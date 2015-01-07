@@ -378,6 +378,7 @@ class assign_events_testcase extends mod_assign_base_testcase {
 
         $assign = $this->create_instance();
 
+        // Test process_set_batch_marking_workflow_state.
         $sink = $this->redirectEvents();
         $assign->testable_process_set_batch_marking_workflow_state($this->students[0]->id, ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW);
 
@@ -397,6 +398,65 @@ class assign_events_testcase extends mod_assign_base_testcase {
             'view.php?id=' . $assign->get_course_module()->id,
             get_string('setmarkingworkflowstateforlog', 'assign', array('id' => $this->students[0]->id,
                 'fullname' => fullname($this->students[0]), 'state' => ASSIGN_MARKING_WORKFLOW_STATE_INREVIEW)),
+            $assign->get_course_module()->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+
+        // Test setting workflow state in apply_grade_to_user.
+        $sink = $this->redirectEvents();
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $data->workflowstate = 'readyforrelease';
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        $events = $sink->get_events();
+        $this->assertCount(2, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_assign\event\workflow_state_updated', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($assign->get_instance()->id, $event->objectid);
+        $this->assertEquals($this->students[0]->id, $event->relateduserid);
+        $this->assertEquals($this->editingteachers[0]->id, $event->userid);
+        $this->assertEquals(ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE, $event->other['newstate']);
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'set marking workflow state',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('setmarkingworkflowstateforlog', 'assign', array('id' => $this->students[0]->id,
+                'fullname' => fullname($this->students[0]), 'state' => ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE)),
+            $assign->get_course_module()->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+
+        // Test setting workflow state in process_save_quick_grades.
+        $sink = $this->redirectEvents();
+
+        $data = array(
+            'grademodified_' . $this->students[0]->id => time(),
+            'quickgrade_' . $this->students[0]->id => '60.0',
+            'quickgrade_' . $this->students[0]->id . '_workflowstate' => 'inmarking'
+        );
+        $assign->testable_process_save_quick_grades($data);
+
+        $events = $sink->get_events();
+        $this->assertCount(2, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_assign\event\workflow_state_updated', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($assign->get_instance()->id, $event->objectid);
+        $this->assertEquals($this->students[0]->id, $event->relateduserid);
+        $this->assertEquals($this->editingteachers[0]->id, $event->userid);
+        $this->assertEquals(ASSIGN_MARKING_WORKFLOW_STATE_INMARKING, $event->other['newstate']);
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'set marking workflow state',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('setmarkingworkflowstateforlog', 'assign', array('id' => $this->students[0]->id,
+                'fullname' => fullname($this->students[0]), 'state' => ASSIGN_MARKING_WORKFLOW_STATE_INMARKING)),
             $assign->get_course_module()->id
         );
         $this->assertEventLegacyLogData($expected, $event);
