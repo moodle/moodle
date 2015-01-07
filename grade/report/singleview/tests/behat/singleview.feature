@@ -60,12 +60,8 @@ Feature: We can use Single view
     And I press "Update"
     Then I should see "Grades were set for 2 items"
     And I press "Continue"
-    And the following should exist in the "generaltable" table:
-        | Test assignment four |
-        | excluded |
-    And the following should exist in the "generaltable" table:
-        | Test assignment one |
-        | 10.00 |
+    And the field "Exclude for Test assignment four" matches value "1"
+    And the field "Grade for Test assignment one" matches value "10.00"
     And I set the following fields to these values:
         | Test grade item | 45 |
     And I press "Update"
@@ -82,10 +78,8 @@ Feature: We can use Single view
     And I press "Update"
     Then I should see "Grades were set for 2 items"
     And I press "Continue"
-    And the following should exist in the "generaltable" table:
-        | Test assignment three |
-        | 12.05 |
-        | Excluded |
+    And the field "Grade for james (Student) 1" matches value "12.05"
+    And the field "Exclude for holly (Student) 2" matches value "1"
     And I click on "Single view" "link"
     And I click on "new grade item 1" "option"
     And I click on "Very good" "option"
@@ -93,7 +87,8 @@ Feature: We can use Single view
     Then I should see "Grades were set for 1 items"
     And I press "Continue"
     And the following should exist in the "generaltable" table:
-        | Grade for james (Student) 1 | "Very good" |
+        | First name (Alternate name) Surname | Grade |
+        | james (Student) 1 | Very good |
 
   Scenario: Single view links work on grade report.
     Given I follow "Single view for Test assignment one"
