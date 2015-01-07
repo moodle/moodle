@@ -69,7 +69,7 @@ class filter_mediaplugin extends moodle_text_filter {
         $this->trusted = !empty($options['noclean']) or !empty($CFG->allowobjectembed);
 
         // Looking for tags.
-        $matches = preg_split('/(<a\s[^>]*>)/i', $text, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+        $matches = preg_split('/(<[^>]*>)/i', $text, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 
         if (!$matches) {
             return $text;
