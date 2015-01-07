@@ -700,9 +700,11 @@ class assign {
         }
 
         // Delete_records will throw an exception if it fails - so no need for error checking here.
-        $DB->delete_records('assign_submission', array('assignment'=>$this->get_instance()->id));
-        $DB->delete_records('assign_grades', array('assignment'=>$this->get_instance()->id));
-        $DB->delete_records('assign_plugin_config', array('assignment'=>$this->get_instance()->id));
+        $DB->delete_records('assign_submission', array('assignment' => $this->get_instance()->id));
+        $DB->delete_records('assign_grades', array('assignment' => $this->get_instance()->id));
+        $DB->delete_records('assign_plugin_config', array('assignment' => $this->get_instance()->id));
+        $DB->delete_records('assign_user_flags', array('assignment' => $this->get_instance()->id));
+        $DB->delete_records('assign_user_mapping', array('assignment' => $this->get_instance()->id));
 
         // Delete items from the gradebook.
         if (! $this->delete_grades()) {
@@ -761,19 +763,18 @@ class assign {
                 }
             }
 
-            $assignssql = 'SELECT a.id
-                             FROM {assign} a
-                           WHERE a.course=:course';
-            $params = array('course'=>$data->courseid);
+            $assignids = $DB->get_records('assign', array('course' => $data->courseid), '', 'id');
+            list($sql, $params) = $DB->get_in_or_equal(array_keys($assignids));
 
-            $DB->delete_records_select('assign_submission', "assignment IN ($assignssql)", $params);
+            $DB->delete_records_select('assign_submission', "assignment $sql", $params);
+            $DB->delete_records_select('assign_user_flags', "assignment $sql", $params);
 
             $status[] = array('component'=>$componentstr,
                               'item'=>get_string('deleteallsubmissions', 'assign'),
                               'error'=>false);
 
             if (!empty($data->reset_gradebook_grades)) {
-                $DB->delete_records_select('assign_grades', "assignment IN ($assignssql)", $params);
+                $DB->delete_records_select('assign_grades', "assignment $sql", $params);
                 // Remove all grades from gradebook.
                 require_once($CFG->dirroot.'/mod/assign/lib.php');
                 assign_reset_gradebook($data->courseid);
