@@ -44,17 +44,36 @@ class restore_trainingevent_activity_structure_step extends restore_activity_str
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->course = $this->get_courseid();
+echo "DATA = <pre>";
+print_r($data);
+echo "</pre></br>";
+        $newtrainingevent = array('course' => $this->get_courseid(),
+                                  'name' => $data->name,
+                                  'intro' => $data->intro,
+                                  'introformat' => $data->introformat,
+                                  'timemodified' => $data->timemodified,
+                                  'startdatetime' => $data->startdatetime,
+                                  'enddatetime' => $data->enddatetime,
+                                  'classroomid' => $data->classroomid,
+                                  'approvaltype' => $data->approvaltype);
+        $newtrainingeventid = $DB->insert_record('trainingevent', $newtrainingevent);
+        // Immediately after inserting "activity" record, call this.
+        $this->apply_activity_instance($newtrainingeventid);
 
         // Insert the trainingevent record.
-        $newitemid = $DB->insert_record('trainingevent', $data);
-        // Immediately after inserting "activity" record, call this.
-        $this->apply_activity_instance($newitemid);
+        // Iterate over all the feed elements, creating them if needed
+        if (isset($data->trainingevent_user['trainingevent_users'])) {
+            foreach ($data->trainingevent_user['trainingevent_users'] as $trainingeventuser) {
+                $trainingeventuser = (object)$trainingeventuser;
+                $trainingeventuser->trainingeventid = $newtrainingeventid;
+                $catcourse_catid = $DB->insert_record('trainingevent_users', $trainingeventuser);
+            }
+        }
     }
 
     protected function after_execute() {
         // Add trainingevent related files, no need to match by itemname (just internally handled context).
-        $this->add_related_files('mod_trainingevent', 'intro', null);
+        //$this->add_related_files('mod_trainingevent', 'intro', null);
     }
 
 }

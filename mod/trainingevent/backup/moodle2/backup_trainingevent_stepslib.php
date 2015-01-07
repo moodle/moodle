@@ -37,19 +37,19 @@ class backup_trainingevent_activity_structure_step extends backup_activity_struc
 
         // Define each element separated.
         $trainingevent = new backup_nested_element('trainingevent', array('id'), array(
-            'course', 'name', 'intro', 'introformat', 'timemodified', 'startdatetime', 'enddatetime', 'classroomid'));
-        $users = new backup_nested_element('users');
-        $user = new backup_nested_element('trainingevent_users', array('id'), array('userid', 'trainingeventid'));
+            'course', 'name', 'intro', 'introformat', 'timemodified', 'startdatetime', 'enddatetime', 'classroomid', 'approvaltype'));
+        $trainingevent_users = new backup_nested_element('trainingevent_user');
+        $trainingevent_user = new backup_nested_element('trainingevent_users', array('id'), array('userid', 'trainingeventid'));
 
-        $trainingevent->add_child($users);
-        $users->add_child($user);
+        $trainingevent->add_child($trainingevent_users);
+        $trainingevent_users->add_child($trainingevent_user);
 
         // Build the tree.
         // (love this).
 
         // Define sources.
         $trainingevent->set_source_table('trainingevent', array('id' => backup::VAR_ACTIVITYID));
-        $trainingevent->set_source_table('trainingevent_users', array('trainingeventid' => backup::VAR_ACTIVITYID));
+        $trainingevent_user->set_source_table('trainingevent_users', array('trainingeventid' => backup::VAR_ACTIVITYID));
 
         // Define id annotations.
         // (none).
