@@ -70,6 +70,11 @@ if ($data = $form->get_data()) {
 
     // User hit submit button.  Check for records since the configured date.
     if (isset($data->submitbutton)) {
+        if(local_kaltura_get_channels_id(local_kaltura_get_kaltura_client(), $data->kafcategory) === false)
+        {
+            $url = new moodle_url('/admin/settings.php', array('section' => 'local_kaltura'));
+            notice("Selected target root category does not have a KAF structure (subcategory '>site>channels' is missing)", $url);
+        }
         // Set the migration start time and initialize the KAF root category id.
         if (0 == local_kaltura_migration_progress::get_migrationstarted()) {
             local_kaltura_migration_progress::init_migrationstarted();
