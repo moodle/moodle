@@ -473,17 +473,46 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $course3  = self::getDataGenerator()->create_course();
 
         // Delete courses.
-        core_course_external::delete_courses(array($course1->id, $course2->id));
+        $result = core_course_external::delete_courses(array($course1->id, $course2->id));
+        $result = external_api::clean_returnvalue(core_course_external::delete_courses_returns(), $result);
+        // Check for 0 warnings.
+        $this->assertEquals(0, count($result['warnings']));
 
         // Check $course 1 and 2 are deleted.
         $notdeletedcount = $DB->count_records_select('course',
             'id IN ( ' . $course1->id . ',' . $course2->id . ')');
         $this->assertEquals(0, $notdeletedcount);
 
+        // Try to delete non-existent course.
+        $result = core_course_external::delete_courses(array($course1->id));
+        $result = external_api::clean_returnvalue(core_course_external::delete_courses_returns(), $result);
+        // Check for 1 warnings.
+        $this->assertEquals(1, count($result['warnings']));
+
+        // Try to delete Frontpage course.
+        $result = core_course_external::delete_courses(array(0));
+        $result = external_api::clean_returnvalue(core_course_external::delete_courses_returns(), $result);
+        // Check for 1 warnings.
+        $this->assertEquals(1, count($result['warnings']));
+
+         // Fail when the user has access to course (enrolled) but does not have permission or is not admin.
+        $student1 = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student1->id,
+                                              $course3->id,
+                                              $studentrole->id);
+        $this->setUser($student1);
+        $result = core_course_external::delete_courses(array($course3->id));
+        $result = external_api::clean_returnvalue(core_course_external::delete_courses_returns(), $result);
+        // Check for 1 warnings.
+        $this->assertEquals(1, count($result['warnings']));
+
          // Fail when the user is not allow to access the course (enrolled) or is not admin.
         $this->setGuestUser();
         $this->setExpectedException('require_login_exception');
-        $createdsubcats = core_course_external::delete_courses(array($course3->id));
+
+        $result = core_course_external::delete_courses(array($course3->id));
+        $result = external_api::clean_returnvalue(core_course_external::delete_courses_returns(), $result);
     }
 
     /**

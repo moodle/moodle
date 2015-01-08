@@ -838,27 +838,50 @@ class core_course_external extends external_api {
         // Parameter validation.
         $params = self::validate_parameters(self::delete_courses_parameters(), array('courseids'=>$courseids));
 
-        $transaction = $DB->start_delegated_transaction();
+        $warnings = array();
 
         foreach ($params['courseids'] as $courseid) {
-            $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+            $course = $DB->get_record('course', array('id' => $courseid));
+
+            if ($course === false) {
+                $warnings[] = array(
+                                'item' => 'course',
+                                'itemid' => $courseid,
+                                'warningcode' => 'unknowncourseidnumber',
+                                'message' => 'Unknown course ID ' . $courseid
+                            );
+                continue;
+            }
 
             // Check if the context is valid.
             $coursecontext = context_course::instance($course->id);
             self::validate_context($coursecontext);
 
-            // Check if the current user has enought permissions.
+            // Check if the current user has permission.
             if (!can_delete_course($courseid)) {
-                throw new moodle_exception('cannotdeletecategorycourse', 'error',
-                    '', format_string($course->fullname)." (id: $courseid)");
+                $warnings[] = array(
+                                'item' => 'course',
+                                'itemid' => $courseid,
+                                'warningcode' => 'cannotdeletecourse',
+                                'message' => 'You do not have the permission to delete this course' . $courseid
+                            );
+                continue;
             }
 
-            delete_course($course, false);
+            if (delete_course($course, false) === false) {
+                $warnings[] = array(
+                                'item' => 'course',
+                                'itemid' => $courseid,
+                                'warningcode' => 'cannotdeletecategorycourse',
+                                'message' => 'Course ' . $courseid . ' failed to be deleted'
+                            );
+                continue;
+            }
         }
 
-        $transaction->allow_commit();
+        fix_course_sortorder();
 
-        return null;
+        return array('warnings' => $warnings);
     }
 
     /**
@@ -868,7 +891,11 @@ class core_course_external extends external_api {
      * @since Moodle 2.2
      */
     public static function delete_courses_returns() {
-        return null;
+        return new external_single_structure(
+            array(
+                'warnings' => new external_warnings()
+            )
+        );
     }
 
     /**
