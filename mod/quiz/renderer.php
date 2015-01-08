@@ -461,6 +461,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         foreach ($slots as $slot) {
             $output .= $attemptobj->render_question($slot, false,
                     $attemptobj->attempt_url($slot, $page));
+            $output .= $attemptobj->restart_question_button($slot);
         }
 
         $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));

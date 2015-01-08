@@ -36,4 +36,11 @@ class qbehaviour_immediatefeedback_type extends question_behaviour_type {
     public function is_archetypal() {
         return true;
     }
+
+    /**
+     * Allow user to re-attempt graded questions during a quiz attempt
+     */
+    public function user_can_reattempt_graded_question() {
+        return true;
+    }
 }

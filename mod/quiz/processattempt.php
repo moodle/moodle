@@ -44,6 +44,12 @@ $finishattempt = optional_param('finishattempt', false, PARAM_BOOL);
 $timeup        = optional_param('timeup',        0,      PARAM_BOOL); // True if form was submitted by timer.
 $scrollpos     = optional_param('scrollpos',     '',     PARAM_RAW);
 
+// Process replace question action, when user press on 'Replace question' link.
+if (isset($_POST['restartquestioninslot'])) {
+    redirect(new moodle_url('/mod/quiz/attempt.php',
+            array('attempt' => $attemptid, 'page' => $thispage, 'replacequestioninslot' => $_POST['restartquestionincurrentslot'])));
+}
+
 $transaction = $DB->start_delegated_transaction();
 $attemptobj = quiz_attempt::create($attemptid);
 
