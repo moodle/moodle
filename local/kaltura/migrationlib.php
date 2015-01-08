@@ -566,6 +566,13 @@ function local_kaltura_assign_entries_to_new_course_categories($client, $entries
  * @return object|bool An object whose properties are id and fullname, or false it's not found.
  */
 function local_kaltura_get_channels_id($client, $rootcatid) {
+    static $channelsCategoryObj = null;
+    
+    if(!is_null($channelsCategoryObj))
+    {
+        return $channelsCategoryObj;
+    }
+    
     // Retrieve the array of categories and get the name of the parent category.
     $catnames = local_kaltura_get_categories();
     $parentcatname = $catnames[$rootcatid];
@@ -580,6 +587,8 @@ function local_kaltura_get_channels_id($client, $rootcatid) {
         $category = new stdClass();
         $category->id = $result->objects[0]->id;
         $category->fullname = "$parentcatname>site>channels";
+        
+        $channelsCategoryObj = $category;
         return $category;
     } else {
         return false;
@@ -795,6 +804,7 @@ function local_kaltura_update_activities() {
                 try {
                     // Retrieve the Kaltura base entry object.
                     $kalentry = $client->baseEntry->get($record->entry_id);
+                    local_kaltura_set_activity_entry_to_incontext($record->entry_id, $record->course);
                 }
                 catch(Exception $ex) {
                     // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
@@ -831,6 +841,7 @@ function local_kaltura_update_activities() {
                 try {
                     // Retrieve the Kaltura base entry object.
                     $kalentry = $client->baseEntry->get($record->entry_id);
+                    local_kaltura_set_activity_entry_to_incontext($record->entry_id, $record->course);
                 }
                 catch(Exception $ex) {
                     // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
@@ -868,9 +879,18 @@ function local_kaltura_update_activities() {
                 $record->width = $width + KALTURA_MIGRATION_WIDTH_PADDING;
                 $record->height = $height + KALTURA_MIGRATION_HEIGHT_PADDING;
 
+                
+                $assignmentSql = 'SELECT * FROM {kalvidassign} WHERE id = '.$record->vidassignid;
+                $assignmentRecords = $DB->get_records_sql($assignmentSql);
+
                 try {
                     // Retrieve the Kaltura base entry object.
                     $kalentry = $client->baseEntry->get($record->entry_id);
+                    if(isset($assignmentRecords[$record->vidassignid]))
+                    {
+                        $assignmentRecord = $assignmentRecords[$record->vidassignid];
+                        local_kaltura_set_activity_entry_to_incontext($record->entry_id, $assignmentRecord->course);
+                    }
                 }
                 catch(Exception $ex) {
                     // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
@@ -885,6 +905,100 @@ function local_kaltura_update_activities() {
                 $DB->update_record('kalvidassign_submission', $record, true);
             }
         }
+    }
+}
+
+/**
+ * This function makes sure that the entry of activity (assignment submission, resource, video-presentation resource) is assigned to the InContext category or the respective course.
+ * This function is used in order to bridge the gap in cases where the moodle kaltura repository 
+ * was disabled in V3, or was enabled after resources have already been created which would make those resources to not be in the old category tree.
+ * 
+ * @param string $entryId
+ * @param string $courseId
+ */
+function local_kaltura_set_activity_entry_to_incontext($entryId, $courseId)
+{
+    $client = local_kaltura_get_kaltura_client();
+    $channelCatData = local_kaltura_get_channels_id($client, local_kaltura_migration_progress::get_kafcategoryrootid());
+    
+    $inContextCategoryName = $channelCatData->fullname . '>'. $courseId . '>InContext';
+    
+    // check if the course channel and its InContext categories exists for the given course ID
+    $filter = new KalturaCategoryFilter();
+
+    $filter->fullNameStartsWith = $channelCatData->fullname . '>'. $courseId;
+    
+    try
+    {
+        $result = $client->category->listAction($filter);
+    }
+    catch(Exception $ex)
+    {
+        // write to log?
+    }
+    
+    $inContextCategoryId = null;
+    $courseCategoryId = null;
+    foreach($result->objects as $category)
+    {
+        if($category->fullName == $inContextCategoryName)
+        {
+            $inContextCategoryId = $category->id;
+        }
+        if($category->fullName == $filter->fullNameStartsWith)
+        {
+            $courseCategoryId = $category->id;
+        }
+    }
+    
+    // if not - create the missing categories (channels>{courseID} and channels>{courseID}>InContext)
+    if(is_null($inContextCategoryId))
+    {
+        $isMultiRequest = false;
+        if(is_null($courseCategoryId))
+        {
+            $client->startMultiRequest();
+            $isMultiRequest = true;
+            $courseCategory = new KalturaCategory();
+            $courseCategory->parentId = $channelCatData->id;
+            $courseCategory->name = $courseId;
+            
+            $client->category->add($courseCategory);
+            $courseCategoryId = '{1:result:id}';
+        }
+        
+        $inContextCategory = new KalturaCategory();
+        $inContextCategory->parentId = $courseCategoryId;
+        $inContextCategory->name = 'InContext';
+        
+        $res = $client->category->add($inContextCategory);
+        
+        if($isMultiRequest)
+        {
+            $multiResponse = $client->doMultiRequest();
+            if(isset($multiResponse[1]) && $multiResponse[1] instanceof KalturaCategory)
+            {
+                $inContextCategoryId = $multiResponse[1]->id;
+            }
+        }
+    }
+    
+    // assign the entry to the InContext category
+    if(is_null($inContextCategoryId))
+    {
+        throw new Exception("Failed getting/creating InContext category for course $courseId with response objects of single-req: ".print_r($res, true). " and multi-req: ".print_r($multiResponse, true) );
+    }
+    
+    $categoryEntry = new KalturaCategoryEntry();
+    $categoryEntry->entryId = $entryId;
+    $categoryEntry->categoryId = $inContextCategoryId;
+    
+    try
+    {
+        $client->categoryEntry->add($categoryEntry);
+    } catch (Exception $ex) {
+        // write to log?
+        throw $ex;
     }
 }
 
