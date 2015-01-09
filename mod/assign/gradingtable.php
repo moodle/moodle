@@ -270,7 +270,7 @@ class assign_grading_table extends table_sql implements renderable {
             $columns[] = 'status';
             $headers[] = get_string('status', 'assign');
         } else if ($this->assignment->get_instance()->markingworkflow) {
-            $columns[] = 'workflowstatus';
+            $columns[] = 'workflowstate';
             $headers[] = get_string('status', 'assign');
         }
 
