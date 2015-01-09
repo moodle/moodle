@@ -466,7 +466,7 @@ function lesson_mediafile_block_contents($cmid, $lesson) {
 
     $bc = new block_contents();
     $bc->title = get_string('linkedmedia', 'lesson');
-    $bc->attributes['class'] = 'mediafile';
+    $bc->attributes['class'] = 'mediafile block';
     $bc->content = $content;
 
     return $bc;
