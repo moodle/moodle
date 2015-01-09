@@ -434,7 +434,7 @@ Y.extend(TREE, Y.Base, TREE.prototype, {
  * @constructor
  * @extends Base
  */
-BRANCH = function() {
+var BRANCH = function() {
     BRANCH.superclass.constructor.apply(this, arguments);
 };
 BRANCH.prototype = {
@@ -632,7 +632,7 @@ BRANCH.prototype = {
 
         Y.io(M.cfg.wwwroot + ajaxfile, {
             method:'POST',
-            data:  build_querystring(params),
+            data:  params,
             on: {
                 complete: this.ajaxProcessResponse
             },
@@ -670,8 +670,10 @@ BRANCH.prototype = {
                         this.addChild(object.children[i]);
                     }
                 }
-                if ((this.get('type') === NODETYPE.CATEGORY || this.get('type') === NODETYPE.ROOTNODE || this.get('type') === NODETYPE.MYCATEGORY)
-                    && coursecount >= M.block_navigation.courselimit) {
+                if ((this.get('type') === NODETYPE.CATEGORY ||
+                     this.get('type') === NODETYPE.ROOTNODE ||
+                     this.get('type') === NODETYPE.MYCATEGORY)
+                     && coursecount >= M.block_navigation.courselimit) {
                     this.addViewAllCoursesChild(this);
                 }
                 // If this block can dock tell the dock to resize if required and check

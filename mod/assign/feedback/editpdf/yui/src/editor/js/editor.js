@@ -28,7 +28,7 @@
  * @constructor
  * @extends Y.Base
  */
-EDITOR = function() {
+var EDITOR = function() {
     EDITOR.superclass.constructor.apply(this, arguments);
 };
 EDITOR.prototype = {
@@ -720,9 +720,9 @@ EDITOR.prototype = {
         this.currentedit.end = {x : point.x, y : point.y};
 
         if (this.currentedit.tool === 'select') {
-            x = this.currentedit.end.x;
-            y = this.currentedit.end.y;
-            annotations = this.pages[this.currentpage].annotations;
+            var x = this.currentedit.end.x,
+                y = this.currentedit.end.y,
+                annotations = this.pages[this.currentpage].annotations;
             // Find the first annotation whose bounds encompass the click.
             Y.each(annotations, function(annotation) {
                 if (((x - annotation.x) * (x - annotation.endx)) <= 0 &&
@@ -1031,7 +1031,7 @@ EDITOR.prototype = {
 
         pageselect = Y.one(SELECTOR.PAGESELECT);
 
-        options = pageselect.all('option');
+        var options = pageselect.all('option');
         if (options.size() <= 1) {
             for (i = 0; i < this.pages.length; i++) {
                 option = Y.Node.create('<option/>');

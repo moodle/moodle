@@ -105,7 +105,7 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
  * @param Number y
  * @class point
  */
-POINT = function(x, y) {
+var POINT = function(x, y) {
 
     /**
      * X coordinate.
@@ -180,7 +180,7 @@ M.assignfeedback_editpdf.point = POINT;
  * @param int height
  * @class rect
  */
-RECT = function(x, y, width, height) {
+var RECT = function(x, y, width, height) {
 
     /**
      * X coordinate.
@@ -319,7 +319,7 @@ M.assignfeedback_editpdf.rect = RECT;
  * @namespace M.assignfeedback_editpdf
  * @class edit
  */
-EDIT = function() {
+var EDIT = function() {
 
     /**
      * Starting point for the edit.
@@ -424,7 +424,7 @@ M.assignfeedback_editpdf.edit = EDIT;
  * @param M.assignfeedback_editpdf.editor editor
  * @class drawable
  */
-DRAWABLE = function(editor) {
+var DRAWABLE = function(editor) {
 
     /**
      * Reference to M.assignfeedback_editpdf.editor.
@@ -536,7 +536,7 @@ M.assignfeedback_editpdf.drawable = DRAWABLE;
  * @class annotation
  * @constructor
  */
-ANNOTATION = function(config) {
+var ANNOTATION = function(config) {
     ANNOTATION.superclass.constructor.apply(this, [config]);
 };
 
@@ -752,7 +752,8 @@ Y.extend(ANNOTATION, Y.Base, {
      * @param event
      */
     remove : function(e) {
-        var annotations;
+        var annotations,
+            i;
 
         e.preventDefault();
 
@@ -875,7 +876,7 @@ M.assignfeedback_editpdf.annotation = ANNOTATION;
  * @class annotationline
  * @extends M.assignfeedback_editpdf.annotation
  */
-ANNOTATIONLINE = function(config) {
+var ANNOTATIONLINE = function(config) {
     ANNOTATIONLINE.superclass.constructor.apply(this, [config]);
 };
 
@@ -995,7 +996,7 @@ M.assignfeedback_editpdf.annotationline = ANNOTATIONLINE;
  * @class annotationrectangle
  * @extends M.assignfeedback_editpdf.annotation
  */
-ANNOTATIONRECTANGLE = function(config) {
+var ANNOTATIONRECTANGLE = function(config) {
     ANNOTATIONRECTANGLE.superclass.constructor.apply(this, [config]);
 };
 
@@ -1011,6 +1012,7 @@ Y.extend(ANNOTATIONRECTANGLE, M.assignfeedback_editpdf.annotation, {
      */
     draw : function() {
         var drawable,
+            bounds,
             shape;
 
         drawable = new M.assignfeedback_editpdf.drawable(this.editor);
@@ -1108,7 +1110,7 @@ M.assignfeedback_editpdf.annotationrectangle = ANNOTATIONRECTANGLE;
  * @class annotationoval
  * @extends M.assignfeedback_editpdf.annotation
  */
-ANNOTATIONOVAL = function(config) {
+var ANNOTATIONOVAL = function(config) {
     ANNOTATIONOVAL.superclass.constructor.apply(this, [config]);
 };
 
@@ -1124,6 +1126,7 @@ Y.extend(ANNOTATIONOVAL, M.assignfeedback_editpdf.annotation, {
      */
     draw : function() {
         var drawable,
+            bounds,
             shape;
 
         drawable = new M.assignfeedback_editpdf.drawable(this.editor);
@@ -1221,7 +1224,7 @@ M.assignfeedback_editpdf.annotationoval = ANNOTATIONOVAL;
  * @class annotationpen
  * @extends M.assignfeedback_editpdf.annotation
  */
-ANNOTATIONPEN = function(config) {
+var ANNOTATIONPEN = function(config) {
     ANNOTATIONPEN.superclass.constructor.apply(this, [config]);
 };
 
@@ -1382,7 +1385,7 @@ M.assignfeedback_editpdf.annotationpen = ANNOTATIONPEN;
  * @extends M.assignfeedback_editpdf.annotation
  * @module moodle-assignfeedback_editpdf-editor
  */
-ANNOTATIONHIGHLIGHT = function(config) {
+var ANNOTATIONHIGHLIGHT = function(config) {
     ANNOTATIONHIGHLIGHT.superclass.constructor.apply(this, [config]);
 };
 
@@ -1534,7 +1537,7 @@ M.assignfeedback_editpdf.annotationhighlight = ANNOTATIONHIGHLIGHT;
  * @class annotationstamp
  * @extends M.assignfeedback_editpdf.annotation
  */
-ANNOTATIONSTAMP = function(config) {
+var ANNOTATIONSTAMP = function(config) {
     ANNOTATIONSTAMP.superclass.constructor.apply(this, [config]);
 };
 
@@ -1749,10 +1752,11 @@ Y.extend(DROPDOWN, M.core.dialogue, {
      * @return void
      */
     show : function() {
-        var button = this.get('buttonNode');
-
-        result = DROPDOWN.superclass.show.call(this);
+        var button = this.get('buttonNode'),
+            result = DROPDOWN.superclass.show.call(this);
         this.align(button, [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]);
+
+        return result;
     }
 }, {
     NAME : DROPDOWN_NAME,
@@ -2081,13 +2085,17 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
         // Build the list of menu items.
         commentlinks = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_menu"/>');
 
-        link = Y.Node.create('<li><a tabindex="-1" href="#">' + M.util.get_string('addtoquicklist', 'assignfeedback_editpdf') + '</a></li>');
+        link = Y.Node.create('<li><a tabindex="-1" href="#">' +
+               M.util.get_string('addtoquicklist', 'assignfeedback_editpdf') +
+               '</a></li>');
         link.on('click', comment.add_to_quicklist, comment);
         link.on('key', comment.add_to_quicklist, 'enter,space', comment);
 
         commentlinks.append(link);
 
-        link = Y.Node.create('<li><a tabindex="-1" href="#">' + M.util.get_string('deletecomment', 'assignfeedback_editpdf') + '</a></li>');
+        link = Y.Node.create('<li><a tabindex="-1" href="#">' +
+               M.util.get_string('deletecomment', 'assignfeedback_editpdf') +
+               '</a></li>');
         link.on('click', function(e) { e.preventDefault(); this.menu.hide(); this.remove(); }, comment);
         link.on('key', function() { comment.menu.hide(); comment.remove(); }, 'enter,space', comment);
 
@@ -2116,8 +2124,8 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
      */
     show : function() {
         var commentlinks = this.get('boundingBox').one('ul');
-            commentlinks.all('.quicklist_comment').remove(true),
-            comment = this.get('comment');
+            commentlinks.all('.quicklist_comment').remove(true);
+        var comment = this.get('comment');
 
         comment.deleteme = false; // Cancel the deleting of blank comments.
 
@@ -2371,7 +2379,7 @@ M.assignfeedback_editpdf.commentsearch = COMMENTSEARCH;
  * @param String colour
  * @param String rawtext
  */
-COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
+var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
 
     /**
      * Reference to M.assignfeedback_editpdf.editor.
@@ -2806,7 +2814,7 @@ M.assignfeedback_editpdf.comment = COMMENT;
  * @namespace M.assignfeedback_editpdf
  * @class quickcomment
  */
-QUICKCOMMENT = function(id, rawtext, width, colour) {
+var QUICKCOMMENT = function(id, rawtext, width, colour) {
 
     /**
      * Quick comment text.
@@ -2870,7 +2878,7 @@ M.assignfeedback_editpdf.quickcomment = QUICKCOMMENT;
  * @namespace M.assignfeedback_editpdf
  * @class quickcommentlist
  */
-QUICKCOMMENTLIST = function(editor) {
+var QUICKCOMMENTLIST = function(editor) {
 
     /**
      * Reference to M.assignfeedback_editpdf.editor.
@@ -3073,7 +3081,7 @@ M.assignfeedback_editpdf.quickcommentlist = QUICKCOMMENTLIST;
  * @constructor
  * @extends Y.Base
  */
-EDITOR = function() {
+var EDITOR = function() {
     EDITOR.superclass.constructor.apply(this, arguments);
 };
 EDITOR.prototype = {
@@ -3765,9 +3773,9 @@ EDITOR.prototype = {
         this.currentedit.end = {x : point.x, y : point.y};
 
         if (this.currentedit.tool === 'select') {
-            x = this.currentedit.end.x;
-            y = this.currentedit.end.y;
-            annotations = this.pages[this.currentpage].annotations;
+            var x = this.currentedit.end.x,
+                y = this.currentedit.end.y,
+                annotations = this.pages[this.currentpage].annotations;
             // Find the first annotation whose bounds encompass the click.
             Y.each(annotations, function(annotation) {
                 if (((x - annotation.x) * (x - annotation.endx)) <= 0 &&
@@ -4076,7 +4084,7 @@ EDITOR.prototype = {
 
         pageselect = Y.one(SELECTOR.PAGESELECT);
 
-        options = pageselect.all('option');
+        var options = pageselect.all('option');
         if (options.size() <= 1) {
             for (i = 0; i < this.pages.length; i++) {
                 option = Y.Node.create('<option/>');

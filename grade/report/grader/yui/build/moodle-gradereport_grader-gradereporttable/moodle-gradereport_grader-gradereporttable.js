@@ -660,7 +660,8 @@ FloatingHeaders.prototype = {
         this.headerCell = Y.one(SELECTORS.STUDENTHEADER);
 
         // Create the floating row and cell.
-        var floatingUserHeaderRow = Y.Node.create('<div aria-hidden="true" role="presentation" class="floater sideonly heading"></div>'),
+        var floatingUserHeaderRow = Y.Node.create('<div aria-hidden="true" role="presentation" ' +
+                                                   'class="floater sideonly heading"></div>'),
             floatingUserHeaderCell = Y.Node.create('<div></div>'),
             nodepos = this._getRelativeXY(this.headerCell)[0],
             coordinates = this._getRelativeXY(this.headerRow),
@@ -921,7 +922,7 @@ FloatingHeaders.prototype = {
         }
 
         // User column position.
-        if (right_to_left()) {
+        if (window.right_to_left()) {
             floatingUserTriggerPoint = Y.config.win.innerWidth + Y.config.win.pageXOffset - this.dockWidth;
             floatingUserRelativePoint = floatingUserTriggerPoint - this.firstUserCellWidth;
             userFloats = floatingUserTriggerPoint < (this.firstUserCellLeft + this.firstUserCellWidth);

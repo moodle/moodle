@@ -26,7 +26,7 @@
  * @class annotationstamp
  * @extends M.assignfeedback_editpdf.annotation
  */
-ANNOTATIONSTAMP = function(config) {
+var ANNOTATIONSTAMP = function(config) {
     ANNOTATIONSTAMP.superclass.constructor.apply(this, [config]);
 };
 

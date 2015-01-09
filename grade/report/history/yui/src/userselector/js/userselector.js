@@ -272,7 +272,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
 
         Y.io(M.cfg.wwwroot + this.get(USP.AJAXURL), {
             method:'POST',
-            data:build_querystring(params),
+            data: window.build_querystring(params),
             on: {
                 start: this.preSearch,
                 complete: this.processSearchResults,
@@ -374,7 +374,9 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
 
         // Create the div containing the users when it is a fresh search.
         if (!args.append) {
-            users = Y.Node.create('<div role="listbox" aria-activedescendant="" aria-multiselectable="true" class="'+CSS.USERS+'"></div>');
+            users = Y.Node.create('<div role="listbox" aria-activedescendant="" aria-multiselectable="true" class="' +
+                                   CSS.USERS +
+                                   '"></div>');
         } else {
             users = bb.one(SELECTORS.RESULTSUSERS);
         }
@@ -403,6 +405,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         // Append the users one by one.
         count = this.get(USP.USERCOUNT);
         selected = '';
+        var user;
         for (i in result.response.users) {
             count++;
             user = result.response.users[i];

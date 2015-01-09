@@ -34,7 +34,8 @@ M.availability_completion.form.getNode = function(json) {
         // String has already been escaped using format_string.
         html += '<option value="' + cm.id + '">' + cm.name + '</option>';
     }
-    html += '</select></label> <label><span class="accesshide">' + M.util.get_string('label_completion', 'availability_completion') +
+    html += '</select></label> <label><span class="accesshide">' +
+                M.util.get_string('label_completion', 'availability_completion') +
             ' </span><select name="e" title="' + M.util.get_string('label_completion', 'availability_completion') + '">' +
             '<option value="1">' + M.util.get_string('option_complete', 'availability_completion') + '</option>' +
             '<option value="0">' + M.util.get_string('option_incomplete', 'availability_completion') + '</option>' +

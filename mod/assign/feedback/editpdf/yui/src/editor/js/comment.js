@@ -33,7 +33,7 @@
  * @param String colour
  * @param String rawtext
  */
-COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
+var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
 
     /**
      * Reference to M.assignfeedback_editpdf.editor.

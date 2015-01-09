@@ -49,7 +49,7 @@ Y.extend(POPUP, Y.Base, {
 
     create_dialogue: function() {
         // Create a dialogue on the page and hide it.
-        config = {
+        var config = {
             headerContent : '',
             bodyContent : Y.one(CSS.QBANKLOADING),
             draggable : true,
@@ -167,10 +167,11 @@ Y.extend(POPUP, Y.Base, {
 
         // Question preview. Needs to open in a pop-up.
         if (e.currentTarget.ancestor(CSS.PREVIEWCONTAINER)) {
-            openpopup(e, {
+            window.openpopup(e, {
                 url: e.currentTarget.get('href'),
                 name: 'questionpreview',
-                options: 'height=600,width=800,top=0,left=0,menubar=0,location=0,scrollbars,resizable,toolbar,status,directories=0,fullscreen=0,dependent'
+                options: 'height=600,width=800,top=0,left=0,menubar=0,location=0,scrollbars,' +
+                         'resizable,toolbar,status,directories=0,fullscreen=0,dependent'
             });
             return;
         }

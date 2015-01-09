@@ -70,10 +70,11 @@ Y.extend(DROPDOWN, M.core.dialogue, {
      * @return void
      */
     show : function() {
-        var button = this.get('buttonNode');
-
-        result = DROPDOWN.superclass.show.call(this);
+        var button = this.get('buttonNode'),
+            result = DROPDOWN.superclass.show.call(this);
         this.align(button, [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]);
+
+        return result;
     }
 }, {
     NAME : DROPDOWN_NAME,

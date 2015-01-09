@@ -245,7 +245,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
 
             // Force the editing instruction to match the mod-indent position.
             var padside = 'left';
-            if (right_to_left()) {
+            if (window.right_to_left()) {
                 padside = 'right';
             }
 
@@ -365,7 +365,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         // Prevent the default button action
         ev.preventDefault();
 
-        nextactivity = activity.next('li.activity.slot');
+        var nextactivity = activity.next('li.activity.slot');
         var spinner = this.add_spinner(nextactivity),
             slotid = 0;
         var value = action === 'removepagebreak' ? 1 : 2;
