@@ -39,6 +39,7 @@ $string['admindirsettingsub'] = 'A very few webhosts use /admin as a special URL
     This will fix admin links in Moodle.';
 $string['availablelangs'] = 'Available language packs';
 $string['caution'] = 'Caution';
+$string['cliadminemail'] = 'New admin user email address';
 $string['cliadminpassword'] = 'New admin user password';
 $string['cliadminusername'] = 'Admin account username';
 $string['clialreadyconfigured'] = 'The configuration file config.php already exists. Please use admin/cli/install_database.php to install Moodle for this site.';
