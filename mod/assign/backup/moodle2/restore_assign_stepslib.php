@@ -33,8 +33,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class restore_assign_activity_structure_step extends restore_activity_structure_step {
 
-    // Store whether submission details should be included. Details may not be included if the
-    // this is a team submission, but groups/grouping information was not included in the backup.
+    /**
+     * Store whether submission details should be included. Details may not be included if the
+     * this is a team submission, but groups/grouping information was not included in the backup.
+     */
     protected $includesubmission = true;
 
     /**

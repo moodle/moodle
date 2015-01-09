@@ -68,6 +68,8 @@ class backup_users_setting extends backup_generic_setting {}
 /**
  * root setting to control if backup will include group information
  * depends on @backup_users_setting
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_groups_setting extends backup_generic_setting {
 }

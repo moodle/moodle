@@ -127,10 +127,20 @@ class condition extends \core_availability\condition {
         return $this->groupid ? '#' . $this->groupid : 'any';
     }
 
+    /**
+     * Include this condition only if we are including groups in restore, or
+     * if it's a generic 'same activity' one.
+     *
+     * @param int $restoreid The restore Id.
+     * @param int $courseid The ID of the course.
+     * @param base_logger $logger The logger being used.
+     * @param string $name Name of item being restored.
+     * @param base_task $task The task being performed.
+     *
+     * @return Integer groupid
+     */
     public function include_after_restore($restoreid, $courseid, \base_logger $logger,
             $name, \base_task $task) {
-        // Include this condition only if we are including groups in restore, or
-        // if it's a generic 'any group' one.
         return !$this->groupid || $task->get_setting_value('groups');
     }
 

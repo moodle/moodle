@@ -46,6 +46,8 @@ class restore_users_setting extends restore_generic_setting {}
 /**
  * root setting to control if restore will create groups/grouping information.
  * depends on @restore_users_setting
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_groups_setting extends restore_generic_setting {
 }
