@@ -35,7 +35,7 @@ $string['availablelangs'] = 'Kullanılabilir dil paketleri';
 $string['chooselanguagehead'] = 'Bir dil seçin';
 $string['chooselanguagesub'] = 'Lütfen, SADECE kurulum için bir dil seçin. Site ve kullanıcı dillerini sonraki ekranda seçebilirsiniz.';
 $string['clialreadyconfigured'] = 'config.php halihazırda mevcut, lütfen eğer bu siteyi yüklemek istiyorsanız şu dizini kullanın: admin/cli/install_database.php';
-$string['clialreadyinstalled'] = 'Config.php zaten var. Sitenizi güncellemek istiyorsanız bu adresi kullanın: admin/cli/upgrade.php';
+$string['clialreadyinstalled'] = 'Config.php zaten var. Sitenizi güncellemek istiyorsanız bu adresi kullanın: admin/cli/install_database.php';
 $string['cliinstallheader'] = 'Moodle {$a} komut satırı kurulum programı';
 $string['databasehost'] = 'Veritabanı sunucusu';
 $string['databasename'] = 'Veritabanı adı';
@@ -78,12 +78,16 @@ $string['pathshead'] = 'Yolları doğrulayın';
 $string['pathsrodataroot'] = 'Veri yolu yazılabilir değil.';
 $string['pathsroparentdataroot'] = 'Ana klasör ({$a->parent}) yazılabilir değil. Veri Klasörü ({$a->dataroot}) kurulum tarafından oluşturulamıyor.';
 $string['pathssubadmindir'] = 'Pek az web sunucusu /admin adresini kontrol paneline yada benzeri birşeye erişmek için kullanır. Ne yazık ki bu Moodle admin sayfalarının standart konumuyla bir karışıklık yaratır. Bu durumu düzeltmek için kurulumunuzdaki admin dizinini yeniden isimlendirip buraya yeni ismi yazınız. Örneğin: <em>moodleadmin</em>. Bu Moodle\'daki admin bağlantısını düzeltecektir.';
-$string['pathssubdataroot'] = 'Moodle\'ın yüklenen dosyaları kayıt etmesi için bir yere ihtiyacınız var. Bu dizin/klasör web sunucusunun kullanıcı hesabı tarafından okunabilir ve yazılabilir olmalıdır. Bu okuma, yazma izinlerini klasöre vermelisiniz. Fakat bu klasör aynı zamanda web üzerinden direk erişilebilir olmamalıdır. Yükleyici eğer klasör yok ise oluşturmayı deneyecektir.';
-$string['pathssubdirroot'] = 'Moodle kurulumu için tam klasör yolu. Sadece sembolik linkleri kullanmaya gereksinim duyuyorsanız değiştirin.';
-$string['pathssubwwwroot'] = 'Moodle\'a erişlecek tam web adresi. Moodle\'ın birden çok adres kullanması mümkün değildir.
-Eğer siteniz birden fazla adrese sahip ise bu adres harici diğerlerinin yönlendirme ayarlarını yapılandırın.
-Eğer siteniz Intranet ve İnternet üzerinden erişilebilirse burada genel bir adres kullanın ve DNS\'iniz ayarlayın. Bu şekilde Intranet kullanıcları da genel adresi kullanabilirler.
-Eğer adres doğru değilse lütfen kurulumu tekrar başlatmak için tarayıcınızdaki URL\'i değiştirin.';
+$string['pathssubdataroot'] = '<p>Moodle\'ın yüklenen dosyaları kayıt etmesi için bir yere ihtiyacınız var. </p>
+ <p>Bu dizin/klasör web sunucusunun kullanıcı hesabı tarafından (genellikle \' \'www-data\', \'nobody\', ya da \'apache\') okunabilir ve yazılabilir olmalıdır. </p>
+ <p>Bu okuma, yazma izinlerini klasöre vermelisiniz. </p>
+<p>Fakat bu klasör aynı zamanda web üzerinden direk erişilebilir olmamalıdır. </p>
+<p>Yükleyici eğer klasör yok ise oluşturmayı deneyecektir.</p>';
+$string['pathssubdirroot'] = '<p>Moodle kurulumu için tam klasör yolu.</p >';
+$string['pathssubwwwroot'] = '<p>Moodle\'a erişilecek tam web adresi. Moodle\'ın birden çok adres kullanması mümkün değildir. </p>
+<p>Eğer siteniz birden fazla adrese sahip ise bu adres harici diğerlerinin yönlendirme ayarlarını yapılandırın.</p>
+<p>Eğer siteniz Intranet ve İnternet üzerinden erişilebilirse burada genel bir adres kullanın ve DNS\'iniz ayarlayın. Bu şekilde Intranet kullanıcıları da genel adresi kullanabilirler.</p>
+<p>IEğer adres doğru değilse lütfen kurulumu tekrar başlatmak için tarayıcınızdaki URL\'i değiştirin.</p>';
 $string['pathsunsecuredataroot'] = 'Veri yolu güvenli değil';
 $string['pathswrongadmindir'] = 'Yönetici klasörü yok';
 $string['phpextension'] = '{$a} PHP eklentisi';
