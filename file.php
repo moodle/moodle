@@ -87,7 +87,8 @@ if (!$file = $fs->get_file_by_hash(sha1($fullpath))) {
     if (strrpos($fullpath, '/') !== strlen($fullpath) -1 ) {
         $fullpath .= '/';
     }
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath.'/.'))) {
+    // Try to fallback to the directory named as the supposed file.
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath.'.'))) {
         send_file_not_found();
     }
 }
