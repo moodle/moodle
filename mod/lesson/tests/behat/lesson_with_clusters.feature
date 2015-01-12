@@ -24,7 +24,6 @@ Feature: In a lesson activity, students can see questions in random order
   Scenario: Lesson with two clusters
     Given I add a "Lesson" to section "1" and I fill the form with:
       | Name | Lesson with clusters |
-      | Description | Test lesson description |
     And I follow "Lesson with clusters"
     And I follow "Add a content page"
     And I set the following fields to these values:
