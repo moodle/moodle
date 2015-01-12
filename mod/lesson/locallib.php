@@ -1497,15 +1497,15 @@ class lesson extends lesson_base {
                 return LESSON_EOL;
             } else {
                 $clusterendid = $pageid;
-                while ($clusterendid != 0) { // this condition should not be satisfied... should be a cluster page
-                    if ($lessonpages[$clusterendid]->qtype == LESSON_PAGE_CLUSTER) {
+                while ($clusterendid != 0) { // This condition should not be satisfied... should be an end of cluster page.
+                    if ($lessonpages[$clusterendid]->qtype == LESSON_PAGE_ENDOFCLUSTER) {
                         break;
                     }
-                    $clusterendid = $lessonpages[$clusterendid]->prevpageid;
+                    $clusterendid = $lessonpages[$clusterendid]->nextpageid;
                 }
                 $exitjump = $DB->get_field("lesson_answers", "jumpto", array("pageid" => $clusterendid, "lessonid" => $this->properties->id));
                 if ($exitjump == LESSON_NEXTPAGE) {
-                    $exitjump = $lessonpages[$pageid]->nextpageid;
+                    $exitjump = $lessonpages[$clusterendid]->nextpageid;
                 }
                 if ($exitjump == 0) {
                     return LESSON_EOL;
