@@ -4027,9 +4027,30 @@ class core_dml_testcase extends database_driver_testcase {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
-        $sql = "SELECT id, ".$DB->sql_substr("name", ":param1 + 1")." AS name FROM {{$tablename}}";
-        $record = $DB->get_record_sql($sql, array('param1' => 4));
-        $this->assertEquals(substr($string, 5-1), $record->name);
+        // Cover the function using placeholders in all positions.
+        $start = 4;
+        $length = 2;
+        // 1st param (target).
+        $sql = "SELECT id, ".$DB->sql_substr(":param1", $start)." AS name FROM {{$tablename}}";
+        $record = $DB->get_record_sql($sql, array('param1' => $string));
+        $this->assertEquals(substr($string, $start - 1), $record->name); // PHP's substr is 0-based.
+        // 2nd param (start).
+        $sql = "SELECT id, ".$DB->sql_substr("name", ":param1")." AS name FROM {{$tablename}}";
+        $record = $DB->get_record_sql($sql, array('param1' => $start));
+        $this->assertEquals(substr($string, $start - 1), $record->name); // PHP's substr is 0-based.
+        // 3rd param (length).
+        $sql = "SELECT id, ".$DB->sql_substr("name", $start, ":param1")." AS name FROM {{$tablename}}";
+        $record = $DB->get_record_sql($sql, array('param1' => $length));
+        $this->assertEquals(substr($string, $start - 1,  $length), $record->name); // PHP's substr is 0-based.
+        // All together.
+        $sql = "SELECT id, ".$DB->sql_substr(":param1", ":param2", ":param3")." AS name FROM {{$tablename}}";
+        $record = $DB->get_record_sql($sql, array('param1' => $string, 'param2' => $start, 'param3' => $length));
+        $this->assertEquals(substr($string, $start - 1,  $length), $record->name); // PHP's substr is 0-based.
+
+        // Try also with some expression passed.
+        $sql = "SELECT id, ".$DB->sql_substr("name", "(:param1 + 1) - 1")." AS name FROM {{$tablename}}";
+        $record = $DB->get_record_sql($sql, array('param1' => $start));
+        $this->assertEquals(substr($string, $start - 1), $record->name); // PHP's substr is 0-based.
     }
 
     public function test_sql_length() {
