@@ -4026,6 +4026,10 @@ class core_dml_testcase extends database_driver_testcase {
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
+
+        $sql = "SELECT id, ".$DB->sql_substr("name", ":param1 + 1")." AS name FROM {{$tablename}}";
+        $record = $DB->get_record_sql($sql, array('param1' => 4));
+        $this->assertEquals(substr($string, 5-1), $record->name);
     }
 
     public function test_sql_length() {

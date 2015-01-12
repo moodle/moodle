@@ -1324,7 +1324,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         }
 
         if ($length === false) {
-            return "SUBSTRING($expr, $start, (LEN($expr) - $start + 1))";
+            return "SUBSTRING($expr, $start, LEN($expr))";
         } else {
             return "SUBSTRING($expr, $start, $length)";
         }
