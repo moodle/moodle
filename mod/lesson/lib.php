@@ -389,7 +389,7 @@ function lesson_update_grades($lesson, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
 
-    if ($lesson->grade == 0) {
+    if ($lesson->grade == 0 || $lesson->practice) {
         lesson_grade_item_update($lesson);
 
     } else if ($grades = lesson_get_user_grades($lesson, $userid)) {

@@ -232,5 +232,15 @@ function xmldb_lesson_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015031500, 'lesson');
     }
 
+    if ($oldversion < 2015032600) {
+
+        // Change practice lesson to allow multiple attempts
+        // so that behaviour is not changed by MDL-18966.
+        $DB->set_field('lesson', 'retake', 1, array('practice' => 1));
+
+        // Lesson savepoint reached.
+        upgrade_mod_savepoint(true, 2015032600, 'lesson');
+    }
+
     return true;
 }
