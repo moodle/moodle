@@ -276,8 +276,10 @@ a.skip:active {position: static;display: block;}
 .mform .fitem .fitemtitle div {display: inline;}
 .mform .fitem .felement {border-width: 0;width:80%;margin-left:16%;}
 .mform .fitem fieldset.felement {margin-left:15%;padding-left:1%;margin-bottom:0}
+#adminsettings span.error,
 .mform .error,
 .mform .required {color:#A00;}
+#adminsettings span.error,
 .mform span.error {display: inline-block;padding: 4px;margin-bottom: 4px;background-color: #F2DEDE;border: 1px solid #EED3D7;}
 .mform .required .fgroup span label {color:#000;}
 .mform .fdescription.required {color:#A00;text-align:right;}
