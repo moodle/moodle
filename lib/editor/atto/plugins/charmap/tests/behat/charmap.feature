@@ -11,8 +11,7 @@ Feature: Atto charmap button
     And I select the text in the "Description" Atto editor
     When I click on "Show more buttons" "button"
     And I click on "Insert character" "button"
-    And I click on "copyright sign" "button"
+    And I click on "a - macron" "button"
     And I press "Update profile"
     And I follow "Edit profile"
-    Then I should see "(c)"
-
+    Then I should see "ā"
