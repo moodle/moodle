@@ -2442,7 +2442,7 @@ class assign {
         $params = array('overflowdiv' => true, 'context' => $this->get_context());
         $result .= format_text($finaltext, $format, $params);
 
-        if ($CFG->enableportfolios) {
+        if ($CFG->enableportfolios && has_capability('mod/assign:exportownsubmission', $this->context)) {
             require_once($CFG->libdir . '/portfoliolib.php');
 
             $button = new portfolio_add_button();
