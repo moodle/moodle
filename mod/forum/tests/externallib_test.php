@@ -342,7 +342,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
-        $this->assertDebuggingCalled();
     }
 
     /**
