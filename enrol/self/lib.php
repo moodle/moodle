@@ -248,6 +248,8 @@ class enrol_self_plugin extends enrol_plugin {
             $form->display();
             $output = ob_get_clean();
             return $OUTPUT->box($output);
+        } else {
+            return $OUTPUT->box($enrolstatus);
         }
     }
 
@@ -265,7 +267,7 @@ class enrol_self_plugin extends enrol_plugin {
         if ($checkuserenrolment) {
             if (isguestuser()) {
                 // Can not enrol guest.
-                return get_string('canntenrol', 'enrol_self');
+                return get_string('noguestaccess', 'enrol');
             }
             // Check if user is already enroled.
             if ($DB->get_record('user_enrolments', array('userid' => $USER->id, 'enrolid' => $instance->id))) {
