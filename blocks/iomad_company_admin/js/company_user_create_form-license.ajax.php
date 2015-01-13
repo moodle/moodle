@@ -38,17 +38,7 @@ iomad::require_capability('block/iomad_company_admin:user_create', $context);
 $return = '';
 
 if ($license = $DB->get_record('companylicense', array('id' => $licenseid))) {
-    if ($courses = $DB->get_records_sql_menu("SELECT c.id, c.fullname FROM {companylicense_courses} clc
-                                                         JOIN {course} c ON (clc.courseid = c.id
-                                                         AND clc.licenseid = :licenseid)",
-                                                         array('licenseid' => $licenseid))) {
-        $return = '<select id="licensecourseselector" name="licensecourses[]" multiple="multiple">';
-        $return .= '<optgroup label="'.$license->name.' ('.$license->used.'/'.$license->allocation.')">';
-        foreach ($courses as $id => $course) {
-            $return .= '<option value="'. $id . '">' . $course .'</option>';
-        }
-        $return .= '</optgroup></select>';
-    }
+    $return = '<b>' . get_string('licensedetails', 'block_iomad_company_admin', $license) . '</b>';
 }
 echo $return;
 die;

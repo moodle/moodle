@@ -21,7 +21,7 @@ require_once(dirname(__FILE__) . '/../../../local/course_selector/lib.php');
  * base class for selecting courses of a company
  */
 abstract class company_course_selector_base extends course_selector_base {
-    const MAX_COURSES_PER_PAGE = 100;
+    const MAX_COURSES_PER_PAGE = 200;
 
     protected $companyid;
     protected $hasenrollments = false;
@@ -840,7 +840,7 @@ class current_user_license_course_selector extends course_selector_base {
                                                               'licensecourseid' => $course->id,
                                                               'timecompleted' => null,
                                                               'isusing' => 1))) {
-                $licensecourses[$id]->fullname = '*'.$course->fullname;
+                $licensecourses[$id]->fullname = $course->fullname;
             }
         }
     }
@@ -904,6 +904,7 @@ class potential_user_license_course_selector extends course_selector_base {
     public function __construct($name, $options) {
         $this->companyid  = $options['companyid'];
         $this->user = $options['user'];
+        $this->licenseid = $options['licenseid'];
  
         parent::__construct($name, $options);
     }
@@ -913,6 +914,7 @@ class potential_user_license_course_selector extends course_selector_base {
         $options['companyid'] = $this->companyid;
         $options['file']    = 'blocks/iomad_company_admin/lib/course_selectors.php';
         $options['user'] = $this->user;
+        $options['licenseid'] = $this->licenseid;
         return $options;
     }
 
@@ -926,6 +928,7 @@ class potential_user_license_course_selector extends course_selector_base {
         $params['siteid'] = $SITE->id;
         $params['timestamp'] = time();
         $params['userid'] = $this->user->id;
+        $params['licenseid'] = $this->licenseid;
 
         $fields      = 'SELECT ' . $this->required_fields_sql('c');
         $countfields = 'SELECT COUNT(1)';
@@ -940,6 +943,7 @@ class potential_user_license_course_selector extends course_selector_base {
                         AND cl.id = clc.licenseid
                         AND $wherecondition
                         AND cl.companyid = :companyid
+                        AND cl.id = :licenseid
                         AND cl.used < cl.allocation
                         AND cl.expirydate >= :timestamp
                         AND c.id NOT IN
