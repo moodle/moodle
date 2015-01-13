@@ -353,7 +353,6 @@ if ($pageid != LESSON_EOL) {
         }
     }
 
-    $PAGE->set_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
     $PAGE->set_subpage($page->id);
     $currenttab = 'view';
     $extraeditbuttons = true;
