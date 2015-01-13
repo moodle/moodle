@@ -483,18 +483,6 @@ function lesson_grade_item_update($lesson, $grades=null) {
 }
 
 /**
- * Delete grade item for given lesson
- *
- * @category grade
- * @param object $lesson object
- * @return object lesson
- */
-function lesson_grade_item_delete($lesson) {
-    global $CFG;
-
-}
-
-/**
  * List the actions that correspond to a view of this module.
  * This is used by the participation report.
  *
