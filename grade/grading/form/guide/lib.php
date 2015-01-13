@@ -757,6 +757,26 @@ class gradingform_guide_instance extends gradingform_instance {
     }
 
     /**
+     * Determines whether the submitted form was empty.
+     *
+     * @param array $elementvalue value of element submitted from the form
+     * @return boolean true if the form is empty
+     */
+    public function is_empty_form($elementvalue) {
+        $criteria = $this->get_controller()->get_definition()->guide_criteria;
+        foreach ($criteria as $id => $criterion) {
+            $score = $elementvalue['criteria'][$id]['score'];
+            $remark = $elementvalue['criteria'][$id]['remark'];
+
+            if ((isset($score) && $score !== '')
+                    || ((isset($remark) && $remark !== ''))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Validates that guide is fully completed and contains valid grade on each criterion
      *
      * @param array $elementvalue value of element as came in form submit
@@ -841,6 +861,19 @@ class gradingform_guide_instance extends gradingform_instance {
             }
         }
         $this->get_guide_filling(true);
+    }
+
+    /**
+     * Removes the attempt from the gradingform_guide_fillings table
+     * @param array $data the attempt data
+     */
+    public function clear_attempt($data) {
+        global $DB;
+
+        foreach ($data['criteria'] as $criterionid => $record) {
+            $DB->delete_records('gradingform_guide_fillings',
+                array('criterionid' => $criterionid, 'instanceid' => $this->get_id()));
+        }
     }
 
     /**
