@@ -2927,7 +2927,7 @@ function get_capability_info($capabilityname) {
 
     if (empty($ACCESSLIB_PRIVATE->capabilities)) {
         $ACCESSLIB_PRIVATE->capabilities = array();
-        $caps = $DB->get_records('capabilities', array(), 'id, name, captype, riskbitmask');
+        $caps = $DB->get_records('capabilities', array(), '', 'id, name, captype, riskbitmask');
         foreach ($caps as $cap) {
             $capname = $cap->name;
             unset($cap->id);
