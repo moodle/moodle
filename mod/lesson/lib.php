@@ -788,10 +788,9 @@ function lesson_get_completion_state($course, $cm, $userid, $type) {
 function lesson_extend_settings_navigation($settings, $lessonnode) {
     global $PAGE, $DB;
 
-    $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id));
-    $lessonnode->add(get_string('preview', 'lesson'), $url);
-
     if (has_capability('mod/lesson:edit', $PAGE->cm->context)) {
+        $url = new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id));
+        $lessonnode->add(get_string('preview', 'lesson'), $url);
         $url = new moodle_url('/mod/lesson/edit.php', array('id'=>$PAGE->cm->id));
         $lessonnode->add(get_string('edit', 'lesson'), $url);
     }
