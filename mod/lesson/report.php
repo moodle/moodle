@@ -70,9 +70,7 @@ if (!$students->valid()) {
 }
 
 $url = new moodle_url('/mod/lesson/report.php', array('id'=>$id));
-if ($action !== 'reportoverview') {
-    $url->param('action', $action);
-}
+$url->param('action', $action);
 if ($pageid !== null) {
     $url->param('pageid', $pageid);
 }
