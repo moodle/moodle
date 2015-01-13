@@ -796,10 +796,9 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
 
     $canedit = has_capability('mod/lesson:edit', $PAGE->cm->context);
 
-    $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id));
-    $lessonnode->add(get_string('preview', 'lesson'), $url);
-
     if ($canedit) {
+        $url = new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id));
+        $lessonnode->add(get_string('preview', 'lesson'), $url);
         $url = new moodle_url('/mod/lesson/edit.php', array('id'=>$PAGE->cm->id));
         $lessonnode->add(get_string('edit', 'lesson'), $url);
     }
