@@ -67,44 +67,7 @@ class lesson_page_type_endofcluster extends lesson_page {
     public function get_grayout() {
         return 1;
     }
-    public function update($properties, $context = null, $maxbytes = null) {
-        global $DB, $PAGE;
 
-        $properties->id = $this->properties->id;
-        $properties->lessonid = $this->lesson->id;
-        if (empty($properties->qoption)) {
-            $properties->qoption = '0';
-        }
-        $properties->timemodified = time();
-        $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes), context_module::instance($PAGE->cm->id), 'mod_lesson', 'page_contents', $properties->id);
-        $DB->update_record("lesson_pages", $properties);
-
-        $answers  = $this->get_answers();
-        if (count($answers)>1) {
-            $answer = array_shift($answers);
-            foreach ($answers as $a) {
-                $DB->delete_record('lesson_answers', array('id'=>$a->id));
-            }
-        } else if (count($answers)==1) {
-            $answer = array_shift($answers);
-        } else {
-            $answer = new stdClass;
-        }
-
-        $answer->timemodified = time();
-        if (isset($properties->jumpto[0])) {
-            $answer->jumpto = $properties->jumpto[0];
-        }
-        if (isset($properties->score[0])) {
-            $answer->score = $properties->score[0];
-        }
-        if (!empty($answer->id)) {
-            $DB->update_record("lesson_answers", $answer->properties());
-        } else {
-            $DB->insert_record("lesson_answers", $answer);
-        }
-        return true;
-    }
     public function override_next_page() {
         global $DB;
         $jump = $DB->get_field("lesson_answers", "jumpto", array("pageid" => $this->properties->id, "lessonid" => $this->lesson->id));

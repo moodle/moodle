@@ -2243,45 +2243,77 @@ abstract class lesson_page extends lesson_base {
         $properties->timemodified = time();
         $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$maxbytes), $context, 'mod_lesson', 'page_contents', $properties->id);
         $DB->update_record("lesson_pages", $properties);
-
-        for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
-            if (!array_key_exists($i, $this->answers)) {
-                $this->answers[$i] = new stdClass;
-                $this->answers[$i]->lessonid = $this->lesson->id;
-                $this->answers[$i]->pageid = $this->id;
-                $this->answers[$i]->timecreated = $this->timecreated;
+        if ($this->type == self::TYPE_STRUCTURE && $this->get_typeid() != LESSON_PAGE_BRANCHTABLE) {
+            if (count($answers) > 1) {
+                $answer = array_shift($answers);
+                foreach ($answers as $a) {
+                    $DB->delete_record('lesson_answers', array('id' => $a->id));
+                }
+            } else if (count($answers) == 1) {
+                $answer = array_shift($answers);
+            } else {
+                $answer = new stdClass;
+                $answer->lessonid = $properties->lessonid;
+                $answer->pageid = $properties->id;
+                $answer->timecreated = time();
             }
 
-            if (!empty($properties->answer_editor[$i]) && is_array($properties->answer_editor[$i])) {
-                $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];
-                $this->answers[$i]->answerformat = $properties->answer_editor[$i]['format'];
+            $answer->timemodified = time();
+            if (isset($properties->jumpto[0])) {
+                $answer->jumpto = $properties->jumpto[0];
             }
-            if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {
-                $this->answers[$i]->response = $properties->response_editor[$i]['text'];
-                $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
+            if (isset($properties->score[0])) {
+                $answer->score = $properties->score[0];
             }
-
-            // we don't need to check for isset here because properties called it's own isset method.
-            if ($this->answers[$i]->answer != '') {
-                if (isset($properties->jumpto[$i])) {
-                    $this->answers[$i]->jumpto = $properties->jumpto[$i];
+            if (!empty($answer->id)) {
+                $DB->update_record("lesson_answers", $answer->properties());
+            } else {
+                $DB->insert_record("lesson_answers", $answer);
+            }
+        } else {
+            for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
+                if (!array_key_exists($i, $this->answers)) {
+                    $this->answers[$i] = new stdClass;
+                    $this->answers[$i]->lessonid = $this->lesson->id;
+                    $this->answers[$i]->pageid = $this->id;
+                    $this->answers[$i]->timecreated = $this->timecreated;
                 }
-                if ($this->lesson->custom && isset($properties->score[$i])) {
-                    $this->answers[$i]->score = $properties->score[$i];
+
+                if (!empty($properties->answer_editor[$i]) && is_array($properties->answer_editor[$i])) {
+                    $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];
+                    $this->answers[$i]->answerformat = $properties->answer_editor[$i]['format'];
                 }
-                if (!isset($this->answers[$i]->id)) {
-                    $this->answers[$i]->id =  $DB->insert_record("lesson_answers", $this->answers[$i]);
-                } else {
-                    $DB->update_record("lesson_answers", $this->answers[$i]->properties());
+                if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {
+                    $this->answers[$i]->response = $properties->response_editor[$i]['text'];
+                    $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
                 }
 
-                // Save files in answers and responses.
-                $this->save_answers_files($context, $maxbytes, $this->answers[$i],
-                        $properties->answer_editor[$i], $properties->response_editor[$i]);
+                if (isset($this->answers[$i]->answer) && $this->answers[$i]->answer != '') {
+                    if (isset($properties->jumpto[$i])) {
+                        $this->answers[$i]->jumpto = $properties->jumpto[$i];
+                    }
+                    if ($this->lesson->custom && isset($properties->score[$i])) {
+                        $this->answers[$i]->score = $properties->score[$i];
+                    }
+                    if (!isset($this->answers[$i]->id)) {
+                        $this->answers[$i]->id = $DB->insert_record("lesson_answers", $this->answers[$i]);
+                    } else {
+                        $DB->update_record("lesson_answers", $this->answers[$i]->properties());
+                    }
 
-            } else if (isset($this->answers[$i]->id)) {
-                $DB->delete_records('lesson_answers', array('id'=>$this->answers[$i]->id));
-                unset($this->answers[$i]);
+                    // Save files in answers and responses.
+                    if (isset($properties->response_editor[$i])) {
+                        $this->save_answers_files($context, $maxbytes, $this->answers[$i],
+                                $properties->answer_editor[$i], $properties->response_editor[$i]);
+                    } else {
+                        $this->save_answers_files($context, $maxbytes, $this->answers[$i],
+                                $properties->answer_editor[$i]);
+                    }
+
+                } else if (isset($this->answers[$i]->id)) {
+                    $DB->delete_records('lesson_answers', array('id' => $this->answers[$i]->id));
+                    unset($this->answers[$i]);
+                }
             }
         }
         return true;

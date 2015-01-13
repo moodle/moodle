@@ -1,9 +1,13 @@
 This files describes API changes in the lesson code.
 
 === 2.9 ===
-The  grade_item_delete function in mod/lesson/lib.php was removed because it was not doing anything and was never called.
-
-A third optional boolean parameter $endreached was added to lesson::update_timer to indicate that end of lesson was reached. This is used by 'completionendreached' custom completion rule.
+* The  grade_item_delete function in mod/lesson/lib.php was removed because it was not doing anything and was never called.
+* A third optional boolean parameter $endreached was added to lesson::update_timer to indicate that end of lesson was reached. This is used by 'completionendreached' custom completion rule.
+* lesson_page_type_endofbranch::update in mod/lesson/pagetypes/endofbranch.php
+  and lesson_page_type_endofcluster::update in mod/lesson/pagetypes/endofcluster.php
+  have been removed, this is now handled by the base class: lesson_page::update in
+  locallib.php and the exact same code is executed (it is also executed by the
+  lesson_page_type_cluster class that previously had no update function).
 
 === Earlier changes ===
 
