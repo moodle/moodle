@@ -1242,7 +1242,7 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
         $param->fields = 'sum(stat1+stat2) AS line1';
         $param->stattype = 'activity';
         $param->orderby = 'line1 DESC';
-        $param->line1 = get_string('activity');
+        $param->line1 = get_string('useractivity');
         $param->graphline = 'line1';
         break;
 
@@ -1268,7 +1268,7 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
                       ) enrolments
                       ON (activity.courseid = enrolments.courseid)
                       ORDER BY line3 DESC';
-        $param->line1 = get_string('activity');
+        $param->line1 = get_string('useractivity');
         $param->line2 = get_string('users');
         $param->line3 = get_string('activityweighted');
         $param->graphline = 'line3';
