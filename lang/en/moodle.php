@@ -1904,6 +1904,7 @@ $string['usemessageform'] = 'or use the form below to send a message to the sele
 $string['user'] = 'User';
 $string['userconfirmed'] = 'Confirmed {$a}';
 $string['usercurrentsettings'] = 'My profile settings';
+$string['useractivity'] = 'Activity';
 $string['userdata'] = 'User data';
 $string['userdeleted'] = 'This user account has been deleted';
 $string['userdescription'] = 'Description';
