@@ -394,7 +394,7 @@ function mnet_generate_keypair($dn = null, $days=28) {
     );
 
     foreach ($dnlimits as $key => $length) {
-        $dn[$key] = substr($dn[$key], 0, $length);
+        $dn[$key] = core_text::substr($dn[$key], 0, $length);
     }
 
     // ensure we remove trailing slashes
