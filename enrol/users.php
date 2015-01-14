@@ -205,7 +205,7 @@ if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
 
 $filterform = new enrol_users_filter_form('users.php', array('manager' => $manager, 'id' => $id),
         'get', '', array('id' => 'filterform'));
-$filterform->set_data(array('search' => $search, 'ifilter' => $filter, 'role' => $role));
+$filterform->set_data(array('search' => $search, 'ifilter' => $filter, 'role' => $role, 'filtergroup' => $fgroup));
 
 $table->set_fields($fields, $renderer);
 

@@ -894,7 +894,7 @@ class course_enrolment_manager {
             $args['search'] = $this->searchfilter;
         }
         if (!empty($this->groupfilter)) {
-            $args['group'] = $this->groupfilter;
+            $args['filtergroup'] = $this->groupfilter;
         }
         if ($this->statusfilter !== -1) {
             $args['status'] = $this->statusfilter;
