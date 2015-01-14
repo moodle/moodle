@@ -63,7 +63,7 @@ class behat_workshopallocation_manual extends behat_base {
             $this->find_button(get_string('showallparticipants', 'workshopallocation_manual'))->press();
             $selectnode = $this->find('xpath', $xpathselect);
         }
-        $selectid = $selectnode->getAttribute('id');
+
         $selectformfield = behat_field_manager::get_form_field($selectnode, $this->getSession());
         $selectformfield->set_value($reviewername);
 
@@ -72,11 +72,13 @@ class behat_workshopallocation_manual extends behat_base {
             $go = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('go'));
             $this->find('xpath', $xpathtd."/descendant::input[@value=$go]")->click();
         } else {
-            // With Javascript we just wait for the page to reload and the success string to appear.
-            $allocatedtext = $this->getSession()->getSelectorsHandler()->xpathLiteral(
-                    get_string('allocationadded', 'workshopallocation_manual'));
-            $this->find('xpath', "//*[contains(.,$allocatedtext)]");
+            // With Javascript we just wait for the page to reload.
+            $this->getSession()->wait(self::EXTENDED_TIMEOUT, self::PAGE_READY_JS);
         }
+        // Check the success string to appear.
+        $allocatedtext = $this->getSession()->getSelectorsHandler()->xpathLiteral(
+            get_string('allocationadded', 'workshopallocation_manual'));
+        $this->find('xpath', "//*[contains(.,$allocatedtext)]");
     }
 
     /**
