@@ -78,6 +78,7 @@ class qtype_ordering extends question_type {
         global $DB;
 
         $result = new stdClass();
+        $context = $question->context;
 
         // remove empty answers
         $question->answer = array_filter($question->answer, array($this, 'is_not_blank'));
@@ -88,7 +89,7 @@ class qtype_ordering extends question_type {
 
         // check at least two answers exist
         if ($countanswers < 2) {
-            $result->notice = get_string('ordering_notenoughanswers', 'qtype_ordering', '2');
+            $result->notice = get_string('notenoughanswers', 'qtype_ordering', '2');
             return $result;
         }
 
@@ -127,23 +128,22 @@ class qtype_ordering extends question_type {
 
         // create $options for this ordering question
         $options = (object)array(
-            'question' => $question->id,
-            'logical'  => $question->logical,
-            'studentsee' => $question->studentsee,
-            'correctfeedback' => $question->correctfeedback,
-            'incorrectfeedback' => $question->incorrectfeedback,
-            'partiallycorrectfeedback' => $question->partiallycorrectfeedback
+            'questionid' => $question->id,
+            'logical'    => $question->logical,
+            'studentsee' => $question->studentsee
         );
+        $options = $this->save_combined_feedback_helper($options, $question, $context, true);
 
         // add/update $options for this ordering question
-        if ($options->id = $DB->get_field('question_ordering', 'id', array('question' => $question->id))) {
-            if (! $DB->update_record('question_ordering', $options)) {
-                $result->error = get_string('cannotupdaterecord', 'error', 'question_ordering (id='.$options->id.')');
+        if ($options->id = $DB->get_field('qtype_ordering_options', 'id', array('questionid' => $question->id))) {
+            if (! $DB->update_record('qtype_ordering_options', $options)) {
+                $result->error = get_string('cannotupdaterecord', 'error', 'qtype_ordering_options (id='.$options->id.')');
                 return $result;
             }
         } else {
-            if (! $options->id = $DB->insert_record('question_ordering', $options)) {
-                $result->error = get_string('cannotinsertrecord', 'error', 'question_ordering');
+            unset($options->id);
+            if (! $options->id = $DB->insert_record('qtype_ordering_options', $options)) {
+                $result->error = get_string('cannotinsertrecord', 'error', 'qtype_ordering_options');
                 return $result;
             }
         }
@@ -165,7 +165,7 @@ class qtype_ordering extends question_type {
         global $DB, $OUTPUT;
 
         // load the options
-        if (! $question->options = $DB->get_record('question_ordering', array('question' => $question->id))) {
+        if (! $question->options = $DB->get_record('qtype_ordering_options', array('questionid' => $question->id))) {
             echo $OUTPUT->notification('Error: Missing question options!');
             return false;
         }
@@ -185,7 +185,7 @@ class qtype_ordering extends question_type {
 
     public function delete_question($questionid, $contextid) {
         global $DB;
-        $DB->delete_records('question_ordering', array('question' => $questionid));
+        $DB->delete_records('qtype_ordering_options', array('questionid' => $questionid));
         parent::delete_question($questionid, $contextid);
     }
 

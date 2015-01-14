@@ -50,76 +50,62 @@ class qtype_ordering_edit_form extends question_edit_form {
      */
     public function definition_inner($mform) {
         $options = array(
-            0 => get_string('ordering_exactorder',    'qtype_ordering'), // = all ?
-            1 => get_string('ordering_relativeorder', 'qtype_ordering'), // = random subset
-            2 => get_string('ordering_contiguous',    'qtype_ordering')  // = contiguous subset
+            0 => get_string('exactorder',    'qtype_ordering'), // = all ?
+            1 => get_string('relativeorder', 'qtype_ordering'), // = random subset
+            2 => get_string('contiguous',    'qtype_ordering')  // = contiguous subset
         );
-        $mform->addElement('select', 'logical', get_string('ordering_logicalpossibilities', 'qtype_ordering'), $options);
+        $mform->addElement('select', 'logical', get_string('logicalpossibilities', 'qtype_ordering'), $options);
         $mform->setDefault('logical', 0);
 
         $options = array(0 => 'All');
         for ($i=3; $i <= 20; $i++) {
             $options[] = $i;
         }
-        $mform->addElement('select', 'studentsee', get_string('ordering_itemsforstudent', 'qtype_ordering'), $options);
+        $mform->addElement('select', 'studentsee', get_string('itemsforstudent', 'qtype_ordering'), $options);
         $mform->setDefault('studentsee', 0);
 
-        $repeated = array();
-        $repeated[] =& $mform->createElement('header', 'choicehdr', get_string('ordering_choiceno', 'qtype_ordering', '{no}'));
-        $repeated[] =& $mform->createElement('textarea', 'answer', get_string('ordering_answer', 'qtype_ordering'), 'rows="3" cols="50"');
+        $elements = array();
+        $elements[] =& $mform->createElement('header', 'choicehdr', get_string('choiceno', 'qtype_ordering', '{no}'));
+        $elements[] =& $mform->createElement('textarea', 'answer', get_string('answer', 'qtype_ordering'), 'rows="3" cols="50"');
 
         if (empty($this->question->options)){
-            $countanswers = 0;
+            $count = 0;
         } else {
-            $countanswers = count($this->question->options->answers);
+            $count = count($this->question->options->answers);
         }
-        if (self::NUM_ANS_START > ($countanswers + self::NUM_ANS_ADD)) {
-            $repeatsatstart = self::NUM_ANS_START;
-        } else {
-            $repeatsatstart = ($countanswers + self::NUM_ANS_ADD);
-        }
-        $repeatedoptions = array();
-        $repeatedoptions['fraction']['default'] = 0;
+        $start = max(self::NUM_ANS_START, $count + self::NUM_ANS_ADD);
+
+        $options = array('fraction' => array('default' => 0));
         $mform->setType('answer', PARAM_NOTAGS);
 
-        $this->repeat_elements($repeated, $repeatsatstart, $repeatedoptions, 'noanswers', 'addanswers', self::NUM_ANS_ADD, get_string('ordering_addmoreanswers', 'qtype_ordering'));
+        $label = get_string('addmoreanswers', 'qtype_ordering');
+        $this->repeat_elements($elements, $start, $options, 'noanswers', 'addanswers', self::NUM_ANS_ADD, $label);
 
-        $mform->addElement('header', 'overallfeedbackhdr', get_string('overallfeedback', 'qtype_ordering'));
-
-        $mform->addElement('htmleditor', 'correctfeedback', get_string('correctfeedback', 'qtype_ordering'));
-        $mform->setType('correctfeedback', PARAM_RAW);
-
-        $mform->addElement('htmleditor', 'partiallycorrectfeedback', get_string('partiallycorrectfeedback', 'qtype_ordering'));
-        $mform->setType('partiallycorrectfeedback', PARAM_RAW);
-
-        $mform->addElement('htmleditor', 'incorrectfeedback', get_string('incorrectfeedback', 'qtype_ordering'));
-        $mform->setType('incorrectfeedback', PARAM_RAW);
-
+        $this->add_combined_feedback_fields();
     }
 
     public function data_preprocessing($question) {
 
         $question = parent::data_preprocessing($question);
         //$question = $this->data_preprocessing_answers($question, true);
-        //$question = $this->data_preprocessing_combined_feedback($question, true);
-        //$question = $this->data_preprocessing_hints($question, true, true);
+        $question = $this->data_preprocessing_combined_feedback($question);
 
-
-        if (!empty($question->options)){
-	        $answers = $question->options->answers;
-	        if (count($answers)) {
-	            $key = 0;
-	            foreach ($answers as $answerkey => $answer){
-	                $default_values['answer['.$key.']'] = $answer->answer;
-	                $default_values['fraction['.$key.']'] = $answerkey + 1;
-	                //$default_values['feedback['.$key.']'] = $answer->feedback;
-	                $key++;
-	            }
-	        }
-	        $default_values['studentsee'] =  $question->options->studentsee;
-	        $default_values['logical'] =  $question->options->logical;
-	        $question = (object)((array)$question + $default_values);
-
+        if (isset($question->options->answers)) {
+            $i = 0;
+            foreach ($question->options->answers as $answer) {
+                if (trim($answer->answer)=='') {
+                    continue; // skip empty answers
+                }
+                if ($i==0) {
+                    $question->answer     = array();
+                    $question->fraction   = array();
+                    $question->logical    = $question->options->logical;
+                    $question->studentsee = $question->options->studentsee;
+                }
+                $question->answer[$i]   = $answer->answer;
+                $question->fraction[$i] = ($i + 1);
+                $i++;
+            }
         }
 
         return $question;
@@ -130,18 +116,15 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         $answercount = 0;
         foreach ($data['answer'] as $answer){
-            $answer = trim($answer);
-            if ($answer || $answer==='0'){
-                $answercount++;
+            if (trim($answer)=='') {
+                continue; // skip empty answer
             }
+            $answercount++;
         }
 
-        if ($answercount==0){
-            $errors['answer[0]'] = get_string('ordering_notenoughanswers', 'qtype_ordering', 2);
-            $errors['answer[1]'] = get_string('ordering_notenoughanswers', 'qtype_ordering', 2);
-        } elseif ($answercount==1){
-            $errors['answer[1]'] = get_string('ordering_notenoughanswers', 'qtype_ordering', 2);
-
+        switch ($answercount) {
+            case 0: $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_ordering', 2);
+            case 1: $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_ordering', 2);
         }
 
         return $errors;

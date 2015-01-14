@@ -60,20 +60,16 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
         $oldid = $data->id;
 
         // Detect if the question is created or mapped
-        $oldquestionid   = $this->get_old_parentid('question');
-        $newquestionid   = $this->get_new_parentid('question');
-        $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
+        $oldquestionid   = $this->get_old_parentid('questionid');
+        $newquestionid   = $this->get_new_parentid('questionid');
 
-        // If the question has been created by restore, we need to create its question_ordering too
-        if ($questioncreated) {
-            // Adjust some columns
-            $data->question = $newquestionid;
-            //$data->trueanswer = $this->get_mappingid('question_answer', $data->trueanswer);
-            //$data->falseanswer = $this->get_mappingid('question_answer', $data->falseanswer);
-            // Insert record
-            $newitemid = $DB->insert_record('question_ordering', $data);
-            // Create mapping
-            $this->set_mapping('question_ordering', $oldid, $newitemid);
+        // If the question has been created by restore,
+        // we need to create a "qtype_ordering_options" record
+        // and create a mapping from the $oldid to the $newid
+        if ($this->get_mappingid('question_created', $oldquestionid)) {
+            $data->questionid = $newquestionid;
+            $newid = $DB->insert_record('qtype_ordering_options', $data);
+            $this->set_mapping('qtype_ordering_options', $oldid, $newid);
         }
     }
 

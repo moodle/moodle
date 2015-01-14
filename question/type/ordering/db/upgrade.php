@@ -61,6 +61,75 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
     }
 
+    $newversion = 2015011408;
+    if ($oldversion < $newversion) {
+
+        // rename "ordering" table for Moodle >= 2.5
+        $oldname = 'question_ordering';
+        $newname = 'qtype_ordering_options';
+
+        $oldtable = new xmldb_table($oldname);
+        if ($dbman->table_exists($oldtable)) {
+            if ($dbman->table_exists($newname)) {
+                $dbman->drop_table($oldtable);
+            } else {
+                $dbman->rename_table($oldtable, $newname);
+            }
+        }
+
+        // remove index on question(id) field
+        // (because we want to modify the field)
+        $table = new xmldb_table('qtype_ordering_options');
+        $fields = array('question', 'questionid');
+        foreach ($fields as $field) {
+            if ($dbman->field_exists($table, $field)) {
+                $index = new xmldb_index('quesorde_que_ix', XMLDB_INDEX_NOTUNIQUE, array($field));
+                if ($dbman->index_exists($table, $index)) {
+                    $dbman->drop_index($table, $index);
+                }
+            }
+        }
+
+        // add "feedbackformat" fields
+        $table = new xmldb_table('qtype_ordering_options');
+        $fields = array(
+            'questionid'                     => new xmldb_field('question',                       XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0', 'id'),
+            'correctfeedbackformat'          => new xmldb_field('correctfeedbackformat',          XMLDB_TYPE_INTEGER,  '4', null, XMLDB_NOTNULL, null, '0', 'correctfeedback'),
+            'incorrectfeedbackformat'        => new xmldb_field('incorrectfeedbackformat',        XMLDB_TYPE_INTEGER,  '4', null, XMLDB_NOTNULL, null, '0', 'incorrectfeedback'),
+            'partiallycorrectfeedbackformat' => new xmldb_field('partiallycorrectfeedbackformat', XMLDB_TYPE_INTEGER,  '4', null, XMLDB_NOTNULL, null, '0', 'partiallycorrectfeedback')
+        );
+        foreach ($fields as $newname => $field) {
+            $oldexists = $dbman->field_exists($table, $field);
+            $newexists = $dbman->field_exists($table, $newname);
+            if ($field->getName()==$newname) {
+                // same field name
+            } else if ($oldexists) {
+                if ($newexists) {
+                    $dbman->drop_field($table, $field);
+                } else {
+                    $dbman->rename_field($table, $field, $newname);
+                    $newexists = true;
+                }
+                $oldexists = false;
+            }
+            $field->setName($newname);
+            if ($newexists) {
+                $dbman->change_field_type($table, $field);
+            } else {
+                $dbman->add_field($table, $field);
+            }
+        }
+
+        // restore index on questionid field
+        $table = new xmldb_table('qtype_ordering_options');
+        $index = new xmldb_index('quesorde_que_ix', XMLDB_INDEX_NOTUNIQUE, array('questionid'));
+        if (! $dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
+    }
+
     return true;
 }
 

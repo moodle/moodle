@@ -50,15 +50,18 @@ class backup_qtype_ordering_plugin extends backup_qtype_plugin {
         $this->add_question_question_answers($pluginwrapper);
 
         // Now create the qtype own structures
-        $fields = array('logical', 'studentsee', 'correctfeedback', 'incorrectfeedback', 'partiallycorrectfeedback');
+        $fields = array('logical', 'studentsee',
+                        'correctfeedback', 'correctfeedbackformat',
+                        'incorrectfeedback', 'incorrectfeedbackformat',
+                        'partiallycorrectfeedback', 'partiallycorrectfeedbackformat');
         $ordering = new backup_nested_element('ordering', array('id'), $fields);
 
         // Now the own qtype tree
         $pluginwrapper->add_child($ordering);
 
         // set source to populate the data
-        $params = array('question' => backup::VAR_PARENTID);
-        $ordering->set_source_table('question_ordering', $params);
+        $params = array('questionid' => backup::VAR_PARENTID);
+        $ordering->set_source_table('qtype_ordering_options', $params);
 
         // don't need to annotate ids nor files
 

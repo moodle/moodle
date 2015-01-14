@@ -76,17 +76,20 @@ class qtype_ordering_question extends question_graded_automatically {
     public function get_ordering_options() {
         global $DB;
         if ($this->options===null) {
-            $this->options = $DB->get_record('question_ordering', array('question' => $this->id));
+            $this->options = $DB->get_record('qtype_ordering_options', array('questionid' => $this->id));
             if ($this->options==false) {
                 $this->options = (object)array(
-                    'question'   => $this->id,
+                    'questionid' => $this->id,
                     'logical'    => 0, // require all answers
                     'studentsee' => 0,
                     'correctfeedback' => '',
+                    'correctfeedbackformat' => 0,
                     'incorrectfeedback' => '',
+                    'incorrectfeedbackformat' => 0,
                     'partiallycorrectfeedback' => ''
+                    'partiallycorrectfeedbackformat' => 0
                 );
-                $this->options->id = $DB->insert_record('question_ordering', $options);
+                $this->options->id = $DB->insert_record('qtype_ordering', $options);
             }
         }
         return $this->options;
