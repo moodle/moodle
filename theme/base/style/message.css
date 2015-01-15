@@ -102,3 +102,59 @@ table.message .searchresults td {padding:5px;}
 #newmessageoverlay {background-color:LightGrey;border:1px solid black;padding:20px;position:fixed;bottom:0;right:0;}
 #newmessageoverlay #usermessage {padding:10px;}
 .ie6 #newmessageoverlay {position:static;}
+
+/** Messenger send message dialog */
+.core_message-messenger-sendmessage-hidden {
+    display:none;
+}
+.core_message-messenger-sendmessage .message.actions {
+    position: relative;
+}
+.core_message-messenger-sendmessage .message-area {
+    height: 240px;
+    max-height: 100%;
+    position: relative;
+    margin-bottom: 10px;
+}
+.core_message-messenger-sendmessage .message-input {
+    width: 100%;
+    height: 100%;
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+.core_message-messenger-sendmessage .message-send {
+    margin: 0;
+    float: right;
+}
+.core_message-messenger-sendmessage .message-notice-area {
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+}
+.core_message-messenger-sendmessage .message-notice {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+.core_message-messenger-sendmessage .message-notice > div {
+    background: #eee;
+    padding: 5px;
+    font-size: 12px;
+}
+.core_message-messenger-sendmessage .message-footer {
+    margin-top: 3px;
+    line-height: 20px;
+}
+.core_message-messenger-sendmessage .message-history {
+    position: absolute;
+    bottom: 0;
+}
+.dir-rtl .core_message-messenger-sendmessage .message-send {
+    float: left;
+}

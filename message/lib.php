@@ -2660,3 +2660,49 @@ function message_get_messages($useridto, $useridfrom = 0, $notifications = -1, $
     $messages = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     return $messages;
 }
+
+/**
+ * Requires the JS libraries to send a message using a dialog.
+ *
+ * @return void
+ */
+function message_messenger_requirejs() {
+    global $PAGE;
+
+    static $done = false;
+    if ($done) {
+        return;
+    }
+
+    $PAGE->requires->yui_module(
+        array('moodle-core_message-messenger'),
+        'Y.M.core_message.messenger.init',
+        array(array())
+    );
+    $PAGE->requires->strings_for_js(array(
+        'errorwhilesendingmessage',
+        'messagesent',
+        'messagetosend',
+        'sendingmessage',
+        'sendmessage',
+        'viewconversation',
+    ), 'core_message');
+    $PAGE->requires->string_for_js('error', 'core');
+
+    $done = true;
+}
+
+/**
+ * Returns the attributes to place on a link to open the 'Send message' dialog.
+ *
+ * @param object $user User object.
+ * @return void
+ */
+function message_messenger_sendmessage_link_params($user) {
+    return array(
+        'data-trigger' => 'core_message-messenger::sendmessage',
+        'data-fullname' => fullname($user),
+        'data-userid' => $user->id,
+        'role' => 'button'
+    );
+}
