@@ -113,7 +113,7 @@ foreach ($rs as $row) {
     if (!array_key_exists($row->groupid, $members[$row->groupingid])) {
         $members[$row->groupingid][$row->groupid] = array();
     }
-    if(isset($user->id)){
+    if (!empty($user->id)) {
         $members[$row->groupingid][$row->groupid][] = $user;
     }
 }
