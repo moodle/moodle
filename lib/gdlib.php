@@ -105,6 +105,7 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
     }
 
     $imageinfo = getimagesize($originalfile);
+    $imagefnc = '';
 
     if (empty($imageinfo)) {
         return false;
@@ -137,6 +138,13 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
                 debugging('JPEG not supported on this server');
                 return false;
             }
+            // If the user uploads a jpeg them we should process as a jpeg if possible.
+            if (function_exists('imagejpeg')) {
+                $imagefnc = 'imagejpeg';
+                $imageext = '.jpg';
+                $filters = null; // Not used.
+                $quality = 90;
+            }
             break;
         case IMAGETYPE_PNG:
             if (function_exists('imagecreatefrompng')) {
@@ -150,19 +158,22 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
             return false;
     }
 
-    if (function_exists('imagepng')) {
-        $imagefnc = 'imagepng';
-        $imageext = '.png';
-        $filters = PNG_NO_FILTER;
-        $quality = 1;
-    } else if (function_exists('imagejpeg')) {
-        $imagefnc = 'imagejpeg';
-        $imageext = '.jpg';
-        $filters = null; // not used
-        $quality = 90;
-    } else {
-        debugging('Jpeg and png not supported on this server, please fix server configuration');
-        return false;
+    // The conversion has not been decided yet, let's apply defaults (png with fallback to jpg).
+    if (empty($imagefnc)) {
+        if (function_exists('imagepng')) {
+            $imagefnc = 'imagepng';
+            $imageext = '.png';
+            $filters = PNG_NO_FILTER;
+            $quality = 1;
+        } else if (function_exists('imagejpeg')) {
+            $imagefnc = 'imagejpeg';
+            $imageext = '.jpg';
+            $filters = null; // Not used.
+            $quality = 90;
+        } else {
+            debugging('Jpeg and png not supported on this server, please fix server configuration');
+            return false;
+        }
     }
 
     if (function_exists('imagecreatetruecolor')) {
