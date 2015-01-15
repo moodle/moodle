@@ -86,7 +86,7 @@ class qtype_ordering_question extends question_graded_automatically {
                     'correctfeedbackformat' => 0,
                     'incorrectfeedback' => '',
                     'incorrectfeedbackformat' => 0,
-                    'partiallycorrectfeedback' => ''
+                    'partiallycorrectfeedback' => '',
                     'partiallycorrectfeedbackformat' => 0
                 );
                 $this->options->id = $DB->insert_record('qtype_ordering', $options);
