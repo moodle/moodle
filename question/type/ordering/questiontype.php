@@ -132,7 +132,7 @@ class qtype_ordering extends question_type {
             'logical'    => $question->logical,
             'studentsee' => $question->studentsee
         );
-        $options = $this->save_combined_feedback_helper($options, $question, $context, true);
+        $options = $this->save_ordering_feedback_helper($options, $question, $context, true);
 
         // add/update $options for this ordering question
         if ($options->id = $DB->get_field('qtype_ordering_options', 'id', array('questionid' => $question->id))) {
@@ -154,6 +154,22 @@ class qtype_ordering extends question_type {
         }
 
         return true;
+    }
+
+    protected function save_ordering_feedback_helper($options, $question, $context, $withparts = false) {
+        if (method_exists($this, 'save_combined_feedback_helper')) {
+            // Moodle >= 2.1
+            $options = $this->save_combined_feedback_helper($options, $question, $context, $withparts);
+        } else {
+            // Moodle 2.0
+            $names = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+            foreach ($names as $name) {
+                $text = $question->$name;
+                $options->$name = $this->import_or_save_files($text, $context, 'qtype_ordering', $name, $question->id);
+                $options->{$name.'format'} = $text['format'];
+            }
+        }
+        return $options;
     }
 
     public function is_not_blank($value) {

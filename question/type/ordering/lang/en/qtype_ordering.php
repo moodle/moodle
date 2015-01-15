@@ -45,5 +45,5 @@ $string['notenoughanswers'] = 'not enough answers';
 $string['comment'] = 'Drag and drop the items into the correct order.';
 
 // TODO add any other requred strings.
-$string['help'] = 'Ordering help';
+$string['ordering_help'] = 'Ordering help';
 $string['defaultquestionname'] = 'Put the following events into the correct order.';

@@ -49,63 +49,82 @@ class qtype_ordering_edit_form extends question_edit_form {
      * @param object $mform the form being built.
      */
     public function definition_inner($mform) {
+
+        // logical
+        $name = 'logical';
+        $label = get_string('logicalpossibilities', 'qtype_ordering');
         $options = array(
             0 => get_string('exactorder',    'qtype_ordering'), // = all ?
             1 => get_string('relativeorder', 'qtype_ordering'), // = random subset
             2 => get_string('contiguous',    'qtype_ordering')  // = contiguous subset
         );
-        $mform->addElement('select', 'logical', get_string('logicalpossibilities', 'qtype_ordering'), $options);
-        $mform->setDefault('logical', 0);
+        $mform->addElement('select', $name, $label, $options);
+        $mform->setDefault($name, 0);
 
-        $options = array(0 => 'All');
+        // studentsee
+        $name = 'studentsee';
+        $label = get_string('itemsforstudent', 'qtype_ordering');
+        $options = array(0 => get_string('all'));
         for ($i=3; $i <= 20; $i++) {
             $options[] = $i;
         }
-        $mform->addElement('select', 'studentsee', get_string('itemsforstudent', 'qtype_ordering'), $options);
+        $mform->addElement('select', $name, $label, $options);
         $mform->setDefault('studentsee', 0);
 
+        // answers
         $elements = array();
         $elements[] =& $mform->createElement('header', 'choicehdr', get_string('choiceno', 'qtype_ordering', '{no}'));
         $elements[] =& $mform->createElement('textarea', 'answer', get_string('answer', 'qtype_ordering'), 'rows="3" cols="50"');
-
         if (empty($this->question->options)){
             $count = 0;
         } else {
             $count = count($this->question->options->answers);
         }
         $start = max(self::NUM_ANS_START, $count + self::NUM_ANS_ADD);
-
         $options = array('fraction' => array('default' => 0));
-        $mform->setType('answer', PARAM_NOTAGS);
+        $buttontext = get_string('addmoreanswers', 'qtype_ordering');
+        $this->repeat_elements($elements, $start, $options, 'noanswers', 'addanswers', self::NUM_ANS_ADD, $buttontext);
 
-        $label = get_string('addmoreanswers', 'qtype_ordering');
-        $this->repeat_elements($elements, $start, $options, 'noanswers', 'addanswers', self::NUM_ANS_ADD, $label);
-
-        $this->add_combined_feedback_fields();
+        // feedback
+        $this->add_ordering_feedback_fields();
     }
 
     public function data_preprocessing($question) {
 
         $question = parent::data_preprocessing($question);
         //$question = $this->data_preprocessing_answers($question, true);
-        $question = $this->data_preprocessing_combined_feedback($question);
 
+        // feedback
+        $question = $this->data_preprocessing_ordering_feedback($question);
+
+        // answers and fractions
+        $question->answer     = array();
+        $question->fraction   = array();
         if (isset($question->options->answers)) {
             $i = 0;
             foreach ($question->options->answers as $answer) {
                 if (trim($answer->answer)=='') {
                     continue; // skip empty answers
                 }
-                if ($i==0) {
-                    $question->answer     = array();
-                    $question->fraction   = array();
-                    $question->logical    = $question->options->logical;
-                    $question->studentsee = $question->options->studentsee;
-                }
                 $question->answer[$i]   = $answer->answer;
                 $question->fraction[$i] = ($i + 1);
                 $i++;
             }
+
+        }
+
+        // logical
+        if (isset($question->options->logical)) {
+            $question->logical = $question->options->logical;
+        } else {
+            $question->logical = 0;
+        }
+
+        // studentsee
+        if (isset($question->options->studentsee)) {
+            $question->studentsee = $question->options->studentsee;
+        } else {
+            $question->studentsee = max(3, count($question->answer));
         }
 
         return $question;
@@ -128,5 +147,62 @@ class qtype_ordering_edit_form extends question_edit_form {
         }
 
         return $errors;
+    }
+
+
+    protected function add_ordering_feedback_fields($withshownumpartscorrect = false) {
+        if (method_exists($this, 'add_combined_feedback_fields')) {
+            // Moodle >= 2.1
+            $this->add_combined_feedback_fields($withshownumpartscorrect);
+        } else {
+            // Moodle 2.0
+            $mform = $this->_form;
+            $names = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+            foreach ($names as $name) {
+                $label = get_string($name, 'qtype_multichoice'); // borrow string from standard core
+                $mform->addElement('editor', $name, $label, array('rows' => 10), $this->editoroptions);
+                $mform->setType($name, PARAM_RAW);
+            }
+        }
+    }
+
+    protected function data_preprocessing_ordering_feedback($question, $withshownumcorrect = false) {
+        if (method_exists($this, 'data_preprocessing_combined_feedback')) {
+            // Moodle >= 2.1
+            $question = $this->data_preprocessing_combined_feedback($question, $withshownumcorrect);
+        } else {
+            // Moodle 2.0
+            $names = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+            foreach ($names as $name) {
+                $draftid = file_get_submitted_draft_itemid($name);
+
+                if (isset($question->id)) {
+                    $itemid = $question->id;
+                } else {
+                    $itemid = null;
+                }
+
+                if (isset($question->options->$name)) {
+                    $text = $question->options->$name;
+                } else {
+                    $text = '';
+                }
+
+                $text = file_prepare_draft_area($draftid, $this->context->id, 'qtype_ordering',
+                                                $name, $itemid, $this->fileoptions, $text);
+
+                $format = $name.'format';
+                if (isset($question->options->$format)) {
+                    $format = $question->options->$format;
+                } else {
+                    $format = 0;
+                }
+
+                $question->$name = array('text'   => $text,
+                                         'format' => $format,
+                                         'itemid' => $draftid);
+            }
+        }
+        return $question;
     }
 }
