@@ -339,4 +339,16 @@ class format_topics extends format_base {
         }
         return $this->update_format_options($data);
     }
+
+    /**
+     * Whether this format allows to delete sections
+     *
+     * Do not call this function directly, instead use {@link course_can_delete_section()}
+     *
+     * @param int|stdClass|section_info $section
+     * @return bool
+     */
+    public function can_delete_section($section) {
+        return true;
+    }
 }

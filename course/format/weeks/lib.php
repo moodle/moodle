@@ -393,4 +393,16 @@ class format_weeks extends format_base {
         $dates = $this->get_section_dates($section);
         return (($timenow >= $dates->start) && ($timenow < $dates->end));
     }
+
+    /**
+     * Whether this format allows to delete sections
+     *
+     * Do not call this function directly, instead use {@link course_can_delete_section()}
+     *
+     * @param int|stdClass|section_info $section
+     * @return bool
+     */
+    public function can_delete_section($section) {
+        return true;
+    }
 }
