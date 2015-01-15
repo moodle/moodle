@@ -586,8 +586,6 @@ class pgsql_native_moodle_database extends moodle_database {
      * @return mixed the normalised value
      */
     protected function normalise_value($column, $value) {
-        $this->detect_objects($value);
-
         if (is_bool($value)) { // Always, convert boolean to int
             $value = (int)$value;
 
@@ -602,6 +600,8 @@ class pgsql_native_moodle_database extends moodle_database {
             if ($column->meta_type === 'I' or $column->meta_type === 'F' or $column->meta_type === 'N') {
                 $value = 0; // prevent '' problems in numeric fields
             }
+        } else if (is_object($value)) {
+            $this->detect_objects($value);
         }
         return $value;
     }
@@ -678,7 +678,11 @@ class pgsql_native_moodle_database extends moodle_database {
         }
 
         $this->query_start($sql, $params, SQL_QUERY_UPDATE);
-        $result = pg_query_params($this->pgsql, $sql, $params);
+        if (empty($params)) {
+            $result = pg_query($this->pgsql, $sql);
+        } else {
+            $result = pg_query_params($this->pgsql, $sql, $params);
+        }
         $this->query_end($result);
 
         pg_free_result($result);
@@ -713,7 +717,12 @@ class pgsql_native_moodle_database extends moodle_database {
                 // this is a workaround for weird max int problem
                 $limitnum = "ALL";
             }
-            $sql .= " LIMIT $limitnum OFFSET $limitfrom";
+            if ($limitnum != 'ALL') {
+                $sql .= " LIMIT $limitnum";
+            }
+            if (!empty($limitfrom)) {
+                $sql .= " OFFSET $limitfrom";
+            }
         }
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
@@ -755,7 +764,12 @@ class pgsql_native_moodle_database extends moodle_database {
                 // this is a workaround for weird max int problem
                 $limitnum = "ALL";
             }
-            $sql .= " LIMIT $limitnum OFFSET $limitfrom";
+            if ($limitnum != 'ALL') {
+                $sql .= " LIMIT $limitnum";
+            }
+            if (!empty($limitfrom)) {
+                $sql .= " OFFSET $limitfrom";
+            }
         }
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
@@ -773,12 +787,9 @@ class pgsql_native_moodle_database extends moodle_database {
             }
         }
 
-        $rows = pg_fetch_all($result);
-        pg_free_result($result);
-
         $return = array();
-        if ($rows) {
-            foreach ($rows as $row) {
+        if ($result) {
+            while ($row = pg_fetch_object($result)) {
                 $id = reset($row);
                 if ($blobs) {
                     foreach ($blobs as $blob) {
@@ -786,12 +797,13 @@ class pgsql_native_moodle_database extends moodle_database {
                     }
                 }
                 if (isset($return[$id])) {
-                    $colname = key($row);
-                    debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$id' found in column '$colname'.", DEBUG_DEVELOPER);
+                    debugging("Did you remember to make the first column something unique in your call to get_records? Duplicate value '$id' found in column '".key($row)."'.", DEBUG_DEVELOPER);
                 }
-                $return[$id] = (object)$row;
+                $return[$id] = $row;
             }
         }
+
+        pg_free_result($result);
 
         return $return;
     }
