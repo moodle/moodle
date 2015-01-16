@@ -1,11 +1,12 @@
 {
-  "moodle-calendar-eventmanager": {
+  "moodle-calendar-info": {
     "requires": [
         "base",
         "node",
         "event-mouseenter",
+        "event-key",
         "overlay",
-        "moodle-calendar-eventmanager-skin"
+        "moodle-calendar-info-skin"
     ]
   }
 }
