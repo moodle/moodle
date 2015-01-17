@@ -38,4 +38,5 @@ $string['cannotfindcomponent'] = 'لم يتم العثور على المكون';
 $string['cannotsavemd5file'] = 'لم يتم حفظ ملف  md5';
 $string['cannotsavezipfile'] = 'لم يتم حفظ الملف المضغوط';
 $string['cannotunzipfile'] = 'لم يتم فك الملف المضغوط';
+$string['componentisuptodate'] = 'العنصر محدث';
 $string['missingrequiredfield'] = 'بعض الحقول المطلوبة مفقودة';
