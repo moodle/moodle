@@ -31,9 +31,9 @@ $string['selecttype_help'] = 'Choose whether to display all the items or a subse
 $string['selecttype'] = 'Item selection type';
 
 // requred strings for Moodle 2.0
-$string['addingordering'] = $string['pluginnameadding'];
-$string['editingordering'] = $string['pluginnameediting'];
-$string['ordering_help'] = $string['pluginname_help'];
-$string['ordering_link'] = $string['pluginname_link'];
-$string['ordering'] = $string['pluginname'];
-$string['orderingsummary'] = $string['pluginnamesummary'];
+$string['addingordering'] = 'Adding an Ordering question';
+$string['editingordering'] = 'Editing an Ordering question';
+$string['ordering_help'] = 'Several items are displayed in a jumbled order. The items can be dragged into a meaningful order.';
+$string['ordering_link'] = 'question/type/ordering';
+$string['ordering'] = 'Ordering';
+$string['orderingsummary'] = 'Put jumbled items into a meaningful order.';
