@@ -61,7 +61,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
     }
 
-    $newversion = 2015011711;
+    $newversion = 2015011713;
     if ($oldversion < $newversion) {
 
         // rename "ordering" table for Moodle >= 2.5

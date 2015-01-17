@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="question/type/ordering/db" VERSION="2007021402" COMMENT="XMLDB file for Moodle question/type/ordering">
   <TABLES>
-    <TABLE NAME="question_ordering" COMMENT="Options for ordering questions">
+    <TABLE NAME="qtype_ordering_options" COMMENT="Options for ordering questions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="question"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="selecttype"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="selecttype"/>
         <FIELD NAME="selecttype" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="question" NEXT="selectcount"/>
         <FIELD NAME="selectcount" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="selecttype" NEXT="correctfeedback"/>
         <FIELD NAME="correctfeedback" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="selectcount" NEXT="correctfeedbackformat"/>
