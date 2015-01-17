@@ -33,12 +33,78 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ordering_question extends question_graded_automatically {
 
-    public $answers;
-    public $options;
-    public $rightanswer;
+    /** fields from "qtype_ordering_options" */
+    public $correctfeedback;
+    public $correctfeedbackformat;
+    public $incorrectfeedback;
+    public $incorrectfeedbackformat;
+    public $partiallycorrectfeedback;
+    public $partiallycorrectfeedbackformat;
 
-    public function get_response_fieldname() {
-        return 'response_'.$this->id;
+    /** records from "question_answers" table */
+    public $answers;
+
+    /** records from "qtype_ordering_options" table */
+    public $options;
+
+    /** array of answerids in correct order */
+    public $correctresponse;
+
+    /** array current order of answerids */
+    public $currentresponse;
+
+    public function start_attempt(question_attempt_step $step, $variant) {
+        $this->answers = $this->get_ordering_answers();
+        $this->options = $this->get_ordering_options();
+
+        $countanswers = count($this->answers);
+
+        // sanitize "selecttype"
+        $selecttype = $this->options->selecttype;
+        $selecttype = max(0, $selecttype);
+        $selecttype = min(2, $selecttype);
+
+        // sanitize "selectcount"
+        $selectcount = $this->options->selectcount;
+        $selectcount = max(3, $selectcount);
+        $selectcount = min($countanswers, $selectcount);
+
+        // ensure consistency between "selecttype" and "selectcount"
+        switch (true) {
+            case ($selecttype==0): $selectcount = $countanswers; break;
+            case ($selectcount==$countanswers): $selecttype = 0; break;
+        }
+
+        // extract answer ids
+        switch ($selecttype) {
+            case 0: // all
+                $answerids = array_keys($this->answers);
+                break;
+
+            case 1: // random subset
+                $answerids = array_rand($this->answers, $selectcount);
+                break;
+
+            case 2: // contiguous subset
+                $answerids = array_keys($this->answers);
+                $offset = mt_rand(0, $countanswers - $selectcount);
+                $answerids = array_slice($answerids, $offset, $selectcount, true);
+                break;
+        }
+
+        $this->correctresponse = $answerids;
+        $step->set_qt_var('_correctresponse', implode(',', $this->correctresponse));
+
+        shuffle($answerids);
+        $this->currentresponse = $answerids;
+        $step->set_qt_var('_currentresponse', implode(',', $this->currentresponse));
+    }
+
+    public function apply_attempt_state(question_attempt_step $step) {
+        $this->answers = $this->get_ordering_answers();
+        $this->options = $this->get_ordering_options();
+        $this->correctresponse = explode(',', $step->get_qt_var('_correctresponse'));
+        $this->currentresponse = explode(',', $step->get_qt_var('_currentresponse'));
     }
 
     public function format_questiontext($qa) {
@@ -52,24 +118,85 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     public function get_correct_response() {
-        if ($this->rightanswer===null) {
-            $this->rightanswer = $this->get_ordering_answers();
-            $this->rightanswer = array_keys($this->rightanswer);
-            $this->rightanswer = implode(',', $this->rightanswer);
+        $correctresponse = $this->correctresponse;
+        foreach ($correctresponse as $position => $answerid) {
+            $answer = $this->answers[$answerid];
+            $correctresponse[$position] = $answer->md5key;
         }
-        return array('answer' => $this->rightanswer);
+        $name = $this->get_response_fieldname();
+        return array($name => implode(',', $correctresponse));
     }
 
     public function summarise_response(array $response) {
+        return '';
     }
 
     public function classify_response(array $response) {
-        if (array_key_exists('answer', $response)) {
-            $responseclassid = ($response['answer'] ? 1 : 0);
-            list($fraction) = $this->grade_response($response);
-            return array($this->id => new question_classified_response($responseclassid, get_string('true', 'qtype_ordering'), $fraction));
+        return array();
+    }
+
+    public function is_complete_response(array $response) {
+        return true;
+    }
+
+    public function is_gradable_response(array $response) {
+        return true;
+    }
+
+    public function get_validation_error(array $response) {
+        return '';
+    }
+
+    public function is_same_response(array $old, array $new) {
+        $name = $this->get_response_fieldname();
+        return (isset($old[$name]) && isset($new[$name]) && $old[$name]==$new[$name]);
+    }
+
+    public function grade_response(array $response) {
+        $this->update_current_response($response);
+        $countcorrect = 0;
+        $countanswers = 0;
+        $correctresponse = $this->correctresponse;
+        $currentresponse = $this->currentresponse;
+        foreach ($currentresponse as $position => $answerid) {
+            if ($correctresponse[$position]==$answerid) {
+                $countcorrect++;
+            }
+            $countanswers++;
+        }
+        if ($countanswers==0) {
+            $fraction = 0;
         } else {
-            return array($this->id => question_classified_response::no_response());
+            $fraction = ($countcorrect / $countanswers);
+        }
+        return array($fraction, question_state::graded_state_for_fraction($fraction));
+    }
+
+    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
+        return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+    }
+
+    ////////////////////////////////////////////////////////////////////
+    // custom methods
+    ////////////////////////////////////////////////////////////////////
+
+    public function get_response_fieldname() {
+        return 'response_'.$this->id;
+    }
+
+    public function update_current_response($response) {
+        $name = $this->get_response_fieldname();
+        if (isset($response[$name])) {
+            $ids = explode(',', $response[$name]);
+            foreach ($ids as $i => $id) {
+                foreach ($this->answers as $answer) {
+                    if ($id==$answer->md5key) {
+                        $ids[$i] = $answer->id;
+                        break;
+                    }
+                }
+            }
+            $this->currentresponse = $ids;
         }
     }
 
@@ -77,17 +204,17 @@ class qtype_ordering_question extends question_graded_automatically {
         global $DB;
         if ($this->options===null) {
             $this->options = $DB->get_record('qtype_ordering_options', array('questionid' => $this->id));
-            if ($this->options==false) {
+            if (empty($this->options)) {
                 $this->options = (object)array(
                     'questionid' => $this->id,
-                    'logical'    => 0, // require all answers
-                    'studentsee' => 0,
+                    'selecttype' => 0, // all answers
+                    'selectcount' => 0,
                     'correctfeedback' => '',
-                    'correctfeedbackformat' => 0,
+                    'correctfeedbackformat' => FORMAT_MOODLE, // =0
                     'incorrectfeedback' => '',
-                    'incorrectfeedbackformat' => 0,
+                    'incorrectfeedbackformat' => FORMAT_MOODLE, // =0
                     'partiallycorrectfeedback' => '',
-                    'partiallycorrectfeedbackformat' => 0
+                    'partiallycorrectfeedbackformat' => FORMAT_MOODLE // =0
                 );
                 $this->options->id = $DB->insert_record('qtype_ordering', $options);
             }
@@ -113,136 +240,5 @@ class qtype_ordering_question extends question_graded_automatically {
             }
         }
         return $this->answers;
-    }
-
-    public function is_complete_response(array $response) {
-        global $CFG, $DB, $SESSION;
-
-        $name = $this->get_response_fieldname();
-        if (isset($response[$name])) {
-            $responses = $response[$name];
-        } else {
-            $responses = optional_param($name, '', PARAM_TEXT);
-        }
-        $responses = preg_replace('[^a-zA-Z0-9,_-]', '', $responses);
-        $responses = explode(',', $responses); // convert to array
-        $responses = array_filter($responses); // remove blanks
-        $responses = array_unique($responses); // remove duplicates
-
-        foreach ($responses as $i => $response) {
-            if (substr($response, 0, 14)=='ordering_item_') {
-                $responses[$i] = substr($response, 14);
-            } else {
-                unset($responses[$i]); // remove invalid response
-            }
-        }
-
-        $ordering = $this->get_ordering_options();
-        $answers  = $this->get_ordering_answers();
-
-        if ($ordering->logical==0) {
-            $total = count($answers); // require all answers
-        } else {
-            $total = $ordering->studentsee + 2; // a subset of answers
-        }
-
-        if (isset($CFG->passwordsaltmain)) {
-            $salt = $CFG->passwordsaltmain;
-        } else {
-            $salt = ''; // complex_random_string()
-        }
-
-        $validresponses = array();
-        foreach ($answers as $answerid => $answer) {
-
-            $response = md5($salt.$answer->answer);
-            $sortorder = intval($answer->fraction);
-
-            if (in_array($response, $responses)) {
-                $answers[$answerid]->sortorder = $sortorder;
-                $answers[$answerid]->response = $response;
-                $validresponses[] = $response;
-            } else {
-                unset($answers[$answerid]); // this answer is not used
-            }
-        }
-
-        // convert $answers to sequentially numbered array
-        $answers = array_values($answers);
-
-        // sort $answers by sortorder (not really necessary)
-        usort($answers, array($this, 'usort_sortorder'));
-
-        // remove invalid responses
-        foreach ($responses as $i => $response) {
-            if (! in_array($response, $validresponses)) {
-                unset($responses[$i]);
-            }
-        }
-        unset($validresponses);
-
-        $correct = 0;
-        foreach ($answers as $i => $answer) {
-            if (isset($responses[$i]) && $answer->response==$responses[$i]) {
-                $correct++;
-            }
-            $i++;
-        }
-
-        if ($total==0) {
-            $grade = 0;
-        } else {
-            $grade = round($correct / $total, 5);
-        }
-
-        // we use $SESSION instead of accessing $_SESSION directly
-        // $_SESSION['SESSION']->quiz_answer['q'.$this->id] = $grade;
-
-        if (empty($SESSION->quiz_answer)) {
-            $SESSION->quiz_answer = array();
-        }
-        $SESSION->quiz_answer['q'.$this->id] = $grade;
-
-        return true;
-    }
-
-    public function usort_sortorder($a, $b) {
-        if ($a->sortorder < $b->sortorder) {
-            return -1;
-        }
-        if ($a->sortorder > $b->sortorder) {
-            return 1;
-        }
-        return 0; // equal values
-    }
-
-    public function is_gradable_response(array $response) {
-        return true;
-    }
-
-    public function get_validation_error(array $response) {
-        return '';
-    }
-
-    public function is_same_response(array $prevresponse, array $newresponse) {
-
-    }
-
-    public function compute_final_grade($responses, $totaltries) {
-        return 1;
-    }
-
-    public function grade_response(array $response) {
-        global $SESSION;
-        if (empty($SESSION->quiz_answer['q'.$this->id])) {
-            $fraction = 0;
-        } else {
-            $fraction = $SESSION->quiz_answer['q'.$this->id];
-        }
-        return array($fraction, question_state::graded_state_for_fraction($fraction));
-    }
-
-    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
-        return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 }

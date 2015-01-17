@@ -27,7 +27,7 @@
  * @subpackage questiontypes
  */
 
-require_once($CFG->libdir . '/questionlib.php');
+require_once($CFG->libdir.'/questionlib.php');
 
 /**
  * This is the base class for Moodle question types.
@@ -46,6 +46,7 @@ require_once($CFG->libdir . '/questionlib.php');
  * @subpackage questiontypes
  */
 class question_type extends default_questiontype {
+
     protected $fileoptions = array(
         'subdirs' => false,
         'maxfiles' => -1,
@@ -708,17 +709,12 @@ class question_type extends default_questiontype {
     */
     function get_all_responses(&$question, &$state) {
         if (isset($question->options->answers) && is_array($question->options->answers)) {
-            $answers = array();
-            foreach ($question->options->answers as $aid=>$answer) {
-                $r = new stdClass;
-                $r->answer = $answer->answer;
-                $r->credit = $answer->fraction;
-                $answers[$aid] = $r;
+            $responses = array();
+            foreach ($question->options->answers as $id => $answer) {
+                $responses[$id] = (object)array('answer' => $answer->answer,
+                                                'credit' => $answer->fraction);
             }
-            $result = new stdClass;
-            $result->id = $question->id;
-            $result->responses = $answers;
-            return $result;
+            return (object)array('id' => $question->id, 'responses' => $responses);
         } else {
             return null;
         }
@@ -1258,28 +1254,28 @@ class question_type extends default_questiontype {
             return; // shouldn't happen !!
         }
 
-        if ($question->options->studentsee==0) { // all items
-            $question->options->studentsee = count($answers);
+        if ($question->options->selectcount==0) { // all items
+            $question->options->selectcount = count($answers);
         } else {
-            // a nasty hack so that "studentsee" is the same
+            // a nasty hack so that "selectcount" is the same
             // as what is displayed by edit_ordering_form.php
-            $question->options->studentsee += 2;
+            $question->options->selectcount += 2;
         }
 
-        switch ($question->options->logical) {
+        switch ($question->options->selecttype) {
 
             case 0: // all
                 $answerids = array_keys($answers);
                 break;
 
             case 1: // random subset
-                $answerids = array_rand($answers, $question->options->studentsee);
+                $answerids = array_rand($answers, $question->options->selectcount);
                 break;
 
             case 2: // contiguous subset
-                if (count($answers) > $question->options->studentsee) {
-                    $offset = mt_rand(0, count($answers) - $question->options->studentsee);
-                    $answers = array_slice($answers, $offset, $question->options->studentsee, true);
+                if (count($answers) > $question->options->selectcount) {
+                    $offset = mt_rand(0, count($answers) - $question->options->selectcount);
+                    $answers = array_slice($answers, $offset, $question->options->selectcount, true);
                 }
                 $answerids = array_keys($answers);
                 break;
@@ -1865,5 +1861,31 @@ class question_type extends default_questiontype {
         default:
             return base64_decode($file->content);
         }
+    }
+}
+
+abstract class qtype_with_combined_feedback_renderer extends qtype_renderer {
+    protected function combined_feedback(question_attempt $qa) {
+        $question = $qa->get_question();
+
+        $state = $qa->get_state();
+
+        if (!$state->is_finished()) {
+            $response = $qa->get_last_qt_data();
+            if (!$qa->get_question()->is_gradable_response($response)) {
+                return '';
+            }
+            list($notused, $state) = $qa->get_question()->grade_response($response);
+        }
+
+        $feedback = '';
+        $field = $state->get_feedback_class() . 'feedback';
+        $format = $state->get_feedback_class() . 'feedbackformat';
+        if ($question->$field) {
+            $feedback .= $question->format_text($question->$field, $question->$format,
+                    $qa, 'question', $field, $question->id);
+        }
+
+        return $feedback;
     }
 }

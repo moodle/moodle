@@ -15,35 +15,25 @@ $string['pluginnameadding'] = 'Adding an Ordering question';
 $string['pluginnameediting'] = 'Editing an Ordering question';
 $string['pluginnamesummary'] = 'Put jumbled items into a meaningful order.';
 
-$string['editingordering'] = 'Editing ordering';
-$string['addingordering'] = 'Adding a Ordering';
-$string['orderingsummary'] = 'Ordering summary';
-
-$string['ordering'] = 'Ordering';
-$string['exactorder'] = 'Exact order';
-$string['relativeorder'] = 'Relative order';
-$string['contiguous'] = 'Contiguous';
-
-$string['logicalpossibilities'] = 'Logical possibilities';
-$string['addmoreanswers'] = 'Blank for {no} more answers';
-
-$string['choiceno'] = 'Answer {$a}';
-$string['choices'] = 'Available answers';
-$string['answer'] = 'Answer';
-
-$string['itemsforstudent'] = 'How many items the student will see';
-
+$string['addmoreanswers'] = 'Add {$a} more items';
+$string['answer'] = 'Item text';
+$string['answerheader'] = 'Draggable item {no}';
 $string['correctorder'] = 'The correct order for these items is as follows:';
+$string['defaultquestionname'] = 'Drag the following items into the correct order.';
 $string['noresponsedetails'] = 'Sorry, no details of the response to this question are available.';
+$string['notenoughanswers'] = 'Ordering questions must have more than {$a} answers.';
+$string['selectall'] = 'Select all items';
+$string['selectcontiguous'] = 'Select a contiguous subset of items';
+$string['selectcount_help'] = 'The number of items that will be displayed when the question is appears in a quiz.';
+$string['selectcount'] = 'Size of subset';
+$string['selectrandom'] = 'Select a random subset of items';
+$string['selecttype_help'] = 'Choose whether to display all the items or a subset of the items.';
+$string['selecttype'] = 'Item selection type';
 
-//$string['correctfeedback'] = 'Correct answer';
-//$string['incorrectfeedback'] = 'Incorrect answer';
-//$string['overallfeedback'] = 'Overall Feedback';
-//$string['partiallycorrectfeedback'] = 'Partially correct answer';
-$string['notenoughanswers'] = 'not enough answers';
-
-$string['comment'] = 'Drag and drop the items into the correct order.';
-
-// TODO add any other requred strings.
-$string['ordering_help'] = 'Ordering help';
-$string['defaultquestionname'] = 'Put the following events into the correct order.';
+// requred strings for Moodle 2.0
+$string['addingordering'] = $string['pluginnameadding'];
+$string['editingordering'] = $string['pluginnameediting'];
+$string['ordering_help'] = $string['pluginname_help'];
+$string['ordering_link'] = $string['pluginname_link'];
+$string['ordering'] = $string['pluginname'];
+$string['orderingsummary'] = $string['pluginnamesummary'];

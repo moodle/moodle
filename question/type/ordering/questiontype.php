@@ -30,7 +30,7 @@ if (class_exists('question_type')) {
     $register_questiontype = false;
 } else {
     $register_questiontype = true; // Moodle 2.0
-    require_once(dirname(__FILE__).'/legacy/20.php');
+    require_once($CFG->dirroot.'/question/type/ordering/legacy/20.php');
 }
 
 /**
@@ -70,8 +70,7 @@ class qtype_ordering extends question_type {
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
-        $answers = array_keys($questiondata->options->answers);
-        $question->rightanswer = implode(',', $answers);
+        $this->initialise_ordering_feedback($question, $questiondata);
     }
 
     public function save_question_options($question) {
@@ -119,6 +118,7 @@ class qtype_ordering extends question_type {
                     return $result;
                 }
             } else {
+                unset($answer->id);
                 if (! $answer->id = $DB->insert_record('question_answers', $answer)) {
                     $result->error = get_string('cannotinsertrecord', 'error', 'question_answers');
                     return $result;
@@ -129,8 +129,8 @@ class qtype_ordering extends question_type {
         // create $options for this ordering question
         $options = (object)array(
             'questionid' => $question->id,
-            'logical'    => $question->logical,
-            'studentsee' => $question->studentsee
+            'selecttype' => $question->selecttype,
+            'selectcount' => $question->selectcount
         );
         $options = $this->save_ordering_feedback_helper($options, $question, $context, true);
 
@@ -156,17 +156,53 @@ class qtype_ordering extends question_type {
         return true;
     }
 
-    protected function save_ordering_feedback_helper($options, $question, $context, $withparts = false) {
+    protected function initialise_ordering_feedback($question, $questiondata, $shownumcorrect=false) {
+        if (method_exists($this, 'initialise_combined_feedback')) {
+            // Moodle >= 2.1
+            $options = $this->initialise_combined_feedback($question, $questiondata, $shownumcorrect);
+        } else {
+            // Moodle 2.0
+            $names = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+            foreach ($names as $name) {
+                $format = $name.'format';
+                $question->$name = $questiondata->options->$name;
+                $question->$format = $questiondata->options->$format;
+            }
+            if ($shownumcorrect) {
+                $question->shownumcorrect = $questiondata->options->shownumcorrect;
+            }
+        }
+        return $options;
+    }
+
+    public function get_possible_responses($questiondata) {
+        $responses = array();
+        $question = $this->make_question($questiondata);
+        foreach ($question->correctresponse as $position => $answerid) {
+            $responses[] = $position.': '.$question->answers[$answerid]->answer;
+        }
+        $responses = array(
+            0 => question_possible_response::no_response(),
+            1 => implode(', ', $responses)
+        );
+        return ;
+    }
+
+    protected function save_ordering_feedback_helper($options, $question, $context, $shownumcorrect=false) {
         if (method_exists($this, 'save_combined_feedback_helper')) {
             // Moodle >= 2.1
-            $options = $this->save_combined_feedback_helper($options, $question, $context, $withparts);
+            $options = $this->save_combined_feedback_helper($options, $question, $context, $shownumcorrect);
         } else {
             // Moodle 2.0
             $names = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
             foreach ($names as $name) {
                 $text = $question->$name;
+                $format = $name.'format';
                 $options->$name = $this->import_or_save_files($text, $context, 'qtype_ordering', $name, $question->id);
-                $options->{$name.'format'} = $text['format'];
+                $options->$format = $text['format'];
+            }
+            if ($shownumcorrect) {
+                $options->shownumcorrect = (isset($question->shownumcorrect) && $question->shownumcorrect);
             }
         }
         return $options;
@@ -195,9 +231,6 @@ class qtype_ordering extends question_type {
         //parent::get_question_options($question);
         return true;
     }
-
-    // following seems to be unnecessary ...
-    // initialise_question_instance(question_definition $question, $questiondata)
 
     public function delete_question($questionid, $contextid) {
         global $DB;
@@ -230,8 +263,8 @@ class qtype_ordering extends question_type {
         }
 
         $questionname = trim($matches[1]);
-        $numberofitems = trim($matches[2]);
-        $extractiontype = trim($matches[3]);
+        $selectcount = trim($matches[2]);
+        $selecttype = trim($matches[3]);
         $lines = explode(PHP_EOL, $matches[4]);
         unset($matches);
 
@@ -241,13 +274,13 @@ class qtype_ordering extends question_type {
         // fix empty or long question name
         $question->name = $this->fix_questionname($question->name, $questionname);
 
-        // set "studentsee" field from $numberofitems
-        if (is_numeric($numberofitems) && $numberofitems > 2 && $numberofitems <= count($lines)) {
-            $numberofitems = intval($numberofitems);
+        // set "selectcount" field from $selectcount
+        if (is_numeric($selectcount) && $selectcount > 2 && $selectcount <= count($lines)) {
+            $selectcount = intval($selectcount);
         } else {
-            $numberofitems = min(6, count($lines));
+            $selectcount = min(6, count($lines));
         }
-        $this->set_num_and_type($question, $numberofitems, $extractiontype);
+        $this->set_count_and_type($question, $selectcount, $selecttype);
 
         // remove blank items
         $lines = array_map('trim', $lines);
@@ -276,20 +309,23 @@ class qtype_ordering extends question_type {
     }
 
     /**
-     * extract_num_and_type
+     * extract_count_and_type
      *
      * @param stdClass      $question
      * @todo Finish documenting this function
      */
-    function extract_num_and_type($question) {
-        switch ($question->options->logical) {
-            case 0:  $type = 'EXACT';  break; // all
-            case 1:  $type = 'REL';    break; // random subset
-            case 2:  $type = 'CONTIG'; break; // contiguous subset
-            default: $type = ''; // shouldn't happen !!
+    function extract_count_and_type($question) {
+        switch ($question->options->selecttype) {
+            case 0:  $type = 'ALL';        break; // all items
+            case 1:  $type = 'RANDOM';     break; // random subset
+            case 2:  $type = 'CONTIGUOUS'; break; // contiguous subset
+            default: $type = '';                  // shouldn't happen !!
         }
-        $num = $question->options->studentsee + 2;
-        return array($num, $type);
+
+        // Note: this used to be (selectcount + 2)
+        $count = $question->options->selectcount;
+
+        return array($count, $type);
     }
 
     /**
@@ -301,9 +337,9 @@ class qtype_ordering extends question_type {
      * @todo Finish documenting this function
      */
     function export_to_gift($question, $format, $extra=null) {
-        list($num, $type) = $this->extract_num_and_type($question);
+        list($count, $type) = $this->extract_count_and_type($question);
 
-        $expout = $question->questiontext.'{>'.$num.' '.$type.' '."\n";
+        $expout = $question->questiontext.'{>'.$count.' '.$type.' '."\n";
         foreach ($question->options->answers as $answer) {
             $expout .= $answer->answer."\n";
         }
@@ -322,11 +358,11 @@ class qtype_ordering extends question_type {
      */
     function export_to_xml($question, qformat_xml $format, $extra=null) {
 
-        list($num, $type) = $this->extract_num_and_type($question);
+        list($count, $type) = $this->extract_count_and_type($question);
 
         $output = '';
-        $output .= "    <logical>$type</logical>\n";
-        $output .= "    <studentsee>$num</studentsee>\n";
+        $output .= "    <selecttype>$type</selecttype>\n";
+        $output .= "    <selectcount>$count</selectcount>\n";
 
         foreach($question->options->answers as $answer) {
             $output .= '    <answer fraction="'.$answer->fraction.'" '.$format->format($answer->answerformat).">\n";
@@ -367,10 +403,18 @@ class qtype_ordering extends question_type {
         // fix empty or long question name
         $newquestion->name = $this->fix_questionname($newquestion->name, $newquestion->questiontext);
 
-        // extra fields fields fields - "logical" and "studentsee"
-        $numberofitems = $format->getpath($data, array('#', 'studentsee', 0, '#'), 6);
-        $extractiontype = $format->getpath($data, array('#', 'logical', 0, '#'), 'RANDOM');
-        $this->set_num_and_type($newquestion, $numberofitems, $extractiontype);
+        // extra fields fields fields - "selecttype" and "selectcount"
+        // (these fields used to be called "logical" and "studentsee")
+        if (isset($data['#']['selecttype'])) {
+            $selecttype = 'selecttype';
+            $selectcount = 'selectcount';
+        } else {
+            $selecttype = 'logical';
+            $selectcount = 'studentsee';
+        }
+        $selecttype = $format->getpath($data, array('#', $selecttype, 0, '#'), 'RANDOM');
+        $selectcount = $format->getpath($data, array('#', $selectcount, 0, '#'), 6);
+        $this->set_count_and_type($newquestion, $selectcount, $selecttype);
 
         $newquestion->answer = array();
         $newquestion->answerformat = array();
@@ -421,38 +465,39 @@ class qtype_ordering extends question_type {
     }
 
     /*
-     * set_num_and_type
+     * set_count_and_type
      *
      * @param object $question (passed by reference)
-     * @param integer $num the number of items to display
+     * @param integer $count the number of items to display
      * @param integer $type the extraction type
      * @param integer $default_type (optional, default=1)
      */
-    function set_num_and_type(&$question, $num, $type, $default_type=1) {
+    function set_count_and_type(&$question, $count, $type, $default_type=1) {
 
-        // set "studentsee" from $num(ber of items)
-        $question->studentsee = ($num - 2);
+        // set "selectcount" from $count
+        // this used to be ($count - 2)
+        $question->selectcount = $count;
 
-        // set "logical" from (extraction) $type
+        // set "selecttype" from $type
         switch ($type) {
             case 'ALL':
             case 'EXACT':
-                $question->logical = 0;
+                $question->selecttype = 0;
                 break;
 
             case 'RANDOM':
             case 'REL':
-                $question->logical = 1;
+                $question->selecttype = 1;
                 break;
 
             case 'CONTIGUOUS':
             case 'CONTIG':
-                $question->logical = 2;
+                $question->selecttype = 2;
                 break;
 
             // otherwise
             default:
-                $question->logical = $default_type;
+                $question->selecttype = $default_type;
         }
     }
 }

@@ -26,58 +26,35 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+if (! class_exists('qtype_with_combined_feedback_renderer')) {
+    // Moodle 2.0
+    require_once($CFG->dirroot.'/question/type/ordering/legacy/20.php');
+}
+
 /**
  * Generates the output for ORDERING questions
  *
  * @copyright  2013 Gordon Bateson
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ordering_renderer extends qtype_renderer {
+class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
         global $CFG, $DB;
 
         $question = $qa->get_question();
-        $ordering = $question->get_ordering_options();
-        $answers  = $question->get_ordering_answers();
+        $response = $qa->get_last_qt_data();
+        $question->update_current_response($response);
+        $currentresponse = $question->currentresponse;
+        $correctresponse = $question->correctresponse;
 
-        if (empty($ordering) || empty($answers)) {
-            return ''; // shouldn't happen !!
-        }
-
-        if ($ordering->studentsee==0) { // all items
-            $ordering->studentsee = count($answers);
-        } else {
-            // a nasty hack so that "studentsee" is the same
-            // as what is displayed by edit_ordering_form.php
-            $ordering->studentsee += 2;
-        }
-
-        if ($options->correctness) {
-            list($answerids, $correctorder) = $this->get_response($qa, $question, $answers);
-        } else {
-            $correctorder = array();
-            switch ($ordering->logical) {
-                case 0: // all
-                    $answerids = array_keys($answers);
-                    break;
-
-                case 1: // random subset
-                    $answerids = array_rand($answers, $ordering->studentsee);
-                    break;
-
-                case 2: // contiguous subset
-                    if (count($answers) > $ordering->studentsee) {
-                        $offset = mt_rand(0, count($answers) - $ordering->studentsee);
-                        $answers = array_slice($answers, $offset, $ordering->studentsee, true);
-                    }
-                    $answerids = array_keys($answers);
-                    break;
-            }
-            shuffle($answerids);
-        }
-
-        $response_name = $qa->get_qt_field_name($question->get_response_fieldname());
+        // generate fieldnames and ids
+        //   response_fieldname : fieldname: 1_response_319
+        //   response_name      : q27:1_response_319
+        //   response_id        : id_q27_1_response_319
+        //   sortable_id        : id_sortable_q27_1_response_319
+        $response_fieldname = $question->get_response_fieldname();
+        $response_name = $qa->get_qt_field_name($response_fieldname);
         $response_id = 'id_'.preg_replace('/[^a-zA-Z0-9]+/', '_', $response_name);
         $sortable_id = 'id_sortable_'.$question->id;
 
@@ -107,16 +84,16 @@ class qtype_ordering_renderer extends qtype_renderer {
 
         $result .= html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
 
-        if (count($answerids)) {
+        if (count($currentresponse)) {
             $result .= html_writer::start_tag('div', array('class' => 'ablock'));
             $result .= html_writer::start_tag('div', array('class' => 'answer'));
             $result .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortable_id));
 
             // generate ordering items
-            foreach ($answerids as $position => $answerid) {
-                if (array_key_exists($answerid, $answers)) {
+            foreach ($currentresponse as $position => $answerid) {
+                if (array_key_exists($answerid, $question->answers)) {
                     if ($options->correctness) {
-                        if ($correctorder[$position]==$answerid) {
+                        if ($correctresponse[$position]==$answerid) {
                             $class = 'correctposition';
                             $img = $this->feedback_image(1);
                         } else {
@@ -130,10 +107,10 @@ class qtype_ordering_renderer extends qtype_renderer {
                     }
                     // the original "id" revealed the correct order of the answers
                     // because $answer->fraction holds the correct order number
-                    // $id = 'ordering_item_'.$answerid.'_'.intval($answers[$answerid]->fraction);
-                    $params = array('class' => $class, 'id' => $answers[$answerid]->md5key);
-
-                    $result .= html_writer::tag('li', $img.$answers[$answerid]->answer, $params);
+                    // $id = 'ordering_item_'.$answerid.'_'.intval($question->answers[$answerid]->fraction);
+                    $answer = $question->answers[$answerid];
+                    $params = array('class' => $class, 'id' => $answer->md5key);
+                    $result .= html_writer::tag('li', $img.$answer->answer, $params);
                 }
             }
 
@@ -151,78 +128,40 @@ class qtype_ordering_renderer extends qtype_renderer {
         return $result;
     }
 
+    public function specific_feedback(question_attempt $qa) {
+        return $this->combined_feedback($qa);
+    }
+
     public function correct_response(question_attempt $qa) {
         global $DB;
 
         $output = '';
 
-        $showcorrect = true;
+        $showcorrect = false;
         if ($step = $qa->get_last_step()) {
             switch ($step->get_state()) {
-                case 'gradedright':
-                    $showcorrect = false;
-                    $msg = get_string('correctfeedback', 'qtype_ordering');
-                    break;
-                case 'gradedpartial':
-                    $fraction = round($step->get_fraction(), 2);
-                    $msg = get_string('partiallycorrectfeedback', 'qtype_ordering', $fraction);
-                    break;
-                case 'gradedwrong':
-                    $msg = get_string('incorrectfeedback', 'qtype_ordering');
-                    break;
-                default:
-                    $showcorrect = false;
-                    $msg = '';
-            }
-            if ($msg) {
-                $output .= html_writer::tag('p', $msg);
+                case 'gradedright'  : $showcorrect = false; break;
+                case 'gradedpartial': $showcorrect = true;  break;
+                case 'gradedwrong'  : $showcorrect = true;  break;
             }
         }
 
         if ($showcorrect) {
             $question = $qa->get_question();
-            $answers  = $question->get_ordering_answers();
-            list($answerids, $correctorder) = $this->get_response($qa, $question, $answers);
-            if (count($correctorder)) {
+            if (empty($question->correctresponse)) {
+                $output .= html_writer::tag('p', get_string('noresponsedetails', 'qtype_ordering'));
+            } else {
                 $output .= html_writer::tag('p', get_string('correctorder', 'qtype_ordering'));
                 $output .= html_writer::start_tag('ol');
-                foreach ($correctorder as $position => $answerid) {
-                    $output .= html_writer::tag('li', $answers[$answerid]->answer);
+                $correctresponse = $question->correctresponse;
+                foreach ($correctresponse as $position => $answerid) {
+                    $answer = $question->answers[$answerid];
+                    $output .= html_writer::tag('li', $answer->answer);
                 }
                 $output .= html_writer::end_tag('ol');
-            } else {
-                $output .= html_writer::tag('p', get_string('noresponsedetails', 'qtype_ordering'));
             }
         }
 
         return $output;
-    }
-
-    public function get_response($qa, $question, $answers) {
-        $answerids = array();
-        $correctorder = array();
-
-        $name = $question->get_response_fieldname();
-        if ($step = $qa->get_last_step_with_qt_var($name)) {
-
-            $response = $step->get_qt_var($name);  // "$md5key, ..."
-            $response = explode(',', $response);   // array($position => $md5key, ...)
-            $response = array_flip($response);     // array($md5key => $position, ...)
-
-            foreach ($answers as $answer) {
-                if (array_key_exists($answer->md5key, $response)) {
-                    $position = $response[$answer->md5key];
-                    $sortorder = intval($answer->fraction);
-                    $answerids[$position] = $answer->id;
-                    $correctorder[$sortorder] = $answer->id;
-                }
-            }
-
-            ksort($answerids);
-            ksort($correctorder);
-            $correctorder = array_values($correctorder);
-        }
-
-        return array($answerids, $correctorder);
     }
 }

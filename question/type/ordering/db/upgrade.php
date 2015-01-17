@@ -61,15 +61,15 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
     }
 
-    $newversion = 2015011408;
+    $newversion = 2015011711;
     if ($oldversion < $newversion) {
 
         // rename "ordering" table for Moodle >= 2.5
         $oldname = 'question_ordering';
         $newname = 'qtype_ordering_options';
 
-        $oldtable = new xmldb_table($oldname);
-        if ($dbman->table_exists($oldtable)) {
+        if ($dbman->table_exists($oldname)) {
+            $oldtable = new xmldb_table($oldname);
             if ($dbman->table_exists($newname)) {
                 $dbman->drop_table($oldtable);
             } else {
@@ -90,13 +90,18 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
             }
         }
 
-        // add "feedbackformat" fields
+        // rename "question"   -> "questionid"
+        // rename "logical"    -> "selecttype"
+        // rename "studentsee" -> "selectcount"
+        // add    "(xxx)feedbackformat" fields
         $table = new xmldb_table('qtype_ordering_options');
         $fields = array(
             'questionid'                     => new xmldb_field('question',                       XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, '0', 'id'),
-            'correctfeedbackformat'          => new xmldb_field('correctfeedbackformat',          XMLDB_TYPE_INTEGER,  '4', null, XMLDB_NOTNULL, null, '0', 'correctfeedback'),
-            'incorrectfeedbackformat'        => new xmldb_field('incorrectfeedbackformat',        XMLDB_TYPE_INTEGER,  '4', null, XMLDB_NOTNULL, null, '0', 'incorrectfeedback'),
-            'partiallycorrectfeedbackformat' => new xmldb_field('partiallycorrectfeedbackformat', XMLDB_TYPE_INTEGER,  '4', null, XMLDB_NOTNULL, null, '0', 'partiallycorrectfeedback')
+            'selecttype'                     => new xmldb_field('logical',                        XMLDB_TYPE_INTEGER,  '4', null, XMLDB_NOTNULL, null, '0', 'questionid'),
+            'selectcount'                    => new xmldb_field('studentsee',                     XMLDB_TYPE_INTEGER,  '4', null, XMLDB_NOTNULL, null, '0', 'selecttype'),
+            'correctfeedbackformat'          => new xmldb_field('correctfeedbackformat',          XMLDB_TYPE_INTEGER,  '2', null, XMLDB_NOTNULL, null, '0', 'correctfeedback'),
+            'incorrectfeedbackformat'        => new xmldb_field('incorrectfeedbackformat',        XMLDB_TYPE_INTEGER,  '2', null, XMLDB_NOTNULL, null, '0', 'incorrectfeedback'),
+            'partiallycorrectfeedbackformat' => new xmldb_field('partiallycorrectfeedbackformat', XMLDB_TYPE_INTEGER,  '2', null, XMLDB_NOTNULL, null, '0', 'partiallycorrectfeedback')
         );
         foreach ($fields as $newname => $field) {
             $oldexists = $dbman->field_exists($table, $field);

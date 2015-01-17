@@ -36,8 +36,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ordering_edit_form extends question_edit_form {
 
-    const NUM_ANS_START = 10;
-    const NUM_ANS_ADD   = 5;
+    const NUM_ANS_ROWS  = 2;
+    const NUM_ANS_COLS  = 60;
+    const NUM_ANS_START = 6;
+    const NUM_ANS_ADD   = 2;
 
     public function qtype() {
         return 'ordering';
@@ -50,40 +52,56 @@ class qtype_ordering_edit_form extends question_edit_form {
      */
     public function definition_inner($mform) {
 
-        // logical
-        $name = 'logical';
-        $label = get_string('logicalpossibilities', 'qtype_ordering');
+        // cache this plugins name
+        $plugin = 'qtype_ordering';
+
+        // selecttype
+        $name = 'selecttype';
+        $label = get_string($name, $plugin);
         $options = array(
-            0 => get_string('exactorder',    'qtype_ordering'), // = all ?
-            1 => get_string('relativeorder', 'qtype_ordering'), // = random subset
-            2 => get_string('contiguous',    'qtype_ordering')  // = contiguous subset
+            0 => get_string('selectall', $plugin),
+            1 => get_string('selectrandom', $plugin),
+            2 => get_string('selectcontiguous', $plugin)
         );
         $mform->addElement('select', $name, $label, $options);
+        $mform->addHelpButton($name, $name, $plugin);
         $mform->setDefault($name, 0);
 
-        // studentsee
-        $name = 'studentsee';
-        $label = get_string('itemsforstudent', 'qtype_ordering');
+        // selectcount
+        $name = 'selectcount';
+        $label = get_string($name, $plugin);
         $options = array(0 => get_string('all'));
         for ($i=3; $i <= 20; $i++) {
-            $options[] = $i;
+            $options[$i] = $i;
         }
         $mform->addElement('select', $name, $label, $options);
-        $mform->setDefault('studentsee', 0);
+        $mform->disabledIf($name, 'selecttype', 'eq', 0);
+        $mform->addHelpButton($name, $name, $plugin);
+        $mform->setDefault($name, 0);
 
-        // answers
+        // answers (=items)
         $elements = array();
-        $elements[] =& $mform->createElement('header', 'choicehdr', get_string('choiceno', 'qtype_ordering', '{no}'));
-        $elements[] =& $mform->createElement('textarea', 'answer', get_string('answer', 'qtype_ordering'), 'rows="3" cols="50"');
+
+        $name = 'answerheader';
+        $label = get_string($name, $plugin);
+        $elements[] =& $mform->createElement('header', $name, $label);
+
+        $name = 'answer';
+        $label = get_string($name, $plugin);
+        $options = array('rows' => self::NUM_ANS_ROWS, 'cols' => self::NUM_ANS_COLS);
+        $elements[] =& $mform->createElement('textarea', $name, $label, $options);
+
         if (empty($this->question->options)){
-            $count = 0;
+            $start = 0;
         } else {
-            $count = count($this->question->options->answers);
+            $start = count($this->question->options->answers);
         }
-        $start = max(self::NUM_ANS_START, $count + self::NUM_ANS_ADD);
-        $options = array('fraction' => array('default' => 0));
-        $buttontext = get_string('addmoreanswers', 'qtype_ordering');
-        $this->repeat_elements($elements, $start, $options, 'noanswers', 'addanswers', self::NUM_ANS_ADD, $buttontext);
+        if ($start < self::NUM_ANS_START) {
+            $start = self::NUM_ANS_START;
+        }
+        $options = array('answerheader' => array('expanded' => true));
+        $buttontext = get_string('addmoreanswers', $plugin, self::NUM_ANS_ADD);
+        $this->repeat_elements($elements, $start, $options, 'countanswers', 'addanswers', self::NUM_ANS_ADD, $buttontext);
 
         // feedback
         $this->add_ordering_feedback_fields();
@@ -113,18 +131,18 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         }
 
-        // logical
-        if (isset($question->options->logical)) {
-            $question->logical = $question->options->logical;
+        // selecttype
+        if (isset($question->options->selecttype)) {
+            $question->selecttype = $question->options->selecttype;
         } else {
-            $question->logical = 0;
+            $question->selecttype = 0;
         }
 
-        // studentsee
-        if (isset($question->options->studentsee)) {
-            $question->studentsee = $question->options->studentsee;
+        // selectcount
+        if (isset($question->options->selectcount)) {
+            $question->selectcount = $question->options->selectcount;
         } else {
-            $question->studentsee = max(3, count($question->answer));
+            $question->selectcount = max(3, count($question->answer));
         }
 
         return $question;
@@ -132,6 +150,7 @@ class qtype_ordering_edit_form extends question_edit_form {
 
     public function validation($data, $files) {
         $errors = array();
+        $plugin = 'qtype_ordering';
 
         $answercount = 0;
         foreach ($data['answer'] as $answer){
@@ -142,8 +161,8 @@ class qtype_ordering_edit_form extends question_edit_form {
         }
 
         switch ($answercount) {
-            case 0: $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_ordering', 2);
-            case 1: $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_ordering', 2);
+            case 0: $errors['answer[0]'] = get_string('notenoughanswers', $plugin, 2);
+            case 1: $errors['answer[1]'] = get_string('notenoughanswers', $plugin, 2);
         }
 
         return $errors;
