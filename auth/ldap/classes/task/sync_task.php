@@ -15,16 +15,40 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * A scheduled task for LDAP user sync.
  *
  * @package    auth_ldap
- * @author     Martin Dougiamas
- * @author     Iñaki Arenaza
+ * @copyright  2015 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace auth_ldap\task;
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * A scheduled task class for LDAP user sync.
+ *
+ * @copyright  2015 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class sync_task extends \core\task\scheduled_task {
 
-$plugin->version   = 2015100600;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015050500;        // Requires this Moodle version
-$plugin->component = 'auth_ldap';       // Full name of the plugin (used for diagnostics)
+    /**
+     * Get a descriptive name for this task (shown to admins).
+     *
+     * @return string
+     */
+    public function get_name() {
+        return get_string('synctask', 'auth_ldap');
+    }
+
+    /**
+     * Run users sync.
+     */
+    public function execute() {
+        global $CFG;
+        if (is_enabled_auth('ldap')) {
+            $auth = get_auth_plugin('ldap');
+            $auth->sync_users(true);
+        }
+    }
+
+}

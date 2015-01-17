@@ -137,6 +137,7 @@ $string['pluginname'] = 'LDAP server';
 $string['pluginnotenabled'] = 'Plugin not enabled!';
 $string['renamingnotallowed'] = 'User renaming not allowed in LDAP';
 $string['rootdseerror'] = 'Error querying rootDSE for Active Directory';
+$string['synctask'] = 'LDAP users sync job';
 $string['start_tls'] = 'Use regular LDAP service (port 389) with TLS encryption';
 $string['start_tls_key'] = 'Use TLS';
 $string['updateremfail'] = 'Error updating LDAP record. Error code: {$a->errno}; Error string: {$a->errstring}<br/>Key ({$a->key}) - old moodle value: \'{$a->ouvalue}\' new value: \'{$a->nuvalue}\'';
