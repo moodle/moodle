@@ -47,6 +47,23 @@ class lesson_page_type_essay extends lesson_page {
     public function get_idstring() {
         return $this->typeidstring;
     }
+
+    /**
+     * Unserialize attempt useranswer and add missing responseformat if needed
+     * for compatibility with old records.
+     *
+     * @param string $useranswer serialized object
+     * @return object
+     */
+    static public function extract_useranswer($useranswer) {
+        $essayinfo = unserialize($useranswer);
+        if (!isset($essayinfo->responseformat)) {
+            $essayinfo->response = text_to_html($essayinfo->response, false, false);
+            $essayinfo->responseformat = FORMAT_HTML;
+        }
+        return $essayinfo;
+    }
+
     public function display($renderer, $attempt) {
         global $PAGE, $CFG, $USER;
 
@@ -56,7 +73,7 @@ class lesson_page_type_essay extends lesson_page {
         $data->id = $PAGE->cm->id;
         $data->pageid = $this->properties->id;
         if (isset($USER->modattempts[$this->lesson->id])) {
-            $essayinfo = unserialize($attempt->useranswer);
+            $essayinfo = self::extract_useranswer($attempt->useranswer);
             $data->answer = $essayinfo->answer;
         }
         $mform->set_data($data);
@@ -99,7 +116,7 @@ class lesson_page_type_essay extends lesson_page {
             $studentanswerformat = $data->answer['format'];
         } else {
             $studentanswer = $data->answer;
-            $studentanswerformat = FORMAT_MOODLE;
+            $studentanswerformat = FORMAT_HTML;
         }
 
         if (trim($studentanswer) === '') {
@@ -119,7 +136,8 @@ class lesson_page_type_essay extends lesson_page {
         $userresponse->score = 0;
         $userresponse->answer = $studentanswer;
         $userresponse->answerformat = $studentanswerformat;
-        $userresponse->response = "";
+        $userresponse->response = '';
+        $userresponse->responseformat = FORMAT_HTML;
         $result->userresponse = serialize($userresponse);
         $result->studentanswerformat = $studentanswerformat;
         $result->studentanswer = $studentanswer;
@@ -161,7 +179,7 @@ class lesson_page_type_essay extends lesson_page {
             // else, user attempted the question less than the max, so grab the last one
             $temp = end($tries);
         }
-        $essayinfo = unserialize($temp->useranswer);
+        $essayinfo = self::extract_useranswer($temp->useranswer);
         if ($essayinfo->graded) {
             if (isset($pagestats[$temp->pageid])) {
                 $essaystats = $pagestats[$temp->pageid];
@@ -178,15 +196,21 @@ class lesson_page_type_essay extends lesson_page {
         return true;
     }
     public function report_answers($answerpage, $answerdata, $useranswer, $pagestats, &$i, &$n) {
+        $formattextdefoptions = new stdClass();
+        $formattextdefoptions->noclean = true;
+        $formattextdefoptions->para = false;
+        $formattextdefoptions->context = $answerpage->context;
         $answers = $this->get_answers();
 
         foreach ($answers as $answer) {
             if ($useranswer != null) {
-                $essayinfo = unserialize($useranswer->useranswer);
+                $essayinfo = self::extract_useranswer($useranswer->useranswer);
                 if ($essayinfo->response == null) {
                     $answerdata->response = get_string("nocommentyet", "lesson");
                 } else {
-                    $answerdata->response = s($essayinfo->response);
+                    $essayinfo->response = file_rewrite_pluginfile_urls($essayinfo->response, 'pluginfile.php',
+                            $answerpage->context->id, 'mod_lesson', 'essay_responses', $useranswer->id);
+                    $answerdata->response  = format_text($essayinfo->response, $essayinfo->responseformat, $formattextdefoptions);
                 }
                 if (isset($pagestats[$this->properties->id])) {
                     $percent = $pagestats[$this->properties->id]->totalscore / $pagestats[$this->properties->id]->total * 100;
@@ -239,7 +263,7 @@ class lesson_page_type_essay extends lesson_page {
         return true;
     }
     public function get_earnedscore($answers, $attempt) {
-        $essayinfo = unserialize($attempt->useranswer);
+        $essayinfo = self::extract_useranswer($attempt->useranswer);
         return $essayinfo->score;
     }
 }
@@ -273,7 +297,7 @@ class lesson_display_answer_form_essay extends moodleform {
             if (isset($USER->modattempts[$lessonid]->useranswer) && !empty($USER->modattempts[$lessonid]->useranswer)) {
                 $attrs = array('disabled' => 'disabled');
                 $hasattempt = true;
-                $useranswertemp = unserialize($USER->modattempts[$lessonid]->useranswer);
+                $useranswertemp = lesson_page_type_essay::extract_useranswer($USER->modattempts[$lessonid]->useranswer);
                 $useranswer = htmlspecialchars_decode($useranswertemp->answer, ENT_QUOTES);
                 $useranswerraw = $useranswertemp->answer;
             }
