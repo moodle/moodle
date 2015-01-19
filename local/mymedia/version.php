@@ -27,7 +27,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 $plugin->version = 2014121807;
 $plugin->component = 'local_mymedia';
-$plugin->release = 'Kaltura release 4.0.01';
+$plugin->release = 'Kaltura release 4.0.02';
 $plugin->requires = 2014050800;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->dependencies = array(
