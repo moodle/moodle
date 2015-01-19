@@ -27,6 +27,8 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
+global $CFG; // should be defined in config.php
+
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 define('KALTURA_PLUGIN_NAME', 'local_kaltura');
