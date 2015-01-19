@@ -474,6 +474,7 @@ if ($showactivity) {
 
     if ($mode == 'asearch') {
         $maxcount = 0;
+        data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
 
     } else {
         // Approve or disapprove any requested records
@@ -714,6 +715,11 @@ if ($showactivity) {
             $nowperpage = $perpage;
         }
 
+        // Advanced search form doesn't make sense for single (redirects list view).
+        if ($maxcount && $mode != 'single') {
+            data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
+        }
+
     /// Get the actual records
 
         if (!$records = $DB->get_records_sql($sqlselect, $allparams, $page * $nowperpage, $nowperpage)) {
@@ -849,11 +855,6 @@ if ($showactivity) {
             }
             echo $button->to_html(PORTFOLIO_ADD_FULL_FORM);
         }
-    }
-
-    //Advanced search form doesn't make sense for single (redirects list view)
-    if (($maxcount || $mode == 'asearch') && $mode != 'single') {
-        data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
     }
 }
 
