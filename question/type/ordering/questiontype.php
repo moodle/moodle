@@ -23,14 +23,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
 if (class_exists('question_type')) {
-    $register_questiontype = false;
+    $register_question_type = false;
 } else {
-    $register_questiontype = true; // Moodle 2.0
-    require_once($CFG->dirroot.'/question/type/ordering/legacy/20.php');
+    $register_question_type = true; // Moodle 2.0
+    require_once($CFG->dirroot.'/question/type/ordering/legacy/questiontypebase.php');
 }
 
 /**
@@ -502,11 +501,8 @@ class qtype_ordering extends question_type {
     }
 }
 
-if ($register_questiontype) {
+if ($register_question_type) {
     class question_ordering_qtype extends qtype_ordering {
-        function name() {
-            return 'ordering';
-        }
     }
     question_register_questiontype(new question_ordering_qtype());
 }

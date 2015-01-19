@@ -61,7 +61,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
     }
 
-    $newversion = 2015011713;
+    $newversion = 2015011915;
     if ($oldversion < $newversion) {
 
         // rename "ordering" table for Moodle >= 2.5
@@ -83,7 +83,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         $fields = array('question', 'questionid');
         foreach ($fields as $field) {
             if ($dbman->field_exists($table, $field)) {
-                $index = new xmldb_index('quesorde_que_ix', XMLDB_INDEX_NOTUNIQUE, array($field));
+                $index = new xmldb_index('qtypordeopti_que_uix', XMLDB_INDEX_UNIQUE, array($field));
                 if ($dbman->index_exists($table, $index)) {
                     $dbman->drop_index($table, $index);
                 }
@@ -127,7 +127,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
 
         // restore index on questionid field
         $table = new xmldb_table('qtype_ordering_options');
-        $index = new xmldb_index('quesorde_que_ix', XMLDB_INDEX_NOTUNIQUE, array('questionid'));
+        $index = new xmldb_index('qtypordeopti_que_uix', XMLDB_INDEX_UNIQUE, array('questionid'));
         if (! $dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }

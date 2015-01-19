@@ -26,9 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-if (! class_exists('qtype_with_combined_feedback_renderer')) {
-    // Moodle 2.0
-    require_once($CFG->dirroot.'/question/type/ordering/legacy/20.php');
+if (! class_exists('qtype_with_combined_feedback_renderer')) { // Moodle 2.0
+    require_once($CFG->dirroot.'/question/type/ordering/legacy/rendererbase.php');
 }
 
 /**
@@ -49,7 +48,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $correctresponse = $question->correctresponse;
 
         // generate fieldnames and ids
-        //   response_fieldname : fieldname: 1_response_319
+        //   response_fieldname : 1_response_319
         //   response_name      : q27:1_response_319
         //   response_id        : id_q27_1_response_319
         //   sortable_id        : id_sortable_q27_1_response_319
