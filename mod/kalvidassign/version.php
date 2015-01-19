@@ -27,7 +27,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 $module->version = 2014121807;
 $module->component  = 'mod_kalvidassign';
-$module->release    = 'Kaltura release 4.0.01';
+$module->release    = 'Kaltura release 4.0.02';
 $module->requires = 2014050800;
 $module->cron       = 0;
 $module->maturity = MATURITY_STABLE;
