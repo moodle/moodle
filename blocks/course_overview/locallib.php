@@ -171,6 +171,9 @@ function block_course_overview_get_sorted_courses($showallcourses = false) {
     $courses = enrol_get_my_courses();
     $site = get_site();
 
+    //  IOMAD - deal with licensed courses
+    iomad::iomad_add_license_courses($courses);
+
     if (array_key_exists($site->id,$courses)) {
         unset($courses[$site->id]);
     }

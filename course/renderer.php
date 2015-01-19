@@ -2018,6 +2018,9 @@ class core_course_renderer extends plugin_renderer_base {
             $rhosts   = get_my_remotehosts();
         }
 
+        //  IOMAD - deal with licensed courses
+        iomad::iomad_add_license_courses($courses);
+
         if (!empty($courses) || !empty($rcourses) || !empty($rhosts)) {
 
             $chelper = new coursecat_helper();
