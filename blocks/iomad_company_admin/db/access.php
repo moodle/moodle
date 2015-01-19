@@ -51,6 +51,30 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK
     ),
 
+    'block/iomad_commerce:companymanagement_view' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK
+    ),
+
+    'block/iomad_commerce:usermanagement_view' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK
+    ),
+
+    'block/iomad_commerce:coursemanagement_view' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK
+    ),
+
+    'block/iomad_commerce:licensemanagement_view' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK
+    ),
+
     'block/iomad_company_admin:assign_company_manager' => array(
 
         'captype' => 'read',
