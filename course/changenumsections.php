@@ -52,8 +52,8 @@ if (isset($courseformatoptions['numsections'])) {
     // Don't go less than 0, intentionally redirect silently (for the case of
     // double clicks).
     if ($courseformatoptions['numsections'] >= 0) {
-        course_get_format($course)->update_course_format_options(
-                array('numsections' => $courseformatoptions['numsections']));
+        update_course((object)array('id' => $course->id,
+            'numsections' => $courseformatoptions['numsections']));
     }
 }
 
