@@ -95,6 +95,7 @@ if ($data = $form->get_data()) {
 
         // Update the Kaltura activities.
         local_kaltura_update_activities();
+        local_kaltura_set_activities_entries_to_categories();
 
         // If both variables are null, then there is nother more to migrate.
         if (is_null($categoryentries) && is_null($metadataentries)) {

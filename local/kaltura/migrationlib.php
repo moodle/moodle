@@ -804,7 +804,6 @@ function local_kaltura_update_activities() {
                 try {
                     // Retrieve the Kaltura base entry object.
                     $kalentry = $client->baseEntry->get($record->entry_id);
-                    local_kaltura_set_activity_entry_to_incontext($record->entry_id, $record->course);
                 }
                 catch(Exception $ex) {
                     // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
@@ -841,7 +840,6 @@ function local_kaltura_update_activities() {
                 try {
                     // Retrieve the Kaltura base entry object.
                     $kalentry = $client->baseEntry->get($record->entry_id);
-                    local_kaltura_set_activity_entry_to_incontext($record->entry_id, $record->course);
                 }
                 catch(Exception $ex) {
                     // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
@@ -879,18 +877,9 @@ function local_kaltura_update_activities() {
                 $record->width = $width + KALTURA_MIGRATION_WIDTH_PADDING;
                 $record->height = $height + KALTURA_MIGRATION_HEIGHT_PADDING;
 
-                
-                $assignmentSql = 'SELECT * FROM {kalvidassign} WHERE id = '.$record->vidassignid;
-                $assignmentRecords = $DB->get_records_sql($assignmentSql);
-
                 try {
                     // Retrieve the Kaltura base entry object.
                     $kalentry = $client->baseEntry->get($record->entry_id);
-                    if(isset($assignmentRecords[$record->vidassignid]))
-                    {
-                        $assignmentRecord = $assignmentRecords[$record->vidassignid];
-                        local_kaltura_set_activity_entry_to_incontext($record->entry_id, $assignmentRecord->course);
-                    }
                 }
                 catch(Exception $ex) {
                     // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
@@ -903,6 +892,73 @@ function local_kaltura_update_activities() {
                 $record->metadata = $metadata;
 
                 $DB->update_record('kalvidassign_submission', $record, true);
+            }
+        }
+    }
+}
+
+/**
+ * This function makes sure that allactivity entries are also assigned to the right category in KAF structure.
+ */
+function local_kaltura_set_activities_entries_to_categories() {
+    global $CFG, $DB;
+
+    $configsettings = get_config(KALTURA_PLUGIN_NAME);
+
+    // Check if the KAF URi is initialized.
+    if (!isset($configsettings->kaf_uri) || empty($configsettings->kaf_uri)) {
+        $url = new moodle_url('/admin/settings.php', array('section' => 'local_kaltura'));
+        notice(get_string('migration_kaf_url_not_set', 'local_kaltura'), $url);
+    }
+
+    // Check if the table exists.
+    $table = new xmldb_table('kalvidres');
+
+    if ($DB->get_manager()->table_exists($table)) {
+        // Migrate Kaltura video resrouce entries.
+        $sql = 'SELECT *
+                  FROM {kalvidres}';
+        $records = $DB->get_records_sql($sql);
+
+        foreach ($records as $id => $record) {
+            if (!is_null($record->entry_id) && !empty($record->entry_id)) {
+                local_kaltura_set_activity_entry_to_incontext($record->entry_id, $record->course);
+            }
+        }
+    }
+
+    $table = new xmldb_table('kalvidpres');
+
+    if ($DB->get_manager()->table_exists($table)) {
+        // Migrate Kaltura video resrouce entries.
+        $sql = 'SELECT *
+                  FROM {kalvidpres}';
+        $records = $DB->get_records_sql($sql);
+
+        foreach ($records as $id => $record) {
+            if (!is_null($record->entry_id) && !empty($record->entry_id)) {
+                local_kaltura_set_activity_entry_to_incontext($record->entry_id, $record->course);
+            }
+        }
+    }
+
+    $table = new xmldb_table('kalvidassign_submission');
+
+    if ($DB->get_manager()->table_exists($table)) {
+        // Migrate Kaltura video resrouce entries.
+        $sql = 'SELECT *
+                  FROM {kalvidassign_submission}';
+        $records = $DB->get_records_sql($sql);
+
+        foreach ($records as $id => $record) {
+            if (!is_null($record->entry_id) && !empty($record->entry_id)) {
+                $assignmentSql = 'SELECT * FROM {kalvidassign} WHERE id = '.$record->vidassignid;
+                $assignmentRecords = $DB->get_records_sql($assignmentSql);
+                if(isset($assignmentRecords[$record->vidassignid]))
+                {
+                    $assignmentRecord = $assignmentRecords[$record->vidassignid];
+                    local_kaltura_set_activity_entry_to_incontext($record->entry_id, $assignmentRecord->course);
+                }
             }
         }
     }
@@ -998,7 +1054,14 @@ function local_kaltura_set_activity_entry_to_incontext($entryId, $courseId)
         $client->categoryEntry->add($categoryEntry);
     } catch (Exception $ex) {
         // write to log?
-        throw $ex;
+        if($ex->getCode() == 'CATEGORY_ENTRY_ALREADY_EXISTS')
+        {
+            // do nothing. this is OK.
+        }
+        else
+        {
+            throw $ex;
+        }
     }
 }
 
