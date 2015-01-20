@@ -617,7 +617,7 @@ function grade_print_tabs($active_type, $active_plugin, $plugin_info, $return=fa
     $top_row  = array();
     $bottom_row = array();
     $inactive = array($active_plugin);
-    $activated = array();
+    $activated = array($active_type);
 
     $count = 0;
     $active = '';
@@ -661,9 +661,9 @@ function grade_print_tabs($active_type, $active_plugin, $plugin_info, $return=fa
     $tabs[] = $bottom_row;
 
     if ($return) {
-        return print_tabs($tabs, $active_type, $inactive, $activated, true);
+        return print_tabs($tabs, $active_plugin, $inactive, $activated, true);
     } else {
-        print_tabs($tabs, $active_type, $inactive, $activated);
+        print_tabs($tabs, $active_plugin, $inactive, $activated);
     }
 }
 
