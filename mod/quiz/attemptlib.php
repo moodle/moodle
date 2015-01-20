@@ -1628,12 +1628,21 @@ class quiz_attempt {
  * @since      Moodle 2.1
  */
 class quiz_nav_question_button implements renderable {
+    /** @var string id="..." to add to the HTML for this button. */
     public $id;
+    /** @var string number to display in this button. Either the question number of 'i'. */
     public $number;
+    /** @var string class to add to the class="" attribute to represnt the question state. */
     public $stateclass;
+    /** @var string Textual description of the question state, e.g. to use as a tool tip. */
     public $statestring;
+    /** @var int the page number this question is on. */
+    public $page;
+    /** @var bool true if this question is on the current page. */
     public $currentpage;
+    /** @var bool true if this question has been flagged. */
     public $flagged;
+    /** @var moodle_url the link this button goes to, or null if there should not be a link. */
     public $url;
 }
 
@@ -1679,7 +1688,8 @@ abstract class quiz_nav_panel_base {
                 $button->stateclass = 'complete';
             }
             $button->statestring = $this->get_state_string($qa, $showcorrectness);
-            $button->currentpage = $this->showall || $this->attemptobj->get_question_page($slot) == $this->page;
+            $button->page        = $this->attemptobj->get_question_page($slot);
+            $button->currentpage = $this->showall || $button->page == $this->page;
             $button->flagged     = $qa->is_flagged();
             $button->url         = $this->get_question_url($slot);
             $buttons[] = $button;
