@@ -240,8 +240,8 @@ foreach ($instances as $instance) {
         }
     }
 
-    // add a row to the table
-    $table->data[] = array($displayname, $users, implode('&nbsp;', $updown), implode('&nbsp;', $edit));
+    // Add a row to the table.
+    $table->data[] = array($displayname, $users, implode('', $updown), implode('', $edit));
 
 }
 echo html_writer::table($table);
