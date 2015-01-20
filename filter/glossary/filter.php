@@ -50,8 +50,13 @@ class filter_glossary extends moodle_text_filter {
         }
     }
 
-    public function filter($text, array $options = array()) {
-        global $CFG, $USER, $GLOSSARY_EXCLUDEENTRY;
+    /**
+     * Get all the concepts for this context.
+     * @return filterobject[] the concepts, and filterobjects, with an added
+     *      ->conceptid field.
+     */
+    protected function get_all_concepts() {
+        global $CFG, $USER;
 
         // Try to get current course.
         $coursectx = $this->context->get_course_context(false);
@@ -67,11 +72,8 @@ class filter_glossary extends moodle_text_filter {
             $this->cacheconceptlist = null;
         }
 
-        if (is_array($this->cacheconceptlist) and empty($GLOSSARY_EXCLUDEENTRY)) {
-            if (empty($this->cacheconceptlist)) {
-                return $text;
-            }
-            return filter_phrases($text, $this->cacheconceptlist);
+        if (is_array($this->cacheconceptlist)) {
+            return $this->cacheconceptlist;
         }
 
         list($glossaries, $allconcepts) = \mod_glossary\local\concept_cache::get_concepts($courseid);
@@ -80,20 +82,15 @@ class filter_glossary extends moodle_text_filter {
             $this->cacheuserid = $USER->id;
             $this->cachecourseid = $courseid;
             $this->cacheconcepts = array();
-            return $text;
+            return $this->cacheconceptlist;
         }
 
         $strcategory = get_string('category', 'glossary');
 
         $conceptlist = array();
-        $excluded = false;
 
         foreach ($allconcepts as $concepts) {
             foreach ($concepts as $concept) {
-                if (!empty($GLOSSARY_EXCLUDEENTRY) and $concept->id == $GLOSSARY_EXCLUDEENTRY) {
-                    $excluded = true;
-                    continue;
-                }
                 if ($concept->category) { // Link to a category.
                     // TODO: Fix this string usage.
                     $title = $glossaries[$concept->glossaryid] . ': ' . $strcategory . ' ' . $concept->concept;
@@ -102,6 +99,7 @@ class filter_glossary extends moodle_text_filter {
                         'href'  => $link,
                         'title' => $title,
                         'class' => 'glossary autolink category glossaryid' . $concept->glossaryid);
+                    $conceptid = 0;
 
                 } else { // Link to entry or alias
                     $title = $glossaries[$concept->glossaryid] . ': ' . $concept->concept;
@@ -114,6 +112,7 @@ class filter_glossary extends moodle_text_filter {
                         'href'  => $link,
                         'title' => str_replace('&amp;', '&', $title), // Undo the s() mangling.
                         'class' => 'glossary autolink concept glossaryid' . $concept->glossaryid);
+                    $conceptid = $concept->id;
                 }
                 // This flag is optionally set by resource_pluginfile()
                 // if processing an embedded file use target to prevent getting nested Moodles.
@@ -122,23 +121,42 @@ class filter_glossary extends moodle_text_filter {
                 }
                 $href_tag_begin = html_writer::start_tag('a', $attributes);
 
-                $conceptlist[] = new filterobject($concept->concept, $href_tag_begin, '</a>',
-                    $concept->casesensitive, $concept->fullmatch);
+                $filterobj = new filterobject($concept->concept, $href_tag_begin, '</a>',
+                        $concept->casesensitive, $concept->fullmatch);;
+                $filterobj->conceptid = $conceptid;
+                $conceptlist[] = $filterobj;
             }
         }
 
         usort($conceptlist, 'filter_glossary::sort_entries_by_length');
 
-        if (!$excluded) {
-            // Do not cache the excluded list here, it is used once per page only.
-            $this->cacheuserid = $USER->id;
-            $this->cachecourseid = $courseid;
-            $this->cacheconceptlist = $conceptlist;
+        $this->cacheuserid = $USER->id;
+        $this->cachecourseid = $courseid;
+        $this->cacheconceptlist = $conceptlist;
+        return $this->cacheconceptlist;
+    }
+
+    public function filter($text, array $options = array()) {
+        global $GLOSSARY_EXCLUDEENTRY;
+
+        $conceptlist = $this->get_all_concepts();
+
+        if (empty($conceptlist)) {
+            return $text;
+        }
+
+        if (!empty($GLOSSARY_EXCLUDEENTRY)) {
+            foreach ($conceptlist as $key => $filterobj) {
+                if ($filterobj->conceptid == $GLOSSARY_EXCLUDEENTRY) {
+                    unset($conceptlist[$key]);
+                }
+            }
         }
 
         if (empty($conceptlist)) {
             return $text;
         }
+
         return filter_phrases($text, $conceptlist);   // Actually search for concepts!
     }
 
