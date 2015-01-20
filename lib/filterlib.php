@@ -216,7 +216,7 @@ class filter_manager {
     public function filter_text($text, $context, array $options = array(),
             array $skipfilters = null) {
         $text = $this->apply_filter_chain($text, $this->get_text_filters($context), $options, $skipfilters);
-        // <nolink> tags removed for XHTML compatibility
+        // Remove <nolink> tags for XHTML compatibility.
         $text = str_replace(array('<nolink>', '</nolink>'), '', $text);
         return $text;
     }
@@ -465,28 +465,28 @@ abstract class moodle_text_filter {
  *
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- **/
+ */
 class filterobject {
     /** @var string */
-    var $phrase;
-    var $hreftagbegin;
-    var $hreftagend;
+    public $phrase;
+    public $hreftagbegin;
+    public $hreftagend;
     /** @var bool */
-    var $casesensitive;
-    var $fullmatch;
+    public $casesensitive;
+    public $fullmatch;
     /** @var mixed */
-    var $replacementphrase;
-    var $work_phrase;
-    var $work_hreftagbegin;
-    var $work_hreftagend;
-    var $work_casesensitive;
-    var $work_fullmatch;
-    var $work_replacementphrase;
+    public $replacementphrase;
+    public $work_phrase;
+    public $work_hreftagbegin;
+    public $work_hreftagend;
+    public $work_casesensitive;
+    public $work_fullmatch;
+    public $work_replacementphrase;
     /** @var bool */
-    var $work_calculated;
+    public $work_calculated;
 
     /**
-     * A constructor just because I like constructing
+     * Constructor.
      *
      * @param string $phrase
      * @param string $hreftagbegin
@@ -499,15 +499,15 @@ class filterobject {
                                    $hreftagend = '</span>',
                                    $casesensitive = false,
                                    $fullmatch = false,
-                                   $replacementphrase = NULL) {
+                                   $replacementphrase = null) {
 
-        $this->phrase           = $phrase;
-        $this->hreftagbegin     = $hreftagbegin;
-        $this->hreftagend       = $hreftagend;
-        $this->casesensitive    = $casesensitive;
-        $this->fullmatch        = $fullmatch;
-        $this->replacementphrase= $replacementphrase;
-        $this->work_calculated  = false;
+        $this->phrase            = $phrase;
+        $this->hreftagbegin      = $hreftagbegin;
+        $this->hreftagend        = $hreftagend;
+        $this->casesensitive     = $casesensitive;
+        $this->fullmatch         = $fullmatch;
+        $this->replacementphrase = $replacementphrase;
+        $this->work_calculated   = false;
 
     }
 }
@@ -574,7 +574,6 @@ function filter_set_global_state($filtername, $state, $move = 0) {
     }
 
     if (strpos($filtername, 'filter/') === 0) {
-        //debugging("Old filtername '$filtername' parameter used in filter_set_global_state()", DEBUG_DEVELOPER);
         $filtername = substr($filtername, 7);
     } else if (strpos($filtername, '/') !== false) {
         throw new coding_exception("Invalid filter name '$filtername' used in filter_set_global_state()");
@@ -588,7 +587,7 @@ function filter_set_global_state($filtername, $state, $move = 0) {
     $on = array();
     $off = array();
 
-    foreach($filters as $f) {
+    foreach ($filters as $f) {
         if ($f->active == TEXTFILTER_DISABLED) {
             $off[$f->filter] = $f;
         } else {
@@ -675,13 +674,13 @@ function filter_set_global_state($filtername, $state, $move = 0) {
     $i = 1;
     foreach ($on as $f) {
         if ($f->sortorder != $i) {
-            $DB->set_field('filter_active', 'sortorder', $i, array('id'=>$f->id));
+            $DB->set_field('filter_active', 'sortorder', $i, array('id' => $f->id));
         }
         $i++;
     }
     foreach ($off as $f) {
         if ($f->sortorder != $i) {
-            $DB->set_field('filter_active', 'sortorder', $i, array('id'=>$f->id));
+            $DB->set_field('filter_active', 'sortorder', $i, array('id' => $f->id));
         }
         $i++;
     }
@@ -696,7 +695,6 @@ function filter_set_global_state($filtername, $state, $move = 0) {
  */
 function filter_is_enabled($filtername) {
     if (strpos($filtername, 'filter/') === 0) {
-        //debugging("Old filtername '$filtername' parameter used in filter_is_enabled()", DEBUG_DEVELOPER);
         $filtername = substr($filtername, 7);
     } else if (strpos($filtername, '/') !== false) {
         throw new coding_exception("Invalid filter name '$filtername' used in filter_is_enabled()");
@@ -707,7 +705,6 @@ function filter_is_enabled($filtername) {
 /**
  * Return a list of all the filters that may be in use somewhere.
  *
- * @staticvar array $enabledfilters
  * @return array where the keys and values are both the filter name, like 'tex'.
  */
 function filter_get_globally_enabled() {
@@ -965,7 +962,7 @@ function filter_get_active_in_context($context) {
     $contextids = str_replace('/', ',', trim($context->path, '/'));
 
     // The following SQL is tricky. It is explained on
-    // http://docs.moodle.org/dev/Filter_enable/disable_by_context
+    // http://docs.moodle.org/dev/Filter_enable/disable_by_context.
     $sql = "SELECT active.filter, fc.name, fc.value
          FROM (SELECT f.filter, MAX(f.sortorder) AS sortorder
              FROM {filter_active} f
@@ -1007,7 +1004,7 @@ function filter_preload_activities(course_modinfo $modinfo) {
         $FILTERLIB_PRIVATE = new stdClass();
     }
 
-    // Don't repeat preload
+    // Don't repeat preload.
     if (!isset($FILTERLIB_PRIVATE->preloaded)) {
         $FILTERLIB_PRIVATE->preloaded = array();
     }
@@ -1016,7 +1013,7 @@ function filter_preload_activities(course_modinfo $modinfo) {
     }
     $FILTERLIB_PRIVATE->preloaded[$modinfo->get_course_id()] = true;
 
-    // Get contexts for all CMs
+    // Get contexts for all CMs.
     $cmcontexts = array();
     $cmcontextids = array();
     foreach ($modinfo->get_cms() as $cm) {
@@ -1025,16 +1022,16 @@ function filter_preload_activities(course_modinfo $modinfo) {
         $cmcontexts[] = $modulecontext;
     }
 
-    // Get course context and all other parents...
+    // Get course context and all other parents.
     $coursecontext = context_course::instance($modinfo->get_course_id());
     $parentcontextids = explode('/', substr($coursecontext->path, 1));
     $allcontextids = array_merge($cmcontextids, $parentcontextids);
 
-    // Get all filter_active rows relating to all these contexts
+    // Get all filter_active rows relating to all these contexts.
     list ($sql, $params) = $DB->get_in_or_equal($allcontextids);
     $filteractives = $DB->get_records_select('filter_active', "contextid $sql", $params, 'sortorder');
 
-    // Get all filter_config only for the cm contexts
+    // Get all filter_config only for the cm contexts.
     list ($sql, $params) = $DB->get_in_or_equal($cmcontextids);
     $filterconfigs = $DB->get_records_select('filter_config', "contextid $sql", $params);
 
@@ -1044,20 +1041,20 @@ function filter_preload_activities(course_modinfo $modinfo) {
     // filter_get_active_in_context, this does seem to be correct.
 
     // Build course default active list. Initially this will be an array of
-    // filter name => active score (where an active score >0 means it's active)
+    // filter name => active score (where an active score >0 means it's active).
     $courseactive = array();
 
-    // Also build list of filter_active rows below course level, by contextid
+    // Also build list of filter_active rows below course level, by contextid.
     $remainingactives = array();
 
-    // Array lists filters that are banned at top level
+    // Array lists filters that are banned at top level.
     $banned = array();
 
-    // Add any active filters in parent contexts to the array
+    // Add any active filters in parent contexts to the array.
     foreach ($filteractives as $row) {
         $depth = array_search($row->contextid, $parentcontextids);
         if ($depth !== false) {
-            // Find entry
+            // Find entry.
             if (!array_key_exists($row->filter, $courseactive)) {
                 $courseactive[$row->filter] = 0;
             }
@@ -1072,7 +1069,7 @@ function filter_preload_activities(course_modinfo $modinfo) {
                 $banned[$row->filter] = true;
             }
         } else {
-            // Build list of other rows indexed by contextid
+            // Build list of other rows indexed by contextid.
             if (!array_key_exists($row->contextid, $remainingactives)) {
                 $remainingactives[$row->contextid] = array();
             }
@@ -1081,7 +1078,7 @@ function filter_preload_activities(course_modinfo $modinfo) {
     }
 
     // Chuck away the ones that aren't active.
-    foreach ($courseactive as $filter=>$score) {
+    foreach ($courseactive as $filter => $score) {
         if ($score <= 0) {
             unset($courseactive[$filter]);
         } else {
@@ -1095,7 +1092,7 @@ function filter_preload_activities(course_modinfo $modinfo) {
         $FILTERLIB_PRIVATE->active = array();
     }
     foreach ($cmcontextids as $contextid) {
-        // Copy course list
+        // Copy course list.
         $FILTERLIB_PRIVATE->active[$contextid] = $courseactive;
 
         // Are there any changes to the active list?
@@ -1242,16 +1239,15 @@ function filter_context_may_have_filter_settings($context) {
 /**
  * Process phrases intelligently found within a HTML text (such as adding links).
  *
- * @staticvar array $usedpharses
- * @param string $text             the text that we are filtering
- * @param array $link_array       an array of filterobjects
+ * @param string $text            the text that we are filtering
+ * @param array $linkarray       an array of filterobjects
  * @param array $ignoretagsopen   an array of opening tags that we should ignore while filtering
  * @param array $ignoretagsclose  an array of corresponding closing tags
  * @param bool $overridedefaultignore True to only use tags provided by arguments
  * @return string
- **/
-function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsclose=NULL,
-        $overridedefaultignore=false) {
+ */
+function filter_phrases($text, $linkarray, $ignoretagsopen = null, $ignoretagsclose = null,
+        $overridedefaultignore = false) {
 
     global $CFG;
 
@@ -1261,14 +1257,14 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
     $tags = array();        // To store all the simple tags to be ignored.
 
     if (!$overridedefaultignore) {
-        // A list of open/close tags that we should not replace within
-        // Extended to include <script>, <textarea>, <select> and <a> tags
-        // Regular expression allows tags with or without attributes
-        $filterignoretagsopen  = array('<head>' , '<nolink>' , '<span(\s[^>]*?)?class="nolink"(\s[^>]*?)?>',
+        // A list of open/close tags that we should not replace within.
+        // Extended to include <script>, <textarea>, <select> and <a> tags.
+        // Regular expression allows tags with or without attributes.
+        $filterignoretagsopen  = array('<head>', '<nolink>', '<span(\s[^>]*?)?class="nolink"(\s[^>]*?)?>',
                 '<script(\s[^>]*?)?>', '<textarea(\s[^>]*?)?>',
                 '<select(\s[^>]*?)?>', '<a(\s[^>]*?)?>');
         $filterignoretagsclose = array('</head>', '</nolink>', '</span>',
-                 '</script>', '</textarea>', '</select>','</a>');
+                 '</script>', '</textarea>', '</select>', '</a>');
     } else {
         // Set an empty default list.
         $filterignoretagsopen = array();
@@ -1285,29 +1281,26 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
         }
     }
 
-    // Invalid prefixes and suffixes for the fullmatch searches
+    // Invalid prefixes and suffixes for the fullmatch searches.
     // Every "word" character, but the underscore, is a invalid suffix or prefix.
     // (nice to use this because it includes national characters (accents...) as word characters.
     $filterinvalidprefixes = '([^\W_])';
     $filterinvalidsuffixes = '([^\W_])';
 
-    // Double up some magic chars to avoid "accidental matches"
-    $text = preg_replace('/([#*%])/','\1\1',$text);
+    // Double up some magic chars to avoid "accidental matches".
+    $text = preg_replace('/([#*%])/', '\1\1', $text);
 
+    // Remove everything enclosed by the ignore tags from $text.
+    filter_save_ignore_tags($text, $filterignoretagsopen, $filterignoretagsclose, $ignoretags);
 
-    //Remove everything enclosed by the ignore tags from $text
-    filter_save_ignore_tags($text,$filterignoretagsopen,$filterignoretagsclose,$ignoretags);
+    // Remove tags from $text.
+    filter_save_tags($text, $tags);
 
-    // Remove tags from $text
-    filter_save_tags($text,$tags);
+    // Time to cycle through each phrase to be linked.
+    foreach ($linkarray as $linkobject) {
 
-    // Time to cycle through each phrase to be linked
-    $size = sizeof($link_array);
-    for ($n=0; $n < $size; $n++) {
-        $linkobject =& $link_array[$n];
-
-        // Set some defaults if certain properties are missing
-        // Properties may be missing if the filterobject class has not been used to construct the object
+        // Set some defaults if certain properties are missing.
+        // Properties may be missing if the filterobject class has not been used to construct the object.
         if (empty($linkobject->phrase)) {
             continue;
         }
@@ -1318,8 +1311,8 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
             continue;
         }
 
-        // All this work has to be done ONLY it it hasn't been done before
-         if (!$linkobject->work_calculated) {
+        // All this work has to be done ONLY it it hasn't been done before.
+        if (!$linkobject->work_calculated) {
             if (!isset($linkobject->hreftagbegin) or !isset($linkobject->hreftagend)) {
                 $linkobject->work_hreftagbegin = '<span class="highlight"';
                 $linkobject->work_hreftagend   = '</span>';
@@ -1330,7 +1323,7 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
 
             // Double up chars to protect true duplicates
             // be cleared up before returning to the user.
-            $linkobject->work_hreftagbegin = preg_replace('/([#*%])/','\1\1',$linkobject->work_hreftagbegin);
+            $linkobject->work_hreftagbegin = preg_replace('/([#*%])/', '\1\1', $linkobject->work_hreftagbegin);
 
             if (empty($linkobject->casesensitive)) {
                 $linkobject->work_casesensitive = false;
@@ -1343,58 +1336,58 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
                 $linkobject->work_fullmatch = true;
             }
 
-            // Strip tags out of the phrase
+            // Strip tags out of the phrase.
             $linkobject->work_phrase = strip_tags($linkobject->phrase);
 
             // Double up chars that might cause a false match -- the duplicates will
             // be cleared up before returning to the user.
-            $linkobject->work_phrase = preg_replace('/([#*%])/','\1\1',$linkobject->work_phrase);
+            $linkobject->work_phrase = preg_replace('/([#*%])/', '\1\1', $linkobject->work_phrase);
 
-            // Set the replacement phrase properly
-            if ($linkobject->replacementphrase) {    //We have specified a replacement phrase
-                // Strip tags
+            // Set the replacement phrase properly.
+            if ($linkobject->replacementphrase) {    // We have specified a replacement phrase.
+                // Strip tags.
                 $linkobject->work_replacementphrase = strip_tags($linkobject->replacementphrase);
-            } else {                                 //The replacement is the original phrase as matched below
+            } else {                                 // The replacement is the original phrase as matched below.
                 $linkobject->work_replacementphrase = '$1';
             }
 
-            // Quote any regular expression characters and the delimiter in the work phrase to be searched
+            // Quote any regular expression characters and the delimiter in the work phrase to be searched.
             $linkobject->work_phrase = preg_quote($linkobject->work_phrase, '/');
 
-            // Work calculated
+            // Work calculated.
             $linkobject->work_calculated = true;
-
         }
 
-        // If $CFG->filtermatchoneperpage, avoid previously (request) linked phrases
+        // If $CFG->filtermatchoneperpage, avoid previously (request) linked phrases.
         if (!empty($CFG->filtermatchoneperpage)) {
-            if (!empty($usedphrases) && in_array($linkobject->work_phrase,$usedphrases)) {
+            if (!empty($usedphrases) && in_array($linkobject->work_phrase, $usedphrases)) {
                 continue;
             }
         }
 
-        // Regular expression modifiers
-        $modifiers = ($linkobject->work_casesensitive) ? 's' : 'isu'; // works in unicode mode!
+        // Regular expression modifiers.
+        $modifiers = ($linkobject->work_casesensitive) ? 's' : 'isu'; // Works in unicode mode!
 
         // Do we need to do a fullmatch?
-        // If yes then go through and remove any non full matching entries
+        // If yes then go through and remove any non full matching entries.
         if ($linkobject->work_fullmatch) {
             $notfullmatches = array();
-            $regexp = '/'.$filterinvalidprefixes.'('.$linkobject->work_phrase.')|('.$linkobject->work_phrase.')'.$filterinvalidsuffixes.'/'.$modifiers;
+            $regexp = '/'.$filterinvalidprefixes.'('.$linkobject->work_phrase.')|('.
+                    $linkobject->work_phrase.')'.$filterinvalidsuffixes.'/'.$modifiers;
 
-            preg_match_all($regexp,$text,$list_of_notfullmatches);
+            preg_match_all($regexp, $text, $listofnotfullmatches);
 
-            if ($list_of_notfullmatches) {
-                foreach (array_unique($list_of_notfullmatches[0]) as $key=>$value) {
+            if ($listofnotfullmatches) {
+                foreach (array_unique($listofnotfullmatches[0]) as $key => $value) {
                     $notfullmatches['<*'.$key.'*>'] = $value;
                 }
                 if (!empty($notfullmatches)) {
-                    $text = str_replace($notfullmatches,array_keys($notfullmatches),$text);
+                    $text = str_replace($notfullmatches, array_keys($notfullmatches), $text);
                 }
             }
         }
 
-        // Finally we do our highlighting
+        // Finally we do our highlighting.
         if (!empty($CFG->filtermatchonepertext) || !empty($CFG->filtermatchoneperpage)) {
             $resulttext = preg_replace('/('.$linkobject->work_phrase.')/'.$modifiers,
                                       $linkobject->work_hreftagbegin.
@@ -1407,46 +1400,41 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
                                       $linkobject->work_hreftagend, $text);
         }
 
-
-        // If the text has changed we have to look for links again
+        // If the text has changed we have to look for links again.
         if ($resulttext != $text) {
-            // Set $text to $resulttext
             $text = $resulttext;
-            // Remove everything enclosed by the ignore tags from $text
-            filter_save_ignore_tags($text,$filterignoretagsopen,$filterignoretagsclose,$ignoretags);
-            // Remove tags from $text
-            filter_save_tags($text,$tags);
-            // If $CFG->filtermatchoneperpage, save linked phrases to request
+            // Remove everything enclosed by the ignore tags from $text.
+            filter_save_ignore_tags($text, $filterignoretagsopen, $filterignoretagsclose, $ignoretags);
+            // Remove tags from $text.
+            filter_save_tags($text, $tags);
+            // If $CFG->filtermatchoneperpage, save linked phrases to request.
             if (!empty($CFG->filtermatchoneperpage)) {
                 $usedphrases[] = $linkobject->work_phrase;
             }
         }
 
-
-        // Replace the not full matches before cycling to next link object
+        // Replace the not full matches before cycling to next link object.
         if (!empty($notfullmatches)) {
-            $text = str_replace(array_keys($notfullmatches),$notfullmatches,$text);
+            $text = str_replace(array_keys($notfullmatches), $notfullmatches, $text);
             unset($notfullmatches);
         }
     }
 
-    // Rebuild the text with all the excluded areas
-
+    // Rebuild the text with all the excluded areas.
     if (!empty($tags)) {
         $text = str_replace(array_keys($tags), $tags, $text);
     }
 
     if (!empty($ignoretags)) {
         $ignoretags = array_reverse($ignoretags);     // Reversed so "progressive" str_replace() will solve some nesting problems.
-        $text = str_replace(array_keys($ignoretags),$ignoretags,$text);
+        $text = str_replace(array_keys($ignoretags), $ignoretags, $text);
     }
 
-    // Remove the protective doubleups
-    $text =  preg_replace('/([#*%])(\1)/','\1',$text);
+    // Remove the protective doubleups.
+    $text = preg_replace('/([#*%])(\1)/', '\1', $text);
 
-    // Add missing javascript for popus
+    // Add missing javascript for popus.
     $text = filter_add_javascript($text);
-
 
     return $text;
 }
@@ -1459,12 +1447,12 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
  */
 function filter_remove_duplicates($linkarray) {
 
-    $concepts  = array(); // keep a record of concepts as we cycle through
-    $lconcepts = array(); // a lower case version for case insensitive
+    $concepts  = array(); // Keep a record of concepts as we cycle through.
+    $lconcepts = array(); // A lower case version for case insensitive.
 
     $cleanlinks = array();
 
-    foreach ($linkarray as $key=>$filterobject) {
+    foreach ($linkarray as $key => $filterobject) {
         if ($filterobject->casesensitive) {
             $exists = in_array($filterobject->phrase, $concepts);
         } else {
@@ -1494,21 +1482,21 @@ function filter_remove_duplicates($linkarray) {
  **/
 function filter_save_ignore_tags(&$text, $filterignoretagsopen, $filterignoretagsclose, &$ignoretags) {
 
-    // Remove everything enclosed by the ignore tags from $text
-    foreach ($filterignoretagsopen as $ikey=>$opentag) {
+    // Remove everything enclosed by the ignore tags from $text.
+    foreach ($filterignoretagsopen as $ikey => $opentag) {
         $closetag = $filterignoretagsclose[$ikey];
-        // form regular expression
-        $opentag  = str_replace('/','\/',$opentag); // delimit forward slashes
-        $closetag = str_replace('/','\/',$closetag); // delimit forward slashes
+        // Form regular expression.
+        $opentag  = str_replace('/', '\/', $opentag); // Delimit forward slashes.
+        $closetag = str_replace('/', '\/', $closetag); // Delimit forward slashes.
         $pregexp = '/'.$opentag.'(.*?)'.$closetag.'/is';
 
-        preg_match_all($pregexp, $text, $list_of_ignores);
-        foreach (array_unique($list_of_ignores[0]) as $key=>$value) {
-            $prefix = (string)(count($ignoretags) + 1);
+        preg_match_all($pregexp, $text, $listofignores);
+        foreach (array_unique($listofignores[0]) as $key => $value) {
+            $prefix = (string) (count($ignoretags) + 1);
             $ignoretags['<#'.$prefix.TEXTFILTER_EXCL_SEPARATOR.$key.'#>'] = $value;
         }
         if (!empty($ignoretags)) {
-            $text = str_replace($ignoretags,array_keys($ignoretags),$text);
+            $text = str_replace($ignoretags, array_keys($ignoretags), $text);
         }
     }
 }
@@ -1523,13 +1511,13 @@ function filter_save_ignore_tags(&$text, $filterignoretagsopen, $filterignoretag
  **/
 function filter_save_tags(&$text, &$tags) {
 
-    preg_match_all('/<([^#%*].*?)>/is',$text,$list_of_newtags);
-    foreach (array_unique($list_of_newtags[0]) as $ntkey=>$value) {
+    preg_match_all('/<([^#%*].*?)>/is', $text, $listofnewtags);
+    foreach (array_unique($listofnewtags[0]) as $ntkey => $value) {
         $prefix = (string)(count($tags) + 1);
         $tags['<%'.$prefix.TEXTFILTER_EXCL_SEPARATOR.$ntkey.'%>'] = $value;
     }
     if (!empty($tags)) {
-        $text = str_replace($tags,array_keys($tags),$text);
+        $text = str_replace($tags, array_keys($tags), $text);
     }
 }
 
@@ -1542,13 +1530,13 @@ function filter_save_tags(&$text, &$tags) {
 function filter_add_javascript($text) {
     global $CFG;
 
-    if (stripos($text, '</html>') === FALSE) {
+    if (stripos($text, '</html>') === false) {
         return $text; // This is not a html file.
     }
-    if (strpos($text, 'onclick="return openpopup') === FALSE) {
+    if (strpos($text, 'onclick="return openpopup') === false) {
         return $text; // No popup - no need to add javascript.
     }
-    $js ="
+    $js = "
     <script type=\"text/javascript\">
     <!--
         function openpopup(url,name,options,fullscreen) {
@@ -1563,7 +1551,7 @@ function filter_add_javascript($text) {
         }
     // -->
     </script>";
-    if (stripos($text, '</head>') !== FALSE) {
+    if (stripos($text, '</head>') !== false) {
         // Try to add it into the head element.
         $text = str_ireplace('</head>', $js.'</head>', $text);
         return $text;
