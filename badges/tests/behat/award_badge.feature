@@ -212,8 +212,7 @@ Feature: Award badges
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I set the field "type" to "Course completion"
-    And I set the following fields to these values:
-      | grade_2 | 0 |
+    And I set the field with xpath "//fieldset/input[1]" to "0"
     And I press "Save"
     And I press "Enable access"
     When I press "Continue"
