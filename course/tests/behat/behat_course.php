@@ -473,7 +473,9 @@ class behat_course extends behat_base {
 
             // The activity should not be dimmed.
             try {
-                $this->find('css', 'a.dimmed', false, $activitynode);
+                $xpath = "/descendant-or-self::a[contains(concat(' ', normalize-space(@class), ' '), ' dimmed ')] | ".
+                         "/descendant-or-self::div[contains(concat(' ', normalize-space(@class), ' '), ' dimmed_text ')]";
+                $this->find('xpath', $xpath, false, $activitynode);
                 throw new ExpectationException('"' . $activityname . '" is hidden', $this->getSession());
             } catch (ElementNotFoundException $e) {
                 // All ok.
@@ -501,7 +503,9 @@ class behat_course extends behat_base {
 
             // Should be hidden.
             $exception = new ExpectationException('"' . $activityname . '" is not dimmed', $this->getSession());
-            $this->find('css', 'a.dimmed', $exception, $activitynode);
+            $xpath = "/descendant-or-self::a[contains(concat(' ', normalize-space(@class), ' '), ' dimmed ')] | ".
+                     "/descendant-or-self::div[contains(concat(' ', normalize-space(@class), ' '), ' dimmed_text ')]";
+            $this->find('xpath', $xpath, $exception, $activitynode);
 
             // Also 'Show' icon.
             $noshowexception = new ExpectationException('"' . $activityname . '" don\'t have a "' . get_string('show') . '" icon', $this->getSession());
