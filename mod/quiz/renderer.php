@@ -335,11 +335,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
      */
     protected function render_quiz_nav_question_button(quiz_nav_question_button $button) {
         $classes = array('qnbutton', $button->stateclass, $button->navmethod);
-        $attributes = array();
+        $extrainfo = array();
 
         if ($button->currentpage) {
             $classes[] = 'thispage';
-            $attributes[] = get_string('onthispage', 'quiz');
+            $extrainfo[] = get_string('onthispage', 'quiz');
         }
 
         // Flagged?
@@ -349,7 +349,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         } else {
             $flaglabel = '';
         }
-        $attributes[] = html_writer::tag('span', $flaglabel, array('class' => 'flagstate'));
+        $extrainfo[] = html_writer::tag('span', $flaglabel, array('class' => 'flagstate'));
 
         if (is_numeric($button->number)) {
             $qnostring = 'questionnonav';
@@ -359,12 +359,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         $a = new stdClass();
         $a->number = $button->number;
-        $a->attributes = implode(' ', $attributes);
+        $a->attributes = implode(' ', $extrainfo);
         $tagcontents = html_writer::tag('span', '', array('class' => 'thispageholder')) .
                         html_writer::tag('span', '', array('class' => 'trafficlight')) .
                         get_string($qnostring, 'quiz', $a);
         $tagattributes = array('class' => implode(' ', $classes), 'id' => $button->id,
-                                  'title' => $button->statestring);
+                                  'title' => $button->statestring, 'data-quiz-page' => $button->page);
 
         if ($button->url) {
             return html_writer::link($button->url, $tagcontents, $tagattributes);
