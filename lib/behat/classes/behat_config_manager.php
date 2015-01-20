@@ -221,7 +221,8 @@ class behat_config_manager {
                     ),
                     'Moodle\BehatExtension\Extension' => array(
                         'formatters' => array(
-                            'moodle_progress' => 'Moodle\BehatExtension\Formatter\MoodleProgressFormatter'
+                            'moodle_progress' => 'Moodle\BehatExtension\Formatter\MoodleProgressFormatter',
+                            'moodle_list' => 'Moodle\BehatExtension\Formatter\MoodleListFormatter'
                         ),
                         'features' => $features,
                         'steps_definitions' => $stepsdefinitions
