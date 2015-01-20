@@ -196,8 +196,8 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
                 "retry, timeseen")) {
         echo $OUTPUT->box_start();
         $table = new html_table();
-        $table->head = array (get_string("attempt", "lesson"),  get_string("numberofpagesviewed", "lesson"),
-            get_string("numberofcorrectanswers", "lesson"), get_string("time"));
+        $table->head = array (get_string("attemptheader", "lesson"),  get_string("numberofpagesviewedheader", "lesson"),
+            get_string("numberofcorrectanswersheader", "lesson"), get_string("time"));
         $table->width = "100%";
         $table->align = array ("center", "center", "center", "center");
         $table->size = array ("*", "*", "*", "*");
