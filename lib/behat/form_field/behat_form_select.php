@@ -278,7 +278,7 @@ class behat_form_select extends behat_form_field {
      */
     protected function get_selected_options($returntexts = true) {
 
-        $method = 'getText';
+        $method = 'getHtml';
         if ($returntexts === false) {
             $method = 'getValue';
         }
