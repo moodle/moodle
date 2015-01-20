@@ -53,9 +53,10 @@ class behat_config_manager {
      *
      * @param  string $component Restricts the obtained steps definitions to the specified component
      * @param  string $testsrunner If the config file will be used to run tests
+     * @param  string $tags features files including tags.
      * @return void
      */
-    public static function update_config_file($component = '', $testsrunner = true) {
+    public static function update_config_file($component = '', $testsrunner = true, $tags = '') {
         global $CFG;
 
         // Behat must have a separate behat.yml to have access to the whole set of features and steps definitions.
@@ -108,13 +109,47 @@ class behat_config_manager {
 
         // Behat config file specifing the main context class,
         // the required Behat extensions and Moodle test wwwroot.
-        $contents = self::get_config_file_contents($features, $stepsdefinitions);
+        $contents = self::get_config_file_contents(self::get_fetaures_with_tags($features, $tags), $stepsdefinitions);
 
         // Stores the file.
         if (!file_put_contents($configfilepath, $contents)) {
             behat_error(BEHAT_EXITCODE_PERMISSIONS, 'File ' . $configfilepath . ' can not be created');
         }
 
+    }
+
+    /**
+     * Search feature files for set of tags.
+     *
+     * @param array $features set of feature files.
+     * @param string $tags list of tags (currently support && only.)
+     * @return array filtered list of feature files with tags.
+     */
+    public static function get_fetaures_with_tags($features, $tags) {
+        if (empty($tags)) {
+            return $features;
+        }
+        $newfeaturelist = array();
+        $tagstosearch = explode('&&', $tags);
+        foreach ($features as $featurefile) {
+            $contents = file_get_contents($featurefile);
+            $includefeature = true;
+            foreach ($tagstosearch as $tag) {
+                // If negitive tag, then ensure it don't exist.
+                if (strpos($tag, '~') !== false) {
+                    $tag = substr($tag, 1);
+                    if ($contents && strpos($contents, $tag) !== false) {
+                        $includefeature = false;
+                    }
+                } else if ($contents && strpos($contents, $tag) === false) {
+                    $includefeature = false;
+                }
+            }
+            if ($includefeature) {
+                $newfeaturelist[] = $featurefile;
+            }
+        }
+        return $newfeaturelist;
     }
 
     /**
@@ -172,12 +207,18 @@ class behat_config_manager {
     /**
      * Returns the behat config file path used by the behat cli command.
      *
+     * @param int $runprocess Runprocess.
      * @return string
      */
-    public static function get_behat_cli_config_filepath() {
+    public static function get_behat_cli_config_filepath($runprocess = 0) {
         global $CFG;
 
-        $command = $CFG->behat_dataroot . DIRECTORY_SEPARATOR . 'behat' . DIRECTORY_SEPARATOR . 'behat.yml';
+        if ($runprocess) {
+            $command = $CFG->behat_dataroot . $runprocess;
+        } else {
+            $command = $CFG->behat_dataroot;
+        }
+        $command .= DIRECTORY_SEPARATOR . 'behat' . DIRECTORY_SEPARATOR . 'behat.yml';
 
         // Cygwin uses linux-style directory separators.
         if (testing_is_cygwin()) {
@@ -185,6 +226,92 @@ class behat_config_manager {
         }
 
         return $command;
+    }
+
+    /**
+     * Returns the path to the parallel run file which specifies if parallel test environment is enabled
+     * and how many parallel runs to execute.
+     *
+     * @param int $runprocess run process for which behat dir is returned.
+     * @return string
+     */
+    public final static function get_parallel_test_file_path($runprocess = 0) {
+        return behat_command::get_behat_dir($runprocess) . '/parallel_environment_enabled.txt';
+    }
+
+    /**
+     * Returns number of parallel runs for which site is initialised.
+     *
+     * @param int $runprocess run process for which behat dir is returned.
+     * @return int
+     */
+    public final static function get_parallel_test_runs($runprocess = 0) {
+        $parallelrun = 0;
+        // Get parallel run info from first file and last file.
+        $parallelrunconfigfile = self::get_parallel_test_file_path($runprocess);
+        if (file_exists($parallelrunconfigfile)) {
+            if ($parallel = file_get_contents($parallelrunconfigfile)) {
+                $parallelrun = (int) $parallel;
+            }
+        }
+
+        return $parallelrun;
+    }
+
+    /**
+     * Drops parallel site links.
+     *
+     * @return bool true on success else false.
+     */
+    public final static function drop_parallel_site_links() {
+        global $CFG;
+
+        // Get parallel test runs from first run.
+        $parallelrun = self::get_parallel_test_runs(1);
+
+        if (empty($parallelrun)) {
+            return false;
+        }
+
+        // If parallel run then remove links and original file.
+        clearstatcache();
+        for ($i = 1; $i <= $parallelrun; $i++) {
+            $link = $CFG->dirroot . '/' . BEHAT_PARALLEL_SITE_WWW_SUFFIX . $i;
+            if (file_exists($link) && is_link($link)) {
+                @unlink($link);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Create parallel site links.
+     *
+     * @return bool true for sucess, else false.
+     */
+    public final static function create_parallel_site_links() {
+        global $CFG;
+
+        // Get parallel test runs from first run.
+        $parallelrun = self::get_parallel_test_runs(1);
+
+        // Create site symlink if necessary.
+        clearstatcache();
+        for ($i = 1; $i <= $parallelrun; $i++) {
+            $link = $CFG->dirroot.'/'.BEHAT_PARALLEL_SITE_WWW_SUFFIX.$i;
+            clearstatcache();
+            if (file_exists($link)) {
+                if (!is_link($link) || !is_dir($link)) {
+                    echo "File exists at link location ($link) but is not a link or directory!\n";
+                    return false;
+                }
+            } else if (!symlink($CFG->dirroot, $link)) {
+                // Try create link in case it's not already present.
+                echo "Unable to create behat site symlink ($link)\n";
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -201,27 +328,26 @@ class behat_config_manager {
         // We require here when we are sure behat dependencies are available.
         require_once($CFG->dirroot . '/vendor/autoload.php');
 
-        $instance = 1;
-        $parallel = 0;
-        foreach ($_SERVER['argv'] as $arg) {
-            if (strpos($arg, '--suffix=') === 0) {
-                $instance = intval(substr($arg, strlen('--suffix=')));
-            }
-            if (empty($parallel)) {
-                $parallel = preg_filter('#--parallel=(\d+)#', '$1', $arg);
-            }
-        }
+        $selenium2wdhost = array('wd_host' => 'http://localhost:4444/wd/hub');
 
-        // Attempt to split into weighted buckets using timing information, if available.
-        if ($alloc = self::profile_guided_allocate($features, max(1, $parallel), $instance)) {
-            $features = $alloc;
-        } else {
-            // Divide the list of feature files amongst the parallel runners.
-            srand(crc32(floor(time() / 3600 / 24).var_export($features,true)));
-            shuffle($features);
-            // Pull out the features for just this worker.
-            $features = array_chunk($features, ceil(count($features) / max(1, $parallel)));
-            $features = $features[$instance-1];
+        $parallelruns = self::get_parallel_test_runs();
+        // If parallel run, then only divide features.
+        if (!empty($CFG->behatrunprocess) && !empty($parallelruns)) {
+            // Attempt to split into weighted buckets using timing information, if available.
+            if ($alloc = self::profile_guided_allocate($features, max(1, $parallelruns), $CFG->behatrunprocess)) {
+                $features = $alloc;
+            } else {
+                // Divide the list of feature files amongst the parallel runners.
+                srand(crc32(floor(time() / 3600 / 24) . var_export($features, true)));
+                shuffle($features);
+                // Pull out the features for just this worker.
+                $features = array_chunk($features, ceil(count($features) / max(1, $parallelruns)));
+                $features = $features[$CFG->behatrunprocess - 1];
+            }
+            // Set proper selenium2 wd_host if defined.
+            if (!empty($CFG->behat_parallel_run[$CFG->behatrunprocess - 1]['wd_host'])) {
+                $selenium2wdhost = array('wd_host' => $CFG->behat_parallel_run[$CFG->behatrunprocess - 1]['wd_host']);
+            }
         }
 
         // It is possible that it has no value as we don't require a full behat setup to list the step definitions.
@@ -230,6 +356,7 @@ class behat_config_manager {
         }
 
         $basedir = $CFG->dirroot . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'behat';
+
         $config = array(
             'default' => array(
                 'paths' => array(
@@ -243,7 +370,7 @@ class behat_config_manager {
                     'Behat\MinkExtension\Extension' => array(
                         'base_url' => $CFG->behat_wwwroot,
                         'goutte' => null,
-                        'selenium2' => null
+                        'selenium2' => $selenium2wdhost
                     ),
                     'Moodle\BehatExtension\Extension' => array(
                         'formatters' => array(
@@ -273,7 +400,7 @@ class behat_config_manager {
      * Simply add each one to lightest buckets until all files allocated.
      * PGA = Profile Guided Allocation. I made it up just now.
      * CAUTION: workers must agree on allocation, do not be random anywhere!
-     * 
+     *
      * @param array $features Behat feature files array
      * @param int $nbuckets Number of buckets to divide into
      * @param int $instance Index number of this instance
@@ -296,7 +423,7 @@ class behat_config_manager {
         $buckets = array_fill(0, $nbuckets, array());
         $totalweight = 0;
 
-        // Re-key the features list to match pga data.
+        // Re-key the features list to match timing data.
         foreach ($features as $k => $file) {
             $key = str_replace($realroot, '', $file);
             $features[$key] = $file;
@@ -316,9 +443,9 @@ class behat_config_manager {
         // Finally, add each feature one by one to the lightest bucket.
         foreach ($pgaorder as $key => $weight) {
             $file = $features[$key];
-            $light_bucket = array_search(min($weights), $weights);
-            $weights[$light_bucket] += $weight;
-            $buckets[$light_bucket][] = $file;
+            $lightbucket = array_search(min($weights), $weights);
+            $weights[$lightbucket] += $weight;
+            $buckets[$lightbucket][] = $file;
             $totalweight += $weight;
         }
 
@@ -330,7 +457,7 @@ class behat_config_manager {
         }
 
         // Return the features for this worker.
-        return $buckets[$instance-1];
+        return $buckets[$instance - 1];
     }
 
     /**

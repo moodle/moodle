@@ -724,6 +724,21 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->behat_faildump_path = '/my/path/to/save/failure/dumps';
 //
+// You can specify db, selenium wd_host etc. for behat parallel run by setting following variable.
+// Example:
+//   $CFG->behat_parallel_run = array (
+//       array (
+//           'dbtype' => 'mysqli',
+//           'dblibrary' => 'native',
+//           'dbhost' => 'localhost',
+//           'dbname' => 'moodletest',
+//           'dbuser' => 'moodle',
+//           'dbpass' => 'moodle',
+//           'behat_prefix' => 'mdl_',
+//           'wd_host' => 'http://127.0.0.1:4444/wd/hub'
+//       ),
+//   );
+//
 //=========================================================================
 // 12. DEVELOPER DATA GENERATOR
 //=========================================================================

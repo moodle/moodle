@@ -42,6 +42,11 @@ define('BEHAT_EXITCODE_COMPOSER', 255);
 define('BEHAT_EXITCODE_INSTALLED', 256);
 
 /**
+ * The behat test site fullname and shortname.
+ */
+define('BEHAT_PARALLEL_SITE_WWW_SUFFIX', "behatrun");
+
+/**
  * Exits with an error code
  *
  * @param  mixed $errorcode
@@ -224,6 +229,7 @@ function behat_check_config_vars() {
         behat_error(BEHAT_EXITCODE_CONFIG,
             'Define $CFG->behat_dataroot in config.php');
     }
+    clearstatcache();
     if (!file_exists($CFG->behat_dataroot)) {
         $permissions = isset($CFG->directorypermissions) ? $CFG->directorypermissions : 02777;
         umask(0);
@@ -273,30 +279,53 @@ function behat_is_test_site() {
 }
 
 /**
- * Add behat suffix to $CFG vars for parallel testing.
+ * Fix variables for parallel behat testing.
+ * - behat_wwwroot = behat_wwwroot{behatrunprocess}
+ * - behat_dataroot = behat_dataroot{behatrunprocess}
+ * - behat_prefix = behat_prefix.{behatrunprocess}_ (For oracle it will be firstletter of prefix and behatrunprocess)
+ *
+ * @param string $behatrunprocess process index for which variables will be set.
  **/
-function behat_add_suffix_to_vars($suffix = '') {
+function behat_update_vars_for_process($behatrunprocess = '') {
     global $CFG;
 
-    if (empty($suffix)) {
-        if (!empty($CFG->behat_suffix)) {
-            $suffix = $CFG->behat_suffix;
+    $allowedconfigoverride = array('dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass');
+    $behatrunprocess = $CFG->behatrunprocess;
 
-        } else if (defined('BEHAT_SUFFIX') && BEHAT_SUFFIX) {
-            $suffix = BEHAT_SUFFIX;
+    if ($behatrunprocess) {
+        // Set www root for run process.
+        if (isset($CFG->behat_wwwroot) && !preg_match("#/" . BEHAT_PARALLEL_SITE_WWW_SUFFIX . $behatrunprocess . "\$#",
+                $CFG->behat_wwwroot)) {
+            $CFG->behat_wwwroot .= "/" . BEHAT_PARALLEL_SITE_WWW_SUFFIX . $behatrunprocess;
         }
-    }
 
-    $CFG->behat_suffix = $suffix;
+        // Set behat_dataroot.
+        if (!preg_match("#" . $behatrunprocess . "\$#", $CFG->behat_dataroot)) {
+            $CFG->behat_dataroot .= $behatrunprocess;
+        }
 
-    if ($suffix) {
-        if (isset($CFG->behat_wwwroot) && !preg_match("#/behat$suffix\$#", $CFG->behat_wwwroot)) {
-            $CFG->behat_wwwroot .= "/behat{$suffix}";
+        // Set behat_prefix for db, just suffix run process number, to avoid max length exceed.
+        // For oracle only 2 letter prefix is possible.
+        // NOTE: This will not work for parallel process > 9.
+        if ($CFG->dbtype === 'oci') {
+            $CFG->behat_prefix = substr($CFG->behat_prefix, 0, 1);
+            $CFG->behat_prefix .= "{$behatrunprocess}";
+        } else {
+            $CFG->behat_prefix .= "{$behatrunprocess}_";
         }
-        if (!preg_match("#/behat{$suffix}\$#", $CFG->behat_dataroot)) {
-            $CFG->behat_dataroot = dirname($CFG->behat_dataroot)."/behat{$suffix}";
+
+        if (!empty($CFG->behat_parallel_run[$behatrunprocess - 1])) {
+            // Override allowed config vars.
+            foreach ($allowedconfigoverride as $config) {
+                if (isset($CFG->behat_parallel_run[$behatrunprocess - 1][$config])) {
+                    $CFG->$config = $CFG->behat_parallel_run[$behatrunprocess - 1][$config];
+                }
+            }
+            // Override behat prefix, if specified.
+            if (isset($CFG->behat_parallel_run[$behatrunprocess - 1]['behat_prefix'])) {
+                $CFG->behat_prefix = $CFG->behat_parallel_run[$behatrunprocess - 1]['behat_prefix'];
+            }
         }
-        $CFG->behat_prefix = "behat{$suffix}_";
     }
 }
 

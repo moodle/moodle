@@ -78,34 +78,46 @@ if (defined('BEHAT_SITE_RUNNING')) {
 
 } else if (!empty($CFG->behat_wwwroot) or !empty($CFG->behat_dataroot) or !empty($CFG->behat_prefix)) {
     global $argv;
-    $suffix = '';
+    $behatrunprocess = false;
 
-    if (defined('BEHAT_SUFFIX') && BEHAT_SUFFIX) {
-        $suffix = BEHAT_SUFFIX;
+    require_once(__DIR__ . '/../lib/behat/lib.php');
 
+    // Get behat run process, if set.
+    if (defined('BEHAT_CURRENT_RUN') && BEHAT_CURRENT_RUN) {
+        $behatrunprocess = BEHAT_CURRENT_RUN;
     } else if (!empty($_SERVER['REMOTE_ADDR'])) {
-        if (preg_match('#/behat(.+?)/#', $_SERVER['REQUEST_URI'])) {
-            $afterpath = str_replace(realpath($CFG->dirroot).'/', '', realpath($_SERVER['SCRIPT_FILENAME']));
-            if (!$suffix = preg_filter("#.*/behat(.+?)/$afterpath#", '$1', $_SERVER['SCRIPT_FILENAME'])) {
-                throw new coding_exception("Unable to determine behat suffix [afterpath=$afterpath, scriptfilename={$_SERVER['SCRIPT_FILENAME']}]!");
+        if (preg_match('#/' . BEHAT_PARALLEL_SITE_WWW_SUFFIX . '(.+?)/#', $_SERVER['REQUEST_URI'])) {
+            $dirrootrealpath = str_replace("\\", "/", realpath($CFG->dirroot));
+            $serverrealpath = str_replace("\\", "/", realpath($_SERVER['SCRIPT_FILENAME']));
+            $afterpath = str_replace($dirrootrealpath.'/', '', $serverrealpath);
+            if (!$behatrunprocess = preg_filter("#.*/" . BEHAT_PARALLEL_SITE_WWW_SUFFIX . "(.+?)/$afterpath#", '$1',
+                    $_SERVER['SCRIPT_FILENAME'])) {
+                throw new Exception("Unable to determine behat process [afterpath=" . $afterpath .
+                        ", scriptfilename=" . $_SERVER['SCRIPT_FILENAME'] . "]!");
             }
         }
-
     } else if (defined('BEHAT_TEST') || defined('BEHAT_UTIL')) {
-        if ($match = preg_filter('#--suffix=(.+)#', '$1', $argv)) {
-            $suffix = reset($match);
+        if ($match = preg_filter('#--run=(.+)#', '$1', $argv)) {
+            $behatrunprocess = reset($match);
         }
+
         if ($k = array_search('--config', $argv)) {
-            $behatconfig = $argv[$k+1];
-            $suffix = preg_filter("#^{$CFG->behat_dataroot}(.+?)/behat/behat\.yml#", '$1', $behatconfig);
+            $behatconfig = str_replace("\\", "/", $argv[$k + 1]);
+            $behatdataroot = str_replace("\\", "/", $CFG->behat_dataroot);
+            $behatrunprocess = preg_filter("#^{$behatdataroot}" .
+                    "(.+?)[/|\\\]behat[/|\\\]behat\.yml#", '$1', $behatconfig);
         }
     }
 
+    $CFG->behatrunprocess = $behatrunprocess;
+
     // The behat is configured on this server, we need to find out if this is the behat test
     // site based on the URL used for access.
-    require_once(__DIR__ . '/../lib/behat/lib.php');
-    behat_add_suffix_to_vars($suffix);
+    behat_update_vars_for_process($behatrunprocess);
+
     if (behat_is_test_site()) {
+        clearstatcache();
+
         // Checking the integrity of the provided $CFG->behat_* vars and the
         // selected wwwroot to prevent conflicts with production and phpunit environments.
         behat_check_config_vars();
@@ -117,7 +129,7 @@ if (defined('BEHAT_SITE_RUNNING')) {
                     if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store' or is_numeric($file)) {
                         continue;
                     }
-                    behat_error(BEHAT_EXITCODE_CONFIG, '$CFG->behat_dataroot directory is not empty, ensure this is the directory where you want to install behat test dataroot');
+                    behat_error(BEHAT_EXITCODE_CONFIG, "$CFG->behat_dataroot directory is not empty, ensure this is the directory where you want to install behat test dataroot");
                 }
                 closedir($dh);
                 unset($dh);

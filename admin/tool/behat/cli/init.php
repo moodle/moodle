@@ -40,92 +40,109 @@ define('CACHE_DISABLE_ALL', true);
 require_once(__DIR__ . '/../../../../lib/clilib.php');
 require_once(__DIR__ . '/../../../../lib/behat/lib.php');
 
-
 list($options, $unrecognized) = cli_get_params(
     array(
         'parallel' => 0,
-        'suffix' => '',
+        'maxruns'  => false,
+        'help' => false,
+    ),
+    array(
+        'j' => 'parallel',
+        'm' => 'maxruns',
+        'h' => 'help',
     )
 );
 
+// Checking run.php CLI script usage.
+$help = "
+Behat utilities to initialise behat tests
 
-$nproc = (int) preg_filter('#.*(\d+).*#', '$1', $options['parallel']);
-$suffixarg = $options['suffix'] ? "--suffix={$options['suffix']} --parallel=$nproc" : '';
+Options:
+-j, --parallel Number of parallel behat run to initialise
+-m, --maxruns  Max parallel processes to be executed at one time.
 
+-h, --help     Print out this help
 
-if ($nproc && !$suffixarg) {
-    foreach ((array)glob(__DIR__."/../../../../behat*") as $dir) {
-        if (file_exists($dir) && is_link($dir) && preg_match('#/behat\d+$#', $dir)) {
-            unlink($dir);
-        }
-    }
-    $cmds = array();
-    for ($i = 1; $i <= $nproc; $i++) {
-        $cmds[] = "php ".__FILE__." --suffix=$i --parallel=$nproc 2>&1";
-    }
-    // This is intensive compared to behat itself so halve the parallelism.
-    foreach (array_chunk($cmds, max(1, floor($nproc/2)), true) as $chunk) {
-        ns_parallel_popen($chunk, true);
-    }
+Example from Moodle root directory:
+\$ php admin/tool/behat/cli/init.php --parallel=2
+
+More info in http://docs.moodle.org/dev/Acceptance_testing#Running_tests
+";
+
+if (!empty($options['help'])) {
+    echo $help;
     exit(0);
 }
 
+// Check which util file to call.
+$utilfile = 'util.php';
+$paralleloption = "";
+// If parallel run then use utilparallel.
+if ($options['parallel']) {
+    $utilfile = 'utilparallel.php';
+    $paralleloption = " --parallel=".$options['parallel'];
+}
 
 // Changing the cwd to admin/tool/behat/cli.
+$cwd = getcwd();
 chdir(__DIR__);
 $output = null;
-exec("php util.php --diag $suffixarg", $output, $code);
+
+exec("php $utilfile --diag $paralleloption", $output, $code);
+
+// Check if composer needs to be updated.
+if (($code == BEHAT_EXITCODE_INSTALL) || $code == BEHAT_EXITCODE_REINSTALL || $code == BEHAT_EXITCODE_COMPOSER) {
+    testing_update_composer_dependencies();
+}
+
 if ($code == 0) {
     echo "Behat test environment already installed\n";
 
 } else if ($code == BEHAT_EXITCODE_INSTALL) {
-
-    testing_update_composer_dependencies();
-
     // Behat and dependencies are installed and we need to install the test site.
     chdir(__DIR__);
-    passthru("php util.php --install $suffixarg", $code);
+    passthru("php $utilfile --install $paralleloption", $code);
     if ($code != 0) {
+        chdir($cwd);
         exit($code);
     }
 
 } else if ($code == BEHAT_EXITCODE_REINSTALL) {
-
-    testing_update_composer_dependencies();
-
     // Test site data is outdated.
     chdir(__DIR__);
-    passthru("php util.php --drop $suffixarg", $code);
+    passthru("php $utilfile --drop $paralleloption", $code);
     if ($code != 0) {
+        chdir($cwd);
         exit($code);
     }
 
-    passthru("php util.php --install $suffixarg", $code);
+    passthru("php $utilfile --install $paralleloption", $code);
     if ($code != 0) {
+        chdir($cwd);
         exit($code);
     }
 
 } else if ($code == BEHAT_EXITCODE_COMPOSER) {
     // Missing Behat dependencies.
-
-    testing_update_composer_dependencies();
-
     // Returning to admin/tool/behat/cli.
     chdir(__DIR__);
-    passthru("php util.php --install $suffixarg", $code);
+    passthru("php $utilfile --install $paralleloption", $code);
     if ($code != 0) {
+        chdir($cwd);
         exit($code);
     }
 
 } else {
     // Generic error, we just output it.
     echo implode("\n", $output)."\n";
+    chdir($cwd);
     exit($code);
 }
 
 // Enable editing mode according to config.php vars.
-passthru("php util.php --enable $suffixarg", $code);
+passthru("php $utilfile --enable $paralleloption", $code);
 if ($code != 0) {
+    chdir($cwd);
     exit($code);
 }
 

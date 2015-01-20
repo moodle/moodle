@@ -176,8 +176,15 @@ function cli_error($text, $errorcode=1) {
     die($errorcode);
 }
 
-
-function ns_proc_open($cmd, $die = false) {
+/**
+ * Executes cli command and return handle.
+ *
+ * @param string $cmd command to be executed.
+ * @param bool $die exit if command is not executed.
+ * @return array list of handles and pipe.
+ * @throws Exception if worker is not started,
+ */
+function cli_execute($cmd, $die = false) {
     $desc = array(
         0 => array('pipe', 'r'),
         1 => array('pipe', 'w'),
@@ -189,20 +196,80 @@ function ns_proc_open($cmd, $die = false) {
     return array($handle, $pipes);
 }
 
+/**
+ * Execute commands in parallel.
+ *
+ * @param array $cmds list of commands to be executed.
+ * @param string $cwd aabsolute path of working directory.
+ * @param bool $returnonfirstfail Will stop all process and return.
+ *
+ * @return bool status of all process.
+ */
+function cli_execute_parallel($cmds, $cwd = NULL, $returnonfirstfail = false, $addprefix = true) {
+    require_once(__DIR__ . '/classes/process_manager.php');
 
-function ns_parallel_popen($cmds, $doexit = false) {
+    $overallstatus = false;
+    $processmanager = new process_manager();
+
+    // Create child process.
+    foreach ($cmds as $name => $cmd) {
+        if (!$processmanager->create($name, $cmd, $cwd) && $returnonfirstfail) {
+            throw new Exception('Error starting worker');
+        }
+    }
+    while (0 < count($processmanager)) {
+        usleep(10000);
+        list($status, $stdout, $stderr) = $processmanager->listen();
+
+        if (!empty($status)) {
+            foreach ($status as $name => $value) {
+                // Something went wrong.
+                if ((0 > $value)) {
+                    throw new \RuntimeException();
+                }
+                $overallstatus = $overallstatus || (bool)$value;
+                // Add prefix to process.
+                $prefix = "";
+                if ($addprefix && ($value === 0)) {
+                    $prefix = '[' . $name . '] ';
+                }
+                if (!empty($stdout[$name]) && trim($stdout[$name])) {
+                    echo $prefix . $stdout[$name];
+                }
+                if (!empty($stderr[$name]) && trim($stderr[$name])) {
+                    echo $prefix . $stderr[$name];
+                }
+            }
+
+            // Return if fail found.
+            if ($returnonfirstfail && (bool)$value) {
+                unset($processmanager);
+                $processmanager = null;
+                echo PHP_EOL;
+                return $value;
+            }
+        }
+    }
+
+    echo PHP_EOL;
+    return $overallstatus;
+}
+
+/**
+ * Execute commands in sequence and return status code for each process.
+ *
+ * @param array $cmds commands to execute.
+ * @param bool $returnonfirstfail if true then returns on any fail.
+ * @return array status codes for each process.
+ */
+function cli_execute_sequential($cmds, $returnonfirstfail = false) {
     $procs = array();
     foreach ($cmds as $k => $cmd) {
-        $procs[] = popen($cmd, 'r');
+        $procs[$k] = popen($cmd, 'r');
+        passthru($cmd, $procs[$k]);
+        if (($procs[$k] != 0) && $returnonfirstfail) {
+            return $procs;
+        }
     }
-    $status = false;
-    foreach ($procs as $p) {
-        if (!$p) continue;
-        while ($out = fgets($p)) echo $out;
-        $status |= (bool) pclose($p);
-    }
-    if ($doexit && $status) {
-        exit($status);
-    }
-    return $status;
+    return $procs;
 }

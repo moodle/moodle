@@ -34,18 +34,18 @@ if (isset($_SERVER['REMOTE_ADDR'])) {
 require_once(__DIR__ . '/../../../../lib/clilib.php');
 require_once(__DIR__ . '/../../../../lib/behat/lib.php');
 
-
 // CLI options.
 list($options, $unrecognized) = cli_get_params(
     array(
         'help'    => false,
         'install' => false,
         'parallel' => 0,
-        'suffix' => '',
+        'run' => '',
         'drop'    => false,
         'enable'  => false,
         'disable' => false,
-        'diag'    => false
+        'diag'    => false,
+        'tags'    => '',
     ),
     array(
         'h' => 'help'
@@ -65,10 +65,9 @@ Options:
 --drop     Drops the database tables and the dataroot contents
 --enable   Enables test environment and updates tests list
 --disable  Disables test environment
---parallel  Run operation for all parallel behat environments.
 --diag     Get behat test environment status code
 
--h, --help     Print out this help
+-h, --help Print out this help
 
 Example from Moodle root directory:
 \$ php admin/tool/behat/cli/util.php --enable
@@ -81,32 +80,16 @@ if (!empty($options['help'])) {
     exit(0);
 }
 
-
-if (!empty($options['parallel']) && empty($options['suffix'])) {
-    foreach ((array)glob(__DIR__."/../../../../behat*") as $dir) {
-        if (file_exists($dir) && is_dir($dir)) {
-            unlink($dir);
-        }
-    }
-    $cmds = array();
-    $extra = preg_filter('#(.*)\s*--parallel=\d+\s*(.*?)#', '$1 $2', implode(' ', array_slice($argv, 1)));
-    for ($i = 1; $i <= $options['parallel']; $i++) {
-        $cmds[] = "php ".__FILE__." $extra --suffix=$i 2>&1";
-    }
-    // This is intensive compared to behat itself so halve the parallelism.
-    foreach (array_chunk($cmds, min(1, floor($options['parallel']/2)), true) as $chunk) {
-        ns_parallel_popen($chunk, true);
-    }
-    exit(0);
-}
-
-
-// Checking $CFG->behat_* vars and values.
+// Describe this script.
 define('BEHAT_UTIL', true);
 define('CLI_SCRIPT', true);
 define('NO_OUTPUT_BUFFERING', true);
 define('IGNORE_COMPONENT_CACHE', true);
-define('BEHAT_SUFFIX', $options['suffix']);
+
+// Set run value, to be used by setup for configuring proper CFG variables.
+if ($options['run']) {
+    define('BEHAT_CURRENT_RUN', $options['run']);
+}
 
 // Only load CFG from config.php, stop ASAP in lib/setup.php.
 define('ABORT_AFTER_CONFIG', true);
@@ -139,29 +122,69 @@ if ($unrecognized) {
 // Behat utilities.
 require_once($CFG->libdir . '/behat/classes/util.php');
 require_once($CFG->libdir . '/behat/classes/behat_command.php');
+require_once($CFG->libdir . '/behat/classes/behat_config_manager.php');
+
+// Ensure run option is <= parallel run installed.
+if ($options['run']) {
+    if (!$options['parallel']) {
+        $options['parallel'] = behat_config_manager::get_parallel_test_runs();
+    }
+    if (empty($options['parallel']) || $options['run'] > $options['parallel']) {
+        echo "Parallel runs can't be more then ".$options['parallel'].PHP_EOL;
+        exit(1);
+    }
+    $CFG->behatrunprocess = $options['run'];
+}
 
 // Run command (only one per time).
 if ($options['install']) {
     behat_util::install_site();
-    mtrace("Acceptance tests site installed");
+
+    // This is only displayed once for parallel install.
+    if (empty($options['run'])) {
+        mtrace("Acceptance tests site installed");
+    }
+
 } else if ($options['drop']) {
     // Ensure no tests are running.
     test_lock::acquire('behat');
     behat_util::drop_site();
-    mtrace("Acceptance tests site dropped");
+    // This is only displayed once for parallel install.
+    if (empty($options['run'])) {
+        mtrace("Acceptance tests site dropped");
+    }
+
 } else if ($options['enable']) {
     behat_util::start_test_mode();
-    $runtestscommand = behat_command::get_behat_command(true) .
-        ' --config ' . behat_config_manager::get_behat_cli_config_filepath();
-    mtrace("Acceptance tests environment enabled on $CFG->behat_wwwroot, to run the tests use:\n " . $runtestscommand);
+
+    // This is only displayed once for parallel install.
+    if (empty($options['run'])) {
+        $runtestscommand = behat_command::get_behat_command(true, !empty($options['run']));
+
+        $runtestscommand .= ' --config ' . behat_config_manager::get_behat_cli_config_filepath();
+        mtrace("Acceptance tests environment enabled on $CFG->behat_wwwroot, to run the tests use:\n " . $runtestscommand);
+     } else {
+        // Save parallel site info for enable and install options.
+        $filepath = behat_config_manager::get_parallel_test_file_path();
+        if (!file_put_contents($filepath, $options['parallel'])) {
+            behat_error(BEHAT_EXITCODE_PERMISSIONS, 'File ' . $filepath . ' can not be created');
+        }
+    }
+
 } else if ($options['disable']) {
     behat_util::stop_test_mode();
-    mtrace("Acceptance tests environment disabled");
+    // This is only displayed once for parallel install.
+    if (empty($options['run'])) {
+        mtrace("Acceptance tests environment disabled");
+    }
+
 } else if ($options['diag']) {
     $code = behat_util::get_behat_status();
     exit($code);
+
 } else {
     echo $help;
+    exit(1);
 }
 
 exit(0);
