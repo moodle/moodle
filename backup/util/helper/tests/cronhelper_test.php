@@ -34,6 +34,19 @@ require_once($CFG->dirroot . '/backup/util/helper/backup_cron_helper.class.php')
 class backup_cron_helper_testcase extends advanced_testcase {
 
     /**
+     * @var String keep system default timezone.
+     */
+    protected $systemdefaulttimezone;
+
+    /**
+     * Setup.
+     */
+    protected function setUp() {
+        parent::setUp();
+        $this->systemdefaulttimezone = date_default_timezone_get();
+    }
+
+    /**
      * Test {@link backup_cron_automated_helper::calculate_next_automated_backup}.
      */
     public function test_next_automated_backup() {
@@ -456,5 +469,13 @@ class backup_cron_helper_testcase extends advanced_testcase {
         $expected = !$dst ? '5-09:00' : '5-10:00';
         $this->assertEquals($expected, date('w-H:i', $next));
 
+    }
+
+    /**
+     * Set timezone back to default.
+     */
+    protected function tearDown() {
+        date_default_timezone_set($this->systemdefaulttimezone);
+        parent::tearDown();
     }
 }
