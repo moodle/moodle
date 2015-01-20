@@ -1272,6 +1272,10 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
         $replacement[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$record->userid.
                                '&amp;course='.$data->course.'">'.fullname($record).'</a>';
 
+        $patterns[] = '##userpicture##';
+        $ruser = user_picture::unalias($record, null, 'userid');
+        $replacement[] = $OUTPUT->user_picture($ruser, array('courseid' => $data->course));
+
         $patterns[]='##export##';
 
         if (!empty($CFG->enableportfolios) && ($template == 'singletemplate' || $template == 'listtemplate')
@@ -3611,7 +3615,10 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
 function data_get_advanced_search_sql($sort, $data, $recordids, $selectdata, $sortorder) {
     global $DB;
 
-    $namefields = get_all_user_name_fields(true, 'u');
+    $namefields = user_picture::fields('u');
+    // Remove the id from the string. This already exists in the sql statement.
+    $namefields = str_replace('u.id,', '', $namefields);
+
     if ($sort == 0) {
         $nestselectsql = 'SELECT r.id, r.approved, r.timecreated, r.timemodified, r.userid, ' . $namefields . '
                         FROM {data_content} c,
