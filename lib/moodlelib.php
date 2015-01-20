@@ -2902,8 +2902,22 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             if (!empty($_SERVER['HTTP_REFERER'])) {
                 $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
             }
-            redirect(get_login_url());
-            exit; // Never reached.
+
+            // Give auth plugins an opportunity to authenticate or redirect to an external login page
+            $authsequence = get_enabled_auth_plugins(true); // auths, in sequence
+            foreach($authsequence as $authname) {
+                $authplugin = get_auth_plugin($authname);
+                $authplugin->pre_loginpage_hook();
+                if (isloggedin()) {
+                    break;
+                }
+            }
+
+            // If we're still not logged in then go to the login page
+            if (!isloggedin()) {
+                redirect(get_login_url());
+                exit; // Never reached.
+            }
         }
     }
 
