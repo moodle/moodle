@@ -72,6 +72,14 @@ class grade extends tablelike implements selectable_items, filterable_items {
     }
 
     /**
+     * Get the label for the select box that chooses items for this page.
+     * @return string
+     */
+    public function select_label() {
+        return get_string('selectuser', 'gradereport_singleview');
+    }
+
+    /**
      * Get the description of this page
      * @return string
      */
@@ -278,7 +286,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
      * @return string
      */
     public function heading() {
-        return $this->item->get_name();
+        return get_string('gradeitem', 'gradereport_singleview', $this->item->get_name());
     }
 
     /**

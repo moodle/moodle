@@ -200,7 +200,7 @@ abstract class screen {
      * @return string
      */
     public function heading() {
-        return get_string('pluginname', 'gradereport_singleview');
+        return get_string('entrypage', 'gradereport_singleview');
     }
 
     /**
