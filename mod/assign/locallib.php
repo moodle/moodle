@@ -5399,6 +5399,7 @@ class assign {
         // Gets a list of possible users and look for values based upon that.
         foreach ($participants as $userid => $unused) {
             $modified = optional_param('grademodified_' . $userid, -1, PARAM_INT);
+            $attemptnumber = optional_param('gradeattempt_' . $userid, -1, PARAM_INT);
             // Gather the userid, updated grade and last modified value.
             $record = new stdClass();
             $record->userid = $userid;
@@ -5410,6 +5411,7 @@ class assign {
                 // This user was not in the grading table.
                 continue;
             }
+            $record->attemptnumber = $attemptnumber;
             $record->lastmodified = $modified;
             $record->gradinginfo = grade_get_grades($this->get_course()->id,
                                                     'mod',
@@ -5428,19 +5430,20 @@ class assign {
         $params['assignid2'] = $this->get_instance()->id;
 
         // Check them all for currency.
-        $grademaxattempt = 'SELECT mxg.userid, MAX(mxg.attemptnumber) AS maxattempt
-                            FROM {assign_grades} mxg
-                            WHERE mxg.assignment = :assignid1 GROUP BY mxg.userid';
+        $grademaxattempt = 'SELECT s.userid, s.attemptnumber AS maxattempt
+                              FROM {assign_submission} s
+                             WHERE s.assignment = :assignid1 AND s.latest = 1';
 
-        $sql = 'SELECT u.id as userid, g.grade as grade, g.timemodified as lastmodified, uf.workflowstate, uf.allocatedmarker
-                    FROM {user} u
-                LEFT JOIN ( ' . $grademaxattempt . ' ) gmx ON u.id = gmx.userid
-                LEFT JOIN {assign_grades} g ON
-                    u.id = g.userid AND
-                    g.assignment = :assignid2 AND
-                    g.attemptnumber = gmx.maxattempt
-                LEFT JOIN {assign_user_flags} uf ON uf.assignment = g.assignment AND uf.userid = g.userid
-                WHERE u.id ' . $userids;
+        $sql = 'SELECT u.id AS userid, g.grade AS grade, g.timemodified AS lastmodified,
+                       uf.workflowstate, uf.allocatedmarker, gmx.maxattempt AS attemptnumber
+                  FROM {user} u
+             LEFT JOIN ( ' . $grademaxattempt . ' ) gmx ON u.id = gmx.userid
+             LEFT JOIN {assign_grades} g ON
+                       u.id = g.userid AND
+                       g.assignment = :assignid2 AND
+                       g.attemptnumber = gmx.maxattempt
+             LEFT JOIN {assign_user_flags} uf ON uf.assignment = g.assignment AND uf.userid = g.userid
+                 WHERE u.id ' . $userids;
         $currentgrades = $DB->get_recordset_sql($sql, $params);
 
         $modifiedusers = array();
@@ -5504,7 +5507,9 @@ class assign {
                 if ($this->grading_disabled($modified->userid)) {
                     continue;
                 }
-                if ((int)$current->lastmodified > (int)$modified->lastmodified) {
+                $badmodified = (int)$current->lastmodified > (int)$modified->lastmodified;
+                $badattempt = (int)$current->attemptnumber != (int)$modified->attemptnumber;
+                if ($badmodified || $badattempt) {
                     // Error - record has been modified since viewing the page.
                     return get_string('errorrecordmodified', 'assign');
                 } else {
