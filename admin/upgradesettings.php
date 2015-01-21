@@ -24,7 +24,6 @@ $adminroot = admin_get_root(); // need all settings
 // now we'll deal with the case that the admin has submitted the form with new settings
 if ($data = data_submitted() and confirm_sesskey()) {
     $count = admin_write_settings($data);
-    $adminroot = admin_get_root(true); //reload tree
 }
 
 $newsettings = admin_output_new_settings_by_page($adminroot);
