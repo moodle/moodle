@@ -451,13 +451,13 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                     .append(create('<div class="'+CSS.DETAILS+'"></div>')
                         .append(create('<div class="'+CSS.COHORTNAME+'">'+cohort.name+'</div>')))
                     .append(create('<div class="'+CSS.OPTIONS+'"></div>')
-                        .append(create('<input type="button" class="'+CSS.ENROL+'" value="'+'Enrol '+cohort.cnt+' users'+'" />'))) // TODO string
+                        .append(create('<input type="button" class="' + CSS.ENROL + '" value="' + M.util.get_string('enrolxusers', 'enrol', cohort.cnt) + '" />')))
                 );
             }
             this.set(UEP.COHORTCOUNT, count);
             if (!args.append) {
                 //var usersstr = (result.response.totalusers == '1')?M.str.enrol.ajaxoneuserfound:M.util.get_string('ajaxxusersfound','enrol', result.response.totalusers);
-                var cohortsstr = 'Found '+result.response.totalcohorts+' cohorts'; // TODO
+                var cohortsstr = M.util.get_string('foundxcohorts', 'enrol', result.response.totalcohorts);
                 var content = create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
                     .append(create('<div class="'+CSS.TOTALCOHORTS+'">'+cohortsstr+'</div>'))
                     .append(cohorts);
