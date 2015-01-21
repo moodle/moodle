@@ -919,3 +919,61 @@ table#categoryquestions {
 #page-mod-quiz-edit ul.slots li.section ul.section {
     list-style: none;
 }
+
+/** Print formatting for attempt and review pages **/
+
+@media print {
+
+    #page-mod-quiz-attempt header.navbar,
+    #page-mod-quiz-review header.navbar {
+        display: none;
+    }
+
+    #page-mod-quiz-attempt #dock,
+    #page-mod-quiz-review #dock {
+        display: none;
+    }
+
+    #page-mod-quiz-attempt #page #page-header h1,
+    #page-mod-quiz-review #page #page-header h1 {
+        display: none;
+    }
+
+    #page-mod-quiz-attempt #region-main,
+    #page-mod-quiz-review #region-main {
+        width: 100%;
+    }
+
+    #page-mod-quiz-attempt #block-region-side-pre,
+    #page-mod-quiz-attempt #block-region-side-post,
+    #page-mod-quiz-review #block-region-side-pre,
+    #page-mod-quiz-review #block-region-side-post {
+        display: none;
+    }
+
+    #page-mod-quiz-attempt #page-footer,
+    #page-mod-quiz-review #page-footer {
+        display: none;
+    }
+
+    #page-mod-quiz-attempt .editquestion,
+    #page-mod-quiz-review .editquestion,
+    #page-mod-quiz-attempt .questionflag,
+    #page-mod-quiz-review .questionflag {
+        display: none;
+    }
+
+    #page-mod-quiz-attempt .submitbtns,
+    #page-mod-quiz-review .submitbtns {
+        display: none;
+    }
+
+    #page-mod-quiz-review .que .commentlink {
+        display: none;
+    }
+
+    #page-mod-quiz-attempt .que,
+    #page-mod-quiz-review .que {
+        page-break-inside: avoid;
+    }
+}
