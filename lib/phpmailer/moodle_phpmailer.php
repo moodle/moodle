@@ -162,4 +162,22 @@ class moodle_phpmailer extends PHPMailer {
             return parent::postSend();
         }
     }
+
+    /**
+     * Get the server hostname.
+     * Returns the host part of the wwwroot.
+     *
+     * @access protected
+     * @return string
+     */
+    protected function serverHostname() {
+        global $CFG;
+
+        $hostname = parent::serverHostname();
+        if ($hostname === 'localhost.localdomain') {
+            $urlinfo = parse_url($CFG->wwwroot);
+            $hostname = $urlinfo['host'];
+        }
+        return $hostname;
+    }
 }
