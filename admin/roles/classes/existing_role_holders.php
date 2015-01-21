@@ -41,15 +41,24 @@ class core_role_existing_role_holders extends core_role_assign_user_selector_bas
         list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
         $params = array_merge($params, $sortparams);
 
-        $sql = "SELECT ra.id AS raid," . $this->required_fields_sql('u') . ",ra.contextid,ra.component
-                  FROM {role_assignments} ra
+        $fields = "SELECT ra.id AS raid," . $this->required_fields_sql('u') . ",ra.contextid,ra.component ";
+        $countfields = "SELECT COUNT(1) ";
+        $sql = "FROM {role_assignments} ra
                   JOIN {user} u ON u.id = ra.userid
                   JOIN {context} ctx ON ra.contextid = ctx.id
                  WHERE $wherecondition
                        AND ctx.id $ctxcondition
-                       AND ra.roleid = :roleid
-              ORDER BY ctx.depth DESC, ra.component, $sort";
-        $contextusers = $DB->get_records_sql($sql, $params);
+                       AND ra.roleid = :roleid";
+         $order = " ORDER BY ctx.depth DESC, ra.component, $sort";
+
+        if (!$this->is_validating()) {
+            $existinguserscount = $DB->count_records_sql($countfields . $sql, $params);
+            if ($existinguserscount > $this->maxusersperpage) {
+                return $this->too_many_results($search, $existinguserscount);
+            }
+        }
+
+        $contextusers = $DB->get_records_sql($fields . $sql . $order, $params);
 
         // No users at all.
         if (empty($contextusers)) {
