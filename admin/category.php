@@ -67,7 +67,6 @@ if ($data = data_submitted() and confirm_sesskey()) {
         $errormsg = get_string('errorwithsettings', 'admin');
         $firsterror = reset($adminroot->errors);
     }
-    $adminroot = admin_get_root(true); //reload tree
     $settingspage = $adminroot->locate($category, true);
 }
 
