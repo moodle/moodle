@@ -88,5 +88,37 @@ function xmldb_block_iomad_company_admin_upgrade($oldversion) {
         }
     }
 
+    // add new role capability
+    if ($oldversion < 2015012100) {
+        $systemcontext = context_system::instance();
+        foreach (array('clientadministrator', 'companymanager', 'companydepartmentmanager') as $rolename) {
+            $role = $DB->get_record('role', array('shortname' => $rolename), '*', MUST_EXIST);
+            assign_capability(
+                'block/iomad_company_admin:block/iomad_company_admin:companymanagement_view',
+                CAP_ALLOW,
+                $role->id,
+                $systemcontext->id
+            );
+            assign_capability(
+                'block/iomad_company_admin:block/iomad_company_admin:usermanagement_view',
+                CAP_ALLOW,
+                $role->id,
+                $systemcontext->id
+            );
+            assign_capability(
+                'block/iomad_company_admin:block/iomad_company_admin:coursemanagement_view',
+                CAP_ALLOW,
+                $role->id,
+                $systemcontext->id
+            );
+            assign_capability(
+                'block/iomad_company_admin:block/iomad_company_admin:licensemanagement_view',
+                CAP_ALLOW,
+                $role->id,
+                $systemcontext->id
+            );
+        }
+    }
+
     return true;
 }
