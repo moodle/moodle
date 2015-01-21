@@ -22,7 +22,6 @@ if ($data = data_submitted() and confirm_sesskey()) {
     if (admin_write_settings($data)) {
         $statusmsg = get_string('changessaved');
     }
-    $adminroot = admin_get_root(true); //reload tree
 
     if (!empty($adminroot->errors)) {
         $errormsg = get_string('errorwithsettings', 'admin');
