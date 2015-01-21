@@ -72,6 +72,7 @@ Options:
 --adminuser=USERNAME  Username for the moodle admin account. Default is admin
 --adminpass=PASSWORD  Password for the moodle admin account,
                       required in non-interactive mode.
+--adminemail=STRING   Email address for the moodle admin account.
 --non-interactive     No interactive questions, installation fails if any
                       problem encountered.
 --agree-license       Indicates agreement with software license,
@@ -252,6 +253,7 @@ list($options, $unrecognized) = cli_get_params(
         'shortname'         => '',
         'adminuser'         => 'admin',
         'adminpass'         => '',
+        'adminemail'        => '',
         'non-interactive'   => false,
         'agree-license'     => false,
         'allow-unstable'    => false,
@@ -685,6 +687,20 @@ if ($interactive) {
         $a = (object)array('option'=>'adminpass', 'value'=>$options['adminpass']);
         cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
     }
+}
+
+// Ask for the admin email address.
+if ($interactive) {
+    cli_separator();
+    cli_heading(get_string('cliadminemail', 'install'));
+    $prompt = get_string('clitypevaluedefault', 'admin', $options['adminemail']);
+    $options['adminemail'] = cli_input($prompt);
+}
+
+// Validate that the address provided was an e-mail address.
+if (!empty($options['adminemail']) && !validate_email($options['adminemail'])) {
+    $a = (object) array('option' => 'adminemail', 'value' => $options['adminemail']);
+    cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
 }
 
 if ($interactive) {
