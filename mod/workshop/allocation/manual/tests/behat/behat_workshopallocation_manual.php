@@ -51,40 +51,32 @@ class behat_workshopallocation_manual extends behat_base {
      * @param string $participantname
      */
     public function i_add_a_reviewer_for_workshop_participant($reviewername, $participantname) {
-        // It will stop spinning once all reviewer for workshop participants are added or it time out.
-        $this->spin(
-            function($context, $args) {
-                $participantnameliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($args['participantname']);
-                $xpathtd = "//table[contains(concat(' ', normalize-space(@class), ' '), ' allocations ')]/".
-                           "tbody/tr[./td[contains(concat(' ', normalize-space(@class), ' '), ' peer ')]".
-                           "[contains(.,$participantnameliteral)]]/".
-                           "td[contains(concat(' ', normalize-space(@class), ' '), ' reviewedby ')]";
-                $xpathselect = $xpathtd . "/descendant::select";
-                try {
-                    $selectnode = $this->find('xpath', $xpathselect);
-                } catch (Exception $ex) {
-                    $this->find_button(get_string('showallparticipants', 'workshopallocation_manual'))->press();
-                    $selectnode = $this->find('xpath', $xpathselect);
-                }
+        $participantnameliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($participantname);
+        $xpathtd = "//table[contains(concat(' ', normalize-space(@class), ' '), ' allocations ')]/".
+                "tbody/tr[./td[contains(concat(' ', normalize-space(@class), ' '), ' peer ')]".
+                "[contains(.,$participantnameliteral)]]/".
+                "td[contains(concat(' ', normalize-space(@class), ' '), ' reviewedby ')]";
+        $xpathselect = $xpathtd . "/descendant::select";
+        try {
+            $selectnode = $this->find('xpath', $xpathselect);
+        } catch (Exception $ex) {
+            $this->find_button(get_string('showallparticipants', 'workshopallocation_manual'))->press();
+            $selectnode = $this->find('xpath', $xpathselect);
+        }
+        $selectid = $selectnode->getAttribute('id');
+        $selectformfield = behat_field_manager::get_form_field($selectnode, $this->getSession());
+        $selectformfield->set_value($reviewername);
 
-                $selectformfield = behat_field_manager::get_form_field($selectnode, $this->getSession());
-                $selectformfield->set_value($args['reviewername']);
-
-                if (!$this->running_javascript()) {
-                    // Without Javascript we need to press the "Go" button.
-                    $go = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('go'));
-                    $this->find('xpath', $xpathtd."/descendant::input[@value=$go]")->click();
-                } else {
-                    // With Javascript we just wait for the page to reload and the success string to appear.
-                    $allocatedtext = $this->getSession()->getSelectorsHandler()->xpathLiteral(
-                        get_string('allocationadded', 'workshopallocation_manual'));
-                    $this->find('xpath', "//*[contains(.,$allocatedtext)]");
-                }
-                return true;
-            },
-            array('participantname' => $participantname, 'reviewername' => $reviewername),
-            self::EXTENDED_TIMEOUT
-        );
+        if (!$this->running_javascript()) {
+            // Without Javascript we need to press the "Go" button.
+            $go = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('go'));
+            $this->find('xpath', $xpathtd."/descendant::input[@value=$go]")->click();
+        } else {
+            // With Javascript we just wait for the page to reload and the success string to appear.
+            $allocatedtext = $this->getSession()->getSelectorsHandler()->xpathLiteral(
+                    get_string('allocationadded', 'workshopallocation_manual'));
+            $this->find('xpath', "//*[contains(.,$allocatedtext)]");
+        }
     }
 
     /**
