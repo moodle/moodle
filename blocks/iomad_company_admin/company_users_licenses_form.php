@@ -270,13 +270,17 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
                                           WHERE companyid = :companyid
                                           AND used < allocation",
                                           array('companyid' => $companyid));
-        $selecturl = new moodle_url('/blocks/iomad_company_admin/company_users_licenses_form.php', $urlparams);
-        $licenseselect = new single_select($selecturl, 'licenseid', $licenses, $licenseid);
-        $licenseselect->label = get_string('select_license', 'block_iomad_company_admin');
-        $licenseselect->formid = 'chooselicense';
-        echo html_writer::tag('div', $OUTPUT->render($licenseselect), array('id' => 'iomad_license_selector'));
+        if (count($licenses) == 0) {
+            echo '<b>' . get_string('nolicenses', 'block_iomad_company_admin') . '</b>';
+        } else {
+            $selecturl = new moodle_url('/blocks/iomad_company_admin/company_users_licenses_form.php', $urlparams);
+            $licenseselect = new single_select($selecturl, 'licenseid', $licenses, $licenseid);
+            $licenseselect->label = get_string('select_license', 'block_iomad_company_admin');
+            $licenseselect->formid = 'chooselicense';
+            echo html_writer::tag('div', $OUTPUT->render($licenseselect), array('id' => 'iomad_license_selector'));
 
-        echo $coursesform->display();
+            echo $coursesform->display();
+        }
     }
 
     echo $OUTPUT->footer();

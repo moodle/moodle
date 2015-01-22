@@ -193,38 +193,44 @@ class user_edit_form extends company_moodleform {
                                                    array('timestamp' => time(),
                                                          'companyid' => $this->selectedcompany));
             $licenses = array('0' => get_string('nolicense', 'block_iomad_company_admin')) + $foundlicenses;
-            if (empty($this->licenseid) && count($foundlicenses) == 0) {
-                // There is only one so select it!
+            if (count($foundlicenses) == 0) {
+                // No valid licenses.
+                $mform->addElement('html', '<div id="licensedetails"><b>' . get_string('nolicenses', 'block_iomad_company_admin') . '</b></div>');
                 $onlyone = true;
-                unset($licenses[0]);
-                list($mylicenseid, $mylicensecourse) = each($licenses);
-                $mylicensedetails = $DB->get_record('companylicense', array('id' => $mylicenseid));
-                $mform->addElement('html', '<div id="licensedetails"><b>' . get_string('licensedetails', 'block_iomad_company_admin', $mylicensedetails) . '</b></div>');
             } else {
-                $onlyone = false;
-                $mform->addElement('html', "<div class='fitem'><div class='fitemtitle'>" .
-                                            get_string('selectlicensecourse', 'block_iomad_company_admin') .
-                                            "</div><div class='felement'>");
-                $mform->addElement('select', 'licenseid', get_string('select_license', 'block_iomad_company_admin'), $licenses, array('id' => 'licenseidselector'));
-                $mylicenseid = $this->licenseid;
-                if (empty($this->licenseid)) {
-                    $mform->addElement('html', '<div id="licensedetails"></div>');
-                } else {
-                    $mylicensedetails = $DB->get_record('companylicense', array('id' => $this->licenseid));
+                if (empty($this->licenseid) && count($foundlicenses) == 1) {
+                    // There is only one so select it!
+                    $onlyone = true;
+                    unset($licenses[0]);
+                    list($mylicenseid, $mylicensecourse) = each($licenses);
+                    $mylicensedetails = $DB->get_record('companylicense', array('id' => $mylicenseid));
                     $mform->addElement('html', '<div id="licensedetails"><b>' . get_string('licensedetails', 'block_iomad_company_admin', $mylicensedetails) . '</b></div>');
+                } else {
+                    $onlyone = false;
+                    $mform->addElement('html', "<div class='fitem'><div class='fitemtitle'>" .
+                                                get_string('selectlicensecourse', 'block_iomad_company_admin') .
+                                                "</div><div class='felement'>");
+                    $mform->addElement('select', 'licenseid', get_string('select_license', 'block_iomad_company_admin'), $licenses, array('id' => 'licenseidselector'));
+                    $mylicenseid = $this->licenseid;
+                    if (empty($this->licenseid)) {
+                        $mform->addElement('html', '<div id="licensedetails"></div>');
+                    } else {
+                        $mylicensedetails = $DB->get_record('companylicense', array('id' => $this->licenseid));
+                        $mform->addElement('html', '<div id="licensedetails"><b>' . get_string('licensedetails', 'block_iomad_company_admin', $mylicensedetails) . '</b></div>');
+                    }
                 }
+
+                $licensecourses = $DB->get_records_sql_menu("SELECT c.id, c.fullname FROM {companylicense_courses} clc
+                                                             JOIN {course} c ON (clc.courseid = c.id
+                                                             AND clc.licenseid = :licenseid)",
+                                                             array('licenseid' => $mylicenseid));
+
+                $licensecourseselect = $mform->addElement('select', 'licensecourses',
+                                                          get_string('select_license_courses', 'block_iomad_company_admin'),
+                                                          $licensecourses, array('id' => 'licensecourseselector'));
+                $licensecourseselect->setMultiple(true);
             }
-                
-            $licensecourses = $DB->get_records_sql_menu("SELECT c.id, c.fullname FROM {companylicense_courses} clc
-                                                         JOIN {course} c ON (clc.courseid = c.id
-                                                         AND clc.licenseid = :licenseid)",
-                                                         array('licenseid' => $mylicenseid));
-    
-            $licensecourseselect = $mform->addElement('select', 'licensecourses',
-                                                      get_string('select_license_courses', 'block_iomad_company_admin'),
-                                                      $licensecourses, array('id' => 'licensecourseselector'));
-            $licensecourseselect->setMultiple(true);
-            
+
             if (!$onlyone) {
                 $mform->addElement('html', "</div></div>");
             }
