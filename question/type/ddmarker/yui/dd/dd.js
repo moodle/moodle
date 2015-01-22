@@ -437,16 +437,6 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                                         d.shape, d.coords, colourfordropzone, true);
                 }
             }
-            if (YUI.Env.UA.webkit) {
-                // Webkit (Chrome, Safari, Android) has a repaint bug. This is a
-                // work-around. See, for example,
-                // http://stackoverflow.com/questions/3485365/how-can-i-force-webkit-to-redraw-repaint-to-propagate-style-changes
-                var outer = this.doc.top_node().one('div.ddarea');
-                var oldDisplay = outer.getStyle('display');
-                outer.setStyle('display', 'none');
-                outer.get('offsetHeight');
-                outer.setStyle('display', oldDisplay);
-            }
         },
         /**
          * Determine what drag items need to be shown and
