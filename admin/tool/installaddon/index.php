@@ -55,11 +55,15 @@ if ($form->is_cancelled()) {
     if (empty($data->plugintype)) {
         $versiondir = make_temp_directory('tool_installaddon/'.$jobid.'/version');
         $detected = $installer->detect_plugin_component($sourcedir.'/'.$zipfilename, $versiondir);
-        list($detectedtype, $detectedname) = core_component::normalize_component($detected);
-        if ($detectedtype and $detectedname and $detectedtype !== 'core') {
-            $data->plugintype = $detectedtype;
-        } else {
+        if (empty($detected)) {
             $form->require_explicit_plugintype();
+        } else {
+            list($detectedtype, $detectedname) = core_component::normalize_component($detected);
+            if ($detectedtype and $detectedname and $detectedtype !== 'core') {
+                $data->plugintype = $detectedtype;
+            } else {
+                $form->require_explicit_plugintype();
+            }
         }
     }
     // Redirect to the validation page.
