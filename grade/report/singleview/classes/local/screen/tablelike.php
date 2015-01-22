@@ -226,7 +226,7 @@ abstract class tablelike extends screen {
     public function buttons() {
         $save = html_writer::empty_tag('input', array(
             'type' => 'submit',
-            'value' => get_string('update'),
+            'value' => get_string('save', 'gradereport_singleview'),
         ));
 
         return array($save);

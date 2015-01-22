@@ -51,6 +51,7 @@ $string['overridefor'] = 'Override for {$a}';
 $string['overridenone'] = 'Do not override any grades';
 $string['pluginname'] = 'Single view';
 $string['savegrades'] = 'Saving grades';
+$string['save'] = 'Save';
 $string['savegradessuccess'] = 'Grades were set for {$a} items';
 $string['selectgrade'] = 'Select grade item...';
 $string['selectuser'] = 'Select user...';
