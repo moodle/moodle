@@ -772,6 +772,15 @@ $functions = array(
         'capabilities'  => '',
     ),
 
+    'core_message_get_blocked_users' => array(
+        'classname'     => 'core_message_external',
+        'methodname'    => 'get_blocked_users',
+        'classpath'     => 'message/externallib.php',
+        'description'   => 'Retrieve a list of users blocked',
+        'type'          => 'read',
+        'capabilities'  => '',
+    ),
+
     // === notes related functions ===
 
     'moodle_notes_create_notes' => array(
@@ -975,7 +984,9 @@ $services = array(
             'core_message_block_contacts',
             'core_message_unblock_contacts',
             'core_message_get_contacts',
-            'core_message_search_contacts'),
+            'core_message_search_contacts',
+            'core_message_get_blocked_users'
+            ),
         'enabled' => 0,
         'restrictedusers' => 0,
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,

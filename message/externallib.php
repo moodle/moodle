@@ -829,6 +829,105 @@ class core_message_external extends external_api {
         );
     }
 
+    /**
+     * Get blocked users parameters description.
+     *
+     * @return external_function_parameters
+     * @since 2.9
+     */
+    public static function get_blocked_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT,
+                                'the user whose blocked users we want to retrieve',
+                                VALUE_REQUIRED),
+            )
+        );
+    }
+
+    /**
+     * Retrieve a list of users blocked
+     *
+     * @param  int $userid the user whose blocked users we want to retrieve
+     * @return external_description
+     * @since 2.9
+     */
+    public static function get_blocked_users($userid) {
+        global $CFG, $USER;
+        require_once($CFG->dirroot . "/message/lib.php");
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        // Validate params.
+        $params = array(
+            'userid' => $userid
+        );
+        $params = self::validate_parameters(self::get_blocked_users_parameters(), $params);
+        $userid = $params['userid'];
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        // Check if private messaging between users is allowed.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $user = core_user::get_user($userid, 'id', MUST_EXIST);
+
+        // Check if we have permissions for retrieve the information.
+        if ($userid != $USER->id and !has_capability('moodle/site:readallmessages', $context)) {
+            throw new moodle_exception('accessdenied', 'admin');
+        }
+
+        // Now, we can get safely all the blocked users.
+        $users = message_get_blocked_users($user);
+
+        $blockedusers = array();
+        foreach ($users as $user) {
+            $newuser = array(
+                'id' => $user->id,
+                'fullname' => fullname($user),
+            );
+            $newuser['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
+                context_user::instance($user->id)->id, 'user', 'icon', null, '/', 'f1')->out(false);
+
+            $blockedusers[] = $newuser;
+        }
+
+        $results = array(
+            'users' => $blockedusers,
+            'warnings' => $warnings
+        );
+        return $results;
+    }
+
+    /**
+     * Get blocked users return description.
+     *
+     * @return external_single_structure
+     * @since 2.9
+     */
+    public static function get_blocked_users_returns() {
+        return new external_single_structure(
+            array(
+                'users' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'User ID'),
+                            'fullname' => new external_value(PARAM_NOTAGS, 'User full name'),
+                            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL', VALUE_OPTIONAL)
+                        )
+                    ),
+                    'List of blocked users'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
 
 /**
