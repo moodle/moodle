@@ -1220,20 +1220,7 @@ class behat_general extends behat_base {
      * @param number $expectedsize the expected file size in bytes.
      */
     public function following_should_download_bytes($link, $expectedsize) {
-        $exception = new ExpectationException('Error while downloading data from ' . $link, $this->getSession());
-
-        // It will stop spinning once file is downloaded or time out.
-        $result = $this->spin(
-            function($context, $args) {
-                $link = $args['link'];
-                return $this->download_file_from_link($link);
-            },
-            array('link' => $link),
-            self::EXTENDED_TIMEOUT,
-            $exception
-        );
-
-        // Check download size.
+        $result = $this->download_file_from_link($link);
         $actualsize = (int)strlen($result);
         if ($actualsize !== (int)$expectedsize) {
             throw new ExpectationException('Downloaded data was ' . $actualsize .
@@ -1262,21 +1249,7 @@ class behat_general extends behat_base {
             list($minexpectedsize, $maxexpectedsize) = array($maxexpectedsize, $minexpectedsize);
         }
 
-        $exception = new ExpectationException('Error while downloading data from ' . $link, $this->getSession());
-
-        // It will stop spinning once file is downloaded or time out.
-        $result = $this->spin(
-            function($context, $args) {
-                $link = $args['link'];
-
-                return $this->download_file_from_link($link);
-            },
-            array('link' => $link),
-            self::EXTENDED_TIMEOUT,
-            $exception
-        );
-
-        // Check download size.
+        $result = $this->download_file_from_link($link);
         $actualsize = (int)strlen($result);
         if ($actualsize < $minexpectedsize || $actualsize > $maxexpectedsize) {
             throw new ExpectationException('Downloaded data was ' . $actualsize .
