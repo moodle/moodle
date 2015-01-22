@@ -775,7 +775,7 @@ function forum_cron() {
                 // Send the post now!
                 mtrace('Sending ', '');
 
-                $eventdata = new stdClass();
+                $eventdata = new \core\message\message();
                 $eventdata->component           = 'mod_forum';
                 $eventdata->name                = 'posts';
                 $eventdata->userfrom            = $userfrom;
@@ -786,6 +786,14 @@ function forum_cron() {
                 $eventdata->fullmessagehtml     = $posthtml;
                 $eventdata->notification        = 1;
                 $eventdata->replyto             = $replyaddress;
+                if (!empty($replyaddress)) {
+                    // Add extra text to email messages if they can reply back.
+                    $textfooter = "\n\n" . get_string('replytopostbyemail', 'mod_forum');
+                    $htmlfooter = html_writer::tag('p', get_string('replytopostbyemail', 'mod_forum'));
+                    $additionalcontent = array('fullmessage' => array('footer' => $textfooter),
+                                     'fullmessagehtml' => array('footer' => $htmlfooter));
+                    $eventdata->set_additional_content('email', $additionalcontent);
+                }
 
                 // If forum_replytouser is not set then send mail using the noreplyaddress.
                 if (empty($CFG->forum_replytouser)) {
@@ -1245,10 +1253,6 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
     $posttext .= get_string("digestmailpost", "forum");
     $posttext .= ": {$CFG->wwwroot}/mod/forum/index.php?id={$forum->course}\n";
 
-    if ($replyaddress) {
-        $posttext .= "\n\n" . get_string('replytopostbyemail', 'mod_forum');
-    }
-
     return $posttext;
 }
 
@@ -1302,10 +1306,6 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
                      format_string($discussion->name,true).'</a></div>';
     }
     $posthtml .= forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
-
-    if ($replyaddress) {
-        $posthtml .= html_writer::tag('p', get_string('replytopostbyemail', 'mod_forum'));
-    }
 
     $footerlinks = array();
     if ($canunsubscribe) {
