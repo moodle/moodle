@@ -1201,6 +1201,14 @@ class moodle_user_external extends external_api {
         return core_user_external::create_users_returns();
     }
 
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function create_users_is_deprecated() {
+        return true;
+    }
 
     /**
      * Returns description of method parameters
@@ -1239,6 +1247,14 @@ class moodle_user_external extends external_api {
         return core_user_external::delete_users_returns();
     }
 
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function delete_users_is_deprecated() {
+        return true;
+    }
 
     /**
      * Returns description of method parameters
@@ -1275,6 +1291,15 @@ class moodle_user_external extends external_api {
      */
     public static function update_users_returns() {
         return core_user_external::update_users_returns();
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function update_users_is_deprecated() {
+        return true;
     }
 
     /**
@@ -1316,6 +1341,16 @@ class moodle_user_external extends external_api {
     public static function get_users_by_id_returns() {
         return core_user_external::get_users_by_id_returns();
     }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_users_by_id_is_deprecated() {
+        return true;
+    }
+
     /**
      * Returns description of method parameters
      *
@@ -1354,6 +1389,15 @@ class moodle_user_external extends external_api {
     }
 
     /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_course_participants_by_id_is_deprecated() {
+        return true;
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
@@ -1380,7 +1424,7 @@ class moodle_user_external extends external_api {
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
      * @see core_enrol_external::get_enrolled_users()
      */
-    public static function get_users_by_courseid($courseid, $options) {
+    public static function get_users_by_courseid($courseid, $options = array()) {
         global $CFG;
         require_once($CFG->dirroot . '/enrol/externallib.php');
         return core_enrol_external::get_enrolled_users($courseid, $options);
@@ -1398,4 +1442,15 @@ class moodle_user_external extends external_api {
         require_once($CFG->dirroot . '/enrol/externallib.php');
         return core_enrol_external::get_enrolled_users_returns();
     }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_users_by_courseid_is_deprecated() {
+        return true;
+    }
+
+
 }

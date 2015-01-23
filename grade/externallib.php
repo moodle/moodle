@@ -41,11 +41,19 @@ class core_grade_external extends external_api {
     }
 
     public static function get_definitions($cmids, $areaname, $activeonly = false) {
-        return core_grading_external::get_definitions($cmids, $areaname, $activeonly = false);
+        return core_grading_external::get_definitions($cmids, $areaname, $activeonly);
     }
 
     public static function get_definitions_returns() {
         return core_grading_external::get_definitions_returns();
     }
 
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_definitions_is_deprecated() {
+        return true;
+    }
 }

@@ -207,4 +207,12 @@ class moodle_enrol_manual_external extends external_api {
         return enrol_manual_external::enrol_users_returns();
     }
 
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function manual_enrol_users_is_deprecated() {
+        return true;
+    }
 }

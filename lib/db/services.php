@@ -122,10 +122,10 @@ $functions = array(
     // === group related functions ===
 
     'moodle_group_create_groups' => array(
-        'classname'   => 'core_group_external',
+        'classname'   => 'moodle_group_external',
         'methodname'  => 'create_groups',
         'classpath'   => 'group/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_group_create_groups(). ',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_group_create_groups(). ',
         'type'        => 'write',
         'capabilities'=> 'moodle/course:managegroups',
     ),
@@ -140,10 +140,10 @@ $functions = array(
     ),
 
     'moodle_group_get_groups' => array(
-        'classname'   => 'core_group_external',
+        'classname'   => 'moodle_group_external',
         'methodname'  => 'get_groups',
         'classpath'   => 'group/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_group_get_groups()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_group_get_groups()',
         'type'        => 'read',
         'capabilities'=> 'moodle/course:managegroups',
     ),
@@ -158,10 +158,10 @@ $functions = array(
     ),
 
     'moodle_group_get_course_groups' => array(
-        'classname'   => 'core_group_external',
+        'classname'   => 'moodle_group_external',
         'methodname'  => 'get_course_groups',
         'classpath'   => 'group/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_group_get_course_groups()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_group_get_course_groups()',
         'type'        => 'read',
         'capabilities'=> 'moodle/course:managegroups',
     ),
@@ -176,10 +176,10 @@ $functions = array(
     ),
 
     'moodle_group_delete_groups' => array(
-        'classname'   => 'core_group_external',
+        'classname'   => 'moodle_group_external',
         'methodname'  => 'delete_groups',
         'classpath'   => 'group/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_group_delete_groups()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_group_delete_groups()',
         'type'        => 'delete',
         'capabilities'=> 'moodle/course:managegroups',
     ),
@@ -194,10 +194,10 @@ $functions = array(
     ),
 
     'moodle_group_get_groupmembers' => array(
-        'classname'   => 'core_group_external',
-        'methodname'  => 'get_group_members',
+        'classname'   => 'moodle_group_external',
+        'methodname'  => 'get_groupmembers',
         'classpath'   => 'group/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_group_get_group_members()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_group_get_group_members()',
         'type'        => 'read',
         'capabilities'=> 'moodle/course:managegroups',
     ),
@@ -212,10 +212,10 @@ $functions = array(
     ),
 
     'moodle_group_add_groupmembers' => array(
-        'classname'   => 'core_group_external',
-        'methodname'  => 'add_group_members',
+        'classname'   => 'moodle_group_external',
+        'methodname'  => 'add_groupmembers',
         'classpath'   => 'group/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_group_add_group_members()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_group_add_group_members()',
         'type'        => 'write',
         'capabilities'=> 'moodle/course:managegroups',
     ),
@@ -230,10 +230,10 @@ $functions = array(
     ),
 
     'moodle_group_delete_groupmembers' => array(
-        'classname'   => 'core_group_external',
-        'methodname'  => 'delete_group_members',
+        'classname'   => 'moodle_group_external',
+        'methodname'  => 'delete_groupmembers',
         'classpath'   => 'group/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_group_delete_group_members()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_group_delete_group_members()',
         'type'        => 'delete',
         'capabilities'=> 'moodle/course:managegroups',
     ),
@@ -306,9 +306,9 @@ $functions = array(
     // === file related functions ===
 
     'moodle_file_get_files' => array(
-        'classname'   => 'core_files_external',
+        'classname'   => 'moodle_file_external',
         'methodname'  => 'get_files',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_files_get_files()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_files_get_files()',
         'type'        => 'read',
         'classpath'   => 'files/externallib.php',
     ),
@@ -322,9 +322,9 @@ $functions = array(
     ),
 
     'moodle_file_upload' => array(
-        'classname'   => 'core_files_external',
+        'classname'   => 'moodle_file_external',
         'methodname'  => 'upload',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_files_upload()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_files_upload()',
         'type'        => 'write',
         'classpath'   => 'files/externallib.php',
     ),
@@ -340,10 +340,10 @@ $functions = array(
     // === user related functions ===
 
     'moodle_user_create_users' => array(
-        'classname'   => 'core_user_external',
+        'classname'   => 'moodle_user_external',
         'methodname'  => 'create_users',
         'classpath'   => 'user/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_user_create_users()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_user_create_users()',
         'type'        => 'write',
         'capabilities'=> 'moodle/user:create',
     ),
@@ -367,10 +367,10 @@ $functions = array(
     ),
 
     'moodle_user_get_users_by_id' => array(
-        'classname'   => 'core_user_external',
+        'classname'   => 'moodle_user_external',
         'methodname'  => 'get_users_by_id',
         'classpath'   => 'user/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_user_get_users_by_id()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. Use core_user_get_users_by_field service instead',
         'type'        => 'read',
         'capabilities'=> 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update',
     ),
@@ -394,19 +394,19 @@ $functions = array(
     ),
 
     'moodle_user_get_users_by_courseid' => array(
-        'classname'   => 'core_enrol_external',
-        'methodname'  => 'get_enrolled_users',
-        'classpath'   => 'enrol/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_enrol_get_enrolled_users()',
+        'classname'   => 'moodle_user_external',
+        'methodname'  => 'get_users_by_courseid',
+        'classpath'   => 'user/externallib.php',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_enrol_get_enrolled_users()',
         'type'        => 'read',
         'capabilities'=> 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update, moodle/site:accessallgroups',
     ),
 
     'moodle_user_get_course_participants_by_id' => array(
-        'classname'   => 'core_user_external',
-        'methodname'  => 'get_course_user_profiles',
+        'classname'   => 'moodle_user_external',
+        'methodname'  => 'get_course_participants_by_id',
         'classpath'   => 'user/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_user_get_course_user_profiles()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_user_get_course_user_profiles()',
         'type'        => 'read',
         'capabilities'=> 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update, moodle/site:accessallgroups',
     ),
@@ -421,10 +421,10 @@ $functions = array(
     ),
 
     'moodle_user_delete_users' => array(
-        'classname'   => 'core_user_external',
+        'classname'   => 'moodle_user_external',
         'methodname'  => 'delete_users',
         'classpath'   => 'user/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_user_delete_users()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_user_delete_users()',
         'type'        => 'write',
         'capabilities'=> 'moodle/user:delete',
     ),
@@ -439,10 +439,10 @@ $functions = array(
     ),
 
     'moodle_user_update_users' => array(
-        'classname'   => 'core_user_external',
+        'classname'   => 'moodle_user_external',
         'methodname'  => 'update_users',
         'classpath'   => 'user/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_user_update_users()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_user_update_users()',
         'type'        => 'write',
         'capabilities'=> 'moodle/user:update',
     ),
@@ -496,10 +496,10 @@ $functions = array(
     ),
 
     'moodle_enrol_get_users_courses' => array(
-        'classname'   => 'core_enrol_external',
+        'classname'   => 'moodle_enrol_external',
         'methodname'  => 'get_users_courses',
         'classpath'   => 'enrol/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_enrol_get_users_courses()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_enrol_get_users_courses()',
         'type'        => 'read',
         'capabilities'=> 'moodle/course:viewparticipants',
     ),
@@ -524,10 +524,10 @@ $functions = array(
     // === Role related functions ===
 
     'moodle_role_assign' => array(
-        'classname'   => 'core_role_external',
-        'methodname'  => 'assign_roles',
+        'classname'   => 'moodle_enrol_external',
+        'methodname'  => 'role_assign',
         'classpath'   => 'enrol/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_role_assign_role()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_role_assign_role()',
         'type'        => 'write',
         'capabilities'=> 'moodle/role:assign',
     ),
@@ -542,10 +542,10 @@ $functions = array(
     ),
 
     'moodle_role_unassign' => array(
-        'classname'   => 'core_role_external',
-        'methodname'  => 'unassign_roles',
+        'classname'   => 'moodle_enrol_external',
+        'methodname'  => 'role_unassign',
         'classpath'   => 'enrol/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_role_unassign_role()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_role_unassign_role()',
         'type'        => 'write',
         'capabilities'=> 'moodle/role:assign',
     ),
@@ -571,10 +571,10 @@ $functions = array(
     ),
 
     'moodle_course_get_courses' => array(
-        'classname'   => 'core_course_external',
+        'classname'   => 'moodle_course_external',
         'methodname'  => 'get_courses',
         'classpath'   => 'course/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_course_get_courses()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_course_get_courses()',
         'type'        => 'read',
         'capabilities'=> 'moodle/course:view,moodle/course:update,moodle/course:viewhiddencourses',
     ),
@@ -589,10 +589,10 @@ $functions = array(
     ),
 
     'moodle_course_create_courses' => array(
-        'classname'   => 'core_course_external',
+        'classname'   => 'moodle_course_external',
         'methodname'  => 'create_courses',
         'classpath'   => 'course/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_course_create_courses()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_course_create_courses()',
         'type'        => 'write',
         'capabilities'=> 'moodle/course:create,moodle/course:visibility',
     ),
@@ -692,10 +692,10 @@ $functions = array(
     // === message related functions ===
 
     'moodle_message_send_instantmessages' => array(
-        'classname'   => 'core_message_external',
-        'methodname'  => 'send_instant_messages',
+        'classname'   => 'moodle_message_external',
+        'methodname'  => 'send_instantmessages',
         'classpath'   => 'message/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_message_send_instant_messages()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_message_send_instant_messages()',
         'type'        => 'write',
         'capabilities'=> 'moodle/site:sendmessage',
     ),
@@ -784,10 +784,10 @@ $functions = array(
     // === notes related functions ===
 
     'moodle_notes_create_notes' => array(
-        'classname'   => 'core_notes_external',
+        'classname'   => 'moodle_notes_external',
         'methodname'  => 'create_notes',
         'classpath'   => 'notes/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_notes_create_notes()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_notes_create_notes()',
         'type'        => 'write',
         'capabilities'=> 'moodle/notes:manage',
     ),
@@ -862,10 +862,10 @@ $functions = array(
     // === webservice related functions ===
 
     'moodle_webservice_get_siteinfo' => array(
-        'classname'   => 'core_webservice_external',
-        'methodname'  => 'get_site_info',
+        'classname'   => 'moodle_webservice_external',
+        'methodname'  => 'get_siteinfo',
         'classpath'   => 'webservice/externallib.php',
-        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has be renamed as core_webservice_get_site_info()',
+        'description' => 'DEPRECATED: this deprecated function will be removed in a future version. This function has been renamed as core_webservice_get_site_info()',
         'type'        => 'read',
     ),
 
