@@ -133,18 +133,23 @@ class report_log_table_log extends table_sql {
             if ($event->courseid) {
                 $params['course'] = $event->courseid;
             }
-            $a->realusername = html_writer::link(new moodle_url("/user/view.php", $params),
-                $this->userfullnames[$logextra['realuserid']]);
-            $params['id'] = $event->userid;
-            $a->asusername = html_writer::link(new moodle_url("/user/view.php", $params),
-                    $this->userfullnames[$event->userid]);
+            $a->realusername = $this->userfullnames[$logextra['realuserid']];
+            $a->asusername = $this->userfullnames[$event->userid];
+            if (empty($this->download)) {
+                $a->realusername = html_writer::link(new moodle_url('/user/view.php', $params), $a->realusername);
+                $params['id'] = $event->userid;
+                $a->asusername = html_writer::link(new moodle_url('/user/view.php', $params), $a->asusername);
+            }
             $username = get_string('eventloggedas', 'report_log', $a);
         } else if (!empty($event->userid) && !empty($this->userfullnames[$event->userid])) {
             $params = array('id' => $event->userid);
             if ($event->courseid) {
                 $params['course'] = $event->courseid;
             }
-            $username = html_writer::link(new moodle_url("/user/view.php", $params), $this->userfullnames[$event->userid]);
+            $username = $this->userfullnames[$event->userid];
+            if (empty($this->download)) {
+                $username = html_writer::link(new moodle_url('/user/view.php', $params), $username);
+            }
         } else {
             $username = '-';
         }
@@ -164,10 +169,14 @@ class report_log_table_log extends table_sql {
             if ($event->courseid) {
                 $params['course'] = $event->courseid;
             }
-            return html_writer::link(new moodle_url("/user/view.php", $params), $this->userfullnames[$event->relateduserid]);
+            $username = $this->userfullnames[$event->relateduserid];
+            if (empty($this->download)) {
+                $username = html_writer::link(new moodle_url('/user/view.php', $params), $username);
+            }
         } else {
-            return '-';
+            $username = '-';
         }
+        return $username;
     }
 
     /**
@@ -186,7 +195,7 @@ class report_log_table_log extends table_sql {
                 $context = context::instance_by_id($event->contextid, IGNORE_MISSING);
                 if ($context) {
                     $contextname = $context->get_context_name(true);
-                    if ($url = $context->get_url()) {
+                    if ($url = $context->get_url() && empty($this->download)) {
                         $contextname = html_writer::link($url, $contextname);
                     }
                 } else {
@@ -233,7 +242,8 @@ class report_log_table_log extends table_sql {
         } else {
             $eventname = $event->get_name();
         }
-        if ($url = $event->get_url()) {
+        // Only encode as an action link if we're not downloading.
+        if (($url = $event->get_url()) && empty($this->download)) {
             $eventname = $this->action_link($url, $eventname, 'action');
         }
         return $eventname;
@@ -273,9 +283,13 @@ class report_log_table_log extends table_sql {
     public function col_ip($event) {
         // Get extra event data for origin and realuserid.
         $logextra = $event->get_logextra();
+        $ip = $logextra['ip'];
 
-        $url = new moodle_url("/iplookup/index.php?ip={$logextra['ip']}&user=$event->userid");
-        return $this->action_link($url, $logextra['ip'], 'ip');
+        if (empty($this->download)) {
+            $url = new moodle_url("/iplookup/index.php?ip={$ip}&user={$event->userid}");
+            $ip = $this->action_link($url, $ip, 'ip');
+        }
+        return $ip;
     }
 
     /**
