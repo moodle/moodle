@@ -578,4 +578,44 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         }
 
     }
+
+    /**
+     * Test get_blocked_users.
+     */
+    public function test_get_blocked_users() {
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $userstranger = self::getDataGenerator()->create_user();
+        $useroffline1 = self::getDataGenerator()->create_user();
+        $useroffline2 = self::getDataGenerator()->create_user();
+        $userblocked = self::getDataGenerator()->create_user();
+
+        // Login as user1.
+        $this->setUser($user1);
+        $this->assertEquals(array(), core_message_external::create_contacts(
+            array($useroffline1->id, $useroffline2->id)));
+
+        // The userstranger sends a couple of messages to user1.
+        $this->send_message($userstranger, $user1, 'Hello there!');
+        $this->send_message($userstranger, $user1, 'How you goin?');
+
+        // The userblocked sends a message to user1.
+        // Note that this user is not blocked at this point.
+        $this->send_message($userblocked, $user1, 'Here, have some spam.');
+
+        // Retrieve the list of blocked users.
+        $this->setUser($user1);
+        $blockedusers = core_message_external::get_blocked_users($user1->id);
+        $blockedusers = external_api::clean_returnvalue(core_message_external::get_blocked_users_returns(), $blockedusers);
+        $this->assertCount(0, $blockedusers['users']);
+
+        // Block the $userblocked and retrieve again the list.
+        core_message_external::block_contacts(array($userblocked->id));
+        $blockedusers = core_message_external::get_blocked_users($user1->id);
+        $blockedusers = external_api::clean_returnvalue(core_message_external::get_blocked_users_returns(), $blockedusers);
+        $this->assertCount(1, $blockedusers['users']);
+
+    }
+
 }
