@@ -34,6 +34,6 @@ Feature: Duplicate activities
       | Name | Duplicated database name |
       | Description | Duplicated database description |
     And I press "Save and return to course"
-    Then I should see "Original database name" in the "#section-1" "css_element"
-    And I should see "Duplicated database name" in the "#section-1" "css_element"
+    Then I should see "Original database name" in the "Topic 1" "section"
+    And I should see "Duplicated database name" in the "Topic 1" "section"
     And "Original database name" "link" should appear before "Duplicated database name" "link"
