@@ -125,6 +125,20 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
             }
         }
 
+        // make sure there are no duplicate "questionid" fields in "qtype_ordering_options" table
+        $select = 'questionid, COUNT(*) AS countduplicates, MAX(id) AS maxid';
+        $from   = '{qtype_ordering_options}';
+        $group  = 'questionid';
+        $having = 'countduplicates > ?';
+        $params = array(1);
+        if ($records = $DB->get_records_sql("SELECT $select FROM $from GROUP BY $group HAVING $having", $params)) {
+            foreach ($records as $record) {
+                $select = 'id <> ? AND questionid = ?';
+                $params = array($record->maxid, $record->questionid);
+                $DB->delete_records_select('qtype_ordering_options', $select, $params);
+            }
+        }
+
         // restore index on questionid field
         $table = new xmldb_table('qtype_ordering_options');
         $index = new xmldb_index('qtypordeopti_que_uix', XMLDB_INDEX_UNIQUE, array('questionid'));
