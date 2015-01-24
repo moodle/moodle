@@ -103,8 +103,8 @@ class qtype_ordering_question extends question_graded_automatically {
     public function apply_attempt_state(question_attempt_step $step) {
         $this->answers = $this->get_ordering_answers();
         $this->options = $this->get_ordering_options();
-        $this->correctresponse = explode(',', $step->get_qt_var('_correctresponse'));
-        $this->currentresponse = explode(',', $step->get_qt_var('_currentresponse'));
+        $this->currentresponse = array_filter(explode(',', $step->get_qt_var('_currentresponse')));
+        $this->correctresponse = array_filter(explode(',', $step->get_qt_var('_correctresponse')));
     }
 
     public function format_questiontext($qa) {
