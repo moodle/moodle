@@ -66,10 +66,33 @@ function local_kaltura_get_kaltura_client() {
     return $client;
 }
 
+
+/**
+ * Writes data to the log table.
+ * @param string $method The method where the log originated from.
+ * @param array $data relevant information to be written to log.
+ */
+function local_kaltura_migration_log_data($method, $data = null) {
+    global $DB;
+
+    $record = new stdClass();
+    $record->type = 'MIG';
+    $record->module = 'Kalturamigration';
+    $record->timecreated = time();
+    $record->endpoint = $method;
+    $record->data = serialize($data);
+    $DB->insert_record('local_kaltura_log', $record);
+
+    return true;
+}
+
 /**
  * This function validates that a root category and a profile id have set.  The root category is then queried to find a category id.
  */
 function local_kaltura_retrieve_repository_settings() {
+    local_kaltura_migration_log_data(__FUNCTION__, array(
+        'getting repository settings',
+    ));
     $rootcategoryid = get_config(KALTURA_PLUGIN_NAME, 'migration_source_category');
     $metadataprofileid = get_config(KALTURA_PLUGIN_NAME, 'migration_metadata_profile_id');
 
@@ -121,7 +144,9 @@ function local_kaltura_get_categories() {
             asort($list);
         }
     }
-
+    
+    local_kaltura_migration_log_data(__FUNCTION__, $list);
+    
     return $list;
 }
 
@@ -368,9 +393,14 @@ function local_kaltura_assign_entries_to_new_categories($client, $entries, $pare
                     try{
                         $result = $client->categoryEntry->add($categoryentry);
                     } catch (Exception $ex) {
-                        local_kaltura_log_data("Kalturamigration", 
-                                'local_kaltura_assign_entries_to_new_categories - failed adding entry to category '.$ex->getCode(), 
-                                array($categoryentry->entryId, $categoryentry->categoryId), false);
+                        local_kaltura_migration_log_data(__FUNCTION__, array(
+                            "failed adding entry to category",
+                            $categoryentry->entryId,
+                            $categoryentry->categoryId,
+                            $ex->getCode(),
+                            $ex->getMessage(),
+                            base64_encode($ex->getTraceAsString()),
+                        ));
                     }
                     local_kaltura_migration_progress::increment_entriesmigrated();
                 }
@@ -486,9 +516,14 @@ function local_kaltura_assign_entries_to_new_course_categories($client, $entries
                     try{
                         $client->categoryEntry->add($categoryentry);
                     } catch (Exception $ex) {
-                        local_kaltura_log_data("Kalturamigration", 
-                                'local_kaltura_assign_entries_to_new_categories - failed adding entry to category '.$ex->getCode(), 
-                                array($categoryentry->entryId, $categoryentry->categoryId), false);
+                        local_kaltura_migration_log_data(__FUNCTION__, array(
+                            "failed adding entry to category line: ".__LINE__,
+                            $categoryentry->entryId,
+                            $categoryentry->categoryId,
+                            $ex->getCode(),
+                            $ex->getMessage(),
+                            base64_encode($ex->getTraceAsString()),
+                        ));
                     }
 
                     local_kaltura_migration_progress::increment_entriesmigrated();
@@ -514,9 +549,14 @@ function local_kaltura_assign_entries_to_new_course_categories($client, $entries
                     try{
                         $categoryresult = $client->categoryEntry->add($categoryentry);
                     } catch (Exception $ex) {
-                        local_kaltura_log_data("Kalturamigration", 
-                                'local_kaltura_assign_entries_to_new_categories - failed adding entry to category '.$ex->getCode(), 
-                                array($categoryentry->entryId, $categoryentry->categoryId), false);
+                        local_kaltura_migration_log_data(__FUNCTION__, array(
+                            "failed adding entry to category line: ".__LINE__,
+                            $categoryentry->entryId,
+                            $categoryentry->categoryId,
+                            $ex->getCode(),
+                            $ex->getMessage(),
+                            base64_encode($ex->getTraceAsString()),
+                        ));
                         $categoryresult = null;
                     }
 
@@ -631,10 +671,24 @@ function local_kaltura_get_sharedrepo_id($client, $channelsid, $rootcatid) {
         } catch (Exception $ex) {
             if($ex->getCode() == 'DUPLICATE_CATEGORY')
             {
+                local_kaltura_migration_log_data(__FUNCTION__, array(
+                    "category already exists",
+                    $category,
+                    $ex->getCode(),
+                    $ex->getMessage(),
+                    base64_encode($ex->getTraceAsString()),
+                ));
                 // nothing to do - category exists is a good thing
             }
             else {
-                throw $ex;
+                local_kaltura_migration_log_data(__FUNCTION__, array(
+                            "failed adding category",
+                            $category,
+                            $ex->getCode(),
+                            $ex->getMessage(),
+                            base64_encode($ex->getTraceAsString()),
+                ));
+                //throw $ex; // not throwing exception. always writing to log.
             }
         }
         
@@ -806,6 +860,7 @@ function local_kaltura_update_activities() {
                     $kalentry = $client->baseEntry->get($record->entry_id);
                 }
                 catch(Exception $ex) {
+                    local_kaltura_migration_log_data(__FUNCTION__, array("could not get entry", $record->entry_id, $ex->getCode(), $ex->getMessage()));
                     // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
                     // since this is for backward compatibility - we can ignore that for the sake of completing the migration
                     $kalentry = new stdClass();
@@ -842,6 +897,7 @@ function local_kaltura_update_activities() {
                     $kalentry = $client->baseEntry->get($record->entry_id);
                 }
                 catch(Exception $ex) {
+                    local_kaltura_migration_log_data(__FUNCTION__, array("could not get entry", $record->entry_id, $ex->getCode(), $ex->getMessage()));
                     // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
                     // since this is for backward compatibility - we can ignore that for the sake of completing the migration
                     $kalentry = new stdClass();
@@ -882,6 +938,7 @@ function local_kaltura_update_activities() {
                     $kalentry = $client->baseEntry->get($record->entry_id);
                 }
                 catch(Exception $ex) {
+                    local_kaltura_migration_log_data(__FUNCTION__, array("could not get entry", $record->entry_id, $ex->getCode(), $ex->getMessage()));
                     // if from some reason we were not able to get the entry - lets make an empty object to use for empty metadata
                     // since this is for backward compatibility - we can ignore that for the sake of completing the migration
                     $kalentry = new stdClass();
@@ -990,7 +1047,7 @@ function local_kaltura_set_activity_entry_to_incontext($entryId, $courseId)
     }
     catch(Exception $ex)
     {
-        // write to log?
+        local_kaltura_migration_log_data(__FUNCTION__, array("could not list categories", $record->entry_id, $ex->getCode(), $ex->getMessage()));
     }
     
     $inContextCategoryId = null;
@@ -1056,11 +1113,25 @@ function local_kaltura_set_activity_entry_to_incontext($entryId, $courseId)
         // write to log?
         if($ex->getCode() == 'CATEGORY_ENTRY_ALREADY_EXISTS')
         {
-            // do nothing. this is OK.
+            local_kaltura_migration_log_data(__FUNCTION__, array(
+                "failed edding entry to category - already exists", 
+                $categoryEntry->entryId,
+                $categoryEntry->categoryId,
+                $ex->getCode(), 
+                $ex->getMessage(),
+                $ex->getTraceAsString(),
+            ));
         }
         else
         {
-            throw $ex;
+            local_kaltura_migration_log_data(__FUNCTION__, array(
+                "failed edding entry to category - reason unexpected", 
+                $categoryEntry->entryId,
+                $categoryEntry->categoryId,
+                $ex->getCode(), 
+                $ex->getMessage(),
+                $ex->getTraceAsString(),
+            ));
         }
     }
 }
@@ -1080,9 +1151,13 @@ function local_kaltura_update_video_presentation_entry($client, $entrylist) {
             $client->baseEntry->update($entryid, $vidpres);
         }
         catch(Exception $ex){
-            local_kaltura_log_data("Kalturamigration", 
-                'local_kaltura_update_video_presentation_entry - failed updating data with tag '.$ex->getCode(), 
-                array($entryid), false);
+            local_kaltura_migration_log_data(__FUNCTION__, array(
+                            "failed updating data with tag",
+                            $entryid,
+                            $ex->getCode(),
+                            $ex->getMessage(),
+                            base64_encode($ex->getTraceAsString()),
+            ));
         }
     }
 }
