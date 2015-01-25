@@ -242,6 +242,7 @@ $string['selectedquestions'] = 'Selected questions from a scale, all students';
 $string['summary'] = 'Summary';
 $string['survey:addinstance'] = 'Add a new survey';
 $string['surveycompleted'] = 'You\'ve completed this survey.  The graph below shows a summary of your results compared to the class averages.';
+$string['surveycompletednograph'] = 'You have completed this survey.';
 $string['survey:download'] = 'Download responses';
 $string['surveygraph'] = 'Survey graph';
 $string['surveyname'] = 'Survey name';
