@@ -24,10 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014121807;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->release = 'Kaltura release 4.0.02';
+$plugin->version   = 2015012507;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->release = 'Kaltura release 4.0.03';
 $plugin->requires  = 2014050800;        // Requires this Moodle version.
 $plugin->component = 'atto_kalturamedia';  // Full name of the plugin (used for diagnostics).
 $plugin->dependencies = array(
-    'local_kaltura' => 2014121807
+    'local_kaltura' => 2015012507
 );
