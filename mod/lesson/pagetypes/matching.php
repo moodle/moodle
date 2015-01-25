@@ -342,9 +342,8 @@ class lesson_page_type_matching extends lesson_page {
                 } else {
                     $DB->update_record("lesson_answers", $this->answers[$i]->properties());
                 }
-                // Save files in answers and responses.
-                $this->save_answers_files($context, $maxbytes, $this->answers[$i],
-                        $properties->answer_editor[$i], $properties->response_editor[$i]);
+                // Save files in answers (no response_editor for matching questions).
+                $this->save_answers_files($context, $maxbytes, $this->answers[$i], $properties->answer_editor[$i]);
             } else if ($i < 2) {
                 if (!isset($this->answers[$i]->id)) {
                     $this->answers[$i]->id =  $DB->insert_record("lesson_answers", $this->answers[$i]);
@@ -352,9 +351,8 @@ class lesson_page_type_matching extends lesson_page {
                     $DB->update_record("lesson_answers", $this->answers[$i]->properties());
                 }
 
-                // Save files in answers and responses.
-                $this->save_answers_files( $context, $maxbytes, $this->answers[$i],
-                        $properties->answer_editor[$i], $properties->response_editor[$i]);
+                // Save files in answers (no response_editor for matching questions).
+                $this->save_answers_files($context, $maxbytes, $this->answers[$i], $properties->answer_editor[$i]);
             } else if (isset($this->answers[$i]->id)) {
                 $DB->delete_records('lesson_answers', array('id'=>$this->answers[$i]->id));
                 unset($this->answers[$i]);
