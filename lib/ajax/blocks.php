@@ -28,7 +28,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 // Initialise ALL common incoming parameters here, up front.
 $courseid = required_param('courseid', PARAM_INT);
 $pagelayout = required_param('pagelayout', PARAM_ALPHAEXT);
-$pagetype = required_param('pagetype', PARAM_ALPHAEXT);
+$pagetype = required_param('pagetype', PARAM_ALPHANUMEXT);
 $contextid = required_param('contextid', PARAM_INT);
 $subpage = optional_param('subpage', '', PARAM_ALPHANUMEXT);
 $cmid = optional_param('cmid', null, PARAM_INT);
