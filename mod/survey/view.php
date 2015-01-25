@@ -107,11 +107,19 @@ $completion->set_module_viewed($cm);
         $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
 
         if ($showscales) {
-            echo $OUTPUT->box(get_string("surveycompleted", "survey"));
-            echo $OUTPUT->box(get_string("peoplecompleted", "survey", $numusers));
-            echo '<div class="resultgraph">';
-            survey_print_graph("id=$cm->id&amp;sid=$USER->id&amp;group=$currentgroup&amp;type=student.png");
-            echo '</div>';
+            // Ensure that graph.php will allow the user to see the graph.
+            if (has_capability('mod/survey:readresponses', $context) || !$groupmode || groups_is_member($currentgroup)) {
+
+                echo $OUTPUT->box(get_string("surveycompleted", "survey"));
+                echo $OUTPUT->box(get_string("peoplecompleted", "survey", $numusers));
+
+                echo '<div class="resultgraph">';
+                survey_print_graph("id=$cm->id&amp;sid=$USER->id&amp;group=$currentgroup&amp;type=student.png");
+                echo '</div>';
+            } else {
+                echo $OUTPUT->box(get_string("surveycompletednograph", "survey"));
+                echo $OUTPUT->box(get_string("peoplecompleted", "survey", $numusers));
+            }
 
         } else {
 
