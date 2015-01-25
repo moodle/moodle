@@ -1094,12 +1094,21 @@ function local_kaltura_set_activity_entry_to_incontext($entryId, $courseId)
                 $inContextCategoryId = $multiResponse[1]->id;
             }
         }
+        else
+        {
+            $inContextCategoryId = $res->id;
+        }
     }
     
     // assign the entry to the InContext category
     if(is_null($inContextCategoryId))
     {
-        throw new Exception("Failed getting/creating InContext category for course $courseId with response objects of single-req: ".print_r($res, true). " and multi-req: ".print_r($multiResponse, true) );
+        local_kaltura_migration_log_data(__FUNCTION__, array(
+            'Failed getting/creating InContext category for course',
+            $courseId,
+            'single request response: '.base64_encode(print_r($res, true)),
+            'multi request response: '.  base64_encode(print_r($multiResponse, true)),
+        ));
     }
     
     $categoryEntry = new KalturaCategoryEntry();
