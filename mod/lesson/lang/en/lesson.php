@@ -231,6 +231,7 @@ $string['lessoncloseson'] = 'Lesson closes on {$a}';
 $string['lesson:edit'] = 'Edit a lesson activity';
 $string['lessonformating'] = 'Lesson formatting';
 $string['lesson:manage'] = 'Manage a lesson activity';
+$string['lesson:viewreports'] = 'View lesson reports';
 $string['lessonmenu'] = 'Lesson menu';
 $string['lessonnotready'] = 'This lesson is not ready to be taken.  Please contact your {$a}.';
 $string['lessonnotready2'] = 'This lesson is not ready to be taken.';

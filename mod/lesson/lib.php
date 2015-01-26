@@ -796,7 +796,7 @@ function lesson_extend_settings_navigation($settings, $lessonnode) {
         $editnode->add(get_string('full', 'lesson'), $url);
     }
 
-    if (has_capability('mod/lesson:manage', $PAGE->cm->context)) {
+    if (has_capability('mod/lesson:viewreports', $PAGE->cm->context)) {
         $reportsnode = $lessonnode->add(get_string('reports', 'lesson'));
         $url = new moodle_url('/mod/lesson/report.php', array('id'=>$PAGE->cm->id, 'action'=>'reportoverview'));
         $reportsnode->add(get_string('overview', 'lesson'), $url);
