@@ -820,14 +820,25 @@ if ($showactivity) {
     }
     echo html_writer::end_tag('form');
 
+    // Check to see if we can export records to a portfolio. This is for exporting all records, not just the ones in the search.
     if ($mode == '' && !empty($CFG->enableportfolios) && !empty($records)) {
-        require_once($CFG->libdir . '/portfoliolib.php');
-        $button = new portfolio_add_button();
-        $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id), 'mod_data');
-        if (data_portfolio_caller::has_files($data)) {
-            $button->set_formats(array(PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_LEAP2A)); // no plain html for us
+        $canexport = false;
+        // Exportallentries and exportentry are basically the same capability.
+        if (has_capability('mod/data:exportallentries', $context) || has_capability('mod/data:exportentry', $context)) {
+            $canexport = true;
+        } else if (has_capability('mod/data:exportownentry', $context) &&
+                $DB->record_exists('data_records', array('userid' => $USER->id))) {
+            $canexport = true;
         }
-        echo $button->to_html(PORTFOLIO_ADD_FULL_FORM);
+        if ($canexport) {
+            require_once($CFG->libdir . '/portfoliolib.php');
+            $button = new portfolio_add_button();
+            $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id), 'mod_data');
+            if (data_portfolio_caller::has_files($data)) {
+                $button->set_formats(array(PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_LEAP2A)); // No plain html for us.
+            }
+            echo $button->to_html(PORTFOLIO_ADD_FULL_FORM);
+        }
     }
 
     //Advanced search form doesn't make sense for single (redirects list view)
