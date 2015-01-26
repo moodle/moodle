@@ -36,6 +36,17 @@ function atto_charmap_strings_for_js() {
     // which are enabled in the JavaScript part of this plugin.
     $PAGE->requires->strings_for_js(
         array(
+            'amacron',
+            'emacron',
+            'imacron',
+            'omacron',
+            'umacron',
+            'amacron_caps',
+            'emacron_caps',
+            'imacron_caps',
+            'omacron_caps',
+            'umacron_caps',
+            'interrobang',
             'insertcharacter',
             'nobreakspace',
             'ampersand',
