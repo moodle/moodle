@@ -4124,7 +4124,7 @@ function xmldb_main_upgrade($oldversion) {
 
     }
 
-    if ($oldversion < 2015011501.02) {
+    if ($oldversion < 2015012600.00) {
 
         // If the site is using internal and external storage, or just external
         // storage, and the external path specified is empty we change the setting
@@ -4137,7 +4137,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2015011501.02);
+        upgrade_main_savepoint(true, 2015012600.00);
     }
 
     return true;
