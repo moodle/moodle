@@ -4328,6 +4328,7 @@ class assign {
                 $this->get_grading_status($grade->userid) != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
             // Remove the grade (if it exists) from the gradebook as it is not 'final'.
             $grade->grade = -1;
+            $grade->feedbacktext = '';
         }
 
         if ($submission != null) {
