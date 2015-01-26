@@ -745,7 +745,7 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
 
         // If the parent aggregation is Natural, we should show the number, even for scales, as that value is used...
         // ...in the computation. For text grades, the grademax is not used, so we can still show the no value string.
-        $parent_cat = $item->get_parent_category();
+        $parentcat = $item->get_parent_category();
         if ($item->gradetype == GRADE_TYPE_TEXT) {
             $grademax = ' - ';
         } else if ($item->gradetype == GRADE_TYPE_SCALE) {
@@ -756,7 +756,7 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
             } else {
                 $scale_items = explode(',', $scale->scale);
             }
-            if ($parent_cat->aggregation == GRADE_AGGREGATE_SUM) {
+            if ($parentcat->aggregation == GRADE_AGGREGATE_SUM) {
                 $grademax = end($scale_items) . ' (' .
                         format_float($item->grademax, $item->get_decimals()) . ')';
             } else {
@@ -766,7 +766,20 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
             $grademax = format_float($item->grademax, $item->get_decimals());
         }
 
-        if ($item->aggregationcoef > 0 && $parent_cat->is_extracredit_used()) {
+        $isextracredit = false;
+        if ($item->aggregationcoef > 0) {
+            // For category grade items, we need the grandparent category.
+            // The parent is just category the grade item represents.
+            if ($item->is_category_item()) {
+                $grandparentcat = $parentcat->get_parent_category();
+                if ($grandparentcat->is_extracredit_used()) {
+                    $isextracredit = true;
+                }
+            } else if ($parentcat->is_extracredit_used()) {
+                $isextracredit = true;
+            }
+        }
+        if ($isextracredit) {
             $grademax .= ' ' . html_writer::tag('abbr', get_string('aggregationcoefextrasumabbr', 'grades'),
                 array('title' => get_string('aggregationcoefextrasum', 'grades')));
         }
