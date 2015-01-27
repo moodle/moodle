@@ -8,6 +8,7 @@ This files describes API changes in the lesson code.
   have been removed, this is now handled by the base class: lesson_page::update in
   locallib.php and the exact same code is executed (it is also executed by the
   lesson_page_type_cluster class that previously had no update function).
+* removedoublecr() and importmodifiedaikenstyle() are now deprecated.
 
 === Earlier changes ===
 
