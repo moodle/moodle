@@ -1066,35 +1066,56 @@ function tag_autocomplete($text) {
 function tag_cleanup() {
     global $DB;
 
-    $instances = $DB->get_recordset('tag_instance');
+    // Get ids to delete from instances where the tag has been deleted. This should never happen apparently.
+    $sql = "SELECT ti.id
+              FROM {tag_instance} ti
+         LEFT JOIN {tag} t ON t.id = ti.tagid
+             WHERE t.id IS null";
+    $tagids = $DB->get_records_sql($sql);
+    $tagarray = array();
+    foreach ($tagids as $tagid) {
+        $tagarray[] = $tagid->id;
+    }
 
-    // cleanup tag instances
-    foreach ($instances as $instance) {
-        $delete = false;
+    // Next get ids from instances that have an owner that has been deleted.
+    $sql = "SELECT ti.id
+              FROM {tag_instance} ti, {user} u
+             WHERE ti.itemid = u.id
+               AND ti.itemtype = 'user'
+               AND u.deleted = 1";
+    $tagids = $DB->get_records_sql($sql);
+    foreach ($tagids as $tagid) {
+        $tagarray[] = $tagid->id;
+    }
 
-        if (!$DB->record_exists('tag', array('id'=>$instance->tagid))) {
-            // if the tag has been removed, instance should be deleted.
-            $delete = true;
-        } else {
-            switch ($instance->itemtype) {
-                case 'user': // users are marked as deleted, but not actually deleted
-                    if ($DB->record_exists('user', array('id'=>$instance->itemid, 'deleted'=>1))) {
-                        $delete = true;
-                    }
-                    break;
-                default: // anything else, if the instance is not there, delete.
-                    if (!$DB->record_exists($instance->itemtype, array('id'=>$instance->itemid))) {
-                        $delete = true;
-                    }
-                    break;
-            }
-        }
-        if ($delete) {
-            tag_delete_instance($instance->itemtype, $instance->itemid, $instance->tagid);
-            //debugging('deleting tag_instance #'. $instance->id .', linked to tag id #'. $instance->tagid, DEBUG_DEVELOPER);
+    // Get the other itemtypes.
+    $sql = "SELECT itemtype
+              FROM {tag_instance}
+             WHERE itemtype <> 'user'
+          GROUP BY itemtype";
+    $tagitemtypes = $DB->get_records_sql($sql);
+    foreach ($tagitemtypes as $key => $notused) {
+        $sql = 'SELECT ti.id
+                  FROM {tag_instance} ti
+             LEFT JOIN {' . $key . '} it ON it.id = ti.itemid
+                 WHERE it.id IS null
+                 AND ti.itemtype = \'' . $key . '\'';
+        $tagids = $DB->get_records_sql($sql);
+        foreach ($tagids as $tagid) {
+            $tagarray[] = $tagid->id;
         }
     }
-    $instances->close();
+
+    // Get instances for each of the ids to be deleted.
+    if (count($tagarray) > 0) {
+        list($sqlin, $params) = $DB->get_in_or_equal($tagarray);
+        $sql = "SELECT ti.*, COALESCE(t.name, 'deleted') AS name, COALESCE(t.rawname, 'deleted') AS rawname
+                  FROM {tag_instance} ti
+             LEFT JOIN {tag} t ON t.id = ti.tagid
+                 WHERE ti.id $sqlin";
+        $instances = $DB->get_records_sql($sql, $params);
+        tag_bulk_delete_instances($instances);
+    }
 
     // TODO MDL-31212 this will only clean tags of type 'default'.  This is good as
     // it won't delete 'official' tags, but the day we get more than two
@@ -1114,6 +1135,48 @@ function tag_cleanup() {
         //debugging('deleting unused tag #'. $unused_tag->id,  DEBUG_DEVELOPER);
     }
     $unused_tags->close();
+}
+
+/**
+ * This function will delete numerous tag instances efficiently.
+ * This removes tag instances only. It doesn't check to see if it is the last use of a tag.
+ *
+ * @param array $instances An array of tag instance objects with the addition of the tagname and tagrawname
+ *        (used for recording a delete event).
+ */
+function tag_bulk_delete_instances($instances) {
+    global $DB;
+
+    $instanceids = array();
+    foreach ($instances as $instance) {
+        $instanceids[] = $instance->id;
+    }
+
+    // This is a multi db compatible method of creating the correct sql when using the 'IN' value.
+    // $insql is the sql statement, $params are the id numbers.
+    list($insql, $params) = $DB->get_in_or_equal($instanceids);
+    $sql = 'id ' . $insql;
+    $DB->delete_records_select('tag_instance', $sql, $params);
+
+    // Now go through and record each tag individually with the event system.
+    foreach ($instances as $instance) {
+        // Trigger tag removed event (i.e. The tag instance has been removed).
+        $event = \core\event\tag_removed::create(array(
+            'objectid' => $instance->id,
+            'contextid' => $instance->contextid,
+            'other' => array(
+                'tagid' => $instance->tagid,
+                'tagname' => $instance->name,
+                'tagrawname' => $instance->rawname,
+                'itemid' => $instance->itemid,
+                'itemtype' => $instance->itemtype
+            )
+        ));
+        unset($instance->name);
+        unset($instance->rawname);
+        $event->add_record_snapshot('tag_instance', $instance);
+        $event->trigger();
+    }
 }
 
 /**
