@@ -43,10 +43,9 @@ if ($errormsg !== '') {
 
 $resultshtml = admin_search_settings_html($query); // case insensitive search only
 
-echo '<form action="search.php" method="post" id="adminsettings">';
+echo '<form action="' . $PAGE->url->out(true) . '" method="post" id="adminsettings">';
 echo '<div>';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-echo '<input type="hidden" name="query" value="'.s($query).'" />';
 echo '</div>';
 echo '<fieldset>';
 echo '<div class="clearer"><!-- --></div>';
