@@ -72,8 +72,13 @@ if ($options['list']) {
             . $task->get_day_of_week();
         $nextrun = $task->get_next_run_time();
 
-        if ($task->get_disabled()) {
-            $nextrun = get_string('disabled', 'tool_task');
+        $plugininfo = core_plugin_manager::instance()->get_plugin_info($task->get_component());
+        $plugindisabled = $plugininfo && $plugininfo->is_enabled() === false && !$task->get_run_if_component_disabled();
+
+        if ($plugindisabled) {
+            $nextrun = get_string('plugindisabled', 'tool_task');
+        } else if ($task->get_disabled()) {
+            $nextrun = get_string('taskdisabled', 'tool_task');
         } else if ($nextrun > time()) {
             $nextrun = userdate($nextrun);
         } else {

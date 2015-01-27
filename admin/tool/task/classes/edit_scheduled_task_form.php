@@ -38,10 +38,15 @@ class tool_task_edit_scheduled_task_form extends moodleform {
         /** @var \core\task\scheduled_task $task */
         $task = $this->_customdata;
 
+        $plugininfo = core_plugin_manager::instance()->get_plugin_info($task->get_component());
+        $plugindisabled = $plugininfo && $plugininfo->is_enabled() === false && !$task->get_run_if_component_disabled();
+
         $lastrun = $task->get_last_run_time() ? userdate($task->get_last_run_time()) : get_string('never');
         $nextrun = $task->get_next_run_time();
-        if ($task->get_disabled()) {
-            $nextrun = get_string('disabled', 'tool_task');
+        if ($plugindisabled) {
+            $nextrun = get_string('plugindisabled', 'tool_task');
+        } else if ($task->get_disabled()) {
+            $nextrun = get_string('taskdisabled', 'tool_task');
         } else if ($nextrun > time()) {
             $nextrun = userdate($nextrun);
         } else {

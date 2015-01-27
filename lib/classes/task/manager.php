@@ -505,7 +505,6 @@ class manager {
 
                 if ($plugininfo) {
                     if (($plugininfo->is_enabled() === false) && !$task->get_run_if_component_disabled()) {
-                        mtrace($task->get_name().' skipped - the component '.$task->get_component().' is disabled');
                         $lock->release();
                         continue;
                     }
