@@ -176,12 +176,12 @@ class core_useragent {
             }
         }
         if ($this->is_useragent_mobile()) {
-            $this->devicetype = 'mobile';
+            $this->devicetype = self::DEVICETYPE_MOBILE;
         } else if ($this->is_useragent_tablet()) {
-            $this->devicetype = 'tablet';
-        } else if (substr($this->useragent, 0, 34) === 'Mozilla/4.0 (compatible; MSIE 6.0;') {
-            // Safe way to check for IE6 and not get false positives for some IE 7/8 users.
-            $this->devicetype = 'legacy';
+            $this->devicetype = self::DEVICETYPE_TABLET;
+        } else if (self::check_ie_version('0') && !self::check_ie_version('7.0')) {
+            // IE 6 and before are considered legacy.
+            $this->devicetype = self::DEVICETYPE_LEGACY;
         } else {
             $this->devicetype = self::DEVICETYPE_DEFAULT;
         }
@@ -884,7 +884,7 @@ class core_useragent {
             if ($instance->useragent === false) {
                 // Can't be sure, just say no.
                 $instance->supportssvg = false;
-            } else if (self::is_ie() and !self::check_ie_version('9')) {
+            } else if (self::check_ie_version('0') and !self::check_ie_version('9')) {
                 // IE < 9 doesn't support SVG. Say no.
                 $instance->supportssvg = false;
             } else if (self::is_ie() and !self::check_ie_version('10') and self::check_ie_compatibility_view()) {
@@ -911,7 +911,7 @@ class core_useragent {
      */
     public static function supports_json_contenttype() {
         // Modern browsers other than IE correctly supports 'application/json' media type.
-        if (!self::is_ie()) {
+        if (!self::check_ie_version('0')) {
             return true;
         }
 
