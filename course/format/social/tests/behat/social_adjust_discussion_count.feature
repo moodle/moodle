@@ -92,7 +92,8 @@ Scenario: When number of discussions is decreased fewer discussions appear
     And I set the following fields to these values:
     | numdiscussions | 5 |
     When I press "Save and display"
-    Then I should see "This is forum post five"
+    Then I should see "This is forum post one"
+    And I should see "This is forum post five"
     And I should not see "This is forum post six"
 
 Scenario: When number of discussions is decreased to less than 1 only 1 discussion should appear
@@ -102,12 +103,14 @@ Scenario: When number of discussions is decreased to less than 1 only 1 discussi
     When I press "Save and display"
     Then I should see "This is forum post one"
     And I should not see "This is forum post two"
+    And I should not see "This is forum post ten"
 
 Scenario: When number of discussions is increased more discussions appear
     Given I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
     | numdiscussions | 9 |
     When I press "Save and display"
-    Then I should see "This is forum post five"
+    Then I should see "This is forum post one"
+    And I should see "This is forum post five"
     And I should see "This is forum post nine"
     And I should not see "This is forum post ten"

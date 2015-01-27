@@ -33,7 +33,8 @@
 
         $numdiscussions = course_get_format($course)->get_course()->numdiscussions;
         if ($numdiscussions < 1) {
-            $numdiscussions = 1; // Make sure that the value is at least zero.
+            // Make sure that the value is at least one.
+            $numdiscussions = 1;
         }
         forum_print_latest_discussions($course, $forum, $numdiscussions, 'plain', '', false);
 
