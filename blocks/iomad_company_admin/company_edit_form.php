@@ -363,12 +363,6 @@ if ($mform->is_cancelled()) {
     $data->userid = $USER->id;
 
     if ($isadding) {
-        // Set up a profiles field category for this company.
-        $catdata = new object();
-        $catdata->sortorder = $DB->count_records('user_info_category') + 1;
-        $catdata->name = $data->shortname;
-        $data->profileid = $DB->insert_record('user_info_category', $catdata, false);
-
         $companyid = $DB->insert_record('company', $data);
 
         // Set up default department.
@@ -400,6 +394,14 @@ if ($mform->is_cancelled()) {
 
         if ($themechanged) {
             $company->update_theme($data->theme);
+        }
+
+        //  Has the company name changed?
+        $topdepartment = $company->get_company_parentnode($companyid);
+        if ($topdepartment->name != $data->name) {
+            $topdepartment->name = $data->name;
+            $topdepartment->shorname = $data->shortname;
+            $DB->update_record('department', $topdepartment);
         }
 
         if (company_user::is_company_user()) {
