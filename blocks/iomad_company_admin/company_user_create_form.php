@@ -205,6 +205,8 @@ class user_edit_form extends company_moodleform {
                     list($mylicenseid, $mylicensecourse) = each($licenses);
                     $mylicensedetails = $DB->get_record('companylicense', array('id' => $mylicenseid));
                     $mform->addElement('html', '<div id="licensedetails"><b>' . get_string('licensedetails', 'block_iomad_company_admin', $mylicensedetails) . '</b></div>');
+                    $mform->addElement('hidden', 'licenseid', $mylicenseid);
+                    $mform->setType('licenseid', PARAM_INT);
                 } else {
                     $onlyone = false;
                     $mform->addElement('html', "<div class='fitem'><div class='fitemtitle'>" .
