@@ -62,7 +62,6 @@ $string['manage'] = 'Manage';
 $string['managesubscriptions'] = 'Event monitoring';
 $string['managerules'] = 'Event monitoring rules';
 $string['messageprovider:notification'] = 'Notifications of rule subscriptions';
-$string['nopermission'] = 'No permission';
 $string['messagetemplate'] = 'Notification message';
 $string['messagetemplate_help'] = 'A notification message is sent to subscribers once the notification threshold has been reached. It can include any or all of the following placeholders:
 <br /><br />

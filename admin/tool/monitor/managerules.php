@@ -78,13 +78,14 @@ if (!empty($action) && $ruleid) {
 
     echo $OUTPUT->header();
     $rule = \tool_monitor\rule_manager::get_rule($rule);
-    if ($rule->can_manage_rule()) {
-        switch ($action) {
-            case 'copy' :
-                $rule->duplicate_rule($courseid);
-                echo $OUTPUT->notification(get_string('rulecopysuccess', 'tool_monitor'), 'notifysuccess');
-                break;
-            case 'delete' :
+    switch ($action) {
+        case 'copy':
+            // No need to check for capability here as it is done at the start of the page.
+            $rule->duplicate_rule($courseid);
+            echo $OUTPUT->notification(get_string('rulecopysuccess', 'tool_monitor'), 'notifysuccess');
+            break;
+        case 'delete':
+            if ($rule->can_manage_rule()) {
                 $confirmurl = new moodle_url($CFG->wwwroot. '/admin/tool/monitor/managerules.php',
                     array('ruleid' => $ruleid, 'courseid' => $courseid, 'action' => 'delete',
                         'confirm' => true, 'sesskey' => sesskey()));
@@ -103,12 +104,12 @@ if (!empty($action) && $ruleid) {
                     echo $OUTPUT->footer();
                     exit();
                 }
-                break;
-            default:
-        }
-    } else {
-        // User doesn't have permissions. Should never happen for real users.
-        throw new moodle_exception('rulenopermissions', 'tool_monitor', $manageurl, $action);
+            } else {
+                // User doesn't have permissions. Should never happen for real users.
+                throw new moodle_exception('rulenopermissions', 'tool_monitor', $manageurl, $action);
+            }
+            break;
+        default:
     }
 } else {
     echo $OUTPUT->header();
