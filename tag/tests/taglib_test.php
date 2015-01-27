@@ -143,4 +143,117 @@ class core_tag_taglib_testcase extends advanced_testcase {
         tag_assign('course', $course->id, $tag->id, 0, 0);
         $this->assertDebuggingCalled();
     }
+
+    /**
+     * Test the tag cleanup function used by the cron.
+     */
+    public function test_tag_cleanup() {
+        global $DB;
+
+        // Create some users.
+        $users = array();
+        for ($i = 0; $i < 10; $i++) {
+            $users[] = $this->getDataGenerator()->create_user();
+        }
+
+        // Create a course to tag.
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        // Test clean up instances with tags that no longer exist.
+        $tags = array();
+        for ($i = 0; $i < 10; $i++) {
+            $tags[] = $this->getDataGenerator()->create_tag(array('userid' => $users[0]->id));
+        }
+        // Create instances with the tags.
+        foreach ($tags as $tag) {
+            tag_assign('course', $course->id, $tag->id, 0, 0, 'core', $context->id);
+        }
+        // We should now have ten tag instances.
+        $coursetaginstances = $DB->count_records('tag_instance', array('itemtype' => 'course'));
+        $this->assertEquals(10, $coursetaginstances);
+        // Delete four tags
+        // Manual delete of tags is done as the function will remove the instances as well.
+        $DB->delete_records('tag', array('id' => $tags[6]->id));
+        $DB->delete_records('tag', array('id' => $tags[7]->id));
+        $DB->delete_records('tag', array('id' => $tags[8]->id));
+        $DB->delete_records('tag', array('id' => $tags[9]->id));
+        // Clean up the tags.
+        tag_cleanup();
+        // Check that we now only have six tag_instance records left.
+        $coursetaginstances = $DB->count_records('tag_instance', array('itemtype' => 'course'));
+        $this->assertEquals(6, $coursetaginstances);
+
+        // Test clean up with users that have been deleted.
+        // Create a tag for this course.
+        foreach ($users as $user) {
+            tag_assign('user', $user->id, $tags[0]->id, 0, 0, 'core', $context->id);
+        }
+        $usertags = $DB->count_records('tag_instance', array('itemtype' => 'user'));
+        $this->assertCount($usertags, $users);
+        // Remove three students.
+        // Using the proper function to delete the user will also remove the tags.
+        $DB->update_record('user', array('id' => $users[4]->id, 'deleted' => 1));
+        $DB->update_record('user', array('id' => $users[5]->id, 'deleted' => 1));
+        $DB->update_record('user', array('id' => $users[6]->id, 'deleted' => 1));
+        // Clean up the tags.
+        tag_cleanup();
+        $usertags = $DB->count_records('tag_instance', array('itemtype' => 'user'));
+        $usercount = $DB->count_records('user', array('deleted' => 0));
+        // Remove admin and guest from the count.
+        $this->assertEquals($usertags, ($usercount - 2));
+
+        // Test clean up where a course has been removed.
+        // Delete the course. This also needs to be this way otherwise the tags are removed by using the proper function.
+        $DB->delete_records('course', array('id' => $course->id));
+        tag_cleanup();
+        $coursetags = $DB->count_records('tag_instance', array('itemtype' => 'course'));
+        $this->assertEquals(0, $coursetags);
+
+        // Test clean up where a post has been removed.
+        // Create default post.
+        $post = new stdClass();
+        $post->userid = $users[1]->id;
+        $post->content = 'test post content text';
+        $post->id = $DB->insert_record('post', $post);
+        tag_assign('post', $post->id, $tags[0]->id, 0, 0, 'core', $context->id);
+        // Add another one with a fake post id to be removed.
+        tag_assign('post', 15, $tags[0]->id, 0, 0, 'core', $context->id);
+        // Check that there are two tag instances.
+        $posttags = $DB->count_records('tag_instance', array('itemtype' => 'post'));
+        $this->assertEquals(2, $posttags);
+        // Clean up the tags.
+        tag_cleanup();
+        // We should only have one entry left now.
+        $posttags = $DB->count_records('tag_instance', array('itemtype' => 'post'));
+        $this->assertEquals(1, $posttags);
+    }
+
+    /**
+     * Test deleting a group of tag instances.
+     */
+    public function test_tag_bulk_delete_instances() {
+        global $DB;
+        // Setup.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        // Create some tag instances.
+        for ($i = 0; $i < 10; $i++) {
+            $tag = $this->getDataGenerator()->create_tag(array('userid' => $user->id));
+            tag_assign('course', $course->id, $tag->id, 0, 0, 'core', $context->id);
+        }
+        // Get tag instances. tag name and rawname are required for the event fired in this function.
+        $sql = "SELECT ti.*, t.name, t.rawname
+                  FROM {tag_instance} ti
+                  JOIN {tag} t ON t.id = ti.tagid";
+        $taginstances = $DB->get_records_sql($sql);
+        $this->assertCount(10, $taginstances);
+        // Run the function.
+        tag_bulk_delete_instances($taginstances);
+        // Make sure they are gone.
+        $instancecount = $DB->count_records('tag_instance');
+        $this->assertEquals(0, $instancecount);
+    }
 }
