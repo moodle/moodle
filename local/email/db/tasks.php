@@ -14,5 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version  = 2015012700;   // The (date) version of this plugin.
-$plugin->requires = 2010021900;   // Requires this Moodle version.
+/**
+ * Definition of Forum scheduled tasks.
+ *
+ * @package   local_email
+ * @category  task
+ * @copyright 2015 E-Learn Design
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+$tasks = array(
+    array(
+        'classname' => 'local_email\task\cron_task',
+        'blocking' => 0,
+        'minute' => '*/5',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
+    )
+);

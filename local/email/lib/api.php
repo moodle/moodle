@@ -292,7 +292,7 @@ class EmailTemplate {
      * Parameters - $user = stdclass() or int.
      *
      **/
-    private function get_user($user) {
+    private static function get_user($user) {
         global $DB;
 
         if ($user) {
@@ -410,7 +410,7 @@ class EmailTemplate {
      * Parameters - $user = stdclass();
      *
      **/
-    private function get_sender($user) {
+    private static function get_sender($user) {
 
         // Get the user's company.
         if ($usercompany = company::get_company_byuserid($user->id)) {

@@ -17,3 +17,24 @@
 require_once(dirname(__FILE__) . '/../../config.php'); // Creates $PAGE.
 require_once('lib/vars.php');
 require_once('lib/api.php');
+
+function email_cron() {
+    global $DB;
+
+    // Delete emails older than 6 months to prevent the email table from clogging up the database.
+    $halfyearagoish = time() - 6 * 30 * 24 * 60 * 60;
+    $DB->delete_records_select('email', "modifiedtime < $halfyearagoish");
+
+    // Send emails.
+    if ($emails = $DB->get_records('email', array('sent' => null), null, '*')) {
+        foreach ($emails as $email) {
+            EmailTemplate::send_to_user($email);
+            // Adding a sleep to ensure there is no processing confusion.
+            sleep(1);
+    
+            $email->modifiedtime = $email->sent = time();
+            $email->id = $email->id;
+            $DB->update_record('email', $email);
+        }
+    }
+}
