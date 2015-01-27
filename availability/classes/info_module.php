@@ -109,6 +109,10 @@ class info_module extends info {
         return parent::filter_user_list($filtered);
     }
 
+    protected function get_view_hidden_capability() {
+        return 'moodle/course:viewhiddenactivities';
+    }
+
     /**
      * Checks if an activity is visible to the given user.
      *
