@@ -75,11 +75,24 @@ mybadges,badges|/badges/mybadges.php|award',
             6 => new lang_string('saturday', 'calendar')
         )));
     $temp->add(new admin_setting_special_calendar_weekend());
-    $options = array();
-    for ($i=1; $i<=99; $i++) {
-        $options[$i] = $i;
-    }
-    $temp->add(new admin_setting_configselect('calendar_lookahead',new lang_string('configlookahead','admin'),new lang_string('helpupcominglookahead', 'admin'),21,$options));
+    $options = array(365 => new lang_string('numyear', '', 1),
+            270 => new lang_string('nummonths', '', 9),
+            180 => new lang_string('nummonths', '', 6),
+            150 => new lang_string('nummonths', '', 5),
+            120 => new lang_string('nummonths', '', 4),
+            90  => new lang_string('nummonths', '', 3),
+            60  => new lang_string('nummonths', '', 2),
+            30  => new lang_string('nummonth', '', 1),
+            21  => new lang_string('numweeks', '', 3),
+            14  => new lang_string('numweeks', '', 2),
+            7  => new lang_string('numweek', '', 1),
+            6  => new lang_string('numdays', '', 6),
+            5  => new lang_string('numdays', '', 5),
+            4  => new lang_string('numdays', '', 4),
+            3  => new lang_string('numdays', '', 3),
+            2  => new lang_string('numdays', '', 2),
+            1  => new lang_string('numday', '', 1));
+    $temp->add(new admin_setting_configselect('calendar_lookahead', new lang_string('configlookahead', 'admin'), new lang_string('helpupcominglookahead', 'admin'), 21, $options));
     $options = array();
     for ($i=1; $i<=20; $i++) {
         $options[$i] = $i;

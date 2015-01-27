@@ -4140,5 +4140,26 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015012600.00);
     }
 
+    if ($oldversion < 2015012600.01) {
+
+        // Convert calendar_lookahead to nearest new value.
+        $value = $DB->get_field('config', 'value', array('name' => 'calendar_lookahead'));
+        if ($value > 90) {
+            set_config('calendar_lookahead', '120');
+        } else if ($value > 60 and $value < 90) {
+            set_config('calendar_lookahead', '90');
+        } else if ($value > 30 and $value < 60) {
+            set_config('calendar_lookahead', '60');
+        } else if ($value > 21 and $value < 30) {
+            set_config('calendar_lookahead', '30');
+        } else if ($value > 14 and $value < 21) {
+            set_config('calendar_lookahead', '21');
+        } else if ($value > 7 and $value < 14) {
+            set_config('calendar_lookahead', '14');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015012600.01);
+    }
     return true;
 }
