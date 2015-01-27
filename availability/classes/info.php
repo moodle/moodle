@@ -608,17 +608,39 @@ abstract class info {
         }
         $tree = $this->get_availability_tree();
         $checker = new capability_checker($this->get_context());
+
+        // Filter using availability tree.
         $this->modinfo = get_fast_modinfo($this->get_course());
-        $result = $tree->filter_user_list($users, false, $this, $checker);
+        $filtered = $tree->filter_user_list($users, false, $this, $checker);
         $this->modinfo = null;
+
+        // Include users in the result if they're either in the filtered list,
+        // or they have viewhidden. This logic preserves ordering of the
+        // passed users array.
+        $result = array();
+        $canviewhidden = $checker->get_users_by_capability($this->get_view_hidden_capability());
+        foreach ($users as $userid => $data) {
+            if (array_key_exists($userid, $filtered) || array_key_exists($userid, $canviewhidden)) {
+                $result[$userid] = $users[$userid];
+            }
+        }
+
         return $result;
     }
+
+    /**
+     * Gets the capability used to view hidden activities/sections (as
+     * appropriate).
+     *
+     * @return string Name of capability used to view hidden items of this type
+     */
+    protected abstract function get_view_hidden_capability();
 
     /**
      * Obtains SQL that returns a list of enrolled users that has been filtered
      * by the conditions applied in the availability API, similar to calling
      * get_enrolled_users and then filter_user_list. As for filter_user_list,
-     * this ONLY filteres out users with conditions that are marked as applying
+     * this ONLY filters out users with conditions that are marked as applying
      * to user lists. For example, group conditions are included but date
      * conditions are not included.
      *
@@ -640,8 +662,22 @@ abstract class info {
         if (is_null($this->availability) || !$CFG->enableavailability) {
             return array('', array());
         }
+
+        // Get SQL for the availability filter.
         $tree = $this->get_availability_tree();
-        return $tree->get_user_list_sql(false, $this, $onlyactive);
+        list ($filtersql, $filterparams) = $tree->get_user_list_sql(false, $this, $onlyactive);
+        if ($filtersql === '') {
+            // No restrictions, so return empty query.
+            return array('', array());
+        }
+
+        // Get SQL for the view hidden list.
+        list ($viewhiddensql, $viewhiddenparams) = get_enrolled_sql(
+                $this->get_context(), $this->get_view_hidden_capability(), 0, $onlyactive);
+
+        // Result is a union of the two.
+        return array('(' . $filtersql . ') UNION (' . $viewhiddensql . ')',
+                array_merge($filterparams, $viewhiddenparams));
     }
 
     /**
