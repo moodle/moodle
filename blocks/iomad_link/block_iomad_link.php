@@ -24,7 +24,7 @@ class block_iomad_link extends block_base {
     }
 
     public function applicable_formats() {
-        return array('site' => true);
+        return array('site' => true, 'my' => true);
     }
 
     public function get_content() {
