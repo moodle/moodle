@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'エラー、「 {$a->option} 」の値「 {$a->value} 」が正しくありません。';
-$string['cliincorrectvalueretry'] = '値が正しくありません、再度お試しください。';
+$string['cliincorrectvalueerror'] = 'エラー: 「 {$a->option} 」の値「 {$a->value} 」が正しくありません。';
+$string['cliincorrectvalueretry'] = '値が正しくありません、再度入力してください。';
 $string['clitypevalue'] = '値を入力してください。';
 $string['clitypevaluedefault'] = '値を入力してください。デフォルト値 ({$a}) を使用するにはEnterキーを押してください。';
 $string['cliunknowoption'] = '不明なオプション:
