@@ -43,6 +43,8 @@ try {
     $branchtype = required_param('type', PARAM_INT);
     // This identifies the block instance requesting AJAX extension
     $instanceid = optional_param('instance', null, PARAM_INT);
+    // URL of referrer page.
+    $returnurl = optional_param('returnurl', null, PARAM_LOCALURL);
 
     $PAGE->set_context(context_system::instance());
 
@@ -102,9 +104,18 @@ try {
     if (!$linkcategories) {
         foreach ($branch->find_all_of_type(navigation_node::TYPE_CATEGORY) as $category) {
             $category->action = null;
+            foreach ($category->find_all_of_type(navigation_node::TYPE_COURSE) as $course) {
+                $course->action->param('returnurl', $returnurl);
+            }
         }
         foreach ($branch->find_all_of_type(navigation_node::TYPE_MY_CATEGORY) as $category) {
             $category->action = null;
+            foreach ($category->find_all_of_type(navigation_node::TYPE_COURSE) as $course) {
+                $course->action->param('returnurl', $returnurl);
+            }
+        }
+        foreach ($branch->find_all_of_type(navigation_node::TYPE_COURSE) as $course) {
+            $course->action->param('returnurl', $returnurl);
         }
     }
 

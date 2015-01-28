@@ -180,7 +180,8 @@ NS._toggle_category_expansion = function(e) {
             categoryid: categoryid,
             depth: depth,
             showcourses: categorynode.getData('showcourses'),
-            type: TYPE_CATEGORY
+            type: TYPE_CATEGORY,
+            returnurl: location.href
         }
     });
 };

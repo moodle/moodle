@@ -44,6 +44,7 @@ if ($categoryid) {
 
 $PAGE->set_pagelayout('coursecategory');
 $courserenderer = $PAGE->get_renderer('core', 'course');
+$courserenderer->returnurl = $PAGE->url;
 
 if ($CFG->forcelogin) {
     require_login();

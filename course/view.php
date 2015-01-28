@@ -19,6 +19,7 @@
     $switchrole  = optional_param('switchrole',-1, PARAM_INT); // Deprecated, use course/switchrole.php instead.
     $modchooser  = optional_param('modchooser', -1, PARAM_BOOL);
     $return      = optional_param('return', 0, PARAM_LOCALURL);
+    $returnurl   = optional_param('returnurl', 0, PARAM_LOCALURL);
 
     $params = array();
     if (!empty($name)) {
@@ -41,6 +42,9 @@
     }
     if ($section) {
         $urlparams['section'] = $section;
+    }
+    if ($returnurl) {
+        $urlparams['returnurl'] = $returnurl;
     }
 
     $PAGE->set_url('/course/view.php', $urlparams); // Defined here to avoid notices on errors etc
