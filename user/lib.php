@@ -615,8 +615,8 @@ function user_count_login_failures($user, $reset = true) {
 }
 
 /**
- * Converts a string into a flat array of links, where each link is a
- * stdClass with fields url, title, pix, and imgsrc.
+ * Converts a string into a flat array of menu items, where each menu items is a
+ * stdClass with fields type, url, title, pix, and imgsrc.
  *
  * @param string $text the menu items definition
  * @param moodle_page $page the current page
@@ -634,7 +634,10 @@ function user_convert_text_to_menu_items($text, $page) {
     foreach ($lines as $line) {
         $line = trim($line);
         $bits = explode('|', $line, 3);
-        if (!array_key_exists(0, $bits) or empty($bits[0])) {
+        $itemtype = 'link';
+        if (preg_match("/^#+$/", $line)) {
+            $itemtype = 'divider';
+        } else if (!array_key_exists(0, $bits) or empty($bits[0])) {
             // Every item must have a name to be valid.
             continue;
         } else {
@@ -643,6 +646,13 @@ function user_convert_text_to_menu_items($text, $page) {
 
         // Create the child.
         $child = new stdClass();
+        $child->itemtype = $itemtype;
+        if ($itemtype === 'divider') {
+            // Add the divider to the list of children and skip link
+            // processing.
+            $children[] = $child;
+            continue;
+        }
 
         // Name processing.
         $namebits = explode(',', $bits[0], 2);
@@ -656,8 +666,9 @@ function user_convert_text_to_menu_items($text, $page) {
 
         // URL processing.
         if (!array_key_exists(1, $bits) or empty($bits[1])) {
-            // Set the url to null.
+            // Set the url to null, and set the itemtype to invalid.
             $bits[1] = null;
+            $child->itemtype = "invalid";
         } else {
             // Make sure the url is a moodle url.
             $bits[1] = new moodle_url(trim($bits[1]));
@@ -788,6 +799,7 @@ function user_get_user_navigation_info($user, $page) {
 
     // Links: My Home.
     $myhome = new stdClass();
+    $myhome->itemtype = 'link';
     $myhome->url = new moodle_url('/my/');
     $myhome->title = get_string('mymoodle', 'admin');
     $myhome->pix = "i/course";
@@ -795,6 +807,7 @@ function user_get_user_navigation_info($user, $page) {
 
     // Links: My Profile.
     $myprofile = new stdClass();
+    $myprofile->itemtype = 'link';
     $myprofile->url = new moodle_url('/user/profile.php', array('id' => $user->id));
     $myprofile->title = get_string('myprofile');
     $myprofile->pix = "i/user";
@@ -808,6 +821,7 @@ function user_get_user_navigation_info($user, $page) {
         if ($role = $DB->get_record('role', array('id' => $user->access['rsw'][$context->path]))) {
             // Build role-return link instead of logout link.
             $rolereturn = new stdClass();
+            $rolereturn->itemtype = 'link';
             $rolereturn->url = new moodle_url('/course/switchrole.php', array(
                 'id' => $course->id,
                 'sesskey' => sesskey(),
@@ -845,6 +859,7 @@ function user_get_user_navigation_info($user, $page) {
 
         // Build a user-revert link.
         $userrevert = new stdClass();
+        $userrevert->itemtype = 'link';
         $userrevert->url = new moodle_url('/course/loginas.php', array(
             'id' => $course->id,
             'sesskey' => sesskey()
@@ -859,6 +874,7 @@ function user_get_user_navigation_info($user, $page) {
     if ($buildlogout) {
         // Build a logout link.
         $logout = new stdClass();
+        $logout->itemtype = 'link';
         $logout->url = new moodle_url('/login/logout.php', array('sesskey' => sesskey()));
         $logout->pix = "a/logout";
         $logout->title = get_string('logout');
