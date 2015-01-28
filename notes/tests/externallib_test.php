@@ -100,7 +100,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $creatednotes = core_notes_external::create_notes($cnotes);
         $creatednotes = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
 
-        $dnotes1 = array("notes"=>array($creatednotes[0]['noteid']));
+        $dnotes1 = array($creatednotes[0]['noteid']);
         $deletednotes1 = core_notes_external::delete_notes($dnotes1);
         $deletednotes1 = external_api::clean_returnvalue(core_notes_external::delete_notes_returns(), $deletednotes1);
 
@@ -108,7 +108,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $notdeletedcount = $DB->count_records_select('post', 'id = ' . $creatednotes[0]['noteid']);
         $this->assertEquals(0, $notdeletedcount);
 
-        $dnotes2 = array("notes"=>array(33)); // This note does not exist.
+        $dnotes2 = array(33); // This note does not exist.
         $deletednotes2 = core_notes_external::delete_notes($dnotes2);
         $deletednotes2 = external_api::clean_returnvalue(core_notes_external::delete_notes_returns(), $deletednotes2);
 
@@ -119,7 +119,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $creatednotes = core_notes_external::create_notes($cnotes);
-        $dnotes3 = array("notes"=>array($creatednotes[0]['noteid']));
+        $dnotes3 = array($creatednotes[0]['noteid']);
 
         $this->unassignUserCapability('moodle/notes:manage', $contextid, $roleid);
         $this->setExpectedException('required_capability_exception');
@@ -157,7 +157,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $creatednotes3 = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes3);
 
         // Note 33 does not exist.
-        $gnotes = array("notes"=>array($creatednotes1[0]['noteid'], $creatednotes2[0]['noteid'], $creatednotes3[0]['noteid'], 33));
+        $gnotes = array($creatednotes1[0]['noteid'], $creatednotes2[0]['noteid'], $creatednotes3[0]['noteid'], 33);
         $getnotes = core_notes_external::get_notes($gnotes);
         $getnotes = external_api::clean_returnvalue(core_notes_external::get_notes_returns(), $getnotes);
 
