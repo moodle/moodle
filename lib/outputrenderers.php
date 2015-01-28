@@ -3072,7 +3072,6 @@ EOD;
                     case 'divider':
                         // If the nav item is a divider, add one and skip link processing.
                         $am->add($divider);
-                        $idx++;
                         break;
 
                     case 'invalid':
@@ -3098,16 +3097,15 @@ EOD;
                             array('class' => 'icon')
                         );
                         $am->add($al);
-
-                        // Add dividers after the first item and before the
-                        // last item.
-                        if ($idx == 0 || $idx == $navitemcount - 2) {
-                            $am->add($divider);
-                        }
                         break;
                 }
 
                 $idx++;
+
+                // Add dividers after the first item and before the last item.
+                if ($idx == 1 || $idx == $navitemcount - 1) {
+                    $am->add($divider);
+                }
             }
         }
 
