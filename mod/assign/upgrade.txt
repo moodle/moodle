@@ -1,4 +1,7 @@
 This files describes API changes in the assign code.
+=== 2.9 ===
+* External parameter now returns PARAM_RAW instead of PARAM_TEXT for webservices using feedback comments.
+
 === 2.8 ===
 * Some DB changes were made to simplify the SQL required to query the latest attempt.
   - The assign_submission table now has a column "latest" which is set to 1 for the latest submission attempt.
