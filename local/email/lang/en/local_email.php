@@ -18,7 +18,7 @@ $string['add_template_button'] = 'Override';
 $string['addnewtemplate'] = 'Override a default template';
 $string['blocktitle'] = 'Email Templates';
 $string['body'] = 'Body';
-$string['crontask'] 'Iomad email processing';
+$string['crontask'] = 'Iomad email processing';
 $string['default'] = 'default';
 $string['delete_template'] = 'Delete template';
 $string['delete_template_button'] = 'Revert to default';
