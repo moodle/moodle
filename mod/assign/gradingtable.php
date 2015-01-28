@@ -83,6 +83,7 @@ class assign_grading_table extends table_sql implements renderable {
                                 $downloadfilename = null) {
         global $CFG, $PAGE, $DB, $USER;
         parent::__construct('mod_assign_grading');
+        $this->is_persistent(true);
         $this->assignment = $assignment;
 
         // Check permissions up front.
