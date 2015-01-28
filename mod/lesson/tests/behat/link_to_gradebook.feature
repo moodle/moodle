@@ -19,10 +19,6 @@ Feature: link to gradebook on the end of lesson page
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
-    And I click on "Edit settings" "link" in the "Administration" "block"
-    And I set the following fields to these values:
-      | Show gradebook to students | No |
-    And I press "Save and display"
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson |
       | Description | Test lesson description |
@@ -43,6 +39,7 @@ Feature: link to gradebook on the end of lesson page
       | id_answer_editor_1 | Next page |
       | id_jumpto_1 | Next page |
     And I press "Save page"
+
   @javascript
   Scenario: Link to gradebook for non practice lesson
     Given I log out
@@ -53,6 +50,9 @@ Feature: link to gradebook on the end of lesson page
     And I press "Next page"
     Then I should see "Congratulations - end of lesson reached"
     And I should see "View grades"
+    And I follow "View grades"
+    And I should see "User report - Student 1"
+    And I should see "Test lesson"
 
   @javascript
   Scenario: No link to gradebook for non graded lesson
@@ -76,6 +76,22 @@ Feature: link to gradebook on the end of lesson page
     And I navigate to "Edit settings" node in "Lesson administration"
     And I set the following fields to these values:
         | Practice lesson | Yes |
+    And I press "Save and display"
+    And I log out
+    When I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Test lesson"
+    And I press "Next page"
+    And I press "Next page"
+    Then I should see "Congratulations - end of lesson reached"
+    And I should not see "View grades"
+
+  @javascript
+  Scenario: No link if Show gradebook to student disabled
+    Given I follow "Course 1"
+    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I set the following fields to these values:
+      | Show gradebook to students | No |
     And I press "Save and display"
     And I log out
     When I log in as "student1"
