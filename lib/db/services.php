@@ -946,7 +946,6 @@ $services = array(
             'core_webservice_get_site_info',
             'core_notes_create_notes',
             'core_user_get_course_user_profiles',
-            'core_enrol_get_enrolled_users',
             'core_message_send_instant_messages',
             'mod_assign_get_grades',
             'mod_assign_get_assignments',
