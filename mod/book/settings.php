@@ -30,7 +30,7 @@ if ($ADMIN->fulltree) {
     // General settings
 
     $settings->add(new admin_setting_configcheckbox('book/requiremodintro',
-        get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 1));
+        get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 0));
 
     $options = book_get_numbering_types();
 
