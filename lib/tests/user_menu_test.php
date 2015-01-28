@@ -23,20 +23,33 @@
  */
 class core_user_menu_testcase extends advanced_testcase {
 
-    public function test_custom_user_menu() {
+    /**
+     * Custom user menu data for the test_custom_user_menu test.
+     *
+     * @return array containing testing data
+     */
+    public function custom_user_menu_data() {
+        return array(
+            // These are fillers only.
+            array('###', 0, 1),
+            array('#####', 0, 1),
 
-        global $CFG, $OUTPUT, $USER, $PAGE;
+            // These are invalid and will not generate any entry or filler.
+            array('-----', 0, 0),
+            array('_____', 0, 0),
+            array('test', 0, 0),
 
-        $this->resetAfterTest(true);
-        $this->expectOutputString('');
+            // These are unusual, but valid and will generate a menu entry (no filler).
+            array('-|-|-|-', 1, 0),
+            array('-|-|-', 1, 0),
+            array('-|-', 1, 0),
+            array('#f234|2', 1, 0),
 
-        // Test using an admin user at the root of Moodle; this way we
-        // don't have to create a test user with avatar.
-        $this->setAdminUser();
-        $PAGE->set_url('/');
+            // This is a pretty typical entry.
+            array('messages,message|/message/index.php|message', 1, 0),
 
-        // Build a test string for the custom user menu items setting.
-        $usermenuitems = 'messages,message|/message/index.php|message
+            // And these are combinations containing both valid and invalid.
+            array('messages,message|/message/index.php|message
 myfiles,moodle|/user/files.php|download
 ###
 mybadges,badges|/badges/mybadges.php|award
@@ -44,26 +57,42 @@ mybadges,badges|/badges/mybadges.php|award
 test
 -
 #####
-#f234|2';
-        set_config('customusermenuitems', $usermenuitems);
+#f234|2', 5, 2),
+        );
+    }
 
-        // Fail the test and dump output if an exception is thrown
-        // during user menu creation.
-        $valid = true;
-        try {
-            $usermenu = $OUTPUT->user_menu($USER);
-        } catch (moodle_exception $me) {
-            $valid = false;
-            printf(
-                "[%s] %s: %s\n%s\n",
-                $me->module,
-                $me->errorcode,
-                $me->message,
-                $me->debuginfo
-            );
-        }
-        $this->assertTrue($valid);
+    /**
+     * Test the custom user menu.
+     *
+     * @dataProvider custom_user_menu_data
+     * @param string $input The menu text to test
+     * @param int $entrycount The numbers of entries expected
+     */
+    public function test_custom_user_menu($data, $entrycount, $dividercount) {
+        global $CFG, $OUTPUT, $USER, $PAGE;
 
+        // Must reset because of config and user modifications.
+        $this->resetAfterTest(true);
+
+        // Test using an admin user at the root of Moodle; this way we don't have to create a test user with avatar.
+        $this->setAdminUser();
+        $PAGE->set_url('/');
+
+        // Set the configuration.
+        set_config('customusermenuitems', $data);
+
+        // We always add two dividers as standard.
+        $dividercount += 2;
+
+        // The basic entry count will additionally include the wrapper menu, My home, My profile, and the Logout link.
+        $entrycount += 4;
+
+        $output = $OUTPUT->user_menu($USER);
+        preg_match_all('/<a [^>]+role="menuitem"[^>]+>/', $output, $results);
+        $this->assertCount($entrycount, $results[0]);
+
+        preg_match_all('/<span class="filler">/', $output, $results);
+        $this->assertCount($dividercount, $results[0]);
     }
 
 }
