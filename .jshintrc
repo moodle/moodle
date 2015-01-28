@@ -46,8 +46,8 @@
     "sub":          false,
     "supernew":     false,
     "trailing":     true,
-    "unused":       true,
     "undef":        true,
+    "unused":       true,
     "white":        false,
     "yui":          true
 }
