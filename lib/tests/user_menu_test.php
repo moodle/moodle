@@ -38,6 +38,14 @@ class core_user_menu_testcase extends advanced_testcase {
             array('-----', 0, 0),
             array('_____', 0, 0),
             array('test', 0, 0),
+            array('#Garbage#', 0, 0),
+
+            // These are valid but have an invalid string identifiers or components. They will still produce a menu
+            // item, and no exception should be thrown.
+            array('#my1files,moodle|/user/files.php|download', 1, 0),
+            array('#my1files,moodleakjladf|/user/files.php|download', 1, 0),
+            array('#my1files,a/b|/user/files.php|download', 1, 0),
+            array('#my1files,#b|/user/files.php|download', 1, 0),
 
             // These are unusual, but valid and will generate a menu entry (no filler).
             array('-|-|-|-', 1, 0),
