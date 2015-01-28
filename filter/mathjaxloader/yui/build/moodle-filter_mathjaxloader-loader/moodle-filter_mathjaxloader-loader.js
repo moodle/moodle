@@ -76,11 +76,11 @@ M.filter_mathjaxloader = M.filter_mathjaxloader || {
     _setLocale: function() {
         if (!this._configured) {
             var lang = this._lang;
-            if (typeof MathJax !== "undefined") {
-                MathJax.Hub.Queue(function () {
-                    MathJax.Localization.setLocale(lang);
+            if (typeof window.MathJax !== "undefined") {
+                window.MathJax.Hub.Queue(function () {
+                    window.MathJax.Localization.setLocale(lang);
                 });
-                MathJax.Hub.Configured();
+                window.MathJax.Hub.Configured();
                 this._configured = true;
             }
         }
@@ -97,8 +97,8 @@ M.filter_mathjaxloader = M.filter_mathjaxloader || {
             Y.use('mathjax', function() {
                 self._setLocale();
                 Y.all('.filter_mathjaxloader_equation').each(function(node) {
-                    if (typeof MathJax !== "undefined") {
-                        MathJax.Hub.Queue(["Typeset", MathJax.Hub, node.getDOMNode()]);
+                    if (typeof window.MathJax !== "undefined") {
+                        window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, node.getDOMNode()]);
                     }
                 });
             });
@@ -116,8 +116,8 @@ M.filter_mathjaxloader = M.filter_mathjaxloader || {
             self._setLocale();
             event.nodes.each(function (node) {
                 node.all('.filter_mathjaxloader_equation').each(function(node) {
-                    if (typeof MathJax !== "undefined") {
-                        MathJax.Hub.Queue(["Typeset", MathJax.Hub, node.getDOMNode()]);
+                    if (typeof window.MathJax !== "undefined") {
+                        window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, node.getDOMNode()]);
                     }
                 });
             });

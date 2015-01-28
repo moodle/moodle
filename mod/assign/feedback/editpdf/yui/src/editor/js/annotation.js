@@ -26,7 +26,7 @@
  * @class annotation
  * @constructor
  */
-ANNOTATION = function(config) {
+var ANNOTATION = function(config) {
     ANNOTATION.superclass.constructor.apply(this, [config]);
 };
 
@@ -242,7 +242,8 @@ Y.extend(ANNOTATION, Y.Base, {
      * @param event
      */
     remove : function(e) {
-        var annotations;
+        var annotations,
+            i;
 
         e.preventDefault();
 

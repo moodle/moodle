@@ -142,7 +142,9 @@ Y.Moodle.mod_quiz.util.page = {
      * @return {node[]} An array containing page nodes.
      */
     getPages: function() {
-        return Y.all(Y.Moodle.mod_quiz.util.slot.SELECTORS.PAGECONTENT + ' ' + Y.Moodle.mod_quiz.util.slot.SELECTORS.SECTIONUL + ' ' + this.SELECTORS.PAGE);
+        return Y.all(Y.Moodle.mod_quiz.util.slot.SELECTORS.PAGECONTENT + ' ' +
+                     Y.Moodle.mod_quiz.util.slot.SELECTORS.SECTIONUL + ' ' +
+                    this.SELECTORS.PAGE);
     },
 
     /**
@@ -263,7 +265,7 @@ Y.Moodle.mod_quiz.util.page = {
         var actionmenus = this.getActionMenus();
         // Loop through pages incrementing the number each time.
         actionmenus.each(function(actionmenu, key) {
-            var previousActionMenu = actionmenus.item(key - 1);
+            var previousActionMenu = actionmenus.item(key - 1),
                 previousActionMenunumber = 0;
             if (previousActionMenu) {
                 previousActionMenunumber = this.getActionMenuId(previousActionMenu);
@@ -289,7 +291,9 @@ Y.Moodle.mod_quiz.util.page = {
      * @return {node[]} An array containing page nodes.
      */
     getActionMenus: function() {
-        return Y.all(Y.Moodle.mod_quiz.util.slot.SELECTORS.PAGECONTENT + ' ' + Y.Moodle.mod_quiz.util.slot.SELECTORS.SECTIONUL + ' ' + this.SELECTORS.ACTIONMENU);
+        return Y.all(Y.Moodle.mod_quiz.util.slot.SELECTORS.PAGECONTENT + ' ' +
+                     Y.Moodle.mod_quiz.util.slot.SELECTORS.SECTIONUL + ' ' +
+                     this.SELECTORS.ACTIONMENU);
     },
 
     /**

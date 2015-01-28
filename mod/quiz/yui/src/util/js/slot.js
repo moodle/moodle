@@ -177,8 +177,8 @@ Y.Moodle.mod_quiz.util.slot = {
                 slot.swap(nextpage);
             }
 
-            var previousSlot = this.getPreviousNumbered(slot);
-            previousslotnumber = 0;
+            var previousSlot = this.getPreviousNumbered(slot),
+                previousslotnumber = 0;
             if (slot.hasClass(this.CSS.QUESTIONTYPEDESCRIPTION)) {
                 return;
             }

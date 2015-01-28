@@ -95,9 +95,11 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         // Get our drag object
         var drag = e.target;
         // Creat a dummy structure of the outer elemnents for clean styles application
-        var containernode = Y.Node.create('<' + M.course.format.get_containernode() + '></' + M.course.format.get_containernode() + '>');
+        var containernode = Y.Node.create('<' + M.course.format.get_containernode() +
+                '></' + M.course.format.get_containernode() + '>');
         containernode.addClass(M.course.format.get_containerclass());
-        var sectionnode = Y.Node.create('<' + M.course.format.get_sectionwrappernode() + '></' + M.course.format.get_sectionwrappernode() + '>');
+        var sectionnode = Y.Node.create('<' + M.course.format.get_sectionwrappernode() +
+                '></' + M.course.format.get_sectionwrappernode() + '>');
         sectionnode.addClass( M.course.format.get_sectionwrapperclass());
         sectionnode.setStyle('margin', 0);
         sectionnode.setContent(drag.get('node').get('innerHTML'));

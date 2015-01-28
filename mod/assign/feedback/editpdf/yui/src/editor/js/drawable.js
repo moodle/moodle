@@ -26,7 +26,7 @@
  * @param M.assignfeedback_editpdf.editor editor
  * @class drawable
  */
-DRAWABLE = function(editor) {
+var DRAWABLE = function(editor) {
 
     /**
      * Reference to M.assignfeedback_editpdf.editor.

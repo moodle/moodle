@@ -126,7 +126,9 @@ Y.extend(TOOLBOX, Y.Base, {
                         Y.one(SELECTOR.SUMMARKS).setHTML(responsetext.newsummarks);
                     }
                     if (responsetext.hasOwnProperty('newnumquestions')) {
-                        Y.one(SELECTOR.NUMQUESTIONS).setHTML(M.util.get_string('numquestionsx', 'quiz', responsetext.newnumquestions));
+                        Y.one(SELECTOR.NUMQUESTIONS).setHTML(
+                                M.util.get_string('numquestionsx', 'quiz', responsetext.newnumquestions)
+                            );
                     }
                     if (success_callback) {
                         Y.bind(success_callback, this, responsetext)();

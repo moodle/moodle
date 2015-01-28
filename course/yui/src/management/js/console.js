@@ -437,7 +437,7 @@ Console.prototype = {
     handleBulkSortByaction : function(e) {
         var sortcategoryby = this.get('categorylisting').one('#menuresortcategoriesby'),
             sortcourseby = this.get('categorylisting').one('#menuresortcoursesby'),
-            sortbybutton = this.get('categorylisting').one('input[name="bulksort"]');
+            sortbybutton = this.get('categorylisting').one('input[name="bulksort"]'),
             sortby = e;
 
         if (!sortby) {
@@ -565,7 +565,7 @@ Console.prototype = {
                 complete : callback
             },
             context : context,
-            data : build_querystring(args),
+            data : args,
             'arguments' : args
         });
     }
