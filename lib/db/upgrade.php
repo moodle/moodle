@@ -4130,8 +4130,8 @@ function xmldb_main_upgrade($oldversion) {
         // storage, and the external path specified is empty we change the setting
         // to internal only. That is how the backup code is handling this
         // misconfiguration.
-        $storage = (int) get_config('backup_auto_storage', 'backup');
-        $folder = get_config('backup_auto_destination', 'backup');
+        $storage = (int) get_config('backup', 'backup_auto_storage');
+        $folder = get_config('backup', 'backup_auto_destination');
         if ($storage !== 0 && empty($folder)) {
             set_config('backup_auto_storage', 0, 'backup');
         }
