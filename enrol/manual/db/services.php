@@ -44,4 +44,13 @@ $functions = array(
         'type'        => 'write',
     ),
 
+    'enrol_manual_unenrol_users' => array(
+        'classname'   => 'enrol_manual_external',
+        'methodname'  => 'unenrol_users',
+        'classpath'   => 'enrol/manual/externallib.php',
+        'description' => 'Manual unenrol users',
+        'capabilities'=> 'enrol/manual:unenrol',
+        'type'        => 'write',
+    ),
+
 );
