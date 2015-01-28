@@ -3232,16 +3232,19 @@ class admin_setting_configtime extends admin_setting {
         }
 
         $return = '<div class="form-time defaultsnext">'.
+            '<label class="accesshide" for="' . $this->get_id().'h">' . get_string('hours') . '</label>' .
             '<select id="'.$this->get_id().'h" name="'.$this->get_full_name().'[h]">';
         for ($i = 0; $i < 24; $i++) {
             $return .= '<option value="'.$i.'"'.($i == $data['h'] ? ' selected="selected"' : '').'>'.$i.'</option>';
         }
-        $return .= '</select>:<select id="'.$this->get_id().'m" name="'.$this->get_full_name().'[m]">';
+        $return .= '</select>:<label class="accesshide" for="' . $this->get_id().'m">' . get_string('minutes');
+        $return .= '</label><select id="'.$this->get_id().'m" name="'.$this->get_full_name().'[m]">';
         for ($i = 0; $i < 60; $i += 5) {
             $return .= '<option value="'.$i.'"'.($i == $data['m'] ? ' selected="selected"' : '').'>'.$i.'</option>';
         }
         $return .= '</select></div>';
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', $defaultinfo, $query);
+        return format_admin_setting($this, $this->visiblename, $return, $this->description,
+            $this->get_id() . 'h', '', $defaultinfo, $query);
     }
 
 }
