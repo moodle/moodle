@@ -65,7 +65,7 @@ if (!empty($registeredhub) and $registeredhub->token == $token) {
     $registeredhub->hubname = $hubname;
     $registrationmanager->update_registeredhub($registeredhub);
 
-    //display notficiation message
+    // Display notification message.
     $notificationmessage = $OUTPUT->notification(
             get_string('registrationconfirmedon', 'hub', $hublink), 'notifysuccess');
     echo $notificationmessage;
