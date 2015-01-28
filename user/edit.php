@@ -209,7 +209,7 @@ if ($usernew = $userform->get_data()) {
     $usernew->timemodified = time();
 
     // Description editor element may not exist!
-    if (isset($usernew->description_editor)) {
+    if (isset($usernew->description_editor) && isset($usernew->description_format)) {
         $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $personalcontext, 'user', 'profile', 0);
     }
 
