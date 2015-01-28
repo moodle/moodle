@@ -532,6 +532,7 @@ class core_message_external extends external_api {
      */
     public static function search_contacts($searchtext, $onlymycourses = false) {
         global $CFG, $USER;
+        require_once($CFG->dirroot . '/user/lib.php');
 
         // Check if messaging is enabled.
         if (!$CFG->messaging) {
