@@ -444,12 +444,11 @@ class core_message_external extends external_api {
                     'unread' => $contact->messagecount
                 );
 
-                // Try to get the user picture, but sometimes this method can return null.
-                $userdetails = user_get_user_details($contact, null, array('profileimageurl', 'profileimageurlsmall'));
-                if (!empty($userdetails)) {
-                    $newcontact['profileimageurl'] = $userdetails['profileimageurl'];
-                    $newcontact['profileimageurlsmall'] = $userdetails['profileimageurlsmall'];
-                }
+                $usercontextid = context_user::instance($contact->id)->id;
+                $newcontact['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
+                                                    $usercontextid, 'user', 'icon', null, '/', 'f1')->out(false);
+                $newcontact['profileimageurlsmall'] = moodle_url::make_webservice_pluginfile_url(
+                                                        $usercontextid, 'user', 'icon', null, '/', 'f2')->out(false);
 
                 $allcontacts[$mode][$key] = $newcontact;
             }
@@ -576,12 +575,11 @@ class core_message_external extends external_api {
             $user->phone1 = null;
             $user->phone2 = null;
 
-            // Try to get the user picture, but sometimes this method can return null.
-            $userdetails = user_get_user_details($user, null, array('profileimageurl', 'profileimageurlsmall'));
-            if (!empty($userdetails)) {
-                $newuser['profileimageurl'] = $userdetails['profileimageurl'];
-                $newuser['profileimageurlsmall'] = $userdetails['profileimageurlsmall'];
-            }
+            $usercontextid = context_user::instance($user->id)->id;
+            $newuser['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
+                                                $usercontextid, 'user', 'icon', null, '/', 'f1')->out(false);
+            $newuser['profileimageurlsmall'] = moodle_url::make_webservice_pluginfile_url(
+                                                    $usercontextid, 'user', 'icon', null, '/', 'f2')->out(false);
 
             $user = $newuser;
         }
