@@ -196,7 +196,8 @@
 .navbar-static-top .container,
 .navbar-fixed-top .container,
 .navbar-fixed-bottom .container {
-  #grid > .core > .span(@gridColumns);
+// This is a Moodle hack - please see less/bootstrap/mixins.less#L593.
+  width: (@gridColumnWidth * @gridColumns) + (@gridGutterWidth * (@gridColumns - 1));
 }
 
 // Fixed to top
