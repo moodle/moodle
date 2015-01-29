@@ -64,6 +64,15 @@ if (!empty($user)) {
         }
     }
 
+    // Check whether the user should be changing password.
+    if (get_user_preferences('auth_forcepasswordchange', false, $user)) {
+        if ($userauth->can_change_password()) {
+            throw new moodle_exception('forcepasswordchangenotice');
+        } else {
+            throw new moodle_exception('nopasswordchangeforced', 'auth');
+        }
+    }
+
     // let enrol plugins deal with new enrolments if necessary
     enrol_check_plugins($user);
 
