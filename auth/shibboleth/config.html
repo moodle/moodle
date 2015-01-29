@@ -138,7 +138,7 @@ urn:mace:organization2:providerID, Example Organization 2, /Shibboleth.sso/WAYF/
 
 <?php
 
-print_auth_lock_options($this->authtype, $user_fields, '<!-- empty help -->', true, false);
+print_auth_lock_options($this->authtype, $user_fields, '<!-- empty help -->', true, false, $this->get_custom_user_profile_fields());
 
 ?>
 </table>
