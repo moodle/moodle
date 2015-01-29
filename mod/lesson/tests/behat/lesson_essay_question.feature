@@ -37,11 +37,6 @@ Feature: In a lesson activity, teacher can add an essay question
     When I follow "Test lesson name"
     Then I should see "Please write a story about a frog."
     And I set the field "Your answer" to "<p>Once upon a time there was a little <b>green</b> frog."
-    And I click on "Image" "button"
-    And I set the following fields to these values:
-      | Enter URL | http://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Greenfrog.jpg/120px-Greenfrog.jpg |
-      | Describe this image for someone who cannot see it | A frog |
-    And I press "Save image"
     And I press "Submit"
     And I should see "Your answer"
     And I should see "Once upon a time there was a little green frog."
