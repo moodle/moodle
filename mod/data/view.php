@@ -469,9 +469,6 @@ if ($showactivity) {
     }
     include('tabs.php');
 
-    $url = new moodle_url('/mod/data/view.php', array('d' => $data->id, 'sesskey' => sesskey()));
-    echo html_writer::start_tag('form', array('action' => $url, 'method' => 'post'));
-
     if ($mode == 'asearch') {
         $maxcount = 0;
         data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
@@ -746,7 +743,10 @@ if ($showactivity) {
                 echo $OUTPUT->notification(get_string('norecords','data'));
             }
 
-        } else { //  We have some records to print
+        } else {
+            //  We have some records to print.
+            $url = new moodle_url('/mod/data/view.php', array('d' => $data->id, 'sesskey' => sesskey()));
+            echo html_writer::start_tag('form', array('action' => $url, 'method' => 'post'));
 
             if ($maxcount != $totalcount) {
                 $a = new stdClass();
@@ -818,6 +818,28 @@ if ($showactivity) {
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
             }
 
+            if ($mode != 'single' && $canmanageentries) {
+                echo html_writer::empty_tag('input', array(
+                        'type' => 'button',
+                        'id' => 'checkall',
+                        'value' => get_string('selectall'),
+                    ));
+                echo html_writer::empty_tag('input', array(
+                        'type' => 'button',
+                        'id' => 'checknone',
+                        'value' => get_string('deselectall'),
+                    ));
+                echo html_writer::empty_tag('input', array(
+                        'class' => 'form-submit',
+                        'type' => 'submit',
+                        'value' => get_string('deleteselected'),
+                    ));
+
+                $module = array('name' => 'mod_data', 'fullpath' => '/mod/data/module.js');
+                $PAGE->requires->js_init_call('M.mod_data.init_view', null, false, $module);
+            }
+
+            echo html_writer::end_tag('form');
         }
     }
 
@@ -825,16 +847,6 @@ if ($showactivity) {
     if (empty($records)) {
         $records = array();
     }
-
-    if ($mode != 'single' && $canmanageentries) {
-        echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checkall', 'value' => get_string('selectall')));
-        echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checknone', 'value' => get_string('deselectall')));
-        echo html_writer::empty_tag('input', array('class' => 'form-submit', 'type' => 'submit', 'value' => get_string('deleteselected')));
-
-        $module = array('name'=>'mod_data', 'fullpath'=>'/mod/data/module.js');
-        $PAGE->requires->js_init_call('M.mod_data.init_view', null, false, $module);
-    }
-    echo html_writer::end_tag('form');
 
     // Check to see if we can export records to a portfolio. This is for exporting all records, not just the ones in the search.
     if ($mode == '' && !empty($CFG->enableportfolios) && !empty($records)) {
