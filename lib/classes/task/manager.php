@@ -138,19 +138,10 @@ class manager {
      */
     public static function configure_scheduled_task(scheduled_task $task) {
         global $DB;
-        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
-
-        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10, 60)) {
-            throw new \moodle_exception('locktimeout');
-        }
 
         $classname = get_class($task);
         if (strpos($classname, '\\') !== 0) {
             $classname = '\\' . $classname;
-        }
-        if (!$lock = $cronlockfactory->get_lock($classname, 10, 60)) {
-            $cronlock->release();
-            throw new \moodle_exception('locktimeout');
         }
 
         $original = $DB->get_record('task_scheduled', array('classname'=>$classname), 'id', MUST_EXIST);
@@ -160,8 +151,6 @@ class manager {
         $record->nextruntime = $task->get_next_scheduled_time();
         $result = $DB->update_record('task_scheduled', $record);
 
-        $lock->release();
-        $cronlock->release();
         return $result;
     }
 
