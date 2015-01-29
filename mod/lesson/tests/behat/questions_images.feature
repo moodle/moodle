@@ -41,10 +41,12 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
       | id_response_editor_1 | Incorrect answer |
       | id_jumpto_1 | This page |
       | id_score_1 | 0 |
-      | id_answer_editor_2 | Dog |
+      | id_answer_editor_2 | <p></p><p>Dog</p> |
       | id_response_editor_2 | Incorrect answer |
       | id_jumpto_2 | This page |
       | id_score_2 | 0 |
+    # Atto needs focus to add image, select empty p tag to do so.
+    And I select the text in the "id_answer_editor_2" Atto editor
     And I click on "Image" "button" in the "#fitem_id_answer_editor_2" "css_element"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link"
@@ -60,11 +62,13 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
       | Page title | Next question |
       | Page contents | Paper is made from trees. |
       | id_answer_editor_0 | True |
-      | id_response_editor_0 | Correct |
+      | id_response_editor_0 | <p></p><p>Correct</p> |
       | id_jumpto_0 | Next page |
       | id_answer_editor_1 | False |
       | id_response_editor_1 | Wrong |
       | id_jumpto_1 | This page |
+    # Atto needs focus to add image, select empty p tag to do so.
+    And I select the text in the "id_response_editor_0" Atto editor
     And I click on "Image" "button" in the "#fitem_id_response_editor_0" "css_element"
     And I click on "Browse repositories..." "button"
     And I click on "Private files" "link"
