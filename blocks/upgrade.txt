@@ -5,6 +5,8 @@ information provided here is intended especially for developers.
 
 * The obsolete method preferred_width() was removed (it was not doing anything)
 * Deprecated block_base::config_save as is not called anywhere and should not be used.
+* Added instance_copy() function to the block_base class. This function allows for block
+  specific data to be copied when a block is copied.
 
 === 2.8 ===
 
