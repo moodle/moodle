@@ -1,0 +1,10 @@
+{
+    "name": "moodle-qtype_ddimageortext-form",
+    "builds": {
+        "moodle-qtype_ddimageortext-form": {
+            "jsfiles": [
+                "form.js"
+            ]
+        }
+    }
+}
