@@ -5807,6 +5807,13 @@ class assign {
             return true;
         }
 
+        // Slight re-ordering here to avoid saving empty submissions
+        $allempty = $this->submission_empty($submission);
+        if ($allempty) {
+            $notices[] = get_string('submissionempty', 'mod_assign');
+            return false;
+        }
+
         $pluginerror = false;
         foreach ($this->submissionplugins as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
@@ -5817,11 +5824,7 @@ class assign {
             }
         }
 
-        $allempty = $this->submission_empty($submission);
-        if ($pluginerror || $allempty) {
-            if ($allempty) {
-                $notices[] = get_string('submissionempty', 'mod_assign');
-            }
+        if ($pluginerror) {
             return false;
         }
 
