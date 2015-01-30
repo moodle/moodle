@@ -801,7 +801,7 @@ function user_get_user_navigation_info($user, $page) {
         }
     }
 
-    // Links: My Home.
+    // Links: Dashboard.
     $myhome = new stdClass();
     $myhome->itemtype = 'link';
     $myhome->url = new moodle_url('/my/');

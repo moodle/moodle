@@ -33,12 +33,12 @@ Feature: Add and configure blocks throughout the site
     # The first block matching the pattern should be top-left block
     And I should see "Comments" in the "//*[@id='region-pre' or @id='block-region-side-pre']/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' block ')]" "xpath_element"
 
-  Scenario: Blocks on the my home page cannot have roles assigned to them
+  Scenario: Blocks on the dashboard page cannot have roles assigned to them
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | manager1 | Manager | 1 | manager1@asd.com |
     And I log in as "manager1"
-    And I click on "My home" "link" in the "Navigation" "block"
+    And I click on "Dashboard" "link" in the "Navigation" "block"
     When I press "Customise this page"
     Then I should not see "Assign roles in Navigation block"
 

@@ -72,6 +72,6 @@ $string['showcoursetagsdef'] = 'Display the course tagging features in the tags 
 $string['suggestedtagthisunit'] = 'Suggested tag to this course:';
 $string['tags'] = 'tags';
 $string['tags:addinstance'] = 'Add a new tags block';
-$string['tags:myaddinstance'] = 'Add a new tags block to My home';
+$string['tags:myaddinstance'] = 'Add a new tags block to Dashboard';
 $string['tagthisunit'] = 'Tag this course:';
 $string['tagunits'] = 'to tag your favourite courses';
