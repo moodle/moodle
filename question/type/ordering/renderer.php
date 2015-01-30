@@ -83,36 +83,48 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
         $result .= html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
 
+        $printeditems = false;
         if (count($currentresponse)) {
-            $result .= html_writer::start_tag('div', array('class' => 'ablock'));
-            $result .= html_writer::start_tag('div', array('class' => 'answer'));
-            $result .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortable_id));
 
             // generate ordering items
             foreach ($currentresponse as $position => $answerid) {
-                if (array_key_exists($answerid, $question->answers)) {
-                    if ($options->correctness) {
-                        if ($correctresponse[$position]==$answerid) {
-                            $class = 'correctposition';
-                            $img = $this->feedback_image(1);
-                        } else {
-                            $class = 'wrongposition';
-                            $img = $this->feedback_image(0);
-                        }
-                        $img = "$img ";
-                    } else {
-                        $class = 'sortableitem';
-                        $img = '';
-                    }
-                    // the original "id" revealed the correct order of the answers
-                    // because $answer->fraction holds the correct order number
-                    // $id = 'ordering_item_'.$answerid.'_'.intval($question->answers[$answerid]->fraction);
-                    $answer = $question->answers[$answerid];
-                    $params = array('class' => $class, 'id' => $answer->md5key);
-                    $result .= html_writer::tag('li', $img.$answer->answer, $params);
+                if (! array_key_exists($answerid, $question->answers)) {
+                    continue; // shouldn't happen !!
                 }
-            }
+                if (! array_key_exists($position, $correctresponse)) {
+                    continue; // shouldn't happen !!
+                }
 
+                if ($printeditems==false) {
+                    $printeditems = true;
+                    $result .= html_writer::start_tag('div', array('class' => 'ablock'));
+                    $result .= html_writer::start_tag('div', array('class' => 'answer'));
+                    $result .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortable_id));
+                }
+
+                if ($options->correctness) {
+                    if ($correctresponse[$position]==$answerid) {
+                        $class = 'correctposition';
+                        $img = $this->feedback_image(1);
+                    } else {
+                        $class = 'wrongposition';
+                        $img = $this->feedback_image(0);
+                    }
+                    $img = "$img ";
+                } else {
+                    $class = 'sortableitem';
+                    $img = '';
+                }
+                // the original "id" revealed the correct order of the answers
+                // because $answer->fraction holds the correct order number
+                // $id = 'ordering_item_'.$answerid.'_'.intval($question->answers[$answerid]->fraction);
+                $answer = $question->answers[$answerid];
+                $params = array('class' => $class, 'id' => $answer->md5key);
+                $result .= html_writer::tag('li', $img.$answer->answer, $params);
+            }
+        }
+
+        if ($printeditems) {
             $result .= html_writer::end_tag('ul');
             $result .= html_writer::end_tag('div'); // answer
             $result .= html_writer::end_tag('div'); // ablock
@@ -137,28 +149,27 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $output = '';
 
         $showcorrect = false;
-        if ($step = $qa->get_last_step()) {
-            switch ($step->get_state()) {
-                case 'gradedright'  : $showcorrect = false; break;
-                case 'gradedpartial': $showcorrect = true;  break;
-                case 'gradedwrong'  : $showcorrect = true;  break;
+        $question = $qa->get_question();
+        if (empty($question->correctresponse)) {
+            $output .= html_writer::tag('p', get_string('noresponsedetails', 'qtype_ordering'));
+        } else {
+            if ($step = $qa->get_last_step()) {
+                switch ($step->get_state()) {
+                    case 'gradedright'  : $showcorrect = false; break;
+                    case 'gradedpartial': $showcorrect = true;  break;
+                    case 'gradedwrong'  : $showcorrect = true;  break;
+                }
             }
         }
-
         if ($showcorrect) {
-            $question = $qa->get_question();
-            if (empty($question->correctresponse)) {
-                $output .= html_writer::tag('p', get_string('noresponsedetails', 'qtype_ordering'));
-            } else {
-                $output .= html_writer::tag('p', get_string('correctorder', 'qtype_ordering'));
-                $output .= html_writer::start_tag('ol');
-                $correctresponse = $question->correctresponse;
-                foreach ($correctresponse as $position => $answerid) {
-                    $answer = $question->answers[$answerid];
-                    $output .= html_writer::tag('li', $answer->answer);
-                }
-                $output .= html_writer::end_tag('ol');
+            $output .= html_writer::tag('p', get_string('correctorder', 'qtype_ordering'));
+            $output .= html_writer::start_tag('ol');
+            $correctresponse = $question->correctresponse;
+            foreach ($correctresponse as $position => $answerid) {
+                $answer = $question->answers[$answerid];
+                $output .= html_writer::tag('li', $answer->answer);
             }
+            $output .= html_writer::end_tag('ol');
         }
 
         return $output;
