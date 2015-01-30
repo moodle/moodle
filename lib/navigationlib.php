@@ -3231,22 +3231,28 @@ class navbar extends navigation_node {
      */
     private function get_course_categories() {
         global $CFG;
-
         require_once($CFG->dirroot.'/course/lib.php');
+        require_once($CFG->libdir.'/coursecatlib.php');
+
         $categories = array();
         $cap = 'moodle/category:viewhiddencategories';
-        foreach ($this->page->categories as $category) {
-            if (!$category->visible && !has_capability($cap, get_category_or_system_context($category->parent))) {
-                continue;
+        $showcategories = coursecat::count_all() > 1;
+
+        if ($showcategories) {
+            foreach ($this->page->categories as $category) {
+                if (!$category->visible && !has_capability($cap, get_category_or_system_context($category->parent))) {
+                    continue;
+                }
+                $url = new moodle_url('/course/index.php', array('categoryid' => $category->id));
+                $name = format_string($category->name, true, array('context' => context_coursecat::instance($category->id)));
+                $categorynode = navigation_node::create($name, $url, self::TYPE_CATEGORY, null, $category->id);
+                if (!$category->visible) {
+                    $categorynode->hidden = true;
+                }
+                $categories[] = $categorynode;
             }
-            $url = new moodle_url('/course/index.php', array('categoryid' => $category->id));
-            $name = format_string($category->name, true, array('context' => context_coursecat::instance($category->id)));
-            $categorynode = navigation_node::create($name, $url, self::TYPE_CATEGORY, null, $category->id);
-            if (!$category->visible) {
-                $categorynode->hidden = true;
-            }
-            $categories[] = $categorynode;
         }
+
         if (is_enrolled(context_course::instance($this->page->course->id))) {
             $courses = $this->page->navigation->get('mycourses');
         } else {
