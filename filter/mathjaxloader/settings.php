@@ -52,17 +52,7 @@ if ($ADMIN->fulltree) {
 
     $default = '
 MathJax.Hub.Config({
-    config: ["MMLorHTML.js", "Safe.js"],
-    jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-    extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-    TeX: {
-        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
-    },
-    menuSettings: {
-        zoom: "Double-Click",
-        mpContext: true,
-        mpMouse: true
-    },
+    config: ["Accessible.js", "Safe.js"],
     errorSettings: { message: ["!"] },
     skipStartupTypeset: true,
     messageStyle: "none"
