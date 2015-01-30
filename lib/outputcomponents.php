@@ -3596,3 +3596,62 @@ class action_menu_link_secondary extends action_menu_link {
         parent::__construct($url, $icon, $text, false, $attributes);
     }
 }
+
+/**
+ * Represents a set of preferences groups.
+ *
+ * @package core
+ * @category output
+ * @copyright 2015 Frédéric Massart - FMCorz.net
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class preferences_groups implements renderable {
+
+    /**
+     * Array of preferences_group.
+     * @var array
+     */
+    public $groups;
+
+    /**
+     * Constructor.
+     * @param array $groups of preferences_group
+     */
+    public function __construct($groups) {
+        $this->groups = $groups;
+    }
+
+}
+
+/**
+ * Represents a group of preferences page link.
+ *
+ * @package core
+ * @category output
+ * @copyright 2015 Frédéric Massart - FMCorz.net
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class preferences_group implements renderable {
+
+    /**
+     * Title of the group.
+     * @var string
+     */
+    public $title;
+
+    /**
+     * Array of navigation_node.
+     * @var array
+     */
+    public $nodes;
+
+    /**
+     * Constructor.
+     * @param string $title The title.
+     * @param array $nodes of navigation_node.
+     */
+    public function __construct($title, $nodes) {
+        $this->title = $title;
+        $this->nodes = $nodes;
+    }
+}

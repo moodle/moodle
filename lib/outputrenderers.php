@@ -3946,6 +3946,58 @@ EOD;
     public function favicon() {
         return $this->pix_url('favicon', 'theme');
     }
+
+    /**
+     * Renders preferences groups.
+     *
+     * @param  preferences_groups $renderable The renderable
+     * @return string The output.
+     */
+    public function render_preferences_groups(preferences_groups $renderable) {
+        $html = '';
+        $html .= html_writer::start_tag('div', array('class' => 'span12 preferences-groups'));
+        $i = 0;
+        $open = false;
+        foreach ($renderable->groups as $group) {
+            if ($i == 0 || $i % 3 == 0) {
+                if ($open) {
+                    $html .= html_writer::end_tag('div');
+                }
+                $html .= html_writer::start_tag('div', array('class' => 'row'));
+                $open = true;
+            }
+            $html .= $this->render($group);
+            $i++;
+        }
+
+        $html .= html_writer::end_tag('div');
+
+        $html .= html_writer::end_tag('ul');
+        $html .= html_writer::end_tag('div');
+        return $html;
+    }
+
+    /**
+     * Renders preferences group.
+     *
+     * @param  preferences_group $renderable The renderable
+     * @return string The output.
+     */
+    public function render_preferences_group(preferences_group $renderable) {
+        $html = '';
+        $html .= html_writer::start_tag('div', array('class' => 'span4 preferences-group'));
+        $html .= $this->heading($renderable->title, 3);
+        $html .= html_writer::start_tag('ul');
+        foreach ($renderable->nodes as $node) {
+            if ($node->has_children()) {
+                debugging('Preferences nodes do not support children', DEBUG_DEVELOPER);
+            }
+            $html .= html_writer::tag('li', $this->render($node));
+        }
+        $html .= html_writer::end_tag('ul');
+        $html .= html_writer::end_tag('div');
+        return $html;
+    }
 }
 
 /**

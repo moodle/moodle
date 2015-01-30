@@ -75,6 +75,7 @@ $string['cannoteditcomment'] = 'This comment is not yours to edit!';
 $string['cannoteditcommentexpired'] = 'You can\'t edit this. The time has expired!';
 $string['cannoteditpostorblog'] = 'You cannot post or edit blogs';
 $string['cannoteditsiteform'] = 'You cannot edit the site course using this form';
+$string['cannotedituserpreferences'] = 'Cannot edit this user\'s preferences';
 $string['cannotedityourprofile'] = 'Sorry, you cannot edit own profile';
 $string['cannotexecduringupgrade'] = 'Cannot be executed during upgrade';
 $string['cannotfindcategory'] = 'Cannot find category record from database by ID - {$a}';
