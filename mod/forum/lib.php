@@ -1950,6 +1950,20 @@ function forum_get_all_discussion_posts($discussionid, $sort, $tracking=false) {
         $posts[$p->parent]->children[$pid] =& $posts[$pid];
     }
 
+    // Start with the last child of the first post.
+    $post = &$posts[reset($posts)->id];
+
+    $lastpost = false;
+    while (!$lastpost) {
+        if (!isset($post->children)) {
+            $post->lastpost = true;
+            $lastpost = true;
+        } else {
+             // Go to the last child of this post.
+            $post = &$posts[end($post->children)->id];
+        }
+    }
+
     return $posts;
 }
 
@@ -3375,6 +3389,10 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $topicclass = '';
     if (empty($post->parent)) {
         $topicclass = ' firstpost starter';
+    }
+
+    if (!empty($post->lastpost)) {
+        $forumpostclass = ' lastpost';
     }
 
     $postbyuser = new stdClass;
