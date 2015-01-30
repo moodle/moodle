@@ -26,6 +26,15 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
 
+
+/**
+ * External grade report API implementation
+ *
+ * @package    gradereport_user
+ * @copyright  2015 Juan Leyva <juan@moodle.com>
+ * @category   external
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class gradereport_user_external extends external_api {
 
     /**
