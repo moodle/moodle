@@ -495,7 +495,7 @@ class lesson_add_page_form_matching extends lesson_add_page_form_base {
 
         for ($i = 2; $i < $this->_customdata['lesson']->maxanswers+2; $i++) {
             $this->_form->addElement('header', 'matchingpair'.($i-1), get_string('matchingpair', 'lesson', $i-1));
-            $this->add_answer($i, null, ($i < 4));
+            $this->add_answer($i, null, ($i < 4), LESSON_ANSWER_HTML);
             $required = ($i < 4);
             $label = get_string('matchesanswer','lesson');
             $count = $i;
