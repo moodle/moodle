@@ -71,6 +71,10 @@ class qbehaviour_interactive extends question_behaviour_with_multiple_tries {
         // We only need different behaviour in try again states.
         if (!$this->is_try_again_state()) {
             parent::adjust_display_options($options);
+            if ($this->qa->get_state() == question_state::$invalid &&
+                    $options->marks == question_display_options::MARK_AND_MAX) {
+                $options->marks = question_display_options::MAX_ONLY;
+            }
             return;
         }
 
