@@ -523,8 +523,8 @@ function lesson_process_pre_save(&$lesson) {
 
     $lesson->timemodified = time();
 
-    if (empty($lesson->timed)) {
-        $lesson->timed = 0;
+    if (empty($lesson->timelimit)) {
+        $lesson->timelimit = 0;
     }
     if (empty($lesson->timespent) or !is_numeric($lesson->timespent) or $lesson->timespent < 0) {
         $lesson->timespent = 0;

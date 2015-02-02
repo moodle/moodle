@@ -229,7 +229,7 @@ if (empty($pageid)) {
     }
     if (isset($lastpageseen) && $DB->count_records('lesson_attempts', array('lessonid'=>$lesson->id, 'userid'=>$USER->id, 'retry'=>$retries)) > 0) {
         echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('leftduringtimedsession', 'lesson'));
-        if ($lesson->timed) {
+        if ($lesson->timelimit) {
             if ($lesson->retake) {
                 $continuelink = new single_button(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('continue', 'lesson'), 'get');
                 echo '<div class="center leftduring">'.$lessonoutput->message(get_string('leftduringtimed', 'lesson'), $continuelink).'</div>';
@@ -305,8 +305,8 @@ if ($pageid != LESSON_EOL) {
         $restart  = ($continue && $startlastseen == 'yes');
         $timer = $lesson->update_timer($continue, $restart);
 
-        if ($lesson->timed) {
-            $timeleft = ($timer->starttime + $lesson->maxtime * 60) - time();
+        if ($lesson->timelimit) {
+            $timeleft = $timer->starttime + $lesson->timelimit - time();
             if ($timeleft <= 0) {
                 // Out of time
                 $lesson->add_message(get_string('eolstudentoutoftime', 'lesson'));
@@ -343,7 +343,7 @@ if ($pageid != LESSON_EOL) {
         }
     } else {
         $timer = null;
-        if ($lesson->timed) {
+        if ($lesson->timelimit) {
             $lesson->add_message(get_string('teachertimerwarning', 'lesson'));
         }
         if (lesson_display_teacher_warning($lesson)) {
@@ -490,7 +490,7 @@ if ($pageid != LESSON_EOL) {
                 $DB->delete_records("lesson_attempts", array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $ntries));
             }
         } else {
-            if ($lesson->timed) {
+            if ($lesson->timelimit) {
                 if ($outoftime == 'normal') {
                     $grade = new stdClass();
                     $grade->lessonid = $lesson->id;

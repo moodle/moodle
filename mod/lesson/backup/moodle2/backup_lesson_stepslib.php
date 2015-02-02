@@ -72,7 +72,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
             'course', 'name', 'practice', 'modattempts', 'usepassword', 'password',
             'dependency', 'conditions', 'grade', 'custom', 'ongoing', 'usemaxgrade',
             'maxanswers', 'maxattempts', 'review', 'nextpagedefault', 'feedback',
-            'minquestions', 'maxpages', 'timed', 'maxtime', 'retake', 'activitylink',
+            'minquestions', 'maxpages', 'timelimit', 'retake', 'activitylink',
             'mediafile', 'mediaheight', 'mediawidth', 'mediaclose', 'slideshow',
             'width', 'height', 'bgcolor', 'displayleft', 'displayleftif', 'progressbar',
             'showhighscores', 'maxhighscores', 'available', 'deadline', 'timemodified',
