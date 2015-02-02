@@ -55,6 +55,12 @@ class qtype_multianswer_renderer extends qtype_renderer {
                     $qa, 'question', 'questiontext', $question->id);
         }
 
+        if ($qa->get_state() == question_state::$invalid) {
+            $output .= html_writer::nonempty_tag('div',
+                    $question->get_validation_error($qa->get_last_qt_data()),
+                    array('class' => 'validationerror'));
+        }
+
         $this->page->requires->js_init_call('M.qtype_multianswer.init',
                 array('#q' . $qa->get_slot()), false, array(
                     'name'     => 'qtype_multianswer',
