@@ -37,35 +37,30 @@ $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*'
 
 require_login($course, false, $cm);
 
+$currentgroup = groups_get_activity_group($cm, true);
+
 $context = context_module::instance($cm->id);
 require_capability('mod/lesson:viewreports', $context);
 
-$ufields = user_picture::fields('u'); // These fields are enough
-$params = array("lessonid" => $lesson->id);
-list($sort, $sortparams) = users_order_by_sql('u');
-$params = array_merge($params, $sortparams);
-// TODO: Improve this. Fetching all students always is crazy!
-if (!empty($cm->groupingid)) {
-    $params["groupingid"] = $cm->groupingid;
-    $sql = "SELECT DISTINCT $ufields
-                FROM {lesson_attempts} a
-                    INNER JOIN {user} u ON u.id = a.userid
-                    INNER JOIN {groups_members} gm ON gm.userid = u.id
-                    INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid
-                WHERE a.lessonid = :lessonid AND
-                      gg.groupingid = :groupingid
-                ORDER BY $sort";
-} else {
-    $sql = "SELECT DISTINCT $ufields
-            FROM {user} u,
-                 {lesson_attempts} a
-            WHERE a.lessonid = :lessonid and
-                  u.id = a.userid
-            ORDER BY $sort";
-}
+// Only load students if there attempts for this lesson.
+if ($attempts = $DB->record_exists('lesson_attempts', array('lessonid' => $lesson->id))) {
+    list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
+    list($sort, $sortparams) = users_order_by_sql('u');
 
-$students = $DB->get_recordset_sql($sql, $params);
-if (!$students->valid()) {
+    $params['lessonid'] = $lesson->id;
+    $ufields = user_picture::fields('u');
+    $sql = "SELECT DISTINCT $ufields
+            FROM {user} u
+            JOIN {lesson_attempts} a ON u.id = a.userid
+            JOIN ($esql) ue ON ue.id = a.userid
+            WHERE a.lessonid = :lessonid
+            ORDER BY $sort";
+
+    $students = $DB->get_recordset_sql($sql, $params);
+    if (!$students->valid()) {
+        $nothingtodisplay = true;
+    }
+} else {
     $nothingtodisplay = true;
 }
 
@@ -97,7 +92,13 @@ if (! $times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id)
 
 if ($nothingtodisplay) {
     echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('nolessonattempts', 'lesson'));
-    echo $OUTPUT->notification(get_string('nolessonattempts', 'lesson'));
+    if (!empty($currentgroup)) {
+        $groupname = groups_get_group_name($currentgroup);
+        echo $OUTPUT->notification(get_string('nolessonattemptsgroup', 'lesson', $groupname));
+    } else {
+        echo $OUTPUT->notification(get_string('nolessonattempts', 'lesson'));
+    }
+    groups_print_activity_menu($cm, $url);
     echo $OUTPUT->footer();
     exit();
 }
@@ -163,6 +164,7 @@ if ($action === 'delete') {
     this action is for default view and overview view
     **************************************************************************/
     echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('overview', 'lesson'));
+    groups_print_activity_menu($cm, $url);
 
     $course_context = context_course::instance($course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
@@ -392,6 +394,7 @@ if ($action === 'delete') {
 
 **************************************************************************/
     echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('detailedstats', 'lesson'));
+    groups_print_activity_menu($cm, $url);
 
     $course_context = context_course::instance($course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
