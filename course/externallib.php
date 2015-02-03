@@ -849,6 +849,7 @@ class core_course_external extends external_api {
 
             // Check if the current user has enought permissions.
             if (!can_delete_course($courseid)) {
+                fix_course_sortorder();
                 throw new moodle_exception('cannotdeletecategorycourse', 'error',
                     '', format_string($course->fullname)." (id: $courseid)");
             }
@@ -857,6 +858,7 @@ class core_course_external extends external_api {
         }
 
         $transaction->allow_commit();
+        fix_course_sortorder();
 
         return null;
     }
