@@ -252,7 +252,7 @@ if ($action === 'delete') {
             $bestgradefound = false;
             // $tries holds all the tries/retries a student has done
             $tries = $studentdata[$student->id];
-            $studentname = "{$student->lastname},&nbsp;$student->firstname";
+            $studentname = fullname($student, true);
             foreach ($tries as $try) {
             // start to build up the checkbox and link
                 if (has_capability('mod/lesson:edit', $context)) {
@@ -261,7 +261,8 @@ if ($action === 'delete') {
                     $temp = '';
                 }
 
-                $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;userid=".$try['userid'].'&amp;try='.$try['try'].'">';
+                $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;userid=".$try['userid']
+                        .'&amp;try='.$try['try'].'" class="lesson-attempt-link">';
                 if ($try["grade"] !== null) { // if null then not done yet
                     // this is what the link does when the user has completed the try
                     $timetotake = $try["timeend"] - $try["timestart"];

@@ -1870,7 +1870,19 @@ abstract class lesson_page extends lesson_base {
      */
     final public function delete() {
         global $DB;
-        // first delete all the associated records...
+
+        $cm = get_coursemodule_from_instance('lesson', $this->lesson->id, $this->lesson->course);
+        $context = context_module::instance($cm->id);
+
+        // Delete files associated with attempts.
+        $fs = get_file_storage();
+        if ($attempts = $DB->get_records('lesson_attempts', array("pageid" => $this->properties->id))) {
+            foreach ($attempts as $attempt) {
+                $fs->delete_area_files($context->id, 'mod_lesson', 'essay_responses', $attempt->id);
+            }
+        }
+
+        // Then delete all the associated records...
         $DB->delete_records("lesson_attempts", array("pageid" => $this->properties->id));
         // ...now delete the answers...
         $DB->delete_records("lesson_answers", array("pageid" => $this->properties->id));
@@ -1878,9 +1890,6 @@ abstract class lesson_page extends lesson_base {
         $DB->delete_records("lesson_pages", array("id" => $this->properties->id));
 
         // Delete files associated with this page.
-        $cm = get_coursemodule_from_instance('lesson', $this->lesson->id, $this->lesson->course);
-        $context = context_module::instance($cm->id);
-        $fs = get_file_storage();
         $fs->delete_area_files($context->id, 'mod_lesson', 'page_contents', $this->properties->id);
         $fs->delete_area_files($context->id, 'mod_lesson', 'page_answers', $this->properties->id);
         $fs->delete_area_files($context->id, 'mod_lesson', 'page_responses', $this->properties->id);
@@ -2088,8 +2097,7 @@ abstract class lesson_page extends lesson_base {
                     $options->para = true;
                     $options->overflowdiv = true;
                     $options->context = $context;
-                    $result->response = file_rewrite_pluginfile_urls($result->response, 'pluginfile.php', $context->id,
-                            'mod_lesson', 'page_responses', $result->answerid);
+
                     $result->feedback = $OUTPUT->box(format_text($this->get_contents(), $this->properties->contentsformat, $options), 'generalbox boxaligncenter');
                     if (isset($result->studentanswerformat)) {
                         // This is the student's answer so it should be cleaned.
@@ -2100,7 +2108,14 @@ abstract class lesson_page extends lesson_base {
                     }
                     $result->feedback .= '<div class="correctanswer generalbox"><em>'
                             . get_string("youranswer", "lesson").'</em> : ' . $studentanswer;
-                    $result->feedback .= $OUTPUT->box($result->response, $class); // Already converted to HTML.
+                    if (isset($result->responseformat)) {
+                        $result->response = file_rewrite_pluginfile_urls($result->response, 'pluginfile.php', $context->id,
+                            'mod_lesson', 'page_responses', $result->answerid);
+                        $result->feedback .= $OUTPUT->box(format_text($result->response, $result->responseformat, $options)
+                            , $class);
+                    } else {
+                        $result->feedback .= $OUTPUT->box($result->response, $class);
+                    }
                     $result->feedback .= '</div>';
                 }
             }

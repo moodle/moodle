@@ -171,6 +171,7 @@ $string['essay'] = 'Essay';
 $string['essayemailmessage'] = '<p>Essay prompt:<blockquote>{$a->question}</blockquote></p><p>Your response:<blockquote><em>{$a->response}</em></blockquote></p><p>{$a->teacher}\'s comments:<blockquote><em>{$a->comment}</em></blockquote></p><p>You have received {$a->earned} out of {$a->outof} for this essay question.</p><p>Your grade for the lesson has been changed to {$a->newgrade}&#37;.</p>';
 $string['essayemailmessage2'] = '<p>Essay prompt:<blockquote>{$a->question}</blockquote></p><p>Your response:<blockquote><em>{$a->response}</em></blockquote></p><p>Grader\'s comments:<blockquote><em>{$a->comment}</em></blockquote></p><p>You have received {$a->earned} out of {$a->outof} for this essay question.</p><p>Your grade for the lesson has been changed to {$a->newgrade}&#37;.</p>';
 $string['essayemailsubject'] = 'Your grade for {$a} question';
+$string['essayresponses'] = 'Essay responses';
 $string['essays'] = 'Essays';
 $string['essayscore'] = 'Essay score';
 $string['eventessayassessed'] = 'Essay assessed';

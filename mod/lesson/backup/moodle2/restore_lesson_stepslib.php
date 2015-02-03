@@ -131,6 +131,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->timeseen = $this->apply_date_offset($data->timeseen);
 
         $newitemid = $DB->insert_record('lesson_attempts', $data);
+        $this->set_mapping('lesson_attempt', $oldid, $newitemid, true); // Has related fileareas.
     }
 
     protected function process_lesson_grade($data) {
@@ -209,6 +210,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $this->add_related_files('mod_lesson', 'page_contents', 'lesson_page');
         $this->add_related_files('mod_lesson', 'page_answers', 'lesson_answer');
         $this->add_related_files('mod_lesson', 'page_responses', 'lesson_answer');
+        $this->add_related_files('mod_lesson', 'essay_responses', 'lesson_attempt');
 
         // Remap all the restored prevpageid and nextpageid now that we have all the pages and their mappings
         $rs = $DB->get_recordset('lesson_pages', array('lessonid' => $this->task->get_activityid()),

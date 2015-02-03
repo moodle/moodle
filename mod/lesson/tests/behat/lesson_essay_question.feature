@@ -73,7 +73,15 @@ Feature: In a lesson activity, teacher can add an essay question
     And I should see "Student 1's response"
     And I should see "Once upon a time there was a little green frog."
     And I set the following fields to these values:
-      | Your comments | Well done. |
+      | Your comments | <p>Well <b>done</b>.</p> |
       | Essay score | 1 |
     And I press "Save changes"
     And I should see "Changes saved"
+    And I follow "Reports"
+    And I should see "Student 1"
+    And I click on ".lesson-attempt-link" "css_element" in the "Student 1" "table_row"
+    And I should see "Essay: Essay question"
+    And I should see "Please write a story about a frog."
+    And I should see "Once upon a time there was a little green frog."
+    And I should see "Well done."
+    And I should not see "&lt;b&gt;"

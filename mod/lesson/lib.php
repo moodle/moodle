@@ -682,6 +682,20 @@ function lesson_reset_userdata($data) {
                         WHERE l.course=:course";
 
         $params = array ("course" => $data->courseid);
+        $lessons = $DB->get_records_sql($lessonssql, $params);
+
+        // Get rid of attempts files.
+        $fs = get_file_storage();
+        if ($lessons) {
+            foreach ($lessons as $lessonid => $unused) {
+                if (!$cm = get_coursemodule_from_instance('lesson', $lessonid)) {
+                    continue;
+                }
+                $context = context_module::instance($cm->id);
+                $fs->delete_area_files($context->id, 'mod_lesson', 'essay_responses');
+            }
+        }
+
         $DB->delete_records_select('lesson_timer', "lessonid IN ($lessonssql)", $params);
         $DB->delete_records_select('lesson_high_scores', "lessonid IN ($lessonssql)", $params);
         $DB->delete_records_select('lesson_grades', "lessonid IN ($lessonssql)", $params);
@@ -897,6 +911,13 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
         }
         $fullpath = "/$context->id/mod_lesson/$filearea/$itemid/".implode('/', $args);
 
+    } else if ($filearea === 'essay_responses') {
+        $itemid = (int)array_shift($args);
+        if (!$attempt = $DB->get_record('lesson_attempts', array('id' => $itemid))) {
+            return false;
+        }
+        $fullpath = "/$context->id/mod_lesson/$filearea/$itemid/".implode('/', $args);
+
     } else if ($filearea === 'mediafile') {
         if (count($args) > 1) {
             // Remove the itemid when it appears to be part of the arguments. If there is only one argument
@@ -931,6 +952,7 @@ function lesson_get_file_areas() {
     $areas['mediafile'] = get_string('mediafile', 'mod_lesson');
     $areas['page_answers'] = get_string('pageanswers', 'mod_lesson');
     $areas['page_responses'] = get_string('pageresponses', 'mod_lesson');
+    $areas['essay_responses'] = get_string('essayresponses', 'mod_lesson');
     return $areas;
 }
 
