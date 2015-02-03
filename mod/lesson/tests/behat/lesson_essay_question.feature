@@ -17,10 +17,6 @@ Feature: In a lesson activity, teacher can add an essay question
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I navigate to "My private files" node in "My profile"
-    And I upload "mod/lesson/tests/fixtures/moodle_logo.jpg" file to "Files" filemanager
-    And I click on "Save changes" "button"
-    When I am on homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
@@ -34,13 +30,6 @@ Feature: In a lesson activity, teacher can add an essay question
     And I set the following fields to these values:
       | Page title | Essay question |
       | Page contents | <p>Please write a story about a <b>frog</b>.</p> |
-    And I click on "Image" "button"
-    And I click on "Browse repositories..." "button"
-    And I click on "Private files" "link"
-    And I click on "moodle_logo.jpg" "link"
-    And I click on "Select this file" "button"
-    And I set the field "Describe this image for someone who cannot see it" to "It's the logo"
-    And I click on "Save image" "button"
     And I press "Save page"
     And I log out
     And I log in as "student1"
@@ -48,11 +37,6 @@ Feature: In a lesson activity, teacher can add an essay question
     When I follow "Test lesson name"
     Then I should see "Please write a story about a frog."
     And I set the field "Your answer" to "<p>Once upon a time there was a little <b>green</b> frog."
-    And I click on "Image" "button"
-    And I set the following fields to these values:
-      | Enter URL | http://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Greenfrog.jpg/120px-Greenfrog.jpg |
-      | Describe this image for someone who cannot see it | A frog |
-    And I press "Save image"
     And I press "Submit"
     And I should see "Your answer"
     And I should see "Once upon a time there was a little green frog."
