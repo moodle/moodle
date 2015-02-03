@@ -98,6 +98,10 @@ class behat_forms extends behat_base {
      * @return void
      */
     protected function expand_all_fields() {
+        // Expand only if JS mode, else not needed.
+        if (!$this->running_javascript()) {
+            return;
+        }
 
         // We already know that we waited for the DOM and the JS to be loaded, even the editor
         // so, we will use the reduced timeout as it is a common task and we should save time.
