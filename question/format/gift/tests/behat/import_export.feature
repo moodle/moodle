@@ -34,4 +34,3 @@ Feature: Test importing questions from GIFT format.
     And I set the field "id_format_gift" to "1"
     And I press "Export questions to file"
     And following "click here" should download between "1550" and "1650" bytes
-
