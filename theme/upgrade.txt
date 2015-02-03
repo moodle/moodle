@@ -3,6 +3,8 @@ information provided here is intended especially for theme designer.
 
 === 2.9 ===
 
+* Themes Bootstrapbase, Clean and More have undergone some changes for RTL layouts see - MDL-48160.
+
 * Themes Clean amd More page header background logo, if loaded, no longer links to the home page.
 
 === 2.8 ===
