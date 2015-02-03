@@ -76,7 +76,7 @@ Feature: Add customised file types
     And I press "Yes"
     Then "//img[contains(@src, 'archive')]" "xpath_element" should exist in the "7z" "table_row"
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Create a resource activity which contains a customised file type
     Given the following "courses" exist:
       | fullname | shortname |
