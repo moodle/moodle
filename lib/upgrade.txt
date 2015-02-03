@@ -14,6 +14,7 @@ information provided here is intended especially for developers.
 * For 3rd party plugin specific environment.xml files, it's now possible to specify version independent checks by using the
   <PLUGIN name="component_name"> tag instead of the version dependent <MOODLE version="x.y"> one. If the PLUGIN tag is used any
   Moodle specific tags will be ignored.
+* html_table: new API for adding captions to tables (new field, $table->caption) and subsequently hiding said captions from sighted users using accesshide (enabled using $table->captionhide).
 
 === 2.8 ===
 

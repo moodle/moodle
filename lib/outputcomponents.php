@@ -1513,6 +1513,19 @@ class html_writer {
 
         $countcols = 0;
 
+        // Output a caption if present.
+        if (!empty($table->caption)) {
+            $captionattributes = array();
+            if ($table->captionhide) {
+                $captionattributes['class'] = 'accesshide';
+            }
+            $output .= html_writer::tag(
+                'caption',
+                $table->caption,
+                $captionattributes
+            );
+        }
+
         if (!empty($table->head)) {
             $countcols = count($table->head);
 
@@ -2094,6 +2107,23 @@ class html_table {
      * @var string Description of the contents for screen readers.
      */
     public $summary;
+
+    /**
+     * @var string Caption for the table, typically a title.
+     *
+     * Example of usage:
+     * $t->caption = "TV Guide";
+     */
+    public $caption;
+
+    /**
+     * @var bool Whether to hide the table's caption from sighted users.
+     *
+     * Example of usage:
+     * $t->caption = "TV Guide";
+     * $t->captionhide = true;
+     */
+    public $captionhide = false;
 
     /**
      * Constructor
