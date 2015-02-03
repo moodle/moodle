@@ -256,8 +256,8 @@ class repository_s3 extends repository {
         $mform->setType('access_key', PARAM_RAW_TRIMMED);
         $mform->addElement('text', 'secret_key', get_string('secret_key', 'repository_s3'));
         $mform->setType('secret_key', PARAM_RAW_TRIMMED);
-        $endpointselected = $mform->addElement('select', 'endpoint', get_string('endpoint', 'repository_s3'), $endpointselect);
-        $endpointselected->setSelected('s3.amazonaws.com'); // Default to US Endpoint.
+        $mform->addElement('select', 'endpoint', get_string('endpoint', 'repository_s3'), $endpointselect);
+        $mform->setDefault('endpoint', 's3.amazonaws.com'); // Default to US Endpoint.
         $mform->addRule('access_key', $strrequired, 'required', null, 'client');
         $mform->addRule('secret_key', $strrequired, 'required', null, 'client');
     }
