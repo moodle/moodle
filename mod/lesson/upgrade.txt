@@ -11,6 +11,7 @@ This files describes API changes in the lesson code.
 * A fourth parameter (format) has been added to the add_answer() function
   located as part of the lesson_add_page_form_base class. If specified with a value of 'LESSON_ANSWER_HTML'
   then a rich html editor is generated. Otherwise an editor is created with Moodle Auto Format
+* removedoublecr() and importmodifiedaikenstyle() are now deprecated.
 
 === Earlier changes ===
 
