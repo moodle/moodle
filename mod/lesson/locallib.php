@@ -58,6 +58,8 @@ define("LESSON_UNDEFINED", -99);
 /** LESSON_MAX_EVENT_LENGTH = 432000 ; 5 days maximum */
 define("LESSON_MAX_EVENT_LENGTH", "432000");
 
+/** Answer format is HTML */
+define("LESSON_ANSWER_HTML", "HTML");
 
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other lesson functions go here.  Each of them must have a name that
@@ -785,23 +787,24 @@ abstract class lesson_add_page_form_base extends moodleform {
      * @param int $count The count of the element to add
      * @param string $label, null means default
      * @param bool $required
+     * @param string $format
      * @return void
      */
-    protected final function add_answer($count, $label = null, $required = false) {
+    protected final function add_answer($count, $label = null, $required = false, $format= '') {
         if ($label === null) {
             $label = get_string('answer', 'lesson');
         }
 
-        if ($this->qtype != 'multichoice' && $this->qtype != 'matching') {
-            $this->_form->addElement('editor', 'answer_editor['.$count.']', $label,
-                    array('rows' => '4', 'columns' => '80'), array('noclean' => true));
-            $this->_form->setDefault('answer_editor['.$count.']', array('text' => '', 'format' => FORMAT_MOODLE));
-        } else {
+        if ($format == LESSON_ANSWER_HTML) {
             $this->_form->addElement('editor', 'answer_editor['.$count.']', $label,
                     array('rows' => '4', 'columns' => '80'),
                     array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $this->_customdata['maxbytes']));
             $this->_form->setType('answer_editor['.$count.']', PARAM_RAW);
             $this->_form->setDefault('answer_editor['.$count.']', array('text' => '', 'format' => FORMAT_HTML));
+        } else {
+            $this->_form->addElement('editor', 'answer_editor['.$count.']', $label,
+                    array('rows' => '4', 'columns' => '80'), array('noclean' => true));
+            $this->_form->setDefault('answer_editor['.$count.']', array('text' => '', 'format' => FORMAT_MOODLE));
         }
 
         if ($required) {
