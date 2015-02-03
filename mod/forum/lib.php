@@ -789,10 +789,7 @@ function forum_cron() {
 
                 // If forum_replytouser is not set then send mail using the noreplyaddress.
                 if (empty($CFG->forum_replytouser)) {
-                    // Clone userfrom as it is referenced by $users.
-                    $cloneduserfrom = clone($userfrom);
-                    $cloneduserfrom->email = $CFG->noreplyaddress;
-                    $eventdata->userfrom = $cloneduserfrom;
+                    $eventdata->userfrom = core_user::get_noreply_user();
                 }
 
                 $smallmessagestrings = new stdClass();
