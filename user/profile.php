@@ -107,6 +107,13 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('mypublic');
 $PAGE->set_pagetype('user-profile');
 
+// Load the JS to send a message.
+$cansendmessage = isloggedin() && has_capability('moodle/site:sendmessage', $context)
+    && !empty($CFG->messaging) && !isguestuser() && !isguestuser($user) && ($USER->id != $user->id);
+if ($cansendmessage) {
+    message_messenger_requirejs();
+}
+
 // Set up block editing capabilities.
 if (isguestuser()) {     // Guests can never edit their profile.
     $USER->editing = $edit = 0;  // Just in case.
@@ -229,7 +236,6 @@ $event->trigger();
 // TODO WORK OUT WHERE THE NAV BAR IS!
 echo $OUTPUT->header();
 echo '<div class="userprofile">';
-
 
 // Print the standard content of this page, the basic profile info.
 echo $OUTPUT->heading(fullname($user));
@@ -462,10 +468,10 @@ echo "</div></div>"; // Closing desriptionbox and userprofilebox.
 echo $OUTPUT->custom_block_region('content');
 
 // Print messaging link if allowed.
-if (isloggedin() && has_capability('moodle/site:sendmessage', $context)
-    && !empty($CFG->messaging) && !isguestuser() && !isguestuser($user) && ($USER->id != $user->id)) {
+if ($cansendmessage) {
+    $sendurl = new moodle_url('/message/index.php', array('id' => $user->id));
     echo '<div class="messagebox">';
-    echo '<a href="'.$CFG->wwwroot.'/message/index.php?id='.$user->id.'">'.get_string('messageselectadd').'</a>';
+    echo html_writer::link($sendurl, get_string('messageselectadd'), message_messenger_sendmessage_link_params($user));
     echo '</div>';
 }
 
