@@ -136,7 +136,7 @@ class tool_generator_maketestcourse_testcase extends advanced_testcase {
         $lastusernumber = 0;
         $discussionstarters = array();
         foreach ($discussions as $discussion) {
-            $usernumber = intval($discussion->lastname);
+            $usernumber = core_user::get_user($discussion->userid, 'id, idnumber')->idnumber;
 
             // Checks that the users are odd numbers.
             $this->assertEquals(1, $usernumber % 2);
