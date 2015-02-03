@@ -486,6 +486,11 @@ class block_manager {
             return false;
         }
 
+        // Block regions should not be docked during editing when all the blocks are hidden.
+        if ($this->page->user_is_editing() && $this->page->user_can_edit_blocks()) {
+            return false;
+        }
+
         $this->check_is_loaded();
         $this->ensure_content_created($region, $output);
         if (!$this->region_has_content($region, $output)) {
