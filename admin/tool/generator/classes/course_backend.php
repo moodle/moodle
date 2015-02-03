@@ -308,7 +308,7 @@ class tool_generator_course_backend extends tool_generator_backend {
             $username = 'tool_generator_' . $textnumber;
 
             // Create user account.
-            $record = array('username' => $username);
+            $record = array('username' => $username, 'idnumber' => $number);
 
             // We add a user password if it has been specified.
             if (!empty($CFG->tool_generator_users_password)) {
