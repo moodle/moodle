@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Message ajax.
+ * Ajax point of entry for messaging API.
  *
  * @package    core_message
  * @copyright  2015 Frédéric Massart - FMCorz.net
