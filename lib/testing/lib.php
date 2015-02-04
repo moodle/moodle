@@ -190,7 +190,7 @@ function testing_update_composer_dependencies() {
     }
 
     // Update composer dependencies.
-    passthru("php composer.phar update --dev", $code);
+    passthru("php composer.phar update", $code);
     if ($code != 0) {
         exit($code);
     }
