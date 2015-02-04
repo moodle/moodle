@@ -1500,7 +1500,7 @@ class grade_report_grader extends grade_report {
      * Given element category, create a collapsible icon and
      * course header.
      *
-     * @param object $element
+     * @param array $element
      * @return string HTML
      */
     protected function get_course_header($element) {
