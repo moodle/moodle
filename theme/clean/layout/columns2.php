@@ -25,7 +25,15 @@
 // Get the HTML for the settings bits.
 $html = theme_clean_get_html_for_settings($OUTPUT, $PAGE);
 
-$left = (!right_to_left());  // To know if to add 'pull-right' and 'desktop-first-column' classes in the layout for LTR.
+// Set default (LTR) layout mark-up for a two column page (side-pre-only).
+$regionmain = 'span9 pull-right';
+$sidepre = 'span3 desktop-first-column';
+// Reset layout mark-up for RTL languages.
+if (right_to_left()) {
+    $regionmain = 'span9';
+    $sidepre = 'span3 pull-right';
+}
+
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes(); ?>>
 <head>
@@ -75,19 +83,14 @@ echo $OUTPUT->doctype() ?>
     </header>
 
     <div id="page-content" class="row-fluid">
-        <section id="region-main" class="span9<?php if ($left) { echo ' pull-right'; } ?>">
+        <section id="region-main" class="<?php echo $regionmain; ?>">
             <?php
             echo $OUTPUT->course_content_header();
             echo $OUTPUT->main_content();
             echo $OUTPUT->course_content_footer();
             ?>
         </section>
-        <?php
-        $classextra = '';
-        if ($left) {
-            $classextra = ' desktop-first-column';
-        }
-        echo $OUTPUT->blocks('side-pre', 'span3'.$classextra);
+        <?php echo $OUTPUT->blocks('side-pre', $sidepre);
         ?>
     </div>
 
