@@ -24,8 +24,22 @@ YUI.add('moodle-core_message-messenger', function (Y, NAME) {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-var CSS = {},
-    SELECTORS = {};
+
+/**
+ * Cascading Style Sheet References.
+ *
+ * Using the name "CSS" would redefine the existing JS object CSS.
+ *
+ * @type {Object}
+ */
+var CSSR = {};
+
+/**
+ * Object containing a reference to the selectors.
+ *
+ * @type {Object}
+ */
+var SELECTORS = {};
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -173,7 +187,7 @@ Y.namespace('M.core_message.messenger').init = function(config) {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-CSS.SENDMSGDIALOG = {
+CSSR.SENDMSGDIALOG = {
     ACCESSHIDE: 'accesshide',
     ACTIONS: 'message-actions',
     FOOTER: 'message-footer',
@@ -218,28 +232,31 @@ Y.namespace('M.core_message.messenger').sendMessage = Y.extend(SENDMSGDIALOG, M.
      * @method initializer
      */
     initializer: function() {
+        var tpl,
+            content;
+
         this._bb = this.get('boundingBox');
 
         // Prepare the content area.
         tpl = Y.Handlebars.compile(
             '<form action="#">' +
-                '<div class="{{CSS.INPUTAREA}}">' +
-                    '<label class="{{CSS.ACCESSHIDE}}" for="{{id}}">{{labelStr}}</label>' +
-                    '<textarea class="{{CSS.INPUT}}" id="{{id}}"></textarea>' +
-                    '<div class="{{CSS.NOTICEAREA}}" style="display: none;" aria-live="assertive">' +
-                        '<div class="{{CSS.NOTICE}}"><div></div></div>' +
+                '<div class="{{CSSR.INPUTAREA}}">' +
+                    '<label class="{{CSSR.ACCESSHIDE}}" for="{{id}}">{{labelStr}}</label>' +
+                    '<textarea class="{{CSSR.INPUT}}" id="{{id}}"></textarea>' +
+                    '<div class="{{CSSR.NOTICEAREA}}" style="display: none;" aria-live="assertive">' +
+                        '<div class="{{CSSR.NOTICE}}"><div></div></div>' +
                     '</div>' +
                 '</div>' +
-                '<div class="{{CSS.ACTIONS}}">' +
-                    '<input type="submit" value="{{sendStr}}" class="{{CSS.SENDBTN}}">' +
-                    '<a href="#" class="{{CSS.HISTORYLINK}}">{{viewHistoryStr}}</a>' +
+                '<div class="{{CSSR.ACTIONS}}">' +
+                    '<input type="submit" value="{{sendStr}}" class="{{CSSR.SENDBTN}}">' +
+                    '<a href="#" class="{{CSSR.HISTORYLINK}}">{{viewHistoryStr}}</a>' +
                     '<div style="clear: both;"></div>' +
                 '</div>' +
             '</form>'
         );
         content = Y.Node.create(
             tpl({
-                CSS: CSS.SENDMSGDIALOG,
+                CSSR: CSSR.SENDMSGDIALOG,
                 id: Y.guid(),
                 labelStr: M.util.get_string('messagetosend', 'core_message'),
                 loadingIcon: M.util.image_url('i/loading', 'moodle'),
@@ -301,12 +318,12 @@ Y.namespace('M.core_message.messenger').sendMessage = Y.extend(SENDMSGDIALOG, M.
         // Actually send the message.
         this._ioSend = Y.io(this.get('url'), {
             method: 'POST',
-            data: build_querystring({
+            data: {
                 sesskey: M.cfg.sesskey,
                 action: 'sendmessage',
                 userid: this.get('userid'),
                 message: message
-            }),
+            },
             on: {
                 start: function() {
                     var img = '<img alt="" role="presentation" src="' + M.util.image_url('i/loading_small', 'moodle') + '">';
@@ -427,7 +444,7 @@ Y.namespace('M.core_message.messenger').sendMessage = Y.extend(SENDMSGDIALOG, M.
 
 }, {
     NAME: 'core_message-messenger-sendmessage',
-    CSS_PREFIX: CSS.SENDMSGDIALOG.PREFIX,
+    CSS_PREFIX: CSSR.SENDMSGDIALOG.PREFIX,
     ATTRS: {
 
         /**
