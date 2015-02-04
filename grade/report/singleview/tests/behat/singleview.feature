@@ -57,14 +57,14 @@ Feature: We can use Single view
         | Grade for Test assignment one | 10.00 |
         | Feedback for Test assignment one | test data |
     And I click on "Exclude for Test assignment four" "checkbox"
-    And I press "Update"
+    And I press "Save"
     Then I should see "Grades were set for 2 items"
     And I press "Continue"
     And the field "Exclude for Test assignment four" matches value "1"
     And the field "Grade for Test assignment one" matches value "10.00"
     And I set the following fields to these values:
         | Test grade item | 45 |
-    And I press "Update"
+    And I press "Save"
     Then I should see "Grades were set for 1 items"
     And I press "Continue"
     And the field "Grade for Test grade item" matches value "45.00"
@@ -75,7 +75,7 @@ Feature: We can use Single view
         | Grade for james (Student) 1 | 12.05 |
         | Feedback for james (Student) 1 | test data2 |
     And I click on "Exclude for holly (Student) 2" "checkbox"
-    And I press "Update"
+    And I press "Save"
     Then I should see "Grades were set for 2 items"
     And I press "Continue"
     And the field "Grade for james (Student) 1" matches value "12.05"
@@ -83,7 +83,7 @@ Feature: We can use Single view
     And I click on "Single view" "link"
     And I click on "new grade item 1" "option"
     And I click on "Very good" "option"
-    And I press "Update"
+    And I press "Save"
     Then I should see "Grades were set for 1 items"
     And I press "Continue"
     And the following should exist in the "generaltable" table:
@@ -104,7 +104,7 @@ Feature: We can use Single view
     When I click on "All grades" "option"
     And I set the field "Insert value" to "1.0"
     And I click on "Perform bulk insert" "checkbox"
-    And I press "Update"
+    And I press "Save"
     Then I should see "Grades were set for 9 items"
 
   Scenario: Navigation works in the Single view.
