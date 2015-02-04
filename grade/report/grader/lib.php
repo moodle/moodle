@@ -793,8 +793,7 @@ class grade_report_grader extends grade_report {
                     $categorycell = new html_table_cell();
                     $categorycell->attributes['class'] = 'category ' . $catlevel;
                     $categorycell->colspan = $colspan;
-                    $categorycell->text = shorten_text($element['object']->get_name());
-                    $categorycell->text .= $this->get_collapsing_icon($element);
+                    $categorycell->text = $this->get_course_header($element);
                     $categorycell->header = true;
                     $categorycell->scope = 'col';
 
@@ -832,8 +831,10 @@ class grade_report_grader extends grade_report {
                             'id' => $this->course->id,
                             'item' => 'grade',
                             'itemid' => $element['object']->id));
-                        $singleview = $OUTPUT->action_icon($url, new pix_icon('t/editstring', get_string('singleview', 'grades',
-                                $element['object']->get_name())));
+                        $singleview = $OUTPUT->action_icon(
+                            $url,
+                            new pix_icon('t/editstring', get_string('singleview', 'grades', $element['object']->itemname))
+                        );
                     }
 
                     $itemcell->colspan = $colspan;
@@ -1496,6 +1497,49 @@ class grade_report_grader extends grade_report {
     }
 
     /**
+     * Given element category, create a collapsible icon and
+     * course header.
+     *
+     * @param object $element
+     * @return string HTML
+     */
+    protected function get_course_header($element) {
+        global $OUTPUT;
+
+        $icon = '';
+        // If object is a category, display expand/contract icon.
+        if ($element['type'] == 'category') {
+            // Load language strings.
+            $strswitchminus = $this->get_lang_string('aggregatesonly', 'grades');
+            $strswitchplus  = $this->get_lang_string('gradesonly', 'grades');
+            $strswitchwhole = $this->get_lang_string('fullmode', 'grades');
+
+            $url = new moodle_url($this->gpr->get_return_url(null, array('target' => $element['eid'], 'sesskey' => sesskey())));
+
+            if (in_array($element['object']->id, $this->collapsed['aggregatesonly'])) {
+                $url->param('action', 'switch_plus');
+                $icon = $OUTPUT->action_icon($url, new pix_icon('t/switch_plus', $strswitchplus), null, null);
+                $showing = get_string('showingaggregatesonly', 'grades');
+            } else if (in_array($element['object']->id, $this->collapsed['gradesonly'])) {
+                $url->param('action', 'switch_whole');
+                $icon = $OUTPUT->action_icon($url, new pix_icon('t/switch_whole', $strswitchwhole), null, null);
+                $showing = get_string('showinggradesonly', 'grades');
+            } else {
+                $url->param('action', 'switch_minus');
+                $icon = $OUTPUT->action_icon($url, new pix_icon('t/switch_minus', $strswitchminus), null, null);
+                $showing = get_string('showingfullmode', 'grades');
+            }
+        }
+
+        $name = shorten_text($element['object']->get_name());
+        $courseheader = html_writer::tag('span', $name, array('id' => 'courseheader'));
+        $courseheader .= html_writer::label($showing, 'courseheader', false, array('class' => 'accesshide'));
+        $courseheader .= $icon;
+
+        return $courseheader;
+    }
+
+    /**
      * Given a grade_category, grade_item or grade_grade, this function
      * figures out the state of the object and builds then returns a div
      * with the icons needed for the grader report.
@@ -1555,11 +1599,16 @@ class grade_report_grader extends grade_report {
 
     /**
      * Given a category element returns collapsing +/- icon if available
+     *
+     * @deprecated since Moodle 2.9 MDL-46662 - please do not use this function any more.
+     * @todo MDL-49021 This will be deleted in Moodle 3.1
+     * @see grade_report_grader::get_course_header()
      * @param object $element
      * @return string HTML
      */
     protected function get_collapsing_icon($element) {
         global $OUTPUT;
+        debugging('get_collapsing_icon is deprecated, please use get_course_header instead.', DEBUG_DEVELOPER);
 
         $icon = '';
         // If object is a category, display expand/contract icon

@@ -1,5 +1,7 @@
 This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
+=== 2.9 ===
+* Deprecating grade_report_grader:get_collapsing_icon.
 
 === 2.8.2 ===
 * gradereport_singleview::__construct doesn't need groupid parameter anymore, so it was renamed to $unused.
