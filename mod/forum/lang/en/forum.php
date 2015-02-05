@@ -385,6 +385,7 @@ $string['page-mod-forum-view'] = 'Forum module main page';
 $string['page-mod-forum-discuss'] = 'Forum module discussion thread page';
 $string['parent'] = 'Show parent';
 $string['parentofthispost'] = 'Parent of this post';
+$string['permalink'] = 'Permalink';
 $string['posttomygroups'] = 'Post a copy to all groups';
 $string['posttomygroups_help'] = 'Posts a copy of this message to all groups you have access to. Participants in groups you do not have access to will not see this post';
 $string['prevdiscussiona'] = 'Previous discussion: {$a}';
