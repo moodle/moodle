@@ -363,6 +363,10 @@ function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $edit
     }
 
     $requestparams = lti_build_request((object) $lti, $typeconfig, $ltirequest['course']);
+    if(!isset($requestparams['resource_link_id'])) // fix to moodle 2.8 issue where this function (lti_build_request) does not set resource_link_id value
+    {
+        $requestparams['resource_link_id'] = $lti->id;
+    }
 
     // Moodle by default uses the Moodle user id.  Overriding this parameter to user the Moodle username.
     $requestparams['user_id'] = $USER->username;
