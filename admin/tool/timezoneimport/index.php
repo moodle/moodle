@@ -113,8 +113,7 @@
         $a = new stdClass();
         $a->count = count($timezones);
         $a->source  = $importdone;
-        echo $OUTPUT->heading(get_string('importtimezonescount', 'tool_timezoneimport', $a), 3);
-
+        echo $OUTPUT->notification(get_string('importtimezonescount', 'tool_timezoneimport', $a), 'notifysuccess');
         echo $OUTPUT->continue_button(new moodle_url('/admin/index.php'));
 
         $timezonelist = array();
@@ -130,15 +129,26 @@
         }
         ksort($timezonelist);
 
-        echo "<br />";
-        echo $OUTPUT->box_start();
+        $timezonetable = new html_table();
+        $timezonetable->head = array(
+            get_string('timezone', 'moodle'),
+            get_string('entries', 'moodle')
+        );
+        $rows = array();
         foreach ($timezonelist as $name => $count) {
-            echo "$name ($count)<br />";
+            $row = new html_table_row(
+                array(
+                    new html_table_cell($name),
+                    new html_table_cell($count)
+                )
+            );
+            $rows[] = $row;
         }
-        echo $OUTPUT->box_end();
+        $timezonetable->data = $rows;
+        echo html_writer::table($timezonetable);
 
     } else {
-        echo $OUTPUT->heading(get_string('importtimezonesfailed', 'tool_timezoneimport'), 3);
+        echo $OUTPUT->notification(get_string('importtimezonesfailed', 'tool_timezoneimport'));
         echo $OUTPUT->continue_button(new moodle_url('/admin/index.php'));
     }
 
