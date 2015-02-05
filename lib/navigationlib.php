@@ -2267,6 +2267,22 @@ class global_navigation extends navigation_node {
             $usernode->add(get_string('notes', 'notes'), $url);
         }
 
+        // Show the my grades node.
+        if (($issitecourse && $iscurrentuser) || has_capability('moodle/user:viewdetails', $usercontext)) {
+            require_once($CFG->dirroot . '/user/lib.php');
+            // Set the grades node to link to the "My grades" page.
+            if ($course->id == SITEID) {
+                $url = user_mygrades_url($user->id, $course->id);
+            } else { // Otherwise we are in a course and should redirect to the user grade report (Activity report version).
+                $url = new moodle_url('/course/user.php', array('mode' => 'grade', 'id' => $course->id, 'user' => $user->id));
+            }
+            if ($USER->id != $user->id) {
+                $usernode->add(get_string('grades', 'grades'), $url);
+            } else {
+                $usernode->add(get_string('mygrades', 'grades'), $url);
+            }
+        }
+
         // If the user is the current user add the repositories for the current user
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
         if ($iscurrentuser) {
@@ -3804,18 +3820,6 @@ class settings_navigation extends navigation_node {
         $reportavailable = false;
         if (has_capability('moodle/grade:viewall', $coursecontext)) {
             $reportavailable = true;
-        } else if (!empty($course->showgrades)) {
-            $reports = core_component::get_plugin_list('gradereport');
-            if (is_array($reports) && count($reports)>0) {     // Get all installed reports
-                arsort($reports); // user is last, we want to test it first
-                foreach ($reports as $plugin => $plugindir) {
-                    if (has_capability('gradereport/'.$plugin.':view', $coursecontext)) {
-                        //stop when the first visible plugin is found
-                        $reportavailable = true;
-                        break;
-                    }
-                }
-            }
         }
         if ($reportavailable) {
             $url = new moodle_url('/grade/report/index.php', array('id'=>$course->id));
@@ -4324,30 +4328,7 @@ class settings_navigation extends navigation_node {
         foreach ($reports as $reportfunction) {
             $reportfunction($reporttab, $user, $course);
         }
-        $anyreport = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
-        if ($anyreport || ($course->showreports && $currentuser)) {
-            // Add grade hardcoded grade report if necessary.
-            $gradeaccess = false;
-            if (has_capability('moodle/grade:viewall', $coursecontext)) {
-                // Can view all course grades.
-                $gradeaccess = true;
-            } else if ($course->showgrades) {
-                if ($currentuser && has_capability('moodle/grade:view', $coursecontext)) {
-                    // Can view own grades.
-                    $gradeaccess = true;
-                } else if (has_capability('moodle/grade:viewall', $usercontext)) {
-                    // Can view grades of this user - parent most probably.
-                    $gradeaccess = true;
-                } else if ($anyreport) {
-                    // Can view grades of this user - parent most probably.
-                    $gradeaccess = true;
-                }
-            }
-            if ($gradeaccess) {
-                $reporttab->add(get_string('grade'), new moodle_url('/course/user.php', array('mode'=>'grade', 'id'=>$course->id,
-                        'user'=>$usercontext->instanceid)));
-            }
-        }
+
         // Check the number of nodes in the report node... if there are none remove the node
         $reporttab->trim_if_empty();
 

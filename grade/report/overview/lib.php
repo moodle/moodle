@@ -134,7 +134,12 @@ class grade_report_overview extends grade_report {
         $this->table->setup();
     }
 
-    public function fill_table() {
+    /**
+     * Fill the table for displaying.
+     *
+     * @param bool $activitylink If this report link to the activity report or the user report.
+     */
+    public function fill_table($activitylink = false) {
         global $CFG, $DB, $OUTPUT, $USER;
 
         // Only show user's courses instead of all courses.
@@ -153,13 +158,21 @@ class grade_report_overview extends grade_report {
                     continue;
                 }
 
-                if ((!has_capability('moodle/grade:view', $coursecontext) || $this->user->id != $USER->id) &&
-                        !has_capability('moodle/grade:viewall', $coursecontext)) {
+                if (!has_capability('moodle/user:viewuseractivitiesreport', context_user::instance($this->user->id)) &&
+                        ((!has_capability('moodle/grade:view', $coursecontext) || $this->user->id != $USER->id) &&
+                        !has_capability('moodle/grade:viewall', $coursecontext))) {
                     continue;
                 }
 
-                $courseshortname = format_string(get_course_display_name_for_list($course), true, array('context' => $coursecontext));
-                $courselink = html_writer::link(new moodle_url('/grade/report/user/index.php', array('id' => $course->id, 'userid' => $this->user->id)), $courseshortname);
+                $coursename = format_string(get_course_display_name_for_list($course), true, array('context' => $coursecontext));
+                // Link to the activity report version of the user grade report.
+                if ($activitylink) {
+                    $courselink = html_writer::link(new moodle_url('/course/user.php', array('mode' => 'grade', 'id' => $course->id,
+                        'user' => $this->user->id)), $coursename);
+                } else {
+                    $courselink = html_writer::link(new moodle_url('/grade/report/user/index.php', array('id' => $course->id,
+                        'userid' => $this->user->id)), $coursename);
+                }
                 $canviewhidden = has_capability('moodle/grade:viewhidden', $coursecontext);
 
                 // Get course grade_item
@@ -221,7 +234,7 @@ class grade_report_overview extends grade_report {
             return true;
 
         } else {
-            echo $OUTPUT->notification(get_string('nocourses', 'grades'));
+            echo $OUTPUT->notification(get_string('notenrolled', 'grades'), 'notifymessage');
             return false;
         }
     }
@@ -250,6 +263,13 @@ class grade_report_overview extends grade_report {
     function process_data($data) {
     }
     function process_action($target, $action) {
+    }
+
+    /**
+     * This report supports being set as the 'my grades' report.
+     */
+    public static function supports_mygrades() {
+        return true;
     }
 }
 

@@ -27,7 +27,8 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
         'customusermenuitems',
         new lang_string('customusermenuitems', 'admin'),
         new lang_string('configcustomusermenuitems', 'admin'),
-        'messages,message|/message/index.php|message
+        'mygrades,grades|/grade/report/mygrades.php|grades
+messages,message|/message/index.php|message
 myfiles,moodle|/user/files.php|download
 mybadges,badges|/badges/mybadges.php|award',
         PARAM_TEXT,

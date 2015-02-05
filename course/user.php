@@ -124,10 +124,24 @@ $PAGE->navigation->extend_for_user($user);
 $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
 $PAGE->set_title("$course->shortname: $stractivityreport ($mode)");
 $PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
 
 switch ($mode) {
     case "grade":
+        // Change the navigation to point to the my grade node (If we are a student).
+        if ($USER->id == $user->id) {
+            require_once($CFG->dirroot . '/user/lib.php');
+            // Get the correct 'My grades' url to point to.
+            $activeurl = user_mygrades_url();
+            $PAGE->navigation->override_active_url($activeurl);
+            $activenode = $PAGE->navbar->add($course->shortname);
+            $activenode->make_active();
+            // Find the course node and collapse it.
+            $coursenode = $PAGE->navigation->find($course->id, navigation_node::TYPE_COURSE);
+            $coursenode->collapse = true;
+            $coursenode->make_inactive();
+        }
+        echo $OUTPUT->header();
+
         if (empty($CFG->grade_profilereport) or !file_exists($CFG->dirroot.'/grade/report/'.$CFG->grade_profilereport.'/lib.php')) {
             $CFG->grade_profilereport = 'user';
         }
@@ -144,6 +158,8 @@ switch ($mode) {
         break;
     default:
         // can not be reached ;-)
+        // But just incase let's not break the navigation.
+        echo $OUTPUT->header();
 }
 
 

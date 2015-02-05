@@ -27,20 +27,25 @@ require_once $CFG->libdir.'/gradelib.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/overview/lib.php';
 
-$courseid = required_param('id', PARAM_INT);
+$courseid = optional_param('id', SITEID, PARAM_INT);
 $userid   = optional_param('userid', $USER->id, PARAM_INT);
 
-$PAGE->set_url(new moodle_url('/grade/report/overview/index.php', array('id'=>$courseid)));
+$PAGE->set_url(new moodle_url('/grade/report/overview/index.php', array('id' => $courseid, 'userid' => $userid)));
 
-/// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
-require_login($course);
+require_login(null, false);
 
 $context = context_course::instance($course->id);
 $systemcontext = context_system::instance();
-require_capability('gradereport/overview:view', $context);
+$personalcontext = null;
+$PAGE->set_context($context);
+
+// If we are accessing the page from a site context then ignore this check.
+if ($courseid != SITEID) {
+    require_capability('gradereport/overview:view', $context);
+}
 
 if (empty($userid)) {
     require_capability('moodle/grade:viewall', $context);
@@ -49,6 +54,7 @@ if (empty($userid)) {
     if (!$DB->get_record('user', array('id'=>$userid, 'deleted'=>0)) or isguestuser($userid)) {
         print_error('invaliduserid');
     }
+    $personalcontext = context_user::instance($userid);
 }
 
 $access = false;
@@ -60,12 +66,16 @@ if (has_capability('moodle/grade:viewall', $systemcontext)) {
     // Ok - can view any grades in context.
     $access = true;
 
-} else if ($userid == $USER->id and has_capability('moodle/grade:view', $context) and $course->showgrades) {
+} else if ($userid == $USER->id and ((has_capability('moodle/grade:view', $context) and $course->showgrades)
+        || $courseid == SITEID)) {
     // Ok - can view own course grades.
     $access = true;
 
-} else if (has_capability('moodle/grade:viewall', context_user::instance($userid)) and $course->showgrades) {
-    // Ok - can view grades of this user- parent most probably.
+} else if (has_capability('moodle/grade:viewall', $personalcontext) and $course->showgrades) {
+    // Ok - can view grades of this user - parent most probably.
+    $access = true;
+} else if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext) and $course->showgrades) {
+    // Ok - can view grades of this user - parent most probably.
     $access = true;
 }
 
@@ -86,7 +96,7 @@ $USER->grade_last_report[$course->id] = 'overview';
 //first make sure we have proper final grades - this must be done before constructing of the grade tree
 grade_regrade_final_grades($courseid);
 
-if (has_capability('moodle/grade:viewall', $context)) {
+if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
     // Please note this would be extremely slow if we wanted to implement this properly for all teachers.
     $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
     $currentgroup = groups_get_course_group($course, true);
@@ -135,16 +145,38 @@ if (has_capability('moodle/grade:viewall', $context)) {
             }
         }
     }
-} else { //Non-admins will see just their own report
+} else { // Non-admins and users viewing from the site context can just see their own report.
 
     // Create a report instance
     $report = new grade_report_overview($userid, $gpr, $context);
 
-    // print the page
-    print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview'). ' - '.fullname($report->user));
+    // If the course id matches the site id then we don't have a course context to work with.
+    // Display a standard page.
+    if ($courseid == SITEID) {
+        $PAGE->set_pagelayout('standard');
+        $header = get_string('mygrades', 'grades'). ' - '.fullname($report->user);
+        $PAGE->set_title($header);
+        $PAGE->set_heading($header);
 
-    if ($report->fill_table()) {
-        echo '<br />'.$report->print_table(true);
+        if ($USER->id != $report->user->id) {
+            $PAGE->navigation->extend_for_user($report->user);
+            if ($node = $PAGE->settingsnav->get('userviewingsettings'.$report->user->id)) {
+                $node->forceopen = true;
+            }
+        } else if ($node = $PAGE->settingsnav->get('usercurrentsettings', navigation_node::TYPE_CONTAINER)) {
+            $node->forceopen = true;
+        }
+
+        echo $OUTPUT->header();
+        if ($report->fill_table(true)) {
+            echo '<br />'.$report->print_table(true);
+        }
+    } else { // We have a course context. We must be navigating from the gradebook.
+        print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview')
+                . ' - ' . fullname($report->user));
+        if ($report->fill_table()) {
+            echo '<br />'.$report->print_table(true);
+        }
     }
 }
 
