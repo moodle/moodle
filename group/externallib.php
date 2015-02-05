@@ -1154,6 +1154,115 @@ class core_group_external extends external_api {
         return null;
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9
+     */
+    public static function get_course_user_groups_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'id of course'),
+                'userid' => new external_value(PARAM_INT, 'id of user'),
+                'groupingid' => new external_value(PARAM_INT, 'returns only groups in the specified grouping', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Get all groups in the specified course for the specified user.
+     *
+     * @throws moodle_exception
+     * @param int $courseid id of course.
+     * @param int $userid id of user.
+     * @param int $groupingid optional returns only groups in the specified grouping.
+     * @return array of group objects (id, name, description, format) and possible warnings.
+     * @since Moodle 2.9
+     */
+    public static function get_course_user_groups($courseid, $userid, $groupingid = 0) {
+        global $USER;
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        $params = array(
+            'courseid' => $courseid,
+            'userid' => $userid,
+            'groupingid' => $groupingid
+        );
+        $params = self::validate_parameters(self::get_course_user_groups_parameters(), $params);
+        $courseid = $params['courseid'];
+        $userid = $params['userid'];
+        $groupingid = $params['groupingid'];
+
+        // Validate course and user. get_course throws an exception if the course does not exists.
+        $course = get_course($courseid);
+        $user = core_user::get_user($userid, 'id', MUST_EXIST);
+
+        // Security checks.
+        $context = context_course::instance($course->id);
+        self::validate_context($context);
+
+         // Check if we have permissions for retrieve the information.
+        if ($user->id != $USER->id) {
+            if (!has_capability('moodle/course:managegroups', $context)) {
+                throw new moodle_exception('accessdenied', 'admin');
+            }
+            // Validate if the user is enrolled in the course.
+            if (!is_enrolled($context, $user->id)) {
+                // We return a warning because the function does not fail for not enrolled users.
+                $warning['item'] = 'course';
+                $warning['itemid'] = $course->id;
+                $warning['warningcode'] = '1';
+                $warning['message'] = "User $user->id is not enrolled in course $course->id";
+                $warnings[] = $warning;
+            }
+        }
+
+        $usergroups = array();
+        if (empty($warnings)) {
+            $groups = groups_get_all_groups($course->id, $user->id, 0, 'g.id, g.name, g.description, g.descriptionformat');
+
+            foreach ($groups as $group) {
+                list($group->description, $group->descriptionformat) =
+                    external_format_text($group->description, $group->descriptionformat,
+                            $context->id, 'group', 'description', $group->id);
+                $usergroups[] = (array)$group;
+            }
+        }
+
+        $results = array(
+            'groups' => $usergroups,
+            'warnings' => $warnings
+        );
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description A single structure containing groups and possible warnings.
+     * @since Moodle 2.9
+     */
+    public static function get_course_user_groups_returns() {
+        return new external_single_structure(
+            array(
+                'groups' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'group record id'),
+                            'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                            'description' => new external_value(PARAM_RAW, 'group description text'),
+                            'descriptionformat' => new external_format_value('description')
+                        )
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
 
 /**

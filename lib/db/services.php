@@ -303,6 +303,15 @@ $functions = array(
         'type'        => 'write',
     ),
 
+    'core_group_get_course_user_groups' => array(
+        'classname'     => 'core_group_external',
+        'methodname'    => 'get_course_user_groups',
+        'classpath'     => 'group/externallib.php',
+        'description'   => 'Returns all groups in specified course for the specified user.',
+        'type'          => 'read',
+        'capabilities'  => 'moodle/course:managegroups',
+    ),
+
     // === file related functions ===
 
     'moodle_file_get_files' => array(
@@ -985,7 +994,8 @@ $services = array(
             'core_message_get_contacts',
             'core_message_search_contacts',
             'core_message_get_blocked_users',
-            'gradereport_user_get_grades_table'
+            'gradereport_user_get_grades_table',
+            'core_group_get_course_user_groups'
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
