@@ -4187,12 +4187,14 @@ class settings_navigation extends navigation_node {
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $this->page->context));
 
         $key = $gstitle;
+        $prefurl = new moodle_url('/user/preferences.php');
         if ($gstitle != 'usercurrentsettings') {
             $key .= $userid;
+            $prefurl->param('userid', $userid);
         }
 
         // Add a user setting branch
-        $usersetting = $this->add(get_string($gstitle, 'moodle', $fullname), null, self::TYPE_CONTAINER, null, $key);
+        $usersetting = $this->add(get_string($gstitle, 'moodle', $fullname), $prefurl, self::TYPE_CONTAINER, null, $key);
         $usersetting->id = 'usersettings';
         if ($this->page->context->contextlevel == CONTEXT_USER && $this->page->context->instanceid == $user->id) {
             // Automatically start by making it active
