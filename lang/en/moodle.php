@@ -1905,6 +1905,7 @@ $string['used'] = 'Used';
 $string['usedinnplaces'] = 'Used in {$a} places';
 $string['usemessageform'] = 'or use the form below to send a message to the selected students';
 $string['user'] = 'User';
+$string['useraccount'] = 'User account';
 $string['userconfirmed'] = 'Confirmed {$a}';
 $string['usercurrentsettings'] = 'My profile settings';
 $string['useractivity'] = 'Activity';
