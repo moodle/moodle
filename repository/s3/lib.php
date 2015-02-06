@@ -251,7 +251,7 @@ class repository_s3 extends repository {
     }
 
     public static function get_type_option_names() {
-        return array('access_key', 'secret_key', 'pluginname');
+        return array('access_key', 'secret_key', 'endpoint', 'pluginname');
     }
 
     public static function type_config_form($mform, $classname = 'repository') {
