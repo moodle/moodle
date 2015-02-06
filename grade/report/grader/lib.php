@@ -600,12 +600,18 @@ class grade_report_grader extends grade_report {
 
         $levels = count($this->gtree->levels) - 1;
 
-        for ($i = 0; $i < $levels; $i++) {
-            $fillercell = new html_table_cell();
-            $fillercell->attributes['class'] = 'fixedcolumn cell topleft';
-            $fillercell->text = ' ';
-            $fillercell->colspan = $colspan;
-            $row = new html_table_row(array($fillercell));
+        $fillercell = new html_table_cell();
+        $fillercell->header = true;
+        $fillercell->attributes['scope'] = 'col';
+        $fillercell->attributes['class'] = 'cell topleft';
+        $fillercell->text = html_writer::span(get_string('participants'), 'accesshide');
+        $fillercell->colspan = $colspan;
+        $fillercell->rowspan = $levels;
+        $row = new html_table_row(array($fillercell));
+        $rows[] = $row;
+
+        for ($i = 1; $i < $levels; $i++) {
+            $row = new html_table_row();
             $rows[] = $row;
         }
 
@@ -626,7 +632,7 @@ class grade_report_grader extends grade_report {
 
         foreach ($extrafields as $field) {
             $fieldheader = new html_table_cell();
-            $fieldheader->attributes['class'] = 'header userfield user' . $field;
+            $fieldheader->attributes['class'] = 'userfield user' . $field;
             $fieldheader->scope = 'col';
             $fieldheader->header = true;
             $fieldheader->text = $arrows[$field];
@@ -644,13 +650,13 @@ class grade_report_grader extends grade_report {
             $userrow->id = 'fixed_user_'.$userid;
 
             $usercell = new html_table_cell();
-            $usercell->attributes['class'] = 'user';
+            $usercell->attributes['class'] = 'header user';
 
             $usercell->header = true;
             $usercell->scope = 'row';
 
             if ($showuserimage) {
-                $usercell->text = $OUTPUT->user_picture($user);
+                $usercell->text = $OUTPUT->user_picture($user, array('visibletoscreenreaders' => false));
             }
 
             $fullname = fullname($user);
@@ -673,7 +679,7 @@ class grade_report_grader extends grade_report {
 
             $userreportcell = new html_table_cell();
             $userreportcell->attributes['class'] = 'userreport';
-            $userreportcell->header = true;
+            $userreportcell->header = false;
             if (has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context)) {
                 $a = new stdClass();
                 $a->user = $fullname;
@@ -694,9 +700,8 @@ class grade_report_grader extends grade_report {
 
             foreach ($extrafields as $field) {
                 $fieldcell = new html_table_cell();
-                $fieldcell->attributes['class'] = 'header userfield user' . $field;
-                $fieldcell->header = true;
-                $fieldcell->scope = 'row';
+                $fieldcell->attributes['class'] = 'userfield user' . $field;
+                $fieldcell->header = false;
                 $fieldcell->text = $user->{$field};
                 $userrow->cells[] = $fieldcell;
             }
@@ -785,8 +790,9 @@ class grade_report_grader extends grade_report {
                     $fillercell->attributes['class'] = $type . ' ' . $catlevel;
                     $fillercell->colspan = $colspan;
                     $fillercell->text = '&nbsp;';
-                    $fillercell->header = true;
-                    $fillercell->scope = 'col';
+
+                    // This is a filler cell; don't use a <th>, it'll confuse screen readers.
+                    $fillercell->header = false;
                     $headingrow->cells[] = $fillercell;
                 } else if ($type == 'category') {
                     // Element is a category
@@ -1154,6 +1160,7 @@ class grade_report_grader extends grade_report {
         $fulltable = new html_table();
         $fulltable->attributes['class'] = 'gradereport-grader-table';
         $fulltable->id = 'user-grades';
+        $fulltable->summary = get_string('summarygrader', 'gradereport_grader');
 
         // Extract rows from each side (left and right) and collate them into one row each
         foreach ($leftrows as $key => $row) {
