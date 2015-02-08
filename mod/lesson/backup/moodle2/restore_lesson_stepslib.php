@@ -233,6 +233,25 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         }
         $rs->close();
 
+        // Replay the upgrade step 2015022700
+        // to clean lesson answers that should be plain text.
+        // 1 = LESSON_PAGE_SHORTANSWER, 8 = LESSON_PAGE_NUMERICAL, 20 = LESSON_PAGE_BRANCHTABLE.
+
+        $sql = 'SELECT a.*
+                  FROM {lesson_answers} a
+                  JOIN {lesson_pages} p ON p.id = a.pageid
+                 WHERE a.answerformat <> :format
+                   AND a.lessonid = :lessonid
+                   AND p.qtype IN (1, 8, 20)';
+        $badanswers = $DB->get_recordset_sql($sql, array('lessonid' => $this->task->get_activityid(), 'format' => FORMAT_MOODLE));
+
+        foreach ($badanswers as $badanswer) {
+            // Strip tags from answer text and convert back the format to FORMAT_MOODLE.
+            $badanswer->answer = strip_tags($badanswer->answer);
+            $badanswer->answerformat = FORMAT_MOODLE;
+            $DB->update_record('lesson_answers', $badanswer);
+        }
+
         // Re-map the dependency and activitylink information
         // If a depency or activitylink has no mapping in the backup data then it could either be a duplication of a
         // lesson, or a backup/restore of a single lesson. We have no way to determine which and whether this is the

@@ -93,20 +93,29 @@ if ($edit) {
         $answereditor = 'answer_editor['.$answerscount.']';
         if (is_array($data->$answereditor)) {
             $answerdata = $data->$answereditor;
-            $answerdraftid = file_get_submitted_draft_itemid($answereditor);
-            $answertext = file_prepare_draft_area($answerdraftid, $PAGE->cm->context->id,
-                    'mod_lesson', 'page_answers', $answer->id, $editoroptions, $answerdata['text']);
-            $data->$answereditor = array('text' => $answertext, 'format' => $answerdata['format'], 'itemid' => $answerdraftid);
+            if ($answerdata['format'] != FORMAT_MOODLE) {
+                $answerdata = $data->$answereditor;
+                $answerdraftid = file_get_submitted_draft_itemid($answereditor);
+                $answertext = file_prepare_draft_area($answerdraftid, $PAGE->cm->context->id,
+                        'mod_lesson', 'page_answers', $answer->id, $editoroptions, $answerdata['text']);
+                $data->$answereditor = array('text' => $answertext, 'format' => $answerdata['format'], 'itemid' => $answerdraftid);
+            } else {
+                $data->$answereditor = $answerdata['text'];
+            }
         }
 
         $responseeditor = 'response_editor['.$answerscount.']';
         if (is_array($data->$responseeditor)) {
             $responsedata = $data->$responseeditor;
-            $responsedraftid = file_get_submitted_draft_itemid($responseeditor);
-            $responsetext = file_prepare_draft_area($responsedraftid, $PAGE->cm->context->id,
-                    'mod_lesson', 'page_responses', $answer->id, $editoroptions, $responsedata['text']);
-            $data->$responseeditor = array('text' => $responsetext, 'format' => $responsedata['format'],
-                    'itemid' => $responsedraftid);
+            if ($responsedata['format'] != FORMAT_MOODLE) {
+                $responsedraftid = file_get_submitted_draft_itemid($responseeditor);
+                $responsetext = file_prepare_draft_area($responsedraftid, $PAGE->cm->context->id,
+                        'mod_lesson', 'page_responses', $answer->id, $editoroptions, $responsedata['text']);
+                $data->$responseeditor = array('text' => $responsetext, 'format' => $responsedata['format'],
+                        'itemid' => $responsedraftid);
+            } else {
+                $data->$responseeditor = $responsedata['text'];
+            }
         }
         $answerscount++;
     }
