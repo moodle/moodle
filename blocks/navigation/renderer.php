@@ -51,7 +51,7 @@ class block_navigation_renderer extends plugin_renderer_base {
     /**
      * Produces a navigation node for the navigation tree
      *
-     * @param array $items
+     * @param navigation_node[] $items
      * @param array $attrs
      * @param int $expansionlimit
      * @param array $options
@@ -59,13 +59,12 @@ class block_navigation_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function navigation_node($items, $attrs=array(), $expansionlimit=null, array $options = array(), $depth=1) {
-
-        // exit if empty, we don't want an empty ul element
-        if (count($items)==0) {
+        // Exit if empty, we don't want an empty ul element.
+        if (count($items) === 0) {
             return '';
         }
 
-        // array of nested li elements
+        // Turn our navigation items into list items.
         $lis = array();
         foreach ($items as $item) {
             if (!$item->display && !$item->contains_active_node()) {
@@ -86,10 +85,13 @@ class block_navigation_renderer extends plugin_renderer_base {
 
             if ($hasicon) {
                 $icon = $this->output->render($item->icon);
+                // Because an icon is being used we're going to wrap the actual content in a span.
+                // This will allow designers to create columns for the content, as we've done in styles.css.
+                $content = $icon . html_writer::span($content, 'item-content-wrap');
             } else {
                 $icon = '';
             }
-            $content = $icon.$content; // use CSS for spacing of icons
+
             if ($item->helpbutton !== null) {
                 $content = trim($item->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton'));
             }
@@ -116,13 +118,16 @@ class block_navigation_renderer extends plugin_renderer_base {
                 $link->text = $icon.$link->text;
                 $link->attributes = array_merge($link->attributes, $attributes);
                 $content = $this->output->render($link);
-                $linkrendered = true;
             } else if ($item->action instanceof moodle_url) {
                 $content = html_writer::link($item->action, $content, $attributes);
             }
 
-            // this applies to the li item which contains all child lists too
+            // This applies to the li item which contains all child lists too.
             $liclasses = array($item->get_css_type(), 'depth_'.$depth);
+
+            // Class attribute on the div item which only contains the item content.
+            $divclasses = array('tree_item');
+
             $liexpandable = array();
             if ($item->has_children() && (!$item->forceopen || $item->collapse)) {
                 $liclasses[] = 'collapsed';
@@ -130,30 +135,30 @@ class block_navigation_renderer extends plugin_renderer_base {
             if ($isbranch) {
                 $liclasses[] = 'contains_branch';
                 $liexpandable = array('aria-expanded' => in_array('collapsed', $liclasses) ? "false" : "true");
-            } else if ($hasicon) {
-                $liclasses[] = 'item_with_icon';
-            }
-            if ($item->isactive === true) {
-                $liclasses[] = 'current_branch';
-            }
-            $liattr = array('class' => join(' ',$liclasses)) + $liexpandable;
-            // class attribute on the div item which only contains the item content
-            $divclasses = array('tree_item');
-            if ($isbranch) {
                 $divclasses[] = 'branch';
             } else {
                 $divclasses[] = 'leaf';
             }
             if ($hasicon) {
+                // Add this class if the item has an icon, whether it is a branch or not.
+                $liclasses[] = 'item_with_icon';
                 $divclasses[] = 'hasicon';
+            }
+            if ($item->isactive === true) {
+                $liclasses[] = 'current_branch';
             }
             if (!empty($item->classes) && count($item->classes)>0) {
                 $divclasses[] = join(' ', $item->classes);
             }
+
+            // Now build attribute arrays.
+            $liattr = array('class' => join(' ', $liclasses)) + $liexpandable;
             $divattr = array('class'=>join(' ', $divclasses));
             if (!empty($item->id)) {
                 $divattr['id'] = $item->id;
             }
+
+            // Create the structure.
             $content = html_writer::tag('p', $content, $divattr);
             if ($isexpandable) {
                 $content .= $this->navigation_node($item->children, array(), $expansionlimit, $options, $depth+1);
@@ -165,11 +170,14 @@ class block_navigation_renderer extends plugin_renderer_base {
             $lis[] = $content;
         }
 
-        if (count($lis)) {
-            return html_writer::tag('ul', implode("\n", $lis), $attrs);
-        } else {
+        if (count($lis) === 0) {
+            // There is still a chance, despite having items, that nothing had content and no list items were created.
             return '';
         }
+
+        // We used to separate using new lines, however we don't do that now, instead we'll save a few chars.
+        // The source is complex already anyway.
+        return html_writer::tag('ul', implode('', $lis), $attrs);
     }
 
 }
