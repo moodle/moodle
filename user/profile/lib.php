@@ -210,7 +210,7 @@ class profile_field_base {
      */
     public function edit_field_set_required($mform) {
         global $USER;
-        if ($this->is_required() && ($this->userid == $USER->id)) {
+        if ($this->is_required() && ($this->userid == $USER->id || isguestuser())) {
             $mform->addRule($this->inputname, get_string('required'), 'required', null, 'client');
         }
     }
