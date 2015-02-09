@@ -244,6 +244,8 @@ class core_files_externallib_testcase extends advanced_testcase {
         // Create a file from the string that we made earlier.
         $file = $fs->create_file_from_string($filerecord, $filecontent);
         $timemodified = $file->get_timemodified();
+        $timecreated = $file->get_timemodified();
+        $filesize = $file->get_filesize();
 
         // Use the web service function to return the information about the file that we just uploaded.
         // The first time is with a valid context ID.
@@ -293,7 +295,12 @@ class core_files_externallib_testcase extends advanced_testcase {
                                         'filename' => 'Simple4.txt',
                                         'url' => 'http://www.example.com/moodle/pluginfile.php/'.$context->id.'/mod_data/content/'.$itemid.'/Simple4.txt',
                                         'isdir' => false,
-                                        'timemodified' => $timemodified);
+                                        'timemodified' => $timemodified,
+                                        'timecreated' => $timecreated,
+                                        'filesize' => $filesize,
+                                        'author' => null,
+                                        'license' => null
+                                        );
         // Make sure that they are the same.
         $this->assertEquals($testdata, $testfilelisting);
 

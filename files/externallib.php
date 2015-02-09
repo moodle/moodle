@@ -74,6 +74,7 @@ class core_files_external extends external_api {
      * @param string $contextlevel The context level for the file location.
      * @param int $instanceid The instance id for where the file is located.
      * @return array
+     * @since Moodle 2.9 Returns additional fields (timecreated, filesize, author, license)
      * @since Moodle 2.2
      */
     public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename, $modified = null,
@@ -139,6 +140,7 @@ class core_files_external extends external_api {
 
                 $params = $child->get_params();
                 $timemodified = $child->get_timemodified();
+                $timecreated = $child->get_timecreated();
 
                 if ($child->is_directory()) {
                     if ((is_null($modified)) or ($modified < $timemodified)) {
@@ -151,7 +153,11 @@ class core_files_external extends external_api {
                             'filename'  => $child->get_visible_name(),
                             'url'       => null,
                             'isdir'     => true,
-                            'timemodified' => $timemodified
+                            'timemodified' => $timemodified,
+                            'timecreated' => $timecreated,
+                            'filesize' => 0,
+                            'author' => null,
+                            'license' => null
                            );
                            $list[] = $node;
                     }
@@ -166,7 +172,11 @@ class core_files_external extends external_api {
                             'filename'  => $child->get_visible_name(),
                             'url'       => $child->get_url(),
                             'isdir'     => false,
-                            'timemodified' => $timemodified
+                            'timemodified' => $timemodified,
+                            'timecreated' => $timecreated,
+                            'filesize' => $child->get_filesize(),
+                            'author' => $child->get_author(),
+                            'license' => $child->get_license()
                         );
                            $list[] = $node;
                     }
@@ -181,6 +191,7 @@ class core_files_external extends external_api {
      * Returns description of get_files returns
      *
      * @return external_single_structure
+     * @since Moodle 2.9 Returns additional fields for files (timecreated, filesize, author, license)
      * @since Moodle 2.2
      */
     public static function get_files_returns() {
@@ -210,6 +221,10 @@ class core_files_external extends external_api {
                             'isdir'    => new external_value(PARAM_BOOL, ''),
                             'url'      => new external_value(PARAM_TEXT, ''),
                             'timemodified' => new external_value(PARAM_INT, ''),
+                            'timecreated' => new external_value(PARAM_INT, 'Time created', VALUE_OPTIONAL),
+                            'filesize' => new external_value(PARAM_INT, 'File size', VALUE_OPTIONAL),
+                            'author' => new external_value(PARAM_TEXT, 'File owner', VALUE_OPTIONAL),
+                            'license' => new external_value(PARAM_TEXT, 'File license', VALUE_OPTIONAL),
                         )
                     )
                 )
