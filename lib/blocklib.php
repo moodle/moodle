@@ -498,7 +498,7 @@ class block_manager {
             return false;
         }
         foreach ($this->visibleblockcontent[$region] as $instance) {
-            if (!empty($instance->content) && !get_user_preferences('docked_block_instance_'.$instance->blockinstanceid, 0)) {
+            if (!get_user_preferences('docked_block_instance_'.$instance->blockinstanceid, 0)) {
                 return false;
             }
         }
