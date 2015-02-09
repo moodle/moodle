@@ -41,6 +41,8 @@ class behat_selectors {
     protected static $allowedtextselectors = array(
         'dialogue' => 'dialogue',
         'block' => 'block',
+        'section' => 'section',
+        'activity' => 'activity',
         'region' => 'region',
         'table_row' => 'table_row',
         'list_item' => 'list_item',
@@ -56,6 +58,8 @@ class behat_selectors {
     protected static $allowedselectors = array(
         'dialogue' => 'dialogue',
         'block' => 'block',
+        'section' => 'section',
+        'activity' => 'activity',
         'region' => 'region',
         'table_row' => 'table_row',
         'list_item' => 'list_item',
@@ -102,6 +106,16 @@ XPATH
     (contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' ')) or
      descendant::h2[normalize-space(.) = %locator%] or
      @aria-label = %locator%)]
+XPATH
+        , 'section' => <<<XPATH
+//li[contains(concat(' ', normalize-space(@class), ' '), ' section ')][./descendant::*[self::h3]
+    [normalize-space(.) = %locator%][contains(concat(' ', normalize-space(@class), ' '), ' sectionname ') or
+    contains(concat(' ', normalize-space(@class), ' '), ' section-title ')]] |
+//div[contains(concat(' ', normalize-space(@class), ' '), ' sitetopic ')]
+    [./descendant::*[self::h2][normalize-space(.) = %locator%] or %locator% = 'frontpage']
+XPATH
+        , 'activity' => <<<XPATH
+//li[contains(concat(' ', normalize-space(@class), ' '), ' activity ')][normalize-space(.) = %locator% ]
 XPATH
         , 'region' => <<<XPATH
 //*[self::div | self::section | self::aside | self::header | self::footer][./@id = %locator%]
