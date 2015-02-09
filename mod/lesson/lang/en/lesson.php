@@ -174,6 +174,7 @@ $string['essayemailsubject'] = 'Your grade for {$a} question';
 $string['essayresponses'] = 'Essay responses';
 $string['essays'] = 'Essays';
 $string['essayscore'] = 'Essay score';
+$string['eventcontentpageviewed'] = 'Content page viewed';
 $string['eventessayassessed'] = 'Essay assessed';
 $string['eventessayattemptviewed'] = 'Essay attempt viewed';
 $string['eventhighscoreadded'] = 'Highscore added';

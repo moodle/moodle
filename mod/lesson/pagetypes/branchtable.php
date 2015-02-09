@@ -145,6 +145,15 @@ class lesson_page_type_branchtable extends lesson_page {
             $output .= $renderer->slideshow_end();
         }
 
+        // Trigger an event: content page viewed.
+        $eventparams = array(
+            'context' => context_module::instance($PAGE->cm->id),
+            'objectid' => $this->properties->id
+            );
+
+        $event = \mod_lesson\event\content_page_viewed::create($eventparams);
+        $event->trigger();
+
         return $output;
     }
 
