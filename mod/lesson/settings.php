@@ -67,5 +67,5 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('lesson_defaultnextpage', get_string('actionaftercorrectanswer','lesson'),
             get_string('configactionaftercorrectanswer', 'lesson'), 0, $defaultnextpages));
     $settings->add(new admin_setting_configcheckbox('lesson/requiremodintro',
-        get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 1));
+        get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 0));
 }
