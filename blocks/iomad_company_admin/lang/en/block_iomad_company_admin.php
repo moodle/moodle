@@ -53,6 +53,7 @@ $string['company_course_users_title'] = 'Assign users to course';
 $string['companydeletecheckfull'] = 'Are you absolutely sure you want to completely delete {$a} and its users ?';
 $string['companydeletelicensecheckfull'] = 'Are you absolutely sure you want to completely delete {$a}?';
 $string['companydepartment'] = 'Company departments for ';
+$string['companydomains'] = 'List of company domains';
 $string['company_edit_advanced_title'] = 'Editing User';
 $string['company_edit_users_title'] = 'Edit Users';
 $string['company_edit_companies_title'] = 'Edit Companies';

@@ -1048,8 +1048,6 @@ function xmldb_local_iomad_upgrade($oldversion) {
                 $licensecourses = $DB->get_records('companylicense_courses', array('licenseid' => $licenseuser->licenseid));
                 if (count($licensecourses) == 1) {
                     // Only one course so add it.
-echo "licensecourse = ";
-print_r($licensecourses);
                     $licensecourse = array_pop($licensecourses);
                     $licenseuser->licensecourseid = $licensecourse->id;
                     $DB->update_record('companylicense_users', $licenseuser);
@@ -1069,6 +1067,28 @@ print_r($licensecourses);
 
         // Iomad savepoint reached.
         upgrade_plugin_savepoint(true, 2014121900, 'local', 'iomad');
+    }
+
+    if ($oldversion < 2015020800) {
+
+        // Define table company_domains to be created.
+        $table = new xmldb_table('company_domains');
+
+        // Adding fields to table company_domains.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('companyid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('domain', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table company_domains.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for company_domains.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2015020800, 'local', 'iomad');
     }
 
     return $result;

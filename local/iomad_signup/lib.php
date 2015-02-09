@@ -31,15 +31,22 @@ function local_iomad_signup_user_created($user) {
     }
 
     // If not 'email' auth then we are not interested
-    if ($user->auth != 'email') {
+    if (!in_array($user->auth, explode(',', $CFG->local_iomad_signup_auth))) {
         return true;
     }
 
     // Get context
     $context = context_system::instance();
 
-    // Do we have a company to assign?
-    if (!empty($CFG->local_iomad_signup_company)) {
+    // Check if we have a domain already for this users email address.
+    if ($domaininfo = $DB->get_record('company_domains', array('domain' => substr(strrchr($user->email, "@"), 1)))) {
+        // Get company.
+        $company = new company($domaininfo->companyid);
+
+        // assign the user to the company.
+        $company->assign_user_to_company($user->id);
+    } else if (!empty($CFG->local_iomad_signup_company)) {
+        // Do we have a company to assign?
         // Get company.
         $company = new company($CFG->local_iomad_signup_company);
 

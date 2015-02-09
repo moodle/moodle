@@ -27,6 +27,17 @@ if ($hassiteconfig && !empty($USER->id)) {
         1)
     );
 
+    $siteauths = get_enabled_auth_plugins();
+    $siteautharray = array();
+    foreach ($siteauths as $siteauth) {
+        if ($siteauth != 'manual') {
+            $siteautharray[$siteauth] = $siteauth;
+        }
+    }
+
+    // Add the available auth methods.
+    $settings->add(new admin_setting_configmulticheckbox('local_iomad_signup_auth', get_string('authenticationtypes', 'local_iomad_signup'), get_string('authenticationtypes_desc', 'local_iomad_signup'), array(),$siteautharray));
+
     $siteroles = $DB->get_records_menu('role', array(), 'id', 'id,shortname');
     $availableroles = array('0' => 'none') + $siteroles;
     $settings->add(new admin_setting_configselect('local_iomad_signup_role', get_string('role', 'local_iomad_signup'),

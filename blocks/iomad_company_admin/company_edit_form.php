@@ -77,6 +77,10 @@ class company_edit_form extends company_moodleform {
             $mform->setDefault('country', $CFG->country);
         }
 
+        $mform->addElement('textarea', 'companydomains', get_string('companydomains', 'block_iomad_company_admin'), array('display' => 'noofficial'));
+        $mform->setType('companydomains', PARAM_NOTAGS);
+
+
         /* === User defaults === */
         $mform->addElement('header', 'userdefaults',
                             get_string('userdefaults', 'block_iomad_company_admin'));
@@ -351,6 +355,12 @@ file_prepare_draft_area($draftitemid,
                         'companylogo', $companyid,
                         array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
 $companyrecord->companylogo = $draftitemid;
+if ($domains = $DB->get_records('company_domains', array('companyid' => $companyid))) {
+    $companyrecord->companydomains = '';
+    foreach ($domains as $domain) {
+        $companyrecord->companydomains .= $domain->domain ."\n";
+    }
+}
 
 // Set up the form.
 $mform = new company_edit_form($PAGE->url, $isadding, $companyid, $companyrecord);
@@ -416,6 +426,16 @@ if ($mform->is_cancelled()) {
                                    'companylogo',
                                    $data->id,
                                    array('subdirs' => 0, 'maxbytes' => 150 * 1024, 'maxfiles' => 1));
+    }
+    if (!empty($data->companydomains)) {
+        $domainsarray = preg_split('/[\r\n]+/', $data->companydomains, -1, PREG_SPLIT_NO_EMPTY);
+        // Delete any recorded domains for this company.
+        $DB->delete_records('company_domains', array('companyid' => $companyid));
+        foreach ($domainsarray as $domain) {
+            if (!empty($domain)) {
+                $DB->insert_record('company_domains', array('companyid' => $companyid, 'domain' => $domain));
+            }
+        }
     }
     redirect($companylist);
 }
