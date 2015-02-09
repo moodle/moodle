@@ -129,5 +129,5 @@ Feature: Restore Moodle 2 course backups
     And section "3" should be hidden
     And section "7" should be hidden
     And section "15" should be visible
-    And I should see "Test URL name" in the "#section-3" "css_element"
-    And I should see "Test forum name" in the "#section-1" "css_element"
+    And I should see "Test URL name" in the "Topic 3" "section"
+    And I should see "Test forum name" in the "Topic 1" "section"

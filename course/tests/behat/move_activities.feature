@@ -29,8 +29,8 @@ Feature: Activities can be moved between sections
 
   Scenario: Move activities in a single page course with Javascript disabled
     When I move "Test forum name" activity to section "2"
-    Then I should see "Test forum name" in the "#section-2" "css_element"
-    And I should not see "Test forum name" in the "#section-1" "css_element"
+    Then I should see "Test forum name" in the "Topic 2" "section"
+    And I should not see "Test forum name" in the "Topic 1" "section"
 
   Scenario: Move activities in the course home with Javascript disabled using paged mode
     Given I click on "Edit settings" "link" in the "Administration" "block"
@@ -38,8 +38,8 @@ Feature: Activities can be moved between sections
       | Course layout | Show one section per page |
     And I press "Save changes"
     When I move "Test forum name" activity to section "2"
-    Then I should see "Test forum name" in the "#section-2" "css_element"
-    And I should not see "Test forum name" in the "#section-1" "css_element"
+    Then I should see "Test forum name" in the "Topic 2" "section"
+    And I should not see "Test forum name" in the "Topic 1" "section"
 
   Scenario: Move activities in a course section with Javascript disabled using paged mode
     Given I click on "Edit settings" "link" in the "Administration" "block"
