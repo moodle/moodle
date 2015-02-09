@@ -239,4 +239,99 @@ class mod_lesson_events_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the content page viewed event.
+     *
+     * There is no external API for viewing a content page, so the unit test will simply
+     * create and trigger the event and ensure data is returned as expected.
+     */
+    public function test_content_page_viewed() {
+
+        // Trigger an event: content page viewed.
+        $eventparams = array(
+            'context' => context_module::instance($this->lesson->properties()->cmid),
+            'objectid' => 25
+            );
+
+        $event = \mod_lesson\event\content_page_viewed::create($eventparams);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\content_page_viewed', $event);
+        $this->assertEquals(25, $event->objectid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the question viewed event.
+     *
+     * There is no external API for viewing an truefalse question, so the unit test will simply
+     * create and trigger the event and ensure data is returned as expected.
+     */
+    public function test_question_viewed() {
+
+        // Trigger an event: truefalse question viewed.
+        $eventparams = array(
+            'context' => context_module::instance($this->lesson->properties()->cmid),
+            'objectid' => 25,
+            'other' => array(
+                'pagetype' => 'truefalse'
+                )
+        );
+
+        $event = \mod_lesson\event\question_viewed::create($eventparams);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\question_viewed', $event);
+        $this->assertEquals(25, $event->objectid);
+        $this->assertEquals('truefalse', $event->other['pagetype']);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the question answered event.
+     *
+     * There is no external API for answering an truefalse question, so the unit test will simply
+     * create and trigger the event and ensure data is returned as expected.
+     */
+    public function test_question_answered() {
+
+        // Trigger an event: truefalse question answered.
+        $eventparams = array(
+            'context' => context_module::instance($this->lesson->properties()->cmid),
+            'objectid' => 25,
+            'other' => array(
+                'pagetype' => 'truefalse'
+                )
+        );
+
+        $event = \mod_lesson\event\question_answered::create($eventparams);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\question_answered', $event);
+        $this->assertEquals(25, $event->objectid);
+        $this->assertEquals('truefalse', $event->other['pagetype']);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
 }
