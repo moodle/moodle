@@ -465,6 +465,15 @@ $functions = array(
         'capabilities'=> '',
     ),
 
+    'core_user_remove_user_device' => array(
+        'classname'     => 'core_user_external',
+        'methodname'    => 'remove_user_device',
+        'classpath'     => 'user/externallib.php',
+        'description'   => 'Remove a user device from the Moodle database.',
+        'type'          => 'write',
+        'capabilities'  => '',
+    ),
+
     // === enrol related functions ===
 
     'core_enrol_get_enrolled_users_with_capability' => array(
@@ -985,7 +994,8 @@ $services = array(
             'core_message_get_contacts',
             'core_message_search_contacts',
             'core_message_get_blocked_users',
-            'gradereport_user_get_grades_table'
+            'gradereport_user_get_grades_table',
+            'core_user_remove_user_device'
             ),
         'enabled' => 0,
         'restrictedusers' => 0,

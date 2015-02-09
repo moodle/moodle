@@ -977,3 +977,28 @@ function user_is_previously_used_password($userid, $password) {
 
     return $reused;
 }
+
+/**
+ * Remove a user device from the Moodle database (for PUSH notifications usually).
+ *
+ * @param string $uuid The device UUID.
+ * @param string $appid The app id. If empty all the devices matching the UUID for the user will be removed.
+ * @return bool true if removed, false if the device didn't exists in the database
+ * @since Moodle 2.9
+ */
+function user_remove_user_device($uuid, $appid = "") {
+    global $DB, $USER;
+
+    $conditions = array('uuid' => $uuid, 'userid' => $USER->id);
+    if (!empty($appid)) {
+        $conditions['appid'] = $appid;
+    }
+
+    if (!$DB->count_records('user_devices', $conditions)) {
+        return false;
+    }
+
+    $DB->delete_records('user_devices', $conditions);
+
+    return true;
+}

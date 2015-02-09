@@ -2982,6 +2982,9 @@
         <KEY NAME="pushid-userid" TYPE="unique" FIELDS="pushid, userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="uuid-userid" UNIQUE="false" FIELDS="uuid, userid" COMMENT="Index on uuid and userid"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="user_password_resets" COMMENT="table tracking password reset confirmation tokens">
       <FIELDS>

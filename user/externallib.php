@@ -1159,6 +1159,76 @@ class core_user_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9
+     */
+    public static function remove_user_device_parameters() {
+        return new external_function_parameters(
+            array(
+                'uuid'  => new external_value(PARAM_RAW, 'the device UUID'),
+                'appid' => new external_value(PARAM_NOTAGS,
+                                                'the app id, if empty devices matching the UUID for the user will be removed',
+                                                VALUE_DEFAULT, ''),
+            )
+        );
+    }
+
+    /**
+     * Remove a user device from the Moodle database (for PUSH notifications usually).
+     *
+     * @param string $uuid The device UUID.
+     * @param string $appid The app id, opitonal parameter. If empty all the devices fmatching the UUID or the user will be removed.
+     * @return array List of possible warnings and removal status.
+     * @since Moodle 2.9
+     */
+    public static function remove_user_device($uuid, $appid = "") {
+        global $CFG;
+        require_once($CFG->dirroot . "/user/lib.php");
+
+        $params = self::validate_parameters(self::remove_user_device_parameters(), array('uuid' => $uuid, 'appid' => $appid));
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        $removed = user_remove_user_device($params['uuid'], $params['appid']);
+
+        if (!$removed) {
+            $warnings[] = array(
+                'item' => $params['uuid'],
+                'warningcode' => 'devicedoesnotexist',
+                'message' => 'The device doesn\'t exists in the database'
+            );
+        }
+
+        $result = array(
+            'removed' => $removed,
+            'warnings' => $warnings
+        );
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_multiple_structure
+     * @since Moodle 2.9
+     */
+    public static function remove_user_device_returns() {
+        return new external_single_structure(
+            array(
+                'removed' => new external_value(PARAM_BOOL, 'True if removed, false if not removed because it doesn\'t exists'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
 
  /**
