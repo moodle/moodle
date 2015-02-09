@@ -7775,11 +7775,11 @@ class admin_setting_webservicesoverview extends admin_setting {
                 get_string('enablemobilewebservice', 'admin'),
                 get_string('configenablemobilewebservice',
                         'admin', ''), 0); //we don't want to display it but to know the ws mobile status
-        $manageserviceurl = new moodle_url("/admin/settings.php?section=externalservices");
+        $manageserviceurl = new moodle_url("/admin/settings.php?section=mobile");
         $wsmobileparam = new stdClass();
         $wsmobileparam->enablemobileservice = get_string('enablemobilewebservice', 'admin');
         $wsmobileparam->manageservicelink = html_writer::link($manageserviceurl,
-                get_string('externalservices', 'webservice'));
+                get_string('mobile', 'admin'));
         $mobilestatus = $enablemobile->get_setting()?get_string('mobilewsenabled', 'webservice'):get_string('mobilewsdisabled', 'webservice');
         $wsmobileparam->wsmobilestatus = html_writer::tag('strong', $mobilestatus);
         $return .= $OUTPUT->heading(get_string('enablemobilewebservice', 'admin'), 3, 'main');
