@@ -516,4 +516,13 @@ class moodle_notes_external extends external_api {
         return core_notes_external::create_notes_returns();
     }
 
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function create_notes_is_deprecated() {
+        return true;
+    }
+
 }

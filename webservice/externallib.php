@@ -257,4 +257,13 @@ class moodle_webservice_external extends external_api {
     public static function get_siteinfo_returns() {
         return core_webservice_external::get_site_info_returns();
     }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_siteinfo_is_deprecated() {
+        return true;
+    }
 }

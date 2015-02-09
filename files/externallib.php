@@ -419,13 +419,18 @@ class moodle_file_external extends external_api {
      * @param int $itemid
      * @param string $filepath
      * @param string $filename
+     * @param int $modified timestamp to return files changed after this time.
+     * @param string $contextlevel The context level for the file location.
+     * @param int $instanceid The instance id for where the file is located.
      * @return array
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
      * @see core_files_external::get_files()
      */
-    public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename) {
-        return core_files_external::get_files($contextid, $component, $filearea, $itemid, $filepath, $filename);
+    public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename, $modified = null,
+                                     $contextlevel = null, $instanceid = null) {
+        return core_files_external::get_files($contextid, $component, $filearea, $itemid, $filepath, $filename,
+            $modified, $contextlevel, $instanceid);
     }
 
     /**
@@ -438,6 +443,15 @@ class moodle_file_external extends external_api {
      */
     public static function get_files_returns() {
         return core_files_external::get_files_returns();
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_files_is_deprecated() {
+        return true;
     }
 
     /**
@@ -462,13 +476,16 @@ class moodle_file_external extends external_api {
      * @param string $filepath
      * @param string $filename
      * @param string $filecontent
+     * @param string $contextlevel Context level (block, course, coursecat, system, user or module)
+     * @param int    $instanceid   Instance id of the item associated with the context level
      * @return array
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
      * @see core_files_external::upload()
      */
-    public static function upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent) {
-        return core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent);
+    public static function upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent, $contextlevel, $instanceid) {
+        return core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename,
+            $filecontent, $contextlevel, $instanceid);
     }
 
     /**
@@ -482,4 +499,14 @@ class moodle_file_external extends external_api {
     public static function upload_returns() {
         return core_files_external::upload_returns();
     }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function upload_is_deprecated() {
+        return true;
+    }
+
 }

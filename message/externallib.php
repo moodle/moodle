@@ -978,4 +978,12 @@ class moodle_message_external extends external_api {
         return core_message_external::send_instant_messages_returns();
     }
 
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function send_instantmessages_is_deprecated() {
+        return true;
+    }
 }

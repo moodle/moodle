@@ -1984,6 +1984,15 @@ class moodle_course_external extends external_api {
     }
 
     /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_courses_is_deprecated() {
+        return true;
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
@@ -2020,4 +2029,12 @@ class moodle_course_external extends external_api {
         return core_course_external::create_courses_returns();
     }
 
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function create_courses_is_deprecated() {
+        return true;
+    }
 }
