@@ -97,8 +97,9 @@ class format_topics_renderer extends format_section_renderer_base {
         }
         $url->param('sesskey', sesskey());
 
+        $isstealth = $section->section > $course->numsections;
         $controls = array();
-        if (has_capability('moodle/course:setcurrentsection', $coursecontext)) {
+        if (!$isstealth && has_capability('moodle/course:setcurrentsection', $coursecontext)) {
             if ($course->marker == $section->section) {  // Show the "light globe" on/off.
                 $url->param('marker', 0);
                 $controls[] = html_writer::link($url,

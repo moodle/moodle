@@ -29,6 +29,7 @@ require_once($CFG->libdir . '/formslib.php');
 
 $id = required_param('id', PARAM_INT);    // course_sections.id
 $sectionreturn = optional_param('sr', 0, PARAM_INT);
+$deletesection = optional_param('delete', 0, PARAM_BOOL);
 
 $PAGE->set_url('/course/editsection.php', array('id'=>$id, 'sr'=> $sectionreturn));
 
@@ -42,6 +43,41 @@ require_capability('moodle/course:update', $context);
 
 // Get section_info object with all availability options.
 $sectioninfo = get_fast_modinfo($course)->get_section_info($sectionnum);
+
+// Deleting the section.
+if ($deletesection) {
+    $cancelurl = course_get_url($course, $sectioninfo, array('sr' => $sectionreturn));
+    if (course_can_delete_section($course, $sectioninfo)) {
+        $confirm = optional_param('confirm', false, PARAM_BOOL) && confirm_sesskey();
+        if ($confirm) {
+            course_delete_section($course, $sectioninfo, true);
+            $courseurl = course_get_url($course, 0, array('sr' => $sectionreturn));
+            redirect($courseurl);
+        } else {
+            if (get_string_manager()->string_exists('deletesection', 'format_' . $course->format)) {
+                $strdelete = get_string('deletesection', 'format_' . $course->format);
+            } else {
+                $strdelete = get_string('deletesection');
+            }
+            $PAGE->navbar->add($strdelete);
+            $PAGE->set_title($strdelete);
+            $PAGE->set_heading($course->fullname);
+            echo $OUTPUT->header();
+            echo $OUTPUT->box_start('noticebox');
+            $optionsyes = array('id' => $id, 'confirm' => 1, 'delete' => 1, 'sesskey' => sesskey());
+            $deleteurl = new moodle_url('/course/editsection.php', $optionsyes);
+            $formcontinue = new single_button($deleteurl, get_string('yes'));
+            $formcancel = new single_button($cancelurl, get_string('no'), 'get');
+            echo $OUTPUT->confirm(get_string('confirmdeletesection', '',
+                get_section_name($course, $sectioninfo)), $formcontinue, $formcancel);
+            echo $OUTPUT->box_end();
+            echo $OUTPUT->footer();
+            exit;
+        }
+    } else {
+        notice(get_string('nopermissions', 'error', get_string('deletesection')), $cancelurl);
+    }
+}
 
 $editoroptions = array('context'=>$context ,'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
 $mform = course_get_format($course->id)->editsection_form($PAGE->url,

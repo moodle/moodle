@@ -324,8 +324,8 @@ class format_weeks extends format_base {
      */
     public function update_course_format_options($data, $oldcourse = null) {
         global $DB;
+        $data = (array)$data;
         if ($oldcourse !== null) {
-            $data = (array)$data;
             $oldcourse = (array)$oldcourse;
             $options = $this->course_format_options();
             foreach ($options as $key => $unused) {
@@ -346,7 +346,19 @@ class format_weeks extends format_base {
                 }
             }
         }
-        return $this->update_format_options($data);
+        $changed = $this->update_format_options($data);
+        if ($changed && array_key_exists('numsections', $data)) {
+            // If the numsections was decreased, try to completely delete the orphaned sections (unless they are not empty).
+            $numsections = (int)$data['numsections'];
+            $maxsection = $DB->get_field_sql('SELECT max(section) from {course_sections}
+                        WHERE course = ?', array($this->courseid));
+            for ($sectionnum = $maxsection; $sectionnum > $numsections; $sectionnum--) {
+                if (!$this->delete_section($sectionnum, false)) {
+                    break;
+                }
+            }
+        }
+        return $changed;
     }
 
     /**
@@ -392,5 +404,17 @@ class format_weeks extends format_base {
         $timenow = time();
         $dates = $this->get_section_dates($section);
         return (($timenow >= $dates->start) && ($timenow < $dates->end));
+    }
+
+    /**
+     * Whether this format allows to delete sections
+     *
+     * Do not call this function directly, instead use {@link course_can_delete_section()}
+     *
+     * @param int|stdClass|section_info $section
+     * @return bool
+     */
+    public function can_delete_section($section) {
+        return true;
     }
 }

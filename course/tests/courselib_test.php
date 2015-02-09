@@ -859,6 +859,130 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals(3, $course->marker);
     }
 
+    public function test_course_can_delete_section() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+
+        $courseweeks = $generator->create_course(
+            array('numsections' => 5, 'format' => 'weeks'),
+            array('createsections' => true));
+        $assign1 = $generator->create_module('assign', array('course' => $courseweeks, 'section' => 1));
+        $assign2 = $generator->create_module('assign', array('course' => $courseweeks, 'section' => 2));
+
+        $coursetopics = $generator->create_course(
+            array('numsections' => 5, 'format' => 'topics'),
+            array('createsections' => true));
+
+        $coursesingleactivity = $generator->create_course(
+            array('format' => 'singleactivity'),
+            array('createsections' => true));
+
+        // Enrol student and teacher.
+        $roleids = $DB->get_records_menu('role', null, '', 'shortname, id');
+        $student = $generator->create_user();
+        $teacher = $generator->create_user();
+
+        $generator->enrol_user($student->id, $courseweeks->id, $roleids['student']);
+        $generator->enrol_user($teacher->id, $courseweeks->id, $roleids['editingteacher']);
+
+        $generator->enrol_user($student->id, $coursetopics->id, $roleids['student']);
+        $generator->enrol_user($teacher->id, $coursetopics->id, $roleids['editingteacher']);
+
+        $generator->enrol_user($student->id, $coursesingleactivity->id, $roleids['student']);
+        $generator->enrol_user($teacher->id, $coursesingleactivity->id, $roleids['editingteacher']);
+
+        // Teacher should be able to delete sections (except for 0) in topics and weeks format.
+        $this->setUser($teacher);
+
+        // For topics and weeks formats will return false for section 0 and true for any other section.
+        $this->assertFalse(course_can_delete_section($courseweeks, 0));
+        $this->assertTrue(course_can_delete_section($courseweeks, 1));
+
+        $this->assertFalse(course_can_delete_section($coursetopics, 0));
+        $this->assertTrue(course_can_delete_section($coursetopics, 1));
+
+        // For singleactivity course format no section can be deleted.
+        $this->assertFalse(course_can_delete_section($coursesingleactivity, 0));
+        $this->assertFalse(course_can_delete_section($coursesingleactivity, 1));
+
+        // Now let's revoke a capability from teacher to manage activity in section 1.
+        $modulecontext = context_module::instance($assign1->cmid);
+        assign_capability('moodle/course:manageactivities', CAP_PROHIBIT, $roleids['editingteacher'],
+            $modulecontext);
+        $modulecontext->mark_dirty();
+        $this->assertFalse(course_can_delete_section($courseweeks, 1));
+        $this->assertTrue(course_can_delete_section($courseweeks, 2));
+
+        // Student does not have permissions to delete sections.
+        $this->setUser($student);
+        $this->assertFalse(course_can_delete_section($courseweeks, 1));
+        $this->assertFalse(course_can_delete_section($coursetopics, 1));
+        $this->assertFalse(course_can_delete_section($coursesingleactivity, 1));
+    }
+
+    public function test_course_delete_section() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+
+        $course = $generator->create_course(array('numsections' => 6, 'format' => 'topics'),
+            array('createsections' => true));
+        $assign0 = $generator->create_module('assign', array('course' => $course, 'section' => 0));
+        $assign1 = $generator->create_module('assign', array('course' => $course, 'section' => 1));
+        $assign21 = $generator->create_module('assign', array('course' => $course, 'section' => 2));
+        $assign22 = $generator->create_module('assign', array('course' => $course, 'section' => 2));
+        $assign3 = $generator->create_module('assign', array('course' => $course, 'section' => 3));
+        $assign5 = $generator->create_module('assign', array('course' => $course, 'section' => 5));
+        $assign6 = $generator->create_module('assign', array('course' => $course, 'section' => 6));
+
+        $this->setAdminUser();
+
+        // Attempt to delete non-existing section.
+        $this->assertFalse(course_delete_section($course, 10, false));
+        $this->assertFalse(course_delete_section($course, 9, true));
+
+        // Attempt to delete 0-section.
+        $this->assertFalse(course_delete_section($course, 0, true));
+        $this->assertTrue($DB->record_exists('course_modules', array('id' => $assign0->cmid)));
+
+        // Delete last section.
+        $this->assertTrue(course_delete_section($course, 6, true));
+        $this->assertFalse($DB->record_exists('course_modules', array('id' => $assign6->cmid)));
+        $this->assertEquals(5, course_get_format($course)->get_course()->numsections);
+
+        // Delete empty section.
+        $this->assertTrue(course_delete_section($course, 4, false));
+        $this->assertEquals(4, course_get_format($course)->get_course()->numsections);
+
+        // Delete section in the middle (2).
+        $this->assertFalse(course_delete_section($course, 2, false));
+        $this->assertTrue(course_delete_section($course, 2, true));
+        $this->assertFalse($DB->record_exists('course_modules', array('id' => $assign21->cmid)));
+        $this->assertFalse($DB->record_exists('course_modules', array('id' => $assign22->cmid)));
+        $this->assertEquals(3, course_get_format($course)->get_course()->numsections);
+        $this->assertEquals(array(0 => array($assign0->cmid),
+            1 => array($assign1->cmid),
+            2 => array($assign3->cmid),
+            3 => array($assign5->cmid)), get_fast_modinfo($course)->sections);
+
+        // Make last section orphaned.
+        update_course((object)array('id' => $course->id, 'numsections' => 2));
+        $this->assertEquals(2, course_get_format($course)->get_course()->numsections);
+
+        // Remove orphaned section.
+        $this->assertTrue(course_delete_section($course, 3, true));
+        $this->assertEquals(2, course_get_format($course)->get_course()->numsections);
+
+        // Remove marked section.
+        course_set_marker($course->id, 1);
+        $this->assertTrue(course_get_format($course)->is_section_current(1));
+        $this->assertTrue(course_delete_section($course, 1, true));
+        $this->assertFalse(course_get_format($course)->is_section_current(1));
+    }
+
     public function test_get_course_display_name_for_list() {
         global $CFG;
         $this->resetAfterTest(true);
