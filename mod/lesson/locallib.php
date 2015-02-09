@@ -1993,7 +1993,7 @@ abstract class lesson_page extends lesson_base {
      * @return stdClass Returns the result of the attempt
      */
     final public function record_attempt($context) {
-        global $DB, $USER, $OUTPUT;
+        global $DB, $USER, $OUTPUT, $PAGE;
 
         /**
          * This should be overridden by each page type to actually check the response
@@ -2033,7 +2033,19 @@ abstract class lesson_page extends lesson_base {
                 // Only insert a record if we are not reviewing the lesson.
                 if (!$userisreviewing) {
                     if ($this->lesson->retake || (!$this->lesson->retake && $nretakes == 0)) {
-                        $DB->insert_record("lesson_attempts", $attempt);
+                        $attempt->id = $DB->insert_record("lesson_attempts", $attempt);
+                        // Trigger an event: question answered.
+                        $eventparams = array(
+                            'context' => context_module::instance($PAGE->cm->id),
+                            'objectid' => $this->properties->id,
+                            'other' => array(
+                                'pagetype' => $this->get_typestring()
+                                )
+                            );
+                        $event = \mod_lesson\event\question_answered::create($eventparams);
+                        $event->add_record_snapshot('lesson_attempts', $attempt);
+                        $event->trigger();
+
                     }
                 }
                 // "number of attempts remaining" message if $this->lesson->maxattempts > 1
