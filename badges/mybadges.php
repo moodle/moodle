@@ -26,6 +26,7 @@
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->libdir . '/badgeslib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 $page        = optional_param('page', 0, PARAM_INT);
 $search      = optional_param('search', '', PARAM_CLEAN);
@@ -71,17 +72,13 @@ if ($hide) {
     require_sesskey();
     $badge = new badge($download);
     $name = str_replace(' ', '_', $badge->name) . '.png';
-    ob_start();
-    $file = badges_bake($hash, $download);
-    header('Content-Type: image/png');
-    header('Content-Disposition: attachment; filename="'. $name .'"');
-    readfile($file);
-    ob_flush();
+    $filehash = badges_bake($hash, $download, $USER->id, true);
+    $fs = get_file_storage();
+    $file = $fs->get_file_by_hash($filehash);
+    send_stored_file($file, 0, 0, true, array('filename' => $name));
 } else if ($downloadall) {
     require_sesskey();
-    ob_start();
     badges_download($USER->id);
-    ob_flush();
 }
 
 $context = context_user::instance($USER->id);
