@@ -1841,7 +1841,7 @@ function quiz_get_completion_state($course, $cm, $userid, $type) {
     if ($quiz->completionpass) {
         require_once($CFG->libdir . '/gradelib.php');
         $item = grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod',
-                'itemmodule' => 'quiz', 'iteminstance' => $cm->instance));
+                'itemmodule' => 'quiz', 'iteminstance' => $cm->instance, 'outcomeid' => null));
         if ($item) {
             $grades = grade_grade::fetch_users_grades($item, array($userid), false);
             if (!empty($grades[$userid])) {
