@@ -390,12 +390,18 @@ abstract class grade_export {
             // Implode the grade display types array as moodle_url function doesn't accept arrays.
             $displaytypes = implode(',', $this->displaytype);
         }
+        
+        if (!empty($this->updatedgradesonly)) {
+            $updatedgradesonly = $this->updatedgradesonly;
+        } else {
+            $updatedgradesonly = 0;
+        }
         $params = array('id'                => $this->course->id,
                         'groupid'           => $this->groupid,
                         'itemids'           => $itemidsparam,
                         'export_letters'    => $this->export_letters,
                         'export_feedback'   => $this->export_feedback,
-                        'updatedgradesonly' => $this->updatedgradesonly,
+                        'updatedgradesonly' => $updatedgradesonly,
                         'decimalpoints'     => $this->decimalpoints,
                         'export_onlyactive' => $this->onlyactive,
                         'usercustomfields'  => $this->usercustomfields,
