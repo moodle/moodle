@@ -305,6 +305,7 @@ $string['gradepointmax_validateerror'] = 'This setting must be an integer betwee
 $string['gradepreferences'] = 'Grade preferences';
 $string['gradepreferenceshelp'] = 'Grade preferences Help';
 $string['gradepublishing'] = 'Enable publishing';
+$string['gradepublishinglink'] = 'Download: {$a}';
 $string['gradepublishing_help'] = 'Enable publishing in exports and imports: Exported grades can be accessed by accessing a URL, without having to log on to a Moodle site. Grades can be imported by accessing such a URL (which means that a Moodle site can import grades published by another site). By default only administrators may use this feature, please educate users before adding required capabilities to other roles (dangers of bookmark sharing and download accelerators, IP restrictions, etc.).';
 $string['gradereport'] = 'Grade report';
 $string['graderreport'] = 'Grader report';
