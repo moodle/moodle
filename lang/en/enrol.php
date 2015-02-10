@@ -104,6 +104,7 @@ $string['periodend'] = 'until {$a}';
 $string['periodnone'] = 'enrolled {$a}';
 $string['periodstart'] = 'from {$a}';
 $string['periodstartend'] = 'from {$a->start} until {$a->end}';
+$string['proceedtocourse'] = 'Proceed to course content';
 $string['recovergrades'] = 'Recover user\'s old grades if possible';
 $string['rolefromthiscourse'] = '{$a->role} (Assigned in this course)';
 $string['rolefrommetacourse'] = '{$a->role} (Inherited from parent course)';
