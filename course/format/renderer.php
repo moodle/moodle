@@ -266,7 +266,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 'sr' => $onsectionpage ? $section->section : 0, 'delete' => 1));
             $controls[] = html_writer::link($url,
                 html_writer::empty_tag('img', array('src' => $this->output->pix_url('t/delete'),
-                    'class' => 'iconsmall edit', 'alt' => $strdelete)),
+                    'class' => 'icon delete', 'alt' => $strdelete)),
                 array('title' => $strdelete));
         }
 
