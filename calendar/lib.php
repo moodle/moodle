@@ -991,7 +991,7 @@ function calendar_filter_controls_element(moodle_url $url, $type) {
         $str = get_string('show'.$typeforhumans.'events', 'calendar');
     }
     $content = html_writer::start_tag('li', array('class' => 'calendar_event'));
-    $content .= html_writer::start_tag('a', array('href' => $url));
+    $content .= html_writer::start_tag('a', array('href' => $url, 'rel' => 'nofollow'));
     $content .= html_writer::tag('span', $icon, array('class' => $class));
     $content .= html_writer::tag('span', $str, array('class' => 'eventname'));
     $content .= html_writer::end_tag('a');
