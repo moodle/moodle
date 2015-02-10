@@ -54,6 +54,7 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     Then the "Group" select box should contain "All participants"
     And the "Group" select box should contain "Group A"
     And the "Group" select box should contain "Group B"
+    And I should see "Post a copy to all groups"
 
   @javascript
   Scenario: Teacher in all groups but without accessallgroups can only post in their groups
@@ -68,6 +69,7 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     Then the "Group" select box should not contain "All participants"
     And the "Group" select box should contain "Group A"
     And the "Group" select box should contain "Group B"
+    And I should see "Post a copy to all groups"
 
   @javascript
   Scenario: Teacher in some groups and without accessallgroups can only post in their groups
@@ -82,3 +84,4 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     Then the "Group" select box should not contain "All participants"
     And the "Group" select box should contain "Group A"
     And the "Group" select box should contain "Group B"
+    And I should see "Post a copy to all groups"
