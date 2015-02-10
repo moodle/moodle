@@ -40,7 +40,7 @@ use Behat\Gherkin\Node\TableNode as TableNode;
 class behat_calendar extends behat_base {
 
     /**
-     * Create event.
+     * Create event when starting on the front page.
      *
      * @Given /^I create a calendar event with form data:$/
      * @param TableNode $data
@@ -53,10 +53,60 @@ class behat_calendar extends behat_base {
 
         return array(
             new Given('I follow "' . get_string('monththis', 'calendar') . '"'),
+            new Given('I create a calendar event:', $data),
+        );
+    }
+
+    /**
+     * Create event.
+     *
+     * @Given /^I create a calendar event:$/
+     * @param TableNode $data
+     * @return array the list of actions to perform
+     */
+    public function i_create_a_calendar_event($data) {
+        // Get the event name.
+        $eventname = $data->getRow(1);
+        $eventname = $eventname[1];
+
+        return array(
             new Given('I click on "' . get_string('newevent', 'calendar') .'" "button"'),
             new Given('I set the following fields to these values:', $data),
             new Given('I press "' . get_string('savechanges') . '"'),
             new Given('I should see "' . $eventname . '"')
         );
+    }
+
+    /**
+     * Hover over a specific day in the calendar.
+     *
+     * @Given /^I hover over day "(?P<dayofmonth>\d+)" of this month in the calendar$/
+     * @param int $day The day of the current month
+     * @return Given[]
+     */
+    public function i_hover_over_day_of_this_month_in_calendar($day) {
+        $summarytitle = get_string('calendarheading', 'calendar', userdate(time(), get_string('strftimemonthyear')));
+        // The current month table.
+        $currentmonth = "table[contains(concat(' ', normalize-space(@summary), ' '), ' {$summarytitle} ')]";
+
+        // Strings for the class cell match.
+        $cellclasses  = "contains(concat(' ', normalize-space(@class), ' '), ' day ')";
+        $daycontains  = "text()[contains(concat(' ', normalize-space(.), ' '), ' {$day} ')]";
+        $daycell      = "td[{$cellclasses}]";
+        $dayofmonth   = "a[{$daycontains}]";
+        return array(
+            new Given('I hover "//' . $currentmonth . '/descendant::' . $daycell . '/' . $dayofmonth . '" "xpath_element"'),
+        );
+    }
+
+    /**
+     * Hover over today in the calendar.
+     *
+     * @Given /^I hover over today in the calendar$/
+     * @return Given[]
+     */
+    public function i_hover_over_today_in_the_calendar() {
+        $todaysday = trim(strftime('%e'));
+        return $this->i_hover_over_day_of_this_month_in_calendar($todaysday);
     }
 }
