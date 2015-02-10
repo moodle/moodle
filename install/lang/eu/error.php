@@ -39,6 +39,7 @@ $string['cannotsavemd5file'] = 'Ezin da Md5 fitxategia gorde';
 $string['cannotsavezipfile'] = 'Ezin da ZIP fitxategia gorde';
 $string['cannotunzipfile'] = 'Ezin da fitxategia deskonprimatu';
 $string['componentisuptodate'] = 'Osagaia eguneratu da';
+$string['dmlexceptiononinstall'] = '<p>Datu-basearen errorea gertatu da [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'Jaitsitako fitxategiaren konprobazioak kale egin du.';
 $string['invalidmd5'] = 'md5 ez da baliagarria';
 $string['missingrequiredfield'] = 'Beharrezko eremuren bat falta da.';
