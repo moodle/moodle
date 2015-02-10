@@ -105,7 +105,13 @@ class repository_s3 extends repository {
             try {
                 $buckets = $this->s->listBuckets();
             } catch (S3Exception $e) {
-                throw new moodle_exception('errorwhilecommunicatingwith', 'repository', '', $this->get_name());
+                throw new moodle_exception(
+                    'errorwhilecommunicatingwith',
+                    'repository',
+                    '',
+                    $this->get_name(),
+                    $e->getMessage()
+                );
             }
             foreach ($buckets as $bucket) {
                 $folder = array(
@@ -124,7 +130,13 @@ class repository_s3 extends repository {
             try {
                 $contents = $this->s->getBucket($bucket, $uri, null, null, '/', true);
             } catch (S3Exception $e) {
-                throw new moodle_exception('errorwhilecommunicatingwith', 'repository', '', $this->get_name());
+                throw new moodle_exception(
+                    'errorwhilecommunicatingwith',
+                    'repository',
+                    '',
+                    $this->get_name(),
+                    $e->getMessage()
+                );
             }
             foreach ($contents as $object) {
 
@@ -199,7 +211,13 @@ class repository_s3 extends repository {
         try {
             $this->s->getObject($bucket, $uri, $path);
         } catch (S3Exception $e) {
-            throw new moodle_exception('errorwhilecommunicatingwith', 'repository', '', $this->get_name());
+            throw new moodle_exception(
+                'errorwhilecommunicatingwith',
+                'repository',
+                '',
+                $this->get_name(),
+                $e->getMessage()
+            );
         }
         return array('path' => $path);
     }
