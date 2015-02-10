@@ -124,6 +124,7 @@ $calendar->add_sidecalendar_blocks($renderer, true, $view);
 echo $OUTPUT->header();
 echo $renderer->start_layout();
 echo html_writer::start_tag('div', array('class'=>'heightcontainer'));
+echo $OUTPUT->heading(get_string('calendar', 'calendar'));
 
 switch($view) {
     case 'day':
