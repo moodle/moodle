@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details for the user gradebook report
+ * User grade report external functions and service definitions.
  *
  * @package    gradereport_user
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+$functions = array(
 
-$plugin->version   = 2014111001;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014110400;        // Requires this Moodle version
-$plugin->component = 'gradereport_user'; // Full name of the plugin (used for diagnostics)
+    'gradereport_user_get_grades_table' => array(
+        'classname' => 'gradereport_user_external',
+        'methodname' => 'get_grades_table',
+        'classpath' => 'grade/report/user/externallib.php',
+        'description' => 'Get the user/s report grades table for a course',
+        'type' => 'read',
+        'capabilities' => 'gradereport/user:view'
+    )
+);

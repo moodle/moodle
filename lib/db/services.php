@@ -984,7 +984,8 @@ $services = array(
             'core_message_unblock_contacts',
             'core_message_get_contacts',
             'core_message_search_contacts',
-            'core_message_get_blocked_users'
+            'core_message_get_blocked_users',
+            'gradereport_user_get_grades_table'
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
