@@ -218,7 +218,7 @@ class auth_plugin_db extends auth_plugin_base {
                     $fields_obj = $rs->FetchObj();
                     $fields_obj = (object)array_change_key_case((array)$fields_obj , CASE_LOWER);
                     foreach ($selectfields as $localname=>$externalname) {
-                        $result[$localname] = core_text::convert($fields_obj->{$localname}, $this->config->extencoding, 'utf-8');
+                        $result[$localname] = core_text::convert($fields_obj->{strtolower($localname)}, $this->config->extencoding, 'utf-8');
                      }
                  }
                  $rs->Close();
@@ -611,6 +611,10 @@ class auth_plugin_db extends auth_plugin_base {
                 continue;
             }
             $nuvalue = $newuser->$key;
+            // Support for textarea fields.
+            if (isset($nuvalue['text'])) {
+                $nuvalue = $nuvalue['text'];
+            }
             if ($nuvalue != $value) {
                 $update[] = $this->config->{"field_map_$key"}."='".$this->ext_addslashes(core_text::convert($nuvalue, 'utf-8', $this->config->extencoding))."'";
             }
