@@ -24,7 +24,7 @@ Feature: Users can send messages to each other
     When I follow "Send a message"
     And I set the field "Message to send" to "Lorem ipsum sa messagus textus"
     And I press "Send message"
-    And I press "Close"
+    And I am on homepage
     And I navigate to "Messages" node in "My profile"
     And I set the field "Search people and messages" to "User Two"
     And I press "Search people and messages"
@@ -47,7 +47,7 @@ Feature: Users can send messages to each other
     When I follow "Send a message"
     And I set the field "Message to send" to "Lorem ipsum sa messagus textus"
     And I press "Send message"
-    And I press "Close"
+    And I am on homepage
     And I navigate to "Messages" node in "My profile"
     And I set the field "Search people and messages" to "User Two"
     And I press "Search people and messages"
