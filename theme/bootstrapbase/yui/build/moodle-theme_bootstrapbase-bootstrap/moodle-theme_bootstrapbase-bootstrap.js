@@ -697,7 +697,7 @@ NS.setup_toggle_show = function() {
 NS.toggle_show = function(e) {
     // Toggle the active class on both the clicked .btn-navbar and the
     // associated target, defined by a CSS selector string set as the
-    // data-target attribute on the .btn-navbar element in question.    
+    // data-target attribute on the .btn-navbar element in question.
     var navButtons = Y.all(SELECTORS.NAVBAR_BUTTON);
     var currentOpen = this.hasClass(CSS.ACTIVE);
 
