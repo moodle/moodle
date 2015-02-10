@@ -584,9 +584,21 @@ class block_base {
             && $page->context->contextlevel == CONTEXT_USER // Page belongs to a user
             && $page->context->instanceid == $USER->id // Page belongs to this user
             && $page->pagetype == 'my-index') { // Ensure we are on the My Moodle page
-            $capability = 'block/' . $this->name() . ':myaddinstance';
-            return $this->has_add_block_capability($page, $capability)
-                    && has_capability('moodle/my:manageblocks', $page->context);
+
+            // If the block cannot be displayed on /my it is ok if the myaddinstance capability is not defined.
+            $formats = $this->applicable_formats();
+            // Is 'my' explicitly forbidden?
+            // If 'all' has not been allowed, has 'my' been explicitly allowed?
+            if ((isset($formats['my']) && $formats['my'] == false)
+                || (empty($formats['all']) && empty($formats['my']))) {
+
+                // Block cannot be added to /my regardless of capabilities.
+                return false;
+            } else {
+                $capability = 'block/' . $this->name() . ':myaddinstance';
+                return $this->has_add_block_capability($page, $capability)
+                       && has_capability('moodle/my:manageblocks', $page->context);
+            }
         }
 
         $capability = 'block/' . $this->name() . ':addinstance';
