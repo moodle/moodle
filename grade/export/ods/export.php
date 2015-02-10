@@ -57,6 +57,3 @@ if (!empty($CFG->gradepublishing) && !empty($key)) {
 } else {
     $export->print_grades();
 }
-
-
-
