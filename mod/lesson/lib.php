@@ -740,9 +740,9 @@ function lesson_get_extra_capabilities() {
 function lesson_supports($feature) {
     switch($feature) {
         case FEATURE_GROUPS:
-            return false;
+            return true;
         case FEATURE_GROUPINGS:
-            return false;
+            return true;
         case FEATURE_MOD_INTRO:
             return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS:

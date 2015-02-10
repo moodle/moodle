@@ -47,6 +47,8 @@ if ($mode !== 'display') {
 }
 $PAGE->set_url($url);
 
+$currentgroup = groups_get_activity_group($cm, true);
+
 $attempt = new stdClass();
 $user = new stdClass();
 $attemptid = optional_param('attemptid', 0, PARAM_INT);
@@ -178,7 +180,12 @@ switch ($mode) {
             }
         } else {
             $queryadd = '';
-            $params = array ("lessonid" => $lesson->id);
+
+            // If group selected, only send to group members.
+            list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
+            list($sort, $sortparams) = users_order_by_sql('u');
+            $params['lessonid'] = $lesson->id;
+
             // Need to use inner view to avoid distinct + text
             if (!$users = $DB->get_records_sql("
                 SELECT u.*
@@ -187,7 +194,9 @@ switch ($mode) {
                            SELECT DISTINCT userid
                              FROM {lesson_attempts}
                             WHERE lessonid = :lessonid
-                       ) ui ON u.id = ui.userid", $params)) {
+                       ) ui ON u.id = ui.userid
+                  JOIN ($esql) ue ON ue.id = u.id
+                  ORDER BY $sort", $params)) {
                 print_error('cannotfinduser', 'lesson');
             }
         }
@@ -284,27 +293,45 @@ switch ($mode) {
             }
         }
         if (count($pages) > 0) {
-            $params = array ("lessonid" => $lesson->id, "qtype" => LESSON_PAGE_ESSAY);
             // Get only the attempts that are in response to essay questions
-            list($usql, $parameters) = $DB->get_in_or_equal(array_keys($pages));
-            if ($essayattempts = $DB->get_records_select('lesson_attempts', 'pageid '.$usql, $parameters)) {
-                // Get all the users who have taken this lesson, order by their last name
+            list($usql, $parameters) = $DB->get_in_or_equal(array_keys($pages), SQL_PARAMS_NAMED);
+            // If group selected, only get group members attempts.
+            list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
+            $parameters = array_merge($params, $parameters);
+
+            $sql = "SELECT a.*
+                        FROM {lesson_attempts} a
+                        JOIN ($esql) ue ON a.userid = ue.id
+                        WHERE pageid $usql";
+            if ($essayattempts = $DB->get_records_sql($sql, $parameters)) {
                 $ufields = user_picture::fields('u');
+                // Get all the users who have taken this lesson.
                 list($sort, $sortparams) = users_order_by_sql('u');
-                $params = array_merge($params, $sortparams);
+
+                $params['lessonid'] = $lesson->id;
                 $sql = "SELECT DISTINCT $ufields
-                        FROM {user} u,
-                             {lesson_attempts} a
-                        WHERE a.lessonid = :lessonid and
-                              u.id = a.userid
+                        FROM {user} u
+                        JOIN {lesson_attempts} a ON u.id = a.userid
+                        JOIN ($esql) ue ON ue.id = a.userid
+                        WHERE a.lessonid = :lessonid
                         ORDER BY $sort";
                 if (!$users = $DB->get_records_sql($sql, $params)) {
                     $mode = 'none'; // not displaying anything
-                    $lesson->add_message(get_string('noonehasanswered', 'lesson'));
+                    if (!empty($currentgroup)) {
+                        $groupname = groups_get_group_name($currentgroup);
+                        $lesson->add_message(get_string('noonehasansweredgroup', 'lesson', $groupname));
+                    } else {
+                        $lesson->add_message(get_string('noonehasanswered', 'lesson'));
+                    }
                 }
             } else {
                 $mode = 'none'; // not displaying anything
-                $lesson->add_message(get_string('noonehasanswered', 'lesson'));
+                if (!empty($currentgroup)) {
+                    $groupname = groups_get_group_name($currentgroup);
+                    $lesson->add_message(get_string('noonehasansweredgroup', 'lesson', $groupname));
+                } else {
+                    $lesson->add_message(get_string('noonehasanswered', 'lesson'));
+                }
             }
         } else {
             $mode = 'none'; // not displaying anything
@@ -318,6 +345,7 @@ echo $lessonoutput->header($lesson, $cm, 'essay', false, null, get_string('manua
 
 switch ($mode) {
     case 'display':
+        groups_print_activity_menu($cm, $url);
         // Expects $user, $essayattempts and $pages to be set already
 
         // Group all the essays by userid
@@ -427,6 +455,9 @@ switch ($mode) {
         $mform->set_data($data);
 
         $mform->display();
+        break;
+    default:
+        groups_print_activity_menu($cm, $url);
         break;
 }
 
