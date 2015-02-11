@@ -163,7 +163,7 @@ class local_mymedia_renderer extends plugin_renderer_base {
         $screenrec     = '';
         $enable_ksr    = get_config(KALTURA_PLUGIN_NAME, 'enable_screen_recorder');
 
-        $context = get_context_instance(CONTEXT_USER, $USER->id);
+        $context = context_user::instance($USER->id);
 
         if (has_capability('local/mymedia:upload', $context, $USER)) {
             $upload = $this->create_upload_markup();
