@@ -69,6 +69,7 @@ class registration_manager {
                     $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
                     try {
                         $result = $xmlrpcclient->call($function, $params);
+                        $this->update_registeredhub($hub); // To update timemodified.
                         mtrace(get_string('siteupdatedcron', 'hub', $hub->hubname));
                     } catch (Exception $e) {
                         $errorparam = new stdClass();
@@ -118,6 +119,7 @@ class registration_manager {
      */
     public function add_registeredhub($hub) {
         global $DB;
+        $hub->timemodified = time();
         $id = $DB->insert_record('registration_hubs', $hub);
         return $id;
     }
@@ -171,15 +173,16 @@ class registration_manager {
 
     /**
      * Update a registered hub (mostly use to update the confirmation status)
-     * @param object $communication the hub
+     * @param object $hub the hub
      */
-    public function update_registeredhub($communication) {
+    public function update_registeredhub($hub) {
         global $DB;
-        $DB->update_record('registration_hubs', $communication);
+        $hub->timemodified = time();
+        $DB->update_record('registration_hubs', $hub);
     }
 
     /**
-     * Return all hubs where the site is registered on
+     * Return all hubs where the site is registered
      */
     public function get_registered_on_hubs() {
         global $DB;
