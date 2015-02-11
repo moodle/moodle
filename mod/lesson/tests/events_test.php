@@ -243,28 +243,33 @@ class mod_lesson_events_testcase extends advanced_testcase {
     /**
      * Test the content page viewed event.
      *
-     * There is no external API for viewing a content page, so the unit test will simply
-     * create and trigger the event and ensure data is returned as expected.
      */
     public function test_content_page_viewed() {
+        global $DB, $PAGE;
 
-        // Trigger an event: content page viewed.
-        $eventparams = array(
-            'context' => context_module::instance($this->lesson->properties()->cmid),
-            'objectid' => 25
-            );
-
-        $event = \mod_lesson\event\content_page_viewed::create($eventparams);
+        // Set up a generator to create content.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        // Create a content page.
+        $pagerecord = $generator->create_content($this->lesson);
+        // Get the lesson page information.
+        $page = $this->lesson->load_page($pagerecord->id);
+        // Get the coursemodule record to setup the $PAGE->cm.
+        $coursemodule = $DB->get_record('course_modules', array('id' => $this->lesson->properties()->cmid));
+        // Set the $PAGE->cm.
+        $PAGE->set_cm($coursemodule);
+        // Get the appropriate renderer.
+        $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $event->trigger();
+        // Fire the function that leads to the triggering of our event.
+        $lessonoutput->display_page($this->lesson, $page, false);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_lesson\event\content_page_viewed', $event);
-        $this->assertEquals(25, $event->objectid);
+        $this->assertEquals($page->id, $event->objectid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -272,32 +277,34 @@ class mod_lesson_events_testcase extends advanced_testcase {
     /**
      * Test the question viewed event.
      *
-     * There is no external API for viewing an truefalse question, so the unit test will simply
-     * create and trigger the event and ensure data is returned as expected.
      */
     public function test_question_viewed() {
+        global $DB, $PAGE;
 
-        // Trigger an event: truefalse question viewed.
-        $eventparams = array(
-            'context' => context_module::instance($this->lesson->properties()->cmid),
-            'objectid' => 25,
-            'other' => array(
-                'pagetype' => 'truefalse'
-                )
-        );
-
-        $event = \mod_lesson\event\question_viewed::create($eventparams);
+        // Set up a generator to create content.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        // Create a question page.
+        $pagerecord = $generator->create_question_truefalse($this->lesson);
+        // Get the lesson page information.
+        $page = $this->lesson->load_page($pagerecord->id);
+        // Get the coursemodule record to setup the $PAGE->cm.
+        $coursemodule = $DB->get_record('course_modules', array('id' => $this->lesson->properties()->cmid));
+        // Set the $PAGE->cm.
+        $PAGE->set_cm($coursemodule);
+        // Get the appropriate renderer.
+        $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $event->trigger();
+        // Fire the function that leads to the triggering of our event.
+        $lessonoutput->display_page($this->lesson, $page, false);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_lesson\event\question_viewed', $event);
-        $this->assertEquals(25, $event->objectid);
-        $this->assertEquals('truefalse', $event->other['pagetype']);
+        $this->assertEquals($page->id, $event->objectid);
+        $this->assertEquals('True/false', $event->other['pagetype']);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -315,7 +322,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
             'context' => context_module::instance($this->lesson->properties()->cmid),
             'objectid' => 25,
             'other' => array(
-                'pagetype' => 'truefalse'
+                'pagetype' => 'True/false'
                 )
         );
 
@@ -330,7 +337,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_lesson\event\question_answered', $event);
         $this->assertEquals(25, $event->objectid);
-        $this->assertEquals('truefalse', $event->other['pagetype']);
+        $this->assertEquals('True/false', $event->other['pagetype']);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
