@@ -542,6 +542,13 @@ class core_media_player_youtube extends core_media_player_external {
             $params .= "start=$start&";
         }
 
+        $listid = $url->param('list');
+        // Check for non-empty but valid playlist ID.
+        if (!empty($listid) && !preg_match('/[^a-zA-Z0-9\-_]/', $listid)) {
+            // This video is part of a playlist, and we want to embed it as such.
+            $params .= "list=$listid&";
+        }
+
         return <<<OET
 <span class="mediaplugin mediaplugin_youtube">
 <iframe title="$info" width="$width" height="$height"
