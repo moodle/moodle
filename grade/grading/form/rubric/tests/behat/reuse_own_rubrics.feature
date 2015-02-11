@@ -40,6 +40,7 @@ Feature: Reuse my rubrics in other activities
     And I should see "Criterion 1"
     And I should see "Criterion 2"
     And I should see "Criterion 3"
+    And I follow "C1"
     And I go to "Test assignment 1 name" advanced grading definition page
     And I should see "Criterion 1"
     And I should see "Criterion 2"
