@@ -77,11 +77,14 @@ class core_course_external extends external_api {
         //retrieve the course
         $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
 
-        //check course format exist
-        if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
-            throw new moodle_exception('cannotgetcoursecontents', 'webservice', '', null, get_string('courseformatnotfound', 'error', '', $course->format));
-        } else {
-            require_once($CFG->dirroot . '/course/format/' . $course->format . '/lib.php');
+        if ($course->id != SITEID) {
+            // Check course format exist.
+            if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
+                throw new moodle_exception('cannotgetcoursecontents', 'webservice', '', null,
+                                            get_string('courseformatnotfound', 'error', $course->format));
+            } else {
+                require_once($CFG->dirroot . '/course/format/' . $course->format . '/lib.php');
+            }
         }
 
         // now security checks
