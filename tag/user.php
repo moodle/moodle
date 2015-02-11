@@ -44,7 +44,7 @@ switch ($action) {
         break;
 
     case 'flaginappropriate':
-
+        require_capability('moodle/tag:flag', context_system::instance());
         $tagid = tag_get_id($tag);
         // Add flaging action to logs
         add_to_log(SITEID, 'tag', 'flag', 'index.php?id='. $tagid, $tagid, '', $USER->id);
