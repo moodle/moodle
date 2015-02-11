@@ -59,13 +59,13 @@ function xmldb_local_kaltura_upgrade($oldversion) {
         }
 
         // Kaltura savepoint reached.
-        upgrade_plugin_savepoint(true, 2015020508, 'local', 'kaltura');
+        upgrade_plugin_savepoint(true, 2015021108, 'local', 'kaltura');
         $savePointDone = true;
     }
 
-    if (!$savePointDone && $oldversion < 2015020508) {
+    if (!$savePointDone && $oldversion < 2015021108) {
         // Kaltura savepoint reached.
-        upgrade_plugin_savepoint(true, 2015020508, 'local', 'kaltura');
+        upgrade_plugin_savepoint(true, 2015021108, 'local', 'kaltura');
     }
     return true;
 }
