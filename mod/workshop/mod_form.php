@@ -97,6 +97,12 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->setDefault('grade', $workshopconfig->grade);
         $mform->addHelpButton('submissiongradegroup', 'submissiongrade', 'workshop');
 
+        $mform->addElement('text', 'submissiongradepass', get_string('gradetopasssubmission', 'workshop'));
+        $mform->addHelpButton('submissiongradepass', 'gradepass', 'grades');
+        $mform->setDefault('submissiongradepass', '');
+        $mform->setType('submissiongradepass', PARAM_FLOAT);
+        $mform->addRule('submissiongradepass', null, 'numeric', null, 'client');
+
         $label = get_string('gradinggrade', 'workshop');
         $mform->addGroup(array(
             $mform->createElement('select', 'gradinggrade', '', $grades),
@@ -104,6 +110,12 @@ class mod_workshop_mod_form extends moodleform_mod {
             ), 'gradinggradegroup', $label, ' ', false);
         $mform->setDefault('gradinggrade', $workshopconfig->gradinggrade);
         $mform->addHelpButton('gradinggradegroup', 'gradinggrade', 'workshop');
+
+        $mform->addElement('text', 'gradinggradepass', get_string('gradetopassgrading', 'workshop'));
+        $mform->addHelpButton('gradinggradepass', 'gradepass', 'grades');
+        $mform->setDefault('gradinggradepass', '');
+        $mform->setType('gradinggradepass', PARAM_FLOAT);
+        $mform->addRule('gradinggradepass', null, 'numeric', null, 'client');
 
         $options = array();
         for ($i=5; $i>=0; $i--) {
@@ -296,7 +308,10 @@ class mod_workshop_mod_form extends moodleform_mod {
                 foreach ($gradeitems as $gradeitem) {
                     // here comes really crappy way how to set the value of the fields
                     // gradecategory and gradinggradecategory - grrr QuickForms
+                    $decimalpoints = $gradeitem->get_decimals();
                     if ($gradeitem->itemnumber == 0) {
+                        $submissiongradepass = $mform->getElement('submissiongradepass');
+                        $submissiongradepass->setValue(format_float($gradeitem->gradepass, $decimalpoints));
                         $group = $mform->getElement('submissiongradegroup');
                         $elements = $group->getElements();
                         foreach ($elements as $element) {
@@ -305,6 +320,8 @@ class mod_workshop_mod_form extends moodleform_mod {
                             }
                         }
                     } else if ($gradeitem->itemnumber == 1) {
+                        $gradinggradepass = $mform->getElement('gradinggradepass');
+                        $gradinggradepass->setValue(format_float($gradeitem->gradepass, $decimalpoints));
                         $group = $mform->getElement('gradinggradegroup');
                         $elements = $group->getElements();
                         foreach ($elements as $element) {
@@ -353,6 +370,13 @@ class mod_workshop_mod_form extends moodleform_mod {
                     }
                 }
             }
+        }
+
+        if ($data['submissiongradepass'] > $data['grade']) {
+            $errors['submissiongradepass'] = get_string('gradepassgreaterthangrade', 'grades');
+        }
+        if ($data['gradinggradepass'] > $data['gradinggrade']) {
+            $errors['gradinggradepass'] = get_string('gradepassgreaterthangrade', 'grades');
         }
 
         return $errors;
