@@ -45,7 +45,7 @@ switch ($action) {
         break;
 
     case 'flaginappropriate':
-
+        require_capability('moodle/tag:flag', context_system::instance());
         $tagid = tag_get_id($tag);
 
         tag_set_flag($tagid);
