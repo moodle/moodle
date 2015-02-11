@@ -56,3 +56,16 @@ Feature: Add and configure blocks throughout the site
     And I follow "Course 1"
     And I follow "Turn editing on"
     Then I should see "Assign roles in Search forums block"
+
+  @javascript
+  Scenario: Blocks can safely be customised
+    Given I log in as "admin"
+    And I click on "My home" "link" in the "Navigation" "block"
+    And I press "Customise this page"
+    And I add the "HTML" block
+    And I configure the "(new HTML block)" block
+    And I set the following fields to these values:
+      | Block title | Foo " onload="document.getElementsByTagName('body')[0].remove()" alt="
+      | Content     | Example
+    When I press "Save changes"
+    Then I should see "Course overview"
