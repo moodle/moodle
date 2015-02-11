@@ -419,7 +419,7 @@ class submissions_table extends table_sql {
     
     private function _generateLtiLaunchLink($source, $data)
     {
-        $cmid = $data->id;
+        $cmid = $this->cminstance->cmid;
         
         $width = 485;
         $height = 450;
