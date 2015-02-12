@@ -145,13 +145,12 @@ class filter_urltolink extends moodle_text_filter {
         }
 
         // Locate any HTML tags.
-        $matches = preg_split('/(<[^>]*>)/i', $text, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-        $lookingforendstyle = false;
+        $matches = preg_split('/(<[^<|>]*>)/i', $text, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 
         // Iterate through the tokenized text to handle chunks (html and content).
         foreach ($matches as $idx => $chunk) {
             // Nothing to do. We skip completely any html chunk.
-            if (strpos($chunk, '<') !== false) {
+            if (strpos(trim($chunk), '<') === 0) {
                 continue;
             }
 
