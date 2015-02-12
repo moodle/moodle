@@ -42,7 +42,7 @@ class gradeimport_csv_load_data_testcase extends grade_base_testcase {
 
     /** @var string $oktext Text to be imported. This data should have no issues being imported. */
     protected $oktext = '"First name",Surname,"ID number",Institution,Department,"Email address","Assignment: Assignment for grape group", "Feedback: Assignment for grape group","Assignment: Second new grade item","Course total"
-Anne,Able,,"Moodle HQ","Rock on!",student7@mail.com,56.00,"We welcome feedback",44.0,56.00
+Anne,Able,,"Moodle HQ","Rock on!",student7@mail.com,56.00,"We welcome feedback",,56.00
 Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,,45.0,75.00';
 
     /** @var string $badtext Text to be imported. This data has an extra column and should not succeed in being imported. */
@@ -109,7 +109,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,,75.00,{exportdate}'
                 'student7@mail.com',
                 56.00,
                 'We welcome feedback',
-                44.0,
+                '',
                 56.00
             ),
             array(
@@ -379,7 +379,8 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,,75.00,{exportdate}'
         // Check that the final grade is the same as the one inserted.
         // The testobject should now contain 2 new grade items.
         $this->assertEquals(2, count($newgrades));
-        $this->assertEquals($testarray[0][8], $newgrades[1]->finalgrade);
+        // Because this grade item is empty, the value for final grade should be null.
+        $this->assertNull($newgrades[1]->finalgrade);
 
         $feedback = $testobject->test_map_user_data_with_value('feedback', $testarray[0][7], $this->columns, $map, $key,
                 $this->courseid, $map[$key], $verbosescales);
