@@ -366,6 +366,16 @@ class core_medialib_testcase extends advanced_testcase {
         $this->assertContains('list=PLxcO_MFWQBDcyn9xpbmx601YSDlDcTcr0', $t);
         $this->assertContains('start=65', $t);
 
+        // Format: youtube video with invalid parameter values (injection attempts).
+        $url = new moodle_url('https://www.youtube.com/watch?v=dv2f_xfmbD8&index=4&list=PLxcO_">');
+        $t = $renderer->embed_url($url);
+        $this->assertContains('</iframe>', $t);
+        $this->assertNotContains('list=PLxcO_', $t); // We shouldn't get a list param as input was invalid.
+        $url = new moodle_url('https://www.youtube.com/watch?v=JNJMF1l3udM&t=">');
+        $t = $renderer->embed_url($url);
+        $this->assertContains('</iframe>', $t);
+        $this->assertNotContains('start=', $t); // We shouldn't get a start param as input was invalid.
+
         // Format: youtube playlist.
         $url = new moodle_url('http://www.youtube.com/view_play_list?p=PL6E18E2927047B662');
         $t = $renderer->embed_url($url);
