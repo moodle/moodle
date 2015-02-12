@@ -41,7 +41,7 @@ require_once($CFG->libdir . '/grade/tests/fixtures/lib.php');
 class gradeimport_csv_load_data_testcase extends grade_base_testcase {
 
     /** @var string $oktext Text to be imported. This data should have no issues being imported. */
-    protected $oktext = '"First name",Surname,"ID number",Institution,Department,"Email address","Assignment: Assignment for grape group", "Feedback: Assignment for grape group","Assignment:second new grade item","Course total"
+    protected $oktext = '"First name",Surname,"ID number",Institution,Department,"Email address","Assignment: Assignment for grape group", "Feedback: Assignment for grape group","Assignment: Second new grade item","Course total"
 Anne,Able,,"Moodle HQ","Rock on!",student7@mail.com,56.00,"We welcome feedback",44.0,56.00
 Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,,45.0,75.00';
 
@@ -135,7 +135,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,,75.00,{exportdate}'
             'Email address',
             'Assignment: Assignment for grape group',
             'Feedback: Assignment for grape group',
-            'Assignment:second new grade item',
+            'Assignment: Second new grade item',
             'Course total'
         );
         // Check that general data is returned as expected.
@@ -377,9 +377,10 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@mail.com,75.00,,75.00,{exportdate}'
         $newgrades = $testobject->test_map_user_data_with_value('new', $testarray[0][8], $this->columns, $map, $key,
                 $this->courseid, $map[$key], $verbosescales);
         // Check that the final grade is the same as the one inserted.
-        $this->assertEquals(2, count($newgrades)); //the testobject should now contain 2 new grade items.
+        // The testobject should now contain 2 new grade items.
+        $this->assertEquals(2, count($newgrades));
         $this->assertEquals($testarray[0][8], $newgrades[1]->finalgrade);
-        
+
         $feedback = $testobject->test_map_user_data_with_value('feedback', $testarray[0][7], $this->columns, $map, $key,
                 $this->courseid, $map[$key], $verbosescales);
         // Expected result.
