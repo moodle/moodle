@@ -29,7 +29,7 @@ global $CFG;
 require_once($CFG->dirroot . '/filter/urltolink/filter.php'); // Include the code to test
 
 
-class filter_urltolink_testcase extends basic_testcase {
+class filter_urltolink_filter_testcase extends basic_testcase {
 
     function get_convert_urls_into_links_test_cases() {
         // Create a 4095 and 4096 long URLs.
@@ -159,6 +159,21 @@ class filter_urltolink_testcase extends basic_testcase {
             'URL: ' . $superlong4096 => 'URL: ' . $superlong4096,
             // Testing URL within a span tag.
             'URL: <span style="kasd"> my link to http://google.com </span>' => 'URL: <span style="kasd"> my link to <a href="http://google.com" class="_blanktarget">http://google.com</a> </span>',
+            // Nested tags test.
+            '<b><i>www.google.com</i></b>' => '<b><i><a href="http://www.google.com" class="_blanktarget">www.google.com</a></i></b>',
+            '<input type="submit" value="Go to http://moodle.org">' => '<input type="submit" value="Go to http://moodle.org">',
+            // Test realistic content.
+            '<p><span style="color: rgb(37, 37, 37); font-family: sans-serif; line-height: 22.3999996185303px;">Lorem ipsum amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut http://google.com aliquip ex ea <a href="http://google.com">commodo consequat</a>. Duis aute irure in reprehenderit in excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia https://docs.google.com/document/d/BrokenLinkPleaseAyacDHc_Ov8aoskoSVQsfmLHP_jYAkRMk/edit?usp=sharing https://docs.google.com/document/d/BrokenLinkPleaseAyacDHc_Ov8aoskoSVQsfmLHP_jYAkRMk/edit?usp=sharing mollit anim id est laborum.</span><br></p>'
+            =>
+            '<p><span style="color: rgb(37, 37, 37); font-family: sans-serif; line-height: 22.3999996185303px;">Lorem ipsum amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut <a href="http://google.com" class="_blanktarget">http://google.com</a> aliquip ex ea <a href="http://google.com">commodo consequat</a>. Duis aute irure in reprehenderit in excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia <a href="https://docs.google.com/document/d/BrokenLinkPleaseAyacDHc_Ov8aoskoSVQsfmLHP_jYAkRMk/edit?usp=sharing" class="_blanktarget">https://docs.google.com/document/d/BrokenLinkPleaseAyacDHc_Ov8aoskoSVQsfmLHP_jYAkRMk/edit?usp=sharing</a> <a href="https://docs.google.com/document/d/BrokenLinkPleaseAyacDHc_Ov8aoskoSVQsfmLHP_jYAkRMk/edit?usp=sharing" class="_blanktarget">https://docs.google.com/document/d/BrokenLinkPleaseAyacDHc_Ov8aoskoSVQsfmLHP_jYAkRMk/edit?usp=sharing</a> mollit anim id est laborum.</span><br></p>',
+            // Test some broken html.
+            '5 < 10 www.google.com <a href="hi.com">im a link</a>' => '5 < 10 <a href="http://www.google.com" class="_blanktarget">www.google.com</a> <a href="hi.com">im a link</a>',
+            'h3 (www.styles.com/h3) < h1 (www.styles.com/h1)' => 'h3 (<a href="http://www.styles.com/h3" class="_blanktarget">www.styles.com/h3</a>) < h1 (<a href="http://www.styles.com/h1" class="_blanktarget">www.styles.com/h1</a>)',
+            '<p>text www.moodle.org&lt;/p> text' => '<p>text <a href="http://www.moodle.org" class="_blanktarget">www.moodle.org</a>&lt;/p> text',
+            // Some more urls.
+            '<link rel="search" type="application/opensearchdescription+xml" href="/osd.jsp" title="Peer review - Moodle Tracker"/>' => '<link rel="search" type="application/opensearchdescription+xml" href="/osd.jsp" title="Peer review - Moodle Tracker"/>',
+            '<a href="https://docs.moodle.org/dev/Main_Page"></a><span>www.google.com</span><span class="placeholder"></span>' => '<a href="https://docs.moodle.org/dev/Main_Page"></a><span><a href="http://www.google.com" class="_blanktarget">www.google.com</a></span><span class="placeholder"></span>',
+            'http://nolandforzombies.com <a href="zombiesFTW.com">Zombies FTW</a> http://aliens.org' => '<a href="http://nolandforzombies.com" class="_blanktarget">http://nolandforzombies.com</a> <a href="zombiesFTW.com">Zombies FTW</a> <a href="http://aliens.org" class="_blanktarget">http://aliens.org</a>',
             //URLs in Javascript. Commented out as part of MDL-21183
             //'var url="http://moodle.org";'=>'var url="http://moodle.org";',
             //'var url = "http://moodle.org";'=>'var url = "http://moodle.org";',
