@@ -175,33 +175,6 @@ class controller {
             }
         }
 
-        // Clean-up currently installed versions of the packs.
-        foreach ($neededlangs as $packindex => $pack) {
-            if ($pack == 'en') {
-                continue;
-            }
-
-            // Delete old directories.
-            $dest1 = $CFG->dataroot.'/lang/'.$pack;
-            $dest2 = $CFG->dirroot.'/lang/'.$pack;
-            if (file_exists($dest1)) {
-                if (!remove_dir($dest1)) {
-                    $this->errors[] = 'Could not delete old directory '.$dest1.', update of '.$pack
-                        .' failed, please check permissions.';
-                    unset($neededlangs[$packindex]);
-                    continue;
-                }
-            }
-            if (file_exists($dest2)) {
-                if (!remove_dir($dest2)) {
-                    $this->errors[] = 'Could not delete old directory '.$dest2.', update of '.$pack
-                        .' failed, please check permissions.';
-                    unset($neededlangs[$packindex]);
-                    continue;
-                }
-            }
-        }
-
         try {
             $updated = $this->install_languagepacks($neededlangs, true);
         } catch (\moodle_exception $e) {

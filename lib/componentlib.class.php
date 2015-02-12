@@ -323,8 +323,14 @@ class component_installer {
     /// Move current revision to a safe place
         $destinationdir = $CFG->dataroot.'/'.$this->destpath;
         $destinationcomponent = $destinationdir.'/'.$this->componentname;
-        @remove_dir($destinationcomponent.'_old');     //Deleting possible old components before
-        @rename ($destinationcomponent, $destinationcomponent.'_old');  //Moving to a safe place
+        @remove_dir($destinationcomponent.'_old');     // Deleting a possible old version.
+
+        // Moving to a safe place.
+        $moveresult = rename($destinationcomponent, $destinationcomponent.'_old');
+        if (!$moveresult) {
+            debugging("Failed to rename {$destinationcomponent} to {$destinationcomponent}_old while installing a language");
+        }
+
     /// Unzip new version
         if (!unzip_file($zipfile, $destinationdir, false)) {
         /// Error so, go back to the older
