@@ -808,6 +808,15 @@ class core_user_external extends external_api {
     }
 
     /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_users_by_id_is_deprecated() {
+        return true;
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
@@ -1451,6 +1460,4 @@ class moodle_user_external extends external_api {
     public static function get_users_by_courseid_is_deprecated() {
         return true;
     }
-
-
 }
