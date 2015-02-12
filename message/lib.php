@@ -708,32 +708,41 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     // There is a separate query for read and unread messages as they are stored
     // in different tables. They were originally retrieved in one query but it
     // was so large that it was difficult to be confident in its correctness.
-    $sql = "SELECT $userfields,
+    $uniquefield = $DB->sql_concat_join("'-'", array('message.useridfrom', 'message.useridto'));
+    $sql = "SELECT $uniquefield, $userfields,
                    message.id as mid, message.notification, message.smallmessage, message.fullmessage,
                    message.fullmessagehtml, message.fullmessageformat, message.timecreated,
                    contact.id as contactlistid, contact.blocked
-
               FROM {message_read} message
-              JOIN {user} otheruser ON otheruser.id = CASE
-                                WHEN message.useridto = :userid1 THEN message.useridfrom
-                                                                 ELSE message.useridto END
-         LEFT JOIN {message_contacts} contact ON contact.userid = :userid2 AND contact.contactid = otheruser.id
-
-             WHERE otheruser.deleted = 0
-               AND (message.useridto = :userid3 OR message.useridfrom = :userid4)
-               AND message.notification = 0
-               AND NOT EXISTS (
-                        SELECT 1
-                          FROM {message_read} othermessage
-                         WHERE ((othermessage.useridto = :userid5 AND othermessage.useridfrom = otheruser.id) OR
-                                (othermessage.useridfrom = :userid6 AND othermessage.useridto = otheruser.id))
-                           AND (othermessage.timecreated > message.timecreated OR (
-                                othermessage.timecreated = message.timecreated AND othermessage.id > message.id))
-                   )
-
+              JOIN (
+                        SELECT MAX(id) AS messageid,
+                               matchedmessage.useridto,
+                               matchedmessage.useridfrom
+                         FROM {message_read} matchedmessage
+                   INNER JOIN (
+                               SELECT MAX(recentmessages.timecreated) timecreated,
+                                      recentmessages.useridfrom,
+                                      recentmessages.useridto
+                                 FROM {message_read} recentmessages
+                                WHERE (recentmessages.useridfrom = :userid1 OR recentmessages.useridto = :userid2)
+                             GROUP BY recentmessages.useridfrom, recentmessages.useridto
+                              ) recent ON matchedmessage.useridto     = recent.useridto
+                           AND matchedmessage.useridfrom   = recent.useridfrom
+                           AND matchedmessage.timecreated  = recent.timecreated
+                      GROUP BY matchedmessage.useridto, matchedmessage.useridfrom
+                   ) messagesubset ON messagesubset.messageid = message.id
+              JOIN {user} otheruser ON (message.useridfrom = :userid4 AND message.useridto = otheruser.id)
+                OR (message.useridto   = :userid5 AND message.useridfrom   = otheruser.id)
+         LEFT JOIN {message_contacts} contact ON contact.userid  = :userid3 AND contact.userid = otheruser.id
+             WHERE otheruser.deleted = 0 AND message.notification = 0
           ORDER BY message.timecreated DESC";
-    $params = array('userid1' => $user->id, 'userid2' => $user->id, 'userid3' => $user->id,
-            'userid4' => $user->id, 'userid5' => $user->id, 'userid6' => $user->id);
+    $params = array(
+            'userid1' => $user->id,
+            'userid2' => $user->id,
+            'userid3' => $user->id,
+            'userid4' => $user->id,
+            'userid5' => $user->id,
+        );
     $read = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
 
     // We want to get the messages that have not been read. These are stored in the 'message' table. It is the
@@ -742,16 +751,23 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     $sql = str_replace('{message_read}', '{message}', $sql);
     $unread = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
 
-    $conversations = array();
-
     // Union the 2 result sets together looking for the message with the most
     // recent timecreated for each other user.
     // $conversation->id (the array key) is the other user's ID.
     $conversation_arrays = array($unread, $read);
     foreach ($conversation_arrays as $conversation_array) {
         foreach ($conversation_array as $conversation) {
-            if (empty($conversations[$conversation->id]) || $conversations[$conversation->id]->timecreated < $conversation->timecreated ) {
+            if (!isset($conversations[$conversation->id])) {
                 $conversations[$conversation->id] = $conversation;
+            } else {
+                $current = $conversations[$conversation->id];
+                if ($current->timecreated < $conversation->timecreated) {
+                    $conversations[$conversation->id] = $conversation;
+                } else if ($current->timecreated == $conversation->timecreated) {
+                    if ($current->mid < $conversation->mid) {
+                        $conversations[$conversation->id] = $conversation;
+                    }
+                }
             }
         }
     }
