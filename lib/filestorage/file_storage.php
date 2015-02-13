@@ -1963,6 +1963,63 @@ class file_storage {
     }
 
     /**
+     * Search through the server files.
+     *
+     * The query parameter will be used in conjuction with the SQL directive
+     * LIKE, so include '%' in it if you need to. This search will always ignore
+     * user files and directories. Note that the search is case insensitive.
+     *
+     * This query can quickly become inefficient so use it sparignly.
+     *
+     * @param  string  $query The string used with SQL LIKE.
+     * @param  integer $from  The offset to start the search at.
+     * @param  integer $limit The maximum number of results.
+     * @param  boolean $count When true this methods returns the number of results availabe,
+     *                        disregarding the parameters $from and $limit.
+     * @return int|array      Integer when count, otherwise array of stored_file objects.
+     */
+    public function search_server_files($query, $from = 0, $limit = 20, $count = false) {
+        global $DB;
+        $params = array(
+            'contextlevel' => CONTEXT_USER,
+            'directory' => '.',
+            'query' => $query
+        );
+
+        if ($count) {
+            $select = 'COUNT(1)';
+        } else {
+            $select = self::instance_sql_fields('f', 'r');
+        }
+        $like = $DB->sql_like('f.filename', ':query', false);
+
+        $sql = "SELECT $select
+                  FROM {files} f
+             LEFT JOIN {files_reference} r
+                    ON f.referencefileid = r.id
+                  JOIN {context} c
+                    ON f.contextid = c.id
+                 WHERE c.contextlevel <> :contextlevel
+                   AND f.filename <> :directory
+                   AND " . $like . "";
+
+        if ($count) {
+            return $DB->count_records_sql($sql, $params);
+        }
+
+        $sql .= " ORDER BY f.filename";
+
+        $result = array();
+        $filerecords = $DB->get_recordset_sql($sql, $params, $from, $limit);
+        foreach ($filerecords as $filerecord) {
+            $result[$filerecord->pathnamehash] = $this->get_file_instance($filerecord);
+        }
+        $filerecords->close();
+
+        return $result;
+    }
+
+    /**
      * Returns all aliases that refer to some stored_file via the given reference
      *
      * All repositories that provide access to a stored_file are expected to use
