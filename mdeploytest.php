@@ -364,6 +364,7 @@ class mdeploytest extends PHPUnit_Framework_TestCase {
     public function get_env_valid_provider() {
         return array(
             array('dataroot'),
+            array('dirroot'),
         );
     }
 }
