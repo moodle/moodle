@@ -28,7 +28,6 @@ Feature: Preview a drag-drop into text question
   Scenario: Preview a question using the mouse.
     When I click on "Preview" "link" in the "Drag to text" "table_row"
     And I switch to "questionpreview" window
-    And I wait "1" seconds
     And I drag "quick" to space "1" in the drag and drop into text question
     And I drag "fox" to space "2" in the drag and drop into text question
     And I drag "assiduous" to space "3" in the drag and drop into text question
@@ -40,7 +39,6 @@ Feature: Preview a drag-drop into text question
   Scenario: Preview a question using the keyboard & submit incomplete.
     When I click on "Preview" "link" in the "Drag to text" "table_row"
     And I switch to "questionpreview" window
-    And I wait "1" seconds
     And I type " " into space "1" in the drag and drop onto image question
     And I type "   " into space "2" in the drag and drop onto image question
     And I type " " into space "3" in the drag and drop onto image question
@@ -52,7 +50,6 @@ Feature: Preview a drag-drop into text question
   Scenario: Preview a question using the keyboard.
     When I click on "Preview" "link" in the "Drag to text" "table_row"
     And I switch to "questionpreview" window
-    And I wait "1" seconds
     And I type "  " into space "1" in the drag and drop onto image question
     And I type "  " into space "2" in the drag and drop onto image question
     And I type "  " into space "3" in the drag and drop onto image question
