@@ -308,7 +308,10 @@ var DDMARKER_QUESTION = function() {
  * This is the code for question rendering.
  */
 Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
+    pendingid: '',
     initializer : function() {
+        this.pendingid = 'qtype_ddmarker-' + Math.random().toString(36).slice(2); // Random string.
+        M.util.js_pending(this.pendingid);
         this.doc = this.doc_structure(this);
         this.poll_for_image_load(null, false, 0, this.after_image_load);
         this.doc.bg_img().after('load', this.poll_for_image_load, this,
@@ -316,6 +319,7 @@ Y.extend(DDMARKER_QUESTION, M.qtype_ddmarker.dd_base_class, {
     },
     after_image_load : function () {
         this.redraw_drags_and_drops();
+        M.util.js_complete(this.pendingid);
         Y.later(2000, this, this.redraw_drags_and_drops, [], true);
     },
     clone_new_drag_item : function (draghome, itemno) {

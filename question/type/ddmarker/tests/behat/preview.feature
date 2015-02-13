@@ -28,7 +28,6 @@ Feature: Preview a drag-drop onto image question
   Scenario: Preview a question using the mouse.
     When I click on "Preview" "link" in the "Drag markers" "table_row"
     And I switch to "questionpreview" window
-    And I wait "2" seconds
     # Odd, but the <br>s go to nothing, not a space.
     And I drag "OU" to "340,228" in the drag and drop markers question
     And I drag "Railway station" to "252,195" in the drag and drop markers question
@@ -42,7 +41,6 @@ Feature: Preview a drag-drop onto image question
   Scenario: Preview a question using the keyboard.
     When I click on "Preview" "link" in the "Drag markers" "table_row"
     And I switch to "questionpreview" window
-    And I wait "1" seconds
     And I type "up" "89" times on marker "Railway station" in the drag and drop markers question
     And I type "right" "21" times on marker "Railway station" in the drag and drop markers question
     And I press "Submit and finish"

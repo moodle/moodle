@@ -24,6 +24,8 @@ Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
     fp : null,
 
     initializer : function() {
+        var pendingid = 'qtype_ddmarker-form-' + Math.random().toString(36).slice(2); // Random string.
+        M.util.js_pending(pendingid);
         this.fp = this.file_pickers();
         var tn = Y.one(this.get('topnode'));
         tn.one('div.fcontainer').append(
@@ -37,7 +39,7 @@ Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
         this.stop_selector_events();
         this.set_options_for_drag_item_selectors();
         this.setup_form_events();
-        Y.later(500, this, this.update_drop_zones, [], true);
+        Y.later(500, this, this.update_drop_zones, [pendingid], true);
         Y.after(this.load_bg_image, M.form_filepicker, 'callback', this);
         this.load_bg_image();
     },
@@ -96,6 +98,7 @@ Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
             .setXY(this.doc.bg_img().getXY())
             .setStyle('width', this.doc.bg_img().get('width'))
             .setStyle('height', this.doc.bg_img().get('height'));
+        M.util.js_complete(this.pendingid);
     },
 
     get_coords : function (dropzoneno) {
