@@ -248,14 +248,17 @@ var DDIMAGEORTEXT_QUESTION = function() {
  * This is the code for question rendering.
  */
 Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
+    pendingid: '',
     initializer : function() {
+        this.pendingid = 'qtype_ddimageortext-' + Math.random().toString(36).slice(2); // Random string.
+        M.util.js_pending(this.pendingid);
         this.doc = this.doc_structure(this);
         this.poll_for_image_load(null, false, 0, this.create_all_drag_and_drops);
         this.doc.bg_img().after('load', this.poll_for_image_load, this,
                                                 false, 0, this.create_all_drag_and_drops);
         this.doc.drag_item_homes().after('load', this.poll_for_image_load, this,
                                                 false, 0, this.create_all_drag_and_drops);
-        Y.later(500, this, this.reposition_drags_for_question, [], true);
+        Y.later(500, this, this.reposition_drags_for_question, [pendingid], true);
     },
     create_all_drag_and_drops : function () {
         this.init_drops();
@@ -291,6 +294,7 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
                     v.on('dragchange', this.drop_zone_key_press, this);
                 }, this);
         }
+        M.util.js_complete(this.pendingid);
     },
     drop_zone_key_press : function (e) {
         switch (e.direction) {

@@ -28,7 +28,6 @@ Feature: Preview a drag-drop onto image question
   Scenario: Preview a question using the mouse.
     When I click on "Preview" "link" in the "Drag onto image" "table_row"
     And I switch to "questionpreview" window
-    And I wait "2" seconds
     # Odd, but the <br>s go to nothing, not a space.
     And I drag "mountainbelt" to place "1" in the drag and drop onto image question
     And I drag "continentalshelf" to place "2" in the drag and drop onto image question
@@ -46,7 +45,6 @@ Feature: Preview a drag-drop onto image question
   Scenario: Preview a question using the keyboard.
     When I click on "Preview" "link" in the "Drag onto image" "table_row"
     And I switch to "questionpreview" window
-    And I wait "1" seconds
     And I type "       " on place "1" in the drag and drop onto image question
     And I type "       " on place "2" in the drag and drop onto image question
     And I type "     " on place "3" in the drag and drop onto image question

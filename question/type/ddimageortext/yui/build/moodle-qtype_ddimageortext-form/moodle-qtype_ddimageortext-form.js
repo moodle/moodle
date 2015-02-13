@@ -24,9 +24,12 @@ var DDIMAGEORTEXT_FORM = function() {
 };
 
 Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
+    pendingid: '',
     fp : null,
 
     initializer : function() {
+        this.pendingid = 'qtype_ddimageortext-form-' + Math.random().toString(36).slice(2); // Random string.
+        M.util.js_pending(this.pendingid);
         this.fp = this.file_pickers();
         var tn = Y.one(this.get('topnode'));
         tn.one('div.fcontainer').append('<div class="ddarea"><div class="droparea"></div><div class="dragitems"></div>' +
