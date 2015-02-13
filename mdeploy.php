@@ -736,6 +736,7 @@ class worker extends singleton_pattern {
 
     /** @var array the whitelisted config options which can be queried. */
     private $validconfigoptions = array(
+        'dirroot'       => true,
         'dataroot'      => true,
     );
 
@@ -781,8 +782,13 @@ class worker extends singleton_pattern {
             }
             $this->log('MD5 checksum ok');
 
-            // Backup the current version of the plugin
+            // Check that the specified typeroot is within the current site's dirroot.
             $plugintyperoot = $this->input->get_option('typeroot');
+            if (strpos(realpath($plugintyperoot), realpath($this->get_env('dirroot'))) !== 0) {
+                throw new backup_folder_exception('Unable to backup the current version of the plugin (typeroot is invalid)');
+            }
+
+            // Backup the current version of the plugin
             $pluginname = $this->input->get_option('name');
             $sourcelocation = $plugintyperoot.'/'.$pluginname;
             $backuplocation = $this->backup_location($sourcelocation);
@@ -825,6 +831,10 @@ class worker extends singleton_pattern {
             $pluginname     = $this->input->get_option('name');
             $source         = $this->input->get_option('package');
             $md5remote      = $this->input->get_option('md5');
+
+            if (strpos(realpath($plugintyperoot), realpath($this->get_env('dirroot'))) !== 0) {
+                throw new backup_folder_exception('Unable to prepare the plugin location (typeroot is invalid)');
+            }
 
             // Check if the plugin location if available for us.
             $pluginlocation = $plugintyperoot.'/'.$pluginname;
