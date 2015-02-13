@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ddimageortext_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('fox', 'maths');
+        return array('fox', 'maths', 'xsection');
     }
 
     /**
@@ -126,5 +126,116 @@ class qtype_ddimageortext_test_helper extends question_test_helper {
         $dd->rightchoices = array(1 => 1, 2 => 2, 3 => 1, 4 => 2);
 
         return $dd;
+    }
+
+    /**
+     * @return stdClass date to create a ddimageortext question.
+     */
+    public function get_ddimageortext_question_form_data_xsection() {
+        global $CFG, $USER;
+        $fromform = new stdClass();
+
+        $bgdraftitemid = 0;
+        file_prepare_draft_area($bgdraftitemid, null, null, null, null);
+        $fs = get_file_storage();
+        $filerecord = new stdClass();
+        $filerecord->contextid = context_user::instance($USER->id)->id;
+        $filerecord->component = 'user';
+        $filerecord->filearea = 'draft';
+        $filerecord->itemid = $bgdraftitemid;
+        $filerecord->filepath = '/';
+        $filerecord->filename = 'oceanfloorbase.jpg';
+        $fs->create_file_from_pathname($filerecord, $CFG->dirroot .
+                '/question/type/ddimageortext/tests/fixtures/oceanfloorbase.jpg');
+
+        $fromform->name = 'Geography cross-section';
+        $fromform->questiontext = array(
+            'text' => '<p>Identify the features in this cross-section by dragging the labels into the boxes.</p>
+                       <p><em>Use the mouse to drag the boxed words into the empty boxes. Alternatively, use the tab key to select an empty box, then use the space key to cycle through the options.</em></p>',
+            'format' => FORMAT_HTML,
+        );
+        $fromform->defaultmark = 1;
+        $fromform->generalfeedback = array(
+            'text' => '<p>More information about the major features of the Earth\'s surface can be found in Block 3, Section 6.2.</p>',
+            'format' => FORMAT_HTML,
+        );
+        $fromform->bgimage = $bgdraftitemid;
+        $fromform->shuffleanswers = 0;
+        $fromform->drags = array(
+            array('dragitemtype' => 'word', 'draggroup' => '1', 'infinite' => '0'),
+            array('dragitemtype' => 'word', 'draggroup' => '1', 'infinite' => '0'),
+            array('dragitemtype' => 'word', 'draggroup' => '1', 'infinite' => '0'),
+            array('dragitemtype' => 'word', 'draggroup' => '1', 'infinite' => '0'),
+            array('dragitemtype' => 'word', 'draggroup' => '1', 'infinite' => '0'),
+            array('dragitemtype' => 'word', 'draggroup' => '1', 'infinite' => '0'),
+            array('dragitemtype' => 'word', 'draggroup' => '1', 'infinite' => '0'),
+            array('dragitemtype' => 'word', 'draggroup' => '1', 'infinite' => '0'),
+        );
+        $fromform->dragitem = array(0, 0, 0, 0, 0, 0, 0, 0);
+        $fromform->draglabel =
+        array(
+            'island<br/>arc',
+            'mid-ocean<br/>ridge',
+            'abyssal<br/>plain',
+            'continental<br/>rise',
+            'ocean<br/>trench',
+            'continental<br/>slope',
+            'mountain<br/>belt',
+            'continental<br/>shelf',
+        );
+        $fromform->drops = array(
+            array('xleft' => '53', 'ytop' => '17', 'choice' => '7', 'droplabel' => ''),
+            array('xleft' => '172', 'ytop' => '2', 'choice' => '8', 'droplabel' => ''),
+            array('xleft' => '363', 'ytop' => '31', 'choice' => '5', 'droplabel' => ''),
+            array('xleft' => '440', 'ytop' => '13', 'choice' => '3', 'droplabel' => ''),
+            array('xleft' => '115', 'ytop' => '74', 'choice' => '6', 'droplabel' => ''),
+            array('xleft' => '210', 'ytop' => '94', 'choice' => '4', 'droplabel' => ''),
+            array('xleft' => '310', 'ytop' => '87', 'choice' => '1', 'droplabel' => ''),
+            array('xleft' => '479', 'ytop' => '84', 'choice' => '2', 'droplabel' => ''),
+        );
+
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+
+        $fromform->penalty ='0.3333333';
+        $fromform->hint = array(
+            array(
+                'text' => '<p>Incorrect placements will be removed.</p>',
+                'format' => FORMAT_HTML,
+            ),
+            array(
+                'text' => '<ul>
+                           <li>The abyssal plain is a flat almost featureless expanse of ocean floor 4km to 6km below sea-level.</li>
+                           <li>The continental rise is the gently sloping part of the ocean floor beyond the continental slope.</li>
+                           <li>The continental shelf is the gently sloping ocean floor just offshore from the land.</li>
+                           <li>The continental slope is the relatively steep part of the ocean floor beyond the continental shelf.</li>
+                           <li>A mid-ocean ridge is a broad submarine ridge several kilometres high.</li>
+                           <li>A mountain belt is a long range of mountains.</li>
+                           <li>An island arc is a chain of volcanic islands.</li>
+                           <li>An oceanic trench is a deep trough in the ocean floor.</li>
+                           </ul>',
+                'format' => FORMAT_HTML,
+            ),
+            array(
+                'text' => '<p>Incorrect placements will be removed.</p>',
+                'format' => FORMAT_HTML,
+            ),
+            array(
+                'text' => '<ul>
+                           <li>The abyssal plain is a flat almost featureless expanse of ocean floor 4km to 6km below sea-level.</li>
+                           <li>The continental rise is the gently sloping part of the ocean floor beyond the continental slope.</li>
+                           <li>The continental shelf is the gently sloping ocean floor just offshore from the land.</li>
+                           <li>The continental slope is the relatively steep part of the ocean floor beyond the continental shelf.</li>
+                           <li>A mid-ocean ridge is a broad submarine ridge several kilometres high.</li>
+                           <li>A mountain belt is a long range of mountains.</li>
+                           <li>An island arc is a chain of volcanic islands.</li>
+                           <li>An oceanic trench is a deep trough in the ocean floor.</li>
+                           </ul>',
+                'format' => FORMAT_HTML,
+            ),
+        );
+        $fromform->hintclearwrong = array(1, 0, 1, 0);
+        $fromform->hintshownumcorrect = array(1, 1, 1, 1);
+
+        return $fromform;
     }
 }
