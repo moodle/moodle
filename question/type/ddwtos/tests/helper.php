@@ -76,6 +76,31 @@ class qtype_ddwtos_test_helper extends question_test_helper {
     }
 
     /**
+     * @return stdClass date to create a ddwtos question.
+     */
+    public function get_ddwtos_question_form_data_fox() {
+        $fromform = new stdClass();
+
+        $fromform->name = 'Drag-and-drop words into sentences question';
+        $fromform->questiontext = array('text' => 'The [[1]] brown [[2]] jumped over the [[3]] dog.', 'format' => FORMAT_HTML);
+        $fromform->defaultmark = 1.0;
+        $fromform->generalfeedback = array('text' => 'This sentence uses each letter of the alphabet.', 'format' => FORMAT_HTML);
+        $fromform->choices = array(
+            array('answer' => 'quick',     'choicegroup' => '1'),
+            array('answer' => 'fox',       'choicegroup' => '2'),
+            array('answer' => 'lazy',      'choicegroup' => '3'),
+            array('answer' => 'slow',      'choicegroup' => '1'),
+            array('answer' => 'dog',       'choicegroup' => '2'),
+            array('answer' => 'assiduous', 'choicegroup' => '3'),
+        );
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+        $fromform->shownumcorrect = 0;
+        $fromform->penalty = 0.3333333;
+
+        return $fromform;
+    }
+
+    /**
      * @return qtype_ddwtos_question
      */
     public function make_ddwtos_question_maths() {

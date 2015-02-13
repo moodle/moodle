@@ -1,12 +1,13 @@
 @ou @ou_vle @qtype @qtype_ddwtos
-Feature: Test importing questions of this type
-  As a manager/teacher I should be able to import questions from other courses
-  to this course
+Feature: Test importing drag and drop into text questions
+  As a teacher
+  In order to reuse drag and drop into text questions
+  I need to import them
 
   Background:
-     Given the following "users" exist:
+    Given the following "users" exist:
       | username | firstname | lastname | email                |
-      | teacher1 | T1        | Teacher1 | teacher1@moodle.com  |
+      | teacher1 | T1        | Teacher1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
@@ -16,9 +17,8 @@ Feature: Test importing questions of this type
     And I log in as "teacher1"
     And I follow "Course 1"
 
-  @javascript
-  Scenario: import a variable numeric sets question.
-    # Import sample file.
+  @javascript @_file_upload
+  Scenario: import drag and drop into text question.
     When I navigate to "Import" node in "Course administration > Question bank"
     And I set the field "id_format_xml" to "1"
     And I upload "question/type/ddwtos/tests/fixtures/testquestion.moodle.xml" file to "Import" filemanager
