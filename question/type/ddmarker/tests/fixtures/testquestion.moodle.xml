@@ -11,7 +11,7 @@
 <!-- question: 1  -->
   <question type="ddmarker">
     <name>
-      <text>Imported Drag and drop markers 001</text>
+      <text>Milton Keynes landmarks</text>
     </name>
     <questiontext format="html">
       <text>Please place the markers on the map of Milton Keynes and be aware that there is more than one railway station.</text>

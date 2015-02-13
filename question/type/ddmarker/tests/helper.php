@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ddmarker_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('fox', 'maths');
+        return array('fox', 'maths', 'mkmap');
     }
 
     /**
@@ -128,5 +128,70 @@ class qtype_ddmarker_test_helper extends question_test_helper {
         $dd->rightchoices = array(1 => 1, 2 => 1, 3 => 1);
 
         return $dd;
+    }
+
+    /**
+     * @return stdClass date to create a ddmarkers question.
+     */
+    public function get_ddmarker_question_form_data_mkmap() {
+        global $CFG, $USER;
+        $fromform = new stdClass();
+
+        $bgdraftitemid = 0;
+        file_prepare_draft_area($bgdraftitemid, null, null, null, null);
+        $fs = get_file_storage();
+        $filerecord = new stdClass();
+        $filerecord->contextid = context_user::instance($USER->id)->id;
+        $filerecord->component = 'user';
+        $filerecord->filearea = 'draft';
+        $filerecord->itemid = $bgdraftitemid;
+        $filerecord->filepath = '/';
+        $filerecord->filename = 'mkmap.png';
+        $fs->create_file_from_pathname($filerecord, $CFG->dirroot .
+                '/question/type/ddmarker/tests/fixtures/mkmap.png');
+
+        $fromform->name = 'Milton Keynes landmarks';
+        $fromform->questiontext = array(
+            'text' => 'Please place the markers on the map of Milton Keynes and be aware that there is more than one railway station.',
+            'format' => FORMAT_HTML,
+        );
+        $fromform->defaultmark = 1;
+        $fromform->generalfeedback = array(
+            'text' => 'The Open University is at the junction of Brickhill Street and Groveway. There are three railway stations, Wolverton, Milton Keynes Central and Bletchley.',
+            'format' => FORMAT_HTML,
+        );
+        $fromform->bgimage = $bgdraftitemid;
+        $fromform->shuffleanswers = 0;
+
+        $fromform->drags = array(
+            array('label' => 'OU', 'noofdrags' => 1),
+            array('label' => 'Railway station', 'noofdrags' => 3),
+        );
+
+        $fromform->drops = array(
+            array('shape' => 'Circle', 'coords' => '322,213;10', 'choice' => 1),
+            array('shape' => 'Circle', 'coords' => '144,84;10', 'choice' => 2),
+            array('shape' => 'Circle', 'coords' => '195,180;10', 'choice' => 2),
+            array('shape' => 'Circle', 'coords' => '267,302;10', 'choice' => 2),
+        );
+
+        test_question_maker::set_standard_combined_feedback_form_data($fromform);
+
+        $fromform->penalty ='0.3333333';
+        $fromform->hint = array(
+            array(
+                'text' => 'You are trying to place four markers on the map.',
+                'format' => FORMAT_HTML,
+            ),
+            array(
+                'text' => 'You are trying to mark three railway stations.',
+                'format' => FORMAT_HTML,
+            ),
+        );
+        $fromform->hintshownumcorrect = array(1, 1);
+        $fromform->hintclearwrong = array(0, 1);
+        $fromform->hintoptions = array(0, 1);
+
+        return $fromform;
     }
 }
