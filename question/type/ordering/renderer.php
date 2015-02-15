@@ -64,19 +64,22 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         } else {
             $script = "\n";
             $script .= "//<![CDATA[\n";
-            $script .= "$(function() {\n";
-            $script .= "    $('#$sortable_id').sortable({\n";
-            $script .= "        update: function(event, ui) {\n";
-            $script .= "            var ItemsOrder = $(this).sortable('toArray').toString();\n";
-            $script .= "            $('#$response_id').attr('value', ItemsOrder);\n";
-            $script .= "        }\n";
+            $script .= "if (window.$) {\n"; // $ is an alias for jQuery
+            $script .= "    $(function() {\n";
+            $script .= "        $('#$sortable_id').sortable({\n";
+            $script .= "            update: function(event, ui) {\n";
+            $script .= "                var ItemsOrder = $(this).sortable('toArray').toString();\n";
+            $script .= "                $('#$response_id').attr('value', ItemsOrder);\n";
+            $script .= "            },\n";
+            $script .= "            opacity: 0.6\n";
+            $script .= "        });\n";
+            $script .= "        $('#$sortable_id').disableSelection();\n";
             $script .= "    });\n";
-            $script .= "    $('#$sortable_id').disableSelection();\n";
-            $script .= "});\n";
-            $script .= "$(document).ready(function() {\n";
-            $script .= "    var ItemsOrder = $('#$sortable_id').sortable('toArray').toString();\n";
-            $script .= "    $('#$response_id').attr('value', ItemsOrder);\n";
-            $script .= "});\n";
+            $script .= "    $(document).ready(function() {\n";
+            $script .= "        var ItemsOrder = $('#$sortable_id').sortable('toArray').toString();\n";
+            $script .= "        $('#$response_id').attr('value', ItemsOrder);\n";
+            $script .= "    });\n";
+            $script .= "}\n";
             $script .= "//]]>\n";
             $result .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
         }

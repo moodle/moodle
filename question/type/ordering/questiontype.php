@@ -47,19 +47,54 @@ class qtype_ordering extends question_type {
      * It also includes the jquery files required for this plugin
      */
     public function find_standard_scripts() {
-        global $PAGE;
+        global $CFG, $PAGE;
 
         // include "script.js" and/or "script.php" in the normal way
         parent::find_standard_scripts();
 
-        // include jquery files
+        $version = '';
+        $min_version = '1.11.0'; // Moodle 2.7
+        $search = '/jquery-([0-9.]+)(\.min)?\.js$/';
+
+        // make sure jQuery version is high enough
+        // (required if Quiz is in a popup window)
+        //     Moodle 2.5 has jQuery 1.9.1
+        //     Moodle 2.6 has jQuery 1.10.2
+        //     Moodle 2.7 has jQuery 1.11.0
+        //     Moodle 2.8 has jQuery 1.11.1
+        //     Moodle 2.9 has jQuery 1.11.1
         if (method_exists($PAGE->requires, 'jquery')) {
             // Moodle >= 2.5
+            if ($version=='') {
+                include($CFG->dirroot.'/lib/jquery/plugins.php');
+                if (isset($plugins['jquery']['files'][0])) {
+                    if (preg_match($search, $plugins['jquery']['files'][0], $matches)) {
+                        $version = $matches[1];
+                    }
+                }
+            }
+            if ($version=='') {
+                $filename = $CFG->dirroot.'/lib/jquery/jquery*.js';
+                foreach (glob($filename) as $filename) {
+                    if (preg_match($search, $filename, $matches)) {
+                        $version = $matches[1];
+                        break;
+                    }
+                }
+            }
+            if (version_compare($version, $min_version) < 0) {
+                $version = '';
+            }
+        }
+
+        // include jquery files
+        if ($version) {
+            // Moodle >= 2.7
             $PAGE->requires->jquery();
             $PAGE->requires->jquery_plugin('ui');
             $PAGE->requires->jquery_plugin('ui.touch-punch', 'qtype_ordering');
         } else {
-            // Moodle <= 2.4
+            // Moodle <= 2.6
             $jquery = '/question/type/' . $this->name().'/jquery';
             $PAGE->requires->js($jquery.'/jquery.js', true);
             $PAGE->requires->js($jquery.'/jquery-ui.js', true);
