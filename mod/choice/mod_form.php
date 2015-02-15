@@ -79,6 +79,10 @@ class mod_choice_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'timeclose', get_string("choiceclose", "choice"));
         $mform->disabledIf('timeclose', 'timerestrict');
 
+        $mform->addElement('advcheckbox', 'showpreview', get_string('showpreview', 'choice'));
+        $mform->addHelpButton('showpreview', 'showpreview', 'choice');
+        $mform->disabledIf('showpreview', 'timerestrict');
+
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'resultshdr', get_string('results', 'choice'));
 

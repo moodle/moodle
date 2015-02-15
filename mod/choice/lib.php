@@ -232,6 +232,10 @@ function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
         $cdisplay['allowupdate'] = true;
     }
 
+    if ($choice->showpreview && $choice->timeopen > time()) {
+        $cdisplay['previewonly'] = true;
+    }
+
     return $cdisplay;
 }
 

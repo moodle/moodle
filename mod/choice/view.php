@@ -128,9 +128,13 @@ if (isloggedin() && (!empty($current)) &&
 $choiceopen = true;
 if ($choice->timeclose !=0) {
     if ($choice->timeopen > $timenow ) {
-        echo $OUTPUT->box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "generalbox notopenyet");
-        echo $OUTPUT->footer();
-        exit;
+        if ($choice->showpreview) {
+            echo $OUTPUT->box(get_string('previewonly', 'choice', userdate($choice->timeopen)), 'generalbox alert');
+        } else {
+            echo $OUTPUT->box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "generalbox notopenyet");
+            echo $OUTPUT->footer();
+            exit;
+        }
     } else if ($timenow > $choice->timeclose) {
         echo $OUTPUT->box(get_string("expired", "choice", userdate($choice->timeclose)), "generalbox expired");
         $choiceopen = false;
