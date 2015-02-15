@@ -25,8 +25,8 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
-$plugin->version = 2015020508;
+$plugin->version = 2015021108;
 $plugin->component = 'local_kaltura';
-$plugin->release = 'Kaltura release 4.0.03';
+$plugin->release = 'Kaltura release 4.0.04';
 $plugin->requires = 2014050800;
 $plugin->maturity = MATURITY_STABLE;

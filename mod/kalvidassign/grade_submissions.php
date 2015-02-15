@@ -61,8 +61,6 @@ echo $OUTPUT->header();
 
 require_capability('mod/kalvidassign:gradesubmission', context_module::instance($cm->id));
 
-add_to_log($course->id, 'kalvidassign', 'view submissions page', 'grade_submissions.php?cmid='.$cm->id, $kalvidassignobj->id, $cm->id);
-
 $prefform =  new kalvidassign_gradepreferences_form(null, array('cmid' => $cm->id, 'groupmode' => $cm->groupmode));
 $data = null;
 
@@ -143,9 +141,6 @@ if (!empty($gradedata->mode)) {
 
                 kalvidassign_grade_item_update($kalvidassignobj, $grade);
 
-                // Add to log only if updating.
-                add_to_log($kalvidassignobj->course, 'kalvidassign', 'update grades', 'grade_submissions.php?cmid='.$cm->id, $cm->id);
-
             }
 
         } else {
@@ -186,9 +181,6 @@ if (!empty($gradedata->mode)) {
                 $kalvidassignobj->cmidnumber = $cm->idnumber;
 
                 kalvidassign_grade_item_update($kalvidassignobj, $grade);
-
-                // Add to log only if updating
-                add_to_log($kalvidassignobj->course, 'kalvidassign', 'update grades', 'grade_submissions.php?cmid='.$cm->id, $cm->id);
 
             }
 

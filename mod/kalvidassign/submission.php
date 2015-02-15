@@ -101,7 +101,6 @@ if ($submission) {
         echo $OUTPUT->single_button($url, $continue, 'post');
         echo html_writer::end_tag('center');
 
-        add_to_log($course->id, 'kalvidassign', 'submit', 'view.php?id='.$cm->id, $kalvidassignobj->id, $cm->id);
     } else {
         notice(get_string('failedtoinsertsubmission', 'kalvidassign'), $url, $course);
     }

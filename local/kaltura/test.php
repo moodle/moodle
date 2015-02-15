@@ -7,7 +7,7 @@ global $CFG, $USER, $PAGE;
 
 require_login();
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 
 $url = new moodle_url('/local/kaltura/test.php');
 

@@ -57,8 +57,6 @@ $PAGE->add_body_class($pageclass);
 
 $context = $PAGE->context;
 
-add_to_log($course->id, 'kalvidres', 'view video resource', 'view.php?id='.$cm->id, $kalvidres->id, $cm->id);
-
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
