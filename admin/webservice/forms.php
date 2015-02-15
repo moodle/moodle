@@ -157,6 +157,13 @@ class external_service_form extends moodleform {
 
         $errors = parent::validation($data, $files);
 
+        // Add field validation check for duplicate name.
+        if (!empty($data['name'])) {
+            if ($DB->record_exists('external_services', array('name' => $data['name']))) {
+                $errors['name'] = get_string('nameexists', 'webservice');
+            }
+        }
+
         // Add field validation check for duplicate shortname.
         // Allow duplicated "empty" shortnames.
         if (!empty($data['shortname'])) {
