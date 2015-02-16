@@ -177,6 +177,25 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // We reset this field, because we do not want to compare it.
         $firsttaskrecord->nextruntime = '0';
 
+        // Delete a task to simulate the fact that its new.
+        $secondtask = next($defaulttasks);
+        $DB->delete_records('task_scheduled', array('classname' => '\\' . trim(get_class($secondtask), '\\')));
+        $this->assertFalse(\core\task\manager::get_scheduled_task(get_class($secondtask)));
+
+        // Edit a task to simulate a change in its definition (as if it was not customised).
+        $thirdtask = next($defaulttasks);
+        $thirdtask->set_minute('1');
+        $thirdtask->set_hour('2');
+        $thirdtask->set_month('3');
+        $thirdtask->set_day_of_week('4');
+        $thirdtask->set_day('5');
+        $thirdtaskbefore = \core\task\manager::get_scheduled_task(get_class($thirdtask));
+        $thirdtaskbefore->set_next_run_time(null);      // Ignore this value when comparing.
+        \core\task\manager::configure_scheduled_task($thirdtask);
+        $thirdtask = \core\task\manager::get_scheduled_task(get_class($thirdtask));
+        $thirdtask->set_next_run_time(null);            // Ignore this value when comparing.
+        $this->assertNotEquals($thirdtaskbefore, $thirdtask);
+
         // Now call reset on all the tasks.
         \core\task\manager::reset_scheduled_tasks_for_component('moodle');
 
@@ -191,6 +210,17 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         // Assert a customised task was not altered by reset.
         $this->assertEquals($firsttaskrecord, $newfirsttaskrecord);
+
+        // Assert that the second task was added back.
+        $secondtaskafter = \core\task\manager::get_scheduled_task(get_class($secondtask));
+        $secondtaskafter->set_next_run_time(null);   // Do not compare the nextruntime.
+        $secondtask->set_next_run_time(null);
+        $this->assertEquals($secondtask, $secondtaskafter);
+
+        // Assert that the third task edits were overridden.
+        $thirdtaskafter = \core\task\manager::get_scheduled_task(get_class($thirdtask));
+        $thirdtaskafter->set_next_run_time(null);
+        $this->assertEquals($thirdtaskbefore, $thirdtaskafter);
 
         // Assert we have the same number of tasks.
         $this->assertEquals($initcount, $finalcount);
