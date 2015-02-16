@@ -4210,5 +4210,11 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015022500.00);
     }
 
+    if ($oldversion < 2015030400.00) {
+        // We have long since switched to storing timemodified per hub rather than a single 'registered' timestamp.
+        unset_config('registered');
+        upgrade_main_savepoint(true, 2015030400.00);
+    }
+
     return true;
 }

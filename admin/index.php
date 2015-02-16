@@ -88,7 +88,6 @@ core_component::get_core_subsystems();
 require_once($CFG->libdir.'/adminlib.php');    // various admin-only functions
 require_once($CFG->libdir.'/upgradelib.php');  // general upgrade/install related functions
 
-$id             = optional_param('id', '', PARAM_TEXT);
 $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
 $confirmrelease = optional_param('confirmrelease', 0, PARAM_BOOL);
 $confirmplugins = optional_param('confirmplugincheck', 0, PARAM_BOOL);
@@ -523,11 +522,6 @@ if (empty($site->shortname)) {
     // remove settings that we want uninitialised
     unset_config('registerauth');
     redirect('upgradesettings.php?return=site');
-}
-
-// Check if we are returning from moodle.org registration and if so, we mark that fact to remove reminders
-if (!empty($id) and $id == $CFG->siteidentifier) {
-    set_config('registered', time());
 }
 
 // setup critical warnings before printing admin tree block
