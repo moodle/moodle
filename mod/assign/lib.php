@@ -469,7 +469,7 @@ function assign_get_mysubmission_details_for_print_overview(&$mysubmissions, $sq
                                                       s.latest = 1 AND
                                                       s.assignment = a.id AND
                                                       s.userid = ?', $dbparams);
-}
+    }
 
     $submitdetails = '';
     $submitdetails .= '<div class="details">';
