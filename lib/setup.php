@@ -86,11 +86,11 @@ if (defined('BEHAT_SITE_RUNNING')) {
     if (defined('BEHAT_CURRENT_RUN') && BEHAT_CURRENT_RUN) {
         $behatrunprocess = BEHAT_CURRENT_RUN;
     } else if (!empty($_SERVER['REMOTE_ADDR'])) {
-        if (preg_match('#/' . BEHAT_PARALLEL_SITE_WWW_SUFFIX . '(.+?)/#', $_SERVER['REQUEST_URI'])) {
+        if (preg_match('#/' . BEHAT_PARALLEL_SITE_NAME . '(.+?)/#', $_SERVER['REQUEST_URI'])) {
             $dirrootrealpath = str_replace("\\", "/", realpath($CFG->dirroot));
             $serverrealpath = str_replace("\\", "/", realpath($_SERVER['SCRIPT_FILENAME']));
             $afterpath = str_replace($dirrootrealpath.'/', '', $serverrealpath);
-            if (!$behatrunprocess = preg_filter("#.*/" . BEHAT_PARALLEL_SITE_WWW_SUFFIX . "(.+?)/$afterpath#", '$1',
+            if (!$behatrunprocess = preg_filter("#.*/" . BEHAT_PARALLEL_SITE_NAME . "(.+?)/$afterpath#", '$1',
                     $_SERVER['SCRIPT_FILENAME'])) {
                 throw new Exception("Unable to determine behat process [afterpath=" . $afterpath .
                         ", scriptfilename=" . $_SERVER['SCRIPT_FILENAME'] . "]!");
@@ -129,7 +129,8 @@ if (defined('BEHAT_SITE_RUNNING')) {
                     if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store' or is_numeric($file)) {
                         continue;
                     }
-                    behat_error(BEHAT_EXITCODE_CONFIG, "$CFG->behat_dataroot directory is not empty, ensure this is the directory where you want to install behat test dataroot");
+                    behat_error(BEHAT_EXITCODE_CONFIG, "$CFG->behat_dataroot directory is not empty, ensure this is the " .
+                        "directory where you want to install behat test dataroot");
                 }
                 closedir($dh);
                 unset($dh);

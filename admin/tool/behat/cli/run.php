@@ -62,13 +62,13 @@ list($options, $unrecognised) = cli_get_params(
 $help = "
 Behat utilities to run behat tests in parallel
 Options:
--t, --tags{{color_green}}         Tags to execute.
--p, --profile{{color_green}}      Profile to execute.
---stop-on-failure{{color_green}}  Stop on failure in any parallel run.
---verbose{{color_green}}          Verbose output
---replace{{color_green}}          Replace args string with run process number, useful for output.
+-t, --tags         Tags to execute.
+-p, --profile      Profile to execute.
+--stop-on-failure  Stop on failure in any parallel run.
+--verbose          Verbose output
+--replace          Replace args string with run process number, useful for output.
 
--h, --help{{color_green}}         Print out this help
+-h, --help         Print out this help
 
 Example from Moodle root directory:
 \$ php admin/tool/behat/cli/run.php --parallel=2
@@ -85,21 +85,11 @@ if (!empty($options['help'])) {
 $parallelrun = behat_config_manager::get_parallel_test_runs(1);
 
 // Capture signals and ensure we clean symlinks.
-pcntl_signal(SIGTERM, "signal_handler");
-pcntl_signal(SIGINT, "signal_handler");
-/**
- * Signal handler for terminal exit.
- *
- * @param $signal
- */
-function signal_handler($signal) {
-    switch ($signal) {
-        case SIGTERM:
-        case SIGKILL:
-        case SIGINT:
-            // Remove site symlink if necessary.
-            behat_config_manager::drop_parallel_site_links();
-            exit(1);
+if (extension_loaded('pcntl')) {
+    $disabled = explode(',', ini_get('disable_functions'));
+    if (!in_array('pcntl_signal', $disabled)) {
+        pcntl_signal(SIGTERM, "signal_handler");
+        pcntl_signal(SIGINT, "signal_handler");
     }
 }
 
@@ -109,7 +99,7 @@ if (empty($parallelrun)) {
         $runtestscommand = behat_command::get_behat_command();
         $runtestscommand .= ' --config ' . behat_config_manager::get_behat_cli_config_filepath();
         exec("php $runtestscommand", $output, $code);
-        echo implode("\n", $output) . "\n";
+        echo implode(PHP_EOL, $output) . PHP_EOL;
         exit($code);
     } else {
         exit(1);
@@ -118,6 +108,7 @@ if (empty($parallelrun)) {
 
 // Create site symlink if necessary.
 if (!behat_config_manager::create_parallel_site_links()) {
+    echo "Check permissions. If on windows, make sure you are running this command as admin" . PHP_EOL;
     exit(1);
 }
 
@@ -131,19 +122,8 @@ array_walk($unrecognised, function (&$v) {
 });
 $extraopts = implode(' ', $unrecognised);
 
-$checkfail = array();
-$outputs = array();
-$handles = array();
-$pipe2i = array();
-$exits = array();
-$unused = null;
-$linelencnt = 0;
-$procs = array();
-$behatdataroot = $CFG->behat_dataroot;
-
 $tags = '';
-// Options parameters to be added to each run.
-$myopts = !empty($options['replace']) ? str_replace($options['replace'], $i, $extraopts) : $extraopts;
+
 if ($options['profile']) {
     $profile = $options['profile'];
     if (empty($CFG->behat_config[$profile]['filters']['tags'])) {
@@ -151,10 +131,10 @@ if ($options['profile']) {
         exit(1);
     }
     $tags = $CFG->behat_config[$profile]['filters']['tags'];
-    $myopts .= '--profile=\'' . $profile . "'";
+    $extraopts .= '--profile=\'' . $profile . "'";
 } else if ($options['tags']) {
     $tags = $options['tags'];
-    $myopts .= '--tags=' . $tags;
+    $extraopts .= '--tags="' . $tags . '"';
 }
 
 // Update config file if tags defined.
@@ -165,7 +145,7 @@ if ($tags) {
     for ($i = 1; $i <= $parallelrun; $i++) {
         $CFG->behatrunprocess = $i;
         $CFG->behat_dataroot = $behatdataroot . $i;
-        $CFG->behat_wwwroot = $behatwwwroot . "/" . BEHAT_PARALLEL_SITE_WWW_SUFFIX . $i;
+        $CFG->behat_wwwroot = $behatwwwroot . "/" . BEHAT_PARALLEL_SITE_NAME . $i;
         behat_config_manager::update_config_file('', true, $tags);
     }
     $CFG->behat_dataroot = $behatdataroot;
@@ -173,140 +153,196 @@ if ($tags) {
     unset($CFG->behatrunprocess);
 }
 
+$cmds = array();
+echo "Running ${parallelrun} parallel behat sites:" . PHP_EOL;
 for ($i = 1; $i <= $parallelrun; $i++) {
     $CFG->behatrunprocess = $i;
+
+    // Options parameters to be added to each run.
+    $myopts = !empty($options['replace']) ? str_replace($options['replace'], $i, $extraopts) : $extraopts;
+
     $behatcommand = behat_command::get_behat_command();
     $behatconfigpath = behat_config_manager::get_behat_cli_config_filepath($i);
 
     // Command to execute behat run.
-    $cmd = $behatcommand .' --config ' . $behatconfigpath . " " . $myopts;
-
-    echo "[" . BEHAT_PARALLEL_SITE_WWW_SUFFIX . $i . "] ". $cmd . "\n";
-
-    list($handle, $pipes) = cli_execute($cmd, true);
-    @fclose($pipes[0]);
-    unset($pipes[0]);
-    $exits[$i] = 1;
-    $handles[$i] = array($handle, $pipes[1], $pipes[2]);
-    $procs[$i] = $handle;
-    $checkfail[$i] = false;
-    $outputs[$i] = array('');
-    $pipe2i[(int) $pipes[1]] = $i;
-    $pipe2i[(int) $pipes[2]] = $i;
-    stream_set_blocking($pipes[1], 0);
-    stream_set_blocking($pipes[2], 0);
+    $cmds[BEHAT_PARALLEL_SITE_NAME . $i] = $behatcommand . ' --config ' . $behatconfigpath . " " . $myopts;
+    echo "[" . BEHAT_PARALLEL_SITE_NAME . $i . "] " . $cmds[BEHAT_PARALLEL_SITE_NAME . $i] . PHP_EOL;
 }
 
-$progresscount = 0;
-while (!empty($procs)) {
-    usleep(10000);
-
-    foreach ($handles as $i => $p) {
-        if (!($status = @proc_get_status($p[0])) || !$status['running']) {
-            if ($exits[$i] !== 0) {
-                $exits[$i] = !empty($status) ? $status['exitcode'] : 1;
-            }
-            unset($procs[$i]);
-            unset($handles[$i][0]);
-            $last = array_pop($outputs[$i]);
-            for ($l = 2; $l >= 1; $l--) {
-                while ($part = @fread($handles[$i][$l], 8192)) {
-                    $last .= $part;
-                }
-            }
-            $outputs[$i] = array_merge($outputs[$i], explode("\n", $last));
-        }
-    }
-
-    $ready = array();
-    foreach ($handles as $i => $set) {
-        $ready[] = $set[1];
-        $ready[] = $set[2];
-    }
-
-    // Poll for any process with output or ended.
-    if (!$result = @stream_select($ready, $unused, $unused, 1)) {
-        // Nothing; try again.
-        continue;
-    }
-    if (!$fh = reset($ready)) {
-        continue;
-    }
-
-    $i = $pipe2i[(int) $fh];
-    $last = array_pop($outputs[$i]);
-    $read = fread($fh, 4096);
-    $newlines = explode("\n", $last.$read);
-    $outputs[$i] = array_merge($outputs[$i], $newlines);
-
-    if (!$checkfail[$i]) {
-        foreach ($newlines as $l => $line) {
-            unset($newlines[$l]);
-            if (preg_match('#^Started at [\d\-]+#', $line) || (strlen($line) > 3 &&
-                    preg_match('#^\s*([FS\.\-]+)(?:\s+\d+)?\s*$#', $line))) {
-                $checkfail[$i] = true;
-                break;
-            }
-        }
-    }
-    if ($progress = preg_filter('#^\s*([FUS\.\-]+)(?:\s+\d+)?\s*$#', '$1', $newlines)) {
-        if ($checkfail[$i] && preg_filter('#^\s*[S\.\-]*[FU][S\.\-]*(?:\s+\d+)?\s*$#', '$1', $progress)) {
-            $exits[$i] = 1;
-            if ($options['stop-on-failure']) {
-                foreach ($handles as $l => $p) {
-                    $exits[$l] = $l != $i ? 0 : $exits[$i];
-                    @proc_terminate($p[0], SIGINT);
-                }
-            }
-        }
-    }
-    // Process has gone, assume this is the last output for it.
-    if (empty($procs[$i])) {
-        unset($handles[$i]);
-    }
-    if (empty($checkfail[$i]) || !($update = preg_filter('#^\s*([FS\.\-]+)(?:\s+\d+)?\s*$#', '$1', $read))) {
-        continue;
-    }
-    while ($update) {
-        $part = substr($update, 0, 70 - $linelencnt);
-        $update = substr($update, strlen($part));
-        $linelencnt += strlen($part);
-        echo $part;
-        if ($linelencnt >= 70) {
-            $progresscount += 70;
-            echo " $progresscount\n";
-            $linelencnt = 0;
-        }
-    }
-}
-echo "\n\n";
-
-$exits = array_filter($exits,
-    function ($v) {
-        return $v !== 0;
-    }
-);
-
-if ($exits || $options['verbose']) {
-    echo "Exit codes: ".implode(" ", $exits)."\n\n";
-    foreach ($outputs as $i => $output) {
-        unset($outputs[$i]);
-        if (!end($output)) {
-            array_pop($output);
-        }
-        $prefix = "[" . BEHAT_PARALLEL_SITE_WWW_SUFFIX . $i . "] ";
-        array_walk($output, function (&$l) use ($prefix) {
-            $l = $prefix.$l;
-        });
-        echo implode("\n", $output)."\n\n";
-    }
-    $failed = true;
+if (empty($cmds)) {
+    echo "No commands to execute " . PHP_EOL;
+    exit(1);
 }
 
+// Execute all commands.
+$processes = cli_execute_parallel($cmds);
+$stoponfail = empty($options['stop-on-failure']) ? false : true;
+
+// Print header.
+print_process_start_info($processes);
+
+// Print combined run o/p from processes.
+$exitcodes = print_combined_run_output($processes, $stoponfail);
 $time = round(microtime(true) - $time, 1);
-echo "Finished in {$time}s\n";
+echo "Finished in " . gmdate("G\h i\m s\s", $time) . PHP_EOL . PHP_EOL;
+
+
+// Print exit info from each run.
+$status = false;
+foreach ($exitcodes as $exitcode) {
+    $status = (bool)$status || (bool)$exitcode;
+}
+
+// Show exit code from each process, if any process failed.
+if ($status) {
+    echo "Exit codes: " . implode(" ", $exitcodes) . PHP_EOL;
+    echo "To re-run failed processes, you can use following commands:" . PHP_EOL;
+    foreach ($cmds as $name => $cmd) {
+        if (!empty($exitcodes[$name])) {
+            echo "[" . $name . "] " . $cmd . PHP_EOL;
+        }
+    }
+    echo PHP_EOL;
+}
+
+// Run finished. Show exit code and output from individual process.
+$verbose = empty($options['verbose']) ? false : true;
+$verbose = $verbose || $status;
+print_each_process_info($processes, $verbose);
 
 // Remove site symlink if necessary.
 behat_config_manager::drop_parallel_site_links();
 
-exit(!empty($failed) ? 1 : 0);
+exit((int) $status);
+
+/**
+ * Signal handler for terminal exit.
+ *
+ * @param int $signal signal number.
+ */
+function signal_handler($signal) {
+    switch ($signal) {
+        case SIGTERM:
+        case SIGKILL:
+        case SIGINT:
+            // Remove site symlink if necessary.
+            behat_config_manager::drop_parallel_site_links();
+            exit(1);
+    }
+}
+
+/**
+ * Prints header from the first process.
+ *
+ * @param array $processes list of processes to loop though.
+ */
+function print_process_start_info($processes) {
+    $printed = false;
+    // Keep looping though processes, till we get first process o/p.
+    while (!$printed) {
+        usleep(10000);
+        foreach ($processes as $name => $process) {
+            // Exit if any process has stopped.
+            if (!$process->isRunning()) {
+                $printed = true;
+                break;
+            }
+
+            $op = explode(PHP_EOL, $process->getOutput());
+            if (count($op) >= 3) {
+                foreach ($op as $line) {
+                    if (trim($line) && (strpos($line, '.') !== 0)) {
+                        echo $line . PHP_EOL;
+                    }
+                }
+                $printed = true;
+            }
+        }
+    }
+}
+
+/**
+ * Loop though all processes and print combined o/p
+ *
+ * @param array $processes list of processes to loop though.
+ * @param bool $stoponfail Stop all processes and exit if failed.
+ * @return array list of exit codes from all processes.
+ */
+function print_combined_run_output($processes, $stoponfail = false) {
+    $exitcodes = array();
+    $maxdotsonline = 70;
+    $remainingprintlen = $maxdotsonline;
+    $progresscount = 0;
+    while (count($exitcodes) != count($processes)) {
+        usleep(10000);
+        foreach ($processes as $name => $process) {
+            if ($process->isRunning()) {
+                $op = $process->getIncrementalOutput();
+                if (trim($op)) {
+                    $update = preg_filter('#^\s*([FS\.\-]+)(?:\s+\d+)?\s*$#', '$1', $op);
+                    // Exit process if anything fails.
+                    if ($stoponfail && (strpos($update, 'F') !== false)) {
+                        $process->stop(0);
+                    }
+
+                    $strlentoprint = strlen($update);
+
+                    // If not enough dots printed on line then just print.
+                    if ($strlentoprint < $remainingprintlen) {
+                        echo $update;
+                        $remainingprintlen = $remainingprintlen - $strlentoprint;
+                    } else if ($strlentoprint == $remainingprintlen) {
+                        $progresscount += $maxdotsonline;
+                        echo $update ." " . $progresscount . PHP_EOL;
+                        $remainingprintlen = $maxdotsonline;
+                    } else {
+                        while ($part = substr($update, 0, $remainingprintlen) > 0) {
+                            $progresscount += $maxdotsonline;
+                            echo $part . " " . $progresscount . PHP_EOL;
+                            $update = substr($update, $remainingprintlen);
+                            $remainingprintlen = $maxdotsonline;
+                        }
+                    }
+                }
+            } else {
+                $exitcodes[$name] = $process->getExitCode();
+                if ($stoponfail && ($exitcodes[$name] != 0)) {
+                    foreach ($processes as $l => $p) {
+                        $exitcodes[$l] = -1;
+                        $process->stop(0);
+                    }
+                }
+            }
+        }
+    }
+
+    echo PHP_EOL;
+    return $exitcodes;
+}
+
+/**
+ * Loop though all processes and print combined o/p
+ *
+ * @param array $processes list of processes to loop though.
+ * @param bool $verbose Show verbose output for each process.
+ */
+function print_each_process_info($processes, $verbose = false) {
+    foreach ($processes as $name => $process) {
+        echo "**************** [" . $name . "] ****************" . PHP_EOL;
+        if ($verbose) {
+            echo $process->getOutput();
+            echo $process->getErrorOutput();
+        } else {
+            $op = explode(PHP_EOL, $process->getOutput());
+            foreach ($op as $line) {
+                // Don't print progress .
+                if (trim($line) && (strpos($line, '.') !== 0) && (strpos($line, 'Moodle ') !== 0) &&
+                    (strpos($line, 'Server OS ') !== 0) && (strpos($line, 'Started at ') !== 0) &&
+                    (strpos($line, 'Browser specific fixes ') !== 0)) {
+                    echo $line . PHP_EOL;
+                }
+            }
+        }
+        echo PHP_EOL;
+    }
+}

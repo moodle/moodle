@@ -75,20 +75,30 @@ if (!empty($options['help'])) {
 }
 
 // Check which util file to call.
-$utilfile = 'util.php';
+$utilfile = 'util_single_run.php';
 $paralleloption = "";
 // If parallel run then use utilparallel.
 if ($options['parallel']) {
-    $utilfile = 'utilparallel.php';
-    $paralleloption = " --parallel=".$options['parallel'];
+    $utilfile = 'util.php';
+    $paralleloption = "--parallel=" . $options['parallel'];
+
+    // If maxruns then add that option.
+    if ($options['maxruns']) {
+        $paralleloption .= " --maxruns=" . $options['maxruns'];
+    }
 }
 
 // Changing the cwd to admin/tool/behat/cli.
 $cwd = getcwd();
-chdir(__DIR__);
 $output = null;
 
-exec("php $utilfile --diag $paralleloption", $output, $code);
+// If behat dependencies not downloaded then do it first, else symfony/process can't be used.
+if ($options['parallel'] && !file_exists(__DIR__ . "/../../../../vendor/autoload.php")) {
+    $code = BEHAT_EXITCODE_COMPOSER;
+} else {
+    chdir(__DIR__);
+    exec("php $utilfile --diag $paralleloption", $output, $code);
+}
 
 // Check if composer needs to be updated.
 if (($code == BEHAT_EXITCODE_INSTALL) || $code == BEHAT_EXITCODE_REINSTALL || $code == BEHAT_EXITCODE_COMPOSER) {
@@ -116,6 +126,7 @@ if ($code == 0) {
         exit($code);
     }
 
+    chdir(__DIR__);
     passthru("php $utilfile --install $paralleloption", $code);
     if ($code != 0) {
         chdir($cwd);
@@ -140,8 +151,10 @@ if ($code == 0) {
 }
 
 // Enable editing mode according to config.php vars.
+chdir(__DIR__);
 passthru("php $utilfile --enable $paralleloption", $code);
 if ($code != 0) {
+    echo "Error enabling site" . PHP_EOL;
     chdir($cwd);
     exit($code);
 }

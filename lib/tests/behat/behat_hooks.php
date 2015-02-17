@@ -167,11 +167,10 @@ class behat_hooks extends behat_base {
      * Gives access to moodle codebase, to keep track of feature start time.
      *
      * @param FeatureEvent $event event fired before feature.
-     * @static
      * @BeforeFeature
      */
     public static function before_feature(FeatureEvent $event) {
-        if (!defined('BEHAT_FEATURE_TIMING')) {
+        if (!defined('BEHAT_FEATURE_TIMING_FILE')) {
             return;
         }
         $file = $event->getFeature()->getFile();
@@ -182,11 +181,10 @@ class behat_hooks extends behat_base {
      * Gives access to moodle codebase, to keep track of feature end time.
      *
      * @param FeatureEvent $event event fired after feature.
-     * @static
      * @AfterFeature
      */
     public static function after_feature(FeatureEvent $event) {
-        if (!defined('BEHAT_FEATURE_TIMING')) {
+        if (!defined('BEHAT_FEATURE_TIMING_FILE')) {
             return;
         }
         $file = $event->getFeature()->getFile();
@@ -201,11 +199,10 @@ class behat_hooks extends behat_base {
      * Gives access to moodle codebase, to keep track of suite timings.
      *
      * @param SuiteEvent $event event fired after suite.
-     * @static
      * @AfterSuite
      */
     public static function after_suite(SuiteEvent $event) {
-        if (!defined('BEHAT_FEATURE_TIMING')) {
+        if (!defined('BEHAT_FEATURE_TIMING_FILE')) {
             return;
         }
         $realroot = realpath(__DIR__.'/../../../').'/';
@@ -214,11 +211,11 @@ class behat_hooks extends behat_base {
             self::$timings[$new] = round($v, 1);
             unset(self::$timings[$k]);
         }
-        if ($existing = @json_decode(file_get_contents(BEHAT_FEATURE_TIMING), true)) {
+        if ($existing = @json_decode(file_get_contents(BEHAT_FEATURE_TIMING_FILE), true)) {
             self::$timings = array_merge($existing, self::$timings);
         }
         arsort(self::$timings);
-        @file_put_contents(BEHAT_FEATURE_TIMING, json_encode(self::$timings, JSON_PRETTY_PRINT));
+        @file_put_contents(BEHAT_FEATURE_TIMING_FILE, json_encode(self::$timings, JSON_PRETTY_PRINT));
     }
 
     /**

@@ -44,7 +44,7 @@ define('BEHAT_EXITCODE_INSTALLED', 256);
 /**
  * The behat test site fullname and shortname.
  */
-define('BEHAT_PARALLEL_SITE_WWW_SUFFIX', "behatrun");
+define('BEHAT_PARALLEL_SITE_NAME', "behatrun");
 
 /**
  * Exits with an error code
@@ -289,14 +289,14 @@ function behat_is_test_site() {
 function behat_update_vars_for_process($behatrunprocess = '') {
     global $CFG;
 
-    $allowedconfigoverride = array('dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass');
+    $allowedconfigoverride = array('dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'behat_prefix');
     $behatrunprocess = $CFG->behatrunprocess;
 
     if ($behatrunprocess) {
         // Set www root for run process.
-        if (isset($CFG->behat_wwwroot) && !preg_match("#/" . BEHAT_PARALLEL_SITE_WWW_SUFFIX . $behatrunprocess . "\$#",
+        if (isset($CFG->behat_wwwroot) && !preg_match("#/" . BEHAT_PARALLEL_SITE_NAME . $behatrunprocess . "\$#",
                 $CFG->behat_wwwroot)) {
-            $CFG->behat_wwwroot .= "/" . BEHAT_PARALLEL_SITE_WWW_SUFFIX . $behatrunprocess;
+            $CFG->behat_wwwroot .= "/" . BEHAT_PARALLEL_SITE_NAME . $behatrunprocess;
         }
 
         // Set behat_dataroot.
@@ -320,10 +320,6 @@ function behat_update_vars_for_process($behatrunprocess = '') {
                 if (isset($CFG->behat_parallel_run[$behatrunprocess - 1][$config])) {
                     $CFG->$config = $CFG->behat_parallel_run[$behatrunprocess - 1][$config];
                 }
-            }
-            // Override behat prefix, if specified.
-            if (isset($CFG->behat_parallel_run[$behatrunprocess - 1]['behat_prefix'])) {
-                $CFG->behat_prefix = $CFG->behat_parallel_run[$behatrunprocess - 1]['behat_prefix'];
             }
         }
     }
@@ -362,4 +358,39 @@ function behat_is_requested_url($url) {
     }
 
     return false;
+}
+
+/**
+ * Execute commands in parallel.
+ *
+ * @param array $cmds list of commands to be executed.
+ * @param string $cwd absolute path of working directory.
+ * @return array list of processes.
+ */
+function cli_execute_parallel($cmds, $cwd = null) {
+    require_once(__DIR__ . "/../../vendor/autoload.php");
+
+    $processes = array();
+
+    // Create child process.
+    foreach ($cmds as $name => $cmd) {
+        $process = new Symfony\Component\Process\Process($cmd);
+
+        $process->setWorkingDirectory($cwd);
+        $process->setTimeout(null);
+        $processes[$name] = $process;
+        $processes[$name]->start();
+
+        // If error creating process then exit.
+        if ($processes[$name]->getStatus() !== 'started') {
+            echo "Error starting process: $name";
+            foreach ($processes[$name] as $process) {
+                if ($process) {
+                    $process->signal(SIGKILL);
+                }
+            }
+            exit(1);
+        }
+    }
+    return $processes;
 }

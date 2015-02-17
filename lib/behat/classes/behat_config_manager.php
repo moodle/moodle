@@ -109,7 +109,7 @@ class behat_config_manager {
 
         // Behat config file specifing the main context class,
         // the required Behat extensions and Moodle test wwwroot.
-        $contents = self::get_config_file_contents(self::get_fetaures_with_tags($features, $tags), $stepsdefinitions);
+        $contents = self::get_config_file_contents(self::get_features_with_tags($features, $tags), $stepsdefinitions);
 
         // Stores the file.
         if (!file_put_contents($configfilepath, $contents)) {
@@ -125,7 +125,7 @@ class behat_config_manager {
      * @param string $tags list of tags (currently support && only.)
      * @return array filtered list of feature files with tags.
      */
-    public static function get_fetaures_with_tags($features, $tags) {
+    public static function get_features_with_tags($features, $tags) {
         if (empty($tags)) {
             return $features;
         }
@@ -276,7 +276,7 @@ class behat_config_manager {
         // If parallel run then remove links and original file.
         clearstatcache();
         for ($i = 1; $i <= $parallelrun; $i++) {
-            $link = $CFG->dirroot . '/' . BEHAT_PARALLEL_SITE_WWW_SUFFIX . $i;
+            $link = $CFG->dirroot . '/' . BEHAT_PARALLEL_SITE_NAME . $i;
             if (file_exists($link) && is_link($link)) {
                 @unlink($link);
             }
@@ -298,16 +298,16 @@ class behat_config_manager {
         // Create site symlink if necessary.
         clearstatcache();
         for ($i = 1; $i <= $parallelrun; $i++) {
-            $link = $CFG->dirroot.'/'.BEHAT_PARALLEL_SITE_WWW_SUFFIX.$i;
+            $link = $CFG->dirroot.'/'.BEHAT_PARALLEL_SITE_NAME.$i;
             clearstatcache();
             if (file_exists($link)) {
                 if (!is_link($link) || !is_dir($link)) {
-                    echo "File exists at link location ($link) but is not a link or directory!\n";
+                    echo "File exists at link location ($link) but is not a link or directory!" . PHP_EOL;
                     return false;
                 }
             } else if (!symlink($CFG->dirroot, $link)) {
                 // Try create link in case it's not already present.
-                echo "Unable to create behat site symlink ($link)\n";
+                echo "Unable to create behat site symlink ($link)" . PHP_EOL;
                 return false;
             }
         }
@@ -341,8 +341,10 @@ class behat_config_manager {
                 srand(crc32(floor(time() / 3600 / 24) . var_export($features, true)));
                 shuffle($features);
                 // Pull out the features for just this worker.
-                $features = array_chunk($features, ceil(count($features) / max(1, $parallelruns)));
-                $features = $features[$CFG->behatrunprocess - 1];
+                if (count($features)) {
+                    $features = array_chunk($features, ceil(count($features) / max(1, $parallelruns)));
+                    $features = $features[$CFG->behatrunprocess - 1];
+                }
             }
             // Set proper selenium2 wd_host if defined.
             if (!empty($CFG->behat_parallel_run[$CFG->behatrunprocess - 1]['wd_host'])) {
@@ -375,7 +377,8 @@ class behat_config_manager {
                     'Moodle\BehatExtension\Extension' => array(
                         'formatters' => array(
                             'moodle_progress' => 'Moodle\BehatExtension\Formatter\MoodleProgressFormatter',
-                            'moodle_list' => 'Moodle\BehatExtension\Formatter\MoodleListFormatter'
+                            'moodle_list' => 'Moodle\BehatExtension\Formatter\MoodleListFormatter',
+                            'moodle_step_count' => 'Moodle\BehatExtension\Formatter\MoodleStepCountFormatter'
                         ),
                         'features' => $features,
                         'steps_definitions' => $stepsdefinitions
@@ -407,18 +410,28 @@ class behat_config_manager {
      * @return array Feature files array, sorted into allocations
      */
     protected static function profile_guided_allocate($features, $nbuckets, $instance) {
-        $pga = __DIR__.'/../../../behat_pga_default.json';
-        $pga = defined('BEHAT_PGA_DATA') && file_exists(BEHAT_PGA_DATA) ? BEHAT_PGA_DATA : $pga;
 
-        if (defined('BEHAT_PGA_DISABLE') || !file_exists($pga) || !$pga = @json_decode(file_get_contents($pga), true)) {
-            // No data available, fall back to relying on shuffle.
-            return false;
+        $behattimingfile = defined('BEHAT_FEATURE_TIMING_FILE') &&
+            @filesize(BEHAT_FEATURE_TIMING_FILE) ? BEHAT_FEATURE_TIMING_FILE : false;
+
+        if (!$behattimingfile || !$behattimingdata = @json_decode(file_get_contents($behattimingfile), true)) {
+            // No data available, fall back to relying on steps data.
+            $stepfile = __DIR__ . "/../../../behat_features_step_count.json";
+
+            if (defined('BEHAT_FEATURE_STEP_FILE') && BEHAT_FEATURE_STEP_FILE) {
+                $stepfile = BEHAT_FEATURE_STEP_FILE;
+            }
+            // We should never get this. But in case we can't do this then fall back on simple splitting.
+            if (!$stepfile || !$behattimingdata = @json_decode(file_get_contents($stepfile), true)) {
+                echo "No step/timing information available, falling back on simple distribution" . PHP_EOL;
+                return false;
+            }
         }
 
-        arsort($pga); // Ensure most expensive is first.
+        arsort($behattimingdata); // Ensure most expensive is first.
 
         $realroot = realpath(__DIR__.'/../../../').'/';
-        $defaultweight = array_sum($pga) / count($pga); // TODO: median is more ideal.
+        $defaultweight = array_sum($behattimingdata) / count($behattimingdata);
         $weights = array_fill(0, $nbuckets, 0);
         $buckets = array_fill(0, $nbuckets, array());
         $totalweight = 0;
@@ -428,20 +441,20 @@ class behat_config_manager {
             $key = str_replace($realroot, '', $file);
             $features[$key] = $file;
             unset($features[$k]);
-            if (!isset($pga[$key])) {
-                $pga[$key] = $defaultweight;
+            if (!isset($behattimingdata[$key])) {
+                $behattimingdata[$key] = $defaultweight;
             }
         }
 
         // Sort features by known weights; largest ones should be allocated first.
-        $pgaorder = array();
+        $behattimingorder = array();
         foreach ($features as $key => $file) {
-            $pgaorder[$key] = $pga[$key];
+            $behattimingorder[$key] = $behattimingdata[$key];
         }
-        arsort($pgaorder);
+        arsort($behattimingorder);
 
         // Finally, add each feature one by one to the lightest bucket.
-        foreach ($pgaorder as $key => $weight) {
+        foreach ($behattimingorder as $key => $weight) {
             $file = $features[$key];
             $lightbucket = array_search(min($weights), $weights);
             $weights[$lightbucket] += $weight;
@@ -449,10 +462,10 @@ class behat_config_manager {
             $totalweight += $weight;
         }
 
-        if (!defined('BEHAT_PGA_DISABLE_HISTOGRAM') && $instance == $nbuckets) {
+        if ($totalweight && !defined('BEHAT_DISABLE_HISTOGRAM') && $instance == $nbuckets) {
             echo "Bucket weightings:\n";
             foreach ($weights as $k => $weight) {
-                echo "$k: ".str_repeat('*', 70 * $nbuckets * $weight / $totalweight)."\n";
+                echo $k + 1 . ": " . str_repeat('*', 70 * $nbuckets * $weight / $totalweight) . PHP_EOL;
             }
         }
 
