@@ -4719,7 +4719,7 @@ function forum_post_subscription($fromform, $forum, $discussion) {
     $info->discussion = format_string($discussion->name);
     $info->forum = format_string($forum->name);
 
-    if ($fromform->discussionsubscribe) {
+    if (isset($fromform->discussionsubscribe) && $fromform->discussionsubscribe) {
         if ($result = \mod_forum\subscriptions::subscribe_user_to_discussion($USER->id, $discussion)) {
             return html_writer::tag('p', get_string('discussionnowsubscribed', 'forum', $info));
         }

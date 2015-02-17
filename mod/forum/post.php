@@ -616,11 +616,26 @@ $postid = empty($post->id) ? null : $post->id;
 $draftid_editor = file_get_submitted_draft_itemid('message');
 $currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'mod_forum', 'post', $postid, mod_forum_post_form::editor_options($modcontext, $postid), $post->message);
 
-// Respect the user's discussion autosubscribe preference unless they have already posted - in which case, use that preference.
-$discussionsubscribe = $USER->autosubscribe;
-if (isset($discussion) && forum_user_has_posted($forum->id, $discussion->id, $USER->id)) {
-    $discussionsubscribe = \mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussion->id, $cm);
+$manageactivities = has_capability('moodle/course:manageactivities', $coursecontext);
+if (\mod_forum\subscriptions::subscription_disabled($forum) && !$manageactivities) {
+    // User does not have permission to subscribe to this discussion at all.
+    $discussionsubscribe = false;
+} else if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
+    // User does not have permission to unsubscribe from this discussion at all.
+    $discussionsubscribe = true;
+} else {
+    if (isset($discussion) && \mod_forum\subscriptions::is_subscribed($USER->id, $forum, $discussion->id, $cm)) {
+        // User is subscribed to the discussion - continue the subscription.
+        $discussionsubscribe = true;
+    } else if (!isset($discussion) && \mod_forum\subscriptions::is_subscribed($USER->id, $forum, null, $cm)) {
+        // Starting a new discussion, and the user is subscribed to the forum - subscribe to the discussion.
+        $discussionsubscribe = true;
+    } else {
+        // User is not subscribed to either forum or discussion. Follow user preference.
+        $discussionsubscribe = $USER->autosubscribe;
+    }
 }
+
 $mform_post->set_data(array(        'attachments'=>$draftitemid,
                                     'general'=>$heading,
                                     'subject'=>$post->subject,
