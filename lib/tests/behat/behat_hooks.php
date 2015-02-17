@@ -205,9 +205,6 @@ class behat_hooks extends behat_base {
         $user = $DB->get_record('user', array('username' => 'admin'));
         \core\session\manager::set_user($user);
 
-        // Enable web cron.
-        set_config('cronclionly', 0);
-
         // Reset the browser if specified in config.php.
         if (!empty($CFG->behat_restart_browser_after) && $this->running_javascript()) {
             $now = time();

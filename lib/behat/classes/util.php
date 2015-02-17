@@ -111,6 +111,9 @@ class behat_util extends testing_util {
         // Disable some settings that are not wanted on test sites.
         set_config('noemailever', 1);
 
+        // Enable web cron.
+        set_config('cronclionly', 0);
+
         // Keeps the current version of database and dataroot.
         self::store_versions_hash();
 
