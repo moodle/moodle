@@ -165,11 +165,7 @@ class behat_forms extends behat_base {
      * @return void
      */
     public function i_set_the_field_with_xpath_to($fieldxpath, $value) {
-        try {
-            $fieldNode = $this->find('xpath', $fieldxpath);
-        } catch (\Behat\Mink\Exception\ElementNotFoundException $e) {
-            throw new ElementNotFoundException('Field with xpath ' . $fieldxpath . 'not found, so can\'t be set');
-        }
+        $fieldNode = $this->find('xpath', $fieldxpath);
         $field = behat_field_manager::get_form_field($fieldNode, $this->getSession());
         $field->set_value($value);
     }
