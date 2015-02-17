@@ -287,11 +287,11 @@ if ($formdata = $mform2->get_data()) {
                     $newgrade = new stdClass();
                     $newgrade->newgradeitem = $newgradeitems[$key];
 
-                    // if the user has a grade for this grade item
-                    if (trim($value) != '-') {
-                        // instead of omitting the grade we could insert one with finalgrade set to 0
-                        // we do not have access to grade item min grade
-                        $newgrade->finalgrade   = $value;
+                    // If the user has a grade for this grade item.
+                    $trimmed = trim($value);
+                    if ($trimmed !== '' and $trimmed != '-') {
+                        // Only include a grade if it is not blank or a dash.
+                        $newgrade->finalgrade = $value;
                         $newgrades[] = $newgrade;
                     }
                 break;
