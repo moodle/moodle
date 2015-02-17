@@ -47,9 +47,6 @@ function xmldb_filter_mathjaxloader_upgrade($oldversion) {
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Moodle v2.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2015021200) {
 
         $httpurl = get_config('filter_mathjaxloader', 'httpurl');
