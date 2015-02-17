@@ -68,6 +68,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $html .= html_writer::end_tag('ul');
         $html .= html_writer::tag('div', '', array('class'=>'clearfloat'));
         $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
+        $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'action', 'value'=>'makechoice'));
         $html .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'id', 'value'=>$coursemoduleid));
 
         if (!empty($options['hascapability']) && ($options['hascapability'])) {
