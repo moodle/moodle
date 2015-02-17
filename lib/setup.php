@@ -133,6 +133,11 @@ if (defined('BEHAT_SITE_RUNNING')) {
     }
 }
 
+// Force timezone to be Australia/Perth for behat tests, so we don't get time zone problems.
+if (defined('BEHAT_SITE_RUNNING') || defined('BEHAT_TEST') || defined('BEHAT_UTIL')) {
+    @date_default_timezone_set('Australia/Perth');
+}
+
 // Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
 if (!isset($CFG->dataroot)) {
     if (isset($_SERVER['REMOTE_ADDR'])) {
