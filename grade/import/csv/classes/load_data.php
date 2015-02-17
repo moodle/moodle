@@ -180,7 +180,7 @@ class gradeimport_csv_load_data {
      * @param array $header The column headers from the CSV file.
      * @param int $key Current row identifier.
      * @param string $value The value for this row (final grade).
-     * @return object new grade that is ready for commiting to the gradebook.
+     * @return stdClass new grade that is ready for commiting to the gradebook.
      */
     protected function import_new_grade_item($header, $key, $value) {
         global $DB, $USER;
