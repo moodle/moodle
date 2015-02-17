@@ -46,7 +46,25 @@ function xmldb_filter_mathjaxloader_upgrade($oldversion) {
 
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
-    if ($oldversion < 2015013000) {
+
+    if ($oldversion < 2015021200) {
+
+        $httpurl = get_config('filter_mathjaxloader', 'httpurl');
+        // Don't change the config if it has been manually changed to something besides the default setting value.
+        if ($httpurl === "http://cdn.mathjax.org/mathjax/2.3-latest/MathJax.js") {
+            set_config('httpurl', 'http://cdn.mathjax.org/mathjax/2.5-latest/MathJax.js', 'filter_mathjaxloader');
+        }
+
+        $httpsurl = get_config('filter_mathjaxloader', 'httpsurl');
+        // Don't change the config if it has been manually changed to something besides the default setting value.
+        if ($httpsurl === "https://cdn.mathjax.org/mathjax/2.3-latest/MathJax.js") {
+            set_config('httpsurl', 'https://cdn.mathjax.org/mathjax/2.5-latest/MathJax.js', 'filter_mathjaxloader');
+        }
+
+        upgrade_plugin_savepoint(true, 2015021200, 'filter', 'mathjaxloader');
+    }
+
+    if ($oldversion < 2015021700) {
 
         $oldconfig = get_config('filter_mathjaxloader', 'mathjaxconfig');
         $olddefault = 'MathJax.Hub.Config({
@@ -85,24 +103,7 @@ MathJax.Hub.Config({
             set_config('mathjaxconfig', $newdefault, 'filter_mathjaxloader');
         }
 
-        upgrade_plugin_savepoint(true, 2015013000, 'filter', 'mathjaxloader');
-    }
-
-    if ($oldversion < 2015021200) {
-
-        $httpurl = get_config('filter_mathjaxloader', 'httpurl');
-        // Don't change the config if it has been manually changed to something besides the default setting value.
-        if ($httpurl === "http://cdn.mathjax.org/mathjax/2.3-latest/MathJax.js") {
-            set_config('httpurl', 'http://cdn.mathjax.org/mathjax/2.5-latest/MathJax.js', 'filter_mathjaxloader');
-        }
-
-        $httpsurl = get_config('filter_mathjaxloader', 'httpsurl');
-        // Don't change the config if it has been manually changed to something besides the default setting value.
-        if ($httpsurl === "https://cdn.mathjax.org/mathjax/2.3-latest/MathJax.js") {
-            set_config('httpsurl', 'https://cdn.mathjax.org/mathjax/2.5-latest/MathJax.js', 'filter_mathjaxloader');
-        }
-
-        upgrade_plugin_savepoint(true, 2015021200, 'filter', 'mathjaxloader');
+        upgrade_plugin_savepoint(true, 2015021700, 'filter', 'mathjaxloader');
     }
 
     return true;
