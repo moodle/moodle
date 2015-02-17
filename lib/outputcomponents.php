@@ -3076,6 +3076,85 @@ class tabobject implements renderable {
 }
 
 /**
+ * Renderable for the main page header.
+ *
+ * @package core
+ * @category output
+ * @since 2.9
+ * @copyright 2015 Adrian Greeve <adrian@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class context_header implements renderable {
+
+    /**
+     * @var stdClass $imagedata Image information to retrieve a picture for the header.
+     */
+    public $imagedata;
+    /**
+     * @var array $additionalbuttons Additional buttons for the header e.g. Messaging button for the user header.
+     *      array elements - title => alternate text for the image, or if no image is available the button text.
+     *                       url => Link for the button to head to. Should be a moodle_url.
+     *                       image => location to the image, or name of the image in /pix/t/{image name}.
+     *                       linkattributes => additional attributes for the <a href> element.
+     *                       page => page object. Don't include if the image is an external image.
+     */
+    public $additionalbuttons;
+    /**
+     * @var $subheading Secondary information to show with the header.
+     */
+    public $subheading;
+
+    public $shownavbar;
+    public $showbutton;
+
+    public $type = 'generic';
+
+    /**
+     * Constructor.
+     *
+     * @param object $imagedata Information needed to include a picture in the header.
+     * @param string $additionalbuttons Buttons for the header e.g. Messaging button for the user header.
+     * @param string $subheading Secondary text for the header.
+     * @param bool $shownavbar Switch for showing the navigation bar.
+     * @param bool $showbutton Switch for showing the editing button for the page.
+     */
+    public function __construct($imagedata = null, $additionalbuttons = null, $subheading = null, $shownavbar = true,
+            $showbutton = true, $type = null) {
+        // Check to see if the image id is for a user or something else (course, module);
+        $this->imagedata = $imagedata;
+        $this->additionalbuttons = $additionalbuttons;
+        $this->subheading = $subheading;
+        $this->shownavbar = $shownavbar;
+        $this->showbutton = $showbutton;
+        if (isset($this->additionalbuttons)) {
+            $this->format_button_images();
+        }
+        if (!empty($type)) {
+            $this->type = $type;
+        }
+    }
+
+    protected function format_button_images() {
+
+        foreach ($this->additionalbuttons as $buttontype => $button) {
+            $page = $button['page'];
+            if (!isset($button['image'])) {
+                $this->additionalbuttons[$buttontype]['formattedimage'] = $button['title'];
+            } else {
+                // TODO Check to see if this is an external url or an internal image.
+                $internalimage = $page->theme->resolve_image_location('t/' . $button['image'], 'moodle');
+                if (!$internalimage) {
+                    $this->additionalbuttons[$buttontype]['formattedimage'] = $button['image'];
+                } else {
+                    $this->additionalbuttons[$buttontype]['formattedimage'] = 't/' . $button['image'];
+                }
+            }
+            $this->additionalbuttons[$buttontype]['linkattributes'] = array_merge($button['linkattributes'], array('class' => 'btn'));
+        }
+    }
+}
+
+/**
  * Stores tabs list
  *
  * Example how to print a single line tabs:

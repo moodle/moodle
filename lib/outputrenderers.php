@@ -3998,6 +3998,114 @@ EOD;
         $html .= html_writer::end_tag('div');
         return $html;
     }
+
+    /**
+     * Returns the header bar.
+     *
+     * @since Moodle 2.9
+     * @return string HTML for the header bar.
+     */
+    public function context_header() {
+        global $DB;
+        $context = $this->page->context;
+        $imagedata = null;
+        $subheader = null;
+        $userbuttons = null;
+        $type = 'generic';
+        if ($context->contextlevel == CONTEXT_USER) {
+            $imagedata = $DB->get_record('user', array('id' => $context->instanceid));
+            $subheader = $imagedata->city . ', ' . get_string($imagedata->country, 'countries');
+            $userbuttons = array();
+            $userbuttons['messages'] = array(
+                'title' => get_string('message', 'message'),
+                'url' => new moodle_url('/message/index.php', array('id' => $imagedata->id)),
+                'image' => 'message',
+                'linkattributes' => message_messenger_sendmessage_link_params($imagedata),
+                'page' => $this->page
+            );
+            $type = 'user';
+         }
+        $contextheader = new context_header($imagedata, $userbuttons, $subheader, true, true, $type);
+        return $this->render_context_header($contextheader);
+     }
+
+     /**
+      * Renders the header bar.
+      *
+      * @param context_header $contextheader Header bar object.
+      * @return string HTML for the header bar.
+      */
+    protected function render_context_header(context_header $contextheader) {
+
+        // CSS classes.
+        $classprefix = 'header-bar-';
+        $classes = array('header-mc-heady-head');
+        if ($contextheader->type !== 'generic') {
+            $classes[] = $classprefix . $contextheader->type;
+        }
+        $classstr = implode(' ', $classes);
+
+        // All the html stuff goes here.
+
+        $html = html_writer::start_div($classstr);
+
+        // Image data.
+        if (isset($contextheader->imagedata)) {
+            $html .= html_writer::div($this->user_picture($contextheader->imagedata, array('size' => 100)), 'page-header-image');
+        }
+
+        // Headings.
+        $headings = $this->heading($this->page->heading, 1);
+        if (isset($contextheader->subheading)) {
+            $headings .= $contextheader->subheading;
+        }
+        $html .= html_writer::tag('div', $headings, array('class' => 'page-header-headings'));
+
+        // Buttons.
+        if (isset($contextheader->additionalbuttons)) {
+
+            $buttons = array();
+
+            $html .= html_writer::start_div('btn-group header-button-group');
+
+            foreach ($contextheader->additionalbuttons as $key => $value) {
+                if (!isset($value->page)) {
+                    $image = $this->pix_icon($value['formattedimage'], $value['title'], 'moodle', array(
+                        'class' => 'iconsmall',
+                        'role' => 'presentation'
+                    ));
+                    $image .= html_writer::span($value['title'], 'header-button-title');
+                } else {
+                    $image = html_writer::empty_tag('img', array(
+                        'src' => $value['formattedimage'],
+                        'role' => 'presentation'
+                    ));
+                }
+                $html .=  html_writer::link($value['url'], html_writer::tag('span', $image), $value['linkattributes']);
+            }
+            $html .= html_writer::end_div();
+
+        }
+
+        $html .= html_writer::tag('div', $this->course_header(), array('class' => 'course-header'));
+        $html .= html_writer::end_div();
+
+        return $html;
+    }
+
+    public function full_header() {
+        return $this->render_full_header();
+    }
+
+    protected function render_full_header() {
+        $html = html_writer::start_tag('header', array('id' => 'page-header', 'class' => 'clearfix'));
+        $html .= $this->context_header();
+        $html .= html_writer::tag('nav', $this->navbar(), array('class' => 'breadcrumb-nav'));
+        $html .= html_writer::div($this->page_heading_button(), 'breadcrumb-button');
+        $html .= html_writer::end_tag('header');
+        return $html;
+
+    }
 }
 
 /**
