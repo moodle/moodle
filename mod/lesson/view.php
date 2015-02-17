@@ -27,6 +27,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot.'/mod/lesson/locallib.php');
 require_once($CFG->dirroot.'/mod/lesson/view_form.php');
 require_once($CFG->libdir . '/completionlib.php');
+require_once($CFG->libdir . '/grade/constants.php');
 
 $id      = required_param('id', PARAM_INT);             // Course Module ID
 $pageid  = optional_param('pageid', null, PARAM_INT);   // Lesson Page ID
@@ -329,12 +330,14 @@ if ($pageid != LESSON_EOL) {
                     $lesson->add_message(get_string('numberofpagesviewednotice', 'lesson', $a));
                 }
 
-                $a = new stdClass;
-                $a->grade = number_format($gradeinfo->grade * $lesson->grade / 100, 1);
-                $a->total = $lesson->grade;
                 if (!$reviewmode && !$lesson->retake){
                     $lesson->add_message(get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned), 'notify');
-                    $lesson->add_message(get_string('yourcurrentgradeisoutof', 'lesson', $a), 'notify');
+                    if ($lesson->grade != GRADE_TYPE_NONE) {
+                        $a = new stdClass;
+                        $a->grade = number_format($gradeinfo->grade * $lesson->grade / 100, 1);
+                        $a->total = $lesson->grade;
+                        $lesson->add_message(get_string('yourcurrentgradeisoutof', 'lesson', $a), 'notify');
+                    }
                 }
             }
         }
@@ -460,10 +463,12 @@ if ($pageid != LESSON_EOL) {
             } else {
                 $lessoncontent .= $OUTPUT->box(get_string("displayscorewithoutessays", "lesson", $a), 'center');
             }
-            $a = new stdClass;
-            $a->grade = number_format($gradeinfo->grade * $lesson->grade / 100, 1);
-            $a->total = $lesson->grade;
-            $lessoncontent .= $lessonoutput->paragraph(get_string("yourcurrentgradeisoutof", "lesson", $a), 'center');
+            if ($lesson->grade != GRADE_TYPE_NONE) {
+                $a = new stdClass;
+                $a->grade = number_format($gradeinfo->grade * $lesson->grade / 100, 1);
+                $a->total = $lesson->grade;
+                $lessoncontent .= $lessonoutput->paragraph(get_string("yourcurrentgradeisoutof", "lesson", $a), 'center');
+            }
 
             $grade = new stdClass();
             $grade->lessonid = $lesson->id;
@@ -508,7 +513,9 @@ if ($pageid != LESSON_EOL) {
 
     } else {
         // display for teacher
-        $lessoncontent .= $lessonoutput->paragraph(get_string("displayofgrade", "lesson"), 'center');
+        if ($lesson->grade != GRADE_TYPE_NONE) {
+            $lessoncontent .= $lessonoutput->paragraph(get_string("displayofgrade", "lesson"), 'center');
+        }
     }
     $lessoncontent .= $OUTPUT->box_end(); //End of Lesson button to Continue.
 
