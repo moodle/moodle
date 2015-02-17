@@ -44,5 +44,47 @@ function xmldb_filter_mathjaxloader_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2014051201, 'filter', 'mathjaxloader');
     }
 
+    if ($oldversion < 2014051202) {
+
+        $oldconfig = get_config('filter_mathjaxloader', 'mathjaxconfig');
+        $olddefault = 'MathJax.Hub.Config({
+    config: ["MMLorHTML.js", "Safe.js"],
+    jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+    extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+    TeX: {
+        extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+    },
+    menuSettings: {
+        zoom: "Double-Click",
+        mpContext: true,
+        mpMouse: true
+    },
+    errorSettings: { message: ["!"] },
+    skipStartupTypeset: true,
+    messageStyle: "none"
+});
+';
+        $newdefault = '
+MathJax.Hub.Config({
+    config: ["Accessible.js", "Safe.js"],
+    errorSettings: { message: ["!"] },
+    skipStartupTypeset: true,
+    messageStyle: "none"
+});
+';
+
+        // Ignore white space changes.
+        $oldconfig = trim(preg_replace('/\s+/', ' ', $oldconfig));
+        $olddefault = trim(preg_replace('/\s+/', ' ', $olddefault));
+
+        // Update the default config for mathjax only if it has not been customised.
+
+        if ($oldconfig == $olddefault) {
+            set_config('mathjaxconfig', $newdefault, 'filter_mathjaxloader');
+        }
+
+        upgrade_plugin_savepoint(true, 2014051202, 'filter', 'mathjaxloader');
+    }
+
     return true;
 }
