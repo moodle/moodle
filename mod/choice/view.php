@@ -7,6 +7,7 @@ require_once($CFG->libdir . '/completionlib.php');
 $id         = required_param('id', PARAM_INT);                 // Course Module ID
 $action     = optional_param('action', '', PARAM_ALPHA);
 $attemptids = optional_param_array('attemptid', array(), PARAM_INT); // array of attempt ids for delete action
+$notify     = optional_param('notify', '', PARAM_ALPHA);
 
 $url = new moodle_url('/mod/choice/view.php', array('id'=>$id));
 if ($action !== '') {
@@ -43,6 +44,7 @@ if ($action == 'delchoice' and confirm_sesskey() and is_enrolled($context, NULL,
         if ($completion->is_enabled($cm) && $choice->completionsubmit) {
             $completion->update_state($cm, COMPLETION_INCOMPLETE);
         }
+        redirect("view.php?id=$cm->id");
     }
 }
 
@@ -62,25 +64,35 @@ if (data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && conf
         redirect("view.php?id=$cm->id");
     }
 
+    // Redirection after all POSTs breaks block editing, we need to be more specific!
     if ($choice->allowmultiple) {
         $answer = optional_param_array('answer', array(), PARAM_INT);
     } else {
         $answer = optional_param('answer', '', PARAM_INT);
     }
 
-    if (empty($answer)) {
-        redirect("view.php?id=$cm->id", get_string('mustchooseone', 'choice'));
-    } else {
+    if ($answer) {
         choice_user_submit_response($answer, $choice, $USER->id, $course, $cm);
+        redirect(new moodle_url('/mod/choice/view.php',
+            array('id' => $cm->id, 'notify' => 'choicesaved', 'sesskey' => sesskey())));
+    } else if (empty($answer) and $action === 'makechoice') {
+        // We cannot use the 'makechoice' alone because there might be some legacy renderers without it,
+        // outdated renderers will not get the 'mustchoose' message - bad luck.
+        redirect(new moodle_url('/mod/choice/view.php',
+            array('id' => $cm->id, 'notify' => 'mustchooseone', 'sesskey' => sesskey())));
     }
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($choice->name), 2, null);
-    echo $OUTPUT->notification(get_string('choicesaved', 'choice'),'notifysuccess');
-} else {
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($choice->name), 2, null);
 }
 
+echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($choice->name), 2, null);
+
+if ($notify and confirm_sesskey()) {
+    if ($notify === 'choicesaved') {
+        echo $OUTPUT->notification(get_string('choicesaved', 'choice'), 'notifysuccess');
+    } else if ($notify === 'mustchooseone') {
+        echo $OUTPUT->notification(get_string('mustchooseone', 'choice'), 'notifyproblem');
+    }
+}
 
 /// Display the choice and possibly results
 $eventdata = array();
