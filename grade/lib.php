@@ -1248,10 +1248,22 @@ class grade_structure {
         global $CFG, $OUTPUT;
         require_once $CFG->libdir.'/filelib.php';
 
+        $outputstr = '';
+
+        // Object holding pix_icon information before instantiation.
+        $icon = new stdClass();
+        $icon->attributes = array(
+            'class' => 'item itemicon'
+        );
+        $icon->component = 'moodle';
+
+        $none = true;
         switch ($element['type']) {
             case 'item':
             case 'courseitem':
             case 'categoryitem':
+                $none = false;
+
                 $is_course   = $element['object']->is_course_item();
                 $is_category = $element['object']->is_category_item();
                 $is_scale    = $element['object']->gradetype == GRADE_TYPE_SCALE;
@@ -1259,71 +1271,68 @@ class grade_structure {
                 $is_outcome  = !empty($element['object']->outcomeid);
 
                 if ($element['object']->is_calculated()) {
-                    $strcalc = get_string('calculatedgrade', 'grades');
-                    return '<img src="'.$OUTPUT->pix_url('i/calc') . '" class="icon itemicon" title="'.
-                            s($strcalc).'" alt="'.s($strcalc).'"/>';
+                    $icon->pix = 'i/calc';
+                    $icon->title = s(get_string('calculatedgrade', 'grades'));
 
                 } else if (($is_course or $is_category) and ($is_scale or $is_value)) {
                     if ($category = $element['object']->get_item_category()) {
                         $aggrstrings = grade_helper::get_aggregation_strings();
                         $stragg = $aggrstrings[$category->aggregation];
+
+                        $icon->pix = 'i/calc';
+                        $icon->title = s($stragg);
+
                         switch ($category->aggregation) {
                             case GRADE_AGGREGATE_MEAN:
                             case GRADE_AGGREGATE_MEDIAN:
                             case GRADE_AGGREGATE_WEIGHTED_MEAN:
                             case GRADE_AGGREGATE_WEIGHTED_MEAN2:
                             case GRADE_AGGREGATE_EXTRACREDIT_MEAN:
-                                return '<img src="'.$OUTPUT->pix_url('i/agg_mean') . '" ' .
-                                        'class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
+                                $icon->pix = 'i/agg_mean';
+                                break;
                             case GRADE_AGGREGATE_SUM:
-                                return '<img src="'.$OUTPUT->pix_url('i/agg_sum') . '" ' .
-                                        'class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
-                            default:
-                                return '<img src="'.$OUTPUT->pix_url('i/calc') . '" ' .
-                                        'class="icon itemicon" title="'.s($stragg).'" alt="'.s($stragg).'"/>';
+                                $icon->pix = 'i/agg_sum';
+                                break;
                         }
                     }
 
                 } else if ($element['object']->itemtype == 'mod') {
-                    //prevent outcomes being displaying the same icon as the activity they are attached to
+                    // Prevent outcomes displaying the same icon as the activity they are attached to.
                     if ($is_outcome) {
-                        $stroutcome = s(get_string('outcome', 'grades'));
-                        return '<img src="'.$OUTPUT->pix_url('i/outcomes') . '" ' .
-                            'class="icon itemicon" title="'.$stroutcome.
-                            '" alt="'.$stroutcome.'"/>';
+                        $icon->pix = 'i/outcomes';
+                        $icon->title = s(get_string('outcome', 'grades'));
                     } else {
-                        $strmodname = get_string('modulename', $element['object']->itemmodule);
-                        return '<img src="'.$OUTPUT->pix_url('icon',
-                            $element['object']->itemmodule) . '" ' .
-                            'class="icon itemicon" title="' .s($strmodname).
-                            '" alt="' .s($strmodname).'"/>';
+                        $icon->pix = 'icon';
+                        $icon->component = $element['object']->itemmodule;
+                        $icon->title = s(get_string('modulename', $element['object']->itemmodule));
                     }
                 } else if ($element['object']->itemtype == 'manual') {
                     if ($element['object']->is_outcome_item()) {
-                        $stroutcome = get_string('outcome', 'grades');
-                        return '<img src="'.$OUTPUT->pix_url('i/outcomes') . '" ' .
-                                'class="icon itemicon" title="'.s($stroutcome).
-                                '" alt="'.s($stroutcome).'"/>';
+                        $icon->pix = 'i/outcomes';
+                        $icon->title = s(get_string('outcome', 'grades'));
                     } else {
-                        $strmanual = get_string('manualitem', 'grades');
-                        return '<img src="'.$OUTPUT->pix_url('i/manual_item') . '" '.
-                                'class="icon itemicon" title="'.s($strmanual).
-                                '" alt="'.s($strmanual).'"/>';
+                        $icon->pix = 'i/manual_item';
+                        $icon->title = s(get_string('manualitem', 'grades'));
                     }
                 }
                 break;
 
             case 'category':
-                $strcat = get_string('category', 'grades');
-                return '<img src="'.$OUTPUT->pix_url('i/folder') . '" class="icon itemicon" ' .
-                        'title="'.s($strcat).'" alt="'.s($strcat).'" />';
+                $none = false;
+                $icon->pix = 'i/folder';
+                $icon->title = s(get_string('category', 'grades'));
+                break;
         }
 
-        if ($spacerifnone) {
-            return $OUTPUT->spacer().' ';
+        if ($none) {
+            if ($spacerifnone) {
+                $outputstr = $OUTPUT->spacer() . ' ';
+            }
         } else {
-            return '';
+            $outputstr = $OUTPUT->pix_icon($icon->pix, $icon->title, $icon->component, $icon->attributes);
         }
+
+        return $outputstr;
     }
 
     /**
