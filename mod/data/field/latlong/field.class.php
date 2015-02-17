@@ -44,7 +44,7 @@ class data_field_latlong extends data_field_base {
     // Other map sources listed at http://kvaleberg.com/extensions/mapsources/index.php?params=51_30.4167_N_0_7.65_W_region:earth
 
     function display_add_field($recordid = 0, $formdata = null) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         $lat = '';
         $long = '';
@@ -59,25 +59,26 @@ class data_field_latlong extends data_field_base {
                 $long = $content->content1;
             }
         }
-        $str = '';
-        if ($this->field->required) {
-            $str .= '<div title="' . get_string('requiredfieldhint', 'data', s($this->field->description)) . '">';
-        } else {
-            $str .= '<div title="' . s($this->field->description) . '">';
-        }
+        $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
         $str .= '<table><tr><td align="right">';
-        $str .= '<label for="field_'.$this->field->id.'_0">' . get_string('latitude', 'data') . '</label></td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="'.s($lat).'" size="10" />°N</td></tr>';
-        $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1">' . get_string('longitude', 'data') . '</label></td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.s($long).'" size="10" />°E</td>';
+        $str .= '<label for="field_'.$this->field->id.'_0">' . get_string('latitude', 'data');
         if ($this->field->required) {
-            $str .= '<td><span class="requiredfield">' . get_string('requiredfieldshort', 'data') . '</span></td>';
+            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
         }
+        $str .= '</label></td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="';
+        $str .= s($lat).'" size="10" />°N</td></tr>';
+        $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1">' . get_string('longitude', 'data');
+        if ($this->field->required) {
+            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+        }
+        $str .= '</label></td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="';
+        $str .= s($long).'" size="10" />°E</td>';
         $str .= '</tr>';
         $str .= '</table>';
         $str .= '</fieldset>';
-        if ($this->field->required) {
-            $str .= get_string('requiredfieldhint', 'data', s($this->field->description));
-        }
         $str .= '</div>';
         return $str;
     }
@@ -238,6 +239,17 @@ class data_field_latlong extends data_field_base {
     function export_text_value($record) {
         // The content here is from the database and does not require location formating.
         return sprintf('%01.4f', $record->content) . ' ' . sprintf('%01.4f', $record->content1);
+    }
+
+    /**
+     * Check if a field from an add form is empty
+     *
+     * @param mixed $value
+     * @param mixed $name
+     * @return bool
+     */
+    function notemptyfield($value, $name) {
+        return isset($value) && !($value == '');
     }
 
 }

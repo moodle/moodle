@@ -135,6 +135,7 @@ $string['entry'] = 'Entry';
 $string['entrysaved'] = 'Your entry has been saved';
 $string['errormustbeteacher'] = 'You need to be a teacher to use this page!';
 $string['errorpresetexists'] = 'There is already a preset with the selected name';
+$string['errormustsupplyvalue'] = 'You must supply a value here.';
 $string['example'] = 'Database module example';
 $string['excel'] = 'Excel';
 $string['export'] = 'Export';
@@ -310,8 +311,6 @@ $string['requiredentriestoview_help'] = 'The number of entries a student is requ
 
 Note: If entries are required before viewing, the database auto-linking filter should be disabled. This is because the database auto-linking filter can\'t determine whether a user has submitted the required number of entries.';
 $string['requiredfield'] = 'Required field';
-$string['requiredfieldhint'] = '{$a} (required field)';
-$string['requiredfieldshort'] = ' *';
 $string['resetsettings'] = 'Reset filters';
 $string['resettemplate'] = 'Reset template';
 $string['resizingimages'] = 'Resizing image thumbnails...';

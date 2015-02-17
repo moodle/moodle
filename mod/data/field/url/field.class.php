@@ -56,23 +56,26 @@ class data_field_url extends data_field_base {
                 $text = $content->content1;
             }
         }
-        $str = '';
+        $str = '<div title="' . s($this->field->description) . '">';
+
+        $label = '<label for="' . $fieldid . '"><span class="accesshide">' . $this->field->name . '</span>';
         if ($this->field->required) {
-            $str .= '<div title="' . get_string('requiredfieldhint', 'data', s($this->field->description)) . '">';
-        } else {
-            $str .= '<div title="' . s($this->field->description) . '">';
+            $label .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
         }
+        $label .= '</label>';
+
         if (!empty($this->field->param1) and empty($this->field->param2)) {
             $str .= '<table><tr><td align="right">';
             $str .= get_string('url','data').':</td><td>';
-            $str .= '<label class="accesshide" for="' . $fieldid . '">'. $this->field->name .'</label>';
+            $str .= $label;
             $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.$url.'" size="60" />';
             $str .= '<button id="filepicker-button-'.$options->client_id.'" style="display:none">'.$straddlink.'</button></td></tr>';
             $str .= '<tr><td align="right">'.get_string('text','data').':</td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.s($text).'" size="60" /></td></tr>';
             $str .= '</table>';
         } else {
             // Just the URL field
-            $str .= '<label class="accesshide" for="' . $fieldid . '">'. $this->field->name .'</label>';
+            $str .= $label;
             $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'" size="60" />';
             if (count($options->repositories) > 0) {
                 $str .= '<button id="filepicker-button-'.$options->client_id.'" class="visibleifjs">'.$straddlink.'</button>';
@@ -84,10 +87,6 @@ class data_field_url extends data_field_base {
 
         $module = array('name'=>'data_urlpicker', 'fullpath'=>'/mod/data/data.js', 'requires'=>array('core_filepicker'));
         $PAGE->requires->js_init_call('M.data_urlpicker.init', array($options), true, $module);
-
-        if ($this->field->required) {
-            $str .= '<span class="requiredfield">' . get_string('requiredfieldshort', 'data') . '</span>';
-        }
         $str .= '</div>';
         return $str;
     }

@@ -39,7 +39,7 @@ class data_field_file extends data_field_base {
         if ($formdata) {
             $fieldname = 'field_' . $this->field->id . '_file';
             $itemid = $formdata->$fieldname;
-        } else if ($recordid){
+        } else if ($recordid) {
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
 
                 file_prepare_draft_area($itemid, $this->context->id, 'mod_data', 'content', $content->id);
@@ -65,14 +65,18 @@ class data_field_file extends data_field_base {
             $itemid = file_get_unused_draft_itemid();
         }
 
-        $html = '';
         // database entry label
+        $html = '<div title="' . s($this->field->description) . '">';
+        $html .= '<fieldset><legend><span class="accesshide">'.$this->field->name;
+
         if ($this->field->required) {
-            $html .= '<div title="' . get_string('requiredfieldhint', 'data', s($this->field->description)) . '">';
+            $html .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';
+            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $html .= html_writer::div($image);
         } else {
-            $html .= '<div title="' . s($this->field->description) . '">';
+            $html .= '</span></legend>';
         }
-        $html .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
 
         // itemid element
         $html .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.$itemid.'" />';
@@ -90,10 +94,6 @@ class data_field_file extends data_field_base {
 
         $output = $PAGE->get_renderer('core', 'files');
         $html .= $output->render($fm);
-
-        if ($this->field->required) {
-            $html .= '<span class="requiredfield">' . get_string('requiredfieldshort', 'data') . '</span>';
-        }
         $html .= '</fieldset>';
         $html .= '</div>';
 

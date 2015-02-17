@@ -133,7 +133,11 @@ function xmldb_data_upgrade($oldversion) {
 
     // Moodle v2.7.0 release upgrade line.
     // Put any upgrade step following this.
-    if ($oldversion < 2014051201) {
+
+    // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2015022600) {
         // Define field required to be added to data_fields.
         $table = new xmldb_table('data_fields');
         $field = new xmldb_field('required', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'description');
@@ -143,11 +147,8 @@ function xmldb_data_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_mod_savepoint(true, 2014051201, 'data');
+        upgrade_mod_savepoint(true, 2015022600, 'data');
     }
-
-    // Moodle v2.8.0 release upgrade line.
-    // Put any upgrade step following this.
 
     return true;
 }

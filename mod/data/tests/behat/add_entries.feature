@@ -31,19 +31,19 @@ Feature: Users can add entries to database activities
     When I log in as "student1"
     And I follow "Course 1"
     And I add an entry to "Test database name" database with:
-      | Test field description | Student original entry |
+      | Test field name | Student original entry |
     And I press "Save and view"
     Then I should see "Student original entry"
     And I follow "Edit"
     And I set the following fields to these values:
-      | Test field description | Student edited entry |
+      | Test field name | Student edited entry |
     And I press "Save and view"
     And I should see "Student edited entry"
     And I add an entry to "Test database name" database with:
-      | Test field description | Student second entry |
+      | Test field name | Student second entry |
     And I press "Save and add another"
     And I add an entry to "Test database name" database with:
-      | Test field description | Student third entry |
+      | Test field name | Student third entry |
     And I press "Save and view"
     And I follow "View list"
     And I should see "Student edited entry"

@@ -330,7 +330,7 @@ if ($data->addtemplate){
                     $errors .= $OUTPUT->notification($notification);
                 }
             }
-            $replacements[] = $errors . $field->display_add_field($rid);
+            $replacements[] = $errors . $field->display_add_field($rid, $datarecord);
         }
 
         // Replace the field id tag.

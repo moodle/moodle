@@ -27,30 +27,36 @@ class data_field_radiobutton extends data_field_base {
     var $type = 'radiobutton';
 
     function display_add_field($recordid = 0, $formdata = null) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         if ($formdata) {
             $fieldname = 'field_' . $this->field->id;
-            $content = $formdata->$fieldname;
-        } else if ($recordid){
+            if (isset($formdata->$fieldname)) {
+                $content = $formdata->$fieldname;
+            } else {
+                $content = '';
+            }
+        } else if ($recordid) {
             $content = trim($DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid)));
         } else {
             $content = '';
         }
-        $str = '';
+
+        $str = '<div title="' . s($this->field->description) . '">';
+        $str .= '<fieldset><legend><span class="accesshide">' . $this->field->name;
+
         if ($this->field->required) {
-            $str .= '<div title="' . get_string('requiredfieldhint', 'data', s($this->field->description)) . '">';
+            $str .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';
+            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= html_writer::div($image);
         } else {
-            $str .= '<div title="' . s($this->field->description) . '">';
+            $str .= '</span></legend>';
         }
-        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
 
         $i = 0;
         $requiredstr = '';
-        if ($this->field->required) {
-            $requiredstr = '<span class="requiredfield">' . get_string('requiredfieldshort', 'data') . '</span>';
-        }
-        $options = explode("\n",$this->field->param1);
+        $options = explode("\n", $this->field->param1);
         foreach ($options as $radio) {
             $radio = trim($radio);
             if ($radio === '') {
@@ -66,11 +72,7 @@ class data_field_radiobutton extends data_field_base {
                 $str .= '/>';
             }
 
-            $str .= '<label for="field_'.$this->field->id.'_'.$i.'">'.$radio.'</label>';
-            if ($i == count($options) - 1) {
-                $str .= $requiredstr;
-            }
-            $str .= '<br />';
+            $str .= '<label for="field_'.$this->field->id.'_'.$i.'">'.$radio.'</label><br />';
             $i++;
         }
         $str .= '</fieldset>';

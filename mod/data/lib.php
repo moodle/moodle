@@ -153,7 +153,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
         $this->field->name        = trim($data->name);
         $this->field->description = trim($data->description);
-        $this->field->required    = !empty($data->required)?1:0;
+        $this->field->required    = !empty($data->required) ? 1 : 0;
 
         if (isset($data->param1)) {
             $this->field->param1 = trim($data->param1);
@@ -270,13 +270,13 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      * @param int $recordid
      * @return string
      */
-    function display_add_field($recordid=0, $formdata=null){
-        global $DB;
+    function display_add_field($recordid=0, $formdata=null) {
+        global $DB, $OUTPUT;
 
         if ($formdata) {
             $fieldname = 'field_' . $this->field->id;
             $content = $formdata->$fieldname;
-        } else if ($recordid){
+        } else if ($recordid) {
             $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
         } else {
             $content = '';
@@ -287,17 +287,14 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
             $content='';
         }
 
-        $str = '';
+        $str = '<div title="' . s($this->field->description) . '">';
+        $str .= '<label for="field_'.$this->field->id.'"><span class="accesshide">'.$this->field->name.'</span>';
         if ($this->field->required) {
-            $str .= '<div title="' . get_string('requiredfieldhint', 'data', s($this->field->description)) . '">';
-        } else {
-            $str .= '<div title="' . s($this->field->description) . '">';
+            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
         }
-        $str .= '<label class="accesshide" for="field_'.$this->field->id.'">'.$this->field->description.'</label>';
-        $str .= '<input class="basefieldinput" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id.'" value="'.s($content).'" />';
-        if ($this->field->required) {
-            $str .= '<span class="requiredfield">' . get_string('requiredfieldshort', 'data') . '</span>';
-        }
+        $str .= '</label><input class="basefieldinput" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id;
+        $str .= '" value="'.s($content).'" />';
         $str .= '</div>';
 
         return $str;
@@ -3835,7 +3832,7 @@ function data_process_submission(stdClass $mod, $fields, stdClass $datarecord) {
             if (!isset($result->fieldnotifications[$field->field->name])) {
                 $result->fieldnotifications[$field->field->name] = array();
             }
-            $result->fieldnotifications[$field->field->name][] = get_string('required');
+            $result->fieldnotifications[$field->field->name][] = get_string('errormustsupplyvalue', 'data');
             $requiredfieldsfilled = false;
         }
 
@@ -3849,7 +3846,7 @@ function data_process_submission(stdClass $mod, $fields, stdClass $datarecord) {
 
     if ($emptyform) {
         // The form is empty.
-        $result->generalnotifications[] = get_string('emptyaddform','data');
+        $result->generalnotifications[] = get_string('emptyaddform', 'data');
     }
 
     $result->validated = $requiredfieldsfilled && !$emptyform;

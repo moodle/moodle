@@ -27,7 +27,7 @@ class data_field_checkbox extends data_field_base {
     var $type = 'checkbox';
 
     function display_add_field($recordid = 0, $formdata = null) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
 
         $content = array();
 
@@ -41,13 +41,18 @@ class data_field_checkbox extends data_field_base {
             $content = array();
         }
 
-        $str = '';
+        $str = '<div title="' . s($this->field->description) . '">';
+        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name;
         if ($this->field->required) {
-            $str .= '<div title="' . get_string('requiredfieldhint', 'data', s($this->field->description)) . '">';
+            $str .= '$nbsp;' . get_string('requiredelement', 'form');
+            $str .= '</span></legend>';
+            $str .= '<div>';
+            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= '</div>';
         } else {
-            $str .= '<div title="' . s($this->field->description) . '">';
+            $str .= '</span></legend>';
         }
-        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
 
         $i = 0;
         foreach (explode("\n", $this->field->param1) as $checkbox) {
