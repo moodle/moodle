@@ -15,7 +15,7 @@ Feature: Manage scheduled tasks
       | disabled             | 1 |
     And I press "Save changes"
     Then I should see "Changes saved"
-    And I should see "Task disabled" in the "Log table cleanup" "table_row"
+    And I should see "Disabled" in the "Log table cleanup" "table_row"
 
   Scenario: Enable scheduled task
     When I click on "Edit task schedule: Log table cleanup" "link" in the "Log table cleanup" "table_row"
