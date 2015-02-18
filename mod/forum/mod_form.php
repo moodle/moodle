@@ -121,6 +121,9 @@ class mod_forum_mod_form extends moodleform_mod {
             $choices[2] = get_string('posts', 'forum');
             $mform->addElement('select', 'rsstype', get_string('rsstype'), $choices);
             $mform->addHelpButton('rsstype', 'rsstype', 'forum');
+            if (isset($CFG->forum_rsstype)) {
+                $mform->setDefault('rsstype', $CFG->forum_rsstype);
+            }
 
             $choices = array();
             $choices[0] = '0';
@@ -139,6 +142,9 @@ class mod_forum_mod_form extends moodleform_mod {
             $mform->addElement('select', 'rssarticles', get_string('rssarticles'), $choices);
             $mform->addHelpButton('rssarticles', 'rssarticles', 'forum');
             $mform->disabledIf('rssarticles', 'rsstype', 'eq', '0');
+            if (isset($CFG->forum_rssarticles)) {
+                $mform->setDefault('rssarticles', $CFG->forum_rssarticles);
+            }
         }
 
 //-------------------------------------------------------------------------------

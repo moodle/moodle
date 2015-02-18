@@ -104,6 +104,34 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('forum_enablerssfeeds', get_string('enablerssfeeds', 'admin'),
                        $str, 0, $options));
 
+    if (!empty($CFG->enablerssfeeds)) {
+        $options = array(
+            0 => get_string('none'),
+            1 => get_string('discussions', 'forum'),
+            2 => get_string('posts', 'forum')
+        );
+        $settings->add(new admin_setting_configselect('forum_rsstype', get_string('rsstypedefault', 'forum'),
+                get_string('configrsstypedefault', 'forum'), 0, $options));
+
+        $options = array(
+            0  => '0',
+            1  => '1',
+            2  => '2',
+            3  => '3',
+            4  => '4',
+            5  => '5',
+            10 => '10',
+            15 => '15',
+            20 => '20',
+            25 => '25',
+            30 => '30',
+            40 => '40',
+            50 => '50'
+        );
+        $settings->add(new admin_setting_configselect('forum_rssarticles', get_string('rssarticles', 'forum'),
+                get_string('configrssarticlesdefault', 'forum'), 0, $options));
+    }
+
     $settings->add(new admin_setting_configcheckbox('forum_enabletimedposts', get_string('timedposts', 'forum'),
                        get_string('configenabletimedposts', 'forum'), 0));
 }
