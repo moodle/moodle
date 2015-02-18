@@ -49,5 +49,5 @@ Feature: Manage scheduled tasks
     And I press "Save changes"
     Then I should see "Changes saved"
     And the following should not exist in the "admintable" table:
-      | Component    | Minute | Hour | Day | Day of week | Month |
-      | Standard log | */5    | 1    | 2   | 4           | 3     |
+      | Name               | Component    | Minute | Hour | Day | Day of week | Month |
+      | Log table cleanup  | Standard log | */5    | 1    | 2   | 4           | 3     |
