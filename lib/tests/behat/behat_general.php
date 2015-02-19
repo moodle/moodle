@@ -383,23 +383,6 @@ class behat_general extends behat_base {
     }
 
     /**
-     * Simulate pressing a sequence of keys.
-     * @When /^I type "(?P<keys>(?:[^"]|\\")*)" into the "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)"$/
-     * @param string $keys the keys to press.
-     * @param string $element Element we look for
-     * @param string $selectortype The type of what we look for
-     */
-    public function i_type_into_the($keys, $element, $selectortype) {
-        $node = $this->get_selected_node($selectortype, $element);
-        $this->ensure_node_is_visible($node);
-        foreach (str_split($keys) as $key) {
-            $node->keyDown($key);
-            $node->keyPress($key);
-            $node->keyUp($key);
-        }
-    }
-
-    /**
      * Drags and drops the specified element to the specified container. This step does not work in all the browsers, consider it experimental.
      *
      * The steps definitions calling this step as part of them should
