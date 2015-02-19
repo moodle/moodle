@@ -219,8 +219,6 @@ class kalvidassign_singlesubmission_form extends moodleform {
             $width = $data->width;
             $height = $data->height;
         }
-        $realSource = local_kaltura_add_kaf_uri_token($source);
-        $hashedSource = base64_encode($realSource);
         
         $target = new moodle_url('/mod/kalvidassign/lti_launch_grade.php?cmid='.$cmid.'&source='.urlencode($source).'&height='.$height.'&width='.$width.'&courseid='.$courseId);
         return $target;
