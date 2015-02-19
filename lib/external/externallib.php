@@ -108,11 +108,12 @@ class core_external extends external_api {
      * @return string
      * @since Moodle 2.4
      */
-    public static function get_string($stringid, $component = 'moodle', $stringparams = array()) {
+    public static function get_string($stringid, $component = 'moodle', $lang = null, $stringparams = array()) {
         $params = self::validate_parameters(self::get_string_parameters(),
-                      array('stringid'=>$stringid, 'component' => $component, 'stringparams' => $stringparams));
+                      array('stringid'=>$stringid, 'component' => $component, 'lang' => $lang, 'stringparams' => $stringparams));
 
-        return get_string($params['stringid'], $params['component'],
+        $stringmanager = get_string_manager();
+        return $stringmanager->get_string($params['stringid'], $params['component'],
             core_external::format_string_parameters($params['stringparams']), $params['lang']);
     }
 
@@ -163,11 +164,12 @@ class core_external extends external_api {
     public static function get_strings($strings) {
         $params = self::validate_parameters(self::get_strings_parameters(),
                       array('strings'=>$strings));
+        $stringmanager = get_string_manager();
 
         $translatedstrings = array();
         foreach($params['strings'] as $string) {
 
-            if (empty($string['lang'])) {
+            if (!empty($string['lang'])) {
                 $lang = $string['lang'];
             } else {
                 $lang = current_language();
@@ -177,7 +179,7 @@ class core_external extends external_api {
                 'stringid' => $string['stringid'],
                 'component' => $string['component'],
                 'lang' => $lang,
-                'string' => get_string($string['stringid'], $string['component'],
+                'string' => $stringmanager->get_string($string['stringid'], $string['component'],
                     core_external::format_string_parameters($string['stringparams']), $lang));
         }
 
