@@ -151,7 +151,7 @@ function kalvidres_cron () {
  * of his role (student, teacher, admin...). The returned objects must contain
  * at least id property. See other modules as example.
  *
- * @param int $kalvidres ID of an instance of this module
+ * @param int $kalvidresid ID of an instance of this module
  * @return boolean|array false if no participants, array of objects otherwise
  */
 function kalvidres_get_participants($kalvidresid) {
@@ -167,33 +167,23 @@ function kalvidres_supports($feature) {
     switch($feature) {
         case FEATURE_MOD_ARCHETYPE:
             return MOD_ARCHETYPE_RESOURCE;
-            break;
         case FEATURE_GROUPS:
             return true;
-            break;
         case FEATURE_GROUPINGS:
             return true;
-            break;
         case FEATURE_GROUPMEMBERSONLY:
             return true;
-            break;
         case FEATURE_MOD_INTRO:
             return true;
-            break;
         case FEATURE_COMPLETION_TRACKS_VIEWS:
             return false;
-            break;
         case FEATURE_GRADE_HAS_GRADE:
             return false;
-            break;
         case FEATURE_GRADE_OUTCOMES:
             return false;
-            break;
         case FEATURE_BACKUP_MOODLE2:
             return true;
-            break;
         default:
             return null;
-            break;
     }
 }
