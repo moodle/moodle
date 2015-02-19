@@ -76,7 +76,8 @@ if ($data = $form->get_data()) {
             $output = fopen('php://output', 'w');
 
             // output the column headings
-            fputcsv($output, array('Request/Response', 'Time', 'Module', 'Endpoint', 'Data (JSON)'));
+            fputcsv($output, array(get_string('request', 'local_kaltura'), get_string('time', 'local_kaltura'),
+                get_string('module', 'local_kaltura'), get_string('endpoint', 'local_kaltura'), get_string('data', 'local_kaltura')));
 
             foreach ($rs as $record) {
                 $record->data = json_encode(unserialize($record->data));

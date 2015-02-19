@@ -26,8 +26,9 @@
 $PAGE->set_pagelayout('embedded');
 echo $OUTPUT->header();
 $playurl = urldecode($url);
+
+echo html_writer::tag('h2', get_string('preview', 'local_kaltura'));
 ?>
-<h2>Preview</h2>
 <div id="KalturaAttoPreview"></div>
 <script>
     var data = {
