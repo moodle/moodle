@@ -399,10 +399,13 @@ class badge {
 
         if ($result) {
             // Trigger badge awarded event.
-            $context = context_system::instance();
-            $event = \core\event\badge_awarded::create(array('context' => $context, 'objectid' => $result,
-                'courseid' => $this->courseid ? $this->courseid : 0, 'relateduserid' => $userid));
-            $event->trigger();
+            $eventdata = array (
+                'context' => $this->get_context(),
+                'objectid' => $this->id,
+                'relateduserid' => $userid,
+                'other' => array('expiredate' => $issued->dateexpire, 'badgeissuedid' => $result)
+            );
+            \core\event\badge_awarded::create($eventdata)->trigger();
 
             // Lock the badge, so that its criteria could not be changed any more.
             if ($this->status == BADGE_STATUS_ACTIVE) {
