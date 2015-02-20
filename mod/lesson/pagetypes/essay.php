@@ -164,6 +164,9 @@ class lesson_page_type_essay extends lesson_page {
         $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes), context_module::instance($PAGE->cm->id), 'mod_lesson', 'page_contents', $properties->id);
         $DB->update_record("lesson_pages", $properties);
 
+        // Trigger an event: page updated.
+        \mod_lesson\event\page_updated::create_from_lesson_page($this, $context)->trigger();
+
         if (!array_key_exists(0, $this->answers)) {
             $this->answers[0] = new stdClass;
             $this->answers[0]->lessonid = $this->lesson->id;
