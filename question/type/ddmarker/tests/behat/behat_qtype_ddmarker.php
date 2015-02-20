@@ -113,9 +113,13 @@ class behat_qtype_ddmarker extends behat_base {
             'left'  => chr(37),
             'right' => chr(39),
         );
-        $keys = str_repeat($keycodes[$direction], $repeats);
         list($marker, $item) = $this->parse_marker_name($marker);
-        $generalcontext = behat_context_helper::get('behat_general');
-        $generalcontext->i_type_into_the($keys, $this->marker_xpath($marker, $item), 'xpath_element');
+        $node = $this->get_selected_node('xpath_element', $this->marker_xpath($marker, $item));
+        $this->ensure_node_is_visible($node);
+        for ($i = 0; $i < $repeats; $i++) {
+            $node->keyDown($keycodes[$direction]);
+            $node->keyPress($keycodes[$direction]);
+            $node->keyUp($keycodes[$direction]);
+        }
     }
 }
