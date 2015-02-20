@@ -273,6 +273,7 @@ class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
         if (count($coordsstringparts) < 3) {
             $this->error = 'polygonmusthaveatleastthreepoints';
         } else {
+            $lastxy = null;
             foreach ($coordsstringparts as $coordsstringpart) {
                 $xy = explode(',', $coordsstringpart);
                 if (count($xy) !== 2) {
@@ -283,7 +284,11 @@ class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
                 }
                 $xy[0] = (int) $xy[0];
                 $xy[1] = (int) $xy[1];
+                if ($lastxy !== null && $lastxy[0] == $xy[0] && $lastxy[1] == $xy[1]) {
+                    $this->error = 'repeatedpoint';
+                }
                 $this->coords[] = $xy;
+                $lastxy = $xy;
                 if (isset($this->minxy)) {
                     $this->minxy[0] = min($this->minxy[0], $xy[0]);
                     $this->minxy[1] = min($this->minxy[1], $xy[1]);

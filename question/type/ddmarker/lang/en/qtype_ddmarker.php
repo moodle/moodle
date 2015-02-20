@@ -51,6 +51,7 @@ $string['formerror_nosemicolons'] = 'There are no semicolons in your coordinates
 $string['formerror_onlysometagsallowed'] = 'Only "{$a}" tags are allowed in the label for a marker';
 $string['formerror_onlyusewholepositivenumbers'] = 'Please use only whole positive numbers to specify x,y coords and/or width and height of shapes. Your coordinates for a {$a->shape} should be expressed as - {$a->coordsstring}.';
 $string['formerror_polygonmusthaveatleastthreepoints'] = 'For a polygon shape you need to specify at least 3 points. Your coordinates for a {$a->shape} should be expressed as - {$a->coordsstring}.';
+$string['formerror_repeatedpoint'] = 'You have given the same point twice. Please remove the duplication. Your coordinates for a {$a->shape} should be expressed as - {$a->coordsstring}.';
 $string['formerror_shapeoutsideboundsofbgimage'] = 'The shape you have defined goes out of the bounds of the background image';
 $string['formerror_toomanysemicolons'] = 'There are too many semi colon separated parts to the coordinates you have specified. Your coordinates for a {$a->shape} should be expressed as - {$a->coordsstring}.';
 $string['formerror_unrecognisedwidthheightpart'] = 'We do not recognise the width and height you have specified. Your coordinates for a {$a->shape} should be expressed as - {$a->coordsstring}.';

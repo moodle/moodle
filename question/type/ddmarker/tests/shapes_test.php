@@ -38,9 +38,30 @@ require_once($CFG->dirroot . '/question/type/ddmarker/shapes.php');
  */
 class qtype_ddmarker_shapes_test extends basic_testcase {
 
-    public function test_polygon_valdiation_test() {
+    public function test_polygon_valdiation_test_ok() {
         $shape = new qtype_ddmarker_shape_polygon('10, 10; 20, 10; 20, 20; 10, 20');
         $this->assertFalse($shape->get_coords_interpreter_error()); // No errors.
+    }
+
+    public function test_polygon_valdiation_test_only_two_points() {
+        $shape = new qtype_ddmarker_shape_polygon('10, 10; 20, 10');
+        $this->assertEquals(get_string('formerror_polygonmusthaveatleastthreepoints', 'qtype_ddmarker',
+                        array('shape' => 'polygon', 'coordsstring' => get_string('shape_polygon_coords', 'qtype_ddmarker'))),
+                $shape->get_coords_interpreter_error());
+    }
+
+    public function test_polygon_valdiation_test_invalid_point() {
+        $shape = new qtype_ddmarker_shape_polygon('10, 10; 20, ; 20, 20; 10, 20');
+        $this->assertEquals(get_string('formerror_onlyusewholepositivenumbers', 'qtype_ddmarker',
+                        array('shape' => 'polygon', 'coordsstring' => get_string('shape_polygon_coords', 'qtype_ddmarker'))),
+                $shape->get_coords_interpreter_error());
+    }
+
+    public function test_polygon_valdiation_test_repeated_point() {
+        $shape = new qtype_ddmarker_shape_polygon('70,220;90,200;95,150;120,150;140,200;150,230;150,230;150,240;120,240;110,240;90,240');
+        $this->assertEquals(get_string('formerror_repeatedpoint', 'qtype_ddmarker',
+                        array('shape' => 'polygon', 'coordsstring' => get_string('shape_polygon_coords', 'qtype_ddmarker'))),
+                $shape->get_coords_interpreter_error());
     }
 
     public function test_polygon_hit_test() {
