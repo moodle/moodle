@@ -45,7 +45,8 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
         $value = $qa->get_last_qt_var($question->field($place));
 
         $attributes = array(
-            'id' => $this->box_id($qa, 'p' . $place),
+            'id'     => $this->box_id($qa, 'p' . $place),
+             'class' => 'place' . $place,
         );
         $groupclass = 'group' . $group;
 
@@ -65,13 +66,22 @@ class qtype_gapselect_renderer extends qtype_elements_embedded_in_question_text_
             if (array_key_exists($fieldname, $response)) {
                 $fraction = (int) ($response[$fieldname] ==
                         $question->get_right_choice_for($place));
-                $attributes['class'] = $this->feedback_class($fraction);
+                $attributes['class'] .= ' ' . $this->feedback_class($fraction);
                 $feedbackimage = $this->feedback_image($fraction);
             }
         }
 
+        // If the text is short use non-breaking space.
+        $choose = '&nbsp;';
+        foreach ($selectoptions as $key => $text) {
+            if (strlen(get_string('choosedots')) / 2 <= strlen($text)) {
+                $choose = get_string('choosedots');
+                break;
+            }
+        }
+
         $selecthtml = html_writer::select($selectoptions, $qa->get_qt_field_name($fieldname),
-                $value, get_string('choosedots'), $attributes) . ' ' . $feedbackimage;
+                $value, $choose, $attributes) . ' ' . $feedbackimage;
         return html_writer::tag('span', $selecthtml, array('class' => 'control '.$groupclass));
     }
 
