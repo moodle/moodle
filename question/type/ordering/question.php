@@ -216,7 +216,7 @@ class qtype_ordering_question extends question_graded_automatically {
                     'partiallycorrectfeedback' => '',
                     'partiallycorrectfeedbackformat' => FORMAT_MOODLE // =0
                 );
-                $this->options->id = $DB->insert_record('qtype_ordering_options', $options);
+                $this->options->id = $DB->insert_record('qtype_ordering_options', $this->options);
             }
         }
         return $this->options;
