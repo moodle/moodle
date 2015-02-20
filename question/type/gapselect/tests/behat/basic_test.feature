@@ -53,10 +53,9 @@ Feature: Test all the basic functionality of this question type
     And I press "Start again with these options"
 
     # Answer question correctly
-    And I set the following fields to these values:
-      | q3_1_p1 | cat |
-      | q3_1_p2 | sat |
-      | q3_1_p3 | mat |
+    And I set space "1" to "cat" in the select missing words question
+    And I set space "2" to "sat" in the select missing words question
+    And I set space "3" to "mat" in the select missing words question
     And I press "Check"
     Then I should see "Your answer is correct"
     And I should see "The cat sat on the mat"
@@ -64,22 +63,21 @@ Feature: Test all the basic functionality of this question type
     And I press "Start again"
 
     # Answer question partially correct twice and then correct
-    And I set the following fields to these values:
-      | q4_1_p1 | cat |
-      | q4_1_p2 | sat |
-      | q4_1_p3 | dog |
+    And I set space "1" to "cat" in the select missing words question
+    And I set space "2" to "sat" in the select missing words question
+    And I set space "3" to "dog" in the select missing words question
     And I press "Check"
     Then I should see "Your answer is partially correct"
     And I should see "First hint"
 
     When I press "Try again"
-    And I set the field "q4_1_p3" to "table"
+    And I set space "3" to "table" in the select missing words question
     And I press "Check"
     Then I should see "Your answer is partially correct"
     And I should see "Second hint"
 
     When I press "Try again"
-    And I set the field "q4_1_p3" to "mat"
+    And I set space "3" to "mat" in the select missing words question
     And I press "Check"
     Then I should see "Your answer is correct"
     And I should see "The cat sat on the mat"
@@ -93,10 +91,9 @@ Feature: Test all the basic functionality of this question type
     # Answer question correctly
     When I press "Check"
     Then I should see "Please put an answer in each box."
-    And I set the following fields to these values:
-      | q5_1_p1 | cat |
-      | q5_1_p2 | sat |
-      | q5_1_p3 | mat |
+    And I set space "1" to "cat" in the select missing words question
+    And I set space "2" to "sat" in the select missing words question
+    And I set space "3" to "mat" in the select missing words question
     And I press "Check"
     Then I should see "Your answer is correct"
     And I should see "The cat sat on the mat"
@@ -104,10 +101,9 @@ Feature: Test all the basic functionality of this question type
     And I press "Start again"
 
     # Answer question partially correct
-    And I set the following fields to these values:
-      | q6_1_p1 | dog |
-      | q6_1_p2 | sat |
-      | q6_1_p3 | cat |
+    And I set space "1" to "dog" in the select missing words question
+    And I set space "2" to "sat" in the select missing words question
+    And I set space "3" to "cat" in the select missing words question
     And I press "Check"
     Then I should see "Your answer is partially correct"
     And I should see "You have correctly selected 1."
@@ -116,10 +112,9 @@ Feature: Test all the basic functionality of this question type
     And I press "Start again"
 
     # Answer question incorrectly
-    And I set the following fields to these values:
-      | q7_1_p1 | mat |
-      | q7_1_p2 | cat |
-      | q7_1_p3 | sat |
+    And I set space "1" to "mat" in the select missing words question
+    And I set space "2" to "cat" in the select missing words question
+    And I set space "3" to "sat" in the select missing words question
     And I press "Check"
     Then I should see "Your answer is incorrect"
     And I should see "The cat sat on the mat"
@@ -154,4 +149,3 @@ Feature: Test all the basic functionality of this question type
       | Question name | Edited question name |
     And I press "id_submitbutton"
     Then I should see "Edited question name"
-    And I wait "10" seconds
