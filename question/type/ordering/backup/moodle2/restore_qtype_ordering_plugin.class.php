@@ -60,8 +60,9 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
         $oldid = $data->id;
 
         // Detect if the question is created or mapped
-        $oldquestionid   = $this->get_old_parentid('questionid');
-        $newquestionid   = $this->get_new_parentid('questionid');
+        // "question" is the XML tag name, not the DB field name
+        $oldquestionid   = $this->get_old_parentid('question');
+        $newquestionid   = $this->get_new_parentid('question');
 
         // If the question has been created by restore,
         // we need to create a "qtype_ordering_options" record
