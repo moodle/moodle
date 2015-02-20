@@ -1761,14 +1761,8 @@ function scorm_format_toc_for_droplist($scorm, $scoes, $usertracks, $currentorg=
                 }
             }
 
-            if ($sco->prereq) {
-                if ($sco->scormtype == 'sco') {
-                    $tocmenus[$sco->id] = scorm_repeater('&minus;', $level) . '&gt;' . format_string($sco->title);
-                }
-            } else {
-                if ($sco->scormtype == 'sco') {
-                    $tocmenus[$sco->id] = scorm_repeater('&minus;', $level) . '&gt;' . format_string($sco->title);
-                }
+            if ($sco->scormtype == 'sco') {
+                $tocmenus[$sco->id] = scorm_repeater('&minus;', $level) . '&gt;' . format_string($sco->title);
             }
 
             if (!empty($sco->children)) {
@@ -1940,4 +1934,32 @@ function scorm_check_url($url) {
     }
 
     return true;
+}
+
+/**
+ * Check if the current sco is launchable
+ * If not, find the next launchable sco
+ *
+ * @param stdClass $scorm Scorm object
+ * @param integer $scoid id of scorm_scoes record.
+ * @return integer scoid of correct sco to launch or empty if one cannot be found, which will trigger first sco.
+ */
+function scorm_check_launchable_sco($scorm, $scoid) {
+    global $DB;
+    if ($sco = scorm_get_sco($scoid, SCO_ONLY)) {
+        if ($sco->launch == '') {
+            // This scoid might be a top level org that can't be launched, find the first launchable sco after this sco.
+            $scoes = $DB->get_records_select('scorm_scoes',
+                                             'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true).
+                                             ' AND id > ?', array($scorm->id, $sco->id), 'sortorder, id', 'id', 0, 1);
+            if (!empty($scoes)) {
+                $sco = reset($scoes); // Get first item from the list.
+                return $sco->id;
+            }
+        } else {
+            return $sco->id;
+        }
+    }
+    // Returning 0 will cause default behaviour which will find the first launchable sco in the package.
+    return 0;
 }
