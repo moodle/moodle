@@ -77,7 +77,12 @@ class behat_qtype_ddimageortext extends behat_base {
      * @Given /^I type "(?P<keys>[^"]*)" on place "(?P<place_number>\d+)" in the drag and drop onto image question$/
      */
     public function i_type_on_place_in_the_drag_and_drop_onto_image_question($keys, $placenumber) {
-        $generalcontext = behat_context_helper::get('behat_general');
-        $generalcontext->i_type_into_the($keys, $this->drop_xpath($placenumber), 'xpath_element');
+        $node = $this->get_selected_node('xpath_element', $this->drop_xpath($placenumber));
+        $this->ensure_node_is_visible($node);
+        foreach (str_split($keys) as $key) {
+            $node->keyDown($key);
+            $node->keyPress($key);
+            $node->keyUp($key);
+        }
     }
 }
