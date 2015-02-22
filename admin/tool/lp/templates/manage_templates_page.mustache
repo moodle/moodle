@@ -1,0 +1,98 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Manage learning plan templates template.
+
+    Classes required for JS:
+    * drag-parentnode
+    * drag-handlecontainer
+    * drag-samenode
+    * templateactions
+
+    Data attibutes required for JS:
+    * data-region = managetemplates
+    * data-templateid = id
+    * data-action = deletetemplate
+
+    Context variables required for this template:
+    * templates - array of objects containing id, shortname, idnumber, sortorder, visible
+    * canmanage - true if this user has permission to manage the templates
+    * navigation - array of strings containing buttons for navigation
+}}
+<div data-region="managetemplates">
+<table class="generaltable fullwidth managetemplates">
+    <caption>{{#str}}listtemplatescaption, tool_lp{{/str}}</caption>
+    <thead>
+        <tr>
+            <th scope="col">{{#str}}templatename, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody class="drag-parentnode">
+        {{#templates}}
+        <tr class="drag-samenode" data-templateid="{{id}}">
+            <td><span class="drag-handlecontainer"></span><span><a href="{{pluginbaseurl}}/templatecompetencies.php?templateid={{id}}">{{shortname}} {{idnumber}}</a></span> {{^visible}}{{#str}}hiddenhint, tool_lp{{/str}}{{/visible}}</td>
+            <td>
+            {{#canmanage}}
+            <div style="display: inline-block;">
+            <ul class="templateactions hide">
+                <li>
+                    <a href="{{pluginbaseurl}}/edittemplate.php?id={{id}}">
+                        {{#pix}}t/edit{{/pix}}{{#str}}editthistemplate, tool_lp{{/str}}
+                    </a>
+                </li>
+                <li>
+                    <a data-action="deletetemplate" data-templateid="{{id}}" href="#">
+                        {{#pix}}t/delete{{/pix}}{{#str}}deletethistemplate, tool_lp{{/str}}
+                    </a>
+                </li>
+            </ul>
+            </div>
+            {{/canmanage}}
+            </td>
+        </tr>
+        {{/templates}}
+    </tbody>
+</table>
+{{^templates}}
+<p class="alert-info">
+    {{#str}}notemplates, tool_lp{{/str}}
+</p>
+{{/templates}}
+
+<div class="btn-group pull-right">
+{{#navigation}}
+{{{.}}}
+{{/navigation}}
+</div>
+
+{{#js}}
+// Initialise the JS.
+require(['tool_lp/templatedelete',
+         'core/menu',
+         'tool_lp/templatemove'],
+        function(deleteMod, menu, moveMod) {
+
+    deleteMod.init();
+    moveMod.init();
+
+    menu.menu('{{#str}}edit{{/str}}', '.templateactions');
+});
+
+{{/js}}
+
+</div>

@@ -1,0 +1,12 @@
+<li data-id="{{id}}" draggable="true">
+    {{^visible}}<span class="disabled">{{/visible}}
+        {{shortname}} <em>{{idnumber}}</em>
+    {{^visible}}</span>{{/visible}}
+    {{#haschildren}}
+    <ul>
+    {{#children}}
+    {{> tool_lp/competencies_tree }}
+    {{/children}}
+    </ul>
+    {{/haschildren}}
+</li>

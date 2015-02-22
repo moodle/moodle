@@ -1,0 +1,114 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Manage competencies template.
+
+    Classes required for JS:
+
+    Data attibutes required for JS:
+    * data-enhance=tree
+
+    Context variables required for this template:
+    * framework -
+    * competencies - array of objects containing id, shortname, idnumber, sortorder, visible, parentid, competencyframeworkid, path
+    * canmanage - true if this user has permission to manage the competencies
+}}
+<div data-region="managecompetencies" >
+
+<div class="row">
+<div class="span6">
+<p>
+<form data-region="filtercompetencies" data-frameworkid="{{framework.id}}">
+    <label class="accesshide" for="filter{{uniqid}}">{{#str}}search, tool_lp{{/str}}</label>
+    <input type="text" id="filter{{uniqid}}" placeholder="{{#str}}search, tool_lp{{/str}}" value="{{search}}">
+    <button>{{#pix}}a/search, , {{#str}}search{{/str}}{{/pix}}</button>
+</form>
+</p>
+<ul data-enhance="tree">
+    <li>{{framework.shortname}}
+        <ul>
+            {{#competencies}}
+                {{> tool_lp/competencies_tree }}
+            {{/competencies}}
+        </ul>
+    </li>
+</ul>
+</div>
+
+<div class="span6 well">
+<h4>{{#str}}selectedcompetency, tool_lp{{/str}}</h4>
+<p data-region="competencyinfo">
+{{#str}}nocompetencyselected, tool_lp{{/str}}
+</p>
+{{#canmanage}}
+<div data-region="competencyactions">
+<div class="btn-group">
+<button class="btn" data-action="add" disabled="disabled">{{#pix}}t/add{{/pix}} {{#str}}addcompetency, tool_lp{{/str}}</button>
+</div>
+            <div data-region="competencyactionsmenu">
+            <ul class="competencyactionsmenu">
+                <li>
+                    <a href="#" data-action="edit">
+                        {{#pix}}t/edit{{/pix}}{{#str}}edit{{/str}}
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-action="move">
+                        {{#pix}}t/move{{/pix}}{{#str}}movetonewparent, tool_lp{{/str}}
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-action="delete">
+                        {{#pix}}t/delete{{/pix}}{{#str}}delete{{/str}}
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-action="moveup">
+                        {{#pix}}t/up{{/pix}}{{#str}}moveup{{/str}}
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-action="movedown">
+                        {{#pix}}t/down{{/pix}}{{#str}}movedown{{/str}}
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-action="linkedcourses">
+                        {{#pix}}t/viewdetails{{/pix}}{{#str}}linkedcourses, tool_lp{{/str}}
+                    </a>
+                </li>
+            </ul>
+            </div>
+</div>
+{{/canmanage}}
+</div>
+</div>
+
+{{#js}}
+// Initialise the JS.
+require(['core/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions' ], function(ariatree, treeModel, actions) {
+
+    treeModel.init({{framework.id}});
+
+    actions.init(treeModel);
+
+    var competencytree = new ariatree('[data-enhance=tree]', actions.selectionChanged);
+
+});
+{{/js}}
+
+</div>

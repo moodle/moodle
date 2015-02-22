@@ -1,0 +1,11 @@
+<p>
+{{#str}}coursesusingthiscompetency, tool_lp{{/str}}
+</p>
+<ol>
+{{#courses}}
+    <li><a href="{{courseviewurl}}?id={{id}}">{{{fullnameformatted}}} {{{shortnameformatted}}}</a></li>
+{{/courses}}
+{{^courses}}
+    {{#str}}nolinkedcourses, tool_lp{{/str}}
+{{/courses}}
+</ol>
