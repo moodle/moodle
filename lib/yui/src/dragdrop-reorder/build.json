@@ -1,0 +1,10 @@
+{
+    "name": "moodle-core-dragdrop-reorder",
+    "builds": {
+        "moodle-core-dragdrop-reorder": {
+            "jsfiles": [
+                "dragdropreorder.js"
+            ]
+        }
+    }
+}

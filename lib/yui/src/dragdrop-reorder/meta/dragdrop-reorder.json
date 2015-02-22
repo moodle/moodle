@@ -1,0 +1,7 @@
+{
+    "moodle-core-dragdrop-reorder": {
+        "requires": [
+            "moodle-core-dragdrop"
+        ]
+    }
+}
