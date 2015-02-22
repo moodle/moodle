@@ -1,0 +1,24 @@
+{
+    "name": "mustache/mustache",
+    "description": "A Mustache implementation in PHP.",
+    "keywords": ["templating", "mustache"],
+    "homepage": "https://github.com/bobthecow/mustache.php",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Justin Hileman",
+            "email": "justin@justinhileman.info",
+            "homepage": "http://justinhileman.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-0": { "Mustache": "src/" }
+    }
+}
