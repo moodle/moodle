@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 2.9 ===
 
+* Support for loading AMD javascript modules has been added. See MDL-49046.
 * Webservice core_course_delete_courses now return warning messages on any failures and does not try to rollback the entire deletion.
 * \core\event\course_viewed 'other' argument renamed from coursesectionid to coursesectionnumber as it contains the section number.
 * New API core_filetypes::add_type (etc.) allows custom filetypes to be added and modified.
