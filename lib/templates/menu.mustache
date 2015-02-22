@@ -1,0 +1,52 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Moodle actionmenu template. The purpose of this list is to take a plain
+    HTML list of links and changing into specific DOM structure expected by
+    moodle-actionmenu. It is unlikely you will want to customise this template
+    because the actionmenu code is looking for specific classes, roles and data-attributes.
+
+    Classes required for JS:
+    * moodle-actionmenu
+    * menubar
+    * toggle-display
+    * textmenu
+    * menu
+
+    Data attibutes required for JS:
+    * data-enhance = moodle-core-actionmenu
+    * data-rel = menu-content
+
+    Context variables required for this template:
+    * uniqid - A uniq string that changes every time a template is renderer.
+    * triggerMessage - A message to show in the link that opens the menu.
+    * links - An array of things to show in the menu. Standard menus put a link with a pix_icon and a short bit of text.
+}}
+<div class="moodle-actionmenu" data-enhance="moodle-core-actionmenu">
+    <ul class="menubar" role="menubar">
+        <li role="presentation">
+            <a id="{{uniqid}}-action-menu-toggle" class="toggle-display textmenu" role="menuitem" href="#" aria-haspopup="true">{{triggerMessage}}<b class="caret"></b></a>
+        </li>
+    </ul>
+    <ul class="menu" data-rel="menu-content" aria-labelledby="{{uniqid}}-action-menu-toggle" role="menu" aria-hidden="true">
+        {{#links}}
+        <li role="presentation">
+            {{{.}}}
+        </li>
+        {{/links}}
+    </ul>
+</div>
