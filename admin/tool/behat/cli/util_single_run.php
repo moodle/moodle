@@ -189,9 +189,11 @@ if ($options['install']) {
     exit($code);
 
 } else if ($options['updatesteps']) {
-    $behatstepfile = __DIR__ . "/../../../../behat_features_step_count.json";
     if (defined('BEHAT_FEATURE_STEP_FILE') && BEHAT_FEATURE_STEP_FILE) {
         $behatstepfile = BEHAT_FEATURE_STEP_FILE;
+    } else {
+        echo "BEHAT_FEATURE_STEP_FILE is not set, please ensure you set this to writable file" . PHP_EOL;
+        exit(1);
     }
 
     // Rewrite config file to ensure we have all the features covered.
@@ -265,7 +267,7 @@ function print_update_step_output($process, $featurestepfile) {
         $exitcode = -1;
     }
 
-    echo PHP_EOL;
+    echo PHP_EOL. "Updated step count in " . $featurestepfile . PHP_EOL;
 
     return $exitcode;
 }

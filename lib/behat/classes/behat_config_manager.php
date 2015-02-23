@@ -416,14 +416,12 @@ class behat_config_manager {
 
         if (!$behattimingfile || !$behattimingdata = @json_decode(file_get_contents($behattimingfile), true)) {
             // No data available, fall back to relying on steps data.
-            $stepfile = __DIR__ . "/../../../behat_features_step_count.json";
-
+            $stepfile = "";
             if (defined('BEHAT_FEATURE_STEP_FILE') && BEHAT_FEATURE_STEP_FILE) {
                 $stepfile = BEHAT_FEATURE_STEP_FILE;
             }
             // We should never get this. But in case we can't do this then fall back on simple splitting.
-            if (!$stepfile || !$behattimingdata = @json_decode(file_get_contents($stepfile), true)) {
-                echo "No step/timing information available, falling back on simple distribution" . PHP_EOL;
+            if (empty($stepfile) || !$behattimingdata = @json_decode(file_get_contents($stepfile), true)) {
                 return false;
             }
         }
