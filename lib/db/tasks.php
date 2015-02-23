@@ -125,8 +125,8 @@ $tasks = array(
     array(
         'classname' => 'core\task\create_contexts_task',
         'blocking' => 1,
-        'minute' => '*',
-        'hour' => '*',
+        'minute' => '0',
+        'hour' => '0',
         'day' => '*',
         'dayofweek' => '*',
         'month' => '*'
