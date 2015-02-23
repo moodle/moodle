@@ -6447,14 +6447,17 @@ class context_user extends context {
     protected static function create_level_instances() {
         global $DB;
 
-        $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_USER.", u.id
+        $sql = "SELECT ".CONTEXT_USER.", u.id
                   FROM {user} u
                  WHERE u.deleted = 0
                        AND NOT EXISTS (SELECT 'x'
                                          FROM {context} cx
                                         WHERE u.id = cx.instanceid AND cx.contextlevel=".CONTEXT_USER.")";
-        $DB->execute($sql);
+        if ($contextdata = $DB->get_records_sql($sql)) {
+            foreach ($contextdata as $context) {
+                context::insert_context_record(CONTEXT_USER, $context->id, null);
+            }
+        }
     }
 
     /**
@@ -6655,13 +6658,16 @@ class context_coursecat extends context {
     protected static function create_level_instances() {
         global $DB;
 
-        $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_COURSECAT.", cc.id
+        $sql = "SELECT ".CONTEXT_COURSECAT.", cc.id
                   FROM {course_categories} cc
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE cc.id = cx.instanceid AND cx.contextlevel=".CONTEXT_COURSECAT.")";
-        $DB->execute($sql);
+        if ($contextdata = $DB->get_records_sql($sql)) {
+            foreach ($contextdata as $context) {
+                context::insert_context_record(CONTEXT_COURSECAT, $context->id, null);
+            }
+        }
     }
 
     /**
@@ -6878,13 +6884,16 @@ class context_course extends context {
     protected static function create_level_instances() {
         global $DB;
 
-        $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_COURSE.", c.id
+        $sql = "SELECT ".CONTEXT_COURSE.", c.id
                   FROM {course} c
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE c.id = cx.instanceid AND cx.contextlevel=".CONTEXT_COURSE.")";
-        $DB->execute($sql);
+        if ($contextdata = $DB->get_records_sql($sql)) {
+            foreach ($contextdata as $context) {
+                context::insert_context_record(CONTEXT_COURSE, $context->id, null);
+            }
+        }
     }
 
     /**
@@ -7132,13 +7141,16 @@ class context_module extends context {
     protected static function create_level_instances() {
         global $DB;
 
-        $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_MODULE.", cm.id
+        $sql = "SELECT ".CONTEXT_MODULE.", cm.id
                   FROM {course_modules} cm
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE cm.id = cx.instanceid AND cx.contextlevel=".CONTEXT_MODULE.")";
-        $DB->execute($sql);
+        if ($contextdata = $DB->get_records_sql($sql)) {
+            foreach ($contextdata as $context) {
+                context::insert_context_record(CONTEXT_MODULE, $context->id, null);
+            }
+        }
     }
 
     /**
@@ -7349,13 +7361,16 @@ class context_block extends context {
     protected static function create_level_instances() {
         global $DB;
 
-        $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_BLOCK.", bi.id
+        $sql = "SELECT ".CONTEXT_BLOCK.", bi.id
                   FROM {block_instances} bi
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE bi.id = cx.instanceid AND cx.contextlevel=".CONTEXT_BLOCK.")";
-        $DB->execute($sql);
+        if ($contextdata = $DB->get_records_sql($sql)) {
+            foreach ($contextdata as $context) {
+                context::insert_context_record(CONTEXT_BLOCK, $context->id, null);
+            }
+        }
     }
 
     /**
