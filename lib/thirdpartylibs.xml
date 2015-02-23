@@ -252,4 +252,11 @@
     <version>5.2.1</version>
     <licenseversion>2.1</licenseversion>
   </library>
+  <library>
+    <location>requirejs</location>
+    <name>RequireJS</name>
+    <license>MIT</license>
+    <version>2.1.15</version>
+    <licenseversion></licenseversion>
+  </library>
 </libraries>
