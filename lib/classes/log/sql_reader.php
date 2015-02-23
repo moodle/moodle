@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Log storage reader interface.
+ * Log iterator reader interface.
  *
  * @package    core
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @copyright  2015 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,16 +27,18 @@ namespace core\log;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Sql select reader.
+ * Log iterator reader interface.
  *
- * @deprecated since Moodle 2.9 MDL-48595 - please do not use this interface any more.
- * @see        sql_reader
- * @todo       MDL-49291 This will be deleted in Moodle 3.1.
+ * Replaces sql_select_reader adding functions
+ * to return iterators.
+ *
+ * @since      Moodle 2.9
  * @package    core
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @copyright  2015 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface sql_select_reader extends reader {
+interface sql_reader extends reader {
+
     /**
      * Fetch records using given criteria.
      *
@@ -57,4 +59,32 @@ interface sql_select_reader extends reader {
      * @return int
      */
     public function get_events_select_count($selectwhere, array $params);
+
+    /**
+     * Fetch records using the given criteria returning an traversable list of events.
+     *
+     * Note that the returned object is Traversable, not Iterator, as we are returning
+     * EmptyIterator if we know there are no events, and EmptyIterator does not implement
+     * Countable {@link https://bugs.php.net/bug.php?id=60577} so valid() should be checked
+     * in any case instead of a count().
+     *
+     * Also note that the traversable object contains a recordset and it is very important
+     * that you close it after using it.
+     *
+     * @param string $selectwhere
+     * @param array $params
+     * @param string $sort
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return \Traversable|\core\event\base[] Returns an iterator containing \core\event\base objects.
+     */
+    public function get_events_select_iterator($selectwhere, array $params, $sort, $limitfrom, $limitnum);
+
+    /**
+     * Returns an event from the log data.
+     *
+     * @param stdClass $data Log data
+     * @return \core\event\base
+     */
+    public function get_log_event($data);
 }
