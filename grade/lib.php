@@ -2847,8 +2847,9 @@ abstract class grade_helper {
                 $importplugins[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
             }
 
-
-            if ($CFG->gradepublishing) {
+            // Show key manager if grade publishing is enabled and the user has xml publishing capability.
+            // XML is the only grade import plugin that has publishing feature.
+            if ($CFG->gradepublishing && has_capability('gradeimport/xml:publish', $context)) {
                 $url = new moodle_url('/grade/import/keymanager.php', array('id'=>$courseid));
                 $importplugins['keymanager'] = new grade_plugin_info('keymanager', $url, get_string('keymanager', 'grades'));
             }
@@ -2875,17 +2876,24 @@ abstract class grade_helper {
         }
         $context = context_course::instance($courseid);
         $exportplugins = array();
+        $canpublishgrades = 0;
         if (has_capability('moodle/grade:export', $context)) {
             foreach (core_component::get_plugin_list('gradeexport') as $plugin => $plugindir) {
                 if (!has_capability('gradeexport/'.$plugin.':view', $context)) {
                     continue;
                 }
+                // All the grade export plugins has grade publishing capabilities.
+                if (has_capability('gradeexport/'.$plugin.':publish', $context)) {
+                    $canpublishgrades++;
+                }
+
                 $pluginstr = get_string('pluginname', 'gradeexport_'.$plugin);
                 $url = new moodle_url('/grade/export/'.$plugin.'/index.php', array('id'=>$courseid));
                 $exportplugins[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);
             }
 
-            if ($CFG->gradepublishing) {
+            // Show key manager if grade publishing is enabled and the user has at least one grade publishing capability.
+            if ($CFG->gradepublishing && $canpublishgrades != 0) {
                 $url = new moodle_url('/grade/export/keymanager.php', array('id'=>$courseid));
                 $exportplugins['keymanager'] = new grade_plugin_info('keymanager', $url, get_string('keymanager', 'grades'));
             }
