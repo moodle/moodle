@@ -26,7 +26,7 @@ namespace logstore_legacy\log;
 
 defined('MOODLE_INTERNAL') || die();
 
-class store implements \tool_log\log\store, \core\log\sql_select_reader {
+class store implements \tool_log\log\store, \core\log\sql_reader {
     use \tool_log\helper\store,
         \tool_log\helper\reader;
 
@@ -47,7 +47,7 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
     const CRUD_REGEX = "/(crud).*?(<>|=|!=).*?'(.*?)'/s";
 
     /**
-     * This method contains mapping required for Moodle core to make legacy store compatible with other sql_select_reader based
+     * This method contains mapping required for Moodle core to make legacy store compatible with other sql_reader based
      * queries.
      *
      * @param string $selectwhere Select statment
@@ -104,12 +104,54 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
         $events = array();
 
         foreach ($records as $data) {
-            $events[$data->id] = \logstore_legacy\event\legacy_logged::restore_legacy($data);
+            $events[$data->id] = $this->get_log_event($data);
         }
 
         $records->close();
 
         return $events;
+    }
+
+    /**
+     * Fetch records using given criteria returning a Traversable object.
+     *
+     * Note that the traversable object contains a moodle_recordset, so
+     * remember that is important that you call close() once you finish
+     * using it.
+     *
+     * @param string $selectwhere
+     * @param array $params
+     * @param string $sort
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return \Traversable|\core\event\base[]
+     */
+    public function get_events_select_iterator($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
+        global $DB;
+
+        $sort = self::tweak_sort_by_id($sort);
+
+        // Replace the query with hardcoded mappings required for core.
+        list($selectwhere, $params, $sort) = self::replace_sql_legacy($selectwhere, $params, $sort);
+
+        try {
+            $recordset = $DB->get_recordset_select('log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
+        } catch (\moodle_exception $ex) {
+            debugging("error converting legacy event data " . $ex->getMessage() . $ex->debuginfo, DEBUG_DEVELOPER);
+            return new \EmptyIterator;
+        }
+
+        return new \core\dml\recordset_walk($recordset, array($this, 'get_log_event'));
+    }
+
+    /**
+     * Returns an event from the log data.
+     *
+     * @param stdClass $data Log data
+     * @return \core\event\base
+     */
+    public function get_log_event($data) {
+        return \logstore_legacy\event\legacy_logged::restore_legacy($data);
     }
 
     public function get_events_select_count($selectwhere, array $params) {

@@ -1345,7 +1345,7 @@ class table_sql extends flexible_table {
      */
     public $sql = NULL;
     /**
-     * @var array Data fetched from the db.
+     * @var array|\Traversable Data fetched from the db.
      */
     public $rawdata = NULL;
 
@@ -1374,14 +1374,27 @@ class table_sql extends flexible_table {
      * processing each col using either col_{columnname} method or other_cols
      * method or if other_cols returns NULL then put the data straight into the
      * table.
+     *
+     * @return void
      */
     function build_table() {
-        if ($this->rawdata) {
-            foreach ($this->rawdata as $row) {
-                $formattedrow = $this->format_row($row);
-                $this->add_data_keyed($formattedrow,
-                        $this->get_row_class($row));
-            }
+
+        if ($this->rawdata instanceof \Traversable && !$this->rawdata->valid()) {
+            return;
+        }
+        if (!$this->rawdata) {
+            return;
+        }
+
+        foreach ($this->rawdata as $row) {
+            $formattedrow = $this->format_row($row);
+            $this->add_data_keyed($formattedrow,
+                $this->get_row_class($row));
+        }
+
+        if ($this->rawdata instanceof \core\dml\recordset_walk ||
+                $this->rawdata instanceof moodle_recordset) {
+            $this->rawdata->close();
         }
     }
 
