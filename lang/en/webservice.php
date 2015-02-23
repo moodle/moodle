@@ -127,6 +127,7 @@ $string['missingusername'] = 'Missing username';
 $string['missingversionfile'] = 'Coding error: version.php file is missing for the component {$a}';
 $string['mobilewsdisabled'] = 'Disabled';
 $string['mobilewsenabled'] = 'Enabled';
+$string['nameexists'] = 'This name is already in use by another service';
 $string['nocapabilitytouseparameter'] = 'The user does not have the required capability to use the parameter {$a}';
 $string['nofunctions'] = 'This service has no functions.';
 $string['norequiredcapability'] = 'No required capability';
