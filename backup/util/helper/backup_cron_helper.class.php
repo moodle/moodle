@@ -656,7 +656,7 @@ abstract class backup_cron_automated_helper {
      */
     protected static function is_course_modified($courseid, $since) {
         $logmang = get_log_manager();
-        $readers = $logmang->get_readers('core\log\sql_select_reader');
+        $readers = $logmang->get_readers('core\log\sql_reader');
         $where = "courseid = :courseid and timecreated > :since and crud <> 'r'";
         $params = array('courseid' => $courseid, 'since' => $since);
         foreach ($readers as $reader) {

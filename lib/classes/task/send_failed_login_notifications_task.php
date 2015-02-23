@@ -72,7 +72,7 @@ class send_failed_login_notifications_task extends scheduled_task {
         // Get all the IPs with more than notifyloginthreshold failures since lastnotifyfailure
         // and insert them into the cache_flags temp table.
         $logmang = get_log_manager();
-        $readers = $logmang->get_readers('\core\log\sql_internal_reader');
+        $readers = $logmang->get_readers('\core\log\sql_internal_table_reader');
         $reader = reset($readers);
         $readername = key($readers);
         if (empty($reader) || empty($readername)) {
