@@ -32,6 +32,7 @@ use Behat\Behat\Context\Step\Given as Given,
     Behat\Behat\Context\Step\When as When,
     Behat\Behat\Context\Step\Then as Then,
     Behat\Gherkin\Node\TableNode as TableNode,
+    Behat\Gherkin\Node\PyStringNode as PyStringNode,
     Behat\Mink\Element\NodeElement as NodeElement,
     Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
@@ -157,6 +158,19 @@ class behat_forms extends behat_base {
      */
     public function i_set_the_field_to($field, $value) {
         $this->set_field_value($field, $value);
+    }
+
+    /**
+     * Sets the specified value to the field.
+     *
+     * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to multiline$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field
+     * @param PyStringNode $value
+     * @return void
+     */
+    public function i_set_the_field_to_multiline($field, PyStringNode $value) {
+        $this->set_field_value($field, (string)$value);
     }
 
     /**
