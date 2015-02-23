@@ -6453,11 +6453,11 @@ class context_user extends context {
                        AND NOT EXISTS (SELECT 'x'
                                          FROM {context} cx
                                         WHERE u.id = cx.instanceid AND cx.contextlevel=".CONTEXT_USER.")";
-        if ($contextdata = $DB->get_records_sql($sql)) {
-            foreach ($contextdata as $context) {
-                context::insert_context_record(CONTEXT_USER, $context->id, null);
-            }
+        $contextdata = $DB->get_recordset_sql($sql);
+        foreach ($contextdata as $context) {
+            context::insert_context_record(CONTEXT_USER, $context->id, null);
         }
+        $contextdata->close();
     }
 
     /**
@@ -6663,11 +6663,11 @@ class context_coursecat extends context {
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE cc.id = cx.instanceid AND cx.contextlevel=".CONTEXT_COURSECAT.")";
-        if ($contextdata = $DB->get_records_sql($sql)) {
-            foreach ($contextdata as $context) {
-                context::insert_context_record(CONTEXT_COURSECAT, $context->id, null);
-            }
+        $contextdata = $DB->get_recordset_sql($sql);
+        foreach ($contextdata as $context) {
+            context::insert_context_record(CONTEXT_COURSECAT, $context->id, null);
         }
+        $contextdata->close();
     }
 
     /**
@@ -6889,11 +6889,11 @@ class context_course extends context {
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE c.id = cx.instanceid AND cx.contextlevel=".CONTEXT_COURSE.")";
-        if ($contextdata = $DB->get_records_sql($sql)) {
-            foreach ($contextdata as $context) {
-                context::insert_context_record(CONTEXT_COURSE, $context->id, null);
-            }
+        $contextdata = $DB->get_recordset_sql($sql);
+        foreach ($contextdata as $context) {
+            context::insert_context_record(CONTEXT_COURSE, $context->id, null);
         }
+        $contextdata->close();
     }
 
     /**
@@ -7146,11 +7146,11 @@ class context_module extends context {
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE cm.id = cx.instanceid AND cx.contextlevel=".CONTEXT_MODULE.")";
-        if ($contextdata = $DB->get_records_sql($sql)) {
-            foreach ($contextdata as $context) {
-                context::insert_context_record(CONTEXT_MODULE, $context->id, null);
-            }
+        $contextdata = $DB->get_recordset_sql($sql);
+        foreach ($contextdata as $context) {
+            context::insert_context_record(CONTEXT_MODULE, $context->id, null);
         }
+        $contextdata->close();
     }
 
     /**
@@ -7366,11 +7366,11 @@ class context_block extends context {
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE bi.id = cx.instanceid AND cx.contextlevel=".CONTEXT_BLOCK.")";
-        if ($contextdata = $DB->get_records_sql($sql)) {
-            foreach ($contextdata as $context) {
-                context::insert_context_record(CONTEXT_BLOCK, $context->id, null);
-            }
+        $contextdata = $DB->get_recordset_sql($sql);
+        foreach ($contextdata as $context) {
+            context::insert_context_record(CONTEXT_BLOCK, $context->id, null);
         }
+        $contextdata->close();
     }
 
     /**
