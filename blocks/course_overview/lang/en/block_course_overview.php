@@ -25,7 +25,7 @@
 $string['activityoverview'] = 'You have {$a}s that need attention';
 $string['alwaysshowall'] = 'Always show all';
 $string['collapseall'] = 'Collapse all course lists';
-$string['configotherexpanded'] = 'If enabled, other courses will be expanded by default unless overriden by user preferences.';
+$string['configotherexpanded'] = 'If enabled, other courses will be expanded by default unless overridden by user preferences.';
 $string['configpreservestates'] = 'If enabled, the collapsed/expanded states set by the user are stored and used on each load.';
 $string['course_overview:addinstance'] = 'Add a new course overview block';
 $string['course_overview:myaddinstance'] = 'Add a new course overview block to My home';

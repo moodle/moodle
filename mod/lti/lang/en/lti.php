@@ -57,10 +57,9 @@ Some tool providers support reporting grades back to Moodle based on actions tak
 experience.';
 $string['accept_grades_help'] = 'Specify whether the tool provider can add, update, read, and delete grades associated only with this external tool instance.
 
-Some tool providers support reporting grades back to Moodle based on actions taken within the tool, creating a more integrated
-experience.
+Some tool providers support reporting grades back to Moodle based on actions taken within the tool, creating a more integrated experience.
 
-Note that this setting may be overriden in the tool configuration.';
+Note that this setting may be overridden in the tool configuration.';
 $string['action'] = 'Action';
 $string['active'] = 'Active';
 $string['activity'] = 'Activity';
@@ -363,24 +362,25 @@ $string['share_email_admin_help'] = 'Specify whether the e-mail address of the u
 The tool provider may need launcher\'s e-mail addresses to distinguish users with the same name in the UI, or send e-mails
 to users based on actions within the tool.';
 $string['share_email_help'] = 'Specify whether the e-mail address of the user launching the tool will be shared with the tool provider.
-The tool provider may need launcher\'s e-mail addresses to distinguish users with the same name, or send e-mails
-to users based on actions within the tool.
 
-Note that this setting may be overriden in the tool configuration.';
+The tool provider may need launcher\'s email addresses to distinguish users with the same name, or send emails to users based on actions within the tool.
+
+Note that this setting may be overridden in the tool configuration.';
 $string['share_name'] = 'Share launcher\'s name with the tool';
 $string['share_name_admin'] = 'Share launcher\'s name with tool';
 $string['share_name_admin_help'] = 'Specify whether the full name of the user launching the tool should be shared with the tool provider.
 The tool provider may need launchers\' names to show meaningful information within the tool.';
 $string['share_name_help'] = 'Specify whether the full name of the user launching the tool should be shared with the tool provider.
+
 The tool provider may need launchers\' names to show meaningful information within the tool.
 
-Note that this setting may be overriden in the tool configuration.';
+Note that this setting may be overridden in the tool configuration.';
 $string['share_roster'] = 'Allow the tool to access this course\'s roster';
 $string['share_roster_admin'] = 'Tool may access course roster';
 $string['share_roster_admin_help'] = 'Specify whether the tool can access the list of users enrolled in courses from which this tool type is launched.';
 $string['share_roster_help'] = 'Specify whether the tool can access the list of users enrolled in this course.
 
-Note that this setting may be overriden in the tool configuration.';
+Note that this setting may be overridden in the tool configuration.';
 $string['show_in_course'] = 'Show tool type when creating tool instances';
 $string['show_in_course_help'] = 'If selected, this tool configuration will appear in the "External tool type" dropdown when teachers
 configure external tools within courses.
