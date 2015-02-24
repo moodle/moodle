@@ -564,7 +564,9 @@ function scorm_parse_scorm(&$scorm, $manifest) {
                         }
                     }
 
-                    if (!empty($defaultorgid) && empty($firstinorg) && $newitem->parent == $scoes->defaultorg) {
+                    if (!empty($defaultorgid) && !empty($scoes->defaultorg) && empty($firstinorg) &&
+                        $newitem->parent == $scoes->defaultorg) {
+
                         $firstinorg = $sortorder;
                     }
 
