@@ -250,18 +250,22 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
     global $DB, $CFG;
     require_once($CFG->libdir.'/completionlib.php');
 
-    // Start lock to prevent synchronous access to the same data
-    // before it's updated.
-    $timeout = 10;
-    $locktype = 'mod_choice_choice_user_submit_response';
-    // Limiting access to this choice.
-    $resouce = 'choiceid:' . $choice->id;
-    $lockfactory = \core\lock\lock_config::get_lock_factory($locktype);
+    $continueurl = new moodle_url('/mod/choice/view.php', array('id' => $cm->id));
 
-    // Opening the lock.
-    $choicelock = $lockfactory->get_lock($resouce, $timeout);
-    if (!$choicelock) {
-        print_error('cannotsubmit', 'choice');
+    // Start lock to prevent synchronous access to the same data
+    // before it's updated, if using limits.
+    if ($choice->limitanswers) {
+        $timeout = 10;
+        $locktype = 'mod_choice_choice_user_submit_response';
+        // Limiting access to this choice.
+        $resouce = 'choiceid:' . $choice->id;
+        $lockfactory = \core\lock\lock_config::get_lock_factory($locktype);
+
+        // Opening the lock.
+        $choicelock = $lockfactory->get_lock($resouce, $timeout);
+        if (!$choicelock) {
+            print_error('cannotsubmit', 'choice', $continueurl);
+        }
     }
 
     $current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid));
@@ -336,12 +340,14 @@ WHERE
         if (!($current->optionid == $formanswer)) { // Check to see if current choice already selected - if not display error.
             // Release lock before error.
             $choicelock->release();
-            print_error('choicefull', 'choice');
+            print_error('choicefull', 'choice', $continueurl);
         }
     }
 
     // Release lock.
-    $choicelock->release();
+    if (isset($choicelock)) {
+        $choicelock->release();
+    }
 
     // Now record completed event.
     if (isset($answerupdated)) {
