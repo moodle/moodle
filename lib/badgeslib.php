@@ -398,6 +398,15 @@ class badge {
         $result = $DB->insert_record('badge_issued', $issued, true);
 
         if ($result) {
+            // Trigger badge awarded event.
+            $eventdata = array (
+                'context' => $this->get_context(),
+                'objectid' => $this->id,
+                'relateduserid' => $userid,
+                'other' => array('expiredate' => $issued->dateexpire, 'badgeissuedid' => $result)
+            );
+            \core\event\badge_awarded::create($eventdata)->trigger();
+
             // Lock the badge, so that its criteria could not be changed any more.
             if ($this->status == BADGE_STATUS_ACTIVE) {
                 $this->set_status(BADGE_STATUS_ACTIVE_LOCKED);
