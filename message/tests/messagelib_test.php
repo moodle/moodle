@@ -72,6 +72,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $record->useridto = $userto->id;
         $record->subject = 'No subject';
         $record->fullmessage = $message;
+        $record->smallmessage = $message;
         $record->timecreated = time();
 
         return $DB->insert_record('message', $record);
@@ -362,68 +363,261 @@ class core_message_messagelib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test message_get_recent_conversations.
+     * The data provider for message_get_recent_conversations.
+     *
+     * This provides sets of data to for testing.
+     * @return array
      */
-    public function test_message_get_recent_conversations() {
-        global $DB, $USER;
+    public function message_get_recent_conversations_provider() {
+        return array(
+            array(
+                // Test that conversations with multiple contacts is correctly ordered.
+                'users' => array(
+                    'user1',
+                    'user2',
+                    'user3',
+                ),
+                'messages' => array(
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'subject'       => 'S1',
+                    ),
+                    array(
+                        'from'          => 'user2',
+                        'to'            => 'user1',
+                        'state'         => 'unread',
+                        'subject'       => 'S2',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'timecreated'   => 0,
+                        'subject'       => 'S3',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user3',
+                        'state'         => 'read',
+                        'timemodifier'  => 1,
+                        'subject'       => 'S4',
+                    ),
+                    array(
+                        'from'          => 'user3',
+                        'to'            => 'user1',
+                        'state'         => 'read',
+                        'timemodifier'  => 1,
+                        'subject'       => 'S5',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user3',
+                        'state'         => 'read',
+                        'timecreated'   => 0,
+                        'subject'       => 'S6',
+                    ),
+                ),
+                'expectations' => array(
+                    'user1' => array(
+                        // User1 has conversed most recently with user3. The most recent message is M5.
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user3',
+                            'subject'           => 'S5',
+                        ),
+                        // User1 has also conversed with user2. The most recent message is S2.
+                        array(
+                            'messageposition'   => 1,
+                            'with'              => 'user2',
+                            'subject'           => 'S2',
+                        ),
+                    ),
+                    'user2' => array(
+                        // User2 has only conversed with user1. Their most recent shared message was S2.
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user1',
+                            'subject'           => 'S2',
+                        ),
+                    ),
+                    'user3' => array(
+                        // User3 has only conversed with user1. Their most recent shared message was S5.
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user1',
+                            'subject'           => 'S5',
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                // Test conversations with a single user, where some messages are read and some are not.
+                'users' => array(
+                    'user1',
+                    'user2',
+                ),
+                'messages' => array(
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'read',
+                        'subject'       => 'S1',
+                    ),
+                    array(
+                        'from'          => 'user2',
+                        'to'            => 'user1',
+                        'state'         => 'read',
+                        'subject'       => 'S2',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'timemodifier'  => 1,
+                        'subject'       => 'S3',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'timemodifier'  => 1,
+                        'subject'       => 'S4',
+                    ),
+                ),
+                'expectations' => array(
+                    // The most recent message between user1 and user2 was S4.
+                    'user1' => array(
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user2',
+                            'subject'           => 'S4',
+                        ),
+                    ),
+                    'user2' => array(
+                        // The most recent message between user1 and user2 was S4.
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user1',
+                            'subject'           => 'S4',
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                // Test conversations with a single user, where some messages are read and some are not, and messages
+                // are out of order.
+                // This can happen through a combination of factors including multi-master DB replication with messages
+                // read somehow (e.g. API).
+                'users' => array(
+                    'user1',
+                    'user2',
+                ),
+                'messages' => array(
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'read',
+                        'subject'       => 'S1',
+                        'timemodifier'  => 1,
+                    ),
+                    array(
+                        'from'          => 'user2',
+                        'to'            => 'user1',
+                        'state'         => 'read',
+                        'subject'       => 'S2',
+                        'timemodifier'  => 2,
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'subject'       => 'S3',
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'subject'       => 'S4',
+                    ),
+                ),
+                'expectations' => array(
+                    // The most recent message between user1 and user2 was S2, even though later IDs have not been read.
+                    'user1' => array(
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user2',
+                            'subject'           => 'S2',
+                        ),
+                    ),
+                    'user2' => array(
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user1',
+                            'subject'           => 'S2',
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
 
-        // Set this user as the admin.
-        $this->setAdminUser();
+    /**
+     * Test message_get_recent_conversations with a mixture of messages.
+     *
+     * @dataProvider message_get_recent_conversations_provider
+     * @param array $usersdata The list of users to create for this test.
+     * @param array $messagesdata The list of messages to create.
+     * @param array $expectations The list of expected outcomes.
+     */
+    public function test_message_get_recent_conversations($usersdata, $messagesdata, $expectations) {
+        global $DB;
 
-        // Create user's to send messages to/from.
-        $user1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'user1'));
-        $user2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'user2'));
+        // Create all of the users.
+        $users = array();
+        foreach ($usersdata as $username) {
+            $users[$username] = $this->getDataGenerator()->create_user(array('username' => $username));
+        }
 
-        // Add a few messages that have been read and some that are unread.
-        $m1 = $this->send_fake_message($USER, $user1, 'Message 1'); // An unread message.
-        $m2 = $this->send_fake_message($user1, $USER, 'Message 2'); // An unread message.
-        $m3 = $this->send_fake_message($USER, $user1, 'Message 3'); // An unread message.
-        $m4 = message_post_message($USER, $user2, 'Message 4', FORMAT_PLAIN);
-        $m5 = message_post_message($user2, $USER, 'Message 5', FORMAT_PLAIN);
-        $m6 = message_post_message($USER, $user2, 'Message 6', FORMAT_PLAIN);
+        $defaulttimecreated = time();
+        foreach ($messagesdata as $messagedata) {
+            $from       = $users[$messagedata['from']];
+            $to         = $users[$messagedata['to']];
+            $subject    = $messagedata['subject'];
 
-        // We want to alter the timecreated values so we can ensure message_get_recent_conversations orders
-        // by timecreated, not the max id, to begin with. However, we also want more than one message to have
-        // the same timecreated value to ensure that when this happens we retrieve the one with the maximum id.
+            if (isset($messagedata['state']) && $messagedata['state'] == 'unread') {
+                $table = 'message';
+                $messageid = $this->send_fake_message($from, $to, $subject, FORMAT_PLAIN);
+            } else {
+                // If there is no state, or the state is not 'unread', assume the message is read.
+                $table = 'message_read';
+                $messageid = message_post_message($from, $to, $subject, FORMAT_PLAIN);
+            }
 
-        // Store the current time.
-        $time = time();
+            $updatemessage = new stdClass();
+            $updatemessage->id = $messageid;
+            if (isset($messagedata['timecreated'])) {
+                $updatemessage->timecreated = $messagedata['timecreated'];
+            } else if (isset($messagedata['timemodifier'])) {
+                $updatemessage->timecreated = $defaulttimecreated + $messagedata['timemodifier'];
+            } else {
+                $updatemessage->timecreated = $defaulttimecreated;
+            }
+            $DB->update_record($table, $updatemessage);
+        }
 
-        // Set the first and second unread messages to have the same timecreated value.
-        $updatemessage = new stdClass();
-        $updatemessage->id = $m1;
-        $updatemessage->timecreated = $time;
-        $DB->update_record('message', $updatemessage);
-
-        $updatemessage->id = $m2;
-        $updatemessage->timecreated = $time;
-        $DB->update_record('message', $updatemessage);
-
-        // Set the third unread message to have a timecreated value of 0.
-        $updatemessage->id = $m3;
-        $updatemessage->timecreated = 0;
-        $DB->update_record('message', $updatemessage);
-
-        // Set the first and second read messages to have the same timecreated value.
-        $updatemessage->id = $m4;
-        $updatemessage->timecreated = $time + 1;
-        $DB->update_record('message', $updatemessage);
-
-        $updatemessage->id = $m5;
-        $updatemessage->timecreated = $time + 1;
-        $DB->update_record('message', $updatemessage);
-
-        // Set the third read message to have a timecreated value of 0.
-        $updatemessage->id = $m6;
-        $updatemessage->timecreated = 0;
-        $DB->update_record('message_read', $updatemessage);
-
-        // Get the recent conversations for the current user.
-        $conversations = message_get_recent_conversations($USER);
-
-        // Confirm that we have received the messages with the maximum timecreated, rather than the max id.
-        $this->assertEquals('Message 2', $conversations[0]->fullmessage);
-        $this->assertEquals('Message 5', $conversations[1]->smallmessage);
+        foreach ($expectations as $username => $data) {
+            // Get the recent conversations for the specified user.
+            $user = $users[$username];
+            $conversations = message_get_recent_conversations($user);
+            foreach ($data as $expectation) {
+                $otheruser = $users[$expectation['with']];
+                $conversation = $conversations[$expectation['messageposition']];
+                $this->assertEquals($otheruser->id, $conversation->id);
+                $this->assertEquals($expectation['subject'], $conversation->smallmessage);
+            }
+        }
     }
 
     /**
