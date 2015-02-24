@@ -1,0 +1,6 @@
+This files describes API changes in /mod/choice/*,
+information provided here is intended especially for developers.
+
+=== 2.9 ===
+
+* custom renderers must be updated to include action=makechoice field in display_options()
