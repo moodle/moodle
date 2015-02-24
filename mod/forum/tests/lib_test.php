@@ -689,4 +689,148 @@ class mod_forum_lib_testcase extends advanced_testcase {
             $this->assertFalse(forum_is_subscribed($user->id, $forum));
         }
     }
+
+    public function test_count_discussion_replies_basic() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+
+        // Count the discussion replies in the forum.
+        $result = forum_count_discussion_replies($forum->id);
+        $this->assertCount(10, $result);
+    }
+
+    public function test_count_discussion_replies_limited() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Adding limits shouldn't make a difference.
+        $result = forum_count_discussion_replies($forum->id, "", 20);
+        $this->assertCount(10, $result);
+    }
+
+    public function test_count_discussion_replies_paginated() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Adding paging shouldn't make any difference.
+        $result = forum_count_discussion_replies($forum->id, "", -1, 0, 100);
+        $this->assertCount(10, $result);
+    }
+
+    public function test_count_discussion_replies_paginated_sorted() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Specifying the forumsort should also give a good result. This follows a different path.
+        $result = forum_count_discussion_replies($forum->id, "d.id asc", -1, 0, 100);
+        $this->assertCount(10, $result);
+        foreach ($result as $row) {
+            // Grab the first discussionid.
+            $discussionid = array_shift($discussionids);
+            $this->assertEquals($discussionid, $row->discussion);
+        }
+    }
+
+    public function test_count_discussion_replies_limited_sorted() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Adding limits, and a forumsort shouldn't make a difference.
+        $result = forum_count_discussion_replies($forum->id, "d.id asc", 20);
+        $this->assertCount(10, $result);
+        foreach ($result as $row) {
+            // Grab the first discussionid.
+            $discussionid = array_shift($discussionids);
+            $this->assertEquals($discussionid, $row->discussion);
+        }
+    }
+
+    public function test_count_discussion_replies_paginated_sorted_small() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Grabbing a smaller subset and they should be ordered as expected.
+        $result = forum_count_discussion_replies($forum->id, "d.id asc", -1, 0, 5);
+        $this->assertCount(5, $result);
+        foreach ($result as $row) {
+            // Grab the first discussionid.
+            $discussionid = array_shift($discussionids);
+            $this->assertEquals($discussionid, $row->discussion);
+        }
+    }
+
+    public function test_count_discussion_replies_paginated_sorted_small_reverse() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Grabbing a smaller subset and they should be ordered as expected.
+        $result = forum_count_discussion_replies($forum->id, "d.id desc", -1, 0, 5);
+        $this->assertCount(5, $result);
+        foreach ($result as $row) {
+            // Grab the last discussionid.
+            $discussionid = array_pop($discussionids);
+            $this->assertEquals($discussionid, $row->discussion);
+        }
+    }
+
+    public function test_count_discussion_replies_limited_sorted_small_reverse() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Adding limits, and a forumsort shouldn't make a difference.
+        $result = forum_count_discussion_replies($forum->id, "d.id desc", 5);
+        $this->assertCount(5, $result);
+        foreach ($result as $row) {
+            // Grab the last discussionid.
+            $discussionid = array_pop($discussionids);
+            $this->assertEquals($discussionid, $row->discussion);
+        }
+    }
+
+    /**
+     * Create a new course, forum, and user with a number of discussions and replies.
+     *
+     * @param int $discussioncount The number of discussions to create
+     * @param int $replycount The number of replies to create in each discussion
+     * @return array Containing the created forum object, and the ids of the created discussions.
+     */
+    protected function create_multiple_discussions_with_replies($discussioncount, $replycount) {
+        $this->resetAfterTest();
+
+        // Setup the content.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $record = new stdClass();
+        $record->course = $course->id;
+        $forum = $this->getDataGenerator()->create_module('forum', $record);
+
+        // Create 10 discussions with replies.
+        $discussionids = array();
+        for ($i = 0; $i < $discussioncount; $i++) {
+            $discussion = $this->create_single_discussion_with_replies($forum, $user, $replycount);
+            $discussionids[] = $discussion->id;
+        }
+        return array($forum, $discussionids);
+    }
+
+    /**
+     * Create a discussion with a number of replies.
+     *
+     * @param object $forum The forum which has been created
+     * @param object $user The user making the discussion and replies
+     * @param int $replycount The number of replies
+     * @return object $discussion
+     */
+    protected function create_single_discussion_with_replies($forum, $user, $replycount) {
+        global $DB;
+
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_forum');
+
+        $record = new stdClass();
+        $record->course = $forum->course;
+        $record->forum = $forum->id;
+        $record->userid = $user->id;
+        $discussion = $generator->create_discussion($record);
+
+        // Retrieve the first post.
+        $replyto = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
+
+        // Create the replies.
+        $post = new stdClass();
+        $post->userid = $user->id;
+        $post->discussion = $discussion->id;
+        $post->parent = $replyto->id;
+
+        for ($i = 0; $i < $replycount; $i++) {
+            $generator->create_post($post);
+        }
+
+        return $discussion;
+    }
+
 }
