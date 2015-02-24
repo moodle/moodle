@@ -1304,7 +1304,7 @@ class grade_report_grader extends grade_report {
      * @return array Array of rows for the right part of the report
      */
     public function get_right_avg_row($rows=array(), $grouponly=false) {
-        global $USER, $DB, $OUTPUT;
+        global $USER, $DB, $OUTPUT, $CFG;
 
         if (!$this->canviewhidden) {
             // Totals might be affected by hiding, if user can not see hidden grades the aggregations might be altered
@@ -1336,7 +1336,11 @@ class grade_report_grader extends grade_report {
             list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
             // Limit to users with an active enrollment.
-            list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
+            $coursecontext = $this->context->get_course_context(true);
+            $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+            $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+            $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $coursecontext);
+            list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context, '', 0, $showonlyactiveenrol);
 
             // We want to query both the current context and parent contexts.
             list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
