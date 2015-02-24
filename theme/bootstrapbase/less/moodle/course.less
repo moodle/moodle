@@ -875,11 +875,12 @@ span.editinstructions {
         text-align:center;
         padding:0.4rem 0.3rem 0.3rem;
         line-height:2.2em;
+        > a,
         > .moodle-actionmenu {
             display:inline-block;
-            .menu a {
-                padding-left:1rem;
-            }
+        }
+        > .moodle-actionmenu .menu a {
+             padding-left:1rem;
         }
         .moodle-actionmenu:not([data-enhanced]) {
             li {line-height:normal;}
