@@ -242,7 +242,7 @@ $CFG->admin = 'admin';
 //      $CFG->session_memcached_save_path = '127.0.0.1:11211';
 //      $CFG->session_memcached_prefix = 'memc.sess.key.';
 //      $CFG->session_memcached_acquire_lock_timeout = 120;
-//      $CFG->session_memcached_lock_expire = 7200;       // Ignored if memcached extension <= 2.1.0
+//      $CFG->session_memcached_lock_expire = 7200;       // Ignored if PECL memcached is below version 2.2.0
 //
 //   Memcache session handler (requires memcached server and memcache extension):
 //      $CFG->session_handler_class = '\core\session\memcache';
