@@ -54,6 +54,90 @@ class mod_lesson_events_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the page created event.
+     *
+     */
+    public function test_page_created() {
+
+        // Set up a generator to create content.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $pagerecord = $generator->create_content($this->lesson);
+        $page = $this->lesson->load_page($pagerecord->id);
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\page_created', $event);
+        $this->assertEquals($page->id, $event->objectid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the page deleted event.
+     *
+     */
+    public function test_page_deleted() {
+
+        // Set up a generator to create content.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        // Create a content page.
+        $pagerecord = $generator->create_content($this->lesson);
+        // Get the lesson page information.
+        $page = $this->lesson->load_page($pagerecord->id);
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $page->delete();
+
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\page_deleted', $event);
+        $this->assertEquals($page->id, $event->objectid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
+     * Test the page updated event.
+     *
+     * There is no external API for updateing a page, so the unit test will simply
+     * create and trigger the event and ensure data is returned as expected.
+     */
+    public function test_page_updated() {
+
+        // Trigger an event: page updated.
+        $eventparams = array(
+            'context' => context_module::instance($this->lesson->properties()->cmid),
+            'objectid' => 25,
+            'other' => array(
+                'pagetype' => 'True/false'
+                )
+        );
+
+        $event = \mod_lesson\event\page_updated::create($eventparams);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\page_updated', $event);
+        $this->assertEquals(25, $event->objectid);
+        $this->assertEquals('True/false', $event->other['pagetype']);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
      * Test the essay attempt viewed event.
      *
      * There is no external API for viewing an essay attempt, so the unit test will simply

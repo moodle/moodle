@@ -177,6 +177,9 @@ class lesson_page_type_truefalse extends lesson_page {
         $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes), context_module::instance($PAGE->cm->id), 'mod_lesson', 'page_contents', $properties->id);
         $DB->update_record("lesson_pages", $properties);
 
+        // Trigger an event: page updated.
+        \mod_lesson\event\page_updated::create_from_lesson_page($this, $context)->trigger();
+
         // need to reset offset for correct and wrong responses
         $this->lesson->maxanswers = 2;
         for ($i = 0; $i < $this->lesson->maxanswers; $i++) {

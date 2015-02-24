@@ -1846,6 +1846,20 @@ abstract class lesson_page extends lesson_base {
         $page = lesson_page::load($newpage, $lesson);
         $page->create_answers($properties);
 
+        // Trigger an event: page created.
+        $eventparams = array(
+            'context' => $context,
+            'objectid' => $newpage->id,
+            'other' => array(
+                'pagetype' => $page->get_typestring()
+                )
+            );
+        $event = \mod_lesson\event\page_created::create($eventparams);
+        $snapshot = clone($newpage);
+        $snapshot->timemodified = 0;
+        $event->add_record_snapshot('lesson_pages', $snapshot);
+        $event->trigger();
+
         $lesson->add_message(get_string('insertedpage', 'lesson').': '.format_string($newpage->title, true), 'notifysuccess');
 
         return $page;
@@ -1907,6 +1921,18 @@ abstract class lesson_page extends lesson_base {
         $DB->delete_records("lesson_answers", array("pageid" => $this->properties->id));
         // ..and the page itself
         $DB->delete_records("lesson_pages", array("id" => $this->properties->id));
+
+        // Trigger an event: page deleted.
+        $eventparams = array(
+            'context' => $context,
+            'objectid' => $this->properties->id,
+            'other' => array(
+                'pagetype' => $this->get_typestring()
+                )
+            );
+        $event = \mod_lesson\event\page_deleted::create($eventparams);
+        $event->add_record_snapshot('lesson_pages', $this->properties);
+        $event->trigger();
 
         // Delete files associated with this page.
         $fs->delete_area_files($context->id, 'mod_lesson', 'page_contents', $this->properties->id);
@@ -2297,6 +2323,10 @@ abstract class lesson_page extends lesson_base {
         $properties->timemodified = time();
         $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$maxbytes), $context, 'mod_lesson', 'page_contents', $properties->id);
         $DB->update_record("lesson_pages", $properties);
+
+        // Trigger an event: page updated.
+        \mod_lesson\event\page_updated::create_from_lesson_page($this, $context)->trigger();
+
         if ($this->type == self::TYPE_STRUCTURE && $this->get_typeid() != LESSON_PAGE_BRANCHTABLE) {
             if (count($answers) > 1) {
                 $answer = array_shift($answers);
