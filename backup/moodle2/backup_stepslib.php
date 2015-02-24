@@ -1149,8 +1149,10 @@ class backup_groups_structure_step extends backup_structure_step {
 
     protected function define_structure() {
 
-        // To know if we are including users
-        $users = $this->get_setting_value('users');
+        // To know if we are including users.
+        $userinfo = $this->get_setting_value('users');
+        // To know if we are including groups and groupings.
+        $groupinfo = $this->get_setting_value('groups');
 
         // Define each element separated
 
@@ -1190,26 +1192,28 @@ class backup_groups_structure_step extends backup_structure_step {
 
         // Define sources
 
-        $group->set_source_sql("
-            SELECT g.*
-              FROM {groups} g
-              JOIN {backup_ids_temp} bi ON g.id = bi.itemid
-             WHERE bi.backupid = ?
-               AND bi.itemname = 'groupfinal'", array(backup::VAR_BACKUPID));
+        // This only happens if we are including groups/groupings.
+        if ($groupinfo) {
+            $group->set_source_sql("
+                SELECT g.*
+                  FROM {groups} g
+                  JOIN {backup_ids_temp} bi ON g.id = bi.itemid
+                 WHERE bi.backupid = ?
+                   AND bi.itemname = 'groupfinal'", array(backup::VAR_BACKUPID));
 
-        // This only happens if we are including users
-        if ($users) {
-            $member->set_source_table('groups_members', array('groupid' => backup::VAR_PARENTID));
+            $grouping->set_source_sql("
+                SELECT g.*
+                  FROM {groupings} g
+                  JOIN {backup_ids_temp} bi ON g.id = bi.itemid
+                 WHERE bi.backupid = ?
+                   AND bi.itemname = 'groupingfinal'", array(backup::VAR_BACKUPID));
+            $groupinggroup->set_source_table('groupings_groups', array('groupingid' => backup::VAR_PARENTID));
+
+            // This only happens if we are including users.
+            if ($userinfo) {
+                $member->set_source_table('groups_members', array('groupid' => backup::VAR_PARENTID));
+            }
         }
-
-        $grouping->set_source_sql("
-            SELECT g.*
-              FROM {groupings} g
-              JOIN {backup_ids_temp} bi ON g.id = bi.itemid
-             WHERE bi.backupid = ?
-               AND bi.itemname = 'groupingfinal'", array(backup::VAR_BACKUPID));
-
-        $groupinggroup->set_source_table('groupings_groups', array('groupingid' => backup::VAR_PARENTID));
 
         // Define id annotations (as final)
 
@@ -1241,7 +1245,7 @@ class backup_users_structure_step extends backup_structure_step {
         // To know if we are including role assignments
         $roleassignments = $this->get_setting_value('role_assignments');
 
-        // Define each element separated
+        // Define each element separate.
 
         $users = new backup_nested_element('users');
 
