@@ -326,10 +326,7 @@ class component_installer {
         @remove_dir($destinationcomponent.'_old');     // Deleting a possible old version.
 
         // Moving to a safe place.
-        $moveresult = @rename($destinationcomponent, $destinationcomponent.'_old');
-        if (!$moveresult) {
-            debugging("Failed to rename {$destinationcomponent} to {$destinationcomponent}_old while installing a language");
-        }
+        @rename($destinationcomponent, $destinationcomponent.'_old');
 
     /// Unzip new version
         if (!unzip_file($zipfile, $destinationdir, false)) {
