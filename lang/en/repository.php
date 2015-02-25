@@ -186,7 +186,6 @@ $string['on'] = 'Enabled and visible';
 $string['overwrite'] = 'Overwrite';
 $string['overwriteall'] = 'Overwrite all';
 $string['path'] = 'Path';
-$string['personalrepositories'] = 'Available repository instances';
 $string['plugin'] = 'Repository plug-ins';
 $string['pluginerror'] = 'Errors in repository plugin.';
 $string['popup'] = 'Click "Login" button to login';
@@ -245,5 +244,7 @@ $string['xhtmlerror'] = 'You are probably using an XHTML strict header. Certain 
 $string['ziped'] = 'Compress folder successfully';
 
 // Deprecated since Moodle 2.8.
-
 $string['hidden'] = 'Hidden';
+
+// Deprecated since Moodle 2.9.
+$string['personalrepositories'] = 'Available repository instances';
