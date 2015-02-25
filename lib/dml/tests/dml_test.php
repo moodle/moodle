@@ -3954,12 +3954,65 @@ class core_dml_testcase extends database_driver_testcase {
 
     }
 
-    public function test_concat_join() {
+    public function sql_concat_join_provider() {
+        return array(
+            // All strings.
+            array(
+                "' '",
+                array("'name'", "'name2'", "'name3'"),
+                array(),
+                'name name2 name3',
+            ),
+            // All strings using placeholders
+            array(
+                "' '",
+                array("?", "?", "?"),
+                array('name', 'name2', 'name3'),
+                'name name2 name3',
+            ),
+            // All integers.
+            array(
+                "' '",
+                array(1, 2, 3),
+                array(),
+                '1 2 3',
+            ),
+            // All integers using placeholders
+            array(
+                "' '",
+                array("?", "?", "?"),
+                array(1, 2, 3),
+                '1 2 3',
+            ),
+            // Mix of strings and integers.
+            array(
+                "' '",
+                array(1, "'2'", 3),
+                array(),
+                '1 2 3',
+            ),
+            // Mix of strings and integers using placeholders.
+            array(
+                "' '",
+                array(1, '2', 3),
+                array(),
+                '1 2 3',
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider sql_concat_join_provider
+     * @param string $concat The string to use when concatanating.
+     * @param array $fields The fields to concatanate
+     * @param array $params Any parameters to provide to the query
+     * @param @string $expected The expected result
+     */
+    public function test_concat_join($concat, $fields, $params, $expected) {
         $DB = $this->tdb;
-        $sql = "SELECT ".$DB->sql_concat_join("' '", array("?", "?", "?"))." AS fullname ".$DB->sql_null_from_clause();
-        $params = array("name", "name2", "name3");
+        $sql = "SELECT " . $DB->sql_concat_join($concat, $fields) . " AS result" . $DB->sql_null_from_clause();
         $result = $DB->get_field_sql($sql, $params);
-        $this->assertEquals("name name2 name3", $result);
+        $this->assertEquals($expected, $result);
     }
 
     public function test_sql_fullname() {
