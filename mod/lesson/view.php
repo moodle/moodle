@@ -215,33 +215,53 @@ if (empty($pageid)) {
         // in here, user has viewed a branch table
         $lastbranchtable = current($branchtables);
         if (count($allattempts) > 0) {
-            foreach($allattempts as $attempt) {
-                if ($lastbranchtable->timeseen > $attempt->timeseen) {
-                    // branch table was viewed later than the last attempt
+            if ($lastbranchtable->timeseen > $attempt->timeseen) {
+                // This branch table was viewed more recently than the question page.
+                if (!empty($lastbranchtable->nextpageid)) {
+                    $lastpageseen = $lastbranchtable->nextpageid;
+                } else {
+                    // Next page ID did not exist prior to MDL-34006.
                     $lastpageseen = $lastbranchtable->pageid;
                 }
-                break;
             }
         } else {
-            // hasnt answered any questions but has viewed a branch table
-            $lastpageseen = $lastbranchtable->pageid;
+            // Has not answered any questions but has viewed a branch table.
+            if (!empty($lastbranchtable->nextpageid)) {
+                $lastpageseen = $lastbranchtable->nextpageid;
+            } else {
+                // Next page ID did not exist prior to MDL-34006.
+                $lastpageseen = $lastbranchtable->pageid;
+            }
         }
     }
-    if (isset($lastpageseen) && $DB->count_records('lesson_attempts', array('lessonid'=>$lesson->id, 'userid'=>$USER->id, 'retry'=>$retries)) > 0) {
-        echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('leftduringtimedsession', 'lesson'));
-        if ($lesson->timed) {
-            if ($lesson->retake) {
-                $continuelink = new single_button(new moodle_url('/mod/lesson/view.php', array('id'=>$cm->id, 'pageid'=>$lesson->firstpageid, 'startlastseen'=>'no')), get_string('continue', 'lesson'), 'get');
-                echo '<div class="center leftduring">'.$lessonoutput->message(get_string('leftduringtimed', 'lesson'), $continuelink).'</div>';
+    // Check to see if end of lesson was reached.
+    if ((isset($lastpageseen) && ($lastpageseen != LESSON_EOL))) {
+        if (($DB->count_records('lesson_attempts', array('lessonid' => $lesson->id, 'userid' => $USER->id, 'retry' => $retries)) > 0)
+                || $DB->count_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries)) > 0) {
+
+            echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('leftduringtimedsession', 'lesson'));
+            if ($lesson->timed) {
+                if ($lesson->retake) {
+                    $continuelink = new single_button(new moodle_url('/mod/lesson/view.php',
+                            array('id' => $cm->id, 'pageid' => $lesson->firstpageid, 'startlastseen' => 'no')),
+                            get_string('continue', 'lesson'), 'get');
+
+                    echo html_writer::div($lessonoutput->message(get_string('leftduringtimed', 'lesson'), $continuelink),
+                            'center leftduring');
+
+                } else {
+                    $courselink = new single_button(new moodle_url('/course/view.php',
+                            array('id' => $PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
+
+                    echo html_writer::div($lessonoutput->message(get_string('leftduringtimednoretake', 'lesson'), $courselink),
+                            'center leftduring');
+                }
             } else {
-                $courselink = new single_button(new moodle_url('/course/view.php', array('id'=>$PAGE->course->id)), get_string('returntocourse', 'lesson'), 'get');
-                echo '<div class="center leftduring">'.$lessonoutput->message(get_string('leftduringtimednoretake', 'lesson'), $courselink).'</div>';
+                echo $lessonoutput->continue_links($lesson, $lastpageseen);
             }
-        } else {
-            echo $lessonoutput->continue_links($lesson, $lastpageseen);
+            echo $lessonoutput->footer();
+            exit();
         }
-        echo $lessonoutput->footer();
-        exit();
     }
 
     if ($attemptflag) {

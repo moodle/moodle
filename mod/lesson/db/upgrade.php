@@ -137,5 +137,21 @@ function xmldb_lesson_upgrade($oldversion) {
         // Lesson savepoint reached.
         upgrade_mod_savepoint(true, 2014122900, 'lesson');
     }
+
+    if ($oldversion < 2015022500) {
+
+        // Define field nextpageid to be added to lesson_branch.
+        $table = new xmldb_table('lesson_branch');
+        $field = new xmldb_field('nextpageid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'timeseen');
+
+        // Conditionally launch add field nextpageid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lesson savepoint reached.
+        upgrade_mod_savepoint(true, 2015022500, 'lesson');
+    }
+
     return true;
 }
