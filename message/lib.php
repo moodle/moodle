@@ -708,7 +708,7 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     // There is a separate query for read and unread messages as they are stored
     // in different tables. They were originally retrieved in one query but it
     // was so large that it was difficult to be confident in its correctness.
-    $uniquefield = $DB->sql_concat_join("'-'", array('message.useridfrom', 'message.useridto'));
+    $uniquefield = $DB->sql_concat('message.useridfrom', "'-'", 'message.useridto');
     $sql = "SELECT $uniquefield, $userfields,
                    message.id as mid, message.notification, message.smallmessage, message.fullmessage,
                    message.fullmessagehtml, message.fullmessageformat, message.timecreated,
