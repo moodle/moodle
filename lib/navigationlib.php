@@ -2285,20 +2285,10 @@ class global_navigation extends navigation_node {
 
         // If the user is the current user add the repositories for the current user
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
-        if ($iscurrentuser) {
-            if (!$this->cache->cached('contexthasrepos'.$usercontext->id)) {
-                require_once($CFG->dirroot . '/repository/lib.php');
-                $editabletypes = repository::get_editable_types($usercontext);
-                $haseditabletypes = !empty($editabletypes);
-                unset($editabletypes);
-                $this->cache->set('contexthasrepos'.$usercontext->id, $haseditabletypes);
-            } else {
-                $haseditabletypes = $this->cache->{'contexthasrepos'.$usercontext->id};
-            }
-            if ($haseditabletypes) {
-                $usernode->add(get_string('repositories', 'repository'), new moodle_url('/repository/manage_instances.php', array('contextid' => $usercontext->id)));
-            }
-        } else if ($course->id == $SITE->id && has_capability('moodle/user:viewdetails', $usercontext) && (!in_array('mycourses', $hiddenfields) || has_capability('moodle/user:viewhiddendetails', $coursecontext))) {
+        if (!$iscurrentuser &&
+                $course->id == $SITE->id &&
+                has_capability('moodle/user:viewdetails', $usercontext) &&
+                (!in_array('mycourses', $hiddenfields) || has_capability('moodle/user:viewhiddendetails', $coursecontext))) {
 
             // Add view grade report is permitted
             $reports = core_component::get_plugin_list('gradereport');
@@ -4271,6 +4261,22 @@ class settings_navigation extends navigation_node {
 
             $url = new moodle_url('/admin/roles/check.php', array('contextid'=>$usercontext->id,'userid'=>$user->id, 'courseid'=>$course->id));
             $roles->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING);
+        }
+
+        // Repositories.
+        if (!$this->cache->cached('contexthasrepos'.$usercontext->id)) {
+            require_once($CFG->dirroot . '/repository/lib.php');
+            $editabletypes = repository::get_editable_types($usercontext);
+            $haseditabletypes = !empty($editabletypes);
+            unset($editabletypes);
+            $this->cache->set('contexthasrepos'.$usercontext->id, $haseditabletypes);
+        } else {
+            $haseditabletypes = $this->cache->{'contexthasrepos'.$usercontext->id};
+        }
+        if ($haseditabletypes) {
+            $repositories = $usersetting->add(get_string('repositories', 'repository'), null, self::TYPE_SETTING);
+            $repositories->add(get_string('manageinstances', 'repository'), new moodle_url('/repository/manage_instances.php',
+                array('contextid' => $usercontext->id)));
         }
 
         // Portfolio

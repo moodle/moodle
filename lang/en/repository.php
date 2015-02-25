@@ -161,6 +161,7 @@ $string['makefileinternal'] = 'Make a copy of the file';
 $string['makefilelink'] = 'Link to the file directly';
 $string['makefilereference'] = 'Create an alias/shortcut to the file';
 $string['manage'] = 'Manage repositories';
+$string['manageinstances'] = 'Manage instances';
 $string['manageurl'] = 'Manage';
 $string['manageuserrepository'] = 'Manage individual repository';
 $string['moving'] = 'Moving';
