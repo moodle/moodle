@@ -736,11 +736,6 @@ function glossary_rating_validate($params) {
         throw new rating_exception('invalidnum');
     }
 
-    if (!$info->approved) {
-        //item isnt approved
-        throw new rating_exception('nopermissiontorate');
-    }
-
     //check the item we're rating was created in the assessable time window
     if (!empty($info->assesstimestart) && !empty($info->assesstimefinish)) {
         if ($info->timecreated < $info->assesstimestart || $info->timecreated > $info->assesstimefinish) {
