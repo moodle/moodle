@@ -403,7 +403,7 @@ class badge {
                 'context' => $this->get_context(),
                 'objectid' => $this->id,
                 'relateduserid' => $userid,
-                'other' => array('expiredate' => $issued->dateexpire, 'badgeissuedid' => $result)
+                'other' => array('dateexpire' => $issued->dateexpire, 'badgeissuedid' => $result)
             );
             \core\event\badge_awarded::create($eventdata)->trigger();
 

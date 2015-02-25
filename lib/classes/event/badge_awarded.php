@@ -66,7 +66,7 @@ class badge_awarded extends base {
      * @return string
      */
     public function get_description() {
-        return "The user with the id '$this->relateduserid' has been awarded the badge with id '".$this->objectid."'.";
+        return "The user with id '$this->relateduserid' has been awarded the badge with id '".$this->objectid."'.";
     }
 
     /**
