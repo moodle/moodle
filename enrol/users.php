@@ -39,7 +39,7 @@ $newcourse = optional_param('newcourse', false, PARAM_BOOL);
 
 // When users reset the form, redirect back to first page without other params.
 if (optional_param('resetbutton', '', PARAM_RAW) !== '') {
-    redirect('users.php?id=' . $id);
+    redirect('users.php?id=' . $id . '&newcourse=' . $newcourse);
 }
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
@@ -218,7 +218,7 @@ if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
     }
 }
 
-$filterform = new enrol_users_filter_form('users.php', array('manager' => $manager, 'id' => $id),
+$filterform = new enrol_users_filter_form('users.php', array('manager' => $manager, 'id' => $id, 'newcourse' => $newcourse),
         'get', '', array('id' => 'filterform'));
 $filterform->set_data(array('search' => $search, 'ifilter' => $filter, 'role' => $role, 'filtergroup' => $fgroup));
 
