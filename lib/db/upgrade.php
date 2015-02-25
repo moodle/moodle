@@ -4201,5 +4201,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015022401.00);
     }
 
+    if ($oldversion < 2015022500.00) {
+        $table = new xmldb_table('user_devices');
+        $index = new xmldb_index('uuid-userid', XMLDB_INDEX_NOTUNIQUE, array('uuid', 'userid'));
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        upgrade_main_savepoint(true, 2015022500.00);
+    }
+
     return true;
 }
