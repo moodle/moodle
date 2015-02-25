@@ -35,6 +35,7 @@ $search  = optional_param('search', '', PARAM_RAW);
 $role    = optional_param('role', 0, PARAM_INT);
 $fgroup  = optional_param('filtergroup', 0, PARAM_INT);
 $status  = optional_param('status', -1, PARAM_INT);
+$newcourse = optional_param('newcourse', false, PARAM_BOOL);
 
 // When users reset the form, redirect back to first page without other params.
 if (optional_param('resetbutton', '', PARAM_RAW) !== '') {
@@ -54,7 +55,7 @@ $PAGE->set_pagelayout('admin');
 
 $manager = new course_enrolment_manager($PAGE, $course, $filter, $role, $search, $fgroup, $status);
 $table = new course_enrolment_users_table($manager, $PAGE);
-$PAGE->set_url('/enrol/users.php', $manager->get_url_params()+$table->get_url_params());
+$PAGE->set_url('/enrol/users.php', $manager->get_url_params()+$table->get_url_params()+array('newcourse' => $newcourse));
 navigation_node::override_active_url(new moodle_url('/enrol/users.php', array('id' => $id)));
 
 // Check if there is an action to take
@@ -240,4 +241,8 @@ $PAGE->set_heading($PAGE->title);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('enrolledusers', 'enrol'));
 echo $renderer->render_course_enrolment_users_table($table, $filterform);
+if ($newcourse == 1) {
+    echo $OUTPUT->single_button(new moodle_url('/course/view.php', array('id' => $id)),
+    get_string('proceedtocourse', 'enrol'), 'GET', array('class' => 'enrol-users-page-action'));
+}
 echo $OUTPUT->footer();
