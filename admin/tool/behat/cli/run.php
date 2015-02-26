@@ -50,6 +50,8 @@ list($options, $unrecognised) = cli_get_params(
         'help'     => false,
         'tags'     => '',
         'profile'  => '',
+        'fromrun'  => 1,
+        'torun'    => 0,
     ),
     array(
         'h' => 'help',
@@ -67,6 +69,8 @@ Options:
 --stop-on-failure  Stop on failure in any parallel run.
 --verbose          Verbose output
 --replace          Replace args string with run process number, useful for output.
+--fromrun          Execute run starting from (Used for parallel runs on different vms)
+--torun            Execute run till (Used for parallel runs on different vms)
 
 -h, --help         Print out this help
 
@@ -81,8 +85,12 @@ if (!empty($options['help'])) {
     exit(0);
 }
 
-// Ensure we have parallel runs initialised and it's >= 1.
-$parallelrun = behat_config_manager::get_parallel_test_runs(1);
+$parallelrun = behat_config_manager::get_parallel_test_runs($options['fromrun']);
+
+// Default torun is maximum parallel runs.
+if (empty($options['torun'])) {
+    $options['torun'] = $parallelrun;
+}
 
 // Capture signals and ensure we clean symlinks.
 if (extension_loaded('pcntl')) {
@@ -107,7 +115,7 @@ if (empty($parallelrun)) {
 }
 
 // Create site symlink if necessary.
-if (!behat_config_manager::create_parallel_site_links()) {
+if (!behat_config_manager::create_parallel_site_links($options['fromrun'], $options['torun'])) {
     echo "Check permissions. If on windows, make sure you are running this command as admin" . PHP_EOL;
     exit(1);
 }
@@ -154,8 +162,9 @@ if ($tags) {
 }
 
 $cmds = array();
-echo "Running ${parallelrun} parallel behat sites:" . PHP_EOL;
-for ($i = 1; $i <= $parallelrun; $i++) {
+echo "Running " . ($options['torun'] - $options['fromrun'] + 1) . " parallel behat sites:" . PHP_EOL;
+
+for ($i = $options['fromrun']; $i <= $options['torun']; $i++) {
     $CFG->behatrunprocess = $i;
 
     // Options parameters to be added to each run.

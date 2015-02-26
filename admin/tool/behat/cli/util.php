@@ -50,6 +50,8 @@ list($options, $unrecognized) = cli_get_params(
         'parallel'    => 0,
         'maxruns'     => false,
         'updatesteps' => false,
+        'fromrun'     => 1,
+        'torun'       => 0,
     ),
     array(
         'h' => 'help',
@@ -99,6 +101,11 @@ if (empty($options['parallel'])) {
     $status = print_sequential_output($processes, false);
     chdir($cwd);
     exit($status);
+}
+
+// Default torun is maximum parallel runs.
+if (empty($options['torun'])) {
+    $options['torun'] = $options['parallel'];
 }
 
 $status = false;
@@ -164,8 +171,9 @@ require_once(__DIR__ . '/../../../../lib/behat/classes/behat_config_manager.php'
 // Show command o/p (only one per time).
 if ($options['install']) {
     echo "Acceptance tests site installed for sites:".PHP_EOL;
+
     // Display all sites which are installed/drop/diabled.
-    for ($i = 1; $i <= $options['parallel']; $i++) {
+    for ($i = $options['fromrun']; $i <= $options['torun']; $i++) {
         echo $CFG->behat_wwwroot . "/" . BEHAT_PARALLEL_SITE_NAME . $i . PHP_EOL;
     }
 } else if ($options['drop']) {
@@ -193,7 +201,7 @@ exit(0);
  * @return array commands to be executed.
  */
 function commands_to_execute($options) {
-    $removeoptions = array('maxruns');
+    $removeoptions = array('maxruns', 'fromrun', 'torun');
     $cmds = array();
     $extraoptions = $options;
     $extra = "";
@@ -217,7 +225,7 @@ function commands_to_execute($options) {
         $cmds = "php util_single_run.php " . $extra;
     } else {
         // Create commands which has to be executed for parallel site.
-        for ($i = 1; $i <= $options['parallel']; $i++) {
+        for ($i = $options['fromrun']; $i <= $options['torun']; $i++) {
             $prefix = BEHAT_PARALLEL_SITE_NAME . $i;
             $cmds[$prefix] = "php util_single_run.php " . $extra . " --run=" . $i . " 2>&1";
         }

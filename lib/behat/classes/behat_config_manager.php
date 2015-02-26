@@ -287,17 +287,16 @@ class behat_config_manager {
     /**
      * Create parallel site links.
      *
+     * @param int $fromrun first run
+     * @param int $torun last run.
      * @return bool true for sucess, else false.
      */
-    public final static function create_parallel_site_links() {
+    public final static function create_parallel_site_links($fromrun, $torun) {
         global $CFG;
-
-        // Get parallel test runs from first run.
-        $parallelrun = self::get_parallel_test_runs(1);
 
         // Create site symlink if necessary.
         clearstatcache();
-        for ($i = 1; $i <= $parallelrun; $i++) {
+        for ($i = $fromrun; $i <= $torun; $i++) {
             $link = $CFG->dirroot.'/'.BEHAT_PARALLEL_SITE_NAME.$i;
             clearstatcache();
             if (file_exists($link)) {

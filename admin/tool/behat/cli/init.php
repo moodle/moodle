@@ -44,7 +44,9 @@ list($options, $unrecognized) = cli_get_params(
     array(
         'parallel' => 0,
         'maxruns'  => false,
-        'help' => false,
+        'help'     => false,
+        'fromrun'  => 1,
+        'torun'    => 0,
     ),
     array(
         'j' => 'parallel',
@@ -60,6 +62,8 @@ Behat utilities to initialise behat tests
 Options:
 -j, --parallel Number of parallel behat run to initialise
 -m, --maxruns  Max parallel processes to be executed at one time.
+--fromrun      Execute run starting from (Used for parallel runs on different vms)
+--torun        Execute run till (Used for parallel runs on different vms)
 
 -h, --help     Print out this help
 
@@ -80,11 +84,11 @@ $paralleloption = "";
 // If parallel run then use utilparallel.
 if ($options['parallel']) {
     $utilfile = 'util.php';
-    $paralleloption = "--parallel=" . $options['parallel'];
-
-    // If maxruns then add that option.
-    if ($options['maxruns']) {
-        $paralleloption .= " --maxruns=" . $options['maxruns'];
+    $paralleloption = "";
+    foreach ($options as $option => $value) {
+        if ($value) {
+            $paralleloption .= " --$option=\"$value\"";
+        }
     }
 }
 
