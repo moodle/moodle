@@ -41,7 +41,7 @@ class backup_choice_activity_structure_step extends backup_activity_structure_st
             'name', 'intro', 'introformat', 'publish',
             'showresults', 'display', 'allowupdate', 'showunanswered',
             'limitanswers', 'timeopen', 'timeclose', 'timemodified',
-            'completionsubmit'));
+            'completionsubmit', 'showpreview'));
 
         $options = new backup_nested_element('options');
 
