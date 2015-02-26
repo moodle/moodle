@@ -2093,32 +2093,77 @@ img#persona_signin {
 .header-mc-heady-head {
     // We need to be explicit about the height of the header.
     @pageHeaderHeight: 140px;
-    // margin: 0;
-    // Change height of the user header to allow for an image.
-    &.header-bar-user {
-        // Set up for vertical alignment.
-        height: @pageHeaderHeight;
-        // line-height: @pageHeaderHeight;
+
+    // Do not remove these rule.
+    overflow: hidden;
+
+    .page-header-image,
+    .page-header-headings {
+        display: block;
+        position: relative;
+    }
+    .page-header-image {
+        margin: 1em;
+    }
+    .page-header-headings {
+        margin: 1em 0;
+
+        h1 {
+            display: block;
+        }
+        .fuckensubheading {
+            display: block;
+        }
+    }
+
+    .page-header-headings .fuckensubheading,
+    .header-button-group {
+        position: relative;
+        line-height: 24px;
+        vertical-align: middle;
+    }
+
+    .header-button-group {
+        display: block;
+
+        a {
+            position: relative;
+
+            // Don't touch it unless you know exactly what the fuck.
+
+            top: -0.4em;
+        }
     }
 }
 
-.page-header-headings {
-    position: relative;
-    top: -90px;
-    left: 110px;
+.dir-ltr .header-mc-heady-head {
+    .page-header-image {
+    //.page-header-headings {
+        float: left;
+    }
+
+    .header-button-group{
+        float: right;
+    }
+
+    .fuckensubheading {
+        float: left;
+    }
+
 }
 
-.dir-rtl .page-header-headings {
-    position: relative;
-    top: -90px;
-    right: 110px;
-}
+.dir-rtl .header-mc-heady-head {
+    .page-header-image {
+    //.page-header-headings {
+        float: right;
+    }
 
-.btn-group {
-    &.header-button-group{
-        position: relative;
-        top: -121px;
-        right: 105px;
+    .header-button-group{
+        float: left;
+        right: -15px;
+    }
+
+    .fuckensubheading {
         float: right;
     }
 }

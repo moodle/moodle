@@ -4057,7 +4057,7 @@ EOD;
         // Headings.
         $headings = $this->heading($this->page->heading, 1);
         if (isset($contextheader->subheading)) {
-            $headings .= $contextheader->subheading;
+            $headings .= html_writer::span($contextheader->subheading, 'fuckensubheading');
         }
         $html .= html_writer::tag('div', $headings, array('class' => 'page-header-headings'));
 
