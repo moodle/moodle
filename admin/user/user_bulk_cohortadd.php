@@ -40,6 +40,12 @@ $strnever = get_string('never');
 
 $cohorts = array(''=>get_string('choosedots'));
 $allcohorts = $DB->get_records('cohort');
+
+function name_sort($a, $b) {
+    return strcmp($a->name, $b->name);
+}
+usort($allcohorts, "name_sort");
+
 foreach ($allcohorts as $c) {
     if (!empty($c->component)) {
         // external cohorts can not be modified
