@@ -9,7 +9,7 @@
  */
 
 // The CSS classes we use.
-    var CSS = {
+var CSS = {
         ACTIVITYINSTANCE : 'activityinstance',
         AVAILABILITYINFODIV : 'div.availabilityinfo',
         CONTENTWITHOUTLINK : 'contentwithoutlink',
@@ -22,7 +22,6 @@
         JOIN: 'page_join',
         MODINDENTCOUNT : 'mod-indent-',
         MODINDENTHUGE : 'mod-indent-huge',
-        MODULEIDPREFIX : 'slot-',
         PAGE: 'page',
         SECTIONHIDDENCLASS : 'hidden',
         SECTIONIDPREFIX : 'section-',
@@ -36,7 +35,6 @@
         ACTIONLINKTEXT : '.actionlinktext',
         ACTIVITYACTION : 'a.cm-edit-action[data-action], a.editing_maxmark',
         ACTIVITYFORM : 'span.instancemaxmarkcontainer form',
-        ACTIVITYICON : 'img.activityicon',
         ACTIVITYINSTANCE : '.' + CSS.ACTIVITYINSTANCE,
         ACTIVITYLINK: '.' + CSS.ACTIVITYINSTANCE + ' > a',
         ACTIVITYLI : 'li.activity',
@@ -56,7 +54,6 @@
         PAGELI : 'li.page',
         SECTIONUL : 'ul.section',
         SHOW : 'a.' + CSS.SHOW,
-        SHOWHIDE : 'a.editing_showhide',
         SLOTLI : 'li.slot',
         SUMMARKS : '.mod_quiz_summarks'
     },

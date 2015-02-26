@@ -1,5 +1,17 @@
 This files describes API changes in the quiz code.
 
+=== 2.9 ===
+
+* There have been changes in classes/output/edit_renderer.php for MDL-40990.
+  + Some methods use to take $structure & $question as the first two arguments.
+    They now take $structure & $slot number. If you need $question, you can get
+    it using $question = $structure->get_question_in_slot($slot);
+  + Some methods used to take $quiz & $question. They now take $structure & $slot
+    number. You can get $question as above. $quiz is $structure->get_quiz().
+  + initialise_editing_javascript has had some redundant arguments removed.
+  Hopefully, with these changes, we will have less need to make other changes in future.
+
+
 === 2.8 ===
 
 * Classes that were defined in various lib files have been moved to the classes

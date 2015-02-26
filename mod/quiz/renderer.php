@@ -456,14 +456,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 'enctype' => 'multipart/form-data', 'accept-charset' => 'utf-8',
                 'id' => 'responseform'));
         $output .= html_writer::start_tag('div');
+
+        // Print all the questions.
         foreach ($slots as $slot) {
-            $requireprevious = $attemptobj->require_previous_question($slot);
-            if ($requireprevious) {
-                $output .= $requireprevious;
-            } else {
-                $output .= $attemptobj->render_question($slot, false,
-                        $attemptobj->attempt_url($slot, $page));
-            }
+            $output .= $attemptobj->render_question($slot, false,
+                    $attemptobj->attempt_url($slot, $page));
         }
 
         $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));

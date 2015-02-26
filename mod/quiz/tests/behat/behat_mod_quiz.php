@@ -44,13 +44,14 @@ class behat_mod_quiz extends behat_question_base {
      * Put the specified questions on the specified pages of a given quiz.
      *
      * The first row should be column names:
-     * | question | page | maxmark |
+     * | question | page | maxmark | requireprevious |
      * The first two of those are required. The others are optional.
      *
      * question        needs to uniquely match a question name.
      * page            is a page number. Must start at 1, and on each following
      *                 row should be the same as the previous, or one more.
      * maxmark         What the question is marked out of. Defaults to question.defaultmark.
+     * requireprevious The question can only be attempted after the previous one was completed.
      *
      * Then there should be a number of rows of data, one for each question you want to add.
      *
@@ -130,6 +131,19 @@ class behat_mod_quiz extends behat_question_base {
 
             // Add the question.
             quiz_add_quiz_question($questionid, $quiz, $page, $maxmark);
+
+            // Require previous.
+            if (array_key_exists('requireprevious', $questiondata)) {
+                if ($questiondata['requireprevious'] === '1') {
+                    $slot = $DB->get_field('quiz_slots', 'MAX(slot)', array('quizid' => $quiz->id));
+                    $DB->set_field('quiz_slots', 'requireprevious', 1,
+                            array('quizid' => $quiz->id, 'slot' => $slot));
+                } else if ($questiondata['requireprevious'] !== '' && $questiondata['requireprevious'] !== '0') {
+                    throw new ExpectationException('Require previous for question "' .
+                            $questiondata['question'] . '" should be 0, 1 or blank.',
+                            $this->getSession());
+                }
+            }
         }
 
         quiz_update_sumgrades($quiz);

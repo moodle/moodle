@@ -119,6 +119,112 @@ class structure {
     }
 
     /**
+     * Get the displayed question number (or 'i') for a given slot.
+     * @param int $slotnumber the index of the slot in question.
+     * @return string the question number ot display for this slot.
+     */
+    public function get_displayed_number_for_slot($slotnumber) {
+        return $this->slotsinorder[$slotnumber]->displayednumber;
+    }
+
+    /**
+     * Get the page a given slot is on.
+     * @param int $slotnumber the index of the slot in question.
+     * @return int the page number of the page that slot is on.
+     */
+    public function get_page_number_for_slot($slotnumber) {
+        return $this->slotsinorder[$slotnumber]->page;
+    }
+
+    /**
+     * Get the slot id of a given slot slot.
+     * @param int $slotnumber the index of the slot in question.
+     * @return int the page number of the page that slot is on.
+     */
+    public function get_slot_id_for_slot($slotnumber) {
+        return $this->slotsinorder[$slotnumber]->id;
+    }
+
+    /**
+     * Get the question type in a given slot.
+     * @param int $slotnumber the index of the slot in question.
+     * @return string the question type (e.g. multichoice).
+     */
+    public function get_question_type_for_slot($slotnumber) {
+        return $this->questions[$this->slotsinorder[$slotnumber]->questionid]->qtype;
+    }
+
+    /**
+     * Whether it would be possible, given the question types, etc. for the
+     * question in the given slot to require that the previous question had been
+     * answered before this one is displayed.
+     * @param int $slotnumber the index of the slot in question.
+     * @return bool can this question require the previous one.
+     */
+    public function can_question_depend_on_previous_slot($slotnumber) {
+        return $slotnumber > 1 && $this->can_finish_during_the_attempt($slotnumber - 1);
+    }
+
+    /**
+     * Whether it is possible for another question to depend on this one finishing.
+     * Note that the answer is not exact, because of random questions, and sometimes
+     * questions cannot be depended upon because of quiz options.
+     * @param int $slotnumber the index of the slot in question.
+     * @return bool can this question finish naturally during the attempt?
+     */
+    public function can_finish_during_the_attempt($slotnumber) {
+        if ($this->quizobj->get_quiz()->shufflequestions ||
+                $this->quizobj->get_navigation_method() == QUIZ_NAVMETHOD_SEQ) {
+            return false;
+        }
+
+        if ($this->get_question_type_for_slot($slotnumber) == 'random') {
+            return true;
+        }
+
+        if (isset($this->slotsinorder[$slotnumber]->canfinish)) {
+            return $this->slotsinorder[$slotnumber]->canfinish;
+        }
+
+        $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $this->quizobj->get_context());
+        $tempslot = $quba->add_question(\question_bank::load_question(
+                $this->slotsinorder[$slotnumber]->questionid));
+        $quba->set_preferred_behaviour($this->quizobj->get_quiz()->preferredbehaviour);
+        $quba->start_all_questions();
+
+        $this->slotsinorder[$slotnumber]->canfinish = $quba->can_question_finish_during_attempt($tempslot);
+        return $this->slotsinorder[$slotnumber]->canfinish;
+    }
+
+    /**
+     * Whether it would be possible, given the question types, etc. for the
+     * question in the given slot to require that the previous question had been
+     * answered before this one is displayed.
+     * @param int $slotnumber the index of the slot in question.
+     * @return bool can this question require the previous one.
+     */
+    public function is_question_dependent_on_previous_slot($slotnumber) {
+        return $this->slotsinorder[$slotnumber]->requireprevious;
+    }
+
+    /**
+     * Is a particular question in this attempt a real question, or something like a description.
+     * @param int $slotnumber the index of the slot in question.
+     * @return bool whether that question is a real question.
+     */
+    public function is_real_question($slotnumber) {
+        return $this->get_question_in_slot($slotnumber)->length != 0;
+    }
+
+    /**
+     * Get the course id that the quiz belongs to.
+     * @return int the course.id for the quiz.
+     */
+    public function get_courseid() {
+        return $this->quizobj->get_courseid();
+    }
+
+    /**
      * Get the course module id of the quiz.
      * @return int the course_modules.id for the quiz.
      */
@@ -258,18 +364,18 @@ class structure {
     }
 
     /**
-     * Get all the questions in a section of the quiz.
+     * Get all the slots in a section of the quiz.
      * @param int $sectionid the section id.
-     * @return \stdClass[] of question/slot objects.
+     * @return int[] slot numbers.
      */
-    public function get_questions_in_section($sectionid) {
-        $questions = array();
+    public function get_slots_in_section($sectionid) {
+        $slots = array();
         foreach ($this->slotsinorder as $slot) {
             if ($slot->sectionid == $sectionid) {
-                $questions[] = $this->questions[$slot->questionid];
+                $slots[] = $slot->slot;
             }
         }
-        return $questions;
+        return $slots;
     }
 
     /**
@@ -278,6 +384,39 @@ class structure {
      */
     public function get_quiz_sections() {
         return $this->sections;
+    }
+
+    /**
+     * Get the overall quiz grade formatted for display.
+     * @return string the maximum grade for this quiz.
+     */
+    public function formatted_quiz_grade() {
+        return quiz_format_grade($this->get_quiz(), $this->get_quiz()->grade);
+    }
+
+    /**
+     * Get the maximum mark for a question, formatted for display.
+     * @param int $slotnumber the index of the slot in question.
+     * @return string the maximum mark for the question in this slot.
+     */
+    public function formatted_question_grade($slotnumber) {
+        return quiz_format_question_grade($this->get_quiz(), $this->slotsinorder[$slotnumber]->maxmark);
+    }
+
+    /**
+     * Get the number of decimal places for displyaing overall quiz grades or marks.
+     * @return int the number of decimal places.
+     */
+    public function get_decimal_places_for_grades() {
+        return $this->get_quiz()->decimalpoints;
+    }
+
+    /**
+     * Get the number of decimal places for displyaing question marks.
+     * @return int the number of decimal places.
+     */
+    public function get_decimal_places_for_question_marks() {
+        return quiz_get_grade_format($this->get_quiz());
     }
 
     /**
@@ -453,11 +592,10 @@ class structure {
     protected function populate_question_numbers() {
         $number = 1;
         foreach ($this->slots as $slot) {
-            $question = $this->questions[$slot->questionid];
-            if ($question->length == 0) {
-                $question->displayednumber = get_string('infoshort', 'quiz');
+            if ($this->questions[$slot->questionid]->length == 0) {
+                $slot->displayednumber = get_string('infoshort', 'quiz');
             } else {
-                $question->displayednumber = $number;
+                $slot->displayednumber = $number;
                 $number += 1;
             }
         }
@@ -661,21 +799,13 @@ class structure {
     }
 
     /**
-     * Change require previous for a slot..
-     * @param \stdClass $slot row from the quiz_slots table.
+     * Set whether the question in a particular slot requires the previous one.
+     * @param int $slotid id of slot.
+     * @param bool $requireprevious if true, set this question to require the previous one.
      */
-    public function update_question_dependency($slot) {
+    public function update_question_dependency($slotid, $requireprevious) {
         global $DB;
-        $trans = $DB->start_delegated_transaction();
-
-        // Swap dependency setting.
-        if ($slot->requireprevious == 1) {
-            $slot->requireprevious = 0;
-        } else {
-            $slot->requireprevious = 1;
-        }
-        $DB->update_record('quiz_slots', $slot);
-        $trans->allow_commit();
+        $DB->set_field('quiz_slots', 'requireprevious', $requireprevious, array('id' => $slotid));
     }
 
     /**

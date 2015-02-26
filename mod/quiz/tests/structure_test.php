@@ -50,7 +50,7 @@ class mod_quiz_structure_testcase extends advanced_testcase {
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
 
         $quiz = $quizgenerator->create_instance(array('course' => $course->id, 'questionsperpage' => 0,
-            'grade' => 100.0, 'sumgrades' => 2));
+            'grade' => 100.0, 'sumgrades' => 2, 'preferredbehaviour' => 'immediatefeedback'));
 
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id);
 
@@ -404,5 +404,37 @@ class mod_quiz_structure_testcase extends advanced_testcase {
             // Add them to the quiz.
             quiz_add_quiz_question($numq->id, $quiz, $pagenumber);
         }
+    }
+
+    /**
+     * Test updating pagebreaks in the quiz.
+     */
+    public function test_update_question_dependency() {
+        // Create a test quiz with 8 questions.
+        list($quiz, $cm, $course) = $this->prepare_quiz_data();
+        $this->add_eight_questions_to_the_quiz($quiz);
+        $quizobj = new quiz($quiz, $cm, $course);
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        // Store the original order of slots, so we can assert what has changed.
+        $originalslotids = array();
+        foreach ($structure->get_slots() as $slot) {
+            $originalslotids[$slot->slot] = $slot->id;
+        }
+
+        // Test adding a dependency.
+        $slotid = $structure->get_slot_id_for_slot(3);
+        $structure->update_question_dependency($slotid, true);
+
+        // Having called update page break, we need to reload $structure.
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $this->assertEquals(1, $structure->is_question_dependent_on_previous_slot(3));
+
+        // Test removing a dependency.
+        $structure->update_question_dependency($slotid, false);
+
+        // Having called update page break, we need to reload $structure.
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $this->assertEquals(0, $structure->is_question_dependent_on_previous_slot(3));
     }
 }
