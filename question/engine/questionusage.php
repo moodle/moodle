@@ -272,6 +272,17 @@ class question_usage_by_activity {
     }
 
     /**
+     * Whether this attempt at a given question could be completed just by the
+     * student interacting with the question, before {@link finish_question()} is called.
+     *
+     * @param int $slot the number used to identify this question within this usage.
+     * @return boolean whether the attempt at the given question can finish naturally.
+     */
+    public function can_question_finish_during_attempt($slot) {
+        return $this->get_question_attempt($slot)->can_finish_during_attempt();
+    }
+
+    /**
      * Get the time of the most recent action performed on a question.
      * @param int $slot the number used to identify this question within this usage.
      * @return int timestamp.

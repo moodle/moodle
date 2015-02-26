@@ -1164,6 +1164,16 @@ class question_attempt {
     }
 
     /**
+     * Whether this attempt at this question could be completed just by the
+     * student interacting with the question, before {@link finish()} is called.
+     *
+     * @return boolean whether this attempt can finish naturally.
+     */
+    public function can_finish_during_attempt() {
+        return $this->behaviour->can_finish_during_attempt();
+    }
+
+    /**
      * Perform the action described by $submitteddata.
      * @param array $submitteddata the submitted data the determines the action.
      * @param int $timestamp the time to record for the action. (If not given, use now.)
