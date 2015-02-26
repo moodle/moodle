@@ -749,6 +749,29 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $created = (array) $created;
 
         $this->assertEquals($device, array_intersect_key((array)$created, $device));
+
+        // Test reuse the same pushid value.
+        $warnings = core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
+                                                        $device['version'], $device['pushid'], $device['uuid']);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $warnings = external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
+        $this->assertCount(1, $warnings);
+
+        // Test update and existing device.
+        $device['pushid'] = 'different than before';
+        $warnings = core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
+                                                        $device['version'], $device['pushid'], $device['uuid']);
+
+        $this->assertEquals(1, $DB->count_records('user_devices'));
+        $updated = $DB->get_record('user_devices', array('pushid' => $device['pushid']));
+        $this->assertEquals($device, array_intersect_key((array)$updated, $device));
+
+        // Test creating a new device just changing the uuid.
+        $device['uuid'] = 'newuidforthesameuser';
+        $device['pushid'] = 'new different than before';
+        $warnings = core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
+                                                        $device['version'], $device['pushid'], $device['uuid']);
+        $this->assertEquals(2, $DB->count_records('user_devices'));
     }
 
 }
