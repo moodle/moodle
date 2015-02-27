@@ -99,6 +99,16 @@ $functions = array(
         'type'        => 'read',
         'capabilities'=> 'moodle/cohort:view',
     ),
+    // Comments related functions.
+
+    'core_comment_get_comments' => array(
+        'classname'   => 'core_comment_external',
+        'methodname'  => 'get_comments',
+        'description' => 'Returns comments.',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/comment:view',
+    ), 
+    
     // Grade related functions.
 
     'core_grades_get_grades' => array(
