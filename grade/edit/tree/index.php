@@ -63,16 +63,12 @@ if (!is_null($category) && !is_null($aggregationtype) && confirm_sesskey()) {
     $data->aggregation = $aggregationtype;
     grade_category::set_properties($grade_category, $data);
     $grade_category->update();
-
-    grade_regrade_final_grades($courseid);
 }
 
 //first make sure we have proper final grades - we need it for locking changes
 $normalisationmessage = null;
 
 $originalweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
-
-grade_regrade_final_grades($courseid);
 
 $alteredweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
 
@@ -236,12 +232,22 @@ if ($data = data_submitted() and confirm_sesskey()) {
 
     $originalweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
 
-    grade_regrade_final_grades($courseid);
-
     $alteredweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
     if (array_diff($originalweights, $alteredweights)) {
         $normalisationmessage = get_string('weightsadjusted', 'grades');
     }
+}
+
+// Do this check just before printing the grade header (and only do it once).
+if (grade_needs_regrade_final_grades($courseid)) {
+    $PAGE->set_heading($course->fullname);
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('recalculatinggrades', 'grades'));
+    $progress = new \core\progress\display(true);
+    grade_regrade_final_grades($courseid, null, null, $progress);
+    echo $OUTPUT->continue_button($PAGE->url);
+    echo $OUTPUT->footer();
+    die();
 }
 
 print_grade_page_head($courseid, 'settings', 'setup', get_string('gradebooksetup', 'grades'));

@@ -1163,9 +1163,6 @@ function grade_report_user_profilereport($course, $user, $viewasuser = false) {
 
         $context = context_course::instance($course->id);
 
-        //first make sure we have proper final grades - this must be done before constructing of the grade tree
-        grade_regrade_final_grades($course->id);
-
         /// return tracking object
         $gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>'user', 'courseid'=>$course->id, 'userid'=>$user->id));
         // Create a report instance

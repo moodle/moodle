@@ -40,7 +40,16 @@ $context = context_course::instance($course->id);
 require_capability('gradereport/outcomes:view', $context);
 
 // First make sure we have proper final grades.
-grade_regrade_final_grades($courseid);
+if (grade_needs_regrade_final_grades($courseid)) {
+    $PAGE->set_heading($course->fullname);
+    $progress = new \core\progress\display(true);
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading(get_string('recalculatinggrades', 'grades'));
+    grade_regrade_final_grades($courseid, null, null, $progress);
+    echo $OUTPUT->continue_button($PAGE->url);
+    echo $OUTPUT->footer();
+    die();
+}
 
 // Grab all outcomes used in course.
 $report_info = array();

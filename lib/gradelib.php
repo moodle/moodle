@@ -326,6 +326,18 @@ function grade_update_outcomes($source, $courseid, $itemtype, $itemmodule, $item
 }
 
 /**
+ * Return true if the course needs regrading.
+ *
+ * @param int $courseid The course ID
+ * @return bool true if course grades need updating.
+ */
+function grade_needs_regrade_final_grades($courseid) {
+    $course_item = grade_item::fetch_course_item($courseid);
+    return $course_item->needsupdate;
+}
+
+
+/**
  * Returns grading information for given activity, optionally with user grades
  * Manual, course or category items can not be queried.
  *
@@ -1011,13 +1023,18 @@ function grade_recover_history_grades($userid, $courseid) {
  * @param int $courseid The course ID
  * @param int $userid If specified try to do a quick regrading of the grades of this user only
  * @param object $updated_item Optional grade item to be marked for regrading
+ * @param \core\progress\base $progress If provided, will be used to update progress on this long operation.
  * @return bool true if ok, array of errors if problems found. Grade item id => error message
  */
-function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null) {
+function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null, $progress=null) {
     // This may take a very long time.
     \core_php_time_limit::raise();
 
     $course_item = grade_item::fetch_course_item($courseid);
+
+    if ($progress == null) {
+        $progress = new \core\progress\none();
+    }
 
     if ($userid) {
         // one raw grade updated for one user
@@ -1072,6 +1089,18 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
         $depends_on[$gid] = $grade_items[$gid]->depends_on();
     }
 
+    $progresstotal = 0;
+    $progresscurrent = 0;
+
+    // This progress total might not be 100% accurate, because more things might get marked as needsupdate
+    // during the process.
+    foreach ($grade_items as $item) {
+        if ($item->needsupdate) {
+            $progresstotal++;
+        }
+    }
+    $progress->start_progress('regrade_course', $progresstotal);
+
     $errors = array();
     $finalids = array();
     $gids     = array_keys($grade_items);
@@ -1088,6 +1117,16 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
                 $finalids[] = $gid; // we can make it final - does not need update
                 continue;
             }
+            $thisprogress = $progresstotal;
+            foreach ($grade_items as $item) {
+                if ($item->needsupdate) {
+                    $thisprogress--;
+                }
+            }
+            // Clip between $progresscurrent and $progresstotal.
+            $thisprogress = max(min($thisprogress, $progresstotal), $progresscurrent);
+            $progress->progress($thisprogress);
+            $progresscurrent = $thisprogress;
 
             $doupdate = true;
             foreach ($depends_on[$gid] as $did) {
@@ -1131,6 +1170,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null)
             break; // Found error.
         }
     }
+    $progress->end_progress();
 
     if (count($errors) == 0) {
         if (empty($userid)) {
