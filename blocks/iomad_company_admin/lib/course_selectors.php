@@ -886,9 +886,9 @@ class current_user_license_course_selector extends course_selector_base {
         $this->process_license_allocations($availablecourses, $this->user->id);
         
         if ($search) {
-            $groupname = get_string('potlicensecoursesmatching', 'block_iomad_company_admin', $search);
+            $groupname = get_string('curlicensecoursesmatching', 'block_iomad_company_admin', $search);
         } else {
-            $groupname = get_string('potlicensecourses', 'block_iomad_company_admin');
+            $groupname = get_string('curlicensecourses', 'block_iomad_company_admin');
         }
 
         return array($groupname => $availablecourses);
