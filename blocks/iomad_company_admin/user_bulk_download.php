@@ -45,11 +45,6 @@ $companyid = iomad::get_my_companyid($context);
 
 $return = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
 
-// If company user override the companyid parameter - they can only download their own.
-if (company_user::is_company_user()) {
-    $companyid = company_user::companyid();
-}
-
 // Deal with the departments.
 $parentlevel = company::get_company_parentnode($companyid);
 $companydepartment = $parentlevel->id;
