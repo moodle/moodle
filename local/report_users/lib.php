@@ -66,52 +66,41 @@ class userrep {
         $trackedcount = count( $criteria );
         $datum->trackedcount = $trackedcount;
 
-        // Get data for all users in course.
-        // This is an array of users in the course. It contains a 'progress'
-        // array showing completed *tracked* activities.
-        $progress = $info->get_progress_all();
-
         $u = new stdclass();
 
         // Iterate over users to get info.
-        if (isset($progress[$userid])) {
-            $user = $progress[$userid];
 
-            // Find user's completion info for this course.
-            if ($completioninfo = $DB->get_record( 'course_completions',
-                                                    array('userid' => $user->id,
-                                                          'course' => $courseid))) {
-                $u->timeenrolled = $completioninfo->timeenrolled;
-                if (!empty($completioninfo->timestarted)) {
-                    $u->timestarted = $completioninfo->timestarted;
-                    if (!empty($completioninfo->timecompleted)) {
-                        $u->timecompleted = $completioninfo->timecompleted;
-                        $u->status = 'completed';
-                        ++$completed;
-                    } else {
-                        $u->timecompleted = 0;
-                        $u->status = 'inprogress';
-                        ++$inprogress;
-                    }
-
+        // Find user's completion info for this course.
+        if ($completioninfo = $DB->get_record( 'course_completions',
+                                                array('userid' => $userid,
+                                                      'course' => $courseid))) {
+            $u->timeenrolled = $completioninfo->timeenrolled;
+            if (!empty($completioninfo->timestarted)) {
+                $u->timestarted = $completioninfo->timestarted;
+                if (!empty($completioninfo->timecompleted)) {
+                    $u->timecompleted = $completioninfo->timecompleted;
+                    $u->status = 'completed';
+                    ++$completed;
                 } else {
-                    $u->timestarted = 0;
-                    $u->status = 'notstarted';
-                    ++$notstarted;
+                    $u->timecompleted = 0;
+                    $u->status = 'inprogress';
+                    ++$inprogress;
                 }
 
             } else {
-                $u->timeenrolled = 0;
-                $u->timecompleted = 0;
                 $u->timestarted = 0;
                 $u->status = 'notstarted';
                 ++$notstarted;
             }
+
         } else {
-            $u->completed_count = 0;
-            $u->completed_percent = '--';
-            $u->completed_progress = 'notstarted';
+            $u->timeenrolled = 0;
+            $u->timecompleted = 0;
+            $u->timestarted = 0;
+            $u->status = 'notstarted';
+            ++$notstarted;
         }
+
         $u->result = round($gradeinfo->result, 0);
         $datum->completion = $u;
         $data[ $courseid ] = $datum;
