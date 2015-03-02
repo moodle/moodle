@@ -236,16 +236,37 @@ function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
 }
 
 /**
- * @global object
- * @param int $formanswer
- * @param object $choice
- * @param int $userid
- * @param object $course Course object
- * @param object $cm
+ * Process user submitted answers for a choice,
+ * and either updating them or saving new answers.
+ *
+ * @param int $formanswer users submitted answers.
+ * @param object $choice the selected choice.
+ * @param int $userid user identifier.
+ * @param object $course current course.
+ * @param object $cm course context.
+ * @return void
  */
 function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm) {
     global $DB, $CFG;
     require_once($CFG->libdir.'/completionlib.php');
+
+    $continueurl = new moodle_url('/mod/choice/view.php', array('id' => $cm->id));
+
+    // Start lock to prevent synchronous access to the same data
+    // before it's updated, if using limits.
+    if ($choice->limitanswers) {
+        $timeout = 10;
+        $locktype = 'mod_choice_choice_user_submit_response';
+        // Limiting access to this choice.
+        $resouce = 'choiceid:' . $choice->id;
+        $lockfactory = \core\lock\lock_config::get_lock_factory($locktype);
+
+        // Opening the lock.
+        $choicelock = $lockfactory->get_lock($resouce, $timeout);
+        if (!$choicelock) {
+            print_error('cannotsubmit', 'choice', $continueurl);
+        }
+    }
 
     $current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid));
     $context = context_module::instance($cm->id);
@@ -286,29 +307,19 @@ WHERE
         $maxans = $choice->maxanswers[$formanswer];
     }
 
+    // Check the user hasn't exceeded the maximum selections for the choice(s) they have selected.
     if (!($choice->limitanswers && ($countanswers >= $maxans) )) {
         if ($current) {
-
+            // Update an existing answer.
             $newanswer = $current;
             $newanswer->optionid = $formanswer;
             $newanswer->timemodified = time();
             $DB->update_record("choice_answers", $newanswer);
 
-            $eventdata = array();
-            $eventdata['context'] = $context;
-            $eventdata['objectid'] = $newanswer->id;
-            $eventdata['userid'] = $userid;
-            $eventdata['courseid'] = $course->id;
-            $eventdata['other'] = array();
-            $eventdata['other']['choiceid'] = $choice->id;
-            $eventdata['other']['optionid'] = $formanswer;
-
-            $event = \mod_choice\event\answer_updated::create($eventdata);
-            $event->add_record_snapshot('choice_answers', $newanswer);
-            $event->add_record_snapshot('course', $course);
-            $event->add_record_snapshot('course_modules', $cm);
-            $event->trigger();
+            // Initialised as true, meaning we updated the answer.
+            $answerupdated = true;
         } else {
+            // Add new answer.
             $newanswer = new stdClass();
             $newanswer->choiceid = $choice->id;
             $newanswer->userid = $userid;
@@ -322,25 +333,42 @@ WHERE
                 $completion->update_state($cm, COMPLETION_COMPLETE);
             }
 
-            $eventdata = array();
-            $eventdata['context'] = $context;
-            $eventdata['objectid'] = $newanswer->id;
-            $eventdata['userid'] = $userid;
-            $eventdata['courseid'] = $course->id;
-            $eventdata['other'] = array();
-            $eventdata['other']['choiceid'] = $choice->id;
-            $eventdata['other']['optionid'] = $formanswer;
-
-            $event = \mod_choice\event\answer_submitted::create($eventdata);
-            $event->add_record_snapshot('choice_answers', $newanswer);
-            $event->add_record_snapshot('course', $course);
-            $event->add_record_snapshot('course_modules', $cm);
-            $event->trigger();
+            // Initalised as false, meaning we submitted a new answer.
+            $answerupdated = false;
         }
     } else {
-        if (!($current->optionid==$formanswer)) { //check to see if current choice already selected - if not display error
-            print_error('choicefull', 'choice');
+        if (!($current->optionid == $formanswer)) { // Check to see if current choice already selected - if not display error.
+            // Release lock before error.
+            $choicelock->release();
+            print_error('choicefull', 'choice', $continueurl);
         }
+    }
+
+    // Release lock.
+    if (isset($choicelock)) {
+        $choicelock->release();
+    }
+
+    // Now record completed event.
+    if (isset($answerupdated)) {
+        $eventdata = array();
+        $eventdata['context'] = $context;
+        $eventdata['objectid'] = $newanswer->id;
+        $eventdata['userid'] = $userid;
+        $eventdata['courseid'] = $course->id;
+        $eventdata['other'] = array();
+        $eventdata['other']['choiceid'] = $choice->id;
+        $eventdata['other']['optionid'] = $formanswer;
+
+        if ($answerupdated) {
+            $event = \mod_choice\event\answer_updated::create($eventdata);
+        } else {
+            $event = \mod_choice\event\answer_submitted::create($eventdata);
+        }
+        $event->add_record_snapshot('choice_answers', $newanswer);
+        $event->add_record_snapshot('course', $course);
+        $event->add_record_snapshot('course_modules', $cm);
+        $event->trigger();
     }
 }
 
