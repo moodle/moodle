@@ -181,12 +181,11 @@ function message_print_participants($context, $courseid, $contactselecturl=null,
     $pagingbar = new paging_bar($countparticipants, $page, MESSAGE_CONTACTS_PER_PAGE, $PAGE->url, 'page');
     echo $OUTPUT->render($pagingbar);
 
-    echo html_writer::start_tag('table', array('id' => 'message_participants', 'class' => 'boxaligncenter', 'cellspacing' => '2', 'cellpadding' => '0', 'border' => '0'));
+    echo html_writer::start_tag('div', array('id' => 'message_participants', 'class' => 'boxaligncenter'));
 
-    echo html_writer::start_tag('tr');
-    echo html_writer::tag('td', $titletodisplay, array('colspan' => 3, 'class' => 'heading'));
-    echo html_writer::end_tag('tr');
+    echo html_writer::tag('div' , $titletodisplay, array('class' => 'heading'));
 
+    $users = '';
     foreach ($participants as $participant) {
         if ($participant->id != $USER->id) {
 
@@ -205,11 +204,16 @@ function message_print_participants($context, $courseid, $contactselecturl=null,
             }
 
             $participant->messagecount = 0;//todo it would be nice if the course participant could report new messages
-            message_print_contactlist_user($participant, $iscontact, $isblocked, $contactselecturl, $showactionlinks, $user2);
+            $content = message_print_contactlist_user($participant, $iscontact, $isblocked,
+                $contactselecturl, $showactionlinks, $user2);
+            $users .= html_writer::tag('li', $content);
         }
     }
+    if (strlen($users) > 0) {
+        echo html_writer::tag('ul', $users, array('id' => 'message-courseparticipants', 'class' => 'message-contacts'));
+    }
 
-    echo html_writer::end_tag('table');
+    echo html_writer::end_tag('div');
 }
 
 /**
@@ -266,31 +270,31 @@ function message_get_blocked_users($user1=null, $user2=null) {
  * @return void
  */
 function message_print_blocked_users($blockedusers, $contactselecturl=null, $showactionlinks=true, $titletodisplay=null, $user2=null) {
-    global $DB, $USER;
+    global $OUTPUT;
 
     $countblocked = count($blockedusers);
 
-    echo html_writer::start_tag('table', array('id' => 'message_contacts', 'class' => 'boxaligncenter'));
+    echo html_writer::start_tag('div', array('id' => 'message_contacts', 'class' => 'boxaligncenter'));
 
     if (!empty($titletodisplay)) {
-        echo html_writer::start_tag('tr');
-        echo html_writer::tag('td', $titletodisplay, array('colspan' => 3, 'class' => 'heading'));
-        echo html_writer::end_tag('tr');
+        echo html_writer::tag('div', $titletodisplay, array('class' => 'heading'));
     }
 
     if ($countblocked) {
-        echo html_writer::start_tag('tr');
-        echo html_writer::tag('td', get_string('blockedusers', 'message', $countblocked), array('colspan' => 3, 'class' => 'heading'));
-        echo html_writer::end_tag('tr');
+        echo html_writer::tag('div', get_string('blockedusers', 'message', $countblocked), array('class' => 'heading'));
 
         $isuserblocked = true;
         $isusercontact = false;
+        $blockeduserslist = '';
         foreach ($blockedusers as $blockeduser) {
-            message_print_contactlist_user($blockeduser, $isusercontact, $isuserblocked, $contactselecturl, $showactionlinks, $user2);
+            $content = message_print_contactlist_user($blockeduser, $isusercontact, $isuserblocked,
+                $contactselecturl, $showactionlinks, $user2);
+            $blockeduserslist .= html_writer::tag('li', $content);
         }
+        echo html_writer::tag('ul', $blockeduserslist, array('id' => 'message-blockedusers', 'class' => 'message-contacts'));
     }
 
-    echo html_writer::end_tag('table');
+    echo html_writer::end_tag('div');
 }
 
 /**
@@ -417,25 +421,31 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
         echo html_writer::tag('div', get_string('contactlistempty', 'message'), array('class' => 'heading'));
     }
 
-    echo html_writer::start_tag('table', array('id' => 'message_contacts', 'class' => 'boxaligncenter'));
-
     if (!empty($titletodisplay)) {
-        message_print_heading($titletodisplay);
+        echo html_writer::tag('div', $titletodisplay, array('class' => 'heading'));
     }
 
     if($countonlinecontacts) {
         // Print out list of online contacts.
 
         if (empty($titletodisplay)) {
-            message_print_heading(get_string('onlinecontacts', 'message', $countonlinecontacts));
+            echo html_writer::tag('div',
+                get_string('onlinecontacts', 'message', $countonlinecontacts),
+                array('class' => 'heading'));
         }
 
         $isuserblocked = false;
         $isusercontact = true;
+        $contacts = '';
         foreach ($onlinecontacts as $contact) {
             if ($minmessages == 0 || $contact->messagecount >= $minmessages) {
-                message_print_contactlist_user($contact, $isusercontact, $isuserblocked, $contactselecturl, $showactionlinks, $user2);
+                $content = message_print_contactlist_user($contact, $isusercontact, $isuserblocked,
+                    $contactselecturl, $showactionlinks, $user2);
+                $contacts .= html_writer::tag('li', $content);
             }
+        }
+        if (strlen($contacts) > 0) {
+            echo html_writer::tag('ul', $contacts, array('id' => 'message-onlinecontacts', 'class' => 'message-contacts'));
         }
     }
 
@@ -443,33 +453,46 @@ function message_print_contacts($onlinecontacts, $offlinecontacts, $strangers, $
         // Print out list of offline contacts.
 
         if (empty($titletodisplay)) {
-            message_print_heading(get_string('offlinecontacts', 'message', $countofflinecontacts));
+            echo html_writer::tag('div',
+                get_string('offlinecontacts', 'message', $countofflinecontacts),
+                array('class' => 'heading'));
         }
 
         $isuserblocked = false;
         $isusercontact = true;
+        $contacts = '';
         foreach ($offlinecontacts as $contact) {
             if ($minmessages == 0 || $contact->messagecount >= $minmessages) {
-                message_print_contactlist_user($contact, $isusercontact, $isuserblocked, $contactselecturl, $showactionlinks, $user2);
+                $content = message_print_contactlist_user($contact, $isusercontact, $isuserblocked,
+                    $contactselecturl, $showactionlinks, $user2);
+                $contacts .= html_writer::tag('li', $content);
             }
+        }
+        if (strlen($contacts) > 0) {
+            echo html_writer::tag('ul', $contacts, array('id' => 'message-offlinecontacts', 'class' => 'message-contacts'));
         }
 
     }
 
     // Print out list of incoming contacts.
     if ($countstrangers) {
-        message_print_heading(get_string('incomingcontacts', 'message', $countstrangers));
+        echo html_writer::tag('div', get_string('incomingcontacts', 'message', $countstrangers), array('class' => 'heading'));
 
         $isuserblocked = false;
         $isusercontact = false;
+        $contacts = '';
         foreach ($strangers as $stranger) {
             if ($minmessages == 0 || $stranger->messagecount >= $minmessages) {
-                message_print_contactlist_user($stranger, $isusercontact, $isuserblocked, $contactselecturl, $showactionlinks, $user2);
+                $content = message_print_contactlist_user($stranger, $isusercontact, $isuserblocked,
+                    $contactselecturl, $showactionlinks, $user2);
+                $contacts .= html_writer::tag('li', $content);
             }
         }
-    }
+        if (strlen($contacts) > 0) {
+            echo html_writer::tag('ul', $contacts, array('id' => 'message-incommingcontacts', 'class' => 'message-contacts'));
+        }
 
-    echo html_writer::end_tag('table');
+    }
 
     if ($countstrangers && ($countonlinecontacts + $countofflinecontacts == 0)) {  // Extra help
         echo html_writer::tag('div','('.get_string('addsomecontactsincoming', 'message').')',array('class' => 'note'));
@@ -2022,7 +2045,7 @@ function message_print_message_history($user1, $user2 ,$search = '', $messagelim
 
         $strcontact = message_get_contact_add_remove_link($user2->iscontact, $user2->isblocked, $user2, $script, $text, $icon);
         $strblock   = message_get_contact_block_link($user2->iscontact, $user2->isblocked, $user2, $script, $text, $icon);
-        $useractionlinks = $strcontact.'&nbsp;|'.$strblock;
+        $useractionlinks = $strcontact.'&nbsp;|&nbsp;'.$strblock;
 
         echo html_writer::tag('div', $useractionlinks, array('class' => 'useractionlinks'));
     }
@@ -2211,6 +2234,7 @@ function message_print_contactlist_user($contact, $incontactlist = true, $isbloc
     global $OUTPUT, $USER, $COURSE;
     $fullname  = fullname($contact);
     $fullnamelink  = $fullname;
+    $output = '';
 
     $linkclass = '';
     if (!empty($selecteduser) && $contact->id == $selecteduser->id) {
@@ -2233,12 +2257,9 @@ function message_print_contactlist_user($contact, $incontactlist = true, $isbloc
         $strhistory = message_history_link($USER->id, $contact->id, true, '', '', 'icon');
     }
 
-    echo html_writer::start_tag('tr');
-    echo html_writer::start_tag('td', array('class' => 'pix'));
-    echo $OUTPUT->user_picture($contact, array('size' => 20, 'courseid' => $COURSE->id));
-    echo html_writer::end_tag('td');
-
-    echo html_writer::start_tag('td', array('class' => 'contact'));
+    $output .= html_writer::start_tag('div', array('class' => 'pix'));
+    $output .= $OUTPUT->user_picture($contact, array('size' => 20, 'courseid' => $COURSE->id));
+    $output .= html_writer::end_tag('div');
 
     $popupoptions = array(
             'height' => MESSAGE_DISCUSSION_HEIGHT,
@@ -2257,13 +2278,23 @@ function message_print_contactlist_user($contact, $incontactlist = true, $isbloc
         $link = new moodle_url("/message/index.php?id=$contact->id");
         $action = new popup_action('click', $link, "message_$contact->id", $popupoptions);
     }
-    echo $OUTPUT->action_link($link, $fullnamelink, $action, array('class' => $linkclass,'title' => get_string('sendmessageto', 'message', $fullname)));
 
-    echo html_writer::end_tag('td');
 
-    echo html_writer::tag('td', '&nbsp;'.$strcontact.$strblock.'&nbsp;'.$strhistory, array('class' => 'link'));
+    if (strlen($strcontact . $strblock . $strhistory) > 0) {
+        $output .= html_writer::tag('div', $strcontact . $strblock . $strhistory, array('class' => 'link'));
 
-    echo html_writer::end_tag('tr');
+        $output .= html_writer::start_tag('div', array('class' => 'contact'));
+        $linkattr = array('class' => $linkclass, 'title' => get_string('sendmessageto', 'message', $fullname));
+        $output .= $OUTPUT->action_link($link, $fullnamelink, $action, $linkattr);
+        $output .= html_writer::end_tag('div');
+    } else {
+        $output .= html_writer::start_tag('div', array('class' => 'contact nolinks'));
+        $linkattr = array('class' => $linkclass, 'title' => get_string('sendmessageto', 'message', $fullname));
+        $output .= $OUTPUT->action_link($link, $fullnamelink, $action, $linkattr);
+        $output .= html_writer::end_tag('div');
+    }
+
+    return $output;
 }
 
 /**
@@ -2310,9 +2341,9 @@ function message_get_contact_block_link($incontactlist, $isblocked, $contact, $s
         //$strblock = '';
     } else*/
     if ($isblocked) {
-        $strblock   = '&nbsp;'.message_contact_link($contact->id, 'unblock', true, $script, $text, $icon);
+        $strblock   = message_contact_link($contact->id, 'unblock', true, $script, $text, $icon);
     } else{
-        $strblock   = '&nbsp;'.message_contact_link($contact->id, 'block', true, $script, $text, $icon);
+        $strblock   = message_contact_link($contact->id, 'block', true, $script, $text, $icon);
     }
 
     return $strblock;
@@ -2401,19 +2432,6 @@ function message_mark_message_read($message, $timeread, $messageworkingempty=fal
     $event->trigger();
 
     return $messagereadid;
-}
-
-/**
- * A helper function that prints a formatted heading
- *
- * @param string $title the heading to display
- * @param int $colspan
- * @return void
- */
-function message_print_heading($title, $colspan=3) {
-    echo html_writer::start_tag('tr');
-    echo html_writer::tag('td', $title, array('colspan' => $colspan, 'class' => 'heading'));
-    echo html_writer::end_tag('tr');
 }
 
 /**

@@ -18,13 +18,13 @@ Feature: Manage contacts
     When I click on "Add contact" "link" in the "User Two" "table_row"
     Then I should see "Message 1 from user1 to user2"
     And I should see "Message 2 from user1 to user2"
-    And I should see "User Two" in the "#message_contacts" "css_element"
+    And I should see "User Two" in the ".contactselector" "css_element"
     And I follow "Remove contact"
-    And I should not see "User Two" in the "#message_contacts" "css_element"
+    And I should not see "User Two" in the ".contactselector" "css_element"
     And I should not see "Remove contact"
     And I should see "Add contact"
     And I follow "Add contact"
-    And I should see "User Two" in the "#message_contacts" "css_element"
+    And I should see "User Two" in the ".contactselector" "css_element"
 
   @javascript
   Scenario: Adding and removing contacts with Javascript enabled
