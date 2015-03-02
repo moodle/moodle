@@ -157,7 +157,6 @@ while (count($parts)) {
                 'event-mouseenter',
                 'event-key',
                 'event-outside',
-                'event-autohide',
                 'event-focus',
                 'classnamemanager',
                 'widget-base',
