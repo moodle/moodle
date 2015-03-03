@@ -45,9 +45,20 @@ class behat_mod_quiz extends behat_question_base {
     /**
      * Put the specified questions on the specified pages of a given quiz.
      *
-     * Give the question name in the first column, and that page number in the
-     * second column. You may optionally give the desired maximum mark for each
-     * question in a third column.
+     * The first row should be column names:
+     * | question | page | maxmark |
+     * The first two of those are required. The others are optional.
+     *
+     * question        needs to uniquely match a question name.
+     * page            is a page number. Must start at 1, and on each following
+     *                 row should be the same as the previous, or one more.
+     * maxmark         What the question is marked out of. Defaults to question.defaultmark.
+     *
+     * Then there should be a number of rows of data, one for each question you want to add.
+     *
+     * For backwards-compatibility reasons, specifying the column names is optional
+     * (but strongly encouraged). If not specified, the columns are asseumed to be
+     * | question | page | maxmark |.
      *
      * @param string $quizname the name of the quiz to add questions to.
      * @param TableNode $data information about the questions to add.
@@ -60,34 +71,70 @@ class behat_mod_quiz extends behat_question_base {
 
         $quiz = $DB->get_record('quiz', array('name' => $quizname), '*', MUST_EXIST);
 
-        // The action depends on the field type.
-        foreach ($data->getRows() as $questiondata) {
-            if (count($questiondata) < 2 || count($questiondata) > 3) {
+        // Deal with backwards-compatibility, optional first row.
+        $firstrow = $data->getRow(0);
+        if (!in_array('question', $firstrow) && !in_array('page', $firstrow)) {
+            if (count($firstrow) == 2) {
+                $headings = array('question', 'page');
+            } else if (count($firstrow) == 3) {
+                $headings = array('question', 'page', 'maxmark');
+            } else {
                 throw new ExpectationException('When adding questions to a quiz, you should give 2 or three 3 things: ' .
-                        ' the question name, the page number, and optionally a the maxiumum mark. ' .
-                        count($questiondata) . ' values passed.', $this->getSession());
+                        ' the question name, the page number, and optionally the maxiumum mark. ' .
+                        count($firstrow) . ' values passed.', $this->getSession());
+            }
+            $rows = $data->getRows();
+            array_unshift($rows, $headings);
+            $data->setRows($rows);
+        }
+
+        // Add the questions.
+        $lastpage = 0;
+        foreach ($data->getHash() as $questiondata) {
+            if (!array_key_exists('question', $questiondata)) {
+                throw new ExpectationException('When adding questions to a quiz, ' .
+                        'the question name column is required.', $this->getSession());
+            }
+            if (!array_key_exists('page', $questiondata)) {
+                throw new ExpectationException('When adding questions to a quiz, ' .
+                        'the page number column is required.', $this->getSession());
             }
 
-            list($questionname, $rawpage) = $questiondata;
-            if (!isset($questiondata[2]) || $questiondata[2] === '') {
+            // Question id.
+            $questionid = $DB->get_field('question', 'id',
+                    array('name' => $questiondata['question']), MUST_EXIST);
+
+            // Page number.
+            $page = clean_param($questiondata['page'], PARAM_INT);
+            if ($page <= 0 || (string) $page !== $questiondata['page']) {
+                throw new ExpectationException('The page number for question "' .
+                         $questiondata['question'] . '" must be a positive integer.',
+                        $this->getSession());
+            }
+            if ($page < $lastpage || $page > $lastpage + 1) {
+                throw new ExpectationException('When adding questions to a quiz, ' .
+                        'the page number for each question must either be the same, ' .
+                        'or one more, then the page number for the previous question.',
+                        $this->getSession());
+            }
+            $lastpage = $page;
+
+            // Max mark.
+            if (!array_key_exists('maxmark', $questiondata) || $questiondata['maxmark'] === '') {
                 $maxmark = null;
             } else {
-                $maxmark = clean_param($questiondata[2], PARAM_FLOAT);
-                if (!is_numeric($questiondata[2]) || $maxmark < 0) {
-                    throw new ExpectationException('When adding questions to a quiz, the max mark must be a positive number.',
+                $maxmark = clean_param($questiondata['maxmark'], PARAM_FLOAT);
+                if (!is_numeric($questiondata['maxmark']) || $maxmark < 0) {
+                    throw new ExpectationException('The max mark for question "' .
+                            $questiondata['question'] . '" must be a positive number.',
                             $this->getSession());
                 }
             }
 
-            $page = clean_param($rawpage, PARAM_INT);
-            if ($page <= 0 || (string) $page !== $rawpage) {
-                throw new ExpectationException('When adding questions to a quiz, the page number must be a positive integer.',
-                        $this->getSession());
-            }
-
-            $questionid = $DB->get_field('question', 'id', array('name' => $questionname), MUST_EXIST);
+            // Add the question.
             quiz_add_quiz_question($questionid, $quiz, $page, $maxmark);
         }
+
         quiz_update_sumgrades($quiz);
     }
 
