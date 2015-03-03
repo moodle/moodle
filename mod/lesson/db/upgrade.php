@@ -178,5 +178,44 @@ function xmldb_lesson_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015030301, 'lesson');
     }
 
+    if ($oldversion < 2015030400) {
+
+        // Creating new field timelimit in lesson table.
+        $table = new xmldb_table('lesson');
+        $field = new xmldb_field('timelimit', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'maxpages');
+
+        // Conditionally launch add field timelimit.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lesson savepoint reached.
+        upgrade_mod_savepoint(true, 2015030400, 'lesson');
+    }
+
+    if ($oldversion < 2015030401) {
+
+        // Convert maxtime (minutes) to timelimit (seconds).
+        $table = new xmldb_table('lesson');
+        $oldfield = new xmldb_field('maxtime');
+        $newfield = new xmldb_field('timelimit');
+        if ($dbman->field_exists($table, $oldfield) && $dbman->field_exists($table, $newfield)) {
+            $sql = 'UPDATE {lesson} SET timelimit = 60 * maxtime';
+            $DB->execute($sql);
+            // Drop field maxtime.
+            $dbman->drop_field($table, $oldfield);
+        }
+
+        $oldfield = new xmldb_field('timed');
+        if ($dbman->field_exists($table, $oldfield) && $dbman->field_exists($table, $newfield)) {
+            // Set timelimit to 0 for non timed lessons.
+            $DB->set_field_select('lesson', 'timelimit', 0, 'timed = 0');
+            // Drop field timed.
+            $dbman->drop_field($table, $oldfield);
+        }
+        // Lesson savepoint reached.
+        upgrade_mod_savepoint(true, 2015030401, 'lesson');
+    }
+
     return true;
 }

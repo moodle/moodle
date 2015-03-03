@@ -50,8 +50,8 @@ $PAGE->navbar->add(get_string('continue', 'lesson'));
 if (!$canmanage) {
     $lesson->displayleft = lesson_displayleftif($lesson);
     $timer = $lesson->update_timer();
-    if ($lesson->timed) {
-        $timeleft = ($timer->starttime + $lesson->maxtime * 60) - time();
+    if ($lesson->timelimit) {
+        $timeleft = ($timer->starttime + $lesson->timelimit) - time();
         if ($timeleft <= 0) {
             // Out of time
             $lesson->add_message(get_string('eolstudentoutoftime', 'lesson'));
@@ -157,7 +157,7 @@ if ($canmanage) {
         $lesson->add_message(get_string("teacherjumpwarning", "lesson", $warningvars));
     }
     // Inform teacher that s/he will not see the timer
-    if ($lesson->timed) {
+    if ($lesson->timelimit) {
         $lesson->add_message(get_string("teachertimerwarning", "lesson"));
     }
 }

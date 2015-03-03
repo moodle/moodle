@@ -486,7 +486,7 @@ function lesson_mediafile_block_contents($cmid, $lesson) {
 function lesson_clock_block_contents($cmid, $lesson, $timer, $page) {
     // Display for timed lessons and for students only
     $context = context_module::instance($cmid);
-    if(!$lesson->timed || has_capability('mod/lesson:manage', $context)) {
+    if ($lesson->timelimit == 0 || has_capability('mod/lesson:manage', $context)) {
         return null;
     }
 
@@ -494,7 +494,7 @@ function lesson_clock_block_contents($cmid, $lesson, $timer, $page) {
     $content .=  $lesson->time_remaining($timer->starttime);
     $content .= '</div>';
 
-    $clocksettings = array('starttime'=>$timer->starttime, 'servertime'=>time(),'testlength'=>($lesson->maxtime * 60));
+    $clocksettings = array('starttime' => $timer->starttime, 'servertime' => time(), 'testlength' => $lesson->timelimit);
     $page->requires->data_for_js('clocksettings', $clocksettings, true);
     $page->requires->strings_for_js(array('timeisup'), 'lesson');
     $page->requires->js('/mod/lesson/timer.js');
@@ -1241,8 +1241,8 @@ class lesson extends lesson_base {
         $startlesson->starttime = time();
         $startlesson->lessontime = time();
         $DB->insert_record('lesson_timer', $startlesson);
-        if ($this->properties->timed) {
-            $this->add_message(get_string('maxtimewarning', 'lesson', $this->properties->maxtime), 'center');
+        if ($this->properties->timelimit) {
+            $this->add_message(get_string('timelimitwarning', 'lesson', format_time($this->properties->timelimit)), 'center');
         }
         return true;
     }
@@ -1412,7 +1412,7 @@ class lesson extends lesson_base {
      * @return string
      */
     public function time_remaining($starttime) {
-        $timeleft = $starttime + $this->maxtime * 60 - time();
+        $timeleft = $starttime + $this->timelimit - time();
         $hours = floor($timeleft/3600);
         $timeleft = $timeleft - ($hours * 3600);
         $minutes = floor($timeleft/60);

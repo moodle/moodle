@@ -171,22 +171,11 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'deadline', get_string('deadline', 'lesson'), array('optional'=>true));
         $mform->setDefault('deadline', 0);
 
-        // Create a text box that can be enabled/disabled for lesson time limit
-        $timedgrp = array();
-        $timedgrp[] = &$mform->createElement('text', 'maxtime');
-        $timedgrp[] = &$mform->createElement('checkbox', 'timed', '', get_string('enable'));
-        $mform->addGroup($timedgrp, 'timedgrp', get_string('maxtime', 'lesson'), array(' '), false);
-        $mform->disabledIf('timedgrp', 'timed');
-
-        // Add numeric rule to text field
-        $timedgrprules = array();
-        $timedgrprules['maxtime'][] = array(null, 'numeric', null, 'client');
-        $mform->addGroupRule('timedgrp', $timedgrprules);
-
-        // Rest of group setup
-        $mform->setDefault('timed', 0);
-        $mform->setDefault('maxtime', 20);
-        $mform->setType('maxtime', PARAM_INT);
+        // Time limit.
+        $mform->addElement('duration', 'timelimit', get_string('timelimit', 'lesson'),
+                array('optional' => true));
+        $mform->addHelpButton('timelimit', 'timelimit', 'lesson');
+        $mform->setDefault('timelimit', 1200);
 
         $mform->addElement('selectyesno', 'usepassword', get_string('usepassword', 'lesson'));
         $mform->addHelpButton('usepassword', 'usepassword', 'lesson');
@@ -334,9 +323,6 @@ class mod_lesson_mod_form extends moodleform_mod {
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if (empty($data['maxtime']) and !empty($data['timed'])) {
-            $errors['timedgrp'] = get_string('err_numeric', 'form');
-        }
         if (!empty($data['usepassword']) && empty($data['password'])) {
             $errors['password'] = get_string('emptypassword', 'lesson');
         }

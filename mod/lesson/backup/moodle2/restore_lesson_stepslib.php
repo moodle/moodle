@@ -77,6 +77,14 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
             $data->completionendreached = 0;
         }
 
+        // Compatibility with old backups with maxtime and timed fields.
+        if (!isset($data->timelimit)) {
+            if (isset($data->timed) && isset($data->maxtime) && $data->timed) {
+                $data->timelimit = 60 * $data->maxtime;
+            } else {
+                $data->timelimit = 0;
+            }
+        }
         // insert the lesson record
         $newitemid = $DB->insert_record('lesson', $data);
         // immediately after inserting "activity" record, call this
