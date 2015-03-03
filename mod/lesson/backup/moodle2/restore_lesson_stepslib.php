@@ -233,6 +233,17 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         }
         $rs->close();
 
+        // Remap all the restored 'nextpageid' fields now that we have all the pages and their mappings.
+        $rs = $DB->get_recordset('lesson_branch', array('lessonid' => $this->task->get_activityid()),
+                                 '', 'id, nextpageid');
+        foreach ($rs as $answer) {
+            if ($answer->nextpageid > 0) {
+                $answer->nextpageid = $this->get_mappingid('lesson_page', $answer->nextpageid);
+                $DB->update_record('lesson_branch', $answer);
+            }
+        }
+        $rs->close();
+
         // Re-map the dependency and activitylink information
         // If a depency or activitylink has no mapping in the backup data then it could either be a duplication of a
         // lesson, or a backup/restore of a single lesson. We have no way to determine which and whether this is the

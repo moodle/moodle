@@ -119,7 +119,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // and user.
         $branches = new backup_nested_element('branches');
         $branch = new backup_nested_element('branch', array('id'), array(
-            'userid','retry','flag','timeseen'
+             'userid', 'retry', 'flag', 'timeseen', 'nextpageid'
         ));
 
         // The lesson_grades table
