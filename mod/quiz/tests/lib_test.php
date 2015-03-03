@@ -26,6 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/mod/quiz/lib.php');
+
 
 /**
  * @copyright  2008 The Open University
