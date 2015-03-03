@@ -1787,6 +1787,10 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertEquals(false, strpos($output, '50.0'));
 
+        // Make sure the grade isn't pushed to the gradebook.
+        $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
+        $this->assertEmpty($grades);
+
         // Mark the submission and set to inmarking.
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
@@ -1798,6 +1802,10 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->students[0]);
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertEquals(false, strpos($output, '50.0'));
+
+        // Make sure the grade isn't pushed to the gradebook.
+        $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
+        $this->assertEmpty($grades);
 
         // Mark the submission and set to readyforreview.
         $this->setUser($this->teachers[0]);
@@ -1811,6 +1819,10 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertEquals(false, strpos($output, '50.0'));
 
+        // Make sure the grade isn't pushed to the gradebook.
+        $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
+        $this->assertEmpty($grades);
+
         // Mark the submission and set to inreview.
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
@@ -1822,6 +1834,10 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->students[0]);
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertEquals(false, strpos($output, '50.0'));
+
+        // Make sure the grade isn't pushed to the gradebook.
+        $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
+        $this->assertEmpty($grades);
 
         // Mark the submission and set to readyforrelease.
         $this->setUser($this->teachers[0]);
@@ -1835,6 +1851,10 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertEquals(false, strpos($output, '50.0'));
 
+        // Make sure the grade isn't pushed to the gradebook.
+        $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
+        $this->assertEmpty($grades);
+
         // Mark the submission and set to released.
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
@@ -1846,6 +1866,10 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->students[0]);
         $output = $assign->view_student_summary($this->students[0], true);
         $this->assertNotEquals(false, strpos($output, '50.0'));
+
+        // Make sure the grade is pushed to the gradebook.
+        $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
+        $this->assertEquals(50, (int)$grades[$this->students[0]->id]->rawgrade);
     }
 
     public function test_markerallocation() {
