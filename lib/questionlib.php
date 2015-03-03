@@ -1963,6 +1963,9 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
 
     $module = $DB->get_field('question_usages', 'component',
             array('id' => $qubaid));
+    if (!$module) {
+        send_file_not_found();
+    }
 
     if ($module === 'core_question_preview') {
         require_once($CFG->dirroot . '/question/previewlib.php');
