@@ -44,7 +44,7 @@ class memcached extends handler {
     protected $acquiretimeout = 120;
     /**
      * @var int $lockexpire how long to wait before expiring the lock so that other requests
-     * may continue execution, ignored if memcached <= 2.1.0.
+     * may continue execution, ignored if PECL memcached is below version 2.2.0.
      */
     protected $lockexpire = 7200;
 
@@ -86,7 +86,7 @@ class memcached extends handler {
      * @return bool success
      */
     public function start() {
-        // NOTE: memcached <= 2.1.0 expires session locks automatically after max_execution_time,
+        // NOTE: memcached before 2.2.0 expires session locks automatically after max_execution_time,
         //       this leads to major difference compared to other session drivers that timeout
         //       and stop the second request execution instead.
 
@@ -119,7 +119,7 @@ class memcached extends handler {
         ini_set('memcached.sess_prefix', $this->prefix);
         ini_set('memcached.sess_locking', '1'); // Locking is required!
 
-        // Try to configure lock and expire timeouts - ignored if memcached <=2.1.0.
+        // Try to configure lock and expire timeouts - ignored if memcached is before version 2.2.0.
         ini_set('memcached.sess_lock_max_wait', $this->acquiretimeout);
         ini_set('memcached.sess_lock_expire', $this->lockexpire);
     }
