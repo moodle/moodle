@@ -18,6 +18,8 @@ information provided here is intended especially for developers.
   Moodle specific tags will be ignored.
 * External function core_files_get_files returns additional fields (timecreated, filesize, author, license)
 * html_table: new API for adding captions to tables (new field, $table->caption) and subsequently hiding said captions from sighted users using accesshide (enabled using $table->captionhide).
+* The authorization procedure in the mdeploy.php script has been improved. The script
+  now relies on the main config.php when deploying an available update.
 
 === 2.8 ===
 
