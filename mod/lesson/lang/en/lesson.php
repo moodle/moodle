@@ -168,9 +168,8 @@ $string['emptypassword'] = 'Password cannot be empty';
 $string['eolstudentoutoftime'] = 'Attention:  You ran out of time for this lesson.  Your last answer may not have counted if it was answered after the time was up.';
 $string['eolstudentoutoftimenoanswers'] = 'You did not answer any questions.  You have received a 0 for this lesson.';
 $string['essay'] = 'Essay';
-$string['essayemailmessage'] = '<p>Essay prompt:<blockquote>{$a->question}</blockquote></p><p>Your response:<blockquote><em>{$a->response}</em></blockquote></p><p>{$a->teacher}\'s comments:<blockquote><em>{$a->comment}</em></blockquote></p><p>You have received {$a->earned} out of {$a->outof} for this essay question.</p><p>Your grade for the lesson has been changed to {$a->newgrade}&#37;.</p>';
-$string['essayemailmessage2'] = '<p>Essay prompt:<blockquote>{$a->question}</blockquote></p><p>Your response:<blockquote><em>{$a->response}</em></blockquote></p><p>Grader\'s comments:<blockquote><em>{$a->comment}</em></blockquote></p><p>You have received {$a->earned} out of {$a->outof} for this essay question.</p><p>Your grade for the lesson has been changed to {$a->newgrade}&#37;.</p>';
-$string['essayemailsubject'] = 'Your grade for {$a} question';
+$string['essayemailmessage2'] = '<p>Essay prompt: {$a->question}</p><p>Your response: <em>{$a->response}</em></p><p>Grader\'s comments: <em>{$a->comment}</em></p><p>You have received {$a->earned} out of {$a->outof} for this essay question.</p><p>Your grade for the {$a->lesson} lesson has been changed to {$a->newgrade}&#37;.</p>';
+$string['essayemailsubject'] = 'Grade available for lesson question';
 $string['essayresponses'] = 'Essay responses';
 $string['essays'] = 'Essays';
 $string['essayscore'] = 'Essay score';
@@ -469,3 +468,7 @@ $string['youranswer'] = 'Your answer';
 $string['yourcurrentgradeis'] = 'Your current grade is {$a}';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is {$a->grade} out of {$a->total}';
 $string['youshouldview'] = 'You should answer at least: {$a}';
+
+// Deprecated since Moodle 2.9.
+
+$string['essayemailmessage'] = '<p>Essay prompt:<blockquote>{$a->question}</blockquote></p><p>Your response:<blockquote><em>{$a->response}</em></blockquote></p><p>{$a->teacher}\'s comments:<blockquote><em>{$a->comment}</em></blockquote></p><p>You have received {$a->earned} out of {$a->outof} for this essay question.</p><p>Your grade for the lesson has been changed to {$a->newgrade}&#37;.</p>';
