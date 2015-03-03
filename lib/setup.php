@@ -77,43 +77,12 @@ if (defined('BEHAT_SITE_RUNNING')) {
     // We already switched to behat test site previously.
 
 } else if (!empty($CFG->behat_wwwroot) or !empty($CFG->behat_dataroot) or !empty($CFG->behat_prefix)) {
-    global $argv;
-    $behatrunprocess = false;
-
-    require_once(__DIR__ . '/../lib/behat/lib.php');
-
-    // Get behat run process, if set.
-    if (defined('BEHAT_CURRENT_RUN') && BEHAT_CURRENT_RUN) {
-        $behatrunprocess = BEHAT_CURRENT_RUN;
-    } else if (!empty($_SERVER['REMOTE_ADDR'])) {
-        if (preg_match('#/' . BEHAT_PARALLEL_SITE_NAME . '(.+?)/#', $_SERVER['REQUEST_URI'])) {
-            $dirrootrealpath = str_replace("\\", "/", realpath($CFG->dirroot));
-            $serverrealpath = str_replace("\\", "/", realpath($_SERVER['SCRIPT_FILENAME']));
-            $afterpath = str_replace($dirrootrealpath.'/', '', $serverrealpath);
-            if (!$behatrunprocess = preg_filter("#.*/" . BEHAT_PARALLEL_SITE_NAME . "(.+?)/$afterpath#", '$1',
-                    $_SERVER['SCRIPT_FILENAME'])) {
-                throw new Exception("Unable to determine behat process [afterpath=" . $afterpath .
-                        ", scriptfilename=" . $_SERVER['SCRIPT_FILENAME'] . "]!");
-            }
-        }
-    } else if (defined('BEHAT_TEST') || defined('BEHAT_UTIL')) {
-        if ($match = preg_filter('#--run=(.+)#', '$1', $argv)) {
-            $behatrunprocess = reset($match);
-        }
-
-        if ($k = array_search('--config', $argv)) {
-            $behatconfig = str_replace("\\", "/", $argv[$k + 1]);
-            $behatdataroot = str_replace("\\", "/", $CFG->behat_dataroot);
-            $behatrunprocess = preg_filter("#^{$behatdataroot}" .
-                    "(.+?)[/|\\\]behat[/|\\\]behat\.yml#", '$1', $behatconfig);
-        }
-    }
-
-    $CFG->behatrunprocess = $behatrunprocess;
-
     // The behat is configured on this server, we need to find out if this is the behat test
     // site based on the URL used for access.
-    behat_update_vars_for_process($behatrunprocess);
+    require_once(__DIR__ . '/../lib/behat/lib.php');
+
+    // Update config variables for parallel behat runs.
+    behat_update_vars_for_process();
 
     if (behat_is_test_site()) {
         clearstatcache();

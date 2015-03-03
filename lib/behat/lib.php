@@ -283,14 +283,13 @@ function behat_is_test_site() {
  * - behat_wwwroot = behat_wwwroot{behatrunprocess}
  * - behat_dataroot = behat_dataroot{behatrunprocess}
  * - behat_prefix = behat_prefix.{behatrunprocess}_ (For oracle it will be firstletter of prefix and behatrunprocess)
- *
- * @param string $behatrunprocess process index for which variables will be set.
  **/
-function behat_update_vars_for_process($behatrunprocess = '') {
+function behat_update_vars_for_process() {
     global $CFG;
 
     $allowedconfigoverride = array('dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'behat_prefix');
-    $behatrunprocess = $CFG->behatrunprocess;
+    $behatrunprocess = behat_get_run_process();
+    $CFG->behatrunprocess = $behatrunprocess;
 
     if ($behatrunprocess) {
         // Set www root for run process.
@@ -358,6 +357,45 @@ function behat_is_requested_url($url) {
     }
 
     return false;
+}
+
+/**
+ * Get behat run process from either $_SERVER or command config.
+ *
+ * @return bool|int false if single run, else run process number.
+ */
+function behat_get_run_process() {
+    global $argv, $CFG;
+    $behatrunprocess = false;
+
+    // Get behat run process, if set.
+    if (defined('BEHAT_CURRENT_RUN') && BEHAT_CURRENT_RUN) {
+        $behatrunprocess = BEHAT_CURRENT_RUN;
+    } else if (!empty($_SERVER['REMOTE_ADDR'])) {
+        if (preg_match('#/' . BEHAT_PARALLEL_SITE_NAME . '(.+?)/#', $_SERVER['REQUEST_URI'])) {
+            $dirrootrealpath = str_replace("\\", "/", realpath($CFG->dirroot));
+            $serverrealpath = str_replace("\\", "/", realpath($_SERVER['SCRIPT_FILENAME']));
+            $afterpath = str_replace($dirrootrealpath.'/', '', $serverrealpath);
+            if (!$behatrunprocess = preg_filter("#.*/" . BEHAT_PARALLEL_SITE_NAME . "(.+?)/$afterpath#", '$1',
+                $_SERVER['SCRIPT_FILENAME'])) {
+                throw new Exception("Unable to determine behat process [afterpath=" . $afterpath .
+                    ", scriptfilename=" . $_SERVER['SCRIPT_FILENAME'] . "]!");
+            }
+        }
+    } else if (defined('BEHAT_TEST') || defined('BEHAT_UTIL')) {
+        if ($match = preg_filter('#--run=(.+)#', '$1', $argv)) {
+            $behatrunprocess = reset($match);
+        }
+
+        if ($k = array_search('--config', $argv)) {
+            $behatconfig = str_replace("\\", "/", $argv[$k + 1]);
+            $behatdataroot = str_replace("\\", "/", $CFG->behat_dataroot);
+            $behatrunprocess = preg_filter("#^{$behatdataroot}" .
+                "(.+?)[/|\\\]behat[/|\\\]behat\.yml#", '$1', $behatconfig);
+        }
+    }
+
+    return $behatrunprocess;
 }
 
 /**
