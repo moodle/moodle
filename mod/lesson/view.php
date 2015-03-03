@@ -214,12 +214,9 @@ if (empty($pageid)) {
         // in here, user has viewed a branch table
         $lastbranchtable = current($branchtables);
         if (count($allattempts) > 0) {
-            foreach($allattempts as $attempt) {
-                if ($lastbranchtable->timeseen > $attempt->timeseen) {
-                    // branch table was viewed later than the last attempt
-                    $lastpageseen = $lastbranchtable->pageid;
-                }
-                break;
+            if ($lastbranchtable->timeseen > $attempt->timeseen) {
+                // This branch table was viewed more recently than the question page.
+                $lastpageseen = $lastbranchtable->pageid;
             }
         } else {
             // hasnt answered any questions but has viewed a branch table
