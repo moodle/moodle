@@ -142,4 +142,21 @@ class quiz_statistics_question_table extends flexible_table {
 
         return $this->format_percentage($response->count / $this->s);
     }
+
+    /**
+     * If there is not a col_{column name} method then we call this method. If it returns null
+     * that means just output the property as in the table raw data. If this returns none null
+     * then this is the output for this cell of the table.
+     *
+     * @param string $colname  The name of this column.
+     * @param object $response The raw data for this row.
+     * @return string|null The value for this cell of the table or null means use raw data.
+     */
+    public function other_cols($colname, $response) {
+        if ($colname == 'part' || $colname == 'responseclass' || $colname == 'response') {
+            return s($response->$colname);
+        } else {
+            return null;
+        }
+    }
 }
