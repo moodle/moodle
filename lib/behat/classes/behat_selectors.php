@@ -45,6 +45,7 @@ class behat_selectors {
         'dialogue' => 'dialogue',
         'fieldset' => 'fieldset',
         'list_item' => 'list_item',
+        'question' => 'question',
         'region' => 'region',
         'section' => 'section',
         'table' => 'table',
@@ -71,6 +72,7 @@ class behat_selectors {
         'list_item' => 'list_item',
         'optgroup' => 'optgroup',
         'option' => 'option',
+        'question' => 'question',
         'radio' => 'radio',
         'region' => 'region',
         'section' => 'section',
@@ -113,6 +115,10 @@ XPATH
 XPATH
         , 'list_item' => <<<XPATH
 .//li[contains(normalize-space(.), %locator%)]
+XPATH
+        , 'question' => <<<XPATH
+//div[contains(concat(' ', normalize-space(@class), ' '), ' que ')]
+    [contains(div[@class='content']/div[@class='formulation'], %locator%)]
 XPATH
         , 'region' => <<<XPATH
 //*[self::div | self::section | self::aside | self::header | self::footer][./@id = %locator%]
