@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.6.9 ===
+
+* The authorization procedure in the mdeploy.php script has been improved. The script
+  now relies on the main config.php when deploying an available update.
+
 === 2.6.4 / 2.7.1 ===
 
 * update_internal_user_password() accepts optional boolean $fasthash for fast
