@@ -71,8 +71,13 @@ class restore_qtype_shortanswer_plugin extends restore_qtype_plugin {
         // qtype_shortanswer_options too, if they are defined (the gui should ensure this).
         if ($questioncreated) {
             $data->questionid = $newquestionid;
-            $newitemid = $DB->insert_record('qtype_shortanswer_options', $data);
-            $this->set_mapping('qtype_shortanswer_options', $oldid, $newitemid);
+
+            // It is possible for old backup files to contain unique key violations.
+            // We need to check to avoid that.
+            if (!$DB->record_exists('qtype_shortanswer_options', array('questionid' => $data->questionid))) {
+                $newitemid = $DB->insert_record('qtype_shortanswer_options', $data);
+                $this->set_mapping('qtype_shortanswer_options', $oldid, $newitemid);
+            }
         }
     }
 }
