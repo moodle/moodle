@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.7.6 ===
+
+* The authorization procedure in the mdeploy.php script has been improved. The script
+  now relies on the main config.php when deploying an available update.
+
 === 2.7.4 ===
 
 * \core_component::fetch_subsystems() now returns a valid path for completion component instead of null.
