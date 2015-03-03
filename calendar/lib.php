@@ -2953,11 +2953,12 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid, $timez
         $description = '';
     } else {
         $description = $event->properties['DESCRIPTION'][0]->value;
+        $description = clean_param($description, PARAM_NOTAGS);
         $description = str_replace('\n', '<br />', $description);
         $description = str_replace('\\', '', $description);
         $description = preg_replace('/\s+/', ' ', $description);
     }
-    $eventrecord->description = clean_param($description, PARAM_NOTAGS);
+    $eventrecord->description = $description;
 
     // Probably a repeating event with RRULE etc. TODO: skip for now.
     if (empty($event->properties['DTSTART'][0]->value)) {
