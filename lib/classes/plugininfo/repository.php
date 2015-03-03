@@ -67,4 +67,56 @@ class repository extends base {
     public static function get_manage_url() {
         return new moodle_url('/admin/repository.php');
     }
+
+    /**
+     * Defines if there should be a way to uninstall the plugin via the administration UI.
+     * @return boolean
+     */
+    public function is_uninstall_allowed() {
+        if ($this->name === 'upload' || $this->name === 'coursefiles' || $this->name === 'user') {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Pre-uninstall hook.
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     * Converts all linked files to standard files when repository is removed
+     * and cleans up all records in the DB for that repository.
+     */
+    public function uninstall_cleanup() {
+        global $DB;
+
+        // Get all instances of this repository.
+        $count = $DB->count_records('repository', array('type' => $this->name));
+        if ($count > 0) {
+            // This repository is in use.
+            $rec = $DB->get_record('repository', array('type' => $this->name));
+            $repos = $DB->get_records('repository_instances', array('typeid' => $rec->id));
+            foreach ($repos as $repo) {
+                // Convert all files to local storage.
+                $fs = get_file_storage();
+                $files = $fs->get_external_files($repo->id);
+                foreach ($files as $storedfile) {
+                    $fs->import_external_file($storedfile);
+                }
+
+                // Clean up from the DB.
+                $DB->delete_records('repository_instances', array('id' => $repo->id));
+                $DB->delete_records('repository_instance_config', array('instanceid' => $repo->id));
+
+            }
+
+            // Clean up from config_plugins.
+            // NOTE: Repository plugins are not using the correct plugin names.
+            $DB->delete_records('config_plugins', array('plugin' => $this->name));
+
+            // Remove the record from the repository table.
+            $DB->delete_records('repository', array('id' => $rec->id));
+        }
+
+        parent::uninstall_cleanup();
+    }
 }
