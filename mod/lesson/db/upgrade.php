@@ -172,6 +172,7 @@ function xmldb_lesson_upgrade($oldversion) {
             $badanswer->answerformat = FORMAT_MOODLE;
             $DB->update_record('lesson_answers', $badanswer);
         }
+        $badanswers->close();
 
         // Lesson savepoint reached.
         upgrade_mod_savepoint(true, 2015030301, 'lesson');

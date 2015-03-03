@@ -262,6 +262,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
             $badanswer->answerformat = FORMAT_MOODLE;
             $DB->update_record('lesson_answers', $badanswer);
         }
+        $badanswers->close();
 
         // Re-map the dependency and activitylink information
         // If a depency or activitylink has no mapping in the backup data then it could either be a duplication of a
