@@ -41,7 +41,7 @@ class core_external_testcase extends externallib_advanced_testcase {
         $service->id = 12;
 
         // String with two parameters.
-        $returnedstring = core_external::get_string('addservice', 'webservice',
+        $returnedstring = core_external::get_string('addservice', 'webservice', null,
                 array(array('name' => 'name', 'value' => $service->name),
                       array('name' => 'id', 'value' => $service->id)));
 
@@ -53,7 +53,7 @@ class core_external_testcase extends externallib_advanced_testcase {
 
         // String with one parameter.
         $acapname = 'A capability name';
-        $returnedstring = core_external::get_string('missingrequiredcapability', 'webservice',
+        $returnedstring = core_external::get_string('missingrequiredcapability', 'webservice', null,
                 array(array('value' => $acapname)));
 
         // We need to execute the return values cleaning process to simulate the web service server.
@@ -73,7 +73,7 @@ class core_external_testcase extends externallib_advanced_testcase {
 
         // String with two parameter but one is invalid (not named).
         $this->setExpectedException('moodle_exception');
-        $returnedstring = core_external::get_string('addservice', 'webservice',
+        $returnedstring = core_external::get_string('addservice', 'webservice', null,
                 array(array('value' => $service->name),
                       array('name' => 'id', 'value' => $service->id)));
     }
@@ -83,6 +83,8 @@ class core_external_testcase extends externallib_advanced_testcase {
      */
     public function test_get_strings() {
         $this->resetAfterTest(true);
+
+        $stringmanager = get_string_manager();
 
         $service = new stdClass();
         $service->name = 'Dummy Service';
@@ -94,16 +96,20 @@ class core_external_testcase extends externallib_advanced_testcase {
                         'stringid' => 'addservice', 'component' => 'webservice',
                         'stringparams' => array(array('name' => 'name', 'value' => $service->name),
                               array('name' => 'id', 'value' => $service->id)
-                        )
+                        ),
+                        'lang' => 'en'
                     ),
-                    array('stringid' =>  'addaservice', 'component' => 'webservice')
+                    array('stringid' =>  'addaservice', 'component' => 'webservice', 'lang' => 'en')
                 ));
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $returnedstrings = external_api::clean_returnvalue(core_external::get_strings_returns(), $returnedstrings);
 
         foreach($returnedstrings as $returnedstring) {
-            $corestring = get_string($returnedstring['stringid'], $returnedstring['component'], $service);
+            $corestring = $stringmanager->get_string($returnedstring['stringid'],
+                                                     $returnedstring['component'],
+                                                     $service,
+                                                     'en');
             $this->assertSame($corestring, $returnedstring['string']);
         }
     }
