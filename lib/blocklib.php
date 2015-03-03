@@ -750,19 +750,23 @@ class block_manager {
     }
 
     /**
-     * Convenience method, calls add_block repeatedly for all the blocks in $blocks.
+     * Convenience method, calls add_block repeatedly for all the blocks in $blocks. Optionally, a starting weight
+     * can be used to decide the starting point that blocks are added in the region, the weight is passed to {@link add_block}
+     * and incremented by the position of the block in the $blocks array
      *
      * @param array $blocks array with array keys the region names, and values an array of block names.
-     * @param string $pagetypepattern optional. Passed to @see add_block()
-     * @param string $subpagepattern optional. Passed to @see add_block()
+     * @param string $pagetypepattern optional. Passed to {@link add_block()}
+     * @param string $subpagepattern optional. Passed to {@link add_block()}
+     * @param boolean $showinsubcontexts optional. Passed to {@link add_block()}
+     * @param integer $weight optional. Determines the starting point that the blocks are added in the region.
      */
     public function add_blocks($blocks, $pagetypepattern = NULL, $subpagepattern = NULL, $showinsubcontexts=false, $weight=0) {
+        $initialweight = $weight;
         $this->add_regions(array_keys($blocks), false);
         foreach ($blocks as $region => $regionblocks) {
-            $weight = 0;
-            foreach ($regionblocks as $blockname) {
+            foreach ($regionblocks as $offset => $blockname) {
+                $weight = $initialweight + $offset;
                 $this->add_block($blockname, $region, $weight, $showinsubcontexts, $pagetypepattern, $subpagepattern);
-                $weight += 1;
             }
         }
     }
@@ -2123,12 +2127,12 @@ function blocks_find_block($blockid, $blocksarray) {
 
 // Functions for programatically adding default blocks to pages ================
 
-/**
- * Parse a list of default blocks. See config-dist for a description of the format.
- *
- * @param string $blocksstr
- * @return array
- */
+ /**
+  * Parse a list of default blocks. See config-dist for a description of the format.
+  *
+  * @param string $blocksstr Determines the starting point that the blocks are added in the region.
+  * @return array the parsed list of default blocks
+  */
 function blocks_parse_default_blocks_list($blocksstr) {
     $blocks = array();
     $bits = explode(':', $blocksstr);
@@ -2139,7 +2143,7 @@ function blocks_parse_default_blocks_list($blocksstr) {
         }
     }
     if (!empty($bits)) {
-        $rightbits =trim(array_shift($bits));
+        $rightbits = trim(array_shift($bits));
         if ($rightbits != '') {
             $blocks[BLOCK_POS_RIGHT] = explode(',', $rightbits);
         }
