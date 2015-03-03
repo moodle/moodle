@@ -802,9 +802,9 @@ abstract class lesson_add_page_form_base extends moodleform {
             $this->_form->setType('answer_editor['.$count.']', PARAM_RAW);
             $this->_form->setDefault('answer_editor['.$count.']', array('text' => '', 'format' => FORMAT_HTML));
         } else {
-            $this->_form->addElement('editor', 'answer_editor['.$count.']', $label,
-                    array('rows' => '4', 'columns' => '80'), array('noclean' => true));
-            $this->_form->setDefault('answer_editor['.$count.']', array('text' => '', 'format' => FORMAT_MOODLE));
+            $this->_form->addElement('text', 'answer_editor['.$count.']', $label,
+                    array('size' => '50', 'maxlength' => '200'));
+            $this->_form->setType('answer_editor['.$count.']', PARAM_TEXT);
         }
 
         if ($required) {
@@ -2328,6 +2328,7 @@ abstract class lesson_page extends lesson_base {
         \mod_lesson\event\page_updated::create_from_lesson_page($this, $context)->trigger();
 
         if ($this->type == self::TYPE_STRUCTURE && $this->get_typeid() != LESSON_PAGE_BRANCHTABLE) {
+            // These page types have only one answer to save the jump and score.
             if (count($answers) > 1) {
                 $answer = array_shift($answers);
                 foreach ($answers as $a) {
@@ -2363,10 +2364,18 @@ abstract class lesson_page extends lesson_base {
                     $this->answers[$i]->timecreated = $this->timecreated;
                 }
 
-                if (!empty($properties->answer_editor[$i]) && is_array($properties->answer_editor[$i])) {
-                    $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];
-                    $this->answers[$i]->answerformat = $properties->answer_editor[$i]['format'];
+                if (!empty($properties->answer_editor[$i])) {
+                    if (is_array($properties->answer_editor[$i])) {
+                        // Multichoice and true/false pages have an HTML editor.
+                        $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];
+                        $this->answers[$i]->answerformat = $properties->answer_editor[$i]['format'];
+                    } else {
+                        // Branch tables, shortanswer and mumerical pages have only a text field.
+                        $this->answers[$i]->answer = $properties->answer_editor[$i];
+                        $this->answers[$i]->answerformat = FORMAT_MOODLE;
+                    }
                 }
+
                 if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {
                     $this->answers[$i]->response = $properties->response_editor[$i]['text'];
                     $this->answers[$i]->responseformat = $properties->response_editor[$i]['format'];
@@ -2469,9 +2478,16 @@ abstract class lesson_page extends lesson_base {
         for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
             $answer = clone($newanswer);
 
-            if (!empty($properties->answer_editor[$i]) && is_array($properties->answer_editor[$i])) {
-                $answer->answer = $properties->answer_editor[$i]['text'];
-                $answer->answerformat = $properties->answer_editor[$i]['format'];
+            if (!empty($properties->answer_editor[$i])) {
+                if (is_array($properties->answer_editor[$i])) {
+                    // Multichoice and true/false pages have an HTML editor.
+                    $answer->answer = $properties->answer_editor[$i]['text'];
+                    $answer->answerformat = $properties->answer_editor[$i]['format'];
+                } else {
+                    // Branch tables, shortanswer and mumerical pages have only a text field.
+                    $answer->answer = $properties->answer_editor[$i];
+                    $answer->answerformat = FORMAT_MOODLE;
+                }
             }
             if (!empty($properties->response_editor[$i]) && is_array($properties->response_editor[$i])) {
                 $answer->response = $properties->response_editor[$i]['text'];

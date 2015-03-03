@@ -153,5 +153,29 @@ function xmldb_lesson_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015030300, 'lesson');
     }
 
+    if ($oldversion < 2015030301) {
+
+        // Clean lesson answers that should be plain text.
+        // Unfortunately we can't use LESSON_PAGE_XX constants here as we can't include the files.
+        // 1 = LESSON_PAGE_SHORTANSWER, 8 = LESSON_PAGE_NUMERICAL, 20 = LESSON_PAGE_BRANCHTABLE.
+
+        $sql = 'SELECT a.*
+                  FROM {lesson_answers} a
+                  JOIN {lesson_pages} p ON p.id = a.pageid
+                 WHERE a.answerformat <> :format
+                   AND p.qtype IN (1, 8, 20)';
+        $badanswers = $DB->get_recordset_sql($sql, array('format' => FORMAT_MOODLE));
+
+        foreach ($badanswers as $badanswer) {
+            // Strip tags from answer text and convert back the format to FORMAT_MOODLE.
+            $badanswer->answer = strip_tags($badanswer->answer);
+            $badanswer->answerformat = FORMAT_MOODLE;
+            $DB->update_record('lesson_answers', $badanswer);
+        }
+
+        // Lesson savepoint reached.
+        upgrade_mod_savepoint(true, 2015030301, 'lesson');
+    }
+
     return true;
 }
