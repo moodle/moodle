@@ -134,7 +134,11 @@ if ($options['diag'] || $options['enable'] || $options['disable']) {
             $exitcodes = print_combined_install_output($processes);
             foreach ($exitcodes as $name => $exitcode) {
                 if ($exitcode != 0) {
+                    echo "Failed process [[$name]]" . PHP_EOL;
+                    echo $processes[$name]->getOutput();
+                    echo PHP_EOL;
                     echo $processes[$name]->getErrorOutput();
+                    echo PHP_EOL . PHP_EOL;
                 }
                 $status = (bool)$status || (bool)$exitcode;
             }
@@ -144,7 +148,11 @@ if ($options['diag'] || $options['enable'] || $options['disable']) {
         $exitcodes = print_combined_install_output($processes);
         foreach ($exitcodes as $name => $exitcode) {
             if ($exitcode != 0) {
+                echo "Failed process [[$name]]" . PHP_EOL;
+                echo $processes[$name]->getOutput();
+                echo PHP_EOL;
                 echo $processes[$name]->getErrorOutput();
+                echo PHP_EOL . PHP_EOL;
             }
             $status = (bool)$status || (bool)$exitcode;
         }
