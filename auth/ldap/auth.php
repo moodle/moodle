@@ -1653,7 +1653,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                                       $_SERVER['HTTP_REFERER'] != $CFG->wwwroot &&
                                       $_SERVER['HTTP_REFERER'] != $CFG->wwwroot.'/' &&
                                       $_SERVER['HTTP_REFERER'] != $CFG->httpswwwroot.'/login/' &&
-                                      $_SERVER['HTTP_REFERER'] != $CFG->httpswwwroot.'/login/index.php')
+                                      $_SERVER['HTTP_REFERER'] != $CFG->httpswwwroot.'/login/index.php' &&
+                                      clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL) != '')
                     ? $_SERVER['HTTP_REFERER'] : NULL;
             }
 
