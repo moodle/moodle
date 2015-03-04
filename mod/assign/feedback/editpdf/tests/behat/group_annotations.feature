@@ -53,6 +53,7 @@ Feature: In a group assignment, teacher can annotate PDF files for all users
     And I follow "View/grade all submissions"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
     And I follow "Launch PDF editor..."
+    And I change window size to "large"
     And I click on ".navigate-next-button" "css_element"
     And I click on ".stampbutton" "css_element"
     And I click on ".drawingcanvas" "css_element"
