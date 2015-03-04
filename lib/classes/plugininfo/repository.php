@@ -87,34 +87,12 @@ class repository extends base {
      * and cleans up all records in the DB for that repository.
      */
     public function uninstall_cleanup() {
-        global $DB;
+        global $CFG;
+        require_once($CFG->dirroot.'/repository/lib.php');
 
-        // Get all instances of this repository.
-        $count = $DB->count_records('repository', array('type' => $this->name));
-        if ($count > 0) {
-            // This repository is in use.
-            $rec = $DB->get_record('repository', array('type' => $this->name));
-            $repos = $DB->get_records('repository_instances', array('typeid' => $rec->id));
-            foreach ($repos as $repo) {
-                // Convert all files to local storage.
-                $fs = get_file_storage();
-                $files = $fs->get_external_files($repo->id);
-                foreach ($files as $storedfile) {
-                    $fs->import_external_file($storedfile);
-                }
-
-                // Clean up from the DB.
-                $DB->delete_records('repository_instances', array('id' => $repo->id));
-                $DB->delete_records('repository_instance_config', array('instanceid' => $repo->id));
-
-            }
-
-            // Clean up from config_plugins.
-            // NOTE: Repository plugins are not using the correct plugin names.
-            $DB->delete_records('config_plugins', array('plugin' => $this->name));
-
-            // Remove the record from the repository table.
-            $DB->delete_records('repository', array('id' => $rec->id));
+        $repo = \repository::get_type_by_typename($this->name);
+        if ($repo) {
+            $repo->delete(true);
         }
 
         parent::uninstall_cleanup();
