@@ -121,7 +121,7 @@ function SCORMapi1_2() {
         'cmi.student_data.time_limit_action':{'defaultvalue':'<?php echo isset($userdata->timelimitaction)?$userdata->timelimitaction:'' ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.student_preference._children':{'defaultvalue':student_preference_children, 'mod':'r', 'writeerror':'402'},
         'cmi.student_preference.audio':{'defaultvalue':<?php echo isset($userdata->{'cmi.student_preference.audio'})?$userdata->{'cmi.student_preference.audio'}:'0' ?>, 'format':CMISInteger, 'range':audio_range, 'mod':'rw', 'writeerror':'405'},
-        'cmi.student_preference.language':{'defaultvalue':<?php echo isset($userdata->{'cmi.student_preference.language'})?$userdata->{'cmi.student_preference.language'}:'' ?>, 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
+        'cmi.student_preference.language':{'defaultvalue':'<?php echo isset($userdata->{'cmi.student_preference.language'})?$userdata->{'cmi.student_preference.language'}:'' ?>', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
         'cmi.student_preference.speed':{'defaultvalue':<?php echo isset($userdata->{'cmi.student_preference.speed'})?$userdata->{'cmi.student_preference.speed'}:'0' ?>, 'format':CMISInteger, 'range':speed_range, 'mod':'rw', 'writeerror':'405'},
         'cmi.student_preference.text':{'defaultvalue':<?php echo isset($userdata->{'cmi.student_preference.text'})?$userdata->{'cmi.student_preference.text'}:'0' ?>, 'format':CMISInteger, 'range':text_range, 'mod':'rw', 'writeerror':'405'},
         'cmi.interactions._children':{'defaultvalue':interactions_children, 'mod':'r', 'writeerror':'402'},
