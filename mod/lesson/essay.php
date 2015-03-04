@@ -252,13 +252,14 @@ switch ($mode) {
                 $a->comment = file_rewrite_pluginfile_urls($a->comment, 'pluginfile.php', $context->id,
                             'mod_lesson', 'essay_responses', $attempt->id);
                 $a->comment  = format_text($a->comment, $essayinfo->responseformat, $formattextdefoptions);
+                $a->lesson = format_string($lesson->name, true);
 
                 // Fetch message HTML and plain text formats
                 $message  = get_string('essayemailmessage2', 'lesson', $a);
                 $plaintext = format_text_email($message, FORMAT_HTML);
 
                 // Subject
-                $subject = get_string('essayemailsubject', 'lesson', format_string($pages[$attempt->pageid]->title,true));
+                $subject = get_string('essayemailsubject', 'lesson');
 
                 $eventdata = new stdClass();
                 $eventdata->modulename       = 'lesson';
