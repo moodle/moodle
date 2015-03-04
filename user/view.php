@@ -102,8 +102,9 @@ if ($currentuser) {
     if (!is_viewing($coursecontext) && !is_enrolled($coursecontext)) { // Need to have full access to a course to see the rest of own info
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('notenrolled', '', $fullname));
-        if (!empty($_SERVER['HTTP_REFERER'])) {
-            echo $OUTPUT->continue_button($_SERVER['HTTP_REFERER']);
+        $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+        if (!empty($referer)) {
+            echo $OUTPUT->continue_button($referer);
         }
         echo $OUTPUT->footer();
         die;
@@ -133,8 +134,9 @@ if ($currentuser) {
             $PAGE->navbar->add($struser);
             echo $OUTPUT->heading(get_string('notenrolledprofile'));
         }
-        if (!empty($_SERVER['HTTP_REFERER'])) {
-            echo $OUTPUT->continue_button($_SERVER['HTTP_REFERER']);
+        $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+        if (!empty($referer)) {
+            echo $OUTPUT->continue_button($referer);
         }
         echo $OUTPUT->footer();
         exit;
