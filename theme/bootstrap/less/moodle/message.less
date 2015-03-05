@@ -1,0 +1,328 @@
+.box.message {
+    .mdl-align {
+        text-align: left;
+    }
+    table {
+        tr {
+            &:nth-child(odd) {
+                > td,
+                > th {
+                  background-color: @table-bg-accent;
+                }
+            }
+            border-bottom: 1px solid @table-border-color;
+        }
+        td.heading{
+            &:extend(.panel-default > .panel-heading);
+            padding: 5px 10px;
+            font-size: @font-size-base;
+        }
+    }
+    tbody {
+        margin: 5px 10px;
+        padding: 5px 10px;
+    }
+    tbody {
+        display: table;
+        margin: 5px 0;
+        padding: 5px 0;
+        width: 100%;
+    }
+    .message_form {
+        width: 100%;
+        tr {
+            border: 0;
+        }
+        td {
+            background-color: inherit !important;
+        }
+        input[type="text"] {
+            .form-control;
+            display: inline-block;
+        }
+    }
+    .contactselector {
+        .panel;
+        .panel-default;
+        .heading {
+            margin: 10px 15px;
+            color: @headings-color;
+        }
+        form#usergroupform {
+            padding: 5px 10px;
+            fieldset {
+                .make-row();
+                margin-left: 0;
+                margin-right: 0;
+                .fitem {
+                    margin-left: 0;
+                    margin-right: 0;
+                }
+                label {
+                    .make-md-column(4);
+                    display: block !important;
+                }
+                select {
+                    .make-md-column(7);
+                    float: left;
+                    .form-control;
+                    width: auto;
+                }
+            }
+        }
+        table#message_contacts,
+        table#message_participants {      
+            
+            float: none !important;
+            display: block;
+            margin: 5px 5px;
+
+            td.pix {
+                padding: 10px;
+                width: 30px;
+            }
+            td.contact {
+                width: 100px;
+                padding: 10px;
+                a.messageselecteduser {
+                    
+                }
+            }
+            td.link {
+                padding: 10px;
+                width: 100px;
+                span.removecontact {
+
+                }
+                span.blockcontact{
+
+                }
+                span.history{
+
+                }
+            }
+        }
+    }
+    .messagearea {
+        .panel;
+        .panel-default;
+
+        p.heading {
+            margin: 10px 15px;
+            font-size: @font-size-h2;
+            color: @headings-color;
+        }
+
+        #personsearch {
+            margin: 10px 15px;
+            input[type="text"] {
+                width: 150px;
+                margin-bottom: 10px;
+                margin-right: 10px;
+            }
+            input[type="submit"] {
+                margin-left: 0px;
+            }
+
+        }
+        .mdl-left {
+            .heading {
+                font-size: @font-size-base;
+            }
+            .messagesearchresults {
+                width: 100%;
+                margin: 10px 0;
+                padding: 0px 15px;
+                display: block;
+                td.pix {
+                    padding: 10px;
+                    width: 30px;
+                }
+                td.contact {
+                    width: 30px;
+                    img {
+                       margin: 10px; 
+                    }
+                }
+            }
+
+        }
+        .messagerecent {
+            .singlemessage {
+                margin: 10px 15px;
+                
+                .panel;
+                .panel-default;
+                .otheruser {
+                    &:extend(.panel-default > .panel-heading);
+                    padding: 10px 15px;
+                    display: block;
+                    width: 100%;
+                    .pix {
+                        margin: 5px;
+                    }
+                }
+                .themessage {
+                    border: 2px solid @state-warning-border;
+                    padding: 5px 10px;
+                    margin: 10px 15px;
+                    display: block;
+                }
+                .messagedate {
+                    margin: 10px 15px 0;
+                }
+                .messagecontext {
+                    margin: 0px 15px 10px;
+                }
+            }
+
+        }
+
+        .messagehistory {
+            .messagehistory {
+                border-top: 1px solid @nav-tabs-border-color;
+                margin: 0 15px 20px;
+                padding: 15px;
+                clear: both;
+                .mdl-left {
+                    .make-row();
+                }
+                .mdl-left.left .message {
+                    .make-md-column(7);
+                    .text {
+                        border: 2px solid @state-success-border;
+                    }
+
+                }
+                .mdl-left.right .message {
+                    .make-md-column(7);
+                    .make-md-column-push(5);
+                    .text {
+                        border: 2px solid @state-info-border;
+                    }
+                }
+                .message {
+                    display: block;
+                    .text {
+                        border-radius: @border-radius-base;
+                        padding: 5px 10px;
+                        display: block;
+                    }
+                }
+                    
+            }
+            .box.center {
+                table.message_user_pictures {
+                    .make-md-column-push(2);
+                    .make-md-column(8);
+                    float: none !important;
+                    tr {
+                        border: 0;
+                    }
+                    td {
+                        background-color: @body-bg;
+                    }
+                    td#user1,
+                    td#user2 {
+                        display: block;
+                        height: 160px;
+                        img.userpicture {
+                            .img-circle;
+                        }
+                    }
+                    td#user1 img.userpicture {
+                        border: 3px solid @state-success-border;
+                    }
+                    td#user2 img.userpicture {
+                        border: 3px solid @state-info-border;
+                    }
+                }
+            }
+            .messagehistorytype {
+                color: #fff;
+                padding: 5px 15px;
+                .nav-tabs;
+                border: 0;
+                .hiddenelement {
+                    display: none;
+                }
+                
+                span.visible {
+                    color: @text-color;
+                    &:extend(.nav > li > a);
+                    &:extend(.nav-tabs > li);
+                    &:extend(.nav-tabs > li > a);
+                    &:extend(.nav-tabs > li.active > a);
+                }
+                a.visible {
+                    &:extend(.nav > li > a);
+                    &:extend(.nav-tabs > li);
+                    &:extend(.nav-tabs > li > a);
+                    color: @link-color;
+                    &:hover {
+                        &:extend(.nav-tabs > li > a:hover);
+                    }
+                }
+            }
+        }
+        .messagesend {
+            .mform {
+                margin: 0 20px;
+                fieldset .fitem .felement,
+                fieldset.hidden > div {
+                    margin-left: 0;
+                    float: none;
+                    width: 100%;
+                }
+                .fitemtitle, .form-label {
+                    .h3;
+                    float: none;
+                    text-align: left;
+                }
+                fieldset .fitem {
+                    margin-left: 0;
+                    margin-right: 0;
+                    margin-bottom: 0 !important;
+                }
+                .fitem_ftextarea {
+                    margin: 15px;
+                }
+            }
+        }
+
+    }
+}
+
+#newmessageoverlay {
+    //fix for yui absolute positioning
+    width: @popover-max-width;
+    .popover;
+    position: fixed;
+    top: inherit;
+    left: inherit;
+    bottom: 5px;
+    right: 5px;
+    a {
+        text-decoration: underline;
+    }
+    display: block;
+    #newmessagetext {
+        .popover-title;
+
+    }
+    #usermessage {
+        .popover-content;
+        border: 1px dotted @popover-border-color;
+        border-radius: @border-radius-base;
+        margin-top: 5px;
+        background-color: (lighten(@popover-bg, 10%));
+    }
+    #newmessagelinks {
+        margin: 5px 14px;
+    }
+}
+
+textarea {
+    .form-control;
+    height: 200px;
+}

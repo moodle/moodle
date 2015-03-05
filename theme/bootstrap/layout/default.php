@@ -20,55 +20,41 @@ $hassidepost = $PAGE->blocks->region_has_content('side-post', $OUTPUT);
 
 $knownregionpre = $PAGE->blocks->is_known_region('side-pre');
 $knownregionpost = $PAGE->blocks->is_known_region('side-post');
-$knownregiontop = $PAGE->blocks->is_known_region('page-top');
 
 $regions = bootstrap_grid($hassidepre, $hassidepost);
 $PAGE->set_popup_notification_allowed(false);
-$PAGE->requires->jquery();
-$PAGE->requires->jquery_plugin('bootstrap', 'theme_bootstrap');
-
-$usereader = (!empty($PAGE->layout_options['usereader']));
-$navbarbtn = '';
-if ($usereader) {
-    theme_bootstrap_initialise_reader($PAGE);
-    $navbarbtn = $OUTPUT->navbar_button_reader('#region-main', 'hidden-xs');
+if ($knownregionpre || $knownregionpost) {
+    theme_bootstrap_initialise_zoom($PAGE);
 }
-
-
-$navbarclass = 'navbar navbar-default';
-// if ($PAGE->theme->settings->inversenavbar == true) {
-//     $navbarclass = 'navbar navbar-inverse';
-// }
-
-$settingshtml = theme_bootstrap_html_for_settings($PAGE);
+$setzoom = theme_bootstrap_get_zoom();
 
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes(); ?>>
 <head>
     <title><?php echo $OUTPUT->page_title(); ?></title>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->favicon(); ?>" />
-    <?php echo $settingshtml->brandfontlink; ?>
     <?php echo $OUTPUT->standard_head_html(); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimal-ui">
-    <style><?php echo $settingshtml->companycss ?></style>
 </head>
 
-<body <?php echo $OUTPUT->body_attributes(); ?>>
+<body <?php echo $OUTPUT->body_attributes($setzoom); ?>>
 
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
-<nav role="navigation" class="<?php echo $settingshtml->navbarclass; ?>">
-    <div class="<?php echo $settingshtml->containerclass; ?>">
+<nav role="navigation" class="navbar navbar-default">
+    <div class="container-fluid">
     <div class="navbar-header">
-        <?php echo $OUTPUT->navbar_button_login('visible-xs'); ?>
-        <?php echo $OUTPUT->navbar_button_burger(); ?>
-        <a class="navbar-brand" href="<?php echo $CFG->wwwroot;?>"><?php echo $OUTPUT->iomadhead(); ?></a>
-        <?php echo $OUTPUT->page_heading('span'); ?>
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#moodle-navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="<?php echo $CFG->wwwroot;?>"><?php echo $SITE->shortname; ?></a>
     </div>
-    <?php echo $OUTPUT->navbar_button_login('hidden-xs'); ?>
+
     <div id="moodle-navbar" class="navbar-collapse collapse">
         <?php echo $OUTPUT->custom_menu(); ?>
-        <?php echo $navbarbtn; ?>
         <?php echo $OUTPUT->user_menu(); ?>
         <ul class="nav pull-right">
             <li><?php echo $OUTPUT->page_heading_menu(); ?></li>
@@ -76,14 +62,22 @@ echo $OUTPUT->doctype() ?>
     </div>
     </div>
 </nav>
+<header class="moodleheader">
+    <div class="container-fluid">
+    <a href="<?php echo $CFG->wwwroot ?>" class="logo"></a>
+    <?php echo $OUTPUT->page_heading(); ?>
+    </div>
+</header>
 
-<div id="page" class="<?php echo $settingshtml->containerclass; ?>">
+<div id="page" class="container-fluid">
     <header id="page-header" class="clearfix">
         <div id="page-navbar" class="clearfix">
             <nav class="breadcrumb-nav" role="navigation" aria-label="breadcrumb"><?php echo $OUTPUT->navbar(); ?></nav>
             <div class="breadcrumb-button"><?php echo $OUTPUT->page_heading_button(); ?></div>
+            <?php if ($knownregionpre || $knownregionpost) { ?>
+                <div class="breadcrumb-button"> <?php echo $OUTPUT->content_zoom(); ?></div>
+            <?php } ?>
         </div>
-        <?php echo $settingshtml->heading; ?>
 
         <div id="course-header">
             <?php echo $OUTPUT->course_header(); ?>
@@ -93,10 +87,8 @@ echo $OUTPUT->doctype() ?>
     <div id="page-content" class="row">
         <div id="region-main" class="<?php echo $regions['content']; ?>">
             <?php
-            if ($knownregiontop) {
-                echo $OUTPUT->blocks('page-top', 'page-top');
-            }
             echo $OUTPUT->course_content_header();
+
             echo $OUTPUT->main_content();
             echo $OUTPUT->course_content_footer();
             ?>

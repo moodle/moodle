@@ -1,0 +1,150 @@
+@dock-width: 36px;
+@dock-title-margin: 3px;
+@dock-panel-width: (768px / 2);
+@dock-title-font-size: 11px;
+
+/**
+ * This styles the H2 node the dock creates to test the width before making its title rotation.
+ * We need to apply these EXACT styles to the #dock .dockedtitle h2 to be sure things are spaced correctly.
+ */
+.transform-test-heading {
+    font-family: @font-family-sans-serif;
+    font-size: @dock-title-font-size;
+    line-height: @dock-width;
+    text-align: center;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+}
+
+body.has_dock {
+    #page,
+    .moodleheader {
+        padding-left: (@dock-width + (@dock-title-margin * 3));
+    }
+    div#dock {
+        display: inline;
+    }
+}
+
+#dock {
+    width: (@dock-width + (@dock-title-margin * 2));
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: transparent;
+    border-right: 0 none;
+    .nothingdocked {
+        visibility: hidden;
+        display: none;
+    }
+    .dockeditem_container {
+        margin-top: 68px;
+    }
+    .dockeditem .firstdockitem {
+        margin-top: 1em;
+    }
+    .dockedtitle {
+        .btn;
+        .btn-default;
+        display: block;
+        width: @dock-width;
+        margin: @dock-title-margin;
+        padding:0;
+        cursor: pointer;
+        h2 {
+            .transform-test-heading;
+        }
+        .filterrotate {
+            margin-left: 8px;
+        }
+    }
+    .controls {
+        position: absolute;
+        bottom: 1em;
+        text-align: center;
+        width: 100%;
+        img {
+            cursor: pointer;
+        }
+    }
+
+    // Hide the move icon for blocks which are docked.
+    .editing_move,
+    .moodle-core-dragdrop-draghandle {
+        display: none;
+    }
+
+}
+
+#dockeditempanel {
+    z-index: 12000; /** Required to place the dock panel above the fixed pos navbar */
+    &.dockitempanel_hidden {
+        display: none;
+    }
+    min-width: 200px;
+    position: relative;
+    left: 100%;
+    padding-left: 5px;
+    .dockeditempanel_content {
+        .panel;
+
+    }
+    .dockeditempanel_bd {
+        overflow: auto; /** Required to make the content scrollable when it flows over the fixed area of the screen */
+        padding: 0;
+        .block_navigation .block_tree li {
+            overflow: visible;
+        }
+    }
+    .dockeditempanel_hd {
+        &:extend(.panel-default > .panel-heading);
+        .panel-heading;
+        h2 {
+            .panel-title;
+        }
+        .commands {
+            display: block;
+            text-align: right;
+            > a,
+            > span {
+                margin-left: 3px;
+                cursor: pointer;
+            }
+            img,
+            input {
+                vertical-align: middle;
+                margin-right: 1px;
+            }
+            .hidepanelicon img {
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.dir-rtl {
+    &.has_dock #page,
+    &.has_dock .moodleheader {
+        padding-left: (@grid-gutter-width / 2);
+        padding-right: (@dock-width + (@dock-title-margin * 3));
+    }
+    #dock {
+        left: auto;
+        right: 0%;
+        .dockedtitle {
+            h2 {
+                line-height: @dock-width - @dock-title-font-size;
+            }
+        }
+    }
+    #dockeditempanel {
+        right: 100%;
+        .dockeditempanel_hd {
+            .commands {
+                text-align: left;
+            }
+        }
+    }
+}

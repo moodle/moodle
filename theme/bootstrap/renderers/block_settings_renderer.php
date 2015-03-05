@@ -47,7 +47,7 @@ class theme_bootstrap_block_settings_renderer extends block_settings_renderer {
             )
         );
         $content .= html_writer::start_span('input-group-btn');
-        $content .= html_writer::tag('button', s(get_string('go')), array('type' => 'button', 'class' => 'btn btn-default'));
+        $content .= html_writer::tag('button', s(get_string('go')), array('type' => 'submit', 'class' => 'btn btn-default'));
         $content .= html_writer::end_span();
         $content .= html_writer::end_div();
         $content .= html_writer::end_tag('form');

@@ -29,17 +29,17 @@ $THEME->yuicssmodules = array();
 $THEME->name = 'bootstrap';
 $THEME->parents = array();
 if ('ltr' === get_string('thisdirection', 'langconfig')) {
-    $THEME->sheets = array('company', 'iomad', 'moodle', 'custom');
+    $THEME->sheets = array('moodle');
 } else {
-    $THEME->sheets = array('company', 'iomad', 'moodle-rtl', 'tinymce-rtl', 'yui2-rtl', 'forms-rtl', 'custom');
+    $THEME->sheets = array('moodle-rtl');
 }
+$THEME->enable_dock = true;
 $THEME->supportscssoptimisation = false;
 
 $THEME->editor_sheets = array('editor');
 
 $THEME->plugins_exclude_sheets = array(
     'block' => array(
-        'html',
         'search_forums'
     ),
     'tool' => array(
@@ -79,7 +79,6 @@ $THEME->layouts = array(
         'file' => 'default.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
-        'options' => array('usereader' => true),
     ),
     // The site home page.
     'frontpage' => array(
@@ -91,13 +90,14 @@ $THEME->layouts = array(
     // Server administration scripts.
     'admin' => array(
         'file' => 'default.php',
-        'regions' => array('side-pre', 'page-top'),
+        'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
+        'options' => array('fluid' => true),
     ),
     // My dashboard page.
     'mydashboard' => array(
         'file' => 'default.php',
-        'regions' => array('side-pre', 'page-top'),
+        'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
         'options' => array('langmenu' => true),
     ),
@@ -153,7 +153,6 @@ $THEME->layouts = array(
         'file' => 'default.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
-        'options' => array('usereader' => true),
     ),
     // The pagelayout used for safebrowser and securewindow.
     'secure' => array(
@@ -162,16 +161,12 @@ $THEME->layouts = array(
         'defaultregion' => 'side-pre'
     ),
 );
-$THEME->larrow  = '';
-$THEME->rarrow  = '';
+
 $THEME->javascripts = array(
 );
 $THEME->javascripts_footer = array(
-    'reader',
+    'moodlebootstrap', 'dock'
 );
-
-
-
 
 if (core_useragent::is_ie() && !core_useragent::check_ie_version('9.0')) {
     $THEME->javascripts[] = 'html5shiv';

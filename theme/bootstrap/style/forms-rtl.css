@@ -23,8 +23,8 @@
     direction: ltr;
 }
 
-#plugins-check .rootdir,
-#plugins-check .requires-ok {
+.dir-rtl#plugins-check .rootdir,
+.dir-rtl#plugins-check .requires-ok {
     text-align: left;
     direction: ltr;
 }

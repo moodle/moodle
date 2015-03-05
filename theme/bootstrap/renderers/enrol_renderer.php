@@ -32,7 +32,7 @@ class theme_bootstrap_core_enrol_renderer extends core_enrol_renderer {
 
         $table->initialise_javascript();
 
-        // Added for the Bootstrap theme. Make this table responsive
+        // Added for the Bootstrap theme. Make this table responsive.
         $table->attributes['class'] .= ' table table-responsive';
 
         $buttons = $table->get_manual_enrol_buttons();
@@ -56,7 +56,8 @@ class theme_bootstrap_core_enrol_renderer extends core_enrol_renderer {
         // Check if the table has any bulk operations. If it does we want to wrap the table in a
         // form so that we can capture and perform any required bulk operations.
         if ($table->has_bulk_user_enrolment_operations()) {
-            $content .= html_writer::start_tag('form', array('action' => new moodle_url('/enrol/bulkchange.php'), 'method' => 'post'));
+            $content .= html_writer::start_tag('form', array('action' => new moodle_url('/enrol/bulkchange.php'),
+                                               'method' => 'post'));
             foreach ($table->get_combined_url_params() as $key => $value) {
                 if ($key == 'action') {
                     continue;
@@ -78,7 +79,7 @@ class theme_bootstrap_core_enrol_renderer extends core_enrol_renderer {
 
             $content .= html_writer::end_tag('form');
         } else {
-            // Added for the Bootstrap theme, a no-overflow wrapper
+            // Added for the Bootstrap theme, a no-overflow wrapper.
             $content .= html_writer::start_tag('div', array('class' => 'no-overflow'));
             $content .= html_writer::table($table);
             $content .= html_writer::end_tag('div');
@@ -94,16 +95,18 @@ class theme_bootstrap_core_enrol_renderer extends core_enrol_renderer {
         $iconenroladd    = $this->output->pix_url('t/enroladd');
         $iconenrolremove = $this->output->pix_url('t/delete');
 
-        // get list of roles
+        // Get list of roles.
         $rolesoutput = '';
-        foreach ($roles as $roleid=>$role) {
+        foreach ($roles as $roleid => $role) {
             if ($canassign and (is_siteadmin() or isset($assignableroles[$roleid])) and !$role['unchangeable']) {
                 $strunassign = get_string('unassignarole', 'role', $role['text']);
-                $icon = html_writer::empty_tag('img', array('alt'=>$strunassign, 'src'=>$iconenrolremove));
-                $url = new moodle_url($pageurl, array('action'=>'unassign', 'roleid'=>$roleid, 'user'=>$userid));
-                $rolesoutput .= html_writer::tag('div', $role['text'] . html_writer::link($url, $icon, array('class'=>'unassignrolelink', 'rel'=>$roleid, 'title'=>$strunassign)), array('class'=>'role role_'.$roleid));
+                $icon = html_writer::empty_tag('img', array('alt' => $strunassign, 'src' => $iconenrolremove));
+                $url = new moodle_url($pageurl, array('action' => 'unassign', 'roleid' => $roleid, 'user' => $userid));
+                $rolesoutput .= html_writer::tag('div', $role['text'] . html_writer::link($url, $icon,
+                    array('class' => 'unassignrolelink', 'rel' => $roleid, 'title' => $strunassign)),
+                    array('class' => 'role role_'.$roleid));
             } else {
-                $rolesoutput .= html_writer::tag('div', $role['text'], array('class'=>'role unchangeable', 'rel'=>$roleid));
+                $rolesoutput .= html_writer::tag('div', $role['text'], array('class' => 'role unchangeable', 'rel' => $roleid));
             }
         }
         $output = '';
@@ -117,12 +120,15 @@ class theme_bootstrap_core_enrol_renderer extends core_enrol_renderer {
                 }
             }
             if (!$hasallroles) {
-                $url = new moodle_url($pageurl, array('action'=>'assign', 'user'=>$userid));
-                $icon = html_writer::tag('label', get_string('assignroles', 'role'), array('alt'=>get_string('assignroles', 'role'), 'class' => 'label label-primary'));
-                $output = html_writer::tag('div', html_writer::link($url, $icon, array('class'=>'assignrolelink', 'title'=>get_string('assignroles', 'role'))), array('class'=>'addrole'));
+                $url = new moodle_url($pageurl, array('action' => 'assign', 'user' => $userid));
+                $icon = html_writer::tag('label', get_string('assignroles', 'role'),
+                    array('alt' => get_string('assignroles', 'role'), 'class' => 'label label-primary'));
+                $output = html_writer::tag('div', html_writer::link($url, $icon,
+                    array('class' => 'assignrolelink', 'title' => get_string('assignroles', 'role'))),
+                    array('class' => 'addrole'));
             }
         }
-        $output .= html_writer::tag('div', $rolesoutput, array('class'=>'roles'));
+        $output .= html_writer::tag('div', $rolesoutput, array('class' => 'roles'));
         return $output;
     }
 
@@ -133,23 +139,26 @@ class theme_bootstrap_core_enrol_renderer extends core_enrol_renderer {
         $straddgroup = get_string('addgroup', 'group');
 
         $groupoutput = '';
-        foreach($groups as $groupid=>$name) {
+        foreach ($groups as $groupid => $name) {
             if ($canmanagegroups and groups_remove_member_allowed($groupid, $userid)) {
-                $icon = html_writer::tag('label', get_string('add'), array('alt'=>$straddgroup, 'class' => 'label label-primary'));
-                $url = new moodle_url($pageurl, array('action'=>'addmember', 'user'=>$userid));
-                $groupoutput .= html_writer::tag('div', html_writer::link($url, $icon), array('class'=>'addgroup'));
-                $icon = html_writer::empty_tag('img', array('alt'=>get_string('removefromgroup', 'group', $name), 'src'=>$iconenrolremove));
-                $url = new moodle_url($pageurl, array('action'=>'removemember', 'group'=>$groupid, 'user'=>$userid));
-                $groupoutput .= html_writer::tag('div', $name . html_writer::link($url, $icon), array('class'=>'group', 'rel'=>$groupid));
+                $icon = html_writer::tag('label', get_string('add'),
+                    array('alt' => $straddgroup, 'class' => 'label label-primary'));
+                $url = new moodle_url($pageurl, array('action' => 'addmember', 'user' => $userid));
+                $groupoutput .= html_writer::tag('div', html_writer::link($url, $icon), array('class' => 'addgroup'));
+                $icon = html_writer::empty_tag('img', array('alt' => get_string('removefromgroup', 'group', $name),
+                                               'src' => $iconenrolremove));
+                $url = new moodle_url($pageurl, array('action' => 'removemember', 'group' => $groupid, 'user' => $userid));
+                $groupoutput .= html_writer::tag('div', $name . html_writer::link($url, $icon),
+                    array('class' => 'group', 'rel' => $groupid));
             } else {
-                $groupoutput .= html_writer::tag('div', $name, array('class'=>'group', 'rel'=>$groupid));
+                $groupoutput .= html_writer::tag('div', $name, array('class' => 'group', 'rel' => $groupid));
             }
         }
-        $groupoutput = html_writer::tag('div', $groupoutput, array('class'=>'groups'));
+        $groupoutput = html_writer::tag('div', $groupoutput, array('class' => 'groups'));
         if ($canmanagegroups && (count($groups) < count($allgroups))) {
-            $icon = html_writer::tag('label', get_string('add'), array('alt'=>$straddgroup, 'class' => 'label label-primary'));
-            $url = new moodle_url($pageurl, array('action'=>'addmember', 'user'=>$userid));
-            $groupoutput .= html_writer::tag('div', html_writer::link($url, $icon), array('class'=>'addgroup'));
+            $icon = html_writer::tag('label', get_string('add'), array('alt' => $straddgroup, 'class' => 'label label-primary'));
+            $url = new moodle_url($pageurl, array('action' => 'addmember', 'user' => $userid));
+            $groupoutput .= html_writer::tag('div', html_writer::link($url, $icon), array('class' => 'addgroup'));
         }
         return $groupoutput;
     }

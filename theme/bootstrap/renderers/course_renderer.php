@@ -28,8 +28,7 @@ require_once($CFG->dirroot . "/course/renderer.php");
 class theme_bootstrap_core_course_renderer extends core_course_renderer {
 
     protected function coursecat_coursebox(coursecat_helper $chelper, $course, $additionalclasses = '') {
-        global $CFG, $OUTPUT;
-
+        global $CFG;
         if (!isset($this->strings->summary)) {
             $this->strings->summary = get_string('summary');
         }
@@ -41,31 +40,39 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer {
             $course = new course_in_list($course);
         }
         $content = '';
-        $classes = trim($additionalclasses);
-
+        $classes = trim('panel panel-default coursebox clearfix '. $additionalclasses);
         if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
             $classes .= ' collapsed';
         }
 
-        $content .= html_writer::start_tag('div', array('class' => 'panel panel-default coursebox'));
+        // .coursebox
+        $content .= html_writer::start_tag('div', array(
+            'class' => $classes,
+            'data-courseid' => $course->id,
+            'data-type' => self::COURSECAT_TYPE_COURSE,
+        ));
 
-        $content .= html_writer::start_tag('div', array('class' => 'panel-heading'));
+        $content .= html_writer::start_tag('div', array('class' => 'panel-heading info'));
 
-        // Course name.
+        // course name
         $coursename = $chelper->get_course_formatted_name($course);
-        $content .=  html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
-            $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-        
-
+        $coursenamelink = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
+                                            $coursename, array('class' => $course->visible ? '' : 'dimmed'));
+        $content .= html_writer::tag('span', $coursenamelink, array('class' => 'coursename'));
         // If we display course in collapsed form but the course has summary or course contacts, display the link to the info page.
+        $content .= html_writer::start_tag('span', array('class' => 'moreinfo'));
         if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
             if ($course->has_summary() || $course->has_course_contacts() || $course->has_course_overviewfiles()) {
                 $url = new moodle_url('/course/info.php', array('id' => $course->id));
-                $arrow = html_writer::tag('span', '', array('class'=>'glyphicon glyphicon-info-sign'));
-                $content .= html_writer::link('#coursecollapse' . $course->id , '&nbsp;' . $arrow, array('data-toggle' => 'collapse', 'data-parent' => '#frontpage-category-combo'));
+                $image = html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/info'),
+                    'alt' => $this->strings->summary));
+                $content .= html_writer::link($url, $image, array('title' => $this->strings->summary));
+                // Make sure JS file to expand course content is included.
+                $this->coursecat_include_js();
             }
         }
-        
+        $content .= html_writer::end_tag('span'); // .moreinfo
+
         // print enrolmenticons
         if ($icons = enrol_get_course_info_icons($course)) {
             $content .= html_writer::start_tag('div', array('class' => 'enrolmenticons'));
@@ -75,15 +82,9 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer {
             $content .= html_writer::end_tag('div'); // .enrolmenticons
         }
 
-        $content .= html_writer::end_tag('div'); // End .panel-heading.
+        $content .= html_writer::end_tag('div'); // .info
 
-        if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
-            $content .= html_writer::start_tag('div', array('id' => 'coursecollapse' . $course->id, 'class' => 'panel-collapse collapse'));
-        }
-        
-        $content .= html_writer::start_tag('div', array('class' => 'panel-body'));
-        
-        // This gets the course image or files
+        $content .= html_writer::start_tag('div', array('class' => 'content panel-body'));
         $content .= $this->coursecat_coursebox_content($chelper, $course);
 
         if ($chelper->get_show_courses() >= self::COURSECAT_SHOW_COURSES_EXPANDED) {
@@ -91,35 +92,32 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer {
             if ('ltr' === get_string('thisdirection', 'langconfig')) {
                 $icondirection = 'right';
             }
-            $arrow = html_writer::tag('span','', array('class' => ' glyphicon glyphicon-arrow-'.$icondirection));
-            $btn = html_writer::tag('span', get_string('course') . ' ' . $arrow, array('class' => 'coursequicklink'));
-            $content .= html_writer::link(new moodle_url('/course/view.php',
-                array('id' => $course->id)), $btn, array('class' => 'coursebtn btn btn-info btn-sm pull-right'));
+            if (is_enrolled(context_course::instance($course->id))) {
+                $arrow = html_writer::tag('span', '', array('class' => ' glyphicon glyphicon-arrow-'.$icondirection));
+                $visit = html_writer::tag('span', get_string('course') . ' ' . $arrow);
+                $visitlink = html_writer::link(new moodle_url('/course/view.php',
+                    array('id' => $course->id)), $visit);
+                $content .= html_writer::tag('div', $visitlink, array('class' => 'visitlink'));
+            }
         }
+        $content .= html_writer::end_tag('div'); // .content
 
-        $content .= html_writer::end_tag('div'); // End .panel-body.
-
-        if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
-            $content .= html_writer::end_tag('div'); // End .collapse.
-        }
-
-        $content .= html_writer::end_tag('div'); // End .panel.
-
+        $content .= html_writer::end_tag('div'); // .coursebox
         return $content;
     }
 
     protected function coursecat_coursebox_content(coursecat_helper $chelper, $course) {
         global $CFG;
-        // if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
-        //     return '';
-        // }
+        if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
+            return '';
+        }
         if ($course instanceof stdClass) {
             require_once($CFG->libdir. '/coursecatlib.php');
             $course = new course_in_list($course);
         }
         $content = '';
 
-        // display course overview files
+        // Display course overview files.
         $contentimages = $contentfiles = '';
         foreach ($course->get_course_overviewfiles() as $file) {
             $isimage = $file->is_valid_image();
@@ -127,9 +125,13 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer {
                     '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
                     $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
             if ($isimage) {
-                $contentimages .= html_writer::tag('div',
-                        html_writer::empty_tag('img', array('src' => $url, 'alt' => 'Course Image '. $course->fullname)),
-                        array('class' => 'courseimage'));
+                    $contentimages .= html_writer::start_tag('div', array('class' => 'imagebox'));
+
+                    $images = html_writer::empty_tag('img', array('src' => $url, 'alt' => 'Course Image '. $course->fullname,
+                        'class' => 'courseimage'));
+                    $contentimages .= html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $images);
+
+                    $contentimages .= html_writer::end_tag('div');
             } else {
                 $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
                 $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
@@ -141,15 +143,13 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer {
         }
         $content .= $contentimages. $contentfiles;
 
-        // display course summary
+        // Display course summary.
         if ($course->has_summary()) {
-            $content .= html_writer::start_tag('div', array('class' => 'summary'));
-            $content .= $chelper->get_course_formatted_summary($course,
-                    array('overflowdiv' => true, 'noclean' => true, 'para' => false));
-            $content .= html_writer::end_tag('div'); // .summary
+            $content .= $chelper->get_course_formatted_summary($course);
         }
 
-        // display course contacts. See course_in_list::get_course_contacts()
+
+        // Display course contacts. See course_in_list::get_course_contacts().
         if ($course->has_course_contacts()) {
             $content .= html_writer::start_tag('ul', array('class' => 'teachers'));
             foreach ($course->get_course_contacts() as $userid => $coursecontact) {
@@ -162,7 +162,7 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer {
             $content .= html_writer::end_tag('ul'); // .teachers
         }
 
-        // display course category if necessary (for example in search results)
+        // Display course category if necessary (for example in search results).
         if ($chelper->get_show_courses() == self::COURSECAT_SHOW_COURSES_EXPANDED_WITH_CAT) {
             require_once($CFG->libdir. '/coursecatlib.php');
             if ($cat = coursecat::get($course->category, IGNORE_MISSING)) {
@@ -173,8 +173,6 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer {
                 $content .= html_writer::end_tag('div'); // .coursecat
             }
         }
-
-        $content .= html_writer::tag('div', '', array('class' => 'boxfooter')); // .coursecat
 
         return $content;
     }
@@ -198,14 +196,16 @@ class theme_bootstrap_core_course_renderer extends core_course_renderer {
 
         $form = array('id' => $formid, 'action' => $searchurl, 'method' => 'get', 'class' => "form-inline", 'role' => 'form');
         $output = html_writer::start_tag('form', $form);
-        $output .= html_writer::start_div('form-group');
+        $output .= html_writer::start_div('input-group');
         $output .= html_writer::tag('label', $strsearchcourses, array('for' => $inputid, 'class' => 'sr-only'));
         $search = array('type' => 'text', 'id' => $inputid, 'size' => $inputsize, 'name' => 'search',
                         'class' => 'form-control', 'value' => s($value), 'placeholder' => $strsearchcourses);
         $output .= html_writer::empty_tag('input', $search);
-        $output .= html_writer::end_div(); // Close form-group.
         $button = array('type' => 'submit', 'class' => 'btn btn-default');
+        $output .= html_writer::start_span('input-group-btn');
         $output .= html_writer::tag('button', get_string('go'), $button);
+        $output .= html_writer::end_span();
+        $output .= html_writer::end_div(); // Close form-group.
         $output .= html_writer::end_tag('form');
 
         return $output;

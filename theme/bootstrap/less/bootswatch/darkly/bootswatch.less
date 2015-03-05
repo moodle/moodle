@@ -1,0 +1,238 @@
+// Darkly 3.1.1
+// Bootswatch
+// -----------------------------------------------------
+
+@import url("//fonts.googleapis.com/css?family=Lato:400,700,400italic");
+
+// Navbar =====================================================================
+
+.navbar {
+  border-width: 0;
+
+  &-brand {
+    padding: 18.5px 15px 20.5px;
+  }
+
+  &-form {
+    .form-control {
+      background-color: white;
+
+      &:focus {
+        border-color: white;
+      }
+    }
+  }
+}
+
+// Buttons ====================================================================
+
+.btn:active {
+  .box-shadow(none);
+}
+
+.btn-group.open .dropdown-toggle {
+  .box-shadow(none);
+}
+
+// Typography =================================================================
+
+.text-primary,
+.text-primary:hover {
+  color: lighten(@brand-primary, 10%);
+}
+
+.text-success,
+.text-success:hover {
+  color: @brand-success;
+}
+
+.text-danger,
+.text-danger:hover {
+  color: @brand-danger;
+}
+
+.text-warning,
+.text-warning:hover {
+  color: @brand-warning;
+}
+
+.text-info,
+.text-info:hover {
+  color: @brand-info;
+}
+
+// Tables =====================================================================
+
+table,
+.table {
+
+  a {
+    text-decoration: underline;
+  }
+
+  .success,
+  .warning,
+  .danger,
+  .info {
+    color: #fff;
+
+    a {
+      color: #fff;
+    }
+  }
+
+  > thead > tr > th,
+  > tbody > tr > th,
+  > tfoot > tr > th,
+  > thead > tr > td,
+  > tbody > tr > td,
+  > tfoot > tr > td {
+    border: none;
+  }
+
+  &-bordered > thead > tr > th,
+  &-bordered > tbody > tr > th,
+  &-bordered > tfoot > tr > th,
+  &-bordered > thead > tr > td,
+  &-bordered > tbody > tr > td,
+  &-bordered > tfoot > tr > td {
+    border: 1px solid @table-border-color;
+  }
+}
+
+// Forms ======================================================================
+
+.form-control,
+input {
+  border: none;
+  .box-shadow(none);
+
+  &:focus {
+    .box-shadow(none);
+  }
+}
+
+.has-warning {
+  .help-block,
+  .control-label {
+    color: @brand-warning;
+  }
+
+  .form-control,
+  .form-control:focus {
+    .box-shadow(none);
+  }
+}
+
+.has-error {
+  .help-block,
+  .control-label {
+    color: @brand-danger;
+  }
+
+  .form-control,
+  .form-control:focus {
+    .box-shadow(none);
+  }
+}
+
+.has-success {
+  .help-block,
+  .control-label {
+    color: @brand-success;
+  }
+
+  .form-control,
+  .form-control:focus {
+    .box-shadow(none);
+  }
+}
+
+.input-group-addon {
+  color: @text-color;
+}
+
+// Navs =======================================================================
+
+.nav {
+  .open > a,
+  .open > a:hover,
+  .open > a:focus {
+    border-color: @nav-tabs-border-color;
+  }
+}
+
+.nav-tabs > li > a,
+.nav-pills > li > a {
+  color: #fff;
+}
+
+.pager {
+  a,
+  a:hover {
+    color: #fff;
+  }
+
+  .disabled {
+    &>a,
+    &>a:hover,
+    &>a:focus,
+    &>span {
+      background-color: @pagination-disabled-bg;
+    }
+  }
+}
+
+// Indicators =================================================================
+
+.alert {
+
+  a,
+  .alert-link {
+    color: #fff;
+    text-decoration: underline;
+  }
+}
+
+// Progress bars ==============================================================
+
+.progress {
+  height: 10px;
+  .box-shadow(none);
+  .progress-bar {
+    font-size: 10px;
+    line-height: 10px;
+  }
+}
+
+// Containers =================================================================
+
+.well {
+  .box-shadow(none);
+}
+
+.popover,
+.modal {
+  color: @gray-dark;
+}
+
+.breadcrumb a {
+  color: #fff;
+}
+
+.panel-default > .panel-heading {
+  background-color: @panel-footer-bg;
+}
+
+.modal {
+  color: @text-color;
+
+  &-header,
+  &-footer {
+    border-color: @gray;
+  }
+}
+
+.popover {
+  color: @text-color;
+}

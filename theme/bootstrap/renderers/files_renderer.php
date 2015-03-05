@@ -31,7 +31,7 @@ class theme_bootstrap_core_files_renderer extends core_files_renderer {
     /**
      * Returns html for displaying one file manager
      *
-     * The main element in HTML must have id="filemanager-{$client_id}" and
+     * The main element in HTML must have id="filemanager-{$clientid}" and
      * class="filemanager fm-loading";
      * After all necessary code on the page (both html and javascript) is loaded,
      * the class fm-loading will be removed and added class fm-loaded;
@@ -75,20 +75,20 @@ class theme_bootstrap_core_files_renderer extends core_files_renderer {
     private function fm_print_generallayout($fm) {
         global $OUTPUT;
         $options = $fm->options;
-        $client_id = $options->client_id;
+        $clientid = $options->client_id;
         $straddfile  = get_string('addfile', 'repository');
         $strmakedir  = get_string('makeafolder', 'moodle');
         $strdownload = get_string('downloadfolder', 'repository');
         $strloading  = get_string('loading', 'repository');
         $strdroptoupload = get_string('droptoupload', 'moodle');
-        $icon_progress = $OUTPUT->pix_icon('i/loading_small', $strloading).'';
+        $iconprogress = $OUTPUT->pix_icon('i/loading_small', $strloading).'';
         $restrictions = $this->fm_print_restrictions($fm);
         $strdndnotsupported = get_string('dndnotsupported_insentence', 'moodle').$OUTPUT->help_icon('dndnotsupported');
         $strdndenabledinbox = get_string('dndenabled_inbox', 'moodle');
         $loading = get_string('loading', 'repository');
 
         $html = '
-<div id="filemanager-'.$client_id.'" class="filemanager fm-loading">
+<div id="filemanager-'.$clientid.'" class="filemanager fm-loading">
     <div class="fp-restrictions">
         '.$restrictions.'
         <span class="dnduploadnotsupported-message"> - '.$strdndnotsupported.' </span>
@@ -122,7 +122,7 @@ class theme_bootstrap_core_files_renderer extends core_files_renderer {
             <span class="fp-path-folder"><a class="fp-path-folder-name" href="#"></a></span>
         </div>
     </div>
-    <div class="filemanager-loading mdl-align">'.$icon_progress.'</div>
+    <div class="filemanager-loading mdl-align">'.$iconprogress.'</div>
     <div class="filemanager-container" >
         <div class="fm-content-wrapper">
             <div class="fp-content"></div>
@@ -131,9 +131,9 @@ class theme_bootstrap_core_files_renderer extends core_files_renderer {
             </div>
             <div class="dndupload-target">'.$strdroptoupload.'<br/><div class="dndupload-arrow"></div></div>
             <div class="dndupload-progressbars"></div>
-            <div class="dndupload-uploadinprogress">'.$icon_progress.'</div>
+            <div class="dndupload-uploadinprogress">'.$iconprogress.'</div>
         </div>
-        <div class="filemanager-updating">'.$icon_progress.'</div>
+        <div class="filemanager-updating">'.$iconprogress.'</div>
     </div>
 </div>';
         return $html;
@@ -377,11 +377,11 @@ class theme_bootstrap_core_files_renderer extends core_files_renderer {
      * @return array
      */
     public function filemanager_js_templates() {
-        $class_methods = get_class_methods($this);
+        $classmethods = get_class_methods($this);
         $templates = array();
-        foreach ($class_methods as $method_name) {
-            if (preg_match('/^fm_js_template_(.*)$/', $method_name, $matches))
-            $templates[$matches[1]] = $this->$method_name();
+        foreach ($classmethods as $methodname) {
+            if (preg_match('/^fm_js_template_(.*)$/', $methodname, $matches))
+            $templates[$matches[1]] = $this->$methodname();
         }
         return $templates;
     }
@@ -810,7 +810,8 @@ class theme_bootstrap_core_files_renderer extends core_files_renderer {
     }
 
     /**
-     * FilePicker JS template for popup dialogue window asking for action when file with the same name already exists (multiple-file version).
+     * FilePicker JS template for popup dialogue window asking for action when file with the same name
+     * already exists (multiple-file version).
      *
      * Must have one top element, CSS for this element must define width and height of the window;
      *
@@ -886,7 +887,8 @@ class theme_bootstrap_core_files_renderer extends core_files_renderer {
                     <div class="controls col-md-8 fp-login-radio"><input /> <label></label></div>
                 </div>
             </div>
-            <div class="col-md-8 col-md-offset-4"><button class="fp-login-submit btn-primary btn">'.get_string('submit', 'repository').'</button></div>
+            <div class="col-md-8 col-md-offset-4"><button class="fp-login-submit btn-primary btn">'.
+            get_string('submit', 'repository').'</button></div>
         </form>
     </div>
 </div>';
@@ -899,11 +901,11 @@ class theme_bootstrap_core_files_renderer extends core_files_renderer {
      * @return array
      */
     public function filepicker_js_templates() {
-        $class_methods = get_class_methods($this);
+        $classmethods = get_class_methods($this);
         $templates = array();
-        foreach ($class_methods as $method_name) {
-            if (preg_match('/^fp_js_template_(.*)$/', $method_name, $matches))
-            $templates[$matches[1]] = $this->$method_name();
+        foreach ($classmethods as $methodname) {
+            if (preg_match('/^fp_js_template_(.*)$/', $methodname, $matches))
+            $templates[$matches[1]] = $this->$methodname();
         }
         return $templates;
     }

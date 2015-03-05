@@ -1,0 +1,58 @@
+.phpinfo td {
+    border: 1px solid @table-border-color;
+    vertical-align: baseline;
+}
+#page-footer .performanceinfo {
+    margin: 10px 20%;
+}
+#page-footer .performanceinfo span {
+    display: block;
+}
+#page-footer .validators {
+    margin-top: 40px;
+    padding-top: 5px;
+    border-top: 1px dotted gray;
+}
+#page-footer .validators ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+#page-footer .validators ul li {
+    display: inline;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.performanceinfo .cachesused {
+    margin-top: 1em;
+}
+.performanceinfo .cachesused .cache-stats-heading,
+.performanceinfo .cachesused .cache-total-stats {
+    font-weight: bold;
+    font-size: 110%;
+    margin-top: 0.3em;
+}
+#page-footer .performanceinfo .cachesused .cache-definition-stats {
+    margin: .3em;
+    display: inline-block;
+    vertical-align: top;
+    background-color: @table-bg-accent;
+}
+.cache-store-stats {
+    padding: 0 1.3em;
+}
+.cache-store-stats.nohits {
+    background-color: @state-danger-bg;
+}
+.cache-store-stats.lowhits {
+    background-color: @state-warning-bg;
+}
+.cache-store-stats.hihits {
+    background-color: @state-success-bg;
+}
+#page-footer,
+#page-footer .validators,
+#page-footer .purgecaches,
+#page-footer .performanceinfo {
+    text-align: center;
+}

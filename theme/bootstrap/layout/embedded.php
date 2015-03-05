@@ -21,7 +21,6 @@ echo $OUTPUT->doctype() ?>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->favicon(); ?>" />
     <?php echo $OUTPUT->standard_head_html() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimal-ui">
-    <style><?php echo $settingshtml->companycss ?></style>
 </head>
 
 <body <?php echo $OUTPUT->body_attributes(); ?>>

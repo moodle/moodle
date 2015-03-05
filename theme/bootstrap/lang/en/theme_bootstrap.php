@@ -21,44 +21,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['brandfont'] = 'Logotype Font';
-$string['brandfontdesc'] = 'The name of a Google Font to use for the site name in the navbar';
-$string['brandfontitalic'] = 'Logotype Italics';
-$string['brandfontitalicdesc'] = 'Use the italic version of the font, check italic is available at the selected weight';
-$string['brandfontweight'] = 'Logotype Weight';
-$string['brandfontweightdesc'] = 'Weight of the font, 400 is normal, 700 bold, double check what weights the font supports';
-$string['customcss'] = 'Custom CSS';
-$string['customcssdesc'] = 'Whatever CSS rules you add to this textarea will be reflected in every page, making for easier customization of this theme.';
-$string['deletecss'] = 'Delete Unneeded CSS';
-$string['deletecssdesc'] = 'Delete CSS for webkit and moz specific rules that are no longer necessary';
-$string['fluidwidth'] = 'Fluid width theme';
-$string['fluidwidthdesc'] = 'Enable this option to allow using your full screen';
-$string['fonticons'] = 'Use Icon Font';
-$string['fonticonsdesc'] = 'Enable this option to use the Glyphicon Icon Font';
-$string['fontweight100'] = '100 (thin)';
-$string['fontweight200'] = '200';
-$string['fontweight300'] = '300 (light)';
-$string['fontweight400'] = '400 (normal)';
-$string['fontweight500'] = '500';
-$string['fontweight600'] = '600';
-$string['fontweight700'] = '700 (bold)';
-$string['fontweight800'] = '800';
-$string['fontweight900'] = '900 (ultra-bold)';
-$string['footerwidget'] = 'Footer Widget #{$a}';
-$string['footerwidgetdesc'] = 'All footer widgets have the same description';
-$string['inversenavbar'] = 'Inverse Navbar';
-$string['inversenavbardesc'] = 'Enable this option to use the inverted color scheme for the navbar';
-$string['logo'] = 'Site Logo';
-$string['logodesc'] = 'Please upload your custom logo here if you want to add it to the header.<br>
-If the height of your logo is more than 75px add the following CSS rule to the Custom CSS box below.<br>
-a.logo {height: 100px;} or whatever height in pixels the logo is.';
-
 $string['pluginname'] = 'Bootstrap 3';
-$string['reader'] = 'Reader';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
-$string['region-page-top'] = 'Top';
-
+$string['fullscreen'] = 'Full screen';
+$string['closefullscreen'] = 'Close full screen';
 
 $string['choosereadme'] = '
 <div class="clearfix"><div class="theme_screenshot"><h2>Bootstrap Base</h2>
@@ -83,15 +50,12 @@ Feel free to modify / improve / share
 </p>
 <p>
 This theme has been created with the help of:
-Joby Harding, Gareth J Barnard and brought under Iomad by Derick Turner.
+Joby Harding, Gareth J Barnard.
 </p>
 <p>
-Original Authors: Bas Brands, David Scotson<br>
+Authors: Bas Brands, David Scotson<br>
 Contact: bas@sonsbeekmedia.nl<br>
 Website: <a href="http://www.basbrands.nl">www.basbrands.nl</a><br>
-Iomad-fied by: Derick Turner</br>
-Contact: derick@e-learndesign.co.uk</br>
-Website: <a href="http://www.e-learndesign.co.uk">www.e-learndesign.co.uk</a></br>
 </p>
 
 <h3>Reporting bugs</h3>
