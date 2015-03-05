@@ -46,7 +46,6 @@ $perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per
 $acl          = optional_param('acl', '0', PARAM_INT);           // Id of user to tweak mnet ACL (requires $access).
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
-$vantage      = optional_param('profile_field_VANTAGE', '', PARAM_CLEAN);
 $compfromraw = optional_param_array('compfrom', null, PARAM_INT);
 $comptoraw = optional_param_array('compto', null, PARAM_INT);
 $completiontype = optional_param('completiontype', 0, PARAM_INT);
@@ -89,9 +88,6 @@ if ($departmentid) {
 }
 if ($departmentid) {
     $params['departmentid'] = $departmentid;
-}
-if ($vantage) {
-    $params['vantage'] = $vantage;
 }
 if ($showsuspended) {
     $params['showsuspended'] = $showsuspended;
@@ -323,13 +319,6 @@ if (empty($charttype)) {
             }
         }
     
-        // Is there a global vantage number.
-        if ($DB->get_record('user_info_field', array('shortname' => 'VANTAGE'))) {
-            $vantage = true;
-        } else {
-            $vantage = false;
-        }
-    
         // Check if there is a certificate module.
         $hascertificate = false;
         if (empty($dodownload) && $certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
@@ -349,28 +338,15 @@ if (empty($charttype)) {
         $compusertable = new html_table();
     
         // Deal with table columns.
-        if (!$vantage) {
-            $columns = array('firstname',
-                             'lastname',
-                             'department',
-                             'email',
-                             'status',
-                             'timeenrolled',
-                             'timestarted',
-                             'timecompleted',
-                             'finalscore');
-        } else {
-            $columns = array('firstname',
-                             'lastname',
-                             'vantage',
-                             'department',
-                             'email',
-                             'status',
-                             'timeenrolled',
-                             'timestarted',
-                             'timecompleted',
-                             'finalscore');
-        }
+        $columns = array('firstname',
+                         'lastname',
+                         'department',
+                         'email',
+                         'status',
+                         'timeenrolled',
+                         'timestarted',
+                         'timecompleted',
+                         'finalscore');
     
         foreach ($columns as $column) {
             $string[$column] = get_string($column, 'local_report_completion');
@@ -390,26 +366,14 @@ if (empty($charttype)) {
         if (!empty($dodownload)) {
     
             echo $courseinfo[$courseid]->coursename."\n";
-            if (!$vantage) {
-                echo '"'.get_string('name', 'local_report_completion').'","'
-                     .get_string('email', 'local_report_completion').'","'
-                     .get_string('department', 'block_iomad_company_admin').'","'
-                     .get_string('status', 'local_report_completion').'","'
-                     .get_string('timeenrolled', 'local_report_completion').'","'
-                     .get_string('timestarted', 'local_report_completion').'","'
-                     .get_string('timecompleted', 'local_report_completion').'","'
-                     .get_string('finalscore', 'local_report_completion')."\"\n";
-            } else {
-                echo '"'.get_string('name', 'local_report_completion').'","'
-                     .get_string('vantage', 'local_report_completion').'","'
-                     .get_string('email', 'local_report_completion').'","'
-                     .get_string('department', 'block_iomad_company_admin').'","'
-                     .get_string('status', 'local_report_completion').'","'
-                     .get_string('timeenrolled', 'local_report_completion').'","'
-                     .get_string('timestarted', 'local_report_completion').'","'
-                     .get_string('timecompleted', 'local_report_completion').'","'
-                     .get_string('finalscore', 'local_report_completion')."\"\n";
-            }
+            echo '"'.get_string('name', 'local_report_completion').'","'
+                 .get_string('email', 'local_report_completion').'","'
+                 .get_string('department', 'block_iomad_company_admin').'","'
+                 .get_string('status', 'local_report_completion').'","'
+                 .get_string('timeenrolled', 'local_report_completion').'","'
+                 .get_string('timestarted', 'local_report_completion').'","'
+                 .get_string('timecompleted', 'local_report_completion').'","'
+                 .get_string('finalscore', 'local_report_completion')."\"\n";
             $xlsrow = 1;
         }
         // Set the initial parameters for the table header links.
@@ -429,8 +393,6 @@ if (empty($charttype)) {
             $firstnameurl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'lastname';
             $lastnameurl = new moodle_url('index.php', $linkparams);
-            $linkparams['sort'] = 'vantage';
-            $vantageurl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'department';
             $departmenturl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'email';
@@ -465,15 +427,6 @@ if (empty($charttype)) {
                     } else {
                         $linkparams['dir'] = 'ASC';
                         $lastnameurl = new moodle_url('index.php', $linkparams);
-                    }
-                } else if ($params['sort'] == 'vantage') {
-                    $linkparams['sort'] = 'vantage';
-                    if ($params['dir'] == 'ASC') {
-                        $linkparams['dir'] = 'DESC';
-                        $vantageurl = new moodle_url('index.php', $linkparams);
-                    } else {
-                        $linkparams['dir'] = 'ASC';
-                        $vantageurl = new moodle_url('index.php', $linkparams);
                     }
                 } else if ($params['sort'] == 'department') {
                     $linkparams['sort'] = 'department';
@@ -543,26 +496,14 @@ if (empty($charttype)) {
         }
         $fullnamedisplay = $OUTPUT->action_link($firstnameurl, $firstname) ." / ". $OUTPUT->action_link($lastnameurl, $lastname);
     
-        if (!$vantage) {
-            $compusertable->head = array ($fullnamedisplay,
-                                          $OUTPUT->action_link($emailurl, $email),
-                                          $OUTPUT->action_link($departmenturl, $department),
-                                          $OUTPUT->action_link($timeenrolledurl, $timeenrolled),
-                                          $OUTPUT->action_link($statusurl, $status),
-                                          $OUTPUT->action_link($timestartedurl, $timestarted),
-                                          $OUTPUT->action_link($timecompletedurl, $timecompleted),
-                                          $OUTPUT->action_link($finalscoreurl, $finalscore));
-        } else {
-            $compusertable->head = array ($fullnamedisplay,
-                                          $OUTPUT->action_link($vantageurl, $vantage),
-                                          $OUTPUT->action_link($emailurl, $email),
-                                          $OUTPUT->action_link($departmenturl, $department),
-                                          $OUTPUT->action_link($timeenrolledurl, $timeenrolled),
-                                          $OUTPUT->action_link($statusurl, $status),
-                                          $OUTPUT->action_link($timestartedurl, $timestarted),
-                                          $OUTPUT->action_link($timecompletedurl, $timecompleted),
-                                          $OUTPUT->action_link($finalscoreurl, $finalscore));
-        }
+        $compusertable->head = array ($fullnamedisplay,
+                                      $OUTPUT->action_link($emailurl, $email),
+                                      $OUTPUT->action_link($departmenturl, $department),
+                                      $OUTPUT->action_link($timeenrolledurl, $timeenrolled),
+                                      $OUTPUT->action_link($statusurl, $status),
+                                      $OUTPUT->action_link($timestartedurl, $timestarted),
+                                      $OUTPUT->action_link($timecompletedurl, $timecompleted),
+                                      $OUTPUT->action_link($finalscoreurl, $finalscore));
         $compusertable->align = array('left', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
         if ($hascertificate) {
             $compusertable->head[] = get_string('certificate', 'local_report_completion');
@@ -624,61 +565,30 @@ if (empty($charttype)) {
                     } else {
                         $certtabledata = get_string('nocerttodownload', 'local_report_users');
                     }
-                    if (!$vantage) {
-                        $compusertable->data[] = array("<a href='".new moodle_url($userurl,
-                                                                                  array('userid' => $user->id,
-                                                                                        'courseid' => $courseid)).
-                                                       "'>$user->fullname</a>",
-                                                        $user->email,
-                                                        $user->department,
-                                                        $enrolledtime,
-                                                        $statusstring,
-                                                        $starttime,
-                                                        $completetime,
-                                                        $scorestring,
-                                                        $certtabledata);
-                    } else {
-                        $compusertable->data[] = array("<a href='".new moodle_url($userurl,
-                                                                                  array('userid' => $user->id,
-                                                                                        'courseid' => $courseid)).
-                                                       "'>$user->fullname</a>",
-                                                        $user->vantage,
-                                                        $user->email,
-                                                        $user->department,
-                                                        $enrolledtime,
-                                                        $statusstring,
-                                                        $starttime,
-                                                        $completetime,
-                                                        $scorestring,
-                                                        $certtabledata);
-                    }
+                    $compusertable->data[] = array("<a href='".new moodle_url($userurl,
+                                                                              array('userid' => $user->id,
+                                                                                    'courseid' => $courseid)).
+                                                   "'>$user->fullname</a>",
+                                                    $user->email,
+                                                    $user->department,
+                                                    $enrolledtime,
+                                                    $statusstring,
+                                                    $starttime,
+                                                    $completetime,
+                                                    $scorestring,
+                                                    $certtabledata);
                 } else {
-                    if (!$vantage) {
-                        $compusertable->data[] = array("<a href='".new moodle_url($userurl,
-                                                                                  array('userid' => $user->id,
-                                                                                        'courseid' => $courseid)).
-                                                       "'>$user->fullname</a>",
-                                                        $user->email,
-                                                        $user->department,
-                                                        $enrolledtime,
-                                                        $statusstring,
-                                                        $starttime,
-                                                        $completetime,
-                                                        $scorestring);
-                    } else {
-                        $compusertable->data[] = array("<a href='".new moodle_url($userurl,
-                                                                                  array('userid' => $user->id,
-                                                                                        'courseid' => $courseid)).
-                                                       "'>$user->fullname</a>",
-                                                        $user->vantage,
-                                                        $user->email,
-                                                        $user->department,
-                                                        $enrolledtime,
-                                                        $statusstring,
-                                                        $starttime,
-                                                        $completetime,
-                                                        $scorestring);
-                    }
+                    $compusertable->data[] = array("<a href='".new moodle_url($userurl,
+                                                                              array('userid' => $user->id,
+                                                                                    'courseid' => $courseid)).
+                                                   "'>$user->fullname</a>",
+                                                    $user->email,
+                                                    $user->department,
+                                                    $enrolledtime,
+                                                    $statusstring,
+                                                    $starttime,
+                                                    $completetime,
+                                                    $scorestring);
                 }
                 if (!empty($dodownload)) {
                     echo '"'.$user->fullname.

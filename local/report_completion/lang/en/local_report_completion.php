@@ -66,4 +66,3 @@ $string['completionfrom'] = 'Completion start date';
 $string['completionto'] = 'Completion end date';
 $string['started'] = 'Started';
 $string['summarychart'] = 'Draw summary chart for all courses';
-$string['vantage'] = 'Vantage';
