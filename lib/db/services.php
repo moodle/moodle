@@ -1013,7 +1013,8 @@ $services = array(
             'gradereport_user_get_grades_table',
             'core_group_get_course_user_groups',
             'core_user_remove_user_device',
-            'core_course_get_courses'
+            'core_course_get_courses',
+            'mod_data_get_databases_by_courses',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
