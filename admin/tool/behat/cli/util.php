@@ -34,9 +34,13 @@ define('BEHAT_UTIL', true);
 define('CLI_SCRIPT', true);
 define('NO_OUTPUT_BUFFERING', true);
 define('IGNORE_COMPONENT_CACHE', true);
+define('ABORT_AFTER_CONFIG', true);
 
+require_once(__DIR__ . '/../../../../config.php');
 require_once(__DIR__ . '/../../../../lib/clilib.php');
 require_once(__DIR__ . '/../../../../lib/behat/lib.php');
+require_once(__DIR__ . '/../../../../lib/behat/classes/behat_command.php');
+require_once(__DIR__ . '/../../../../lib/behat/classes/behat_config_manager.php');
 
 // CLI options.
 list($options, $unrecognized) = cli_get_params(
@@ -88,6 +92,13 @@ if (!empty($options['help'])) {
 }
 
 $cwd = getcwd();
+
+// For drop option check if parallel site.
+if ((empty($options['parallel'])) && $options['drop']) {
+    // Get parallel run info from first run.
+    $options['parallel'] = behat_config_manager::get_parallel_test_runs($options['fromrun']);
+}
+
 // If not a parallel site then open single run.
 if (empty($options['parallel'])) {
     chdir(__DIR__);
@@ -169,12 +180,6 @@ if ($status) {
     echo "Unknown failure $status" . PHP_EOL;
     exit((int)$status);
 }
-
-// Only load CFG from config.php for 1st run amd stop ASAP in lib/setup.php.
-define('ABORT_AFTER_CONFIG', true);
-require_once(__DIR__ . '/../../../../config.php');
-require_once(__DIR__ . '/../../../../lib/behat/classes/behat_command.php');
-require_once(__DIR__ . '/../../../../lib/behat/classes/behat_config_manager.php');
 
 // Show command o/p (only one per time).
 if ($options['install']) {
