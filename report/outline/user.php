@@ -78,6 +78,14 @@ $event = \report_outline\event\report_viewed::create(array('context' => context_
 $event->trigger();
 
 echo $OUTPUT->header();
+if ($courseid != SITEID) {
+    echo $OUTPUT->context_header(
+            array(
+            'heading' => fullname($user),
+            'user' => $user,
+            'usercontext' => $personalcontext
+        ), 2);
+}
 
 $modinfo = get_fast_modinfo($course);
 $sections = $modinfo->get_section_info_all();

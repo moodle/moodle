@@ -115,7 +115,11 @@ if ($data = data_submitted()) {
 }
 
 $PAGE->set_pagelayout('report');
-print_grade_page_head($course->id, 'report', 'singleview', $reportname);
+if ($itemtype == 'user') {
+    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false, true, null, null, $report->screen->item);
+} else {
+    print_grade_page_head($course->id, 'report', 'singleview', $reportname);
+}
 
 $graderrightnav = $graderleftnav = null;
 

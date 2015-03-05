@@ -196,8 +196,8 @@ if ($node = $PAGE->settingsnav->get('courseadmin')) {
 echo $OUTPUT->header();
 
 echo '<div class="userprofile">';
-
-echo $OUTPUT->heading(fullname($user).' ('.format_string($course->shortname, true, array('context' => $coursecontext)).')');
+$headerinfo = array('heading' => fullname($user) ,'user' => $user, 'usercontext' => $usercontext);
+echo $OUTPUT->context_header($headerinfo, 2);
 
 if ($user->deleted) {
     echo $OUTPUT->heading(get_string('userdeleted'));
@@ -233,9 +233,7 @@ if (is_mnet_remote_user($user)) {
     echo $OUTPUT->box(get_string('remoteuserinfo', 'mnet', $a), 'remoteuserinfo');
 }
 
-echo '<div class="userprofilebox clearfix"><div class="profilepicture">';
-echo $OUTPUT->user_picture($user, array('size' => 100));
-echo '</div>';
+echo '<div class="userprofilebox clearfix">';
 
 // Print the description.
 echo '<div class="descriptionbox"><div class="description">';

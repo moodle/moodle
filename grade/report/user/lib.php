@@ -1164,7 +1164,11 @@ function grade_report_user_profilereport($course, $user, $viewasuser = false) {
 
         // print the page
         echo '<div class="grade-report-user">'; // css fix to share styles with real report page
-        echo $OUTPUT->heading(get_string('pluginname', 'gradereport_user'). ' - '.fullname($report->user));
+        echo $OUTPUT->context_header(array(
+                'heading' => fullname($report->user),
+                'user' => $user,
+                'usercontext' => context_user::instance($user->id)
+            ));
 
         if ($report->fill_table()) {
             echo $report->print_table(true);

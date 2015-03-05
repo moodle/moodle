@@ -134,7 +134,8 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
 
     } else { // Only show one user's report
         $report = new grade_report_overview($userid, $gpr, $context);
-        print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview'). ' - '.fullname($report->user));
+        print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview') .
+                ' - ' . fullname($report->user), false, false, true, null, null, $report->user);
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
 
         if ($user_selector) {

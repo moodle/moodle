@@ -207,7 +207,16 @@ if (empty($result->posts)) {
         $PAGE->set_heading(fullname($user));
     }
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($pagetitle);
+    if (!$isspecificcourse) {
+        echo $OUTPUT->heading($pagetitle);
+    } else {
+        $userheading = array(
+                'heading' => fullname($user),
+                'user' => $user,
+                'usercontext' => $usercontext
+            );
+        echo $OUTPUT->context_header($userheading, 2);
+    }
     echo $OUTPUT->notification($notification);
     if (!$url->compare($PAGE->url)) {
         echo $OUTPUT->continue_button($url);

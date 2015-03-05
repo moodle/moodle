@@ -75,6 +75,7 @@ $PAGE->set_url('/report/log/user.php', array('id' => $user->id, 'course' => $cou
 $PAGE->navigation->extend_for_user($user);
 $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
 $PAGE->set_title("$course->shortname: $stractivityreport");
+
 if ($courseid == SITEID) {
     $PAGE->set_heading(fullname($user));
 } else {
@@ -87,6 +88,13 @@ $event = \report_log\event\user_report_viewed::create(array('context' => $course
 $event->trigger();
 
 echo $OUTPUT->header();
+if ($courseid != SITEID) {
+    $userheading = array(
+            'user' => $user,
+            'usercontext' => $personalcontext,
+        );
+    echo $OUTPUT->context_header($userheading, 2);
+}
 
 // Time to filter records from.
 if ($mode === 'today') {
