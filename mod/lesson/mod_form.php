@@ -175,7 +175,6 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->addElement('duration', 'timelimit', get_string('timelimit', 'lesson'),
                 array('optional' => true));
         $mform->addHelpButton('timelimit', 'timelimit', 'lesson');
-        $mform->setDefault('timelimit', 1200);
 
         $mform->addElement('selectyesno', 'usepassword', get_string('usepassword', 'lesson'));
         $mform->addHelpButton('usepassword', 'usepassword', 'lesson');
