@@ -398,4 +398,113 @@ class core_setuplib_testcase extends advanced_testcase {
         // Prove that we cannot use array_merge_recursive() instead.
         $this->assertNotSame($expected, array_merge_recursive($original, $chunk));
     }
+
+    /**
+     * Test the link processed by get_exception_info().
+     */
+    public function test_get_exception_info_link() {
+        global $CFG, $SESSION;
+
+        $initialloginhttps = $CFG->loginhttps;
+        $httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
+        $CFG->loginhttps = false;
+
+        // Simple local URL.
+        $url = $CFG->wwwroot . '/something/here?really=yes';
+        $exception = new moodle_exception('none', 'error', $url);
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($url, $infos->link);
+
+        // Relative local URL.
+        $url = '/something/here?really=yes';
+        $exception = new moodle_exception('none', 'error', $url);
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($CFG->wwwroot . '/', $infos->link);
+
+        // HTTPS URL when login HTTPS is not enabled.
+        $url = $httpswwwroot . '/something/here?really=yes';
+        $exception = new moodle_exception('none', 'error', $url);
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($CFG->wwwroot . '/', $infos->link);
+
+        // HTTPS URL with login HTTPS.
+        $CFG->loginhttps = true;
+        $url = $httpswwwroot . '/something/here?really=yes';
+        $exception = new moodle_exception('none', 'error', $url);
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($url, $infos->link);
+
+        // External HTTP URL.
+        $url = 'http://moodle.org/something/here?really=yes';
+        $exception = new moodle_exception('none', 'error', $url);
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($CFG->wwwroot . '/', $infos->link);
+
+        // External HTTPS URL.
+        $url = 'https://moodle.org/something/here?really=yes';
+        $exception = new moodle_exception('none', 'error', $url);
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($CFG->wwwroot . '/', $infos->link);
+
+        // External URL containing local URL.
+        $url = 'http://moodle.org/something/here?' . $CFG->wwwroot;
+        $exception = new moodle_exception('none', 'error', $url);
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($CFG->wwwroot . '/', $infos->link);
+
+        // Internal link from fromurl.
+        $SESSION->fromurl = $url = $CFG->wwwroot . '/something/here?really=yes';
+        $exception = new moodle_exception('none');
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($url, $infos->link);
+
+        // Internal HTTPS link from fromurl.
+        $SESSION->fromurl = $url = $httpswwwroot . '/something/here?really=yes';
+        $exception = new moodle_exception('none');
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($url, $infos->link);
+
+        // Internal HTTPS link from fromurl without login HTTPS.
+        $CFG->loginhttps = false;
+        $SESSION->fromurl = $httpswwwroot . '/something/here?really=yes';
+        $exception = new moodle_exception('none');
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($CFG->wwwroot . '/', $infos->link);
+
+        // External link from fromurl.
+        $SESSION->fromurl = 'http://moodle.org/something/here?really=yes';
+        $exception = new moodle_exception('none');
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($CFG->wwwroot . '/', $infos->link);
+
+        // External HTTPS link from fromurl.
+        $SESSION->fromurl = 'https://moodle.org/something/here?really=yes';
+        $exception = new moodle_exception('none');
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($CFG->wwwroot . '/', $infos->link);
+
+        // External HTTPS link from fromurl with login HTTPS.
+        $CFG->loginhttps = true;
+        $SESSION->fromurl = 'https://moodle.org/something/here?really=yes';
+        $exception = new moodle_exception('none');
+        $infos = $this->get_exception_info($exception);
+        $this->assertSame($CFG->wwwroot . '/', $infos->link);
+
+        $CFG->loginhttps = $initialloginhttps;
+        $SESSION->fromurl = '';
+    }
+
+    /**
+     * Wrapper to call {@link get_exception_info()}.
+     *
+     * @param  Exception $ex An exception.
+     * @return stdClass of information.
+     */
+    public function get_exception_info($ex) {
+        try {
+            throw $ex;
+        } catch (moodle_exception $e) {
+            return get_exception_info($e);
+        }
+    }
 }
