@@ -1052,6 +1052,7 @@ $string['uninstallplugin'] = 'Uninstall';
 $string['unlockaccount'] = 'Unlock account';
 $string['unsettheme'] = 'Unset theme';
 $string['unsupported'] = 'Unsupported';
+$string['unsupporteddbstorageengine'] = 'The database storage engine being used is no longer supported.';
 $string['unsuspenduser'] = 'Activate user account';
 $string['updateaccounts'] = 'Update existing accounts';
 $string['updatecomponent'] = 'Update component';
