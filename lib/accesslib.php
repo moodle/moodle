@@ -2256,9 +2256,10 @@ function can_access_course(stdClass $course, $user = null, $withcapability = '',
  * @param string $withcapability
  * @param int $groupid 0 means ignore groups, any other value limits the result by group id
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
  * @return array list($sql, $params)
  */
-function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, $onlyactive = false) {
+function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, $onlyactive = false, $onlysuspended = false) {
     global $DB, $CFG;
 
     // use unique prefix just in case somebody makes some SQL magic with the result
@@ -2270,6 +2271,13 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
     $coursecontext = $context->get_course_context();
 
     $isfrontpage = ($coursecontext->instanceid == SITEID);
+
+    if ($onlyactive && $onlysuspended) {
+        throw new coding_exception("Both onlyactive and onlysuspended are set, this is probably not what you want!");
+    }
+    if ($isfrontpage && $onlysuspended) {
+        throw new coding_exception("onlysuspended is not supported on frontpage; please add your own early-exit!");
+    }
 
     $joins  = array();
     $wheres = array();
@@ -2387,13 +2395,28 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
     if ($isfrontpage) {
         // all users are "enrolled" on the frontpage
     } else {
-        $joins[] = "JOIN {user_enrolments} {$prefix}ue ON {$prefix}ue.userid = {$prefix}u.id";
-        $joins[] = "JOIN {enrol} {$prefix}e ON ({$prefix}e.id = {$prefix}ue.enrolid AND {$prefix}e.courseid = :{$prefix}courseid)";
+        $where1 = "{$prefix}ue.status = :{$prefix}active AND {$prefix}e.status = :{$prefix}enabled";
+        $where2 = "{$prefix}ue.timestart < :{$prefix}now1 AND ({$prefix}ue.timeend = 0 OR {$prefix}ue.timeend > :{$prefix}now2)";
+        $ejoin = "JOIN {enrol} {$prefix}e ON ({$prefix}e.id = {$prefix}ue.enrolid AND {$prefix}e.courseid = :{$prefix}courseid)";
         $params[$prefix.'courseid'] = $coursecontext->instanceid;
 
-        if ($onlyactive) {
-            $wheres[] = "{$prefix}ue.status = :{$prefix}active AND {$prefix}e.status = :{$prefix}enabled";
-            $wheres[] = "{$prefix}ue.timestart < :{$prefix}now1 AND ({$prefix}ue.timeend = 0 OR {$prefix}ue.timeend > :{$prefix}now2)";
+        if (!$onlysuspended) {
+            $joins[] = "JOIN {user_enrolments} {$prefix}ue ON {$prefix}ue.userid = {$prefix}u.id";
+            $joins[] = $ejoin;
+            if ($onlyactive) {
+                $wheres[] = "$where1 AND $where2";
+            }
+        } else {
+            // Suspended only where there is enrolment but ALL are suspended.
+            // Consider multiple enrols where one is not suspended or plain role_assign.
+            $enrolselect = "SELECT DISTINCT {$prefix}ue.userid FROM {user_enrolments} {$prefix}ue $ejoin WHERE $where1 AND $where2";
+            $joins[] = "JOIN {user_enrolments} {$prefix}ue1 ON {$prefix}ue1.userid = {$prefix}u.id";
+            $joins[] = "JOIN {enrol} {$prefix}e1 ON ({$prefix}e1.id = {$prefix}ue1.enrolid AND {$prefix}e1.courseid = :{$prefix}_e1_courseid)";
+            $params["{$prefix}_e1_courseid"] = $coursecontext->instanceid;
+            $wheres[] = "{$prefix}u.id NOT IN ($enrolselect)";
+        }
+
+        if ($onlyactive || $onlysuspended) {
             $now = round(time(), -2); // rounding helps caching in DB
             $params = array_merge($params, array($prefix.'enabled'=>ENROL_INSTANCE_ENABLED,
                                                  $prefix.'active'=>ENROL_USER_ACTIVE,
@@ -7506,7 +7529,6 @@ function extract_suspended_users($context, &$users, $ignoreusers=array()) {
 function get_suspended_userids(context $context, $usecache = false) {
     global $DB;
 
-    // Check the cache first for performance reasons if enabled.
     if ($usecache) {
         $cache = cache::make('core', 'suspended_userids');
         $susers = $cache->get($context->id);
@@ -7515,21 +7537,14 @@ function get_suspended_userids(context $context, $usecache = false) {
         }
     }
 
-    // Get all enrolled users.
-    list($sql, $params) = get_enrolled_sql($context);
-    $users = $DB->get_records_sql($sql, $params);
-
-    // Get active enrolled users.
-    list($sql, $params) = get_enrolled_sql($context, null, null, true);
-    $activeusers = $DB->get_records_sql($sql, $params);
-
+    $coursecontext = $context->get_course_context();
     $susers = array();
-    if (sizeof($activeusers) != sizeof($users)) {
-        foreach ($users as $userid => $user) {
-            if (!array_key_exists($userid, $activeusers)) {
-                $susers[$userid] = $userid;
-            }
-        }
+
+    // Front page users are always enrolled, so suspended list is empty.
+    if ($coursecontext->instanceid != SITEID) {
+        list($sql, $params) = get_enrolled_sql($context, null, null, false, true);
+        $susers = $DB->get_fieldset_sql($sql, $params);
+        $susers = array_combine($susers, $susers);
     }
 
     // Cache results for the remainder of this request.
@@ -7537,6 +7552,5 @@ function get_suspended_userids(context $context, $usecache = false) {
         $cache->set($context->id, $susers);
     }
 
-    // Return.
     return $susers;
 }

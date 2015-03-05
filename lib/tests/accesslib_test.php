@@ -1764,6 +1764,68 @@ class core_accesslib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test enrolled users SQL works via common paths.
+     * Including active/suspended only cases and multiple enrols.
+     */
+    public function test_get_enrolled_sql() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $role1 = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $role2 = $DB->get_record('role', array('shortname' => 'teacher'), '*', MUST_EXIST);
+        $user = $this->getDataGenerator()->create_user();
+
+        // This user should not appear anywhere, we're not interested in that context.
+        $user2 = $this->getDataGenerator()->create_user();
+        $course2 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user2->id, $course2->id, $role1->id);
+
+        // Role assignment is not the same as course enrollment.
+        role_assign($role2->id, $user->id, $context->id);
+        $enrold = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, false);
+        $active = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, true);
+        $susped = get_suspended_userids($context);
+        $this->assertFalse(isset($enrold[$user->id]));
+        $this->assertFalse(isset($active[$user->id]));
+        $this->assertFalse(isset($susped[$user->id]));
+        $this->assertCount(0, $enrold);
+        $this->assertCount(0, $active);
+        $this->assertCount(0, $susped);
+
+        // Add a suspended enrol.
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $role1->id, 'self', 0, 0, ENROL_USER_SUSPENDED);
+
+        // Should be enrolled, but not active - user is suspended.
+        $enrold = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, false);
+        $active = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, true);
+        $susped = get_suspended_userids($context);
+        $this->assertTrue(isset($enrold[$user->id]));
+        $this->assertFalse(isset($active[$user->id]));
+        $this->assertTrue(isset($susped[$user->id]));
+        $this->assertCount(1, $enrold);
+        $this->assertCount(0, $active);
+        $this->assertCount(1, $susped);
+
+        // Add an active enrol for the user. Any active enrol makes them enrolled.
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $role1->id);
+
+        // User should be active now.
+        $enrold = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, false);
+        $active = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, true);
+        $susped = get_suspended_userids($context);
+        $this->assertTrue(isset($enrold[$user->id]));
+        $this->assertTrue(isset($active[$user->id]));
+        $this->assertFalse(isset($susped[$user->id]));
+        $this->assertCount(1, $enrold);
+        $this->assertCount(1, $active);
+        $this->assertCount(0, $susped);
+    }
+
+    /**
      * A small functional test of permission evaluations.
      */
     public function test_permission_evaluation() {
