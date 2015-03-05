@@ -14,14 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once('../../config.php');
+require_once(dirname(__FILE__).'/../../config.php');
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/excellib.class.php');
-require_once('select_form.php');
+require_once(dirname(__FILE__).'/select_form.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
-require_once($CFG->dirroot.'/local/iomad/pchart/pChart/pData.class');
-require_once($CFG->dirroot.'/local/iomad/pchart/pChart/pChart.class');
-require_once('lib.php');
+//require_once($CFG->dirroot.'/local/iomad/pchart/pChart/pData.class');
+//require_once($CFG->dirroot.'/local/iomad/pchart/pChart/pChart.class');
+require_once($CFG->dirroot.'/local/iomad/pchart2/class/pData.class.php');
+require_once($CFG->dirroot.'/local/iomad/pchart2/class/pDraw.class.php');
+require_once($CFG->dirroot.'/local/iomad/pchart2/class/pImage.class.php');
+require_once($CFG->dirroot.'/local/iomad/pchart2/class/pPie.class.php');
+require_once(dirname(__FILE__).'/lib.php');
+
+// chart stuff
+define('PCHART_SIZEX', 500);
+define('PCHART_SIZEY', 500);
 
 // Params.
 $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -271,33 +279,26 @@ foreach ($courseinfo as $id => $coursedata) {
 }
 
 if (!empty($charttype)) {
+    $chartdata = new pData();
     if ($charttype == 'summary') {
-        $chartdata = new pData;
-        $chartdata->AddPoint($chartnotstarted,"Serie1");
-        $chartdata->AddPoint($chartinprogress,"Serie2");
-        $chartdata->AddPoint($chartcompleted,"Serie3");
-        $chartdata->AddPoint($chartname,"Serie4");
-        $chartdata->AddAllSeries();
-        $chartdata->SetAbsciseLabelSerie("Serie4");
-        $chartdata->SetSerieName(get_string('notstartedusers', 'local_report_completion'),"Serie1");
-        $chartdata->SetSerieName(get_string('inprogressusers', 'local_report_completion'),"Serie2");
-        $chartdata->SetSerieName(get_string('completedusers', 'local_report_completion'),"Serie3");
-        $chartdata->SetYAxisName(get_string('numusers', 'local_report_completion'));
-        $chartdata->SetXAxisName(get_string('course'));
+        $chartdata->addPoints($chartnotstarted, 's_notstarted' );
+        $chartdata->addPoints($chartinprogress, 's_inprogress' );
+        $chartdata->addPoints($chartcompleted, 's_completed' );
     } else if ($charttype == 'course') {
-        $chartdata = new pData;
-        $chartdata->AddPoint($seriesdata, "Serie1");
-        $chartdata->AddPoint(array(get_string('notstartedusers', 'local_report_completion'),
-                                 get_string('inprogressusers', 'local_report_completion'),
-                                 get_string('completedusers', 'local_report_completion')),"Serie2");
-        $chartdata->AddAllSeries();
-        $chartdata->SetAbsciseLabelSerie("Serie2");
+        $chartdata->addPoints($seriesdata, 'Value');
     }
-
+    $chartdata->addPoints(array(
+        get_string('notstartedusers', 'local_report_completion'),
+        get_string('inprogressusers', 'local_report_completion'),
+        get_string('completedusers', 'local_report_completion'),
+    ), 'Legend');
+    $chartdata->setAbscissa('Legend');
 }
 
 if (empty($dodownload) && empty($showchart)) {
-    echo html_writer::table($coursecomptable);
+    if (empty($courseid)) {
+        echo html_writer::table($coursecomptable);
+    }
     if (!empty($courseid)  && empty($charttype)) {
         echo $completiontypeselectoutput;
     }
@@ -715,52 +716,51 @@ if (empty($charttype)) {
     }
 }
 if (!empty($showchart)) {
+
+    // Initialise the graph
+    $pi = new pImage(PCHART_SIZEX, PCHART_SIZEY, $chartdata);
+    $pi->drawRectangle(0, 0, PCHART_SIZEX-1, PCHART_SIZEY-1, array('R' => 0, 'G' => 0, 'B' => 0));
+
     if ($charttype == "summary") {
-        // Initialise the graph
-        $Test = new pChart(700,230);
-        $Test->setFontProperties($CFG->dirroot."/local/iomad/pchart/Fonts/tahoma.ttf",8);
-        $Test->setGraphArea(65,30,125,200);
-        $Test->drawFilledRoundedRectangle(7,7,203,223,5,240,240,240);
-        $Test->drawRoundedRectangle(5,5,205,225,5,230,230,230);
-        $Test->drawGraphArea(255,255,255,TRUE);
-        $Test->drawScale($chartdata->GetData(),$chartdata->GetDataDescription(),SCALE_ADDALLSTART0,150,150,150,TRUE,0,2,TRUE);
-        $Test->drawGrid(4,TRUE,230,230,230,50);
-        $chartdata->RemoveSerie("Serie4");
-        
-        // Draw the 0 line
-        $Test->setFontProperties("Fonts/tahoma.ttf",6);
-        $Test->drawTreshold(0,143,55,72,TRUE,TRUE);
-        
-        // Draw the bar graph
-        $Test->drawBarGraph($chartdata->GetData(),$chartdata->GetDataDescription(),80);
 
-    // Finish the graph
-    $Test->setFontProperties($CFG->dirroot."/local/iomad/pchart/Fonts/tahoma.ttf",8);
-    $Test->drawLegend(135,150,$chartdata->GetDataDescription(),255,255,255);
-    $Test->setFontProperties($CFG->dirroot."/local/iomad/pchart/Fonts/tahoma.ttf",10);
-    $Test->drawTitle(0,22,"Sample size",50,50,50,210);
-    $Test->Stroke("SmallStacked.png");
-    exit;
+        // Bar chart
+        $pi->setFontProperties(array(
+            'FontName' => $CFG->dirroot . '/local/iomad/pchart2/fonts/verdana.ttf',
+            'FontSize' => 10,
+            'R' => 0, 'G' => 0, 'B' => 0,
+        ));
+        $pi->setGraphArea(50, 50, PCHART_SIZEX-50, PCHART_SIZEY-50);
+        $pi->setShadow(false);
+        $pi->drawScale(array('DrawSubTicks' => true));
+        $pi->drawBarChart();
+        $pi->autoOutput();
+        exit;
     } else if ($charttype == "course") {
-        // Initialise the graph
-        $Test = new pChart(420,250);
-        $Test->drawFilledRoundedRectangle(7,7,413,243,5,240,240,240);
-        $Test->drawRoundedRectangle(5,5,415,245,5,230,230,230);
-        $Test->createColorGradientPalette(195,204,56,223,110,41,5);
 
-        // Draw the pie chart
-        $Test->setFontProperties($CFG->dirroot."/local/iomad/pchart/Fonts/tahoma.ttf",8);
-        $Test->AntialiasQuality = 0;
-        $Test->drawPieGraph($chartdata->GetData(),$chartdata->GetDataDescription(),180,130,110,PIE_PERCENTAGE_LABEL,FALSE,50,20,5);
-        $Test->drawPieLegend(330,15,$chartdata->GetData(),$chartdata->GetDataDescription(),250,250,250);
-
-    // Finish the graph
-    $Test->setFontProperties($CFG->dirroot."/local/iomad/pchart/Fonts/tahoma.ttf",8);
-    $Test->drawLegend(135,150,$chartdata->GetDataDescription(),255,255,255);
-    $Test->setFontProperties($CFG->dirroot."/local/iomad/pchart/Fonts/tahoma.ttf",10);
-    $Test->drawTitle(0,22,"Course Completion",50,50,50,210);
-    $Test->Stroke("SmallStacked.png");
-    exit;
+        // Pie chart
+        $pp = new pPie($pi, $chartdata);
+        $pi->setShadow(false);
+        $pi->setFontProperties(array(
+            'FontName' => $CFG->dirroot . '/local/iomad/pchart2/fonts/verdana.ttf',
+            'FontSize' => 10,
+            'R' => 0, 'G' => 0, 'B' => 0,
+        ));
+        $pp->draw3DPie(PCHART_SIZEX * 0.5, PCHART_SIZEY * 0.5, array(
+            'Radius' => PCHART_SIZEX * 0.4,
+            'DrawLabels' => true,
+            'DataGapAngle' => 10,
+            'DataGapRadius' => 6,
+            'Border' => true,
+        )); 
+        $pp->drawPieLegend(10,PCHART_SIZEY-20, array(
+            'Style' => LEGEND_BOX,
+            'Mode' => LEGEND_HORIZONTAL,
+        ));
+        $pi->drawText(PCHART_SIZEX * 0.5, 10, 'Course completion', array(
+            'Align' => TEXT_ALIGN_TOPMIDDLE,
+        ));
+        $pi->autoOutput();
+        exit;
     }
 }
 
