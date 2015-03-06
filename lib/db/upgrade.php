@@ -4223,5 +4223,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015031100.00);
     }
 
+    if ($oldversion < 2015031400.00) {
+
+        // Define index useridfrom (not unique) to be dropped form message.
+        $table = new xmldb_table('message');
+        $index = new xmldb_index('useridfrom', XMLDB_INDEX_NOTUNIQUE, array('useridfrom'));
+
+        // Conditionally launch drop index useridfrom.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Define index useridfrom (not unique) to be dropped form message_read.
+        $table = new xmldb_table('message_read');
+        $index = new xmldb_index('useridfrom', XMLDB_INDEX_NOTUNIQUE, array('useridfrom'));
+
+        // Conditionally launch drop index useridfrom.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015031400.00);
+    }
+
     return true;
 }
