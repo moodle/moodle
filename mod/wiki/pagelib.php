@@ -136,7 +136,7 @@ abstract class page_wiki {
 
         echo $OUTPUT->header();
         $wiki = $PAGE->activityrecord;
-        echo $OUTPUT->heading($wiki->name);
+        echo $OUTPUT->heading(format_string($wiki->name));
 
         echo $this->wikioutput->wiki_info();
 
