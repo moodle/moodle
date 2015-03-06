@@ -261,7 +261,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             });
         },
         preSearch : function(e) {
-            this.search(null, false);
+            this.search(e, false);
             /*
             var value = this.get(UEP.SEARCH).get('value');
             if (value.length < 3 || value == this.get(UEP.LASTSEARCH)) {
