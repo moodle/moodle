@@ -50,9 +50,13 @@ class behat_command {
     public static function get_behat_dir($runprocess = 0) {
         global $CFG;
 
-        $runprocess = empty($runprocess) ? "" : $runprocess;
-
-        $behatdir = $CFG->behat_dataroot . $runprocess . '/behat';
+        if (empty($runprocess)) {
+            $behatdir = $CFG->behat_dataroot . '/behat';
+        } else if (isset($CFG->behat_parallel_run[$runprocess - 1]['behat_dataroot'])) {
+            $behatdir = $CFG->behat_parallel_run[$runprocess - 1]['behat_dataroot'] . '/behat';;
+        } else {
+            $behatdir = $CFG->behat_dataroot . $runprocess . '/behat';
+        }
 
         if (!is_dir($behatdir)) {
             if (!mkdir($behatdir, $CFG->directorypermissions, true)) {

@@ -147,13 +147,17 @@ if ($options['profile']) {
 
 // Update config file if tags defined.
 if ($tags) {
-    // Hack to set proper dataroot and wwroot.
+    // Hack to set proper dataroot and wwwroot.
     $behatdataroot = $CFG->behat_dataroot;
     $behatwwwroot  = $CFG->behat_wwwroot;
     for ($i = 1; $i <= $parallelrun; $i++) {
         $CFG->behatrunprocess = $i;
         $CFG->behat_dataroot = $behatdataroot . $i;
-        $CFG->behat_wwwroot = $behatwwwroot . "/" . BEHAT_PARALLEL_SITE_NAME . $i;
+        if (!empty($CFG->behat_parallel_run['behat_wwwroot'][$i - 1]['behat_wwwroot'])) {
+            $CFG->behat_wwwroot = $CFG->behat_parallel_run['behat_wwwroot'][$i - 1]['behat_wwwroot'];
+        } else {
+            $CFG->behat_wwwroot = $behatwwwroot . "/" . BEHAT_PARALLEL_SITE_NAME . $i;
+        }
         behat_config_manager::update_config_file('', true, $tags);
     }
     $CFG->behat_dataroot = $behatdataroot;

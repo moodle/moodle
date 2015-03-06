@@ -214,7 +214,11 @@ class behat_config_manager {
         global $CFG;
 
         if ($runprocess) {
-            $command = $CFG->behat_dataroot . $runprocess;
+            if (isset($CFG->behat_parallel_run[$runprocess - 1 ]['behat_dataroot'])) {
+                $command = $CFG->behat_parallel_run[$runprocess - 1]['behat_dataroot'];
+            } else {
+                $command = $CFG->behat_dataroot . $runprocess;
+            }
         } else {
             $command = $CFG->behat_dataroot;
         }
@@ -276,6 +280,10 @@ class behat_config_manager {
         // If parallel run then remove links and original file.
         clearstatcache();
         for ($i = 1; $i <= $parallelrun; $i++) {
+            // Don't delete links for specified sites, as they should be accessible.
+            if (!empty($CFG->behat_parallel_run['behat_wwwroot'][$i - 1]['behat_wwwroot'])) {
+                continue;
+            }
             $link = $CFG->dirroot . '/' . BEHAT_PARALLEL_SITE_NAME . $i;
             if (file_exists($link) && is_link($link)) {
                 @unlink($link);
@@ -297,6 +305,10 @@ class behat_config_manager {
         // Create site symlink if necessary.
         clearstatcache();
         for ($i = $fromrun; $i <= $torun; $i++) {
+            // Don't create links for specified sites, as they should be accessible.
+            if (!empty($CFG->behat_parallel_run['behat_wwwroot'][$i - 1]['behat_wwwroot'])) {
+                continue;
+            }
             $link = $CFG->dirroot.'/'.BEHAT_PARALLEL_SITE_NAME.$i;
             clearstatcache();
             if (file_exists($link)) {

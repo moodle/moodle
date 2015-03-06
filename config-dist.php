@@ -735,7 +735,9 @@ $CFG->admin = 'admin';
 //           'dbuser' => 'moodle',
 //           'dbpass' => 'moodle',
 //           'behat_prefix' => 'mdl_',
-//           'wd_host' => 'http://127.0.0.1:4444/wd/hub'
+//           'wd_host' => 'http://127.0.0.1:4444/wd/hub',
+//           'behat_wwwroot' => 'http://127.0.0.1/moodle',
+//           'behat_dataroot' => '/home/example/bht_moodledata'
 //       ),
 //   );
 //

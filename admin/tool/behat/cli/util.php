@@ -187,7 +187,12 @@ if ($options['install']) {
 
     // Display all sites which are installed/drop/diabled.
     for ($i = $options['fromrun']; $i <= $options['torun']; $i++) {
-        echo $CFG->behat_wwwroot . "/" . BEHAT_PARALLEL_SITE_NAME . $i . PHP_EOL;
+        if (empty($CFG->behat_parallel_run[$i - 1]['behat_wwwroot'])) {
+            echo $CFG->behat_wwwroot . "/" . BEHAT_PARALLEL_SITE_NAME . $i . PHP_EOL;
+        } else {
+            echo $CFG->behat_parallel_run[$i - 1]['behat_wwwroot'] . PHP_EOL;
+        }
+
     }
 } else if ($options['drop']) {
     echo "Acceptance tests site dropped for " . $options['parallel'] . " parallel sites" . PHP_EOL;

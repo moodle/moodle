@@ -287,20 +287,25 @@ function behat_is_test_site() {
 function behat_update_vars_for_process() {
     global $CFG;
 
-    $allowedconfigoverride = array('dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'behat_prefix');
+    $allowedconfigoverride = array('dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'behat_prefix',
+        'behat_wwwroot', 'behat_dataroot');
     $behatrunprocess = behat_get_run_process();
     $CFG->behatrunprocess = $behatrunprocess;
 
     if ($behatrunprocess) {
-        // Set www root for run process.
-        if (isset($CFG->behat_wwwroot) && !preg_match("#/" . BEHAT_PARALLEL_SITE_NAME . $behatrunprocess . "\$#",
-                $CFG->behat_wwwroot)) {
-            $CFG->behat_wwwroot .= "/" . BEHAT_PARALLEL_SITE_NAME . $behatrunprocess;
+        if (empty($CFG->behat_parallel_run[$behatrunprocess - 1]['behat_wwwroot'])) {
+            // Set www root for run process.
+            if (isset($CFG->behat_wwwroot) &&
+                !preg_match("#/" . BEHAT_PARALLEL_SITE_NAME . $behatrunprocess . "\$#", $CFG->behat_wwwroot)) {
+                $CFG->behat_wwwroot .= "/" . BEHAT_PARALLEL_SITE_NAME . $behatrunprocess;
+            }
         }
 
-        // Set behat_dataroot.
-        if (!preg_match("#" . $behatrunprocess . "\$#", $CFG->behat_dataroot)) {
-            $CFG->behat_dataroot .= $behatrunprocess;
+        if (empty($CFG->behat_parallel_run[$behatrunprocess - 1]['behat_dataroot'])) {
+            // Set behat_dataroot.
+            if (!preg_match("#" . $behatrunprocess . "\$#", $CFG->behat_dataroot)) {
+                $CFG->behat_dataroot .= $behatrunprocess;
+            }
         }
 
         // Set behat_prefix for db, just suffix run process number, to avoid max length exceed.
@@ -372,7 +377,17 @@ function behat_get_run_process() {
     if (defined('BEHAT_CURRENT_RUN') && BEHAT_CURRENT_RUN) {
         $behatrunprocess = BEHAT_CURRENT_RUN;
     } else if (!empty($_SERVER['REMOTE_ADDR'])) {
-        if (preg_match('#/' . BEHAT_PARALLEL_SITE_NAME . '(.+?)/#', $_SERVER['REQUEST_URI'])) {
+        // Try get it from config if present.
+        if (!empty($CFG->behat_parallel_run)) {
+            foreach ($CFG->behat_parallel_run as $run => $behatconfig) {
+                if (isset($behatconfig['behat_wwwroot']) && behat_is_requested_url($behatconfig['behat_wwwroot'])) {
+                    $behatrunprocess = $run + 1; // We start process from 1.
+                    break;
+                }
+            }
+        }
+        // Check if parallel site prefix is used.
+        if (empty($behatrunprocess) && preg_match('#/' . BEHAT_PARALLEL_SITE_NAME . '(.+?)/#', $_SERVER['REQUEST_URI'])) {
             $dirrootrealpath = str_replace("\\", "/", realpath($CFG->dirroot));
             $serverrealpath = str_replace("\\", "/", realpath($_SERVER['SCRIPT_FILENAME']));
             $afterpath = str_replace($dirrootrealpath.'/', '', $serverrealpath);
@@ -385,13 +400,25 @@ function behat_get_run_process() {
     } else if (defined('BEHAT_TEST') || defined('BEHAT_UTIL')) {
         if ($match = preg_filter('#--run=(.+)#', '$1', $argv)) {
             $behatrunprocess = reset($match);
-        }
-
-        if ($k = array_search('--config', $argv)) {
+        } else if ($k = array_search('--config', $argv)) {
             $behatconfig = str_replace("\\", "/", $argv[$k + 1]);
-            $behatdataroot = str_replace("\\", "/", $CFG->behat_dataroot);
-            $behatrunprocess = preg_filter("#^{$behatdataroot}" .
-                "(.+?)[/|\\\]behat[/|\\\]behat\.yml#", '$1', $behatconfig);
+            // Try get it from config if present.
+            if (!empty($CFG->behat_parallel_run)) {
+                foreach ($CFG->behat_parallel_run as $run => $parallelconfig) {
+                    if (!empty($parallelconfig['behat_dataroot']) &&
+                        $parallelconfig['behat_dataroot'] . '/behat/behat.yml' == $behatconfig) {
+
+                        $behatrunprocess = $run + 1; // We start process from 1.
+                        break;
+                    }
+                }
+            }
+            // Check if default behat datroot increment was done.
+            if (empty($behatrunprocess)) {
+                $behatdataroot = str_replace("\\", "/", $CFG->behat_dataroot);
+                $behatrunprocess = preg_filter("#^{$behatdataroot}" . "(.+?)[/|\\\]behat[/|\\\]behat\.yml#", '$1',
+                    $behatconfig);
+            }
         }
     }
 
