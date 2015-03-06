@@ -129,6 +129,7 @@ $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
 $PAGE->set_heading($SITE->fullname);
 $PAGE->requires->css("/local/report_completion/styles.css");
+$PAGE->requires->jquery();
 
 
 // Set the companyid
@@ -212,25 +213,33 @@ if (empty($dodownload) && empty($showchart)) {
         $options['charttype'] = 'summary';
         $options['dodownload'] = false;
         echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("summarychart", 'local_report_completion'));
-        $options['charttype'] = 'course';
-        echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("coursechart", 'local_report_completion'));
     } else {
         $options['charttype'] = 'summary';
         $options['dodownload'] = false;
         echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("summarychart", 'local_report_completion'));
+        $alluserslink = new moodle_url($url, array(
+            'courseid' => 1,
+            'departmentid' => $departmentid,
+            'showchart' => 0,
+            'charttype' => '',
+        ));
+        echo $OUTPUT->single_button($alluserslink, get_string("allusers", 'local_report_completion'));
     }
 
 }
 
 // Set up the course overview table.
 $coursecomptable = new html_table();
-$coursecomptable->head = array(get_string('coursename', 'local_report_completion'),
-                               get_string('numusers', 'local_report_completion'),
-                               get_string('notstartedusers', 'local_report_completion'),
-                               get_string('inprogressusers', 'local_report_completion'),
-                               get_string('completedusers', 'local_report_completion'));
+$coursecomptable->head = array(
+    get_string('coursename', 'local_report_completion'),
+    get_string('numusers', 'local_report_completion'),
+    get_string('notstartedusers', 'local_report_completion'),
+    get_string('inprogressusers', 'local_report_completion'),
+    get_string('completedusers', 'local_report_completion'),
+    ' ',
+);
 $coursecomptable->align = array('left', 'center', 'center', 'center', 'center', 'center');
-$coursecomptable->width = '95%';
+//$coursecomptable->width = '95%';
 $chartdata = array();
 
 if (!empty($dodownload)) {
@@ -252,15 +261,27 @@ $chartname = array();
 
 // Iterate over courses.
 foreach ($courseinfo as $id => $coursedata) {
-    $coursecomptable->data[] = array("<a href='".new moodle_url($url, array('courseid' => $coursedata->id,
-                                                                            'departmentid' => $departmentid,
-                                                                            'showchart' => 0,
-                                                                            'charttype' => '')).
-                                     "'>{$coursedata->coursename}</a>",
-                                     $coursedata->numenrolled,
-                                     $coursedata->numnotstarted,
-                                     $coursedata->numstarted - $coursedata->numcompleted,
-                                     $coursedata->numcompleted);
+    $courseuserslink = new moodle_url($url, array(
+        'courseid' => $coursedata->id,
+        'departmentid' => $departmentid,
+        'showchart' => 0,
+        'charttype' => '',
+    ));
+    $coursechartlink = new moodle_url('index.php', array(
+        'courseid' => $coursedata->id,
+        'departmentid' => $departmentid,
+        'showchart' => 0,
+        'charttype' => 'course',
+    ));
+    $coursecomptable->data[] = array(
+        $coursedata->coursename,
+        $coursedata->numenrolled,
+        $coursedata->numnotstarted,
+        $coursedata->numstarted - $coursedata->numcompleted,
+        $coursedata->numcompleted,
+        '<a class="btn btn-info" href="' . $courseuserslink . '">' . get_string('usersummary', 'local_report_completion') . '</a>&nbsp;' .
+        '<a class="btn btn-success" href="' . $coursechartlink . '">' . get_string('cchart', 'local_report_completion') . '</a>',
+    );
     if ($charttype == 'summary') {
         $chartname[] = $coursedata->coursename;
         $chartnumusers[] = $coursedata->numenrolled;
@@ -307,13 +328,22 @@ if (empty($charttype)) {
         if (empty($dodownload)) {
             if (empty($idlist['0'])) {
                 // Only want the data for the page we are on.
-                $coursedataobj = iomad::get_user_course_completion_data($searchinfo, $courseid, $page, $perpage, $completiontype);
+                // courseid==1 is ALL users.
+                if ($courseid == 1) {
+                    $coursedataobj = iomad::all_completion_users($searchinfo, $courseinfo, $completiontype);
+                } else {
+                    $coursedataobj = iomad::get_user_course_completion_data($searchinfo, $courseid, $page, $perpage, $completiontype);
+                }
                 $coursedata = $coursedataobj->users;
                 $totalcount = $coursedataobj->totalcount;
             }
         } else {
             if (empty($idlist['0'])) {
-                $coursedataobj = iomad::get_user_course_completion_data($searchinfo, $courseid);
+                if ($courseid == 1) {
+                    $coursedataobj = iomad::all_completion_users($searchinfo, $courseinfo, $completiontype);
+                } else {
+                    $coursedataobj = iomad::get_user_course_completion_data($searchinfo, $courseid);
+                }
                 $coursedata = $coursedataobj->users;
                 $totalcount = $coursedataobj->totalcount;
             }
@@ -333,7 +363,11 @@ if (empty($charttype)) {
             }
         }
         if (empty($dodownload)) {
-            echo "<h3>".get_string('courseusers', 'local_report_completion').$courseinfo[$courseid]->coursename."</h3>";
+            if ($courseid == 1) {
+                echo "<h3>".get_string('reportallusers', 'local_report_completion')."</h3>";
+            } else {
+                echo "<h3>".get_string('courseusers', 'local_report_completion').$courseinfo[$courseid]->coursename."</h3>";
+            }
         }
         $compusertable = new html_table();
     
@@ -498,6 +532,7 @@ if (empty($charttype)) {
     
         $compusertable->head = array ($fullnamedisplay,
                                       $OUTPUT->action_link($emailurl, $email),
+                                      get_string('course'),
                                       $OUTPUT->action_link($departmenturl, $department),
                                       $OUTPUT->action_link($timeenrolledurl, $timeenrolled),
                                       $OUTPUT->action_link($statusurl, $status),
@@ -556,7 +591,7 @@ if (empty($charttype)) {
                     // Check if user has completed the course - if so, show the certificate.
                     if (!empty($user->timecompleted) ) {
                         // Get the course module.
-                        $certtabledata = "<a href='".new moodle_url('/mod/iomadcertificate/view.php',
+                        $certtabledata = "<a class=\"btn\" href='".new moodle_url('/mod/iomadcertificate/view.php',
                                                                      array('id' => $certificatemodinstance->id,
                                                                            'action' => 'get',
                                                                            'userid' => $user->id,
@@ -570,6 +605,7 @@ if (empty($charttype)) {
                                                                                     'courseid' => $courseid)).
                                                    "'>$user->fullname</a>",
                                                     $user->email,
+                                                    $user->coursename,
                                                     $user->department,
                                                     $enrolledtime,
                                                     $statusstring,
@@ -583,6 +619,7 @@ if (empty($charttype)) {
                                                                                     'courseid' => $courseid)).
                                                    "'>$user->fullname</a>",
                                                     $user->email,
+                                                    $user->coursename,
                                                     $user->department,
                                                     $enrolledtime,
                                                     $statusstring,

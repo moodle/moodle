@@ -677,6 +677,8 @@ class iomad {
 
         $completiondata = new stdclass();
 
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
         // Create a temporary table to hold the userids.
         $temptablename = 'tmp_ccomp_users_'.time();
         $dbman = $DB->get_manager();
@@ -714,60 +716,32 @@ class iomad {
                 
 
         // Get the user details.
-        if ($vantagefield = $DB->get_record('user_info_field', array('shortname' => 'VANTAGE'))) {
-            $countsql = "SELECT u.id ";
-            $selectsql = "SELECT u.id,
-                    u.firstname AS firstname,
-                    u.lastname AS lastname,
-                    u.email AS email,
-                    cc.timeenrolled AS timeenrolled,
-                    cc.timestarted AS timestarted,
-                    cc.timecompleted AS timecompleted,
-                    d.name as department,
-                    gg.finalgrade as result,
-                    uid.data as vantage ";
-            $fromsql = " FROM {user} u, {course_completions} cc, {department} d, {company_users} du,
-                         {user_info_data} uid, {".$temptablename."} tt
-                         LEFT JOIN {grade_grades} gg ON ( gg.itemid = (
-                           SELECT id FROM {grade_items} WHERE courseid = $courseid AND itemtype='course'))
+        $shortname = addslashes($course->shortname);
+        $countsql = "SELECT u.id ";
+        $selectsql = "SELECT u.id,
+                u.firstname AS firstname,
+                u.lastname AS lastname,
+                u.email AS email,
+                '{$shortname}' AS coursename,
+                '$courseid' AS courseid,
+                cc.timeenrolled AS timeenrolled,
+                cc.timestarted AS timestarted,
+                cc.timecompleted AS timecompleted,
+                d.name as department,
+                gg.finalgrade as result ";
+        $fromsql = " FROM {user} u, {course_completions} cc, {department} d, {company_users} du, {".$temptablename."} tt
+                     LEFT JOIN {grade_grades} gg ON ( gg.itemid = (
+                       SELECT id FROM {grade_items} WHERE courseid = $courseid AND itemtype='course'))
 
-                    WHERE $searchinfo->sqlsearch
-                    AND tt.userid = u.id
-                    AND cc.course = $courseid
-                    AND u.id = cc.userid
-                    AND du.userid = u.id
-                    AND d.id = du.departmentid
-                    AND gg.userid = u.id
-                    AND uid.userid = u.id
-                    AND uid.fieldid = $vantagefield->id
-                    $completionsql
-                    $searchinfo->sqlsort ";
-        } else {
-            $countsql = "SELECT u.id ";
-            $selectsql = "SELECT u.id,
-                    u.firstname AS firstname,
-                    u.lastname AS lastname,
-                    u.email AS email,
-                    cc.timeenrolled AS timeenrolled,
-                    cc.timestarted AS timestarted,
-                    cc.timecompleted AS timecompleted,
-                    d.name as department,
-                    gg.finalgrade as result ";
-            $fromsql = " FROM {user} u, {course_completions} cc, {department} d, {company_users} du, {".$temptablename."} tt
-                         LEFT JOIN {grade_grades} gg ON ( gg.itemid = (
-                           SELECT id FROM {grade_items} WHERE courseid = $courseid AND itemtype='course'))
-
-                    WHERE $searchinfo->sqlsearch
-                    AND tt.userid = u.id
-                    AND cc.course = $courseid
-                    AND u.id = cc.userid
-                    AND du.userid = u.id
-                    AND d.id = du.departmentid
-                    AND gg.userid = u.id
-                    $completionsql
-                    $searchinfo->sqlsort ";
-
-        }
+                WHERE $searchinfo->sqlsearch
+                AND tt.userid = u.id
+                AND cc.course = $courseid
+                AND u.id = cc.userid
+                AND du.userid = u.id
+                AND d.id = du.departmentid
+                AND gg.userid = u.id
+                $completionsql
+                $searchinfo->sqlsort ";
 
         $searchinfo->searchparams['courseid'] = $courseid;
         $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
@@ -777,6 +751,22 @@ class iomad {
         $returnobj = new stdclass();
         $returnobj->users = $users;
         $returnobj->totalcount = $numusers;
+
+        $dbman->drop_table($table);
+
+        return $returnobj;
+    }
+
+    public static function all_completion_users($searchinfo, $courseinfo, $completiontype=0) {
+        $results = array();
+        foreach ($courseinfo as $id => $course) {
+            $cd = self::get_user_course_completion_data($searchinfo, $id, 0, 0, $completiontype);
+            $results = array_merge($results, $cd->users);
+        }
+
+        $returnobj = new stdclass();
+        $returnobj->users = $results;
+        $returnobj->totalcount = count($results);
         return $returnobj;
     }
 

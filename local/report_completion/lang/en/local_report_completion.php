@@ -66,3 +66,7 @@ $string['completionfrom'] = 'Completion start date';
 $string['completionto'] = 'Completion end date';
 $string['started'] = 'Started';
 $string['summarychart'] = 'Draw summary chart for all courses';
+$string['usersummary'] = 'User summary';
+$string['cchart'] = 'Chart';
+$string['reportallusers'] = 'All department users';
+$string['allusers'] = 'Show all users';
