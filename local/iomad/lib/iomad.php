@@ -494,10 +494,13 @@ class iomad {
      *
      * Return array();
      **/
-    public static function get_user_sqlsearch($params, $idlist='', $sort, $dir, $departmentid) {
+    public static function get_user_sqlsearch($params, $idlist='', $sort, $dir, $departmentid, $nogrades=false) {
         global $DB, $CFG;
 
-        $sqlsort = " GROUP BY u.id, cc.timeenrolled, cc.timestarted, cc.timecompleted, d.name, gg.finalgrade";
+        $sqlsort = " GROUP BY u.id, cc.timeenrolled, cc.timestarted, cc.timecompleted, d.name";
+        if (!$nogrades) {
+            $sqlsort .= ', gg.finalgrade';
+        }
         $sqlsearch = "u.id != '-1' and u.deleted = 0";
         $sqlsearch .= " AND u.id NOT IN (".$CFG->siteadmins.")";
 
@@ -769,21 +772,18 @@ class iomad {
     }
 
     /**
-     * Get all users completion info for a course
+     * Get all users completion info regardless of course
      *
      * Parameters - $departmentid = int;
-     *              $courseid = int;
      *              $page = int;
      *              $perpade = int;
      *
      * Return array();
      **/
-    public static function get_all_user_course_completion_data($searchinfo, $courseid, $page=0, $perpage=0, $completiontype=0) {
+    public static function get_all_user_course_completion_data($searchinfo, $page=0, $perpage=0, $completiontype=0) {
         global $DB;
 
         $completiondata = new stdclass();
-
-        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
         // Create a temporary table to hold the userids.
         $temptablename = 'tmp_ccomp_users_'.time();
@@ -804,37 +804,42 @@ class iomad {
                 
 
         // Get the user details.
-        $shortname = addslashes($course->shortname);
-        $countsql = "SELECT u.id ";
-        $selectsql = "SELECT u.id,
+        $countsql = "SELECT CONCAT(co.id, u.id) AS id ";
+        $selectsql = "
+                SELECT
+                CONCAT(co.id, u.id) AS id, 
+                u.id AS uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,
                 u.email AS email,
-                '{$shortname}' AS coursename,
-                '$courseid' AS courseid,
+                co.shortname AS coursename,
+                co.id AS courseid,
                 cc.timeenrolled AS timeenrolled,
                 cc.timestarted AS timestarted,
                 cc.timecompleted AS timecompleted,
                 d.name as department,
-                gg.finalgrade as result ";
-        $fromsql = " FROM {user} u, {course_completions} cc, {department} d, {company_users} du, {".$temptablename."} tt
-                     LEFT JOIN {grade_grades} gg ON ( gg.itemid = (
-                       SELECT id FROM {grade_items} WHERE courseid = $courseid AND itemtype='course'))
+                '0' as result ";
+        $fromsql = " FROM {user} u, {course_completions} cc, {department} d, {company_users} du, {".$temptablename."} tt, {course} co
 
                 WHERE $searchinfo->sqlsearch
                 AND tt.userid = u.id
-                AND cc.course = $courseid
+                AND co.id = cc.course
                 AND u.id = cc.userid
                 AND du.userid = u.id
                 AND d.id = du.departmentid
-                AND gg.userid = u.id
                 $completionsql
                 $searchinfo->sqlsort ";
 
-        $searchinfo->searchparams['courseid'] = $courseid;
         $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
         $countusers = $DB->get_records_sql($countsql.$fromsql, $searchinfo->searchparams);
         $numusers = count($countusers);
+        foreach ($users as $id => $user) {
+            $gradeitem = $DB->get_record('grade_items', array('itemtype' => 'course', 'courseid' => $user->courseid));
+            $grade = $DB->get_record('grade_grades', array('itemid' => $gradeitem->id, 'userid' => $user->id));
+            if ($grade) {
+                $user->result = $grade->finalgrade;
+            }
+        }
 
         $returnobj = new stdclass();
         $returnobj->users = $users;

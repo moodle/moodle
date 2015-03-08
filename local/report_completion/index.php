@@ -186,7 +186,7 @@ if (!(iomad::has_capability('block/iomad_company_admin:editusers', $context) or
     print_error('nopermissions', 'error', '', 'report on users');
 }
 
-$searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid);
+$searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, $courseid == 1);
 
 // Create data for form.
 $customdata = null;
@@ -330,7 +330,7 @@ if (empty($charttype)) {
                 // Only want the data for the page we are on.
                 // courseid==1 is ALL users.
                 if ($courseid == 1) {
-                    $coursedataobj = iomad::all_completion_users($searchinfo, $courseinfo, $completiontype);
+                    $coursedataobj = iomad::get_all_user_course_completion_data($searchinfo, $page, $perpage, $completiontype);
                 } else {
                     $coursedataobj = iomad::get_user_course_completion_data($searchinfo, $courseid, $page, $perpage, $completiontype);
                 }
@@ -340,7 +340,7 @@ if (empty($charttype)) {
         } else {
             if (empty($idlist['0'])) {
                 if ($courseid == 1) {
-                    $coursedataobj = iomad::all_completion_users($searchinfo, $courseinfo, $completiontype);
+                    $coursedataobj = iomad::get_all_user_course_completion_data($searchinfo, $page, $perpage, $completiontype);
                 } else {
                     $coursedataobj = iomad::get_user_course_completion_data($searchinfo, $courseid);
                 }
