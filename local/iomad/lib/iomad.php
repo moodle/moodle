@@ -662,25 +662,14 @@ class iomad {
         return $returnarr;
     }
 
-    /**
-     * Get user completion info for a course
-     *
-     * Parameters - $departmentid = int;
-     *              $courseid = int;
-     *              $page = int;
-     *              $perpade = int;
-     *
-     * Return array();
-     **/
-    public static function get_user_course_completion_data($searchinfo, $courseid, $page=0, $perpage=0, $completiontype=0) {
+    /** 
+     * Get users into temporary table
+     */
+    private static function populate_temporary_users($temptablename, $searchinfo) {
         global $DB;
 
-        $completiondata = new stdclass();
-
-        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
         // Create a temporary table to hold the userids.
-        $temptablename = 'tmp_ccomp_users_'.time();
         $dbman = $DB->get_manager();
 
         // Define table user to be created.
@@ -700,6 +689,105 @@ class iomad {
             $tempcreatesql = "";
         }
         $DB->execute($tempcreatesql);
+
+        return array($dbman, $table);
+    }
+
+    /**
+     * Get user completion info for a course
+     *
+     * Parameters - $departmentid = int;
+     *              $courseid = int;
+     *              $page = int;
+     *              $perpade = int;
+     *
+     * Return array();
+     **/
+    public static function get_user_course_completion_data($searchinfo, $courseid, $page=0, $perpage=0, $completiontype=0) {
+        global $DB;
+
+        $completiondata = new stdclass();
+
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+        $temptablename = 'tmp_ccomp_users_'.time();
+        list($dbman, $table) = self::populate_temporary_users($temptablename, $searchinfo);
+
+        // Deal with completion types.
+        if (!empty($completiontype)) {
+            if ($completiontype == 1) {
+                $completionsql = " AND cc.timeenrolled > 0 AND cc.timestarted = 0 ";
+            } else if ($completiontype == 2 ) {
+                $completionsql = " AND cc.timestarted > 0 AND cc.timecompleted IS NULL ";
+            } else if ($completiontype == 3 ) {
+                $completionsql = " AND cc.timecompleted IS NOT NULL  ";
+            }
+        } else {
+            $completionsql = "";
+        }
+                
+        // Get the user details.
+        $shortname = addslashes($course->shortname);
+        $countsql = "SELECT u.id ";
+        $selectsql = "SELECT u.id,
+                u.firstname AS firstname,
+                u.lastname AS lastname,
+                u.email AS email,
+                '{$shortname}' AS coursename,
+                '$courseid' AS courseid,
+                cc.timeenrolled AS timeenrolled,
+                cc.timestarted AS timestarted,
+                cc.timecompleted AS timecompleted,
+                d.name as department,
+                gg.finalgrade as result ";
+        $fromsql = " FROM {user} u, {course_completions} cc, {department} d, {company_users} du, {".$temptablename."} tt
+                     LEFT JOIN {grade_grades} gg ON ( gg.itemid = (
+                       SELECT id FROM {grade_items} WHERE courseid = $courseid AND itemtype='course'))
+
+                WHERE $searchinfo->sqlsearch
+                AND tt.userid = u.id
+                AND cc.course = $courseid
+                AND u.id = cc.userid
+                AND du.userid = u.id
+                AND d.id = du.departmentid
+                AND gg.userid = u.id
+                $completionsql
+                $searchinfo->sqlsort ";
+
+        $searchinfo->searchparams['courseid'] = $courseid;
+        $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
+        $countusers = $DB->get_records_sql($countsql.$fromsql, $searchinfo->searchparams);
+        $numusers = count($countusers);
+
+        $returnobj = new stdclass();
+        $returnobj->users = $users;
+        $returnobj->totalcount = $numusers;
+
+        $dbman->drop_table($table);
+
+        return $returnobj;
+    }
+
+    /**
+     * Get all users completion info for a course
+     *
+     * Parameters - $departmentid = int;
+     *              $courseid = int;
+     *              $page = int;
+     *              $perpade = int;
+     *
+     * Return array();
+     **/
+    public static function get_all_user_course_completion_data($searchinfo, $courseid, $page=0, $perpage=0, $completiontype=0) {
+        global $DB;
+
+        $completiondata = new stdclass();
+
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+        // Create a temporary table to hold the userids.
+        $temptablename = 'tmp_ccomp_users_'.time();
+        list($dbman, $table) = self::populate_temporary_users($temptablename, $searchinfo);
 
         // Deal with completion types.
         if (!empty($completiontype)) {
@@ -756,6 +844,7 @@ class iomad {
 
         return $returnobj;
     }
+
 
     public static function all_completion_users($searchinfo, $courseinfo, $completiontype=0) {
         $results = array();
