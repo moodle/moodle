@@ -369,6 +369,9 @@ class lesson_display_answer_form_shortanswer extends moodleform {
             $attrs['size'] = round(strlen($placeholder) * 1.1);
         }
 
+        // Disable shortforms.
+        $mform->setDisableShortforms();
+
         $mform->addElement('header', 'pageheader');
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

@@ -318,6 +318,9 @@ class lesson_display_answer_form_essay extends moodleform {
             }
         }
 
+        // Disable shortforms.
+        $mform->setDisableShortforms();
+
         $mform->addElement('header', 'pageheader');
 
         $mform->addElement('html', $OUTPUT->container($contents, 'contents'));
