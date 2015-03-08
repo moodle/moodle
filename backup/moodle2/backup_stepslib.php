@@ -91,63 +91,9 @@ class create_taskbasepath_directory extends backup_execution_step {
 
 /**
  * Abstract structure step, parent of all the activity structure steps. Used to wrap the
- * activity structure definition within the main <activity ...> tag. Also provides
- * subplugin support for activities (that must be properly declared)
+ * activity structure definition within the main <activity ...> tag.
  */
 abstract class backup_activity_structure_step extends backup_structure_step {
-
-    /**
-     * Add subplugin structure to any element in the activity backup tree
-     *
-     * @param string $subplugintype type of subplugin as defined in activity db/subplugins.php
-     * @param backup_nested_element $element element in the activity backup tree that
-     *                                       we are going to add subplugin information to
-     * @param bool $multiple to define if multiple subplugins can produce information
-     *                       for each instance of $element (true) or no (false)
-     * @return void
-     */
-    protected function add_subplugin_structure($subplugintype, $element, $multiple) {
-
-        global $CFG;
-
-        // Check the requested subplugintype is a valid one
-        $subpluginsfile = $CFG->dirroot . '/mod/' . $this->task->get_modulename() . '/db/subplugins.php';
-        if (!file_exists($subpluginsfile)) {
-             throw new backup_step_exception('activity_missing_subplugins_php_file', $this->task->get_modulename());
-        }
-        include($subpluginsfile);
-        if (!array_key_exists($subplugintype, $subplugins)) {
-             throw new backup_step_exception('incorrect_subplugin_type', $subplugintype);
-        }
-
-        // Arrived here, subplugin is correct, let's create the optigroup
-        $optigroupname = $subplugintype . '_' . $element->get_name() . '_subplugin';
-        $optigroup = new backup_optigroup($optigroupname, null, $multiple);
-        $element->add_child($optigroup); // Add optigroup to stay connected since beginning
-
-        // Get all the optigroup_elements, looking across all the subplugin dirs
-        $subpluginsdirs = core_component::get_plugin_list($subplugintype);
-        foreach ($subpluginsdirs as $name => $subpluginsdir) {
-            $classname = 'backup_' . $subplugintype . '_' . $name . '_subplugin';
-            $backupfile = $subpluginsdir . '/backup/moodle2/' . $classname . '.class.php';
-            if (file_exists($backupfile)) {
-                require_once($backupfile);
-                $backupsubplugin = new $classname($subplugintype, $name, $optigroup, $this);
-                // Add subplugin returned structure to optigroup
-                $backupsubplugin->define_subplugin_structure($element->get_name());
-            }
-        }
-    }
-
-    /**
-     * As far as activity backup steps are implementing backup_subplugin stuff, they need to
-     * have the parent task available for wrapping purposes (get course/context....)
-     *
-     * @return backup_activity_task
-     */
-    public function get_task() {
-        return $this->task;
-    }
 
     /**
      * Wraps any activity backup structure within the common 'activity' element

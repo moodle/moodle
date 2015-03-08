@@ -61,6 +61,9 @@ class mock_backup_step extends backup_step {
  */
 class mock_backup_task_basepath extends backup_task {
 
+    /** @var string name of the mod plugin (activity) being used in the tests */
+    private $modulename;
+
     public function build() {
         // Nothing to do
     }
@@ -73,6 +76,14 @@ class mock_backup_task_basepath extends backup_task {
         global $CFG;
         return $CFG->tempdir . '/test';
     }
+
+    public function set_modulename($modulename) {
+        $this->modulename = $modulename;
+    }
+
+    public function get_modulename() {
+        return $this->modulename;
+    }
 }
 
 /**
@@ -80,7 +91,7 @@ class mock_backup_task_basepath extends backup_task {
  */
 class mock_backup_structure_step extends backup_structure_step {
 
-    protected function define_structure() {
+    public function define_structure() {
 
         // Create really simple structure (1 nested with 1 attr and 2 fields)
         $test = new backup_nested_element('test',
@@ -90,6 +101,14 @@ class mock_backup_structure_step extends backup_structure_step {
         $test->set_source_array(array(array('id' => 1, 'field1' => 'value1', 'field2' => 'value2')));
 
         return $test;
+    }
+
+    public function add_plugin_structure($plugintype, $element, $multiple) {
+        parent::add_plugin_structure($plugintype, $element, $multiple);
+    }
+
+    public function add_subplugin_structure($subplugintype, $element, $multiple, $plugintype = null, $pluginname = null) {
+        parent::add_subplugin_structure($subplugintype, $element, $multiple, $plugintype, $pluginname);
     }
 }
 

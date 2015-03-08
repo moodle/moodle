@@ -134,6 +134,117 @@ class backup_step_testcase extends advanced_testcase {
         @remove_dir(dirname($file));
     }
 
+
+    /**
+     * Verify the add_plugin_structure() backup method behavior and created structures.
+     */
+    public function test_backup_structure_step_add_plugin_structure() {
+        // Create mocked task, step and element.
+        $bt = new mock_backup_task_basepath('taskname');
+        $bs = new mock_backup_structure_step('steptest', null, $bt);
+        $el = new backup_nested_element('question', array('id'), array('one', 'two', 'qtype'));
+        // Wrong plugintype.
+        try {
+            $bs->add_plugin_structure('fakeplugin', $el, true);
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof backup_step_exception);
+            $this->assertEquals('incorrect_plugin_type', $e->errorcode);
+        }
+        // Correct plugintype qtype call (@ 'question' level).
+        $bs->add_plugin_structure('qtype', $el, false);
+        $ch = $el->get_children();
+        $this->assertEquals(1, count($ch));
+        $og = reset($ch);
+        $this->assertTrue($og instanceof backup_optigroup);
+        $ch = $og->get_children();
+        $this->assertTrue(array_key_exists('optigroup_qtype_calculatedsimple_question', $ch));
+        $this->assertTrue($ch['optigroup_qtype_calculatedsimple_question'] instanceof backup_plugin_element);
+    }
+
+    /**
+     * Verify the add_subplugin_structure() backup method behavior and created structures.
+     */
+    public function test_backup_structure_step_add_subplugin_structure() {
+        // Create mocked task, step and element.
+        $bt = new mock_backup_task_basepath('taskname');
+        $bs = new mock_backup_structure_step('steptest', null, $bt);
+        $el = new backup_nested_element('workshop', array('id'), array('one', 'two', 'qtype'));
+        // Wrong plugin type.
+        try {
+            $bs->add_subplugin_structure('fakesubplugin', $el, true, 'fakeplugintype', 'fakepluginname');
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof backup_step_exception);
+            $this->assertEquals('incorrect_plugin_type', $e->errorcode);
+        }
+        // Wrong plugin type.
+        try {
+            $bs->add_subplugin_structure('fakesubplugin', $el, true, 'mod', 'fakepluginname');
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof backup_step_exception);
+            $this->assertEquals('incorrect_plugin_name', $e->errorcode);
+        }
+        // Wrong plugin not having subplugins.
+        try {
+            $bs->add_subplugin_structure('fakesubplugin', $el, true, 'mod', 'page');
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof backup_step_exception);
+            $this->assertEquals('plugin_missing_subplugins_php_file', $e->errorcode);
+        }
+        // Wrong BC (defaulting to mod and modulename) use not having subplugins.
+        try {
+            $bt->set_modulename('page');
+            $bs->add_subplugin_structure('fakesubplugin', $el, true);
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof backup_step_exception);
+            $this->assertEquals('plugin_missing_subplugins_php_file', $e->errorcode);
+        }
+        // Wrong subplugin type.
+        try {
+            $bs->add_subplugin_structure('fakesubplugin', $el, true, 'mod', 'workshop');
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof backup_step_exception);
+            $this->assertEquals('incorrect_subplugin_type', $e->errorcode);
+        }
+        // Wrong BC subplugin type.
+        try {
+            $bt->set_modulename('workshop');
+            $bs->add_subplugin_structure('fakesubplugin', $el, true);
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof backup_step_exception);
+            $this->assertEquals('incorrect_subplugin_type', $e->errorcode);
+        }
+        // Correct call to workshopform subplugin (@ 'workshop' level).
+        $bs->add_subplugin_structure('workshopform', $el, true, 'mod', 'workshop');
+        $ch = $el->get_children();
+        $this->assertEquals(1, count($ch));
+        $og = reset($ch);
+        $this->assertTrue($og instanceof backup_optigroup);
+        $ch = $og->get_children();
+        $this->assertTrue(array_key_exists('optigroup_workshopform_accumulative_workshop', $ch));
+        $this->assertTrue($ch['optigroup_workshopform_accumulative_workshop'] instanceof backup_subplugin_element);
+
+        // Correct BC call to workshopform subplugin (@ 'assessment' level).
+        $el = new backup_nested_element('assessment', array('id'), array('one', 'two', 'qtype'));
+        $bt->set_modulename('workshop');
+        $bs->add_subplugin_structure('workshopform', $el, true);
+        $ch = $el->get_children();
+        $this->assertEquals(1, count($ch));
+        $og = reset($ch);
+        $this->assertTrue($og instanceof backup_optigroup);
+        $ch = $og->get_children();
+        $this->assertTrue(array_key_exists('optigroup_workshopform_accumulative_assessment', $ch));
+        $this->assertTrue($ch['optigroup_workshopform_accumulative_assessment'] instanceof backup_subplugin_element);
+
+        // TODO: Add some test covering a non-mod subplugin once we have some implemented in core.
+    }
+
     /**
      * wrong base_step class tests
      */
