@@ -340,7 +340,7 @@ if (empty($charttype)) {
         } else {
             if (empty($idlist['0'])) {
                 if ($courseid == 1) {
-                    $coursedataobj = iomad::get_all_user_course_completion_data($searchinfo, $page, $perpage, $completiontype);
+                    $coursedataobj = iomad::get_all_user_course_completion_data($searchinfo);
                 } else {
                     $coursedataobj = iomad::get_user_course_completion_data($searchinfo, $courseid);
                 }
@@ -398,10 +398,15 @@ if (empty($charttype)) {
     
         // Set up the course worksheet.
         if (!empty($dodownload)) {
-    
-            echo $courseinfo[$courseid]->coursename."\n";
+   
+            if ($courseid == 1) {
+                echo get_string('allusers', 'local_report_completion')."\n";
+            } else {
+                echo $courseinfo[$courseid]->coursename."\n";
+            }
             echo '"'.get_string('name', 'local_report_completion').'","'
                  .get_string('email', 'local_report_completion').'","'
+                 .get_string('course').'","'
                  .get_string('department', 'block_iomad_company_admin').'","'
                  .get_string('status', 'local_report_completion').'","'
                  .get_string('timeenrolled', 'local_report_completion').'","'
@@ -630,6 +635,7 @@ if (empty($charttype)) {
                 if (!empty($dodownload)) {
                     echo '"'.$user->fullname.
                          '","'.$user->email.
+                         '","'.$user->coursename.
                          '","'.$user->department.
                          '","'.$statusstring.
                          '","'.$enrolledtime.

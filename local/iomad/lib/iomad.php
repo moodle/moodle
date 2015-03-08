@@ -851,19 +851,6 @@ class iomad {
     }
 
 
-    public static function all_completion_users($searchinfo, $courseinfo, $completiontype=0) {
-        $results = array();
-        foreach ($courseinfo as $id => $course) {
-            $cd = self::get_user_course_completion_data($searchinfo, $id, 0, 0, $completiontype);
-            $results = array_merge($results, $cd->users);
-        }
-
-        $returnobj = new stdclass();
-        $returnobj->users = $results;
-        $returnobj->totalcount = count($results);
-        return $returnobj;
-    }
-
     public static function get_companies_listing($sort='name', $dir='ASC', $page=0, $recordsperpage=0,
                            $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams = null) {
         global $DB;
