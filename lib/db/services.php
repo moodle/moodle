@@ -660,6 +660,15 @@ $functions = array(
         'capabilities'=> 'moodle/course:update,moodle/course:changecategory,moodle/course:changefullname,moodle/course:changeshortname,moodle/course:changeidnumber,moodle/course:changesummary,moodle/course:visibility',
     ),
 
+    'core_course_view_course' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'view_course',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Log that the course was viewed',
+        'type'        => 'write'
+    ),
+
+
     // === course category related functions ===
 
     'core_course_get_categories' => array(
@@ -1023,7 +1032,8 @@ $services = array(
             'core_user_remove_user_device',
             'core_course_get_courses',
             'core_completion_update_activity_completion_status_manually',
-            'mod_data_get_databases_by_courses'
+            'mod_data_get_databases_by_courses',
+            'core_course_view_course',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
