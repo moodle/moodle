@@ -47,6 +47,9 @@ class repository_s3_generator extends testing_repository_generator {
         if (!isset($record['secret_key'])) {
             $record['secret_key'] = 'secret_key';
         }
+        if (!isset($record['endpoint'])) {
+            $record['endpoint'] = 'endpoint';
+        }
         return $record;
     }
 
