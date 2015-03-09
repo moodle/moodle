@@ -448,10 +448,11 @@ class behat_general extends behat_base {
 
         try {
             $this->should_be_visible($element, $selectortype);
-            throw new ExpectationException('"' . $element . '" "' . $selectortype . '" is visible', $this->getSession());
         } catch (ExpectationException $e) {
             // All as expected.
+            return;
         }
+        throw new ExpectationException('"' . $element . '" "' . $selectortype . '" is visible', $this->getSession());
     }
 
     /**
@@ -501,13 +502,14 @@ class behat_general extends behat_base {
 
         try {
             $this->in_the_should_be_visible($element, $selectortype, $nodeelement, $nodeselectortype);
-            throw new ExpectationException(
-                '"' . $element . '" "' . $selectortype . '" in the "' . $nodeelement . '" "' . $nodeselectortype . '" is visible',
-                $this->getSession()
-            );
         } catch (ExpectationException $e) {
             // All as expected.
+            return;
         }
+        throw new ExpectationException(
+            '"' . $element . '" "' . $selectortype . '" in the "' . $nodeelement . '" "' . $nodeselectortype . '" is visible',
+            $this->getSession()
+        );
     }
 
     /**
@@ -898,12 +900,13 @@ class behat_general extends behat_base {
                 $exception,
                 false
             );
-
-            throw new ExpectationException('The "' . $element . '" "' . $selectortype . '" exists in the current page', $this->getSession());
         } catch (ElementNotFoundException $e) {
             // It passes.
             return;
         }
+
+        throw new ExpectationException('The "' . $element . '" "' . $selectortype .
+                '" exists in the current page', $this->getSession());
     }
 
     /**
@@ -968,12 +971,12 @@ class behat_general extends behat_base {
             // but we would need to duplicate the whole find_all() logic to do it, the benefit of
             // changing to 1 second sleep is not significant.
             $this->find($selector, $locator, false, $containernode, self::REDUCED_TIMEOUT);
-            throw new ExpectationException('The "' . $element . '" "' . $selectortype . '" exists in the "' .
-                $containerelement . '" "' . $containerselectortype . '"', $this->getSession());
         } catch (ElementNotFoundException $e) {
             // It passes.
             return;
         }
+        throw new ExpectationException('The "' . $element . '" "' . $selectortype . '" exists in the "' .
+                $containerelement . '" "' . $containerselectortype . '"', $this->getSession());
     }
 
     /**
@@ -1106,15 +1109,15 @@ class behat_general extends behat_base {
     public function row_column_of_table_should_not_contain($row, $column, $table, $value) {
         try {
             $this->row_column_of_table_should_contain($row, $column, $table, $value);
-            // Throw exception if found.
-            throw new ExpectationException(
-                '"' . $column . '" with value "' . $value . '" is present in "' . $row . '"  row for table "' . $table . '"',
-                $this->getSession()
-            );
         } catch (ElementNotFoundException $e) {
             // Table row/column doesn't contain this value. Nothing to do.
             return;
         }
+        // Throw exception if found.
+        throw new ExpectationException(
+            '"' . $column . '" with value "' . $value . '" is present in "' . $row . '"  row for table "' . $table . '"',
+            $this->getSession()
+        );
     }
 
     /**
@@ -1167,13 +1170,13 @@ class behat_general extends behat_base {
                 try {
                     $this->row_column_of_table_should_contain($row, $column, $table, $value);
                     // Throw exception if found.
-                    throw new ExpectationException('"' . $column . '" with value "' . $value . '" is present in "' .
-                        $row . '"  row for table "' . $table . '"', $this->getSession()
-                    );
                 } catch (ElementNotFoundException $e) {
                     // Table row/column doesn't contain this value. Nothing to do.
                     continue;
                 }
+                throw new ExpectationException('"' . $column . '" with value "' . $value . '" is present in "' .
+                    $row . '"  row for table "' . $table . '"', $this->getSession()
+                );
             }
         }
     }
