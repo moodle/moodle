@@ -957,6 +957,14 @@ $functions = array(
         'description' => 'Load a template for a renderable',
         'type'        => 'read'
     ),
+
+    // Completion related functions.
+    'core_completion_update_activity_completion_status_manually' => array(
+        'classname'   => 'core_completion_external',
+        'methodname'  => 'update_activity_completion_status_manually',
+        'description' => 'Update completion status for the current user in an activity, only for activities with manual tracking.',
+        'type'        => 'write',
+    ),
 );
 
 $services = array(
@@ -1013,7 +1021,8 @@ $services = array(
             'gradereport_user_get_grades_table',
             'core_group_get_course_user_groups',
             'core_user_remove_user_device',
-            'core_course_get_courses'
+            'core_course_get_courses',
+            'core_completion_update_activity_completion_status_manually',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
