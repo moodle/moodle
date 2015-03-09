@@ -99,6 +99,15 @@ $functions = array(
         'type'        => 'read',
         'capabilities'=> 'moodle/cohort:view',
     ),
+    
+    'core_completion_get_activities_completion_status' => array(
+        'classname'   => 'core_completion_external',
+        'methodname'  => 'get_activities_completion_status',
+        'description' => 'Return the activities completion status for a user in a course.',
+        'type'        => 'read',
+        'capabilities'=> 'moodle/progress:view',
+    ),
+    
     // Grade related functions.
 
     'core_grades_get_grades' => array(
