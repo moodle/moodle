@@ -592,6 +592,21 @@ class question_display_options {
     public $history = self::HIDDEN;
 
     /**
+     * @since 2.9
+     * @var string extra HTML to include in the info box of the question display.
+     * This is normally shown after the information about the question, and before
+     * any controls like the flag or the edit icon.
+     */
+    public $extrainfocontent = '';
+
+    /**
+     * @since 2.9
+     * @var string extra HTML to include in the history box of the question display,
+     * if it is shown.
+     */
+    public $extrahistorycontent = '';
+
+    /**
      * If not empty, then a link to edit the question will be included in
      * the info box for the question.
      *

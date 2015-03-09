@@ -125,12 +125,6 @@ if ($attemptobj->get_currentpage() != $page) {
     $DB->set_field('quiz_attempts', 'currentpage', $page, array('id' => $attemptid));
 }
 
-// Process replace question action, when user press on 'Replace question' link.
-$replacequestioninslot = optional_param('replacequestioninslot', 0, PARAM_INT);
-if ($replacequestioninslot) {
-    $attemptobj->process_replace_question_actions($replacequestioninslot, time());
-}
-
 // Initialise the JavaScript.
 $headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_get_js_module());

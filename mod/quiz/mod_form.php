@@ -205,17 +205,16 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addHelpButton('preferredbehaviour', 'howquestionsbehave', 'question');
         $mform->setDefault('preferredbehaviour', $quizconfig->preferredbehaviour);
 
-        // TODO: Store the 'reattemptgradedquestions' field when new DB structure in place.
-        $mform->addElement('selectyesno', 'reattemptgradedquestions', get_string('restartgradedquestions', 'quiz'));
-        $mform->addHelpButton('reattemptgradedquestions', 'restartgradedquestions', 'quiz');
-        $mform->setAdvanced('reattemptgradedquestions', $quizconfig->reattemptgradedquestions_adv);
-        $mform->setDefault('reattemptgradedquestions', $quizconfig->reattemptgradedquestions);
+        // Can redo completed questions.
+        $redochoices = array(0 => get_string('no'), 1 => get_string('canredoquestionsyes', 'quiz'));
+        $mform->addElement('select', 'canredoquestions', get_string('canredoquestions', 'quiz'), $redochoices);
+        $mform->addHelpButton('canredoquestions', 'canredoquestions', 'quiz');
+        $mform->setAdvanced('canredoquestions', $quizconfig->canredoquestions_adv);
+        $mform->setDefault('canredoquestions', $quizconfig->canredoquestions);
         foreach ($behaviours as $behaviour => $notused) {
-            $qbt = question_engine::get_behaviour_type($behaviour);
-            if (!$qbt->user_can_reattempt_graded_question()) {
-                $mform->disabledIf('reattemptgradedquestions', 'preferredbehaviour', 'eq', $behaviour);
+            if (!question_engine::can_questions_finish_during_the_attempt($behaviour)) {
+                $mform->disabledIf('canredoquestions', 'preferredbehaviour', 'eq', $behaviour);
             }
-
         }
 
         // Each attempt builds on last.

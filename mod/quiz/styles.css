@@ -24,8 +24,12 @@
     text-align: right;
 }
 
-#page-mod-quiz-attempt .resatrt-question-btn {
-    font-size: 0.75em;
+.path-mod-quiz .mod_quiz-redo_question_button {
+    margin: 0;
+}
+.path-mod-quiz input[type="submit"].mod_quiz-redo_question_button {
+    padding: 2px 0.8em;
+    font-size: 1em;
 }
 
 #page-mod-quiz-attempt .mod_quiz-blocked_question_warning .que .formulation,

@@ -822,9 +822,9 @@ function xmldb_quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2015030900) {
-        // Define field reattemptgradedquestions to be added to quiz.
+        // Define field canredoquestions to be added to quiz.
         $table = new xmldb_table('quiz');
-        $field = new xmldb_field('reattemptgradedquestions', XMLDB_TYPE_INTEGER, '4', null, null, null, 0, 'completionpass');
+        $field = new xmldb_field('canredoquestions', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, 0, 'preferredbehaviour');
 
         // Conditionally launch add field completionpass.
         if (!$dbman->field_exists($table, $field)) {

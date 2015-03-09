@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qbehaviour_informationitem_renderer extends qbehaviour_renderer {
     public function controls(question_attempt $qa, question_display_options $options) {
-        if ($qa->get_state() != question_state::$todo) {
+        if ($options->readonly || $qa->get_state() != question_state::$todo) {
             return '';
         }
 

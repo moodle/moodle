@@ -29,6 +29,11 @@ This files describes API changes for the core question engine.
 
    To see examples of where these are used, look at the chagnes from MDL-40992.
 
+2) New fields in question_display_options, ->extrainfocontent and ->extrahistorycontent.
+   These default to blank, but can be used to inject extra content into those parts
+   of the question display. If you have overridden the methods in
+   core_question_renderer that use these fields, you may need to update your renderer.
+
 
 === 2.6 ===
 
