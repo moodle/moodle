@@ -51,6 +51,10 @@ class qbehaviour_deferredfeedback_type_test extends qbehaviour_walkthrough_test_
         $this->assertTrue($this->behaviourtype->is_archetypal());
     }
 
+    public function test_can_questions_finish_during_the_attempt() {
+        $this->assertFalse($this->behaviourtype->can_questions_finish_during_the_attempt());
+    }
+
     public function test_get_unused_display_options() {
         $this->assertEquals(array('correctness', 'marks', 'specificfeedback', 'generalfeedback', 'rightanswer'),
                 $this->behaviourtype->get_unused_display_options());

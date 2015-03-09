@@ -2,10 +2,16 @@ This files describes API changes for question behaviour plugins.
 
 === 2.9 ===
 
-1) New method question_behaviour::can_finish_during_attempt. This returns false
-   by default. You should override it if, with your behaviour, questions may
+1) There are new methods question_behaviour::can_finish_during_attempt and
+   question_behaviour_type::can_finish_during_attempt. These methods both return
+   false by default. You should override it if, with your behaviour, questions may
    finish just through the student interacting with them (e.g. by clicking the
-   Check button within the question.)
+   Check button within the question).
+
+   The behaviour type method answers the the question for this behaviour in
+   general, without reference to a specific question. The method on the
+   behaviour class answers the question for a specific attempt at a specific
+   question.
 
 
 === 2.7 ===

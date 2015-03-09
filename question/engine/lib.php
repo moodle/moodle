@@ -201,6 +201,16 @@ abstract class question_engine {
     }
 
     /**
+     * With this behaviour, is it possible that a question might finish as the student
+     * interacts with it, without a call to the {@link question_attempt::finish()} method?
+     * @param string $behaviour the name of a behaviour. E.g. 'deferredfeedback'.
+     * @return bool whether with this behaviour, questions may finish naturally.
+     */
+    public static function can_questions_finish_during_the_attempt($behaviour) {
+        return self::get_behaviour_type($behaviour)->can_questions_finish_during_the_attempt();
+    }
+
+    /**
      * Create a behaviour for a particular type. If that type cannot be
      * found, return an instance of qbehaviour_missing.
      *
