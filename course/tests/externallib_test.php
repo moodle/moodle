@@ -1386,4 +1386,39 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // Import from course1 to course2, with invalid option
         core_course_external::import_course($course1->id, $course2->id, -1);;
     }
+
+    /**
+     * Test view_course function
+     */
+    public function test_view_course() {
+
+        $this->resetAfterTest();
+
+        // Course without sections.
+        $course = $this->getDataGenerator()->create_course(array('numsections' => 5), array('createsections' => true));
+        $this->setAdminUser();
+
+        // Redirect events to the sink, so we can recover them later.
+        $sink = $this->redirectEvents();
+
+        core_course_external::view_course($course->id, 1);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check the event details are correct.
+        $this->assertInstanceOf('\core\event\course_viewed', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals(1, $event->other['coursesectionnumber']);
+
+        core_course_external::view_course($course->id);
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+
+        // Check the event details are correct.
+        $this->assertInstanceOf('\core\event\course_viewed', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEmpty($event->other);
+
+    }
 }
