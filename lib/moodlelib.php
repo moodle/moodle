@@ -3143,6 +3143,15 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         }
     }
 
+    // Set the global $COURSE.
+    // TODO MDL-49434: setting current course/cm should be after the check $cm->uservisible .
+    if ($cm) {
+        $PAGE->set_cm($cm, $course);
+        $PAGE->set_pagelayout('incourse');
+    } else if (!empty($courseorid)) {
+        $PAGE->set_course($course);
+    }
+
     // Check visibility of activity to current user; includes visible flag, conditional availability, etc.
     if ($cm && !$cm->uservisible) {
         if ($preventredirect) {
@@ -3154,14 +3163,6 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             $url = new moodle_url('/');
         }
         redirect($url, get_string('activityiscurrentlyhidden'));
-    }
-
-    // Set the global $COURSE.
-    if ($cm) {
-        $PAGE->set_cm($cm, $course);
-        $PAGE->set_pagelayout('incourse');
-    } else if (!empty($courseorid)) {
-        $PAGE->set_course($course);
     }
 
     // Finally access granted, update lastaccess times.
