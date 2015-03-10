@@ -28,7 +28,7 @@ require_once("lib.php");
 
 $contextid  = required_param('contextid', PARAM_INT);
 $component  = required_param('component', PARAM_COMPONENT);
-$ratingarea = optional_param('ratingarea', null, PARAM_AREA);
+$ratingarea = required_param('ratingarea', PARAM_AREA);
 $itemid     = required_param('itemid', PARAM_INT);
 $scaleid    = required_param('scaleid', PARAM_INT);
 $sort       = optional_param('sort', '', PARAM_ALPHA);
@@ -39,11 +39,9 @@ require_login($course, false, $cm);
 
 $url = new moodle_url('/rating/index.php', array('contextid' => $contextid,
                                                  'component' => $component,
+                                                 'ratingarea' => $ratingarea,
                                                  'itemid' => $itemid,
                                                  'scaleid' => $scaleid));
-if (!empty($ratingarea)) {
-    $url->param('ratingarea', $ratingarea);
-}
 if (!empty($sort)) {
     $url->param('sort', $sort);
 }
