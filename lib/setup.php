@@ -678,11 +678,6 @@ if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {
     }
 }
 
-// Turn on SQL logging if required
-if (!empty($CFG->logsql)) {
-    $DB->set_logging(true);
-}
-
 // enable circular reference collector in PHP 5.3,
 // it helps a lot when using large complex OOP structures such as in amos or gradebook
 if (function_exists('gc_enable')) {
