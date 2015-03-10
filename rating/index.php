@@ -60,9 +60,8 @@ if ($popup) {
 if (!has_capability('moodle/rating:view', $context)) {
     print_error('noviewrate', 'rating');
 }
-if (!has_capability('moodle/rating:viewall', $context) and $USER->id != $item->userid) {
-    print_error('noviewanyrate', 'rating');
-}
+
+$canviewallratings = has_capability('moodle/rating:viewall', $context);
 
 switch ($sort) {
     case 'firstname':
@@ -119,6 +118,10 @@ if (!$ratings) {
     $maxrating = max(array_keys($scalemenu));
 
     foreach ($ratings as $rating) {
+        if (!$canviewallratings and $USER->id != $rating->userid) {
+            continue;
+        }
+
         // Undo the aliasing of the user id column from user_picture::fields().
         // We could clone the rating object or preserve the rating id if we needed it again
         // but we don't.
