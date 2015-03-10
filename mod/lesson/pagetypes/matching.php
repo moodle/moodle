@@ -496,6 +496,9 @@ class lesson_display_answer_form_matching extends moodleform {
         $lessonid = $this->_customdata['lessonid'];
         $contents = $this->_customdata['contents'];
 
+        // Disable shortforms.
+        $mform->setDisableShortforms();
+
         $mform->addElement('header', 'pageheader');
 
         $mform->addElement('html', $OUTPUT->container($contents, 'contents'));
