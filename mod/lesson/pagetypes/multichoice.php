@@ -476,6 +476,9 @@ class lesson_display_answer_form_multichoice_singleanswer extends moodleform {
             $attempt->answerid = null;
         }
 
+        // Disable shortforms.
+        $mform->setDisableShortforms();
+
         $mform->addElement('header', 'pageheader');
 
         $mform->addElement('html', $OUTPUT->container($contents, 'contents'));
@@ -528,6 +531,9 @@ class lesson_display_answer_form_multichoice_multianswer extends moodleform {
 
         $lessonid = $this->_customdata['lessonid'];
         $contents = $this->_customdata['contents'];
+
+        // Disable shortforms.
+        $mform->setDisableShortforms();
 
         $mform->addElement('header', 'pageheader');
 
