@@ -50,7 +50,7 @@ class backup_data_activity_structure_step extends backup_activity_structure_step
         $fields = new backup_nested_element('fields');
 
         $field = new backup_nested_element('field', array('id'), array(
-            'type', 'name', 'description', 'param1', 'param2',
+            'type', 'name', 'description', 'required', 'param1', 'param2',
             'param3', 'param4', 'param5', 'param6',
             'param7', 'param8', 'param9', 'param10'));
 
