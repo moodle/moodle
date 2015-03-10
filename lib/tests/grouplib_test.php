@@ -838,4 +838,73 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertCount(0, $usergroups1[0]);
         $this->assertCount(0, $usergroups2[0]);
     }
+
+    /**
+     * Create dummy groups array for use in menu tests
+     * @param int $number
+     * @return array
+     */
+    protected function make_group_list($number) {
+        $testgroups = array();
+        for ($a = 0; $a < $number; $a++) {
+            $grp = new stdClass();
+            $grp->id = 100 + $a;
+            $grp->name = 'test group ' . $grp->id;
+            $testgroups[$grp->id] = $grp;
+        }
+        return $testgroups;
+    }
+
+    public function test_groups_sort_menu_options_empty() {
+        $this->assertEquals(array(), groups_sort_menu_options(array(), array()));
+    }
+
+    public function test_groups_sort_menu_options_allowed_goups_only() {
+        $this->assertEquals(array(
+            100 => 'test group 100',
+            101 => 'test group 101',
+        ), groups_sort_menu_options($this->make_group_list(2), array()));
+    }
+
+    public function test_groups_sort_menu_options_user_goups_only() {
+        $this->assertEquals(array(
+            100 => 'test group 100',
+            101 => 'test group 101',
+        ), groups_sort_menu_options(array(), $this->make_group_list(2)));
+    }
+
+    public function test_groups_sort_menu_options_user_both() {
+        $this->assertEquals(array(
+            1 => array(get_string('mygroups', 'group') => array(
+                100 => 'test group 100',
+                101 => 'test group 101',
+            )),
+            2 => array(get_string('othergroups', 'group') => array(
+                102 => 'test group 102',
+                103 => 'test group 103',
+            )),
+        ), groups_sort_menu_options($this->make_group_list(4), $this->make_group_list(2)));
+    }
+
+    public function test_groups_sort_menu_options_user_both_many_groups() {
+        $this->assertEquals(array(
+            1 => array(get_string('mygroups', 'group') => array(
+                100 => 'test group 100',
+                101 => 'test group 101',
+            )),
+            2 => array (get_string('othergroups', 'group') => array(
+                102 => 'test group 102',
+                103 => 'test group 103',
+                104 => 'test group 104',
+                105 => 'test group 105',
+                106 => 'test group 106',
+                107 => 'test group 107',
+                108 => 'test group 108',
+                109 => 'test group 109',
+                110 => 'test group 110',
+                111 => 'test group 111',
+                112 => 'test group 112',
+            )),
+        ), groups_sort_menu_options($this->make_group_list(13), $this->make_group_list(2)));
+    }
 }
