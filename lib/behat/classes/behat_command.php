@@ -50,6 +50,11 @@ class behat_command {
     public static function get_behat_dir($runprocess = 0) {
         global $CFG;
 
+	// If not set then return empty string.
+	if (!isset($CFG->behat_dataroot)) {
+            return "";
+	}
+
         if (empty($runprocess)) {
             $behatdir = $CFG->behat_dataroot . '/behat';
         } else if (isset($CFG->behat_parallel_run[$runprocess - 1]['behat_dataroot'])) {
