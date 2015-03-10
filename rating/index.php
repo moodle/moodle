@@ -29,7 +29,7 @@ require_once("lib.php");
 
 $contextid  = required_param('contextid', PARAM_INT);
 $component  = required_param('component', PARAM_COMPONENT);
-$ratingarea = optional_param('ratingarea', null, PARAM_AREA);
+$ratingarea = required_param('ratingarea', PARAM_AREA);
 $itemid     = required_param('itemid', PARAM_INT);
 $scaleid    = required_param('scaleid', PARAM_INT);
 $sort       = optional_param('sort', '', PARAM_ALPHA);
@@ -38,10 +38,12 @@ $popup      = optional_param('popup', 0, PARAM_INT); //==1 if in a popup window?
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
 
-$url = new moodle_url('/rating/index.php', array('contextid'=>$contextid,'component'=>$component,'itemid'=>$itemid,'scaleid'=>$scaleid));
-if (!empty($ratingarea)) {
-    $url->param('ratingarea', $ratingarea);
-}
+$url = new moodle_url('/rating/index.php', array('contextid' => $contextid,
+                                                 'component' => $component,
+                                                 'ratingarea' => $ratingarea,
+                                                 'itemid' => $itemid,
+                                                 'scaleid' => $scaleid));
+
 if (!empty($sort)) {
     $url->param('sort', $sort);
 }
