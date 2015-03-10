@@ -33,6 +33,8 @@ list($options, $unrecognized) = cli_get_params(
     array(
         'help' => false,
         'shortname' => false,
+        'fullname' => false,
+        'summary' => false,
         'size' => false,
         'fixeddataset' => false,
         'filesizelimit' => false,
@@ -54,6 +56,8 @@ level.
 
 Options:
 --shortname      Shortname of course to create (required)
+--fullname       Fullname of course to create (optional)
+--summary        Course summary, in double quotes (optional)
 --size           Size of course to create XS, S, M, L, XL, or XXL (required)
 --fixeddataset   Use a fixed data set instead of randomly generated data
 --filesizelimit  Limits the size of the generated files to the specified bytes
@@ -76,6 +80,8 @@ if (empty($options['bypasscheck']) && !debugging('', DEBUG_DEVELOPER)) {
 
 // Get options.
 $shortname = $options['shortname'];
+$fullname = $options['fullname'];
+$summary = $options['summary'];
 $sizename = $options['size'];
 $fixeddataset = $options['fixeddataset'];
 $filesizelimit = $options['filesizelimit'];
@@ -96,5 +102,14 @@ if ($error = tool_generator_course_backend::check_shortname_available($shortname
 \core\session\manager::set_user(get_admin());
 
 // Do backend code to generate course.
-$backend = new tool_generator_course_backend($shortname, $size, $fixeddataset, $filesizelimit, empty($options['quiet']));
+$backend = new tool_generator_course_backend(
+    $shortname,
+    $size,
+    $fixeddataset,
+    $filesizelimit,
+    empty($options['quiet']),
+    $fullname,
+    $summary,
+    FORMAT_HTML
+);
 $id = $backend->make();
