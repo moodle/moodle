@@ -1014,6 +1014,8 @@ function grade_recover_history_grades($userid, $courseid) {
  * @return bool true if ok, array of errors if problems found. Grade item id => error message
  */
 function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null) {
+    // This may take a very long time.
+    \core_php_time_limit::raise();
 
     $course_item = grade_item::fetch_course_item($courseid);
 
