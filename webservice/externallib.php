@@ -160,6 +160,23 @@ class core_webservice_external extends external_api {
         // Mobile CSS theme and alternative login url.
         $siteinfo['mobilecssurl'] = $CFG->mobilecssurl;
 
+        // Retrieve some advanced features. Only enable/disable ones (bool).
+        $advancedfeatures = array("usecomments", "usetags", "enablenotes", "messaging", "enableblogs",
+                                    "enablecompletion", "enablebadges");
+        foreach ($advancedfeatures as $feature) {
+            if (isset($CFG->{$feature})) {
+                $siteinfo['advancedfeatures'][] = array(
+                    'name' => $feature,
+                    'value' => (int) $CFG->{$feature}
+                );
+            }
+        }
+        // Special case mnet_dispatcher_mode.
+        $siteinfo['advancedfeatures'][] = array(
+            'name' => 'mnet_dispatcher_mode',
+            'value' => ($CFG->mnet_dispatcher_mode == 'strict') ? 1 : 0
+        );
+
         return $siteinfo;
     }
 
@@ -200,7 +217,18 @@ class core_webservice_external extends external_api {
                                                        VALUE_OPTIONAL),
                 'release'  => new external_value(PARAM_TEXT, 'Moodle release number', VALUE_OPTIONAL),
                 'version'  => new external_value(PARAM_TEXT, 'Moodle version number', VALUE_OPTIONAL),
-                'mobilecssurl'  => new external_value(PARAM_URL, 'Mobile custom CSS theme', VALUE_OPTIONAL)
+                'mobilecssurl'  => new external_value(PARAM_URL, 'Mobile custom CSS theme', VALUE_OPTIONAL),
+                'advancedfeatures' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name'  => new external_value(PARAM_ALPHANUMEXT, 'feature name'),
+                            'value' => new external_value(PARAM_INT, 'feature value. Usually 1 means enabled.')
+                        ),
+                        'Advanced features availability'
+                    ),
+                    'Advanced features availability',
+                    VALUE_OPTIONAL
+                )
             )
         );
     }
