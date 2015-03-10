@@ -724,6 +724,50 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->behat_faildump_path = '/my/path/to/save/failure/dumps';
 //
+// You can specify db, selenium wd_host etc. for behat parallel run by setting following variable.
+// Example:
+//   $CFG->behat_parallel_run = array (
+//       array (
+//           'dbtype' => 'mysqli',
+//           'dblibrary' => 'native',
+//           'dbhost' => 'localhost',
+//           'dbname' => 'moodletest',
+//           'dbuser' => 'moodle',
+//           'dbpass' => 'moodle',
+//           'behat_prefix' => 'mdl_',
+//           'wd_host' => 'http://127.0.0.1:4444/wd/hub',
+//           'behat_wwwroot' => 'http://127.0.0.1/moodle',
+//           'behat_dataroot' => '/home/example/bht_moodledata'
+//       ),
+//   );
+//
+// To change name of behat parallel run site, define BEHAT_PARALLEL_SITE_NAME and parallel run sites will be suffixed
+// with this value
+// Example:
+//   define('BEHAT_PARALLEL_SITE_NAME', 'behatparallelsite');
+//
+// Command line output for parallel behat install is limited to 80 chars, if you are installing more then 4 sites and
+// want to expand output to more then 80 chars, then define BEHAT_MAX_CMD_LINE_OUTPUT
+// Example:
+//   define('BEHAT_MAX_CMD_LINE_OUTPUT', 120);
+//
+// Behat feature files will be distributed randomly between the processes by default. If you have timing file or want
+// to create timing file then define BEHAT_FEATURE_TIMING_FILE with path to timing file. It will be updated for each
+// run with latest time taken to execute feature.
+// Example:
+//   define('BEHAT_FEATURE_TIMING_FILE', '/PATH_TO_TIMING_FILE/timing.json');
+//
+// If you don't have timing file and want some stable distribution of features, then you can use step counts to
+// distribute the features. You can generate step file by executing php admin/tool/behat/cli/util.php --updatesteps
+// this will update step file which is defined by BEHAT_FEATURE_STEP_FILE.
+// Example:
+//   define('BEHAT_FEATURE_STEP_FILE', '/PATH_TO_FEATURE_STEP_COUNT_FILE/stepcount.json');
+//
+// Feature distribution for each process is displayed as histogram. you can disable it by setting
+// BEHAT_DISABLE_HISTOGRAM
+// Example:
+//   define('BEHAT_DISABLE_HISTOGRAM', true);
+//
 //=========================================================================
 // 12. DEVELOPER DATA GENERATOR
 //=========================================================================

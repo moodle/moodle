@@ -80,7 +80,13 @@ if (defined('BEHAT_SITE_RUNNING')) {
     // The behat is configured on this server, we need to find out if this is the behat test
     // site based on the URL used for access.
     require_once(__DIR__ . '/../lib/behat/lib.php');
+
+    // Update config variables for parallel behat runs.
+    behat_update_vars_for_process();
+
     if (behat_is_test_site()) {
+        clearstatcache();
+
         // Checking the integrity of the provided $CFG->behat_* vars and the
         // selected wwwroot to prevent conflicts with production and phpunit environments.
         behat_check_config_vars();
@@ -89,10 +95,11 @@ if (defined('BEHAT_SITE_RUNNING')) {
         if (!file_exists("$CFG->behat_dataroot/behattestdir.txt")) {
             if ($dh = opendir($CFG->behat_dataroot)) {
                 while (($file = readdir($dh)) !== false) {
-                    if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store') {
+                    if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store' or is_numeric($file)) {
                         continue;
                     }
-                    behat_error(BEHAT_EXITCODE_CONFIG, '$CFG->behat_dataroot directory is not empty, ensure this is the directory where you want to install behat test dataroot');
+                    behat_error(BEHAT_EXITCODE_CONFIG, "$CFG->behat_dataroot directory is not empty, ensure this is the " .
+                        "directory where you want to install behat test dataroot");
                 }
                 closedir($dh);
                 unset($dh);

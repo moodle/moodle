@@ -1365,7 +1365,7 @@ function make_writable_directory($dir, $exceptiononerror = true) {
     umask($CFG->umaskpermissions);
 
     if (!file_exists($dir)) {
-        if (!mkdir($dir, $CFG->directorypermissions, true)) {
+        if (!@mkdir($dir, $CFG->directorypermissions, true)) {
             clearstatcache();
             // There might be a race condition when creating directory.
             if (!is_dir($dir)) {
