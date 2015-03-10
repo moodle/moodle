@@ -50,7 +50,7 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         $this->assertEquals(array('logstore_legacy'), array_keys($stores));
         $store = $stores['logstore_legacy'];
         $this->assertInstanceOf('logstore_legacy\log\store', $store);
-        $this->assertInstanceOf('core\log\sql_select_reader', $store);
+        $this->assertInstanceOf('core\log\sql_reader', $store);
         $this->assertTrue($store->is_logging());
 
         $logs = $DB->get_records('log', array(), 'id ASC');

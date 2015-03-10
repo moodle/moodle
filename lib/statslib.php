@@ -949,7 +949,7 @@ function stats_get_start_from($str) {
             $stores = $manager->get_readers();
             $firstlog = false;
             foreach ($stores as $store) {
-                if ($store instanceof \core\log\sql_internal_reader) {
+                if ($store instanceof \core\log\sql_internal_table_reader) {
                     $logtable = $store->get_internal_log_table_name();
                     if (!$logtable) {
                         continue;
@@ -1767,7 +1767,7 @@ function stats_temp_table_fill($timestart, $timeend) {
     $manager = get_log_manager();
     $stores = $manager->get_readers();
     foreach ($stores as $store) {
-        if ($store instanceof \core\log\sql_internal_reader) {
+        if ($store instanceof \core\log\sql_internal_table_reader) {
             $logtable = $store->get_internal_log_table_name();
             if (!$logtable) {
                 continue;

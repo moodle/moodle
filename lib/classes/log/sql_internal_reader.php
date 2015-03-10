@@ -26,11 +26,20 @@ namespace core\log;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Sql internal reader.
+ *
+ * @deprecated since Moodle 2.9 MDL-48595 - please do not use this interface any more.
+ * @see        sql_reader
+ * @todo       MDL-49291 This will be deleted in Moodle 3.1.
+ * @package    core
+ * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 interface sql_internal_reader extends sql_select_reader {
 
     /**
-     * Returns name of the table or database view that
-     * holds the log data in standardised format.
+     * Returns name of the table or database view that holds the log data in standardised format.
      *
      * Note: this table must be used for reading only,
      * it is strongly recommended to use this in complex reports only.
