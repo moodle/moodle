@@ -80,6 +80,11 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
             $data->completiontimespent = 0;
         }
 
+        if (!isset($data->intro)) {
+            $data->intro = '';
+            $data->introformat = FORMAT_HTML;
+        }
+
         // Compatibility with old backups with maxtime and timed fields.
         if (!isset($data->timelimit)) {
             if (isset($data->timed) && isset($data->maxtime) && $data->timed) {
@@ -215,7 +220,8 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
                     'answerid' => $answer->id));
         }
 
-        // Add lesson mediafile, no need to match by itemname (just internally handled context)
+        // Add lesson files, no need to match by itemname (just internally handled context).
+        $this->add_related_files('mod_lesson', 'intro', null);
         $this->add_related_files('mod_lesson', 'mediafile', null);
         // Add lesson page files, by lesson_page itemname
         $this->add_related_files('mod_lesson', 'page_contents', 'lesson_page');
