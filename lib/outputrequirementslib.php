@@ -1526,6 +1526,7 @@ class page_requirements_manager {
 
         // Set the log level for the JS logging.
         $logconfig = new stdClass();
+        $logconfig->level = 'warn';
         if ($CFG->debugdeveloper) {
             $logconfig->level = 'trace';
         }
