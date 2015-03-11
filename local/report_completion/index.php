@@ -119,7 +119,7 @@ if ($comptoraw) {
 }
 
 // Url stuff.
-$url = new moodle_url('/local/report_completion/index.php', $params);
+$url = new moodle_url('/local/report_completion/index.php');
 $dashboardurl = new moodle_url('/local/iomad_dashboard/index.php');
 
 // Page stuff:.
@@ -158,6 +158,8 @@ $foundfields = $foundobj->foundfields;
 
 // Set the url.
 company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);
+
+$url = new moodle_url('/local/report_completion/index.php', $params);
 
 // Get the appropriate list of departments.
 $selectparams = $params;
