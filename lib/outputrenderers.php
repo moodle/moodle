@@ -3566,16 +3566,23 @@ EOD;
     public function body_css_classes(array $additionalclasses = array()) {
         // Add a class for each block region on the page.
         // We use the block manager here because the theme object makes get_string calls.
+        $usedregions = array();
         foreach ($this->page->blocks->get_regions() as $region) {
             $additionalclasses[] = 'has-region-'.$region;
             if ($this->page->blocks->region_has_content($region, $this)) {
                 $additionalclasses[] = 'used-region-'.$region;
+                $usedregions[] = $region;
             } else {
                 $additionalclasses[] = 'empty-region-'.$region;
             }
             if ($this->page->blocks->region_completely_docked($region, $this)) {
                 $additionalclasses[] = 'docked-region-'.$region;
             }
+        }
+        if (count($usedregions) === 1) {
+            // Add the -only class for the only used region.
+            $region = array_shift($usedregions);
+            $additionalclasses[] = $region . '-only';
         }
         foreach ($this->page->layout_options as $option => $value) {
             if ($value) {
