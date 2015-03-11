@@ -134,7 +134,9 @@ class tool_generator_course_backend extends tool_generator_backend {
 
         // Set parameters.
         $this->shortname = $shortname;
-        if (is_null($fullname)) {
+
+        // We can't allow fullname to be set to an empty string.
+        if (empty($fullname)) {
             $this->fullname = get_string(
                 'fullname',
                 'tool_generator',
@@ -145,6 +147,8 @@ class tool_generator_course_backend extends tool_generator_backend {
         } else {
             $this->fullname = $fullname;
         }
+
+        // Summary, on the other hand, should be empty-able.
         if (!is_null($summary)) {
             $this->summary = $summary;
             $this->summaryformat = $summaryformat;
