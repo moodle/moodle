@@ -1,4 +1,4 @@
-@core @core_calendar @arn
+@core @core_calendar
 Feature: Open calendar popup
   In order to view calendar information
   As a user
