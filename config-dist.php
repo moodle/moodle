@@ -173,6 +173,11 @@ $CFG->admin = 'admin';
 // and then restore on the target server.
 //    $CFG->forcedifferentsitecheckingusersonrestore = true;
 //
+// Force the backup system to continue to create backups in the legacy zip
+// format instead of the new tgz format. Does not affect restore, which
+// auto-detects the underlying file format.
+//    $CFG->usezipbackups = true;
+//
 // Prevent stats processing and hide the GUI
 //      $CFG->disablestatsprocessing = true;
 //

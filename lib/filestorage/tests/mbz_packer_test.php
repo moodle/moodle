@@ -40,8 +40,8 @@ class core_files_mbz_packer_testcase extends advanced_testcase {
         // Set up basic archive contents.
         $files = array('1.txt' => array('frog'));
 
-        // Create 2 archives (each with one file in) in default mode.
-        $CFG->enabletgzbackups = false;
+        // Create 2 archives (each with one file in) in zip mode.
+        $CFG->usezipbackups = true;
         $filefalse = $CFG->tempdir . '/false.mbz';
         $this->assertNotEmpty($packer->archive_to_pathname($files, $filefalse));
         $context = context_system::instance();
@@ -49,7 +49,7 @@ class core_files_mbz_packer_testcase extends advanced_testcase {
                 $files, $context->id, 'phpunit', 'data', 0, '/', 'false.mbz'));
 
         // Create 2 archives in tgz mode.
-        $CFG->enabletgzbackups = true;
+        $CFG->usezipbackups = false;
         $filetrue = $CFG->tempdir . '/true.mbz';
         $this->assertNotEmpty($packer->archive_to_pathname($files, $filetrue));
         $context = context_system::instance();
@@ -61,8 +61,6 @@ class core_files_mbz_packer_testcase extends advanced_testcase {
         $this->assertNotEquals($storagefalse->get_filesize(), $storagetrue->get_filesize());
 
         // Extract files into storage and into filesystem from both formats.
-        // (Note: the setting does not matter, but set to false just to check.)
-        $CFG->enabletgzbackups = false;
 
         // Extract to path (zip).
         $packer->extract_to_pathname($filefalse, $CFG->tempdir);

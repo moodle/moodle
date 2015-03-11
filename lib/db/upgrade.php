@@ -4216,5 +4216,12 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015030400.00);
     }
 
+    if ($oldversion < 2015031100.00) {
+        // Unset old config variable.
+        unset_config('enabletgzbackups');
+
+        upgrade_main_savepoint(true, 2015031100.00);
+    }
+
     return true;
 }
