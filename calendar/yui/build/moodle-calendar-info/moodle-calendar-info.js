@@ -26,7 +26,6 @@ YUI.add('moodle-calendar-info', function (Y, NAME) {
  */
 
 var ARIACONTROLS = 'aria-controls',
-    ARIALIVE = 'aria-live',
     BOUNDINGBOX = 'boundingBox',
     CALENDAREVENT = '[data-core_calendar-title]',
     CALENDARTABLE = 'calendartable',
@@ -109,18 +108,7 @@ Y.extend(Info, Y.Base, {
             });
 
             this._panel.get(BOUNDINGBOX)
-                .addClass('calendar-event-panel')
-                .setAttribute(ARIALIVE, 'off');
-
-            this._panel.on('visibleChange', function(e) {
-                // Assume showing.
-                var state = 'assertive';
-                if (e.prevVal && !e.newVal) {
-                    // Hiding.
-                    state = 'off';
-                }
-                this.get(BOUNDINGBOX).setAttribute(ARIALIVE, state);
-            });
+                .addClass('calendar-event-panel');
         }
 
         return this;
