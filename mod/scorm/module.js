@@ -298,9 +298,11 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
             }
 
             // Calculate the rough new height from the viewport height.
-            newheight = Y.one('body').get('winHeight') - 5;
-            if (newheight < 600) {
-                newheight = 600;
+            var newheight = Y.one('body').get('winHeight') - 5
+                - Y.one('#scorm_layout').getY()
+                - window.pageYOffset;
+            if (newheight < 680 || isNaN(newheight)) {
+                newheight = 680;
             }
             Y.one('#scorm_layout').setStyle('height', newheight);
 
