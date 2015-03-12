@@ -261,13 +261,16 @@ class logstore_standard_store_testcase extends advanced_testcase {
         // Look for non-linear memory usage for the iterator version.
         $mem = memory_get_usage();
         $events = $store->get_events_select('', array(), '', 0, 0);
-        $delta1 = memory_get_usage() - $mem;
-        $events = $store->get_events_select_iterator('', array(), '', 0, 0);
-        $delta2 = memory_get_usage() - $mem;
-        $this->assertInstanceOf('\Traversable', $events);
-        $events->close();
+        $arraymemusage = memory_get_usage() - $mem;
 
-        $this->assertLessThan($delta1 / 10, $delta2);
+        $mem = memory_get_usage();
+        $eventsit = $store->get_events_select_iterator('', array(), '', 0, 0);
+        $eventsit->close();
+        $itmemusage = memory_get_usage() - $mem;
+
+        $this->assertInstanceOf('\Traversable', $eventsit);
+
+        $this->assertLessThan($arraymemusage / 10, $itmemusage);
 
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
