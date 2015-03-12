@@ -232,6 +232,7 @@ if (empty($dodownload) && empty($showchart)) {
 
 // Set up the course overview table.
 $coursecomptable = new html_table();
+$coursecomptable->id = 'ReportTable';
 $coursecomptable->head = array(
     get_string('coursename', 'local_report_completion'),
     get_string('numusers', 'local_report_completion'),
@@ -241,7 +242,6 @@ $coursecomptable->head = array(
     ' ',
 );
 $coursecomptable->align = array('left', 'center', 'center', 'center', 'center', 'center');
-//$coursecomptable->width = '95%';
 $chartdata = array();
 
 if (!empty($dodownload)) {
@@ -281,8 +281,8 @@ foreach ($courseinfo as $id => $coursedata) {
         $coursedata->numnotstarted,
         $coursedata->numstarted - $coursedata->numcompleted,
         $coursedata->numcompleted,
-        '<a class="btn btn-info" href="' . $courseuserslink . '">' . get_string('usersummary', 'local_report_completion') . '</a>&nbsp;' .
-        '<a class="btn btn-success" href="' . $coursechartlink . '">' . get_string('cchart', 'local_report_completion') . '</a>',
+        '<a class="btn" style="margin:2px" href="' . $courseuserslink . '">' . get_string('usersummary', 'local_report_completion') . '</a>&nbsp;' .
+        '<a class="btn" style="margin:2px" href="' . $coursechartlink . '">' . get_string('cchart', 'local_report_completion') . '</a>',
     );
     if ($charttype == 'summary') {
         $chartname[] = $coursedata->coursename;
@@ -350,7 +350,7 @@ if (empty($charttype)) {
                 $totalcount = $coursedataobj->totalcount;
             }
         }
-    
+
         // Check if there is a certificate module.
         $hascertificate = false;
         if (empty($dodownload) && $certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
@@ -372,7 +372,7 @@ if (empty($charttype)) {
             }
         }
         $compusertable = new html_table();
-    
+
         // Deal with table columns.
         $columns = array('firstname',
                          'lastname',
@@ -383,7 +383,7 @@ if (empty($charttype)) {
                          'timestarted',
                          'timecompleted',
                          'finalscore');
-    
+
         foreach ($columns as $column) {
             $string[$column] = get_string($column, 'local_report_completion');
             if ($sort != $column) {
@@ -393,14 +393,14 @@ if (empty($charttype)) {
                 $columndir = $dir == "ASC" ? "DESC":"ASC";
                 $columnicon = $dir == "ASC" ? "down":"up";
                 $columnicon = " <img src=\"" . $OUTPUT->pix_url('t/' . $columnicon) . "\" alt=\"\" />";
-    
+
             }
             $$column = $string[$column].$columnicon;
         }
-    
+
         // Set up the course worksheet.
         if (!empty($dodownload)) {
-   
+
             if ($courseid == 1) {
                 echo get_string('allusers', 'local_report_completion')."\n";
             } else {
@@ -419,7 +419,7 @@ if (empty($charttype)) {
         }
         // Set the initial parameters for the table header links.
         $linkparams = $params;
-    
+
         $override = new object();
         $override->firstname = 'firstname';
         $override->lastname = 'lastname';
@@ -448,7 +448,7 @@ if (empty($charttype)) {
             $finalscoreurl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'timeenrolled';
             $timeenrolledurl = new moodle_url('index.php', $linkparams);
-    
+
             // Set the options if there is already a sort defined.
             if (!empty($params['sort'])) {
                 if ($params['sort'] == 'firstname') {
@@ -536,7 +536,7 @@ if (empty($charttype)) {
             }
         }
         $fullnamedisplay = $OUTPUT->action_link($firstnameurl, $firstname) ." / ". $OUTPUT->action_link($lastnameurl, $lastname);
-    
+
         $compusertable->head = array ($fullnamedisplay,
                                       $OUTPUT->action_link($emailurl, $email),
                                       get_string('course'),
@@ -546,17 +546,16 @@ if (empty($charttype)) {
                                       $OUTPUT->action_link($timestartedurl, $timestarted),
                                       $OUTPUT->action_link($timecompletedurl, $timecompleted),
                                       $OUTPUT->action_link($finalscoreurl, $finalscore));
-        $compusertable->align = array('left', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
+        $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
+        $compusertable->id = 'ReportTable';
         if ($hascertificate) {
             $compusertable->head[] = get_string('certificate', 'local_report_completion');
             $compusertable->align[] = 'center';
         }
-        $compusertable->width = '95%';
-    
         $userurl = '/local/report_users/userdisplay.php';
-    
+
         // Paginate up the results.
-    
+
         if (empty($idlist['0'])) {
             foreach ($coursedata as $userid => $user) {
                 if (empty($user->timestarted)) {
@@ -567,7 +566,7 @@ if (empty($charttype)) {
                 if (!empty($user->timecompleted)) {
                     $statusstring = get_string('completed', 'local_report_completion');
                 }
-    
+
                 // Get the completion date information.
                 if (!empty($user->timestarted)) {
                     $starttime = date('d M Y', $user->timestarted);
@@ -584,14 +583,14 @@ if (empty($charttype)) {
                 } else {
                     $completetime = "";
                 }
-    
+
                 // Score information.
                 if (!empty($user->result)) {
                     $scorestring = round($user->result, 0)."%";
                 } else {
                     $scorestring = "0%";
                 }
-    
+
                 $user->fullname = $user->firstname . ' ' . $user->lastname;
                 // Deal with the certificate.
                 if ($hascertificate) {
@@ -651,17 +650,19 @@ if (empty($charttype)) {
         if (empty($dodownload)) {
             // Set up the filter form.
             $mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
+
             $mform->set_data(array('departmentid' => $departmentid));
             $mform->set_data($params);
-    
+
             // Display the user filter form.
             $mform->display();
-    
+
             // Display the paging bar.
             if (empty($idlist['0'])) {
                 echo $OUTPUT->paging_bar($totalcount, $page, $perpage, new moodle_url('/local/report_completion/index.php', $params));
+                echo "<br />";
             }
-    
+
             // Display the user table.
             echo html_writer::table($compusertable);
             if (!empty($idlist['0'])) {
@@ -706,7 +707,7 @@ if (!empty($showchart)) {
             'DataGapAngle' => 10,
             'DataGapRadius' => 6,
             'Border' => true,
-        )); 
+        ));
         $pp->drawPieLegend(10,PCHART_SIZEY-20, array(
             'Style' => LEGEND_BOX,
             'Mode' => LEGEND_HORIZONTAL,
