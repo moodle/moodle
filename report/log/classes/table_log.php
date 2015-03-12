@@ -127,6 +127,10 @@ class report_log_table_log extends table_sql {
     protected function get_user_fullname($userid) {
         global $DB;
 
+        if (empty($userid)) {
+            return false;
+        }
+
         if (!empty($this->userfullnames[$userid])) {
             return $this->userfullnames[$userid];
         }
