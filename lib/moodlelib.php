@@ -6842,6 +6842,26 @@ function get_string_manager($forcereload=false) {
                 $translist = explode(',', $CFG->langlist);
             }
 
+            if (!empty($CFG->config_php_settings['customstringmanager'])) {
+                $classname = $CFG->config_php_settings['customstringmanager'];
+
+                if (class_exists($classname)) {
+                    $implements = class_implements($classname);
+
+                    if (isset($implements['core_string_manager'])) {
+                        $singleton = new $classname($CFG->langotherroot, $CFG->langlocalroot, $translist);
+                        return $singleton;
+
+                    } else {
+                        debugging('Unable to instantiate custom string manager: class '.$classname.
+                            ' does not implement the core_string_manager interface.');
+                    }
+
+                } else {
+                    debugging('Unable to instantiate custom string manager: class '.$classname.' can not be found.');
+                }
+            }
+
             $singleton = new core_string_manager_standard($CFG->langotherroot, $CFG->langlocalroot, $translist);
 
         } else {
