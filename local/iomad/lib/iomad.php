@@ -850,6 +850,225 @@ class iomad {
         return $returnobj;
     }
 
+    /**
+     * Get a list of users provided a list of parameters
+     *
+     * Parameters - &$params = array();
+     *              $idlist = array();
+     *              $sort = text;
+     *              $dir = text;
+     *              $departmentid = int;
+     *
+     * Return array();
+     **/
+    public static function get_user_license_sqlsearch($params, $idlist='', $sort, $dir, $departmentid, $nogrades=false) {
+        global $DB, $CFG;
+
+        $sqlsort = " GROUP BY u.id, cl.name, d.name";
+        $sqlsearch = "u.id != '-1' and u.deleted = 0";
+        $sqlsearch .= " AND u.id NOT IN (".$CFG->siteadmins.")";
+
+        // Deal with suspended users.
+        if (empty($params['showsuspended'])) {
+            $sqlsearch .= " AND u.suspended = 0";
+        }
+
+        $returnobj = new stdclass();
+
+        // Deal with search strings.
+        $searchparams = array();
+        if (!empty($idlist)) {
+            $sqlsearch .= " AND u.id IN (".implode(',', array_keys($idlist)).") ";
+        }
+        if (!empty($params['firstname'])) {
+            $sqlsearch .= " AND u.firstname LIKE :firstname ";
+            $searchparams['firstname'] = '%'.$params['firstname'].'%';
+        }
+
+        if (!empty($params['lastname'])) {
+            $sqlsearch .= " AND u.lastname LIKE :lastname ";
+            $searchparams['lastname'] = '%'.$params['lastname'].'%';
+        }
+
+        if (!empty($params['email'])) {
+            $sqlsearch .= " AND u.email LIKE :email ";
+            $searchparams['email'] = '%'.$params['email'].'%';
+        }
+
+        // Deal with how we sort the data.
+        switch($sort) {
+            case "firstname":
+                $sqlsort .= " ORDER BY u.firstname $dir ";
+            break;
+            case "lastname":
+                $sqlsort .= " ORDER BY u.lastname $dir ";
+            break;
+            case "email":
+                $sqlsort .= " ORDER BY u.email $dir ";
+            break;
+            case "licensename":
+                $sqlsort .= " ORDER BY cl.name $dir ";
+            break;
+            case "isusing":
+                $sqlsort .= " ORDER BY clu.isusing $dir ";
+            break;
+            case "department":
+                $sqlsort .= " ORDER BY d.name $dir ";
+            break;
+        }
+
+        $returnobj->sqlsearch = $sqlsearch;
+        $returnobj->sqlsort = $sqlsort;
+        $returnobj->searchparams = $searchparams;
+        $returnobj->departmentid = $departmentid;
+        return $returnobj;
+    }
+
+    /**
+     * Get license summary info for a course
+     *
+     * Parameters - $departmentid = int;
+     *              $courseid = int;
+     *
+     * Return array();
+     **/
+    public static function get_course_license_summary_info($departmentid, $courseid=0, $showsuspended) {
+        global $DB;
+
+        // Create a temporary table to hold the userids.
+        $temptablename = 'tmp_clsum_users_'.time();
+        $dbman = $DB->get_manager();
+
+        // Define table user to be created.
+        $table = new xmldb_table($temptablename);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        $dbman->create_temp_table($table);
+
+        // Populate it.
+        $alldepartments = company::get_all_subdepartments($departmentid);
+        if (count($alldepartments) > 0 ) {
+            // Deal with suspended or not.
+            if (empty($showsuspended)) {
+                $suspendedsql = " AND suspended = 0 ";
+            } else {
+                $suspendedsql = "";
+            }
+            $tempcreatesql = "INSERT INTO {".$temptablename."} (userid) SELECT userid from {company_users}
+                              WHERE departmentid IN (".implode(',', array_keys($alldepartments)).") $suspendedsql";
+        } else {
+            $tempcreatesql = "";
+        }
+        $DB->execute($tempcreatesql);
+
+        // All or one course?
+        $courses = array();
+        if (!empty($courseid)) {
+            $courses[$courseid] = new stdclass();
+            $courses[$courseid]->id = $courseid;
+        } else {
+            $courses = company::get_recursive_department_courses($departmentid);
+        }
+
+        // Process them!
+        $returnarr = array();
+        foreach ($courses as $course) {
+            $courseobj = new stdclass();
+            $courseobj->id = $course->courseid;
+            $courseobj->numlicenses = $DB->count_records_sql("SELECT COUNT(clu.id) FROM {companylicense_users} clu
+                                                   JOIN {".$temptablename."} tt ON (clu.userid = tt.userid)
+                                                   WHERE
+                                                   clu.licensecourseid = :courseid", array('courseid' => $course->courseid));
+            $courseobj->numused = $DB->count_records_sql("SELECT COUNT(clu.id) FROM {companylicense_users} clu
+                                                   JOIN {".$temptablename."} tt ON (clu.userid = tt.userid)
+                                                   WHERE
+                                                   clu.licensecourseid = :courseid
+                                                   AND
+                                                   isusing = 1", array('courseid' => $course->courseid));
+            $courseobj->numunused = $courseobj->numlicenses - $courseobj->numused;
+
+            if (!$courseobj->coursename = $DB->get_field('course', 'fullname', array('id' => $course->courseid))) {
+                continue;
+            }
+            $returnarr[$course->courseid] = $courseobj;
+        }
+        return $returnarr;
+    }
+
+    /**
+     * Get all users completion info regardless of course
+     *
+     * Parameters - $departmentid = int;
+     *              $page = int;
+     *              $perpade = int;
+     *
+     * Return array();
+     **/
+    public static function get_all_user_course_license_data($searchinfo, $page=0, $perpage=0, $completiontype=0) {
+        global $DB;
+
+        $completiondata = new stdclass();
+
+        // Create a temporary table to hold the userids.
+        $temptablename = 'tmp_clcomp_users_'.time();
+        list($dbman, $table) = self::populate_temporary_users($temptablename, $searchinfo);
+
+        // Deal with completion types.
+        if (!empty($completiontype)) {
+            if ($completiontype == 1) {
+                $completionsql = " AND cc.timeenrolled > 0 AND cc.timestarted = 0 ";
+            } else if ($completiontype == 2 ) {
+                $completionsql = " AND cc.timestarted > 0 AND cc.timecompleted IS NULL ";
+            } else if ($completiontype == 3 ) {
+                $completionsql = " AND cc.timecompleted IS NOT NULL  ";
+            }
+        } else {
+            $completionsql = "";
+        }
+                
+
+        // Get the user details.
+        $countsql = "SELECT CONCAT(co.id, u.id) AS id ";
+        $selectsql = "
+                SELECT
+                CONCAT(co.id, u.id) AS id, 
+                u.id AS uid,
+                u.firstname AS firstname,
+                u.lastname AS lastname,
+                u.email AS email,
+                co.shortname AS coursename,
+                co.id AS courseid,
+                cl.name AS licensename,
+                d.name as department,
+                cl.name,
+                clu.isusing,
+                '0' as result ";
+        $fromsql = " FROM {user} u, {companylicense_users} clu, {department} d, {company_users} du, {".$temptablename."} tt, {course} co, {companylicense} cl
+
+                WHERE $searchinfo->sqlsearch
+                AND tt.userid = u.id
+                AND co.id = clu.licensecourseid
+                AND u.id = clu.userid
+                AND du.userid = u.id
+                AND d.id = du.departmentid
+                AND cl.id = clu.licenseid
+                $completionsql
+                $searchinfo->sqlsort ";
+
+        $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
+        $countusers = $DB->get_records_sql($countsql.$fromsql, $searchinfo->searchparams);
+        $numusers = count($countusers);
+
+        $returnobj = new stdclass();
+        $returnobj->users = $users;
+        $returnobj->totalcount = $numusers;
+
+        $dbman->drop_table($table);
+
+        return $returnobj;
+    }
 
     public static function get_companies_listing($sort='name', $dir='ASC', $page=0, $recordsperpage=0,
                            $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams = null) {
@@ -883,6 +1102,63 @@ class iomad {
                                      $params, $page, $recordsperpage);
     }
     
+    /**
+     * Get user completion info for a course
+     *
+     * Parameters - $departmentid = int;
+     *              $courseid = int;
+     *              $page = int;
+     *              $perpade = int;
+     *
+     * Return array();
+     **/
+    public static function get_user_course_license_data($searchinfo, $courseid, $page=0, $perpage=0, $completiontype=0) {
+        global $DB;
+
+        $completiondata = new stdclass();
+
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+
+        $temptablename = 'tmp_clcomp_users_'.time();
+        list($dbman, $table) = self::populate_temporary_users($temptablename, $searchinfo);
+
+        // Get the user details.
+        $shortname = addslashes($course->shortname);
+        $countsql = "SELECT u.id ";
+        $selectsql = "SELECT u.id,
+                u.firstname AS firstname,
+                u.lastname AS lastname,
+                u.email AS email,
+                '{$shortname}' AS coursename,
+                '$courseid' AS courseid,
+                clu.isusing AS isusing,
+                d.name AS department,
+                cl.name AS licensename ";
+        $fromsql = " FROM {user} u, {companylicense_users} clu, {department} d, {company_users} du, {".$temptablename."} tt, {companylicense} cl
+                     
+                    WHERE $searchinfo->sqlsearch
+                    AND tt.userid = u.id
+                    AND clu.licensecourseid = $courseid
+                    AND u.id = clu.userid
+                    AND du.userid = u.id
+                    AND d.id = du.departmentid
+                    AND cl.id = clu.licenseid
+                    $searchinfo->sqlsort ";
+
+        $searchinfo->searchparams['courseid'] = $courseid;
+        $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
+        $countusers = $DB->get_records_sql($countsql.$fromsql, $searchinfo->searchparams);
+        $numusers = count($countusers);
+
+        $returnobj = new stdclass();
+        $returnobj->users = $users;
+        $returnobj->totalcount = $numusers;
+
+        $dbman->drop_table($table);
+
+        return $returnobj;
+    }
+
     /**
      * Copied from similarly named function in accesslib.php
      * modified to check iomad restrictions database.
@@ -1020,8 +1296,6 @@ class iomad {
     }
 }
 
-
-
 /**
  * User Filter form used on the Iomad pages.
  *
@@ -1051,4 +1325,6 @@ class iomad_company_filter_form extends moodleform {
 
         $this->add_action_buttons(false, get_string('companyfilter', 'local_iomad'));
     }
+
+
 }
