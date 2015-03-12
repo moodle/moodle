@@ -10,6 +10,10 @@ td.completed {
     background-color: #33ff33;
     }
 
+#ReportTable  td {
+	vertical-align: middle !important;
+}
+
 div#piechart {
     width: 360px;
     height: 200px;

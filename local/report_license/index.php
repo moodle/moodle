@@ -232,6 +232,7 @@ if (empty($dodownload) && empty($showchart)) {
 
 // Set up the course overview table.
 $coursecomptable = new html_table();
+$coursecomptable->id = 'ReportTable';
 $coursecomptable->head = array(
     get_string('coursename', 'local_report_license'),
     get_string('numallocated', 'local_report_license'),
@@ -239,7 +240,7 @@ $coursecomptable->head = array(
     get_string('used', 'local_report_license'),
     ' ',
 );
-$coursecomptable->align = array('left', 'center', 'center', 'center', 'center', 'center');
+$coursecomptable->align = array('left', 'center', 'center', 'center', 'center');
 //$coursecomptable->width = '95%';
 $chartdata = array();
 
@@ -279,8 +280,8 @@ foreach ($courseinfo as $id => $coursedata) {
         $coursedata->numlicenses,
         $coursedata->numunused,
         $coursedata->numused,
-        '<a class="btn btn-info" href="' . $courseuserslink . '">' . get_string('usersummary', 'local_report_license') . '</a>&nbsp;' .
-        '<a class="btn btn-success" href="' . $coursechartlink . '">' . get_string('cchart', 'local_report_license') . '</a>',
+        '<a class="btn" style="margin:2px" href="' . $courseuserslink . '">' . get_string('usersummary', 'local_report_license') . '</a>&nbsp;' .
+        '<a class="btn" style="margin:2px" href="' . $coursechartlink . '">' . get_string('cchart', 'local_report_license') . '</a>',
     );
     if ($charttype == 'summary') {
         $chartname[] = $coursedata->coursename;
@@ -355,6 +356,7 @@ if (empty($charttype)) {
             }
         }
         $compusertable = new html_table();
+        $compusertable->id = 'ReportTable';
     
         // Deal with table columns.
         $columns = array('firstname',
@@ -492,14 +494,13 @@ if (empty($charttype)) {
             }
         }
         $fullnamedisplay = $OUTPUT->action_link($firstnameurl, $firstname) ." / ". $OUTPUT->action_link($lastnameurl, $lastname);
-    
         $compusertable->head = array ($fullnamedisplay,
                                       $OUTPUT->action_link($emailurl, $email),
                                       get_string('course'),
                                       $OUTPUT->action_link($departmenturl, $department),
                                       $OUTPUT->action_link($licensenameurl, $licensename),
                                       $OUTPUT->action_link($isusingurl, $isusing));
-        $compusertable->align = array('left', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
+        $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center');
         $compusertable->width = '95%';
     
         $userurl = '/local/report_users/userdisplay.php';
@@ -546,6 +547,7 @@ if (empty($charttype)) {
             // Display the paging bar.
             if (empty($idlist['0'])) {
                 echo $OUTPUT->paging_bar($totalcount, $page, $perpage, new moodle_url('/local/report_license/index.php', $params));
+                echo "<br />";
             }
     
             // Display the user table.
