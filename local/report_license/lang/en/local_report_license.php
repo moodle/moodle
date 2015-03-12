@@ -17,7 +17,7 @@
 $string['companies'] = 'Companies';
 $string['completed'] = 'Completed';
 $string['course'] = 'Course';
-$string['report_license:view'] = 'View course iomad progress report';
+$string['report_license:view'] = 'View course iomad license report';
 $string['completiondate'] = 'Completion date';
 $string['completionnotenabled'] = 'Completion tracking is not enabled for this course (no report data available)';
 $string['coursechart'] = 'Draw overview chart for course';
@@ -31,7 +31,7 @@ $string['nousers'] = 'No users in this course';
 $string['participant'] = 'Participant';
 $string['percentage'] = 'Percent Complete';
 $string['pluginname'] = 'License usage report by course';
-$string['repcoursecompletion'] = 'Completion report by course';
+$string['repcourselicense'] = 'License report by course';
 $string['remaining'] = 'Remaining';
 $string['reportselect'] = 'Report filter';
 $string['select'] = '--select--';
