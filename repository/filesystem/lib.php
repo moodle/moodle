@@ -349,7 +349,7 @@ class repository_filesystem extends repository {
         static $issyncing = false;
         if ($issyncing) {
             // Avoid infinite recursion when calling $file->get_filesize() and get_contenthash().
-            return;
+            return false;
         }
         $filepath = $this->get_rootpath() . ltrim($file->get_reference(), '/');
         if ($this->is_in_repository($file->get_reference()) && file_exists($filepath) && is_readable($filepath)) {
@@ -366,7 +366,12 @@ class repository_filesystem extends repository {
                 }
             } else {
                 // Update only file size so file will NOT be copied into moodle filepool.
-                $contenthash = null;
+                $emptyfile = $contenthash = sha1('');
+                $currentcontenthash = $file->get_contenthash();
+                if ($currentcontenthash !== $emptyfile && $currentcontenthash === sha1_file($filepath)) {
+                    // File content was synchronised and has not changed since then, leave it.
+                    $contenthash = null;
+                }
                 $filesize = filesize($filepath);
             }
             $issyncing = false;
