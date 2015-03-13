@@ -84,6 +84,14 @@ class testable_question_engine_unit_of_work extends question_engine_unit_of_work
     public function get_steps_deleted() {
         return $this->stepsdeleted;
     }
+
+    public function get_metadata_added() {
+        return $this->metadataadded;
+    }
+
+    public function get_metadata_modified() {
+        return $this->metadatamodified;
+    }
 }
 
 

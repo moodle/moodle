@@ -362,7 +362,7 @@ class question_attempt {
     /**
      * Get one of the steps in this attempt.
      *
-     * @param int $i the step number.
+     * @param int $i the step number, which counts from 0.
      * @return question_attempt_step
      */
     public function get_step($i) {
@@ -749,6 +749,30 @@ class question_attempt {
     }
 
     /**
+     * Return one of the bits of metadata for a this question attempt.
+     * @param string $name the name of the metadata variable to return.
+     * @return string the value of that metadata variable.
+     */
+    public function get_metadata($name) {
+        return $this->get_step(0)->get_metadata_var($name);
+    }
+
+    /**
+     * Set some metadata for this question attempt.
+     * @param string $name the name of the metadata variable to return.
+     * @param string $value the value to set that metadata variable to.
+     */
+    public function set_metadata($name, $value) {
+        $firststep = $this->get_step(0);
+        if (!$firststep->has_metadata_var($name)) {
+            $this->observer->notify_metadata_added($this, $name);
+        } else if ($value !== $firststep->get_metadata_var($name)) {
+            $this->observer->notify_metadata_modified($this, $name);
+        }
+        $firststep->set_metadata_var($name, $value);
+    }
+
+    /**
      * Helper function used by {@link rewrite_pluginfile_urls()} and
      * {@link rewrite_response_pluginfile_urls()}.
      * @return array ids that need to go into the file paths.
@@ -930,6 +954,10 @@ class question_attempt {
      */
     public function start($preferredbehaviour, $variant, $submitteddata = array(),
             $timestamp = null, $userid = null, $existingstepid = null) {
+
+        if ($this->get_num_steps() > 0) {
+            throw new coding_exception('Cannot start a question that is already started.');
+        }
 
         // Initialise the behaviour.
         $this->variant = $variant;
@@ -1264,6 +1292,15 @@ class question_attempt {
         if ($finished) {
             $this->finish();
         }
+    }
+
+    /**
+     * Change the max mark for this question_attempt.
+     * @param float $maxmark the new max mark.
+     */
+    public function set_max_mark($maxmark) {
+        $this->maxmark = $maxmark;
+        $this->observer->notify_attempt_modified($this);
     }
 
     /**
