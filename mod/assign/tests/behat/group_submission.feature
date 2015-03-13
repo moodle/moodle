@@ -100,6 +100,7 @@ Feature: Group assignment submissions
       | assignsubmission_file_enabled | 0 |
       | Students submit in groups | Yes |
       | Group mode | No groups |
+      | Require group to make submission | No |
     And I log out
     And I log in as "student1"
     And I follow "Course 1"

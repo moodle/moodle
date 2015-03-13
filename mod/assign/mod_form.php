@@ -138,6 +138,13 @@ class mod_assign_mod_form extends moodleform_mod {
             $mform->freeze('teamsubmission');
         }
 
+        $name = get_string('preventsubmissionnotingroup', 'assign');
+        $mform->addElement('selectyesno', 'preventsubmissionnotingroup', $name);
+        $mform->addHelpButton('preventsubmissionnotingroup',
+            'preventsubmissionnotingroup',
+            'assign');
+        $mform->setType('preventsubmissionnotingroup', PARAM_BOOL);
+
         $name = get_string('requireallteammemberssubmit', 'assign');
         $mform->addElement('selectyesno', 'requireallteammemberssubmit', $name);
         $mform->addHelpButton('requireallteammemberssubmit', 'requireallteammemberssubmit', 'assign');

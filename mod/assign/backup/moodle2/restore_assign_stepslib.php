@@ -110,6 +110,9 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         if (!isset($data->markingallocation)) {
             $data->markingallocation = 0;
         }
+        if (!isset($data->preventsubmissionnotingroup)) {
+            $data->preventsubmissionnotingroup = 0;
+        }
 
         if (!empty($data->preventlatesubmissions)) {
             $data->cutoffdate = $data->duedate;
