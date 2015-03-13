@@ -659,8 +659,14 @@ function calendar_add_event_metadata($event) {
         $event->courselink = calendar_get_courselink($event->courseid);
         $event->cssclass = 'calendar_event_course';
     } else if ($event->groupid) {                                    // Group event
-        $event->icon = '<img src="'.$OUTPUT->pix_url('i/groupevent') . '" alt="'.get_string('groupevent', 'calendar').'" class="icon" />';
-        $event->courselink = calendar_get_courselink($event->courseid);
+        if ($group = calendar_get_group_cached($event->groupid)) {
+            $groupname = format_string($group->name, true, context_course::instance($group->courseid));
+        } else {
+            $groupname = '';
+        }
+        $event->icon = html_writer::empty_tag('image', array('src' => $OUTPUT->pix_url('i/groupevent'),
+            'alt' => get_string('groupevent', 'calendar'), 'title' => $groupname, 'class' => 'icon'));
+        $event->courselink = calendar_get_courselink($event->courseid) . ', ' . $groupname;
         $event->cssclass = 'calendar_event_group';
     } else if($event->userid) {                                      // User event
         $event->icon = '<img src="'.$OUTPUT->pix_url('i/userevent') . '" alt="'.get_string('userevent', 'calendar').'" class="icon" />';
@@ -1413,6 +1419,20 @@ function calendar_get_course_cached(&$coursecache, $courseid) {
         $coursecache[$courseid] = get_course($courseid);
     }
     return $coursecache[$courseid];
+}
+
+/**
+ * Get group from groupid for calendar display
+ *
+ * @param int $groupid
+ * @return stdClass group object with fields 'id', 'name' and 'courseid'
+ */
+function calendar_get_group_cached($groupid) {
+    static $groupscache = array();
+    if (!isset($groupscache[$groupid])) {
+        $groupscache[$groupid] = groups_get_group($groupid, 'id,name,courseid');
+    }
+    return $groupscache[$groupid];
 }
 
 /**

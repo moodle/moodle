@@ -9,12 +9,20 @@ Feature: Perform basic calendar functionality
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@asd.com |
       | student2 | Student | 2 | student2@asd.com |
+      | student3 | Student | 3 | student3@asd.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
+      | student3 | C1 | student |
+    And the following "groups" exist:
+      | name | course | idnumber |
+      | Group 1 | C1 | G1 |
+    And the following "group members" exist:
+      | user | group |
+      | student1 | G1 |
     When I log in as "admin"
     And I follow "Course 1"
     And I turn editing mode on
@@ -47,6 +55,23 @@ Feature: Perform basic calendar functionality
     And I should see "Really awesome event!"
     And I log out
     And I log in as "student2"
+    And I follow "This month"
+    And I should not see "Really awesome event!"
+
+  Scenario: Create a group event
+    And I create a calendar event with form data:
+      | Type of event | group |
+      | Group | Group 1 |
+      | Event title | Really awesome event! |
+      | Description | Come join this awesome event |
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "This month"
+    And I follow "Really awesome event!"
+    And "Group 1" "text" should exist in the ".eventlist" "css_element"
+    And I log out
+    And I log in as "student3"
     And I follow "This month"
     And I should not see "Really awesome event!"
 
