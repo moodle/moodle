@@ -39,7 +39,7 @@ $string['gradingmethod_help'] = 'Choose the advanced grading method that should 
 
 To disable advanced grading and switch back to the default grading mechanism, choose \'Simple direct grading\'.';
 $string['gradingsimpledirect'] = 'Simple direct grading';
-$string['gradingmethodnograde'] = 'No grade';
+$string['gradingmethodnograding'] = 'No grading';
 $string['gradingmethods'] = 'Grading methods';
 $string['manageactionclone'] = 'Create new grading form from a template';
 $string['manageactiondelete'] = 'Delete the currently defined form';

@@ -90,12 +90,12 @@ if (!empty($add)) {
         require_once($CFG->dirroot.'/grade/grading/lib.php');
 
         $areas = grading_manager::available_areas('mod_'.$module->name);
-        $shownogradeoption = false;
+        $shownogradingoption = false;
         if (count($areas) > 1) {
             // There are multiple grading areas so make sure the option to select no grade is available.
-            $shownogradeoption = true;
+            $shownogradingoption = true;
         }
-        $data->_advancedgradingdata['methods'] = grading_manager::available_methods(true, $shownogradeoption);
+        $data->_advancedgradingdata['methods'] = grading_manager::available_methods(true, $shownogradingoption);
 
 
         foreach ($areas as $areaname => $areatitle) {

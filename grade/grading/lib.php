@@ -243,15 +243,15 @@ class grading_manager {
      * with a simple direct grading.
      *
      * @param bool $includesimple should the 'Simple direct grading' be included
-     * @param bool $includenograde should 'No grade' be included
+     * @param bool $includenograding should 'No grade' be included
      * @return array of the (string)name => (string)localized title of the method
      */
-    public static function available_methods($includesimple = true, $includenograde = false) {
+    public static function available_methods($includesimple = true, $includenograding = false) {
 
         $list = array();
 
-        if ($includenograde) {
-            $list['nograde'] = get_string('gradingmethodnograde', 'core_grading');
+        if ($includenograding) {
+            $list['nograding'] = get_string('gradingmethodnograding', 'core_grading');
         }
         if ($includesimple) {
             $list[''] = get_string('gradingsimpledirect', 'core_grading');
@@ -273,12 +273,12 @@ class grading_manager {
      * Requires the context property to be set in advance.
      *
      * @param bool $includesimple should the 'Simple direct grading' be included
-     * @param bool $includenograde should 'No grade' be included
+     * @param bool $includenograding should 'No grade' be included
      * @return array of the (string)name => (string)localized title of the method
      */
-    public function get_available_methods($includesimple = true, $includenograde = false) {
+    public function get_available_methods($includesimple = true, $includenograding = false) {
         $this->ensure_isset(array('context'));
-        return self::available_methods($includesimple, $includenograde);
+        return self::available_methods($includesimple, $includenograding);
     }
 
     /**
