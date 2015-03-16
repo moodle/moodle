@@ -99,15 +99,16 @@ $functions = array(
         'type'        => 'read',
         'capabilities'=> 'moodle/cohort:view',
     ),
-    
+
+    // Completion related functions.
     'core_completion_get_activities_completion_status' => array(
-        'classname'   => 'core_completion_external',
-        'methodname'  => 'get_activities_completion_status',
-        'description' => 'Return the activities completion status for a user in a course.',
-        'type'        => 'read',
-        'capabilities'=> 'moodle/progress:view',
+        'classname'     => 'core_completion_external',
+        'methodname'    => 'get_activities_completion_status',
+        'description'   => 'Return the activities completion status for a user in a course.',
+        'type'          => 'read',
+        'capabilities'  => '',
     ),
-    
+
     // Grade related functions.
 
     'core_grades_get_grades' => array(
@@ -1032,7 +1033,8 @@ $services = array(
             'core_user_remove_user_device',
             'core_course_get_courses',
             'core_completion_update_activity_completion_status_manually',
-            'mod_data_get_databases_by_courses'
+            'mod_data_get_databases_by_courses',
+            'core_completion_get_activities_completion_status',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,

@@ -137,6 +137,7 @@ class core_completion_external extends external_api {
      * @return array of activities progress and warnings
      * @throws moodle_exception
      * @since Moodle 2.9
+     * @throws moodle_exception
      */
     public static function get_activities_completion_status($courseid, $userid) {
         global $CFG, $USER;
@@ -158,10 +159,9 @@ class core_completion_external extends external_api {
         // Check that current user have permissions to see this user's activities.
         if ($user->id != $USER->id) {
             require_capability('report/progress:view', $context);
-            $group     = groups_get_course_group($course, true);
             $groupmode = groups_get_course_groupmode($course);
-            if ($group === 0 && $groupmode == SEPARATEGROUPS &&
-                    !has_capability('moodle/site:accessallgroups', $context)) {
+
+            if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
 
                 $usergroups = groups_get_all_groups($course->id, $user->id);
                 $currentusergroups = groups_get_all_groups($course->id, $USER->id);
@@ -182,7 +182,7 @@ class core_completion_external extends external_api {
         foreach ($activities as $activity) {
 
             // Check if current user has visibility on this activity.
-            if (!$activity->uservisible) {
+            if (!$activity->visible or !$activity->uservisible) {
                 continue;
             }
 
