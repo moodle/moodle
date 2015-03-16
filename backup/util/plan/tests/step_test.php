@@ -246,6 +246,150 @@ class backup_step_testcase extends advanced_testcase {
     }
 
     /**
+     * Verify the add_plugin_structure() restore method behavior and created structures.
+     */
+    public function test_restore_structure_step_add_plugin_structure() {
+        // Create mocked task, step and element.
+        $bt = new mock_restore_task_basepath('taskname');
+        $bs = new mock_restore_structure_step('steptest', null, $bt);
+        $el = new restore_path_element('question', '/some/path/to/question');
+        // Wrong plugintype.
+        try {
+            $bs->add_plugin_structure('fakeplugin', $el);
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof restore_step_exception);
+            $this->assertEquals('incorrect_plugin_type', $e->errorcode);
+        }
+        // Correct plugintype qtype call (@ 'question' level).
+        $bs->add_plugin_structure('qtype', $el);
+        $patheles = $bs->get_pathelements();
+        // Verify some well-known qtype plugin restore_path_elements have been added.
+        $keys = array(
+            '/some/path/to/question/plugin_qtype_calculated_question/answers/answer',
+            '/some/path/to/question/plugin_qtype_calculated_question/dataset_definitions/dataset_definition',
+            '/some/path/to/question/plugin_qtype_calculated_question/calculated_options/calculated_option',
+            '/some/path/to/question/plugin_qtype_essay_question/essay',
+            '/some/path/to/question/plugin_qtype_random_question',
+            '/some/path/to/question/plugin_qtype_truefalse_question/answers/answer');
+        foreach ($keys as $key) {
+            // Verify the element exists.
+            $this->assertArrayHasKey($key, $patheles);
+            // Verify the element is a restore_path_element.
+            $this->assertTrue($patheles[$key] instanceof restore_path_element);
+            // Check it has a processing object.
+            $po = $patheles[$key]->get_processing_object();
+            $this->assertTrue($po instanceof restore_plugin);
+        }
+    }
+
+    /**
+     * Verify the add_subplugin_structure() restore method behavior and created structures.
+     */
+    public function test_restore_structure_step_add_subplugin_structure() {
+        // Create mocked task, step and element.
+        $bt = new mock_restore_task_basepath('taskname');
+        $bs = new mock_restore_structure_step('steptest', null, $bt);
+        $el = new restore_path_element('workshop', '/path/to/workshop');
+        // Wrong plugin type.
+        try {
+            $bs->add_subplugin_structure('fakesubplugin', $el, 'fakeplugintype', 'fakepluginname');
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof restore_step_exception);
+            $this->assertEquals('incorrect_plugin_type', $e->errorcode);
+        }
+        // Wrong plugin type.
+        try {
+            $bs->add_subplugin_structure('fakesubplugin', $el, 'mod', 'fakepluginname');
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof restore_step_exception);
+            $this->assertEquals('incorrect_plugin_name', $e->errorcode);
+        }
+        // Wrong plugin not having subplugins.
+        try {
+            $bs->add_subplugin_structure('fakesubplugin', $el, 'mod', 'page');
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof restore_step_exception);
+            $this->assertEquals('plugin_missing_subplugins_php_file', $e->errorcode);
+        }
+        // Wrong BC (defaulting to mod and modulename) use not having subplugins.
+        try {
+            $bt->set_modulename('page');
+            $bs->add_subplugin_structure('fakesubplugin', $el);
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof restore_step_exception);
+            $this->assertEquals('plugin_missing_subplugins_php_file', $e->errorcode);
+        }
+        // Wrong subplugin type.
+        try {
+            $bs->add_subplugin_structure('fakesubplugin', $el, 'mod', 'workshop');
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof restore_step_exception);
+            $this->assertEquals('incorrect_subplugin_type', $e->errorcode);
+        }
+        // Wrong BC subplugin type.
+        try {
+            $bt->set_modulename('workshop');
+            $bs->add_subplugin_structure('fakesubplugin', $el);
+            $this->assertTrue(false, 'base_step_exception expected');
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof restore_step_exception);
+            $this->assertEquals('incorrect_subplugin_type', $e->errorcode);
+        }
+        // Correct call to workshopform subplugin (@ 'workshop' level).
+        $bt = new mock_restore_task_basepath('taskname');
+        $bs = new mock_restore_structure_step('steptest', null, $bt);
+        $el = new restore_path_element('workshop', '/path/to/workshop');
+        $bs->add_subplugin_structure('workshopform', $el, 'mod', 'workshop');
+        $patheles = $bs->get_pathelements();
+        // Verify some well-known workshopform subplugin restore_path_elements have been added.
+        $keys = array(
+            '/path/to/workshop/subplugin_workshopform_accumulative_workshop/workshopform_accumulative_dimension',
+            '/path/to/workshop/subplugin_workshopform_comments_workshop/workshopform_comments_dimension',
+            '/path/to/workshop/subplugin_workshopform_numerrors_workshop/workshopform_numerrors_map',
+            '/path/to/workshop/subplugin_workshopform_rubric_workshop/workshopform_rubric_config');
+        foreach ($keys as $key) {
+            // Verify the element exists.
+            $this->assertArrayHasKey($key, $patheles);
+            // Verify the element is a restore_path_element.
+            $this->assertTrue($patheles[$key] instanceof restore_path_element);
+            // Check it has a processing object.
+            $po = $patheles[$key]->get_processing_object();
+            $this->assertTrue($po instanceof restore_subplugin);
+        }
+
+        // Correct BC call to workshopform subplugin (@ 'assessment' level).
+        $bt = new mock_restore_task_basepath('taskname');
+        $bs = new mock_restore_structure_step('steptest', null, $bt);
+        $el = new restore_path_element('assessment', '/a/assessment');
+        $bt->set_modulename('workshop');
+        $bs->add_subplugin_structure('workshopform', $el);
+        $patheles = $bs->get_pathelements();
+        // Verify some well-known workshopform subplugin restore_path_elements have been added.
+        $keys = array(
+            '/a/assessment/subplugin_workshopform_accumulative_assessment/workshopform_accumulative_grade',
+            '/a/assessment/subplugin_workshopform_comments_assessment/workshopform_comments_grade',
+            '/a/assessment/subplugin_workshopform_numerrors_assessment/workshopform_numerrors_grade',
+            '/a/assessment/subplugin_workshopform_rubric_assessment/workshopform_rubric_grade');
+        foreach ($keys as $key) {
+            // Verify the element exists.
+            $this->assertArrayHasKey($key, $patheles);
+            // Verify the element is a restore_path_element.
+            $this->assertTrue($patheles[$key] instanceof restore_path_element);
+            // Check it has a processing object.
+            $po = $patheles[$key]->get_processing_object();
+            $this->assertTrue($po instanceof restore_subplugin);
+        }
+
+        // TODO: Add some test covering a non-mod subplugin once we have some implemented in core.
+    }
+
+    /**
      * wrong base_step class tests
      */
     function test_base_step_wrong() {

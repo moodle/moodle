@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 // Include all the needed stuff
 global $CFG;
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 
 /**
@@ -87,6 +88,31 @@ class mock_backup_task_basepath extends backup_task {
 }
 
 /**
+ * Instantiable class extending restore_task in order to mockup get_taskbasepath()
+ */
+class mock_restore_task_basepath extends restore_task {
+
+    /** @var string name of the mod plugin (activity) being used in the tests */
+    private $modulename;
+
+    public function build() {
+        // Nothing to do.
+    }
+
+    public function define_settings() {
+        // Nothing to do.
+    }
+
+    public function set_modulename($modulename) {
+        $this->modulename = $modulename;
+    }
+
+    public function get_modulename() {
+        return $this->modulename;
+    }
+}
+
+/**
  * Instantiable class extending backup_structure_step in order to be able to perform tests
  */
 class mock_backup_structure_step extends backup_structure_step {
@@ -109,6 +135,27 @@ class mock_backup_structure_step extends backup_structure_step {
 
     public function add_subplugin_structure($subplugintype, $element, $multiple, $plugintype = null, $pluginname = null) {
         parent::add_subplugin_structure($subplugintype, $element, $multiple, $plugintype, $pluginname);
+    }
+}
+
+class mock_restore_structure_step extends restore_structure_step {
+    public function define_structure() {
+
+        // Create a really simple structure (1 element).
+        $test = new restore_path_element('test', '/tests/test');
+        return array($test);
+    }
+
+    public function add_plugin_structure($plugintype, $element) {
+        parent::add_plugin_structure($plugintype, $element);
+    }
+
+    public function add_subplugin_structure($subplugintype, $element, $plugintype = null, $pluginname = null) {
+        parent::add_subplugin_structure($subplugintype, $element, $plugintype, $pluginname);
+    }
+
+    public function get_pathelements() {
+        return $this->pathelements;
     }
 }
 
