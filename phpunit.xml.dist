@@ -135,6 +135,9 @@
         <testsuite name="core_completion_testsuite">
             <directory suffix="_test.php">completion/tests</directory>
         </testsuite>
+        <testsuite name="core_comment_testsuite">
+            <directory suffix="_test.php">comment/tests</directory>
+        </testsuite>
 
         <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from phpunit.xml.dist with up-to-date list of plugins in current install-->
 <!--@plugin_suites_start@-->
