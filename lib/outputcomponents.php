@@ -40,6 +40,28 @@ interface renderable {
 }
 
 /**
+ * Interface marking other classes having the ability to export their data for use by templates.
+ *
+ * @copyright 2015 Damyon Wiese
+ * @package core
+ * @category output
+ * @since 2.9
+ */
+interface templatable {
+
+    /**
+     * Function to export the renderer data in a format that is suitable for a
+     * mustache template. This means:
+     * 1. No complex types - only stdClass, array, int, string, float, bool
+     * 2. Any additional info that is required for the template is pre-calculated (e.g. capability checks).
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return stdClass|array
+     */
+    public function export_for_template(renderer_base $output);
+}
+
+/**
  * Data structure representing a file picker.
  *
  * @copyright 2010 Dongsheng Cai
@@ -601,6 +623,16 @@ class single_button implements renderable {
      * @var array List of attached actions
      */
     var $actions = array();
+
+    /**
+     * @var array $params URL Params
+     */
+    var $params;
+
+    /**
+     * @var string Action id
+     */
+    var $actionid;
 
     /**
      * Constructor

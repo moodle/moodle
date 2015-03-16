@@ -1,3 +1,4 @@
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,17 +15,38 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Expose the M.cfg global variable.
+ * Mustache helper that will add JS to the end of the page.
  *
- * @module     core/config
- * @class      config
  * @package    core
- * @copyright  2015 Damyon Wiese <damyon@moodle.com>
+ * @category   output
+ * @copyright  2015 Damyon Wiese
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core\output;
+
+/**
+ * Lazy create a uniqid per instance of the class. The id is only generated
+ * when this class it converted to a string.
+ *
+ * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
  */
-define(function() {
+class mustache_uniqid_helper {
 
-    // This module exposes only the raw data from M.cfg;
-    return /** @alias module:core/config */ M.cfg;
-});
+    /** @var string $uniqid The unique id */
+    private $uniqid = null;
+
+    /**
+     * Init the random variable and return it as a string.
+     *
+     * @return string random id.
+     */
+    public function __toString() {
+        if ($this->uniqid === null) {
+            $this->uniqid = \html_writer::random_id(uniqid());
+        }
+        return $this->uniqid;
+    }
+}

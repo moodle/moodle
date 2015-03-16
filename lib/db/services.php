@@ -950,6 +950,13 @@ $functions = array(
         'type'        => 'write',
         'capabilities'=> 'moodle/calendar:manageentries', 'moodle/calendar:manageownentries', 'moodle/calendar:managegroupentries'
     ),
+
+    'core_output_load_template' => array(
+        'classname'   => 'core\output\external',
+        'methodname'  => 'load_template',
+        'description' => 'Load a template for a renderable',
+        'type'        => 'read'
+    ),
 );
 
 $services = array(
