@@ -373,10 +373,10 @@ class mod_workshop_mod_form extends moodleform_mod {
         }
 
         if ($data['submissiongradepass'] > $data['grade']) {
-            $errors['submissiongradepass'] = get_string('gradepassgreaterthangrade', 'grades');
+            $errors['submissiongradepass'] = get_string('gradepassgreaterthangrade', 'grades', $data['grade']);
         }
         if ($data['gradinggradepass'] > $data['gradinggrade']) {
-            $errors['gradinggradepass'] = get_string('gradepassgreaterthangrade', 'grades');
+            $errors['gradinggradepass'] = get_string('gradepassgreaterthangrade', 'grades', $data['gradinggrade']);
         }
 
         return $errors;

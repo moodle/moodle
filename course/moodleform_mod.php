@@ -301,14 +301,17 @@ abstract class moodleform_mod extends moodleform {
 
         // Grade to pass: ensure that the grade to pass is valid for points and scales.
         // If we are working with a scale, convert into a positive number for validation.
-        if (isset($data['grade'])) {
-            if ($data['grade'] < 0) {
-                $grade = $data['grade'] * -1;
+
+        if (isset($data['gradepass']) && (isset($data['grade']) || isset($data['scale']))) {
+            $scale = isset($data['grade']) ? $data['grade'] : $data['scale'];
+            if ($scale < 0) {
+                $scalevalues = $DB->get_record('scale', array('id' => -$scale));
+                $grade = count(explode(',', $scalevalues->scale));
             } else {
-                $grade = $data['grade'];
+                $grade = $scale;
             }
-            if (isset($data['gradepass']) && $data['gradepass'] > $grade) {
-                $errors['gradepass'] = get_string('gradepassgreaterthangrade', 'grades');
+            if ($data['gradepass'] > $grade) {
+                $errors['gradepass'] = get_string('gradepassgreaterthangrade', 'grades', $grade);
             }
         }
 
@@ -637,6 +640,9 @@ abstract class moodleform_mod extends moodleform {
                     $mform->addElement('select', 'advancedgradingmethod_'.$areaname,
                         get_string('gradingmethod', 'core_grading'), $this->current->_advancedgradingdata['methods']);
                     $mform->addHelpButton('advancedgradingmethod_'.$areaname, 'gradingmethod', 'core_grading');
+                    if (!$this->_features->rating) {
+                        $mform->disabledIf('advancedgradingmethod_'.$areaname, 'grade[modgrade_type]', 'eq', 'none');
+                    }
 
                 } else {
                     // the module defines multiple gradable areas, display a selector
@@ -657,13 +663,18 @@ abstract class moodleform_mod extends moodleform {
                         get_string('gradecategoryonmodform', 'grades'),
                         grade_get_categories_menu($COURSE->id, $this->_outcomesused));
                 $mform->addHelpButton('gradecat', 'gradecategoryonmodform', 'grades');
+                if (!$this->_features->rating) {
+                    $mform->disabledIf('gradecat', 'grade[modgrade_type]', 'eq', 'none');
+                }
             }
-            if (!empty($this->current->gradepass)) {
-                $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
-                $mform->addHelpButton('gradepass', 'gradepass', 'grades');
-                $mform->setDefault('gradepass', '');
-                $mform->setType('gradepass', PARAM_FLOAT);
-                $mform->addRule('gradepass', null, 'numeric', null, 'client');
+
+            // Grade to pass.
+            $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
+            $mform->addHelpButton('gradepass', 'gradepass', 'grades');
+            $mform->setDefault('gradepass', '');
+            $mform->setType('gradepass', PARAM_FLOAT);
+            $mform->addRule('gradepass', null, 'numeric', null, 'client');
+            if (!$this->_features->rating) {
                 $mform->disabledIf('gradepass', 'grade[modgrade_type]', 'eq', 'none');
             }
         }
