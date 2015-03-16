@@ -104,7 +104,7 @@ if ($userid) {
 
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_title($course->shortname . ': ' . $strnotes);
-$PAGE->set_heading($course->fullname);
+$PAGE->set_heading(fullname($USER));
 
 echo $OUTPUT->header();
 if ($userid) {

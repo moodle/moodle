@@ -108,13 +108,12 @@ if ($isspecificcourse) {
     // We are going to search for all of the users posts in all courses!
     // a general require login here as we arn't actually within any course.
     require_login();
-    $PAGE->set_context(context_system::instance());
+    $PAGE->set_context(context_user::instance($user->id));
 
     // Now we need to get all of the courses to search.
     // All courses where the user has posted within a forum will be returned.
     $courses = forum_get_courses_user_posted_in($user, $discussionsonly);
 }
-
 
 $params = array(
     'context' => $PAGE->context,
@@ -202,7 +201,11 @@ if (empty($result->posts)) {
 
     // Display a page letting the user know that there's nothing to display;
     $PAGE->set_title($pagetitle);
-    $PAGE->set_heading($pageheading);
+    if ($isspecificcourse) {
+        $PAGE->set_heading($pageheading);
+    } else {
+        $PAGE->set_heading(fullname($user));
+    }
     echo $OUTPUT->header();
     echo $OUTPUT->heading($pagetitle);
     echo $OUTPUT->notification($notification);
@@ -323,7 +326,8 @@ if ($isspecificcourse) {
 }
 
 $PAGE->set_title($pagetitle);
-$PAGE->set_heading($pagetitle);
+$PAGE->set_heading($pageheading);
+
 $PAGE->navigation->extend_for_user($user);
 $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
 

@@ -47,7 +47,7 @@ $struser = get_string('user');
 $PAGE->set_url('/user/files.php');
 $PAGE->set_context($context);
 $PAGE->set_title($title);
-$PAGE->set_heading($title);
+$PAGE->set_heading(fullname($USER));
 $PAGE->set_pagelayout('mydashboard');
 $PAGE->set_pagetype('user-files');
 

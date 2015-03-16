@@ -134,7 +134,7 @@ if ($mform->is_cancelled()) {
     $fullname = fullname($USER, true);
 
     $PAGE->set_title($strpasswordchanged);
-    $PAGE->set_heading($COURSE->fullname);
+    $PAGE->set_heading(fullname($USER));
     echo $OUTPUT->header();
 
     notice($strpasswordchanged, new moodle_url($PAGE->url, array('return'=>1)));
@@ -151,7 +151,7 @@ $strchangepassword = get_string('changepassword');
 $fullname = fullname($USER, true);
 
 $PAGE->set_title($strchangepassword);
-$PAGE->set_heading($COURSE->fullname);
+$PAGE->set_heading($fullname);
 echo $OUTPUT->header();
 
 if (get_user_preferences('auth_forcepasswordchange')) {

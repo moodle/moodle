@@ -40,7 +40,6 @@ require_login(null, false);
 $context = context_course::instance($course->id);
 $systemcontext = context_system::instance();
 $personalcontext = null;
-$PAGE->set_context($context);
 
 // If we are accessing the page from a site context then ignore this check.
 if ($courseid != SITEID) {
@@ -55,6 +54,12 @@ if (empty($userid)) {
         print_error('invaliduserid');
     }
     $personalcontext = context_user::instance($userid);
+}
+
+if (isset($personalcontext)) {
+    $PAGE->set_context($personalcontext);
+} else {
+    $PAGE->set_context($context);
 }
 
 $access = false;
@@ -154,9 +159,9 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
     // Display a standard page.
     if ($courseid == SITEID) {
         $PAGE->set_pagelayout('standard');
-        $header = get_string('mygrades', 'grades'). ' - '.fullname($report->user);
+        $header = get_string('mygrades', 'grades') . ' - ' . fullname($report->user);
         $PAGE->set_title($header);
-        $PAGE->set_heading($header);
+        $PAGE->set_heading(fullname($report->user));
 
         if ($USER->id != $report->user->id) {
             $PAGE->navigation->extend_for_user($report->user);

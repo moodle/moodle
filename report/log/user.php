@@ -43,6 +43,10 @@ $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $coursecontext   = context_course::instance($course->id);
 $personalcontext = context_user::instance($user->id);
 
+if ($courseid == SITEID) {
+    $PAGE->set_context($personalcontext);
+}
+
 if ($USER->id != $user->id and has_capability('moodle/user:viewuseractivitiesreport', $personalcontext)
         and !is_enrolled($coursecontext, $USER) and is_enrolled($coursecontext, $user)) {
     //TODO: do not require parents to be enrolled in courses - this is a hack!
@@ -71,7 +75,11 @@ $PAGE->set_url('/report/log/user.php', array('id' => $user->id, 'course' => $cou
 $PAGE->navigation->extend_for_user($user);
 $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
 $PAGE->set_title("$course->shortname: $stractivityreport");
-$PAGE->set_heading($course->fullname);
+if ($courseid == SITEID) {
+    $PAGE->set_heading(fullname($user));
+} else {
+    $PAGE->set_heading($course->fullname);
+}
 
 // Trigger a user logs viewed event.
 $event = \report_log\event\user_report_viewed::create(array('context' => $coursecontext, 'relateduserid' => $userid,

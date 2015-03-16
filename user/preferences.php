@@ -48,17 +48,13 @@ $PAGE->set_context(context_user::instance($userid));
 $PAGE->set_url('/user/preferences.php', array('userid' => $userid));
 $PAGE->set_pagelayout('admin');
 $PAGE->set_pagetype('user-preferences');
+$PAGE->set_title(fullname($user));
+$PAGE->set_heading(fullname($user));
 
 if (!$currentuser) {
-    $PAGE->set_title(fullname($user));
-    $PAGE->set_heading(fullname($user));
-
     $PAGE->navigation->extend_for_user($user);
     $settings = $PAGE->settingsnav->get('userviewingsettings' . $user->id);
 } else {
-    $PAGE->set_title(get_string('preferences'));
-    $PAGE->set_heading(get_string('preferences'));
-
     $settings = $PAGE->settingsnav->get('usercurrentsettings');
 }
 

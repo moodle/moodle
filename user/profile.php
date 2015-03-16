@@ -85,7 +85,7 @@ if (!$currentuser &&
     $struser = get_string('user');
     $PAGE->set_context(context_system::instance());
     $PAGE->set_title("$SITE->shortname: $struser");  // Do not leak the name.
-    $PAGE->set_heading("$SITE->shortname: $struser");
+    $PAGE->set_heading($struser);
     $PAGE->set_url('/user/profile.php', array('id' => $userid));
     $PAGE->navbar->add($struser);
     echo $OUTPUT->header();
@@ -97,10 +97,6 @@ if (!$currentuser &&
 // Get the profile page.  Should always return something unless the database is broken.
 if (!$currentpage = my_get_page($userid, MY_PAGE_PUBLIC)) {
     print_error('mymoodlesetup');
-}
-
-if (!$currentpage->userid) {
-    $context = context_system::instance();  // A trick so that we even see non-sticky blocks.
 }
 
 $PAGE->set_context($context);
@@ -144,7 +140,7 @@ $strpublicprofile = get_string('publicprofile');
 $PAGE->blocks->add_region('content');
 $PAGE->set_subpage($currentpage->id);
 $PAGE->set_title(fullname($user).": $strpublicprofile");
-$PAGE->set_heading(fullname($user).": $strpublicprofile");
+$PAGE->set_heading(fullname($user));
 
 if (!$currentuser) {
     $PAGE->navigation->extend_for_user($user);
@@ -170,16 +166,6 @@ if ($PAGE->user_allowed_editing()) {
         }
     } else if ($edit !== null) {             // Editing state was specified.
         $USER->editing = $edit;       // Change editing state.
-        if (!$currentpage->userid && $edit) {
-            // If we are viewing a system page as ordinary user, and the user turns
-            // editing on, copy the system pages as new user pages, and get the
-            // new page record.
-            if (!$currentpage = my_copy_page($userid, MY_PAGE_PUBLIC, 'user-profile')) {
-                print_error('mymoodlesetup');
-            }
-            $PAGE->set_context($usercontext);
-            $PAGE->set_subpage($currentpage->id);
-        }
     } else {                          // Editing state is in session.
         if ($currentpage->userid) {   // It's a page we can edit, so load from session.
             if (!empty($USER->editing)) {
@@ -187,7 +173,15 @@ if ($PAGE->user_allowed_editing()) {
             } else {
                 $edit = 0;
             }
-        } else {                      // It's a system page and they are not allowed to edit system pages.
+        } else {
+            // For the page to display properly with the user context header the page blocks need to
+            // be copied over to the user context.
+            if (!$currentpage = my_copy_page($userid, MY_PAGE_PUBLIC, 'user-profile')) {
+                print_error('mymoodlesetup');
+            }
+            $PAGE->set_context($usercontext);
+            $PAGE->set_subpage($currentpage->id);
+            // It's a system page and they are not allowed to edit system pages.
             $USER->editing = $edit = 0;          // Disable editing completely, just to be safe.
         }
     }
@@ -217,11 +211,6 @@ if ($PAGE->user_allowed_editing()) {
 
 } else {
     $USER->editing = $edit = 0;
-}
-
-// HACK WARNING!  This loads up all this page's blocks in the system context.
-if ($currentpage->userid == 0) {
-    $CFG->blockmanagerclass = 'my_syspage_block_manager';
 }
 
 // Trigger a user profile viewed event.

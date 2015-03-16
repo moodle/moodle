@@ -48,9 +48,9 @@ if (!empty($id) && $action == 'add') {
     $id = null;
 }
 
-// Blogs are always in system context.
 $sitecontext = context_system::instance();
-$PAGE->set_context($sitecontext);
+$usercontext = context_user::instance($USER->id);
+$PAGE->set_context($usercontext);
 
 require_login($courseid);
 
@@ -142,10 +142,10 @@ if ($action === 'delete') {
     }
 } else if ($action == 'add') {
     $PAGE->set_title("$SITE->shortname: $strblogs: " . get_string('addnewentry', 'blog'));
-    $PAGE->set_heading($SITE->shortname);
+    $PAGE->set_heading(fullname($USER));
 } else if ($action == 'edit') {
     $PAGE->set_title("$SITE->shortname: $strblogs: " . get_string('editentry', 'blog'));
-    $PAGE->set_heading($SITE->shortname);
+    $PAGE->set_heading(fullname($USER));
 }
 
 if (!empty($entry->id)) {

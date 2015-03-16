@@ -164,7 +164,7 @@ $preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage
 /// Display page header
 $strmessaging = get_string('messaging', 'message');
 $PAGE->set_title($strmessaging);
-$PAGE->set_heading($strmessaging);
+$PAGE->set_heading(fullname($USER));
 
 // Grab the renderer
 $renderer = $PAGE->get_renderer('core', 'message');
