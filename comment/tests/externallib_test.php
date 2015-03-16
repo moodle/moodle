@@ -15,98 +15,118 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Events tests.
+ * External comment functions unit tests
  *
- * @package    block_comments
- * @category   test
- * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
+ * @package    core_comment
+ * @category   external
+ * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 2.9
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Events tests class.
- *
- * @package    block_comments
- * @category   test
- * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 global $CFG;
-class core_comment_commentlib_testcase extends advanced_testcase {
-    
-    public $course;
-    public $wiki;
 
-    public function test_comments_get_comments() {
-        
-        $commenttext = 'New comment';
-        //$this->resetAfterTest();
-        $this->setAdminUser();
-        
-        $this->course = $this->getDataGenerator()->create_course();
-        $this->wiki = $this->getDataGenerator()->create_module('wiki', array('course' => $this->course->id));
+require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+
+/**
+ * External comment functions unit tests
+ *
+ * @package    core_comment
+ * @category   external
+ * @copyright  2015 Juan Leyva <juan@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 2.9
+ */
+class core_comment_externallib_testcase extends externallib_advanced_testcase {
+
+    /**
+     * Tests set up
+     */
+    protected function setUp() {
+        global $CFG;
+
         require_once($CFG->dirroot . '/comment/lib.php');
+    }
 
-        // Comment on course page.
-        $context = context_course::instance($this->course->id);
-        $args = new stdClass;
-        $args->context = $context;
-        $args->course = $this->course;
-        $args->area = 'page_comments';
-        $args->itemid = 0;
-        $args->component = 'block_comments';
-        $args->linktext = get_string('showcomments');
-        $args->notoggle = true;
-        $args->autostart = true;
-        $args->displaycancel = false;
-        $comment = new comment($args);
+    /**
+     * Test get_comments
+     */
+    public function test_get_comments() {
+        global $DB, $CFG;
 
-        // Triggering and capturing the event.
-        $sink = $this->redirectEvents();
-        $comment->add($commenttext);
-        $events = $sink->get_events();
-        $this->assertCount(1, $events);
-        $event = reset($events);
+        $this->resetAfterTest(true);
 
-        // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\block_comments\event\comment_created', $event);
-        $this->assertEquals($context, $event->get_context());
-        $url = new moodle_url('/course/view.php', array('id' => $this->course->id));
-        $this->assertEquals($url, $event->get_url());
-        $a = $comment->get_comments(0);
-        print_object($a);
-        exit();
-        
-        /*
-        // Comments when block is on module (wiki) page.
-        $context = context_module::instance($this->wiki->cmid);
-        $args = new stdClass;
-        $args->context   = $context;
-        $args->course    = $this->course;
-        $args->area      = 'page_comments';
-        $args->itemid    = 0;
-        $args->component = 'block_comments';
-        $args->linktext  = get_string('showcomments');
-        $args->notoggle  = true;
-        $args->autostart = true;
-        $args->displaycancel = false;
-        $comment = new comment($args);
+        $CFG->usecomments = true;
 
-        // Triggering and capturing the event.
-        $sink = $this->redirectEvents();
-        $comment->add('New comment 1');
-        $events = $sink->get_events();
-        $this->assertCount(1, $events);
-        $event = reset($events);
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course(array('enablecomment' => 1));
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
 
-        // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\block_comments\event\comment_created', $event);
-        $this->assertEquals($context, $event->get_context());
-        $url = new moodle_url('/mod/wiki/view.php', array('id' => $this->wiki->cmid));
-        $this->assertEquals($url, $event->get_url());
-        $this->assertEventContextNotUsed($event);
-        */
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->name = "Mod data  test";
+        $record->intro = "Some intro of some sort";
+        $record->comments = 1;
+
+        $module = $this->getDataGenerator()->create_module('data', $record);
+        $field = data_get_field_new('text', $module);
+
+        $fielddetail = new stdClass();
+        $fielddetail->name = 'Name';
+        $fielddetail->description = 'Some name';
+
+        $field->define_field($fielddetail);
+        $field->insert_field();
+        $recordid = data_add_record($module);
+
+        $datacontent = array();
+        $datacontent['fieldid'] = $field->field->id;
+        $datacontent['recordid'] = $recordid;
+        $datacontent['content'] = 'Asterix';
+
+        $contentid = $DB->insert_record('data_content', $datacontent);
+        $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
+
+        $context = context_module::instance($module->cmid);
+
+        $this->setUser($user);
+
+        // We need to add the comments manually, the comment API uses the global OUTPUT and this is going to make the WS to fail.
+        $newcmt = new stdClass;
+        $newcmt->contextid    = $context->id;
+        $newcmt->commentarea  = 'database_entry';
+        $newcmt->itemid       = $recordid;
+        $newcmt->content      = 'New comment';
+        $newcmt->format       = 0;
+        $newcmt->userid       = $user->id;
+        $newcmt->timecreated  = time();
+        $cmtid1 = $DB->insert_record('comments', $newcmt);
+
+        $newcmt->content  = 'New comment 2';
+        $cmtid2 = $DB->insert_record('comments', $newcmt);
+
+        $contextlevel = 'module';
+        $instanceid = $cm->id;
+        $component = 'mod_data';
+        $itemid = $recordid;
+        $area = 'database_entry';
+        $page = 0;
+
+        $result = core_comment_external::get_comments($contextlevel, $instanceid, $component, $itemid, $area, $page);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(
+            core_comment_external::get_comments_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['comments']);
+
+        $this->assertEquals($user->id, $result['comments'][0]['userid']);
+        $this->assertEquals($user->id, $result['comments'][1]['userid']);
+
+        $this->assertEquals($cmtid1, $result['comments'][0]['id']);
+        $this->assertEquals($cmtid2, $result['comments'][1]['id']);
     }
 }
