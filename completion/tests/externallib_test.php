@@ -87,4 +87,103 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
         $this->assertEquals(0, $completiondata->completionstate);
         $this->assertTrue($result['status']);
     }
+
+    /**
+     * Test update_activity_completion_status
+     */
+    public function test_get_activities_completion_status() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        $CFG->enablecompletion = true;
+        $student = $this->getDataGenerator()->create_user();
+        $teacher = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1,
+                                                                    'groupmode' => SEPARATEGROUPS,
+                                                                    'groupmodeforce' => 1));
+
+        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id),
+                                                             array('completion' => 1));
+        $forum = $this->getDataGenerator()->create_module('forum',  array('course' => $course->id),
+                                                             array('completion' => 1));
+        $assign = $this->getDataGenerator()->create_module('assign',  array('course' => $course->id));
+        $page = $this->getDataGenerator()->create_module('page',  array('course' => $course->id),
+                                                            array('completion' => 1, 'visible' => 0));
+
+        $cmdata = get_coursemodule_from_id('data', $data->cmid);
+        $cmforum = get_coursemodule_from_id('forum', $forum->cmid);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+
+        // Teacher and student in different groups initially.
+        groups_add_member($group1->id, $student->id);
+        groups_add_member($group2->id, $teacher->id);
+
+        $this->setUser($student);
+        // Forum complete.
+        $completion = new completion_info($course);
+        $completion->update_state($cmforum, COMPLETION_COMPLETE);
+
+        $result = core_completion_external::get_activities_completion_status($course->id, $student->id);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(
+            core_completion_external::get_activities_completion_status_returns(), $result);
+
+        // We added 4 activities, but only 3 with completion enabled and one of those is hidden.
+        $this->assertCount(2, $result['statuses']);
+
+        $activitiesfound = 0;
+        foreach ($result['statuses'] as $status) {
+            if ($status['cmid'] == $forum->cmid and $status['modname'] == 'forum' and $status['instance'] == $forum->id) {
+                $activitiesfound++;
+                $this->assertEquals(COMPLETION_COMPLETE, $status['state']);
+                $this->assertEquals(COMPLETION_TRACKING_MANUAL, $status['tracking']);
+            } else if ($status['cmid'] == $data->cmid and $status['modname'] == 'data' and $status['instance'] == $data->id) {
+                $activitiesfound++;
+                $this->assertEquals(COMPLETION_INCOMPLETE, $status['state']);
+                $this->assertEquals(COMPLETION_TRACKING_MANUAL, $status['tracking']);
+            }
+        }
+        $this->assertEquals(2, $activitiesfound);
+
+        // Teacher should see students status, they are in different groups but the teacher can access all groups.
+        $this->setUser($teacher);
+        $result = core_completion_external::get_activities_completion_status($course->id, $student->id);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(
+            core_completion_external::get_activities_completion_status_returns(), $result);
+
+        // We added 3 activities, but only 2 with completion enabled.
+        $this->assertCount(2, $result['statuses']);
+
+        // Change teacher role capabilities (disable access al goups).
+        $context = context_course::instance($course->id);
+        assign_capability('moodle/site:accessallgroups', CAP_PROHIBIT, $teacherrole->id, $context);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        try {
+            $result = core_completion_external::get_activities_completion_status($course->id, $student->id);
+            $this->fail('Exception expected due to groups permissions.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('accessdenied', $e->errorcode);
+        }
+
+        // Now add the teacher in the same group.
+        groups_add_member($group1->id, $teacher->id);
+        $result = core_completion_external::get_activities_completion_status($course->id, $student->id);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(
+            core_completion_external::get_activities_completion_status_returns(), $result);
+        // We added 3 activities, but only 2 with completion enabled.
+        $this->assertCount(2, $result['statuses']);
+    }
+
 }
