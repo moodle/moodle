@@ -50,7 +50,7 @@ class qtype_multianswer_renderer extends qtype_renderer {
             if ($i > 0) {
                 $index = $question->places[$i];
                 $token = 'qtypemultianswer' . $i . 'marker';
-                $token = '<span class="nolink">' + $token + '</span>';
+                $token = '<span class="nolink">' . $token . '</span>';
                 $output .= $token;
                 $subquestions[$token] = $this->subquestion($qa, $options, $index,
                         $question->subquestions[$index]);
