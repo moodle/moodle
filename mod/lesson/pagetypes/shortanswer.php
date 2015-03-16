@@ -325,7 +325,8 @@ class lesson_add_page_form_shortanswer extends lesson_add_page_form_base {
 
         for ($i = 0; $i < $this->_customdata['lesson']->maxanswers; $i++) {
             $this->_form->addElement('header', 'answertitle'.$i, get_string('answer').' '.($i+1));
-            $this->add_answer($i);
+            // Only first answer is required.
+            $this->add_answer($i, null, ($i < 1));
             $this->add_response($i);
             $this->add_jumpto($i, null, ($i == 0 ? LESSON_NEXTPAGE : LESSON_THISPAGE));
             $this->add_score($i, null, ($i===0)?1:0);
