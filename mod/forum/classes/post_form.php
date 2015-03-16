@@ -174,6 +174,13 @@ class mod_forum_post_form extends moodleform {
 
             $contextcheck = has_capability('mod/forum:movediscussions', $modulecontext) && empty($post->parent) && $groupcount > 1;
             if ($contextcheck) {
+                if (has_capability('mod/forum:canposttomygroups', $modulecontext)
+                            && !isset($post->edit)) {
+                    $mform->addElement('checkbox', 'posttomygroups', get_string('posttomygroups', 'forum'));
+                    $mform->addHelpButton('posttomygroups', 'posttomygroups', 'forum');
+                    $mform->disabledIf('groupinfo', 'posttomygroups', 'checked');
+                }
+
                 foreach ($groupdata as $grouptemp) {
                     $groupinfo[$grouptemp->id] = $grouptemp->name;
                 }
@@ -196,6 +203,7 @@ class mod_forum_post_form extends moodleform {
         } else {
             $submit_string = get_string('posttoforum', 'forum');
         }
+
         $this->add_action_buttons(true, $submit_string);
 
         $mform->addElement('hidden', 'course');

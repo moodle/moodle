@@ -849,24 +849,10 @@ if ($mform_post->is_cancelled()) {
         exit;
 
     } else { // Adding a new discussion.
-        // Before we add this we must check that the user will not exceed the blocking threshold.
-        forum_check_blocking_threshold($thresholdwarning);
-
-        if (!forum_user_can_post_discussion($forum, $fromform->groupid, -1, $cm, $modcontext)) {
-            print_error('cannotcreatediscussion', 'forum');
-        }
-        // If the user has access all groups capability let them choose the group.
-        if ($contextcheck) {
-            $fromform->groupid = $fromform->groupinfo;
-        }
-        if (empty($fromform->groupid)) {
-            $fromform->groupid = -1;
-        }
-
         $fromform->mailnow = empty($fromform->mailnow) ? 0 : 1;
 
         $discussion = $fromform;
-        $discussion->name    = $fromform->subject;
+        $discussion->name = $fromform->subject;
 
         $newstopic = false;
         if ($forum->type == 'news' && !$fromform->parent) {
@@ -875,49 +861,75 @@ if ($mform_post->is_cancelled()) {
         $discussion->timestart = $fromform->timestart;
         $discussion->timeend = $fromform->timeend;
 
-        $message = '';
-        if ($discussion->id = forum_add_discussion($discussion, $mform_post, $message)) {
+        $allowedgroups = array();
+        $groupstopostto = array();
 
-            $params = array(
-                'context' => $modcontext,
-                'objectid' => $discussion->id,
-                'other' => array(
-                    'forumid' => $forum->id,
-                )
-            );
-            $event = \mod_forum\event\discussion_created::create($params);
-            $event->add_record_snapshot('forum_discussions', $discussion);
-            $event->trigger();
-
-            $timemessage = 2;
-            if (!empty($message)) { // if we're printing stuff about the file upload
-                $timemessage = 4;
-            }
-
-            if ($fromform->mailnow) {
-                $message .= get_string("postmailnow", "forum");
-                $timemessage = 4;
-            } else {
-                $message .= '<p>'.get_string("postaddedsuccess", "forum") . '</p>';
-                $message .= '<p>'.get_string("postaddedtimeleft", "forum", format_time($CFG->maxeditingtime)) . '</p>';
-            }
-
-            if ($subscribemessage = forum_post_subscription($fromform, $forum, $discussion)) {
-                $timemessage = 6;
-            }
-
-            // Update completion status
-            $completion=new completion_info($course);
-            if($completion->is_enabled($cm) &&
-                ($forum->completiondiscussions || $forum->completionposts)) {
-                $completion->update_state($cm,COMPLETION_COMPLETE);
-            }
-
-            redirect(forum_go_back_to("view.php?f=$fromform->forum"), $message.$subscribemessage, $timemessage);
-
+        // If we are posting a copy to all groups the user has access to.
+        if (isset($fromform->posttomygroups)) {
+            $allowedgroups = groups_get_activity_allowed_groups($cm);
+            $groupstopostto = array_keys($allowedgroups);
         } else {
-            print_error("couldnotadd", "forum", $errordestination);
+            if ($contextcheck) {
+                $fromform->groupid = $fromform->groupinfo;
+            }
+            if (empty($fromform->groupid)) {
+                $fromform->groupid = -1;
+            }
+            $groupstopostto = array($fromform->groupid);
         }
+
+        // Before we post this we must check that the user will not exceed the blocking threshold.
+        forum_check_blocking_threshold($thresholdwarning);
+
+        foreach ($groupstopostto as $group) {
+            if (!forum_user_can_post_discussion($forum, $group, -1, $cm, $modcontext)) {
+                print_error('cannotcreatediscussion', 'forum');
+            }
+
+            $discussion->groupid = $group;
+            $message = '';
+            if ($discussion->id = forum_add_discussion($discussion, $mform_post, $message)) {
+
+                $params = array(
+                    'context' => $modcontext,
+                    'objectid' => $discussion->id,
+                    'other' => array(
+                        'forumid' => $forum->id,
+                    )
+                );
+                $event = \mod_forum\event\discussion_created::create($params);
+                $event->add_record_snapshot('forum_discussions', $discussion);
+                $event->trigger();
+
+                $timemessage = 2;
+                if (!empty($message)) { // If we're printing stuff about the file upload.
+                    $timemessage = 4;
+                }
+
+                if ($fromform->mailnow) {
+                    $message .= get_string("postmailnow", "forum");
+                    $timemessage = 4;
+                } else {
+                    $message .= '<p>'.get_string("postaddedsuccess", "forum") . '</p>';
+                    $message .= '<p>'.get_string("postaddedtimeleft", "forum", format_time($CFG->maxeditingtime)) . '</p>';
+                }
+
+                if ($subscribemessage = forum_post_subscription($fromform, $forum, $discussion)) {
+                    $timemessage = 6;
+                }
+            } else {
+                print_error("couldnotadd", "forum", $errordestination);
+            }
+        }
+
+        // Update completion status.
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) &&
+                ($forum->completiondiscussions || $forum->completionposts)) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        }
+
+        redirect(forum_go_back_to("view.php?f=$fromform->forum"), $message.$subscribemessage, $timemessage);
 
         exit;
     }

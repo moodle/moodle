@@ -63,6 +63,7 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
     And I click on "Add a new discussion topic" "button"
     And the "Group" select box should contain "All participants"
     And the "Group" select box should contain "G2G1"
+    And I should see "Post a copy to all groups"
 
   @javascript
   Scenario: Teacher in all groups but without accessallgroups can post in either group but not to All Participants
