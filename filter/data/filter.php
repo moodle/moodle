@@ -32,31 +32,48 @@ defined('MOODLE_INTERNAL') || die();
 class filter_data extends moodle_text_filter {
 
     public function filter($text, array $options = array()) {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
 
-        // Trivial-cache - keyed on $cachedcontextid
-        static $cachedcontextid;
-        static $contentlist;
+        // Trivial-cache - keyed on $cachedcourseid + $cacheduserid.
+        static $cachedcourseid = null;
+        static $cacheduserid = null;
+        static $coursecontentlist = array();
+        static $sitecontentlist = array();
 
         static $nothingtodo;
 
         // Try to get current course.
         $coursectx = $this->context->get_course_context(false);
         if (!$coursectx) {
+            // We could be in a course category so no entries for courseid == 0 will be found.
             $courseid = 0;
         } else {
             $courseid = $coursectx->instanceid;
         }
 
-        // Initialise/invalidate our trivial cache if dealing with a different context
-        if (!isset($cachedcontextid) || $cachedcontextid !== $this->context->id) {
-            $cachedcontextid = $this->context->id;
-            $contentlist = array();
+        if ($cacheduserid !== $USER->id) {
+            // Invalidate all caches if the user changed.
+            $coursecontentlist = array();
+            $sitecontentlist = array();
+            $cacheduserid = $USER->id;
+            $cachedcourseid = $courseid;
+            $nothingtodo = false;
+        } else if ($courseid != get_site()->id && $courseid != 0 && $cachedcourseid != $courseid) {
+            // Invalidate course-level caches if the course id changed.
+            $coursecontentlist = array();
+            $cachedcourseid = $courseid;
             $nothingtodo = false;
         }
 
         if ($nothingtodo === true) {
             return $text;
+        }
+
+        // If courseid == 0 only site entries will be returned.
+        if ($courseid == get_site()->id || $courseid == 0) {
+            $contentlist = & $sitecontentlist;
+        } else {
+            $contentlist = & $coursecontentlist;
         }
 
         // Create a list of all the resources to search for. It may be cached already.
