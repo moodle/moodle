@@ -47,29 +47,29 @@ class core_comment_external extends external_api {
 
         return new external_function_parameters(
             array(
-                'contextlevel' => new external_value(PARAM_ALPHA, 'contextlevel'),
-                'instanceid'   => new external_value(PARAM_INT, 'The Instance id of item associated with the context level'),
+                'contextlevel' => new external_value(PARAM_ALPHA, 'contextlevel system, course, user...'),
+                'instanceid'   => new external_value(PARAM_INT, 'the Instance id of item associated with the context level'),
                 'component'    => new external_value(PARAM_COMPONENT, 'component'),
                 'itemid'       => new external_value(PARAM_INT, 'associated id'),
-                'area'         => new external_value(PARAM_TEXT, 'string comment area', VALUE_DEFAULT, ''),
-                'page'         => new external_value(PARAM_INT, 'page number', VALUE_DEFAULT, 0),
+                'area'         => new external_value(PARAM_AREA, 'string comment area', VALUE_DEFAULT, ''),
+                'page'         => new external_value(PARAM_INT, 'page number (0 based)', VALUE_DEFAULT, 0),
             )
         );
     }
 
     /**
-     * Get comments
+     * Return a list of comments
      *
-     * @param string $contextlevel ('context_course', etc..)
-     * @param int $instanceid (eg. the 'id' in the 'book' table)
+     * @param string $contextlevel ('system, course, user', etc..)
+     * @param int $instanceid
      * @param string $component the name of the component
      * @param int $itemid the item id
-     * @param string|null $area
+     * @param string $area comment area
      * @param int $page page number
      * @return array of comments and warnings
      * @since Moodle 2.9
      */
-    public static function get_comments($contextlevel, $instanceid, $component, $itemid, $area='', $page=0) {
+    public static function get_comments($contextlevel, $instanceid, $component, $itemid, $area = '', $page = 0) {
 
         $warnings = array();
         $arrayparams = array(
@@ -94,21 +94,21 @@ class core_comment_external extends external_api {
         $args->component = $params['component'];
 
         $commentobject = new comment($args);
-        $comments = $commentobject->get_comments($arrayparams['page']);
+        $comments = $commentobject->get_comments($params['page']);
 
+        // False means no permissions to see comments.
         if ($comments === false) {
             throw new moodle_exception('nopermissions', 'error', '', 'view comments');
         }
 
-        foreach ($comments as &$comment) {
+        foreach ($comments as $key => $comment) {
 
-                list($comment->content, $comment->format) = external_format_text($comment->content,
-                                                                                 $comment->format,
-                                                                                 $context->id,
-                                                                                 $params['component'],
-                                                                                 '',
-                                                                                 0);
-                $comment = (array)$comment;
+                list($comments[$key]->content, $comments[$key]->format) = external_format_text($comment->content,
+                                                                                                 $comment->format,
+                                                                                                 $context->id,
+                                                                                                 $params['component'],
+                                                                                                 '',
+                                                                                                 0);
         }
 
         $results = array(
@@ -134,10 +134,10 @@ class core_comment_external extends external_api {
                             'content'        => new external_value(PARAM_RAW,  'The content text formated'),
                             'format'         => new external_format_value('content'),
                             'timecreated'    => new external_value(PARAM_INT,  'Time created (timestamp)'),
-                            'strftimeformat' => new external_value(PARAM_RAW, 'Time format'),
+                            'strftimeformat' => new external_value(PARAM_NOTAGS, 'Time format'),
                             'profileurl'     => new external_value(PARAM_URL,  'URL profile'),
-                            'fullname'       => new external_value(PARAM_TEXT, 'fullname'),
-                            'time'           => new external_value(PARAM_RAW, 'Time in human format'),
+                            'fullname'       => new external_value(PARAM_NOTAGS, 'fullname'),
+                            'time'           => new external_value(PARAM_NOTAGS, 'Time in human format'),
                             'avatar'         => new external_value(PARAM_RAW,  'HTML user picture'),
                             'userid'         => new external_value(PARAM_INT,  'User ID'),
                             'delete'         => new external_value(PARAM_BOOL, 'Permission to delete=true/false', VALUE_OPTIONAL)

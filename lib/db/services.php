@@ -102,13 +102,13 @@ $functions = array(
     // Comments related functions.
 
     'core_comment_get_comments' => array(
-        'classname'   => 'core_comment_external',
-        'methodname'  => 'get_comments',
-        'description' => 'Returns comments.',
-        'type'        => 'read',
-        'capabilities'=> 'moodle/comment:view',
-    ), 
-    
+        'classname'     => 'core_comment_external',
+        'methodname'    => 'get_comments',
+        'description'   => 'Returns comments.',
+        'type'          => 'read',
+        'capabilities'  => 'moodle/comment:view',
+    ),
+
     // Grade related functions.
 
     'core_grades_get_grades' => array(
@@ -1033,7 +1033,8 @@ $services = array(
             'core_user_remove_user_device',
             'core_course_get_courses',
             'core_completion_update_activity_completion_status_manually',
-            'mod_data_get_databases_by_courses'
+            'mod_data_get_databases_by_courses',
+            'core_comment_get_comments',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
