@@ -425,21 +425,57 @@ function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
         return false;
     }
 
-    $fs = get_file_storage();
-    $relativepath = implode('/', $args);
-    $fullpath = "/$context->id/mod_book/chapter/$chid/$relativepath";
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-        return false;
-    }
+    // Download the contents of a chapter as an html file.
+    if ($args[0] == 'index.html') {
+        $filename = "index.html";
 
-    // Nasty hack because we do not have file revisions in book yet.
-    $lifetime = $CFG->filelifetime;
-    if ($lifetime > 60*10) {
-        $lifetime = 60*10;
-    }
+        // Remove @@PLUGINFILE@@/.
+        $content = str_replace('@@PLUGINFILE@@/', '', $chapter->content);
 
-    // finally send the file
-    send_stored_file($file, $lifetime, 0, $forcedownload, $options);
+        $titles = "";
+        // Format the chapter titles.
+        if (!$book->customtitles) {
+            require_once(dirname(__FILE__).'/locallib.php');
+            $chapters = book_preload_chapters($book);
+
+            if (!$chapter->subchapter) {
+                $currtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
+                // Note that we can't use the $OUTPUT->heading() in WS_SERVER mode.
+                $titles = "<h3>$currtitle</h3>";
+            } else {
+                $currtitle = book_get_chapter_title($chapters[$chapter->id]->parent, $chapters, $book, $context);
+                $currsubtitle = book_get_chapter_title($chapter->id, $chapters, $book, $context);
+                // Note that we can't use the $OUTPUT->heading() in WS_SERVER mode.
+                $titles = "<h3>$currtitle</h3>";
+                $titles .= "<h4>$currsubtitle</h4>";
+            }
+        }
+
+        $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
+        $formatoptions->overflowdiv = true;
+        $formatoptions->context = $context;
+
+        $content = $titles . format_text($content, $chapter->contentformat, $formatoptions);
+
+        send_file($content, $filename, 0, 0, true, true);
+    } else {
+        $fs = get_file_storage();
+        $relativepath = implode('/', $args);
+        $fullpath = "/$context->id/mod_book/chapter/$chid/$relativepath";
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        // Nasty hack because we do not have file revisions in book yet.
+        $lifetime = $CFG->filelifetime;
+        if ($lifetime > 60 * 10) {
+            $lifetime = 60 * 10;
+        }
+
+        // Finally send the file.
+        send_stored_file($file, $lifetime, 0, $forcedownload, $options);
+    }
 }
 
 /**
@@ -453,4 +489,112 @@ function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
 function book_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-book-*'=>get_string('page-mod-book-x', 'mod_book'));
     return $module_pagetype;
+}
+
+/**
+ * Export book resource contents
+ *
+ * @param  stdClass $cm     Course module object
+ * @param  string $baseurl  Base URL for file downloads
+ * @return array of file content
+ */
+function book_export_contents($cm, $baseurl) {
+    global $DB;
+
+    $contents = array();
+    $context = context_module::instance($cm->id);
+
+    $book = $DB->get_record('book', array('id' => $cm->instance), '*', MUST_EXIST);
+
+    $fs = get_file_storage();
+
+    $chapters = $DB->get_records('book_chapters', array('bookid' => $book->id), 'pagenum');
+
+    $structure = array();
+    $currentchapter = 0;
+
+    foreach ($chapters as $chapter) {
+        if ($chapter->hidden) {
+            continue;
+        }
+
+        // Generate the book structure.
+        $thischapter = array(
+            "title"     => format_string($chapter->title, true, array('context' => $context)),
+            "href"      => $chapter->id . "/index.html",
+            "level"     => 0,
+            "subitems"  => array()
+        );
+
+        // Main chapter.
+        if (!$chapter->subchapter) {
+            $currentchapter = $chapter->pagenum;
+            $structure[$currentchapter] = $thischapter;
+        } else {
+            // Subchapter.
+            $thischapter['level'] = 1;
+            $structure[$currentchapter]["subitems"][] = $thischapter;
+        }
+
+        // Export the chapter contents.
+
+        // Main content (html).
+        $filename = 'index.html';
+        $chapterindexfile = array();
+        $chapterindexfile['type']         = 'file';
+        $chapterindexfile['filename']     = $filename;
+        // Each chapter in a subdirectory.
+        $chapterindexfile['filepath']     = "/{$chapter->id}/";
+        $chapterindexfile['filesize']     = 0;
+        $chapterindexfile['fileurl']      = moodle_url::make_webservice_pluginfile_url(
+                    $context->id, 'mod_book', 'chapter', $chapter->id, '/', 'index.html')->out(false);
+        $chapterindexfile['timecreated']  = $book->timecreated;
+        $chapterindexfile['timemodified'] = $book->timemodified;
+        $chapterindexfile['content']      = format_string($chapter->title, true, array('context' => $context));
+        $chapterindexfile['sortorder']    = 0;
+        $chapterindexfile['userid']       = null;
+        $chapterindexfile['author']       = null;
+        $chapterindexfile['license']      = null;
+        $contents[] = $chapterindexfile;
+
+        // Chapter files (images usually).
+        $files = $fs->get_area_files($context->id, 'mod_book', 'chapter', $chapter->id, 'sortorder DESC, id ASC', false);
+        foreach ($files as $fileinfo) {
+            $file = array();
+            $file['type']         = 'file';
+            $file['filename']     = $fileinfo->get_filename();
+            $file['filepath']     = "/{$chapter->id}/";
+            $file['filesize']     = $fileinfo->get_filesize();
+            $file['fileurl']      = moodle_url::make_webservice_pluginfile_url(
+                                        $context->id, 'mod_book', 'chapter', $chapter->id,
+                                        $fileinfo->get_filepath(), $fileinfo->get_filename())->out(false);
+            $file['timecreated']  = $fileinfo->get_timecreated();
+            $file['timemodified'] = $fileinfo->get_timemodified();
+            $file['sortorder']    = $fileinfo->get_sortorder();
+            $file['userid']       = $fileinfo->get_userid();
+            $file['author']       = $fileinfo->get_author();
+            $file['license']      = $fileinfo->get_license();
+            $contents[] = $file;
+        }
+    }
+
+    // First content is the structure in encoded JSON format.
+    $structurefile = array();
+    $structurefile['type']         = 'content';
+    $structurefile['filename']     = 'structure';
+    $structurefile['filepath']     = "/";
+    $structurefile['filesize']     = 0;
+    $structurefile['fileurl']      = null;
+    $structurefile['timecreated']  = $book->timecreated;
+    $structurefile['timemodified'] = $book->timemodified;
+    $structurefile['content']      = json_encode(array_values($structure));
+    $structurefile['sortorder']    = 0;
+    $structurefile['userid']       = null;
+    $structurefile['author']       = null;
+    $structurefile['license']      = null;
+
+    // Add it as first element.
+    array_unshift($contents, $structurefile);
+
+    return $contents;
 }
