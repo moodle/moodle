@@ -56,6 +56,7 @@ function external_function_info($function, $strictness=MUST_EXIST) {
         }
     }
 
+    $function->ajax_method = $function->methodname.'_is_allowed_from_ajax';
     $function->parameters_method = $function->methodname.'_parameters';
     $function->returns_method    = $function->methodname.'_returns';
     $function->deprecated_method = $function->methodname.'_is_deprecated';
@@ -73,6 +74,12 @@ function external_function_info($function, $strictness=MUST_EXIST) {
     if (method_exists($function->classname, $function->deprecated_method)) {
         if (call_user_func(array($function->classname, $function->deprecated_method)) === true) {
             $function->deprecated = true;
+        }
+    }
+    $function->allowed_from_ajax = false;
+    if (method_exists($function->classname, $function->ajax_method)) {
+        if (call_user_func(array($function->classname, $function->ajax_method)) === true) {
+            $function->allowed_from_ajax = true;
         }
     }
 

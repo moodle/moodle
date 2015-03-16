@@ -40,6 +40,7 @@ $string['apiexplorer'] = 'API explorer';
 $string['apiexplorernotavalaible'] = 'API explorer not available yet.';
 $string['arguments'] = 'Arguments';
 $string['authmethod'] = 'Authentication method';
+$string['callablefromajax'] = 'Callable from AJAX';
 $string['cannotcreatetoken'] = 'No permission to create web service token for the service {$a}.';
 $string['cannotgetcoursecontents'] = 'Cannot get course contents';
 $string['configwebserviceplugins'] = 'For security reasons, only protocols that are in use should be enabled.';
