@@ -47,6 +47,11 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         set_config('release', '2.4dev (Build: 20120823)');
         set_config('version', '2012083100.00');
 
+        $maxbytes = 10485760;
+        $userquota = 5242880;
+        set_config('maxbytes', $maxbytes);
+        set_config('userquota', $userquota);
+
         // Set current user
         $user = array();
         $user['username'] = 'johnd';
@@ -112,6 +117,33 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
                 $this->assertEquals($CFG->{$feature['name']}, $feature['value']);
             }
         }
+
+        $this->assertEquals($userquota, $siteinfo['userquota']);
+        $this->assertEquals($maxbytes, $siteinfo['usermaxuploadfilesize']);
+        $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
+
+        // Now as admin.
+        $this->setAdminUser();
+
+        // Set a fake token for the user admin.
+        $_POST['wstoken'] = 'testtoken';
+        $externaltoken = new stdClass();
+        $externaltoken->token = 'testtoken';
+        $externaltoken->tokentype = 0;
+        $externaltoken->userid = $USER->id;
+        $externaltoken->externalserviceid = $externalserviceid;
+        $externaltoken->contextid = 1;
+        $externaltoken->creatorid = $USER->id;
+        $externaltoken->timecreated = time();
+        $DB->insert_record('external_tokens', $externaltoken);
+        $siteinfo = core_webservice_external::get_site_info();
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $siteinfo = external_api::clean_returnvalue(core_webservice_external::get_site_info_returns(), $siteinfo);
+
+        $this->assertEquals(0, $siteinfo['userquota']);
+        $this->assertEquals(USER_CAN_IGNORE_FILE_SIZE_LIMITS, $siteinfo['usermaxuploadfilesize']);
+        $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
 
     }
 
