@@ -4045,6 +4045,7 @@ EOD;
             if ($USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
                 $userbuttons = array(
                     'messages' => array(
+                        'buttontype' => 'message',
                         'title' => get_string('message', 'message'),
                         'url' => new moodle_url('/message/index.php', array('id' => $user->id)),
                         'image' => 'message',
@@ -4090,6 +4091,10 @@ EOD;
             $html .= html_writer::start_div('btn-group header-button-group');
             foreach ($contextheader->additionalbuttons as $button) {
                 if (!isset($button->page)) {
+                    // Include js for messaging.
+                    if ($button['buttontype'] === 'message') {
+                        message_messenger_requirejs();
+                    }
                     $image = $this->pix_icon($button['formattedimage'], $button['title'], 'moodle', array(
                         'class' => 'iconsmall',
                         'role' => 'presentation'

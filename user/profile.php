@@ -103,13 +103,6 @@ $PAGE->set_context($context);
 $PAGE->set_pagelayout('mypublic');
 $PAGE->set_pagetype('user-profile');
 
-// Load the JS to send a message.
-$cansendmessage = isloggedin() && has_capability('moodle/site:sendmessage', $context)
-    && !empty($CFG->messaging) && !isguestuser() && !isguestuser($user) && ($USER->id != $user->id);
-if ($cansendmessage) {
-    message_messenger_requirejs();
-}
-
 // Set up block editing capabilities.
 if (isguestuser()) {     // Guests can never edit their profile.
     $USER->editing = $edit = 0;  // Just in case.
@@ -454,14 +447,6 @@ echo html_writer::end_tag('dl');
 echo "</div></div>"; // Closing desriptionbox and userprofilebox.
 
 echo $OUTPUT->custom_block_region('content');
-
-// Print messaging link if allowed.
-if ($cansendmessage) {
-    $sendurl = new moodle_url('/message/index.php', array('id' => $user->id));
-    echo '<div class="messagebox">';
-    echo html_writer::link($sendurl, get_string('messageselectadd'), message_messenger_sendmessage_link_params($user));
-    echo '</div>';
-}
 
 echo '</div>';  // Userprofile class.
 echo $OUTPUT->footer();

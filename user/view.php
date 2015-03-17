@@ -83,12 +83,6 @@ $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 // of inhereting the pagetype will lead to an incorrect docs location.
 $PAGE->set_docs_path('user/profile');
 
-$cansendmessage = isloggedin() && has_capability('moodle/site:sendmessage', $usercontext)
-    && !empty($CFG->messaging) && !isguestuser() && !isguestuser($user) && ($USER->id != $user->id);
-if ($cansendmessage) {
-    message_messenger_requirejs();
-}
-
 $isparent = false;
 
 if (!$currentuser and !$user->deleted
@@ -378,16 +372,6 @@ if (has_capability('moodle/user:viewlastip', $usercontext) && !isset($hiddenfiel
 }
 echo html_writer::end_tag('dl');
 echo "</div></div>"; // Closing desriptionbox and userprofilebox.
-// Print messaging link if allowed.
-if ($cansendmessage) {
-    echo '<div class="messagebox">';
-    $sendmessageurl = new moodle_url('/message/index.php', array('id' => $user->id));
-    if ($courseid) {
-        $sendmessageurl->param('viewing', MESSAGE_VIEW_COURSE. $courseid);
-    }
-    echo html_writer::link($sendmessageurl, get_string('messageselectadd'), message_messenger_sendmessage_link_params($user));
-    echo '</div>';
-}
 
 if (empty($CFG->forceloginforprofiles) || $currentuser || has_capability('moodle/user:viewdetails', $usercontext)
         || has_coursecontact_role($id)) {
