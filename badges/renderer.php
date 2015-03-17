@@ -704,27 +704,45 @@ class core_badges_renderer extends plugin_renderer_base {
         return null;
     }
 
-    // Prints badge criteria.
+    /**
+     * Returns information about badge criteria in a list form.
+     *
+     * @param badge $badge Badge objects
+     * @param string $short Indicates whether to print full info about this badge
+     * @return string $output HTML string to output
+     */
     public function print_badge_criteria(badge $badge, $short = '') {
         $output = "";
         $agg = $badge->get_aggregation_methods();
         if (empty($badge->criteria)) {
             return get_string('nocriteria', 'badges');
-        } else if (count($badge->criteria) == 2) {
+        }
+
+        $overalldescr = '';
+        if (!$short) {
+            $overall = $badge->criteria[BADGE_CRITERIA_TYPE_OVERALL];
+            $overalldescr .= $this->output->box(clean_text($overall->description, FORMAT_HTML));
+        }
+        if (count($badge->criteria) == 2) {
             if (!$short) {
-                $output .= get_string('criteria_descr', 'badges');
+                $output .= $overalldescr . get_string('criteria_descr', 'badges');
             }
         } else {
-            $output .= get_string('criteria_descr_' . $short . BADGE_CRITERIA_TYPE_OVERALL, 'badges',
-                                    core_text::strtoupper($agg[$badge->get_aggregation_method()]));
+            $output .= $overalldescr . get_string('criteria_descr_' . $short . BADGE_CRITERIA_TYPE_OVERALL, 'badges',
+                                      core_text::strtoupper($agg[$badge->get_aggregation_method()]));
         }
         $items = array();
         unset($badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]);
         foreach ($badge->criteria as $type => $c) {
+            $criteriadescr = '';
+            if (!$short) {
+                $criteriadescr = $this->output->box(clean_text($c->description, FORMAT_HTML));
+            }
             if (count($c->params) == 1) {
-                $items[] = get_string('criteria_descr_single_' . $short . $type , 'badges') . $c->get_details($short);
+                $items[] = $criteriadescr . get_string('criteria_descr_single_' . $short . $type , 'badges') .
+                           $c->get_details($short);
             } else {
-                $items[] = get_string('criteria_descr_' . $short . $type , 'badges',
+                $items[] = $criteriadescr . get_string('criteria_descr_' . $short . $type , 'badges',
                         core_text::strtoupper($agg[$badge->get_aggregation_method($type)])) . $c->get_details($short);
             }
         }

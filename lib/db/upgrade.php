@@ -4247,5 +4247,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015031400.00);
     }
 
+    if ($oldversion < 2015032000.00) {
+        $table = new xmldb_table('badge_criteria');
+        $field = new xmldb_field('description', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        // Conditionally add description field to the badge_criteria table.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2015032000.00);
+    }
+
     return true;
 }
