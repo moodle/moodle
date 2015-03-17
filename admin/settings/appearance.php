@@ -29,8 +29,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
         new lang_string('configcustomusermenuitems', 'admin'),
         'mygrades,grades|/grade/report/mygrades.php|grades
 messages,message|/message/index.php|message
-myfiles,moodle|/user/files.php|download
-mybadges,badges|/badges/mybadges.php|award',
+mypreferences,moodle|/user/preferences.php|preferences',
         PARAM_TEXT,
         '50',
         '10'

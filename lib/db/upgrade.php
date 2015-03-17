@@ -4306,10 +4306,35 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2015040800.01) {
         // Add "My grades" to the user menu.
-        $newconfig = "mygrades,grades|/grade/report/mygrades.php|grades\n" . $CFG->customusermenuitems;
-        set_config('customusermenuitems', $newconfig);
+        $oldconfig = get_config('core', 'customusermenuitems');
+        if (strpos("mygrades,grades|/grade/report/mygrades.php|grades", $oldconfig) === false) {
+            $newconfig = "mygrades,grades|/grade/report/mygrades.php|grades\n" . $CFG->customusermenuitems;
+            set_config('customusermenuitems', $newconfig);
+        }
 
         upgrade_main_savepoint(true, 2015040800.01);
+    }
+
+    if ($oldversion < 2015030400.02) {
+        // Update the default user menu (add preferences, remove my files and my badges).
+        $oldconfig = get_config('core', 'customusermenuitems');
+
+        // Add "My preferences" at the end.
+        if (strpos($oldconfig, "mypreferences,moodle|/user/preference.php|preferences") === false) {
+            $newconfig = $oldconfig . "\nmypreferences,moodle|/user/preferences.php|preferences";
+        } else {
+            $newconfig = $oldconfig;
+        }
+        // Remove my files.
+        $newconfig = str_replace("myfiles,moodle|/user/files.php|download", "", $newconfig);
+        // Remove my badges.
+        $newconfig = str_replace("mybadges,badges|/badges/mybadges.php|award", "", $newconfig);
+        // Remove holes.
+        $newconfig = preg_replace('/\n+/', "\n", $newconfig);
+        $newconfig = preg_replace('/(\r\n)+/', "\n", $newconfig);
+        set_config('customusermenuitems', $newconfig);
+
+        upgrade_main_savepoint(true, 2015030400.02);
     }
 
     return true;
