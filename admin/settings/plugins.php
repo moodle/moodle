@@ -32,6 +32,13 @@ if ($hassiteconfig) {
 
     // activity modules
     $ADMIN->add('modules', new admin_category('modsettings', new lang_string('activitymodules')));
+
+    $temp = new admin_settingpage('managemodulescommon', new lang_string('commonsettings', 'admin'));
+
+    $temp->add(new admin_setting_configcheckbox('requiremodintro',
+        get_string('requiremodintro', 'admin'), get_string('requiremodintro_desc', 'admin'), 0));
+    $ADMIN->add('modsettings', $temp);
+
     $ADMIN->add('modsettings', new admin_page_managemods());
     foreach (core_plugin_manager::instance()->get_plugins_of_type('mod') as $plugin) {
         /** @var \core\plugininfo\mod $plugin */

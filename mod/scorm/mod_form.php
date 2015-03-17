@@ -46,7 +46,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         // Summary.
-        $this->add_intro_editor(true);
+        $this->standard_intro_elements();
 
         // Package.
         $mform->addElement('header', 'packagehdr', get_string('packagehdr', 'scorm'));

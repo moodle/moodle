@@ -24,7 +24,7 @@ class mod_data_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $this->add_intro_editor(true, get_string('intro', 'data'));
+        $this->standard_intro_elements(get_string('intro', 'data'));
 
         // ----------------------------------------------------------------------
         $mform->addElement('header', 'entrieshdr', get_string('entries', 'data'));

@@ -25,11 +25,6 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-
-    // General settings.
-    $settings->add(new admin_setting_configcheckbox('imscp/requiremodintro', get_string('requiremodintro', 'admin'),
-                                        get_string('configrequiremodintro', 'admin'), 0));
-
     // Modedit defaults.
     $settings->add(new admin_setting_heading('imscpmodeditdefaults',
                                              get_string('modeditdefaults', 'admin'),

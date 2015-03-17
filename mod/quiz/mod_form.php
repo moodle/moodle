@@ -77,7 +77,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         // Introduction.
-        $this->add_intro_editor(false, get_string('introduction', 'quiz'));
+        $this->standard_intro_elements(get_string('introduction', 'quiz'));
 
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'timing', get_string('timing', 'quiz'));

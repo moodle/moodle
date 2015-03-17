@@ -4216,5 +4216,10 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015030400.00);
     }
 
+    if ($oldversion < 2015033000.00) {
+        $DB->delete_records('config_plugins', array('name' => 'requiremodintro'));
+        upgrade_main_savepoint(true, 2015033000.00);
+    }
+
     return true;
 }

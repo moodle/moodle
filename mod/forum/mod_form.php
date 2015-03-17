@@ -46,7 +46,7 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $this->add_intro_editor(true, get_string('forumintro', 'forum'));
+        $this->standard_intro_elements(get_string('forumintro', 'forum'));
 
         $forumtypes = forum_get_forum_types();
         core_collator::asort($forumtypes, core_collator::SORT_STRING);
