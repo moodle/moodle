@@ -790,7 +790,7 @@ function lesson_get_completion_state($course, $cm, $userid, $type) {
             $result = $result || $value;
         }
     }
-    if ($lesson->completiontimespend) {
+    if ($lesson->completiontimespent != 0) {
         $duration = $DB->get_field_sql(
                         "SELECT SUM(lessontime - starttime)
                                FROM {lesson_timer}
@@ -801,9 +801,9 @@ function lesson_get_completion_state($course, $cm, $userid, $type) {
             $duration = 0;
         }
         if ($type == COMPLETION_AND) {
-            $result = $result && ($lesson->timetospend < $duration);
+            $result = $result && ($lesson->completiontimespent < $duration);
         } else {
-            $result = $result || ($lesson->timetospend < $duration);
+            $result = $result || ($lesson->completiontimespent < $duration);
         }
     }
     return $result;

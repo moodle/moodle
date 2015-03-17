@@ -458,11 +458,11 @@ if ($pageid != LESSON_EOL) {
 
         // Update completion state.
         $completion = new completion_info($course);
-        if ($completion->is_enabled($cm) && ($lesson->completionendreached || $lesson->completiontimespend)) {
+        if ($completion->is_enabled($cm) && ($lesson->completionendreached || $lesson->completiontimespent > 0)) {
             $completion->update_state($cm, COMPLETION_COMPLETE);
         }
 
-        if ($lesson->completiontimespend) {
+        if ($lesson->completiontimespent > 0) {
             $duration = $DB->get_field_sql(
                             "SELECT SUM(lessontime - starttime)
                                FROM {lesson_timer}
@@ -474,10 +474,10 @@ if ($pageid != LESSON_EOL) {
             }
 
             // If student has not spend enough time in the lesson, display a message.
-            if ($duration < $lesson->timetospend) {
+            if ($duration < $lesson->completiontimespent) {
                 $a = new stdClass;
                 $a->timespent = format_time($duration);
-                $a->timerequired = format_time($lesson->timetospend);
+                $a->timerequired = format_time($lesson->completiontimespent);
                 $lessoncontent .= $lessonoutput->paragraph(get_string("notenoughtimespent", "lesson", $a), 'center');
             }
         }

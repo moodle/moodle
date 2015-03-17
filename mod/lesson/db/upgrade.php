@@ -219,22 +219,15 @@ function xmldb_lesson_upgrade($oldversion) {
 
     if ($oldversion < 2015031500) {
 
-        // Define field completiontimespend to be added to lesson.
+        // Define field completiontimespent to be added to lesson.
         $table = new xmldb_table('lesson');
-        $field = new xmldb_field('completiontimespend', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'completionendreached');
+        $field = new xmldb_field('completiontimespent', XMLDB_TYPE_INTEGER, '11', null, null, null, '0', 'completionendreached');
 
-        // Conditionally launch add field completiontimespend.
+        // Conditionally launch add field completiontimespent.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        // Define field timetospend to be added to lesson.
-        $field = new xmldb_field('timetospend', XMLDB_TYPE_INTEGER, '11', null, null, null, '0', 'completiontimespend');
-
-        // Conditionally launch add field timetospend.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
         // Lesson savepoint reached.
         upgrade_mod_savepoint(true, 2015031500, 'lesson');
     }
