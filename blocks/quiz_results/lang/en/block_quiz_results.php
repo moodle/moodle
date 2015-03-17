@@ -22,6 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['pluginname'] = 'Quiz results (disabled)';
+$string['quiz_results:addinstance'] = 'Add a new quiz results block';
+
+// Deprecated since Moodle 2.9.
 $string['bestgrade'] = 'The highest grade:';
 $string['bestgrades'] = 'The {$a} highest grades:';
 $string['bestgroupgrade'] = 'The group with the highest average:';
@@ -43,8 +47,6 @@ $string['config_use_groups'] = 'Show groups instead of students (only if the qui
 $string['error_emptyquizid'] = 'There is an error right now with this block: you need to select which quiz it should display results from.';
 $string['error_emptyquizrecord'] = 'There is an error right now with this block: the selected quiz does not seem to exist in the database.';
 $string['error_nogroupsexist'] = 'There is an error right now with this block: it is set to display grades in group mode, but the course has no defined groups.';
-$string['pluginname'] = 'Quiz results';
-$string['quiz_results:addinstance'] = 'Add a new quiz results block';
 $string['worstgrade'] = 'The lowest grade:';
 $string['worstgrades'] = 'The {$a} lowest grades:';
 $string['worstgroupgrade'] = 'The group with the lowest average:';
