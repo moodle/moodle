@@ -72,9 +72,22 @@ class enrol_meta_addinstance_form extends moodleform {
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);
 
-        $this->add_action_buttons(true, get_string('addinstance', 'enrol'));
+        $this->add_add_buttons();
 
         $this->set_data(array('id'=>$course->id));
+    }
+
+    /**
+     * Adds buttons on create new method form
+     */
+    protected function add_add_buttons() {
+        $mform = $this->_form;
+        $buttonarray = array();
+        $buttonarray[0] = $mform->createElement('submit', 'submitbutton', get_string('addinstance', 'enrol'));
+        $buttonarray[1] = $mform->createElement('submit', 'submitbuttonnext', get_string('addinstanceanother', 'enrol'));
+        $buttonarray[2] = $mform->createElement('cancel');
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('buttonar');
     }
 
     function validation($data, $files) {

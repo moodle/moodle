@@ -25,6 +25,7 @@
 
 $string['actenrolshhdr'] = 'Available course enrolment plugins';
 $string['addinstance'] = 'Add method';
+$string['addinstanceanother'] = 'Add method and create another';
 $string['ajaxoneuserfound'] = '1 user found';
 $string['ajaxxusersfound'] = '{$a} users found';
 $string['ajaxnext25'] = 'Next 25...';
@@ -83,6 +84,7 @@ $string['expirythreshold'] = 'Notification threshold';
 $string['expirythreshold_help'] = 'How long before enrolment expiry should users be notified?';
 $string['finishenrollingusers'] = 'Finish enrolling users';
 $string['foundxcohorts'] = 'Found {$a} cohorts';
+$string['instanceadded'] = 'Method added';
 $string['instanceeditselfwarning'] = 'Warning:';
 $string['instanceeditselfwarningtext'] = 'You are enrolled into this course through this enrolment method, changes may affect your access to this course.';
 $string['invalidenrolinstance'] = 'Invalid enrolment instance';
