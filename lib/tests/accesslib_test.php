@@ -68,6 +68,20 @@ class core_accesslib_testcase extends advanced_testcase {
     }
 
     /**
+     * Check modifying capability record is not exposed to other code.
+     */
+    public function test_capabilities_mutation() {
+        $oldcap = get_capability_info('moodle/site:config');
+        $cap = get_capability_info('moodle/site:config');
+        unset($cap->name);
+        $newcap = get_capability_info('moodle/site:config');
+
+        $this->assertFalse(isset($cap->name));
+        $this->assertTrue(isset($newcap->name));
+        $this->assertTrue(isset($oldcap->name));
+    }
+
+    /**
      * Test getting of role access
      */
     public function test_get_role_access() {

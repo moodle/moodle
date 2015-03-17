@@ -126,6 +126,16 @@ $definitions = array(
         'staticacceleration' => true,
     ),
 
+    // Cache the capabilities list DB table. See get_all_capabilities in accesslib.
+    'capabilities' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
+        'ttl' => 3600, // Just in case.
+    ),
+
     // YUI Module cache.
     // This stores the YUI module metadata for Shifted YUI modules in Moodle.
     'yuimodules' => array(
