@@ -79,7 +79,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $temp->add(new admin_setting_my_grades_report());
 
         $temp->add(new admin_setting_configtext('gradereport_mygradeurl', new lang_string('externalurl', 'grades'),
-                new lang_string('externalurl_desc', 'grades'), null));
+                new lang_string('externalurl_desc', 'grades'), ''));
     }
     $ADMIN->add('grades', $temp);
 
