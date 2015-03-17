@@ -344,6 +344,7 @@ class block_base {
      * You don't need to override this if you 're satisfied with the above
      *
      * @deprecated since Moodle 2.9 MDL-49385 - Please use Admin Settings functionality to save block configuration.
+     * @todo MDL-49553 This will be deleted in Moodle 3.1
      * @param array $data
      * @return boolean
      */
