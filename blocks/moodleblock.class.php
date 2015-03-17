@@ -343,10 +343,12 @@ class block_base {
      * Default behavior: save all variables as $CFG properties
      * You don't need to override this if you 're satisfied with the above
      *
+     * @deprecated since Moodle 2.9 MDL-49385 - Please use Admin Settings functionality to save block configuration.
      * @param array $data
      * @return boolean
      */
     function config_save($data) {
+        debugging('config_save($data) is deprecated, use Admin Settings functionality to save block configuration.', DEBUG_DEVELOPER);
         foreach ($data as $name => $value) {
             set_config($name, $value);
         }
