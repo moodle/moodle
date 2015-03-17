@@ -25,6 +25,8 @@ information provided here is intended especially for developers.
   and sql_reader which use iterators to be more memory efficient.
 * $CFG->enabletgzbackups setting has been removed as now backups are stored internally using .tar.gz format by default, you can
   set $CFG->usezipbackups to store them in zip format. This does not affect the restore process, which continues accepting both.
+* Added support for custom string manager implementations via $CFG->customstringmanager
+  directive in the config.php. See MDL-49361 for details.
 
 === 2.8 ===
 
