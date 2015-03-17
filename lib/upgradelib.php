@@ -2192,3 +2192,27 @@ function upgrade_fix_missing_root_folders_draft() {
     $rs->close();
     $transaction->allow_commit();
 }
+
+/**
+ * This function verifies that the database is not using an unsupported storage engine.
+ *
+ * @param environment_results $result object to update, if relevant
+ * @return environment_results|null updated results object, or null if the storage engine is supported
+ */
+function check_database_storage_engine(environment_results $result) {
+    global $DB;
+
+    // Check if MySQL is the DB family (this will also be the same for MariaDB).
+    if ($DB->get_dbfamily() == 'mysql') {
+        // Get the database engine we will either be using to install the tables, or what we are currently using.
+        $engine = $DB->get_dbengine();
+        // Check if MyISAM is the storage engine that will be used, if so, do not proceed and display an error.
+        if ($engine == 'MyISAM') {
+            $result->setInfo('unsupported_db_storage_engine');
+            $result->setStatus(false);
+            return $result;
+        }
+    }
+
+    return null;
+}
