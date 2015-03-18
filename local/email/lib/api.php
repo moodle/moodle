@@ -132,8 +132,8 @@ class EmailTemplate {
         if (!isset($course)) {
             $course =& $COURSE;
         }
-        if (!isset($sender)) {
-            if ($USER->id == 0) {
+        if (!isset($sender) || is_siteadmin($USER->id)) {
+            if ($USER->id == 0 || is_siteadmin($USER->id)) {
                 // We are being run from cron.
                 $sender =& self::get_sender($user);
             } else {
@@ -250,12 +250,12 @@ class EmailTemplate {
 
         // Check if the user to be sent to is valid.
         if ($user = self::get_user($email->userid)) {
-            if (isset($email->senderid)) {
+            if (isset($email->senderid) && !is_siteadmin($email->senderid) && $email->senderid > 0) {
                 $supportuser = self::get_user($email->senderid);
             } else {
                 $supportuser = self::get_user(self::get_sender($user));
             }
-            if (isset($email->headers)) {
+            if (!empty($email->headers)) {
                 $supportuser->customheaders = unserialize($email->headers);
                 email_to_user($USER, $supportuser, $email->subject, $email->body);
             }
@@ -313,6 +313,8 @@ class EmailTemplate {
                         }
                     } else {
                         if (!empty($user->email) && !empty($user->firstname) && !empty($user->lastname)) {
+                            return $user;
+                        } else if ($user == core_user::get_support_user()) {
                             return $user;
                         } else {
                             return false;

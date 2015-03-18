@@ -104,13 +104,14 @@ class company_user {
             $user->newpassword = generate_password();
             if (!empty($CFG->iomad_email_senderisreal)) {
                 EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER));
+            } else if (is_siteadmin($USER->id)) {
+                EmailTemplate::send('user_create', array('user' => $user,));
             } else {
                 EmailTemplate::send('user_create',
                                      array('user' => $user,
                                            'headers' => serialize(array("To:". $user->email.", ".$USER->email))));
             }
             $sendemail = false;
-
         }
         if ($forcepasswordchange) {
             set_user_preference('auth_forcepasswordchange', 1, $user->id);
@@ -384,11 +385,12 @@ Thank you for your request.
         global $CFG, $USER;
         set_user_preference('iomad_temporary', self::rc4encrypt($temppassword), $user);
         unset_user_preference('create_password', $user);
-
         if ( $sendemail ) {
             $user->newpassword = $temppassword;
             if (!empty($CFG->iomad_email_senderisreal)) {
                 EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER));
+            } else if (is_siteadmin($USER->id)) {
+                EmailTemplate::send('user_create', array('user' => $user,));
             } else {
                 EmailTemplate::send('user_create',
                                      array('user' => $user,
