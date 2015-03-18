@@ -258,7 +258,7 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
                                                 false, 0, this.create_all_drag_and_drops);
         this.doc.drag_item_homes().after('load', this.poll_for_image_load, this,
                                                 false, 0, this.create_all_drag_and_drops);
-        Y.later(500, this, this.reposition_drags_for_question, [pendingid], true);
+        Y.later(500, this, this.reposition_drags_for_question, [this.pendingid], true);
     },
     create_all_drag_and_drops : function () {
         this.init_drops();
