@@ -835,7 +835,7 @@ class iomad {
         $numusers = count($countusers);
         foreach ($users as $id => $user) {
             $gradeitem = $DB->get_record('grade_items', array('itemtype' => 'course', 'courseid' => $user->courseid));
-            $grade = $DB->get_record('grade_grades', array('itemid' => $gradeitem->id, 'userid' => $user->id));
+            $grade = $DB->get_record('grade_grades', array('itemid' => $gradeitem->id, 'userid' => $user->uid));
             if ($grade) {
                 $user->result = $grade->finalgrade;
             }
