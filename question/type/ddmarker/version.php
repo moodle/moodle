@@ -35,3 +35,5 @@ $plugin->dependencies = array(
     'qtype_gapselect'     => 2014111200,
     'qtype_ddimageortext' => 2014111200,
 );
+
+$plugin->outestssufficient = true;
