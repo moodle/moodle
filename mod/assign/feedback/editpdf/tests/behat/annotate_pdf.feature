@@ -138,4 +138,4 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     And I press "Save changes"
     And I should see "The grade changes were saved"
     And I press "Continue"
-    And I should see "View annotated PDF..." in the "Student 1" "table_row"
+    And I should see "View annotated PDF..." in the "student1@asd.com" "table_row"
