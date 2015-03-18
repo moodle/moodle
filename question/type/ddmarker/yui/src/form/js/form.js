@@ -74,7 +74,7 @@ Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
         e.target.detach('load', this.constrain_image_size);
     },
 
-    update_drop_zones : function () {
+    update_drop_zones : function (pendingid) {
 
         // Set up drop zones.
         if (this.graphics !== null) {
@@ -98,7 +98,7 @@ Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
             .setXY(this.doc.bg_img().getXY())
             .setStyle('width', this.doc.bg_img().get('width'))
             .setStyle('height', this.doc.bg_img().get('height'));
-        M.util.js_complete(this.pendingid);
+        M.util.js_complete(pendingid);
     },
 
     get_coords : function (dropzoneno) {
