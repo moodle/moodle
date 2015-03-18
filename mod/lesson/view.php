@@ -458,7 +458,7 @@ if ($pageid != LESSON_EOL) {
 
         // Update completion state.
         $completion = new completion_info($course);
-        if ($completion->is_enabled($cm) && ($lesson->completionendreached || $lesson->completiontimespent > 0)) {
+        if ($completion->is_enabled($cm) && $lesson->completionendreached) {
             $completion->update_state($cm, COMPLETION_COMPLETE);
         }
 

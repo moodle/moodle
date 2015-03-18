@@ -1278,6 +1278,15 @@ class lesson extends lesson_base {
         $timer->lessontime = time();
         $timer->completed = $endreached;
         $DB->update_record('lesson_timer', $timer);
+
+        // Update completion state.
+        $cm = get_coursemodule_from_instance('lesson', $this->properties()->id, $this->properties()->course,
+            false, MUST_EXIST);
+        $course = get_course($cm->course);
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) && $this->properties()->completiontimespent > 0) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        }
         return $timer;
     }
 
