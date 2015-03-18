@@ -182,7 +182,7 @@ class company_users_course_form extends moodleform {
                             EmailTemplate::send('license_allocated', array('course' => $addcourse,
                                                                            'user' => $this->user,
                                                                            'license' => $license));
-                            $licenserecord['used']++;
+                            $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $licenserecord['id']));
                             $DB->update_record('companylicense', $licenserecord);
                         }
                     }
@@ -205,7 +205,7 @@ class company_users_course_form extends moodleform {
                                                                    'isusing' => 0))) {
                         $licenserecord = (array) $DB->get_record('companylicense', array('id' => $userlicenserecord->licenseid));
                         $DB->delete_records('companylicense_users', array('id' => $userlicenserecord->id));
-                        $licenserecord['used']--;
+                        $licenserecord['used'] = $DB->count_records('companylicense_users', array('licenseid' => $licenserecord['id']));
                         $DB->update_record('companylicense', $licenserecord);
                     }
                 }
