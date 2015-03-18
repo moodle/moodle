@@ -24,6 +24,12 @@
     text-align: right;
 }
 
+#page-mod-quiz-attempt .mod_quiz-blocked_question_warning .que .formulation,
+#page-mod-quiz-review .mod_quiz-blocked_question_warning .que .formulation {
+    background: #eee;
+    border: 1px solid #dcdcdc;
+}
+
 body.jsenabled .questionflagcheckbox {
     display: none;
 }
@@ -495,46 +501,31 @@ table.quizreviewsummary td.cell {
 }
 
 /** Mod quiz edit **/
-#page-mod-quiz-edit h2.main {
-    display: inline;
-    padding-right: 1em;
-    clear: left;
-}
-#page-mod-quiz-edit.dir-rtl h2.main {
-    padding-left: 1em;
-    padding-right: 0;
-}
-
 #page-mod-quiz-edit .statusbar {
     margin: 0.6em 0.4em;
 }
 #page-mod-quiz-edit .statusdisplay {
     background-color: #ffc;
     clear: both;
-    margin: 0.3em 1em 0.3em 0;
-    padding: 1px ;
-    /* Stop margin collapse. */
-}
-#page-mod-quiz-edit.dir-rtl .statusdisplay {
-    margin: 0.3em 0 0.3em 1em;
+    margin: 0.3em 0;
+    padding: 1px 10px;
 }
 #page-mod-quiz-edit .statusdisplay p {
-    margin: 0.4em;
+    margin: 4px 0;
 }
-
 #page-mod-quiz-edit .maxgrade,
 #page-mod-quiz-edit .totalpoints {
     display: block;
     float: right;
-    margin: -2.5em 1em 0em 1em;
+    margin: -2.5em 0 0;
     padding: .2em;
-}
-#page-mod-quiz-edit .maxgrade label {
-    display: inline;
 }
 #page-mod-quiz-edit.dir-rtl .maxgrade,
 #page-mod-quiz-edit.dir-rtl .totalpoints {
     float: left;
+}
+#page-mod-quiz-edit .maxgrade label {
+    display: inline;
 }
 
 #page-mod-quiz-edit li.activity > div,
@@ -545,6 +536,7 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit .last-add-menu {
     position: relative;
     height: 1.5em;
+    margin: 0 20px;
 }
 #page-mod-quiz-edit .add-menu-outer {
     position: absolute;
@@ -564,12 +556,16 @@ table.quizreviewsummary td.cell {
     display: inline-block;
 }
 
+#page-mod-quiz-edit ul.section {
+    margin: 0;
+    padding: 0 20px;
+}
 #page-mod-quiz-edit ul.slots li.section {
     border: 0;
 }
 #page-mod-quiz-edit ul.slots li.section .content {
     background-color:#FAFAFA;
-    padding:5px 10px;
+    padding: 0;
 }
 #page-mod-quiz-edit ul.slots li.section .content h3 {
     margin: 0;
@@ -587,7 +583,7 @@ table.quizreviewsummary td.cell {
 }
 #page-mod-quiz-edit ul.slots li.section {
     list-style: none;
-    margin: 0 0 5px 0;
+    margin: 0;
     padding: 0;
 }
 #page-mod-quiz-edit ul.slots li.section .left {
@@ -611,7 +607,7 @@ table.quizreviewsummary td.cell {
 }
 #page-mod-quiz-edit ul.slots li.section li.activity {
     background: #E6E6E6;
-    margin: 3px 0 3px 0;
+    margin: 3px 0;
     padding: 0.2em;
 }
 #page-mod-quiz-edit ul.slots li.section li.activity.page {
@@ -688,6 +684,31 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit ul.slots li.section li.activity .editing_delete,
 #page-mod-quiz-edit ul.slots li.section li.activity .editing_maxmark {
     margin: 0 2px;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .question_dependency_wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .question_dependency_wrapper {
+    left: 0;
+    right: auto;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity .question_dependency_wrapper.question_dependency_cannot_depend {
+    display: none;
+}
+
+#page-mod-quiz-edit ul.slots li.section li.activity .question_dependency_wrapper .currentlink,
+#page-mod-quiz-edit ul.slots li.section li.activity .question_dependency_wrapper .cm-edit-action {
+    position: relative;
+    left: 20px;
+    top: -1em;
+}
+#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .question_dependency_wrapper .currentlink,
+#page-mod-quiz-edit.dir-rtl ul.slots li.section li.activity .question_dependency_wrapper .cm-edit-action {
+    right: 20px;
+    left: auto;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .activityinstance {

@@ -106,6 +106,7 @@ switch($requestmethod) {
                         echo json_encode(array('instancemaxmark' => quiz_format_question_grade($quiz, $maxmark),
                                 'newsummarks' => quiz_format_grade($quiz, $quiz->sumgrades)));
                         break;
+
                     case 'updatepagebreak':
                         require_capability('mod/quiz:manage', $modcontext);
                         $slots = $structure->update_page_break($quiz, $id, $value);
@@ -116,10 +117,15 @@ switch($requestmethod) {
                         }
                         echo json_encode(array('slots' => $json));
                         break;
-                }
-                break;
 
-            case 'course':
+                    case 'updatedependency':
+                        require_capability('mod/quiz:manage', $modcontext);
+                        $slot = $structure->get_slot_by_id($id);
+                        $value = (bool) $value;
+                        $structure->update_question_dependency($slot->id, $value);
+                        echo json_encode(array('requireprevious' => $value));
+                        break;
+                }
                 break;
         }
         break;

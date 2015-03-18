@@ -11,7 +11,7 @@ YUI.add('moodle-mod_quiz-toolboxes', function (Y, NAME) {
  */
 
 // The CSS classes we use.
-    var CSS = {
+var CSS = {
         ACTIVITYINSTANCE : 'activityinstance',
         AVAILABILITYINFODIV : 'div.availabilityinfo',
         CONTENTWITHOUTLINK : 'contentwithoutlink',
@@ -24,7 +24,6 @@ YUI.add('moodle-mod_quiz-toolboxes', function (Y, NAME) {
         JOIN: 'page_join',
         MODINDENTCOUNT : 'mod-indent-',
         MODINDENTHUGE : 'mod-indent-huge',
-        MODULEIDPREFIX : 'slot-',
         PAGE: 'page',
         SECTIONHIDDENCLASS : 'hidden',
         SECTIONIDPREFIX : 'section-',
@@ -38,7 +37,6 @@ YUI.add('moodle-mod_quiz-toolboxes', function (Y, NAME) {
         ACTIONLINKTEXT : '.actionlinktext',
         ACTIVITYACTION : 'a.cm-edit-action[data-action], a.editing_maxmark',
         ACTIVITYFORM : 'span.instancemaxmarkcontainer form',
-        ACTIVITYICON : 'img.activityicon',
         ACTIVITYINSTANCE : '.' + CSS.ACTIVITYINSTANCE,
         ACTIVITYLINK: '.' + CSS.ACTIVITYINSTANCE + ' > a',
         ACTIVITYLI : 'li.activity',
@@ -58,7 +56,6 @@ YUI.add('moodle-mod_quiz-toolboxes', function (Y, NAME) {
         PAGELI : 'li.page',
         SECTIONUL : 'ul.section',
         SHOW : 'a.' + CSS.SHOW,
-        SHOWHIDE : 'a.editing_showhide',
         SLOTLI : 'li.slot',
         SUMMARKS : '.mod_quiz_summarks'
     },
@@ -276,8 +273,8 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      */
     initializer: function() {
         M.mod_quiz.quizbase.register_module(this);
-        BODY.delegate('key', this.handle_data_action, 'down:enter', SELECTOR.ACTIVITYACTION, this);
         Y.delegate('click', this.handle_data_action, BODY, SELECTOR.ACTIVITYACTION, this);
+        Y.delegate('click', this.handle_data_action, BODY, SELECTOR.DEPENDENCY_LINK, this);
     },
 
     /**
@@ -321,6 +318,11 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             case 'removepagebreak':
                 // The user is adding or removing a page break.
                 this.update_page_break(ev, node, activity, action);
+                break;
+            case 'adddependency':
+            case 'removedependency':
+                // The user is adding or removing a dependency between questions.
+                this.update_dependency(ev, node, activity, action);
                 break;
             default:
                 // Nothing to do here!
@@ -390,8 +392,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                     if (M.core.actionmenu && M.core.actionmenu.instance) {
                         M.core.actionmenu.instance.hideMenu();
                     }
-                } else {
-                    window.location.reload(true);
                 }
             });
 
@@ -414,8 +414,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      */
     edit_maxmark : function(ev, button, activity) {
         // Get the element we're working on
-        var activityid = Y.Moodle.mod_quiz.util.slot.getId(activity),
-            instancemaxmark  = activity.one(SELECTOR.INSTANCEMAXMARK),
+        var instancemaxmark  = activity.one(SELECTOR.INSTANCEMAXMARK),
             instance = activity.one(SELECTOR.ACTIVITYINSTANCE),
             currentmaxmark = instancemaxmark.get('firstChild'),
             oldmaxmark = currentmaxmark.get('data'),
@@ -425,7 +424,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             data = {
                 'class'   : 'resource',
                 'field'   : 'getmaxmark',
-                'id'      : activityid
+                'id'      : Y.Moodle.mod_quiz.util.slot.getId(activity)
             };
 
         // Prevent the default actions.
@@ -575,6 +574,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {EventFacade} ev The event that was fired.
      * @param {Node} button The button that triggered this action.
      * @param {Node} activity The activity node that this action will be performed on.
+     * @param {String} action The action, addpagebreak or removepagebreak.
      * @chainable
      */
     update_page_break: function(ev, button, activity, action) {
@@ -582,21 +582,16 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         ev.preventDefault();
 
         var nextactivity = activity.next('li.activity.slot');
-        var spinner = this.add_spinner(nextactivity),
-            slotid = 0;
+        var spinner = this.add_spinner(nextactivity);
         var value = action === 'removepagebreak' ? 1 : 2;
 
         var data = {
             'class': 'resource',
             'field': 'updatepagebreak',
-            'id':    slotid,
+            'id':    Y.Moodle.mod_quiz.util.slot.getId(nextactivity),
             'value': value
         };
 
-        slotid = Y.Moodle.mod_quiz.util.slot.getId(nextactivity);
-        if (slotid) {
-            data.id = Number(slotid);
-        }
         this.send_request(data, spinner, function(response) {
             if (response.slots) {
                 if (action === 'addpagebreak') {
@@ -606,8 +601,39 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                     Y.Moodle.mod_quiz.util.page.remove(page, true);
                 }
                 this.reorganise_edit_page();
-            } else {
-                window.location.reload(true);
+            }
+        });
+
+        return this;
+    },
+
+    /**
+     * Updates a slot to either require the question in the previous slot to
+     * have been answered, or not,
+     *
+     * @protected
+     * @method update_page_break
+     * @param {EventFacade} ev The event that was fired.
+     * @param {Node} button The button that triggered this action.
+     * @param {Node} activity The activity node that this action will be performed on.
+     * @param {String} action The action, adddependency or removedependency.
+     * @chainable
+     */
+    update_dependency: function(ev, button, activity, action) {
+        // Prevent the default button action.
+        ev.preventDefault();
+        var spinner = this.add_spinner(activity);
+
+        var data = {
+            'class': 'resource',
+            'field': 'updatedependency',
+            'id':    Y.Moodle.mod_quiz.util.slot.getId(activity),
+            'value': action === 'adddependency' ? 1 : 0
+        };
+
+        this.send_request(data, spinner, function(response) {
+            if (response.hasOwnProperty('requireprevious')) {
+                Y.Moodle.mod_quiz.util.slot.updateDependencyIcon(activity, response.requireprevious);
             }
         });
 
@@ -624,6 +650,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         Y.Moodle.mod_quiz.util.slot.reorderSlots();
         Y.Moodle.mod_quiz.util.slot.reorderPageBreaks();
         Y.Moodle.mod_quiz.util.page.reorderPages();
+        Y.Moodle.mod_quiz.util.slot.updateAllDependencyIcons();
     },
 
     NAME : 'mod_quiz-resource-toolbox',
@@ -677,134 +704,6 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
      */
     initializer : function() {
         M.mod_quiz.quizbase.register_module(this);
-
-        // Section Highlighting.
-        Y.delegate('click', this.toggle_highlight, SELECTOR.PAGECONTENT, SELECTOR.SECTIONLI + ' ' + SELECTOR.HIGHLIGHT, this);
-
-        // Section Visibility.
-        Y.delegate('click', this.toggle_hide_section, SELECTOR.PAGECONTENT, SELECTOR.SECTIONLI + ' ' + SELECTOR.SHOWHIDE, this);
-    },
-
-    toggle_hide_section : function(e) {
-        // Prevent the default button action.
-        e.preventDefault();
-
-        // Get the section we're working on.
-        var section = e.target.ancestor(M.mod_quiz.format.get_section_selector(Y)),
-            button = e.target.ancestor('a', true),
-            hideicon = button.one('img'),
-
-        // The value to submit
-            value,
-
-        // The text for strings and images. Also determines the icon to display.
-            action,
-            nextaction;
-
-        if (!section.hasClass(CSS.SECTIONHIDDENCLASS)) {
-            section.addClass(CSS.SECTIONHIDDENCLASS);
-            value = 0;
-            action = 'hide';
-            nextaction = 'show';
-        } else {
-            section.removeClass(CSS.SECTIONHIDDENCLASS);
-            value = 1;
-            action = 'show';
-            nextaction = 'hide';
-        }
-
-        var newstring = M.util.get_string(nextaction + 'fromothers', 'format_' + this.get('format'));
-        hideicon.setAttrs({
-            'alt' : newstring,
-            'src'   : M.util.image_url('i/' + nextaction)
-        });
-        button.set('title', newstring);
-
-        // Change the highlight status
-        var data = {
-            'class' : 'section',
-            'field' : 'visible',
-            'id'    : Y.Moodle.core_course.util.section.getId(section.ancestor(M.mod_quiz.edit.get_section_wrapper(Y), true)),
-            'value' : value
-        };
-
-        var lightbox = M.util.add_lightbox(Y, section);
-        lightbox.show();
-
-        this.send_request(data, lightbox, function(response) {
-            var activities = section.all(SELECTOR.ACTIVITYLI);
-            activities.each(function(node) {
-                var button;
-                if (node.one(SELECTOR.SHOW)) {
-                    button = node.one(SELECTOR.SHOW);
-                } else {
-                    button = node.one(SELECTOR.HIDE);
-                }
-                var activityid = Y.Moodle.mod_quiz.util.slot.getId(node);
-
-                // NOTE: resourcestotoggle is returned as a string instead
-                // of a Number so we must cast our activityid to a String.
-                if (Y.Array.indexOf(response.resourcestotoggle, "" + activityid) !== -1) {
-                    M.mod_quiz.resource_toolbox.handle_resource_dim(button, node, action);
-                }
-            }, this);
-        });
-    },
-
-    /**
-     * Toggle highlighting the current section.
-     *
-     * @method toggle_highlight
-     * @param {EventFacade} e
-     */
-    toggle_highlight : function(e) {
-        // Prevent the default button action.
-        e.preventDefault();
-
-        // Get the section we're working on.
-        var section = e.target.ancestor(M.mod_quiz.edit.get_section_selector(Y));
-        var button = e.target.ancestor('a', true);
-        var buttonicon = button.one('img');
-
-        // Determine whether the marker is currently set.
-        var togglestatus = section.hasClass('current');
-        var value = 0;
-
-        // Set the current highlighted item text.
-        var old_string = M.util.get_string('markthistopic', 'moodle');
-        Y.one(SELECTOR.PAGECONTENT)
-            .all(M.mod_quiz.edit.get_section_selector(Y) + '.current ' + SELECTOR.HIGHLIGHT)
-            .set('title', old_string);
-        Y.one(SELECTOR.PAGECONTENT)
-            .all(M.mod_quiz.edit.get_section_selector(Y) + '.current ' + SELECTOR.HIGHLIGHT + ' img')
-            .set('alt', old_string)
-            .set('src', M.util.image_url('i/marker'));
-
-        // Remove the highlighting from all sections.
-        Y.one(SELECTOR.PAGECONTENT).all(M.mod_quiz.edit.get_section_selector(Y))
-            .removeClass('current');
-
-        // Then add it if required to the selected section.
-        if (!togglestatus) {
-            section.addClass('current');
-            value = Y.Moodle.core_course.util.section.getId(section.ancestor(M.mod_quiz.edit.get_section_wrapper(Y), true));
-            var new_string = M.util.get_string('markedthistopic', 'moodle');
-            button
-                .set('title', new_string);
-            buttonicon
-                .set('alt', new_string)
-                .set('src', M.util.image_url('i/marked'));
-        }
-
-        // Change the highlight status.
-        var data = {
-            'class' : 'course',
-            'field' : 'marker',
-            'value' : value
-        };
-        var lightbox = M.util.add_lightbox(Y, section);
-        lightbox.show();
-        this.send_request(data, lightbox);
     }
 },  {
     NAME : 'mod_quiz-section-toolbox',
@@ -814,9 +713,6 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
         },
         quizid : {
             'value' : 0
-        },
-        format : {
-            'value' : 'topics'
         }
     }
 });

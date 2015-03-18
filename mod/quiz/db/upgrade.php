@@ -807,6 +807,19 @@ function xmldb_quiz_upgrade($oldversion) {
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2015022600) {
+        // Define field requireprevious to be added to quiz_slots.
+        $table = new xmldb_table('quiz_slots');
+        $field = new xmldb_field('requireprevious', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, 0, 'page');
+
+        // Conditionally launch add field page.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2015022600, 'quiz');
+    }
+
     return true;
 }
-

@@ -18,7 +18,8 @@ Y.namespace('Moodle.mod_quiz.util.slot');
 Y.Moodle.mod_quiz.util.slot = {
     CSS: {
         SLOT : 'slot',
-        QUESTIONTYPEDESCRIPTION : 'qtype_description'
+        QUESTIONTYPEDESCRIPTION : 'qtype_description',
+        CANNOT_DEPEND: 'question_dependency_cannot_depend'
     },
     CONSTANTS: {
         SLOTIDPREFIX : 'slot-',
@@ -32,7 +33,10 @@ Y.Moodle.mod_quiz.util.slot = {
         PAGEBREAK : 'span.page_split_join_wrapper',
         ICON : 'img.smallicon',
         QUESTIONTYPEDESCRIPTION : '.qtype_description',
-        SECTIONUL : 'ul.section'
+        SECTIONUL : 'ul.section',
+        DEPENDENCY_WRAPPER : '.question_dependency_wrapper',
+        DEPENDENCY_LINK : '.question_dependency_wrapper .cm-edit-action',
+        DEPENDENCY_ICON : '.question_dependency_wrapper img'
     },
 
     /**
@@ -333,6 +337,65 @@ Y.Moodle.mod_quiz.util.slot = {
             // Update the anchor.
             pagebreaklink.set('href', newurl);
         }, this);
+    },
+
+    /**
+     * Update the dependency icons.
+     *
+     * @method updateAllDependencyIcons
+     * @return void
+     */
+    updateAllDependencyIcons: function() {
+        // Get list of slot nodes.
+        var slots = this.getSlots(),
+            slotnumber = 0,
+            previousslot = null;
+        // Loop through slots incrementing the number each time.
+        slots.each (function(slot) {
+            slotnumber++;
+
+            if (slotnumber == 1 || previousslot.getData('canfinish') === '0') {
+                slot.one(this.SELECTORS.DEPENDENCY_WRAPPER).addClass(this.CSS.CANNOT_DEPEND);
+            } else {
+                slot.one(this.SELECTORS.DEPENDENCY_WRAPPER).removeClass(this.CSS.CANNOT_DEPEND);
+            }
+            this.updateDependencyIcon(slot, null);
+
+            previousslot = slot;
+        }, this);
+    },
+
+    /**
+     * Update the slot icon to indicate the new requiresprevious state.
+     *
+     * @method slot Slot node
+     * @method requiresprevious Whether this node now requires the previous one.
+     * @return void
+     */
+    updateDependencyIcon: function(slot, requiresprevious) {
+        var link = slot.one(this.SELECTORS.DEPENDENCY_LINK);
+        var icon = slot.one(this.SELECTORS.DEPENDENCY_ICON);
+        var previousSlot = this.getPrevious(slot);
+        var a = {thisq: this.getNumber(slot)};
+        if (previousSlot) {
+            a.previousq = this.getNumber(previousSlot);
+        }
+
+        if (requiresprevious === null) {
+            requiresprevious = link.getData('action') === 'removedependency';
+        }
+
+        if (requiresprevious) {
+            link.set('title', M.util.get_string('questiondependencyremove', 'quiz', a));
+            link.setData('action', 'removedependency');
+            icon.set('alt', M.util.get_string('questiondependsonprevious', 'quiz'));
+            icon.set('src', M.util.image_url('t/locked', 'moodle'));
+        } else {
+            link.set('title', M.util.get_string('questiondependencyadd', 'quiz', a));
+            link.setData('action', 'adddependency');
+            icon.set('alt', M.util.get_string('questiondependencyfree', 'quiz'));
+            icon.set('src', M.util.image_url('t/unlocked', 'moodle'));
+        }
     }
 };
 

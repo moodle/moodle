@@ -446,12 +446,17 @@ class quiz_attempt {
     /** @var int maximum number of slots in the quiz for the review page to default to show all. */
     const MAX_SLOTS_FOR_DEFAULT_REVIEW_SHOW_ALL = 50;
 
-    // Basic data.
+    /** @var quiz object containing the quiz settings. */
     protected $quizobj;
+
+    /** @var stdClass the quiz_attempts row. */
     protected $attempt;
 
     /** @var question_usage_by_activity the question usage for this quiz attempt. */
     protected $quba;
+
+    /** @var array of quiz_slots rows. */
+    protected $slots;
 
     /** @var array page no => array of slot numbers on the page in order. */
     protected $pagelayout;
@@ -477,6 +482,8 @@ class quiz_attempt {
      *      of the state of each question. Else just set up the basic details of the attempt.
      */
     public function __construct($attempt, $quiz, $cm, $course, $loadquestions = true) {
+        global $DB;
+
         $this->attempt = $attempt;
         $this->quizobj = new quiz($quiz, $cm, $course);
 
@@ -485,6 +492,10 @@ class quiz_attempt {
         }
 
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
+        $this->slots = $DB->get_records('quiz_slots',
+                array('quizid' => $this->get_quizid()), 'slot',
+                'slot, page, requireprevious, questionid, maxmark');
+
         $this->determine_layout();
         $this->number_questions();
     }
@@ -987,6 +998,21 @@ class quiz_attempt {
     }
 
     /**
+     * Checks whether the question in this slot requires the previous question to have been completed.
+     *
+     * @param int $slot the number used to identify this question within this attempt.
+     * @return bool whether the previous question must have been completed before this one can be seen.
+     */
+    public function is_blocked_by_previous_question($slot) {
+        return $slot > 1 && $this->slots[$slot]->requireprevious &&
+                !$this->get_quiz()->shufflequestions &&
+                $this->get_navigation_method() != QUIZ_NAVMETHOD_SEQ &&
+                !$this->quba->get_question_state($slot - 1)->is_finished() &&
+                $this->quba->can_question_finish_during_attempt($slot - 1);
+    }
+
+    /**
+     * Get the displayed question number for a slot.
      * @param int $slot the number used to identify this question within this attempt.
      * @return string the displayed question number for the question in this slot.
      *      For example '1', '2', '3' or 'i'.
@@ -1255,9 +1281,61 @@ class quiz_attempt {
      * @return string HTML for the question in its current state.
      */
     public function render_question($slot, $reviewing, $thispageurl = null) {
+        if ($this->is_blocked_by_previous_question($slot)) {
+            $placeholderqa = $this->make_blocked_question_placeholder($slot);
+
+            $displayoptions = $this->get_display_options($reviewing);
+            $displayoptions->manualcomment = question_display_options::HIDDEN;
+            $displayoptions->history = question_display_options::HIDDEN;
+            $displayoptions->readonly = true;
+
+            return html_writer::div($placeholderqa->render($displayoptions,
+                    $this->get_question_number($slot)),
+                    'mod_quiz-blocked_question_warning');
+        }
+
         return $this->quba->render_question($slot,
                 $this->get_display_options_with_edit_link($reviewing, $slot, $thispageurl),
                 $this->get_question_number($slot));
+    }
+
+    /**
+     * Create a fake question to be displayed in place of a question that is blocked
+     * until the previous question has been answered.
+     *
+     * @param unknown $slot int slot number of the question to replace.
+     * @return question_definition the placeholde question.
+     */
+    protected function make_blocked_question_placeholder($slot) {
+        $replacedquestion = $this->get_question_attempt($slot)->get_question();
+
+        question_bank::load_question_definition_classes('description');
+        $question = new qtype_description_question();
+        $question->id = $replacedquestion->id;
+        $question->category = null;
+        $question->parent = 0;
+        $question->qtype = question_bank::get_qtype('description');
+        $question->name = '';
+        $question->questiontext = get_string('questiondependsonprevious', 'quiz');
+        $question->questiontextformat = FORMAT_HTML;
+        $question->generalfeedback = '';
+        $question->defaultmark = $this->quba->get_question_max_mark($slot);
+        $question->length = $replacedquestion->length;
+        $question->penalty = 0;
+        $question->stamp = '';
+        $question->version = 0;
+        $question->hidden = 0;
+        $question->timecreated = null;
+        $question->timemodified = null;
+        $question->createdby = null;
+        $question->modifiedby = null;
+
+        $placeholderqa = new question_attempt($question, $this->quba->get_id(),
+                null, $this->quba->get_question_max_mark($slot));
+        $placeholderqa->set_slot($slot);
+        $placeholderqa->start($this->get_quiz()->preferredbehaviour, 1);
+        $placeholderqa->set_flagged($this->is_question_flagged($slot));
+        return $placeholderqa;
     }
 
     /**

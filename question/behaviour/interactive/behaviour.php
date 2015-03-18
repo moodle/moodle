@@ -54,6 +54,10 @@ class qbehaviour_interactive extends question_behaviour_with_multiple_tries {
         return $question instanceof question_automatically_gradable;
     }
 
+    public function can_finish_during_attempt() {
+        return true;
+    }
+
     public function get_right_answer_summary() {
         return $this->question->get_right_answer_summary();
     }
