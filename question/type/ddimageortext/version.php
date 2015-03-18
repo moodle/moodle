@@ -34,3 +34,5 @@ $plugin->release   = '1.6 for Moodle 2.6+';
 $plugin->dependencies = array(
     'qtype_gapselect' => 2014111200,
 );
+
+$plugin->outestssufficient = true;
