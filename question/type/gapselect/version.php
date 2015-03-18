@@ -30,3 +30,5 @@ $plugin->cron      = 0;
 $plugin->component = 'qtype_gapselect';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '1.6 for Moodle 2.6+';
+
+$plugin->outestssufficient = true;
