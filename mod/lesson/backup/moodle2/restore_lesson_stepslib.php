@@ -72,9 +72,12 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
             unset($data->showhighscores);
         }
 
-        // Supply item that maybe missing from previous versions.
+        // Supply items that maybe missing from previous versions.
         if (!isset($data->completionendreached)) {
             $data->completionendreached = 0;
+        }
+        if (!isset($data->completiontimespent)) {
+            $data->completiontimespent = 0;
         }
 
         // Compatibility with old backups with maxtime and timed fields.

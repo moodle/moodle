@@ -458,9 +458,30 @@ if ($pageid != LESSON_EOL) {
 
         // Update completion state.
         $completion = new completion_info($course);
-        if ($completion->is_enabled($cm) && $lesson->completionendreached) {
+        if ($completion->is_enabled($cm) && ($lesson->completionendreached || $lesson->completiontimespent > 0)) {
             $completion->update_state($cm, COMPLETION_COMPLETE);
         }
+
+        if ($lesson->completiontimespent > 0) {
+            $duration = $DB->get_field_sql(
+                            "SELECT SUM(lessontime - starttime)
+                               FROM {lesson_timer}
+                              WHERE lessonid = :lessonid
+                                AND userid = :userid",
+                            array('userid' => $USER->id, 'lessonid' => $lesson->id));
+            if (!$duration) {
+                $duration = 0;
+            }
+
+            // If student has not spend enough time in the lesson, display a message.
+            if ($duration < $lesson->completiontimespent) {
+                $a = new stdClass;
+                $a->timespent = format_time($duration);
+                $a->timerequired = format_time($lesson->completiontimespent);
+                $lessoncontent .= $lessonoutput->paragraph(get_string("notenoughtimespent", "lesson", $a), 'center');
+            }
+        }
+
 
         if ($gradeinfo->attempts) {
             if (!$lesson->custom) {

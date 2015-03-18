@@ -76,7 +76,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
             'mediafile', 'mediaheight', 'mediawidth', 'mediaclose', 'slideshow',
             'width', 'height', 'bgcolor', 'displayleft', 'displayleftif', 'progressbar',
             'showhighscores', 'maxhighscores', 'available', 'deadline', 'timemodified',
-            'completionendreached'
+            'completionendreached', 'completiontimespent'
         ));
         // Tell the lesson element about the showhighscores elements mapping to the highscores
         // database field.

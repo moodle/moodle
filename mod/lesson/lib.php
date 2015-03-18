@@ -779,14 +779,34 @@ function lesson_get_completion_state($course, $cm, $userid, $type) {
     $lesson = $DB->get_record('lesson', array('id' => $cm->instance), '*',
             MUST_EXIST);
 
+    $result = $type; // Default return value.
     // If completion option is enabled, evaluate it and return true/false.
     if ($lesson->completionendreached) {
-        return $DB->record_exists('lesson_timer', array(
+        $value = $DB->record_exists('lesson_timer', array(
                 'lessonid' => $lesson->id, 'userid' => $userid, 'completed' => 1));
-    } else {
-        // Completion option is not enabled so just return $type.
-        return $type;
+        if ($type == COMPLETION_AND) {
+            $result = $result && $value;
+        } else {
+            $result = $result || $value;
+        }
     }
+    if ($lesson->completiontimespent != 0) {
+        $duration = $DB->get_field_sql(
+                        "SELECT SUM(lessontime - starttime)
+                               FROM {lesson_timer}
+                              WHERE lessonid = :lessonid
+                                AND userid = :userid",
+                        array('userid' => $userid, 'lessonid' => $lesson->id));
+        if (!$duration) {
+            $duration = 0;
+        }
+        if ($type == COMPLETION_AND) {
+            $result = $result && ($lesson->completiontimespent < $duration);
+        } else {
+            $result = $result || ($lesson->completiontimespent < $duration);
+        }
+    }
+    return $result;
 }
 /**
  * This function extends the settings navigation block for the site.
