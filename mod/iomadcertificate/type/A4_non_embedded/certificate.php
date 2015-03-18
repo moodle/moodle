@@ -96,8 +96,8 @@ iomadcertificate_print_text($pdf, $x, $y + 36, 'C', 'Helvetica', '', 30, fullnam
 iomadcertificate_print_text($pdf, $x, $y + 55, 'C', 'Helvetica', '', 20, get_string('statement', 'iomadcertificate'));
 iomadcertificate_print_text($pdf, $x, $y + 72, 'C', 'Helvetica', '', 20, $course->fullname);
 iomadcertificate_print_text($pdf, $x, $y + 92, 'C', 'Helvetica', '', 14, iomadcertificate_get_date($iomadcertificate, $certrecord, $course, $certuser->id));
-iomadcertificate_print_text($pdf, $x, $y + 102, 'C', 'Times', '', 10, iomadcertificate_get_grade($iomadcertificate, $course));
-iomadcertificate_print_text($pdf, $x, $y + 112, 'C', 'Times', '', 10, iomadcertificate_get_outcome($iomadcertificate, $course));
+iomadcertificate_print_text($pdf, $x, $y + 102, 'C', 'Times', '', 10, iomadcertificate_get_grade($iomadcertificate, $course, $certuser->id));
+iomadcertificate_print_text($pdf, $x, $y + 112, 'C', 'Times', '', 10, iomadcertificate_get_outcome($iomadcertificate, $course, $certuser->id));
 if ($iomadcertificate->printhours) {
     iomadcertificate_print_text($pdf, $x, $y + 122, 'C', 'Times', '', 10, get_string('credithours', 'iomadcertificate') . ': ' . $iomadcertificate->printhours);
 }

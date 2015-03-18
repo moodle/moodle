@@ -1267,14 +1267,18 @@ function iomadcertificate_get_grade($iomadcertificate, $course, $userid = null) 
  * @param stdClass $course
  * @return string the outcome
  */
-function iomadcertificate_get_outcome($iomadcertificate, $course) {
+function iomadcertificate_get_outcome($iomadcertificate, $course, $userid=0) {
     global $USER, $DB;
+    
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
 
     if ($iomadcertificate->printoutcome > 0) {
         if ($grade_item = new grade_item(array('id' => $iomadcertificate->printoutcome))) {
             $outcomeinfo = new stdClass;
             $outcomeinfo->name = $grade_item->get_name();
-            $outcome = new grade_grade(array('itemid' => $grade_item->id, 'userid' => $USER->id));
+            $outcome = new grade_grade(array('itemid' => $grade_item->id, 'userid' => $userid));
             $outcomeinfo->grade = grade_format_gradevalue($outcome->finalgrade, $grade_item, true, GRADE_DISPLAY_TYPE_REAL);
 
             return $outcomeinfo->name . ': ' . $outcomeinfo->grade;

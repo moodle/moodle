@@ -146,6 +146,7 @@ if (empty($action)) { // Not displaying PDF
     echo $OUTPUT->footer($course);
     exit;
 } else { // Output to pdf
+
     // Remove full-stop at the end if it exists, to avoid "..pdf" being created and being filtered by clean_filename
     $certname = rtrim($iomadcertificate->name, '.');
     $filename = clean_filename("$certname.pdf");
