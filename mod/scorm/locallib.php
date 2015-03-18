@@ -495,13 +495,6 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
                         $track->value = $objectivesatisfiedstatus;
                         $track->timemodified = time();
                         $id = $DB->insert_record('scorm_scoes_track', $track);
-                        ob_start();
-                        $filepath = $CFG->dataroot."\\temp\\tempfile.txt";
-                        $fh = fopen($filepath, "a+");
-                        var_dump($track);
-                        $string = ob_get_clean();
-                        fwrite($fh, $string);
-                        fclose($fh);
                     }
                 }
             }
