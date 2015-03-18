@@ -184,6 +184,7 @@ $string['eventhighscoresviewed'] = 'Highscores viewed';
 $string['eventlessonended'] = 'Lesson ended';
 $string['eventlessonstarted'] = 'Lesson started';
 $string['eventpagecreated'] = 'Page created';
+$string['eventpagemoved'] = 'Page moved';
 $string['eventpageupdated'] = 'Page updated';
 $string['eventpagedeleted'] = 'Page deleted';
 $string['eventquestionanswered'] = 'Question answered';
