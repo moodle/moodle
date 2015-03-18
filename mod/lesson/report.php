@@ -244,7 +244,7 @@ if ($action === 'delete') {
             }
 
             $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;";
-            $temp .= "userid=".$try['userid']."&amp;try=".$try['try']." class=\"lesson-attempt-link\">";
+            $temp .= "userid=".$try['userid']."&amp;try=".$try['try']."\" class=\"lesson-attempt-link\">";
             if ($try["grade"] !== null) { // If null then not done yet.
                 // This is what the link does when the user has completed the try.
                 $timetotake = $try["timeend"] - $try["timestart"];
