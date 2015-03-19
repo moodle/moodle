@@ -257,7 +257,6 @@ class EmailTemplate {
             }
             if (!empty($email->headers)) {
                 $supportuser->customheaders = unserialize($email->headers);
-                email_to_user($USER, $supportuser, $email->subject, $email->body);
             }
             return email_to_user($user, $supportuser, $email->subject, $email->body);
         }
@@ -280,7 +279,6 @@ class EmailTemplate {
         }
         if (isset($email->headers)) {
                 $supportuser->customheaders = unserialize($email->headers);
-                email_to_user($USER, $supportuser, $email->subject, $email->body);
         }
 
         return email_to_user($this->user, $supportuser, $subject, $body);

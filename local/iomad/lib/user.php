@@ -109,7 +109,7 @@ class company_user {
             } else {
                 EmailTemplate::send('user_create',
                                      array('user' => $user,
-                                           'headers' => serialize(array("To:". $user->email.", ".$USER->email))));
+                                           'headers' => serialize(array("Cc:".$USER->email))));
             }
             $sendemail = false;
         }
@@ -394,7 +394,7 @@ Thank you for your request.
             } else {
                 EmailTemplate::send('user_create',
                                      array('user' => $user,
-                                     'headers' => serialize(array("To:". $user->email.", ".$USER->email))));
+                                     'headers' => serialize(array("Cc:".$USER->email))));
             }
         } else {
             unset_user_preference('iomad_send_password', $user);
