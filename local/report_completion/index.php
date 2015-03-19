@@ -545,7 +545,7 @@ if (empty($charttype)) {
                                       $OUTPUT->action_link($statusurl, $status),
                                       $OUTPUT->action_link($timestartedurl, $timestarted),
                                       $OUTPUT->action_link($timecompletedurl, $timecompleted),
-                                      $finalscore));
+                                      $finalscore);
         $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
         $compusertable->id = 'ReportTable';
         if ($hascertificate) {
