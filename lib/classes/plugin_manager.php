@@ -967,8 +967,8 @@ class core_plugin_manager {
             ),
 
             'block' => array(
-                'activity_modules', 'admin_bookmarks', 'badges', 'blog_menu',
-                'blog_recent', 'blog_tags', 'calendar_month',
+                'activity_modules', 'activity_results', 'admin_bookmarks', 'badges',
+                'blog_menu', 'blog_recent', 'blog_tags', 'calendar_month',
                 'calendar_upcoming', 'comments', 'community',
                 'completionstatus', 'course_list', 'course_overview',
                 'course_summary', 'feedback', 'glossary_random', 'html',
