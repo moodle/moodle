@@ -3388,6 +3388,11 @@ EOD;
             return '';
         }
 
+        // Remove the Dashboard node from the breadcrumb. This saves doubling up of the same link.
+        if (get_home_page()) {
+            array_shift($items);
+        }
+
         $htmlblocks = array();
         // Iterate the navarray and display each node
         $separator = get_separator();

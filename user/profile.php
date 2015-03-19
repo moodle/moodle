@@ -140,7 +140,7 @@ if (!$currentuser) {
     if ($node = $PAGE->settingsnav->get('userviewingsettings'.$user->id)) {
         $node->forceopen = true;
     }
-} else if ($node = $PAGE->settingsnav->get('usercurrentsettings', navigation_node::TYPE_CONTAINER)) {
+} else if ($node = $PAGE->settingsnav->get('dashboard', navigation_node::TYPE_CONTAINER)) {
     $node->forceopen = true;
 }
 if ($node = $PAGE->settingsnav->get('root')) {

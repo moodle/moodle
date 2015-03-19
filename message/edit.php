@@ -70,6 +70,7 @@ if ($user->id == $USER->id) {
     if (is_siteadmin($user) and !is_siteadmin($USER)) {
         print_error('useradmineditadmin');
     }
+    $PAGE->navbar->includesettingsbase = true;
     $PAGE->navigation->extend_for_user($user);
 }
 

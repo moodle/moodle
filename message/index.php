@@ -200,6 +200,19 @@ if ($user2realuser) {
 }
 $PAGE->set_heading(fullname($USER));
 
+// Remove the user node from the main navigation for this page.
+$usernode = $PAGE->navigation->find('users', null);
+$usernode->remove();
+
+$settings = $PAGE->settingsnav->find('messages', null);
+// Add the user we are contacting to the breadcrumb.
+if (!empty($user2realuser)) {
+    $usernode = $settings->add(fullname($user2), new moodle_url('/user/profile.php', array('id' => $user2->id)));
+    $usernode->make_active();
+} else {
+    $settings->make_active();
+}
+
 //now the page contents
 echo $OUTPUT->header();
 

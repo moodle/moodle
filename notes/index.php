@@ -93,6 +93,10 @@ $strnotes = get_string('notes', 'notes');
 if ($userid) {
     $PAGE->set_context(context_user::instance($user->id));
     $PAGE->navigation->extend_for_user($user);
+    // If we are looking at our own notes, then change focus to 'my notes'.
+    if ($userid == $USER->id) {
+        $notenode = $PAGE->navigation->find('notes', null)->make_inactive();
+    }
 } else {
     $link = null;
     if (has_capability('moodle/course:viewparticipants', $coursecontext)

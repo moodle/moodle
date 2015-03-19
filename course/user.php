@@ -139,6 +139,8 @@ switch ($mode) {
             $coursenode = $PAGE->navigation->find($course->id, navigation_node::TYPE_COURSE);
             $coursenode->collapse = true;
             $coursenode->make_inactive();
+            $url = new moodle_url('/course/user.php', array('id' => $id, 'user' => $user->id, 'mode' => $mode));
+            $reportnode = $PAGE->navbar->add(get_string('pluginname', 'gradereport_user'), $url);
         }
         echo $OUTPUT->header();
 

@@ -61,6 +61,8 @@ if (isset($personalcontext)) {
 } else {
     $PAGE->set_context($context);
 }
+$settings = $PAGE->settingsnav->find('mygrades', null);
+$settings->make_active();
 
 $access = false;
 if (has_capability('moodle/grade:viewall', $systemcontext)) {

@@ -53,9 +53,20 @@ $PAGE->set_heading(fullname($user));
 
 if (!$currentuser) {
     $PAGE->navigation->extend_for_user($user);
-    $settings = $PAGE->settingsnav->get('userviewingsettings' . $user->id);
+    $settings = $PAGE->settingsnav->find('userviewingsettings' . $user->id, null);
+    $settings->make_active();
+    $url = new moodle_url('/user/preferences.php', array('userid' => $userid));
+    $navbar = $PAGE->navbar->add(get_string('preferences', 'moodle'), $url);
 } else {
-    $settings = $PAGE->settingsnav->get('usercurrentsettings');
+    // Shutdown the users node in the navigation menu.
+    $usernode = $PAGE->navigation->find('users', null);
+    $usernode->make_inactive();
+
+    $PAGE->set_title(get_string('preferences'));
+    $PAGE->set_heading(get_string('preferences'));
+
+    $settings = $PAGE->settingsnav->find('usercurrentsettings', null);
+    $settings->make_active();
 }
 
 // Identifying the nodes.

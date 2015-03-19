@@ -51,6 +51,8 @@ if (!empty($id) && $action == 'add') {
 $sitecontext = context_system::instance();
 $usercontext = context_user::instance($USER->id);
 $PAGE->set_context($usercontext);
+$blognode = $PAGE->settingsnav->find('blogadd', null);
+$blognode->make_active();
 
 require_login($courseid);
 

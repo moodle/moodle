@@ -78,6 +78,7 @@ if ($id == -1) {
     require_capability('moodle/user:update', $systemcontext);
     $user = $DB->get_record('user', array('id' => $id), '*', MUST_EXIST);
     $PAGE->set_context(context_user::instance($user->id));
+    $PAGE->navbar->includesettingsbase = true;
     if ($user->id != $USER->id) {
         $PAGE->navigation->extend_for_user($user);
     } else {

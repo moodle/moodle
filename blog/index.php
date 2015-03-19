@@ -66,6 +66,11 @@ $PAGE->set_context($context);
 
 $sitecontext = context_system::instance();
 
+if (isset($userid) && $USER->id == $userid) {
+    $blognode = $PAGE->navigation->find('siteblog', null);
+    $blognode->make_inactive();
+}
+
 // Check basic permissions.
 if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
     // Everybody can see anything - no login required unless site is locked down using forcelogin.

@@ -71,7 +71,7 @@ if (get_home_page() != HOMEPAGE_SITE) {
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY) && $redirect === 1) {
         redirect($CFG->wwwroot .'/my/');
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER)) {
-        $PAGE->settingsnav->get('usercurrentsettings')->add(
+        $PAGE->settingsnav->find('usercurrentsettings', null)->add(
             get_string('makethismyhome'),
             new moodle_url('/', array('setdefaulthome' => true)),
             navigation_node::TYPE_SETTING);

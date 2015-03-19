@@ -178,9 +178,43 @@ if (empty($result->posts)) {
         } else {
             $notification = get_string('nopostsmadebyyou', 'forum');
         }
+        // These are the user's forum interactions.
+        // Shut down the navigation 'Users' node.
+        $usernode = $PAGE->navigation->find('users', null);
+        $usernode->make_inactive();
+        // Edit navbar.
+        if (isset($courseid) && $courseid != SITEID) {
+            // Create as much of the navbar automatically.
+            $newusernode = $PAGE->navigation->find('user' . $user->id, null);
+            $newusernode->make_active();
+            // Check to see if this is a discussion or a post.
+            if ($mode == 'posts') {
+                $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
+                        array('id' => $user->id, 'course' => $courseid)));
+            } else {
+                $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
+                        array('id' => $user->id, 'course' => $courseid, 'mode'=>'discussions')));
+            }
+        }
     } else if ($canviewuser) {
         $PAGE->navigation->extend_for_user($user);
         $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
+
+        // Edit navbar.
+        if (isset($courseid) && $courseid != SITEID) {
+            // Create as much of the navbar automatically.
+            $usernode = $PAGE->navigation->find('user' . $user->id, null);
+            $usernode->make_active();
+            // Check to see if this is a discussion or a post.
+            if ($mode == 'posts') {
+                $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
+                        array('id' => $user->id, 'course' => $courseid)));
+            } else {
+                $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
+                        array('id' => $user->id, 'course' => $courseid, 'mode'=>'discussions')));
+            }
+        }
+
         $fullname = fullname($user);
         if ($discussionsonly) {
             $notification = get_string('nodiscussionsstartedby', 'forum', $fullname);
@@ -339,6 +373,20 @@ $PAGE->set_heading($pageheading);
 
 $PAGE->navigation->extend_for_user($user);
 $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
+
+// Edit navbar.
+if (isset($courseid) && $courseid != SITEID) {
+    $usernode = $PAGE->navigation->find('user' . $user->id , null);
+    $usernode->make_active();
+    // Check to see if this is a discussion or a post.
+    if ($mode == 'posts') {
+        $navbar = $PAGE->navbar->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php',
+                array('id' => $user->id, 'course' => $courseid)));
+    } else {
+        $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
+                array('id' => $user->id, 'course' => $courseid, 'mode'=>'discussions')));
+    }
+}
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($inpageheading);
