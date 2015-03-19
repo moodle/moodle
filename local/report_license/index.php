@@ -508,7 +508,7 @@ if (empty($charttype)) {
         // Paginate up the results.
     
         if (empty($idlist['0'])) {
-            foreach ($coursedata as $userid => $user) {
+            foreach ($coursedata as $user) {
                 if ($user->isusing) {
                     $user->isusing = get_string('yes');
                 } else {
@@ -516,7 +516,7 @@ if (empty($charttype)) {
                 }
                 $user->fullname = $user->firstname . ' ' . $user->lastname;
                 $compusertable->data[] = array("<a href='".new moodle_url($userurl,
-                                                                          array('userid' => $user->id,
+                                                                          array('userid' => $user->uid,
                                                                                 'courseid' => $courseid)).
                                                "'>$user->fullname</a>",
                                                 $user->email,
