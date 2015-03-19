@@ -217,6 +217,110 @@ class core_setuplib_testcase extends advanced_testcase {
         $this->assertTimeCurrent(filemtime($timestampfile));
     }
 
+    public function test_make_unique_directory_basedir_is_file() {
+        global $CFG;
+
+        // Start with a file instead of a directory.
+        $base = $CFG->tempdir . DIRECTORY_SEPARATOR . md5(microtime() + rand());
+        touch($base);
+
+        // First the false test.
+        $this->assertFalse(make_unique_writable_directory($base, false));
+
+        // Now check for exception.
+        $this->setExpectedException('invalid_dataroot_permissions',
+                $base . ' is not writable. Unable to create a unique directory within it.'
+            );
+        make_unique_writable_directory($base);
+
+        unlink($base);
+    }
+
+    public function test_make_unique_directory() {
+        global $CFG;
+
+        // Create directories should be both directories, and writable.
+        $firstdir = make_unique_writable_directory($CFG->tempdir);
+        $this->assertTrue(is_dir($firstdir));
+        $this->assertTrue(is_writable($firstdir));
+
+        $seconddir = make_unique_writable_directory($CFG->tempdir);
+        $this->assertTrue(is_dir($seconddir));
+        $this->assertTrue(is_writable($seconddir));
+
+        // Directories should be different each iteration.
+        $this->assertNotEquals($firstdir, $seconddir);
+    }
+
+    public function test_get_request_storage_directory() {
+        // Making a call to get_request_storage_directory should always give the same result.
+        $firstdir = get_request_storage_directory();
+        $seconddir = get_request_storage_directory();
+        $this->assertTrue(is_dir($firstdir));
+        $this->assertEquals($firstdir, $seconddir);
+
+        // Removing the directory and calling get_request_storage_directory() again should cause a new directory to be created.
+        remove_dir($firstdir);
+        $this->assertFalse(file_exists($firstdir));
+        $this->assertFalse(is_dir($firstdir));
+
+        $thirddir = get_request_storage_directory();
+        $this->assertTrue(is_dir($thirddir));
+        $this->assertNotEquals($firstdir, $thirddir);
+
+        // Removing it and replacing it with a file should cause it to be regenerated again.
+        remove_dir($thirddir);
+        $this->assertFalse(file_exists($thirddir));
+        $this->assertFalse(is_dir($thirddir));
+        touch($thirddir);
+        $this->assertTrue(file_exists($thirddir));
+        $this->assertFalse(is_dir($thirddir));
+
+        $fourthdir = get_request_storage_directory();
+        $this->assertTrue(is_dir($fourthdir));
+        $this->assertNotEquals($thirddir, $fourthdir);
+    }
+
+
+    public function test_make_request_directory() {
+        // Every request directory should be unique.
+        $firstdir   = make_request_directory();
+        $seconddir  = make_request_directory();
+        $thirddir   = make_request_directory();
+        $fourthdir  = make_request_directory();
+
+        $this->assertNotEquals($firstdir,   $seconddir);
+        $this->assertNotEquals($firstdir,   $thirddir);
+        $this->assertNotEquals($firstdir,   $fourthdir);
+        $this->assertNotEquals($seconddir,  $thirddir);
+        $this->assertNotEquals($seconddir,  $fourthdir);
+        $this->assertNotEquals($thirddir,   $fourthdir);
+
+        // They should also all be within the request storage directory.
+        $requestdir = get_request_storage_directory();
+        $this->assertEquals(0, strpos($firstdir,    $requestdir));
+        $this->assertEquals(0, strpos($seconddir,   $requestdir));
+        $this->assertEquals(0, strpos($thirddir,    $requestdir));
+        $this->assertEquals(0, strpos($fourthdir,   $requestdir));
+
+        // Removing the requestdir should mean that new request directories are still created successfully.
+        remove_dir($requestdir);
+        $this->assertFalse(file_exists($requestdir));
+        $this->assertFalse(is_dir($requestdir));
+
+        $fifthdir   = make_request_directory();
+        $this->assertNotEquals($firstdir,   $fifthdir);
+        $this->assertNotEquals($seconddir,  $fifthdir);
+        $this->assertNotEquals($thirddir,   $fifthdir);
+        $this->assertNotEquals($fourthdir,  $fifthdir);
+        $this->assertTrue(is_dir($fifthdir));
+        $this->assertFalse(strpos($fifthdir, $requestdir));
+
+        // And it should be within the new request directory.
+        $newrequestdir = get_request_storage_directory();
+        $this->assertEquals(0, strpos($fifthdir, $newrequestdir));
+    }
+
     public function test_merge_query_params() {
         $original = array(
             'id' => '1',
