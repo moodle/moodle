@@ -158,46 +158,88 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
  */
 function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow,
                                 $questionids = array(), $forcedvariantsbyslot = array()) {
+
+    // Usages for this user's previous quiz attempts.
+    $qubaids = new \mod_quiz\question\qubaids_for_users_attempts(
+            $quizobj->get_quizid(), $attempt->userid);
+
     // Fully load all the questions in this quiz.
     $quizobj->preload_questions();
     $quizobj->load_questions();
 
-    // Add them all to the $quba.
-    $questionsinuse = array_keys($quizobj->get_questions());
+    // First load all the non-random questions.
+    $randomfound = false;
+    $slot = 0;
+    $questions = array();
+    $maxmark = array();
     foreach ($quizobj->get_questions() as $questiondata) {
-        if ($questiondata->qtype != 'random') {
-            if (!$quizobj->get_quiz()->shuffleanswers) {
-                $questiondata->options->shuffleanswers = false;
-            }
-            $question = question_bank::make_question($questiondata);
+        $slot += 1;
+        $maxmark[$slot] = $questiondata->maxmark;
+        if ($questiondata->qtype == 'random') {
+            $randomfound = true;
+            continue;
+        }
+        if (!$quizobj->get_quiz()->shuffleanswers) {
+            $questiondata->options->shuffleanswers = false;
+        }
+        $questions[$slot] = question_bank::make_question($questiondata);
+    }
 
-        } else {
-            if (!isset($questionids[$quba->next_slot_number()])) {
-                $forcequestionid = null;
+    // Then find a question to go in place of each random question.
+    if ($randomfound) {
+        $slot = 0;
+        $usedquestionids = array();
+        foreach ($questions as $question) {
+            if (isset($usedquestions[$question->id])) {
+                $usedquestionids[$question->id] += 1;
             } else {
-                $forcequestionid = $questionids[$quba->next_slot_number()];
+                $usedquestionids[$question->id] = 1;
+            }
+        }
+        $randomloader = new \core_question\bank\random_question_loader($qubaids, $usedquestionids);
+
+        foreach ($quizobj->get_questions() as $questiondata) {
+            $slot += 1;
+            if ($questiondata->qtype != 'random') {
+                continue;
             }
 
-            $question = question_bank::get_qtype('random')->choose_other_question(
-                $questiondata, $questionsinuse, $quizobj->get_quiz()->shuffleanswers, $forcequestionid);
-            if (is_null($question)) {
+            // Deal with fixed random choices for testing.
+            if (isset($questionids[$quba->next_slot_number()])) {
+                if ($randomloader->is_question_available($questiondata->category,
+                        (bool) $questiondata->questiontext, $questionids[$quba->next_slot_number()])) {
+                    $questions[$slot] = question_bank::load_question(
+                            $questionids[$quba->next_slot_number()], $quizobj->get_quiz()->shuffleanswers);
+                    continue;
+                } else {
+                    throw new coding_exception('Forced question id not available.');
+                }
+            }
+
+            // Normal case, pick one at random.
+            $questionid = $randomloader->get_next_question_id($questiondata->category,
+                        (bool) $questiondata->questiontext);
+            if ($questionid === null) {
                 throw new moodle_exception('notenoughrandomquestions', 'quiz',
                                            $quizobj->view_url(), $questiondata);
             }
-        }
 
-        $quba->add_question($question, $questiondata->maxmark);
-        $questionsinuse[] = $question->id;
+            $questions[$slot] = question_bank::load_question($questionid,
+                    $quizobj->get_quiz()->shuffleanswers);
+        }
+    }
+
+    // Finally add them all to the usage.
+    ksort($questions);
+    foreach ($questions as $slot => $question) {
+        $newslot = $quba->add_question($question, $maxmark[$slot]);
+        if ($newslot != $slot) {
+            throw new coding_exception('Slot numbers have got confused.');
+        }
     }
 
     // Start all the questions.
-    if ($attempt->preview) {
-        $variantoffset = rand(1, 100);
-    } else {
-        $variantoffset = $attemptnumber;
-    }
-    $variantstrategy = new question_variant_pseudorandom_no_repeats_strategy(
-            $variantoffset, $attempt->userid, $quizobj->get_quizid());
+    $variantstrategy = new core_question\engine\variants\least_used_strategy($quba, $qubaids);
 
     if (!empty($forcedvariantsbyslot)) {
         $forcedvariantsbyseed = question_variant_forced_choices_selection_strategy::prepare_forced_choices_array(

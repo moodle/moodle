@@ -1198,6 +1198,32 @@ ORDER BY
                 'questionid ' . $test . ' AND questionusageid ' .
                 $qubaids->usage_id_in(), $params + $qubaids->usage_id_in_params());
     }
+
+    /**
+     * Get the number of times each variant has been used for each question in a list
+     * in a set of usages.
+     * @param array $questionids of question ids.
+     * @param qubaid_condition $qubaids ids of the usages to consider.
+     * @return array questionid => variant number => num uses.
+     */
+    public function load_used_variants(array $questionids, qubaid_condition $qubaids) {
+        list($test, $params) = $this->db->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
+        $recordset = $this->db->get_recordset_sql("
+                SELECT qa.questionid, qa.variant, COUNT(1) AS usescount
+                  FROM " . $qubaids->from_question_attempts('qa') . "
+                 WHERE qa.questionid $test
+                   AND " . $qubaids->where() . "
+              GROUP BY qa.questionid, qa.variant
+              ORDER BY COUNT(1) ASC
+                ", $params + $qubaids->from_where_params());
+
+        $usedvariants = array_combine($questionids, array_fill(0, count($questionids), array()));
+        foreach ($recordset as $row) {
+            $usedvariants[$row->questionid][$row->variant] = $row->usescount;
+        }
+        $recordset->close();
+        return $usedvariants;
+    }
 }
 
 
