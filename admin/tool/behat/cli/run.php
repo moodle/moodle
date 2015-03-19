@@ -128,7 +128,7 @@ array_walk($unrecognised, function (&$v) {
         $v = escapeshellarg($v);
     }
 });
-$extraopts = implode(' ', $unrecognised);
+$extraopts = $unrecognised;
 
 $tags = '';
 
@@ -139,10 +139,10 @@ if ($options['profile']) {
         exit(1);
     }
     $tags = $CFG->behat_config[$profile]['filters']['tags'];
-    $extraopts .= '--profile=\'' . $profile . "'";
+    $extraopts[] = '--profile=\'' . $profile . "'";
 } else if ($options['tags']) {
     $tags = $options['tags'];
-    $extraopts .= '--tags="' . $tags . '"';
+    $extraopts[] = '--tags="' . $tags . '"';
 }
 
 // Update config file if tags defined.
@@ -166,6 +166,7 @@ if ($tags) {
 }
 
 $cmds = array();
+$extraopts = implode(' ', $extraopts);
 echo "Running " . ($options['torun'] - $options['fromrun'] + 1) . " parallel behat sites:" . PHP_EOL;
 
 for ($i = $options['fromrun']; $i <= $options['torun']; $i++) {
