@@ -163,7 +163,8 @@ class behat_backup extends behat_base {
         $this->wait();
 
         // Select the course.
-        $exception = new ExpectationException('"' . $fromcourse . '" course not found in the list of courses to import from', $this->getSession());
+        $exception = new ExpectationException('"' . $fromcourse . '" course not found in the list of courses to import from',
+            $this->getSession());
 
         // The argument should be converted to an xpath literal.
         $fromcourse = $this->getSession()->getSelectorsHandler()->xpathLiteral($fromcourse);
@@ -332,7 +333,8 @@ class behat_backup extends behat_base {
     protected function select_backup($backupfilename) {
 
         // Using xpath as there are other restore links before this one.
-        $exception = new ExpectationException('The "' . $backupfilename . '" backup file can not be found in this page', $this->getSession());
+        $exception = new ExpectationException('The "' . $backupfilename . '" backup file can not be found in this page',
+            $this->getSession());
 
         // The argument should be converted to an xpath literal.
         $backupfilename = $this->getSession()->getSelectorsHandler()->xpathLiteral($backupfilename);
@@ -424,7 +426,8 @@ class behat_backup extends behat_base {
         foreach ($rows as $k => $data) {
             if (count($data) !== 3) {
                 // Not enough information to guess the page.
-                throw new ExpectationException("The backup/restore step must be specified for all backup options");
+                throw new ExpectationException("The backup/restore step must be specified for all backup options",
+                    $this->getSession());
             } else if ($data[0] == $step) {
                 unset($data[0]);
                 $newrows[] = $data;
