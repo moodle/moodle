@@ -29,6 +29,12 @@ $id = required_param('id', PARAM_INT);
 $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 
 if (!isloggedin()) {
+    $referer = clean_param(get_referer(), PARAM_LOCALURL);
+    if (empty($referer)) {
+        // A user that is not logged in has arrived directly on this page,
+        // they should be redirected to the course page they are trying to enrol on after logging in.
+        $SESSION->wantsurl = "$CFG->wwwroot/course/view.php?id=$id";
+    }
     // do not use require_login here because we are usually coming from it,
     // it would also mess up the SESSION->wantsurl
     redirect(get_login_url());
