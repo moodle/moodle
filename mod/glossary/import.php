@@ -77,6 +77,10 @@ if (empty($result)) {
     die();
 }
 
+// Large exports are likely to take their time and memory.
+core_php_time_limit::raise();
+raise_memory_limit(MEMORY_EXTRA);
+
 if ($xml = glossary_read_imported_file($result)) {
     $importedentries = 0;
     $importedcats    = 0;

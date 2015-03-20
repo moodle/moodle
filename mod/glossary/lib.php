@@ -2262,6 +2262,10 @@ function glossary_generate_export_csv($entries, $aliases, $categories) {
 function glossary_generate_export_file($glossary, $ignored = "", $hook = 0) {
     global $CFG, $DB;
 
+    // Large exports are likely to take their time and memory.
+    core_php_time_limit::raise();
+    raise_memory_limit(MEMORY_EXTRA);
+
     $cm = get_coursemodule_from_instance('glossary', $glossary->id, $glossary->course);
     $context = context_module::instance($cm->id);
 
