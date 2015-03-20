@@ -312,6 +312,14 @@ $functions = array(
         'capabilities'  => 'moodle/course:managegroups',
     ),
 
+    'core_notes_get_course_notes' => array(
+        'classname'     => 'core_notes_external',
+        'methodname'    => 'get_course_notes',
+        'description'   => 'Returns all notes in specified course (or site) for the specified user.',
+        'type'          => 'read',
+        'capabilities'  => 'moodle/notes:view',
+    ),
+
     // === file related functions ===
 
     'moodle_file_get_files' => array(
@@ -1023,7 +1031,8 @@ $services = array(
             'core_user_remove_user_device',
             'core_course_get_courses',
             'core_completion_update_activity_completion_status_manually',
-            'mod_data_get_databases_by_courses'
+            'mod_data_get_databases_by_courses',
+            'core_notes_get_course_notes',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
