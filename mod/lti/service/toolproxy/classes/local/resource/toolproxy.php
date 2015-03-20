@@ -150,7 +150,8 @@ class toolproxy extends \mod_lti\local\ltiservice\resource_base {
         if ($ok) {
             $resources = $toolproxyjson->tool_profile->resource_handler;
             foreach ($resources as $resource) {
-                $found = false;
+                $launchable = false;
+                $messages = array();
                 $tool = new \stdClass();
 
                 $iconinfo = null;
@@ -164,19 +165,17 @@ class toolproxy extends \mod_lti\local\ltiservice\resource_base {
                 }
 
                 foreach ($resource->message as $message) {
-                    if ($message->message_type == 'basic-lti-launch-request') {
-                        $found = true;
-                        $tool->path = $message->path;
-                        $tool->enabled_capability = $message->enabled_capability;
-                        $tool->parameter = $message->parameter;
-                        break;
+                    if (($message->message_type === 'basic-lti-launch-request') ||
+                        ($message->message_type === 'ContentItemSelectionRequest')) {
+                        $launchable = $launchable || ($message->message_type === 'basic-lti-launch-request');
+                        $messages[$message->message_type] = $message;
                     }
                 }
-                if (!$found) {
+                if (!$launchable) {
                     continue;
                 }
-
                 $tool->name = $resource->resource_name->default_value;
+                $tool->messages = $messages;
                 $tools[] = $tool;
             }
             $ok = count($tools) > 0;
@@ -196,17 +195,27 @@ class toolproxy extends \mod_lti\local\ltiservice\resource_base {
                 $securebaseurl = $toolproxyjson->tool_profile->base_url_choice[0]->secure_base_url;
             }
             foreach ($tools as $tool) {
+                $messages = $tool->messages;
                 $config = new \stdClass();
-                $config->lti_toolurl = "{$baseurl}{$tool->path}";
+                $config->lti_toolurl = "{$baseurl}{$messages['basic-lti-launch-request']->path}";
                 $config->lti_typename = $tool->name;
                 $config->lti_coursevisible = 1;
                 $config->lti_forcessl = 0;
+                if (isset($messages['ContentItemSelectionRequest'])) {
+                    $config->lti_contentitem = 1;
+                    if ($messages['basic-lti-launch-request']->path !== $messages['ContentItemSelectionRequest']->path) {
+                        $config->lti_toolurl_ContentItemSelectionRequest =
+                            "{$baseurl}{$messages['ContentItemSelectionRequest']->path}";
+                    }
+                    $config->lti_enabledcapability_ContentItemSelectionRequest = implode("\n", $messages['ContentItemSelectionRequest']->enabled_capability);
+                    $config->lti_parameter_ContentItemSelectionRequest = self::lti_extract_parameters($messages['ContentItemSelectionRequest']->parameter);
+                }
 
                 $type = new \stdClass();
                 $type->state = LTI_TOOL_STATE_PENDING;
                 $type->toolproxyid = $toolproxy->id;
-                $type->enabledcapability = implode("\n", $tool->enabled_capability);
-                $type->parameter = self::lti_extract_parameters($tool->parameter);
+                $type->enabledcapability = implode("\n", $messages['basic-lti-launch-request']->enabled_capability);
+                $type->parameter = self::lti_extract_parameters($messages['basic-lti-launch-request']->parameter);
 
                 if (!empty($tool->iconpath)) {
                     $type->icon = "{$baseurl}{$tool->iconpath}";

@@ -43,6 +43,8 @@
  * @author     Jordi Piguillem
  * @author     Nikolas Galanis
  * @author     Chris Scribner
+ * @copyright  2015 Vital Source Technologies http://vitalsource.com
+ * @author     Stephen Vickers
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -54,11 +56,12 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 class mod_lti_mod_form extends moodleform_mod {
 
     public function definition() {
-        global $DB, $PAGE, $OUTPUT, $USER, $COURSE;
+        global $DB, $PAGE, $OUTPUT, $USER, $COURSE, $sesskey, $section;
 
         if ($type = optional_param('type', false, PARAM_ALPHA)) {
             component_callback("ltisource_$type", 'add_instance_hook');
         }
+        $sectionreturn = optional_param('sr', 0, PARAM_INT);
 
         $this->typeid = 0;
 
@@ -95,7 +98,12 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addHelpButton('showdescriptionlaunch', 'display_description', 'lti');
 
         // Tool settings.
-        $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'), array());
+        $attributes = array();
+        if ($update = optional_param('update', false, PARAM_INT)) {
+            $attributes['disabled'] = 'disabled';
+        }
+        $attributes['class'] = 'lti_contentitem';
+        $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'), array(), $attributes);
         $typeid = optional_param('typeid', false, PARAM_INT);
         $mform->getElement('typeid')->setValue($typeid);
         $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
@@ -122,6 +130,15 @@ class mod_lti_mod_form extends moodleform_mod {
                 $attributes = array( 'globalTool' => 1, 'domain' => $type->tooldomain);
             } else {
                 $attributes = array();
+            }
+            if (!$update && $id) {
+                $config = lti_get_type_config($id);
+                if (isset($config['contentitem']) && $config['contentitem']) {
+                    $contentitemurl = new moodle_url('/mod/lti/contentitem2.php',
+                        array('course' => $COURSE->id, 'section' => $section, 'id' => $id, 'sr' => $sectionreturn));
+                    $attributes['contentitem'] = 1;
+                    $attributes['contentitemurl'] = $contentitemurl->out(false);
+                }
             }
 
             $tooltypes->addOption($type->name, $id, $attributes);
@@ -247,7 +264,8 @@ class mod_lti_mod_form extends moodleform_mod {
                 array('tooltypedeleted', 'lti'),
                 array('tooltypenotdeleted', 'lti'),
                 array('tooltypeupdated', 'lti'),
-                array('forced_help', 'lti')
+                array('forced_help', 'lti'),
+                array('configure_item', 'lti')
             ),
         );
 
