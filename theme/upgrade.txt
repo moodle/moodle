@@ -1,6 +1,12 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.0 ===
+
+* The renderer function core_availability_renderer::multiple_messages was changed to
+  render_core_availability_multiple_messages, requiring a parameter of the new
+  \core_availability\multiple_messages type.
+
 === 2.9 ===
 
 * Themes Bootstrapbase, Clean and More have undergone some changes for RTL layouts see - MDL-48160.
