@@ -46,7 +46,10 @@ class award_criteria_overall extends award_criteria {
         if (count($data->criteria) > 2) {
             echo $OUTPUT->box_start();
             if (!empty($this->description)) {
-                echo $OUTPUT->box(clean_text($this->description, FORMAT_HTML), array('criteria-description'));
+                $badge = new badge($this->badgeid);
+                echo $OUTPUT->box(
+                    format_text($this->description, FORMAT_HTML, array('context' => $badge->get_context())),
+                    'criteria-description');
             }
             echo $OUTPUT->heading($this->get_title(), 2);
 

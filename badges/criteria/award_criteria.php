@@ -247,7 +247,11 @@ abstract class award_criteria {
         echo $OUTPUT->heading($this->get_title() . $OUTPUT->help_icon('criteria_' . $this->criteriatype, 'badges'), 3, 'main help');
 
         if (!empty($this->description)) {
-            echo $OUTPUT->box(clean_text($this->description, FORMAT_HTML), array('criteria-description'));
+            $badge = new badge($this->badgeid);
+            echo $OUTPUT->box(
+                format_text($this->description, FORMAT_HTML, array('context' => $badge->get_context())),
+                'criteria-description'
+                );
         }
 
         if (!empty($this->params)) {
