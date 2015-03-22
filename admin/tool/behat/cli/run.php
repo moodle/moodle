@@ -134,13 +134,19 @@ $tags = '';
 
 if ($options['profile']) {
     $profile = $options['profile'];
-    if (empty($CFG->behat_config[$profile]['filters']['tags'])) {
-        echo "Invaid profile passed: " . $profile;
+    if (!isset($CFG->behat_config[$profile])) {
+        echo "Invalid profile passed: " . $profile;
         exit(1);
     }
-    $tags = $CFG->behat_config[$profile]['filters']['tags'];
     $extraopts[] = '--profile=\'' . $profile . "'";
-} else if ($options['tags']) {
+    // By default, profile tags will be used.
+    if (!empty($CFG->behat_config[$profile]['filters']['tags'])) {
+        $tags = $CFG->behat_config[$profile]['filters']['tags'];
+    }
+}
+
+// Command line tags have precedence (std behat behavior).
+if ($options['tags']) {
     $tags = $options['tags'];
     $extraopts[] = '--tags="' . $tags . '"';
 }
