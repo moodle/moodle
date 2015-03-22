@@ -30,4 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['availablelangs'] = 'Paquetatges de lenga disponibles';
 $string['chooselanguagehead'] = 'Causissètz una lenga';
