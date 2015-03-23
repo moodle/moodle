@@ -1563,7 +1563,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         require_once($CFG->dirroot.'/cohort/lib.php');
 
         // Make sure we won't timeout when deleting a lot of courses.
-        $settimeout = core_php_time_limit::raise('0');
+        $settimeout = core_php_time_limit::raise();
 
         $deletedcourses = array();
 
