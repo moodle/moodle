@@ -77,9 +77,11 @@ class award_criteria_course extends award_criteria {
 
         if (!empty($this->description)) {
             echo $OUTPUT->box(
-                format_text($this->description, FORMAT_HTML, array('context' => context_course::instance($this->courseid))),
+                format_text($this->description, $this->descriptionformat,
+                        array('context' => context_course::instance($this->courseid))
+                ),
                 'criteria-description'
-                );
+            );
         }
 
         if (!empty($this->params)) {

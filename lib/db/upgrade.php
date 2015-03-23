@@ -4249,9 +4249,15 @@ function xmldb_main_upgrade($oldversion) {
 
     if ($oldversion < 2015032000.00) {
         $table = new xmldb_table('badge_criteria');
-        $field = new xmldb_field('description', XMLDB_TYPE_TEXT, null, null, null, null, null);
 
+        $field = new xmldb_field('description', XMLDB_TYPE_TEXT, null, null, null, null, null);
         // Conditionally add description field to the badge_criteria table.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('descriptionformat', XMLDB_TYPE_INTEGER, 2, null, XMLDB_NOTNULL, null, 0);
+        // Conditionally add description format field to the badge_criteria table.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }

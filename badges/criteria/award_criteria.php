@@ -113,6 +113,12 @@ abstract class award_criteria {
     public $description;
 
     /**
+     * Format of the criterion description.
+     * @var integer
+     */
+    public $descriptionformat;
+
+    /**
      * Any additional parameters.
      * @var array
      */
@@ -128,6 +134,7 @@ abstract class award_criteria {
         $this->method = isset($params['method']) ? $params['method'] : BADGE_CRITERIA_AGGREGATION_ANY;
         $this->badgeid = $params['badgeid'];
         $this->description = isset($params['description']) ? $params['description'] : '';
+        $this->descriptionformat = isset($params['descriptionformat']) ? $params['descriptionformat'] : FORMAT_HTML;
         if (isset($params['id'])) {
             $this->params = $this->get_params($params['id']);
         }
@@ -249,7 +256,7 @@ abstract class award_criteria {
         if (!empty($this->description)) {
             $badge = new badge($this->badgeid);
             echo $OUTPUT->box(
-                format_text($this->description, FORMAT_HTML, array('context' => $badge->get_context())),
+                format_text($this->description, $this->descriptionformat, array('context' => $badge->get_context())),
                 'criteria-description'
                 );
         }
@@ -348,8 +355,10 @@ abstract class award_criteria {
         // Figure out criteria description.
         // If it is coming from the form editor, it is an array(text, format).
         $description = '';
+        $descriptionformat = FORMAT_HTML;
         if (isset($params['description']['text'])) {
             $description = $params['description']['text'];
+            $descriptionformat = $params['description']['format'];
         } else if (isset($params['description'])) {
             $description = $params['description'];
         }
@@ -359,6 +368,7 @@ abstract class award_criteria {
         $fordb->method = isset($params['agg']) ? $params['agg'] : BADGE_CRITERIA_AGGREGATION_ALL;
         $fordb->badgeid = $this->badgeid;
         $fordb->description = $description;
+        $fordb->descriptionformat = $descriptionformat;
         $t = $DB->start_delegated_transaction();
 
         // Pick only params that are required by this criterion.
@@ -434,6 +444,7 @@ abstract class award_criteria {
         $fordb->method = $this->method;
         $fordb->badgeid = $newbadgeid;
         $fordb->description = $this->description;
+        $fordb->descriptionformat = $this->descriptionformat;
         if (($newcrit = $DB->insert_record('badge_criteria', $fordb, true)) && isset($this->params)) {
             foreach ($this->params as $k => $param) {
                 foreach ($param as $key => $value) {

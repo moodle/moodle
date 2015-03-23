@@ -154,10 +154,19 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
 
     public function test_add_badge_criteria_description() {
         $criteriaoverall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $this->badgeid));
-        $criteriaoverall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'description' => 'Overall description'));
+        $criteriaoverall->save(array(
+                'agg' => BADGE_CRITERIA_AGGREGATION_ALL,
+                'description' => 'Overall description',
+                'descriptionformat' => FORMAT_HTML
+        ));
 
         $criteriaprofile = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_PROFILE, 'badgeid' => $this->badgeid));
-        $params = array('agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'field_address' => 'address', 'description' => 'Description');
+        $params = array(
+                'agg' => BADGE_CRITERIA_AGGREGATION_ALL,
+                'field_address' => 'address',
+                'description' => 'Description',
+                'descriptionformat' => FORMAT_HTML
+        );
         $criteriaprofile->save($params);
 
         $badge = new badge($this->badgeid);

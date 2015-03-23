@@ -721,7 +721,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $overall = $badge->criteria[BADGE_CRITERIA_TYPE_OVERALL];
         if (!$short && !empty($overall->description)) {
             $overalldescr = $this->output->box(
-                format_text($overall->description, FORMAT_HTML, array('context' => $badge->get_context())),
+                format_text($overall->description, $overall->descriptionformat, array('context' => $badge->get_context())),
                 'criteria-description'
                 );
         }
@@ -745,7 +745,7 @@ class core_badges_renderer extends plugin_renderer_base {
             $c = reset($badge->criteria);
             if (!$short && !empty($c->description)) {
                 $overalldescr = $this->output->box(
-                    format_text($c->description, FORMAT_HTML, array('context' => $badge->get_context())),
+                    format_text($c->description, $c->descriptionformat, array('context' => $badge->get_context())),
                     'criteria-description'
                     );
             }
@@ -762,7 +762,7 @@ class core_badges_renderer extends plugin_renderer_base {
                 $criteriadescr = '';
                 if (!$short && !empty($c->description)) {
                     $criteriadescr = $this->output->box(
-                        format_text($c->description, FORMAT_HTML, array('context' => $badge->get_context())),
+                        format_text($c->description, $c->descriptionformat, array('context' => $badge->get_context())),
                         'criteria-description'
                         );
                 }

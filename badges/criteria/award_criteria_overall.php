@@ -48,7 +48,7 @@ class award_criteria_overall extends award_criteria {
             if (!empty($this->description)) {
                 $badge = new badge($this->badgeid);
                 echo $OUTPUT->box(
-                    format_text($this->description, FORMAT_HTML, array('context' => $badge->get_context())),
+                    format_text($this->description, $this->descriptionformat, array('context' => $badge->get_context())),
                     'criteria-description');
             }
             echo $OUTPUT->heading($this->get_title(), 2);
@@ -184,8 +184,10 @@ class award_criteria_overall extends award_criteria {
         // Sort out criteria description.
         // If it is coming from the form editor, it is an array of (text, format).
         $description = '';
+        $descriptionformat = FORMAT_HTML;
         if (isset($params['description']['text'])) {
             $description = $params['description']['text'];
+            $descriptionformat = $params['description']['format'];
         } else if (isset($params['description'])) {
             $description = $params['description'];
         }
@@ -194,6 +196,7 @@ class award_criteria_overall extends award_criteria {
         $fordb->criteriatype = $this->criteriatype;
         $fordb->badgeid = $this->badgeid;
         $fordb->description = $description;
+        $fordb->descriptionformat = $descriptionformat;
         if ($this->id !== 0) {
             $fordb->id = $this->id;
             $DB->update_record('badge_criteria', $fordb);

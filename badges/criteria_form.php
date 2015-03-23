@@ -58,7 +58,11 @@ class edit_criteria_form extends moodleform {
                 $mform->addElement('header', 'description_header', get_string('description'));
                 $mform->addElement('editor', 'description', '', null, null);
                 $mform->setType('description', PARAM_RAW);
-                $mform->setDefault('description', array('text' => $criteria->description));
+                $mform->setDefault('description', array(
+                        'text' => $criteria->description,
+                        'format' => $criteria->descriptionformat
+                    )
+                );
 
                 $mform->closeHeaderBefore('buttonar');
                 $this->add_action_buttons(true, get_string('save', 'badges'));
