@@ -486,7 +486,6 @@ class repository_filesystem extends repository {
             return null;
         }
         $filename = sha1($filecontents);
-        unset($filecontents);
 
         // Try to get generated thumbnail for this file.
         $fs = get_file_storage();
@@ -499,7 +498,7 @@ class repository_filesystem extends repository {
             } else {
                 $size = 24;
             }
-            if (!$data = @generate_image_thumbnail($origfile, $size, $size)) {
+            if (!$data = generate_image_thumbnail_from_string($filecontents, $size, $size)) {
                 // Generation failed.
                 return null;
             }

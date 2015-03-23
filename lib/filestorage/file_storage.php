@@ -384,24 +384,18 @@ class file_storage {
         global $CFG;
         require_once($CFG->libdir.'/gdlib.php');
 
-        $tmproot = make_temp_directory('thumbnails');
-        $tmpfilepath = $tmproot.'/'.$file->get_contenthash();
-        $file->copy_content_to($tmpfilepath);
-
         if ($mode === 'tinyicon') {
-            $data = generate_image_thumbnail($tmpfilepath, 24, 24);
+            $data = $file->generate_image_thumbnail(24, 24);
 
         } else if ($mode === 'thumb') {
-            $data = generate_image_thumbnail($tmpfilepath, 90, 90);
+            $data = $file->generate_image_thumbnail(90, 90);
 
         } else if ($mode === 'bigthumb') {
-            $data = generate_image_thumbnail($tmpfilepath, 250, 250);
+            $data = $file->generate_image_thumbnail(250, 250);
 
         } else {
             throw new file_exception('storedfileproblem', 'Invalid preview mode requested');
         }
-
-        unlink($tmpfilepath);
 
         return $data;
     }
