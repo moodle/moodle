@@ -32,3 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['availablelangs'] = 'Paquetatges de lenga disponibles';
 $string['chooselanguagehead'] = 'Causissètz una lenga';
+$string['databasehost'] = 'Servidor de banca de donadas';
+$string['databasename'] = 'Nom de la banca de donadas';
+$string['databasetypehead'] = 'Seleccionar un pilòt de banca de donadas';
