@@ -1322,6 +1322,10 @@ function quiz_reset_course_form_definition($mform) {
     $mform->addElement('header', 'quizheader', get_string('modulenameplural', 'quiz'));
     $mform->addElement('advcheckbox', 'reset_quiz_attempts',
             get_string('removeallquizattempts', 'quiz'));
+    $mform->addElement('advcheckbox', 'reset_quiz_user_overrides',
+            get_string('removealluseroverrides', 'quiz'));
+    $mform->addElement('advcheckbox', 'reset_quiz_group_overrides',
+            get_string('removeallgroupoverrides', 'quiz'));
 }
 
 /**
@@ -1329,7 +1333,9 @@ function quiz_reset_course_form_definition($mform) {
  * @return array the defaults.
  */
 function quiz_reset_course_form_defaults($course) {
-    return array('reset_quiz_attempts' => 1);
+    return array('reset_quiz_attempts' => 1,
+                 'reset_quiz_group_overrides' => 1,
+                 'reset_quiz_user_overrides' => 1);
 }
 
 /**
@@ -1393,6 +1399,25 @@ function quiz_reset_userdata($data) {
         $status[] = array(
             'component' => $componentstr,
             'item' => get_string('gradesdeleted', 'quiz'),
+            'error' => false);
+    }
+
+    // Remove user overrides.
+    if (!empty($data->reset_quiz_user_overrides)) {
+        $DB->delete_records_select('quiz_overrides',
+                'quiz IN (SELECT id FROM {quiz} WHERE course = ?) AND userid IS NOT NULL', array($data->courseid));
+        $status[] = array(
+            'component' => $componentstr,
+            'item' => get_string('useroverridesdeleted', 'quiz'),
+            'error' => false);
+    }
+    // Remove group overrides.
+    if (!empty($data->reset_quiz_group_overrides)) {
+        $DB->delete_records_select('quiz_overrides',
+                'quiz IN (SELECT id FROM {quiz} WHERE course = ?) AND groupid IS NOT NULL', array($data->courseid));
+        $status[] = array(
+            'component' => $componentstr,
+            'item' => get_string('groupoverridesdeleted', 'quiz'),
             'error' => false);
     }
 
