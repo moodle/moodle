@@ -1297,8 +1297,18 @@ class global_navigation extends navigation_node {
         }
 
         // Give the local plugins a chance to include some navigation if they want.
-        foreach (get_plugin_list_with_function('local', 'extends_navigation') as $function) {
-            $function($this);
+        foreach (core_component::get_plugin_list_with_file('local', 'lib.php', true) as $plugin => $unused) {
+            $function = "local_{$plugin}_extend_navigation";
+            $oldfunction = "local_{$plugin}_extends_navigation";
+
+            if (function_exists($function)) {
+                $function($this);
+
+            } else if (function_exists($oldfunction)) {
+                debugging("Deprecated local plugin navigation callback: Please rename '{$oldfunction}' to '{$function}'. ".
+                    "Support for the old callback will be dropped in Moodle 3.1", DEBUG_DEVELOPER);
+                $oldfunction($this);
+            }
         }
 
         // Remove any empty root nodes
@@ -4593,10 +4603,19 @@ class settings_navigation extends navigation_node {
      * This function gives local plugins an opportunity to modify the settings navigation.
      */
     protected function load_local_plugin_settings() {
-        // Get all local plugins with an extend_settings_navigation function in their lib.php file
-        foreach (get_plugin_list_with_function('local', 'extends_settings_navigation') as $function) {
-            // Call each function providing this (the settings navigation) and the current context.
-            $function($this, $this->context);
+
+        foreach (core_component::get_plugin_list_with_file('local', 'lib.php', true) as $plugin => $unused) {
+            $function = "local_{$plugin}_extend_settings_navigation";
+            $oldfunction = "local_{$plugin}_extends_settings_navigation";
+
+            if (function_exists($function)) {
+                $function($this, $this->context);
+
+            } else if (function_exists($oldfunction)) {
+                debugging("Deprecated local plugin navigation callback: Please rename '{$oldfunction}' to '{$function}'. ".
+                    "Support for the old callback will be dropped in Moodle 3.1", DEBUG_DEVELOPER);
+                $oldfunction($this, $this->context);
+            }
         }
     }
 
