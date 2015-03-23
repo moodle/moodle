@@ -1,6 +1,9 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 2.9 ===
+* Added Grade to pass field to mod_form for activities that support grading.
+
 === 2.8 ===
 
 * Constant FEATURE_GROUPMEMBERSONLY is deprecated. Modules should remove this
