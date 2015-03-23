@@ -1140,7 +1140,8 @@ function workshop_grade_item_category_update($workshop) {
     if (!empty($gradeitems)) {
         foreach ($gradeitems as $gradeitem) {
             if ($gradeitem->itemnumber == 0) {
-                if ($gradeitem->gradepass != $workshop->submissiongradepass) {
+                if (isset($workshop->submissiongradepass) &&
+                        $gradeitem->gradepass != $workshop->submissiongradepass) {
                     $gradeitem->gradepass = $workshop->submissiongradepass;
                     $gradeitem->update();
                 }
@@ -1148,7 +1149,8 @@ function workshop_grade_item_category_update($workshop) {
                     $gradeitem->set_parent($workshop->gradecategory);
                 }
             } else if ($gradeitem->itemnumber == 1) {
-                if ($gradeitem->gradepass != $workshop->gradinggradepass) {
+                if (isset($workshop->gradinggradepass) &&
+                        $gradeitem->gradepass != $workshop->gradinggradepass) {
                     $gradeitem->gradepass = $workshop->gradinggradepass;
                     $gradeitem->update();
                 }
