@@ -28,6 +28,10 @@ information provided here is intended especially for developers.
 * Added support for custom string manager implementations via $CFG->customstringmanager
   directive in the config.php. See MDL-49361 for details.
 * Add new make_request_directory() for creation of per-request files.
+* Added generate_image_thumbnail_from_string. This should be used instead of generate_image_thumbnail when the source is a string.
+  This prevents the need to write files to disk unnecessarily.
+* Added generate_image_thumbnail to stored_file class. This should be used when generating thumbnails for stored files.
+  This prevents the need to write files to disk unnecessarily.
 
 === 2.8 ===
 
