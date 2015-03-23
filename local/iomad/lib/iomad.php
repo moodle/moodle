@@ -497,7 +497,7 @@ class iomad {
     public static function get_user_sqlsearch($params, $idlist='', $sort, $dir, $departmentid, $nogrades=false) {
         global $DB, $CFG;
 
-        $sqlsort = " GROUP BY u.id, cc.timeenrolled, cc.timestarted, cc.timecompleted, d.name";
+        $sqlsort = " GROUP BY co.id";
         if (!$nogrades) {
             $sqlsort .= ', gg.finalgrade';
         }
@@ -802,7 +802,6 @@ class iomad {
             $completionsql = "";
         }
                 
-
         // Get the user details.
         $countsql = "SELECT CONCAT(co.id, u.id) AS id ";
         $selectsql = "

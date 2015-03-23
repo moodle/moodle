@@ -211,7 +211,9 @@ if (empty($dodownload) && empty($showchart)) {
     echo "<h3>".get_string('coursesummary', 'local_report_completion')."</h3>";
     if (!empty($courseid)) {
         // Navigation and header.
-        echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("downloadcsv", 'local_report_completion'));
+        if (empty($params['charttype'])) {
+            echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("downloadcsv", 'local_report_completion'));
+        }
         $options['charttype'] = 'summary';
         $options['dodownload'] = false;
         echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("summarychart", 'local_report_completion'));
@@ -607,7 +609,7 @@ if (empty($charttype)) {
                         $certtabledata = get_string('nocerttodownload', 'local_report_users');
                     }
                     $compusertable->data[] = array("<a href='".new moodle_url($userurl,
-                                                                              array('userid' => $user->id,
+                                                                              array('userid' => $user->uid,
                                                                                     'courseid' => $courseid)).
                                                    "'>$user->fullname</a>",
                                                     $user->email,
@@ -621,7 +623,7 @@ if (empty($charttype)) {
                                                     $certtabledata);
                 } else {
                     $compusertable->data[] = array("<a href='".new moodle_url($userurl,
-                                                                              array('userid' => $user->id,
+                                                                              array('userid' => $user->uid,
                                                                                     'courseid' => $courseid)).
                                                    "'>$user->fullname</a>",
                                                     $user->email,
