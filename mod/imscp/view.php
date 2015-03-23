@@ -76,6 +76,7 @@ echo $OUTPUT->heading(format_string($imscp->name));
 // Verify imsmanifest was parsed properly.
 if (!$imscp->structure) {
     echo $OUTPUT->notification(get_string('deploymenterror', 'imscp'), 'notifyproblem');
+    echo $OUTPUT->continue_button(course_get_url($course->id, $cm->section));
     echo $OUTPUT->footer();
     die;
 }
