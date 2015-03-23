@@ -497,7 +497,7 @@ class iomad {
     public static function get_user_sqlsearch($params, $idlist='', $sort, $dir, $departmentid, $nogrades=false) {
         global $DB, $CFG;
 
-        $sqlsort = " GROUP BY co.id";
+        $sqlsort = " GROUP BY co.id, u.id";
         if (!$nogrades) {
             $sqlsort .= ', gg.finalgrade';
         }
