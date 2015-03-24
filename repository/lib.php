@@ -2714,7 +2714,7 @@ abstract class repository implements cacheable_object {
      */
     public function convert_references_to_local() {
         $fs = get_file_storage();
-        $files = $fs->get_external_files($this->id);
+        $files = $fs->get_external_files($this->id, '');
         foreach ($files as $storedfile) {
             $fs->import_external_file($storedfile);
         }

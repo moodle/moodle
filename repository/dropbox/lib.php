@@ -710,7 +710,7 @@ class repository_dropbox extends repository {
      */
     public function cron() {
         $fs = get_file_storage();
-        $files = $fs->get_external_files($this->id);
+        $files = $fs->get_external_files($this->id, '');
         foreach ($files as $file) {
             try {
                 // This call will cache all files that are smaller than max_cache_bytes()
