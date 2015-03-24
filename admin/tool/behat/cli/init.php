@@ -96,17 +96,23 @@ if ($options['parallel']) {
 $cwd = getcwd();
 $output = null;
 
+$installcomposer = true;
 // If behat dependencies not downloaded then do it first, else symfony/process can't be used.
 if ($options['parallel'] && !file_exists(__DIR__ . "/../../../../vendor/autoload.php")) {
-    $code = BEHAT_EXITCODE_COMPOSER;
-} else {
-    chdir(__DIR__);
-    exec("php $utilfile --diag $paralleloption", $output, $code);
+    $installcomposer = false;
+    testing_update_composer_dependencies();
 }
 
+chdir(__DIR__);
+exec("php $utilfile --diag $paralleloption", $output, $code);
+
 // Check if composer needs to be updated.
-if (($code == BEHAT_EXITCODE_INSTALL) || $code == BEHAT_EXITCODE_REINSTALL || $code == BEHAT_EXITCODE_COMPOSER) {
+if ($installcomposer &&
+        ($code == BEHAT_EXITCODE_INSTALL || $code == BEHAT_EXITCODE_REINSTALL || $code == BEHAT_EXITCODE_COMPOSER)) {
     testing_update_composer_dependencies();
+    // Check again for behat test site and see if it's install or re-install.
+    chdir(__DIR__);
+    exec("php $utilfile --diag $paralleloption", $output, $code);
 }
 
 if ($code == 0) {
@@ -130,16 +136,6 @@ if ($code == 0) {
         exit($code);
     }
 
-    chdir(__DIR__);
-    passthru("php $utilfile --install $paralleloption", $code);
-    if ($code != 0) {
-        chdir($cwd);
-        exit($code);
-    }
-
-} else if ($code == BEHAT_EXITCODE_COMPOSER) {
-    // Missing Behat dependencies.
-    // Returning to admin/tool/behat/cli.
     chdir(__DIR__);
     passthru("php $utilfile --install $paralleloption", $code);
     if ($code != 0) {
