@@ -2,6 +2,7 @@
 .path-grade-report-user .user-grade .courseitem,
 .path-grade-report-user .user-grade .categoryitem {font-weight: bold;}
 .path-grade-report-user .user-grade td.cell {padding-left: 5px;padding-right: 5px;}
+.dir-rtl.path-grade-report-user .user-grade td {direction: ltr;}
 #graded_users_selector {float: right;text-align: right;}
 
 /* this must be last if we want to override other category and course item colors */
