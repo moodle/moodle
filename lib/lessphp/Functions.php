@@ -21,7 +21,7 @@ class Less_Functions{
 	/**
 	 * @param string $op
 	 */
-	static public function operate( $op, $a, $b ){
+    public static function operate( $op, $a, $b ){
 		switch ($op) {
 			case '+': return $a + $b;
 			case '-': return $a - $b;
@@ -30,11 +30,11 @@ class Less_Functions{
 		}
 	}
 
-	static public function clamp($val, $max = 1){
+	public static function clamp($val, $max = 1){
 		return min( max($val, 0), $max);
 	}
 
-	static function fround( $value ){
+	public static function fround( $value ){
 
 		if( $value === 0 ){
 			return $value;
@@ -47,7 +47,7 @@ class Less_Functions{
 		return $value;
 	}
 
-	static public function number($n){
+    public static function number($n){
 
 		if ($n instanceof Less_Tree_Dimension) {
 			return floatval( $n->unit->is('%') ? $n->value / 100 : $n->value);
@@ -58,7 +58,7 @@ class Less_Functions{
 		}
 	}
 
-	static public function scaled($n, $size = 255 ){
+    public static function scaled($n, $size = 255 ){
 		if( $n instanceof Less_Tree_Dimension && $n->unit->is('%') ){
 			return (float)$n->value * $size / 100;
 		} else {
@@ -102,7 +102,7 @@ class Less_Functions{
 	/**
 	 * @param double $h
 	 */
-	function hsla_hue($h, $m1, $m2){
+	public function hsla_hue($h, $m1, $m2){
 		$h = $h < 0 ? $h + 1 : ($h > 1 ? $h - 1 : $h);
 		if	  ($h * 6 < 1) return $m1 + ($m2 - $m1) * $h * 6;
 		else if ($h * 2 < 1) return $m2;
@@ -520,7 +520,7 @@ class Less_Functions{
 	/**
 	 * @param boolean $isMin
 	 */
-	function _minmax( $isMin, $args ){
+	private function _minmax( $isMin, $args ){
 
 		$arg_count = count($args);
 
@@ -715,12 +715,12 @@ class Less_Functions{
 		return null;
 	}
 
-	function length($values){
+	public function length($values){
 		$n = (property_exists($values,'value') && is_array($values->value)) ? count($values->value) : 1;
 		return new Less_Tree_Dimension($n);
 	}
 
-	function datauri($mimetypeNode, $filePathNode = null ) {
+	public function datauri($mimetypeNode, $filePathNode = null ) {
 
 		$filePath = ( $filePathNode ? $filePathNode->value : null );
 		$mimetype = $mimetypeNode->value;
@@ -796,7 +796,7 @@ class Less_Functions{
 	}
 
 	//svg-gradient
-	function svggradient( $direction ){
+	public function svggradient( $direction ){
 
 		$throw_message = 'svg-gradient expects direction, start_color [start_position], [color position,]..., end_color [end_position]';
 		$arguments = func_get_args();
@@ -995,7 +995,7 @@ class Less_Functions{
 	}
 
 	// non-w3c functions:
-	function colorBlendAverage($cb, $cs ){
+	public function colorBlendAverage($cb, $cs ){
 		return ($cb + $cs) / 2;
 	}
 
@@ -1003,7 +1003,7 @@ class Less_Functions{
 		return $this->colorBlend( array($this,'colorBlendNegation'),  $color1, $color2 );
 	}
 
-	function colorBlendNegation($cb, $cs){
+	public function colorBlendNegation($cb, $cs){
 		return 1 - abs($cb + $cs - 1);
 	}
 

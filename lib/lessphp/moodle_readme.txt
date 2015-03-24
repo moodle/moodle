@@ -1,7 +1,7 @@
 less.php
 --------
 
-Tag downloaded: v1.7.0.1
+Tag downloaded: v1.7.0.3
 Downloaded from: https://github.com/oyejorge/less.php
 
 All the files from the folder lib/Less are copied in
