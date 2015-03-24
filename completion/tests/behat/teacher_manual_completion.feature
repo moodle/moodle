@@ -16,9 +16,9 @@ Feature: Allow teachers to manually mark users as complete when configured
       | user     | course | role           |
       | student1 | CC1    | student        |
       | teacher1 | CC1    | editingteacher |
+    And the following config values are set as admin:
+      | enablecompletion | 1 |
     And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable completion tracking | 1 |
     And I am on homepage
     And I follow "Completion course"
     And completion tracking is "Enabled" in current course
