@@ -34,10 +34,8 @@ Feature: display_availability
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
-    And I log out
+    And the following config values are set as admin:
+      | enableavailability | 1 |
 
   @javascript
   Scenario: Activity availability display

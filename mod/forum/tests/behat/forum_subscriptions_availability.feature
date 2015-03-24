@@ -34,10 +34,8 @@ Feature: As a teacher I need to see an accurate list of subscribed users
     And the following "grouping groups" exist:
       | grouping | group |
       | GG1      | G1    |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
-    And I log out
+    And the following config values are set as admin:
+      | enableavailability | 1 |
     And I log in as "teacher"
     And I follow "Course 1"
     And I turn editing mode on

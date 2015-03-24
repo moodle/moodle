@@ -128,10 +128,9 @@ Feature: Award badges
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable completion tracking | 1 |
-    And I follow "Home"
+    And the following config values are set as admin:
+      | enablecompletion | 1 |
+    And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Edit settings"
     And I set the following fields to these values:
@@ -141,8 +140,6 @@ Feature: Award badges
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
-    And I log out
-    And I log in as "teacher1"
     And I follow "Course 1"
     And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I follow "Add a new badge"
@@ -181,10 +178,9 @@ Feature: Award badges
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable completion tracking | 1 |
-    And I follow "Home"
+    And the following config values are set as admin:
+      | enablecompletion | 1 |
+    And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Edit settings"
     And I set the following fields to these values:
@@ -200,8 +196,6 @@ Feature: Award badges
     And I click on "Condition: Activity completion" "link"
     And I set the field "Assign - Test assignment name" to "1"
     And I press "Save changes"
-    And I log out
-    And I log in as "teacher1"
     And I follow "Course 1"
     And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I follow "Add a new badge"

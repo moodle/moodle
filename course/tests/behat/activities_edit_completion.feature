@@ -8,9 +8,9 @@ Feature: Edit completion settings of an activity
     Given the following "courses" exist:
       | fullname | shortname | enablecompletion |
       | Course 1 | C1        | 1                |
+    And the following config values are set as admin:
+      | enablecompletion | 1 |
     And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable completion tracking | 1 |
     And I am on homepage
     And I follow "Course 1"
     And I turn editing mode on

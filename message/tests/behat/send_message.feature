@@ -12,10 +12,8 @@ Feature: Users can send messages to each other
 
   @javascript
   Scenario: Using the 'Send message' dialog on one's profile
-    Given I log in as "admin"
-    And I set the following administration settings values:
+    Given the following config settings values are set as admin:
       | forceloginforprofiles | 0 |
-    And I log out
     And I log in as "user1"
     And I navigate to "Messages" node in "My profile"
     And I set the field "Search people and messages" to "User Two"

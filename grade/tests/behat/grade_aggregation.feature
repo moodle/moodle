@@ -248,10 +248,8 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Natural aggregation on outcome items with natural weights
-    And I log out
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable outcomes | 1 |
+    And the following config settings values are set as admin:
+      | enableoutcomes | 1 |
     And the following "scales" exist:
       | name       | scale                                     |
       | Test Scale | Disappointing, Good, Very good, Excellent |
@@ -261,10 +259,7 @@ Feature: We can use calculated grade totals
     And the following "grade items" exist:
       | itemname              | course | outcome | gradetype | scale      |
       | Test outcome item one | C1     | OT1     | Scale     | Test Scale |
-    And I log out
-    When I log in as "teacher1"
-    And I follow "Course 1"
-    And I follow "Grades"
+    Then I follow "Grades"
     And I expand "Setup" node
     And I follow "Categories and items"
     And I set the following settings for grade item "Course 1":
@@ -272,8 +267,6 @@ Feature: We can use calculated grade totals
       | Include outcomes in aggregation | 1       |
       | Exclude empty grades            | 0       |
     And I follow "Grader report"
-    And I turn editing mode on
-    And I press "Save changes"
     And I give the grade "Excellent" to the user "Student 1" for the grade item "Test outcome item one"
     And I press "Save changes"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
@@ -321,10 +314,8 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Natural aggregation on outcome items with modified weights
-    And I log out
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable outcomes | 1 |
+    And the following config settings values are set as admin:
+      | enableoutcomes | 1 |
     And the following "scales" exist:
       | name       | scale                                     |
       | Test Scale | Disappointing, Good, Very good, Excellent |
@@ -334,9 +325,6 @@ Feature: We can use calculated grade totals
     And the following "grade items" exist:
       | itemname              | course | outcome | gradetype | scale      |
       | Test outcome item one | C1     | OT1     | Scale     | Test Scale |
-    And I log out
-    When I log in as "teacher1"
-    And I follow "Course 1"
     And I follow "Grades"
     And I expand "Setup" node
     And I follow "Categories and items"
@@ -348,8 +336,6 @@ Feature: We can use calculated grade totals
      | Weight adjusted  | 1   |
      | aggregationcoef2 | 100 |
     And I follow "Grader report"
-    And I turn editing mode on
-    And I press "Save changes"
     And I give the grade "Excellent" to the user "Student 1" for the grade item "Test outcome item one"
     And I press "Save changes"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
