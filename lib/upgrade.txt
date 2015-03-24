@@ -32,6 +32,7 @@ information provided here is intended especially for developers.
   This prevents the need to write files to disk unnecessarily.
 * Added generate_image_thumbnail to stored_file class. This should be used when generating thumbnails for stored files.
   This prevents the need to write files to disk unnecessarily.
+* Removed pear/HTTP/WebDav. See MDL-49534 for details.
 
 === 2.8 ===
 

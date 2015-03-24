@@ -127,13 +127,6 @@
     <licenseversion>2.0</licenseversion>
   </library>
   <library>
-    <location>pear/HTTP/WebDAV</location>
-    <name>Pear_HTTP_WebDAV</name>
-    <license>BSD</license>
-    <version>1.0.0</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>pear/PEAR.php</location>
     <name>Pear.php</name>
     <license>PHP</license>
