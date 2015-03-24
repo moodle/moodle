@@ -188,7 +188,11 @@ if (!(iomad::has_capability('block/iomad_company_admin:editusers', $context) or
     print_error('nopermissions', 'error', '', 'report on users');
 }
 
-$searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, $courseid == 1);
+if ($courseid == 1) {
+    $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, true, true);
+} else {
+    $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, false, false);
+}
 
 // Create data for form.
 $customdata = null;

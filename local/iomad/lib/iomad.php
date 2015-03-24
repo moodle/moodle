@@ -494,10 +494,14 @@ class iomad {
      *
      * Return array();
      **/
-    public static function get_user_sqlsearch($params, $idlist='', $sort, $dir, $departmentid, $nogrades=false) {
+    public static function get_user_sqlsearch($params, $idlist='', $sort, $dir, $departmentid, $nogrades=false, $allcourse=false) {
         global $DB, $CFG;
 
-        $sqlsort = " GROUP BY co.id, u.id";
+        if ($allcourse) {
+            $sqlsort = " GROUP BY co.id, u.id";
+        } else {
+            $sqlsort = " GROUP BY u.id, cc.timeenrolled, cc.timestarted, cc.timecompleted, d.name, gg.finalgrade";
+        }
         if (!$nogrades) {
             $sqlsort .= ', gg.finalgrade';
         }
@@ -733,6 +737,7 @@ class iomad {
         $shortname = addslashes($course->shortname);
         $countsql = "SELECT u.id ";
         $selectsql = "SELECT u.id,
+                u.id as uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,
                 u.email AS email,
