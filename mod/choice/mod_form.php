@@ -93,6 +93,8 @@ class mod_choice_mod_form extends moodleform_mod {
 
         $mform->addElement('selectyesno', 'showunanswered', get_string("showunanswered", "choice"));
 
+        $mform->addElement('selectyesno', 'includeinactive', get_string('includeinactive', 'choice'));
+        $mform->setDefault('includeinactive', 0);
 
 //-------------------------------------------------------------------------------
         $this->standard_coursemodule_elements();

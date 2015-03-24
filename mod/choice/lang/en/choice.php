@@ -62,6 +62,7 @@ $string['choicesaved'] = 'Your choice has been saved';
 $string['choicetext'] = 'Choice text';
 $string['chooseaction'] = 'Choose an action ...';
 $string['description'] = 'Description';
+$string['includeinactive'] = 'Include responses from inactive/suspended users';
 $string['limit'] = 'Limit';
 $string['limitno'] = 'Limit {no}';
 $string['limitanswers'] = 'Limit the number of responses allowed';

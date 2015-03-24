@@ -72,7 +72,11 @@
     } else {
         $groupmode = groups_get_activity_groupmode($cm);
     }
-    $users = choice_get_response_data($choice, $cm, $groupmode);
+
+    // Check if we want to include responses from inactive users.
+    $onlyactive = $choice->includeinactive ? false : true;
+
+    $users = choice_get_response_data($choice, $cm, $groupmode, $onlyactive);
 
     if ($download == "ods" && has_capability('mod/choice:downloadresponses', $context)) {
         require_once("$CFG->libdir/odslib.class.php");
