@@ -2944,7 +2944,7 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid, $timez
     $name = $event->properties['SUMMARY'][0]->value;
     $name = str_replace('\n', '<br />', $name);
     $name = str_replace('\\', '', $name);
-    $name = preg_replace('/\s+/', ' ', $name);
+    $name = preg_replace('/\s+/u', ' ', $name);
 
     $eventrecord = new stdClass;
     $eventrecord->name = clean_param($name, PARAM_NOTAGS);
@@ -2956,7 +2956,7 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid, $timez
         $description = clean_param($description, PARAM_NOTAGS);
         $description = str_replace('\n', '<br />', $description);
         $description = str_replace('\\', '', $description);
-        $description = preg_replace('/\s+/', ' ', $description);
+        $description = preg_replace('/\s+/u', ' ', $description);
     }
     $eventrecord->description = $description;
 
