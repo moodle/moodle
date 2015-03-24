@@ -2001,6 +2001,22 @@ abstract class lesson_page extends lesson_base {
         $obj->prevpageid = $prevpageid;
         $obj->nextpageid = $nextpageid;
         $DB->update_record('lesson_pages', $obj);
+
+        $cm = get_coursemodule_from_instance('lesson', $this->lesson->id, $this->lesson->course);
+        $context = context_module::instance($cm->id);
+
+        // Trigger an event: page moved.
+        $eventparams = array(
+            'context' => $context,
+            'objectid' => $this->properties->id,
+            'other' => array(
+                'pagetype' => $this->get_typestring(),
+                'prevpageid' => $prevpageid,
+                'nextpageid' => $nextpageid
+                )
+            );
+        $event = \mod_lesson\event\page_moved::create($eventparams);
+        $event->trigger();
     }
 
     /**

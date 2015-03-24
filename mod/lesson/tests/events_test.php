@@ -78,6 +78,36 @@ class mod_lesson_events_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the page created event.
+     *
+     */
+    public function test_page_moved() {
+
+        // Set up a generator to create content.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        $pagerecord1 = $generator->create_content($this->lesson);
+        $page1 = $this->lesson->load_page($pagerecord1->id);
+        $pagerecord2 = $generator->create_content($this->lesson);
+        $page2 = $this->lesson->load_page($pagerecord2->id);
+        $pagerecord3 = $generator->create_content($this->lesson);
+        $page3 = $this->lesson->load_page($pagerecord3->id);
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $page3->move($pagerecord2->id, $pagerecord1->id);
+        // Get our event event.
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\page_moved', $event);
+        $this->assertEquals($page3->id, $event->objectid);
+        $this->assertEquals($pagerecord2->id, $event->other['nextpageid']);
+        $this->assertEquals($pagerecord1->id, $event->other['prevpageid']);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+    }
+
+    /**
      * Test the page deleted event.
      *
      */
