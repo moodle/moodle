@@ -46,10 +46,8 @@ Feature: View structural changes in recent activity block
       | GG3      | G2    |
 
   Scenario: Check that Added module information is displayed respecting view capability
-    Given I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
-    And I log out
+    Given the following config values are set as admin:
+      | enableavailability | 1 |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on

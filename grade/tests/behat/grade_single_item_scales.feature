@@ -71,19 +71,19 @@ Feature: View gradebook when single item scales are used
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range     | Contribution to course total |
       | Test assignment one | Ace!  | Ace!–Ace! | 100.00 %                     |
-      | Sub category 1 total      | 1.00  | 0–1       | -                            |
+      | Sub category 1 total| 1.00  | 0–1       | -                            |
       | Course total        | 1.00  | 0–1       | -                            |
     And I set the field "Select all or one user" to "Student 2"
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range     | Contribution to course total |
       | Test assignment one | -     | Ace!–Ace! | -                            |
-      | Sub category 1 total      | -     | 0–1       | -                            |
+      | Sub category 1 total| -     | 0–1       | -                            |
       | Course total        | -     | 0–1       | -                            |
     And I set the field "jump" to "Categories and items"
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | 1.00      |
-      | Sub category 1 total      | 1.00      |
+      | Sub category 1 total| 1.00      |
       | Course total        | 1.00      |
 
   @javascript
@@ -111,10 +111,10 @@ Feature: View gradebook when single item scales are used
     And I set the field "Select all or one user" to "Student 1"
     And I click on "Select all or one user" "select"
     And the following should exist in the "user-grade" table:
-      | Grade item                        | Grade          | Range       | Contribution to course total |
-      | Test assignment one               | Ace!           | Ace!–Ace!   | <contrib1>                   |
-      | Sub category (<aggregation>) total<aggregation>.      | <cattotal1>    | 0–100       | -                            |
-      | Course total<aggregation>.        | <coursetotal1> | 0–100       | -                            |
+      | Grade item                                       | Grade          | Range       | Contribution to course total |
+      | Test assignment one                              | Ace!           | Ace!–Ace!   | <contrib1>                   |
+      | Sub category (<aggregation>) total<aggregation>. | <cattotal1>    | 0–100       | -                            |
+      | Course total<aggregation>.                       | <coursetotal1> | 0–100       | -                            |
     And I set the field "jump" to "Categories and items"
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                         | Max grade |

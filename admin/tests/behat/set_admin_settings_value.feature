@@ -13,15 +13,13 @@ Feature: Set admin settings value
     And I should not see "C_shortname Course fullname"
 
   Scenario: set admin value with full name
-    Given I set the following administration settings values:
-      | Display extended course names | 1 |
-    When I press "Save changes"
+    Given the following config values are set as admin:
+      | courselistshortnames | 1 |
     And I am on homepage
     Then I should see "C_shortname Course fullname"
 
   Scenario: set admin value with short name
-    Given I set the following administration settings values:
+    Given the following config values are set as admin:
       | courselistshortnames | 1 |
-    When I press "Save changes"
     And I am on homepage
     Then I should see "C_shortname Course fullname"

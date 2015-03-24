@@ -58,11 +58,9 @@ Feature: In an assignment, teachers grade multiple students on one page
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
-    When I log in as "admin"
-    And I set the following administration settings values:
-      | Enable outcomes | 1 |
-    And I log out
-    And I log in as "teacher1"
+    And the following config values are set as admin:
+      | enableoutcomes | 1 |
+    When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Outcomes"
     And I follow "Edit outcomes"

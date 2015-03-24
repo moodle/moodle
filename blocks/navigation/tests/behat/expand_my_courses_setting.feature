@@ -29,10 +29,8 @@ Feature: Test expand my courses navigation setting
 
   @javascript
   Scenario: The My Courses branch is collapsed when expand my courses is off
-    Given I log in as "admin"
-    And I set the following administration settings values:
-      | Show My courses expanded on My home | 0 |
-    And I log out
+    Given the following config values are set as admin:
+      | navexpandmycourses | 0 |
     When I log in as "student1"
     And I click on "My home" "link" in the "Navigation" "block"
     Then I should not see "c1" in the "Navigation" "block"
@@ -41,10 +39,8 @@ Feature: Test expand my courses navigation setting
 
   @javascript
   Scenario: My Courses can be expanded on the My Moodle page when expand my courses is off
-    Given I log in as "admin"
-    And I set the following administration settings values:
-      | Show My courses expanded on My home | 0 |
-    And I log out
+    Given the following config values are set as admin:
+      | navexpandmycourses | 0 |
     When I log in as "student1"
     And I click on "My home" "link" in the "Navigation" "block"
     And I should not see "c1" in the "Navigation" "block"
