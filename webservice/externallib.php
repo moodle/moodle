@@ -76,8 +76,9 @@ class core_webservice_external extends external_api {
         $params = self::validate_parameters(self::get_site_info_parameters(),
                       array('serviceshortnames'=>$serviceshortnames));
 
+        $context = context_user::instance($USER->id);
         $profileimageurl = moodle_url::make_pluginfile_url(
-                context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f1');
+                $context->id, 'user', 'icon', null, '/', 'f1');
 
         // Site information.
         $siteinfo =  array(
@@ -177,6 +178,18 @@ class core_webservice_external extends external_api {
             'value' => ($CFG->mnet_dispatcher_mode == 'strict') ? 1 : 0
         );
 
+        // User can manage own files.
+        $siteinfo['usercanmanageownfiles'] = has_capability('moodle/user:manageownfiles', $context);
+
+        // User quota. 0 means user can ignore the quota.
+        $siteinfo['userquota'] = 0;
+        if (!has_capability('moodle/user:ignoreuserquota', $context)) {
+            $siteinfo['userquota'] = $CFG->userquota;
+        }
+
+        // User max upload file size. -1 means the user can ignore the upload file size.
+        $siteinfo['usermaxuploadfilesize'] = get_user_max_upload_file_size($context, $CFG->maxbytes);
+
         return $siteinfo;
     }
 
@@ -228,7 +241,14 @@ class core_webservice_external extends external_api {
                     ),
                     'Advanced features availability',
                     VALUE_OPTIONAL
-                )
+                ),
+                'usercanmanageownfiles' => new external_value(PARAM_BOOL,
+                                            'true if the user can manage his own files', VALUE_OPTIONAL),
+                'userquota' => new external_value(PARAM_INT,
+                                    'user quota (bytes). 0 means user can ignore the quota', VALUE_OPTIONAL),
+                'usermaxuploadfilesize' => new external_value(PARAM_INT,
+                                            'user max upload file size (bytes). -1 means the user can ignore the upload file size',
+                                            VALUE_OPTIONAL)
             )
         );
     }
