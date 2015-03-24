@@ -93,7 +93,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
         $page3 = $this->lesson->load_page($pagerecord3->id);
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $page3->move($pagerecord1->id, $pagerecord1->id);
+        $page3->move($pagerecord2->id, $pagerecord1->id);
         // Get our event event.
         $events = $sink->get_events();
         $event = reset($events);
@@ -101,6 +101,8 @@ class mod_lesson_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_lesson\event\page_moved', $event);
         $this->assertEquals($page3->id, $event->objectid);
+        $this->assertEquals($pagerecord2->id, $event->other['nextpageid']);
+        $this->assertEquals($pagerecord1->id, $event->other['prevpageid']);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }

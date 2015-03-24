@@ -80,7 +80,7 @@ class page_moved extends \core\event\base {
         return "The user with id '$this->userid' has moved a ".$this->other['pagetype']." page with the ".
                 "id '$this->objectid' to the slot after the page with the id '".$this->other['prevpageid'].
                 "' and before the page with the id '".$this->other['nextpageid'].
-                "'in the lesson activity with course module id '$this->contextinstanceid'.";
+                "' in the lesson activity with course module id '$this->contextinstanceid'.";
     }
 
     /**
