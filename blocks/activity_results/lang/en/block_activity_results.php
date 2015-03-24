@@ -15,17 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'block_quiz_results', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'block_activity_results', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package    block_quiz_results
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package    block_activity_results
+ * @copyright  2015 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Quiz results (disabled)';
-$string['quiz_results:addinstance'] = 'Add a new quiz results block';
-
-// Deprecated since Moodle 2.9.
+$string['activity_results:addinstance'] = 'Add a new activity results block';
 $string['bestgrade'] = 'The highest grade:';
 $string['bestgrades'] = 'The {$a} highest grades:';
 $string['bestgroupgrade'] = 'The group with the highest average:';
@@ -33,20 +30,25 @@ $string['bestgroupgrades'] = 'The {$a} groups with the highest average:';
 $string['config_format_absolute'] = 'Absolute numbers';
 $string['config_format_fraction'] = 'Fractions';
 $string['config_format_percentage'] = 'Percentages';
+$string['config_decimalplaces'] = 'Decimal places to display';
 $string['config_grade_format'] = 'Display grades as:';
 $string['config_name_format'] = 'Privacy level for displayed results:';
 $string['config_names_anon'] = 'Anonymous results';
 $string['config_names_full'] = 'Display full names';
 $string['config_names_id'] = 'Display only ID numbers';
-$string['config_no_quizzes_in_course'] = 'This course does not contain any quiz activities . You must add at least one before you are able to use this block correctly.';
-$string['config_select_quiz'] = 'Which quiz should this block display results from?';
+$string['config_no_activities_in_course'] = 'This course does not contain any activity activities . You must add at least one before you are able to use this block correctly.';
+$string['config_select_activity'] = 'Which activity should this block display results from?';
 $string['config_show_best'] = 'How many of the highest grades should be shown (0 to disable)?';
 $string['config_show_worst'] = 'How many of the lowest grades should be shown (0 to disable)?';
 $string['configuredtoshownothing'] = 'This block\'s configuration currently does not allow it to show any results. You may want to either configure it or hide it.';
-$string['config_use_groups'] = 'Show groups instead of students (only if the quiz supports groups)?';
-$string['error_emptyquizid'] = 'There is an error right now with this block: you need to select which quiz it should display results from.';
-$string['error_emptyquizrecord'] = 'There is an error right now with this block: the selected quiz does not seem to exist in the database.';
+$string['config_use_groups'] = 'Show groups instead of students (only if the activity supports groups)?';
+$string['error_emptyactivityid'] = 'There is an error right now with this block: you need to select which activity it should display results from.';
+$string['error_emptyactivityrecord'] = 'There is an error right now with this block: the selected activity does not seem to exist in the database.';
 $string['error_nogroupsexist'] = 'There is an error right now with this block: it is set to display grades in group mode, but the course has no defined groups.';
+$string['error_unsupportedgradetype'] = 'There is an error right now with this block: The activity selected is configured to use a grading method that is not supported by this block.';
+$string['notyetgraded'] = 'Not yet graded';
+$string['pluginname'] = 'Activity results';
+$string['unknown'] = 'Unknown scale';
 $string['worstgrade'] = 'The lowest grade:';
 $string['worstgrades'] = 'The {$a} lowest grades:';
 $string['worstgroupgrade'] = 'The group with the lowest average:';

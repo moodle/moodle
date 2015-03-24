@@ -15,43 +15,55 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    block_quiz_results
+ * Define all the backup steps that will be used by the backup_block_task
+ * @package    block_activity_results
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @copyright  2015 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Specialised restore task for the quiz_results block
- * (using execute_after_tasks for recoding of target quiz)
- *
- * TODO: Finish phpdocs
+ * Specialised restore task for the activity_results block
+ * (using execute_after_tasks for recoding of target activity)
  *
  * @copyright  2003 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_quiz_results_block_task extends restore_block_task {
+class restore_activity_results_block_task extends restore_block_task {
 
+    /**
+     * Define (add) particular settings this activity can have
+     */
     protected function define_my_settings() {
     }
 
+    /**
+     * Define (add) particular steps this activity can have
+     */
     protected function define_my_steps() {
     }
 
+    /**
+     * Define the associated file areas
+     */
     public function get_fileareas() {
-        return array(); // No associated fileareas
+        return array(); // No associated fileareas.
     }
 
+    /**
+     * Define special handling of configdata.
+     */
     public function get_configdata_encoded_attributes() {
-        return array(); // No special handling of configdata
+        return array(); // No special handling of configdata.
     }
 
     /**
      * This function, executed after all the tasks in the plan
      * have been executed, will perform the recode of the
-     * target quiz for the block. This must be done here
-     * and not in normal execution steps because the quiz
+     * target activity for the block. This must be done here
+     * and not in normal execution steps because the activity
      * can be restored after the block.
      */
     public function after_restore() {
@@ -60,42 +72,43 @@ class restore_quiz_results_block_task extends restore_block_task {
         // Get the blockid.
         $blockid = $this->get_blockid();
 
-        // Extract block configdata and update it to point to the new quiz.
         if ($configdata = $DB->get_field('block_instances', 'configdata', array('id' => $blockid))) {
             $config = unserialize(base64_decode($configdata));
-            if (!empty($config->quizid)) {
-                // Get quiz mapping and replace it in config.
-                if ($quizmap = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'quiz', $config->quizid)) {
-                    $config->activityparent = 'quiz';
-                    $config->activityparentid = $quizmap->newitemid;
+            if (!empty($config->activityparentid)) {
+                // Get the mapping and replace it in config.
+                if ($mapping = restore_dbops::get_backup_ids_record($this->get_restoreid(),
+                    $config->activityparent, $config->activityparentid)) {
 
-                    // Set the decimal valuue as appropriate.
-                    if ($config->gradeformat == 1) {
-                        // This block is using percentages, do not display any decimal places.
-                        $config->decimalpoints = 0;
-                    } else {
-                        // Get the decimal value from the corresponding quiz.
-                        $config->decimalpoints = $DB->get_field('quiz', 'decimalpoints', array('id' => $config->activityparentid));
-                    }
+                    // Update the parent module id (the id from mdl_quiz etc...)
+                    $config->activityparentid = $mapping->newitemid;
 
-                    // Get the grade_items record to set the activitygradeitemid.
+                    // Get the grade_items record to update the activitygradeitemid.
                     $info = $DB->get_record('grade_items',
                             array('iteminstance' => $config->activityparentid, 'itemmodule' => $config->activityparent));
-                    $config->activitygradeitemid = $info->id;
-                    unset($config->quizid);
 
-                    // Save the new configuration and update the record.
-                    $DB->set_field('block_instances', 'configdata', base64_encode(serialize($config)), array('id' => $blockid));
-                    $DB->set_field('block_instances', 'blockname', 'activity_results', array('id' => $blockid));
+                    // Update the activitygradeitemid the id from the grade_items table.
+                    $config->activitygradeitemid = $info->id;
+
+                    // Encode and save the config.
+                    $configdata = base64_encode(serialize($config));
+                    $DB->set_field('block_instances', 'configdata', $configdata, array('id' => $blockid));
                 }
             }
         }
     }
 
+    /**
+     * Define the contents in the activity that must be
+     * processed by the link decoder
+     */
     static public function define_decode_contents() {
         return array();
     }
 
+    /**
+     * Define the decoding rules for links belonging
+     * to the activity to be executed by the link decoder
+     */
     static public function define_decode_rules() {
         return array();
     }

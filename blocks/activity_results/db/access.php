@@ -15,17 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the block_quiz_results plugin.
+ * Activity results block caps.
  *
- * @package    block_quiz_results
- * @copyright  2011 The Open University
+ * @package    block_activity_results
+ * @copyright  2015 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015022200;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014110400;        // Requires this Moodle version
-$plugin->component = 'block_quiz_results'; // Full name of the plugin (used for diagnostics)
+$capabilities = array(
 
-$plugin->dependencies = array('mod_quiz' => 2014110400);
+    'block/activity_results:addinstance' => array(
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' => 'moodle/site:manageblocks'
+    ),
+);
