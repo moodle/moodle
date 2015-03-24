@@ -290,6 +290,51 @@ class mod_lesson_events_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the lesson restarted event.
+     */
+    public function test_lesson_restarted() {
+
+        // Initialize timer.
+        $this->lesson->start_timer();
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $this->lesson->update_timer(true);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\lesson_restarted', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
+        $expected = array($this->course->id, 'lesson', 'start', 'view.php?id=' . $this->lesson->properties()->cmid,
+            $this->lesson->properties()->id, $this->lesson->properties()->cmid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+
+    }
+
+    /**
+     * Test the lesson restarted event.
+     */
+    public function test_lesson_resumed() {
+
+        // Initialize timer.
+        $this->lesson->start_timer();
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $this->lesson->update_timer(true, true);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\lesson_resumed', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
+        $expected = array($this->course->id, 'lesson', 'start', 'view.php?id=' . $this->lesson->properties()->cmid,
+            $this->lesson->properties()->id, $this->lesson->properties()->cmid);
+        $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingNotCalled();
+
+    }
+    /**
      * Test the lesson ended event.
      */
     public function test_lesson_ended() {

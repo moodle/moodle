@@ -1266,6 +1266,9 @@ class lesson extends lesson_base {
      */
     public function update_timer($restart=false, $continue=false, $endreached =false) {
         global $USER, $DB;
+
+        $cm = get_coursemodule_from_instance('lesson', $this->properties->id, $this->properties->course);
+
         // clock code
         // get time information for this user
         $params = array("lessonid" => $this->properties->id, "userid" => $USER->id);
@@ -1279,9 +1282,27 @@ class lesson extends lesson_base {
             if ($continue) {
                 // continue a previous test, need to update the clock  (think this option is disabled atm)
                 $timer->starttime = time() - ($timer->lessontime - $timer->starttime);
+
+                // Trigger lesson resumed event.
+                $event = \mod_lesson\event\lesson_resumed::create(array(
+                    'objectid' => $this->properties->id,
+                    'context' => context_module::instance($cm->id),
+                    'courseid' => $this->properties->course
+                ));
+                $event->trigger();
+
             } else {
                 // starting over, so reset the clock
                 $timer->starttime = time();
+
+                // Trigger lesson restarted event.
+                $event = \mod_lesson\event\lesson_restarted::create(array(
+                    'objectid' => $this->properties->id,
+                    'context' => context_module::instance($cm->id),
+                    'courseid' => $this->properties->course
+                ));
+                $event->trigger();
+
             }
         }
 
