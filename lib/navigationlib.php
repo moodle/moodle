@@ -2276,7 +2276,7 @@ class global_navigation extends navigation_node {
                     $url = new moodle_url('/course/user.php', array('mode' => 'grade', 'id' => $course->id, 'user' => $user->id));
                 }
                 if ($USER->id != $user->id) {
-                    $usernode->add(get_string('grades', 'grades'), $url);
+                    $usernode->add(get_string('grades', 'grades'), $url, self::TYPE_SETTING, null, 'usergrades');
                 } else {
                     $usernode->add(get_string('mygrades', 'grades'), $url);
                 }

@@ -56,13 +56,19 @@ if (empty($userid)) {
     $personalcontext = context_user::instance($userid);
 }
 
-if (isset($personalcontext)) {
+if (isset($personalcontext) && $courseid == SITEID) {
     $PAGE->set_context($personalcontext);
 } else {
     $PAGE->set_context($context);
 }
-$settings = $PAGE->settingsnav->find('mygrades', null);
-$settings->make_active();
+if ($userid == $USER->id) {
+    $settings = $PAGE->settingsnav->find('mygrades', null);
+    $settings->make_active();
+} else if ($courseid != SITEID) {
+    // Show some other navbar thing.
+    $user = $DB->get_record('user', array('id' => $userid));
+    $PAGE->navigation->extend_for_user($user);
+}
 
 $access = false;
 if (has_capability('moodle/grade:viewall', $systemcontext)) {
@@ -158,33 +164,52 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
     // Create a report instance
     $report = new grade_report_overview($userid, $gpr, $context);
 
-    // If the course id matches the site id then we don't have a course context to work with.
-    // Display a standard page.
-    if ($courseid == SITEID) {
+    if (!empty($report->studentcourseids)) {
+        // If the course id matches the site id then we don't have a course context to work with.
+        // Display a standard page.
+        if ($courseid == SITEID) {
+            $PAGE->set_pagelayout('standard');
+            $header = get_string('mygrades', 'grades') . ' - ' . fullname($report->user);
+            $PAGE->set_title($header);
+            $PAGE->set_heading(fullname($report->user));
+
+            if ($USER->id != $report->user->id) {
+                $PAGE->navigation->extend_for_user($report->user);
+                if ($node = $PAGE->settingsnav->get('userviewingsettings'.$report->user->id)) {
+                    $node->forceopen = true;
+                }
+            } else if ($node = $PAGE->settingsnav->get('usercurrentsettings', navigation_node::TYPE_CONTAINER)) {
+                $node->forceopen = true;
+            }
+
+            echo $OUTPUT->header();
+            if ($report->fill_table(true, true)) {
+                echo html_writer::tag('h3', get_string('coursesiamtaking', 'grades'));
+                echo '<br />' . $report->print_table(true);
+            }
+        } else { // We have a course context. We must be navigating from the gradebook.
+            print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview')
+                    . ' - ' . fullname($report->user));
+            if ($report->fill_table()) {
+                echo '<br />' . $report->print_table(true);
+            }
+        }
+    } else {
         $PAGE->set_pagelayout('standard');
         $header = get_string('mygrades', 'grades') . ' - ' . fullname($report->user);
         $PAGE->set_title($header);
         $PAGE->set_heading(fullname($report->user));
-
-        if ($USER->id != $report->user->id) {
-            $PAGE->navigation->extend_for_user($report->user);
-            if ($node = $PAGE->settingsnav->get('userviewingsettings'.$report->user->id)) {
-                $node->forceopen = true;
-            }
-        } else if ($node = $PAGE->settingsnav->get('usercurrentsettings', navigation_node::TYPE_CONTAINER)) {
-            $node->forceopen = true;
-        }
-
         echo $OUTPUT->header();
-        if ($report->fill_table(true)) {
-            echo '<br />'.$report->print_table(true);
-        }
-    } else { // We have a course context. We must be navigating from the gradebook.
-        print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview')
-                . ' - ' . fullname($report->user));
-        if ($report->fill_table()) {
-            echo '<br />'.$report->print_table(true);
-        }
+    }
+
+    if (count($report->teachercourses)) {
+        echo html_writer::tag('h3', get_string('coursesiamteaching', 'grades'));
+        $report->print_teacher_table();
+    }
+
+    if (empty($report->studentcourseids) && empty($report->teachercourses)) {
+        // We have no report to show the user. Let them know something.
+        echo $OUTPUT->notification(get_string('noreports', 'grades'), 'notifymessage');
     }
 }
 
