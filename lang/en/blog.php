@@ -121,7 +121,7 @@ $string['numberoftags'] = 'Number of tags to display';
 $string['pagesize'] = 'Blog entries per page';
 $string['permalink'] = 'Permalink';
 $string['personalblogs'] = 'Users can only see their own blog';
-$string['preferences'] = 'Preferences';
+$string['preferences'] = 'Blog preferences';
 $string['publishto'] = 'Publish to';
 $string['publishto_help'] = 'There are 3 options:
 
@@ -143,7 +143,7 @@ $string['retrievedfrom'] = 'Retrieved from';
 $string['rssfeed'] = 'Blog RSS feed';
 $string['searchterm'] = 'Search: {$a}';
 $string['settingsupdatederror'] = 'An error has occurred, blog preference setting could not be updated';
-$string['siteblog'] = 'Site blog: {$a}';
+$string['siteblogheading'] = 'Site blog';
 $string['siteblogdisable'] = 'Site blog is not enabled';
 $string['siteblogs'] = 'All site users can see all blog entries';
 $string['tagdatelastused'] = 'Date tag was last used';
@@ -182,3 +182,6 @@ $string['wrongpostid'] = 'Wrong blog post id';
 $string['page-blog-edit'] = 'Blog editing pages';
 $string['page-blog-index'] = 'Blog listing pages';
 $string['page-blog-x'] = 'All blog pages';
+
+// Deprecated since Moodle 2.9.
+$string['siteblog'] = 'Site blog: {$a}';

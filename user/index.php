@@ -155,6 +155,7 @@ $PAGE->add_body_class('path-user');                     // So we can style it in
 $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('participants'));
 
 echo '<div class="userlist">';
 

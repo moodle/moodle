@@ -2640,7 +2640,7 @@ class global_navigation extends navigation_node {
 
         // Tags
         if (!empty($CFG->usetags) && isloggedin()) {
-            $coursenode->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));
+            $node = $coursenode->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'), self::TYPE_SETTING, null, 'tags');
         }
 
         if (isloggedin()) {
@@ -4301,8 +4301,7 @@ class settings_navigation extends navigation_node {
             $dashboard->add_node($usersetting);
         } else {
             $usersetting = $this->add(get_string('preferences', 'moodle'), $prefurl, self::TYPE_CONTAINER, null, $key);
-            // Set to false when a link to preferences has been added to the my profile page. MDL-45900.
-            $usersetting->display = true;
+            $usersetting->display = false;
         }
         $usersetting->id = 'usersettings';
 
@@ -4452,7 +4451,7 @@ class settings_navigation extends navigation_node {
         // Badges.
         if ($currentuser && !empty($CFG->enablebadges)) {
             $badges = $usersetting->add(get_string('badges'), null, navigation_node::TYPE_CONTAINER, null, 'badges');
-            $badges->add(get_string('preferences'), new moodle_url('/badges/preferences.php'), navigation_node::TYPE_SETTING);
+            $badges->add(get_string('preferences', 'badges'), new moodle_url('/badges/preferences.php'), navigation_node::TYPE_SETTING);
             if (!empty($CFG->badges_allowexternalbackpack)) {
                 $badges->add(get_string('backpackdetails', 'badges'), new moodle_url('/badges/mybackpack.php'),
                         navigation_node::TYPE_SETTING);

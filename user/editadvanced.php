@@ -293,7 +293,7 @@ if ($usernew = $userform->get_data()) {
             // Somebody double clicked when editing admin user during install.
             redirect("$CFG->wwwroot/$CFG->admin/");
         } else {
-            redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
+            redirect("$CFG->wwwroot/user/preferences.php?userid=$USER->id&course=$course->id");
         }
     } else {
         \core\session\manager::gc(); // Remove stale sessions.

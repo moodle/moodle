@@ -47,7 +47,7 @@ if (!$mform->is_cancelled() && $data = $mform->get_data()) {
 }
 
 if ($mform->is_cancelled()) {
-    redirect($CFG->wwwroot . '/badges/mybadges.php');
+    redirect($CFG->wwwroot . '/user/preferences.php');
 }
 
 $strpreferences = get_string('preferences');

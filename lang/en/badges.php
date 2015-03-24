@@ -330,6 +330,7 @@ $string['numawards'] = 'This badge has been issued to <a href="{$a->link}">{$a->
 $string['numawardstat'] = 'This badge has been issued {$a} user(s).';
 $string['overallcrit'] = 'of the selected criteria are complete.';
 $string['potentialrecipients'] = 'Potential badge recipients';
+$string['preferences'] = 'Badge preferences';
 $string['recipients'] = 'Badge recipients';
 $string['recipientdetails'] = 'Recipient details';
 $string['recipientidentificationproblem'] = 'Cannot find a recipient of this badge among the existing users.';

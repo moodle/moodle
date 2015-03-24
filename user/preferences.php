@@ -62,9 +62,6 @@ if (!$currentuser) {
     $usernode = $PAGE->navigation->find('users', null);
     $usernode->make_inactive();
 
-    $PAGE->set_title(get_string('preferences'));
-    $PAGE->set_heading(get_string('preferences'));
-
     $settings = $PAGE->settingsnav->find('usercurrentsettings', null);
     $settings->make_active();
 }
@@ -85,5 +82,6 @@ if (!empty($orphans)) {
 $preferences = new preferences_groups($groups);
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(get_string('preferences'));
 echo $OUTPUT->render($preferences);
 echo $OUTPUT->footer();
