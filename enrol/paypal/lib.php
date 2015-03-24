@@ -60,7 +60,21 @@ class enrol_paypal_plugin extends enrol_plugin {
      * @return array of pix_icon
      */
     public function get_info_icons(array $instances) {
-        return array(new pix_icon('icon', get_string('pluginname', 'enrol_paypal'), 'enrol_paypal'));
+        $found = false;
+        foreach ($instances as $instance) {
+            if ($instance->enrolstartdate != 0 && $instance->enrolstartdate > time()) {
+                continue;
+            }
+            if ($instance->enrolenddate != 0 && $instance->enrolenddate < time()) {
+                continue;
+            }
+            $found = true;
+            break;
+        }
+        if ($found) {
+            return array(new pix_icon('icon', get_string('pluginname', 'enrol_paypal'), 'enrol_paypal'));
+        }
+        return array();
     }
 
     public function roles_protected() {
