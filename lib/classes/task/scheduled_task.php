@@ -35,10 +35,16 @@ abstract class scheduled_task extends task_base {
     const MINUTEMIN = 0;
     /** Maximum minute value. */
     const MINUTEMAX = 59;
+
     /** Minimum hour value. */
     const HOURMIN = 0;
     /** Maximum hour value. */
     const HOURMAX = 23;
+
+    /** Minimum dayofweek value. */
+    const DAYOFWEEKMIN = 0;
+    /** Maximum dayofweek value. */
+    const DAYOFWEEKMAX = 6;
 
     /** @var string $hour - Pattern to work out the valid hours */
     private $hour = '*';
@@ -173,6 +179,9 @@ abstract class scheduled_task extends task_base {
      * @param string $dayofweek
      */
     public function set_day_of_week($dayofweek) {
+        if ($dayofweek === 'R') {
+            $dayofweek = mt_rand(self::DAYOFWEEKMIN, self::DAYOFWEEKMAX);
+        }
         $this->dayofweek = $dayofweek;
     }
 

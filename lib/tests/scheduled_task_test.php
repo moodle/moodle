@@ -329,6 +329,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Set a random value.
         $testclass->set_minute('R');
         $testclass->set_hour('R');
+        $testclass->set_day_of_week('R');
 
         // Verify the minute has changed within allowed bounds.
         $minute = $testclass->get_minute();
@@ -341,6 +342,12 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $this->assertInternalType('int', $hour);
         $this->assertGreaterThanOrEqual(0, $hour);
         $this->assertLessThanOrEqual(23, $hour);
+
+        // Verify the dayofweek has changed within allowed bounds.
+        $dayofweek = $testclass->get_day_of_week();
+        $this->assertInternalType('int', $dayofweek);
+        $this->assertGreaterThanOrEqual(0, $dayofweek);
+        $this->assertLessThanOrEqual(6, $dayofweek);
     }
 
     /**

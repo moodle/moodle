@@ -53,32 +53,30 @@ class registration_manager {
     public function cron() {
         global $CFG;
         if (extension_loaded('xmlrpc')) {
-            //check if the last registration cron update was less than a week ago
-            $lastcron = get_config('registration', 'crontime');
-            if ($lastcron === false or $lastcron < strtotime("-7 day")) { //set to a week, see MDL-23704
-                $function = 'hub_update_site_info';
-                require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
+            $function = 'hub_update_site_info';
+            require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
 
-                //update all hub where the site is registered on
-                $hubs = $this->get_registered_on_hubs();
-                foreach ($hubs as $hub) {
-                    //update the registration
-                    $siteinfo = $this->get_site_info($hub->huburl);
-                    $params = array('siteinfo' => $siteinfo);
-                    $serverurl = $hub->huburl . "/local/hub/webservice/webservices.php";
-                    $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
-                    try {
-                        $result = $xmlrpcclient->call($function, $params);
-                        $this->update_registeredhub($hub); // To update timemodified.
-                        mtrace(get_string('siteupdatedcron', 'hub', $hub->hubname));
-                    } catch (Exception $e) {
-                        $errorparam = new stdClass();
-                        $errorparam->errormessage = $e->getMessage();
-                        $errorparam->hubname = $hub->hubname;
-                        mtrace(get_string('errorcron', 'hub', $errorparam));
-                    }
+            // Update all hubs where the site is registered.
+            $hubs = $this->get_registered_on_hubs();
+            if (empty($hubs)) {
+                mtrace(get_string('registrationwarning', 'admin'));
+            }
+            foreach ($hubs as $hub) {
+                // Update the registration.
+                $siteinfo = $this->get_site_info($hub->huburl);
+                $params = array('siteinfo' => $siteinfo);
+                $serverurl = $hub->huburl . "/local/hub/webservice/webservices.php";
+                $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $hub->token);
+                try {
+                    $result = $xmlrpcclient->call($function, $params);
+                    $this->update_registeredhub($hub); // To update timemodified.
+                    mtrace(get_string('siteupdatedcron', 'hub', $hub->hubname));
+                } catch (Exception $e) {
+                    $errorparam = new stdClass();
+                    $errorparam->errormessage = $e->getMessage();
+                    $errorparam->hubname = $hub->hubname;
+                    mtrace(get_string('errorcron', 'hub', $errorparam));
                 }
-                set_config('crontime', time(), 'registration');
             }
         } else {
             mtrace(get_string('errorcronnoxmlrpc', 'hub'));
