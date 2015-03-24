@@ -534,13 +534,15 @@
         <FIELD NAME="contexturl" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="If this message is a notification of an event contexturl should contain a link to view this event. For example if its a notification of a forum post contexturl should contain a link to the forum post."/>
         <FIELD NAME="contexturlname" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Display text for the contexturl"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeuserfromdeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeusertodeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="useridto" UNIQUE="false" FIELDS="useridto"/>
-        <INDEX NAME="useridfromto" UNIQUE="false" FIELDS="useridfrom, useridto"/>
+        <INDEX NAME="useridfromtodeleted" UNIQUE="false" FIELDS="useridfrom, useridto, timeuserfromdeleted, timeusertodeleted"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="message_read" COMMENT="Stores all messages that have been read">
@@ -558,13 +560,15 @@
         <FIELD NAME="contexturlname" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Display text for the contexturl"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timeread" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeuserfromdeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeusertodeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="useridto" UNIQUE="false" FIELDS="useridto"/>
-        <INDEX NAME="useridfromto" UNIQUE="false" FIELDS="useridfrom, useridto"/>
+        <INDEX NAME="useridfromtodeleted" UNIQUE="false" FIELDS="useridfrom, useridto, timeuserfromdeleted, timeusertodeleted"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="message_contacts" COMMENT="Maintains lists of relationships between users">
