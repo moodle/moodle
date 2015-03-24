@@ -15,26 +15,34 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Moodle pix_icon template.
+    Moodle template to display another template.
 
-    The purpose of this template is to render a pix_icon.
+    The purpose of this template is to put scafolding in the page, so the javascript can fetch templates and
+    insert them into this part of the page.
 
     Classes required for JS:
     * none
 
     Data attributes required for JS:
-    * none
+    * data-region
 
     Context variables required for this template:
-    * attributes Array of name / value pairs.
+    * none
 
     Example context (json):
-    {
-        "attributes": [
-            { "name": "src", "value": "http://moodle.com/wp-content/themes/moodle/images/logo-hat2.png" },
-            { "name": "class", "value": "iconsmall" }
-        ]
-    }
+    { }
 
 }}
-<img {{#attributes}}{{name}}="{{value}}" {{/attributes}}/>
+<div data-region="displaytemplate">
+        <h3 data-region="displaytemplateheader">{{#str}}notemplateselected, tool_templatelibrary{{/str}}</h3>
+        <div>
+            <h4>{{#str}}example, tool_templatelibrary{{/str}}</h4>
+            <div data-region="displaytemplateexample">
+                -
+            </div>
+        </div>
+        <div>
+            <h4>{{#str}}documentation, tool_templatelibrary{{/str}}</h4>
+            <pre data-region="displaytemplatesource"> - </pre>
+        </div>
+</div>
