@@ -53,7 +53,7 @@
     <location>google</location>
     <name>Google APIs Client Library</name>
     <license>Apache</license>
-    <version>1.0.5-beta</version>
+    <version>1.1.2</version>
     <licenseversion>2.0</licenseversion>
   </library>
   <library>

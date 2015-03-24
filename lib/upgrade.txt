@@ -34,6 +34,8 @@ information provided here is intended especially for developers.
   This prevents the need to write files to disk unnecessarily.
 * Removed pear/HTTP/WebDav. See MDL-49534 for details.
 * Use standard PHP date time classes and methods - see new core_date class for timezone normalisation methods.
+* Moved lib/google/Google/ to lib/google/src/Google. This is to address autoloader issues with Google's provided autoloader
+  for the library. See MDL-49519 for details.
 
 === 2.8 ===
 

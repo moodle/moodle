@@ -1,11 +1,12 @@
 Google APIs Client Library for PHP
 ==================================
 
-Only the source and the README files have been kept in this directory:
+Only the source, README and autoloader files have been kept in this directory:
 
-- Copy /src/Google to /Google
+- Copy /src/Google to /src/Google 
 - Copy /LICENSE to LICENSE
 - Copy /README.md to README.md
+- Copy /autoload.php to autoload.php
 
 Here are the files that we have added.
 
@@ -30,4 +31,4 @@ Repository: https://github.com/google/google-api-php-client
 Documentation: https://developers.google.com/api-client-library/php/
 Global documentation: https://developers.google.com
 
-Downloaded version: 1.0.5-beta
+Downloaded version: 1.1.2
