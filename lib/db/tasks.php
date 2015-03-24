@@ -215,10 +215,10 @@ $tasks = array(
     array(
         'classname' => 'core\task\registration_cron_task',
         'blocking' => 0,
-        'minute' => '0',
-        'hour' => '3',
+        'minute' => 'R',
+        'hour' => 'R',
         'day' => '*',
-        'dayofweek' => '*',
+        'dayofweek' => 'R',
         'month' => '*'
     ),
     array(

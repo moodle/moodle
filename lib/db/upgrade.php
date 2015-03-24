@@ -4068,5 +4068,10 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014111002.01);
     }
 
+    if ($oldversion < 2014111005.03) {
+        unset_config('crontime', 'registration');
+        upgrade_main_savepoint(true, 2014111005.03);
+    }
+
     return true;
 }
