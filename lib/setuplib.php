@@ -576,6 +576,52 @@ function get_exception_info($ex) {
 }
 
 /**
+ * Generate a uuid.
+ *
+ * Unique is hard. Very hard. Attempt to use the PECL UUID functions if available, and if not then revert to
+ * constructing the uuid using mt_rand.
+ *
+ * It is important that this token is not solely based on time as this could lead
+ * to duplicates in a clustered environment (especially on VMs due to poor time precision).
+ *
+ * @return string The uuid.
+ */
+function generate_uuid() {
+    $uuid = '';
+
+    if (function_exists("uuid_create")) {
+        $context = null;
+        uuid_create($context);
+
+        uuid_make($context, UUID_MAKE_V4);
+        uuid_export($context, UUID_FMT_STR, $uuid);
+    } else {
+        // Fallback uuid generation based on:
+        // "http://www.php.net/manual/en/function.uniqid.php#94959".
+        $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+
+            // 32 bits for "time_low".
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+
+            // 16 bits for "time_mid".
+            mt_rand(0, 0xffff),
+
+            // 16 bits for "time_hi_and_version",
+            // four most significant bits holds version number 4.
+            mt_rand(0, 0x0fff) | 0x4000,
+
+            // 16 bits, 8 bits for "clk_seq_hi_res",
+            // 8 bits for "clk_seq_low",
+            // two most significant bits holds zero and one for variant DCE1.1.
+            mt_rand(0, 0x3fff) | 0x8000,
+
+            // 48 bits for "node".
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
+    }
+    return trim($uuid);
+}
+
+/**
  * Returns the Moodle Docs URL in the users language for a given 'More help' link.
  *
  * There are three cases:
