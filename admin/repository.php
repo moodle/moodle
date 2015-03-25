@@ -264,6 +264,7 @@ if (($action == 'edit') || ($action == 'new')) {
     $strshow = get_string('on', 'repository');
     $strhide = get_string('off', 'repository');
     $strdelete = get_string('disabled', 'repository');
+    $struninstall = get_string('uninstallplugin', 'core_admin');
 
     $actionchoicesforexisting = array(
         'show' => $strshow,
@@ -286,9 +287,9 @@ if (($action == 'edit') || ($action == 'new')) {
 
     // Table to list plug-ins
     $table = new html_table();
-    $table->head = array(get_string('name'), get_string('isactive', 'repository'), get_string('order'), $settingsstr);
+    $table->head = array(get_string('name'), get_string('isactive', 'repository'), get_string('order'), $settingsstr, $struninstall);
 
-    $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
+    $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
     $table->id = 'repositoriessetting';
     $table->data = array();
     $table->attributes['class'] = 'admintable generaltable';
@@ -384,7 +385,12 @@ if (($action == 'edit') || ($action == 'new')) {
 
             $updowncount++;
 
-            $table->data[] = array($i->get_readablename(), $OUTPUT->render($select), $updown, $settings);
+            $uninstall = '';
+            if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('repository_' . $typename, 'manage')) {
+                $uninstall = html_writer::link($uninstallurl, $struninstall);
+            }
+
+            $table->data[] = array($i->get_readablename(), $OUTPUT->render($select), $updown, $settings, $uninstall);
 
             if (!in_array($typename, $alreadyplugins)) {
                 $alreadyplugins[] = $typename;
@@ -400,7 +406,11 @@ if (($action == 'edit') || ($action == 'new')) {
             if (!in_array($plugin, $alreadyplugins)) {
                 $select = new single_select(repository_action_url($plugin, 'repos'), 'action', $actionchoicesfornew, 'delete', null, 'applyto' . basename($plugin));
                 $select->set_label(get_string('action'), array('class' => 'accesshide'));
-                $table->data[] = array(get_string('pluginname', 'repository_'.$plugin), $OUTPUT->render($select), '', '');
+                $uninstall = '';
+                if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('repository_' . $plugin, 'manage')) {
+                    $uninstall = html_writer::link($uninstallurl, $struninstall);
+                }
+                $table->data[] = array(get_string('pluginname', 'repository_'.$plugin), $OUTPUT->render($select), '', '', $uninstall);
             }
         }
     }
