@@ -20,6 +20,14 @@ class Bennu {
         return gmstrftime('%Y%m%dT%H%M%SZ', $t);
     }
 
+    static function timestamp_to_date($t = NULL) {
+        if($t === NULL) {
+            $t = time();
+        }
+        return strftime('%Y%m%d', $t);
+    }
+
+
     static function generate_guid() {
         // Implemented as per the Network Working Group draft on UUIDs and GUIDs
     
