@@ -65,8 +65,9 @@ if ($badge->type == BADGE_TYPE_COURSE) {
     navigation_node::override_active_url($navurl, true);
 }
 
+$urlparams = array('badgeid' => $badgeid, 'edit' => $edit, 'type' => $type, 'crit' => $crit);
 $PAGE->set_context($context);
-$PAGE->set_url('/badges/criteria_settings.php');
+$PAGE->set_url('/badges/criteria_settings.php', $urlparams);
 $PAGE->set_heading($badge->name);
 $PAGE->set_title($badge->name);
 $PAGE->navbar->add($badge->name, new moodle_url('overview.php', array('id' => $badge->id)))->add(get_string('criteria_' . $type, 'badges'));
