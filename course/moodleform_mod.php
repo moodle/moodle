@@ -302,8 +302,8 @@ abstract class moodleform_mod extends moodleform {
         // Grade to pass: ensure that the grade to pass is valid for points and scales.
         // If we are working with a scale, convert into a positive number for validation.
 
-        if (isset($data['gradepass']) && (isset($data['grade']) || isset($data['scale']))) {
-            $scale = isset($data['grade']) ? $data['grade'] : $data['scale'];
+        if (isset($data['gradepass']) && (!empty($data['grade']) || !empty($data['scale']))) {
+            $scale = !empty($data['grade']) ? $data['grade'] : $data['scale'];
             if ($scale < 0) {
                 $scalevalues = $DB->get_record('scale', array('id' => -$scale));
                 $grade = count(explode(',', $scalevalues->scale));
