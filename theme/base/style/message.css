@@ -119,10 +119,37 @@ table.message .searchresults td {padding:5px;}
 
 .message .messagearea .messagehistory .heading,
 .message .messagearea .messagehistory h3 {width:100%;clear:both;}
-.message .messagearea .messagehistory .left {padding-bottom:10px;width:50%;float:left;clear:both;}
+.message .messagearea .messagehistory .left {position:relative;margin-bottom:10px;width:50%;float:left;clear:both;}
 .dir-rtl .message .messagearea .messagehistory .left { float: right; }
-.message .messagearea .messagehistory .right {padding-bottom:10px;width:50%;float:right;clear:both;}
+.message .messagearea .messagehistory .right {position:relative;margin-bottom:10px;width:50%;float:right;clear:both;}
 .dir-rtl .message .messagearea .messagehistory .right { float:left; }
+
+.dir-ltr .message .messagearea .messagehistory .message {
+    margin-right: 20px;
+}
+.dir-ltr .message .messagearea .messagehistory .right .message {
+    margin-left: 20px;
+}
+.dir-rtl .message .messagearea .messagehistory .message {
+    margin-left: 20px;
+}
+.dir-rtl .message .messagearea .messagehistory .right .message {
+    margin-right: 20px;
+}
+.message .messagearea .messagehistory .messageactive {
+    background-color: #F5F5F5;
+}
+.message .messagearea .messagehistory .messagecontent .deleteicon {
+    width: 20px;
+    position: absolute;
+    top: -2px;
+}
+.dir-ltr .message .messagearea .messagehistory .messagecontent .deleteicon {
+    right: 0;
+}
+.dir-rtl .message .messagearea .messagehistory .messagecontent .deleteicon {
+    left: 0;
+}
 
 .message .messagearea .messagehistory .notification {padding:10px;background-color:#EEEEEE;margin-top:5px;}
 .message .messagearea .messagesend {padding-top:20px;clear:both;}
