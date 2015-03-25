@@ -221,7 +221,7 @@
     <location>markdown</location>
     <name>Markdown original+extra</name>
     <license>BSD</license>
-    <version>1.4.1</version>
+    <version>1.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
