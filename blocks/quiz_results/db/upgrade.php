@@ -47,7 +47,7 @@ function xmldb_block_quiz_results_upgrade($oldversion, $block) {
 
     if ($oldversion < 2015022200) {
         // Only migrate if the block_activity_results is installed.
-        if (!check_dir_exists($CFG->dirroot . '/blocks/activity_results', false)) {
+        if (is_dir($CFG->dirroot . '/blocks/activity_results')) {
 
             // Migrate all instances of block_quiz_results to block_activity_results.
             $records = $DB->get_records('block_instances', array('blockname' => 'quiz_results'));
