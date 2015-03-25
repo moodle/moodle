@@ -119,7 +119,9 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         }
 
         $this->assertEquals($userquota, $siteinfo['userquota']);
-        $this->assertEquals($maxbytes, $siteinfo['usermaxuploadfilesize']);
+        // We can use the function for the expectation because USER_CAN_IGNORE_FILE_SIZE_LIMITS is
+        // covered below for admin user. This test is for user not allowed to ignore limits.
+        $this->assertEquals(get_max_upload_file_size($maxbytes), $siteinfo['usermaxuploadfilesize']);
         $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
 
         // Now as admin.
