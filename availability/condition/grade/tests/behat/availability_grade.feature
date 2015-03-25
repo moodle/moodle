@@ -59,7 +59,21 @@ Feature: availability_grade
     And I set the field "Grade" to "A1"
     And I click on "min" "checkbox" in the ".availability-item" "css_element"
     And I set the field "Minimum grade percentage (inclusive)" to "50"
+    And I click on "max" "checkbox" in the ".availability-item" "css_element"
+    And I set the field "Maximum grade percentage (exclusive)" to "80"
     And I press "Save and return to course"
+
+    # Check if disabling a part of the restriction is get saved.
+    And I open "P3" actions menu
+    And I click on "Edit settings" "link" in the "P3" activity
+    And I expand all fieldsets
+    And I click on "max" "checkbox" in the ".availability-item" "css_element"
+    And I press "Save and return to course"
+    And I open "P3" actions menu
+    And I click on "Edit settings" "link" in the "P3" activity
+    And I expand all fieldsets
+    And the field "Maximum grade percentage (exclusive)" matches value ""
+    And I follow "Course 1"
 
     # Add a Page with a grade condition for 10%.
     And I add a "Page" to section "4"
