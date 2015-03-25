@@ -73,7 +73,7 @@ class repository extends base {
      * @return boolean
      */
     public function is_uninstall_allowed() {
-        if ($this->name === 'upload' || $this->name === 'coursefiles' || $this->name === 'user') {
+        if ($this->name === 'upload' || $this->name === 'coursefiles' || $this->name === 'user' || $this->name === 'recent') {
             return false;
         } else {
             return true;
