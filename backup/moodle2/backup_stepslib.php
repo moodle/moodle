@@ -825,7 +825,7 @@ class backup_badges_structure_step extends backup_structure_step {
 
         $criteria = new backup_nested_element('criteria');
         $criterion = new backup_nested_element('criterion', array('id'), array('badgeid',
-                'criteriatype', 'method'));
+                'criteriatype', 'method', 'description', 'descriptionformat'));
 
         $parameters = new backup_nested_element('parameters');
         $parameter = new backup_nested_element('parameter', array('id'), array('critid',

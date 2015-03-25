@@ -100,7 +100,7 @@ if (!empty($addcourse)) {
         $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id));
         $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL));
     }
-    $criteria->save($data);
+    $criteria->save((array)$data);
     $return->param('msg', $msg);
     redirect($return);
 }

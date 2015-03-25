@@ -704,32 +704,81 @@ class core_badges_renderer extends plugin_renderer_base {
         return null;
     }
 
-    // Prints badge criteria.
+    /**
+     * Returns information about badge criteria in a list form.
+     *
+     * @param badge $badge Badge objects
+     * @param string $short Indicates whether to print full info about this badge
+     * @return string $output HTML string to output
+     */
     public function print_badge_criteria(badge $badge, $short = '') {
-        $output = "";
         $agg = $badge->get_aggregation_methods();
         if (empty($badge->criteria)) {
             return get_string('nocriteria', 'badges');
-        } else if (count($badge->criteria) == 2) {
+        }
+
+        $overalldescr = '';
+        $overall = $badge->criteria[BADGE_CRITERIA_TYPE_OVERALL];
+        if (!$short && !empty($overall->description)) {
+            $overalldescr = $this->output->box(
+                format_text($overall->description, $overall->descriptionformat, array('context' => $badge->get_context())),
+                'criteria-description'
+                );
+        }
+
+        // Get the condition string.
+        if (count($badge->criteria) == 2) {
+            $condition = '';
             if (!$short) {
-                $output .= get_string('criteria_descr', 'badges');
+                $condition = get_string('criteria_descr', 'badges');
             }
         } else {
-            $output .= get_string('criteria_descr_' . $short . BADGE_CRITERIA_TYPE_OVERALL, 'badges',
-                                    core_text::strtoupper($agg[$badge->get_aggregation_method()]));
+            $condition = get_string('criteria_descr_' . $short . BADGE_CRITERIA_TYPE_OVERALL, 'badges',
+                                      core_text::strtoupper($agg[$badge->get_aggregation_method()]));
         }
-        $items = array();
+
         unset($badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]);
-        foreach ($badge->criteria as $type => $c) {
+
+        $items = array();
+        // If only one criterion left, make sure its description goe to the top.
+        if (count($badge->criteria) == 1) {
+            $c = reset($badge->criteria);
+            if (!$short && !empty($c->description)) {
+                $overalldescr = $this->output->box(
+                    format_text($c->description, $c->descriptionformat, array('context' => $badge->get_context())),
+                    'criteria-description'
+                    );
+            }
             if (count($c->params) == 1) {
-                $items[] = get_string('criteria_descr_single_' . $short . $type , 'badges') . $c->get_details($short);
+                $items[] = get_string('criteria_descr_single_' . $short . $c->criteriatype , 'badges') .
+                           $c->get_details($short);
             } else {
-                $items[] = get_string('criteria_descr_' . $short . $type , 'badges',
-                        core_text::strtoupper($agg[$badge->get_aggregation_method($type)])) . $c->get_details($short);
+                $items[] = get_string('criteria_descr_' . $short . $c->criteriatype, 'badges',
+                        core_text::strtoupper($agg[$badge->get_aggregation_method($c->criteriatype)])) .
+                        $c->get_details($short);
+            }
+        } else {
+            foreach ($badge->criteria as $type => $c) {
+                $criteriadescr = '';
+                if (!$short && !empty($c->description)) {
+                    $criteriadescr = $this->output->box(
+                        format_text($c->description, $c->descriptionformat, array('context' => $badge->get_context())),
+                        'criteria-description'
+                        );
+                }
+                if (count($c->params) == 1) {
+                    $items[] = get_string('criteria_descr_single_' . $short . $type , 'badges') .
+                               $c->get_details($short) . $criteriadescr;
+                } else {
+                    $items[] = get_string('criteria_descr_' . $short . $type , 'badges',
+                            core_text::strtoupper($agg[$badge->get_aggregation_method($type)])) .
+                            $c->get_details($short) .
+                            $criteriadescr;
+                }
             }
         }
-        $output .= html_writer::alist($items, array(), 'ul');
-        return $output;
+
+        return $overalldescr . $condition . html_writer::alist($items, array(), 'ul');;
     }
 
     // Prints criteria actions for badge editing.

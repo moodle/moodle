@@ -55,6 +55,15 @@ class edit_criteria_form extends moodleform {
                 $mform->addElement('html', html_writer::tag('div', $message));
                 $mform->addElement('submit', 'cancel', get_string('continue'));
             } else {
+                $mform->addElement('header', 'description_header', get_string('description'));
+                $mform->addElement('editor', 'description', '', null, null);
+                $mform->setType('description', PARAM_RAW);
+                $mform->setDefault('description', array(
+                        'text' => $criteria->description,
+                        'format' => $criteria->descriptionformat
+                    )
+                );
+
                 $mform->closeHeaderBefore('buttonar');
                 $this->add_action_buttons(true, get_string('save', 'badges'));
             }
@@ -69,7 +78,7 @@ class edit_criteria_form extends moodleform {
         $errors = parent::validation($data, $files);
         $addcourse = $this->_customdata['addcourse'];
 
-        if (!$addcourse) {
+        if (!$addcourse && isset($this->_customdata['criteria']->required_param)) {
             $required = $this->_customdata['criteria']->required_param;
             $pattern1 = '/^' . $required . '_(\d+)$/';
             $pattern2 = '/^' . $required . '_(\w+)$/';
