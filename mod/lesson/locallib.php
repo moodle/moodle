@@ -1645,6 +1645,82 @@ class lesson extends lesson_base {
             $pageid = $pages[$pageid]->prevpageid;
         }
     }
+
+    /**
+     * Move a page resorting all other pages.
+     *
+     * @param int $pageid
+     * @param int $after
+     * @return void
+     */
+    public function resort_pages($pageid, $after) {
+        global $CFG;
+
+        $cm = get_coursemodule_from_instance('lesson', $this->properties->id, $this->properties->course);
+        $context = context_module::instance($cm->id);
+
+        $pages = $this->load_all_pages();
+
+        if (!array_key_exists($pageid, $pages) || ($after!=0 && !array_key_exists($after, $pages))) {
+            print_error('cannotfindpages', 'lesson', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
+        }
+
+        $pagetomove = clone($pages[$pageid]);
+        unset($pages[$pageid]);
+
+        $pageids = array();
+        if ($after === 0) {
+            $pageids['p0'] = $pageid;
+        }
+        foreach ($pages as $page) {
+            $pageids[] = $page->id;
+            if ($page->id == $after) {
+                $pageids[] = $pageid;
+            }
+        }
+
+        $pageidsref = $pageids;
+        reset($pageidsref);
+        $prev = 0;
+        $next = next($pageidsref);
+        foreach ($pageids as $pid) {
+            if ($pid === $pageid) {
+                $page = $pagetomove;
+            } else {
+                $page = $pages[$pid];
+            }
+            if ($page->prevpageid != $prev || $page->nextpageid != $next) {
+                $page->move($next, $prev);
+
+                if ($pid === $pageid) {
+                    // We will trigger an event.
+                    $pageupdated = array('next' => $next, 'prev' => $prev);
+                }
+            }
+
+            $prev = $page->id;
+            $next = next($pageidsref);
+            if (!$next) {
+                $next = 0;
+            }
+        }
+
+        // Trigger an event: page moved.
+        if (!empty($pageupdated)) {
+            $eventparams = array(
+                'context' => $context,
+                'objectid' => $pageid,
+                'other' => array(
+                    'pagetype' => $page->get_typestring(),
+                    'prevpageid' => $pageupdated['prev'],
+                    'nextpageid' => $pageupdated['next']
+                )
+            );
+            $event = \mod_lesson\event\page_moved::create($eventparams);
+            $event->trigger();
+        }
+
+    }
 }
 
 
@@ -2022,22 +2098,6 @@ abstract class lesson_page extends lesson_base {
         $obj->prevpageid = $prevpageid;
         $obj->nextpageid = $nextpageid;
         $DB->update_record('lesson_pages', $obj);
-
-        $cm = get_coursemodule_from_instance('lesson', $this->lesson->id, $this->lesson->course);
-        $context = context_module::instance($cm->id);
-
-        // Trigger an event: page moved.
-        $eventparams = array(
-            'context' => $context,
-            'objectid' => $this->properties->id,
-            'other' => array(
-                'pagetype' => $this->get_typestring(),
-                'prevpageid' => $prevpageid,
-                'nextpageid' => $nextpageid
-                )
-            );
-        $event = \mod_lesson\event\page_moved::create($eventparams);
-        $event->trigger();
     }
 
     /**
