@@ -373,7 +373,7 @@ abstract class award_criteria {
 
         // Pick only params that are required by this criterion.
         // Filter out empty values first.
-        $params = array_filter((array)$params);
+        $params = array_filter($params);
         // Find out which param matches optional and required ones.
         $match = array_merge($this->optional_params, array($this->required_param));
         $regex = implode('|', array_map(create_function('$a', 'return $a . "_";'), $match));
