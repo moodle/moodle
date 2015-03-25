@@ -51,7 +51,8 @@ if ($mform->is_cancelled()) {
     redirect(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
 
 } else if ($data = $mform->get_data()) {
-    $eid = $enrol->add_instance($course, array('customint1'=>$data->link));
+    $eid = $enrol->add_instance($course, array('customint1' => $data->link,
+                                               'customint2' => $data->customint2));
     enrol_meta_sync($course->id);
     if (!empty($data->submitbuttonnext)) {
         redirect(new moodle_url('/enrol/meta/addinstance.php',

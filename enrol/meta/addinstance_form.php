@@ -64,10 +64,17 @@ class enrol_meta_addinstance_form extends moodleform {
         }
         $rs->close();
 
+        $groups = array(0 => get_string('none'));
+        foreach (groups_get_all_groups($course->id) as $group) {
+            $groups[$group->id] = format_string($group->name, true, array('context' => course_context::instance($course->id)));
+        }
+
         $mform->addElement('header','general', get_string('pluginname', 'enrol_meta'));
 
         $mform->addElement('select', 'link', get_string('linkedcourse', 'enrol_meta'), $courses);
         $mform->addRule('link', get_string('required'), 'required', null, 'client');
+
+        $mform->addElement('select', 'customint2', get_string('addgroup', 'enrol_meta'), $groups);
 
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);

@@ -150,11 +150,13 @@ class enrol_meta_handler {
             }
         }
 
+
         // enrol user if not enrolled yet or fix status
         if ($ue) {
             if ($parentstatus != $ue->status) {
                 $plugin->update_user_enrol($instance, $userid, $parentstatus);
                 $ue->status = $parentstatus;
+                groups_add_member($instance->customint2, $userid, 'enrol_meta', $instance->courseid);
             }
         } else {
             $plugin->enrol_user($instance, $userid, NULL, 0, 0, $parentstatus);
@@ -162,6 +164,7 @@ class enrol_meta_handler {
             $ue->userid = $userid;
             $ue->enrolid = $instance->id;
             $ue->status = $parentstatus;
+            groups_add_member($instance->customint2, $userid, 'enrol_meta', $instance->courseid);
         }
 
         $unenrolaction = $plugin->get_config('unenrolaction', ENROL_EXT_REMOVED_SUSPENDNOROLES);
@@ -171,6 +174,7 @@ class enrol_meta_handler {
             if ($unenrolaction == ENROL_EXT_REMOVED_SUSPEND) {
                 // Always keep the roles.
             } else if ($roles) {
+                groups_remove_member($instance->customint2, $userid);
                 role_unassign_all(array('userid'=>$userid, 'contextid'=>$context->id, 'component'=>'enrol_meta', 'itemid'=>$instance->id));
             }
             return;
@@ -180,6 +184,7 @@ class enrol_meta_handler {
         foreach ($parentroles as $rid) {
             if (!isset($roles[$rid])) {
                 role_assign($rid, $userid, $context->id, 'enrol_meta', $instance->id);
+                groups_add_member($instance->customint2, $userid, 'enrol_meta', $instance->courseid);
             }
         }
 
@@ -227,6 +232,8 @@ class enrol_meta_handler {
             if ($ue->status != ENROL_USER_SUSPENDED) {
                 $plugin->update_user_enrol($instance, $userid, ENROL_USER_SUSPENDED);
             }
+            // Remove from metagroup.
+            groups_remove_member($instance->customint2, $userid);
             role_unassign_all(array('userid'=>$userid, 'contextid'=>$context->id, 'component'=>'enrol_meta', 'itemid'=>$instance->id));
 
         } else {
@@ -244,6 +251,7 @@ class enrol_meta_handler {
  */
 function enrol_meta_sync($courseid = NULL, $verbose = false) {
     global $CFG, $DB;
+    require_once("{$CFG->dirroot}/group/lib.php");
 
     // purge all roles if meta sync disabled, those can be recreated later here in cron
     if (!enrol_is_enabled('meta')) {
@@ -543,6 +551,44 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
             $ues->close();
         }
     }
+
+    // Finally sync groups.
+    $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
+
+    // Remove invalid.
+    $sql = "SELECT gm.*, e.courseid, g.name AS groupname
+              FROM {groups_members} gm
+              JOIN {groups} g ON (g.id = gm.groupid)
+              JOIN {enrol} e ON (e.enrol = 'meta' AND e.courseid = g.courseid $onecourse)
+              JOIN {user_enrolments} ue ON (ue.userid = gm.userid AND ue.enrolid = e.id)
+             WHERE gm.component='enrol_meta' AND gm.itemid = e.id AND g.id <> e.customint2";
+    $params = array();
+    $params['courseid'] = $courseid;
+
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $gm) {
+        groups_remove_member($gm->groupid, $gm->userid);
+        mtrace("removing user from group: $gm->userid ==> $gm->courseid - $gm->groupname", 1);
+    }
+    $rs->close();
+
+    // Add missing.
+    $sql = "SELECT ue.*, g.id AS groupid, e.courseid, g.name AS groupname
+              FROM {user_enrolments} ue
+              JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'meta' $onecourse)
+              JOIN {groups} g ON (g.courseid = e.courseid AND g.id = e.customint2)
+              JOIN {user} u ON (u.id = ue.userid AND u.deleted = 0)
+         LEFT JOIN {groups_members} gm ON (gm.groupid = g.id AND gm.userid = ue.userid)
+             WHERE gm.id IS NULL";
+    $params = array();
+    $params['courseid'] = $courseid;
+
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $ue) {
+        groups_add_member($ue->groupid, $ue->userid, 'enrol_meta', $ue->enrolid);
+        mtrace("adding user to group: $ue->userid ==> $ue->courseid - $ue->groupname", 1);
+    }
+    $rs->close();
 
     if ($verbose) {
         mtrace('...user enrolment synchronisation finished.');
