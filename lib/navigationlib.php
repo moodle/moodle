@@ -3516,20 +3516,11 @@ class settings_navigation extends navigation_node {
             $usersettings->force_open();
         }
 
-        // Check if the user is currently logged in as another user
-        if (\core\session\manager::is_loggedinas()) {
-            // Get the actual user, we need this so we can display an informative return link
-            $realuser = \core\session\manager::get_realuser();
-            // Add the informative return to original user link
-            $url = new moodle_url('/course/loginas.php',array('id'=>$this->page->course->id, 'return'=>1,'sesskey'=>sesskey()));
-            $this->add(get_string('returntooriginaluser', 'moodle', fullname($realuser, true)), $url, self::TYPE_SETTING, null, null, new pix_icon('t/left', ''));
-        }
-
         // At this point we give any local plugins the ability to extend/tinker with the navigation settings.
         $this->load_local_plugin_settings();
 
         foreach ($this->children as $key=>$node) {
-            if ($node->nodetype != self::NODETYPE_BRANCH || $node->children->count()===0) {
+            if ($node->nodetype == self::NODETYPE_BRANCH && $node->children->count() == 0) {
                 // Site administration is shown as link.
                 if (!empty($SESSION->load_navigation_admin) && ($node->type === self::TYPE_SITE_ADMIN)) {
                     continue;
