@@ -88,7 +88,7 @@
     <location>password_compat</location>
     <name>Compatible password hashing</name>
     <license>MIT</license>
-    <version></version>
+    <version>1.0.4</version>
     <licenseversion></licenseversion>
   </library>
   <library>
