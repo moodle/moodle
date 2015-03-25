@@ -3501,15 +3501,6 @@ class settings_navigation extends navigation_node {
             $usersettings->force_open();
         }
 
-        // Check if the user is currently logged in as another user
-        if (\core\session\manager::is_loggedinas()) {
-            // Get the actual user, we need this so we can display an informative return link
-            $realuser = \core\session\manager::get_realuser();
-            // Add the informative return to original user link
-            $url = new moodle_url('/course/loginas.php',array('id'=>$this->page->course->id, 'return'=>1,'sesskey'=>sesskey()));
-            $this->add(get_string('returntooriginaluser', 'moodle', fullname($realuser, true)), $url, self::TYPE_SETTING, null, null, new pix_icon('t/left', ''));
-        }
-
         // At this point we give any local plugins the ability to extend/tinker with the navigation settings.
         $this->load_local_plugin_settings();
 
@@ -4345,6 +4336,16 @@ class settings_navigation extends navigation_node {
         if (!$user->deleted and !$currentuser && !\core\session\manager::is_loggedinas() && has_capability('moodle/user:loginas', $coursecontext) && !is_siteadmin($user->id)) {
             $url = new moodle_url('/course/loginas.php', array('id'=>$course->id, 'user'=>$user->id, 'sesskey'=>sesskey()));
             $usersetting->add(get_string('loginas'), $url, self::TYPE_SETTING);
+        }
+
+        // Check if the user is currently logged in as another user and can return to original session.
+        if ($currentuser && \core\session\manager::can_return_from_loginas() === true) {
+            // Get the actual user, we need this so we can display an informative return link
+            $realuser = \core\session\manager::get_realuser();
+            // Add the informative return to original user link
+            $url = new moodle_url('/course/loginas.php',array('id' => $this->page->course->id, 'return' => 1,'sesskey' => sesskey()));
+            $usersetting->add(get_string('returntooriginaluser', 'moodle', fullname($realuser, true)), $url, self::TYPE_SETTING,
+                null, null, new pix_icon('t/left', ''));
         }
 
         // Let admin tools hook into user settings navigation.

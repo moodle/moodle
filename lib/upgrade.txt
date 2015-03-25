@@ -27,6 +27,9 @@ information provided here is intended especially for developers.
   set $CFG->usezipbackups to store them in zip format. This does not affect the restore process, which continues accepting both.
 * Added support for custom string manager implementations via $CFG->customstringmanager
   directive in the config.php. See MDL-49361 for details.
+* It is now possible for admin/manager to return to their original session without re-entering password.
+  All plugins must inspect their code and identify all places where user can view uncleaned input text that would normally
+  be displayed only to themselves. All such pages need to call \core\session\manager::loginas_dangerous();
 
 === 2.8 ===
 

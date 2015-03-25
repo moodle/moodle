@@ -45,6 +45,7 @@ $edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and of
 $reset  = optional_param('reset', null, PARAM_BOOL);
 
 require_login();
+\core\session\manager::loginas_dangerous();
 
 $strmymoodle = get_string('myhome');
 

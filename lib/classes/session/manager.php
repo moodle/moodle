@@ -792,6 +792,43 @@ class manager {
     }
 
     /**
+     * Checks if user can return from being logged in as without entering password
+     *
+     * Checks settings and dangerous pages history
+     *
+     * @return bool|null whether user can return without password (null if the user is not logged in as)
+     */
+    public static function can_return_from_loginas() {
+        global $CFG, $SESSION;
+        if (self::is_loggedinas()) {
+            if (!empty($CFG->simplereturnloginas)) {
+                return empty($SESSION->loginasdangerous);
+            } else {
+                return false;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Must be called on the pages that can potentially endanger loggedin session.
+     *
+     * Usually these are the pages where user can review/access the uncleaned input
+     * text that would normally be available only to themselves.
+     *
+     * After requesting one of such pages a user who is logged in as another person
+     * is no longer able to return to their session without entering the password
+     * even if settings allow it.
+     */
+    public static function loginas_dangerous() {
+        global $SESSION;
+        if (self::can_return_from_loginas() === true) {
+            $SESSION->loginasdangerous = true;
+        }
+    }
+
+    /**
      * Returns the $USER object ignoring current login-as session
      * @return \stdClass user object
      */

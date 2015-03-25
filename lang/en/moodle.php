@@ -1557,6 +1557,7 @@ $string['restoreusersprecheck'] = 'Checking user data';
 $string['restoreusersprecheckerror'] = 'Some problems were detected when checking user data';
 $string['restricted'] = 'Restricted';
 $string['returningtosite'] = 'Returning to this web site?';
+$string['returnfromloggedinas'] = 'You have successfully returned to your session as {$a}';
 $string['returntooriginaluser'] = 'Return to {$a}';
 $string['revert'] = 'Revert';
 $string['role'] = 'Role';

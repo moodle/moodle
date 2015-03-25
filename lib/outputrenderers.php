@@ -786,7 +786,7 @@ class core_renderer extends renderer_base {
             $fullname = fullname($realuser, true);
             if ($withlinks) {
                 $loginastitle = get_string('loginas');
-                $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;sesskey=".sesskey()."\"";
+                $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;return=1&amp;sesskey=".sesskey()."\"";
                 $realuserinfo .= "title =\"".$loginastitle."\">$fullname</a>] ";
             } else {
                 $realuserinfo = " [$fullname] ";

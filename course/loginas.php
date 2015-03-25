@@ -6,6 +6,7 @@ require_once('lib.php');
 
 $id       = optional_param('id', SITEID, PARAM_INT);   // course id
 $redirect = optional_param('redirect', 0, PARAM_BOOL);
+$return   = optional_param('return', 0, PARAM_BOOL);
 
 $url = new moodle_url('/course/loginas.php', array('id'=>$id));
 $PAGE->set_url($url);
@@ -13,10 +14,37 @@ $PAGE->set_url($url);
 // Reset user back to their real self if needed, for security reasons you need to log out and log in again.
 if (\core\session\manager::is_loggedinas()) {
     require_sesskey();
+
+    if ($return && \core\session\manager::can_return_from_loginas() === true) {
+        $_SESSION['SESSION'] = $_SESSION['REALSESSION'];
+        $_SESSION['USER'] = $_SESSION['REALUSER'];
+
+        unset($_SESSION['REALSESSION']);
+        unset($_SESSION['REALUSER']);
+
+        if ($id && $id != SITEID) {
+            require_login($id);
+            $url = course_get_url($id);
+        } else {
+            $PAGE->set_context(context_system::instance());
+            $url = new moodle_url('/');
+        }
+
+        $fullname = fullname($USER, true);
+        $strreturning = get_string('returnfromloggedinas', '', $fullname);
+        notice($strreturning, $url);
+    }
+
     require_logout();
 
     // We can not set wanted URL here because the session is closed.
     redirect(new moodle_url($url, array('redirect'=>1)));
+}
+
+if ($return) {
+    // User is trying to return without being logged in as.
+    // Result of double click or back button - just redirect.
+    redirect(($id && $id != SITEID) ? course_get_url($id) : new moodle_url('/'));
 }
 
 if ($redirect) {
