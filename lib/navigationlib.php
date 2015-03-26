@@ -4438,14 +4438,18 @@ class settings_navigation extends navigation_node {
         // Blogs.
         if ($currentuser && !empty($CFG->enableblogs)) {
             $blog = $usersetting->add(get_string('blogs', 'blog'), null, navigation_node::TYPE_CONTAINER, null, 'blogs');
-            $blog->add(get_string('preferences', 'blog'), new moodle_url('/blog/preferences.php'), navigation_node::TYPE_SETTING);
+            if (has_capability('moodle/blog:view', $systemcontext)) {
+                $blog->add(get_string('preferences', 'blog'), new moodle_url('/blog/preferences.php'), navigation_node::TYPE_SETTING);
+            }
             if (!empty($CFG->useexternalblogs) && $CFG->maxexternalblogsperuser > 0 &&
-                    has_capability('moodle/blog:manageexternal', context_system::instance())) {
+                    has_capability('moodle/blog:manageexternal', $systemcontext)) {
                 $blog->add(get_string('externalblogs', 'blog'), new moodle_url('/blog/external_blogs.php'),
                         navigation_node::TYPE_SETTING);
                 $blog->add(get_string('addnewexternalblog', 'blog'), new moodle_url('/blog/external_blog_edit.php'),
                         navigation_node::TYPE_SETTING);
             }
+            // Remove the blog node if empty.
+            $blog->trim_if_empty();
         }
 
         // Badges.
