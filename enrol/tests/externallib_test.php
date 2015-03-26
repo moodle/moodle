@@ -96,7 +96,12 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        $course1 = self::getDataGenerator()->create_course();
+        $coursedata1 = array('summary'          => 'Lightwork Course 1 description',
+                             'summaryformat'    => FORMAT_MOODLE,
+                             'lang'             => 'en',
+                             'enablecompletion' => true,
+                             'showgrades'       => true);
+        $course1 = self::getDataGenerator()->create_course($coursedata1);
         $course2 = self::getDataGenerator()->create_course();
         $courses = array($course1, $course2);
 
@@ -119,6 +124,21 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
         // Check we retrieve the good total number of enrolled users.
         $this->assertEquals(2, count($enrolledincourses));
+
+        // We need to format summary and summaryformat before to compare them with those values returned by the webservice.
+        $course1context = context_course::instance($course1->id);
+        list($course1->summary, $course1->summaryformat) =
+             external_format_text($course1->summary, $course1->summaryformat, $course1context->id, 'course', 'summary', 0);
+
+        // Check there are no differences between $course1 properties and course values returned by the webservice
+        // only for those fields listed in the $coursedata1 array.
+        foreach ($enrolledincourses as $courseenrol) {
+            if ($courseenrol['id'] == $course1->id) {
+                foreach ($coursedata1 as $fieldname => $value) {
+                    $this->assertEquals($courseenrol[$fieldname], $course1->$fieldname);
+                }
+            }
+        }
     }
 
     /**
