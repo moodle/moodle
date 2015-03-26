@@ -323,3 +323,24 @@ class enrol_cohort_plugin extends enrol_plugin {
 function enrol_cohort_allow_group_member_remove($itemid, $groupid, $userid) {
     return false;
 }
+
+     /**
+     * If group has been created in course returns id group, if not, create a group and return id group.
+     * @param int $courseid
+     * @param int $cohortid
+     * @return int $groupid
+     */
+function enrol_cohort_create_new_group($courseid, $cohortid) {
+        global $DB;
+        $cohort = $DB->get_record('cohort', array('id' => $cohortid));
+        $groupid = $DB->get_record('groups', array('name' => $cohort->name, 'courseid' => $courseid));
+    if (isset($groupid->id)) {
+        $groupid = $groupid->id;
+    } else {
+        $groupdata = new stdClass();
+        $groupdata->courseid = $courseid;
+        $groupdata->name = $cohort->name;
+        $groupid = groups_create_group($groupdata);
+    }
+    return $groupid;
+}

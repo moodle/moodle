@@ -89,9 +89,22 @@ if ($mform->is_cancelled()) {
         $instance->roleid       = $data->roleid;
         $instance->customint2   = $data->customint2;
         $instance->timemodified = time();
+        if ((int)$data->customint2 == -1) {
+            require_capability('moodle/course:managegroups', $context);
+            $groupid = enrol_cohort_create_new_group($course->id, $data->customint1);
+            $instance->customint2 = $groupid;
+        }
         $DB->update_record('enrol', $instance);
     }  else {
-        $enrol->add_instance($course, array('name'=>$data->name, 'status'=>$data->status, 'customint1'=>$data->customint1, 'roleid'=>$data->roleid, 'customint2'=>$data->customint2));
+        if ((int)$data->customint2 == -1) {
+            require_capability('moodle/course:managegroups', $context);
+            $groupid = enrol_cohort_create_new_group($course->id, $data->customint1);
+            $enrol->add_instance($course, array('name' => $data->name, 'status' => $data->status,
+                'customint1' => $data->customint1, 'roleid' => $data->roleid, 'customint2' => $groupid));
+        } else {
+            $enrol->add_instance($course, array('name' => $data->name, 'status' => $data->status,
+                'customint1' => $data->customint1, 'roleid' => $data->roleid, 'customint2' => $data->customint2));
+        }
         if (!empty($data->submitbuttonnext)) {
             $returnurl = new moodle_url($PAGE->url);
             $returnurl->param('message', 'added');
