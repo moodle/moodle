@@ -1023,7 +1023,8 @@ $services = array(
             'core_user_remove_user_device',
             'core_course_get_courses',
             'core_completion_update_activity_completion_status_manually',
-            'mod_data_get_databases_by_courses'
+            'mod_data_get_databases_by_courses',
+            'mod_forum_view_forum',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
