@@ -218,6 +218,22 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame(0, $curl->get_errno());
     }
 
+    /**
+     * Test curl user agent settings.
+     */
+    public function test_curl_useragent() {
+        $curl = new curl();
+        $this->assertNotEmpty($curl->header);
+        $this->assertTrue(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+        $this->assertFalse(in_array('User-Agent: Dan Test/1.0', $curl->header));
+
+        // Setting a new user agent.
+        $curl->setopt(array('useragent' => 'Dan Test/1.0'));
+        $this->assertNotEmpty($curl->header);
+        $this->assertTrue(in_array('User-Agent: Dan Test/1.0', $curl->header));
+        $this->assertFalse(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+    }
+
     public function test_curl_redirects() {
         global $CFG;
 

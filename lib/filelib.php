@@ -3006,10 +3006,21 @@ class curl {
         $this->setopt($options);
         // reset before set options
         curl_setopt($curl, CURLOPT_HEADERFUNCTION, array(&$this,'formatHeader'));
+
+        // Setting the user agent based on options provided as parameter.
+        $useragent = '';
+        if (isset($options['CURLOPT_USERAGENT']) && !empty($options['CURLOPT_USERAGENT'])) {
+            $useragent = $options['CURLOPT_USERAGENT'];
+        } else if (isset($this->options['CURLOPT_USERAGENT']) && !empty($this->options['CURLOPT_USERAGENT'])) {
+            $useragent = $this->options['CURLOPT_USERAGENT'];
+        } else {
+            $useragent = 'MoodleBot/1.0';
+        }
+
         // set headers
         if (empty($this->header)) {
             $this->setHeader(array(
-                'User-Agent: MoodleBot/1.0',
+                'User-Agent: '.$useragent,
                 'Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7',
                 'Connection: keep-alive'
                 ));
