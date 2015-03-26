@@ -217,7 +217,9 @@ $definitions = array(
     'completion' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
-        'ttl' => 10*60,
+        'ttl' => 3600,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 2, // Should be current course and site course.
     ),
 
     // A simple cache that stores whether a user can expand a course in the navigation.

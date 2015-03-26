@@ -244,7 +244,9 @@ class completion_info {
      * Constructs with course details.
      *
      * When instantiating a new completion info object you must provide a course
-     * object with at least id, and enablecompletion properties.
+     * object with at least id, and enablecompletion properties. Property
+     * cacherev is needed if you check completion of the current user since
+     * it is used for cache validation.
      *
      * @param stdClass $course Moodle course object.
      */
@@ -284,7 +286,7 @@ class completion_info {
 
         // Load data if we do not have enough
         if (!isset($this->course->enablecompletion)) {
-            $this->course->enablecompletion = $DB->get_field('course', 'enablecompletion', array('id' => $this->course->id));
+            $this->course = get_course($this->course_id);
         }
 
         // Check course completion
@@ -777,6 +779,9 @@ class completion_info {
 
         $DB->delete_records('course_completions', array('course' => $this->course_id));
         $DB->delete_records('course_completion_crit_compl', array('course' => $this->course_id));
+
+        // Difficult to find affected users, just purge all completion cache.
+        cache::make('core', 'completion')->purge();
     }
 
     /**
@@ -825,6 +830,9 @@ class completion_info {
             $DB->delete_records('course_completion_crit_compl', array('course' => $this->course_id, 'criteriaid' => $acriteria->id));
             $DB->delete_records('course_completions', array('course' => $this->course_id));
         }
+
+        // Difficult to find affected users, just purge all completion cache.
+        cache::make('core', 'completion')->purge();
     }
 
     /**
@@ -895,9 +903,21 @@ class completion_info {
             $userid = $USER->id;
         }
 
-        // See if requested data is present in cache
-        if ($cacheddata = $completioncache->get($userid . '_' . $this->course->id . '_' . $cm->id)) {
-            return $cacheddata;
+        // See if requested data is present in cache (use cache for current user only).
+        $usecache = $userid == $USER->id;
+        $cacheddata = array();
+        if ($usecache) {
+            if (!isset($this->course->cacherev)) {
+                $this->course = get_course($this->course_id);
+            }
+            if ($cacheddata = $completioncache->get($userid . '_' . $this->course->id)) {
+                if ($cacheddata['cacherev'] != $this->course->cacherev) {
+                    // Course structure has been changed since the last caching, forget the cache.
+                    $cacheddata = array();
+                } else if (array_key_exists($cm->id, $cacheddata)) {
+                    return $cacheddata[$cm->id];
+                }
+            }
         }
 
         // Not there, get via SQL
@@ -937,13 +957,12 @@ class completion_info {
                     $data->viewed          = 0;
                     $data->timemodified    = 0;
                 }
-                $completioncache->set($userid . '_' . $this->course->id . '_' . $othercm->id, $data);
+                $cacheddata[$othercm->id] = $data;
             }
 
-            if (!$completiondata = $completioncache->get($userid . '_' . $this->course->id . '_' . $cm->id)) {
+            if (!isset($cacheddata[$cm->id])) {
                 $this->internal_systemerror("Unexpected error: course-module {$cm->id} could not be found on course {$this->course->id}");
             }
-            return $completiondata;
 
         } else {
             // Get single record
@@ -960,10 +979,14 @@ class completion_info {
             }
 
             // Put in cache
-            $completioncache->set($userid . '_' . $this->course->id . '_' . $cm->id, $data);
+            $cacheddata[$cm->id] = $data;
         }
 
-        return $data;
+        if ($usecache) {
+            $cacheddata['cacherev'] = $this->course->cacherev;
+            $completioncache->set($userid . '_' . $this->course->id, $cacheddata);
+        }
+        return $cacheddata[$cm->id];
     }
 
     /**
@@ -1009,11 +1032,20 @@ class completion_info {
         $event->trigger();
 
         $completioncache = cache::make('core', 'completion');
-        $completioncache->set($data->userid . '_' . $cm->course . '_' . $cm->id, $data);
-        // TODO under what circumstances should I call get_fast_modinfo()?
         if ($data->userid == $USER->id) {
+            // Update module completion in user's cache.
+            if (!($cachedata = $completioncache->get($data->userid . '_' . $cm->course))
+                    || $cachedata['cacherev'] != $this->course->cacherev) {
+                $cachedata = array('cacherev' => $this->course->cacherev);
+            }
+            $cachedata[$cm->id] = $data;
+            $completioncache->set($data->userid . '_' . $cm->course, $cachedata);
+
             // reset modinfo for user (no need to call rebuild_course_cache())
             get_fast_modinfo($cm->course, 0, true);
+        } else {
+            // Remove another user's completion cache for this course.
+            $completioncache->delete($data->userid . '_' . $cm->course);
         }
     }
 

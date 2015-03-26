@@ -386,7 +386,7 @@ class core_completionlib_testcase extends advanced_testcase {
 
         $cache = cache::make('core', 'completion');
 
-        $c = new completion_info((object)array('id'=>42));
+        $c = new completion_info((object)array('id'=>42, 'cacherev'=>1));
         $cm = (object)array('id'=>13, 'course'=>42);
 
         // 1. Not current user, record exists.
@@ -399,7 +399,7 @@ class core_completionlib_testcase extends advanced_testcase {
             ->will($this->returnValue($sillyrecord));
         $result = $c->get_data($cm, false, 123);
         $this->assertEquals($sillyrecord, $result);
-        $this->assertEquals($cache->get('123_42_13'), $sillyrecord);
+        $this->assertEquals(false, $cache->get('123_42')); // Not current user is not cached.
 
         // 2. Not current user, default record, whole course.
         $cache->purge();
@@ -412,7 +412,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertEquals((object)array(
             'id'=>'0', 'coursemoduleid'=>13, 'userid'=>123, 'completionstate'=>0,
             'viewed'=>0, 'timemodified'=>0), $result);
-        $this->assertEquals($cache->get('123_42_13'), $result);
+        $this->assertEquals(false, $cache->get('123_42')); // Not current user is not cached.
 
         // 3. Current user, single record, not from cache.
         $DB->expects($this->at(0))
@@ -421,7 +421,8 @@ class core_completionlib_testcase extends advanced_testcase {
             ->will($this->returnValue($sillyrecord));
         $result = $c->get_data($cm);
         $this->assertEquals($sillyrecord, $result);
-        $this->assertEquals($sillyrecord, $cache->get('314159_42_13'));
+        $cachevalue = $cache->get('314159_42');
+        $this->assertEquals($sillyrecord, $cachevalue[13]);
 
         // 4. Current user, 'whole course', but from cache.
         $result = $c->get_data($cm, true);
@@ -445,10 +446,11 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertEquals($basicrecord, $result);
 
         // Check the cache contents.
-        $this->assertEquals($basicrecord, $cache->get('314159_42_13'));
-        $this->assertEquals((object)array('id'=>'0', 'coursemoduleid'=>14, 
+        $cachevalue = $cache->get('314159_42');
+        $this->assertEquals($basicrecord, $cachevalue[13]);
+        $this->assertEquals((object)array('id'=>'0', 'coursemoduleid'=>14,
             'userid'=>314159, 'completionstate'=>0, 'viewed'=>0, 'timemodified'=>0),
-            $cache->get('314159_42_14'));
+            $cachevalue[14]);
     }
 
     public function test_internal_set_data() {
@@ -474,8 +476,9 @@ class core_completionlib_testcase extends advanced_testcase {
         $d1 = $DB->get_field('course_modules_completion', 'id', array('coursemoduleid' => $cm->id));
         $this->assertEquals($d1, $data->id);
         $cache = cache::make('core', 'completion');
-        $this->assertEquals($cache->get($data->userid . '_' . $cm->course . '_' . $cm->id),
-            $data);
+        // Cache was not set for another user.
+        $this->assertEquals(array('cacherev' => $this->course->cacherev, $cm->id => $data),
+            $cache->get($data->userid . '_' . $cm->course));
 
         // 2) Test with existing data and for different user.
         $forum2 = $this->getDataGenerator()->create_module('forum', array('course' => $this->course->id), $completionauto);
@@ -490,10 +493,11 @@ class core_completionlib_testcase extends advanced_testcase {
         $d2->timemodified = time();
         $d2->viewed = COMPLETION_NOT_VIEWED;
         $c->internal_set_data($cm2, $d2);
-        $this->assertEquals($cache->get($data->userid . '_' . $cm->course . '_' . $cm->id),
-            $data);
-        $this->assertEquals($cache->get($d2->userid . '_' . $cm2->course . '_' . $cm2->id),
-            $d2);
+        // Cache for current user returns the data.
+        $cachevalue = $cache->get($data->userid . '_' . $cm->course);
+        $this->assertEquals($data, $cachevalue[$cm->id]);
+        // Cache for another user is not filled.
+        $this->assertEquals(false, $cache->get($d2->userid . '_' . $cm2->course));
 
         // 3) Test where it THINKS the data is new (from cache) but actually
         //    in the database it has been set since.
