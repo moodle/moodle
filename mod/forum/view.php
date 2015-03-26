@@ -100,17 +100,11 @@
         rss_add_http_header($context, 'mod_forum', $forum, $rsstitle);
     }
 
-    // Mark viewed if required
-    $completion = new completion_info($course);
-    $completion->set_module_viewed($cm);
-
 /// Print header.
 
     $PAGE->set_title($forum->name);
     $PAGE->add_body_class('forumtype-'.$forum->type);
     $PAGE->set_heading($course->fullname);
-
-    echo $OUTPUT->header();
 
 /// Some capability checks.
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
@@ -121,6 +115,11 @@
         notice(get_string('noviewdiscussionspermission', 'forum'));
     }
 
+    // Mark viewed and trigger the course_module_viewed event.
+    forum_view($forum, $course, $cm, $context);
+
+    echo $OUTPUT->header();
+
     echo $OUTPUT->heading(format_string($forum->name), 2);
     if (!empty($forum->intro) && $forum->type != 'single' && $forum->type != 'teacher') {
         echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
@@ -128,16 +127,6 @@
 
 /// find out current groups mode
     groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/forum/view.php?id=' . $cm->id);
-
-    $params = array(
-        'context' => $context,
-        'objectid' => $forum->id
-    );
-    $event = \mod_forum\event\course_module_viewed::create($params);
-    $event->add_record_snapshot('course_modules', $cm);
-    $event->add_record_snapshot('course', $course);
-    $event->add_record_snapshot('forum', $forum);
-    $event->trigger();
 
     $SESSION->fromdiscussion = qualified_me();   // Return here if we post or set subscription etc
 
