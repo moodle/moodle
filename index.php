@@ -78,9 +78,8 @@ if (get_home_page() != HOMEPAGE_SITE) {
     }
 }
 
-$eventparams = array('context' => context_course::instance(SITEID));
-$event = \core\event\course_viewed::create($eventparams);
-$event->trigger();
+// Trigger event.
+course_view(context_course::instance(SITEID));
 
 // If the hub plugin is installed then we let it take over the homepage here.
 if (file_exists($CFG->dirroot.'/local/hub/lib.php') and get_config('local_hub', 'hubenabled')) {

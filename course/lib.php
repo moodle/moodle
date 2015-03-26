@@ -3756,3 +3756,23 @@ function course_change_sortorder_after_course($courseorid, $moveaftercourseid) {
     cache_helper::purge_by_event('changesincourse');
     return true;
 }
+
+/**
+ * Trigger course viewed event. This API function is used when course view actions happens,
+ * usually in course/view.php but also in external functions.
+ *
+ * @param stdClass  $context course context object
+ * @param int $sectionnumber section number
+ * @since Moodle 2.9
+ */
+function course_view($context, $sectionnumber = 0) {
+
+    $eventdata = array('context' => $context);
+
+    if (!empty($sectionnumber)) {
+        $eventdata['other']['coursesectionnumber'] = $sectionnumber;
+    }
+
+    $event = \core\event\course_viewed::create($eventdata);
+    $event->trigger();
+}
