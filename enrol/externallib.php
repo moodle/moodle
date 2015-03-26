@@ -354,8 +354,8 @@ class core_enrol_external extends external_api {
                     'format'    => new external_value(PARAM_PLUGIN, 'course format: weeks, topics, social, site', VALUE_OPTIONAL),
                     'showgrades' => new external_value(PARAM_BOOL, 'true if grades are shown, otherwise false', VALUE_OPTIONAL),
                     'lang'      => new external_value(PARAM_LANG, 'forced course language', VALUE_OPTIONAL),
-                    'enablecompletion' => new external_value(PARAM_BOOL, 'Enabled, control via completion and activity settings.
-                                        Disabled, not shown in activity settings.', VALUE_OPTIONAL)
+                    'enablecompletion' => new external_value(PARAM_BOOL, 'true if completion is enabled, otherwise false',
+                                                                VALUE_OPTIONAL)
                 )
             )
         );
