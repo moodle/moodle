@@ -57,6 +57,12 @@ if (!empty($tag)) {
     }
 }
 
+// Set the userid to the entry author if we have the entry ID.
+if ($entryid and !isset($userid)) {
+    $entry = new blog_entry($entryid);
+    $userid = $entry->userid;
+}
+
 if (isset($userid)) {
     $context = context_user::instance($userid);
 } else {

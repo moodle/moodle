@@ -15,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form to edit a users forum preferences. These are stored as columns in the user table, which
+ * Form to edit a users forum preferences.
+ *
+ * These are stored as columns in the user table, which
  * is why they are in /user and not /mod/forum.
  *
  * @copyright 1999 Martin Dougiamas  http://dougiamas.com

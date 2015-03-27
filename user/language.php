@@ -60,11 +60,13 @@ if ($data = $languageform->get_data()) {
 $streditmylanguage = get_string('preferredlanguage');
 $userfullname     = fullname($user, true);
 
+$PAGE->navbar->includesettingsbase = true;
+
 $PAGE->set_title("$course->shortname: $streditmylanguage");
 $PAGE->set_heading($userfullname);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($userfullname);
+echo $OUTPUT->heading($streditmylanguage);
 
 // Finally display THE form.
 $languageform->display();

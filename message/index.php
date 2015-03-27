@@ -198,7 +198,7 @@ if ($user2realuser) {
 } else {
     $PAGE->set_title("{$SITE->shortname}: $strmessages");
 }
-$PAGE->set_heading(fullname($USER));
+$PAGE->set_heading(fullname($user1));
 
 // Remove the user node from the main navigation for this page.
 $usernode = $PAGE->navigation->find('users', null);

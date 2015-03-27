@@ -193,7 +193,7 @@ if (empty($result->posts)) {
                         array('id' => $user->id, 'course' => $courseid)));
             } else {
                 $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
-                        array('id' => $user->id, 'course' => $courseid, 'mode'=>'discussions')));
+                        array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
             }
         }
     } else if ($canviewuser) {
@@ -211,7 +211,7 @@ if (empty($result->posts)) {
                         array('id' => $user->id, 'course' => $courseid)));
             } else {
                 $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
-                        array('id' => $user->id, 'course' => $courseid, 'mode'=>'discussions')));
+                        array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
             }
         }
 
@@ -384,7 +384,7 @@ if (isset($courseid) && $courseid != SITEID) {
                 array('id' => $user->id, 'course' => $courseid)));
     } else {
         $navbar = $PAGE->navbar->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
-                array('id' => $user->id, 'course' => $courseid, 'mode'=>'discussions')));
+                array('id' => $user->id, 'course' => $courseid, 'mode' => 'discussions')));
     }
 }
 

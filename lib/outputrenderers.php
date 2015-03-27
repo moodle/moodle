@@ -3960,6 +3960,7 @@ EOD;
      */
     public function render_preferences_groups(preferences_groups $renderable) {
         $html = '';
+        $html .= html_writer::start_div('row-fluid');
         $html .= html_writer::start_tag('div', array('class' => 'span12 preferences-groups'));
         $i = 0;
         $open = false;
@@ -3968,7 +3969,7 @@ EOD;
                 if ($open) {
                     $html .= html_writer::end_tag('div');
                 }
-                $html .= html_writer::start_tag('div', array('class' => 'row'));
+                $html .= html_writer::start_tag('div', array('class' => 'row-fluid'));
                 $open = true;
             }
             $html .= $this->render($group);
@@ -3979,6 +3980,7 @@ EOD;
 
         $html .= html_writer::end_tag('ul');
         $html .= html_writer::end_tag('div');
+        $html .= html_writer::end_div();
         return $html;
     }
 
@@ -4122,11 +4124,13 @@ EOD;
 
     /**
      * Wrapper for header elements.
+     *
+     * @param string $heading Heading to be used for the main header.
+     * @return string HTML to display the main header.
      */
     public function full_header($heading = null) {
         $html = html_writer::start_tag('header', array('id' => 'page-header', 'class' => 'clearfix'));
-        // This is to ensure that the logo completely overwrites the header. MDL-49536 has been created to investigate
-        // whether the logo should work this way or not.
+        // This is to ensure that the logo completely overwrites the header if set.
         if (isset($heading) && $heading == '<div class="logo"></div>') {
             $html .= $heading;
         } else {
@@ -4136,7 +4140,7 @@ EOD;
         $html .= html_writer::tag('nav', $this->navbar(), array('class' => 'breadcrumb-nav'));
         $html .= html_writer::div($this->page_heading_button(), 'breadcrumb-button');
         $html .= html_writer::end_div();
-        $html .= html_writer::tag('div', $this->course_header(), array('class' => 'course-header'));
+        $html .= html_writer::tag('div', $this->course_header(), array('id' => 'course-header'));
         $html .= html_writer::end_tag('header');
         return $html;
     }

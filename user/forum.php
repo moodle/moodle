@@ -57,6 +57,8 @@ if ($data = $forumform->get_data()) {
 $streditmyforum = get_string('forumpreferences');
 $userfullname     = fullname($user, true);
 
+$PAGE->navbar->includesettingsbase = true;
+
 $PAGE->set_title("$course->shortname: $streditmyforum");
 $PAGE->set_heading($userfullname);
 

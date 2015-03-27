@@ -338,7 +338,7 @@ if ($user->id == -1 or ($user->id != $USER->id)) {
     $PAGE->set_heading($userfullname);
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($userfullname);
+    echo $OUTPUT->heading($streditmyprofile);
 }
 
 // Finally display THE form.

@@ -4270,6 +4270,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015032000.00);
     }
 
+<<<<<<< HEAD
     if ($oldversion < 2015040200.01) {
         // Force uninstall of deleted tool.
         if (!file_exists("$CFG->dirroot/$CFG->admin/tool/timezoneimport")) {
@@ -4315,7 +4316,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015040800.01);
     }
 
-    if ($oldversion < 2015030400.02) {
+    if ($oldversion < 2015040800.02) {
         // Update the default user menu (add preferences, remove my files and my badges).
         $oldconfig = get_config('core', 'customusermenuitems');
 
@@ -4334,7 +4335,7 @@ function xmldb_main_upgrade($oldversion) {
         $newconfig = preg_replace('/(\r\n)+/', "\n", $newconfig);
         set_config('customusermenuitems', $newconfig);
 
-        upgrade_main_savepoint(true, 2015030400.02);
+        upgrade_main_savepoint(true, 2015040800.02);
     }
 
     return true;

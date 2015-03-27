@@ -7831,7 +7831,7 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
     }
     $postsurl = new moodle_url('/mod/forum/user.php', array('id' => $user->id));
     if (!empty($course)) {
-        $postsurl->param('coursre', $course->id);
+        $postsurl->param('course', $course->id);
     }
     $string = $iscurrentuser ? get_string('myprofileownpost', 'mod_forum') :
             get_string('myprofileotherpost', 'mod_forum', fullname($user));
@@ -7840,7 +7840,7 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
 
     $discussionssurl = new moodle_url('/mod/forum/user.php', array('id' => $user->id, 'mode' => 'discussions'));
     if (!empty($course)) {
-        $postsurl->param('coursre', $course->id);
+        $postsurl->param('course', $course->id);
     }
     $string = $iscurrentuser ? get_string('myprofileowndis', 'mod_forum') :
             get_string('myprofileotherdis', 'mod_forum', fullname($user));

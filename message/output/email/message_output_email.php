@@ -134,8 +134,9 @@ class message_output_email extends message_output {
         }
 
         if (!empty($CFG->messagingallowemailoverride)) {
-            $inputattributes = array('size'=>'30', 'name'=>'email_email', 'value'=>$preferences->email_email, 'id'=>'email_email');
-            $string .= html_writer::label(get_string('email','message_email'), 'email_email');
+            $inputattributes = array('size' => '30', 'name' => 'email_email', 'value' => $preferences->email_email,
+                    'id' => 'email_email');
+            $string .= html_writer::label(get_string('email', 'message_email'), 'email_email');
             $string .= $OUTPUT->container(html_writer::empty_tag('input', $inputattributes));
 
             if (empty($preferences->email_email) && !empty($preferences->userdefaultemail)) {

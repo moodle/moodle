@@ -56,6 +56,8 @@ if ($data = $editorform->get_data()) {
 $streditmyeditor = get_string('editorpreferences');
 $userfullname     = fullname($user, true);
 
+$PAGE->navbar->includesettingsbase = true;
+
 $PAGE->set_title("$course->shortname: $streditmyeditor");
 $PAGE->set_heading($userfullname);
 

@@ -83,7 +83,11 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
             if ($userauthplugin && $userauthplugin->can_edit_profile()) {
                 $url = $userauthplugin->edit_profile_url();
                 if (empty($url)) {
-                    $url = new moodle_url('/user/edit.php', array('userid' => $user->id, 'course' => $id));
+                    if (empty($course)) {
+                        $url = new moodle_url('/user/edit.php', array('userid' => $user->id));
+                    } else {
+                        $url = new moodle_url('/user/edit.php', array('userid' => $user->id, 'course' => $course->id));
+                    }
                 }
                 $node = new core_user\output\myprofile\node('administration', 'editprofile',
                         get_string('editmyprofile'), null, $url);

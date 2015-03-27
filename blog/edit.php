@@ -48,8 +48,20 @@ if (!empty($id) && $action == 'add') {
     $id = null;
 }
 
+$entry = new stdClass();
+$entry->id = null;
+
+if ($id) {
+    if (!$entry = new blog_entry($id)) {
+        print_error('wrongentryid', 'blog');
+    }
+    $userid = $entry->userid;
+} else {
+    $userid = $USER->id;
+}
+
 $sitecontext = context_system::instance();
-$usercontext = context_user::instance($USER->id);
+$usercontext = context_user::instance($userid);
 $PAGE->set_context($usercontext);
 $blognode = $PAGE->settingsnav->find('blogadd', null);
 $blognode->make_active();
@@ -85,24 +97,15 @@ if (!has_capability('moodle/blog:create', $sitecontext) && !has_capability('mood
 
 // Make sure that the person trying to edit has access right.
 if ($id) {
-    if (!$entry = new blog_entry($id)) {
-        print_error('wrongentryid', 'blog');
-    }
-
     if (!blog_user_can_edit_entry($entry)) {
         print_error('notallowedtoedit', 'blog');
     }
-    $userid = $entry->userid;
     $entry->subject      = clean_text($entry->subject);
     $entry->summary      = clean_text($entry->summary, $entry->format);
-
 } else {
     if (!has_capability('moodle/blog:create', $sitecontext)) {
         print_error('noentry', 'blog'); // The capability "manageentries" is not enough for adding.
     }
-    $entry  = new stdClass();
-    $entry->id = null;
-    $userid = $USER->id;
 }
 $returnurl->param('userid', $userid);
 

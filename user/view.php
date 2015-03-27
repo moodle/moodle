@@ -190,7 +190,7 @@ if ($node = $PAGE->settingsnav->get('courseadmin')) {
 echo $OUTPUT->header();
 
 echo '<div class="userprofile">';
-$headerinfo = array('heading' => fullname($user) ,'user' => $user, 'usercontext' => $usercontext);
+$headerinfo = array('heading' => fullname($user), 'user' => $user, 'usercontext' => $usercontext);
 echo $OUTPUT->context_header($headerinfo, 2);
 
 if ($user->deleted) {

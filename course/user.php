@@ -154,7 +154,7 @@ switch ($mode) {
                 // Add the user name.
                 $PAGE->navbar->add(fullname($user), $userurl, navigation_node::TYPE_SETTING);
             }
-            $gradeurl = new moodle_url('/course/user.php', array('id'=>$id, 'user'=>$user->id, 'mode'=>$mode));
+            $gradeurl = new moodle_url('/course/user.php', array('id' => $id, 'user' => $user->id, 'mode' => $mode));
             // Add the 'grades' node to the navbar.
             $navbar = $PAGE->navbar->add(get_string('grades', 'grades'), $gradeurl, navigation_node::TYPE_SETTING);
         }

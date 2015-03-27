@@ -93,9 +93,6 @@ if (!isguestuser()) {   // Skip default home page for guests
         }
     }
 }
-$mycoursenode = $PAGE->navigation->get('mycourses');
-$mycoursenode->collapse = true;
-$mycoursenode->make_inactive();
 
 // Toggle the editing state and switches
 if ($PAGE->user_allowed_editing()) {

@@ -96,10 +96,7 @@ function useredit_setup_preference_page($userid, $courseid) {
     } else {
         // Teachers, parents, etc.
         require_capability('moodle/user:editprofile', $personalcontext);
-        // No editing of guest user account.
-        if (isguestuser($user->id)) {
-            print_error('guestnoeditprofileother');
-        }
+
         // No editing of primary admin!
         if (is_siteadmin($user) and !is_siteadmin($USER)) {  // Only admins may edit other admins.
             print_error('useradmineditadmin');
