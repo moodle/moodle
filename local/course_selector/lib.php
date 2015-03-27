@@ -60,6 +60,9 @@ abstract class course_selector_base {
     protected $file = null;
     protected $selectedid = 0;
 
+    //defines the base required fields for this selector.
+    protected $requiredfields = array('id', 'fullname');
+
     /**  @var boolean Used to ensure we only output the search options for one course selector on
      * each page. */
     private static $searchoptionsoutput = false;
@@ -419,7 +422,7 @@ abstract class course_selector_base {
      */
     protected function required_fields_sql($u) {
         // Raw list of fields.
-        $fields = array('id', 'fullname');
+        $fields = (array) $this->requiredfields;
         $fields = array_merge($fields, $this->extrafields);
 
         // Prepend the table alias.

@@ -26,6 +26,9 @@ abstract class company_course_selector_base extends course_selector_base {
     protected $companyid;
     protected $hasenrollments = false;
 
+    //overridden to include the sortorder field
+    protected $requiredfields = array('id', 'fullname', 'sortorder');
+
     public function __construct($name, $options) {
         $this->companyid  = $options['companyid'];
         parent::__construct($name, $options);
@@ -450,9 +453,6 @@ class potential_subdepartment_course_selector extends company_course_selector_ba
         $this->departmentid = $options['departmentid'];
         $this->showopenshared = $options['showopenshared'];
         $this->license = $options['license'];
-
-        // Must select sortorder if we are going to ORDER BY on it.
-        $options['extrafields'][] = 'sortorder';
 
         parent::__construct($name, $options);
     }
