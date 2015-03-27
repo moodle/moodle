@@ -311,7 +311,7 @@ class grade_report_overview extends grade_report {
 
     /**
      * Processes the data sent by the form (grades and feedbacks).
-     * @var array $data
+     * @param array $data
      * @return bool Success or Failure (array of errors).
      */
     function process_data($data) {
