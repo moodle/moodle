@@ -142,6 +142,7 @@ class core_completion_external extends external_api {
     public static function get_activities_completion_status($courseid, $userid) {
         global $CFG, $USER;
         require_once($CFG->libdir . '/grouplib.php');
+
         $warnings = array();
         $arrayparams = array(
             'courseid' => $courseid,
@@ -159,17 +160,9 @@ class core_completion_external extends external_api {
         // Check that current user have permissions to see this user's activities.
         if ($user->id != $USER->id) {
             require_capability('report/progress:view', $context);
-            $groupmode = groups_get_course_groupmode($course);
-
-            if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
-
-                $usergroups = groups_get_all_groups($course->id, $user->id);
-                $currentusergroups = groups_get_all_groups($course->id, $USER->id);
-                $samegroups = array_intersect_key($currentusergroups, $usergroups);
-                if (empty($samegroups)) {
-                    // We are not in the same group!
-                    throw new moodle_exception('accessdenied', 'admin');
-                }
+            if (!groups_user_groups_visible($course, $user->id)) {
+                // We are not in the same group!
+                throw new moodle_exception('accessdenied', 'admin');
             }
         }
 
@@ -182,7 +175,7 @@ class core_completion_external extends external_api {
         foreach ($activities as $activity) {
 
             // Check if current user has visibility on this activity.
-            if (!$activity->visible or !$activity->uservisible) {
+            if (!$activity->uservisible) {
                 continue;
             }
 
@@ -202,7 +195,7 @@ class core_completion_external extends external_api {
                        'instance'      => $activity->instance,
                        'state'         => $state,
                        'timecompleted' => $timecompleted,
-                       'tracking'      => $activity->completion == COMPLETION_TRACKING_AUTOMATIC ? 'auto' : 'manual'
+                       'tracking'      => $activity->completion
             );
         }
 
@@ -225,12 +218,15 @@ class core_completion_external extends external_api {
                 'statuses' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'cmid'          => new external_value(PARAM_INT,    'Comment ID'),
-                            'modname'       => new external_value(PARAM_PLUGIN, 'Activity module name'),
-                            'instance'      => new external_value(PARAM_INT,    'Instance ID'),
-                            'state'         => new external_value(PARAM_INT,    'Completion state value'),
-                            'timecompleted' => new external_value(PARAM_INT,    'Timestamp for completed activity'),
-                            'tracking'      => new external_value(PARAM_ALPHA,  'Tracking (auto/manual)'),
+                            'cmid'          => new external_value(PARAM_INT, 'comment ID'),
+                            'modname'       => new external_value(PARAM_PLUGIN, 'activity module name'),
+                            'instance'      => new external_value(PARAM_INT, 'instance ID'),
+                            'state'         => new external_value(PARAM_INT, 'completion state value:
+                                                                    0 means incomplete, 1 complete,
+                                                                    2 complete pass, 3 complete fail'),
+                            'timecompleted' => new external_value(PARAM_INT, 'timestamp for completed activity'),
+                            'tracking'      => new external_value(PARAM_INT, 'type of tracking:
+                                                                    0 means none, 1 manual, 2 automatic'),
                         ), 'Activity'
                     ), 'List of activities status'
                 ),
