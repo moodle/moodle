@@ -175,12 +175,7 @@ $user->imagefile = $draftitemid;
 $userform = new user_edit_form(null, array(
     'editoroptions' => $editoroptions,
     'filemanageroptions' => $filemanageroptions,
-    'userid' => $user->id));
-if (empty($user->country)) {
-    // MDL-16308 - we must unset the value here so $CFG->country can be used as default one.
-    unset($user->country);
-}
-$userform->set_data($user);
+    'user' => $user));
 
 $emailchanged = false;
 

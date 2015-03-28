@@ -552,4 +552,93 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
     public function test_message_redirection_reset() {
         $this->assertFalse(phpunit_util::is_redirecting_messages(), 'Test reset must stop message redirection.');
     }
+
+    public function test_set_timezone() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $this->assertSame('Australia/Perth', $CFG->timezone);
+        $this->assertSame('Australia/Perth', date_default_timezone_get());
+
+        $this->setTimezone('Pacific/Auckland', 'Europe/Prague');
+        $this->assertSame('Pacific/Auckland', $CFG->timezone);
+        $this->assertSame('Pacific/Auckland', date_default_timezone_get());
+
+        $this->setTimezone('99', 'Europe/Prague');
+        $this->assertSame('99', $CFG->timezone);
+        $this->assertSame('Europe/Prague', date_default_timezone_get());
+
+        $this->setTimezone('xxx', 'Europe/Prague');
+        $this->assertSame('xxx', $CFG->timezone);
+        $this->assertSame('Europe/Prague', date_default_timezone_get());
+
+        $this->setTimezone();
+        $this->assertSame('Australia/Perth', $CFG->timezone);
+        $this->assertSame('Australia/Perth', date_default_timezone_get());
+
+        try {
+            $this->setTimezone('Pacific/Auckland', '');
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+        }
+
+        try {
+            $this->setTimezone('Pacific/Auckland', 'xxxx');
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+        }
+
+        try {
+            $this->setTimezone('Pacific/Auckland', null);
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+        }
+
+    }
+
+    public function test_locale_reset() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // If this fails \phpunit_util::reset_all_data() must be updated.
+        $this->assertSame('en_AU.UTF-8', get_string('locale', 'langconfig'));
+        $this->assertSame('English_Australia.1252', get_string('localewin', 'langconfig'));
+
+        if ($CFG->ostype === 'WINDOWS') {
+            $this->assertSame('English_Australia.1252', setlocale(LC_TIME, 0));
+            setlocale(LC_TIME, 'English_USA.1252');
+        } else {
+            $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, 0));
+            setlocale(LC_TIME, 'en_US.UTF-8');
+        }
+
+        try {
+            phpunit_util::reset_all_data(true);
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+        }
+
+        if ($CFG->ostype === 'WINDOWS') {
+            $this->assertSame('English_Australia.1252', setlocale(LC_TIME, 0));
+        } else {
+            $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, 0));
+        }
+
+        if ($CFG->ostype === 'WINDOWS') {
+            $this->assertSame('English_Australia.1252', setlocale(LC_TIME, 0));
+            setlocale(LC_TIME, 'English_USA.1252');
+        } else {
+            $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, 0));
+            setlocale(LC_TIME, 'en_US.UTF-8');
+        }
+
+        phpunit_util::reset_all_data(false);
+
+        if ($CFG->ostype === 'WINDOWS') {
+            $this->assertSame('English_Australia.1252', setlocale(LC_TIME, 0));
+        } else {
+            $this->assertSame('en_AU.UTF-8', setlocale(LC_TIME, 0));
+        }
+    }
 }

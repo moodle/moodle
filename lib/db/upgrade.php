@@ -4270,5 +4270,34 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015032000.00);
     }
 
+    if ($oldversion < 2015040200.01) {
+        // Force uninstall of deleted tool.
+        if (!file_exists("$CFG->dirroot/$CFG->admin/tool/timezoneimport")) {
+            // Remove capabilities.
+            capabilities_cleanup('tool_timezoneimport');
+            // Remove all other associated config.
+            unset_all_config_for_plugin('tool_timezoneimport');
+        }
+        upgrade_main_savepoint(true, 2015040200.01);
+    }
+
+    if ($oldversion < 2015040200.02) {
+        // Define table timezone to be dropped.
+        $table = new xmldb_table('timezone');
+        // Conditionally launch drop table for timezone.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        upgrade_main_savepoint(true, 2015040200.02);
+    }
+
+    if ($oldversion < 2015040200.03) {
+        if (isset($CFG->timezone) and $CFG->timezone == 99) {
+            // Migrate to real server timezone.
+            unset_config('timezone');
+        }
+        upgrade_main_savepoint(true, 2015040200.03);
+    }
+
     return true;
 }

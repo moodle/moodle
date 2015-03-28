@@ -102,8 +102,14 @@ class core_calendar_type_testcase extends advanced_testcase {
      * different calendar types.
      */
     public function test_calendar_type_dateselector_elements() {
+        global $CFG;
+
         // We want to reset the test data after this run.
         $this->resetAfterTest();
+
+        $this->setTimezone('UTC');
+
+        // Note: this test is pretty useless because it does not test current user timezones.
 
         // Check converting dates to Gregorian when submitting a date selector element works. Note: the test
         // calendar is 2 years, 2 months, 2 days, 2 hours and 2 minutes ahead of the Gregorian calendar.

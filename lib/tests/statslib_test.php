@@ -57,14 +57,17 @@ class core_statslib_testcase extends advanced_testcase {
         parent::setUp();
 
         // Settings to force statistic to run during testing.
-        $CFG->timezone                = self::TIMEZONE;
+        $this->setTimezone(self::TIMEZONE);
+        core_date::set_default_server_timezone();
         $CFG->statsfirstrun           = 'all';
         $CFG->statslastdaily          = 0;
         $CFG->statslastexecution      = 0;
 
         // Figure out the broken day start so I can figure out when to the start time should be.
         $time   = time();
-        $offset = get_timezone_offset($CFG->timezone);
+        // This nonsense needs to be rewritten.
+        $date = new DateTime('now', core_date::get_server_timezone_object());
+        $offset = $date->getOffset();
         $stime  = $time + $offset;
         $stime  = intval($stime / (60*60*24)) * 60*60*24;
         $stime -= $offset;
@@ -131,7 +134,7 @@ class core_statslib_testcase extends advanced_testcase {
             return;
         }
 
-        $CFG->timezone = self::TIMEZONE;
+        $this->setTimezone(self::TIMEZONE);
 
         $guest = $DB->get_record('user', array('id' => $CFG->siteguest));
         $user1 = $DB->get_record('user', array('username' => 'user1'));
@@ -147,8 +150,6 @@ class core_statslib_testcase extends advanced_testcase {
         if (($site === false) || ($course1 === false)) {
             trigger_error('Course setup incomplete', E_USER_ERROR);
         }
-
-        $offset = get_timezone_offset($CFG->timezone);
 
         $start      = stats_get_base_daily(self::DAY + 3600);
         $startnolog = stats_get_base_daily(stats_get_start_from('daily'));
@@ -302,7 +303,8 @@ class core_statslib_testcase extends advanced_testcase {
         $DB->delete_records('log');
 
         // Don't ask.  I don't think get_timezone_offset works correctly.
-        $day = self::DAY - get_timezone_offset($CFG->timezone);
+        $date = new DateTime('now', core_date::get_server_timezone_object());
+        $day = self::DAY - $date->getOffset();
 
         $CFG->statsfirstrun = 'all';
         // Allow 1 second difference in case we cross a second boundary.
@@ -373,8 +375,8 @@ class core_statslib_testcase extends advanced_testcase {
     public function test_statslib_get_base_daily() {
         global $CFG;
 
-        for ($x = 0; $x < 24; $x += 1) {
-            $CFG->timezone = $x;
+        for ($x = 0; $x < 13; $x += 1) {
+            $this->setTimezone($x);
 
             $start = 1272672000 - ($x * 3600);
             if ($x >= 20) {
@@ -389,9 +391,7 @@ class core_statslib_testcase extends advanced_testcase {
      * Test the function that gets the start of the next day.
      */
     public function test_statslib_get_next_day_start() {
-        global $CFG;
-
-        $CFG->timezone = 0;
+        $this->setTimezone(0);
         $this->assertEquals(1272758400, stats_get_next_day_start(1272686410));
     }
 
@@ -516,7 +516,9 @@ class core_statslib_testcase extends advanced_testcase {
 
         $this->prepare_db($dataset[0], array('log'));
 
-        $start = self::DAY - get_timezone_offset($CFG->timezone);
+        // This nonsense needs to be rewritten.
+        $date = new DateTime('now', core_date::get_server_timezone_object());
+        $start = self::DAY - $date->getOffset();
         $end   = $start + (24 * 3600);
 
         stats_temp_table_create();

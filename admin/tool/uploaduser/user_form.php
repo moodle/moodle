@@ -255,8 +255,7 @@ class admin_uploaduser_form2 extends moodleform {
         }
         $mform->setAdvanced('country');
 
-        $choices = get_list_of_timezones();
-        $choices['99'] = get_string('serverlocaltime');
+        $choices = core_date::get_list_of_timezones($templateuser->timezone, true);
         $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
         $mform->setDefault('timezone', $templateuser->timezone);
         $mform->setAdvanced('timezone');

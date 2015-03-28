@@ -31,8 +31,8 @@ class type_factory {
      * Returns an instance of the currently used calendar type.
      *
      * @param string|null $type the calendar type to use, if none provided use logic to determine
-     * @return calendartype_* the created calendar_type class
-     * @throws coding_exception if the calendar type file could not be loaded
+     * @return \core_calendar\type_base the created calendar_type class
+     * @throws \coding_exception if the calendar type file could not be loaded
      */
     public static function get_calendar_instance($type = null) {
         if (is_null($type)) {

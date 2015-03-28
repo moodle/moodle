@@ -27,12 +27,30 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Tests legacy Moodle date/time functions.
+ *
+ * @package   core
+ * @copyright 2015 Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author    Petr Skoda <petr.skoda@totaralms.com>
  */
 class core_date_legacy_testcase extends advanced_testcase {
+    public function test_settings() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $this->assertNotEmpty($CFG->timezone);
+
+        $this->assertSame('99', $CFG->forcetimezone);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->assertSame('99', $user->timezone);
+    }
+
     public function test_get_list_of_timezones() {
         // Use timezones that are not problematic, this way we may test before
         // and after the big tz rewrite.
         $list = get_list_of_timezones();
+        $this->assertDebuggingCalled();
         $this->assertArrayHasKey('Europe/London', $list);
         $this->assertArrayHasKey('Pacific/Auckland', $list);
         $this->assertArrayHasKey('America/New_York', $list);
@@ -52,8 +70,7 @@ class core_date_legacy_testcase extends advanced_testcase {
 
         // All set to something.
 
-        date_default_timezone_set('Pacific/Auckland');
-        $CFG->timezone = 'Pacific/Auckland';
+        $this->setTimezone('Pacific/Auckland', 'Pacific/Auckland');
         $USER->timezone = 'Europe/Prague';
 
         $tz = get_user_timezone();
@@ -69,8 +86,7 @@ class core_date_legacy_testcase extends advanced_testcase {
 
         // User timezone not set.
 
-        date_default_timezone_set('Pacific/Auckland');
-        $CFG->timezone = 'Pacific/Auckland';
+        $this->setTimezone('Pacific/Auckland', 'Pacific/Auckland');
         $USER->timezone = '99';
 
         $tz = get_user_timezone();
@@ -86,8 +102,7 @@ class core_date_legacy_testcase extends advanced_testcase {
 
         // Server timezone not set.
 
-        date_default_timezone_set('Pacific/Auckland');
-        $CFG->timezone = '99';
+        $this->setTimezone('99', 'Pacific/Auckland');
         $USER->timezone = 'Europe/Prague';
 
         $tz = get_user_timezone();
@@ -103,8 +118,7 @@ class core_date_legacy_testcase extends advanced_testcase {
 
         // Server and user timezone not set.
 
-        date_default_timezone_set('Pacific/Auckland');
-        $CFG->timezone = '99';
+        $this->setTimezone('99', 'Pacific/Auckland');
         $USER->timezone = '99';
 
         $tz = get_user_timezone();
@@ -122,6 +136,7 @@ class core_date_legacy_testcase extends advanced_testcase {
     public function test_get_timezone_offset() {
         // This is a useless function, the timezone offset may be changing!
         $this->assertSame(60 * 60 * -5, get_timezone_offset('America/New_York'));
+        $this->assertDebuggingCalled();
         $this->assertSame(60 * 60 * -1, get_timezone_offset(-1));
         $this->assertSame(60 * 60 * 1, get_timezone_offset(1));
         $this->assertSame(60 * 60 * 1, get_timezone_offset('Europe/Prague'));
@@ -141,16 +156,21 @@ class core_date_legacy_testcase extends advanced_testcase {
         $this->assertEquals(60 * 60 * 9.5, get_timezone_offset('Australia/Darwin'));
         $this->assertEquals(60 * 60 * 11.5, get_timezone_offset('11.5'));
         $this->assertEquals(60 * 60 * 11.5, get_timezone_offset('Pacific/Norfolk'));
+
+        $this->resetDebugging();
     }
 
     public function test_get_user_timezone_offset() {
         // This is a useless function, the timezone offset may be changing!
         $this->assertSame(-5.0, get_user_timezone_offset('America/New_York'));
+        $this->assertDebuggingCalled();
         $this->assertSame(-1.0, get_user_timezone_offset(-1));
         $this->assertSame(1.0, get_user_timezone_offset(1));
         $this->assertSame(1.0, get_user_timezone_offset('Europe/Prague'));
         $this->assertSame(8.0, get_user_timezone_offset('Australia/Perth'));
         $this->assertSame(12.0, get_user_timezone_offset('Pacific/Auckland'));
+
+        $this->resetDebugging();
     }
 
     public function test_dst_offset_on() {
@@ -175,8 +195,6 @@ class core_date_legacy_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         // There are quite a lot of problems, let's pick some less problematic zones for now.
-        //$timezones = get_list_of_timezones('99');
-        //$timezones = array_keys($timezones);
         $timezones = array('Europe/Prague', 'Europe/London', 'Australia/Perth', 'Pacific/Auckland', 'America/New_York', '99');
 
         $dates = array(
@@ -187,8 +205,7 @@ class core_date_legacy_testcase extends advanced_testcase {
         );
         $years = array(1999, 2009, 2014, 2018);
 
-        date_default_timezone_set('Pacific/Auckland');
-        $CFG->timezone = 'Pacific/Auckland';
+        $this->setTimezone('Pacific/Auckland', 'Pacific/Auckland');
         foreach ($timezones as $tz) {
             foreach ($years as $year) {
                 foreach ($dates as $date) {
@@ -196,13 +213,13 @@ class core_date_legacy_testcase extends advanced_testcase {
                     $expected = new DateTime('now', new DateTimeZone(($tz == 99 ? 'Pacific/Auckland' : $tz)));
                     $expected->setDate($year, $date[0], $date[1]);
                     $expected->setTime($date[2], $date[3], $date[4]);
-                    $this->assertSame($expected->getTimestamp(), $result, 'Incorrect result for data ' . $expected->format("D, d M Y H:i:s O") . ' ' . $tz);
+                    $this->assertSame($expected->getTimestamp(), $result,
+                        'Incorrect result for data ' . $expected->format("D, d M Y H:i:s O") . ' ' . $tz);
                 }
             }
         }
 
-        date_default_timezone_set('Pacific/Auckland');
-        $CFG->timezone = '99';
+        $this->setTimezone('99', 'Pacific/Auckland');
         foreach ($timezones as $tz) {
             foreach ($years as $year) {
                 foreach ($dates as $date) {
@@ -210,7 +227,8 @@ class core_date_legacy_testcase extends advanced_testcase {
                     $expected = new DateTime('now', new DateTimeZone(($tz == 99 ? 'Pacific/Auckland' : $tz)));
                     $expected->setDate($year, $date[0], $date[1]);
                     $expected->setTime($date[2], $date[3], $date[4]);
-                    $this->assertSame($expected->getTimestamp(), $result, 'Incorrect result for data ' . $expected->format("D, d M Y H:i:s O") . ' ' . $tz);
+                    $this->assertSame($expected->getTimestamp(), $result,
+                        'Incorrect result for data ' . $expected->format("D, d M Y H:i:s O") . ' ' . $tz);
                 }
             }
         }
@@ -222,8 +240,6 @@ class core_date_legacy_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         // There are quite a lot of problems, let's pick some less problematic zones for now.
-        //$timezones = get_list_of_timezones('99');
-        //$timezones = array_keys($timezones);
         $timezones = array('Europe/Prague', 'Europe/London', 'Australia/Perth', 'Pacific/Auckland', 'America/New_York', '99');
 
         $dates = array(
@@ -234,8 +250,7 @@ class core_date_legacy_testcase extends advanced_testcase {
         );
         $years = array(1999, 2009, 2014, 2018);
 
-        date_default_timezone_set('Pacific/Auckland');
-        $CFG->timezone = 'Pacific/Auckland';
+        $this->setTimezone('Pacific/Auckland', 'Pacific/Auckland');
         foreach ($timezones as $tz) {
             foreach ($years as $year) {
                 foreach ($dates as $date) {
@@ -243,7 +258,7 @@ class core_date_legacy_testcase extends advanced_testcase {
                     $expected->setDate($year, $date[0], $date[1]);
                     $expected->setTime($date[2], $date[3], $date[4]);
                     $result = usergetdate($expected->getTimestamp(), $tz);
-                    unset($result[0]); // extra introduced by getdate().
+                    unset($result[0]); // Extra introduced by getdate().
                     $ex = array(
                         'seconds' => $date[4],
                         'minutes' => $date[3],
@@ -256,13 +271,13 @@ class core_date_legacy_testcase extends advanced_testcase {
                         'weekday' => $expected->format('l'),
                         'month' => $expected->format('F'),
                     );
-                    $this->assertSame($ex, $result, 'Incorrect result for data ' . $expected->format("D, d M Y H:i:s O") . ' ' . $tz);
+                    $this->assertSame($ex, $result,
+                        'Incorrect result for data ' . $expected->format("D, d M Y H:i:s O") . ' ' . $tz);
                 }
             }
         }
 
-        date_default_timezone_set('Pacific/Auckland');
-        $CFG->timezone = '99';
+        $this->setTimezone('99', 'Pacific/Auckland');
         foreach ($timezones as $tz) {
             foreach ($years as $year) {
                 foreach ($dates as $date) {
@@ -270,7 +285,7 @@ class core_date_legacy_testcase extends advanced_testcase {
                     $expected->setDate($year, $date[0], $date[1]);
                     $expected->setTime($date[2], $date[3], $date[4]);
                     $result = usergetdate($expected->getTimestamp(), $tz);
-                    unset($result[0]); // extra introduced by getdate().
+                    unset($result[0]); // Extra introduced by getdate().
                     $ex = array(
                         'seconds' => $date[4],
                         'minutes' => $date[3],
@@ -283,7 +298,8 @@ class core_date_legacy_testcase extends advanced_testcase {
                         'weekday' => $expected->format('l'),
                         'month' => $expected->format('F'),
                     );
-                    $this->assertSame($ex, $result, 'Incorrect result for data ' . $expected->format("D, d M Y H:i:s O") . ' ' . $tz);
+                    $this->assertSame($ex, $result,
+                        'Incorrect result for data ' . $expected->format("D, d M Y H:i:s O") . ' ' . $tz);
                 }
             }
         }
@@ -311,8 +327,7 @@ class core_date_legacy_testcase extends advanced_testcase {
 
         $format = get_string('strftimedaydatetime', 'langconfig');
 
-        date_default_timezone_set('Pacific/Auckland');
-        $CFG->timezone = 'Pacific/Auckland';
+        $this->setTimezone('Pacific/Auckland', 'Pacific/Auckland');
         foreach ($years as $year) {
             foreach ($dates as $date) {
                 $expected = new DateTime('now', new DateTimeZone('UTC'));
@@ -350,5 +365,33 @@ class core_date_legacy_testcase extends advanced_testcase {
         $this->assertSame($time - (60 * 60 * 8), usertime($time, 'Australia/Perth'));
         $this->assertSame($time - (60 * 60 * 12), usertime($time, 'Pacific/Auckland'));
         $this->assertSame($time - (60 * 60 * -5), usertime($time, 'America/New_York'));
+    }
+
+    public function test_usertimezone() {
+        global $USER;
+        $this->resetAfterTest();
+
+        $this->setTimezone('Pacific/Auckland', 'Pacific/Auckland');
+
+        $USER->timezone = 'Europe/Prague';
+        $this->assertSame('Europe/Prague', usertimezone());
+
+        $USER->timezone = '1';
+        $this->assertSame('Etc/GMT-1', usertimezone());
+
+        $USER->timezone = '0';
+        $this->assertSame('Etc/GMT', usertimezone());
+
+        $USER->timezone = '99';
+        $this->assertSame('Pacific/Auckland', usertimezone());
+
+        $USER->timezone = '99';
+        $this->assertSame('Europe/Berlin', usertimezone('Europe/Berlin'));
+
+        $USER->timezone = '99';
+        $this->assertSame('Pacific/Auckland', usertimezone('99'));
+
+        $USER->timezone = 'Europe/Prague';
+        $this->assertSame('Europe/Prague', usertimezone('99'));
     }
 }

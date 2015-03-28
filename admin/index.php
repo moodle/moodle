@@ -521,6 +521,7 @@ if (empty($site->shortname)) {
     // probably new installation - lets return to frontpage after this step
     // remove settings that we want uninitialised
     unset_config('registerauth');
+    unset_config('timezone'); // Force admin to select timezone!
     redirect('upgradesettings.php?return=site');
 }
 

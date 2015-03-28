@@ -70,6 +70,7 @@ if ($id == -1) {
     $user->auth = 'manual';
     $user->confirmed = 1;
     $user->deleted = 0;
+    $user->timezone = '99';
     require_capability('moodle/user:create', $systemcontext);
     admin_externalpage_setup('addnewuser', '', array('id' => -1));
 } else {
@@ -154,8 +155,7 @@ $user->imagefile = $draftitemid;
 $userform = new user_editadvanced_form(null, array(
     'editoroptions' => $editoroptions,
     'filemanageroptions' => $filemanageroptions,
-    'userid' => $user->id));
-$userform->set_data($user);
+    'user' => $user));
 
 if ($usernew = $userform->get_data()) {
     $usercreated = false;

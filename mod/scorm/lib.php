@@ -529,7 +529,7 @@ function scorm_cron () {
 
     require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
-    $sitetimezone = $CFG->timezone;
+    $sitetimezone = core_date::get_server_timezone();
     // Now see if there are any scorm updates to be done.
 
     if (!isset($CFG->scorm_updatetimelast)) {    // To catch the first time.
