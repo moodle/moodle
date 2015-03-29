@@ -1486,6 +1486,36 @@ class backup_activity_logs_structure_step extends backup_structure_step {
 }
 
 /**
+ * Structure step in charge of constructing the logstores.xml file for the course logs.
+ *
+ * This backup step will backup the logs for all the enabled logstore subplugins supporting
+ * it, for logs belonging to the course level.
+ */
+class backup_course_logstores_structure_step extends backup_structure_step {
+
+    protected function define_structure() {
+
+        // Define the structure of logstores container.
+        $logstores = new backup_nested_element('logstores');
+        $logstore = new backup_nested_element('logstore');
+        $logstores->add_child($logstore);
+
+        // Add the tool_log logstore subplugins information to the logstore element.
+        $this->add_subplugin_structure('logstore', $logstore, true, 'tool', 'log');
+
+        return $logstores;
+    }
+}
+
+/**
+ * Structure step in charge of constructing the logstores.xml file for the activity logs.
+ *
+ * Note: Activity structure is completely equivalent to the course one, so just extend it.
+ */
+class backup_activity_logstores_structure_step extends backup_course_logstores_structure_step {
+}
+
+/**
  * structure in charge of constructing the inforef.xml file for all the items we want
  * to have referenced there (users, roles, files...)
  */

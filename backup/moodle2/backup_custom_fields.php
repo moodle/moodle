@@ -79,6 +79,25 @@ class mnethosturl_final_element extends backup_final_element {
 }
 
 /**
+ * Implementation of {@link backup_final_element} that provides base64 encoding.
+ *
+ * This final element transparently encodes with base64_encode() contents that
+ * normally are not safe for being stored in utf-8 xml files (binaries, serialized
+ * data...).
+ */
+class base64_encode_final_element extends backup_final_element {
+
+    /**
+     * Set the value for the final element, encoding it as utf-8/xml safe base64.
+     *
+     * @param string $value Original value coming from backup step source, usually db.
+     */
+    public function set_value($value) {
+        parent::set_value(base64_encode($value));
+    }
+}
+
+/**
  * Implementation of backup_nested_element that provides special handling of files
  *
  * This class overwrites the standard fill_values() method, so it gets intercepted
