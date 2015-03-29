@@ -73,6 +73,10 @@ if ($page != 0 && $offset == 0) {
     $offset = $page * $entriesbypage;
 }
 
+// Get visible tabs for this glossary format.
+$glossarytabs = $DB->get_field('glossary_formats', 'showtabs', array('name' => $glossary->displayformat));
+$showtabs = glossary_get_visible_tabs($glossarytabs);
+
 /// setting the default values for the display mode of the current glossary
 /// only if the glossary is viewed by the first time
 if ( $dp = $DB->get_record('glossary_formats', array('name'=>$glossary->displayformat)) ) {
@@ -80,12 +84,30 @@ if ( $dp = $DB->get_record('glossary_formats', array('name'=>$glossary->displayf
     switch ($dp->defaultmode) {
         case 'cat':
             $defaulttab = GLOSSARY_CATEGORY_VIEW;
+
+            // Handle defaultmode if 'category' tab is disabled. Fallback to 'standard' tab.
+            if (!in_array(GLOSSARY_CATEGORY, $showtabs)) {
+                $defaulttab = GLOSSARY_STANDARD_VIEW;
+            }
+
             break;
         case 'date':
             $defaulttab = GLOSSARY_DATE_VIEW;
+
+            // Handle defaultmode if 'date' tab is disabled. Fallback to 'standard' tab.
+            if (!in_array(GLOSSARY_DATE, $showtabs)) {
+                $defaulttab = GLOSSARY_STANDARD_VIEW;
+            }
+
             break;
         case 'author':
             $defaulttab = GLOSSARY_AUTHOR_VIEW;
+
+            // Handle defaultmode if 'author' tab is disabled. Fallback to 'standard' tab.
+            if (!in_array(GLOSSARY_AUTHOR, $showtabs)) {
+                $defaulttab = GLOSSARY_STANDARD_VIEW;
+            }
+
             break;
         default:
             $defaulttab = GLOSSARY_STANDARD_VIEW;
@@ -159,6 +181,12 @@ break;
 
 case 'cat':    /// Looking for a certain cat
     $tab = GLOSSARY_CATEGORY_VIEW;
+
+    // Validation - we don't want to display 'category' tab if it is disabled.
+    if (!in_array(GLOSSARY_CATEGORY, $showtabs)) {
+        $tab = GLOSSARY_STANDARD_VIEW;
+    }
+
     if ( $hook > 0 ) {
         $category = $DB->get_record("glossary_categories", array("id"=>$hook));
     }
@@ -182,6 +210,12 @@ break;
 
 case 'date':
     $tab = GLOSSARY_DATE_VIEW;
+
+    // Validation - we dont want to display 'date' tab if it is disabled.
+    if (!in_array(GLOSSARY_DATE, $showtabs)) {
+        $tab = GLOSSARY_STANDARD_VIEW;
+    }
+
     if ( !$sortkey ) {
         $sortkey = 'UPDATE';
     }
@@ -192,6 +226,12 @@ break;
 
 case 'author':  /// Looking for entries, browsed by author
     $tab = GLOSSARY_AUTHOR_VIEW;
+
+    // Validation - we dont want to display 'author' tab if it is disabled.
+    if (!in_array(GLOSSARY_AUTHOR, $showtabs)) {
+        $tab = GLOSSARY_STANDARD_VIEW;
+    }
+
     if ( !$hook ) {
         $hook = 'ALL';
     }
