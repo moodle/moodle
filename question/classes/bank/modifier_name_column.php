@@ -36,7 +36,8 @@ class modifier_name_column extends column_base {
         if (!empty($question->modifierfirstname) && !empty($question->modifierlastname)) {
             $u = new \stdClass();
             $u = username_load_fields_from_object($u, $question, 'modifier');
-            echo fullname($u);
+            $date = userdate($question->timemodified, get_string('strftimedatetime', 'langconfig'));
+            echo fullname($u) . '<br>' . \html_writer::tag('span', $date, array('class' => 'date'));
         }
     }
 
@@ -50,6 +51,7 @@ class modifier_name_column extends column_base {
         foreach ($allnames as $allname) {
             $requiredfields[] = 'um.' . $allname . ' AS modifier' . $allname;
         }
+        $requiredfields[] = 'q.timemodified';
         return $requiredfields;
     }
 
@@ -57,6 +59,7 @@ class modifier_name_column extends column_base {
         return array(
             'firstname' => array('field' => 'um.firstname', 'title' => get_string('firstname')),
             'lastname' => array('field' => 'um.lastname', 'title' => get_string('lastname')),
+            'timemodified' => array('field' => 'q.timemodified', 'title' => get_string('date'))
         );
     }
 }
