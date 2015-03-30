@@ -80,7 +80,19 @@ define('URL_MATCH_PARAMS', 1);
 define('URL_MATCH_EXACT', 2);
 
 // Functions.
-
+/**
+ * Replaces encoded HTML chars with decoded ones
+ * This prevents html title attribute to show & instead of &amp; which reported as a bug
+ *
+ * @param $var String which contains encoded HTML chars like &amp;
+ * @return string
+ */
+function srep($var) {
+    if ($var === false) {
+        return '0';
+    }
+    return html_entity_decode($var);
+}
 /**
  * Add quotes to HTML characters.
  *
