@@ -1068,6 +1068,7 @@ $services = array(
             'core_course_view_course',
             'core_completion_get_activities_completion_status',
             'core_notes_get_course_notes',
+            'gradereport_user_view_grade_report',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
