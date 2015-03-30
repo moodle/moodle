@@ -513,6 +513,15 @@ $functions = array(
         'capabilities'  => '',
     ),
 
+    'core_user_view_user_list' => array(
+        'classname'     => 'core_user_external',
+        'methodname'    => 'view_user_list',
+        'classpath'     => 'user/externallib.php',
+        'description'   => 'Simulates the web-interface view of user/index.php (triggering events).',
+        'type'          => 'write',
+        'capabilities'  => 'moodle/course:viewparticipants',
+    ),
+
     // === enrol related functions ===
 
     'core_enrol_get_enrolled_users_with_capability' => array(
@@ -1068,6 +1077,7 @@ $services = array(
             'core_course_view_course',
             'core_completion_get_activities_completion_status',
             'core_notes_get_course_notes',
+            'core_user_view_user_list',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
