@@ -79,6 +79,15 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Opens Moodle site homepage.
+     *
+     * @Given /^I am on site homepage$/
+     */
+    public function i_am_on_site_homepage() {
+        $this->getSession()->visit($this->locate_path('/?redirect=0'));
+    }
+
+    /**
      * Reloads the current page.
      *
      * @Given /^I reload the page$/
