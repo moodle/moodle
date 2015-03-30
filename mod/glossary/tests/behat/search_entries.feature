@@ -48,7 +48,6 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
     And I press "Search"
     Then I should see "Sweet cucumber"
     And I should see "Search: cucumber"
-    And I follow "Browse by alphabet"
     And I click on "E" "link" in the ".entrybox" "css_element"
     And I should see "Sour eggplants"
     And I should not see "Sweet cucumber"
