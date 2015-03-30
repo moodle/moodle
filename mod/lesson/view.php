@@ -516,19 +516,16 @@ if ($pageid != LESSON_EOL) {
             $grade->userid = $USER->id;
             $grade->grade = $gradeinfo->grade;
             $grade->completed = time();
-            if (!$lesson->practice) {
-                if (isset($USER->modattempts[$lesson->id])) { // if reviewing, make sure update old grade record
-                    if (!$grades = $DB->get_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id), "completed DESC", '*', 0, 1)) {
-                        print_error('cannotfindgrade', 'lesson');
-                    }
-                    $oldgrade = array_shift($grades);
-                    $grade->id = $oldgrade->id;
-                    $DB->update_record("lesson_grades", $grade);
-                } else {
-                    $newgradeid = $DB->insert_record("lesson_grades", $grade);
+            if (isset($USER->modattempts[$lesson->id])) { // If reviewing, make sure update old grade record.
+                if (!$grades = $DB->get_records("lesson_grades",
+                        array("lessonid" => $lesson->id, "userid" => $USER->id), "completed DESC", '*', 0, 1)) {
+                    print_error('cannotfindgrade', 'lesson');
                 }
+                $oldgrade = array_shift($grades);
+                $grade->id = $oldgrade->id;
+                $DB->update_record("lesson_grades", $grade);
             } else {
-                $DB->delete_records("lesson_attempts", array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $ntries));
+                $newgradeid = $DB->insert_record("lesson_grades", $grade);
             }
         } else {
             if ($lesson->timelimit) {
@@ -538,9 +535,7 @@ if ($pageid != LESSON_EOL) {
                     $grade->userid = $USER->id;
                     $grade->grade = 0;
                     $grade->completed = time();
-                    if (!$lesson->practice) {
-                        $newgradeid = $DB->insert_record("lesson_grades", $grade);
-                    }
+                    $newgradeid = $DB->insert_record("lesson_grades", $grade);
                     $lessoncontent .= $lessonoutput->paragraph(get_string("eolstudentoutoftimenoanswers", "lesson"));
                 }
             } else {
