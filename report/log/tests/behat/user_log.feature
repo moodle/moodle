@@ -40,9 +40,10 @@ Feature: User can view activity log.
     And I follow "Course 1"
     And I navigate to "Participants" node in "Current course > C1"
     And I follow "Student 1"
-    When I navigate to "Today's logs" node in "Profile settings for Student 1 > Activity reports"
+    When I follow "Today's logs"
     And I should see "Assignment: Test assignment name"
-    And I navigate to "All logs" node in "Profile settings for Student 1 > Activity reports"
+    And I follow "Student 1"
+    And I follow "All logs"
     Then I should see "Assignment: Test assignment name"
 
   @javascript
@@ -55,7 +56,8 @@ Feature: User can view activity log.
     And I follow "Course 1"
     And I navigate to "Participants" node in "Current course > C1"
     And I follow "Student 1"
-    When I navigate to "Today's logs" node in "Profile settings for Student 1 > Activity reports"
+    When I follow "Today's logs"
     And I should see "No log reader enabled"
-    And I navigate to "All logs" node in "Profile settings for Student 1 > Activity reports"
+    And I follow "Student 1"
+    And I follow "All logs"
     Then I should see "No log reader enabled"
