@@ -621,4 +621,33 @@ function profile_load_custom_fields($user) {
     $user->profile = (array)profile_user_record($user->id);
 }
 
+/**
+ * Trigger a user profile viewed event.
+ *
+ * @param stdClass  $user user  object
+ * @param stdClass  $context  context object (course or user)
+ * @param stdClass  $course course  object
+ * @since Moodle 2.9
+ */
+function profile_view($user, $context, $course = null) {
+
+    $eventdata = array(
+        'objectid' => $user->id,
+        'relateduserid' => $user->id,
+        'context' => $context
+    );
+
+    if (!empty($course)) {
+        $eventdata['courseid'] = $course->id;
+        $eventdata['other'] = array(
+            'courseid' => $course->id,
+            'courseshortname' => $course->shortname,
+            'coursefullname' => $course->fullname
+        );
+    }
+
+    $event = \core\event\user_profile_viewed::create($eventdata);
+    $event->add_record_snapshot('user', $user);
+    $event->trigger();
+}
 
