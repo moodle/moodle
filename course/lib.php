@@ -1633,7 +1633,7 @@ function set_coursemodule_visible($id, $visible) {
 }
 
 /**
- * This function will handles the whole deletion process of a module. This includes calling
+ * This function will handle the whole deletion process of a module. This includes calling
  * the modules delete_instance function, deleting files, events, grades, conditional data,
  * the data in the course_module and course_sections table and adding a module deletion
  * event to the DB.
@@ -1645,9 +1645,10 @@ function course_delete_module($cmid) {
     global $CFG, $DB;
 
     require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->dirroot.'/blog/lib.php');
     require_once($CFG->dirroot.'/calendar/lib.php');
-    require_once($CFG->dirroot . '/tag/lib.php');
+    require_once($CFG->dirroot.'/tag/lib.php');
 
     // Get the course module.
     if (!$cm = $DB->get_record('course_modules', array('id' => $cmid))) {
@@ -1678,6 +1679,9 @@ function course_delete_module($cmid) {
         throw new moodle_exception('cannotdeletemodulemissingfunc', '', '', null,
             "Cannot delete this module as the function {$modulename}_delete_instance is missing in mod/$modulename/lib.php.");
     }
+
+    // Delete activity context questions and question categories.
+    question_delete_activity($cm);
 
     // Call the delete_instance function, if it returns false throw an exception.
     if (!$deleteinstancefunction($cm->instance)) {
