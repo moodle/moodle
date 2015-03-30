@@ -110,6 +110,8 @@ Feature: Glossary entries can be organised in categories
     And I should see "2 Entries" in the "CategoryAutoLinks" "table_row"
     And I click on "Delete" "link" in the "CategoryAutoLinks" "table_row"
     And I press "Yes"
+    And I wait to be redirected
+    And I follow "MyGlossary"
     And I follow "Browse by category"
     And I should see "EntryCategoryNL"
     And I should not see "EntryNoCategory"

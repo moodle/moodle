@@ -57,6 +57,8 @@ Feature: In a group assignment, teacher can annotate PDF files for all users
     And I click on ".navigate-next-button" "css_element"
     And I click on ".stampbutton" "css_element"
     And I click on ".drawingcanvas" "css_element"
+    And I change window size to "medium"
+    And I wait until the page is ready
     And I click on "Close" "button"
     And I press "Save changes"
     And I should see "The grade changes were saved"
