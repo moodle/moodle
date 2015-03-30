@@ -336,6 +336,12 @@ class mod_lesson_mod_form extends moodleform_mod {
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
+        // Check open and close times are consistent.
+        if ($data['available'] != 0 && $data['deadline'] != 0 &&
+                $data['deadline'] < $data['available']) {
+            $errors['deadline'] = get_string('closebeforeopen', 'lesson');
+        }
+
         if (!empty($data['usepassword']) && empty($data['password'])) {
             $errors['password'] = get_string('emptypassword', 'lesson');
         }
