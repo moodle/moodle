@@ -1004,6 +1004,22 @@ class grade_report_user extends grade_report {
             }
         }
     }
+
+    /**
+     * Trigger the grade_report_viewed event
+     *
+     * @since Moodle 2.9
+     */
+    public function viewed() {
+        $event = \gradereport_user\event\grade_report_viewed::create(
+            array(
+                'context' => $this->context,
+                'courseid' => $this->courseid,
+                'relateduserid' => $this->user->id,
+            )
+        );
+        $event->trigger();
+    }
 }
 
 function grade_report_user_settings_definition(&$mform) {
