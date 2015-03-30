@@ -94,4 +94,47 @@ class core_user_profilelib_testcase extends advanced_testcase {
             $this->assertNotNull($formfield);
         }
     }
+
+    /**
+     * Test profile_view function
+     */
+    public function test_profile_view() {
+        global $USER;
+
+        $this->resetAfterTest();
+
+        // Course without sections.
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $user = $this->getDataGenerator()->create_user();
+        $usercontext = context_user::instance($user->id);
+
+        $this->setUser($user);
+
+        // Redirect events to the sink, so we can recover them later.
+        $sink = $this->redirectEvents();
+
+        profile_view($user, $context, $course);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check the event details are correct.
+        $this->assertInstanceOf('\core\event\user_profile_viewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEquals($user->id, $event->relateduserid);
+        $this->assertEquals($course->id, $event->other['courseid']);
+        $this->assertEquals($course->shortname, $event->other['courseshortname']);
+        $this->assertEquals($course->fullname, $event->other['coursefullname']);
+
+        profile_view($user, $usercontext);
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+
+        $this->assertInstanceOf('\core\event\user_profile_viewed', $event);
+        $this->assertEquals($usercontext, $event->get_context());
+        $this->assertEquals($user->id, $event->relateduserid);
+
+    }
+
 }
