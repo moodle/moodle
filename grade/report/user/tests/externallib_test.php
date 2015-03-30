@@ -161,4 +161,51 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
 
     }
 
+    /**
+     * Test view_grade_report function
+     */
+    public function test_view_grade_report() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+
+        $s1grade = 80;
+        $s2grade = 60;
+        list($course, $teacher, $student1, $student2) = $this->load_data($s1grade, $s2grade);
+
+        // Redirect events to the sink, so we can recover them later.
+        $sink = $this->redirectEvents();
+
+        $this->setUser($student1);
+        gradereport_user_external::view_grade_report($course->id);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Check the event details are correct.
+        $this->assertInstanceOf('\gradereport_user\event\grade_report_viewed', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals($USER->id, $event->get_data()['relateduserid']);
+
+        $this->setUser($teacher);
+        gradereport_user_external::view_grade_report($course->id, $student1->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+        $sink->close();
+
+        // Check the event details are correct.
+        $this->assertInstanceOf('\gradereport_user\event\grade_report_viewed', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals($student1->id, $event->get_data()['relateduserid']);
+
+        $this->setUser($student2);
+        try {
+            $studentgrade = gradereport_user_external::view_grade_report($course->id, $student1->id);
+            $this->fail('Exception expected due to not permissions to view other user grades.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissiontoviewgrades', $e->errorcode);
+        }
+
+    }
+
 }
