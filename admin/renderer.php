@@ -721,6 +721,8 @@ class core_admin_renderer extends plugin_renderer_base {
                 foreach ($updates['core'] as $update) {
                     $updateinfo .= $this->moodle_available_update_info($update);
                 }
+                $updateinfo .= html_writer::tag('p', get_string('updateavailablerecommendation', 'core_admin'),
+                    array('class' => 'updateavailablerecommendation'));
             }
             unset($updates['core']);
             // If something has left in the $updates array now, it is updates for plugins.
