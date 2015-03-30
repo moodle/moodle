@@ -14,5 +14,5 @@ Feature: Atto charmap button
     And I click on "copyright sign" "button"
     And I press "Update profile"
     And I follow "Edit profile"
-    Then I should see "(c)"
+    Then I should see "©"
 

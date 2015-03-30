@@ -690,9 +690,6 @@ table#categoryquestions {
     padding: 0.1em;
     background-color: #F9F9F9;
 }
-#page-mod-quiz-edit .reorder .questioncontentcontainer .quiz_randomquestion {
-    position: relative;
-}
 #page-mod-quiz-edit .reorder div.question div.content div.quiz_randomquestion {
     line-height: 1em;
 }

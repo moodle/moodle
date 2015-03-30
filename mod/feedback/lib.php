@@ -395,9 +395,12 @@ function feedback_get_recent_mod_activity(&$activities, &$index,
         $sql .= " JOIN {groups_members} gm ON  gm.userid=u.id ";
     }
 
-    $sql .= " WHERE fc.timemodified > ? AND fk.id = ? ";
+    $sql .= " WHERE fc.timemodified > ?
+                AND fk.id = ?
+                AND fc.anonymous_response = ?";
     $sqlargs[] = $timemodified;
     $sqlargs[] = $cm->instance;
+    $sqlargs[] = FEEDBACK_ANONYMOUS_NO;
 
     if ($userid) {
         $sql .= " AND u.id = ? ";

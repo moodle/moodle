@@ -1119,20 +1119,34 @@ class core_user_external extends external_api {
             return $warnings;
         }
 
-        $userdevice = new stdclass;
-        $userdevice->userid     = $USER->id;
-        $userdevice->appid      = $params['appid'];
-        $userdevice->name       = $params['name'];
-        $userdevice->model      = $params['model'];
-        $userdevice->platform   = $params['platform'];
-        $userdevice->version    = $params['version'];
-        $userdevice->pushid     = $params['pushid'];
-        $userdevice->uuid       = $params['uuid'];
-        $userdevice->timecreated  = time();
-        $userdevice->timemodified = $userdevice->timecreated;
+        // Notice that we can have multiple devices because previously it was allowed to have repeated ones.
+        // Since we don't have a clear way to decide which one is the more appropiate, we update all.
+        if ($userdevices = $DB->get_records('user_devices', array('uuid' => $params['uuid'],
+                'appid' => $params['appid'], 'userid' => $USER->id))) {
 
-        if (!$DB->insert_record('user_devices', $userdevice)) {
-            throw new moodle_exception("There was a problem saving in the database the device with key: " . $params['pushid']);
+            foreach ($userdevices as $userdevice) {
+                $userdevice->version    = $params['version'];   // Maybe the user upgraded the device.
+                $userdevice->pushid     = $params['pushid'];
+                $userdevice->timemodified  = time();
+                $DB->update_record('user_devices', $userdevice);
+            }
+
+        } else {
+            $userdevice = new stdclass;
+            $userdevice->userid     = $USER->id;
+            $userdevice->appid      = $params['appid'];
+            $userdevice->name       = $params['name'];
+            $userdevice->model      = $params['model'];
+            $userdevice->platform   = $params['platform'];
+            $userdevice->version    = $params['version'];
+            $userdevice->pushid     = $params['pushid'];
+            $userdevice->uuid       = $params['uuid'];
+            $userdevice->timecreated  = time();
+            $userdevice->timemodified = $userdevice->timecreated;
+
+            if (!$DB->insert_record('user_devices', $userdevice)) {
+                throw new moodle_exception("There was a problem saving in the database the device with key: " . $params['pushid']);
+            }
         }
 
         return $warnings;
