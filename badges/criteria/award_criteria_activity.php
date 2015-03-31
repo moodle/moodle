@@ -37,7 +37,7 @@ class award_criteria_activity extends award_criteria {
     public $criteriatype = BADGE_CRITERIA_TYPE_ACTIVITY;
 
     private $courseid;
-    private $coursestartdate;
+    private $course;
 
     public $required_param = 'module';
     public $optional_params = array('bydate');
@@ -46,11 +46,10 @@ class award_criteria_activity extends award_criteria {
         global $DB;
         parent::__construct($record);
 
-        $course = $DB->get_record_sql('SELECT b.courseid, c.startdate
+        $this->course = $DB->get_record_sql('SELECT c.id, c.enablecompletion, c.cacherev, c.startdate
                         FROM {badge} b INNER JOIN {course} c ON b.courseid = c.id
                         WHERE b.id = :badgeid ', array('badgeid' => $this->badgeid));
-        $this->courseid = $course->courseid;
-        $this->coursestartdate = $course->startdate;
+        $this->courseid = $this->course->id;
     }
 
     /**
@@ -107,13 +106,11 @@ class award_criteria_activity extends award_criteria {
      *
      */
     public function get_options(&$mform) {
-        global $DB;
-
         $none = true;
         $existing = array();
         $missing = array();
 
-        $course = $DB->get_record('course', array('id' => $this->courseid));
+        $course = $this->course;
         $info = new completion_info($course);
         $mods = $info->get_activities();
         $mids = array_keys($mods);
@@ -187,14 +184,12 @@ class award_criteria_activity extends award_criteria {
      */
     public function review($userid, $filtered = false) {
         $completionstates = array(COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS);
-        $course = new stdClass();
-        $course->id = $this->courseid;
 
-        if ($this->coursestartdate > time()) {
+        if ($this->course->startdate > time()) {
             return false;
         }
 
-        $info = new completion_info($course);
+        $info = new completion_info($this->course);
 
         $overall = false;
         foreach ($this->params as $param) {
