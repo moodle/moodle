@@ -838,6 +838,15 @@ $functions = array(
         'capabilities'  => '',
     ),
 
+    'core_message_mark_message_read' => array(
+        'classname'     => 'core_message_external',
+        'methodname'    => 'mark_message_read',
+        'classpath'     => 'message/externallib.php',
+        'description'   => 'Mark a single message as read, trigger message_viewed event.',
+        'type'          => 'write',
+        'capabilities'  => '',
+    ),
+
     // === notes related functions ===
 
     'moodle_notes_create_notes' => array(
@@ -1068,6 +1077,7 @@ $services = array(
             'core_course_view_course',
             'core_completion_get_activities_completion_status',
             'core_notes_get_course_notes',
+            'core_message_mark_message_read',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
