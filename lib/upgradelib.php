@@ -2227,3 +2227,21 @@ function check_database_storage_engine(environment_results $result) {
 
     return null;
 }
+
+/**
+ * Method used to check the usage of slasharguments config and display a warning message.
+ *
+ * @param environment_results $result object to update, if relevant.
+ * @return environment_results|null updated results or null if slasharguments is disabled.
+ */
+function check_slasharguments(environment_results $result){
+    global $CFG;
+
+    if (empty($CFG->slasharguments)) {
+        $result->setInfo('slasharguments');
+        $result->setStatus(false);
+        return $result;
+    }
+
+    return null;
+}
