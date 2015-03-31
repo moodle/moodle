@@ -380,4 +380,71 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $result['personalnotes']);
 
     }
+
+    /**
+     * Test view_notes
+     */
+    public function test_view_notes() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+        $CFG->enablenotes = true;
+
+        // Take role definitions.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+
+        // Create students and teachers.
+        $student = $this->getDataGenerator()->create_user();
+        $teacher = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+
+        // Enroll students and teachers to course.
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        // Generate notes.
+        $gen = $this->getDataGenerator()->get_plugin_generator('core_notes');
+        $this->setUser($teacher);
+
+        // NoteA1: on student (Course) by Teacher.
+        $params = array('courseid' => $course->id, 'userid' => $student->id, 'publishstate' => NOTES_STATE_PUBLIC,
+            'usermodified' => $teacher->id);
+        $notea1 = $gen->create_instance($params);
+
+        $sink = $this->redirectEvents();
+
+        $result = core_notes_external::view_notes($course->id, $student->id);
+        $result = external_api::clean_returnvalue(core_notes_external::view_notes_returns(), $result);
+
+        $result = core_notes_external::view_notes($course->id);
+        $result = external_api::clean_returnvalue(core_notes_external::view_notes_returns(), $result);
+
+        $events = $sink->get_events();
+
+        $this->assertCount(2, $events);
+
+        $this->assertInstanceOf('\core\event\notes_viewed', $events[0]);
+        $this->assertEquals($coursecontext, $events[0]->get_context());
+        $this->assertEquals($student->id, $events[0]->relateduserid);
+
+        $this->assertInstanceOf('\core\event\notes_viewed', $events[1]);
+        $this->assertEquals($coursecontext, $events[1]->get_context());
+        $this->assertEquals(0, $events[1]->relateduserid);
+
+        try {
+            core_notes_external::view_notes(0);
+            $this->fail('Exception expected due to invalid permissions at system level.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        try {
+            core_notes_external::view_notes($course->id, $student->id + 100);
+            $this->fail('Exception expected due to invalid user id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invaliduser', $e->errorcode);
+        }
+    }
 }
