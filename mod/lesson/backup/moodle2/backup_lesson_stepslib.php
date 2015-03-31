@@ -69,7 +69,8 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // alot goes into it but nothing relational other than course when will
         // need to be corrected upon restore
         $lesson = new backup_nested_element('lesson', array('id'), array(
-            'course', 'name', 'practice', 'modattempts', 'usepassword', 'password',
+            'course', 'name', 'intro', 'introformat', 'practice', 'modattempts',
+            'usepassword', 'password',
             'dependency', 'conditions', 'grade', 'custom', 'ongoing', 'usemaxgrade',
             'maxanswers', 'maxattempts', 'review', 'nextpagedefault', 'feedback',
             'minquestions', 'maxpages', 'timelimit', 'retake', 'activitylink',
@@ -189,6 +190,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         $timer->annotate_ids('user', 'userid');
 
         // Annotate the file areas in user by the lesson module.
+        $lesson->annotate_files('mod_lesson', 'intro', null);
         $lesson->annotate_files('mod_lesson', 'mediafile', null);
         $page->annotate_files('mod_lesson', 'page_contents', 'id');
         $answer->annotate_files('mod_lesson', 'page_answers', 'id');
