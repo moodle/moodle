@@ -395,8 +395,10 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $iter = new \RecursiveIteratorIterator($dir, \RecursiveIteratorIterator::CHILD_FIRST);
 
         for ($iter->rewind(); $iter->valid(); $iter->next()) {
-            $node = $iter->getRealPath();
-            touch($node, time() - (8 * 24 * 3600));
+            if ($iter->isDir() && !$iter->isDot()) {
+                $node = $iter->getRealPath();
+                touch($node, time() - (8 * 24 * 3600));
+            }
         }
 
         // Run the scheduled task again to remove all of the files and directories.
