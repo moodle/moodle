@@ -147,10 +147,8 @@ abstract class base {
             return false;
         }
         if ($this->versiondb === null and $this->versiondisk === null) {
-            // There is no version.php or version info inside,
-            // for now let's pretend it is ok.
-            // TODO: return false once we require version in each plugin.
-            return true;
+            // There is no version.php or version info inside it.
+            return false;
         }
 
         return ((float)$this->versiondb === (float)$this->versiondisk);
