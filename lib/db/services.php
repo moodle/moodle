@@ -885,6 +885,15 @@ $functions = array(
         'capabilities'=> 'moodle/notes:manage',
     ),
 
+    'core_notes_view_notes' => array(
+        'classname'     => 'core_notes_external',
+        'methodname'    => 'view_notes',
+        'classpath'     => 'notes/externallib.php',
+        'description'   => 'Simulates the web interface view of notes/index.php: trigger events.',
+        'type'          => 'write',
+        'capabilities'  => 'moodle/notes:view',
+    ),
+
     // === grading related functions ===
 
     'core_grading_get_definitions' => array(
@@ -1068,6 +1077,7 @@ $services = array(
             'core_course_view_course',
             'core_completion_get_activities_completion_status',
             'core_notes_get_course_notes',
+            'core_notes_view_notes',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
