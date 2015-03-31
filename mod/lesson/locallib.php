@@ -1882,6 +1882,8 @@ abstract class lesson_page extends lesson_base {
         global $DB;
         // first delete all the associated records...
         $DB->delete_records("lesson_attempts", array("pageid" => $this->properties->id));
+
+        $DB->delete_records("lesson_branch", array("pageid" => $this->properties->id));
         // ...now delete the answers...
         $DB->delete_records("lesson_answers", array("pageid" => $this->properties->id));
         // ..and the page itself
