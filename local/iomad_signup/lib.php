@@ -39,7 +39,8 @@ function local_iomad_signup_user_created($user) {
     $context = context_system::instance();
 
     // Check if we have a domain already for this users email address.
-    if ($domaininfo = $DB->get_record('company_domains', array('domain' => substr(strrchr($user->email, "@"), 1)))) {
+    list($dump, $emaildomain) = explode('@', $user->email); 
+    if ($domaininfo = $DB->get_record_sql("SELECT * FROM {company_domains} WHERE " . $DB->sql_compare_text('domain') . " = '" . $DB->sql_compare_text($emaildomain)."'")) {
         // Get company.
         $company = new company($domaininfo->companyid);
 
