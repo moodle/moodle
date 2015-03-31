@@ -19,6 +19,9 @@
 .path-mod-book .navtop {
     margin-bottom: 0.5em;
 }
+.path-mod-book .navbottom {
+    margin-top: 0.5em;
+}
 
 /* == Fake toc block == */
 
@@ -87,4 +90,46 @@
 }
 .path-mod-book .book_toc_indented li li {
     list-style: none;
+}
+
+/* Text style links */
+.navtop.navtext .chaptername,
+.navbottom.navtext .chaptername {
+    font-weight: bolder;
+}
+.navtop.navtext a,
+.navbottom.navtext a {
+    display: inline-block;
+    max-width: 45%;
+}
+.navtop.navtext a.bookprev,
+.navbottom.navtext a.bookprev {
+    float: left;
+    text-align: left;
+}
+.dir-rtl .navtop.navtext a.bookprev,
+.dir-rtl .navbottom.navtext a.bookprev {
+    float: right;
+    text-align: right;
+}
+
+@media (max-width: 480px) {
+    .path-mod-book .navbottom,
+    .path-mod-book .navtop,
+    .dir-rtl.path-mod-book .navbottom,
+    .dir-rtl.path-mod-book .navtop {
+        text-align: center;
+    }
+    .navtop.navtext a,
+    .navbottom.navtext a {
+        display: block;
+        max-width: 100%;
+        margin: auto;
+    }
+    .navtop.navtext a.bookprev,
+    .navbottom.navtext a.bookprev,
+    .dir-rtl .navtop.navtext a.bookprev,
+    .dir-rtl .navbottom.navtext a.bookprev {
+        float: none;
+    }
 }

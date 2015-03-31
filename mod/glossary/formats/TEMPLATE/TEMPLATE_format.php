@@ -48,17 +48,6 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
 
         echo '<td class="entryattachment">';
 
-        //Use this function to show the attachment. It'll be showed if necessary
-        //Comments: You can configure this parameters:
-        //----Define how to show the attachment
-        $attachmentformat = 'html'; //Values: html (link) and NULL (inline image if possible) (default NULL)
-        //----Define where to show the attachment
-        $attachmentalign = 'right'; //Values: left, center and right (default right)
-        //----Define if the attachment must be showed into a 100% width table
-        $attachmentinsidetable = true; //Values: true, false (default true)
-        //Call the function
-        glossary_print_entry_attachment($entry, $cm, $attachmentformat, $attachmentalign, $attachmentinsidetable);
-
         //Line separator to show this template fine. :-)
         echo "<br />\n";
 
@@ -77,6 +66,9 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
         //Use this function to show the definition
         //Comments: Configuration not supported
         glossary_print_entry_definition($entry, $glossary, $cm);
+
+        // Use this function to show the attachment. It'll be shown if necessary.
+        glossary_print_entry_attachment($entry, $cm, 'html');
 
         //Line separator to show this template fine. :-)
         echo "<br />\n";

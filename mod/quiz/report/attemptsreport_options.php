@@ -119,6 +119,11 @@ class mod_quiz_attempts_report_options {
             'attempts'   => $this->attempts,
             'onlygraded' => $this->onlygraded,
         );
+
+        if ($this->states) {
+            $params['states'] = implode('-', $this->states);
+        }
+
         if (groups_get_activity_groupmode($this->cm, $this->course)) {
             $params['group'] = $this->group;
         }
@@ -164,6 +169,12 @@ class mod_quiz_attempts_report_options {
         $toform->onlygraded = $this->onlygraded;
         $toform->pagesize   = $this->pagesize;
 
+        if ($this->states) {
+            foreach (self::$statefields as $field => $state) {
+                $toform->$field = in_array($state, $this->states);
+            }
+        }
+
         return $toform;
     }
 
@@ -186,7 +197,7 @@ class mod_quiz_attempts_report_options {
     }
 
     /**
-     * Set the fields of this object from the user's preferences.
+     * Set the fields of this object from the URL parameters.
      */
     public function setup_from_params() {
         $this->attempts   = optional_param('attempts', $this->attempts, PARAM_ALPHAEXT);
@@ -194,8 +205,10 @@ class mod_quiz_attempts_report_options {
         $this->onlygraded = optional_param('onlygraded', $this->onlygraded, PARAM_BOOL);
         $this->pagesize   = optional_param('pagesize', $this->pagesize, PARAM_INT);
 
-        $this->states = explode('-', optional_param('states',
-                implode('-', $this->states), PARAM_ALPHAEXT));
+        $states = optional_param('states', '', PARAM_ALPHAEXT);
+        if (!empty($states)) {
+            $this->states = explode('-', $states);
+        }
 
         $this->download   = optional_param('download', $this->download, PARAM_ALPHA);
     }
@@ -259,12 +272,20 @@ class mod_quiz_attempts_report_options {
             $this->onlygraded = false;
         }
 
-        if ($this->onlygraded) {
-            $this->states = array(quiz_attempt::FINISHED);
+        if (!$this->is_showing_finished_attempts()) {
+            $this->onlygraded = false;
         }
 
         if ($this->pagesize < 1) {
             $this->pagesize = quiz_attempts_report::DEFAULT_PAGE_SIZE;
         }
+    }
+
+    /**
+     * Whether the options are such that finished attempts are being shown.
+     * @return boolean
+     */
+    protected function is_showing_finished_attempts() {
+        return $this->states === null || in_array(quiz_attempt::FINISHED, $this->states);
     }
 }

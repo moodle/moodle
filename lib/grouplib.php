@@ -513,8 +513,11 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
     $context = context_course::instance($course->id);
     $aag = has_capability('moodle/site:accessallgroups', $context);
 
+    $usergroups = array();
     if ($groupmode == VISIBLEGROUPS or $aag) {
         $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
+        // Get user's own groups and put to the top.
+        $usergroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
     } else {
         $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
     }
@@ -526,11 +529,7 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
         $groupsmenu[0] = get_string('allparticipants');
     }
 
-    if ($allowedgroups) {
-        foreach ($allowedgroups as $group) {
-            $groupsmenu[$group->id] = format_string($group->name);
-        }
-    }
+    $groupsmenu += groups_sort_menu_options($allowedgroups, $usergroups);
 
     if ($groupmode == VISIBLEGROUPS) {
         $grouplabel = get_string('groupsvisible');
@@ -563,6 +562,55 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
 }
 
 /**
+ * Turn an array of groups into an array of menu options.
+ * @param array $groups of group objects.
+ * @return array groupid => formatted group name.
+ */
+function groups_list_to_menu($groups) {
+    $groupsmenu = array();
+    foreach ($groups as $group) {
+        $groupsmenu[$group->id] = format_string($group->name);
+    }
+    return $groupsmenu;
+}
+
+/**
+ * Takes user's allowed groups and own groups and formats for use in group selector menu
+ * If user has allowed groups + own groups will add to an optgroup
+ * Own groups are removed from allowed groups
+ * @param array $allowedgroups All groups user is allowed to see
+ * @param array $usergroups Groups user belongs to
+ * @return array
+ */
+function groups_sort_menu_options($allowedgroups, $usergroups) {
+    $useroptions = array();
+    if ($usergroups) {
+        $useroptions = groups_list_to_menu($usergroups);
+
+        // Remove user groups from other groups list.
+        foreach ($usergroups as $group) {
+            unset($allowedgroups[$group->id]);
+        }
+    }
+
+    $allowedoptions = array();
+    if ($allowedgroups) {
+        $allowedoptions = groups_list_to_menu($allowedgroups);
+    }
+
+    if ($useroptions && $allowedoptions) {
+        return array(
+            1 => array(get_string('mygroups', 'group') => $useroptions),
+            2 => array(get_string('othergroups', 'group') => $allowedoptions)
+        );
+    } else if ($useroptions) {
+        return $useroptions;
+    } else {
+        return $allowedoptions;
+    }
+}
+
+/**
  * Generates html to print menu selector for course level, listing all groups.
  * Note: This api does not do any group mode check use groups_print_course_menu() instead if you want proper checks.
  *
@@ -587,9 +635,7 @@ function groups_allgroups_course_menu($course, $urlroot, $update = false, $activ
         $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
     }
 
-    foreach ($allowedgroups as $group) {
-        $groupsmenu[$group->id] = format_string($group->name);
-    }
+    $groupsmenu += groups_list_to_menu($allowedgroups);
 
     if ($update) {
         // Init activegroup array if necessary.
@@ -665,8 +711,11 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
     $context = context_module::instance($cm->id);
     $aag = has_capability('moodle/site:accessallgroups', $context);
 
+    $usergroups = array();
     if ($groupmode == VISIBLEGROUPS or $aag) {
         $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid); // any group in grouping
+        // Get user's own groups and put to the top.
+        $usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
     } else {
         $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid); // only assigned groups
     }
@@ -678,11 +727,7 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
         $groupsmenu[0] = get_string('allparticipants');
     }
 
-    if ($allowedgroups) {
-        foreach ($allowedgroups as $group) {
-            $groupsmenu[$group->id] = format_string($group->name);
-        }
-    }
+    $groupsmenu += groups_sort_menu_options($allowedgroups, $usergroups);
 
     if ($groupmode == VISIBLEGROUPS) {
         $grouplabel = get_string('groupsvisible');
@@ -846,105 +891,6 @@ function groups_get_activity_allowed_groups($cm,$userid=0) {
         // ...otherwise they can only access groups they belong to
         return groups_get_all_groups($cm->course, $userid, $cm->groupingid);
     }
-}
-
-/**
- * Filter a user list and return only the users that can see the course module based on
- * groups/permissions etc. It is assumed that the users are pre-filtered to those who are enrolled in the course.
- *
- * @category group
- * @param stdClass $cm The course module
- * @param array $users An array of users, indexed by userid
- * @return array A filtered list of users that can see the module, indexed by userid.
- */
-function groups_filter_users_by_course_module_visible($cm, $users) {
-    global $CFG, $DB;
-
-    if (empty($CFG->enablegroupmembersonly)) {
-        return $users;
-    }
-    if (empty($cm->groupmembersonly)) {
-        return $users;
-    }
-    list($usql, $uparams) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED, 'userid', true);
-
-    // Group membership sub-query.
-    if ($cm->groupingid) {
-        // Find out if member of any group in selected activity grouping.
-        $igsql = "SELECT gm.userid
-                  FROM {groups_members} gm
-                  LEFT JOIN {groupings_groups} gg
-                  ON gm.groupid = gg.groupid
-                  WHERE gm.userid $usql AND gg.groupingid = :groupingid";
-        $igparams = array_merge($uparams, array('groupingid' => $cm->groupingid));
-
-    } else {
-        // No grouping used - check all groups in course.
-        $igsql = "SELECT gm.userid
-                  FROM {groups_members} gm
-                  LEFT JOIN {groups} g
-                  ON gm.groupid = g.id
-                  WHERE gm.userid $usql AND g.courseid = :courseid";
-        $igparams = array_merge($uparams, array('courseid' => $cm->course));
-    }
-
-    $context = context_module::instance($cm->id);
-
-    // Get the list of users in a valid group.
-    $usersingroup = $DB->get_records_sql($igsql, $igparams);
-    if (!$usersingroup) {
-        $usersingroup = array();
-    } else {
-        $usersingroup = array_keys($usersingroup);
-    }
-
-    // Get the list of users who can access all groups.
-    list($accessallgroupssql, $accessallgroupsparams) = get_enrolled_sql($context, 'moodle/site:accessallgroups');
-
-    $userswithaccessallgroups = $DB->get_records_sql($accessallgroupssql, $accessallgroupsparams);
-    if (!$userswithaccessallgroups) {
-        $userswithaccessallgroups = array();
-    } else {
-        $userswithaccessallgroups = array_keys($userswithaccessallgroups);
-    }
-
-    // Explaining this array mangling:
-    // $users is an array of $user[$userid] => stdClass etc
-    // $userswithaccessallgroups is an array of $userswithaccessallgroups[random int] = $userid
-    // $usersingroup is an array of $usersingroup[random int] = $userid
-    // so - the inner array_merge combines the values of the 2 arrays disregarding the keys (because they are ints)
-    // this is then flipped so the values become the keys (and the values are now nonsense)
-    // this is then intersected with the users array only by looking at the keys - this
-    // returns only the users from the original array that had a value in one of the two $usersxxx lists.
-    return array_intersect_key($users, array_flip(array_merge($userswithaccessallgroups, $usersingroup)));
-}
-
-/**
- * Determine if a course module is currently visible to a user
- *
- * $USER If $userid is null, use the global object.
- *
- * @category group
- * @param stdClass|cm_info $cm The course module
- * @param int $userid The user to check against the group.
- * @return bool True if the user can view the course module, false otherwise.
- */
-function groups_course_module_visible($cm, $userid=null) {
-    global $CFG, $USER;
-
-    if (empty($userid)) {
-        $userid = $USER->id;
-    }
-    if (empty($CFG->enablegroupmembersonly)) {
-        return true;
-    }
-    if (empty($cm->groupmembersonly)) {
-        return true;
-    }
-    if (has_capability('moodle/site:accessallgroups', context_module::instance($cm->id), $userid) or groups_has_membership($cm, $userid)) {
-        return true;
-    }
-    return false;
 }
 
 /**

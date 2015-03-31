@@ -48,11 +48,12 @@ class core_role_potential_assignees_below_course extends core_role_assign_user_s
         $fields      = 'SELECT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(u.id)';
 
-        $sql   = " FROM {user} u
-              LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.roleid = :roleid AND ra.contextid = :contextid)
-                  WHERE u.id IN ($enrolsql)
-                        $wherecondition
-                        AND ra.id IS NULL";
+        $sql   = " FROM ($enrolsql) enrolled_users_view
+                   JOIN {user} u ON u.id = enrolled_users_view.id
+              LEFT JOIN {role_assignments} ra ON (ra.userid = enrolled_users_view.id AND
+                                            ra.roleid = :roleid AND ra.contextid = :contextid)
+                  WHERE ra.id IS NULL
+                        $wherecondition";
         $params['contextid'] = $this->context->id;
         $params['roleid'] = $this->roleid;
 

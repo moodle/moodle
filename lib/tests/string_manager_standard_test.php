@@ -67,6 +67,48 @@ class core_string_manager_standard_testcase extends advanced_testcase {
         // Descendant of an orphaned language (N/A < bb < bc).
         $this->assertSame(array('bb', 'bc'), $stringman->get_language_dependencies('bc'));
     }
+
+    public function test_deprecated_strings() {
+        $stringman = get_string_manager();
+
+        // Check non-deprecated string.
+        $this->assertFalse($stringman->string_deprecated('hidden', 'grades'));
+
+        // Check deprecated string.
+        $this->assertTrue($stringman->string_deprecated('hidden', 'repository'));
+        $this->assertTrue($stringman->string_exists('hidden', 'repository'));
+        $this->assertDebuggingNotCalled();
+        $this->assertEquals('Hidden', get_string('hidden', 'repository'));
+        $this->assertDebuggingCalled('String [hidden,core_repository] is deprecated. '.
+            'Either you should no longer be using that string, or the string has been incorrectly deprecated, in which case you should report this as a bug. '.
+            'Please refer to https://docs.moodle.org/dev/String_deprecation');
+    }
+
+    /**
+     * This test is a built-in validation of deprecated.txt files in lang locations.
+     *
+     * It will fail if the string in the wrong format or non-existing (mistyped) string was deprecated.
+     */
+    public function test_validate_deprecated_strings_files() {
+        global $CFG;
+        $stringman = get_string_manager();
+        $teststringman = testable_core_string_manager::instance($CFG->langotherroot, $CFG->langlocalroot, array());
+        $allstrings = $teststringman->get_all_deprecated_strings();
+
+        foreach ($allstrings as $string) {
+            if (!preg_match('/^(.*),(.*)$/', $string, $matches) ||
+                clean_param($matches[2], PARAM_COMPONENT) !== $matches[2]) {
+                $this->fail('String "'.$string.'" appearing in one of the lang/en/deprecated.txt files does not have correct syntax');
+            }
+            list($pluginttype, $pluginname) = core_component::normalize_component($matches[2]);
+            if ($matches[2] !== $pluginttype . '_' . $pluginname) {
+                $this->fail('String "'.$string.'" appearing in one of the lang/en/deprecated.txt files does not have normalised component name');
+            }
+            if (!$stringman->string_exists($matches[1], $matches[2])) {
+                $this->fail('String "'.$string.'" appearing in one of the lang/en/deprecated.txt files does not exist');
+            }
+        }
+    }
 }
 
 
@@ -100,5 +142,9 @@ class testable_core_string_manager extends core_string_manager_standard {
         }
 
         return new testable_core_string_manager($otherroot, $localroot, $usecache, $translist, $menucache);
+    }
+
+    public function get_all_deprecated_strings() {
+        return array_flip($this->load_deprecated_strings());
     }
 }

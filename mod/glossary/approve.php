@@ -49,6 +49,11 @@ if (($newstate != $entry->approved) && confirm_sesskey()) {
     if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $glossary->completionentries) {
         $completion->update_state($cm, COMPLETION_COMPLETE, $entry->userid);
     }
+
+    // Reset caches.
+    if ($entry->usedynalink) {
+        \mod_glossary\local\concept_cache::reset_glossary($glossary);
+    }
 }
 
 redirect("view.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook");

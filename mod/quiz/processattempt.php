@@ -157,13 +157,6 @@ if (!$finishattempt) {
     }
 }
 
-// Otherwise, we have been asked to finish attempt, so do that.
-
-// Log the end of this attempt.
-add_to_log($attemptobj->get_courseid(), 'quiz', 'close attempt',
-        'review.php?attempt=' . $attemptobj->get_attemptid(),
-        $attemptobj->get_quizid(), $attemptobj->get_cmid());
-
 // Update the quiz attempt record.
 try {
     if ($becomingabandoned) {

@@ -45,6 +45,8 @@ function get_new_importcode() {
 function grade_import_commit($courseid, $importcode, $importfeedback=true, $verbose=true) {
     global $CFG, $USER, $DB, $OUTPUT;
 
+    $failed = false;
+    $executionerrors = false;
     $commitstart = time(); // start time in case we need to roll back
     $newitemids = array(); // array to hold new grade_item ids from grade_import_newitem table, mapping array
 
@@ -57,11 +59,11 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
         // instances of the new grade_items created, cached
         // in case grade_update fails, so that we can remove them
         $instances = array();
-        $failed = false;
         foreach ($newitems as $newitem) {
             // get all grades with this item
 
-            if ($grades = $DB->get_records('grade_import_values', array('newgradeitem' => $newitem->id))) {
+            $gradeimportparams = array('newgradeitem' => $newitem->id, 'importcode' => $importcode, 'importer' => $USER->id);
+            if ($grades = $DB->get_records('grade_import_values', $gradeimportparams)) {
                 /// create a new grade item for this - must use false as second param!
                 /// TODO: we need some bounds here too
                 $gradeitem = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual', 'itemname'=>$newitem->itemname), false);
@@ -104,7 +106,8 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
                 return false;
             }
             // get all grades with this item
-            if ($grades = $DB->get_records('grade_import_values', array('itemid' => $itemid))) {
+            $gradeimportparams = array('itemid' => $itemid, 'importcode' => $importcode, 'importer' => $USER->id);
+            if ($grades = $DB->get_records('grade_import_values', $gradeimportparams)) {
 
                 // make the grades array for update_grade
                 foreach ($grades as $grade) {
@@ -112,7 +115,11 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
                         $grade->feedback = false; // ignore it
                     }
                     if (!$gradeitem->update_final_grade($grade->userid, $grade->finalgrade, 'import', $grade->feedback)) {
-                        $failed = 1;
+                        $errordata = new stdClass();
+                        $errordata->itemname = $gradeitem->itemname;
+                        $errordata->userid = $grade->userid;
+                        $executionerrors[] = get_string('errorsettinggrade', 'grades', $errordata);
+                        $failed = true;
                         break 2;
                     }
                 }
@@ -120,11 +127,17 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
                 $modifieditems[] = $itemid;
 
             }
+        }
 
-            if (!empty($failed)) {
-                import_cleanup($importcode);
-                return false;
+        if ($failed) {
+            if ($executionerrors && $verbose) {
+                echo $OUTPUT->notification(get_string('gradeimportfailed', 'grades'));
+                foreach ($executionerrors as $errorstr) {
+                    echo $OUTPUT->notification($errorstr);
+                }
             }
+            import_cleanup($importcode);
+            return false;
         }
     }
 

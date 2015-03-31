@@ -34,8 +34,8 @@ $string['admindirname'] = 'Admin directory';
 $string['availablelangs'] = 'Available language packs';
 $string['chooselanguagehead'] = 'Choose a language';
 $string['chooselanguagesub'] = 'Please choose a language for the installation. This language will also be used as the default language for the site, though it may be changed later.';
-$string['clialreadyconfigured'] = 'File config.php already exists, please use admin/cli/install_database.php if you want to install this site.';
-$string['clialreadyinstalled'] = 'File config.php already exists, please use admin/cli/upgrade.php if you want to upgrade this site.';
+$string['clialreadyconfigured'] = 'The configuration file config.php already exists. Please use admin/cli/install_database.php to install Moodle for this site.';
+$string['clialreadyinstalled'] = 'The configuration file config.php already exists. Please use admin/cli/install_database.php to upgrade Moodle for this site.';
 $string['cliinstallheader'] = 'Moodle {$a} command line installation program';
 $string['databasehost'] = 'Database host';
 $string['databasename'] = 'Database name';
@@ -77,14 +77,15 @@ $string['pathsroparentdataroot'] = 'Parent directory ({$a->parent}) is not write
 $string['pathssubadmindir'] = 'A very few webhosts use /admin as a special URL for you to access a
 control panel or something.  Unfortunately this conflicts with the standard location for the Moodle admin pages.  You can fix this by
 renaming the admin directory in your installation, and putting that  new name here.  For example: <em>moodleadmin</em>. This will fix admin links in Moodle.';
-$string['pathssubdataroot'] = 'You need a place where Moodle can save uploaded files. This directory should be readable AND WRITEABLE by the web server user
-(usually \'nobody\' or \'apache\'), but it must not be accessible directly via the web. The installer will try to create it if doesn\'t exist.';
-$string['pathssubdirroot'] = 'Full directory path to Moodle installation.';
-$string['pathssubwwwroot'] = 'Full web address where Moodle will be accessed.
-It\'s not possible to access Moodle using multiple addresses.
-If your site has multiple public addresses you must set up permanent redirects on all of them except this one.
-If your site is accessible both from Intranet and Internet use the public address here and set up DNS so that the Intranet users may use the public address too.
-If the address is not correct please change the URL in your browser to restart installation with a different value.';
+$string['pathssubdataroot'] = '<p>A directory where Moodle will store all file content uploaded by users.</p>
+<p>This directory should be both readable and writeable by the web server user (usually \'www-data\', \'nobody\', or \'apache\').</p>
+<p>It must not be directly accessible over the web.</p>
+<p>If the directory does not currently exist, the installation process will attempt to create it.</p>';
+$string['pathssubdirroot'] = '<p>The full path to the directory containing the Moodle code.</p>';
+$string['pathssubwwwroot'] = '<p>The full address where Moodle will be accessed i.e. the address that users will enter into the address bar of their browser to access Moodle.</p>
+<p>It is not possible to access Moodle using multiple addresses. If your site is accessible via multiple addresses then choose the easiest one and set up a permanent redirect for each of the other addresses.</p>
+<p>If your site is accessible both from the Internet, and from an internal network (sometimes called an Intranet), then use the public address here.</p>
+<p>If the current address is not correct, please change the URL in your browser\'s address bar and restart the installation.</p>';
 $string['pathsunsecuredataroot'] = 'Dataroot location is not secure';
 $string['pathswrongadmindir'] = 'Admin directory does not exist';
 $string['phpextension'] = '{$a} PHP extension';

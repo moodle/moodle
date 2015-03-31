@@ -56,6 +56,7 @@ function report_security_get_issue_list() {
         'report_security_check_defaultuserrole',
         'report_security_check_guestrole',
         'report_security_check_frontpagerole',
+        'report_security_check_webcron',
 
     );
 }
@@ -381,7 +382,7 @@ function report_security_check_emailchangeconfirmation($detailed=false) {
 function report_security_check_cookiesecure($detailed=false) {
     global $CFG;
 
-    if (strpos($CFG->wwwroot, 'https://') !== 0) {
+    if (!is_https()) {
         return null;
     }
 
@@ -766,7 +767,12 @@ function report_security_check_riskbackup($detailed=false) {
     $systemrolecount = empty($systemroles) ? 0 : count($systemroles);
     $overriddenrolecount = empty($overriddenroles) ? 0 : count($overriddenroles);
 
-    $result->status  = REPORT_SECURITY_WARNING; // there is always at least one admin
+    if (max($usercount, $systemrolecount, $overriddenrolecount) > 0) {
+        $result->status = REPORT_SECURITY_WARNING;
+    } else {
+        $result->status = REPORT_SECURITY_OK;
+    }
+
     $a = (object)array('rolecount'=>$systemrolecount,'overridecount'=>$overriddenrolecount,'usercount'=>$usercount);
     $result->info = get_string('check_riskbackup_warning', 'report_security', $a);
 
@@ -821,6 +827,40 @@ function report_security_check_riskbackup($detailed=false) {
             $users = '<ul>'.implode('', $users).'</ul>';
             $result->details .= get_string('check_riskbackup_details_users', 'report_security', $users);
         }
+    }
+
+    return $result;
+}
+
+/**
+ * Verifies the status of web cron
+ *
+ * @param bool $detailed
+ * @return object result
+ */
+function report_security_check_webcron($detailed = false) {
+    global $CFG;
+
+    $croncli = $CFG->cronclionly;
+    $cronremotepassword = $CFG->cronremotepassword;
+
+    $result = new stdClass();
+    $result->issue   = 'report_security_check_webcron';
+    $result->name    = get_string('check_webcron_name', 'report_security');
+    $result->details = null;
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=sitepolicies\">"
+            .get_string('sitepolicies', 'admin').'</a>';
+
+    if (empty($croncli) && empty($cronremotepassword)) {
+        $result->status = REPORT_SECURITY_WARNING;
+        $result->info   = get_string('check_webcron_warning', 'report_security');
+    } else {
+        $result->status = REPORT_SECURITY_OK;
+        $result->info   = get_string('check_webcron_ok', 'report_security');
+    }
+
+    if ($detailed) {
+        $result->details = get_string('check_webcron_details', 'report_security');
     }
 
     return $result;

@@ -77,6 +77,10 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configcheckbox('loginpageautofocus', new lang_string('loginpageautofocus', 'admin'), new lang_string('loginpageautofocus_help', 'admin'), 0));
     $temp->add(new admin_setting_configselect('guestloginbutton', new lang_string('guestloginbutton', 'auth'),
                                               new lang_string('showguestlogin', 'auth'), '1', array('0'=>new lang_string('hide'), '1'=>new lang_string('show'))));
+    $options = array(0 => get_string('no'), 1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 10 => 10, 20 => 20, 50 => 50);
+    $temp->add(new admin_setting_configselect('limitconcurrentlogins',
+        new lang_string('limitconcurrentlogins', 'core_auth'),
+        new lang_string('limitconcurrentlogins_desc', 'core_auth'), 0, $options));
     $temp->add(new admin_setting_configtext('alternateloginurl', new lang_string('alternateloginurl', 'auth'),
                                             new lang_string('alternatelogin', 'auth', htmlspecialchars(get_login_url())), ''));
     $temp->add(new admin_setting_configtext('forgottenpasswordurl', new lang_string('forgottenpasswordurl', 'auth'),
@@ -278,9 +282,6 @@ if ($hassiteconfig) {
     $ADMIN->add('webservicesettings', new admin_externalpage('webservicedocumentation', new lang_string('wsdocapi', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/documentation.php", 'moodle/site:config', false));
     /// manage service
     $temp = new admin_settingpage('externalservices', new lang_string('externalservices', 'webservice'));
-    $temp->add(new admin_setting_enablemobileservice('enablemobilewebservice',
-            new lang_string('enablemobilewebservice', 'admin'),
-            new lang_string('configenablemobilewebservice', 'admin', $enablemobiledoclink), 0));
     $temp->add(new admin_setting_heading('manageserviceshelpexplaination', new lang_string('information', 'webservice'), new lang_string('servicehelpexplanation', 'webservice')));
     $temp->add(new admin_setting_manageexternalservices());
     $ADMIN->add('webservicesettings', $temp);
@@ -358,7 +359,7 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         2 => get_string('showmarkandmax', 'question'),
     );
     $settings->add(new admin_setting_configselect('question_preview/marks',
-            get_string('marks', 'question'), '', 1, $marksoptions));
+            get_string('marks', 'question'), '', 2, $marksoptions));
 
     $settings->add(new admin_setting_configselect('question_preview/markdp',
             get_string('decimalplacesingrades', 'question'), '', 2, array(0, 1, 2, 3, 4, 5, 6, 7)));

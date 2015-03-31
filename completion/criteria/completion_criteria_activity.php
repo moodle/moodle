@@ -147,7 +147,7 @@ class completion_criteria_activity extends completion_criteria {
         $data = $info->get_data($cm, false, $completion->userid);
 
         // If the activity is complete
-        if (in_array($data->completionstate, array(COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS))) {
+        if (in_array($data->completionstate, array(COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS, COMPLETION_COMPLETE_FAIL))) {
             if ($mark) {
                 $completion->mark_complete();
             }
@@ -229,6 +229,7 @@ class completion_criteria_activity extends completion_criteria {
             AND (
                 mc.completionstate = '.COMPLETION_COMPLETE.'
              OR mc.completionstate = '.COMPLETION_COMPLETE_PASS.'
+             OR mc.completionstate = '.COMPLETION_COMPLETE_FAIL.'
                 )
         ';
 

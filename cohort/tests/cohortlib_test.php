@@ -380,7 +380,13 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         cohort_add_member($cohort1->id, $user3->id);
         cohort_add_member($cohort2->id, $user2->id);
 
+        // Cohort1 (Cat1) has 2 users total, 2 user enrolled in course1, 0 users enrolled in course2.
+        // Cohort2 (Cat2) has 1 users total, 0 user enrolled in course1, 1 users enrolled in course2.
+        // Cohort3 (Syst) has 1 users total, 1 user enrolled in course1, 0 users enrolled in course2.
+        // Cohort4 (Syst) has 0 users total.
+
         $list = cohort_get_visible_list($course1);
+        $this->assertDebuggingCalled();
         $this->assertEquals(2, count($list));
         $this->assertNotEmpty($list[$cohort1->id]);
         $this->assertRegExp('/\(2\)$/', $list[$cohort1->id]);
@@ -388,6 +394,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertRegExp('/\(1\)$/', $list[$cohort3->id]);
 
         $list = cohort_get_visible_list($course1, false);
+        $this->assertDebuggingCalled();
         $this->assertEquals(3, count($list));
         $this->assertNotEmpty($list[$cohort1->id]);
         $this->assertRegExp('/\(2\)$/', $list[$cohort1->id]);
@@ -397,11 +404,13 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertRegExp('/[^\)]$/', $list[$cohort4->id]);
 
         $list = cohort_get_visible_list($course2);
+        $this->assertDebuggingCalled();
         $this->assertEquals(1, count($list));
         $this->assertNotEmpty($list[$cohort2->id]);
         $this->assertRegExp('/\(1\)$/', $list[$cohort2->id]);
 
         $list = cohort_get_visible_list($course2, false);
+        $this->assertDebuggingCalled();
         $this->assertEquals(3, count($list));
         $this->assertNotEmpty($list[$cohort2->id]);
         $this->assertRegExp('/\(1\)$/', $list[$cohort2->id]);
@@ -411,9 +420,11 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertRegExp('/[^\)]$/', $list[$cohort4->id]);
 
         $list = cohort_get_visible_list($course3);
+        $this->assertDebuggingCalled();
         $this->assertEquals(0, count($list));
 
         $list = cohort_get_visible_list($course3, false);
+        $this->assertDebuggingCalled();
         $this->assertEquals(2, count($list));
         $this->assertNotEmpty($list[$cohort3->id]);
         $this->assertRegExp('/[^\)]$/', $list[$cohort3->id]);
@@ -473,5 +484,257 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals(0, $result['totalcohorts']);
         $this->assertEquals(array(), $result['cohorts']);
         $this->assertEquals(3, $result['allcohorts']);
+
+        $result = cohort_get_cohorts(context_system::instance()->id);
+        $this->assertEquals(1, $result['totalcohorts']);
+        $this->assertEquals(array($cohort4->id=>$cohort4), $result['cohorts']);
+        $this->assertEquals(1, $result['allcohorts']);
+    }
+
+    public function test_cohort_get_all_cohorts() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $category1 = $this->getDataGenerator()->create_category();
+        $category2 = $this->getDataGenerator()->create_category();
+
+        $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($category1->id)->id, 'name'=>'aaagrrryyy', 'idnumber'=>'','description'=>''));
+        $cohort2 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($category1->id)->id, 'name'=>'bbb', 'idnumber'=>'', 'description'=>'yyybrrr'));
+        $cohort3 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_coursecat::instance($category2->id)->id, 'name'=>'ccc', 'idnumber'=>'xxarrrghyyy', 'description'=>'po_us'));
+        $cohort4 = $this->getDataGenerator()->create_cohort(array('contextid'=>context_system::instance()->id));
+
+        // Get list of all cohorts as admin.
+        $this->setAdminUser();
+
+        $result = cohort_get_all_cohorts(0, 100, '');
+        $this->assertEquals(4, $result['totalcohorts']);
+        $this->assertEquals(array($cohort1->id=>$cohort1, $cohort2->id=>$cohort2, $cohort3->id=>$cohort3, $cohort4->id=>$cohort4), $result['cohorts']);
+        $this->assertEquals(4, $result['allcohorts']);
+
+        $result = cohort_get_all_cohorts(0, 100, 'grrr');
+        $this->assertEquals(1, $result['totalcohorts']);
+        $this->assertEquals(array($cohort1->id=>$cohort1), $result['cohorts']);
+        $this->assertEquals(4, $result['allcohorts']);
+
+        // Get list of all cohorts as manager who has capability everywhere.
+        $user = $this->getDataGenerator()->create_user();
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        role_assign($managerrole->id, $user->id, context_system::instance()->id);
+        $this->setUser($user);
+
+        $result = cohort_get_all_cohorts(0, 100, '');
+        $this->assertEquals(4, $result['totalcohorts']);
+        $this->assertEquals(array($cohort1->id=>$cohort1, $cohort2->id=>$cohort2, $cohort3->id=>$cohort3, $cohort4->id=>$cohort4), $result['cohorts']);
+        $this->assertEquals(4, $result['allcohorts']);
+
+        $result = cohort_get_all_cohorts(0, 100, 'grrr');
+        $this->assertEquals(1, $result['totalcohorts']);
+        $this->assertEquals(array($cohort1->id=>$cohort1), $result['cohorts']);
+        $this->assertEquals(4, $result['allcohorts']);
+
+        // Get list of all cohorts as manager who has capability everywhere except category2.
+        $context2 = context_coursecat::instance($category2->id);
+        role_change_permission($managerrole->id, $context2, 'moodle/cohort:view', CAP_PROHIBIT);
+        role_change_permission($managerrole->id, $context2, 'moodle/cohort:manage', CAP_PROHIBIT);
+        $this->assertFalse(has_any_capability(array('moodle/cohort:view', 'moodle/cohort:manage'), $context2));
+
+        $result = cohort_get_all_cohorts(0, 100, '');
+        $this->assertEquals(3, $result['totalcohorts']);
+        $this->assertEquals(array($cohort1->id=>$cohort1, $cohort2->id=>$cohort2, $cohort4->id=>$cohort4), $result['cohorts']);
+        $this->assertEquals(3, $result['allcohorts']);
+
+        $result = cohort_get_all_cohorts(0, 100, 'grrr');
+        $this->assertEquals(1, $result['totalcohorts']);
+        $this->assertEquals(array($cohort1->id=>$cohort1), $result['cohorts']);
+        $this->assertEquals(3, $result['allcohorts']);
+
+        $result = cohort_get_cohorts(context_coursecat::instance($category1->id)->id, 1, 1, 'yyy');
+        $this->assertEquals(2, $result['totalcohorts']);
+        $this->assertEquals(array($cohort2->id=>$cohort2), $result['cohorts']);
+        $this->assertEquals(2, $result['allcohorts']);
+    }
+
+    public function test_cohort_get_available_cohorts() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $category1 = $this->getDataGenerator()->create_category();
+        $category2 = $this->getDataGenerator()->create_category();
+
+        $course1 = $this->getDataGenerator()->create_course(array('category' => $category1->id));
+        $course2 = $this->getDataGenerator()->create_course(array('category' => $category2->id));
+
+        $category1ctx = context_coursecat::instance($category1->id);
+        $category2ctx = context_coursecat::instance($category2->id);
+        $course1ctx = context_course::instance(($course1->id));
+        $course2ctx = context_course::instance(($course2->id));
+        $systemctx = context_system::instance();
+
+        $cohort1 = $this->getDataGenerator()->create_cohort(array('contextid'=>$category1ctx->id, 'name'=>'aaagrrryyy', 'idnumber'=>'','description'=>''));
+        $cohort2 = $this->getDataGenerator()->create_cohort(array('contextid'=>$category1ctx->id, 'name'=>'bbb', 'idnumber'=>'', 'description'=>'yyybrrr', 'visible'=>0));
+        $cohort3 = $this->getDataGenerator()->create_cohort(array('contextid'=>$category2ctx->id, 'name'=>'ccc', 'idnumber'=>'xxarrrghyyy', 'description'=>'po_us'));
+        $cohort4 = $this->getDataGenerator()->create_cohort(array('contextid'=>$systemctx->id, 'name' => 'ddd'));
+        $cohort5 = $this->getDataGenerator()->create_cohort(array('contextid'=>$systemctx->id, 'visible'=>0, 'name' => 'eee'));
+
+        /*
+        Structure of generated course categories, courses and cohort:
+
+        system
+          -cohort4 (visible, has 3 members)
+          -cohort5 (not visible, no members)
+          category1
+            -cohort1 (visible, no members)
+            -cohort2 (not visible, has 1 member)
+            course1
+          category2
+            -cohort3 (visible, has 2 member)
+            course2
+
+        In this test we call cohort_get_available_cohorts() for users with different roles
+        and with different paramteres ($withmembers, $search, $offset, $limit) to make sure we go
+        through all possible options of SQL query.
+        */
+
+        // Admin can see visible and invisible cohorts defined in above contexts.
+        $this->setAdminUser();
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_ALL, 0, 0, '');
+        $this->assertEquals(array($cohort1->id, $cohort2->id, $cohort4->id, $cohort5->id), array_keys($result));
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_ALL, 0, 2, '');
+        $this->assertEquals(array($cohort1->id, $cohort2->id), array_keys($result));
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_ALL, 1, 2, '');
+        $this->assertEquals(array($cohort2->id, $cohort4->id), array_keys($result));
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_ALL, 0, 100, 'yyy');
+        $this->assertEquals(array($cohort1->id, $cohort2->id), array_keys($result));
+
+        $result = cohort_get_available_cohorts($course2ctx, COHORT_ALL, 0, 0, '');
+        $this->assertEquals(array($cohort3->id, $cohort4->id, $cohort5->id), array_keys($result));
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_WITH_MEMBERS_ONLY);
+        $this->assertEmpty($result);
+
+        $result = cohort_get_available_cohorts($course2ctx, COHORT_WITH_MEMBERS_ONLY);
+        $this->assertEmpty($result);
+
+        // Get list of available cohorts as a teacher in the course.
+        $user1 = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        role_assign($teacherrole->id, $user1->id, $course1ctx->id);
+        role_assign($teacherrole->id, $user1->id, $course2ctx->id);
+        $this->setUser($user1);
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_ALL, 0, 0, '');
+        $this->assertEquals(array($cohort1->id, $cohort4->id), array_keys($result));
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_ALL, 0, 1, '');
+        $this->assertEquals(array($cohort1->id), array_keys($result));
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_ALL, 1, 1, '');
+        $this->assertEquals(array($cohort4->id), array_keys($result));
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_ALL, 0, 100, 'yyy');
+        $this->assertEquals(array($cohort1->id), array_keys($result));
+
+        $result = cohort_get_available_cohorts($course2ctx, COHORT_ALL, 0, 0, '');
+        $this->assertEquals(array($cohort3->id, $cohort4->id), array_keys($result));
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_WITH_MEMBERS_ONLY);
+        $this->assertEmpty($result);
+
+        // Now add members to cohorts.
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+        $user5 = $this->getDataGenerator()->create_user();
+        $user6 = $this->getDataGenerator()->create_user();
+        cohort_add_member($cohort2->id, $user3->id);
+        cohort_add_member($cohort3->id, $user2->id);
+        cohort_add_member($cohort3->id, $user3->id);
+        cohort_add_member($cohort4->id, $user4->id);
+        cohort_add_member($cohort4->id, $user5->id);
+        cohort_add_member($cohort4->id, $user6->id);
+
+        // Check filtering non-empty cohorts as admin.
+        $this->setAdminUser();
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_WITH_MEMBERS_ONLY, 0, 0, '');
+        $this->assertEquals(array($cohort2->id, $cohort4->id), array_keys($result));
+        $this->assertEquals(1, $result[$cohort2->id]->memberscnt);
+        $this->assertEquals(3, $result[$cohort4->id]->memberscnt);
+
+        $result = cohort_get_available_cohorts($course2ctx, COHORT_WITH_MEMBERS_ONLY, 0, 0, '');
+        $this->assertEquals(array($cohort3->id, $cohort4->id), array_keys($result));
+        $this->assertEquals(2, $result[$cohort3->id]->memberscnt);
+        $this->assertEquals(3, $result[$cohort4->id]->memberscnt);
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_WITH_MEMBERS_ONLY, 0, 0, 'yyy');
+        $this->assertEquals(array($cohort2->id), array_keys($result));
+        $this->assertEquals(1, $result[$cohort2->id]->memberscnt);
+
+        // Check filtering non-empty cohorts as teacher.
+        $this->setUser($user1);
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_WITH_MEMBERS_ONLY, 0, 0, '');
+        $this->assertEquals(array($cohort4->id), array_keys($result));
+        $this->assertEquals(3, $result[$cohort4->id]->memberscnt);
+
+        $result = cohort_get_available_cohorts($course2ctx, COHORT_WITH_MEMBERS_ONLY, 0, 0, '');
+        $this->assertEquals(array($cohort3->id, $cohort4->id), array_keys($result));
+        $this->assertEquals(2, $result[$cohort3->id]->memberscnt);
+        $this->assertEquals(3, $result[$cohort4->id]->memberscnt);
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_WITH_MEMBERS_ONLY, 0, 0, 'yyy');
+        $this->assertEmpty($result);
+
+        // Enrol users.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course1->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user5->id, $course1->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user6->id, $course1->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course2->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course2->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user5->id, $course2->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($user6->id, $course2->id, $studentrole->id);
+
+        // Check cohorts with enrolments as admin.
+        $this->setAdminUser();
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_WITH_ENROLLED_MEMBERS_ONLY, 0, 0, '');
+        $this->assertEquals(array($cohort2->id, $cohort4->id), array_keys($result));
+        $this->assertEquals(1, $result[$cohort2->id]->enrolledcnt);
+        $this->assertEquals(2, $result[$cohort4->id]->enrolledcnt);
+        $this->assertEquals(1, $result[$cohort2->id]->memberscnt);
+        $this->assertEquals(3, $result[$cohort4->id]->memberscnt);
+
+        $result = cohort_get_available_cohorts($course2ctx, COHORT_WITH_ENROLLED_MEMBERS_ONLY, 0, 0, '');
+        $this->assertEquals(array($cohort3->id, $cohort4->id), array_keys($result));
+        $this->assertEquals(1, $result[$cohort3->id]->enrolledcnt);
+        $this->assertEquals(3, $result[$cohort4->id]->enrolledcnt);
+        $this->assertEquals(2, $result[$cohort3->id]->memberscnt);
+        $this->assertEquals(3, $result[$cohort4->id]->memberscnt);
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_WITH_ENROLLED_MEMBERS_ONLY, 0, 0, 'yyy');
+        $this->assertEquals(array($cohort2->id), array_keys($result));
+        $this->assertEquals(1, $result[$cohort2->id]->enrolledcnt);
+        $this->assertEquals(1, $result[$cohort2->id]->memberscnt);
+
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_WITH_NOTENROLLED_MEMBERS_ONLY, 0, 0, '');
+        $this->assertEquals(array($cohort4->id), array_keys($result));
+        $this->assertEquals(2, $result[$cohort4->id]->enrolledcnt);
+        $this->assertEquals(3, $result[$cohort4->id]->memberscnt);
+
+        // Assign user1 additional 'manager' role in the category context. He can now see hidden cohort in category1
+        // but still can not see hidden category in system.
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        role_assign($managerrole->id, $user1->id, context_coursecat::instance($category1->id));
+        $this->setUser($user1);
+        $result = cohort_get_available_cohorts($course1ctx, COHORT_ALL, 0, 0, '');
+        $this->assertEquals(array($cohort1->id, $cohort2->id, $cohort4->id), array_keys($result));
     }
 }

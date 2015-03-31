@@ -69,8 +69,7 @@ class format_singleactivity extends format_base {
     public function extend_course_navigation($navigation, navigation_node $node) {
         // Display orphaned activities for the users who can see them.
         $context = context_course::instance($this->courseid);
-        if (has_all_capabilities(array('moodle/course:viewhiddensections',
-                'moodle/course:viewhiddenactivities'), $context)) {
+        if (has_capability('moodle/course:viewhiddensections', $context)) {
             $modinfo = get_fast_modinfo($this->courseid);
             if (!empty($modinfo->sections[1])) {
                 $section1 = $modinfo->get_section_info(1);
@@ -80,7 +79,9 @@ class format_singleactivity extends format_base {
                 $orphanednode->nodetype = navigation_node::NODETYPE_BRANCH;
                 $orphanednode->add_class('orphaned');
                 foreach ($modinfo->sections[1] as $cmid) {
-                    $this->navigation_add_activity($orphanednode, $modinfo->cms[$cmid]);
+                    if (has_capability('moodle/course:viewhiddenactivities', context_module::instance($cmid))) {
+                        $this->navigation_add_activity($orphanednode, $modinfo->cms[$cmid]);
+                    }
                 }
             }
         }

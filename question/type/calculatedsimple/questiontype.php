@@ -43,11 +43,9 @@ class qtype_calculatedsimple extends qtype_calculated {
     public function save_question_options($question) {
         global $CFG, $DB;
         $context = $question->context;
-        // Get old answers.
 
-        if (isset($question->answer) && !isset($question->answers)) {
-            $question->answers = $question->answer;
-        }
+        // Make it impossible to save bad formulas anywhere.
+        $this->validate_question_data($question);
 
         // Get old versions of the objects.
         if (!$oldanswers = $DB->get_records('question_answers',
@@ -69,10 +67,7 @@ class qtype_calculatedsimple extends qtype_calculated {
             $units = &$result->units;
         }
         // Insert all the new answers.
-        if (isset($question->answer) && !isset($question->answers)) {
-            $question->answers = $question->answer;
-        }
-        foreach ($question->answers as $key => $answerdata) {
+        foreach ($question->answer as $key => $answerdata) {
             if (is_array($answerdata)) {
                 $answerdata = $answerdata['text'];
             }
@@ -243,23 +238,23 @@ class qtype_calculatedsimple extends qtype_calculated {
     public function custom_generator_tools_part($mform, $idx, $j) {
 
         $minmaxgrp = array();
-        $minmaxgrp[] = $mform->createElement('text', "calcmin[$idx]",
+        $minmaxgrp[] = $mform->createElement('text', "calcmin[{$idx}]",
                 get_string('calcmin', 'qtype_calculated'));
-        $minmaxgrp[] = $mform->createElement('text', "calcmax[$idx]",
+        $minmaxgrp[] = $mform->createElement('text', "calcmax[{$idx}]",
                 get_string('calcmax', 'qtype_calculated'));
         $mform->addGroup($minmaxgrp, 'minmaxgrp',
                 get_string('minmax', 'qtype_calculated'), ' - ', false);
-        $mform->setType("calcmin[$idx]", PARAM_FLOAT);
-        $mform->setType("calcmax[$idx]", PARAM_FLOAT);
+        $mform->setType("calcmin[{$idx}]", PARAM_FLOAT);
+        $mform->setType("calcmax[{$idx}]", PARAM_FLOAT);
 
         $precisionoptions = range(0, 10);
-        $mform->addElement('select', "calclength[$idx]",
+        $mform->addElement('select', "calclength[{$idx}]",
                 get_string('calclength', 'qtype_calculated'), $precisionoptions);
 
         $distriboptions = array('uniform' => get_string('uniform', 'qtype_calculated'),
                 'loguniform' => get_string('loguniform', 'qtype_calculated'));
-        $mform->addElement('hidden', "calcdistribution[$idx]", 'uniform');
-        $mform->setType("calcdistribution[$idx]", PARAM_INT);
+        $mform->addElement('hidden', "calcdistribution[{$idx}]", 'uniform');
+        $mform->setType("calcdistribution[{$idx}]", PARAM_INT);
     }
 
     public function comment_header($answers) {
@@ -296,7 +291,7 @@ class qtype_calculatedsimple extends qtype_calculated {
         }
         if (!$selected) {
             if ($mandatory) {
-                $selected =  "1-0-$name"; // Default.
+                $selected =  "1-0-{$name}"; // Default.
             } else {
                 $selected = "0"; // Default.
             }

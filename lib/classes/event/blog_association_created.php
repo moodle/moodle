@@ -25,24 +25,23 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * blog_association_created
- *
  * Class for event to be triggered when a new blog entry is associated with a context.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string associatetype type of blog association, course/coursemodule.
- *      @type int blogid id of blog.
- *      @type int associateid id of associate.
- *      @type string subject blog subject.
+ *      - string associatetype: type of blog association, course/coursemodule.
+ *      - int blogid: id of blog.
+ *      - int associateid: id of associate.
+ *      - string subject: blog subject.
  * }
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class blog_association_created extends \core\event\base {
+class blog_association_created extends base {
 
     /**
      * Set basic properties for the event.
@@ -69,8 +68,8 @@ class blog_association_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "Blog association added between entry id {$this->other['blogid']} and {$this->other['associatetype']} with id
-                {$this->other['associateid']}";
+        return "The user with id '$this->userid' associated the context '{$this->other['associatetype']}' with id " .
+            "'{$this->other['associateid']}' to the blog entry with id '{$this->other['blogid']}'.";
     }
 
     /**
@@ -90,10 +89,10 @@ class blog_association_created extends \core\event\base {
         if ($this->other['associatetype'] === 'course') {
             return array (SITEID, 'blog', 'add association', 'index.php?userid=' . $this->relateduserid. '&entryid=' .
                     $this->other['blogid'], $this->other['subject'], 0, $this->relateduserid);
-        } else {
-            return array (SITEID, 'blog', 'add association', 'index.php?userid=' . $this->relateduserid. '&entryid=' .
-                    $this->other['blogid'], $this->other['subject'], $this->other['associateid'], $this->relateduserid);
         }
+
+        return array (SITEID, 'blog', 'add association', 'index.php?userid=' . $this->relateduserid. '&entryid=' .
+                $this->other['blogid'], $this->other['subject'], $this->other['associateid'], $this->relateduserid);
     }
 
     /**
@@ -104,15 +103,26 @@ class blog_association_created extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
         if (empty($this->other['associatetype']) || ($this->other['associatetype'] !== 'course'
                 && $this->other['associatetype'] !== 'coursemodule')) {
-            throw new \coding_exception('Invalid associatetype in event blog_association_created.');
-        } else if (!isset($this->other['blogid'])) {
-            throw new \coding_exception('Blog id must be set in event blog_association_created.');
-        } else if (!isset($this->other['associateid'])) {
-            throw new \coding_exception('Associate id must be set in event blog_association_created.');
-        } else if (!isset($this->other['subject'])) {
-            throw new \coding_exception('Subject must be set in event blog_association_created.');
+            throw new \coding_exception('The \'associatetype\' value must be set in other and be a valid type.');
+        }
+
+        if (!isset($this->other['blogid'])) {
+            throw new \coding_exception('The \'blogid\' value must be set in other.');
+        }
+
+        if (!isset($this->other['associateid'])) {
+            throw new \coding_exception('The \'associateid\' value must be set in other.');
+        }
+
+        if (!isset($this->other['subject'])) {
+            throw new \coding_exception('The \'subject\' value must be set in other.');
         }
     }
 }

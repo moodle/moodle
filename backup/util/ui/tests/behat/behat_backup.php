@@ -27,6 +27,7 @@
 
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 require_once(__DIR__ . '/../../../../../lib/behat/behat_field_manager.php');
+require_once(__DIR__ . '/../../../../../lib/tests/behat/behat_navigation.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
@@ -43,42 +44,87 @@ use Behat\Gherkin\Node\TableNode as TableNode,
 class behat_backup extends behat_base {
 
     /**
-     * Backups the specified course using the provided options. If you are interested in restoring this backup would be useful to provide a 'Filename' option.
+     * Follow a link like 'Backup' or 'Import', where the link name comes from
+     * a language string, in the settings nav block of a course.
+     * @param string $langstring the lang string to look for. E.g. 'backup' or 'import'.
+     * @param string $component (optional) second argument to {@link get_string}.
+     */
+    protected function navigate_to_course_settings_link($langstring, $component = '') {
+        $behatnavigation = new behat_navigation();
+        $behatnavigation->setMink($this->getMink());
+        $behatnavigation->i_navigate_to_node_in(get_string($langstring, $component),
+                get_string('courseadministration'));
+    }
+
+    /**
+     * Backups the specified course using the provided options. If you are interested in restoring this backup would be
+     * useful to provide a 'Filename' option.
      *
      * @Given /^I backup "(?P<course_fullname_string>(?:[^"]|\\")*)" course using this options:$/
      * @param string $backupcourse
      * @param TableNode $options Backup options or false if no options provided
      */
     public function i_backup_course_using_this_options($backupcourse, $options = false) {
-
         // We can not use other steps here as we don't know where the provided data
         // table elements are used, and we need to catch exceptions contantly.
 
         // Go to homepage.
         $this->getSession()->visit($this->locate_path('/'));
-        $this->wait();
 
         // Click the course link.
         $this->find_link($backupcourse)->click();
+
+        // Click the backup link.
+        $this->navigate_to_course_settings_link('backup');
         $this->wait();
+
+        // Initial settings.
+        $this->fill_backup_restore_form($this->get_step_options($options, "Initial"));
+        $this->find_button(get_string('backupstage1action', 'backup'))->press();
+        $this->wait();
+
+        // Schema settings.
+        $this->fill_backup_restore_form($this->get_step_options($options, "Schema"));
+        $this->find_button(get_string('backupstage2action', 'backup'))->press();
+        $this->wait();
+
+        // Confirmation and review, backup filename can also be specified.
+        $this->fill_backup_restore_form($this->get_step_options($options, "Confirmation"));
+        $this->find_button(get_string('backupstage4action', 'backup'))->press();
+
+        // Waiting for it to finish.
+        $this->wait(self::EXTENDED_TIMEOUT);
+
+        // Last backup continue button.
+        $this->find_button(get_string('backupstage16action', 'backup'))->press();
+    }
+
+    /**
+     * Performs a quick (one click) backup of a course.
+     *
+     * Please note that because you can't set settings with this there is no way to know what the filename
+     * that was produced was. It contains a timestamp making it hard to find.
+     *
+     * @Given /^I perform a quick backup of course "(?P<course_fullname_string>(?:[^"]|\\")*)"$/
+     * @param string $backupcourse
+     */
+    public function i_perform_a_quick_backup_of_course($backupcourse) {
+        // We can not use other steps here as we don't know where the provided data
+        // table elements are used, and we need to catch exceptions contantly.
+
+        // Go to homepage.
+        $this->getSession()->visit($this->locate_path('/'));
+
+        // Click the course link.
+        $this->find_link($backupcourse)->click();
 
         // Click the backup link.
         $this->find_link(get_string('backup'))->click();
         $this->wait();
 
         // Initial settings.
-        $this->fill_backup_restore_form($options);
-        $this->find_button(get_string('backupstage1action', 'backup'))->press();
+        $this->find_button(get_string('jumptofinalstep', 'backup'))->press();
         $this->wait();
-
-        // Schema settings.
-        $this->fill_backup_restore_form($options);
-        $this->find_button(get_string('backupstage2action', 'backup'))->press();
-        $this->wait();
-
-        // Confirmation and review, backup filename can also be specified.
-        $this->fill_backup_restore_form($options);
-        $this->find_button(get_string('backupstage4action', 'backup'))->press();
 
         // Waiting for it to finish.
         $this->wait(self::EXTENDED_TIMEOUT);
@@ -113,7 +159,7 @@ class behat_backup extends behat_base {
         $this->wait();
 
         // Click the import link.
-        $this->find_link(get_string('import'))->click();
+        $this->navigate_to_course_settings_link('import');
         $this->wait();
 
         // Select the course.
@@ -132,12 +178,12 @@ class behat_backup extends behat_base {
         $this->wait();
 
         // Initial settings.
-        $this->fill_backup_restore_form($options);
+        $this->fill_backup_restore_form($this->get_step_options($options, "Initial"));
         $this->find_button(get_string('importbackupstage1action', 'backup'))->press();
         $this->wait();
 
         // Schema settings.
-        $this->fill_backup_restore_form($options);
+        $this->fill_backup_restore_form($this->get_step_options($options, "Schema"));
         $this->find_button(get_string('importbackupstage2action', 'backup'))->press();
         $this->wait();
 
@@ -150,7 +196,9 @@ class behat_backup extends behat_base {
     }
 
     /**
-     * Restores the backup into the specified course and the provided options. You should be in the 'Restore' page where the backup is.
+     * Restores the backup into the specified course and the provided options.
+     *
+     * You should be in the 'Restore' page where the backup is.
      *
      * @Given /^I restore "(?P<backup_filename_string>(?:[^"]|\\")*)" backup into "(?P<existing_course_fullname_string>(?:[^"]|\\")*)" course using this options:$/
      * @param string $backupfilename
@@ -184,7 +232,9 @@ class behat_backup extends behat_base {
     }
 
     /**
-     * Restores the specified backup into a new course using the provided options. You should be in the 'Restore' page where the backup is.
+     * Restores the specified backup into a new course using the provided options.
+     *
+     * You should be in the 'Restore' page where the backup is.
      *
      * @Given /^I restore "(?P<backup_filename_string>(?:[^"]|\\")*)" backup into a new course using this options:$/
      * @param string $backupfilename
@@ -213,7 +263,9 @@ class behat_backup extends behat_base {
     }
 
     /**
-     * Merges the backup into the current course using the provided restore options. You should be in the 'Restore' page where the backup is.
+     * Merges the backup into the current course using the provided restore options.
+     *
+     * You should be in the 'Restore' page where the backup is.
      *
      * @Given /^I merge "(?P<backup_filename_string>(?:[^"]|\\")*)" backup into the current course using this options:$/
      * @param string $backupfilename
@@ -241,7 +293,9 @@ class behat_backup extends behat_base {
     }
 
     /**
-     * Merges the backup into the current course after deleting this contents, using the provided restore options. You should be in the 'Restore' page where the backup is.
+     * Merges the backup into the current course after deleting this contents, using the provided restore options.
+     *
+     * You should be in the 'Restore' page where the backup is.
      *
      * @Given /^I merge "(?P<backup_filename_string>(?:[^"]|\\")*)" backup into the current course after deleting it's contents using this options:$/
      * @param string $backupfilename
@@ -303,12 +357,12 @@ class behat_backup extends behat_base {
         // table elements are used, and we need to catch exceptions contantly.
 
         // Settings.
-        $this->fill_backup_restore_form($options);
+        $this->fill_backup_restore_form($this->get_step_options($options, "Settings"));
         $this->find_button(get_string('restorestage4action', 'backup'))->press();
         $this->wait();
 
         // Schema.
-        $this->fill_backup_restore_form($options);
+        $this->fill_backup_restore_form($this->get_step_options($options, "Schema"));
         $this->find_button(get_string('restorestage8action', 'backup'))->press();
         $this->wait();
 
@@ -341,24 +395,45 @@ class behat_backup extends behat_base {
             return;
         }
 
-        // Wait for the page to be loaded and the JS ready.
-        $this->wait();
-
         // If we find any of the provided options in the current form we should set the value.
         $datahash = $options->getRowsHash();
         foreach ($datahash as $locator => $value) {
-
-            try {
-                // Using $this->find* to enforce stability over speed.
-                $fieldnode = $this->find_field($locator);
-                $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
-                $field->set_value($value);
-
-            } catch (ElementNotFoundException $e) {
-                // Next provided option then, this one should be part of another page's fields.
-            }
+            $field = behat_field_manager::get_form_field_from_label($locator, $this);
+            $field->set_value($value);
         }
     }
+
+    /**
+     * Get the options specific to this step of the backup/restore process.
+     *
+     * @param TableNode $options The options table to filter
+     * @param string $step The name of the step
+     * @return TableNode The filtered options table
+     * @throws ExpectationException
+     */
+    protected function get_step_options($options, $step) {
+        // Nothing to fill if no options are provided.
+        if (!$options) {
+            return;
+        }
+
+        $pageoptions = clone $options;
+
+        $rows = $options->getRows();
+        $newrows = array();
+        foreach ($rows as $k => $data) {
+            if (count($data) !== 3) {
+                // Not enough information to guess the page.
+                throw new ExpectationException("The backup/restore step must be specified for all backup options");
+            } else if ($data[0] == $step) {
+                unset($data[0]);
+                $newrows[] = $data;
+            }
+        }
+        $pageoptions->setRows($newrows);
+        return $pageoptions;
+    }
+
 
     /**
      * Waits until the DOM and the page Javascript code is ready.

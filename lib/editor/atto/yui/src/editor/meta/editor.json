@@ -2,6 +2,7 @@
     "moodle-editor_atto-editor": {
         "requires": [
             "node",
+            "transition",
             "io",
             "overlay",
             "escape",
@@ -10,8 +11,10 @@
             "event-custom",
             "yui-throttle",
             "moodle-core-notification-dialogue",
+            "moodle-core-notification-confirm",
             "moodle-editor_atto-rangy",
-            "handlebars"
+            "handlebars",
+            "timers"
         ]
     },
     "moodle-editor_atto-plugin": {
@@ -22,7 +25,8 @@
             "event",
             "event-outside",
             "handlebars",
-            "event-custom"
+            "event-custom",
+            "timers"
         ]
     },
     "moodle-editor_atto-menu": {

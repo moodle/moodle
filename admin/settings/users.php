@@ -24,6 +24,44 @@ if ($hassiteconfig
     $ADMIN->add('accounts', new admin_externalpage('editusers', new lang_string('userlist','admin'), "$CFG->wwwroot/$CFG->admin/user.php", array('moodle/user:update', 'moodle/user:delete')));
     $ADMIN->add('accounts', new admin_externalpage('userbulk', new lang_string('userbulk','admin'), "$CFG->wwwroot/$CFG->admin/user/user_bulk.php", array('moodle/user:update', 'moodle/user:delete')));
     $ADMIN->add('accounts', new admin_externalpage('addnewuser', new lang_string('addnewuser'), "$securewwwroot/user/editadvanced.php?id=-1", 'moodle/user:create'));
+
+    // "User default preferences" settingpage.
+    $temp = new admin_settingpage('userdefaultpreferences', new lang_string('userdefaultpreferences', 'admin'));
+    if ($ADMIN->fulltree) {
+        $choices = array();
+        $choices['0'] = new lang_string('emaildisplayno');
+        $choices['1'] = new lang_string('emaildisplayyes');
+        $choices['2'] = new lang_string('emaildisplaycourse');
+        $temp->add(new admin_setting_configselect('defaultpreference_maildisplay', new lang_string('emaildisplay'),
+            '', 2, $choices));
+
+        $choices = array();
+        $choices['0'] = new lang_string('textformat');
+        $choices['1'] = new lang_string('htmlformat');
+        $temp->add(new admin_setting_configselect('defaultpreference_mailformat', new lang_string('emailformat'), '', 1, $choices));
+
+        $choices = array();
+        $choices['0'] = new lang_string('emaildigestoff');
+        $choices['1'] = new lang_string('emaildigestcomplete');
+        $choices['2'] = new lang_string('emaildigestsubjects');
+        $temp->add(new admin_setting_configselect('defaultpreference_maildigest', new lang_string('emaildigest'),
+            new lang_string('emaildigest_help'), 0, $choices));
+
+
+        $choices = array();
+        $choices['1'] = new lang_string('autosubscribeyes');
+        $choices['0'] = new lang_string('autosubscribeno');
+        $temp->add(new admin_setting_configselect('defaultpreference_autosubscribe', new lang_string('autosubscribe'),
+            '', 1, $choices));
+
+        $choices = array();
+        $choices['0'] = new lang_string('trackforumsno');
+        $choices['1'] = new lang_string('trackforumsyes');
+        $temp->add(new admin_setting_configselect('defaultpreference_trackforums', new lang_string('trackforums'),
+            '', 0, $choices));
+    }
+    $ADMIN->add('accounts', $temp);
+
     $ADMIN->add('accounts', new admin_externalpage('profilefields', new lang_string('profilefields','admin'), "$CFG->wwwroot/user/profile/index.php", 'moodle/site:config'));
     $ADMIN->add('accounts', new admin_externalpage('cohorts', new lang_string('cohorts', 'cohort'), $CFG->wwwroot . '/cohort/index.php', array('moodle/cohort:manage', 'moodle/cohort:view')));
 
@@ -152,6 +190,9 @@ if ($hassiteconfig
                     'institution' => new lang_string('institution'),
                 )));
         $temp->add(new admin_setting_configtext('fullnamedisplay', new lang_string('fullnamedisplay', 'admin'), new lang_string('configfullnamedisplay', 'admin'), 'language', PARAM_TEXT, 50));
+        $temp->add(new admin_setting_configtext('alternativefullnameformat', new lang_string('alternativefullnameformat', 'admin'),
+                new lang_string('alternativefullnameformat_desc', 'admin'),
+                'language', PARAM_RAW, 50));
         $temp->add(new admin_setting_configtext('maxusersperpage', new lang_string('maxusersperpage','admin'), new lang_string('configmaxusersperpage','admin'), 100, PARAM_INT));
         $temp->add(new admin_setting_configcheckbox('enablegravatar', new lang_string('enablegravatar', 'admin'), new lang_string('enablegravatar_help', 'admin'), 0));
         $temp->add(new admin_setting_configtext('gravatardefaulturl', new lang_string('gravatardefaulturl', 'admin'), new lang_string('gravatardefaulturl_help', 'admin'), 'mm'));

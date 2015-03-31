@@ -14,36 +14,44 @@ Feature: A teacher can delete questions in the question bank
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "question categories" exist:
+      | contextlevel | reference | name           |
+      | Course       | C1        | Test questions |
+    And the following "questions" exist:
+      | questioncategory | qtype | name                        | questiontext                  |
+      | Test questions   | essay | Test question to be deleted | Write about whatever you want |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I add a "Essay" question filling the form with:
-      | Question name | Test question to be deleted |
-      | Question text | Write about whatever you want |
-    And I follow "Course 1"
+    And I navigate to "Questions" node in "Course administration > Question bank"
 
   @javascript
-  Scenario: Delete a question not used in a quiz
-    Given I follow "Question bank"
-    And I click on "Delete" "link" in the "Test question to be deleted" "table_row"
-    When I press "Continue"
+  Scenario: A question not used anywhere can really be deleted
+    When I click on "Delete" "link" in the "Test question to be deleted" "table_row"
+    And I press "Continue"
+    And I click on "Also show old questions" "checkbox"
     Then I should not see "Test question to be deleted"
+
+  @javascript
+  Scenario: Deleting a question can be cancelled
+    When I click on "Delete" "link" in the "Test question to be deleted" "table_row"
+    And I press "Cancel"
+    Then I should see "Test question to be deleted"
 
   @javascript
   Scenario: Delete a question used in a quiz
-    Given I turn editing mode on
+    Given I follow "Course 1"
+    And I turn editing mode on
     And I add a "Quiz" to section "1" and I fill the form with:
       | Name | Test quiz |
-    And I follow "Test quiz"
-    And I follow "Edit quiz"
-    And I follow "Show"
-    And I click on "Add to quiz" "link" in the "Test question to be deleted" "table_row"
-    And I follow "Course 1"
-    And I follow "Question bank"
-    And I click on "Delete" "link" in the "Test question to be deleted" "table_row"
-    When I press "Continue"
-    Then I should not see "Test question to be deleted"
+    And I add a "True/False" question to the "Test quiz" quiz with:
+      | Question name | Test used question to be deleted |
+      | Question text | Write about whatever you want    |
+    And I navigate to "Questions" node in "Course administration > Question bank"
+    When I click on "Delete" "link" in the "Test used question to be deleted" "table_row"
+    And I press "Continue"
+    Then I should not see "Test used question to be deleted"
     And I click on "Also show old questions" "checkbox"
-    And I should see "Test question to be deleted"
+    And I should see "Test used question to be deleted"
     And I follow "Course 1"
     And I follow "Test quiz"
     And I click on "Preview quiz now" "button"

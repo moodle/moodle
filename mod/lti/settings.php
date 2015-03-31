@@ -30,7 +30,7 @@
 //
 // BasicLTI4Moodle is copyright 2009 by Marc Alier Forment, Jordi Piguillem and Nikolas Galanis
 // of the Universitat Politecnica de Catalunya http://www.upc.edu
-// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
+// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
  * This file defines the global lti administration form
@@ -43,10 +43,33 @@
  * @author     Jordi Piguillem
  * @author     Nikolas Galanis
  * @author     Chris Scribner
+ * @copyright  2015 Vital Source Technologies http://vitalsource.com
+ * @author     Stephen Vickers
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
+
+/*
+ * @var admin_settingpage $settings
+ */
+$modltifolder = new admin_category('modltifolder', new lang_string('pluginname', 'mod_lti'), $module->is_enabled() === false);
+$ADMIN->add('modsettings', $modltifolder);
+$settings->visiblename = new lang_string('manage_tools', 'mod_lti');
+$ADMIN->add('modltifolder', $settings);
+$ADMIN->add('modltifolder', new admin_externalpage('ltitoolproxies',
+        get_string('manage_tool_proxies', 'lti'),
+        new moodle_url('/mod/lti/toolproxies.php')));
+
+foreach (core_plugin_manager::instance()->get_plugins_of_type('ltisource') as $plugin) {
+    /*
+     * @var \mod_lti\plugininfo\ltisource $plugin
+     */
+    $plugin->load_settings($ADMIN, 'modltifolder', $hassiteconfig);
+}
+
+$toolproxiesurl = new moodle_url('/mod/lti/toolproxies.php');
+$toolproxiesurl = $toolproxiesurl->out();
 
 if ($ADMIN->fulltree) {
     require_once($CFG->dirroot.'/mod/lti/locallib.php');
@@ -58,10 +81,17 @@ if ($ADMIN->fulltree) {
     $active = get_string('active', 'lti');
     $pending = get_string('pending', 'lti');
     $rejected = get_string('rejected', 'lti');
-    $typename = get_string('typename', 'lti');
-    $baseurl = get_string('baseurl', 'lti');
-    $action = get_string('action', 'lti');
-    $createdon = get_string('createdon', 'lti');
+
+    // Gather strings used for labels in the inline JS.
+    $PAGE->requires->strings_for_js(
+        array(
+            'typename',
+            'baseurl',
+            'action',
+            'createdon'
+        ),
+        'mod_lti'
+    );
 
     $types = lti_filter_get_types(get_site()->id);
 
@@ -92,28 +122,33 @@ if ($ADMIN->fulltree) {
             $activeselected = 'class="selected"';
             break;
     }
+    $addtype = get_string('addtype', 'lti');
+    $config = get_string('manage_tool_proxies', 'lti');
 
-    $template = "
-<div id=\"lti_tabs\" class=\"yui-navset\">
-    <ul id=\"lti_tab_heading\" class=\"yui-nav\" style=\"display:none\">
+    $addtypeurl = "{$CFG->wwwroot}/mod/lti/typessettings.php?action=add&amp;sesskey={$USER->sesskey}";
+
+    $template = <<< EOD
+<div id="lti_tabs" class="yui-navset">
+    <ul id="lti_tab_heading" class="yui-nav" style="display:none">
         <li {$activeselected}>
-            <a href=\"#tab1\">
+            <a href="#tab1">
                 <em>$active</em>
             </a>
         </li>
         <li {$pendingselected}>
-            <a href=\"#tab2\">
+            <a href="#tab2">
                 <em>$pending</em>
             </a>
         </li>
         <li {$rejectedselected}>
-            <a href=\"#tab3\">
+            <a href="#tab3">
                 <em>$rejected</em>
             </a>
         </li>
     </ul>
-    <div class=\"yui-content\">
+    <div class="yui-content">
         <div>
+            <div><a style="margin-top:.25em" href="{$addtypeurl}">{$addtype}</a></div>
             $configuredtoolshtml
         </div>
         <div>
@@ -125,7 +160,7 @@ if ($ADMIN->fulltree) {
     </div>
 </div>
 
-<script type=\"text/javascript\">
+<script type="text/javascript">
 //<![CDATA[
     YUI().use('yui2-tabview', 'yui2-datatable', function(Y) {
         //If javascript is disabled, they will just see the three tabs one after another
@@ -135,16 +170,16 @@ if ($ADMIN->fulltree) {
         new Y.YUI2.widget.TabView('lti_tabs');
 
         var setupTools = function(id, sort){
-            var lti_tools = Y.YUI2.util.Dom.get(id + '_tools');
+            var lti_tools = Y.YUI2.util.Dom.get(id);
 
             if(lti_tools){
                 var dataSource = new Y.YUI2.util.DataSource(lti_tools);
 
                 var configuredColumns = [
-                    {key:'name', label:'$typename', sortable:true},
-                    {key:'baseURL', label:'$baseurl', sortable:true},
-                    {key:'timecreated', label:'$createdon', sortable:true, formatter:Y.YUI2.widget.DataTable.formatDate},
-                    {key:'action', label:'$action'}
+                    {key:'name', label: M.util.get_string('typename', 'mod_lti'), sortable: true},
+                    {key:'baseURL', label: M.util.get_string('baseurl', 'mod_lti'), sortable: true},
+                    {key:'timecreated', label: M.util.get_string('createdon', 'mod_lti'), sortable: true},
+                    {key:'action', label: M.util.get_string('action', 'mod_lti')}
                 ];
 
                 dataSource.responseType = Y.YUI2.util.DataSource.TYPE_HTMLTABLE;
@@ -152,7 +187,7 @@ if ($ADMIN->fulltree) {
                     fields: [
                         {key:'name'},
                         {key:'baseURL'},
-                        {key:'timecreated', parser:'date'},
+                        {key:'timecreated'},
                         {key:'action'}
                     ]
                 };
@@ -165,12 +200,17 @@ if ($ADMIN->fulltree) {
             }
         };
 
-        setupTools('lti_configured', {key:'name', dir:'asc'});
-        setupTools('lti_pending', {key:'timecreated', dir:'desc'});
-        setupTools('lti_rejected', {key:'timecreated', dir:'desc'});
+        setupTools('lti_configured_tools', {key:'name', dir:'asc'});
+        setupTools('lti_pending_tools', {key:'timecreated', dir:'desc'});
+        setupTools('lti_rejected_tools', {key:'timecreated', dir:'desc'});
     });
 //]]
 </script>
-";
-    $settings->add(new admin_setting_heading('lti_types', get_string('external_tool_types', 'lti') . $OUTPUT->help_icon('main_admin', 'lti'), $template));
+EOD;
+    $settings->add(new admin_setting_heading('lti_types', new lang_string('external_tool_types', 'lti') .
+        $OUTPUT->help_icon('main_admin', 'lti'), $template));
 }
+
+// Tell core we already added the settings structure.
+$settings = null;
+

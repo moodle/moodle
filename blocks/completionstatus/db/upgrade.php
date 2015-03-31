@@ -31,7 +31,7 @@
  * Please do not forget to use upgrade_set_timeout()
  * before any action that may take longer time to finish.
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package block_completionstatus
  * @copyright 2012 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -65,6 +65,12 @@ function xmldb_block_completionstatus_upgrade($oldversion, $block) {
 
 
     // Moodle v2.6.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Moodle v2.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

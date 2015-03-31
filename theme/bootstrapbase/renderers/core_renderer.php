@@ -35,7 +35,7 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         $message = clean_text($message);
         $type = '';
 
-        if ($classes == 'notifyproblem') {
+        if (($classes == 'notifyproblem') || ($classes == 'notifytiny')) {
             $type = 'alert alert-error';
         }
         if ($classes == 'notifysuccess') {
@@ -56,6 +56,9 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
      */
     public function navbar() {
         $items = $this->page->navbar->get_items();
+        if (empty($items)) {
+            return '';
+        }
         $breadcrumbs = array();
         foreach ($items as $item) {
             $item->hideicon = true;
@@ -75,8 +78,8 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
     public function custom_menu($custommenuitems = '') {
         global $CFG;
 
-        if (!empty($CFG->custommenuitems)) {
-            $custommenuitems .= $CFG->custommenuitems;
+        if (empty($custommenuitems) && !empty($CFG->custommenuitems)) {
+            $custommenuitems = $CFG->custommenuitems;
         }
         $custommenu = new custom_menu($custommenuitems, current_language());
         return $this->render_custom_menu($custommenu);
@@ -133,6 +136,7 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
     protected function render_custom_menu_item(custom_menu_item $menunode, $level = 0 ) {
         static $submenucount = 0;
 
+        $content = '';
         if ($menunode->has_children()) {
 
             if ($level == 1) {
@@ -164,14 +168,21 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
             }
             $content .= '</ul>';
         } else {
-            $content = '<li>';
             // The node doesn't have children so produce a final menuitem.
-            if ($menunode->get_url() !== null) {
-                $url = $menunode->get_url();
+            // Also, if the node's text matches '####', add a class so we can treat it as a divider.
+            if (preg_match("/^#+$/", $menunode->get_text())) {
+                // This is a divider.
+                $content = '<li class="divider">&nbsp;</li>';
             } else {
-                $url = '#';
+                $content = '<li>';
+                if ($menunode->get_url() !== null) {
+                    $url = $menunode->get_url();
+                } else {
+                    $url = '#';
+                }
+                $content .= html_writer::link($url, $menunode->get_text(), array('title' => $menunode->get_title()));
+                $content .= '</li>';
             }
-            $content .= html_writer::link($url, $menunode->get_text(), array('title'=>$menunode->get_title()));
         }
         return $content;
     }
@@ -206,7 +217,7 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
      * @return string HTML fragment
      */
     protected function render_tabobject(tabobject $tab) {
-        if ($tab->selected or $tab->activated) {
+        if (($tab->selected and (!$tab->linkedwhenselected)) or $tab->activated) {
             return html_writer::tag('li', html_writer::tag('a', $tab->text), array('class' => 'active'));
         } else if ($tab->inactive) {
             return html_writer::tag('li', html_writer::tag('a', $tab->text), array('class' => 'disabled'));
@@ -217,7 +228,53 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
             } else {
                 $link = html_writer::link($tab->link, $tab->text, array('title' => $tab->title));
             }
-            return html_writer::tag('li', $link);
+            $params = $tab->selected ? array('class' => 'active') : null;
+            return html_writer::tag('li', $link, $params);
         }
+    }
+}
+
+/**
+ * Overridden core maintenance renderer.
+ *
+ * This renderer gets used instead of the standard core_renderer during maintenance
+ * tasks such as installation and upgrade.
+ * We override it in order to style those scenarios consistently with the regular
+ * bootstrap look and feel.
+ *
+ * @package    theme_bootstrapbase
+ * @copyright  2014 Sam Hemelryk
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class theme_bootstrapbase_core_renderer_maintenance extends core_renderer_maintenance {
+    /**
+     * Renders notifications for maintenance scripts.
+     *
+     * We need to override this method in the same way we do for the core_renderer maintenance method
+     * found above.
+     * Please note this isn't required of every function, only functions used during maintenance.
+     * In this case notification is used to print errors and we want pretty errors.
+     *
+     * @param string $message
+     * @param string $classes
+     * @return string
+     */
+    public function notification($message, $classes = 'notifyproblem') {
+        $message = clean_text($message);
+        $type = '';
+
+        if (($classes == 'notifyproblem') || ($classes == 'notifytiny')) {
+            $type = 'alert alert-error';
+        }
+        if ($classes == 'notifysuccess') {
+            $type = 'alert alert-success';
+        }
+        if ($classes == 'notifymessage') {
+            $type = 'alert alert-info';
+        }
+        if ($classes == 'redirectmessage') {
+            $type = 'alert alert-block alert-info';
+        }
+        return "<div class=\"$type\">$message</div>";
     }
 }

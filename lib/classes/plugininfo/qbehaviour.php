@@ -60,6 +60,11 @@ class qbehaviour extends base {
     public function is_uninstall_allowed() {
         global $DB;
 
+        if ($this->name === 'missing') {
+            // qbehaviour_missing is used by the system. It cannot be uninstalled.
+            return false;
+        }
+
         return !$DB->record_exists('question_attempts', array('behaviour' => $this->name));
     }
 

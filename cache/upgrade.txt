@@ -1,6 +1,19 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
+=== 2.9 ===
+* Cache data source aggregation functionality has been removed. This functionality was found to be broken and unused.
+  It was decided that rather than fixing it it should be removed.
+  As well as the processing code being removed the following API changes have been made.
+  The following changes have come about because of it:
+   - cache_definition::$datasourceaggregate is deprecated an unused.
+   - cache_definition::load Argument 3 (final arg) is now unused.
+   - cache_factory::create_cache_from_definition Argument 4 (final arg) is now unused.
+   - cache::make Argument 4 (final arg) is now unused.
+* cache_config_phpunittest has been renamed to cache_config_testing
+* New method cache_store::ready_to_be_used_for_testing() that returns true|false if the store is suitable and ready for use as the primary store during unit and acceptance tests.
+* cache_helper::get_stats structure we changed to include the cache mode.
+
 === 2.7 ===
 * cache_store::is_ready is no longer abstract, calling cache_store::are_requirements_met by default.
 

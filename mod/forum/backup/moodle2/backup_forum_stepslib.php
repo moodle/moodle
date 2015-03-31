@@ -65,6 +65,13 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
         $rating = new backup_nested_element('rating', array('id'), array(
             'component', 'ratingarea', 'scaleid', 'value', 'userid', 'timecreated', 'timemodified'));
 
+        $discussionsubs = new backup_nested_element('discussion_subs');
+
+        $discussionsub = new backup_nested_element('discussion_sub', array('id'), array(
+            'userid',
+            'preference',
+        ));
+
         $subscriptions = new backup_nested_element('subscriptions');
 
         $subscription = new backup_nested_element('subscription', array('id'), array(
@@ -109,6 +116,9 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
         $post->add_child($ratings);
         $ratings->add_child($rating);
 
+        $discussion->add_child($discussionsubs);
+        $discussionsubs->add_child($discussionsub);
+
         // Define sources
 
         $forum->set_source_table('forum', array('id' => backup::VAR_ACTIVITYID));
@@ -123,9 +133,9 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
 
             // Need posts ordered by id so parents are always before childs on restore
             $post->set_source_table('forum_posts', array('discussion' => backup::VAR_PARENTID), 'id ASC');
+            $discussionsub->set_source_table('forum_discussion_subs', array('discussion' => backup::VAR_PARENTID));
 
             $subscription->set_source_table('forum_subscriptions', array('forum' => backup::VAR_PARENTID));
-
             $digest->set_source_table('forum_digests', array('forum' => backup::VAR_PARENTID));
 
             $read->set_source_table('forum_read', array('forumid' => backup::VAR_PARENTID));
@@ -146,6 +156,8 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
         $discussion->annotate_ids('group', 'groupid');
 
         $post->annotate_ids('user', 'userid');
+
+        $discussionsub->annotate_ids('user', 'userid');
 
         $rating->annotate_ids('scale', 'scaleid');
 

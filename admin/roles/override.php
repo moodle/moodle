@@ -139,7 +139,6 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         array(
             'context' => $context,
             'objectid' => $roleid,
-            'courseid' => $courseid
         )
     );
 

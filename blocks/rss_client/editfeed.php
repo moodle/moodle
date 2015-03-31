@@ -89,7 +89,7 @@ class feed_edit_form extends moodleform {
         $rss->init();
 
         if ($rss->error()) {
-            $errors['url'] = get_string('errorloadingfeed', 'block_rss_client', $rss->error());
+            $errors['url'] = get_string('couldnotfindloadrssfeed', 'block_rss_client');
         } else {
             $this->title = $rss->get_title();
             $this->description = $rss->get_description();
@@ -176,7 +176,7 @@ if ($returnurl) {
 $managefeeds = new moodle_url('/blocks/rss_client/managefeeds.php', $urlparams);
 
 $PAGE->set_url('/blocks/rss_client/editfeed.php', $urlparams);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 
 if ($rssid) {
     $isadding = false;

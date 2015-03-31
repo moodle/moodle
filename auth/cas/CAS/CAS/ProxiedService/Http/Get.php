@@ -32,30 +32,31 @@
  *
  * Usage Example:
  *
- *			try {
- * 				$service = phpCAS::getProxiedService(PHPCAS_PROXIED_SERVICE_HTTP_GET);
- * 				$service->setUrl('http://www.example.com/path/');
- * 				$service->send();
- *				if ($service->getResponseStatusCode() == 200)
- *					return $service->getResponseBody();
- *				else
- *					// The service responded with an error code 404, 500, etc.
- *					throw new Exception('The service responded with an error.');
+ *	try {
+ *		$service = phpCAS::getProxiedService(PHPCAS_PROXIED_SERVICE_HTTP_GET);
+ *		$service->setUrl('http://www.example.com/path/');
+ *		$service->send();
+ *		if ($service->getResponseStatusCode() == 200)
+ *			return $service->getResponseBody();
+ *		else
+ *			// The service responded with an error code 404, 500, etc.
+ *			throw new Exception('The service responded with an error.');
  *
- *			} catch (CAS_ProxyTicketException $e) {
- *				if ($e->getCode() == PHPCAS_SERVICE_PT_FAILURE)
- *					return "Your login has timed out. You need to log in again.";
- *				else
- *					// Other proxy ticket errors are from bad request format (shouldn't happen)
- *					// or CAS server failure (unlikely) so lets just stop if we hit those.
- *					throw $e;
- *			} catch (CAS_ProxiedService_Exception $e) {
- *				// Something prevented the service request from being sent or received.
- *				// We didn't even get a valid error response (404, 500, etc), so this
- *				// might be caused by a network error or a DNS resolution failure.
- *				// We could handle it in some way, but for now we will just stop.
- *				throw $e;
- *			}
+ * 	} catch (CAS_ProxyTicketException $e) {
+ *	    if ($e->getCode() == PHPCAS_SERVICE_PT_FAILURE)
+ *			return "Your login has timed out. You need to log in again.";
+ *		else
+ *			// Other proxy ticket errors are from bad request format
+ *          // (shouldn't happen) or CAS server failure (unlikely)
+ *          // so lets just stop if we hit those.
+ *			throw $e;
+ *	} catch (CAS_ProxiedService_Exception $e) {
+ *		// Something prevented the service request from being sent or received.
+ *		// We didn't even get a valid error response (404, 500, etc), so this
+ *		// might be caused by a network error or a DNS resolution failure.
+ *		// We could handle it in some way, but for now we will just stop.
+ *		throw $e;
+ *	}
  *
  * @class    CAS_ProxiedService_Http_Get
  * @category Authentication

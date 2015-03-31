@@ -1,6 +1,96 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.9 ===
+
+* Support for rendering templates from php or javascript has been added. See MDL-49152.
+* Support for loading AMD javascript modules has been added. See MDL-49046.
+* Webservice core_course_delete_courses now return warning messages on any failures and does not try to rollback the entire deletion.
+* \core\event\course_viewed 'other' argument renamed from coursesectionid to coursesectionnumber as it contains the section number.
+* New API core_filetypes::add_type (etc.) allows custom filetypes to be added and modified.
+* PHPUnit: PHPMailer Sink is now started for all tests and is setup within the phpunit wrapper for advanced tests.
+  Catching debugging messages when sending mail will no longer work. Use $sink = $this->redirectEmails(); and then check
+  the message in the sink instead.
+* The file pluginlib.php was deprecated since 2.6 and has now been removed, do not include or require it.
+* \core_component::fetch_subsystems() now returns a valid path for completion component instead of null.
+* Deprecated JS global methods have been removed (show_item, destroy_item, hide_item, addonload, getElementsByTagName, findChildNodes).
+* For 3rd party plugin specific environment.xml files, it's now possible to specify version independent checks by using the
+  <PLUGIN name="component_name"> tag instead of the version dependent <MOODLE version="x.y"> one. If the PLUGIN tag is used any
+  Moodle specific tags will be ignored.
+* External function core_files_get_files returns additional fields (timecreated, filesize, author, license)
+* html_table: new API for adding captions to tables (new field, $table->caption) and subsequently hiding said captions from sighted users using accesshide (enabled using $table->captionhide).
+* The authorization procedure in the mdeploy.php script has been improved. The script
+  now relies on the main config.php when deploying an available update.
+* sql_internal_reader and sql_select_reader interfaces have been deprecated in favour of sql_internal_table_reader
+  and sql_reader which use iterators to be more memory efficient.
+* $CFG->enabletgzbackups setting has been removed as now backups are stored internally using .tar.gz format by default, you can
+  set $CFG->usezipbackups to store them in zip format. This does not affect the restore process, which continues accepting both.
+* Added support for custom string manager implementations via $CFG->customstringmanager
+  directive in the config.php. See MDL-49361 for details.
+
+=== 2.8 ===
+
+* Gradebook grade category option "aggregatesubcats" has been removed completely.
+  This means that the database column is removed, the admin settings are removed and
+  the properties from the grade_category object have been removed. If any courses were
+  found to be using this setting, a warning to check the grades will be shown in the
+  course grader report after upgrading the site. The same warning will be shown on
+  courses restored from backup that had this setting enabled (see MDL-47503).
+* lib/excelllib.class.php has been updated. The class MoodleExcelWorkbook will now only produce excel 2007 files.
+* renderers: We now remove the suffix _renderable when looking for a render method for a renderable.
+  If you have a renderable class named like "blah_renderable" and have a method on a renderer named "render_blah_renderable"
+  you will need to change the name of your render method to "render_blah" instead, as renderable at the end is no longer accepted.
+* New functions get_course_and_cm_from_cmid($cmorid, $modulename) and
+  get_course_and_cm_from_instance($instanceorid, $modulename) can be used to
+  more efficiently load these basic data objects at the start of a script.
+* New function cm_info::create($cm) can be used when you need a cm_info
+  object, but have a $cm which might only be a standard database record.
+* $CFG->enablegroupmembersonly no longer exists.
+* Scheduled tasks have gained support for syntax to introduce variability when a
+  task will run across installs. When a when hour or minute are defined as 'R'
+  they will be installed with a random hour/minute value.
+* Several classes grade_edit_tree_column_xxx were removed since grades setup page
+  has been significantly changed. These classes should not be used outside of
+  gradebook or developers can copy them into their plugins from 2.7 branch.
+* Google APIs Client Library (lib/google/) has been upgraded to 1.0.5-beta and
+  API has changed dramatically without backward compatibility. Any code accessing
+  it must be amended. It does not apply to lib/googleapi.php. See MDL-47297
+* Added an extra parameter to the function get_formatted_help_string() (default null) which is used to specify
+  additional string parameters.
+* User settings node and course node in navigation now support callbacks from admin tools.
+* grade_get_grades() optional parameteres $itemtype, $itemmodule, $iteminstance are now required.
+
+DEPRECATIONS:
+* completion_info->get_incomplete_criteria() is deprecated and will be removed in Moodle 3.0.
+* grade_category::aggregate_values() is deprecated and will be removed in Moodle 3.0.
+* groups_filter_users_by_course_module_visible() is deprecated; replace with
+  core_availability\info::filter_user_list. Will be removed in Moodle 3.0.
+* groups_course_module_visible() is deprecated; replace with $cm->uservisible.
+* cm_info property $cm->groupmembersonly is deprecated and always returns 0.
+  Use core_availability\info::filter_user_list if trying to determine which
+  other users can see an activity.
+* cm_info method $cm->is_user_access_restricted_by_group() is deprecated and
+  always returns false. Use $cm->uservisible to determine whether the user can
+  access the activity.
+* Constant FEATURE_GROUPMEMBERSONLY (used in module _supports functions) is
+  deprecated.
+* cohort_get_visible_list() is deprecated. There is a better function cohort_get_available_cohorts()
+  that respects user capabilities to view cohorts.
+* enrol_cohort_get_cohorts() and enrol_cohort_search_cohorts() are deprecated since
+  functionality is removed. Please use cohort_get_available_cohorts()
+* enrol_cohort_enrol_all_users() is deprecated; enrol_manual is now responsible for this action
+* enrol_cohort_can_view_cohort() is deprecated; replace with cohort_can_view_cohort()
+
+=== 2.6.4 / 2.7.1 ===
+
+* setnew_password_and_mail() and update_internal_user_password() will trigger
+  \core\event\user_password_updated. Previously they used to generate
+  \core\event\user_updated event.
+* update_internal_user_password() accepts optional boolean $fasthash for fast
+  hashing.
+* user_update_user() and user_create_user() api's accept optional param
+  $triggerevent to avoid respective events to be triggred from the api's.
+
 === 2.7 ===
 
 * PHPUnit cannot be installed via PEAR any more, please use composer package manager instead.
@@ -10,6 +100,32 @@ Events and Logging:
 * Significant changes in Logging API. For upgrading existing events_trigger() and
   add_to_log() see http://docs.moodle.org/dev/Migrating_logging_calls_in_plugins
   For accessing logs from plugins see http://docs.moodle.org/dev/Migrating_log_access_in_reports
+* The validation of the following events is now stricter (see MDL-45445):
+    - \core\event\blog_entry_created
+    - \core\event\blog_entry_deleted
+    - \core\event\blog_entry_updated
+    - \core\event\cohort_member_added
+    - \core\event\cohort_member_removed
+    - \core\event\course_category_deleted
+    - \core\event\course_completed
+    - \core\event\course_content_deleted
+    - \core\event\course_created
+    - \core\event\course_deleted
+    - \core\event\course_restored
+    - \core\event\course_section_updated (see MDL-45229)
+    - \core\event\email_failed
+    - \core\event\group_member_added
+    - \core\event\group_member_removed
+    - \core\event\note_created
+    - \core\event\note_deleted
+    - \core\event\note_updated
+    - \core\event\role_assigned
+    - \core\event\role_deleted
+    - \core\event\role_unassigned
+    - \core\event\user_graded
+    - \core\event\user_loggedinas
+    - \core\event\user_profile_viewed
+    - \core\event\webservice_token_created
 
 DEPRECATIONS:
 * $module uses in mod/xxx/version.php files is now deprecated. Please use $plugin instead. It will be removed in Moodle 2.10.
@@ -22,10 +138,31 @@ DEPRECATIONS:
 * mod_feedback\event\instances_list_viewed has been deprecated. Please use mod_feedback\event\course_module_instance_list_viewed instead.
 * mod_page\event\instances_list_viewed has been deprecated. Please use mod_page\event\course_module_instance_list_viewed instead.
 * The constants FRONTPAGECOURSELIST, FRONTPAGETOPICONLY & FRONTPAGECOURSELIMIT have been removed.
+* Conditional availability API has moved and changed. The condition_info class is
+  replaced by \core_availability\info_module, and condition_info_section by
+  \core_availability\info_section. (Code that uses the old classes will generally
+  still work.)
+* coursemodule_visible_for_user() has been deprecated but still works - replaced
+  by a new static function \core_availability\info_module::is_user_visible()
+* cm_info::is_user_access_restricted_by_conditional_access has been deprecated
+  but still works (it has never done what its name suggests, and is
+  unnecessary).
+* cm_info and section_info property showavailability has been deprecated, but
+  still works (with the caveat that this information is now per-user).
+* cm_info and section_info properties availablefrom and availableuntil have been
+  deprecated and always return zero (underlying data doesn't have these values).
+* section_info property groupingid has been deprecated and always returns zero,
+  same deal.
 * Various cm_info methods have been deprecated in favour of their read-only properties (get_url(), get_content(), get_extra_classes(),
   get_on_click(), get_custom_data(), get_after_link, get_after_edit_icons)
 * The ajaxenabled function has been deprecated and always returns true. All code should be fully functional in Javascript.
 * count_login_failures() has been deprecated, use user_count_login_failures() instead. Refer MDL-42891 for details.
+
+Conditional availability (activities and sections):
+* New conditional availability API in /availability, including new availability
+  condition plugins in /availability/condition. The new API is very similar with
+  regard to checking availability, but any code that modifies availability settings
+  for an activity or section is likely to need substantial changes.
 
 YUI:
   * The lightbox attribute for moodle-core-notification-dialogue has been

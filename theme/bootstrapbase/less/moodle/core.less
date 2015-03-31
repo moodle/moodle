@@ -16,6 +16,8 @@
     display:none;
 }
 
+/** Start Legacy styles. Deprecated since Moodle 2.9. See MDL-48160 for further information. **/
+.content-only #region-main.span9, // Two column layout with no block or all blocks docked.
 .empty-region-side-post #region-bs-main-and-pre.span9, // LTR with no post area.
 .empty-region-side-pre #region-bs-main-and-post.span9, // RTL with no pre area.
 .empty-region-side-post #region-bs-main-and-post.span9 #region-main.span8, // RTL with no post area.
@@ -27,25 +29,70 @@
 
 .empty-region-side-pre #region-bs-main-and-pre.span9 #region-main, // LTR with no pre area.
 .jsenabled.docked-region-side-pre #region-bs-main-and-pre.span9 #region-main { // LTR with all pre blocks docked.
-    float:none;
-    width:100%;
-}
-
-.empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
-.jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
-    #region-main.span8 {
-        /** Increase the span size by 1 **/
-        .fluid-span(9);
-    }
-    #block-region-side-pre.span4 {
-        /** Decrease the span size by 1 **/
-        .fluid-span(3);
-    }
+    float: none;
+    width: 100%;
 }
 
 .empty-region-side-pre #region-bs-main-and-post.span9 #region-main.span8, // RTL with no pre area.
 .jsenabled.docked-region-side-pre #region-bs-main-and-post.span9 #region-main.span8 { // RTL with all pre blocks docked.
     float: right;
+}
+/** End Legacy styles **/
+
+
+/* Default Three Columns - All
+------------------------------*/
+
+.content-only {
+    #region-main-box,
+    #region-main {
+        width: 100%;
+    }
+}
+.empty-region-side-pre {
+    &.used-region-side-post {
+        #region-main {
+            width: 100%;
+        }
+    }
+}
+.empty-region-side-post {
+    &.used-region-side-pre {
+        #region-main-box {
+            width: 100%;
+        }
+    }
+}
+.jsenabled {
+    &.docked-region-side-pre {
+        &.empty-region-side-pre {
+            &.used-region-side-post {
+                #region-main {
+                    width: 100%;
+                }
+            }
+        }
+    }
+    &.docked-region-side-post {
+        &.empty-region-side-post {
+            &.used-region-side-pre {
+                #region-main-box {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+.empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
+.jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
+    #region-main.span8 {
+    /** Increase the span size by 1 **/
+        .fluid-span(9);
+    }
+    #block-region-side-pre.span4 {
+    /** Decrease the span size by 1 **/
+        .fluid-span(3);
+    }
 }
 
 /** Page layout CSS ends **/
@@ -312,9 +359,6 @@ img.uihint {
     margin-left: auto;
     margin-right: auto;
 }
-.flexible th {
-    white-space: nowrap;
-}
 table.flexible .emptyrow {
     display: none;
 }
@@ -501,20 +545,12 @@ a.skip:active {
 .loginbox .loginform .form-label {
     float: left;
     text-align: right;
-    width: 44%;
-    direction: rtl;
-    white-space: nowrap;
-}
-.dir-rtl .loginbox .loginform .form-label {
-    float: left;
-    text-align: right;
-    width: 44%;
-    direction: ltr;
+    width: 49%;
     white-space: nowrap;
 }
 .loginbox .loginform .form-input {
     float: right;
-    width: 55%;
+    width: 50%;
 }
 .loginbox .loginform .form-input input {
     width: 6em;
@@ -600,6 +636,11 @@ table.mod_index {
 .comment-area textarea {
     width: 100%;
     overflow: auto;
+    &.fullwidth {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
 }
 .comment-area .fd {
     text-align: right;
@@ -1141,9 +1182,12 @@ body.tag .managelink {
             margin-bottom: 0;
         }
     }
-    .user-enroller-panel .uep-search-results .user .details {
-       width: 237px;
-    }
+  .user-enroller-panel .uep-search-results .user .details {
+    width: 237px;
+  }
+  .user-enroller-panel .uep-search-results .cohort .details {
+    width: 237px;
+  }
 }
 .dir-rtl {
     &#page-enrol-users {
@@ -1190,6 +1234,7 @@ body.tag .managelink {
 }
 .dir-rtl .loginbox .loginform .form-input {
     text-align: right;
+    margin-right: 1%;
 }
 .dir-rtl .yui3-menu-hidden {
     left: 0;
@@ -1225,52 +1270,22 @@ body.tag .managelink {
   float:left;
   padding-top:20px
 }
-.mod-indent-1 {
-    width: 30px;
+
+/* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
+@mod-indent-size: 30px;
+@mod-indent-levels: 16;
+.mod-indent-generate(@n, @i: 1) when (@i =< @n) {
+    .mod-indent-@{i} {
+        width: (@i * @mod-indent-size);
+    }
+    .mod-indent-generate(@n, (@i + 1));
 }
-.mod-indent-2 {
-    width: 60px;
+.mod-indent-generate(@n, @i: 1) when (@i = @n) {
+    .mod-indent-huge {
+        width: (@i * @mod-indent-size);
+    }
 }
-.mod-indent-3 {
-    width: 90px;
-}
-.mod-indent-4 {
-    width: 120px;
-}
-.mod-indent-5 {
-    width: 150px;
-}
-.mod-indent-6 {
-    width: 180px;
-}
-.mod-indent-7 {
-    width: 210px;
-}
-.mod-indent-8 {
-    width: 240px;
-}
-.mod-indent-9 {
-    width: 270px;
-}
-.mod-indent-10 {
-    width: 300px;
-}
-.mod-indent-11 {
-    width: 330px;
-}
-.mod-indent-12 {
-    width: 360px;
-}
-.mod-indent-13 {
-    width: 390px;
-}
-.mod-indent-14 {
-    width: 420px;
-}
-.mod-indent-15,
-.mod-indent-huge {
-    width: 420px;
-}
+.mod-indent-generate(@mod-indent-levels);
 
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
 .resourcecontent .mediaplugin_mp3 object {
@@ -1645,11 +1660,11 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     left: 6px;
 }
 /**
-* Chooser Dialogues (moodle-core-chooserdialogue)
-*
-* This CSS belong to the chooser dialogue which should work both with, and
-* without javascript enabled
-*/
+ * Chooser Dialogues (moodle-core-chooserdialogue)
+ *
+ * This CSS belong to the chooser dialogue which should work both with, and
+ * without javascript enabled
+ */
 /* Hide the dialog and it's title */
 .chooserdialoguebody,
 .choosertitle {
@@ -1717,8 +1732,9 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .dir-rtl .choosercontainer #chooseform .nonoption span.modicon img.icon {
     padding: 0 0.5em 0 0;
 }
-.choosercontainer #chooseform .option span.modicon img.icon,
-.choosercontainer #chooseform .nonoption span.modicon img.icon {
+
+.chooserdialogue-course-modchooser .choosercontainer #chooseform .option span.modicon img.icon,
+.chooserdialogue-course-modchooser .choosercontainer #chooseform .nonoption span.modicon img.icon {
     height: 24px;
     width: 24px;
 }
@@ -1765,7 +1781,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     left: 20.3em;
     margin: 0;
     padding: 1.6em;
-    background-color: @bodyBackground;
+    background-color: #fff;
     overflow-x: hidden;
     overflow-y: auto;
     line-height: 2em;
@@ -1782,7 +1798,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     display: block;
 }
 .choosercontainer #chooseform .selected {
-    background-color: @bodyBackground;
+    background-color: #fff;
     .box-shadow(0px 0 10px 0 #ccc);
 }
 .section-modchooser-link img.smallicon {
@@ -1887,31 +1903,11 @@ a.criteria-action {
     padding: 0px 3px;
     float: right;
 }
-table.issuedbadgebox {
-    width: 750px;
-    background-color: @wellBackground;
-}
-table.badgeissuedimage {
-    width: 150px;
-    text-align: center;
-}
-table.badgeissuedinfo {
-    width: 600px;
-}
-table.badgeissuedinfo .bvalue {
-    text-align: left;
-    vertical-align: middle;
-}
-table.badgeissuedinfo .bfield {
-    width: 125px;
-    text-align: left;
-    font-style: italic;
-}
-.dir-rtl {
-    table.badgeissuedinfo .bvalue,
-    table.badgeissuedinfo .bfield {
-        text-align: right;
-    }
+div.criteria-description {
+    padding: 10px 15px;
+    margin: 5px 0px;
+    background: none repeat scroll 0 0 #f9f9f9;
+    border: 1px solid #EEE;
 }
 ul.badges {
     margin: 0;
@@ -1933,8 +1929,8 @@ ul.badges {
     position: absolute;
 }
 .badges li .badge-image {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     left: 10px;
     top: 0px;
     z-index: 1;
@@ -1942,24 +1938,78 @@ ul.badges {
 .badges li .badge-actions {
     position: relative;
 }
-div.badge {
-    position: relative;
-    display: block;
-}
-div.badge .expireimage {
+.badges li .expireimage {
     width: 100px;
     height: 100px;
-    left: 20px;
-    top: 0px;
-}
-.expireimage {
-    .opacity(85);
-    width: 90px; height: 90px;
-    left: 30px;
+    left: 25px;
     top: 0px;
     position: absolute;
-    z-index:10;
+    z-index: 10;
+    opacity: 0.85;
 }
+
+#badge-image {
+    background-color: transparent;
+    padding: 0;
+    position: relative;
+    min-width: 100px;
+    width: 20%;
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 17px;
+
+    .expireimage {
+        width: 100px;
+        height: 100px;
+        left: 0px;
+        top: 0px;
+        .opacity(85);
+        position: absolute;
+        z-index:10;
+    }
+
+    .singlebutton {
+        padding-top: 5px;
+
+        input {
+            margin-left: 0px;
+        }
+    }
+}
+.dir-rtl #badge-image {
+    float: right;
+
+    .expireimage {
+        left: 41px;
+    }
+}
+#badge-details {
+    display: inline-block;
+    width: 79%;
+}
+
+#badge-overview dl,
+#badge-details dl {
+    margin: 0;
+
+    dt,
+    dd {
+        vertical-align: top;
+        padding: 3px 0;
+    }
+    dt {
+        clear: both;
+        display: inline-block;
+        width: 20%;
+        min-width: 100px;
+    }
+    dd {
+        display: inline-block;
+        width: 79%;
+        margin-left: 1%;
+    }
+}
+
 .badge-profile {
     vertical-align: top;
 }
@@ -1985,14 +2035,25 @@ div.badge .expireimage {
     width: 42%;
 }
 
-.statustable {
-    margin-bottom: 0px;
+#issued-badge-table .activatebadge {
+    display: inline-block;
 }
 .statusbox.active {
     background-color: @successBackground;
 }
 .statusbox.inactive {
     background-color: @warningBackground;
+}
+.statusbox {
+    text-align: center;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+.statusbox .activatebadge {
+    display: inline-block;
+}
+.statusbox .activatebadge input[type=submit]{
+    margin: 3px;
 }
 .activatebadge {
     margin: 0px;
@@ -2062,7 +2123,8 @@ img#persona_signin {
             padding-left: 4px;
             padding-right: 4px;
 
-            .iconsmall {
+            .iconsmall,
+            .smallicon {
                 margin: 4px 4px 4px 0px;
                 padding: 8px 4px 0px 2px;
                 vertical-align: text-bottom;
@@ -2139,8 +2201,10 @@ img#persona_signin {
         img {
             vertical-align: middle;
         }
-        .iconsmall {
+        .iconsmall,
+        .smallicon {
             margin: 4px 4px 4px -24px;
+            padding: 4px;
         }
         > li {
             display:block;
@@ -2167,6 +2231,10 @@ img#persona_signin {
         &.align-bl-tr {bottom: 100%;left:100%;}
         &.align-br-tr {bottom: 100%;right: 0;margin-bottom: 4px;}
     }
+    /** no wrap is set - prevent menu items from wrapping **/
+    &.nowrap-items .menu > li {
+        white-space: nowrap;
+    }
 }
 
 .block .moodle-actionmenu {
@@ -2179,9 +2247,13 @@ img#persona_signin {
             text-align: right;
             left: 0;
             right: auto;
-            .iconsmall {
-                margin-right:0;
-                margin-left:8px;
+            a {
+                padding: 2px 28px 2px 1em;
+            }
+            .iconsmall,
+            .smallicon {
+                margin-right: -24px;
+                margin-left: 4px;
             }
 
             /** bottom left of button **/
@@ -2230,4 +2302,32 @@ a.disabled {
 body.lockscroll {
   height: 100%;
   overflow: hidden;
+}
+
+.dir-rtl {
+    // Bootstrap sets right margin to 0. Fail.
+    // They set left margin to 25px so we will copy that.
+    ul {
+        margin-left: 0;
+        margin-right: 25px;
+    }
+}
+
+.progressbar_container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* IE10 only fix for calendar titling */
+.ie10 .yui3-calendar-header-label {
+    display: inline-block;
+}
+
+dd:before,
+dd:after {
+  display: block;
+  content: " ";
+}
+dd:after {
+  clear: both;
 }

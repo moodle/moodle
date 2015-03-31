@@ -111,6 +111,9 @@ class behat_util extends testing_util {
         // Disable some settings that are not wanted on test sites.
         set_config('noemailever', 1);
 
+        // Enable web cron.
+        set_config('cronclionly', 0);
+
         // Keeps the current version of database and dataroot.
         self::store_versions_hash();
 
@@ -290,4 +293,31 @@ class behat_util extends testing_util {
         return behat_command::get_behat_dir() . '/test_environment_enabled.txt';
     }
 
+    /**
+     * Reset contents of all database tables to initial values, reset caches, etc.
+     */
+    public static function reset_all_data() {
+        // Reset database.
+        self::reset_database();
+
+        // Purge dataroot directory.
+        self::reset_dataroot();
+
+        // Reset all static caches.
+        accesslib_clear_all_caches(true);
+        // Reset the nasty strings list used during the last test.
+        nasty_strings::reset_used_strings();
+
+        filter_manager::reset_caches();
+
+        // Reset course and module caches.
+        if (class_exists('format_base')) {
+            // If file containing class is not loaded, there is no cache there anyway.
+            format_base::reset_course_cache(0);
+        }
+        get_fast_modinfo(0, 0, true);
+
+        // Inform data generator.
+        self::get_data_generator()->reset();
+    }
 }

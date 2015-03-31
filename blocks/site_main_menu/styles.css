@@ -5,3 +5,6 @@
 .block_site_main_menu li .buttons a img{ vertical-align: text-bottom;}
 .block_site_main_menu .footer { margin-top: 1em; }
 .block_site_main_menu .section_add_menus noscript div { display: inline;}
+.block_site_main_menu .mod-indent,
+.block_site_main_menu .main-menu-content { display: table-cell; }
+.block_site_main_menu .main-menu-content > .activity-action { display: block; }

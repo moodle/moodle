@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/fixtures/event.php');
+require_once(__DIR__ . '/fixtures/store.php');
 
 class logstore_database_store_testcase extends advanced_testcase {
     public function test_log_writing() {
@@ -129,8 +130,7 @@ class logstore_database_store_testcase extends advanced_testcase {
             array('context' => context_module::instance($module2->cmid), 'other' => array('sample' => 6, 'xx' => 9)));
         $event2->trigger();
 
-        $_SESSION['SESSION'] = new \stdClass();
-        $this->setUser(0);
+        \core\session\manager::init_empty_session();
         $this->assertFalse(\core\session\manager::is_loggedinas());
 
         $logs = $DB->get_records('logstore_standard_log', array(), 'id ASC');
@@ -151,7 +151,7 @@ class logstore_database_store_testcase extends advanced_testcase {
 
         // Test reading.
         $this->assertSame(3, $store->get_events_select_count('', array()));
-        $events = $store->get_events_select('', array(), 'id', 0, 0);
+        $events = $store->get_events_select('', array(), 'timecreated ASC', 0, 0); // Is actually sorted by "timecreated ASC, id ASC".
         $this->assertCount(3, $events);
         $resev1 = array_shift($events);
         array_shift($events);
@@ -223,6 +223,49 @@ class logstore_database_store_testcase extends advanced_testcase {
 
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
+    }
+
+    /**
+     * Test method is_event_ignored.
+     */
+    public function test_is_event_ignored() {
+        $this->resetAfterTest();
+
+        // Test guest filtering.
+        set_config('logguests', 0, 'logstore_database');
+        $this->setGuestUser();
+        $event = \logstore_database\event\unittest_executed::create(
+                array('context' => context_system::instance(), 'other' => array('sample' => 5, 'xx' => 10)));
+        $logmanager = get_log_manager();
+        $store = new \logstore_database\test\store($logmanager);
+        $this->assertTrue($store->is_event_ignored($event));
+
+        set_config('logguests', 1, 'logstore_database');
+        $store = new \logstore_database\test\store($logmanager); // Reload.
+        $this->assertFalse($store->is_event_ignored($event));
+
+        // Test action/level filtering.
+        set_config('includelevels', '', 'logstore_database');
+        set_config('includeactions', '', 'logstore_database');
+        $store = new \logstore_database\test\store($logmanager); // Reload.
+        $this->assertTrue($store->is_event_ignored($event));
+
+        set_config('includelevels', '0,1', 'logstore_database');
+        $store = new \logstore_database\test\store($logmanager); // Reload.
+        $this->assertTrue($store->is_event_ignored($event));
+
+        set_config('includelevels', '0,1,2', 'logstore_database');
+        $store = new \logstore_database\test\store($logmanager); // Reload.
+        $this->assertFalse($store->is_event_ignored($event));
+
+        set_config('includelevels', '', 'logstore_database');
+        set_config('includeactions', 'c,r,d', 'logstore_database');
+        $store = new \logstore_database\test\store($logmanager); // Reload.
+        $this->assertTrue($store->is_event_ignored($event));
+
+        set_config('includeactions', 'c,r,u,d', 'logstore_database');
+        $store = new \logstore_database\test\store($logmanager); // Reload.
+        $this->assertFalse($store->is_event_ignored($event));
     }
 
     /**

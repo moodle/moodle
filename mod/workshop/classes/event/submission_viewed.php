@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when a workshop submission is viewed.
+ * The mod_workshop submission viewed event.
  *
  * @package    mod_workshop
- * @category   event
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,16 +26,16 @@ namespace mod_workshop\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a workshop submission is viewed.
+ * The mod_workshop submission viewed event class.
  *
  * @property-read array $other {
- *     Extra information about the event.
+ *      Extra information about the event.
  *
- *     @type int workshopid workshop ID.
+ *      - int workshopid: (optional) workshop ID.
  * }
  *
  * @package    mod_workshop
- * @category   event
+ * @since      Moodle 2.7
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -57,7 +56,8 @@ class submission_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'A user with an id of ' . $this->userid . ' viewed a workshop submission with an id of ' . $this->objectid;
+        return "The user with id '$this->userid' viewed the submission with id '$this->objectid' for the workshop " .
+            "with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -87,5 +87,19 @@ class submission_viewed extends \core\event\base {
         return array($this->courseid, 'workshop', 'view submission',
             'submission.php?cmid=' . $this->contextinstanceid . '&id=' . $this->objectid,
             $this->objectid, $this->contextinstanceid);
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
     }
 }

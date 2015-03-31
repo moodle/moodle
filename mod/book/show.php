@@ -47,41 +47,27 @@ $chapter->hidden = $chapter->hidden ? 0 : 1;
 
 // Update record.
 $DB->update_record('book_chapters', $chapter);
-$params = array(
-    'context' => $context,
-    'objectid' => $chapter->id
-);
-$event = \mod_book\event\chapter_updated::create($params);
-$event->add_record_snapshot('book_chapters', $chapter);
-$event->trigger();
+\mod_book\event\chapter_updated::create_from_chapter($book, $context, $chapter)->trigger();
 
 // Change visibility of subchapters too.
 if (!$chapter->subchapter) {
-    $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum', 'id, subchapter, hidden');
+    $chapters = $DB->get_recordset('book_chapters', array('bookid'=>$book->id), 'pagenum ASC');
     $found = 0;
     foreach ($chapters as $ch) {
         if ($ch->id == $chapter->id) {
             $found = 1;
+
         } else if ($found and $ch->subchapter) {
             $ch->hidden = $chapter->hidden;
             $DB->update_record('book_chapters', $ch);
-
-            $params = array(
-                'context' => $context,
-                'objectid' => $ch->id
-            );
-            $event = \mod_book\event\chapter_updated::create($params);
-            $event->trigger();
+            \mod_book\event\chapter_updated::create_from_chapter($book, $context, $ch)->trigger();
 
         } else if ($found) {
             break;
         }
     }
+    $chapters->close();
 }
-
-// MDL-39963 Decide what to do with those logs.
-add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
-add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id, $book->id, $cm->id);
 
 book_preload_chapters($book); // fix structure
 $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));

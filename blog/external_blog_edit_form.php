@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -26,7 +25,7 @@
  */
 
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    die('Direct access to this script is forbidden.');    // It must be included from a Moodle page.
 }
 
 require_once($CFG->libdir.'/formslib.php');
@@ -118,9 +117,11 @@ class blog_edit_external_form extends moodleform {
         if ($id = $mform->getElementValue('id')) {
             $mform->setDefault('autotags', implode(',', tag_get_tags_array('blog_external', $id)));
             $mform->freeze('url');
-            $mform->freeze('filtertags');
+            if ($mform->elementExists('filtertags')) {
+                $mform->freeze('filtertags');
+            }
             // TODO change the filtertags element to a multiple select, using the tags of the external blog
-            // Use $rss->get_channel_tags()
+            // Use $rss->get_channel_tags().
         }
     }
 }

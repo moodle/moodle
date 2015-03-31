@@ -45,7 +45,7 @@ $PAGE->navbar->add($strimportgroups);
 navigation_node::override_active_url(new moodle_url('/group/index.php', array('id' => $course->id)));
 $PAGE->set_title("$course->shortname: $strimportgroups");
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 
 $returnurl = new moodle_url('/group/index.php', array('id'=>$id));
 

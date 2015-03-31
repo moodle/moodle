@@ -34,6 +34,8 @@
     - AlfrescoWebService::__soapCall() arguments do not match SoapClient::__soapCall()
     - AlfrescoWebService::__doRequest() arguments do not match SoapClient::__soapCall()
 
+6. Apply the changes from MDL-41975 in regard with the timestamp
+
 == Alfresco PHP Library ==
 
 Installation and developer documentation for the Alfresco PHP Library can be found on the Alfresco Wiki.

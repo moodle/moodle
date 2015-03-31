@@ -27,9 +27,10 @@ namespace mod_forum\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_forum discussion viewed event.
+ * The mod_forum discussion viewed event class.
  *
  * @package    mod_forum
+ * @since      Moodle 2.7
  * @copyright  2014 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -52,7 +53,8 @@ class discussion_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user {$this->userid} has viewed the forum discussion {$this->objectid}";
+        return "The user with id '$this->userid' has viewed the discussion with id '$this->objectid' in the forum " .
+            "with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -93,11 +95,7 @@ class discussion_viewed extends \core\event\base {
         parent::validate_data();
 
         if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context passed must be module context.');
-        }
-
-        if (!isset($this->objectid)) {
-            throw new \coding_exception('objectid must be set to the discussionid.');
+            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
         }
     }
 

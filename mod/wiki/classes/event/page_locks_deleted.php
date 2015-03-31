@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki page locks deleted (override locks)
+ * The mod_wiki page locks deleted (override locks) event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,15 +26,16 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki page locks deleted (override locks)
+ * The mod_wiki page locks deleted (override locks) event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int section section id.
+ *      - int section: (optional) section id.
  * }
  *
  * @package    mod_wiki
+ * @since      Moodle 2.7
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -65,7 +66,8 @@ class page_locks_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' deleted locks for page id ' . $this->objectid;
+        return "The user with id '$this->userid' deleted locks for the page with id '$this->objectid' for the wiki with " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**

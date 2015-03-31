@@ -45,7 +45,7 @@ class core_enrol_renderer extends plugin_renderer_base {
         $buttons = $table->get_manual_enrol_buttons();
         $buttonhtml = '';
         if (count($buttons) > 0) {
-            $buttonhtml .= html_writer::start_tag('div', array('class' => 'enrol_user_buttons'));
+            $buttonhtml .= html_writer::start_tag('div', array('class' => 'enrol_user_buttons enrol-users-page-action'));
             foreach ($buttons as $button) {
                 $buttonhtml .= $this->render($button);
             }
@@ -420,8 +420,8 @@ class course_enrolment_table extends html_table implements renderable {
      * @static
      * @var array
      */
-    protected static $sortablefields = array('firstname', 'lastname', 'idnumber', 'email',
-            'phone1', 'phone2', 'institution', 'department' );
+    protected static $sortablefields = array('firstname', 'lastname', 'firstnamephonetic', 'lastnamephonetic', 'middlename',
+            'alternatename', 'idnumber', 'email', 'phone1', 'phone2', 'institution', 'department' );
 
     /**
      * Constructs the table
@@ -709,7 +709,8 @@ class course_enrolment_users_table extends course_enrolment_table {
      * @static
      * @var array
      */
-    protected static $sortablefields = array('firstname', 'lastname', 'email', 'lastaccess');
+    protected static $sortablefields = array('firstname', 'lastname', 'firstnamephonetic', 'lastnamephonetic', 'middlename',
+            'alternatename', 'email', 'lastaccess');
 }
 
 /**
@@ -758,8 +759,10 @@ class course_enrolment_other_users_table extends course_enrolment_table {
                     'enrol',
                     'enrolmentoptions',
                     'enrolusers',
+                    'enrolxusers',
                     'errajaxfailedenrol',
                     'errajaxsearch',
+                    'foundxcohorts',
                     'none',
                     'usersearch',
                     'unlimitedduration',

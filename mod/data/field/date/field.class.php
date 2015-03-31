@@ -34,10 +34,18 @@ class data_field_date extends data_field_base {
     var $month = 0;
     var $year  = 0;
 
-    function display_add_field($recordid=0) {
+    function display_add_field($recordid = 0, $formdata = null) {
         global $DB, $OUTPUT;
 
-        if ($recordid) {
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id . '_day';
+            $day   = $formdata->$fieldname;
+            $fieldname = 'field_' . $this->field->id . '_month';
+            $month   = $formdata->$fieldname;
+            $fieldname = 'field_' . $this->field->id . '_year';
+            $year   = $formdata->$fieldname;
+            $content = make_timestamp($year, $month, $day, 12, 0, 0, 0, false);
+        } else if ($recordid) {
             $content = (int)$DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
         } else {
             $content = time();
@@ -128,5 +136,3 @@ class data_field_date extends data_field_base {
 
 
 }
-
-

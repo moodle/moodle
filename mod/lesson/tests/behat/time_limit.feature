@@ -22,8 +22,10 @@ Feature: A teacher can set a time limit for a lesson
     And I turn editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson |
-      | timed | 1 |
-      | maxtime | 1 |
+      | Description | Test lesson description |
+      | timelimit[enabled] | 1 |
+      | timelimit[timeunit] | 60 |
+      | timelimit[number]   | 1  |
     And I follow "Test lesson"
     And I follow "Add a content page"
     And I set the following fields to these values:
@@ -35,7 +37,7 @@ Feature: A teacher can set a time limit for a lesson
     And I log in as "student1"
     And I follow "Course 1"
     When I follow "Test lesson"
-    Then I should see "You have 1 minute(s) to finish the lesson."
+    Then I should see "You have 1 min to finish the lesson."
     And I wait "3" seconds
     And I should see "Time remaining"
     And I press "Single button"

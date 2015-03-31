@@ -56,11 +56,6 @@ class assign_upgrade_manager {
         global $DB, $CFG, $USER;
         // Steps to upgrade an assignment.
 
-        // Is the user the admin? admin check goes here.
-        if (!is_siteadmin($USER->id)) {
-              return false;
-        }
-
         core_php_time_limit::raise(ASSIGN_MAX_UPGRADE_TIME_SECS);
 
         // Get the module details.
@@ -71,6 +66,14 @@ class assign_upgrade_manager {
                                            '*',
                                            MUST_EXIST);
         $oldcontext = context_module::instance($oldcoursemodule->id);
+        // We used to check for admin capability, but since Moodle 2.7 this is called
+        // during restore of a mod_assignment module.
+        // Also note that we do not check for any mod_assignment capabilities, because they can
+        // be removed so that users don't add new instances of the broken old thing.
+        if (!has_capability('mod/assign:addinstance', $oldcontext)) {
+            $log = get_string('couldnotcreatenewassignmentinstance', 'mod_assign');
+            return false;
+        }
 
         // First insert an assign instance to get the id.
         $oldassignment = $DB->get_record('assignment', array('id'=>$oldassignmentid), '*', MUST_EXIST);
@@ -179,22 +182,8 @@ class assign_upgrade_manager {
             }
 
             // Upgrade availability data.
-            $DB->set_field('course_modules_avail_fields',
-                           'coursemoduleid',
-                           $newcoursemodule->id,
-                           array('coursemoduleid'=>$oldcoursemodule->id));
-            $DB->set_field('course_modules_availability',
-                           'coursemoduleid',
-                           $newcoursemodule->id,
-                           array('coursemoduleid'=>$oldcoursemodule->id));
-            $DB->set_field('course_modules_availability',
-                           'sourcecmid',
-                           $newcoursemodule->id,
-                           array('sourcecmid'=>$oldcoursemodule->id));
-            $DB->set_field('course_sections_availability',
-                           'sourcecmid',
-                           $newcoursemodule->id,
-                           array('sourcecmid'=>$oldcoursemodule->id));
+            \core_availability\info::update_dependency_id_across_course(
+                    $newcoursemodule->course, 'course_modules', $oldcoursemodule->id, $newcoursemodule->id);
 
             // Upgrade completion data.
             $DB->set_field('course_modules_completion',
@@ -226,6 +215,8 @@ class assign_upgrade_manager {
                 $submission->timecreated = $oldsubmission->timecreated;
                 $submission->timemodified = $oldsubmission->timemodified;
                 $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+                // Because in mod_assignment there could only be one submission per student, it is always the latest.
+                $submission->latest = 1;
                 $submission->id = $DB->insert_record('assign_submission', $submission);
                 if (!$submission->id) {
                     $log .= get_string('couldnotinsertsubmission', 'mod_assign', $submission->userid);
@@ -394,15 +385,12 @@ class assign_upgrade_manager {
         $newcm->indent           = $cm->indent;
         $newcm->groupmode        = $cm->groupmode;
         $newcm->groupingid       = $cm->groupingid;
-        $newcm->groupmembersonly = $cm->groupmembersonly;
         $newcm->completion                = $cm->completion;
         $newcm->completiongradeitemnumber = $cm->completiongradeitemnumber;
         $newcm->completionview            = $cm->completionview;
         $newcm->completionexpected        = $cm->completionexpected;
         if (!empty($CFG->enableavailability)) {
-            $newcm->availablefrom             = $cm->availablefrom;
-            $newcm->availableuntil            = $cm->availableuntil;
-            $newcm->showavailability          = $cm->showavailability;
+            $newcm->availability = $cm->availability;
         }
         $newcm->showdescription = $cm->showdescription;
 

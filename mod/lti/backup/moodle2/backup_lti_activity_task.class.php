@@ -30,7 +30,7 @@
 //
 // BasicLTI4Moodle is copyright 2009 by Marc Alier Forment, Jordi Piguillem and Nikolas Galanis
 // of the Universitat Politecnica de Catalunya http://www.upc.edu
-// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
+// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
  * Defines backup_lti_activity_task class
@@ -78,13 +78,13 @@ class backup_lti_activity_task extends backup_activity_task {
 
         $base = preg_quote($CFG->wwwroot, "/");
 
-        // Link to the list of basiclti tools
-        $search="/(".$base."\/mod\/lti\/index.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@LTIINDEX*$2@$', $content);
+        // Link to the list of basiclti tools.
+        $search = "/(".$base."\/mod\/lti\/index.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@LTIINDEX*$2@$', $content);
 
-        // Link to basiclti view by moduleid
-        $search="/(".$base."\/mod\/lti\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@LTIVIEWBYID*$2@$', $content);
+        // Link to basiclti view by moduleid.
+        $search = "/(".$base."\/mod\/lti\/view.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@LTIVIEWBYID*$2@$', $content);
 
         return $content;
     }

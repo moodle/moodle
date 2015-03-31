@@ -33,11 +33,23 @@ defined('MOODLE_INTERNAL') || die;
 class report_log_renderer extends plugin_renderer_base {
 
     /**
+     * This method should never be manually called, it should only be called by process.
+     *
+     * @deprecated since 2.8, to be removed in 2.9
+     * @param report_log_renderable $reportlog
+     * @return string
+     */
+    public function render_report_log_renderable(report_log_renderable $reportlog) {
+        debugging('Do not call this method. Please call $renderer->render($reportlog) instead.', DEBUG_DEVELOPER);
+        return $this->render($reportlog);
+    }
+
+    /**
      * Render log report page.
      *
      * @param report_log_renderable $reportlog object of report_log.
      */
-    public function render_report_log_renderable(report_log_renderable $reportlog) {
+    protected function render_report_log(report_log_renderable $reportlog) {
         if (empty($reportlog->selectedlogreader)) {
             echo $this->output->notification(get_string('nologreaderenabled', 'report_log'), 'notifyproblem');
             return;
@@ -61,7 +73,9 @@ class report_log_renderer extends plugin_renderer_base {
         if (empty($readers)) {
             $readers = array(get_string('nologreaderenabled', 'report_log'));
         }
-        $select = new single_select($reportlog->url, 'logreader', $readers, $reportlog->selectedlogreader, null);
+        $url = fullclone ($reportlog->url);
+        $url->remove_params(array('logreader'));
+        $select = new single_select($url, 'logreader', $readers, $reportlog->selectedlogreader, null);
         $select->set_label(get_string('selectlogreader', 'report_log'));
         echo $this->output->render($select);
     }
@@ -82,27 +96,26 @@ class report_log_renderer extends plugin_renderer_base {
         $selectedcourseid = empty($reportlog->course) ? 0 : $reportlog->course->id;
 
         // Add course selector.
+        $sitecontext = context_system::instance();
         $courses = $reportlog->get_course_list();
-        if (!empty($courses)) {
-            if ($reportlog->showcourses) {
-                echo html_writer::label(get_string('selectacourse'), 'menuid', false, array('class' => 'accesshide'));
-                echo html_writer::select($courses, "id", $selectedcourseid, null);
-            } else {
-                $courseoption[$selectedcourseid] = $courses[$selectedcourseid];
-                unset($courses);
-                echo html_writer::label(get_string('selectacourse'), 'menuid', false, array('class' => 'accesshide'));
-                echo html_writer::select($courseoption, "id", $selectedcourseid, null);
-
-                // Check if user is admin and this came because of limitation on number of courses to show in dropdown.
-                $sitecontext = context_system::instance();
-                if (has_capability('report/log:view', $sitecontext)) {
-                    $a = new stdClass();
-                    $a->url = new moodle_url('/report/log/index.php', array('chooselog' => 0,
-                        'group' => $reportlog->get_selected_group(), 'user' => $reportlog->userid,
-                        'id' => $selectedcourseid, 'date' => $reportlog->date, 'modid' => $reportlog->modid,
-                        'showcourses' => 1, 'showusers' => $reportlog->showusers));
-                    print_string('logtoomanycourses', 'moodle', $a);
-                }
+        if (!empty($courses) && $reportlog->showcourses) {
+            echo html_writer::label(get_string('selectacourse'), 'menuid', false, array('class' => 'accesshide'));
+            echo html_writer::select($courses, "id", $selectedcourseid, null);
+        } else {
+            $courses = array();
+            $courses[$selectedcourseid] = get_course_display_name_for_list($reportlog->course) . (($selectedcourseid == SITEID) ?
+                ' (' . get_string('site') . ') ' : '');
+            echo html_writer::label(get_string('selectacourse'), 'menuid', false, array('class' => 'accesshide'));
+            echo html_writer::select($courses, "id", $selectedcourseid, false);
+            // Check if user is admin and this came because of limitation on number of courses to show in dropdown.
+            if (has_capability('report/log:view', $sitecontext)) {
+                $a = new stdClass();
+                $a->url = new moodle_url('/report/log/index.php', array('chooselog' => 0,
+                    'group' => $reportlog->get_selected_group(), 'user' => $reportlog->userid,
+                    'id' => $selectedcourseid, 'date' => $reportlog->date, 'modid' => $reportlog->modid,
+                    'showcourses' => 1, 'showusers' => $reportlog->showusers));
+                $a->url = $a->url->out(false);
+                print_string('logtoomanycourses', 'moodle', $a);
             }
         }
 
@@ -115,26 +128,26 @@ class report_log_renderer extends plugin_renderer_base {
 
         // Add user selector.
         $users = $reportlog->get_user_list();
-        if (!empty($users)) {
-            if ($reportlog->showusers) {
-                echo html_writer::label(get_string('selctauser'), 'menuuser', false, array('class' => 'accesshide'));
-                echo html_writer::select($users, "user", $reportlog->userid, get_string("allparticipants"));
+
+        if ($reportlog->showusers) {
+            echo html_writer::label(get_string('selctauser'), 'menuuser', false, array('class' => 'accesshide'));
+            echo html_writer::select($users, "user", $reportlog->userid, get_string("allparticipants"));
+        } else {
+            $users = array();
+            if (!empty($reportlog->userid)) {
+                $users[$reportlog->userid] = $reportlog->get_selected_user_fullname();
             } else {
-                $users = array();
-                if (!empty($reportlog->userid)) {
-                    $users[$reportlog->userid] = $reportlog->get_selected_user_fullname();
-                } else {
-                    $users[0] = get_string('allparticipants');
-                }
-                echo html_writer::label(get_string('selctauser'), 'menuuser', false, array('class' => 'accesshide'));
-                echo html_writer::select($users, "user", $reportlog->userid, false);
-                $a = new stdClass();
-                $a->url = new moodle_url('/report/log/index.php', array('chooselog' => 0,
-                    'group' => $reportlog->get_selected_group(), 'user' => $reportlog->userid,
-                    'id' => $selectedcourseid, 'date' => $reportlog->date, 'modid' => $reportlog->modid,
-                    'showcourses' => 1, 'showusers' => $reportlog->showusers, 'showcourses' => $reportlog->showcourses));
-                print_string('logtoomanyusers', 'moodle', $a);
+                $users[0] = get_string('allparticipants');
             }
+            echo html_writer::label(get_string('selctauser'), 'menuuser', false, array('class' => 'accesshide'));
+            echo html_writer::select($users, "user", $reportlog->userid, false);
+            $a = new stdClass();
+            $a->url = new moodle_url('/report/log/index.php', array('chooselog' => 0,
+                'group' => $reportlog->get_selected_group(), 'user' => $reportlog->userid,
+                'id' => $selectedcourseid, 'date' => $reportlog->date, 'modid' => $reportlog->modid,
+                'showusers' => 1, 'showcourses' => $reportlog->showcourses));
+            $a->url = $a->url->out(false);
+            print_string('logtoomanyusers', 'moodle', $a);
         }
 
         // Add date selector.

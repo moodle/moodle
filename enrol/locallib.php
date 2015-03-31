@@ -243,16 +243,8 @@ class course_enrolment_manager {
                       JOIN {enrol} e ON (e.id = ue.enrolid)
                  LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = u.id)
                  LEFT JOIN {groups_members} gm ON u.id = gm.userid
-                     WHERE $filtersql";
-            if ($sort === 'firstname') {
-                $sql .= " ORDER BY u.firstname $direction, u.lastname $direction";
-            } else if ($sort === 'lastname') {
-                $sql .= " ORDER BY u.lastname $direction, u.firstname $direction";
-            } else if ($sort === 'email') {
-                $sql .= " ORDER BY u.email $direction, u.lastname $direction, u.firstname $direction";
-            } else if ($sort === 'lastseen') {
-                $sql .= " ORDER BY ul.timeaccess $direction, u.lastname $direction, u.firstname $direction";
-            }
+                     WHERE $filtersql
+                  ORDER BY u.$sort $direction";
             $this->users[$key] = $DB->get_records_sql($sql, $params, $page*$perpage, $perpage);
         }
         return $this->users[$key];
@@ -894,7 +886,7 @@ class course_enrolment_manager {
             $args['search'] = $this->searchfilter;
         }
         if (!empty($this->groupfilter)) {
-            $args['group'] = $this->groupfilter;
+            $args['filtergroup'] = $this->groupfilter;
         }
         if ($this->statusfilter !== -1) {
             $args['status'] = $this->statusfilter;
@@ -1099,18 +1091,25 @@ class course_enrolment_manager {
      */
     private function prepare_user_for_display($user, $extrafields, $now) {
         $details = array(
-            'userid'    => $user->id,
-            'courseid'  => $this->get_course()->id,
-            'picture'   => new user_picture($user),
-            'firstname' => fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context())),
-            'lastseen'  => get_string('never'),
+            'userid'           => $user->id,
+            'courseid'         => $this->get_course()->id,
+            'picture'          => new user_picture($user),
+            'firstname'        => fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context())),
+            'lastseen'         => get_string('never'),
+            'lastcourseaccess' => get_string('never'),
         );
         foreach ($extrafields as $field) {
             $details[$field] = $user->{$field};
         }
 
+        // Last time user has accessed the site.
         if ($user->lastaccess) {
             $details['lastseen'] = format_time($now - $user->lastaccess);
+        }
+
+        // Last time user has accessed the course.
+        if ($user->lastseen) {
+            $details['lastcourseaccess'] = format_time($now - $user->lastseen);
         }
         return $details;
     }

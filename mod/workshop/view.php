@@ -74,9 +74,6 @@ $event->trigger();
 if ($workshop->phase == workshop::PHASE_SUBMISSION and $workshop->phaseswitchassessment
         and $workshop->submissionend > 0 and $workshop->submissionend < time()) {
     $workshop->switch_phase(workshop::PHASE_ASSESSMENT);
-    $eventdata['other']['workshopphase'] = $workshop->phase;
-    $event = \mod_workshop\event\phase_switched::create($eventdata);
-    $event->trigger();
     // Disable the automatic switching now so that it is not executed again by accident
     // if the teacher changes the phase back to the submission one.
     $DB->set_field('workshop', 'phaseswitchassessment', 0, array('id' => $workshop->id));

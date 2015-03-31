@@ -18,7 +18,7 @@
 /**
  * This file contains functions used by the admin pages
  *
- * @since 2.1
+ * @since Moodle 2.1
  * @package admin
  * @copyright 2011 Andrew Davis
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

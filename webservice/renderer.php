@@ -214,8 +214,13 @@ class core_webservice_renderer extends plugin_renderer_base {
                 $table->align[] = 'center';
             }
 
+            $anydeprecated = false;
             foreach ($functions as $function) {
                 $function = external_function_info($function);
+
+                if (!empty($function->deprecated)) {
+                    $anydeprecated = true;
+                }
                 $requiredcaps = html_writer::tag('div',
                                 empty($function->capabilities) ? '' : $function->capabilities,
                                 array('class' => 'functiondesc'));
@@ -244,6 +249,10 @@ class core_webservice_renderer extends plugin_renderer_base {
 
         //display add function operation (except for build-in service)
         if (empty($service->component)) {
+
+            if (!empty($anydeprecated)) {
+                debugging('This service uses deprecated functions, replace them by the proposed ones and update your client/s.', DEBUG_DEVELOPER);
+            }
             $addurl = new moodle_url('/' . $CFG->admin . '/webservice/service_functions.php',
                             array('sesskey' => sesskey(), 'id' => $service->id, 'action' => 'add'));
             $html .= html_writer::tag('a', get_string('addfunctions', 'webservice'), array('href' => $addurl));
@@ -643,10 +652,6 @@ EOF;
         $docurl = new moodle_url('http://docs.moodle.org/dev/Creating_a_web_service_client');
         $docinfo->doclink = html_writer::tag('a',
                         get_string('wsclientdoc', 'webservice'), array('href' => $docurl));
-        $documentationhtml .= html_writer::start_tag('table',
-                        array('style' => "margin-left:auto; margin-right:auto;"));
-        $documentationhtml .= html_writer::start_tag('tr', array());
-        $documentationhtml .= html_writer::start_tag('td', array());
         $documentationhtml .= get_string('wsdocumentationintro', 'webservice', $docinfo);
         $documentationhtml .= $br . $br;
 
@@ -806,15 +811,18 @@ EOF;
                 $documentationhtml .= html_writer::end_tag('span');
             }
             $documentationhtml .= $br . $br;
+
+            // Ajax info.
+            $documentationhtml .= html_writer::start_tag('span', array('style' => 'color:#EA33A6'));
+            $documentationhtml .= get_string('callablefromajax', 'webservice') . $br;
+            $documentationhtml .= html_writer::end_tag('span');
+            $documentationhtml .= $description->allowed_from_ajax ? get_string('yes') : get_string('no');
+            $documentationhtml .= $br . $br;
+
             if (empty($printableformat)) {
                 $documentationhtml .= print_collapsible_region_end(true);
             }
         }
-
-        // close the table and return the documentation
-        $documentationhtml .= html_writer::end_tag('td');
-        $documentationhtml .= html_writer::end_tag('tr');
-        $documentationhtml .= html_writer::end_tag('table');
 
         return $documentationhtml;
     }

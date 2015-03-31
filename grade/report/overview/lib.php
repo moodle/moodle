@@ -135,7 +135,7 @@ class grade_report_overview extends grade_report {
     }
 
     public function fill_table() {
-        global $CFG, $DB, $OUTPUT;
+        global $CFG, $DB, $OUTPUT, $USER;
 
         // Only show user's courses instead of all courses.
         if ($this->courses) {
@@ -150,6 +150,11 @@ class grade_report_overview extends grade_report {
 
                 if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                     // The course is hidden and the user isn't allowed to see it
+                    continue;
+                }
+
+                if ((!has_capability('moodle/grade:view', $coursecontext) || $this->user->id != $USER->id) &&
+                        !has_capability('moodle/grade:viewall', $coursecontext)) {
                     continue;
                 }
 
@@ -169,7 +174,22 @@ class grade_report_overview extends grade_report {
                     if ($course_grade->is_hidden()) {
                         $finalgrade = null;
                     } else {
-                        $finalgrade = $this->blank_hidden_total($course->id, $course_item, $finalgrade);
+                        $adjustedgrade = $this->blank_hidden_total_and_adjust_bounds($course->id,
+                                                                                     $course_item,
+                                                                                     $finalgrade);
+
+                        // We temporarily adjust the view of this grade item - because the min and
+                        // max are affected by the hidden values in the aggregation.
+                        $finalgrade = $adjustedgrade['grade'];
+                        $course_item->grademax = $adjustedgrade['grademax'];
+                        $course_item->grademin = $adjustedgrade['grademin'];
+                    }
+                } else {
+                    // We must use the rawgrademin / rawgrademax because it can be different for
+                    // each grade_grade when items are excluded from sum of grades.
+                    if (!is_null($finalgrade)) {
+                        $course_item->grademin = $course_grade->rawgrademin;
+                        $course_item->grademax = $course_grade->rawgrademax;
                     }
                 }
 
@@ -241,7 +261,7 @@ function grade_report_overview_settings_definition(&$mform) {
                       0 => get_string('hide'),
                       1 => get_string('show'));
 
-    if (empty($CFG->grade_overviewreport_showrank)) {
+    if (empty($CFG->grade_report_overview_showrank)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
     } else {
         $options[-1] = get_string('defaultprev', 'grades', $options[1]);

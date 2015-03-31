@@ -46,16 +46,15 @@ if (has_capability('mod/scorm:viewreport', $contextmodule)) {
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/scorm/report.php?id=$cm->id", get_string('reports', 'scorm'));
 }
 
-if ($currenttab == 'info' && count($row) == 1) {
-    // Don't show only an info tab (e.g. to students).
-} else {
+if (!($currenttab == 'info' && count($row) == 1)) {
     $tabs[] = $row;
 }
 
 if ($currenttab == 'reports' && !empty($reportlist) && count($reportlist) > 1) {
     $row2 = array();
     foreach ($reportlist as $rep) {
-        $row2[] = new tabobject('scorm_'.$rep, $CFG->wwwroot."/mod/scorm/report.php?id=$cm->id&mode=$rep", get_string('pluginname', 'scormreport_'.$rep));
+        $row2[] = new tabobject('scorm_'.$rep, $CFG->wwwroot."/mod/scorm/report.php?id=$cm->id&mode=$rep",
+                                get_string('pluginname', 'scormreport_'.$rep));
     }
     $tabs[] = $row2;
 }

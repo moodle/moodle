@@ -15,16 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Mnet access control created event class.
+ * Mnet access control created event.
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Mnet access control created event class.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - string username: the username of the user.
+ *      - string hostname: the name of the host the user came from.
+ *      - string accessctrl: the access control value.
+ * }
+ *
+ * @package    core
+ * @since      Moodle 2.7
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class mnet_access_control_created extends base {
 
     /**
@@ -60,8 +78,8 @@ class mnet_access_control_created extends base {
      * @return string
      */
     public function get_description() {
-        return 'Access control created for the user with the username \'' . $this->other['username'] . '\' belonging
-            to the mnet host \'' . $this->other['hostname'] . '\'';
+        return "The user with id '$this->userid' created access control for the user with username '{$this->other['username']}' " .
+            "belonging to mnet host '{$this->other['hostname']}'.";
     }
 
     /**
@@ -84,15 +102,15 @@ class mnet_access_control_created extends base {
         parent::validate_data();
 
         if (!isset($this->other['username'])) {
-            throw new \coding_exception('The \'username\' must be set in other.');
+            throw new \coding_exception('The \'username\' value must be set in other.');
         }
 
         if (!isset($this->other['hostname'])) {
-            throw new \coding_exception('The \'hostname\' must be set in other.');
+            throw new \coding_exception('The \'hostname\' value must be set in other.');
         }
 
         if (!isset($this->other['accessctrl'])) {
-            throw new \coding_exception('The \'accessctrl\' must be set in other.');
+            throw new \coding_exception('The \'accessctrl\' value must be set in other.');
         }
     }
 }

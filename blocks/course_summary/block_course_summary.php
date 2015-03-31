@@ -74,10 +74,6 @@ class block_course_summary extends block_base {
         return true;
     }
 
-    function preferred_width() {
-        return 210;
-    }
-
 }
 
 

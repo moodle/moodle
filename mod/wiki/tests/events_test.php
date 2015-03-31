@@ -555,7 +555,7 @@ class mod_wiki_events_testcase extends advanced_testcase {
 
         $page = $this->wikigenerator->create_first_page($this->wiki);
         $context = context_module::instance($this->wiki->cmid);
-        $version = wiki_get_version(1);
+        $version = wiki_get_current_version($page->id);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();

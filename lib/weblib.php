@@ -224,6 +224,20 @@ function qualified_me() {
 }
 
 /**
+ * Determines whether or not the Moodle site is being served over HTTPS.
+ *
+ * This is done simply by checking the value of $CFG->httpswwwroot, which seems
+ * to be the only reliable method.
+ *
+ * @return boolean True if site is served over HTTPS, false otherwise.
+ */
+function is_https() {
+    global $CFG;
+
+    return (strpos($CFG->httpswwwroot, 'https://') === 0);
+}
+
+/**
  * Class for creating and manipulating urls.
  *
  * It can be used in moodle pages where config.php has been included without any further includes.
@@ -632,6 +646,10 @@ class moodle_url {
             }
         }
 
+        if ($url->anchor !== $this->anchor) {
+            return false;
+        }
+
         return true;
     }
 
@@ -667,7 +685,7 @@ class moodle_url {
     public function set_slashargument($path, $parameter = 'file', $supported = null) {
         global $CFG;
         if (is_null($supported)) {
-            $supported = $CFG->slasharguments;
+            $supported = !empty($CFG->slasharguments);
         }
 
         if ($supported) {
@@ -723,6 +741,32 @@ class moodle_url {
                                                $forcedownload = false) {
         global $CFG;
         $urlbase = "$CFG->httpswwwroot/pluginfile.php";
+        if ($itemid === null) {
+            return self::make_file_url($urlbase, "/$contextid/$component/$area".$pathname.$filename, $forcedownload);
+        } else {
+            return self::make_file_url($urlbase, "/$contextid/$component/$area/$itemid".$pathname.$filename, $forcedownload);
+        }
+    }
+
+    /**
+     * Factory method for creation of url pointing to plugin file.
+     * This method is the same that make_pluginfile_url but pointing to the webservice pluginfile.php script.
+     * It should be used only in external functions.
+     *
+     * @since  2.8
+     * @param int $contextid
+     * @param string $component
+     * @param string $area
+     * @param int $itemid
+     * @param string $pathname
+     * @param string $filename
+     * @param bool $forcedownload
+     * @return moodle_url
+     */
+    public static function make_webservice_pluginfile_url($contextid, $component, $area, $itemid, $pathname, $filename,
+                                               $forcedownload = false) {
+        global $CFG;
+        $urlbase = "$CFG->httpswwwroot/webservice/pluginfile.php";
         if ($itemid === null) {
             return self::make_file_url($urlbase, "/$contextid/$component/$area".$pathname.$filename, $forcedownload);
         } else {
@@ -973,7 +1017,7 @@ function page_doc_link($text='') {
 /**
  * Returns the path to use when constructing a link to the docs.
  *
- * @since 2.5.1 2.6
+ * @since Moodle 2.5.1 2.6
  * @param moodle_page $page
  * @return string
  */
@@ -1030,9 +1074,11 @@ function get_file_argument() {
 
     // Then try extract file from the slasharguments.
     if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
-        // NOTE: ISS tends to convert all file paths to single byte DOS encoding,
+        // NOTE: IIS tends to convert all file paths to single byte DOS encoding,
         //       we can not use other methods because they break unicode chars,
-        //       the only way is to use URL rewriting.
+        //       the only ways are to use URL rewriting
+        //       OR
+        //       to properly set the 'FastCGIUtf8ServerVariables' registry key.
         if (isset($_SERVER['PATH_INFO']) and $_SERVER['PATH_INFO'] !== '') {
             // Check that PATH_INFO works == must not contain the script name.
             if (strpos($_SERVER['PATH_INFO'], $SCRIPT) === false) {
@@ -1680,6 +1726,7 @@ function purify_html($text, $options = array()) {
             'nntp' => true,
             'news' => true,
             'rtsp' => true,
+            'rtmp' => true,
             'teamspeak' => true,
             'gopher' => true,
             'mms' => true,
@@ -1856,24 +1903,23 @@ function highlight($needle, $haystack, $matchcase = false,
         return $haystack;
     }
 
-    // Find all the HTML tags in the input, and store them in a placeholders array..
-    $placeholders = array();
-    $matches = array();
-    preg_match_all('/<[^>]*>/', $haystack, $matches);
-    foreach (array_unique($matches[0]) as $key => $htmltag) {
-        $placeholders['<|' . $key . '|>'] = $htmltag;
+    // Split the string into HTML tags and real content.
+    $chunks = preg_split('/((?:<[^>]*>)+)/', $haystack, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+    // We have an array of alternating blocks of text, then HTML tags, then text, ...
+    // Loop through replacing search terms in the text, and leaving the HTML unchanged.
+    $ishtmlchunk = false;
+    $result = '';
+    foreach ($chunks as $chunk) {
+        if ($ishtmlchunk) {
+            $result .= $chunk;
+        } else {
+            $result .= preg_replace($regexp, $prefix . '$1' . $suffix, $chunk);
+        }
+        $ishtmlchunk = !$ishtmlchunk;
     }
 
-    // In $hastack, replace each HTML tag with the corresponding placeholder.
-    $haystack = str_replace($placeholders, array_keys($placeholders), $haystack);
-
-    // In the resulting string, Do the highlighting.
-    $haystack = preg_replace($regexp, $prefix . '$1' . $suffix, $haystack);
-
-    // Turn the placeholders back into HTML tags.
-    $haystack = str_replace(array_keys($placeholders), $placeholders, $haystack);
-
-    return $haystack;
+    return $result;
 }
 
 /**
@@ -2221,6 +2267,7 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
     }
 
     $grouppictureurl = moodle_url::make_pluginfile_url($context->id, 'group', 'icon', $group->id, '/', $file);
+    $grouppictureurl->param('rev', $group->picture);
     $output .= '<img class="grouppicture" src="'.$grouppictureurl.'"'.
         ' alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
 
@@ -2500,6 +2547,16 @@ function redirect($url, $message='', $delay=-1) {
     do {
         if (defined('DEBUGGING_PRINTED')) {
             // Some debugging already printed, no need to look more.
+            $debugdisableredirect = true;
+            break;
+        }
+
+        if (core_useragent::is_msword()) {
+            // Clicking a URL from MS Word sends a request to the server without cookies. If that
+            // causes a redirect Word will open a browser pointing the new URL. If not, the URL that
+            // was clicked is opened. Because the request from Word is without cookies, it almost
+            // always results in a redirect to the login page, even if the user is logged in in their
+            // browser. This is not what we want, so prevent the redirect for requests from Word.
             $debugdisableredirect = true;
             break;
         }
@@ -2840,7 +2897,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
         if (!$backtrace) {
             $backtrace = debug_backtrace();
         }
-        $from = format_backtrace($backtrace, CLI_SCRIPT);
+        $from = format_backtrace($backtrace, CLI_SCRIPT || NO_DEBUG_DISPLAY);
         if (PHPUNIT_TEST) {
             if (phpunit_util::debugging_triggered($message, $level, $from)) {
                 // We are inside test, the debug message was logged.
@@ -2851,7 +2908,7 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
         if (NO_DEBUG_DISPLAY) {
             // Script does not want any errors or debugging in output,
             // we send the info to error log instead.
-            error_log('Debugging: ' . $message . $from);
+            error_log('Debugging: ' . $message . ' in '. PHP_EOL . $from);
 
         } else if ($forcedebug or $CFG->debugdisplay) {
             if (!defined('DEBUGGING_PRINTED')) {
@@ -2994,21 +3051,22 @@ class progress_bar {
      * @return void Echo's output
      */
     public function create() {
+        global $PAGE;
+
         $this->time_start = microtime(true);
         if (CLI_SCRIPT) {
             return; // Temporary solution for cli scripts.
         }
-        $widthplusborder = $this->width + 2;
+
+        $PAGE->requires->string_for_js('secondsleft', 'moodle');
+
         $htmlcode = <<<EOT
-        <div style="text-align:center;width:{$widthplusborder}px;clear:both;padding:0;margin:0 auto;">
-            <h2 id="status_{$this->html_id}" style="text-align: center;margin:0 auto"></h2>
-            <p id="time_{$this->html_id}"></p>
-            <div id="bar_{$this->html_id}" style="border-style:solid;border-width:1px;width:{$this->width}px;height:50px;">
-                <div id="progress_{$this->html_id}"
-                style="text-align:center;background:#FFCC66;width:4px;border:1px
-                solid gray;height:38px; padding-top:10px;">&nbsp;<span id="pt_{$this->html_id}"></span>
-                </div>
+        <div class="progressbar_container" style="width: {$this->width}px;" id="{$this->html_id}">
+            <h2></h2>
+            <div class="progress progress-striped active">
+                <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">&nbsp;</div>
             </div>
+            <p></p>
         </div>
 EOT;
         flush();
@@ -3034,12 +3092,11 @@ EOT;
             return; // Temporary solution for cli scripts.
         }
 
-        $es = $this->estimate($percent);
+        $estimate = $this->estimate($percent);
 
-        if ($es === null) {
+        if ($estimate === null) {
             // Always do the first and last updates.
-            $es = "?";
-        } else if ($es == 0) {
+        } else if ($estimate == 0) {
             // Always do the last updates.
         } else if ($this->lastupdate + 20 < time()) {
             // We must update otherwise browser would time out.
@@ -3047,13 +3104,15 @@ EOT;
             // No significant change, no need to update anything.
             return;
         }
+        if (is_numeric($estimate)) {
+            $estimate = get_string('secondsleft', 'moodle', round($estimate, 2));
+        }
 
-        $this->percent = $percent;
+        $this->percent = round($percent, 2);
         $this->lastupdate = microtime(true);
 
-        $w = ($this->percent/100) * $this->width;
-        echo html_writer::script(js_writer::function_call('update_progress_bar',
-            array($this->html_id, $w, $this->percent, $msg, $es)));
+        echo html_writer::script(js_writer::function_call('updateProgressBar',
+            array($this->html_id, $this->percent, $msg, $estimate)));
         flush();
     }
 
@@ -3445,6 +3504,8 @@ function print_password_policy() {
  * @param boolean $ajax Whether this help is called from an AJAX script.
  *                This is used to influence text formatting and determines
  *                which format to output the doclink in.
+ * @param string|object|array $a An object, string or number that can be used
+ *      within translation strings
  * @return Object An object containing:
  * - heading: Any heading that there may be for this help string.
  * - text: The wiki-formatted help string.
@@ -3452,7 +3513,7 @@ function print_password_policy() {
  *            CSS classes to apply to that link. Only present if $ajax = false.
  * - completedoclink: A text representation of the doclink. Only present if $ajax = true.
  */
-function get_formatted_help_string($identifier, $component, $ajax = false) {
+function get_formatted_help_string($identifier, $component, $ajax = false, $a = null) {
     global $CFG, $OUTPUT;
     $sm = get_string_manager();
 
@@ -3479,7 +3540,7 @@ function get_formatted_help_string($identifier, $component, $ajax = false) {
         $options->overflowdiv = !$ajax;
 
         // Should be simple wiki only MDL-21695.
-        $data->text =  format_text(get_string($identifier.'_help', $component), FORMAT_MARKDOWN, $options);
+        $data->text = format_text(get_string($identifier.'_help', $component, $a), FORMAT_MARKDOWN, $options);
 
         $helplink = $identifier . '_link';
         if ($sm->string_exists($helplink, $component)) {  // Link to further info in Moodle docs.

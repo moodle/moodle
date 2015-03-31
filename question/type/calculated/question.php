@@ -278,6 +278,7 @@ class qtype_calculated_dataset_loader {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_calculated_variable_substituter {
+
     /** @var array variable name => value */
     protected $values;
 
@@ -384,8 +385,8 @@ class qtype_calculated_variable_substituter {
                     }
                 } else {
                     // Stick to plain numeric format.
-                    $answer *= "1e$p10";
-                    if (0.1 <= $answer / "1e$length") {
+                    $answer *= "1e{$p10}";
+                    if (0.1 <= $answer / "1e{$length}") {
                         $x = $sign.$answer;
                     } else {
                         // Could be an idea to add some zeros here.
@@ -418,6 +419,10 @@ class qtype_calculated_variable_substituter {
      * @return float the computed result.
      */
     public function calculate($expression) {
+        // Make sure no malicious code is present in the expression. Refer MDL-46148 for details.
+        if ($error = qtype_calculated_find_formula_errors($expression)) {
+            throw new moodle_exception('illegalformulasyntax', 'qtype_calculated', '', $error);
+        }
         return $this->calculate_raw($this->substitute_values_for_eval($expression));
     }
 
@@ -465,108 +470,11 @@ class qtype_calculated_variable_substituter {
      * @return string the text with values substituted.
      */
     public function replace_expressions_in_text($text, $length = null, $format = null) {
-        $vs = $this; // Can't see to use $this in a PHP closure.
-        $text = preg_replace_callback('~\{=([^{}]*(?:\{[^{}]+}[^{}]*)*)}~',
+        $vs = $this; // Can't use $this in a PHP closure.
+        $text = preg_replace_callback(qtype_calculated::FORMULAS_IN_TEXT_REGEX,
                 function ($matches) use ($vs, $format, $length) {
                     return $vs->format_float($vs->calculate($matches[1]), $length, $format);
                 }, $text);
         return $this->substitute_values_pretty($text);
-    }
-
-    /**
-     * Return an array describing any problems there are with an expression.
-     * Returns false if the expression is fine.
-     * @param string $formula an expression.
-     * @return array|false list of problems, or false if the exression is OK.
-     */
-    public function get_formula_errors($formula) {
-        // Validates the formula submitted from the question edit page.
-        // Returns false if everything is alright
-        // otherwise it constructs an error message.
-        // Strip away dataset names.
-        while (preg_match('~\\{[[:alpha:]][^>} <{"\']*\\}~', $formula, $regs)) {
-            $formula = str_replace($regs[0], '1', $formula);
-        }
-
-        // Strip away empty space and lowercase it.
-        $formula = strtolower(str_replace(' ', '', $formula));
-
-        $safeoperatorchar = '-+/*%>:^\~<?=&|!'; /* */
-        $operatorornumber = "[$safeoperatorchar.0-9eE]";
-
-        while (preg_match("~(^|[$safeoperatorchar,(])([a-z0-9_]*)" .
-                "\\(($operatorornumber+(,$operatorornumber+((,$operatorornumber+)+)?)?)?\\)~",
-            $formula, $regs)) {
-            switch ($regs[2]) {
-                // Simple parenthesis.
-                case '':
-                    if ((isset($regs[4]) && $regs[4]) || strlen($regs[3]) == 0) {
-                        return get_string('illegalformulasyntax', 'qtype_calculated', $regs[0]);
-                    }
-                    break;
-
-                    // Zero argument functions.
-                case 'pi':
-                    if ($regs[3]) {
-                        return get_string('functiontakesnoargs', 'qtype_calculated', $regs[2]);
-                    }
-                    break;
-
-                    // Single argument functions (the most common case).
-                case 'abs': case 'acos': case 'acosh': case 'asin': case 'asinh':
-                case 'atan': case 'atanh': case 'bindec': case 'ceil': case 'cos':
-                case 'cosh': case 'decbin': case 'decoct': case 'deg2rad':
-                case 'exp': case 'expm1': case 'floor': case 'is_finite':
-                case 'is_infinite': case 'is_nan': case 'log10': case 'log1p':
-                case 'octdec': case 'rad2deg': case 'sin': case 'sinh': case 'sqrt':
-                case 'tan': case 'tanh':
-                    if (!empty($regs[4]) || empty($regs[3])) {
-                        return get_string('functiontakesonearg', 'qtype_calculated', $regs[2]);
-                    }
-                    break;
-
-                    // Functions that take one or two arguments.
-                case 'log': case 'round':
-                    if (!empty($regs[5]) || empty($regs[3])) {
-                        return get_string('functiontakesoneortwoargs', 'qtype_calculated',
-                                $regs[2]);
-                    }
-                    break;
-
-                    // Functions that must have two arguments.
-                case 'atan2': case 'fmod': case 'pow':
-                    if (!empty($regs[5]) || empty($regs[4])) {
-                        return get_string('functiontakestwoargs', 'qtype_calculated', $regs[2]);
-                    }
-                    break;
-
-                    // Functions that take two or more arguments.
-                case 'min': case 'max':
-                    if (empty($regs[4])) {
-                        return get_string('functiontakesatleasttwo', 'qtype_calculated', $regs[2]);
-                    }
-                    break;
-
-                default:
-                    return get_string('unsupportedformulafunction', 'qtype_calculated', $regs[2]);
-            }
-
-            // Exchange the function call with '1' and then check for another function call.
-
-            if ($regs[1]) {
-                // The function call is proceeded by an operator.
-                $formula = str_replace($regs[0], $regs[1] . '1', $formula);
-            } else {
-                // The function call starts the formula.
-                $formula = preg_replace("~^$regs[2]\\([^)]*\\)~", '1', $formula);
-            }
-        }
-
-        if (preg_match("~[^$safeoperatorchar.0-9eE]+~", $formula, $regs)) {
-            return get_string('illegalformulasyntax', 'qtype_calculated', $regs[0]);
-        } else {
-            // Formula just might be valid.
-            return false;
-        }
     }
 }

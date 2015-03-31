@@ -69,7 +69,7 @@ if ($mform->is_cancelled()){
     redirect($CFG->wwwroot . '/grade/report/grader/index.php?id='.$courseid);
 }
 
-print_grade_page_head($courseid, 'preferences', 'grader', get_string('preferences', 'gradereport_grader'));
+print_grade_page_head($courseid, 'settings', 'grader', get_string('preferences', 'gradereport_grader'));
 
 // If USER has admin capability, print a link to the site config page for this report
 if (has_capability('moodle/site:config', $systemcontext)) {

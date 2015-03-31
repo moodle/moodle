@@ -64,6 +64,15 @@ if (!empty($user)) {
         }
     }
 
+    // Check whether the user should be changing password.
+    if (get_user_preferences('auth_forcepasswordchange', false, $user)) {
+        if ($userauth->can_change_password()) {
+            throw new moodle_exception('forcepasswordchangenotice');
+        } else {
+            throw new moodle_exception('nopasswordchangeforced', 'auth');
+        }
+    }
+
     // let enrol plugins deal with new enrolments if necessary
     enrol_check_plugins($user);
 
@@ -160,6 +169,8 @@ if (!empty($user)) {
             $token->creatorid = $user->id;
             $token->timecreated = time();
             $token->externalserviceid = $service_record->id;
+            // MDL-43119 Token valid for 3 months (12 weeks).
+            $token->validuntil = $token->timecreated + 12 * WEEKSECS;
             $token->id = $DB->insert_record('external_tokens', $token);
 
             $params = array(

@@ -26,7 +26,7 @@
  * @class annotationoval
  * @extends M.assignfeedback_editpdf.annotation
  */
-ANNOTATIONOVAL = function(config) {
+var ANNOTATIONOVAL = function(config) {
     ANNOTATIONOVAL.superclass.constructor.apply(this, [config]);
 };
 
@@ -42,6 +42,7 @@ Y.extend(ANNOTATIONOVAL, M.assignfeedback_editpdf.annotation, {
      */
     draw : function() {
         var drawable,
+            bounds,
             shape;
 
         drawable = new M.assignfeedback_editpdf.drawable(this.editor);

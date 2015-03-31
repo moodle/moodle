@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when a workshop submission is updated.
+ * The mod_workshop submission updated event.
  *
  * @package    mod_workshop
- * @category   event
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,16 +26,16 @@ namespace mod_workshop\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a workshop submission is updated.
+ * The mod_workshop submission updated event class.
  *
  * @property-read array $other {
- *     Extra information about the event.
+ *      Extra information about the event.
  *
- *     @type string submissiontitle Submission title.
+ *      - string submissiontitle: (optional) Submission title.
  * }
  *
  * @package    mod_workshop
- * @category   event
+ * @since      Moodle 2.7
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -57,7 +56,8 @@ class submission_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'A user with an id of ' . $this->userid . ' updated a workshop submission with an id of ' . $this->objectid;
+        return "The user with id '$this->userid' updated the submission with id '$this->objectid' for the workshop " .
+            "with course module id '$this->contextinstanceid'.";
     }
 
     /**

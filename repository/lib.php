@@ -17,7 +17,7 @@
 /**
  * This file contains classes used to manage the repository plugins in Moodle
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -571,35 +571,6 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Magic method for non-existing (usually deprecated) class methods.
-     *
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
-     * @throws coding_exception
-     */
-    public function __call($name, $arguments) {
-        if ($name === 'sync_individual_file') {
-            // Method repository::sync_individual_file() was deprecated in Moodle 2.6.
-            // See repository::sync_reference().
-            debugging('Function repository::sync_individual_file() is deprecated.', DEBUG_DEVELOPER);
-            return true;
-        } else if ($name === 'get_file_by_reference') {
-            // Method repository::get_file_by_reference() was deprecated in Moodle 2.6.
-            // See repository::sync_reference().
-            debugging('Function repository::get_file_by_reference() is deprecated.', DEBUG_DEVELOPER);
-            return null;
-        } else if ($name === 'get_reference_file_lifetime') {
-            // Method repository::get_file_by_reference() was deprecated in Moodle 2.6.
-            // See repository::sync_reference().
-            debugging('Function repository::get_reference_file_lifetime() is deprecated.', DEBUG_DEVELOPER);
-            return 24 * 60 * 60;
-        } else {
-            throw new coding_exception('Tried to call unknown method '.get_class($this).'::'.$name);
-        }
-    }
-
-    /**
      * Get repository instance using repository id
      *
      * Note that this function does not check permission to access repository contents
@@ -659,7 +630,7 @@ abstract class repository implements cacheable_object {
      * Returns the type name of the repository.
      *
      * @return string type name of the repository.
-     * @since  2.5
+     * @since  Moodle 2.5
      */
     public function get_typename() {
         if (empty($this->typename)) {
@@ -839,13 +810,14 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Parses the 'source' returned by moodle repositories and returns an instance of stored_file
+     * Parses the moodle file reference and returns an instance of stored_file
      *
-     * @param string $source
+     * @param string $reference reference to the moodle internal file as retruned by
+     *        {@link repository::get_file_reference()} or {@link file_storage::pack_reference()}
      * @return stored_file|null
      */
-    public static function get_moodle_file($source) {
-        $params = file_storage::unpack_reference($source, true);
+    public static function get_moodle_file($reference) {
+        $params = file_storage::unpack_reference($reference, true);
         $fs = get_file_storage();
         return $fs->get_file($params['contextid'], $params['component'], $params['filearea'],
                     $params['itemid'], $params['filepath'], $params['filename']);
@@ -857,13 +829,14 @@ abstract class repository implements cacheable_object {
      * This is checked when user tries to pick the file from repository to deal with
      * potential parameter substitutions is request
      *
-     * @param string $source
+     * @param string $source source of the file, returned by repository as 'source' and received back from user (not cleaned)
      * @return bool whether the file is accessible by current user
      */
     public function file_is_accessible($source) {
         if ($this->has_moodle_files()) {
+            $reference = $this->get_file_reference($source);
             try {
-                $params = file_storage::unpack_reference($source, true);
+                $params = file_storage::unpack_reference($reference, true);
             } catch (file_reference_exception $e) {
                 return false;
             }
@@ -1376,12 +1349,13 @@ abstract class repository implements cacheable_object {
      * again to another file area (also as a copy or as a reference), the value of
      * files.source is copied.
      *
-     * @param string $source the value that repository returned in listing as 'source'
+     * @param string $source source of the file, returned by repository as 'source' and received back from user (not cleaned)
      * @return string|null
      */
     public function get_file_source_info($source) {
         if ($this->has_moodle_files()) {
-            return $this->get_reference_details($source, 0);
+            $reference = $this->get_file_reference($source);
+            return $this->get_reference_details($reference, 0);
         }
         return $source;
     }
@@ -1662,13 +1636,25 @@ abstract class repository implements cacheable_object {
     /**
      * Prepare file reference information
      *
-     * @param string $source
-     * @return string file referece
+     * @param string $source source of the file, returned by repository as 'source' and received back from user (not cleaned)
+     * @return string file reference, ready to be stored
      */
     public function get_file_reference($source) {
-        if ($this->has_moodle_files() && ($this->supported_returntypes() & FILE_REFERENCE)) {
-            $params = file_storage::unpack_reference($source);
-            if (!is_array($params)) {
+        if ($source && $this->has_moodle_files()) {
+            $params = @json_decode(base64_decode($source), true);
+            if (!is_array($params) || empty($params['contextid'])) {
+                throw new repository_exception('invalidparams', 'repository');
+            }
+            $params = array(
+                'component' => empty($params['component']) ? ''   : clean_param($params['component'], PARAM_COMPONENT),
+                'filearea'  => empty($params['filearea'])  ? ''   : clean_param($params['filearea'], PARAM_AREA),
+                'itemid'    => empty($params['itemid'])    ? 0    : clean_param($params['itemid'], PARAM_INT),
+                'filename'  => empty($params['filename'])  ? null : clean_param($params['filename'], PARAM_FILE),
+                'filepath'  => empty($params['filepath'])  ? null : clean_param($params['filepath'], PARAM_PATH),
+                'contextid' => clean_param($params['contextid'], PARAM_INT)
+            );
+            // Check if context exists.
+            if (!context::instance_by_id($params['contextid'], IGNORE_MISSING)) {
                 throw new repository_exception('invalidparams', 'repository');
             }
             return file_storage::pack_reference($params);
@@ -1868,7 +1854,7 @@ abstract class repository implements cacheable_object {
      * can be edited.
      *
      * @return bool true if the user can edit the instance.
-     * @since 2.5
+     * @since Moodle 2.5
      */
     public final function can_be_edited_by_user() {
         global $USER;
@@ -1925,7 +1911,7 @@ abstract class repository implements cacheable_object {
      * the user instances will be protected when they need to.
      *
      * @return boolean True when the repository accesses private external data.
-     * @since  2.5
+     * @since  Moodle 2.5
      */
     public function contains_private_data() {
         return true;
@@ -2219,7 +2205,7 @@ abstract class repository implements cacheable_object {
      *
      * @param array $breadcrumb contains each element of the breadcrumb.
      * @return array of breadcrumb elements.
-     * @since 2.3.3
+     * @since Moodle 2.3.3
      */
     protected static function prepare_breadcrumb($breadcrumb) {
         global $OUTPUT;
@@ -2240,7 +2226,7 @@ abstract class repository implements cacheable_object {
      *
      * @param array $list of files and folders.
      * @return array of files and folders.
-     * @since 2.3.3
+     * @since Moodle 2.3.3
      */
     protected static function prepare_list($list) {
         global $OUTPUT;
@@ -2698,26 +2684,22 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Method deprecated, cache is handled by MUC now.
-     * @deprecated since 2.6
+     * Function repository::reset_caches() is deprecated, cache is handled by MUC now.
+     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
      */
     public static function reset_caches() {
-        debugging('Function repository::reset_caches() is deprecated.', DEBUG_DEVELOPER);
+        throw new coding_exception('Function repository::reset_caches() can not be used any more, cache is handled by MUC now.');
     }
 
     /**
-     * Method deprecated
-     * @deprecated since 2.6
+     * Function repository::sync_external_file() is deprecated. Use repository::sync_reference instead
+     *
+     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
      * @see repository::sync_reference()
      */
     public static function sync_external_file($file, $resetsynchistory = false) {
-        debugging('Function repository::sync_external_file() is deprecated.',
-                DEBUG_DEVELOPER);
-        if ($resetsynchistory || !$file || !$file->get_repository_id() ||
-                !($repository = self::get_repository_by_id($file->get_repository_id(), SYSCONTEXTID))) {
-            return false;
-        }
-        return $repository->sync_reference($file);
+        throw new coding_exception('Function repository::sync_external_file() can not be used any more. ' .
+            'Use repository::sync_reference instead.');
     }
 
     /**
@@ -2775,114 +2757,7 @@ abstract class repository implements cacheable_object {
             return true;
         }
 
-        // Backward compatibility (Moodle 2.3-2.5) implementation that calls
-        // methods repository::get_reference_file_lifetime(), repository::sync_individual_file()
-        // and repository::get_file_by_reference(). These methods are removed from the
-        // base repository class but may still be implemented by the child classes.
-
-        // THIS IS NOT A GOOD EXAMPLE of implementation. For good examples see the overwriting methods.
-
-        if (!method_exists($this, 'get_file_by_reference')) {
-            // Function get_file_by_reference() is not implemented. No synchronisation.
-            return false;
-        }
-
-        // Check if the previous sync result is still valid.
-        if (method_exists($this, 'get_reference_file_lifetime')) {
-            $lifetime = $this->get_reference_file_lifetime($file->get_reference());
-        } else {
-            // Default value that was hardcoded in Moodle 2.3 - 2.5.
-            $lifetime =  60 * 60 * 24;
-        }
-        if (($lastsynced = $file->get_referencelastsync()) && $lastsynced + $lifetime >= time()) {
-            return false;
-        }
-
-        $cache = cache::make('core', 'repositories');
-        if (($lastsyncresult = $cache->get('sync:'.$file->get_referencefileid())) !== false) {
-            if ($lastsyncresult === true) {
-                // We are in the process of synchronizing this reference.
-                // Avoid recursion when calling $file->get_filesize() and $file->get_contenthash().
-                return false;
-            } else {
-                // We have synchronised the same reference inside this request already.
-                // It looks like the object $file was created before the synchronisation and contains old data.
-                if (!empty($lastsyncresult['missing'])) {
-                    $file->set_missingsource();
-                } else {
-                    $cache->set('sync:'.$file->get_referencefileid(), true);
-                    if ($file->get_contenthash() != $lastsyncresult['contenthash'] ||
-                            $file->get_filesize() != $lastsyncresult['filesize']) {
-                        $file->set_synchronized($lastsyncresult['contenthash'], $lastsyncresult['filesize']);
-                    }
-                    $cache->set('sync:'.$file->get_referencefileid(), $lastsyncresult);
-                }
-                return true;
-            }
-        }
-
-        // Weird function sync_individual_file() that was present in API in 2.3 - 2.5, default value was true.
-        if (method_exists($this, 'sync_individual_file') && !$this->sync_individual_file($file)) {
-            return false;
-        }
-
-        // Set 'true' into the cache to indicate that file is in the process of synchronisation.
-        $cache->set('sync:'.$file->get_referencefileid(), true);
-
-        // Create object with the structure that repository::get_file_by_reference() expects.
-        $reference = new stdClass();
-        $reference->id = $file->get_referencefileid();
-        $reference->reference = $file->get_reference();
-        $reference->referencehash = sha1($file->get_reference());
-        $reference->lastsync = $file->get_referencelastsync();
-        $reference->lifetime = $lifetime;
-
-        $fileinfo = $this->get_file_by_reference($reference);
-
-        $contenthash = null;
-        $filesize = null;
-        $fs = get_file_storage();
-        if (!empty($fileinfo->filesize)) {
-            // filesize returned
-            if (!empty($fileinfo->contenthash) && $fs->content_exists($fileinfo->contenthash)) {
-                // contenthash is specified and valid
-                $contenthash = $fileinfo->contenthash;
-            } else if ($fileinfo->filesize == $file->get_filesize()) {
-                // we don't know the new contenthash but the filesize did not change,
-                // assume the contenthash did not change either
-                $contenthash = $file->get_contenthash();
-            } else {
-                // we can't save empty contenthash so generate contenthash from empty string
-                list($contenthash, $unused1, $unused2) = $fs->add_string_to_pool('');
-            }
-            $filesize = $fileinfo->filesize;
-        } else if (!empty($fileinfo->filepath)) {
-            // File path returned
-            list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($fileinfo->filepath);
-        } else if (!empty($fileinfo->handle) && is_resource($fileinfo->handle)) {
-            // File handle returned
-            $contents = '';
-            while (!feof($fileinfo->handle)) {
-                $contents .= fread($fileinfo->handle, 8192);
-            }
-            fclose($fileinfo->handle);
-            list($contenthash, $filesize, $newfile) = $fs->add_string_to_pool($contents);
-        } else if (isset($fileinfo->content)) {
-            // File content returned
-            list($contenthash, $filesize, $newfile) = $fs->add_string_to_pool($fileinfo->content);
-        }
-
-        if (!isset($contenthash) or !isset($filesize)) {
-            $file->set_missingsource(null);
-            $cache->set('sync:'.$file->get_referencefileid(), array('missing' => true));
-        } else {
-            // update files table
-            $file->set_synchronized($contenthash, $filesize);
-            $cache->set('sync:'.$file->get_referencefileid(),
-                    array('contenthash' => $contenthash, 'filesize' => $filesize));
-        }
-
-        return true;
+        return false;
     }
 
     /**
@@ -2958,7 +2833,7 @@ abstract class repository implements cacheable_object {
 /**
  * Exception class for repository api
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -2969,7 +2844,7 @@ class repository_exception extends moodle_exception {
 /**
  * This is a class used to define a repository instance form
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -3089,7 +2964,7 @@ final class repository_instance_form extends moodleform {
 /**
  * This is a class used to define a repository type setting form
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package   core_repository
  * @copyright 2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

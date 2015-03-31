@@ -202,8 +202,8 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                 // Detect new datasets.
                 $newdataset = false;
                 foreach ($mandatorydatasets as $datasetname) {
-                    if (!isset($this->datasetdefs["1-0-$datasetname"])) {
-                        $key = "1-0-$datasetname";
+                    if (!isset($this->datasetdefs["1-0-{$datasetname}"])) {
+                        $key = "1-0-{$datasetname}";
                         $this->datasetdefs[$key] = new stdClass();
                         $this->datasetdefs[$key]->type = 1;
                         $this->datasetdefs[$key]->category = 0;
@@ -211,7 +211,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                         $this->datasetdefs[$key]->options = "uniform:1.0:10.0:1";
                         $newdataset = true;
                     } else {
-                        $this->datasetdefs["1-0-$datasetname"]->name = $datasetname;
+                        $this->datasetdefs["1-0-{$datasetname}"]->name = $datasetname;
                     }
                 }
                 // Remove obsolete datasets.
@@ -332,15 +332,15 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
             if (!empty($this->datasetdefs)) {// Unnecessary test.
                 $j = (($this->noofitems) * count($this->datasetdefs))+1;//
                 foreach ($this->datasetdefs as $defkey => $datasetdef) {
-                    $mform->addElement('static', "na[$j]",
+                    $mform->addElement('static', "na[{$j}]",
                             get_string('param', 'qtype_calculated', $datasetdef->name));
                     $this->qtypeobj->custom_generator_tools_part($mform, $idx, $j);
-                    $mform->addElement('hidden', "datasetdef[$idx]");
-                    $mform->setType("datasetdef[$idx]", PARAM_RAW);
-                    $mform->addElement('hidden', "defoptions[$idx]");
-                    $mform->setType("defoptions[$idx]", PARAM_RAW);
+                    $mform->addElement('hidden', "datasetdef[{$idx}]");
+                    $mform->setType("datasetdef[{$idx}]", PARAM_RAW);
+                    $mform->addElement('hidden', "defoptions[{$idx}]");
+                    $mform->setType("defoptions[{$idx}]", PARAM_RAW);
                     $idx++;
-                    $mform->addElement('static', "divider[$j]", '', '<hr />');
+                    $mform->addElement('static', "divider[{$j}]", '', '<hr />');
                     $j++;
                 }
             }
@@ -362,23 +362,23 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
 
                     foreach ($this->datasetdefs as $defid => $datasetdef) {
                         if (isset($datasetdef->items[$itemnumber])) {
-                            $this->formdata["definition[$j]"] = $defid;
-                            $this->formdata["itemid[$j]"] =
+                            $this->formdata["definition[{$j}]"] = $defid;
+                            $this->formdata["itemid[{$j}]"] =
                                     $datasetdef->items[$itemnumber]->id;
                             $data[$datasetdef->name] = $datasetdef->items[$itemnumber]->value;
-                            $this->formdata["number[$j]"] = $number =
+                            $this->formdata["number[{$j}]"] = $number =
                                     $datasetdef->items[$itemnumber]->value;
                             if (! is_numeric($number)) {
                                 $a = new stdClass();
                                 $a->name = '{'.$datasetdef->name.'}';
                                 $a->value = $datasetdef->items[$itemnumber]->value;
                                 if (stristr($number, ',')) {
-                                    $this->numbererrors["number[$j]"] =
+                                    $this->numbererrors["number[{$j}]"] =
                                             get_string('nocommaallowed', 'qtype_calculated');
                                     $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
 
                                 } else {
-                                    $this->numbererrors["number[$j]"] =
+                                    $this->numbererrors["number[{$j}]"] =
                                             get_string('notvalidnumber', 'qtype_calculated', $a);
                                     $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
                                 }
@@ -393,7 +393,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                                 $a = new stdClass();
                                 $a->name = '{'.$datasetdef->name.'}';
                                 $a->value = $datasetdef->items[$itemnumber]->value;
-                                $this->numbererrors["number[$j]"] =
+                                $this->numbererrors["number[{$j}]"] =
                                         get_string('notvalidnumber', 'qtype_calculated', $a);
                                 $numbererrors .= $this->numbererrors['number['.$j.']']."<br />";
                             }
@@ -430,7 +430,7 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                 $data = array(); // Data for comment_on_datasetitems later.
                 $idx = 1;
                 foreach ($this->datasetdefs as $defid => $datasetdef) {
-                    $this->formdata["datasetdef[$idx]"] = $defid;
+                    $this->formdata["datasetdef[{$idx}]"] = $defid;
                     $idx++;
                 }
                 $this->formdata = $this->qtypeobj->custom_generator_set_data(
@@ -440,14 +440,14 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
             $addoptions = Array();
             $addoptions['1'] = '1';
             for ($i = 10; $i <= 100; $i += 10) {
-                $addoptions["$i"] = "$i";
+                $addoptions["{$i}"] = "{$i}";
             }
             $showoptions = Array();
             $showoptions['1'] = '1';
             $showoptions['2'] = '2';
             $showoptions['5'] = '5';
             for ($i = 10; $i <= 100; $i += 10) {
-                $showoptions["$i"] = "$i";
+                $showoptions["{$i}"] = "{$i}";
             }
             $mform->closeHeaderBefore('additemhdr');
             $addgrp = array();
@@ -495,38 +495,38 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                 for ($i = $this->noofitems; $i >= 1; $i--) {
                     foreach ($this->datasetdefs as $defkey => $datasetdef) {
                         if ($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors)) {
-                            $mform->addElement('text', "number[$j]", get_string(
+                            $mform->addElement('text', "number[{$j}]", get_string(
                                     'wildcard', 'qtype_calculatedsimple', $datasetdef->name));
-                            $mform->setAdvanced("number[$j]", true);
+                            $mform->setAdvanced("number[{$j}]", true);
                             if (!empty($this->numbererrors['number['.$j.']'])) {
-                                $mform->addElement('static', "numbercomment[$j]", '',
+                                $mform->addElement('static', "numbercomment[{$j}]", '',
                                         '<span class="error">' .
                                         $this->numbererrors['number['.$j.']'] . '</span>');
-                                $mform->setAdvanced("numbercomment[$j]", true);
+                                $mform->setAdvanced("numbercomment[{$j}]", true);
                             }
                         } else {
-                            $mform->addElement('hidden', "number[$j]", get_string(
+                            $mform->addElement('hidden', "number[{$j}]", get_string(
                                     'wildcard', 'qtype_calculatedsimple', $datasetdef->name));
                         }
-                        $mform->setType("number[$j]", PARAM_RAW); // This parameter will be validated in validation().
+                        $mform->setType("number[{$j}]", PARAM_RAW); // This parameter will be validated in validation().
 
-                        $mform->addElement('hidden', "itemid[$j]");
-                        $mform->setType("itemid[$j]", PARAM_INT);
+                        $mform->addElement('hidden', "itemid[{$j}]");
+                        $mform->setType("itemid[{$j}]", PARAM_INT);
 
-                        $mform->addElement('hidden', "definition[$j]");
-                        $mform->setType("definition[$j]", PARAM_NOTAGS);
+                        $mform->addElement('hidden', "definition[{$j}]");
+                        $mform->setType("definition[{$j}]", PARAM_NOTAGS);
 
                         $j--;
                     }
                     if (!empty($strquestionlabel) && ($k > 0 ||  $this->outsidelimit ||
                             !empty($this->numbererrors))) {
-                        $mform->addElement('static', "answercomment[$i]", "<b>" .
+                        $mform->addElement('static', "answercomment[{$i}]", "<b>" .
                                 get_string('setno', 'qtype_calculatedsimple', $i) .
                                 "</b>&nbsp;&nbsp;" . $strquestionlabel);
 
                     }
                     if ($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors)) {
-                        $mform->addElement('static', "divider1[$j]", '', '<hr />');
+                        $mform->addElement('static', "divider1[{$j}]", '', '<hr />');
 
                     }
                     $k--;

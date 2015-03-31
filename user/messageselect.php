@@ -95,8 +95,9 @@ if ($data = data_submitted()) {
     foreach ($data as $k => $v) {
         if (preg_match('/^(user|teacher)(\d+)$/', $k, $m)) {
             if (!array_key_exists($m[2], $SESSION->emailto[$id])) {
-                if ($user = $DB->get_record_select('user', "id = ?", array($m[2]), 'id,
-                        ' . $namefields . ', idnumber, email, mailformat, lastaccess, lang, maildisplay')) {
+                if ($user = $DB->get_record_select('user', "id = ?", array($m[2]), 'id, '.
+                        $namefields . ', idnumber, email, mailformat, lastaccess, lang, '.
+                        'maildisplay, auth, suspended, deleted, emailstop')) {
                     $SESSION->emailto[$id][$m[2]] = $user;
                     $count++;
                 }
@@ -105,7 +106,13 @@ if ($data = data_submitted()) {
     }
 }
 
-$strtitle = get_string('coursemessage');
+if ($course->id == SITEID) {
+    $strtitle = get_string('sitemessage');
+    $PAGE->set_pagelayout('admin');
+} else {
+    $strtitle = get_string('coursemessage');
+    $PAGE->set_pagelayout('incourse');
+}
 
 $link = null;
 if (has_capability('moodle/course:viewparticipants', $coursecontext) ||
@@ -147,16 +154,24 @@ if (!empty($messagebody) && !$edit && !$deluser && ($preview || $send)) {
             echo '<input type="submit" name="edit" value="'.get_string('update').'" /></p>';
             echo "\n</form>";
         } else if (!empty($send)) {
-            $good = 1;
+            $fails = array();
             foreach ($SESSION->emailto[$id] as $user) {
-                $good = $good && message_post_message($USER, $user, $messagebody, $format);
+                if (!message_post_message($USER, $user, $messagebody, $format)) {
+                    $user->fullname = fullname($user);
+                    $fails[] = get_string('messagedselecteduserfailed', 'moodle', $user);
+                };
             }
-            if (!empty($good)) {
+            if (empty($fails)) {
                 echo $OUTPUT->heading(get_string('messagedselectedusers'));
                 unset($SESSION->emailto[$id]);
                 unset($SESSION->emailselect[$id]);
             } else {
-                echo $OUTPUT->heading(get_string('messagedselectedusersfailed'));
+                echo $OUTPUT->heading(get_string('messagedselectedcountusersfailed', 'moodle', count($fails)));
+                echo '<ul>';
+                foreach ($fails as $f) {
+                        echo '<li>', $f, '</li>';
+                }
+                echo '</ul>';
             }
             echo '<p align="center"><a href="index.php?id='.$id.'">'.get_string('backtoparticipants').'</a></p>';
         }

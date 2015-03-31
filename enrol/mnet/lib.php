@@ -88,4 +88,26 @@ class enrol_mnet_plugin extends enrol_plugin {
 
         return new moodle_url('/enrol/mnet/addinstance.php', array('id'=>$courseid));
     }
+
+    /**
+     * Is it possible to delete enrol instance via standard UI?
+     *
+     * @param stdClass $instance
+     * @return bool
+     */
+    public function can_delete_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/mnet:config', $context);
+    }
+
+    /**
+     * Is it possible to hide/show enrol instance via standard UI?
+     *
+     * @param stdClass $instance
+     * @return bool
+     */
+    public function can_hide_show_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/mnet:config', $context);
+    }
 }

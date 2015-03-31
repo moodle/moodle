@@ -381,27 +381,6 @@ abstract class backup_cron_automated_helper {
 
         try {
 
-            $settings = array(
-                'users' => 'backup_auto_users',
-                'role_assignments' => 'backup_auto_role_assignments',
-                'activities' => 'backup_auto_activities',
-                'blocks' => 'backup_auto_blocks',
-                'filters' => 'backup_auto_filters',
-                'comments' => 'backup_auto_comments',
-                'badges' => 'backup_auto_badges',
-                'completion_information' => 'backup_auto_userscompletion',
-                'logs' => 'backup_auto_logs',
-                'histories' => 'backup_auto_histories',
-                'questionbank' => 'backup_auto_questionbank'
-            );
-            foreach ($settings as $setting => $configsetting) {
-                if ($bc->get_plan()->setting_exists($setting)) {
-                    if (isset($config->{$configsetting})) {
-                        $bc->get_plan()->get_setting($setting)->set_value($config->{$configsetting});
-                    }
-                }
-            }
-
             // Set the default filename.
             $format = $bc->get_format();
             $type = $bc->get_type();
@@ -417,18 +396,31 @@ abstract class backup_cron_automated_helper {
             $results = $bc->get_results();
             $outcome = self::outcome_from_results($results);
             $file = $results['backup_destination']; // May be empty if file already moved to target location.
-            if (!file_exists($dir) || !is_dir($dir) || !is_writable($dir)) {
+
+            // If we need to copy the backup file to an external dir and it is not writable, change status to error.
+            // This is a feature to prevent moodledata to be filled up and break a site when the admin misconfigured
+            // the automated backups storage type and destination directory.
+            if ($storage !== 0 && (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_writable($dir))) {
+                $bc->log('Specified backup directory is not writable - ', backup::LOG_ERROR, $dir);
                 $dir = null;
+                $outcome = self::BACKUP_STATUS_ERROR;
             }
+
             // Copy file only if there was no error.
             if ($file && !empty($dir) && $storage !== 0 && $outcome != self::BACKUP_STATUS_ERROR) {
                 $filename = backup_plan_dbops::get_default_backup_filename($format, $type, $course->id, $users, $anonymised,
                         !$config->backup_shortname);
                 if (!$file->copy_content_to($dir.'/'.$filename)) {
+                    $bc->log('Attempt to copy backup file to the specified directory failed - ',
+                            backup::LOG_ERROR, $dir);
                     $outcome = self::BACKUP_STATUS_ERROR;
                 }
                 if ($outcome != self::BACKUP_STATUS_ERROR && $storage === 1) {
-                    $file->delete();
+                    if (!$file->delete()) {
+                        $outcome = self::BACKUP_STATUS_WARNING;
+                        $bc->log('Attempt to delete the backup file from course automated backup area failed - ',
+                                backup::LOG_WARNING, $file->get_filename());
+                    }
                 }
             }
 
@@ -577,9 +569,6 @@ abstract class backup_cron_automated_helper {
             return true;
         }
 
-        $backupword = str_replace(' ', '_', core_text::strtolower(get_string('backupfilename')));
-        $backupword = trim(clean_filename($backupword), '_');
-
         if (!file_exists($dir) || !is_dir($dir) || !is_writable($dir)) {
             $dir = null;
         }
@@ -594,9 +583,6 @@ abstract class backup_cron_automated_helper {
             $files = array();
             // Store all the matching files into timemodified => stored_file array.
             foreach ($fs->get_area_files($context->id, $component, $filearea, $itemid) as $file) {
-                if (strpos($file->get_filename(), $backupword) !== 0) {
-                    continue;
-                }
                 $files[$file->get_timemodified()] = $file;
             }
             if (count($files) <= $keep) {
@@ -616,8 +602,8 @@ abstract class backup_cron_automated_helper {
         if (!empty($dir) && ($storage == 1 || $storage == 2)) {
             // Calculate backup filename regex, ignoring the date/time/info parts that can be
             // variable, depending of languages, formats and automated backup settings.
-            $filename = $backupword . '-' . backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' . $course->id . '-';
-            $regex = '#^'.preg_quote($filename, '#').'.*\.mbz$#';
+            $filename = backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-' . $course->id . '-';
+            $regex = '#' . preg_quote($filename, '#') . '.*\.mbz$#';
 
             // Store all the matching files into filename => timemodified array.
             $files = array();
@@ -670,7 +656,7 @@ abstract class backup_cron_automated_helper {
      */
     protected static function is_course_modified($courseid, $since) {
         $logmang = get_log_manager();
-        $readers = $logmang->get_readers('core\log\sql_select_reader');
+        $readers = $logmang->get_readers('core\log\sql_reader');
         $where = "courseid = :courseid and timecreated > :since and crud <> 'r'";
         $params = array('courseid' => $courseid, 'since' => $since);
         foreach ($readers as $reader) {

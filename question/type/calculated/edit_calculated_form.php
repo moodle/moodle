@@ -199,9 +199,9 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         $key = 0;
         foreach ($question->options->answers as $answer) {
             // See comment in the parent method about this hack.
-            unset($this->_form->_defaultValues["tolerancetype[$key]"]);
-            unset($this->_form->_defaultValues["correctanswerlength[$key]"]);
-            unset($this->_form->_defaultValues["correctanswerformat[$key]"]);
+            unset($this->_form->_defaultValues["tolerancetype[{$key}]"]);
+            unset($this->_form->_defaultValues["correctanswerlength[{$key}]"]);
+            unset($this->_form->_defaultValues["correctanswerformat[{$key}]"]);
 
             $question->tolerancetype[$key]       = $answer->tolerancetype;
             $question->correctanswerlength[$key] = $answer->correctanswerlength;
@@ -216,36 +216,39 @@ class qtype_calculated_edit_form extends qtype_numerical_edit_form {
         return 'calculated';
     }
 
+    /**
+     * Validate the equations in the some question content.
+     * @param array $errors where errors are being accumulated.
+     * @param string $field the field being validated.
+     * @param string $text the content of that field.
+     * @return array the updated $errors array.
+     */
+    protected function validate_text($errors, $field, $text) {
+        $problems = qtype_calculated_find_formula_errors_in_text($text);
+        if ($problems) {
+            $errors[$field] = $problems;
+        }
+        return $errors;
+    }
+
     public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
 
         // Verifying for errors in {=...} in question text.
-        $qtext = "";
-        $qtextremaining = $data['questiontext']['text'];
-        $possibledatasets = $this->qtypeobj->find_dataset_names($data['questiontext']['text']);
-        foreach ($possibledatasets as $name => $value) {
-            $qtextremaining = str_replace('{'.$name.'}', '1', $qtextremaining);
-        }
-        while (preg_match('~\{=([^[:space:]}]*)}~', $qtextremaining, $regs1)) {
-            $qtextsplits = explode($regs1[0], $qtextremaining, 2);
-            $qtext = $qtext.$qtextsplits[0];
-            $qtextremaining = $qtextsplits[1];
-            if (!empty($regs1[1]) && $formulaerrors =
-                    qtype_calculated_find_formula_errors($regs1[1])) {
-                if (!isset($errors['questiontext'])) {
-                    $errors['questiontext'] = $formulaerrors.':'.$regs1[1];
-                } else {
-                    $errors['questiontext'] .= '<br/>'.$formulaerrors.':'.$regs1[1];
-                }
-            }
-        }
-
-        $errors = parent::validation($data, $files);
+        $errors = $this->validate_text($errors, 'questiontext', $data['questiontext']['text']);
+        $errors = $this->validate_text($errors, 'generalfeedback', $data['generalfeedback']['text']);
 
         // Check that the answers use datasets.
         $answers = $data['answer'];
         $mandatorydatasets = array();
         foreach ($answers as $key => $answer) {
+            $problems = qtype_calculated_find_formula_errors($answer);
+            if ($problems) {
+                $errors['answeroptions['.$key.']'] = $problems;
+            }
             $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer);
+            $errors = $this->validate_text($errors, 'feedback[' . $key . ']',
+                    $data['feedback'][$key]['text']);
         }
         if (empty($mandatorydatasets)) {
             foreach ($answers as $key => $answer) {

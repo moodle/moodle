@@ -23,33 +23,33 @@ Feature: Sections can be moved
       | Forum name | Test forum name |
       | Description | Test forum description |
     When I move down section "1"
-    Then I should see "Test forum name" in the "#section-2" "css_element"
+    Then I should see "Test forum name" in the "Topic 2" "section"
     And I move up section "2"
-    And I should see "Test forum name" in the "#section-1" "css_element"
+    And I should see "Test forum name" in the "Topic 1" "section"
 
   Scenario: Move up and down a section with Javascript disabled in the course home of a course using paged mode
     Given I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
       | Course layout | Show one section per page |
-    And I press "Save changes"
+    And I press "Save and display"
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
     When I move down section "1"
-    Then I should see "Test forum name" in the "#section-2" "css_element"
+    Then I should see "Test forum name" in the "Topic 2" "section"
     And I move up section "2"
-    And I should see "Test forum name" in the "#section-1" "css_element"
+    And I should see "Test forum name" in the "Topic 1" "section"
 
   Scenario: Sections can not be moved with Javascript disabled in a section page of a course using paged mode
     Given I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
       | Course layout | Show one section per page |
-    And I press "Save changes"
+    And I press "Save and display"
     And I add a "Forum" to section "2" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
     When I follow "Topic 2"
-    Then "#section-1" "css_element" should not exist
-    And "#section-3" "css_element" should not exist
+    Then "Topic 1" "section" should not exist
+    And "Topic 3" "section" should not exist
     And "Move down" "link" should not exist
     And "Move up" "link" should not exist

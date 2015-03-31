@@ -18,3 +18,9 @@
 #page-mod-imscp-view .yui-layout-hd h2 {
  color: black;
 }
+
+.path-mod-imscp #imscp_child_list {
+ margin-left: 1em;
+ width: auto;
+ height: auto;
+}

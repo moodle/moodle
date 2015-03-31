@@ -1,22 +1,20 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//
 // This file is part of BasicLTI4Moodle
-//
-// Licensed to the Apache Software Foundation (ASF) under one
-// or more contributor license agreements.  See the NOTICE file
-// distributed with this work for additional information
-// regarding copyright ownership.  The ASF licenses this file
-// to you under the Apache License, Version 2.0 (the
-// "License"); you may not use this file except in compliance
-// with the License.  You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing,
-// software distributed under the License is distributed on an
-// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-// KIND, either express or implied.  See the License for the
-// specific language governing permissions and limitations
-// under the License.
 //
 // BasicLTI4Moodle is an IMS BasicLTI (Basic Learning Tools for Interoperability)
 // consumer for Moodle 1.9 and Moodle 2.0. BasicLTI is a IMS Standard that allows web
@@ -32,20 +30,7 @@
 //
 // BasicLTI4Moodle is copyright 2009 by Marc Alier Forment, Jordi Piguillem and Nikolas Galanis
 // of the Universitat Politecnica de Catalunya http://www.upc.edu
-// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
  * This file contains a Trivial memory-based store - no support for tokens
@@ -58,50 +43,97 @@
  * @license http://www.apache.org/licenses/LICENSE-2.0
  */
 
-namespace moodle\mod\lti;//Using a namespace as the basicLTI module imports classes with the same names
+namespace moodle\mod\lti; // Using a namespace as the basicLTI module imports classes with the same names.
 
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * A Trivial memory-based store - no support for tokens
+ * A Trivial memory-based store - no support for tokens.
  */
 class TrivialOAuthDataStore extends OAuthDataStore {
+
+    /** @var array $consumers  Array of tool consumer keys and secrets */
     private $consumers = array();
 
-    function add_consumer($consumer_key, $consumer_secret) {
-        $this->consumers[$consumer_key] = $consumer_secret;
+    /**
+     * Add a consumer to the array
+     *
+     * @param string $consumerkey     Consumer key
+     * @param string $consumersecret  Consumer secret
+     */
+    public function add_consumer($consumerkey, $consumersecret) {
+        $this->consumers[$consumerkey] = $consumersecret;
     }
 
-    function lookup_consumer($consumer_key) {
-        if ( strpos($consumer_key, "http://" ) === 0 ) {
-            $consumer = new OAuthConsumer($consumer_key, "secret", null);
+    /**
+     * Get OAuth consumer given its key
+     *
+     * @param string $consumerkey     Consumer key
+     *
+     * @return moodle\mod\lti\OAuthConsumer  OAuthConsumer object
+     */
+    public function lookup_consumer($consumerkey) {
+        if (strpos($consumerkey, "http://" ) === 0) {
+            $consumer = new OAuthConsumer($consumerkey, "secret", null);
             return $consumer;
         }
-        if ( $this->consumers[$consumer_key] ) {
-            $consumer = new OAuthConsumer($consumer_key, $this->consumers[$consumer_key], null);
+        if ( $this->consumers[$consumerkey] ) {
+            $consumer = new OAuthConsumer($consumerkey, $this->consumers[$consumerkey], null);
             return $consumer;
         }
         return null;
     }
 
-    function lookup_token($consumer, $token_type, $token) {
-        return new OAuthToken($consumer, "");
+    /**
+     * Create a dummy OAuthToken object for a consumer
+     *
+     * @param moodle\mod\lti\OAuthConsumer $consumer     Consumer
+     * @param string $tokentype    Type of token
+     * @param string $token        Token ID
+     *
+     * @return moodle\mod\lti\OAuthToken OAuthToken object
+     */
+    public function lookup_token($consumer, $tokentype, $token) {
+        return new OAuthToken($consumer, '');
     }
 
-    // Return NULL if the nonce has not been used
-    // Return $nonce if the nonce was previously used
-    function lookup_nonce($consumer, $token, $nonce, $timestamp) {
+    /**
+     * Nonce values are not checked so just return a null
+     *
+     * @param moodle\mod\lti\OAuthConsumer $consumer     Consumer
+     * @param string $token        Token ID
+     * @param string $nonce        Nonce value
+     * @param string $timestamp    Timestamp
+     *
+     * @return null
+     */
+    public function lookup_nonce($consumer, $token, $nonce, $timestamp) {
         // Should add some clever logic to keep nonces from
-        // being reused - for no we are really trusting
-        // that the timestamp will save us
+        // being reused - for now we are really trusting
+        // that the timestamp will save us.
         return null;
     }
 
-    function new_request_token($consumer) {
+    /**
+     * Tokens are not used so just return a null.
+     *
+     * @param moodle\mod\lti\OAuthConsumer $consumer     Consumer
+     *
+     * @return null
+     */
+    public function new_request_token($consumer) {
         return null;
     }
 
-    function new_access_token($token, $consumer) {
+    /**
+     * Tokens are not used so just return a null.
+     *
+     * @param string $token        Token ID
+     * @param moodle\mod\lti\OAuthConsumer $consumer     Consumer
+     *
+     * @return null
+     */
+    public function new_access_token($token, $consumer) {
         return null;
     }
 }

@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Event for when a new note entry deleted.
  *
@@ -25,6 +21,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class note_deleted
@@ -34,14 +34,15 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string publishstate publish state
+ *      - string publishstate: (optional) the publish state.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class note_deleted extends \core\event\base {
+class note_deleted extends base {
 
     /**
      * Set basic properties for the event.
@@ -67,7 +68,8 @@ class note_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'Note for user with id "'. $this->relateduserid . '" was deleted by user with id "' . $this->userid . '"';
+        return "The user with id '$this->userid' deleted the note with id '$this->objectid' for the user with id " .
+            "'$this->relateduserid'";
     }
 
     /**
@@ -79,5 +81,19 @@ class note_deleted extends \core\event\base {
         $logurl = new \moodle_url('index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
         $logurl->set_anchor('note-' . $this->objectid);
         return array($this->courseid, 'notes', 'delete', $logurl, 'delete note');
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
     }
 }

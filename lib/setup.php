@@ -80,7 +80,13 @@ if (defined('BEHAT_SITE_RUNNING')) {
     // The behat is configured on this server, we need to find out if this is the behat test
     // site based on the URL used for access.
     require_once(__DIR__ . '/../lib/behat/lib.php');
+
+    // Update config variables for parallel behat runs.
+    behat_update_vars_for_process();
+
     if (behat_is_test_site()) {
+        clearstatcache();
+
         // Checking the integrity of the provided $CFG->behat_* vars and the
         // selected wwwroot to prevent conflicts with production and phpunit environments.
         behat_check_config_vars();
@@ -89,10 +95,11 @@ if (defined('BEHAT_SITE_RUNNING')) {
         if (!file_exists("$CFG->behat_dataroot/behattestdir.txt")) {
             if ($dh = opendir($CFG->behat_dataroot)) {
                 while (($file = readdir($dh)) !== false) {
-                    if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store') {
+                    if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store' or is_numeric($file)) {
                         continue;
                     }
-                    behat_error(BEHAT_EXITCODE_CONFIG, '$CFG->behat_dataroot directory is not empty, ensure this is the directory where you want to install behat test dataroot');
+                    behat_error(BEHAT_EXITCODE_CONFIG, "$CFG->behat_dataroot directory is not empty, ensure this is the " .
+                        "directory where you want to install behat test dataroot");
                 }
                 closedir($dh);
                 unset($dh);
@@ -131,6 +138,11 @@ if (defined('BEHAT_SITE_RUNNING')) {
         $CFG->prefix = $CFG->behat_prefix;
         $CFG->dataroot = $CFG->behat_dataroot;
     }
+}
+
+// Force timezone to be Australia/Perth for behat tests, so we don't get time zone problems.
+if (defined('BEHAT_SITE_RUNNING') || defined('BEHAT_TEST') || defined('BEHAT_UTIL')) {
+    @date_default_timezone_set('Australia/Perth');
 }
 
 // Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
@@ -352,7 +364,7 @@ if (!defined('AJAX_SCRIPT')) {
 
 // Exact version of currently used yui2 and 3 library.
 $CFG->yui2version = '2.9.0';
-$CFG->yui3version = '3.15.0';
+$CFG->yui3version = '3.17.2';
 
 // Patching the upstream YUI release.
 // For important information on patching YUI modules, please see http://docs.moodle.org/dev/YUI/Patching.
@@ -491,7 +503,7 @@ global $OUTPUT;
  * Full script path including all params, slash arguments, scheme and host.
  *
  * Note: Do NOT use for getting of current page URL or detection of https,
- * instead use $PAGE->url or strpos($CFG->httpswwwroot, 'https:') === 0
+ * instead use $PAGE->url or is_https().
  *
  * @global string $FULLME
  * @name $FULLME
@@ -671,11 +683,6 @@ if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {
     }
 }
 
-// Turn on SQL logging if required
-if (!empty($CFG->logsql)) {
-    $DB->set_logging(true);
-}
-
 // enable circular reference collector in PHP 5.3,
 // it helps a lot when using large complex OOP structures such as in amos or gradebook
 if (function_exists('gc_enable')) {
@@ -771,9 +778,23 @@ if (empty($CFG->sessiontimeout)) {
     $CFG->sessiontimeout = 7200;
 }
 \core\session\manager::start();
-if (!PHPUNIT_TEST and !defined('BEHAT_TEST')) {
-    $SESSION =& $_SESSION['SESSION'];
-    $USER    =& $_SESSION['USER'];
+
+// Set default content type and encoding, developers are still required to use
+// echo $OUTPUT->header() everywhere, anything that gets set later should override these headers.
+// This is intended to mitigate some security problems.
+if (AJAX_SCRIPT) {
+    if (!core_useragent::supports_json_contenttype()) {
+        // Some bloody old IE.
+        @header('Content-type: text/plain; charset=utf-8');
+        @header('X-Content-Type-Options: nosniff');
+    } else if (!empty($_FILES)) {
+        // Some ajax code may have problems with json and file uploads.
+        @header('Content-type: text/plain; charset=utf-8');
+    } else {
+        @header('Content-type: application/json; charset=utf-8');
+    }
+} else if (!CLI_SCRIPT) {
+    @header('Content-type: text/html; charset=utf-8');
 }
 
 // Initialise some variables that are supposed to be set in config.php only.

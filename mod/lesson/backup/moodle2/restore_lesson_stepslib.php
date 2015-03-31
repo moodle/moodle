@@ -72,6 +72,22 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
             unset($data->showhighscores);
         }
 
+        // Supply items that maybe missing from previous versions.
+        if (!isset($data->completionendreached)) {
+            $data->completionendreached = 0;
+        }
+        if (!isset($data->completiontimespent)) {
+            $data->completiontimespent = 0;
+        }
+
+        // Compatibility with old backups with maxtime and timed fields.
+        if (!isset($data->timelimit)) {
+            if (isset($data->timed) && isset($data->maxtime) && $data->timed) {
+                $data->timelimit = 60 * $data->maxtime;
+            } else {
+                $data->timelimit = 0;
+            }
+        }
         // insert the lesson record
         $newitemid = $DB->insert_record('lesson', $data);
         // immediately after inserting "activity" record, call this
@@ -105,7 +121,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
 
         // Set a dummy mapping to get the old ID so that it can be used by get_old_parentid when
         // processing attempts. It will be corrected in after_execute
-        $this->set_mapping('lesson_answer', $data->id, 0);
+        $this->set_mapping('lesson_answer', $data->id, 0, true); // Has related fileareas.
 
         // Answers need to be processed in order, so we store them in an
         // instance variable and insert them in the after_execute stage
@@ -126,6 +142,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->timeseen = $this->apply_date_offset($data->timeseen);
 
         $newitemid = $DB->insert_record('lesson_attempts', $data);
+        $this->set_mapping('lesson_attempt', $oldid, $newitemid, true); // Has related fileareas.
     }
 
     protected function process_lesson_grade($data) {
@@ -175,7 +192,10 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->starttime = $this->apply_date_offset($data->starttime);
         $data->lessontime = $this->apply_date_offset($data->lessontime);
-
+        // Supply item that maybe missing from previous versions.
+        if (!isset($data->completed)) {
+            $data->completed = 0;
+        }
         $newitemid = $DB->insert_record('lesson_timer', $data);
     }
 
@@ -186,7 +206,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         ksort($this->answers);
         foreach ($this->answers as $answer) {
             $newitemid = $DB->insert_record('lesson_answers', $answer);
-            $this->set_mapping('lesson_answer', $answer->id, $newitemid);
+            $this->set_mapping('lesson_answer', $answer->id, $newitemid, true);
 
             // Update the lesson attempts to use the newly created answerid
             $DB->set_field('lesson_attempts', 'answerid', $newitemid, array(
@@ -199,6 +219,9 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $this->add_related_files('mod_lesson', 'mediafile', null);
         // Add lesson page files, by lesson_page itemname
         $this->add_related_files('mod_lesson', 'page_contents', 'lesson_page');
+        $this->add_related_files('mod_lesson', 'page_answers', 'lesson_answer');
+        $this->add_related_files('mod_lesson', 'page_responses', 'lesson_answer');
+        $this->add_related_files('mod_lesson', 'essay_responses', 'lesson_attempt');
 
         // Remap all the restored prevpageid and nextpageid now that we have all the pages and their mappings
         $rs = $DB->get_recordset('lesson_pages', array('lessonid' => $this->task->get_activityid()),
@@ -220,6 +243,37 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
             }
         }
         $rs->close();
+
+        // Remap all the restored 'nextpageid' fields now that we have all the pages and their mappings.
+        $rs = $DB->get_recordset('lesson_branch', array('lessonid' => $this->task->get_activityid()),
+                                 '', 'id, nextpageid');
+        foreach ($rs as $answer) {
+            if ($answer->nextpageid > 0) {
+                $answer->nextpageid = $this->get_mappingid('lesson_page', $answer->nextpageid);
+                $DB->update_record('lesson_branch', $answer);
+            }
+        }
+        $rs->close();
+
+        // Replay the upgrade step 2015022700
+        // to clean lesson answers that should be plain text.
+        // 1 = LESSON_PAGE_SHORTANSWER, 8 = LESSON_PAGE_NUMERICAL, 20 = LESSON_PAGE_BRANCHTABLE.
+
+        $sql = 'SELECT a.*
+                  FROM {lesson_answers} a
+                  JOIN {lesson_pages} p ON p.id = a.pageid
+                 WHERE a.answerformat <> :format
+                   AND a.lessonid = :lessonid
+                   AND p.qtype IN (1, 8, 20)';
+        $badanswers = $DB->get_recordset_sql($sql, array('lessonid' => $this->task->get_activityid(), 'format' => FORMAT_MOODLE));
+
+        foreach ($badanswers as $badanswer) {
+            // Strip tags from answer text and convert back the format to FORMAT_MOODLE.
+            $badanswer->answer = strip_tags($badanswer->answer);
+            $badanswer->answerformat = FORMAT_MOODLE;
+            $DB->update_record('lesson_answers', $badanswer);
+        }
+        $badanswers->close();
 
         // Re-map the dependency and activitylink information
         // If a depency or activitylink has no mapping in the backup data then it could either be a duplication of a

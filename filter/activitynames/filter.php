@@ -74,11 +74,12 @@ class filter_activitynames extends moodle_text_filter {
                             'name' => $cm->name,
                             'url' => $cm->url,
                             'id' => $cm->id,
-                            'namelen' => strlen($cm->name),
+                            'namelen' => -strlen($cm->name), // Negative value for reverse sorting.
                         );
                     }
                 }
-                core_collator::asort_objects_by_property($sortedactivities, 'namelen', SORT_NUMERIC);
+                // Sort activities by the length of the activity name in reverse order.
+                core_collator::asort_objects_by_property($sortedactivities, 'namelen', core_collator::SORT_NUMERIC);
 
                 foreach ($sortedactivities as $cm) {
                     $title = s(trim(strip_tags($cm->name)));

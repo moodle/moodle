@@ -338,7 +338,7 @@ class cc2moodle {
 
                     $replace_values = array($i,
                                             $i - 1,
-                                            $topic['title'],
+                                            entities::safexml($topic['title']),
                                             $node_node_course_sections_section_mods_mod);
 
                 } else {

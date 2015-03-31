@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     $settings->add(new admin_setting_configcheckbox('logstore_legacy/loglegacy',
         new lang_string('loglegacy', 'logstore_legacy'),
-        new lang_string('loglegacy_help', 'logstore_legacy'), 1));
+        new lang_string('loglegacy_help', 'logstore_legacy'), 0));
 
     $settings->add(new admin_setting_configcheckbox('logguests',
         new lang_string('logguests', 'admin'),

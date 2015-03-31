@@ -654,6 +654,10 @@ class core_plugin_manager {
             return 'git';
         }
 
+        if (is_file($pluginroot.'/.git')) {
+            return 'git-submodule';
+        }
+
         if (is_dir($pluginroot.'/CVS')) {
             return 'cvs';
         }
@@ -906,9 +910,10 @@ class core_plugin_manager {
         // branch, listed should be no plugins that were removed at 1.9.x - 2.1.x versions as
         // Moodle 2.3 supports upgrades from 2.2.x only.
         $plugins = array(
-            'qformat' => array('blackboard'),
+            'qformat' => array('blackboard', 'learnwise'),
             'enrol' => array('authorize'),
-            'tool' => array('bloglevelupgrade'),
+            'tinymce' => array('dragmath'),
+            'tool' => array('bloglevelupgrade', 'qeupgradehelper'),
             'theme' => array('mymobile', 'afterburner', 'anomaly', 'arialist', 'binarius', 'boxxie', 'brick', 'formal_white',
                 'formfactor', 'fusion', 'leatherbound', 'magazine', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high',
                 'splash', 'standard', 'standardold'),
@@ -936,7 +941,7 @@ class core_plugin_manager {
                 'equation', 'fontcolor', 'html', 'image', 'indent', 'italic',
                 'link', 'managefiles', 'media', 'noautolink', 'orderedlist',
                 'rtl', 'strike', 'subscript', 'superscript', 'table', 'title',
-                'underline', 'undo', 'unlink', 'unorderedlist'
+                'underline', 'undo', 'unorderedlist'
             ),
 
             'assignment' => array(
@@ -957,9 +962,13 @@ class core_plugin_manager {
                 'shibboleth', 'webservice'
             ),
 
+            'availability' => array(
+                'completion', 'date', 'grade', 'group', 'grouping', 'profile'
+            ),
+
             'block' => array(
-                'activity_modules', 'admin_bookmarks', 'badges', 'blog_menu',
-                'blog_recent', 'blog_tags', 'calendar_month',
+                'activity_modules', 'activity_results', 'admin_bookmarks', 'badges',
+                'blog_menu', 'blog_recent', 'blog_tags', 'calendar_month',
                 'calendar_upcoming', 'comments', 'community',
                 'completionstatus', 'course_list', 'course_overview',
                 'course_summary', 'feedback', 'glossary_random', 'html',
@@ -1012,7 +1021,7 @@ class core_plugin_manager {
 
             'filter' => array(
                 'activitynames', 'algebra', 'censor', 'emailprotect',
-                'emoticon', 'mediaplugin', 'multilang', 'tex', 'tidy',
+                'emoticon', 'mathjaxloader', 'mediaplugin', 'multilang', 'tex', 'tidy',
                 'urltolink', 'data', 'glossary'
             ),
 
@@ -1025,11 +1034,11 @@ class core_plugin_manager {
             ),
 
             'gradeimport' => array(
-                'csv', 'xml'
+                'csv', 'direct', 'xml'
             ),
 
             'gradereport' => array(
-                'grader', 'outcomes', 'overview', 'user'
+                'grader', 'history', 'outcomes', 'overview', 'user', 'singleview'
             ),
 
             'gradingform' => array(
@@ -1043,8 +1052,12 @@ class core_plugin_manager {
                 'database', 'legacy', 'standard',
             ),
 
+            'ltiservice' => array(
+                'profile', 'toolproxy', 'toolsettings'
+            ),
+
             'message' => array(
-                'email', 'jabber', 'popup'
+                'airnotifier', 'email', 'jabber', 'popup'
             ),
 
             'mnetservice' => array(
@@ -1077,7 +1090,7 @@ class core_plugin_manager {
 
             'qformat' => array(
                 'aiken', 'blackboard_six', 'examview', 'gift',
-                'learnwise', 'missingword', 'multianswer', 'webct',
+                'missingword', 'multianswer', 'webct',
                 'xhtml', 'xml'
             ),
 
@@ -1098,8 +1111,9 @@ class core_plugin_manager {
             ),
 
             'report' => array(
-                'backups', 'completion', 'configlog', 'courseoverview',
-                'log', 'loglive', 'outline', 'participation', 'progress', 'questioninstances', 'security', 'stats', 'performance'
+                'backups', 'completion', 'configlog', 'courseoverview', 'eventlist',
+                'log', 'loglive', 'outline', 'participation', 'progress', 'questioninstances', 'security', 'stats', 'performance',
+                'usersessions',
             ),
 
             'repository' => array(
@@ -1117,7 +1131,7 @@ class core_plugin_manager {
             ),
 
             'tinymce' => array(
-                'ctrlhelp', 'dragmath', 'managefiles', 'moodleemoticon', 'moodleimage',
+                'ctrlhelp', 'managefiles', 'moodleemoticon', 'moodleimage',
                 'moodlemedia', 'moodlenolink', 'pdw', 'spellchecker', 'wrap'
             ),
 
@@ -1126,10 +1140,10 @@ class core_plugin_manager {
             ),
 
             'tool' => array(
-                'assignmentupgrade', 'behat', 'capability', 'customlang',
-                'dbtransfer', 'generator', 'health', 'innodb', 'installaddon',
-                'langimport', 'log', 'multilangupgrade', 'phpunit', 'profiling',
-                'qeupgradehelper', 'replace', 'spamcleaner', 'task', 'timezoneimport',
+                'assignmentupgrade', 'availabilityconditions', 'behat', 'capability', 'customlang',
+                'dbtransfer', 'filetypes', 'generator', 'health', 'innodb', 'installaddon',
+                'langimport', 'log', 'messageinbound', 'multilangupgrade', 'monitor', 'phpunit', 'profiling',
+                'replace', 'spamcleaner', 'task', 'timezoneimport',
                 'unittest', 'uploadcourse', 'uploaduser', 'unsuproles', 'xmldb'
             ),
 

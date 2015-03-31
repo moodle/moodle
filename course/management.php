@@ -69,12 +69,10 @@ if ($courseid) {
 } else {
     $course = null;
     $courseid = null;
-    $category = null;
-    $categoryid = null;
-    if ($viewmode === 'default') {
-        $viewmode = 'categories';
-    }
-    $context = $systemcontext;
+    $category = coursecat::get_default();
+    $categoryid = $category->id;
+    $context = context_coursecat::instance($category->id);
+    $url->param('categoryid', $category->id);
 }
 
 // Check if there is a selected category param, and if there is apply it.
@@ -235,7 +233,6 @@ if ($action !== false && confirm_sesskey()) {
             if (!$category->can_delete()) {
                 throw new moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
             }
-            require_once($CFG->dirroot.'/course/delete_category_form.php');
             $mform = new core_course_deletecategory_form(null, $category);
             if ($mform->is_cancelled()) {
                 redirect($PAGE->url);
@@ -293,7 +290,7 @@ if ($action !== false && confirm_sesskey()) {
                 $moveto = coursecat::get($movetoid);
                 try {
                     // If this fails we want to catch the exception and report it.
-                    $redirectback = \core_course\management\helper::action_category_move_courses_into($category, $moveto,
+                    $redirectback = \core_course\management\helper::move_courses_into_category($moveto,
                         $courseids);
                     if ($redirectback) {
                         $a = new stdClass;
@@ -357,10 +354,14 @@ if ($action !== false && confirm_sesskey()) {
                     // They're not sorting anything.
                     break;
                 }
-                if (!in_array($sortcategoriesby, array('idnumber', 'name'))) {
+                if (!in_array($sortcategoriesby, array('idnumber', 'idnumberdesc',
+                                                       'name', 'namedesc'))) {
                     $sortcategoriesby = false;
                 }
-                if (!in_array($sortcoursesby, array('idnumber', 'fullname', 'shortname'))) {
+                if (!in_array($sortcoursesby, array('timecreated', 'timecreateddesc',
+                                                    'idnumber', 'idnumberdesc',
+                                                    'fullname', 'fullnamedesc',
+                                                    'shortname', 'shortnamedesc'))) {
                     $sortcoursesby = false;
                 }
 
@@ -498,7 +499,7 @@ if ($displaycourselisting) {
     } else {
         list($courses, $coursescount, $coursestotal) =
             \core_course\management\helper::search_courses($search, $blocklist, $modulelist, $page, $perpage);
-        echo $renderer->search_listing($courses, $coursestotal, $course, $page, $perpage);
+        echo $renderer->search_listing($courses, $coursestotal, $course, $page, $perpage, $search);
     }
     echo $renderer->grid_column_end();
     if ($displaycoursedetail) {
@@ -511,4 +512,6 @@ echo $renderer->grid_end();
 
 // End of the management form.
 echo $renderer->management_form_end();
+echo $renderer->course_search_form($search);
+
 echo $renderer->footer();

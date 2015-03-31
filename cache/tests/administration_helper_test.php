@@ -48,7 +48,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
     public function setUp() {
         parent::setUp();
         cache_factory::reset();
-        cache_config_phpunittest::create_default_configuration();
+        cache_config_testing::create_default_configuration();
     }
 
     /**
@@ -165,9 +165,9 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
      */
     public function test_get_edit_store_form() {
         $config = cache_config_writer::instance();
-        $this->assertTrue($config->add_store_instance('summariesstore', 'file'));
+        $this->assertTrue($config->add_store_instance('test_get_edit_store_form', 'file'));
 
-        $form = cache_administration_helper::get_edit_store_form('file', 'summariesstore');
+        $form = cache_administration_helper::get_edit_store_form('file', 'test_get_edit_store_form');
         $this->assertInstanceOf('moodleform', $form);
 
         try {
@@ -193,7 +193,7 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
         set_debugging(DEBUG_ALL);
 
         // First with simplekeys
-        $instance = cache_config_phpunittest::instance(true);
+        $instance = cache_config_testing::instance(true);
         $instance->phpunit_add_definition('phpunit/hashtest', array(
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',

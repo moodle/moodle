@@ -112,16 +112,18 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             e.halt();
             var event = this.on('assignablerolesloaded', function(){
                 event.detach();
-                var s = M.str.role, confirmation = {
+                var confirmation = {
                     modal:  true,
-                    visible  :  true,
+                    visible  :  false,
                     centered :  true,
-                    title    :  s.confirmunassigntitle,
-                    question :  s.confirmunassign,
-                    yesLabel :  s.confirmunassignyes,
-                    noLabel  :  s.confirmunassignno
+                    title    :  M.util.get_string('confirmunassigntitle', 'role'),
+                    question :  M.util.get_string('confirmunassign', 'role'),
+                    yesLabel :  M.util.get_string('confirmunassignyes', 'role'),
+                    noLabel  :  M.util.get_string('confirmunassignno', 'role')
                 };
-                new M.core.confirm(confirmation).on('complete-yes', this.removeRoleCallback, this, user.get(USERID), roleid);
+                new M.core.confirm(confirmation)
+                        .show()
+                        .on('complete-yes', this.removeRoleCallback, this, user.get(USERID), roleid);
             }, this);
             this._loadAssignableRoles();
         },
@@ -347,7 +349,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
         submitevent : null,
         initializer : function() {
             var i, m = this.get(MANIPULATOR);
-            var element = Y.Node.create('<div class="enrolpanel roleassign"><div class="container"><div class="header"><h2>'+M.str.role.assignroles+'</h2><div class="close"></div></div><div class="content"></div></div></div>');
+            var element = Y.Node.create('<div class="enrolpanel roleassign"><div class="container"><div class="header"><h2>'+M.util.get_string('assignroles', 'role')+'</h2><div class="close"></div></div><div class="content"></div></div></div>');
             var content = element.one('.content');
             var roles = m.get(ASSIGNABLEROLES);
             for (i in roles) {

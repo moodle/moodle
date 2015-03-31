@@ -49,7 +49,7 @@ class cachestore_session_test extends cachestore_tests {
      * Test the maxsize option.
      */
     public function test_maxsize() {
-        $config = cache_config_phpunittest::instance();
+        $config = cache_config_testing::instance();
         $config->phpunit_add_definition('phpunit/one', array(
             'mode' => cache_store::MODE_SESSION,
             'component' => 'phpunit',
@@ -171,7 +171,7 @@ class cachestore_session_test extends cachestore_tests {
     }
 
     public function test_ttl() {
-        $config = cache_config_phpunittest::instance();
+        $config = cache_config_testing::instance();
         $config->phpunit_add_definition('phpunit/three', array(
             'mode' => cache_store::MODE_SESSION,
             'component' => 'phpunit',

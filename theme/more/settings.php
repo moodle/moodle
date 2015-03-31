@@ -40,7 +40,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('textcolor', 'theme_more');
     $description = get_string('textcolor_desc', 'theme_more');
     $default = '#333366';
-    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, null, false);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
@@ -49,7 +49,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('linkcolor', 'theme_more');
     $description = get_string('linkcolor_desc', 'theme_more');
     $default = '#FF6500';
-    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, null, false);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
@@ -58,7 +58,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('bodybackground', 'theme_more');
     $description = get_string('bodybackground_desc', 'theme_more');
     $default = '';
-    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, null, false);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
@@ -120,7 +120,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('contentbackground', 'theme_more');
     $description = get_string('contentbackground_desc', 'theme_more');
     $default = '#FFFFFF';
-    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, null, false);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
@@ -129,7 +129,7 @@ if ($ADMIN->fulltree) {
     $title = get_string('secondarybackground', 'theme_more');
     $description = get_string('secondarybackground_desc', 'theme_more');
     $default = '#FFFFFF';
-    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default);
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, null, false);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 

@@ -1,11 +1,11 @@
 <?php
 /*
- V5.18 3 Sep 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
-  Released under both BSD license and Lesser GPL library license. 
-  Whenever there is any discrepancy between the two licenses, 
+ V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+  Released under both BSD license and Lesser GPL library license.
+  Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
   Set tabs to 4.
-  
+
   Postgres7 support.
   28 Feb 2001: Currently indicate that we support LIMIT
   01 Dec 2001: dannym added support for default values
@@ -17,77 +17,77 @@ if (!defined('ADODB_DIR')) die();
 include_once(ADODB_DIR."/drivers/adodb-postgres64.inc.php");
 
 class ADODB_postgres7 extends ADODB_postgres64 {
-	var $databaseType = 'postgres7';	
+	var $databaseType = 'postgres7';
 	var $hasLimit = true;	// set to true for pgsql 6.5+ only. support pgsql/mysql SELECT * FROM TABLE LIMIT 10
 	var $ansiOuter = true;
 	var $charSet = true; //set to true for Postgres 7 and above - PG client supports encodings
-	   // Richard 3/18/2012 - Modified SQL to return SERIAL type correctly AS old driver no longer return SERIAL as data type. 
+	   // Richard 3/18/2012 - Modified SQL to return SERIAL type correctly AS old driver no longer return SERIAL as data type.
 	var $metaColumnsSQL =
-						 "SELECT a.attname, 
-									CASE 
+						 "SELECT a.attname,
+									CASE
 											   WHEN x.sequence_name != '' THEN 'SERIAL'
 											   ELSE t.typname
 									END AS typname,
 									a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum
 						 FROM pg_class c, pg_attribute a
-						 JOIN pg_type t ON a.atttypid = t.oid 
-						 LEFT JOIN 
-									(SELECT c.relname as sequence_name,  
-												  c1.relname as related_table, 
+						 JOIN pg_type t ON a.atttypid = t.oid
+						 LEFT JOIN
+									(SELECT c.relname as sequence_name,
+												  c1.relname as related_table,
 												  a.attname as related_column
-									FROM pg_class c 
-									   JOIN pg_depend d ON d.objid = c.oid 
-									   LEFT JOIN pg_class c1 ON d.refobjid = c1.oid 
-									   LEFT JOIN pg_attribute a ON (d.refobjid, d.refobjsubid) = (a.attrelid, a.attnum) 
-									WHERE c.relkind = 'S' AND c1.relname = '%s') x 
+									FROM pg_class c
+									   JOIN pg_depend d ON d.objid = c.oid
+									   LEFT JOIN pg_class c1 ON d.refobjid = c1.oid
+									   LEFT JOIN pg_attribute a ON (d.refobjid, d.refobjsubid) = (a.attrelid, a.attnum)
+									WHERE c.relkind = 'S' AND c1.relname = '%s') x
 									ON x.related_column= a.attname
-						 WHERE c.relkind in ('r','v') AND 
-									(c.relname='%s' or c.relname = lower('%s')) AND 
-									a.attname not like '....%%' AND 
-									a.attnum > 0 AND 
-									a.attrelid = c.oid 
+						 WHERE c.relkind in ('r','v') AND
+									(c.relname='%s' or c.relname = lower('%s')) AND
+									a.attname not like '....%%' AND
+									a.attnum > 0 AND
+									a.attrelid = c.oid
 						 ORDER BY a.attnum";
 
    // used when schema defined
 	var $metaColumnsSQL1 = "
-						 SELECT a.attname, 
-									CASE 
+						 SELECT a.attname,
+									CASE
 											   WHEN x.sequence_name != '' THEN 'SERIAL'
 											   ELSE t.typname
 									END AS typname,
 									a.attlen, a.atttypmod, a.attnotnull, a.atthasdef, a.attnum
-						 FROM pg_class c, pg_namespace n, pg_attribute a 
-						 JOIN pg_type t ON a.atttypid = t.oid 
-						 LEFT JOIN 
-									(SELECT c.relname as sequence_name,  
-												  c1.relname as related_table, 
+						 FROM pg_class c, pg_namespace n, pg_attribute a
+						 JOIN pg_type t ON a.atttypid = t.oid
+						 LEFT JOIN
+									(SELECT c.relname as sequence_name,
+												  c1.relname as related_table,
 												  a.attname as related_column
-									FROM pg_class c 
-									   JOIN pg_depend d ON d.objid = c.oid 
-									   LEFT JOIN pg_class c1 ON d.refobjid = c1.oid 
-									   LEFT JOIN pg_attribute a ON (d.refobjid, d.refobjsubid) = (a.attrelid, a.attnum) 
-									WHERE c.relkind = 'S' AND c1.relname = '%s') x 
+									FROM pg_class c
+									   JOIN pg_depend d ON d.objid = c.oid
+									   LEFT JOIN pg_class c1 ON d.refobjid = c1.oid
+									   LEFT JOIN pg_attribute a ON (d.refobjid, d.refobjsubid) = (a.attrelid, a.attnum)
+									WHERE c.relkind = 'S' AND c1.relname = '%s') x
 									ON x.related_column= a.attname
 						 WHERE c.relkind in ('r','v') AND (c.relname='%s' or c.relname = lower('%s'))
-									AND c.relnamespace=n.oid and n.nspname='%s' 
-									AND a.attname not like '....%%' AND a.attnum > 0 
-									AND a.atttypid = t.oid AND a.attrelid = c.oid  
+									AND c.relnamespace=n.oid and n.nspname='%s'
+									AND a.attname not like '....%%' AND a.attnum > 0
+									AND a.atttypid = t.oid AND a.attrelid = c.oid
 						 ORDER BY a.attnum";
 
-	
-	function ADODB_postgres7() 
+
+	function __construct()
 	{
-		$this->ADODB_postgres64();
+		parent::__construct();
 		if (ADODB_ASSOC_CASE !== 2) {
 			$this->rsPrefix .= 'assoc_';
 		}
 		$this->_bindInputArray = PHP_VERSION >= 5.1;
 	}
 
-	
-	// the following should be compat with postgresql 7.2, 
+
+	// the following should be compat with postgresql 7.2,
 	// which makes obsolete the LIMIT limit,offset syntax
-	 function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0) 
+	 function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0)
 	 {
 		 $offsetStr = ($offset >= 0) ? " OFFSET ".((integer)$offset) : '';
 		 $limitStr  = ($nrows >= 0)  ? " LIMIT ".((integer)$nrows) : '';
@@ -95,7 +95,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		  	$rs = $this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
 		 else
 		  	$rs = $this->Execute($sql."$limitStr$offsetStr",$inputarr);
-		
+
 		return $rs;
 	 }
  	/*
@@ -111,7 +111,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 
 	/*
 		I discovered that the MetaForeignKeys method no longer worked for Postgres 8.3.
-		I went ahead and modified it to work for both 8.2 and 8.3. 
+		I went ahead and modified it to work for both 8.2 and 8.3.
 		Please feel free to include this change in your next release of adodb.
 		 William Kolodny [William.Kolodny#gt-t.net]
 	*/
@@ -121,15 +121,15 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	  SELECT fum.ftblname AS lookup_table, split_part(fum.rf, ')'::text, 1) AS lookup_field,
 	     fum.ltable AS dep_table, split_part(fum.lf, ')'::text, 1) AS dep_field
 	  FROM (
-	  SELECT fee.ltable, fee.ftblname, fee.consrc, split_part(fee.consrc,'('::text, 2) AS lf, 
+	  SELECT fee.ltable, fee.ftblname, fee.consrc, split_part(fee.consrc,'('::text, 2) AS lf,
 	    split_part(fee.consrc, '('::text, 3) AS rf
 	  FROM (
 	      SELECT foo.relname AS ltable, foo.ftblname,
 	          pg_get_constraintdef(foo.oid) AS consrc
 	      FROM (
 	          SELECT c.oid, c.conname AS name, t.relname, ft.relname AS ftblname
-	          FROM pg_constraint c 
-	          JOIN pg_class t ON (t.oid = c.conrelid) 
+	          FROM pg_constraint c
+	          JOIN pg_class t ON (t.oid = c.conrelid)
 	          JOIN pg_class ft ON (ft.oid = c.confrelid)
 	          JOIN pg_namespace nft ON (nft.oid = ft.relnamespace)
 	          LEFT JOIN pg_description ds ON (ds.objoid = c.oid)
@@ -142,9 +142,9 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	  ORDER BY fum.ftblname, fum.ltable, split_part(fum.lf, ')'::text, 1)
 	  ";
 	  $rs = $this->Execute($sql);
-	
+
 	  if (!$rs || $rs->EOF) return false;
-	
+
 	  $a = array();
 	  while (!$rs->EOF) {
 	    if ($upper) {
@@ -154,11 +154,11 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	    }
 		$rs->MoveNext();
 	  }
-	
+
 	  return $a;
-	
+
 	}
-	
+
 	// from  Edward Jaramilla, improved version - works on pg 7.4
 	function _old_MetaForeignKeys($table, $owner=false, $upper=false)
 	{
@@ -173,20 +173,20 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		c.relname = \''.strtolower($table).'\'
 		ORDER BY
 			t.tgrelid';
-		
+
 		$rs = $this->Execute($sql);
-		
+
 		if (!$rs || $rs->EOF) return false;
-		
+
 		$arr = $rs->GetArray();
 		$a = array();
 		foreach($arr as $v) {
 			$data = explode(chr(0), $v['args']);
 			$size = count($data)-1; //-1 because the last node is empty
 			for($i = 4; $i < $size; $i++) {
-				if ($upper) 
+				if ($upper)
 					$a[strtoupper($data[2])][] = strtoupper($data[$i].'='.$data[++$i]);
-				else 
+				else
 					$a[$data[2]][] = $data[$i].'='.$data[++$i];
 			}
 		}
@@ -199,7 +199,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 			// We don't have native support for parameterized queries, so let's emulate it at the parent
 			return ADODB_postgres64::_query($sql, $inputarr);
 		}
-		
+
 		$this->_pnum = 0;
 		$this->_errorMsg = false;
 		// -- added Cristiano da Cunha Duarte
@@ -213,7 +213,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 				else $sql .= $v.' $'.$i;
 				$i++;
 			}
-			
+
 			$rez = pg_query_params($this->_connectionID,$sql, $inputarr);
 		} else {
 			$rez = pg_query($this->_connectionID,$sql);
@@ -225,10 +225,10 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 			}
 			$this->_resultid = $rez;
 			return true;
-		}		
+		}
 		return $rez;
 	}
-	
+
  	 // this is a set of functions for managing client encoding - very important if the encodings
 	// of your database and your output target (i.e. HTML) don't match
 	//for instance, you may have UNICODE database and server it on-site as WIN1251 etc.
@@ -246,7 +246,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 			return $this->charSet;
 		}
 	}
-	
+
 	// SetCharSet - switch the client encoding
 	function SetCharSet($charset_name)
 	{
@@ -260,7 +260,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	}
 
 }
-	
+
 /*--------------------------------------------------------------------------------------
 	 Class Name: Recordset
 --------------------------------------------------------------------------------------*/
@@ -268,21 +268,21 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 class ADORecordSet_postgres7 extends ADORecordSet_postgres64{
 
 	var $databaseType = "postgres7";
-	
-	
-	function ADORecordSet_postgres7($queryID,$mode=false) 
+
+
+	function __construct($queryID, $mode=false)
 	{
-		$this->ADORecordSet_postgres64($queryID,$mode);
+		parent::__construct($queryID, $mode);
 	}
-	
-	 	// 10% speedup to move MoveNext to child class
-	function MoveNext() 
+
+	// 10% speedup to move MoveNext to child class
+	function MoveNext()
 	{
 		if (!$this->EOF) {
 			$this->_currentRow++;
 			if ($this->_numOfRows < 0 || $this->_numOfRows > $this->_currentRow) {
 				$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-			
+
 				if (is_array($this->fields)) {
 					if ($this->fields && isset($this->_blobArr)) $this->_fixblobs();
 					return true;
@@ -292,43 +292,43 @@ class ADORecordSet_postgres7 extends ADORecordSet_postgres64{
 			$this->EOF = true;
 		}
 		return false;
-	}		
+	}
 
 }
 
 class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64{
 
 	var $databaseType = "postgres7";
-	
-	
-	function ADORecordSet_assoc_postgres7($queryID,$mode=false) 
+
+
+	function __construct($queryID, $mode=false)
 	{
-		$this->ADORecordSet_postgres64($queryID,$mode);
+		parent::__construct($queryID, $mode);
 	}
-	
+
 	function _fetch()
 	{
 		if ($this->_currentRow >= $this->_numOfRows && $this->_numOfRows >= 0)
         	return false;
 
 		$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-		
+
 		if ($this->fields) {
 			if (isset($this->_blobArr)) $this->_fixblobs();
 			$this->_updatefields();
 		}
-			
+
 		return (is_array($this->fields));
 	}
-	
+
 		// Create associative array
 	function _updatefields()
 	{
 		if (ADODB_ASSOC_CASE == 2) return; // native
-	
+
 		$arr = array();
 		$lowercase = (ADODB_ASSOC_CASE == 0);
-		
+
 		foreach($this->fields as $k => $v) {
 			if (is_integer($k)) $arr[$k] = $v;
 			else {
@@ -340,29 +340,28 @@ class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64{
 		}
 		$this->fields = $arr;
 	}
-	
-	function MoveNext() 
+
+	function MoveNext()
 	{
 		if (!$this->EOF) {
 			$this->_currentRow++;
 			if ($this->_numOfRows < 0 || $this->_numOfRows > $this->_currentRow) {
 				$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-			
+
 				if (is_array($this->fields)) {
 					if ($this->fields) {
 						if (isset($this->_blobArr)) $this->_fixblobs();
-					
+
 						$this->_updatefields();
 					}
 					return true;
 				}
 			}
-			
-			
+
+
 			$this->fields = false;
 			$this->EOF = true;
 		}
 		return false;
 	}
 }
-?>

@@ -1,4 +1,15 @@
 This files describes API changes in the assign code.
+=== 2.9 ===
+* External parameter now returns PARAM_RAW instead of PARAM_TEXT for webservices using feedback comments.
+
+=== 2.8 ===
+* Some DB changes were made to simplify the SQL required to query the latest attempt.
+  - The assign_submission table now has a column "latest" which is set to 1 for the latest submission attempt.
+  - There will always be a submission row if there is a grade (so the latest grade can be found by joining with the submission)
+  - There is a new submission status "new" for a submission that has never been attempted by a student (but the record exists purely
+    to mark the latest attempt number as 0). The function get_user_submission will create a record with the status set to "new"
+    by default (the previous default was "draft").
+
 === 2.7 ===
 
 * Added setting sendstudentnotifications to assign DB table with admin defaults. This sets the default value for the

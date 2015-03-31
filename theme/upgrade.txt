@@ -1,19 +1,43 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 2.9 ===
+
+* Themes Bootstrapbase, Clean and More have undergone some changes for RTL layouts see - MDL-48160.
+
+* Themes Clean amd More page header background logo, if loaded, no longer links to the home page.
+
+=== 2.8 ===
+
+* Themes Base and Canvas layout/embedded.php has changed.
+  The div id="content" has been changed to id="page-content" - see MDL-47915.
+* All mod_assign CSS selectors have been qualified with ".path-mod-assign". This means any custom CSS
+  rules for mod_assign in a theme may need to be updated.
+* The following render methods were renamed, if you have overridden any of these you will need to update your renderer:
+  - report_log_renderer::render_report_log_renderable         => report_log_renderer::render_report_log
+  - report_loglive_renderer::render_report_loglive_renderable => report_loglive_renderer::render_report_log
+* On calendar view screen the course selector and new event button have been swapped, custom CSS for .path-calendar might be affected.
+* The functions search_listing() and search_pagination() in the core_course_management_renderer class take the searched string
+  as an extra parameter - see MDL-46902.
+* Themes with non-fixed headers must have the .navbar class in their navbar in order for floating headers in the grader report to work - see MDL-46658.
+* To accomodate the new gradebook, use of overflow: hidden or overflow-x: hidden CSS rules on DOM elements containing the
+  #user-grades table, visible at [Course administration -> Grades] is not recommended. Please use overflow: auto or
+  overflow: scroll instead, as this will handle medium to large courses with multiple activities better (more information available at https://docs.moodle.org/dev/Theme_upgrade_notes ).
+* The new user menu can be added to themes by calling $OUTPUT->user_menu(); we recommend doing so in a backwards-compatible way (see https://docs.moodle.org/dev/Theme_upgrade_notes for more information).
+
 === 2.7 ===
 
 * CSS related functions in theme class and csslib.php were refactored, addons that are
   using this private API need to be updated
-* Please update your css to use 'tr:nth-of-type(odd/even)' instead of '.ro/.r1' to apply tr specific css for various tables.
+* Please update your css to use 'tr:nth-of-type(odd/even)' instead of '.r0/.r1' to apply tr specific css for various tables.
   These classes are deprecated now and will be removed in Moodle 2.9. This has done to better support styling tables that will be altered by JavaScript.
   Here is an example to update your css:
   Old code:
     table.generaltable .r0 {background-color: #F0F0F0;}
     table.generaltable .r1 {background-color: #F0F0F0;}
   New code:
-    table.generaltable > tbody > tr:nth-of-type(odd) {background-color: #F0F0F0;}
     table.generaltable > tbody > tr:nth-of-type(even) {background-color: #F0F0F0;}
+    table.generaltable > tbody > tr:nth-of-type(odd) {background-color: #F0F0F0;}
 
 Removed themes:
 * afterburner, anomaly, arialist, binarius, boxxie, brick, formal_white, formfactor, fusion, leatherbound,
@@ -21,6 +45,9 @@ Removed themes:
   During the upgrade process the themes will be uninstalled and all their settings will be deleted.
   If you wish to keep your theme and its settings, download it from moodle.org and put it back in
   the theme/ directory BEFORE UPGRADING.
+
+Notes:
+* z-index on #dock has been adjusted from 11000 to 5000 to prevent overlapping issues with fullscreen TinyMCE in Base theme.
 
 === 2.6 ===
 

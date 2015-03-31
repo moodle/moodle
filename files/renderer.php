@@ -102,7 +102,6 @@ class core_files_renderer extends plugin_renderer_base {
      * @return string HTML fragment
      */
     public function render_form_filemanager($fm) {
-        static $filemanagertemplateloaded;
         $html = $this->fm_print_generallayout($fm);
         $module = array(
             'name'=>'form_filemanager',
@@ -117,8 +116,7 @@ class core_files_renderer extends plugin_renderer_base {
                 array('confirmrenamefile', 'repository'), array('newfolder', 'repository'), array('edit', 'moodle')
             )
         );
-        if (empty($filemanagertemplateloaded)) {
-            $filemanagertemplateloaded = true;
+        if ($this->page->requires->should_create_one_time_item_now('core_file_managertemplate')) {
             $this->page->requires->js_init_call('M.form_filemanager.set_templates',
                     array($this->filemanager_js_templates()), true, $module);
         }
@@ -191,6 +189,9 @@ class core_files_renderer extends plugin_renderer_base {
         $strdndnotsupported = get_string('dndnotsupported_insentence', 'moodle').$OUTPUT->help_icon('dndnotsupported');
         $strdndenabledinbox = get_string('dndenabled_inbox', 'moodle');
         $loading = get_string('loading', 'repository');
+        $straddfiletext = get_string('addfiletext', 'repository');
+        $strcreatefolder = get_string('createfolder', 'repository');
+        $strdownloadallfiles = get_string('downloadallfiles', 'repository');
 
         $html = '
 <div id="filemanager-'.$client_id.'" class="filemanager fm-loading">
@@ -202,24 +203,31 @@ class core_files_renderer extends plugin_renderer_base {
         <div class="filemanager-toolbar">
             <div class="fp-toolbar">
                 <div class="fp-btn-add">
-                    <a role="button" title="'.$straddfile.'" href="#"><img src="'.$this->pix_url('a/add_file').'" alt="" /></a>
+                    <a role="button" title="' . $straddfile . '" href="#">
+                        <img src="' . $this->pix_url('a/add_file') . '" alt="' . $straddfiletext . '" />
+                    </a>
                 </div>
                 <div class="fp-btn-mkdir">
-                    <a role="button" title="'.$strmakedir.'" href="#"><img src="'.$this->pix_url('a/create_folder').'" alt="" /></a>
+                    <a role="button" title="' . $strmakedir . '" href="#">
+                        <img src="' . $this->pix_url('a/create_folder') . '" alt="' . $strcreatefolder . '" />
+                    </a>
                 </div>
                 <div class="fp-btn-download">
-                    <a role="button" title="'.$strdownload.'" href="#"><img src="'.$this->pix_url('a/download_all').'" alt="" /></a>
+                    <a role="button" title="' . $strdownload . '" href="#">
+                        <img src="' . $this->pix_url('a/download_all').'" alt="' . $strdownloadallfiles . '" />
+                    </a>
                 </div>
+                <img class="fp-img-downloading" src="'.$this->pix_url('i/loading_small').'" alt="" />
             </div>
             <div class="fp-viewbar">
                 <a title="'. get_string('displayicons', 'repository') .'" class="fp-vb-icons" href="#">
-                    <img alt="" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" />
+                    <img alt="'. get_string('displayasicons', 'repository') .'" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" />
                 </a>
                 <a title="'. get_string('displaydetails', 'repository') .'" class="fp-vb-details" href="#">
-                    <img alt="" src="'. $this->pix_url('fp/view_list_active', 'theme') .'" />
+                    <img alt="'. get_string('displayasdetails', 'repository') .'" src="'. $this->pix_url('fp/view_list_active', 'theme') .'" />
                 </a>
                 <a title="'. get_string('displaytree', 'repository') .'" class="fp-vb-tree" href="#">
-                    <img alt="" src="'. $this->pix_url('fp/view_tree_active', 'theme') .'" />
+                    <img alt="'. get_string('displayastree', 'repository') .'" src="'. $this->pix_url('fp/view_tree_active', 'theme') .'" />
                 </a>
             </div>
         </div>
@@ -603,13 +611,13 @@ class core_files_renderer extends plugin_renderer_base {
                     <div class="fp-tb-message"></div>
                 </div>
                 <div class="fp-viewbar">
-                    <a title="'. get_string('displayicons', 'repository') .'" class="fp-vb-icons" href="#">
+                    <a role="button" title="'. get_string('displayicons', 'repository') .'" class="fp-vb-icons" href="#">
                         <img alt="" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" />
                     </a>
-                    <a title="'. get_string('displaydetails', 'repository') .'" class="fp-vb-details" href="#">
+                    <a role="button" title="'. get_string('displaydetails', 'repository') .'" class="fp-vb-details" href="#">
                         <img alt="" src="'. $this->pix_url('fp/view_list_active', 'theme') .'" />
                     </a>
-                    <a title="'. get_string('displaytree', 'repository') .'" class="fp-vb-tree" href="#">
+                    <a role="button" title="'. get_string('displaytree', 'repository') .'" class="fp-vb-tree" href="#">
                         <img alt="" src="'. $this->pix_url('fp/view_tree_active', 'theme') .'" />
                     </a>
                 </div>
@@ -744,21 +752,21 @@ class core_files_renderer extends plugin_renderer_base {
     </div>
     <form class="form-horizontal">
         <div class="fp-forminset">
-                <div class="fp-linktype-2 control-group clearfix">
-                    <label class="control-label">'.get_string('makefileinternal', 'repository').'</label>
-                    <div class="controls">
+                <div class="fp-linktype-2 control-group control-radio clearfix">
+                    <label class="control-label control-radio">'.get_string('makefileinternal', 'repository').'</label>
+                    <div class="controls control-radio">
                         <input type="radio"/>
                     </div>
                 </div>
-                <div class="fp-linktype-1 control-group clearfix">
-                    <label class="control-label">'.get_string('makefilelink', 'repository').'</label>
-                    <div class="controls">
+                <div class="fp-linktype-1 control-group control-radio clearfix">
+                    <label class="control-label control-radio">'.get_string('makefilelink', 'repository').'</label>
+                    <div class="controls control-radio">
                         <input type="radio"/>
                     </div>
                 </div>
-                <div class="fp-linktype-4 control-group clearfix">
-                    <label class="control-label">'.get_string('makefilereference', 'repository').'</label>
-                    <div class="controls">
+                <div class="fp-linktype-4 control-group control-radio clearfix">
+                    <label class="control-label control-radio">'.get_string('makefilereference', 'repository').'</label>
+                    <div class="controls control-radio">
                         <input type="radio"/>
                     </div>
                 </div>
@@ -790,14 +798,14 @@ class core_files_renderer extends plugin_renderer_base {
         <div class="fp-hr"></div>
         <p class="fp-thumbnail"></p>
         <div class="fp-fileinfo">
-            <div class="fp-datemodified">'.get_string('lastmodified', 'moodle').'<span class="fp-value"></span></div>
+            <div class="fp-datemodified">'.get_string('lastmodified', 'repository').'<span class="fp-value"></span></div>
             <div class="fp-datecreated">'.get_string('datecreated', 'repository').'<span class="fp-value"></span></div>
             <div class="fp-size">'.get_string('size', 'repository').'<span class="fp-value"></span></div>
-            <div class="fp-license">'.get_string('license', 'moodle').'<span class="fp-value"></span></div>
+            <div class="fp-license">'.get_string('license', 'repository').'<span class="fp-value"></span></div>
             <div class="fp-author">'.get_string('author', 'repository').'<span class="fp-value"></span></div>
             <div class="fp-dimensions">'.get_string('dimensions', 'repository').'<span class="fp-value"></span></div>
         </div>
-    <div>
+    </div>
 </div>';
         return $rv;
     }

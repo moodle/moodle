@@ -15,6 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Message sent event.
+ *
+ * @package    core
+ * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
  * Message sent event class.
  *
  * @property-read array $other {
@@ -24,14 +36,40 @@
  * }
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2014 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 class message_sent extends base {
+    /**
+     * Create event using ids.
+     * @param int $userfromid
+     * @param int $usertoid
+     * @param int $messageid
+     * @return message_sent
+     */
+    public static function create_from_ids($userfromid, $usertoid, $messageid) {
+        // We may be sending a message from the 'noreply' address, which means we are not actually sending a
+        // message from a valid user. In this case, we will set the userid to 0.
+        // Check if the userid is valid.
+        if (!\core_user::is_real_user($userfromid)) {
+            $userfromid = 0;
+        }
+
+        $event = self::create(array(
+            'userid' => $userfromid,
+            'context' => \context_system::instance(),
+            'relateduserid' => $usertoid,
+            'other' => array(
+                // In earlier versions it can either be the id in the 'message_read' or 'message' table.
+                // Now it is always the id from 'message' table. Please note that the record is still moved
+                // to the 'message_read' table later when message marked as read.
+                'messageid' => $messageid
+            )
+        ));
+
+        return $event;
+    }
 
     /**
      * Init method.
@@ -67,11 +105,10 @@ class message_sent extends base {
     public function get_description() {
         // Check if we are sending from a valid user.
         if (\core_user::is_real_user($this->userid)) {
-            return 'The user with the id \'' . $this->userid . '\' sent a message to the user with the id \'' .
-                $this->relateduserid . '\'.';
+            return "The user with id '$this->userid' sent a message to the user with id '$this->relateduserid'.";
         }
 
-        return 'A message was sent by the system to the user with the id \'' . $this->relateduserid . '\'.';
+        return "A message was sent by the system to the user with id '$this->relateduserid'.";
     }
 
     /**
@@ -104,7 +141,7 @@ class message_sent extends base {
         }
 
         if (!isset($this->other['messageid'])) {
-            throw new \coding_exception('The \'messageid\' needs to be set in $other.');
+            throw new \coding_exception('The \'messageid\' value must be set in other.');
         }
     }
 }

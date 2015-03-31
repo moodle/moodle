@@ -113,6 +113,10 @@ class testable_worker extends worker {
     public function create_directory_precheck($path) {
         return parent::create_directory_precheck($path);
     }
+
+    public function get_env($key) {
+        return parent::get_env($key);
+    }
 }
 
 
@@ -299,5 +303,68 @@ class mdeploytest extends PHPUnit_Framework_TestCase {
         $this->assertFalse(file_exists($root));
         $this->assertTrue($worker->create_directory_precheck($root));
         $this->assertFalse(file_exists($root)); // The precheck is supposed to remove it again.
+    }
+
+    /**
+     * Test that an invalid setting throws an exception.
+     *
+     * @dataProvider get_env_unlisted_provider
+     * @expectedException invalid_setting_exception
+     * @expectedExceptionMessageRegExp /^Requested environment setting '[^']*' is invalid.$/
+     */
+    public function test_get_env_unlisted($key) {
+        $worker = testable_worker::instance();
+        $worker->get_env($key);
+    }
+
+    public function get_env_unlisted_provider() {
+        return array(
+            // Completely invalid environment variables.
+            array('example'),
+            array('invalid'),
+
+            // Valid ones which have not been whitelisted.
+            array('noemailever'),
+            array('dbname'),
+        );
+    }
+
+    /**
+     * Test that a valid, but unset setting throws an exception.
+     *
+     * @dataProvider get_env_valid_provider
+     * @expectedException invalid_setting_exception
+     * @expectedExceptionMessageRegExp /^Requested environment setting '[^']*' is not current set.$/
+     */
+    public function test_get_env_unset($key) {
+        // Ensure that the setting is currently unset.
+        global $CFG;
+        $CFG->$key = null;
+
+        $worker = testable_worker::instance();
+        $worker->get_env($key);
+    }
+
+    /**
+     * Test that a valid setting with data returns that data.
+     *
+     * @dataProvider get_env_valid_provider
+     */
+    public function test_get_env_valid($key) {
+        // Ensure that the setting is currently unset.
+        global $CFG;
+        $CFG->$key = rand(0, 1000);
+
+        $worker = testable_worker::instance();
+        $value = $worker->get_env($key);
+
+        $this->assertEquals($CFG->$key, $value);
+    }
+
+    public function get_env_valid_provider() {
+        return array(
+            array('dataroot'),
+            array('dirroot'),
+        );
     }
 }

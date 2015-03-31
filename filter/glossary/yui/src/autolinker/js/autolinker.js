@@ -24,7 +24,9 @@ Y.extend(AUTOLINKER, Y.Base, {
 
             //display a progress indicator
             var title = '',
-                content = Y.Node.create('<div id="glossaryfilteroverlayprogress"><img src="'+M.cfg.loadingicon+'" class="spinner" /></div>'),
+                content = Y.Node.create('<div id="glossaryfilteroverlayprogress">' +
+                                        '<img src="' + M.cfg.loadingicon + '" class="spinner" />' +
+                                        '</div>'),
                 o = new Y.Overlay({
                     headerContent :  title,
                     bodyContent : content
@@ -59,7 +61,8 @@ Y.extend(AUTOLINKER, Y.Base, {
     display_callback : function(content) {
         var data,
             key,
-            alertpanel;
+            alertpanel,
+            definition;
         try {
             data = Y.JSON.parse(content);
             if (data.success){
@@ -70,6 +73,8 @@ Y.extend(AUTOLINKER, Y.Base, {
                     alertpanel = new M.core.alert({title:data.entries[key].concept,
                         message:definition, modal:false, yesLabel: M.util.get_string('ok', 'moodle')});
                     alertpanel.show();
+                    Y.fire(M.core.event.FILTER_CONTENT_UPDATED, {nodes: (new Y.NodeList(alertpanel.get('boundingBox')))});
+
                     Y.Node.one('#id_yuialertconfirm-' + alertpanel.get('COUNT')).focus();
                 }
 

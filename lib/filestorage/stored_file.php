@@ -205,7 +205,14 @@ class stored_file {
      */
     public function rename($filepath, $filename) {
         if ($this->fs->file_exists($this->get_contextid(), $this->get_component(), $this->get_filearea(), $this->get_itemid(), $filepath, $filename)) {
-            throw new file_exception('storedfilenotcreated', '', 'file exists, cannot rename');
+            $a = new stdClass();
+            $a->contextid = $this->get_contextid();
+            $a->component = $this->get_component();
+            $a->filearea  = $this->get_filearea();
+            $a->itemid    = $this->get_itemid();
+            $a->filepath  = $filepath;
+            $a->filename  = $filename;
+            throw new file_exception('storedfilenotcreated', $a, 'file exists, cannot rename');
         }
         $filerecord = new stdClass;
         $filerecord->filepath = $filepath;
@@ -216,23 +223,14 @@ class stored_file {
     }
 
     /**
-     * Replace the content by providing another stored_file instance
+     * Function stored_file::replace_content_with() is deprecated. Please use stored_file::replace_file_with()
      *
-     * @deprecated since 2.6
+     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
      * @see stored_file::replace_file_with()
-     * @param stored_file $storedfile
      */
     public function replace_content_with(stored_file $storedfile) {
-        debugging('Function stored_file::replace_content_with() is deprecated. Please use stored_file::replace_file_with()', DEBUG_DEVELOPER);
-        $filerecord = new stdClass;
-        $contenthash = $storedfile->get_contenthash();
-        if ($this->fs->content_exists($contenthash)) {
-            $filerecord->contenthash = $contenthash;
-        } else {
-            throw new file_exception('storedfileproblem', 'Invalid contenthash, content must be already in filepool', $contenthash);
-        }
-        $filerecord->filesize = $storedfile->get_filesize();
-        $this->update($filerecord);
+        throw new coding_exception('Function stored_file::replace_content_with() can not be used any more . ' .
+            'Please use stored_file::replace_file_with()');
     }
 
     /**
@@ -401,7 +399,13 @@ class stored_file {
     * @return void
     */
     public function add_to_curl_request(&$curlrequest, $key) {
-        $curlrequest->_tmp_file_post_params[$key] = '@' . $this->get_content_file_location();
+        if (function_exists('curl_file_create')) {
+            // As of PHP 5.5, the usage of the @filename API for file uploading is deprecated.
+            $value = curl_file_create($this->get_content_file_location());
+        } else {
+            $value = '@' . $this->get_content_file_location();
+        }
+        $curlrequest->_tmp_file_post_params[$key] = $value;
     }
 
     /**
@@ -721,15 +725,14 @@ class stored_file {
     }
 
      /**
-     * Returns the size of file in bytes.
+     * Function stored_file::set_filesize() is deprecated. Please use stored_file::replace_file_with
      *
-     * @param int $filesize bytes
+     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
+     * @see stored_file::replace_file_with()
      */
     public function set_filesize($filesize) {
-        debugging('Function stored_file::set_filesize() is deprecated. Please use stored_file::replace_file_with()', DEBUG_DEVELOPER);
-        $filerecord = new stdClass;
-        $filerecord->filesize = $filesize;
-        $this->update($filerecord);
+        throw new coding_exception('Function stored_file::set_filesize() can not be used any more. ' .
+            'Please use stored_file::replace_file_with()');
     }
 
     /**
@@ -920,26 +923,16 @@ class stored_file {
     }
 
     /**
-     * Get reference life time (in seconds) after which sync is required
-     *
-     * This data is no longer stored in DB or returned by repository. Each
+     * Function stored_file::get_referencelifetime() is deprecated as reference
+     * life time is no longer stored in DB or returned by repository. Each
      * repository should decide by itself when to synchronise the references.
      *
-     * @deprecated since 2.6
+     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
      * @see repository::sync_reference()
-     * @return int
      */
     public function get_referencelifetime() {
-        debugging('Function stored_file::get_referencelifetime() is deprecated.', DEBUG_DEVELOPER);
-        if ($this->repository) {
-            if (method_exists($this->repository, 'get_reference_file_lifetime')) {
-                return $this->repository->get_reference_file_lifetime($this->get_reference());
-            } else {
-                return 24 * 60 * 60;
-            }
-        } else {
-            return 0;
-        }
+        throw new coding_exception('Function stored_file::get_referencelifetime() can not be used any more. ' .
+            'See repository::sync_reference().');
     }
     /**
      * Returns file reference

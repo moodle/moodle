@@ -71,3 +71,20 @@ left: 210px;
 .blocks-moving.side-post-only #page-content #region-post {
     width: 210px;
 }
+
+/** Moving block when side pre only **/
+.blocks-moving.side-pre-only #page-content #region-post-box {
+    margin-left:-420px;
+}
+
+.blocks-moving.side-pre-only #page-content #region-main {
+    margin-left:420px;
+}
+
+.blocks-moving.side-pre-only #page-content #region-pre {
+    left:210px;
+}
+
+.blocks-moving.side-pre-only #page-content #region-post {
+    width:210px;
+}

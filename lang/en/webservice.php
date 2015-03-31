@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'webservice', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   webservice
+ * @package   core_webservice
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -41,6 +40,7 @@ $string['apiexplorer'] = 'API explorer';
 $string['apiexplorernotavalaible'] = 'API explorer not available yet.';
 $string['arguments'] = 'Arguments';
 $string['authmethod'] = 'Authentication method';
+$string['callablefromajax'] = 'Callable from AJAX';
 $string['cannotcreatetoken'] = 'No permission to create web service token for the service {$a}.';
 $string['cannotgetcoursecontents'] = 'Cannot get course contents';
 $string['configwebserviceplugins'] = 'For security reasons, only protocols that are in use should be enabled.';
@@ -82,15 +82,15 @@ $string['errorcoursecontextnotvalid'] = 'You cannot execute functions in the cou
 $string['errorinvalidparam'] = 'The param "{$a}" is invalid.';
 $string['errornotemptydefaultparamarray'] = 'The web service description parameter named \'{$a}\' is an single or multiple structure. The default can only be empty array. Check web service description.';
 $string['erroroptionalparamarray'] = 'The web service description parameter named \'{$a}\' is an single or multiple structure. It can not be set as VALUE_OPTIONAL. Check web service description.';
-$string['event_webservice_function_called'] = 'Web service function called';
-$string['event_webservice_login_failed'] = 'Web service login failed';
-$string['event_webservice_service_created'] = 'Web service service created';
-$string['event_webservice_service_deleted'] = 'Web service service deleted';
-$string['event_webservice_service_updated'] = 'Web service service updated';
-$string['event_webservice_service_user_added'] = 'Web service service user added';
-$string['event_webservice_service_user_removed'] = 'Web service service user removed';
-$string['event_webservice_token_created'] = 'Web service token created';
-$string['event_webservice_token_sent'] = 'Web service token sent';
+$string['eventwebservicefunctioncalled'] = 'Web service function called';
+$string['eventwebserviceloginfailed'] = 'Web service login failed';
+$string['eventwebserviceservicecreated'] = 'Web service service created';
+$string['eventwebserviceservicedeleted'] = 'Web service service deleted';
+$string['eventwebserviceserviceupdated'] = 'Web service service updated';
+$string['eventwebserviceserviceuseradded'] = 'Web service service user added';
+$string['eventwebserviceserviceuserremoved'] = 'Web service service user removed';
+$string['eventwebservicetokencreated'] = 'Web service token created';
+$string['eventwebservicetokensent'] = 'Web service token sent';
 $string['execute'] = 'Execute';
 $string['executewarnign'] = 'WARNING: If you press execute your database will be modified and changes can not be reverted automatically!';
 $string['externalservice'] = 'External service';
@@ -114,7 +114,7 @@ $string['invalidiptoken'] = 'Invalid token - your IP is not supported';
 $string['invalidtimedtoken'] = 'Invalid token - token expired';
 $string['invalidtoken'] = 'Invalid token - token not found';
 $string['iprestriction'] = 'IP restriction';
-$string['iprestriction_help'] = 'The user will need to call web service from the listed IPs.';
+$string['iprestriction_help'] = 'The user will need to call the web service from the listed IPs (separated by commas).';
 $string['key'] = 'Key';
 $string['keyshelp'] = 'The keys are used to access your Moodle account from external applications.';
 $string['manageprotocols'] = 'Manage protocols';
@@ -127,6 +127,7 @@ $string['missingusername'] = 'Missing username';
 $string['missingversionfile'] = 'Coding error: version.php file is missing for the component {$a}';
 $string['mobilewsdisabled'] = 'Disabled';
 $string['mobilewsenabled'] = 'Enabled';
+$string['nameexists'] = 'This name is already in use by another service';
 $string['nocapabilitytouseparameter'] = 'The user does not have the required capability to use the parameter {$a}';
 $string['nofunctions'] = 'This service has no functions.';
 $string['norequiredcapability'] = 'No required capability';

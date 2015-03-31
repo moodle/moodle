@@ -22,6 +22,7 @@ Feature: A teacher can password protect a lesson
     And I turn editing mode on
     And I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson |
+      | Description | Test lesson description |
       | Password protected lesson | Yes |
       | id_password | moodle_rules |
     And I follow "Test lesson"

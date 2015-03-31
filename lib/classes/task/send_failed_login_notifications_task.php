@@ -28,6 +28,9 @@ namespace core\task;
  */
 class send_failed_login_notifications_task extends scheduled_task {
 
+    /** The maximum time period to look back (30 days = 30 * 24 * 3600) */
+    const NOTIFY_MAXIMUM_TIME = 2592000;
+
     /**
      * Get a descriptive name for this task (shown to admins).
      *
@@ -50,8 +53,10 @@ class send_failed_login_notifications_task extends scheduled_task {
 
         $recip = get_users_from_config($CFG->notifyloginfailures, 'moodle/site:config');
 
-        if (empty($CFG->lastnotifyfailure)) {
-            $CFG->lastnotifyfailure = 0;
+        // Do not look back more than 1 month to avoid crashes due to huge number of records.
+        $maximumlastnotifytime = time() - self::NOTIFY_MAXIMUM_TIME;
+        if (empty($CFG->lastnotifyfailure) || ($CFG->lastnotifyfailure < $maximumlastnotifytime)) {
+            $CFG->lastnotifyfailure = $maximumlastnotifytime;
         }
 
         // If it has been less than an hour, or if there are no recipients, don't execute.
@@ -67,7 +72,7 @@ class send_failed_login_notifications_task extends scheduled_task {
         // Get all the IPs with more than notifyloginthreshold failures since lastnotifyfailure
         // and insert them into the cache_flags temp table.
         $logmang = get_log_manager();
-        $readers = $logmang->get_readers('\core\log\sql_internal_reader');
+        $readers = $logmang->get_readers('\core\log\sql_internal_table_reader');
         $reader = reset($readers);
         $readername = key($readers);
         if (empty($reader) || empty($readername)) {

@@ -31,6 +31,21 @@ namespace core\task;
  */
 abstract class scheduled_task extends task_base {
 
+    /** Minimum minute value. */
+    const MINUTEMIN = 0;
+    /** Maximum minute value. */
+    const MINUTEMAX = 59;
+
+    /** Minimum hour value. */
+    const HOURMIN = 0;
+    /** Maximum hour value. */
+    const HOURMAX = 23;
+
+    /** Minimum dayofweek value. */
+    const DAYOFWEEKMIN = 0;
+    /** Maximum dayofweek value. */
+    const DAYOFWEEKMAX = 6;
+
     /** @var string $hour - Pattern to work out the valid hours */
     private $hour = '*';
 
@@ -88,10 +103,14 @@ abstract class scheduled_task extends task_base {
     }
 
     /**
-     * Setter for $minute.
+     * Setter for $minute. Accepts a special 'R' value
+     * which will be translated to a random minute.
      * @param string $minute
      */
     public function set_minute($minute) {
+        if ($minute === 'R') {
+            $minute = mt_rand(self::HOURMIN, self::HOURMAX);
+        }
         $this->minute = $minute;
     }
 
@@ -104,10 +123,14 @@ abstract class scheduled_task extends task_base {
     }
 
     /**
-     * Setter for $hour.
+     * Setter for $hour. Accepts a special 'R' value
+     * which will be translated to a random hour.
      * @param string $hour
      */
     public function set_hour($hour) {
+        if ($hour === 'R') {
+            $hour = mt_rand(self::HOURMIN, self::HOURMAX);
+        }
         $this->hour = $hour;
     }
 
@@ -156,6 +179,9 @@ abstract class scheduled_task extends task_base {
      * @param string $dayofweek
      */
     public function set_day_of_week($dayofweek) {
+        if ($dayofweek === 'R') {
+            $dayofweek = mt_rand(self::DAYOFWEEKMIN, self::DAYOFWEEKMAX);
+        }
         $this->dayofweek = $dayofweek;
     }
 
@@ -181,6 +207,15 @@ abstract class scheduled_task extends task_base {
      */
     public function get_disabled() {
         return $this->disabled;
+    }
+
+    /**
+     * Override this function if you want this scheduled task to run, even if the component is disabled.
+     *
+     * @return bool
+     */
+    public function get_run_if_component_disabled() {
+        return false;
     }
 
     /**
@@ -293,8 +328,8 @@ abstract class scheduled_task extends task_base {
     public function get_next_scheduled_time() {
         global $CFG;
 
-        $validminutes = $this->eval_cron_field($this->minute, 0, 59);
-        $validhours = $this->eval_cron_field($this->hour, 0, 23);
+        $validminutes = $this->eval_cron_field($this->minute, self::MINUTEMIN, self::MINUTEMAX);
+        $validhours = $this->eval_cron_field($this->hour, self::HOURMIN, self::HOURMAX);
 
         // We need to change to the server timezone before using php date() functions.
         $origtz = date_default_timezone_get();
@@ -340,7 +375,7 @@ abstract class scheduled_task extends task_base {
         // otherwise - choose the soonest (see man 5 cron).
         if ($this->dayofweek == '*') {
             $daysincrement = $daysincrementbymonth;
-        } else if ($this->dayofmonth == '*') {
+        } else if ($this->day == '*') {
             $daysincrement = $daysincrementbyweek;
         } else {
             // Take the smaller increment of days by month or week.

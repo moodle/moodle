@@ -33,8 +33,8 @@ $urlparams = array('id' => $id,
                   'useridlistid' => optional_param('action', 0, PARAM_INT));
 
 $url = new moodle_url('/mod/assign/view.php', $urlparams);
-$cm = get_coursemodule_from_id('assign', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+
+list ($course, $cm) = get_course_and_cm_from_cmid($id, 'assign');
 
 require_login($course, true, $cm);
 $PAGE->set_url($url);

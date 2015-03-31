@@ -14,18 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Role updated event.
+ *
+ * @package    core
+ * @since      Moodle 2.6
+ * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Role updated event.
+ * Role updated event class.
  *
- * @package    core_event
+ * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class role_capabilities_updated extends base {
     /** @var array Legacy log data */
     protected $legacylogdata = null;
@@ -54,7 +63,7 @@ class role_capabilities_updated extends base {
      * @return string
      */
     public function get_description() {
-        return 'Capabilities for role ' . $this->objectid . ' are updated by user ' . $this->userid;
+        return "The user with id '$this->userid' updated the capabilities for the role with id '$this->objectid'.";
     }
 
     /**

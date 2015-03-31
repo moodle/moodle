@@ -86,10 +86,6 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * This function checks all the requirements defined in environment.xml.
  *
- * @staticvar bool $result
- * @staticvar array $env_results
- * @staticvar bool $cache_exists
- *
  * @param string $version version to check.
  * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. Default ENV_SELECT_NEWER (BC)
  * @return array with two elements. The first element true/false, depending on
@@ -97,50 +93,36 @@ defined('MOODLE_INTERNAL') || die();
  *      objects that has detailed information about the checks and which ones passed.
  */
 function check_moodle_environment($version, $env_select = ENV_SELECT_NEWER) {
+    if ($env_select != ENV_SELECT_NEWER and $env_select != ENV_SELECT_DATAROOT and $env_select != ENV_SELECT_RELEASE) {
+        throw new coding_exception('Incorrect value of $env_select parameter');
+    }
 
-    $status = true;
+/// Get the more recent version before the requested
+    if (!$version = get_latest_version_available($version, $env_select)) {
+        return array(false, array());
+    }
 
-/// This are cached per request
-    static $result = true;
-    static $env_results;
-    static $cache_exists = false;
+/// Perform all the checks
+    if (!$environment_results = environment_check($version, $env_select)) {
+        return array(false, array());
+    }
 
-/// if we have results cached, use them
-    if ($cache_exists) {
-        $environment_results = $env_results;
-/// No cache exists, calculate everything
-    } else {
-    /// Get the more recent version before the requested
-        if (!$version = get_latest_version_available($version, $env_select)) {
-            $status = false;
+/// Iterate over all the results looking for some error in required items
+/// or some error_code
+    $result = true;
+    foreach ($environment_results as $environment_result) {
+        if (!$environment_result->getStatus() && $environment_result->getLevel() == 'required'
+          && !$environment_result->getBypassStr()) {
+            $result = false; // required item that is not bypased
+        } else if ($environment_result->getStatus() && $environment_result->getLevel() == 'required'
+          && $environment_result->getRestrictStr()) {
+            $result = false; // required item that is restricted
+        } else if ($environment_result->getErrorCode()) {
+            $result = false;
         }
+    }
 
-    /// Perform all the checks
-        if (!($environment_results = environment_check($version, $env_select)) && $status) {
-            $status = false;
-        }
-
-    /// Iterate over all the results looking for some error in required items
-    /// or some error_code
-        if ($status) {
-            foreach ($environment_results as $environment_result) {
-                if (!$environment_result->getStatus() && $environment_result->getLevel() == 'required'
-                  && !$environment_result->getBypassStr()) {
-                    $result = false; // required item that is not bypased
-                } else if ($environment_result->getStatus() && $environment_result->getLevel() == 'required'
-                  && $environment_result->getRestrictStr()) {
-                    $result = false; // required item that is restricted
-                } else if ($environment_result->getErrorCode()) {
-                    $result = false;
-                }
-            }
-        }
-    /// Going to end, we store environment_results to cache
-        $env_results = $environment_results;
-        $cache_exists = true;
-    } ///End of cache block
-
-    return array($result && $status, $environment_results);
+    return array($result, $environment_results);
 }
 
 
@@ -270,73 +252,83 @@ function normalize_version($version) {
 /**
  * This function will load the environment.xml file and xmlize it
  *
- * @global object
- * @staticvar mixed $data
+ * @staticvar array $data
  * @uses ENV_SELECT_NEWER
  * @uses ENV_SELECT_DATAROOT
  * @uses ENV_SELECT_RELEASE
- * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. Default ENV_SELECT_NEWER (BC)
+ * @param int|string $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. String means plugin name.
  * @return mixed the xmlized structure or false on error
  */
 function load_environment_xml($env_select=ENV_SELECT_NEWER) {
 
     global $CFG;
 
-    static $data; //Only load and xmlize once by request
+    static $data = array(); // Only load and xmlize once by request.
 
-    if (!empty($data)) {
-        return $data;
+    if (isset($data[$env_select])) {
+        return $data[$env_select];
     }
+    $contents = false;
 
-/// First of all, take a look inside $CFG->dataroot/environment/environment.xml
-    $file = $CFG->dataroot.'/environment/environment.xml';
-    $internalfile = $CFG->dirroot.'/'.$CFG->admin.'/environment.xml';
-    switch ($env_select) {
-        case ENV_SELECT_NEWER:
-            if (!is_file($file) || !is_readable($file) || filemtime($file) < filemtime($internalfile) ||
-                !$contents = file_get_contents($file)) {
-            /// Fallback to fixed $CFG->admin/environment.xml
-                if (!is_file($internalfile) || !is_readable($internalfile) || !$contents = file_get_contents($internalfile)) {
-                    return false;
+    if (is_numeric($env_select)) {
+        $file = $CFG->dataroot.'/environment/environment.xml';
+        $internalfile = $CFG->dirroot.'/'.$CFG->admin.'/environment.xml';
+        switch ($env_select) {
+            case ENV_SELECT_NEWER:
+                if (!is_file($file) || !is_readable($file) || filemtime($file) < filemtime($internalfile) ||
+                    !$contents = file_get_contents($file)) {
+                    /// Fallback to fixed $CFG->admin/environment.xml
+                    if (!is_file($internalfile) || !is_readable($internalfile) || !$contents = file_get_contents($internalfile)) {
+                        $contents = false;
+                    }
                 }
+                break;
+            case ENV_SELECT_DATAROOT:
+                if (!is_file($file) || !is_readable($file) || !$contents = file_get_contents($file)) {
+                    $contents = false;
+                }
+                break;
+            case ENV_SELECT_RELEASE:
+                if (!is_file($internalfile) || !is_readable($internalfile) || !$contents = file_get_contents($internalfile)) {
+                    $contents = false;
+                }
+                break;
+        }
+    } else {
+        if ($plugindir = core_component::get_component_directory($env_select)) {
+            $pluginfile = "$plugindir/environment.xml";
+            if (!is_file($pluginfile) || !is_readable($pluginfile) || !$contents = file_get_contents($pluginfile)) {
+                $contents = false;
             }
-            break;
-        case ENV_SELECT_DATAROOT:
-            if (!is_file($file) || !is_readable($file) || !$contents = file_get_contents($file)) {
-                return false;
-            }
-            break;
-        case ENV_SELECT_RELEASE:
-            if (!is_file($internalfile) || !is_readable($internalfile) || !$contents = file_get_contents($internalfile)) {
-                return false;
-            }
-            break;
+        }
     }
-/// XML the whole file
-    $data = xmlize($contents);
+    // XML the whole file.
+    if ($contents !== false) {
+        $contents = xmlize($contents);
+    }
 
-    return $data;
+    $data[$env_select] = $contents;
+
+    return $data[$env_select];
 }
 
 
 /**
  * This function will return the list of Moodle versions available
  *
- * @staticvar array $versions
- * @return mixed array of versions. False on error.
+ * @return array of versions
  */
-function get_list_of_environment_versions ($contents) {
-
-    static $versions = array();
-
-    if (!empty($versions)) {
-        return $versions;
-    }
+function get_list_of_environment_versions($contents) {
+    $versions = array();
 
     if (isset($contents['COMPATIBILITY_MATRIX']['#']['MOODLE'])) {
         foreach ($contents['COMPATIBILITY_MATRIX']['#']['MOODLE'] as $version) {
             $versions[] = $version['@']['version'];
         }
+    }
+
+    if (isset($contents['COMPATIBILITY_MATRIX']['#']['PLUGIN'])) {
+        $versions[] = 'all';
     }
 
     return $versions;
@@ -351,7 +343,10 @@ function get_list_of_environment_versions ($contents) {
  * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
  * @return string|bool string more recent version or false if not found
  */
-function get_latest_version_available ($version, $env_select) {
+function get_latest_version_available($version, $env_select) {
+    if ($env_select != ENV_SELECT_NEWER and $env_select != ENV_SELECT_DATAROOT and $env_select != ENV_SELECT_RELEASE) {
+        throw new coding_exception('Incorrect value of $env_select parameter');
+    }
 
 /// Normalize the version requested
     $version = normalize_version($version);
@@ -387,7 +382,7 @@ function get_latest_version_available ($version, $env_select) {
  * This function will return the xmlized data belonging to one Moodle version
  *
  * @param string $version top version from which we start to look backwards
- * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
+ * @param int|string $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. String means plugin name.
  * @return mixed the xmlized structure or false on error
  */
 function get_environment_for_version($version, $env_select) {
@@ -405,6 +400,14 @@ function get_environment_for_version($version, $env_select) {
         return false;
     }
 
+    // If $env_select is not numeric then this is being called on a plugin, and not the core environment.xml
+    // If a version of 'all' is in the arry is also means that the new <PLUGIN> tag was found, this should
+    // be matched against any version of Moodle.
+    if (!is_numeric($env_select) && in_array('all', $versions)
+            && environment_verify_plugin($env_select, $contents['COMPATIBILITY_MATRIX']['#']['PLUGIN'][0])) {
+        return $contents['COMPATIBILITY_MATRIX']['#']['PLUGIN'][0];
+    }
+
 /// If the version requested is available
     if (!in_array($version, $versions)) {
         return false;
@@ -416,6 +419,19 @@ function get_environment_for_version($version, $env_select) {
     return $contents['COMPATIBILITY_MATRIX']['#']['MOODLE'][$fl_arr[$version]];
 }
 
+/**
+ * Checks if a plugin tag has a name attribute and it matches the plugin being tested.
+ *
+ * @param string $plugin the name of the plugin.
+ * @param array $pluginxml the xmlised structure for the plugin tag being tested.
+ * @return boolean true if the name attribute exists and matches the plugin being tested.
+ */
+function environment_verify_plugin($plugin, $pluginxml) {
+    if (!isset($pluginxml['@']['name']) || $pluginxml['@']['name'] != $plugin) {
+        return false;
+    }
+    return true;
+}
 
 /**
  * This function will check for everything (DB, PHP and PHP extensions for now)
@@ -424,10 +440,14 @@ function get_environment_for_version($version, $env_select) {
  * @global object
  * @param string $version xml version we are going to use to test this server
  * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
- * @return array array of results encapsulated in one environment_result object
+ * @return environment_results[] array of results encapsulated in one environment_result object
  */
 function environment_check($version, $env_select) {
     global $CFG;
+
+    if ($env_select != ENV_SELECT_NEWER and $env_select != ENV_SELECT_DATAROOT and $env_select != ENV_SELECT_RELEASE) {
+        throw new coding_exception('Incorrect value of $env_select parameter');
+    }
 
 /// Normalize the version requested
     $version = normalize_version($version);
@@ -455,6 +475,58 @@ function environment_check($version, $env_select) {
     $custom_results = environment_custom_checks($version, $env_select);
     $results = array_merge($results, $custom_results);
 
+    // Always use the plugin directory version of environment.xml,
+    // add-on developers need to keep those up-to-date with future info.
+    foreach (core_component::get_plugin_types() as $plugintype => $unused) {
+        foreach (core_component::get_plugin_list_with_file($plugintype, 'environment.xml') as $pluginname => $unused) {
+            $plugin = $plugintype . '_' . $pluginname;
+
+            $result = environment_check_database($version, $plugin);
+            if ($result->error_code != NO_VERSION_DATA_FOUND
+                and $result->error_code != NO_DATABASE_SECTION_FOUND
+                and $result->error_code != NO_DATABASE_VENDORS_FOUND) {
+
+                $result->plugin = $plugin;
+                $results[] = $result;
+            }
+
+            $result = environment_check_php($version, $plugin);
+            if ($result->error_code != NO_VERSION_DATA_FOUND
+                and $result->error_code != NO_PHP_SECTION_FOUND
+                and $result->error_code != NO_PHP_VERSION_FOUND) {
+
+                $result->plugin = $plugin;
+                $results[] = $result;
+            }
+
+            $pluginresults = environment_check_php_extensions($version, $plugin);
+            foreach ($pluginresults as $result) {
+                if ($result->error_code != NO_VERSION_DATA_FOUND
+                    and $result->error_code != NO_PHP_EXTENSIONS_SECTION_FOUND) {
+
+                    $result->plugin = $plugin;
+                    $results[] = $result;
+                }
+            }
+
+            $pluginresults = environment_check_php_settings($version, $plugin);
+            foreach ($pluginresults as $result) {
+                if ($result->error_code != NO_VERSION_DATA_FOUND) {
+                    $result->plugin = $plugin;
+                    $results[] = $result;
+                }
+            }
+
+            $pluginresults = environment_custom_checks($version, $plugin);
+            foreach ($pluginresults as $result) {
+                if ($result->error_code != NO_VERSION_DATA_FOUND) {
+                    $result->plugin = $plugin;
+                    $results[] = $result;
+                }
+            }
+        }
+    }
+
     return $results;
 }
 
@@ -466,7 +538,7 @@ function environment_check($version, $env_select) {
  * @uses NO_PHP_EXTENSIONS_SECTION_FOUND
  * @uses NO_PHP_EXTENSIONS_NAME_FOUND
  * @param string $version xml version we are going to use to test this server
- * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
+ * @param int|string $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. String means plugin name.
  * @return array array of results encapsulated in one environment_result object
  */
 function environment_check_php_extensions($version, $env_select) {
@@ -528,7 +600,7 @@ function environment_check_php_extensions($version, $env_select) {
  * @uses NO_VERSION_DATA_FOUND
  * @uses NO_PHP_SETTINGS_NAME_FOUND
  * @param string $version xml version we are going to use to test this server
- * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
+ * @param int|string $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. String means plugin name.
  * @return array array of results encapsulated in one environment_result object
  */
 function environment_check_php_settings($version, $env_select) {
@@ -605,12 +677,11 @@ function environment_check_php_settings($version, $env_select) {
 /**
  * This function will do the custom checks.
  *
- * @global object
  * @uses CUSTOM_CHECK_FUNCTION_MISSING
  * @uses CUSTOM_CHECK_FILE_MISSING
  * @uses NO_CUSTOM_CHECK_FOUND
  * @param string $version xml version we are going to use to test this server.
- * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
+ * @param int|string $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. String means plugin name.
  * @return array array of results encapsulated in environment_result objects.
  */
 function environment_custom_checks($version, $env_select) {
@@ -642,27 +713,31 @@ function environment_custom_checks($version, $env_select) {
         $level = get_level($check);
 
     /// Check for extension name
-        if (isset($check['@']['file']) && isset($check['@']['function'])) {
-            $file = $CFG->dirroot . '/' . $check['@']['file'];
+        if (isset($check['@']['function'])) {
             $function = $check['@']['function'];
-            if (is_readable($file)) {
-                include_once($file);
-                if (function_exists($function)) {
-                    $result->setLevel($level);
+            $file = null;
+            if (isset($check['@']['file'])) {
+                $file = $CFG->dirroot . '/' . $check['@']['file'];
+                if (is_readable($file)) {
+                    include_once($file);
+                }
+            }
+
+            if (is_callable($function)) {
+                $result->setLevel($level);
+                $result->setInfo($function);
+                $result = call_user_func($function, $result);
+            } else if (!$file or is_readable($file)) {
+            /// Only show error for current version (where function MUST exist)
+            /// else, we are performing custom checks against future versiosn
+            /// and function MAY not exist, so it doesn't cause error, just skip
+            /// custom check by returning null. MDL-15939
+                if (version_compare($current_version, $version, '>=')) {
+                    $result->setStatus(false);
                     $result->setInfo($function);
-                    $result = $function($result);
+                    $result->setErrorCode(CUSTOM_CHECK_FUNCTION_MISSING);
                 } else {
-                /// Only show error for current version (where function MUST exist)
-                /// else, we are performing custom checks against future versiosn
-                /// and function MAY not exist, so it doesn't cause error, just skip
-                /// custom check by returning null. MDL-15939
-                    if (version_compare($current_version, $version, '>=')) {
-                        $result->setStatus(false);
-                        $result->setInfo($function);
-                        $result->setErrorCode(CUSTOM_CHECK_FUNCTION_MISSING);
-                    } else {
-                        $result = null;
-                    }
+                    $result = null;
                 }
             } else {
             /// Only show error for current version (where function MUST exist)
@@ -699,7 +774,7 @@ function environment_custom_checks($version, $env_select) {
  *
  * @uses NO_VERSION_DATA_FOUND
  * @param string $version xml version we are going to use to test this server
- * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
+ * @param int|string $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. String means plugin name.
  * @return object results encapsulated in one environment_result object
  */
 function environment_check_moodle($version, $env_select) {
@@ -750,7 +825,7 @@ function environment_check_moodle($version, $env_select) {
  * @uses NO_PHP_SECTION_FOUND
  * @uses NO_PHP_VERSION_FOUND
  * @param string $version xml version we are going to use to test this server
- * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
+ * @param int|string $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. String means plugin name.
  * @return object results encapsulated in one environment_result object
  */
 function environment_check_php($version, $env_select) {
@@ -805,7 +880,7 @@ function environment_check_php($version, $env_select) {
 /**
  * Looks for buggy PCRE implementation, we need unicode support in Moodle...
  * @param string $version xml version we are going to use to test this server
- * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
+ * @param int|string $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. String means plugin name.
  * @return stdClass results encapsulated in one environment_result object, null if irrelevant
  */
 function environment_check_pcre_unicode($version, $env_select) {
@@ -846,11 +921,10 @@ function environment_check_pcre_unicode($version, $env_select) {
 /**
  * This function will check if unicode database requirements are satisfied
  *
- * @global object
  * @uses NO_VERSION_DATA_FOUND
  * @uses NO_UNICODE_SECTION_FOUND
  * @param string $version xml version we are going to use to test this server
- * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
+ * @param int|string $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. String means plugin name.
  * @return object results encapsulated in one environment_result object
  */
 function environment_check_unicode($version, $env_select) {
@@ -895,7 +969,6 @@ function environment_check_unicode($version, $env_select) {
 /**
  * This function will check if database requirements are satisfied
  *
- * @global object
  * @uses NO_VERSION_DATA_FOUND
  * @uses NO_DATABASE_SECTION_FOUND
  * @uses NO_DATABASE_VENDORS_FOUND
@@ -903,7 +976,7 @@ function environment_check_unicode($version, $env_select) {
  * @uses NO_DATABASE_VENDOR_POSTGRES_FOUND
  * @uses NO_DATABASE_VENDOR_VERSION_FOUND
  * @param string $version xml version we are going to use to test this server
- * @param int $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use.
+ * @param int|string $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. String means plugin name.
  * @return object results encapsulated in one environment_result object
  */
 function environment_check_database($version, $env_select) {
@@ -1023,7 +1096,11 @@ function process_environment_bypass($xml, &$result) {
             if ($function($result)) {
             /// We only set the bypass message if the function itself hasn't defined it before
                 if (empty($result->getBypassStr)) {
-                    $result->setBypassStr($message);
+                    if (isset($xml['#']['BYPASS'][0]['@']['plugin'])) {
+                        $result->setBypassStr(array($message, $xml['#']['BYPASS'][0]['@']['plugin']));
+                    } else {
+                        $result->setBypassStr($message);
+                    }
                 }
             }
         }
@@ -1059,7 +1136,11 @@ function process_environment_restrict($xml, &$result) {
             if ($function($result)) {
             /// We only set the restrict message if the function itself hasn't defined it before
                 if (empty($result->getRestrictStr)) {
-                    $result->setRestrictStr($message);
+                    if (isset($xml['#']['RESTRICT'][0]['@']['plugin'])) {
+                        $result->setRestrictStr(array($message, $xml['#']['RESTRICT'][0]['@']['plugin']));
+                    } else {
+                        $result->setRestrictStr($message);
+                    }
                 }
             }
         }
@@ -1092,15 +1173,27 @@ function process_environment_messages($xml, &$result) {
 
         if (!$result->status and $result->getLevel() == 'required') {
             if (isset($feedbackxml['ON_ERROR'][0]['@']['message'])) {
-                $result->setFeedbackStr($feedbackxml['ON_ERROR'][0]['@']['message']);
+                if (isset($feedbackxml['ON_ERROR'][0]['@']['plugin'])) {
+                    $result->setFeedbackStr(array($feedbackxml['ON_ERROR'][0]['@']['message'], $feedbackxml['ON_ERROR'][0]['@']['plugin']));
+                } else {
+                    $result->setFeedbackStr($feedbackxml['ON_ERROR'][0]['@']['message']);
+                }
             }
         } else if (!$result->status and $result->getLevel() == 'optional') {
             if (isset($feedbackxml['ON_CHECK'][0]['@']['message'])) {
-                $result->setFeedbackStr($feedbackxml['ON_CHECK'][0]['@']['message']);
+                if (isset($feedbackxml['ON_CHECK'][0]['@']['plugin'])) {
+                    $result->setFeedbackStr(array($feedbackxml['ON_CHECK'][0]['@']['message'], $feedbackxml['ON_CHECK'][0]['@']['plugin']));
+                } else {
+                    $result->setFeedbackStr($feedbackxml['ON_CHECK'][0]['@']['message']);
+                }
             }
         } else {
             if (isset($feedbackxml['ON_OK'][0]['@']['message'])) {
-                $result->setFeedbackStr($feedbackxml['ON_OK'][0]['@']['message']);
+                if (isset($feedbackxml['ON_OK'][0]['@']['plugin'])) {
+                    $result->setFeedbackStr(array($feedbackxml['ON_OK'][0]['@']['message'], $feedbackxml['ON_OK'][0]['@']['plugin']));
+                } else {
+                    $result->setFeedbackStr($feedbackxml['ON_OK'][0]['@']['message']);
+                }
             }
         }
     }
@@ -1158,7 +1251,10 @@ class environment_results {
      * @var string String to show if some restrict has happened
      */
     var $restrict_str;
-
+    /**
+     * @var string|null full plugin name or null if main environment
+     */
+    var $plugin = null;
     /**
      * Constructor of the environment_result class. Just set default values
      *
@@ -1381,6 +1477,21 @@ class environment_results {
                 $str = get_string($string, 'admin');
             }
             return '<p class="'.$class.'">'.$str.'</p>';
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Get plugin name.
+     *
+     * @return string plugin name
+     */
+    function getPluginName() {
+        if ($this->plugin) {
+            $manager = core_plugin_manager::instance();
+            list($plugintype, $pluginname) = core_component::normalize_component($this->plugin);
+            return $manager->plugintype_name($plugintype) . ' / ' . $manager->plugin_name($this->plugin);
         } else {
             return '';
         }

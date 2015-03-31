@@ -602,7 +602,7 @@ class enrol_self_testcase extends advanced_testcase {
         $selfplugin->enrol_user($instance1, $user2->id, $editingteacherrole->id);
 
         $this->setUser($guest);
-        $this->assertSame($expectederrorstring, $selfplugin->can_self_enrol($instance1, true));
+        $this->assertSame(get_string('noguestaccess', 'enrol'), $selfplugin->can_self_enrol($instance1, true));
 
         $this->setUser($user1);
         $this->assertTrue($selfplugin->can_self_enrol($instance1, true));

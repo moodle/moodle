@@ -29,10 +29,30 @@ defined('MOODLE_INTERNAL') || die();
  * booktool_print book printed event class.
  *
  * @package    booktool_print
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class book_printed extends \core\event\base {
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \stdClass $book
+     * @param \context_module $context
+     * @return book_printed
+     */
+    public static function create_from_book(\stdClass $book, \context_module $context) {
+        $data = array(
+            'context' => $context,
+            'objectid' => $book->id
+        );
+        /** @var book_printed $event */
+        $event = self::create($data);
+        $event->add_record_snapshot('book', $book);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.
@@ -40,7 +60,7 @@ class book_printed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user $this->userid has printed the book $this->objectid.";
+        return "The user with id '$this->userid' has printed the book with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -59,7 +79,7 @@ class book_printed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_book_printed', 'booktool_print');
+        return get_string('eventbookprinted', 'booktool_print');
     }
 
     /**

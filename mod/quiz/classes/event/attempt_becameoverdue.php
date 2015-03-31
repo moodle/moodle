@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quiz module event class.
+ * The mod_quiz attempt became overdue event.
  *
  * @package    mod_quiz
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
@@ -25,7 +25,7 @@ namespace mod_quiz\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a quiz attempt is overdue.
+ * The mod_quiz attempt became overdue event class.
  *
  * Please note that the name of this event is not following the event naming convention.
  * Its name should not be used as a reference for other events to be created.
@@ -33,10 +33,12 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int submitterid id of submitter.
+ *      - int submitterid: id of submitter (null when trigged by CLI script).
+ *      - int quizid: (optional) the id of the quiz.
  * }
  *
  * @package    mod_quiz
+ * @since      Moodle 2.6
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -57,8 +59,8 @@ class attempt_becameoverdue extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'A quiz with the id of ' . $this->other['quizid'] . ' has been marked as overdue for the user with ' .
-            'the id of '. $this->relateduserid;
+        return "The quiz attempt with id '$this->objectid' belonging to the quiz with course module id '$this->contextinstanceid' " .
+            "for the user with id '$this->relateduserid' became overdue.";
     }
 
     /**
@@ -117,10 +119,13 @@ class attempt_becameoverdue extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
         if (!array_key_exists('submitterid', $this->other)) {
-            throw new \coding_exception('Other must contain the key submitterid');
-        } else if (!isset($this->relateduserid)) {
-            throw new \coding_exception('relateduserid must be set');
+            throw new \coding_exception('The \'submitterid\' value must be set in other.');
         }
     }
 }

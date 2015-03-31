@@ -669,7 +669,7 @@ if ($formdata = $mform2->is_cancelled()) {
 
             if ($doupdate or $existinguser->password !== $oldpw) {
                 // We want only users that were really updated.
-                user_update_user($existinguser, false);
+                user_update_user($existinguser, false, false);
 
                 $upt->track('status', $struserupdated);
                 $usersupdated++;
@@ -686,6 +686,9 @@ if ($formdata = $mform2->is_cancelled()) {
                         $SESSION->bulk_users[] = $user->id;
                     }
                 }
+
+                // Trigger event.
+                \core\event\user_updated::create_from_userid($existinguser->id)->trigger();
 
             } else {
                 // no user information changed
@@ -800,7 +803,7 @@ if ($formdata = $mform2->is_cancelled()) {
                 $upt->track('password', '-', 'normal', false);
             }
 
-            $user->id = user_create_user($user, false);
+            $user->id = user_create_user($user, false, false);
             $upt->track('username', html_writer::link(new moodle_url('/user/profile.php', array('id'=>$user->id)), s($user->username)), 'normal', false);
 
             // pre-process custom profile menu fields data from csv file
@@ -814,6 +817,9 @@ if ($formdata = $mform2->is_cancelled()) {
             if ($user->password === 'to be generated') {
                 set_user_preference('create_password', 1, $user);
             }
+
+            // Trigger event.
+            \core\event\user_created::create_from_userid($user->id)->trigger();
 
             $upt->track('status', $struseradded);
             $upt->track('id', $user->id, 'normal', false);
@@ -844,6 +850,15 @@ if ($formdata = $mform2->is_cancelled()) {
                         $cohort = $DB->get_record('cohort', array('id'=>$addcohort));
                     } else {
                         $cohort = $DB->get_record('cohort', array('idnumber'=>$addcohort));
+                        if (empty($cohort) && has_capability('moodle/cohort:manage', context_system::instance())) {
+                            // Cohort was not found. Create a new one.
+                            $cohortid = cohort_add_cohort((object)array(
+                                'idnumber' => $addcohort,
+                                'name' => $addcohort,
+                                'contextid' => context_system::instance()->id
+                            ));
+                            $cohort = $DB->get_record('cohort', array('id'=>$cohortid));
+                        }
                     }
 
                     if (empty($cohort)) {

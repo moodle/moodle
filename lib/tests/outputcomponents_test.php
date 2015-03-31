@@ -292,7 +292,7 @@ Moodle community|http://moodle.org
 --Moodle Tracker|http://tracker.moodle.org
 --Moodle Docs|http://docs.moodle.org
 -Moodle News|http://moodle.org/news
-Moodle company
+Moodle company||Moodle trust pty
 -Hosting|http://moodle.com/hosting|Commercial hosting
 -Support|http://moodle.com/support|Commercial support
 EOF;
@@ -314,11 +314,13 @@ EOF;
         $this->assertEquals('http://moodle.org', $itemurl->out());
         $this->assertEquals($item->get_text(), $item->get_title()); // Implicit title.
 
+        /** @var custom_menu_item $item */
         $item = array_shift($firstlevel);
         $this->assertTrue($item->has_children());
         $this->assertCount(2, $item->get_children());
         $this->assertSame('Moodle company', $item->get_text());
         $this->assertNull($item->get_url());
+        $this->assertSame('Moodle trust pty', $item->get_title());
 
         $children = $item->get_children();
         $subitem = array_shift($children);
@@ -327,69 +329,85 @@ EOF;
         $this->assertSame('Commercial hosting', $subitem->get_title());
     }
 
-    public function test_multilang_support() {
+    public function test_custommenu_mulitlang() {
         $definition = <<<EOF
 Start|http://school.info
 Info
 -English|http://school.info/en|Information in English|en
+--Nested under English
+--I will be lost|||de
 -Deutsch|http://school.info/de|Informationen in deutscher Sprache|de,de_du,de_kids
+--Nested under Deutsch
+--I will be lost|||en
+kontaktieren Sie uns|contactus.php||de
+Contact us|contactus.php||en
+EOF;
+        $definitionen = <<<EOF
+Start|http://school.info
+Info
+-English|http://school.info/en|Information in English|en
+--Nested under English
+Contact us|contactus.php||en
+EOF;
+        $definitionde = <<<EOF
+Start|http://school.info
+Info
+-Deutsch|http://school.info/de|Informationen in deutscher Sprache|de,de_du,de_kids
+--Nested under Deutsch
+kontaktieren Sie uns|contactus.php||de
 EOF;
 
-        // The menu without multilang support.
-        $menu = new custom_menu($definition);
-        $this->assertTrue($menu->has_children());
-        $this->assertCount(2, $menu->get_children());
+        $definitiondedu = <<<EOF
+Start|http://school.info
+Info
+-Deutsch|http://school.info/de|Informationen in deutscher Sprache|de,de_du,de_kids
+--Nested under Deutsch
+EOF;
 
-        $children = $menu->get_children();
-        $infomenu = array_pop($children);
-        $this->assertTrue($infomenu->has_children());
-        $children = $infomenu->get_children();
-        $this->assertCount(2, $children);
+        $parsed = $this->custommenu_out(new custom_menu($definition));
+        $parseden = $this->custommenu_out(new custom_menu($definition, 'en'));
+        $parsedde = $this->custommenu_out(new custom_menu($definition, 'de'));
+        $parseddedu = $this->custommenu_out(new custom_menu($definition, 'de_du'));
 
-        $children = $infomenu->get_children();
-        $langspecinfo = array_shift($children);
-        $this->assertSame('Information in English', $langspecinfo->get_title());
+        $actualen = $this->custommenu_out(new custom_menu($definitionen, 'en'));
+        $actualde = $this->custommenu_out(new custom_menu($definitionde, 'de'));
+        $actualdedu = $this->custommenu_out(new custom_menu($definitiondedu, 'de_du'));
 
-        // Same menu for English language selected.
-        $menu = new custom_menu($definition, 'en');
-        $this->assertTrue($menu->has_children());
-        $this->assertCount(2, $menu->get_children());
+        $this->assertSame($actualen, $parseden, 'The parsed English menu does not match the expected English menu');
+        $this->assertSame($actualde, $parsedde, 'The parsed German menu does not match the expected German menu');
+        $this->assertSame($actualdedu, $parseddedu, 'The parsed German [Du] menu does not match the expected German [Du] menu');
 
-        $children = $menu->get_children();
-        $infomenu = array_pop($children);
-        $this->assertTrue($infomenu->has_children());
-        $this->assertCount(1, $infomenu->get_children());
+        $this->assertNotSame($parsed, $parsedde, 'The menu without language is the same as the German menu. They should differ!');
+        $this->assertNotSame($parsed, $parseden, 'The menu without language is the same as the English menu. They should differ!');
+        $this->assertNotSame($parsed, $parseddedu, 'The menu without language is the same as the German [Du] menu. They should differ!');
+        $this->assertNotSame($parseden, $parsedde, 'The English menu is the same as the German menu. They should differ!');
+        $this->assertNotSame($parseden, $parseddedu, 'The English menu is the same as the German [Du] menu. They should differ!');
+        $this->assertNotSame($parseddedu, $parsedde, 'The German [Du] menu is the same as the German menu. They should differ!');
+    }
 
-        $children = $infomenu->get_children();
-        $langspecinfo = array_shift($children);
-        $this->assertSame('Information in English', $langspecinfo->get_title());
-
-        // Same menu for German (de_du) language selected.
-        $menu = new custom_menu($definition, 'de_du');
-        $this->assertTrue($menu->has_children());
-        $this->assertCount(2, $menu->get_children());
-
-        $children = $menu->get_children();
-        $infomenu = array_pop($children);
-        $this->assertTrue($infomenu->has_children());
-        $this->assertCount(1, $infomenu->get_children());
-
-        $children = $infomenu->get_children();
-        $langspecinfo = array_shift($children);
-        $this->assertSame('Informationen in deutscher Sprache', $langspecinfo->get_title());
-
-        // Same menu for Czech language selected.
-        $menu = new custom_menu($definition, 'cs');
-        $this->assertTrue($menu->has_children());
-        $this->assertCount(2, $menu->get_children());
-
-        $children = $infomenu->get_children();
-        $infomenu = array_pop( $children);
-        $this->assertFalse($infomenu->has_children());
+    /**
+     * Support function that takes a custom_menu_item and converts it to a string.
+     *
+     * @param custom_menu_item $item
+     * @param int $depth
+     * @return string
+     */
+    protected function custommenu_out(custom_menu_item $item, $depth = 0) {
+        $str = str_repeat('-', $depth);
+        $str .= $item->get_text();
+        $str .= '|' . $item->get_url();
+        $str .= '|' . $item->get_title();
+        if ($item->has_children()) {
+            $str .= '|' . count($item->get_children());
+            foreach ($item->get_children() as $child) {
+                $str .= "\n" . $this->custommenu_out($child, $depth + 1);
+            }
+        }
+        return $str;
     }
 
     public function test_prepare() {
-        $expecteda = array('1',
+        $expecteda = array('<span class="current-page">1</span>',
                            '<a href="index.php?page=1">2</a>',
                            '<a href="index.php?page=2">3</a>',
                            '<a href="index.php?page=3">4</a>',
@@ -400,7 +418,7 @@ EOF;
                            );
         $expectedb = array('<a href="page?page=3">4</a>',
                            '<a href="page?page=4">5</a>',
-                           '6',
+                           '<span class="current-page">6</span>',
                            '<a href="page?page=6">7</a>',
                            '<a href="page?page=7">8</a>',
                            );

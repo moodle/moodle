@@ -63,9 +63,9 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_configcheckbox('logstore_database/logguests', get_string('logguests',
         'logstore_database'), '', '0'));
     $levels = \logstore_database\helper::get_level_options();
-    $settings->add(new admin_setting_configmulticheckbox('logstore_database/excludelevels', get_string('excludelevels',
-        'logstore_database'), '', array(), $levels));
+    $settings->add(new admin_setting_configmulticheckbox('logstore_database/includelevels', get_string('includelevels',
+        'logstore_database'), '', $levels, $levels));
     $actions = \logstore_database\helper::get_action_options();
-    $settings->add(new admin_setting_configmulticheckbox('logstore_database/excludeactions', get_string('excludeactions',
-        'logstore_database'), '', array(), $actions));
+    $settings->add(new admin_setting_configmulticheckbox('logstore_database/includeactions', get_string('includeactions',
+        'logstore_database'), '', $actions, $actions));
 }

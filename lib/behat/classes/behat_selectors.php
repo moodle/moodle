@@ -39,37 +39,47 @@ class behat_selectors {
      * @var Allowed types when using text selectors arguments.
      */
     protected static $allowedtextselectors = array(
-        'dialogue' => 'dialogue',
+        'activity' => 'activity',
         'block' => 'block',
-        'region' => 'region',
-        'table_row' => 'table_row',
-        'table' => 'table',
-        'fieldset' => 'fieldset',
         'css_element' => 'css_element',
-        'xpath_element' => 'xpath_element'
+        'dialogue' => 'dialogue',
+        'fieldset' => 'fieldset',
+        'list_item' => 'list_item',
+        'question' => 'question',
+        'region' => 'region',
+        'section' => 'section',
+        'table' => 'table',
+        'table_row' => 'table_row',
+        'xpath_element' => 'xpath_element',
     );
 
     /**
      * @var Allowed types when using selector arguments.
      */
     protected static $allowedselectors = array(
-        'dialogue' => 'dialogue',
+        'activity' => 'activity',
         'block' => 'block',
-        'region' => 'region',
-        'table_row' => 'table_row',
-        'link' => 'link',
         'button' => 'button',
-        'link_or_button' => 'link_or_button',
-        'select' => 'select',
         'checkbox' => 'checkbox',
-        'radio' => 'radio',
-        'file' => 'file',
-        'optgroup' => 'optgroup',
-        'option' => 'option',
-        'table' => 'table',
+        'css_element' => 'css_element',
+        'dialogue' => 'dialogue',
         'field' => 'field',
         'fieldset' => 'fieldset',
-        'css_element' => 'css_element',
+        'file' => 'file',
+        'filemanager' => 'filemanager',
+        'link' => 'link',
+        'link_or_button' => 'link_or_button',
+        'list_item' => 'list_item',
+        'optgroup' => 'optgroup',
+        'option' => 'option',
+        'question' => 'question',
+        'radio' => 'radio',
+        'region' => 'region',
+        'section' => 'section',
+        'select' => 'select',
+        'table' => 'table',
+        'table_row' => 'table_row',
+        'text' => 'text',
         'xpath_element' => 'xpath_element'
     );
 
@@ -82,22 +92,52 @@ class behat_selectors {
      * @var XPaths for moodle elements.
      */
     protected static $moodleselectors = array(
-        'dialogue' => <<<XPATH
-//div[contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue ') and
+        'activity' => <<<XPATH
+.//li[contains(concat(' ', normalize-space(@class), ' '), ' activity ')][normalize-space(.) = %locator% ]
+XPATH
+        , 'block' => <<<XPATH
+.//div[contains(concat(' ', normalize-space(@class), ' '), ' block ') and
+    (contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' ')) or
+     descendant::h2[normalize-space(.) = %locator%] or
+     @aria-label = %locator%)]
+XPATH
+        , 'dialogue' => <<<XPATH
+.//div[contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue ') and
     normalize-space(descendant::div[
         contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue-hd ')
         ]) = %locator%] |
-//div[contains(concat(' ', normalize-space(@class), ' '), ' yui-dialog ') and
+.//div[contains(concat(' ', normalize-space(@class), ' '), ' yui-dialog ') and
     normalize-space(descendant::div[@class='hd']) = %locator%]
 XPATH
-        , 'block' => <<<XPATH
-//div[contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' '))] | //div[contains(concat(' ', normalize-space(@class), ' '), ' block ')]/descendant::h2[normalize-space(.) = %locator%]/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' block ')]
+        , 'filemanager' => <<<XPATH
+.//div[contains(concat(' ', normalize-space(@class), ' '), ' ffilemanager ')]
+    /descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
+XPATH
+        , 'list_item' => <<<XPATH
+.//li[contains(normalize-space(.), %locator%) and not(.//li[contains(normalize-space(.), %locator%)])]
+XPATH
+        , 'question' => <<<XPATH
+.//div[contains(concat(' ', normalize-space(@class), ' '), ' que ')]
+    [contains(div[@class='content']/div[@class='formulation'], %locator%)]
 XPATH
         , 'region' => <<<XPATH
-//*[self::div | self::section | self::aside | self::header | self::footer][./@id = %locator%]
+.//*[self::div | self::section | self::aside | self::header | self::footer][./@id = %locator%]
+XPATH
+        , 'section' => <<<XPATH
+.//li[contains(concat(' ', normalize-space(@class), ' '), ' section ')][./descendant::*[self::h3]
+    [normalize-space(.) = %locator%][contains(concat(' ', normalize-space(@class), ' '), ' sectionname ') or
+    contains(concat(' ', normalize-space(@class), ' '), ' section-title ')]] |
+.//div[contains(concat(' ', normalize-space(@class), ' '), ' sitetopic ')]
+    [./descendant::*[self::h2][normalize-space(.) = %locator%] or %locator% = 'frontpage']
+XPATH
+        , 'table' => <<<XPATH
+.//table[(./@id = %locator% or contains(.//caption, %locator%) or contains(concat(' ', normalize-space(@class), ' '), %locator% ))]
 XPATH
         , 'table_row' => <<<XPATH
-.//tr[contains(normalize-space(.), %locator%)]
+.//tr[contains(normalize-space(.), %locator%) and not(.//tr[contains(normalize-space(.), %locator%)])]
+XPATH
+        , 'text' => <<<XPATH
+.//*[contains(., %locator%) and not(.//*[contains(., %locator%)])]
 XPATH
     );
 

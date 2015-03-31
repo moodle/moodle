@@ -51,6 +51,13 @@ class core_questionlib_testcase extends advanced_testcase {
         $this->resetAfterTest();
     }
 
+    /**
+     * Tidy up open files that may be left open.
+     */
+    protected function tearDown() {
+        gc_collect_cycles();
+    }
+
     public function test_question_reorder_qtypes() {
         $this->assertEquals(
             array(0 => 't2', 1 => 't1', 2 => 't3'),
@@ -179,7 +186,7 @@ class core_questionlib_testcase extends advanced_testcase {
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination'];
-        $fp = get_file_packer();
+        $fp = get_file_packer('application/vnd.moodle.backup');
         $filepath = $CFG->dataroot . '/temp/backup/test-restore-course';
         $file->extract_to_pathname($fp, $filepath);
         $bc->destroy();

@@ -85,7 +85,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
      * Determines if and what safe setting is to be used.
      * @var bool|int
      */
-    protected $usesafe = false;
+    protected $usesafe = true;
 
     /**
      * If set to true then multiple identifiers will be requested and used.
@@ -104,6 +104,14 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
      * @var bool
      */
     protected $isready = false;
+
+    /**
+     * Set to true if the Mongo extension is < version 1.3.
+     * If this is the case we must use the legacy Mongo class instead of MongoClient.
+     * Mongo is backwards compatible, although obviously deprecated.
+     * @var bool
+     */
+    protected $legacymongo = false;
 
     /**
      * Constructs a new instance of the Mongo store.
@@ -140,8 +148,13 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
             $this->extendedmode = $configuration['extendedmode'];
         }
 
+        // Test if the MongoClient class exists, if not we need to switch to legacy classes.
+        $this->legacymongo = (!class_exists('MongoClient'));
+
+        // MongoClient from Mongo 1.3 onwards. Mongo for earlier versions.
+        $class = ($this->legacymongo) ? 'Mongo' : 'MongoClient';
         try {
-            $this->connection = new Mongo($this->server, $this->options);
+            $this->connection = new $class($this->server, $this->options);
             $this->isready = true;
         } catch (MongoConnectionException $e) {
             // We only want to catch MongoConnectionExceptions here.
@@ -153,7 +166,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
      * @return bool
      */
     public static function are_requirements_met() {
-        return class_exists('Mongo');
+        return class_exists('MongoClient') || class_exists('Mongo');
     }
 
     /**
@@ -191,12 +204,16 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
             throw new coding_exception('This mongodb instance has already been initialised.');
         }
         $this->database = $this->connection->selectDB($this->databasename);
-        $this->definitionhash = $definition->generate_definition_hash();
+        $this->definitionhash = 'm'.$definition->generate_definition_hash();
         $this->collection = $this->database->selectCollection($this->definitionhash);
-        $this->collection->ensureIndex(array('key' => 1), array(
-            'safe' => $this->usesafe,
-            'name' => 'idx_key'
-        ));
+
+        $options = array('name' => 'idx_key');
+        if ($this->legacymongo) {
+            $options['safe'] = $this->usesafe;
+        } else {
+            $options['w'] = $this->usesafe ? 1 : 0;
+        }
+        $this->collection->ensureIndex(array('key' => 1), $options);
     }
 
     /**
@@ -301,11 +318,12 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
             $record = $key;
         }
         $record['data'] = serialize($data);
-        $options = array(
-            'upsert' => true,
-            'safe' => $this->usesafe,
-            'w' => $this->usesafe ? 1 : 0
-        );
+        $options = array('upsert' => true);
+        if ($this->legacymongo) {
+            $options['safe'] = $this->usesafe;
+        } else {
+            $options['w'] = $this->usesafe ? 1 : 0;
+        }
         $this->delete($key);
         $result = $this->collection->insert($record, $options);
         if ($result === true) {
@@ -354,11 +372,12 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         } else {
             $criteria = $key;
         }
-        $options = array(
-            'justOne' => false,
-            'safe' => $this->usesafe,
-            'w' => $this->usesafe ? 1 : 0
-        );
+        $options = array('justOne' => false);
+        if ($this->legacymongo) {
+            $options['safe'] = $this->usesafe;
+        } else {
+            $options['w'] = $this->usesafe ? 1 : 0;
+        }
         $result = $this->collection->remove($criteria, $options);
 
         if ($result === true) {
@@ -483,7 +502,9 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
             $connection = $this->connection;
         } else {
             try {
-               $connection = new Mongo($this->server, $this->options);
+                // MongoClient from Mongo 1.3 onwards. Mongo for earlier versions.
+                $class = ($this->legacymongo) ? 'Mongo' : 'MongoClient';
+                $connection = new $class($this->server, $this->options);
             } catch (MongoConnectionException $e) {
                 // We only want to catch MongoConnectionExceptions here.
                 // If the server cannot be connected to we cannot clean it.
@@ -535,6 +556,37 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
         }
 
         $store = new cachestore_mongodb('Test mongodb', $configuration);
+        if (!$store->is_ready()) {
+            return false;
+        }
+        $store->initialise($definition);
+
+        return $store;
+    }
+
+
+    /**
+     * Generates an instance of the cache store that can be used for testing.
+     *
+     * @param cache_definition $definition
+     * @return false
+     */
+    public static function initialise_unit_test_instance(cache_definition $definition) {
+        if (!self::are_requirements_met()) {
+            return false;
+        }
+        if (!defined('TEST_CACHESTORE_MONGODB_TESTSERVER')) {
+            return false;
+        }
+
+        $configuration = array();
+        $configuration['servers'] = explode("\n", TEST_CACHESTORE_MONGODB_TESTSERVER);
+        $configuration['usesafe'] = 1;
+
+        $store = new cachestore_mongodb('Test mongodb', $configuration);
+        if (!$store->is_ready()) {
+            return false;
+        }
         $store->initialise($definition);
 
         return $store;
@@ -546,5 +598,17 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
      */
     public function my_name() {
         return $this->name;
+    }
+
+    /**
+     * Returns true if this cache store instance is both suitable for testing, and ready for testing.
+     *
+     * Cache stores that support being used as the default store for unit and acceptance testing should
+     * override this function and return true if there requirements have been met.
+     *
+     * @return bool
+     */
+    public static function ready_to_be_used_for_testing() {
+        return defined('TEST_CACHESTORE_MONGODB_TESTSERVER');
     }
 }

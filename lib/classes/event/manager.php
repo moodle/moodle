@@ -22,6 +22,7 @@ defined('MOODLE_INTERNAL') || die();
  * New event manager class.
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -214,15 +215,16 @@ class manager {
         self::$allobservers = array();
 
         $plugintypes = \core_component::get_plugin_types();
+        $plugintypes = array_merge(array('core' => 'not used'), $plugintypes);
         $systemdone = false;
         foreach ($plugintypes as $plugintype => $ignored) {
-            $plugins = \core_component::get_plugin_list($plugintype);
-            if (!$systemdone) {
-                $plugins[] = "$CFG->dirroot/lib";
-                $systemdone = true;
+            if ($plugintype === 'core') {
+                $plugins['core'] = "$CFG->dirroot/lib";
+            } else {
+                $plugins = \core_component::get_plugin_list($plugintype);
             }
 
-            foreach ($plugins as $fulldir) {
+            foreach ($plugins as $plugin => $fulldir) {
                 if (!file_exists("$fulldir/db/events.php")) {
                     continue;
                 }
@@ -231,7 +233,7 @@ class manager {
                 if (!is_array($observers)) {
                     continue;
                 }
-                self::add_observers($observers, "$fulldir/db/events.php");
+                self::add_observers($observers, "$fulldir/db/events.php", $plugintype, $plugin);
             }
         }
 
@@ -247,8 +249,10 @@ class manager {
      * Add observers.
      * @param array $observers
      * @param string $file
+     * @param string $plugintype Plugin type of the observer.
+     * @param string $plugin Plugin of the observer.
      */
-    protected static function add_observers(array $observers, $file) {
+    protected static function add_observers(array $observers, $file, $plugintype = null, $plugin = null) {
         global $CFG;
 
         foreach ($observers as $observer) {
@@ -291,6 +295,8 @@ class manager {
                 }
                 $o->includefile = $observer['includefile'];
             }
+            $o->plugintype = $plugintype;
+            $o->plugin = $plugin;
             self::$allobservers[$observer['eventname']][] = $o;
         }
     }
@@ -303,6 +309,17 @@ class manager {
             \core_collator::asort_objects_by_property($observers, 'priority', \core_collator::SORT_NUMERIC);
             self::$allobservers[$classname] = array_reverse($observers);
         }
+    }
+
+    /**
+     * Returns all observers in the system. This is only for use for reporting on the list of observers in the system.
+     *
+     * @access private
+     * @return array An array of stdClass with all core observer details.
+     */
+    public static function get_all_observers() {
+        self::init_all_observers();
+        return self::$allobservers;
     }
 
     /**

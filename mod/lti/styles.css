@@ -15,19 +15,6 @@
 .path-mod-lti .late {color: red;}
 .path-mod-lti .message {text-align: center;}
 
-/** Styles for submissions.php **/
-#page-mod-lti-submissions fieldset.felement {margin-left: 16%;}
-#page-mod-lti-submissions form#options div {text-align:right;margin-left:auto;margin-right:20px;}
-#page-mod-lti-submissions .header .commands {display: inline;}
-#page-mod-lti-submissions .picture {width: 35px;}
-#page-mod-lti-submissions .fullname,
-#page-mod-lti-submissions .timemodified,
-#page-mod-lti-submissions .timemarked {text-align: left;}
-#page-mod-lti-submissions .submissions .grade,
-#page-mod-lti-submissions .submissions .outcome,
-#page-mod-lti-submissions .submissions .finalgrade {text-align: right;}
-#page-mod-lti-submissions .qgprefs #optiontable {text-align:right;margin-left:auto;}
-
 /* Styles for admin */
 .path-admin-mod-lti .mform .fitem .fitemtitle { min-width:18em;padding-right:1em } /* Prevent setting titles from wrapping */
 

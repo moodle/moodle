@@ -44,12 +44,24 @@ class behat_command {
 
     /**
      * Ensures the behat dir exists in moodledata
+     * @param int $runprocess run process for which behat dir is returned.
      * @return string Full path
      */
-    public static function get_behat_dir() {
+    public static function get_behat_dir($runprocess = 0) {
         global $CFG;
 
-        $behatdir = $CFG->behat_dataroot . '/behat';
+        // If not set then return empty string.
+        if (!isset($CFG->behat_dataroot)) {
+            return "";
+        }
+
+        if (empty($runprocess)) {
+            $behatdir = $CFG->behat_dataroot . '/behat';
+        } else if (isset($CFG->behat_parallel_run[$runprocess - 1]['behat_dataroot'])) {
+            $behatdir = $CFG->behat_parallel_run[$runprocess - 1]['behat_dataroot'] . '/behat';;
+        } else {
+            $behatdir = $CFG->behat_dataroot . $runprocess . '/behat';
+        }
 
         if (!is_dir($behatdir)) {
             if (!mkdir($behatdir, $CFG->directorypermissions, true)) {
@@ -73,23 +85,29 @@ class behat_command {
      * normal cmd.exe (in Windows).
      *
      * @param  bool $custombyterm  If the provided command should depend on the terminal where it runs
+     * @param bool $parallelrun If parallel run is installed.
      * @return string
      */
-    public final static function get_behat_command($custombyterm = false) {
+    public final static function get_behat_command($custombyterm = false, $parallerun = false) {
 
         $separator = DIRECTORY_SEPARATOR;
-        $exec = 'behat';
+        if (!$parallerun) {
+            $exec = 'behat';
 
-        // Cygwin uses linux-style directory separators.
-        if ($custombyterm && testing_is_cygwin()) {
-            $separator = '/';
+            // Cygwin uses linux-style directory separators.
+            if ($custombyterm && testing_is_cygwin()) {
+                $separator = '/';
 
-            // MinGW can not execute .bat scripts.
-            if (!testing_is_mingw()) {
-                $exec = 'behat.bat';
+                // MinGW can not execute .bat scripts.
+                if (!testing_is_mingw()) {
+                    $exec = 'behat.bat';
+                }
             }
+            $command = 'vendor' . $separator . 'bin' . $separator . $exec;
+        } else {
+            $command = 'php admin' . $separator . 'tool' . $separator . 'behat' . $separator . 'cli' . $separator . 'run.php';
         }
-        return 'vendor' . $separator . 'bin' . $separator . $exec;
+        return $command;
     }
 
     /**

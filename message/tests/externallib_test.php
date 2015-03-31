@@ -33,6 +33,15 @@ require_once($CFG->dirroot . '/message/externallib.php');
 class core_message_externallib_testcase extends externallib_advanced_testcase {
 
     /**
+     * Tests set up
+     */
+    protected function setUp() {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/message/lib.php');
+    }
+
+    /**
      * Send a fake message.
      *
      * {@link message_send()} does not support transaction, this function will simulate a message
@@ -381,4 +390,232 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->setExpectedException('moodle_exception');
         $results = core_message_external::search_contacts('');
     }
+
+    /**
+     * Test get_messages.
+     */
+    public function test_get_messages() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        $this->preventResetByRollback();
+        // This mark the messages as read!.
+        $sink = $this->redirectMessages();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $course = self::getDataGenerator()->create_course();
+
+        // Send a message from one user to another.
+        message_post_message($user1, $user2, 'some random text 1', FORMAT_MOODLE);
+        message_post_message($user1, $user3, 'some random text 2', FORMAT_MOODLE);
+        message_post_message($user2, $user3, 'some random text 3', FORMAT_MOODLE);
+        message_post_message($user3, $user2, 'some random text 4', FORMAT_MOODLE);
+        message_post_message($user3, $user1, 'some random text 5', FORMAT_MOODLE);
+
+        $this->setUser($user1);
+        // Get read conversations from user1 to user2.
+        $messages = core_message_external::get_messages($user2->id, $user1->id, 'conversations', true, true, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $this->assertCount(1, $messages['messages']);
+
+        // Get unread conversations from user1 to user2.
+        $messages = core_message_external::get_messages($user2->id, $user1->id, 'conversations', false, true, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $this->assertCount(0, $messages['messages']);
+
+        // Get read messages send from user1.
+        $messages = core_message_external::get_messages(0, $user1->id, 'conversations', true, true, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $this->assertCount(2, $messages['messages']);
+
+        $this->setUser($user2);
+        // Get read conversations from any user to user2.
+        $messages = core_message_external::get_messages($user2->id, 0, 'conversations', true, true, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $this->assertCount(2, $messages['messages']);
+
+        $this->setUser($user3);
+        // Get read notifications received by user3.
+        $messages = core_message_external::get_messages($user3->id, 0, 'notifications', true, true, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $this->assertCount(0, $messages['messages']);
+
+        // Now, create some notifications...
+        // We are creating fake notifications but based on real ones.
+
+        // This one omits notification = 1.
+        $eventdata = new stdClass();
+        $eventdata->modulename        = 'moodle';
+        $eventdata->component         = 'enrol_paypal';
+        $eventdata->name              = 'paypal_enrolment';
+        $eventdata->userfrom          = get_admin();
+        $eventdata->userto            = $user1;
+        $eventdata->subject           = "Moodle: PayPal payment";
+        $eventdata->fullmessage       = "Your PayPal payment is pending.";
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';
+        message_send($eventdata);
+
+        $message = new stdClass();
+        $message->notification      = 1;
+        $message->component         = 'enrol_manual';
+        $message->name              = 'expiry_notification';
+        $message->userfrom          = $user2;
+        $message->userto            = $user1;
+        $message->subject           = 'Enrolment expired';
+        $message->fullmessage       = 'Enrolment expired blah blah blah';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = markdown_to_html($message->fullmessage);
+        $message->smallmessage      = $message->subject;
+        $message->contexturlname    = $course->fullname;
+        $message->contexturl        = (string)new moodle_url('/course/view.php', array('id' => $course->id));
+        message_send($message);
+
+        $userfrom = core_user::get_noreply_user();
+        $userfrom->maildisplay = true;
+        $eventdata = new stdClass();
+        $eventdata->component         = 'moodle';
+        $eventdata->name              = 'badgecreatornotice';
+        $eventdata->userfrom          = $userfrom;
+        $eventdata->userto            = $user1;
+        $eventdata->notification      = 1;
+        $eventdata->subject           = 'New badge';
+        $eventdata->fullmessage       = format_text_email($eventdata->subject, FORMAT_HTML);
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = $eventdata->subject;
+        $eventdata->smallmessage      = $eventdata->subject;
+        message_send($eventdata);
+
+        $eventdata = new stdClass();
+        $eventdata->name             = 'submission';
+        $eventdata->component        = 'mod_feedback';
+        $eventdata->userfrom         = $user1;
+        $eventdata->userto           = $user2;
+        $eventdata->subject          = 'Feedback submitted';
+        $eventdata->fullmessage      = 'Feedback submitted from an user';
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml  = '<strong>Feedback submitted</strong>';
+        $eventdata->smallmessage     = '';
+        message_send($eventdata);
+
+        $this->setUser($user1);
+        // Get read notifications from any user to user1.
+        $messages = core_message_external::get_messages($user1->id, 0, 'notifications', true, true, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $this->assertCount(3, $messages['messages']);
+
+        // Get one read notifications from any user to user1.
+        $messages = core_message_external::get_messages($user1->id, 0, 'notifications', true, true, 0, 1);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $this->assertCount(1, $messages['messages']);
+
+        // Get unread notifications from any user to user1.
+        $messages = core_message_external::get_messages($user1->id, 0, 'notifications', false, true, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $this->assertCount(0, $messages['messages']);
+
+        // Get read both type of messages from any user to user1.
+        $messages = core_message_external::get_messages($user1->id, 0, 'both', true, true, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $this->assertCount(4, $messages['messages']);
+
+        // Get read notifications from no-reply-user to user1.
+        $messages = core_message_external::get_messages($user1->id, $userfrom->id, 'notifications', true, true, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $this->assertCount(1, $messages['messages']);
+
+        // Get notifications send by user1 to any user.
+        $messages = core_message_external::get_messages(0, $user1->id, 'notifications', true, true, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $this->assertCount(1, $messages['messages']);
+
+        // Test warnings.
+        $CFG->messaging = 0;
+
+        $messages = core_message_external::get_messages(0, $user1->id, 'both', true, true, 0, 0);
+        $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
+        $this->assertCount(1, $messages['warnings']);
+
+        // Test exceptions.
+
+        // Messaging disabled.
+        try {
+            $messages = core_message_external::get_messages(0, $user1->id, 'conversations', true, true, 0, 0);
+            $this->fail('Exception expected due messaging disabled.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('disabled', $e->errorcode);
+        }
+
+        $CFG->messaging = 1;
+
+        // Invalid users.
+        try {
+            $messages = core_message_external::get_messages(0, 0, 'conversations', true, true, 0, 0);
+            $this->fail('Exception expected due invalid users.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('accessdenied', $e->errorcode);
+        }
+
+        // Invalid user ids.
+        try {
+            $messages = core_message_external::get_messages(2500, 0, 'conversations', true, true, 0, 0);
+            $this->fail('Exception expected due invalid users.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invaliduser', $e->errorcode);
+        }
+
+        // Invalid users (permissions).
+        $this->setUser($user2);
+        try {
+            $messages = core_message_external::get_messages(0, $user1->id, 'conversations', true, true, 0, 0);
+            $this->fail('Exception expected due invalid user.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('accessdenied', $e->errorcode);
+        }
+
+    }
+
+    /**
+     * Test get_blocked_users.
+     */
+    public function test_get_blocked_users() {
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $userstranger = self::getDataGenerator()->create_user();
+        $useroffline1 = self::getDataGenerator()->create_user();
+        $useroffline2 = self::getDataGenerator()->create_user();
+        $userblocked = self::getDataGenerator()->create_user();
+
+        // Login as user1.
+        $this->setUser($user1);
+        $this->assertEquals(array(), core_message_external::create_contacts(
+            array($useroffline1->id, $useroffline2->id)));
+
+        // The userstranger sends a couple of messages to user1.
+        $this->send_message($userstranger, $user1, 'Hello there!');
+        $this->send_message($userstranger, $user1, 'How you goin?');
+
+        // The userblocked sends a message to user1.
+        // Note that this user is not blocked at this point.
+        $this->send_message($userblocked, $user1, 'Here, have some spam.');
+
+        // Retrieve the list of blocked users.
+        $this->setUser($user1);
+        $blockedusers = core_message_external::get_blocked_users($user1->id);
+        $blockedusers = external_api::clean_returnvalue(core_message_external::get_blocked_users_returns(), $blockedusers);
+        $this->assertCount(0, $blockedusers['users']);
+
+        // Block the $userblocked and retrieve again the list.
+        core_message_external::block_contacts(array($userblocked->id));
+        $blockedusers = core_message_external::get_blocked_users($user1->id);
+        $blockedusers = external_api::clean_returnvalue(core_message_external::get_blocked_users_returns(), $blockedusers);
+        $this->assertCount(1, $blockedusers['users']);
+
+    }
+
 }

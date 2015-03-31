@@ -157,7 +157,6 @@ while (count($parts)) {
                 'event-mouseenter',
                 'event-key',
                 'event-outside',
-                'event-autohide',
                 'event-focus',
                 'classnamemanager',
                 'widget-base',
@@ -458,7 +457,7 @@ function combo_params() {
         // note: buggy or misconfigured IIS does return the query string in REQUEST_URI
         return array($_SERVER['QUERY_STRING'], false);
 
-    } else if ($slashargument = min_get_slash_argument()) {
+    } else if ($slashargument = min_get_slash_argument(false)) {
         $slashargument = ltrim($slashargument, '/');
         return array($slashargument, true);
 

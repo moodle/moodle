@@ -44,6 +44,7 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_theme_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_report_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_coursereport_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_plagiarism_plugin.class.php');
+require_once($CFG->dirroot . '/backup/moodle2/backup_enrol_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_subplugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_settingslib.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_stepslib.php');

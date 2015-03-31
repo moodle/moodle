@@ -28,7 +28,7 @@
  * @constructor
  * @extends Y.Base
  */
-EDITOR = function() {
+var EDITOR = function() {
     EDITOR.superclass.constructor.apply(this, arguments);
 };
 EDITOR.prototype = {
@@ -205,7 +205,9 @@ EDITOR.prototype = {
 
             this.currentedit.start = false;
             this.currentedit.end = false;
-            this.quicklist = new M.assignfeedback_editpdf.quickcommentlist(this);
+            if (!this.get('readonly')) {
+                this.quicklist = new M.assignfeedback_editpdf.quickcommentlist(this);
+            }
         }
     },
 
@@ -289,7 +291,7 @@ EDITOR.prototype = {
      * @method link_handler
      */
     link_handler : function(e) {
-        var drawingcanvas;
+        var drawingcanvas, drawingregion, resize = true;
         e.preventDefault();
 
         if (!this.dialogue) {
@@ -311,6 +313,9 @@ EDITOR.prototype = {
             drawingcanvas = Y.one(SELECTOR.DRAWINGCANVAS);
             this.graphic = new Y.Graphic({render : SELECTOR.DRAWINGCANVAS});
 
+            drawingregion = Y.one(SELECTOR.DRAWINGREGION);
+            drawingregion.on('scroll', this.move_canvas, this);
+
             if (!this.get('readonly')) {
                 drawingcanvas.on('gesturemovestart', this.edit_start, null, this);
                 drawingcanvas.on('gesturemove', this.edit_move, null, this);
@@ -320,9 +325,18 @@ EDITOR.prototype = {
             }
 
             this.load_all_pages();
+            drawingcanvas.on('windowresize', this.resize, this);
+
+            resize = false;
         }
         this.dialogue.centerDialogue();
         this.dialogue.show();
+
+        // Redraw when the dialogue is moved, to ensure the absolute elements are all positioned correctly.
+        this.dialogue.dd.on('drag:end', this.redraw, this);
+        if (resize) {
+            this.resize(); // When re-opening the dialog call redraw, to make sure the size + layout is correct.
+        }
     },
 
     /**
@@ -344,7 +358,8 @@ EDITOR.prototype = {
                 action : 'loadallpages',
                 userid : this.get('userid'),
                 attemptnumber : this.get('attemptnumber'),
-                assignmentid : this.get('assignmentid')
+                assignmentid : this.get('assignmentid'),
+                readonly : this.get('readonly') ? 1 : 0
             },
             on: {
                 success: function(tid, response) {
@@ -462,7 +477,9 @@ EDITOR.prototype = {
         }
 
         // Update the ui.
-        this.quicklist.load();
+        if (this.quicklist) {
+            this.quicklist.load();
+        }
         this.setup_navigation();
         this.setup_toolbar();
         this.change_page();
@@ -675,6 +692,7 @@ EDITOR.prototype = {
      * @method edit_start
      */
     edit_start : function(e) {
+        e.preventDefault();
         var canvas = Y.one(SELECTOR.DRAWINGCANVAS),
             offset = canvas.getXY(),
             scrolltop = canvas.get('docScrollY'),
@@ -702,9 +720,9 @@ EDITOR.prototype = {
         this.currentedit.end = {x : point.x, y : point.y};
 
         if (this.currentedit.tool === 'select') {
-            x = this.currentedit.end.x;
-            y = this.currentedit.end.y;
-            annotations = this.pages[this.currentpage].annotations;
+            var x = this.currentedit.end.x,
+                y = this.currentedit.end.y,
+                annotations = this.pages[this.currentpage].annotations;
             // Find the first annotation whose bounds encompass the click.
             Y.each(annotations, function(annotation) {
                 if (((x - annotation.x) * (x - annotation.endx)) <= 0 &&
@@ -744,6 +762,7 @@ EDITOR.prototype = {
      * @method edit_move
      */
     edit_move : function(e) {
+        e.preventDefault();
         var bounds = this.get_canvas_bounds(),
             canvas = Y.one(SELECTOR.DRAWINGCANVAS),
             clientpoint = new M.assignfeedback_editpdf.point(e.clientX + canvas.get('docScrollX'),
@@ -822,6 +841,30 @@ EDITOR.prototype = {
         this.currentedit.start = false;
         this.currentedit.end = false;
         this.currentedit.path = [];
+    },
+
+    /**
+     * Resize the dialogue window when the browser is resized.
+     * @public
+     * @method resize
+     */
+    resize : function() {
+        var drawingregion, drawregionheight;
+
+        if (!this.dialogue.get('visible')) {
+            return;
+        }
+        this.dialogue.centerDialogue();
+
+        // Make sure the dialogue box is not bigger than the max height of the viewport.
+        drawregionheight = Y.one('body').get('winHeight') - 120; // Space for toolbar + titlebar.
+        if (drawregionheight < 100) {
+            drawregionheight = 100;
+        }
+        drawingregion = Y.one(SELECTOR.DRAWINGREGION);
+        drawingregion.setStyle('maxHeight', drawregionheight +'px');
+        this.redraw();
+        return true;
     },
 
     /**
@@ -921,6 +964,9 @@ EDITOR.prototype = {
             page;
 
         page = this.pages[this.currentpage];
+        if (page === undefined) {
+            return; // Can happen if a redraw is triggered by an event, before the page has been selected.
+        }
         while (this.drawables.length > 0) {
             this.drawables.pop().erase();
         }
@@ -961,11 +1007,13 @@ EDITOR.prototype = {
         page = this.pages[this.currentpage];
         this.loadingicon.hide();
         drawingcanvas.setStyle('backgroundImage', 'url("' + page.url + '")');
+        drawingcanvas.setStyle('width', page.width + 'px');
+        drawingcanvas.setStyle('height', page.height + 'px');
 
         // Update page select.
         Y.one(SELECTOR.PAGESELECT).set('value', this.currentpage);
 
-        this.redraw();
+        this.resize(); // Internally will call 'redraw', after checking the dialogue size.
     },
 
     /**
@@ -983,7 +1031,7 @@ EDITOR.prototype = {
 
         pageselect = Y.one(SELECTOR.PAGESELECT);
 
-        options = pageselect.all('option');
+        var options = pageselect.all('option');
         if (options.size() <= 1) {
             for (i = 0; i < this.pages.length; i++) {
                 option = Y.Node.create('<option/>');
@@ -1033,9 +1081,24 @@ EDITOR.prototype = {
             this.currentpage = this.pages.length - 1;
         }
         this.change_page();
+    },
+
+    /**
+     * Update any absolutely positioned nodes, within each drawable, when the drawing canvas is scrolled
+     * @protected
+     * @method move_canvas
+     */
+    move_canvas: function() {
+        var drawingregion, x, y, i;
+
+        drawingregion = Y.one(SELECTOR.DRAWINGREGION);
+        x = parseInt(drawingregion.get('scrollLeft'), 10);
+        y = parseInt(drawingregion.get('scrollTop'), 10);
+
+        for (i = 0; i < this.drawables.length; i++) {
+            this.drawables[i].scroll_update(x, y);
+        }
     }
-
-
 
 };
 

@@ -26,8 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-// just a link to course report
-$ADMIN->add('reports', new admin_externalpage('reportloglive', get_string('pluginname', 'report_loglive'), "$CFG->wwwroot/report/loglive/index.php", 'report/loglive:view'));
+// Just a link to course report.
+$ADMIN->add('reports', new admin_externalpage('reportloglive', get_string('pluginname', 'report_loglive'),
+        "$CFG->wwwroot/report/loglive/index.php", 'report/loglive:view'));
 
-// no report settings
+// No report settings.
 $settings = null;

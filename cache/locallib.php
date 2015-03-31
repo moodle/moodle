@@ -68,7 +68,7 @@ class cache_config_writer extends cache_config {
      */
     protected function config_save() {
         global $CFG;
-        $cachefile = self::get_config_file_path();
+        $cachefile = static::get_config_file_path();
         $directory = dirname($cachefile);
         if ($directory !== $CFG->dataroot && !file_exists($directory)) {
             $result = make_writable_directory($directory, false);
@@ -709,7 +709,8 @@ abstract class cache_administration_helper extends cache_helper {
                     'nativelocking' => ($store instanceof cache_is_lockable),
                     'keyawareness' => ($store instanceof cache_is_key_aware),
                     'searchable' => ($store instanceof cache_is_searchable)
-                )
+                ),
+                'warnings' => $store->get_warnings()
             );
             if (empty($details['default'])) {
                 $return[$name] = $record;

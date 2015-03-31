@@ -1,8 +1,0 @@
-{
-  "moodle-theme_bootstrapbase-bootstrap": {
-    "requires": [
-        "node",
-        "selector-css3"
-    ]
-  }
-}

@@ -5,3 +5,4 @@
 #page-report-progress-index .completion_prev {display:inline;margin-right:2em;}
 #page-report-progress-index .completion_pagingbar p {display:inline;margin:0;}
 #page-report-progress-index .completion_next {display:inline;margin-left:2em;}
+#page-report-progress-index.dir-rtl #completion-progress th svg {direction:ltr;}

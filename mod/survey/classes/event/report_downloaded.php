@@ -15,11 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event triggered, when survey report is downloaded.
- *
- * @property-read array $other Extra information about the event.
- *     -string type: Type of report format downloaded.
- *     -int groupid: (optional) report for groupid.
+ * The mod_survey report downloaded event.
  *
  * @package    mod_survey
  * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
@@ -30,6 +26,21 @@ namespace mod_survey\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The mod_survey report downloaded event class.
+ *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - string type: Type of report format downloaded.
+ *      - int groupid: (optional) report for groupid.
+ * }
+ *
+ * @package    mod_survey
+ * @since      Moodle 2.7
+ * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class report_downloaded extends \core\event\base {
 
     /**
@@ -38,7 +49,7 @@ class report_downloaded extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'survey';
         $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
@@ -56,7 +67,7 @@ class report_downloaded extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User with id '$this->userid' downloaded survey report for survey with instance id '$this->objectid'";
+        return "The user with id '$this->userid' downloaded the report for the survey with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -90,7 +101,7 @@ class report_downloaded extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (empty($this->other['type'])) {
-            throw new \coding_exception('Other must contain the key type.');
+            throw new \coding_exception('The \'type\' value must be set in other.');
         }
     }
 }

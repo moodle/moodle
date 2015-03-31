@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when a workshop activity is viewed.
+ * The mod_workshop course module viewed event.
  *
  * @package    mod_workshop
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
@@ -30,9 +30,10 @@ global $CFG;
 require_once("$CFG->dirroot/mod/workshop/locallib.php");
 
 /**
- * Event for when a workshop activity is viewed.
+ * The mod_workshop course module viewed event class.
  *
  * @package    mod_workshop
+ * @since      Moodle 2.6
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

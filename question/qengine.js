@@ -154,7 +154,7 @@ M.core_question_engine.init_form = function(Y, form) {
 
     Y.on('key', function (e) {
         if (!e.target.test('a') && !e.target.test('input[type=submit]') &&
-                !e.target.test('input[type=img]') && !e.target.test('textarea')) {
+                !e.target.test('input[type=img]') && !e.target.test('textarea') && !e.target.test('[contenteditable=true]')) {
             e.preventDefault();
         }
     }, form, 'press:13');

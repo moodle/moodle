@@ -143,6 +143,21 @@ class tool_installaddon_installer_testcase extends advanced_testcase {
         $this->assertTrue(is_file($jobroot.'/moved/sub/folder/readme.txt'));
         $this->assertSame('Hello world!', file_get_contents($jobroot.'/moved/sub/folder/readme.txt'));
     }
+
+    public function test_detect_plugin_component() {
+        $jobid = md5(rand().uniqid('test_', true));
+        $workdir = make_temp_directory('tool_installaddon/'.$jobid.'/version');
+        $zipfile = __DIR__.'/fixtures/zips/bar.zip';
+        $installer = tool_installaddon_installer::instance();
+        $this->assertEquals('foo_bar', $installer->detect_plugin_component($zipfile, $workdir));
+    }
+
+    public function test_detect_plugin_component_from_versionphp() {
+        $installer = testable_tool_installaddon_installer::instance();
+        $this->assertEquals('bar_bar_conan', $installer->detect_plugin_component_from_versionphp('
+$plugin->version  = 2014121300;
+  $plugin->component=   "bar_bar_conan"  ; // Go Arnie go!'));
+    }
 }
 
 
@@ -172,5 +187,9 @@ class testable_tool_installaddon_installer extends tool_installaddon_installer {
 
     protected function should_send_site_info() {
         return true;
+    }
+
+    public function detect_plugin_component_from_versionphp($code) {
+        return parent::detect_plugin_component_from_versionphp($code);
     }
 }

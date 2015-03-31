@@ -44,6 +44,15 @@ class restore_generic_setting extends root_backup_setting {}
 class restore_users_setting extends restore_generic_setting {}
 
 /**
+ * root setting to control if restore will create groups/grouping information. Depends on @restore_users_setting
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2014 Matt Sammarco
+ */
+class restore_groups_setting extends restore_generic_setting {
+}
+
+/**
  * root setting to control if restore will create role assignments
  * or no (any level), depends of @restore_users_setting
  */

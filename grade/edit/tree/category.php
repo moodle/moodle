@@ -36,6 +36,8 @@ if ($id !== 0) {
 }
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
+navigation_node::override_active_url(new moodle_url('/grade/edit/tree/index.php',
+    array('id'=>$courseid)));
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
@@ -75,6 +77,7 @@ if ($id) {
     $category->grade_item_gradepass  = format_float($category->grade_item_gradepass, $decimalpoints);
     $category->grade_item_multfactor = format_float($category->grade_item_multfactor, 4);
     $category->grade_item_plusfactor = format_float($category->grade_item_plusfactor, 4);
+    $category->grade_item_aggregationcoef2 = format_float($category->grade_item_aggregationcoef2 * 100.0, 4);
 
     if (!$parent_category) {
         // keep as is
@@ -82,6 +85,16 @@ if ($id) {
         $category->grade_item_aggregationcoef = $category->grade_item_aggregationcoef == 0 ? 0 : 1;
     } else {
         $category->grade_item_aggregationcoef = format_float($category->grade_item_aggregationcoef, 4);
+    }
+
+    if ($category->aggregation == GRADE_AGGREGATE_SUM) {
+        // Input fields for grademin and grademax are disabled for the "Natural" category,
+        // this means they will be ignored if user does not change aggregation method.
+        // But if user does change aggregation method the default values should be used.
+        $category->grademax = 100;
+        $category->grade_item_grademax = 100;
+        $category->grademin = 0;
+        $category->grade_item_grademin = 0;
     }
 
 } else {
@@ -160,11 +173,14 @@ if ($mform->is_cancelled()) {
     unset($itemdata->locked);
     unset($itemdata->locktime);
 
-    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef');
+    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'aggregationcoef2');
     foreach ($convert as $param) {
         if (property_exists($itemdata, $param)) {
             $itemdata->$param = unformat_float($itemdata->$param);
         }
+    }
+    if (isset($itemdata->aggregationcoef2)) {
+        $itemdata->aggregationcoef2 = $itemdata->aggregationcoef2 / 100.0;
     }
 
     // When creating a new category, a number of grade item fields are filled out automatically, and are required.
@@ -195,6 +211,14 @@ if ($mform->is_cancelled()) {
         $grade_item->decimals = null;
     }
 
+    // Change weightoverride flag. Check if the value is set, because it is not when the checkbox is not ticked.
+    $itemdata->weightoverride = isset($itemdata->weightoverride) ? $itemdata->weightoverride : 0;
+    if ($grade_item->weightoverride != $itemdata->weightoverride && $grade_category->aggregation == GRADE_AGGREGATE_SUM) {
+        // If we are using natural weight and the weight has been un-overriden, force parent category to recalculate weights.
+        $grade_category->force_regrading();
+    }
+    $grade_item->weightoverride = $itemdata->weightoverride;
+
     $grade_item->outcomeid = null;
 
     // update hiding flag
@@ -217,10 +241,8 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-$return = false;
-$buttons = false;
-$shownavigation = false;
-print_grade_page_head($courseid, 'edittree', null, $heading, $return, $buttons, $shownavigation);
+$PAGE->navbar->add($heading);
+print_grade_page_head($courseid, 'settings', null, $heading, false, false, false);
 
 $mform->display();
 

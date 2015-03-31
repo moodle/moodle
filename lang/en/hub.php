@@ -14,12 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  *
  * Hub related strings
  *
- * @package   hub
+ * @package   core_hub
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -160,12 +159,12 @@ $string['registeredcourses'] = 'Registered courses';
 $string['registeredsites'] = 'Registered sites';
 $string['registrationinfo'] = 'Registration information';
 $string['registeredmoodleorg'] = 'Moodle.org ({$a})';
-$string['registeredon'] = 'Hubs with which you are registered';
+$string['registeredon'] = 'Where your site is registered';
 $string['registermoochtips'] = 'In order to register with Moodle.net, your site must be registered with Moodle.org.';
 $string['registersite'] = 'Register with {$a}';
 $string['registerwith'] = 'Register with a hub';
 $string['registrationconfirmed'] = 'Site registration confirmed';
-$string['registrationconfirmedon'] = 'You are now registered on the hub {$a}. You are now able to publish courses to this hub, using the "Publish" link in course administration menus.';
+$string['registrationconfirmedon'] = 'Thank you for registering your site. Registration information will be kept up to date by the \'Site registration\' scheduled task.';
 $string['registrationupdated'] = 'Registration has been updated.';
 $string['registrationupdatedfailed'] = 'Registration update failed.';
 $string['removefromhub'] = 'Remove from hub';

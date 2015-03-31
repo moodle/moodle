@@ -139,20 +139,6 @@ function label_get_coursemodule_info($coursemodule) {
 }
 
 /**
- * @return array
- */
-function label_get_view_actions() {
-    return array();
-}
-
-/**
- * @return array
- */
-function label_get_post_actions() {
-    return array();
-}
-
-/**
  * This function is used by the reset_course_userdata function in moodlelib.
  *
  * @param object $data the data submitted from the reset course.
@@ -175,7 +161,6 @@ function label_get_extra_capabilities() {
  * @uses FEATURE_IDNUMBER
  * @uses FEATURE_GROUPS
  * @uses FEATURE_GROUPINGS
- * @uses FEATURE_GROUPMEMBERSONLY
  * @uses FEATURE_MOD_INTRO
  * @uses FEATURE_COMPLETION_TRACKS_VIEWS
  * @uses FEATURE_GRADE_HAS_GRADE
@@ -188,7 +173,6 @@ function label_supports($feature) {
         case FEATURE_IDNUMBER:                return false;
         case FEATURE_GROUPS:                  return false;
         case FEATURE_GROUPINGS:               return false;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return false;
         case FEATURE_GRADE_HAS_GRADE:         return false;

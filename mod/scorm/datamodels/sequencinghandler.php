@@ -37,7 +37,7 @@ if (!empty($id)) {
 }
 
 $PAGE->set_url('/mod/scorm/datamodels/sequencinghandler.php',
-    array('scoid'=>$scoid, 'attempt'=>$attempt, 'id'=>$cm->id, 'function' => $function, 'request' => $request));
+    array('scoid' => $scoid, 'attempt' => $attempt, 'id' => $cm->id, 'function' => $function, 'request' => $request));
 
 require_login($course, false, $cm);
 

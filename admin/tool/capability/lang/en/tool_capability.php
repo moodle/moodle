@@ -24,6 +24,7 @@
 
 $string['capabilitylabel'] = 'Capability:';
 $string['capabilityreport'] = 'Capability overview';
+$string['eventreportviewed'] = 'Report viewed';
 $string['forroles'] = 'For roles {$a}';
 $string['getreport'] = 'Get the overview';
 $string['changeoverrides'] = 'Change overrides in this context';

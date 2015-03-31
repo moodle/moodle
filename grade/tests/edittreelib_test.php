@@ -93,7 +93,10 @@ class core_grade_edittreelib_testcase extends advanced_testcase {
         // Make the expected scale text.
         $scaleitems = null;
         $scaleitems = explode(',', $scale->scale);
-        $scalestring = end($scaleitems) . ' (' . count($scaleitems) . ')';
+        // Make sure that we expect grademax (displayed in parenthesis) be the same
+        // as number of items in the scale.
+        $scalestring = end($scaleitems) . ' (' .
+                format_float(count($scaleitems), 2) . ')';
 
         $this->assertEquals(GRADE_TYPE_SCALE, $gradeitem->gradetype);
         $this->assertEquals($scale->id, $gradeitem->scaleid);

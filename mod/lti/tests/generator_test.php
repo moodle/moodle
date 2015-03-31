@@ -45,7 +45,9 @@ class mod_lti_generator_testcase extends advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
 
-        /** @var mod_lti_generator $generator */
+        /*
+         * @var mod_lti_generator $generator
+         */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
         $this->assertInstanceOf('mod_lti_generator', $generator);
         $this->assertEquals('lti', $generator->get_modulename());
@@ -63,9 +65,10 @@ class mod_lti_generator_testcase extends advanced_testcase {
         $context = context_module::instance($cm->id);
         $this->assertEquals($lti->cmid, $context->instanceid);
 
-        // test gradebook integration using low level DB access - DO NOT USE IN PLUGIN CODE!
+        // Test gradebook integration using low level DB access - DO NOT USE IN PLUGIN CODE!
         $lti = $generator->create_instance(array('course' => $course->id, 'assessed' => 1, 'scale' => 100));
-        $gitem = $DB->get_record('grade_items', array('courseid' => $course->id, 'itemtype' => 'mod', 'itemmodule' => 'lti', 'iteminstance' => $lti->id));
+        $gitem = $DB->get_record('grade_items', array('courseid' => $course->id, 'itemtype' => 'mod',
+            'itemmodule' => 'lti', 'iteminstance' => $lti->id));
         $this->assertNotEmpty($gitem);
         $this->assertEquals(100, $gitem->grademax);
         $this->assertEquals(0, $gitem->grademin);

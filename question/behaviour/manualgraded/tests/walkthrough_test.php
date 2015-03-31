@@ -40,9 +40,12 @@ require_once(dirname(__FILE__) . '/../../../engine/tests/helpers.php');
  */
 class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthrough_test_base {
     public function test_manual_graded_essay() {
+        global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
         $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
 
         // Create an essay question.
         $essay = test_question_maker::make_an_essay_question();
@@ -110,9 +113,12 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
     }
 
     public function test_manual_graded_essay_not_answered() {
+        global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
         $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
 
         // Create an essay question.
         $essay = test_question_maker::make_an_essay_question();
@@ -273,9 +279,12 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
     }
 
     public function test_manual_graded_essay_can_grade_0() {
+        global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
         $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
 
         // Create an essay question.
         $essay = test_question_maker::make_an_essay_question();
@@ -322,9 +331,12 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
     public function test_manual_graded_respects_display_options() {
         // This test is for MDL-43874. Manual comments were not respecting the
         // Display options for feedback.
+        global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
         $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
 
         // Create an essay question.
         $essay = test_question_maker::make_an_essay_question();

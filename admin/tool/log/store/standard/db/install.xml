@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/log/store/standard/db" VERSION="20140320" COMMENT="XMLDB file for Moodle admin/tool/log/store/standard"
+<XMLDB PATH="admin/tool/log/store/standard/db" VERSION="20140415" COMMENT="XMLDB file for Moodle admin/tool/log/store/standard"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../../lib/xmldb/xmldb.xsd"
 >
@@ -33,11 +33,8 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
-        <INDEX NAME="contextid-component" UNIQUE="false" FIELDS="contextid, component"/>
-        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
-        <INDEX NAME="eventname" UNIQUE="false" FIELDS="eventname"/>
-        <INDEX NAME="crud" UNIQUE="false" FIELDS="crud"/>
-        <INDEX NAME="edulevel" UNIQUE="false" FIELDS="edulevel"/>
+        <INDEX NAME="course-time" UNIQUE="false" FIELDS="courseid, anonymous, timecreated"/>
+        <INDEX NAME="user-module" UNIQUE="false" FIELDS="userid, contextlevel, contextinstanceid, crud, edulevel, timecreated"/>
       </INDEXES>
     </TABLE>
   </TABLES>

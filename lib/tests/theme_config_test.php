@@ -126,4 +126,31 @@ class core_theme_config_testcase extends advanced_testcase {
             }
         }
     }
+
+    /**
+     * This function will test custom device detection regular expression setting.
+     */
+    public function test_devicedetectregex() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Check config currently empty.
+        $this->assertEmpty(json_decode($CFG->devicedetectregex));
+        $this->assertTrue(core_useragent::set_user_device_type('tablet'));
+        $exceptionoccured = false;
+        try {
+            core_useragent::set_user_device_type('featurephone');
+        } catch (moodle_exception $e) {
+            $exceptionoccured = true;
+        }
+        $this->assertTrue($exceptionoccured);
+
+        // Set config and recheck.
+        $config = array('featurephone' => '(Symbian|MIDP-1.0|Maemo|Windows CE)');
+        $CFG->devicedetectregex = json_encode($config);
+        core_useragent::instance(true); // Clears singleton cache.
+        $this->assertTrue(core_useragent::set_user_device_type('tablet'));
+        $this->assertTrue(core_useragent::set_user_device_type('featurephone'));
+    }
 }

@@ -26,7 +26,7 @@ namespace logstore_legacy\log;
 
 defined('MOODLE_INTERNAL') || die();
 
-class store implements \tool_log\log\store, \core\log\sql_select_reader {
+class store implements \tool_log\log\store, \core\log\sql_reader {
     use \tool_log\helper\store,
         \tool_log\helper\reader;
 
@@ -47,7 +47,7 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
     const CRUD_REGEX = "/(crud).*?(<>|=|!=).*?'(.*?)'/s";
 
     /**
-     * This method contains mapping required for Moodle core to make legacy store compatible with other sql_select_reader based
+     * This method contains mapping required for Moodle core to make legacy store compatible with other sql_reader based
      * queries.
      *
      * @param string $selectwhere Select statment
@@ -86,23 +86,72 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
     public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
         global $DB;
 
+        $sort = self::tweak_sort_by_id($sort);
+
         // Replace the query with hardcoded mappings required for core.
         list($selectwhere, $params, $sort) = self::replace_sql_legacy($selectwhere, $params, $sort);
 
-        $events = array();
         $records = array();
 
         try {
-            $records = $DB->get_records_select('log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
+            // A custom report + on the fly SQL rewriting = a possible exception.
+            $records = $DB->get_recordset_select('log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
         } catch (\moodle_exception $ex) {
             debugging("error converting legacy event data " . $ex->getMessage() . $ex->debuginfo, DEBUG_DEVELOPER);
+            return array();
         }
+
+        $events = array();
 
         foreach ($records as $data) {
-            $events[$data->id] = \logstore_legacy\event\legacy_logged::restore_legacy($data);
+            $events[$data->id] = $this->get_log_event($data);
         }
 
+        $records->close();
+
         return $events;
+    }
+
+    /**
+     * Fetch records using given criteria returning a Traversable object.
+     *
+     * Note that the traversable object contains a moodle_recordset, so
+     * remember that is important that you call close() once you finish
+     * using it.
+     *
+     * @param string $selectwhere
+     * @param array $params
+     * @param string $sort
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return \Traversable|\core\event\base[]
+     */
+    public function get_events_select_iterator($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
+        global $DB;
+
+        $sort = self::tweak_sort_by_id($sort);
+
+        // Replace the query with hardcoded mappings required for core.
+        list($selectwhere, $params, $sort) = self::replace_sql_legacy($selectwhere, $params, $sort);
+
+        try {
+            $recordset = $DB->get_recordset_select('log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
+        } catch (\moodle_exception $ex) {
+            debugging("error converting legacy event data " . $ex->getMessage() . $ex->debuginfo, DEBUG_DEVELOPER);
+            return new \EmptyIterator;
+        }
+
+        return new \core\dml\recordset_walk($recordset, array($this, 'get_log_event'));
+    }
+
+    /**
+     * Returns an event from the log data.
+     *
+     * @param stdClass $data Log data
+     * @return \core\event\base
+     */
+    public function get_log_event($data) {
+        return \logstore_legacy\event\legacy_logged::restore_legacy($data);
     }
 
     public function get_events_select_count($selectwhere, array $params) {
@@ -141,8 +190,10 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
      * @param    string $info Additional description information
      * @param    int $cm The course_module->id if there is one
      * @param    int|\stdClass $user If log regards $user other than $USER
+     * @param    string $ip Override the IP, should only be used for restore.
+     * @param    int $time Override the log time, should only be used for restore.
      */
-    public function legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user) {
+    public function legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user, $ip = null, $time = null) {
         // Note that this function intentionally does not follow the normal Moodle DB access idioms.
         // This is for a good reason: it is the most frequently used DB update function,
         // so it has been optimised for speed.
@@ -170,9 +221,9 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
             }
         }
 
-        $remoteaddr = getremoteaddr();
+        $remoteaddr = (is_null($ip)) ? getremoteaddr() : $ip;
 
-        $timenow = time();
+        $timenow = (is_null($time)) ? time() : $time;
         if (!empty($url)) { // Could break doing html_entity_decode on an empty var.
             $url = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
         } else {
@@ -183,6 +234,11 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
         // database so that it doesn't cause a DB error. Log a warning so that
         // developers can avoid doing things which are likely to cause this on a
         // routine basis.
+        if (\core_text::strlen($action) > 40) {
+            $action = \core_text::substr($action, 0, 37) . '...';
+            debugging('Warning: logged very long action', DEBUG_DEVELOPER);
+        }
+
         if (!empty($info) && \core_text::strlen($info) > 255) {
             $info = \core_text::substr($info, 0, 252) . '...';
             debugging('Warning: logged very long info', DEBUG_DEVELOPER);

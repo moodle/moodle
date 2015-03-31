@@ -40,7 +40,14 @@ if (!empty($CFG->gradepublishing)) {
     $CFG->gradepublishing = has_capability('gradeexport/xls:publish', $context);
 }
 
-$mform = new grade_export_form(null, array('publishing' => true));
+$actionurl = new moodle_url('/grade/export/xls/export.php');
+$formoptions = array(
+    'publishing' => true,
+    'simpleui' => true,
+    'multipledisplaytypes' => true
+);
+
+$mform = new grade_export_form($actionurl, $formoptions);
 
 $groupmode    = groups_get_course_groupmode($course);   // Groups are being used
 $currentgroup = groups_get_course_group($course, true);
@@ -48,19 +55,6 @@ if ($groupmode == SEPARATEGROUPS and !$currentgroup and !has_capability('moodle/
     echo $OUTPUT->heading(get_string("notingroup"));
     echo $OUTPUT->footer();
     die;
-}
-
-// process post information
-if ($data = $mform->get_data()) {
-    $onlyactive = $data->export_onlyactive || !has_capability('moodle/course:viewsuspendedusers', $context);
-    $export = new grade_export_xls($course, $currentgroup, '', false, false, $data->display, $data->decimals, $onlyactive, true);
-
-    // print the grades on screen for feedbacks
-    $export->process_form($data);
-    $export->print_continue();
-    $export->display_preview();
-    echo $OUTPUT->footer();
-    exit;
 }
 
 groups_print_course_menu($course, 'index.php?id='.$id);

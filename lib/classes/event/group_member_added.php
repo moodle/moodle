@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * core_group member added event.
+ * Group member added event.
  *
- * @package    core_group
+ * @package    core
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,20 +26,21 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * core_group member added event class.
+ * Group member added event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string component name of component
- *      @type int itemid id of item.
+ *      - string component: name of component
+ *      - int itemid: id of item.
  * }
  *
- * @package    core_group
+ * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class group_member_added extends \core\event\base {
+class group_member_added extends base {
 
     /**
      * Returns description of what happened.
@@ -47,7 +48,8 @@ class group_member_added extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} added user {$this->relateduserid} to group {$this->objectid}.";
+        return "The user with id '$this->userid' added the user with id '$this->relateduserid' to the group with " .
+            "id '$this->objectid'.";
     }
 
     /**
@@ -79,7 +81,7 @@ class group_member_added extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_group_member_added', 'group');
+        return get_string('eventgroupmemberadded', 'group');
     }
 
     /**
@@ -109,10 +111,18 @@ class group_member_added extends \core\event\base {
      * @return void
      */
     protected function validate_data() {
-        if (!isset($this->other['component']) || !isset($this->other['itemid'])) {
-            throw new \coding_exception('The component and itemid need to be set in $other, even if empty.');
-        }
         parent::validate_data();
-    }
 
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        if (!isset($this->other['component'])) {
+            throw new \coding_exception('The \'component\' value must be set in other, even if empty.');
+        }
+
+        if (!isset($this->other['itemid'])) {
+            throw new \coding_exception('The \'itemid\' value must be set in other, even if empty.');
+        }
+    }
 }

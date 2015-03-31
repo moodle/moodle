@@ -45,7 +45,7 @@ admin_externalpage_setup('environment', '', $extraurlparams);
 // Handle the 'updatecomponent' action
 if ($action == 'updatecomponent' && confirm_sesskey()) {
     // Create component installer and execute it
-    if ($cd = new component_installer('http://download.moodle.org',
+    if ($cd = new component_installer('https://download.moodle.org',
                                       'environment',
                                       'environment.zip')) {
         $status = $cd->install(); //returns COMPONENT_(ERROR | UPTODATE | INSTALLED)
@@ -53,7 +53,7 @@ if ($action == 'updatecomponent' && confirm_sesskey()) {
             case COMPONENT_ERROR:
                 if ($cd->get_error() == 'remotedownloaderror') {
                     $a = new stdClass();
-                    $a->url  = 'http://download.moodle.org/environment/environment.zip';
+                    $a->url  = 'https://download.moodle.org/environment/environment.zip';
                     $a->dest = $CFG->dataroot . '/';
                     print_error($cd->get_error(), 'error', $PAGE->url, $a);
                     die();
@@ -102,7 +102,7 @@ if ($contents = load_environment_xml()) {
 }
 
 // Get the results of the environment check.
-list($envstatus, $environment_results) = check_moodle_environment($version);
+list($envstatus, $environment_results) = check_moodle_environment($version, ENV_SELECT_NEWER);
 
 // Display the page.
 $output = $PAGE->get_renderer('core', 'admin');

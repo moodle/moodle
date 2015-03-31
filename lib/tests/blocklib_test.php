@@ -43,6 +43,7 @@ class core_blocklib_testcase extends advanced_testcase {
         parent::setUp();
         $this->testpage = new moodle_page();
         $this->testpage->set_context(context_system::instance());
+        $this->testpage->set_pagetype('phpunit-block-test');
         $this->blockmanager = new testable_block_manager($this->testpage);
     }
 
@@ -69,7 +70,7 @@ class core_blocklib_testcase extends advanced_testcase {
 
     public function test_add_region() {
         // Exercise SUT.
-        $this->blockmanager->add_region('a-region-name');
+        $this->blockmanager->add_region('a-region-name', false);
         // Validate.
         $this->assertEquals(array('a-region-name'), $this->blockmanager->get_regions());
     }
@@ -78,15 +79,15 @@ class core_blocklib_testcase extends advanced_testcase {
         // Set up fixture.
         $regions = array('a-region', 'another-region');
         // Exercise SUT.
-        $this->blockmanager->add_regions($regions);
+        $this->blockmanager->add_regions($regions, false);
         // Validate.
         $this->assertEquals($regions, $this->blockmanager->get_regions(), '', 0, 10, true);
     }
 
     public function test_add_region_twice() {
         // Exercise SUT.
-        $this->blockmanager->add_region('a-region-name');
-        $this->blockmanager->add_region('another-region');
+        $this->blockmanager->add_region('a-region-name', false);
+        $this->blockmanager->add_region('another-region', false);
         // Validate.
         $this->assertEquals(array('a-region-name', 'another-region'), $this->blockmanager->get_regions(), '', 0, 10, true);
     }
@@ -98,12 +99,69 @@ class core_blocklib_testcase extends advanced_testcase {
         // Set up fixture.
         $this->blockmanager->mark_loaded();
         // Exercise SUT.
+        $this->blockmanager->add_region('too-late', false);
+    }
+
+    /**
+     * Testing adding a custom region.
+     */
+    public function test_add_custom_region() {
+        global $SESSION;
+        // Exercise SUT.
+        $this->blockmanager->add_region('a-custom-region-name');
+        // Validate.
+        $this->assertEquals(array('a-custom-region-name'), $this->blockmanager->get_regions());
+        $this->assertTrue(isset($SESSION->custom_block_regions));
+        $this->assertArrayHasKey('phpunit-block-test', $SESSION->custom_block_regions);
+        $this->assertTrue(in_array('a-custom-region-name', $SESSION->custom_block_regions['phpunit-block-test']));
+
+    }
+
+    /**
+     * Test adding two custom regions using add_regions method.
+     */
+    public function test_add_custom_regions() {
+        global $SESSION;
+        // Set up fixture.
+        $regions = array('a-region', 'another-custom-region');
+        // Exercise SUT.
+        $this->blockmanager->add_regions($regions);
+        // Validate.
+        $this->assertEquals($regions, $this->blockmanager->get_regions(), '', 0, 10, true);
+        $this->assertTrue(isset($SESSION->custom_block_regions));
+        $this->assertArrayHasKey('phpunit-block-test', $SESSION->custom_block_regions);
+        $this->assertTrue(in_array('another-custom-region', $SESSION->custom_block_regions['phpunit-block-test']));
+    }
+
+    /**
+     * Test adding two custom block regions.
+     */
+    public function test_add_custom_region_twice() {
+        // Exercise SUT.
+        $this->blockmanager->add_region('a-custom-region-name');
+        $this->blockmanager->add_region('another-custom-region');
+        // Validate.
+        $this->assertEquals(
+            array('a-custom-region-name', 'another-custom-region'),
+            $this->blockmanager->get_regions(),
+            '', 0, 10, true
+        );
+    }
+
+    /**
+     * Test to ensure that we cannot add a region after the blocks have been loaded.
+     * @expectedException coding_exception
+     */
+    public function test_cannot_add_custom_region_after_loaded() {
+        // Set up fixture.
+        $this->blockmanager->mark_loaded();
+        // Exercise SUT.
         $this->blockmanager->add_region('too-late');
     }
 
     public function test_set_default_region() {
         // Set up fixture.
-        $this->blockmanager->add_region('a-region-name');
+        $this->blockmanager->add_region('a-region-name', false);
         // Exercise SUT.
         $this->blockmanager->set_default_region('a-region-name');
         // Validate.
@@ -149,7 +207,7 @@ class core_blocklib_testcase extends advanced_testcase {
         $page->set_subpage($subpage);
 
         $blockmanager = new testable_block_manager($page);
-        $blockmanager->add_regions($regions);
+        $blockmanager->add_regions($regions, false);
         $blockmanager->set_default_region($regions[0]);
 
         return array($page, $blockmanager);
@@ -226,6 +284,26 @@ class core_blocklib_testcase extends advanced_testcase {
         // Validate.
         $blocks = $blockmanager->get_blocks_for_region($regionname);
         $this->assertContainsBlocksOfType(array($blockname, $blockname), $blocks);
+    }
+
+    public function test_adding_blocks() {
+        $this->purge_blocks();
+
+        // Set up fixture.
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+        $context = context_system::instance();
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+
+        $blockmanager->add_blocks(array($regionname => array($blockname, $blockname)), null, null, false, 3);
+        $blockmanager->load_blocks();
+
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+
+        $this->assertEquals('3', $blocks[0]->instance->weight);
+        $this->assertEquals('4', $blocks[1]->instance->weight);
     }
 
     public function test_block_not_included_in_different_context() {
@@ -349,6 +427,56 @@ class core_blocklib_testcase extends advanced_testcase {
         // Validate.
         $blocks = $blockmanager->get_blocks_for_region($regionname);
         $this->assertContainsBlocksOfType(array($blockname), $blocks);
+    }
+
+    public function test_matching_page_type_patterns_from_pattern() {
+        $pattern = '*';
+        $expected = array('*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'admin-*';
+        $expected = array('admin-*', 'admin', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'blog-index';
+        $expected = array('blog-index', 'blog-index-*', 'blog-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'course-index-*';
+        $expected = array('course-index-*', 'course-index', 'course-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'course-index-category';
+        $expected = array('course-index-category', 'course-index-category-*', 'course-index-*', 'course-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-assign-view';
+        $expected = array('mod-assign-view', 'mod-*-view', 'mod-assign-view-*', 'mod-assign-*', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-assign-index';
+        $expected = array('mod-assign-index', 'mod-*-index', 'mod-assign-index-*', 'mod-assign-*', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-forum-*';
+        $expected = array('mod-forum-*', 'mod-forum', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-*-view';
+        $expected = array('mod-*-view', 'mod', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'mod-*-index';
+        $expected = array('mod-*-index', 'mod', 'mod-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'my-index';
+        $expected = array('my-index', 'my-index-*', 'my-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
+
+        $pattern = 'user-profile';
+        $expected = array('user-profile', 'user-profile-*', 'user-*', '*');
+        $this->assertEquals($expected, array_values(matching_page_type_patterns_from_pattern($pattern)));
     }
 }
 

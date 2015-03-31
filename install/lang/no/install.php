@@ -35,7 +35,7 @@ $string['availablelangs'] = 'Tilgjengelige språkpakker';
 $string['chooselanguagehead'] = 'Velg et språk';
 $string['chooselanguagesub'] = 'Velg språk (bare for INSTALLASJONEN). Du vil kunne velge språk for nettsted og bruker på et skjermbilde senere.';
 $string['clialreadyconfigured'] = 'Filen config.php finnes allerede. Vennligst bruk admin/cli/install_database.php hvis du vil installere denne portalen.';
-$string['clialreadyinstalled'] = 'Filen config.php eksisterer allerede. Vennligst bruk admin/cli/upgrade.php hvis du vil oppgradere denne portalen.';
+$string['clialreadyinstalled'] = 'Filen config.php eksisterer allerede. Vennligst bruk admin/cli/install_database.php hvis du vil oppgradere Moodle på denne portalen.';
 $string['cliinstallheader'] = 'Moodle {$a} kommandolinje installasjonsprogram';
 $string['databasehost'] = 'Databasevert';
 $string['databasename'] = 'Databasenavn';
@@ -67,7 +67,7 @@ $string['pathsrodataroot'] = 'Dataroot katalog er ikke skrivbar.';
 $string['pathsroparentdataroot'] = 'Overordnet katalog ({$a->parent}) er ikke skrivbar. Datakatalogen ({$a->dataroot}) kan ikke opprettes av installasjonsprogrammet.';
 $string['pathssubadmindir'] = 'Noen ganske få webhoteller bruker  /admin som en egen url for å få tilgang til et kontrollpanel. Dessverre kommer det i konflikt med standard lokalisering av Moodle sine admin-sider. Du kan fikse dette ved å endre navn på admin-mappen og deretter oppgi dette navnet her. F.eks. <em>moodleadmin</em>.  Dette vil fikse adminlenkene i Moodle.';
 $string['pathssubdataroot'] = 'Du trenger et sted hvor Moodle kan lagre opplastede filer. Denne mappen må være med lese og skriverettigheter for webserver-brukeren (veldig ofte \'nobody\' eller \'apache\'), men denne mappen må IKKE være direkte tilgjengelig via web. Installasjonsprogrammet vil forsøke å opprette den om den ikke finnes fra før.';
-$string['pathssubdirroot'] = 'Full mappesti til moodleinstallasjonen.';
+$string['pathssubdirroot'] = '<p>Full mappesti til moodleinstallasjonen.</p>';
 $string['pathssubwwwroot'] = 'Full webadresse til der hvor Moodle skal vises. Det er ikke mulig å bruke Moodle med mer enn en adresse. Dersom portalen din har flere webadresser må du bruke videresending for til den webadressen du oppgir her. Dersom portalen din er tilgjengelig både fra intranett og internett, skal du oppgi den offentlige internettadressen her og sette opp DNS slik at intranettbrukerne også benytter denne offisielle adressen.
 Dersom adressen ikke er korrekt, vennligst endre URL i nettleseren slik at at installasjonen restartes med andre verdier.';
 $string['pathsunsecuredataroot'] = 'Dataroot plassering er ikke sikker';

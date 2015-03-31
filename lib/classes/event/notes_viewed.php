@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Event for when a new note entry viewed.
  *
@@ -26,16 +22,21 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Class note_viewed
  *
  * Class for event to be triggered when a note is viewed.
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class notes_viewed extends \core\event\base {
+class notes_viewed extends base {
 
     /**
      * Set basic properties for the event.
@@ -61,14 +62,15 @@ class notes_viewed extends \core\event\base {
      */
     public function get_description() {
         if (!empty($this->relateduserid)) {
-            return 'Note for user with id "'. $this->relateduserid . '" was viewed by user with id "'. $this->userid . '"';
-        } else {
-            return 'Note for course with id "'. $this->courseid . '" was viewed by user with id "'. $this->userid . '"';
+            return "The user with id '$this->userid' viewed the notes for the user with id '$this->relateduserid'.";
         }
+
+        return "The user with id '$this->userid' viewed the notes for the course with id '$this->courseid'.";
     }
 
     /**
      * Returns relevant URL.
+     *
      * @return \moodle_url
      */
     public function get_url() {

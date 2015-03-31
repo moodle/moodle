@@ -35,3 +35,5 @@ composer.lock
 /lib/yuilib/*/build/*/*-coverage.js
 # lib/yuilib/version/module/module-coverage.js
 /lib/yuilib/*/*/*-coverage.js
+atlassian-ide-plugin.xml
+/node_modules/

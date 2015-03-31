@@ -35,7 +35,7 @@ require_capability('moodle/site:config', $context);
 
 $type = optional_param('type', '', PARAM_ALPHANUM);
 
-if (!in_array($type, array('excel5', 'excel2007', 'ods'))) {
+if (!in_array($type, array('excel2007', 'ods'))) {
     $type = '';
 }
 
@@ -61,26 +61,19 @@ Tested with:
 Known problems:
 
 * Excel 2007 borders appear too thick in LibreOffice
-* Excel 5 is not compatible with Apple Numbers and Preview
-* Excel 5 is not compatible with Gnumeric
 * Excel 2007 can not be opened in Calligra Suite
 ';
 
     echo markdown_to_html($notes);
     echo $OUTPUT->box_end();
-    echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('type' => 'excel5')), 'Test Excel 5 format');
     echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('type' => 'excel2007')), 'Test Excel 2007 format');
     echo $OUTPUT->single_button(new moodle_url($PAGE->url, array('type' => 'ods')), 'Test ODS format');
     echo $OUTPUT->footer();
     die;
 }
 
-if ($type === 'excel5') {
-    $workbook = new MoodleExcelWorkbook('moodletest.xls', 'Excel5');
-
-} else if ($type === 'excel2007') {
+if ($type === 'excel2007') {
     $workbook = new MoodleExcelWorkbook('moodletest.xlsx', 'Excel2007');
-
 } else if ($type === 'ods') {
     $workbook = new MoodleODSWorkbook('moodletest.ods');
 }

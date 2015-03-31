@@ -26,7 +26,7 @@
  * @class annotationstamp
  * @extends M.assignfeedback_editpdf.annotation
  */
-ANNOTATIONSTAMP = function(config) {
+var ANNOTATIONSTAMP = function(config) {
     ANNOTATIONSTAMP.superclass.constructor.apply(this, [config]);
 };
 
@@ -61,6 +61,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
         drawingregion.append(node);
         node.setX(position.x);
         node.setY(position.y);
+        drawable.store_position(node, position.x, position.y);
 
         // Pass throught the event handlers on the div.
         node.on('gesturemovestart', this.editor.edit_start, null, this.editor);
@@ -104,6 +105,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
         drawingregion.append(node);
         node.setX(position.x);
         node.setY(position.y);
+        drawable.store_position(node, position.x, position.y);
 
         drawable.nodes.push(node);
 

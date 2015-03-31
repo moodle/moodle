@@ -111,6 +111,40 @@ class qformat_xml_test extends question_testcase {
         return $newvar;
     }
 
+    public function test_xml_escape_simple_input_not_escaped() {
+        $exporter = new qformat_xml();
+        $string = 'Nothing funny here. Even if we go to a café or to 日本.';
+        $this->assertEquals($string, $exporter->xml_escape($string));
+    }
+
+    public function test_xml_escape_html_wrapped_in_cdata() {
+        $exporter = new qformat_xml();
+        $string = '<p>Nothing <b>funny<b> here. Even if we go to a café or to 日本.</p>';
+        $this->assertEquals('<![CDATA[' . $string . ']]>', $exporter->xml_escape($string));
+    }
+
+    public function test_xml_escape_script_tag_handled_ok() {
+        $exporter = new qformat_xml();
+        $input = '<script><![CDATA[alert(1<2);]]></script>';
+        $expected = '<![CDATA[<script><![CDATA[alert(1<2);]]]]><![CDATA[></script>]]>';
+        $this->assertEquals($expected, $exporter->xml_escape($input));
+
+        // Check that parsing the expected result does give the input again.
+        $parsed = simplexml_load_string('<div>' . $expected . '</div>');
+        $this->assertEquals($input, $parsed->xpath('//div')[0]);
+    }
+
+    public function test_xml_escape_code_that_looks_like_cdata_end_ok() {
+        $exporter = new qformat_xml();
+        $input = "if (x[[0]]>a) print('hah');";
+        $expected = "<![CDATA[if (x[[0]]]]><![CDATA[>a) print('hah');]]>";
+        $this->assertEquals($expected, $exporter->xml_escape($input));
+
+        // Check that parsing the expected result does give the input again.
+        $parsed = simplexml_load_string('<div>' . $expected . '</div>');
+        $this->assertEquals($input, $parsed->xpath('//div')[0]);
+    }
+
     public function test_write_hint_basic() {
         $q = $this->make_test_question();
         $q->name = 'Short answer question';

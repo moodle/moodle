@@ -40,8 +40,8 @@ if (isguestuser()) {
     print_error('guestsarenotallowed');
 }
 
-$workshop = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
-$workshop = new workshop($workshop, $cm, $course);
+$workshoprecord = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
+$workshop = new workshop($workshoprecord, $cm, $course);
 
 $PAGE->set_url($workshop->submission_url(), array('cmid' => $cmid, 'id' => $id));
 
@@ -232,7 +232,7 @@ if ($edit) {
         // store the updated values or re-save the new submission (re-saving needed because URLs are now rewritten)
         $DB->update_record('workshop_submissions', $formdata);
         $event = \mod_workshop\event\submission_updated::create($params);
-        $event->add_record_snapshot('workshop', $workshop);
+        $event->add_record_snapshot('workshop', $workshoprecord);
         $event->trigger();
 
         // send submitted content for plagiarism detection

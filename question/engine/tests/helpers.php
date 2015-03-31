@@ -27,7 +27,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../lib.php');
+require_once(__DIR__ . '/../lib.php');
+require_once($CFG->dirroot . '/lib/phpunit/lib.php');
 
 
 /**
@@ -545,10 +546,10 @@ abstract class question_testcase extends advanced_testcase {
             $compare = (array)$compare;
             foreach ($expect as $k=>$v) {
                 if (!array_key_exists($k, $compare)) {
-                    $this->fail("Property $k does not exist");
+                    $this->fail("Property {$k} does not exist");
                 }
                 if ($v != $compare[$k]) {
-                    $this->fail("Property $k is different");
+                    $this->fail("Property {$k} is different");
                 }
             }
             $this->assertTrue(true);

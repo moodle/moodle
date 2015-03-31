@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when user interactions is viewed.
+ * The mod_scorm interactions viewed event.
  *
  * @package    mod_scorm
  * @copyright  2013 onwards Ankit Agarwal
@@ -26,15 +26,17 @@ namespace mod_scorm\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a user interactions are viewed.
+ * The mod_scorm interactions viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event properties.
  *
- *      @type int attemptid Attempt id.
- *      @type int instanceid Instance id of the scorm activity.
+ *      - int attemptid: Attempt id.
+ *      - int instanceid: Instance id of the scorm activity.
  * }
+ *
  * @package    mod_scorm
+ * @since      Moodle 2.7
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -54,7 +56,8 @@ class interactions_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed interactions for user ' . $this->relateduserid;
+        return "The user with id '$this->userid' viewed the interactions for the user with id '$this->relateduserid' " .
+            "for the scorm activity with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -99,11 +102,17 @@ class interactions_viewed extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
-        if (empty($this->other['attemptid'])) {
-            throw new \coding_exception('The \\mod_scorm\\event\\interactions_viewed must specify attemptid.');
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
+
+        if (empty($this->other['attemptid'])) {
+            throw new \coding_exception('The \'attemptid\' must be set in other.');
+        }
+
         if (empty($this->other['instanceid'])) {
-            throw new \coding_exception('The \\mod_scorm\\event\\interactions_viewed must specify instanceid of the activity.');
+            throw new \coding_exception('The \'instanceid\' must be set in other.');
         }
     }
 }

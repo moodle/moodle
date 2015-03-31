@@ -4,7 +4,7 @@ global $CFG;
 require_once($CFG->dirroot . '/lib/password_compat/lib/password.php');
 
 class PasswordNeedsRehashTest extends PHPUnit_Framework_TestCase {
-
+    
     public static function provideCases() {
         return array(
             array('foo', 0, array(), false),

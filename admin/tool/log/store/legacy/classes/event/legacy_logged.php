@@ -22,6 +22,7 @@ defined('MOODLE_INTERNAL') || die();
  * Legacy log emulation event class.
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,7 +33,7 @@ class legacy_logged extends \core\event\base {
     }
 
     public static function get_name() {
-        return get_string('event_legacy_logged', 'logstore_legacy');
+        return get_string('eventlegacylogged', 'logstore_legacy');
     }
 
     public function get_description() {

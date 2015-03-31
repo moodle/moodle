@@ -35,11 +35,12 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Typical usage would be
  * <pre>
- *     $PAGE->requires->js_init_call('M.mod_forum.init_view');
+ *     $PAGE->requires->js_call_amd('mod_forum/view', 'init');
  * </pre>
  *
- * It also supports obsoleted coding style withouth YUI3 modules.
+ * It also supports obsoleted coding style with/without YUI3 modules.
  * <pre>
+ *     $PAGE->requires->js_init_call('M.mod_forum.init_view');
  *     $PAGE->requires->css('/mod/mymod/userstyles.php?id='.$id); // not overridable via themes!
  *     $PAGE->requires->js('/mod/mymod/script.js');
  *     $PAGE->requires->js('/mod/mymod/small_but_urgent.js', true);
@@ -79,6 +80,11 @@ class page_requirements_manager {
     protected $jsincludes = array('head'=>array(), 'footer'=>array());
 
     /**
+     * @var array Inline scripts using RequireJS module loading.
+     */
+    protected $amdjscode = array('');
+
+    /**
      * @var array List of needed function calls
      */
     protected $jscalls = array('normal'=>array(), 'ondomready'=>array());
@@ -114,6 +120,13 @@ class page_requirements_manager {
      * @var array Extra modules
      */
     protected $extramodules = array();
+
+    /**
+     * @var array trackes the names of bits of HTML that are only required once
+     * per page. See {@link has_one_time_item_been_created()},
+     * {@link set_one_time_item_created()} and {@link should_create_one_time_item_now()}.
+     */
+    protected $onetimeitemsoutput = array();
 
     /**
      * @var bool Flag indicated head stuff already printed
@@ -162,7 +175,7 @@ class page_requirements_manager {
         $this->yui3loader = new stdClass();
         $this->YUI_config = new YUI_config();
 
-        if (strpos($CFG->httpswwwroot, 'https:') === 0) {
+        if (is_https()) {
             // On HTTPS sites all JS must be loaded from https sites,
             // YUI CDN does not support https yet, sorry.
             $CFG->useexternalyui = 0;
@@ -281,6 +294,42 @@ class page_requirements_manager {
     }
 
     /**
+     * Return the safe config values that get set for javascript in "M.cfg".
+     *
+     * @since 2.9
+     * @return array List of safe config values that are available to javascript.
+     */
+    public function get_config_for_javascript(moodle_page $page, renderer_base $renderer) {
+        global $CFG;
+
+        if (empty($this->M_cfg)) {
+            // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
+            // Otherwise, in some situations, users will get warnings about insecure content
+            // on secure pages from their web browser.
+
+            $this->M_cfg = array(
+                'wwwroot'             => $CFG->httpswwwroot, // Yes, really. See above.
+                'sesskey'             => sesskey(),
+                'loadingicon'         => $renderer->pix_url('i/loading_small', 'moodle')->out(false),
+                'themerev'            => theme_get_revision(),
+                'slasharguments'      => (int)(!empty($CFG->slasharguments)),
+                'theme'               => $page->theme->name,
+                'jsrev'               => $this->get_jsrev(),
+                'admin'               => $CFG->admin,
+                'svgicons'            => $page->theme->use_svg_icons()
+            );
+            if ($CFG->debugdeveloper) {
+                $this->M_cfg['developerdebug'] = true;
+            }
+            if (defined('BEHAT_SITE_RUNNING')) {
+                $this->M_cfg['behatsiterunning'] = true;
+            }
+
+        }
+        return $this->M_cfg;
+    }
+
+    /**
      * Initialise with the bits of JavaScript that every Moodle page should have.
      *
      * @param moodle_page $page
@@ -289,26 +338,8 @@ class page_requirements_manager {
     protected function init_requirements_data(moodle_page $page, core_renderer $renderer) {
         global $CFG;
 
-        // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
-        // Otherwise, in some situations, users will get warnings about insecure content
-        // on secure pages from their web browser.
-
-        $this->M_cfg = array(
-            'wwwroot'             => $CFG->httpswwwroot, // Yes, really. See above.
-            'sesskey'             => sesskey(),
-            'loadingicon'         => $renderer->pix_url('i/loading_small', 'moodle')->out(false),
-            'themerev'            => theme_get_revision(),
-            'slasharguments'      => (int)(!empty($CFG->slasharguments)),
-            'theme'               => $page->theme->name,
-            'jsrev'               => $this->get_jsrev(),
-            'svgicons'            => $page->theme->use_svg_icons()
-        );
-        if ($CFG->debugdeveloper) {
-            $this->M_cfg['developerdebug'] = true;
-        }
-        if (defined('BEHAT_SITE_RUNNING')) {
-            $this->M_cfg['behatsiterunning'] = true;
-        }
+        // Init the js config.
+        $this->get_config_for_javascript($page, $renderer);
 
         // Accessibility stuff.
         $this->skip_link_to('maincontent', get_string('tocontent', 'access'));
@@ -745,7 +776,7 @@ class page_requirements_manager {
                                     'requires' => array('node', 'event', 'json', 'core_filepicker'),
                                     'strings'  => array(array('uploadformlimit', 'moodle'), array('droptoupload', 'moodle'), array('maxfilesreached', 'moodle'),
                                                         array('dndenabled_inbox', 'moodle'), array('fileexists', 'moodle'), array('maxbytesforfile', 'moodle'),
-                                                        array('maxareabytesreached', 'moodle')
+                                                        array('maxareabytesreached', 'moodle'), array('serverconnection', 'error'),
                                                     ));
                     break;
             }
@@ -937,6 +968,52 @@ class page_requirements_manager {
     }
 
     /**
+     * This function appends a block of code to the AMD specific javascript block executed
+     * in the page footer, just after loading the requirejs library.
+     *
+     * The code passed here can rely on AMD module loading, e.g. require('jquery', function($) {...});
+     *
+     * @param string $code The JS code to append.
+     */
+    public function js_amd_inline($code) {
+        $this->amdjscode[] = $code;
+    }
+
+    /**
+     * This function creates a minimal JS script that requires and calls a single function from an AMD module with arguments.
+     * If it is called multiple times, it will be executed multiple times.
+     *
+     * @param string $fullmodule The format for module names is <component name>/<module name>.
+     * @param string $func The function from the module to call
+     * @param array $params The params to pass to the function. They will be json encoded, so no nasty classes/types please.
+     */
+    public function js_call_amd($fullmodule, $func, $params = array()) {
+        global $CFG;
+
+        list($component, $module) = explode('/', $fullmodule, 2);
+
+        $component = clean_param($component, PARAM_COMPONENT);
+        $module = clean_param($module, PARAM_ALPHANUMEXT);
+        $func = clean_param($func, PARAM_ALPHANUMEXT);
+
+        $jsonparams = array();
+        foreach ($params as $param) {
+            $jsonparams[] = json_encode($param);
+        }
+        $strparams = implode(', ', $jsonparams);
+        if ($CFG->debugdeveloper) {
+            $toomanyparamslimit = 1024;
+            if (strlen($strparams) > $toomanyparamslimit) {
+                debugging('Too many params passed to js_call_amd("' . $fullmodule . '", "' . $func . '")', DEBUG_DEVELOPER);
+            }
+        }
+
+        $js = 'require(["' . $component . '/' . $module . '"], function(amd) { amd.' . $func . '(' . $strparams . '); });';
+
+        $this->js_amd_inline($js);
+    }
+
+    /**
      * Creates a JavaScript function call that requires one or more modules to be loaded.
      *
      * This function can be used to include all of the standard YUI module types within JavaScript:
@@ -944,6 +1021,9 @@ class page_requirements_manager {
      *     - YUI2 modules    [yui2-*]
      *     - Moodle modules  [moodle-*]
      *     - Gallery modules [gallery-*]
+     *
+     * Before writing new code that makes extensive use of YUI, you should consider it's replacement AMD/JQuery.
+     * @see js_call_amd()
      *
      * @param array|string $modules One or more modules
      * @param string $function The function to call once modules have been loaded
@@ -1199,6 +1279,47 @@ class page_requirements_manager {
     }
 
     /**
+     * Returns js code to load amd module loader, then insert inline script tags
+     * that contain require() calls using RequireJS.
+     * @return string
+     */
+    protected function get_amd_footercode() {
+        global $CFG;
+        $output = '';
+        $jsrev = $this->get_jsrev();
+
+        $jsloader = new moodle_url($CFG->httpswwwroot . '/lib/javascript.php');
+        $jsloader->set_slashargument('/' . $jsrev . '/');
+        $requirejsloader = new moodle_url($CFG->httpswwwroot . '/lib/requirejs.php');
+        $requirejsloader->set_slashargument('/' . $jsrev . '/');
+
+        $requirejsconfig = file_get_contents($CFG->dirroot . '/lib/requirejs/moodle-config.js');
+
+        // No extension required unless slash args is disabled.
+        $jsextension = '.js';
+        if (!empty($CFG->slasharguments)) {
+            $jsextension = '';
+        }
+
+        $requirejsconfig = str_replace('[BASEURL]', $requirejsloader, $requirejsconfig);
+        $requirejsconfig = str_replace('[JSURL]', $jsloader, $requirejsconfig);
+        $requirejsconfig = str_replace('[JSEXT]', $jsextension, $requirejsconfig);
+
+        $output .= html_writer::script($requirejsconfig);
+        if ($CFG->debugdeveloper) {
+            $output .= html_writer::script('', $this->js_fix_url('/lib/requirejs/require.js'));
+        } else {
+            $output .= html_writer::script('', $this->js_fix_url('/lib/requirejs/require.min.js'));
+        }
+
+        // First include must be to a module with no dependencies, this prevents multiple requests.
+        $prefix = "require(['core/first'], function() {\n";
+        $suffix = "\n});";
+        $output .= html_writer::script($prefix . implode(";\n", $this->amdjscode) . $suffix);
+        return $output;
+    }
+
+    /**
      * Returns basic YUI3 JS loading code.
      * YUI3 is using autoloading of both CSS and JS code.
      *
@@ -1419,9 +1540,21 @@ class page_requirements_manager {
      */
     public function get_end_code() {
         global $CFG;
+        $output = '';
+
+        // Set the log level for the JS logging.
+        $logconfig = new stdClass();
+        $logconfig->level = 'warn';
+        if ($CFG->debugdeveloper) {
+            $logconfig->level = 'trace';
+        }
+        $this->js_call_amd('core/log', 'setConfig', array($logconfig));
+
+        // Call amd init functions.
+        $output .= $this->get_amd_footercode();
 
         // Add other requested modules.
-        $output = $this->get_extra_modules_code();
+        $output .= $this->get_extra_modules_code();
 
         $this->js_init_code('M.util.js_complete("init");', true);
 
@@ -1433,6 +1566,15 @@ class page_requirements_manager {
         }
 
         // Add all needed strings.
+        // First add core strings required for some dialogues.
+        $this->strings_for_js(array(
+            'confirm',
+            'yes',
+            'no',
+            'areyousure',
+            'closebuttontitle',
+            'unknownerror',
+        ), 'moodle');
         if (!empty($this->stringsforjs)) {
             $strings = array();
             foreach ($this->stringsforjs as $component=>$v) {
@@ -1482,6 +1624,68 @@ class page_requirements_manager {
      */
     public function is_top_of_body_done() {
         return $this->topofbodydone;
+    }
+
+    /**
+     * Should we generate a bit of content HTML that is only required once  on
+     * this page (e.g. the contents of the modchooser), now? Basically, we call
+     * {@link has_one_time_item_been_created()}, and if the thing has not already
+     * been output, we return true to tell the caller to generate it, and also
+     * call {@link set_one_time_item_created()} to record the fact that it is
+     * about to be generated.
+     *
+     * That is, a typical usage pattern (in a renderer method) is:
+     * <pre>
+     * if (!$this->page->requires->should_create_one_time_item_now($thing)) {
+     *     return '';
+     * }
+     * // Else generate it.
+     * </pre>
+     *
+     * @param string $thing identifier for the bit of content. Should be of the form
+     *      frankenstyle_things, e.g. core_course_modchooser.
+     * @return bool if true, the caller should generate that bit of output now, otherwise don't.
+     */
+    public function should_create_one_time_item_now($thing) {
+        if ($this->has_one_time_item_been_created($thing)) {
+            return false;
+        }
+
+        $this->set_one_time_item_created($thing);
+        return true;
+    }
+
+    /**
+     * Has a particular bit of HTML that is only required once  on this page
+     * (e.g. the contents of the modchooser) already been generated?
+     *
+     * Normally, you can use the {@link should_create_one_time_item_now()} helper
+     * method rather than calling this method directly.
+     *
+     * @param string $thing identifier for the bit of content. Should be of the form
+     *      frankenstyle_things, e.g. core_course_modchooser.
+     * @return bool whether that bit of output has been created.
+     */
+    public function has_one_time_item_been_created($thing) {
+        return isset($this->onetimeitemsoutput[$thing]);
+    }
+
+    /**
+     * Indicate that a particular bit of HTML that is only required once on this
+     * page (e.g. the contents of the modchooser) has been generated (or is about to be)?
+     *
+     * Normally, you can use the {@link should_create_one_time_item_now()} helper
+     * method rather than calling this method directly.
+     *
+     * @param string $thing identifier for the bit of content. Should be of the form
+     *      frankenstyle_things, e.g. core_course_modchooser.
+     */
+    public function set_one_time_item_created($thing) {
+        if ($this->has_one_time_item_been_created($thing)) {
+            throw new coding_exception($thing . ' is only supposed to be ouput ' .
+                    'once per page, but it seems to be being output again.');
+        }
+        return $this->onetimeitemsoutput[$thing] = true;
     }
 }
 

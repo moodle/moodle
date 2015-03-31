@@ -29,9 +29,11 @@
  * @throws moodle_exception
  * @param stdClass $user user to create
  * @param bool $updatepassword if true, authentication plugin will update password.
+ * @param bool $triggerevent set false if user_created event should not be triggred.
+ *             This will not affect user_password_updated event triggering.
  * @return int id of the newly created user
  */
-function user_create_user($user, $updatepassword = true) {
+function user_create_user($user, $updatepassword = true, $triggerevent = true) {
     global $CFG, $DB;
 
     // Set the timecreate field to the current time.
@@ -70,6 +72,23 @@ function user_create_user($user, $updatepassword = true) {
         $user->calendartype = $CFG->calendartype;
     }
 
+    // Apply default values for user preferences that are stored in users table.
+    if (!isset($user->maildisplay)) {
+        $user->maildisplay = $CFG->defaultpreference_maildisplay;
+    }
+    if (!isset($user->mailformat)) {
+        $user->mailformat = $CFG->defaultpreference_mailformat;
+    }
+    if (!isset($user->maildigest)) {
+        $user->maildigest = $CFG->defaultpreference_maildigest;
+    }
+    if (!isset($user->autosubscribe)) {
+        $user->autosubscribe = $CFG->defaultpreference_autosubscribe;
+    }
+    if (!isset($user->trackforums)) {
+        $user->trackforums = $CFG->defaultpreference_trackforums;
+    }
+
     $user->timecreated = time();
     $user->timemodified = $user->timecreated;
 
@@ -87,14 +106,10 @@ function user_create_user($user, $updatepassword = true) {
         $authplugin->user_update_password($newuser, $userpassword);
     }
 
-    // Trigger event.
-    $event = \core\event\user_created::create(
-            array(
-                'objectid' => $newuserid,
-                'context' => $usercontext
-                )
-            );
-    $event->trigger();
+    // Trigger event If required.
+    if ($triggerevent) {
+        \core\event\user_created::create_from_userid($newuserid)->trigger();
+    }
 
     return $newuserid;
 }
@@ -105,8 +120,10 @@ function user_create_user($user, $updatepassword = true) {
  * @throws moodle_exception
  * @param stdClass $user the user to update
  * @param bool $updatepassword if true, authentication plugin will update password.
+ * @param bool $triggerevent set false if user_updated event should not be triggred.
+ *             This will not affect user_password_updated event triggering.
  */
-function user_update_user($user, $updatepassword = true) {
+function user_update_user($user, $updatepassword = true, $triggerevent = true) {
     global $DB;
 
     // Set the timecreate field to the current time.
@@ -164,15 +181,10 @@ function user_update_user($user, $updatepassword = true) {
             }
         }
     }
-
-    // Trigger event.
-    $event = \core\event\user_updated::create(
-            array(
-                'objectid' => $user->id,
-                'context' => context_user::instance($user->id)
-                )
-            );
-    $event->trigger();
+    // Trigger event if required.
+    if ($triggerevent) {
+        \core\event\user_updated::create_from_userid($user->id)->trigger();
+    }
 }
 
 /**
@@ -602,3 +614,391 @@ function user_count_login_failures($user, $reset = true) {
     return $count;
 }
 
+/**
+ * Converts a string into a flat array of menu items, where each menu items is a
+ * stdClass with fields type, url, title, pix, and imgsrc.
+ *
+ * @param string $text the menu items definition
+ * @param moodle_page $page the current page
+ * @return array
+ */
+function user_convert_text_to_menu_items($text, $page) {
+    global $OUTPUT, $CFG;
+
+    $lines = explode("\n", $text);
+    $items = array();
+    $lastchild = null;
+    $lastdepth = null;
+    $lastsort = 0;
+    $children = array();
+    foreach ($lines as $line) {
+        $line = trim($line);
+        $bits = explode('|', $line, 3);
+        $itemtype = 'link';
+        if (preg_match("/^#+$/", $line)) {
+            $itemtype = 'divider';
+        } else if (!array_key_exists(0, $bits) or empty($bits[0])) {
+            // Every item must have a name to be valid.
+            continue;
+        } else {
+            $bits[0] = ltrim($bits[0], '-');
+        }
+
+        // Create the child.
+        $child = new stdClass();
+        $child->itemtype = $itemtype;
+        if ($itemtype === 'divider') {
+            // Add the divider to the list of children and skip link
+            // processing.
+            $children[] = $child;
+            continue;
+        }
+
+        // Name processing.
+        $namebits = explode(',', $bits[0], 2);
+        if (count($namebits) == 2) {
+            // Check the validity of the identifier part of the string.
+            if (clean_param($namebits[0], PARAM_STRINGID) !== '') {
+                // Treat this as a language string.
+                $child->title = get_string($namebits[0], $namebits[1]);
+            }
+        }
+        if (empty($child->title)) {
+            // Use it as is, don't even clean it.
+            $child->title = $bits[0];
+        }
+
+        // URL processing.
+        if (!array_key_exists(1, $bits) or empty($bits[1])) {
+            // Set the url to null, and set the itemtype to invalid.
+            $bits[1] = null;
+            $child->itemtype = "invalid";
+        } else {
+            // Make sure the url is a moodle url.
+            $bits[1] = new moodle_url(trim($bits[1]));
+        }
+        $child->url = $bits[1];
+
+        // PIX processing.
+        $pixpath = "t/edit";
+        if (!array_key_exists(2, $bits) or empty($bits[2])) {
+            // Use the default.
+            $child->pix = $pixpath;
+        } else {
+            // Check for the specified image existing.
+            $pixpath = "t/" . $bits[2];
+            if ($page->theme->resolve_image_location($pixpath, 'moodle', true)) {
+                // Use the image.
+                $child->pix = $pixpath;
+            } else {
+                // Treat it like a URL.
+                $child->pix = null;
+                $child->imgsrc = $bits[2];
+            }
+        }
+
+        // Add this child to the list of children.
+        $children[] = $child;
+    }
+    return $children;
+}
+
+/**
+ * Get a list of essential user navigation items.
+ *
+ * @param stdclass $user user object.
+ * @param moodle_page $page page object.
+ * @return stdClass $returnobj navigation information object, where:
+ *
+ *      $returnobj->navitems    array    array of links where each link is a
+ *                                       stdClass with fields url, title, and
+ *                                       pix
+ *      $returnobj->metadata    array    array of useful user metadata to be
+ *                                       used when constructing navigation;
+ *                                       fields include:
+ *
+ *          ROLE FIELDS
+ *          asotherrole    bool    whether viewing as another role
+ *          rolename       string  name of the role
+ *
+ *          USER FIELDS
+ *          These fields are for the currently-logged in user, or for
+ *          the user that the real user is currently logged in as.
+ *
+ *          userid         int        the id of the user in question
+ *          userfullname   string     the user's full name
+ *          userprofileurl moodle_url the url of the user's profile
+ *          useravatar     string     a HTML fragment - the rendered
+ *                                    user_picture for this user
+ *          userloginfail  string     an error string denoting the number
+ *                                    of login failures since last login
+ *
+ *          "REAL USER" FIELDS
+ *          These fields are for when asotheruser is true, and
+ *          correspond to the underlying "real user".
+ *
+ *          asotheruser        bool    whether viewing as another user
+ *          realuserid         int        the id of the user in question
+ *          realuserfullname   string     the user's full name
+ *          realuserprofileurl moodle_url the url of the user's profile
+ *          realuseravatar     string     a HTML fragment - the rendered
+ *                                        user_picture for this user
+ *
+ *          MNET PROVIDER FIELDS
+ *          asmnetuser            bool   whether viewing as a user from an
+ *                                       MNet provider
+ *          mnetidprovidername    string name of the MNet provider
+ *          mnetidproviderwwwroot string URL of the MNet provider
+ */
+function user_get_user_navigation_info($user, $page) {
+    global $OUTPUT, $DB, $SESSION, $CFG;
+
+    $returnobject = new stdClass();
+    $returnobject->navitems = array();
+    $returnobject->metadata = array();
+
+    $course = $page->course;
+
+    // Query the environment.
+    $context = context_course::instance($course->id);
+
+    // Get basic user metadata.
+    $returnobject->metadata['userid'] = $user->id;
+    $returnobject->metadata['userfullname'] = fullname($user, true);
+    $returnobject->metadata['userprofileurl'] = new moodle_url('/user/profile.php', array(
+        'id' => $user->id
+    ));
+    $returnobject->metadata['useravatar'] = $OUTPUT->user_picture (
+        $user,
+        array(
+            'link' => false,
+            'visibletoscreenreaders' => false
+        )
+    );
+    // Build a list of items for a regular user.
+
+    // Query MNet status.
+    if ($returnobject->metadata['asmnetuser'] = is_mnet_remote_user($user)) {
+        $mnetidprovider = $DB->get_record('mnet_host', array('id' => $user->mnethostid));
+        $returnobject->metadata['mnetidprovidername'] = $mnetidprovider->name;
+        $returnobject->metadata['mnetidproviderwwwroot'] = $mnetidprovider->wwwroot;
+    }
+
+    // Did the user just log in?
+    if (isset($SESSION->justloggedin)) {
+        // Don't unset this flag as login_info still needs it.
+        if (!empty($CFG->displayloginfailures)) {
+            // We're already in /user/lib.php, so we don't need to include.
+            if ($count = user_count_login_failures($user)) {
+
+                // Get login failures string.
+                $a = new stdClass();
+                $a->attempts = html_writer::tag('span', $count, array('class' => 'value'));
+                $returnobject->metadata['userloginfail'] =
+                    get_string('failedloginattempts', '', $a);
+
+            }
+        }
+    }
+
+    // Links: My Home.
+    $myhome = new stdClass();
+    $myhome->itemtype = 'link';
+    $myhome->url = new moodle_url('/my/');
+    $myhome->title = get_string('mymoodle', 'admin');
+    $myhome->pix = "i/course";
+    $returnobject->navitems[] = $myhome;
+
+    // Links: My Profile.
+    $myprofile = new stdClass();
+    $myprofile->itemtype = 'link';
+    $myprofile->url = new moodle_url('/user/profile.php', array('id' => $user->id));
+    $myprofile->title = get_string('myprofile');
+    $myprofile->pix = "i/user";
+    $returnobject->navitems[] = $myprofile;
+
+    // Links: Role-return or logout link.
+    $lastobj = null;
+    $buildlogout = true;
+    $returnobject->metadata['asotherrole'] = false;
+    if (is_role_switched($course->id)) {
+        if ($role = $DB->get_record('role', array('id' => $user->access['rsw'][$context->path]))) {
+            // Build role-return link instead of logout link.
+            $rolereturn = new stdClass();
+            $rolereturn->itemtype = 'link';
+            $rolereturn->url = new moodle_url('/course/switchrole.php', array(
+                'id' => $course->id,
+                'sesskey' => sesskey(),
+                'switchrole' => 0,
+                'returnurl' => $page->url->out_as_local_url(false)
+            ));
+            $rolereturn->pix = "a/logout";
+            $rolereturn->title = get_string('switchrolereturn');
+            $lastobj = $rolereturn;
+
+            $returnobject->metadata['asotherrole'] = true;
+            $returnobject->metadata['rolename'] = role_get_name($role, $context);
+
+            $buildlogout = false;
+        }
+    }
+
+    if ($returnobject->metadata['asotheruser'] = \core\session\manager::is_loggedinas()) {
+        $realuser = \core\session\manager::get_realuser();
+
+        // Save values for the real user, as $user will be full of data for the
+        // user the user is disguised as.
+        $returnobject->metadata['realuserid'] = $realuser->id;
+        $returnobject->metadata['realuserfullname'] = fullname($realuser, true);
+        $returnobject->metadata['realuserprofileurl'] = new moodle_url('/user/profile.php', array(
+            'id' => $realuser->id
+        ));
+        $returnobject->metadata['realuseravatar'] = $OUTPUT->user_picture (
+            $realuser,
+            array(
+                'link' => false,
+                'visibletoscreenreaders' => false
+            )
+        );
+
+        // Build a user-revert link.
+        $userrevert = new stdClass();
+        $userrevert->itemtype = 'link';
+        $userrevert->url = new moodle_url('/course/loginas.php', array(
+            'id' => $course->id,
+            'sesskey' => sesskey()
+        ));
+        $userrevert->pix = "a/logout";
+        $userrevert->title = get_string('logout');
+        $lastobj = $userrevert;
+
+        $buildlogout = false;
+    }
+
+    if ($buildlogout) {
+        // Build a logout link.
+        $logout = new stdClass();
+        $logout->itemtype = 'link';
+        $logout->url = new moodle_url('/login/logout.php', array('sesskey' => sesskey()));
+        $logout->pix = "a/logout";
+        $logout->title = get_string('logout');
+        $lastobj = $logout;
+    }
+
+    // Before we add the last item (usually a logout link), add any
+    // custom-defined items.
+    $customitems = user_convert_text_to_menu_items($CFG->customusermenuitems, $page);
+    foreach ($customitems as $item) {
+        $returnobject->navitems[] = $item;
+    }
+
+    // Add the last item to the list.
+    if (!is_null($lastobj)) {
+        $returnobject->navitems[] = $lastobj;
+    }
+
+    return $returnobject;
+}
+
+/**
+ * Add password to the list of used hashes for this user.
+ *
+ * This is supposed to be used from:
+ *  1/ change own password form
+ *  2/ password reset process
+ *  3/ user signup in auth plugins if password changing supported
+ *
+ * @param int $userid user id
+ * @param string $password plaintext password
+ * @return void
+ */
+function user_add_password_history($userid, $password) {
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/password_compat/lib/password.php');
+
+    if (empty($CFG->passwordreuselimit) or $CFG->passwordreuselimit < 0) {
+        return;
+    }
+
+    // Note: this is using separate code form normal password hashing because
+    //       we need to have this under control in the future. Also the auth
+    //       plugin might not store the passwords locally at all.
+
+    $record = new stdClass();
+    $record->userid = $userid;
+    $record->hash = password_hash($password, PASSWORD_DEFAULT);
+    $record->timecreated = time();
+    $DB->insert_record('user_password_history', $record);
+
+    $i = 0;
+    $records = $DB->get_records('user_password_history', array('userid' => $userid), 'timecreated DESC, id DESC');
+    foreach ($records as $record) {
+        $i++;
+        if ($i > $CFG->passwordreuselimit) {
+            $DB->delete_records('user_password_history', array('id' => $record->id));
+        }
+    }
+}
+
+/**
+ * Was this password used before on change or reset password page?
+ *
+ * The $CFG->passwordreuselimit setting determines
+ * how many times different password needs to be used
+ * before allowing previously used password again.
+ *
+ * @param int $userid user id
+ * @param string $password plaintext password
+ * @return bool true if password reused
+ */
+function user_is_previously_used_password($userid, $password) {
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/password_compat/lib/password.php');
+
+    if (empty($CFG->passwordreuselimit) or $CFG->passwordreuselimit < 0) {
+        return false;
+    }
+
+    $reused = false;
+
+    $i = 0;
+    $records = $DB->get_records('user_password_history', array('userid' => $userid), 'timecreated DESC, id DESC');
+    foreach ($records as $record) {
+        $i++;
+        if ($i > $CFG->passwordreuselimit) {
+            $DB->delete_records('user_password_history', array('id' => $record->id));
+            continue;
+        }
+        // NOTE: this is slow but we cannot compare the hashes directly any more.
+        if (password_verify($password, $record->hash)) {
+            $reused = true;
+        }
+    }
+
+    return $reused;
+}
+
+/**
+ * Remove a user device from the Moodle database (for PUSH notifications usually).
+ *
+ * @param string $uuid The device UUID.
+ * @param string $appid The app id. If empty all the devices matching the UUID for the user will be removed.
+ * @return bool true if removed, false if the device didn't exists in the database
+ * @since Moodle 2.9
+ */
+function user_remove_user_device($uuid, $appid = "") {
+    global $DB, $USER;
+
+    $conditions = array('uuid' => $uuid, 'userid' => $USER->id);
+    if (!empty($appid)) {
+        $conditions['appid'] = $appid;
+    }
+
+    if (!$DB->count_records('user_devices', $conditions)) {
+        return false;
+    }
+
+    $DB->delete_records('user_devices', $conditions);
+
+    return true;
+}

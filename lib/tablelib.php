@@ -62,10 +62,13 @@ class flexible_table {
     var $column_nosort   = array('userpic');
     private $column_textsort = array();
     var $setup           = false;
-    var $sess            = NULL;
     var $baseurl         = NULL;
     var $request         = array();
 
+    /**
+     * @var bool Whether or not to store table properties in the user_preferences table.
+     */
+    private $persistent = false;
     var $is_collapsible = false;
     var $is_sortable    = false;
     var $use_pages      = false;
@@ -115,6 +118,11 @@ class flexible_table {
     var $started_output = false;
 
     var $exportclass = null;
+
+    /**
+     * @var array For storing user-customised table properties in the user_preferences db table.
+     */
+    private $prefs = array();
 
     /**
      * Constructor
@@ -191,6 +199,21 @@ class flexible_table {
             $this->downloadable = $downloadable;
         }
         return $this->downloadable;
+    }
+
+    /**
+     * Call with boolean true to store table layout changes in the user_preferences table.
+     * Note: user_preferences.value has a maximum length of 1333 characters.
+     * Call with no parameter to get current state of table persistence.
+     *
+     * @param bool $persistent Optional parameter to set table layout persistence.
+     * @return bool Whether or not the table layout preferences will persist.
+     */
+    public function is_persistent($persistent = null) {
+        if ($persistent == true) {
+            $this->persistent = true;
+        }
+        return $this->persistent;
     }
 
     /**
@@ -405,83 +428,95 @@ class flexible_table {
      * @return type?
      */
     function setup() {
-        global $SESSION, $CFG;
+        global $SESSION;
 
         if (empty($this->columns) || empty($this->uniqueid)) {
             return false;
         }
 
-        if (!isset($SESSION->flextable)) {
-            $SESSION->flextable = array();
+        // Load any existing user preferences.
+        if ($this->persistent) {
+            $this->prefs = json_decode(get_user_preferences('flextable_' . $this->uniqueid), true);
+        } else if (isset($SESSION->flextable[$this->uniqueid])) {
+            $this->prefs = $SESSION->flextable[$this->uniqueid];
         }
-
-        if (!isset($SESSION->flextable[$this->uniqueid])) {
-            $SESSION->flextable[$this->uniqueid] = new stdClass;
-            $SESSION->flextable[$this->uniqueid]->uniqueid = $this->uniqueid;
-            $SESSION->flextable[$this->uniqueid]->collapse = array();
-            $SESSION->flextable[$this->uniqueid]->sortby   = array();
-            $SESSION->flextable[$this->uniqueid]->i_first  = '';
-            $SESSION->flextable[$this->uniqueid]->i_last   = '';
-            $SESSION->flextable[$this->uniqueid]->textsort = $this->column_textsort;
+        if (!$this->prefs) {
+            $this->prefs = array(
+                'collapse' => array(),
+                'sortby'   => array(),
+                'i_first'  => '',
+                'i_last'   => '',
+                'textsort' => $this->column_textsort,
+            );
         }
-
-        $this->sess = &$SESSION->flextable[$this->uniqueid];
+        $oldprefs = $this->prefs;
 
         if (($showcol = optional_param($this->request[TABLE_VAR_SHOW], '', PARAM_ALPHANUMEXT)) &&
                 isset($this->columns[$showcol])) {
-            $this->sess->collapse[$showcol] = false;
+            $this->prefs['collapse'][$showcol] = false;
 
         } else if (($hidecol = optional_param($this->request[TABLE_VAR_HIDE], '', PARAM_ALPHANUMEXT)) &&
                 isset($this->columns[$hidecol])) {
-            $this->sess->collapse[$hidecol] = true;
-            if (array_key_exists($hidecol, $this->sess->sortby)) {
-                unset($this->sess->sortby[$hidecol]);
+            $this->prefs['collapse'][$hidecol] = true;
+            if (array_key_exists($hidecol, $this->prefs['sortby'])) {
+                unset($this->prefs['sortby'][$hidecol]);
             }
         }
 
         // Now, update the column attributes for collapsed columns
         foreach (array_keys($this->columns) as $column) {
-            if (!empty($this->sess->collapse[$column])) {
+            if (!empty($this->prefs['collapse'][$column])) {
                 $this->column_style[$column]['width'] = '10px';
             }
         }
 
         if (($sortcol = optional_param($this->request[TABLE_VAR_SORT], '', PARAM_ALPHANUMEXT)) &&
-                $this->is_sortable($sortcol) && empty($this->sess->collapse[$sortcol]) &&
-                (isset($this->columns[$sortcol]) || in_array($sortcol, array('firstname', 'lastname')) && isset($this->columns['fullname']))) {
+                $this->is_sortable($sortcol) && empty($this->prefs['collapse'][$sortcol]) &&
+                (isset($this->columns[$sortcol]) || in_array($sortcol, get_all_user_name_fields())
+                && isset($this->columns['fullname']))) {
 
-            if (array_key_exists($sortcol, $this->sess->sortby)) {
+            if (array_key_exists($sortcol, $this->prefs['sortby'])) {
                 // This key already exists somewhere. Change its sortorder and bring it to the top.
-                $sortorder = $this->sess->sortby[$sortcol] == SORT_ASC ? SORT_DESC : SORT_ASC;
-                unset($this->sess->sortby[$sortcol]);
-                $this->sess->sortby = array_merge(array($sortcol => $sortorder), $this->sess->sortby);
+                $sortorder = $this->prefs['sortby'][$sortcol] == SORT_ASC ? SORT_DESC : SORT_ASC;
+                unset($this->prefs['sortby'][$sortcol]);
+                $this->prefs['sortby'] = array_merge(array($sortcol => $sortorder), $this->prefs['sortby']);
             } else {
                 // Key doesn't exist, so just add it to the beginning of the array, ascending order
-                $this->sess->sortby = array_merge(array($sortcol => SORT_ASC), $this->sess->sortby);
+                $this->prefs['sortby'] = array_merge(array($sortcol => SORT_ASC), $this->prefs['sortby']);
             }
 
             // Finally, make sure that no more than $this->maxsortkeys are present into the array
-            $this->sess->sortby = array_slice($this->sess->sortby, 0, $this->maxsortkeys);
+            $this->prefs['sortby'] = array_slice($this->prefs['sortby'], 0, $this->maxsortkeys);
         }
 
         // MDL-35375 - If a default order is defined and it is not in the current list of order by columns, add it at the end.
         // This prevents results from being returned in a random order if the only order by column contains equal values.
         if (!empty($this->sort_default_column))  {
-            if (!array_key_exists($this->sort_default_column, $this->sess->sortby)) {
+            if (!array_key_exists($this->sort_default_column, $this->prefs['sortby'])) {
                 $defaultsort = array($this->sort_default_column => $this->sort_default_order);
-                $this->sess->sortby = array_merge($this->sess->sortby, $defaultsort);
+                $this->prefs['sortby'] = array_merge($this->prefs['sortby'], $defaultsort);
             }
         }
 
         $ilast = optional_param($this->request[TABLE_VAR_ILAST], null, PARAM_RAW);
         if (!is_null($ilast) && ($ilast ==='' || strpos(get_string('alphabet', 'langconfig'), $ilast) !== false)) {
-            $this->sess->i_last = $ilast;
+            $this->prefs['i_last'] = $ilast;
         }
 
         $ifirst = optional_param($this->request[TABLE_VAR_IFIRST], null, PARAM_RAW);
         if (!is_null($ifirst) && ($ifirst === '' || strpos(get_string('alphabet', 'langconfig'), $ifirst) !== false)) {
-            $this->sess->i_first = $ifirst;
+            $this->prefs['i_first'] = $ifirst;
         }
+
+        // Save user preferences if they have changed.
+        if ($this->prefs != $oldprefs) {
+            if ($this->persistent) {
+                set_user_preference('flextable_' . $this->uniqueid, json_encode($this->prefs));
+            } else {
+                $SESSION->flextable[$this->uniqueid] = $this->prefs;
+            }
+        }
+        unset($oldprefs);
 
         if (empty($this->baseurl)) {
             debugging('You should set baseurl when using flexible_table.');
@@ -503,25 +538,26 @@ class flexible_table {
     }
 
     /**
-     * Get the order by clause from the session, for the table with id $uniqueid.
+     * Get the order by clause from the session or user preferences, for the table with id $uniqueid.
      * @param string $uniqueid the identifier for a table.
      * @return SQL fragment that can be used in an ORDER BY clause.
      */
     public static function get_sort_for_table($uniqueid) {
         global $SESSION;
-        if (empty($SESSION->flextable[$uniqueid])) {
-           return '';
-        }
-
-        $sess = &$SESSION->flextable[$uniqueid];
-        if (empty($sess->sortby)) {
+        if (isset($SESSION->flextable[$uniqueid])) {
+            $prefs = $SESSION->flextable[$uniqueid];
+        } else if (!$prefs = json_decode(get_user_preferences('flextable_' . $uniqueid), true)) {
             return '';
         }
-        if (empty($sess->textsort)) {
-            $sess->textsort = array();
+
+        if (empty($prefs['sortby'])) {
+            return '';
+        }
+        if (empty($prefs['textsort'])) {
+            $prefs['textsort'] = array();
         }
 
-        return self::construct_order_by($sess->sortby, $sess->textsort);
+        return self::construct_order_by($prefs['sortby'], $prefs['textsort']);
     }
 
     /**
@@ -563,23 +599,23 @@ class flexible_table {
             throw new coding_exception('Cannot call get_sort_columns until you have called setup.');
         }
 
-        if (empty($this->sess->sortby)) {
+        if (empty($this->prefs['sortby'])) {
             return array();
         }
 
-        foreach ($this->sess->sortby as $column => $notused) {
+        foreach ($this->prefs['sortby'] as $column => $notused) {
             if (isset($this->columns[$column])) {
                 continue; // This column is OK.
             }
-            if (in_array($column, array('firstname', 'lastname')) &&
+            if (in_array($column, get_all_user_name_fields()) &&
                     isset($this->columns['fullname'])) {
                 continue; // This column is OK.
             }
             // This column is not OK.
-            unset($this->sess->sortby[$column]);
+            unset($this->prefs['sortby'][$column]);
         }
 
-        return $this->sess->sortby;
+        return $this->prefs['sortby'];
     }
 
     /**
@@ -615,13 +651,13 @@ class flexible_table {
             static $i = 0;
             $i++;
 
-            if (!empty($this->sess->i_first)) {
+            if (!empty($this->prefs['i_first'])) {
                 $conditions[] = $DB->sql_like('firstname', ':ifirstc'.$i, false, false);
-                $params['ifirstc'.$i] = $this->sess->i_first.'%';
+                $params['ifirstc'.$i] = $this->prefs['i_first'].'%';
             }
-            if (!empty($this->sess->i_last)) {
+            if (!empty($this->prefs['i_last'])) {
                 $conditions[] = $DB->sql_like('lastname', ':ilastc'.$i, false, false);
-                $params['ilastc'.$i] = $this->sess->i_last.'%';
+                $params['ilastc'.$i] = $this->prefs['i_last'].'%';
             }
         }
 
@@ -858,7 +894,7 @@ class flexible_table {
             return NULL;
         }
 
-        return $this->sess->i_first;
+        return $this->prefs['i_first'];
     }
 
     /**
@@ -870,7 +906,7 @@ class flexible_table {
             return NULL;
         }
 
-        return $this->sess->i_last;
+        return $this->prefs['i_last'];
     }
 
     /**
@@ -905,14 +941,14 @@ class flexible_table {
      * This function is not part of the public api.
      */
     function print_initials_bar() {
-        if ((!empty($this->sess->i_last) || !empty($this->sess->i_first) ||$this->use_initials)
+        if ((!empty($this->prefs['i_last']) || !empty($this->prefs['i_first']) ||$this->use_initials)
                     && isset($this->columns['fullname'])) {
 
             $alpha  = explode(',', get_string('alphabet', 'langconfig'));
 
             // Bar of first initials
-            if (!empty($this->sess->i_first)) {
-                $ifirst = $this->sess->i_first;
+            if (!empty($this->prefs['i_first'])) {
+                $ifirst = $this->prefs['i_first'];
             } else {
                 $ifirst = '';
             }
@@ -920,8 +956,8 @@ class flexible_table {
                     get_string('firstname'), $this->request[TABLE_VAR_IFIRST]);
 
             // Bar of last initials
-            if (!empty($this->sess->i_last)) {
-                $ilast = $this->sess->i_last;
+            if (!empty($this->prefs['i_last'])) {
+                $ilast = $this->prefs['i_last'];
             } else {
                 $ilast = '';
             }
@@ -1015,9 +1051,6 @@ class flexible_table {
 
     /**
      * This function is not part of the public api.
-     *
-     * Please do not use .r0/.r1 for css, as they will be removed in Moodle 2.9.
-     * @todo MDL-43902 , remove r0 and r1 from tr classes.
      */
     function print_row($row, $classname = '') {
         echo $this->get_row_html($row, $classname);
@@ -1033,8 +1066,7 @@ class flexible_table {
      */
     public function get_row_html($row, $classname = '') {
         static $suppress_lastrow = NULL;
-        $oddeven = $this->currentrow % 2;
-        $rowclasses = array('r' . $oddeven);
+        $rowclasses = array();
 
         if ($classname) {
             $rowclasses[] = $classname;
@@ -1056,7 +1088,7 @@ class flexible_table {
             foreach ($row as $index => $data) {
                 $column = $colbyindex[$index];
 
-                if (empty($this->sess->collapse[$column])) {
+                if (empty($this->prefs['collapse'][$column])) {
                     if ($this->column_suppress[$column] && $suppress_lastrow !== NULL && $suppress_lastrow[$index] === $data) {
                         $content = '&nbsp;';
                     } else {
@@ -1138,7 +1170,7 @@ class flexible_table {
 
         $ariacontrols = trim($ariacontrols);
 
-        if (!empty($this->sess->collapse[$column])) {
+        if (!empty($this->prefs['collapse'][$column])) {
             $linkattributes = array('title' => get_string('show') . ' ' . strip_tags($this->headers[$index]),
                                     'aria-expanded' => 'false',
                                     'aria-controls' => $ariacontrols);
@@ -1171,11 +1203,11 @@ class flexible_table {
                 $icon_hide = $this->show_hide_link($column, $index);
             }
 
-            $primary_sort_column = '';
-            $primary_sort_order  = '';
-            if (reset($this->sess->sortby)) {
-                $primary_sort_column = key($this->sess->sortby);
-                $primary_sort_order  = current($this->sess->sortby);
+            $primarysortcolumn = '';
+            $primarysortorder  = '';
+            if (reset($this->prefs['sortby'])) {
+                $primarysortcolumn = key($this->prefs['sortby']);
+                $primarysortorder  = current($this->prefs['sortby']);
             }
 
             switch ($column) {
@@ -1186,7 +1218,7 @@ class flexible_table {
                 if ($nameformat == 'language') {
                     $nameformat = get_string('fullnamedisplay');
                 }
-                $requirednames = order_in_string(array('firstname', 'lastname'), $nameformat);
+                $requirednames = order_in_string(get_all_user_name_fields(), $nameformat);
 
                 if (!empty($requirednames)) {
                     if ($this->is_sortable($column)) {
@@ -1194,7 +1226,7 @@ class flexible_table {
                         $this->headers[$index] = '';
                         foreach ($requirednames as $name) {
                             $sortname = $this->sort_link(get_string($name),
-                                    $name, $primary_sort_column === $name, $primary_sort_order);
+                                    $name, $primarysortcolumn === $name, $primarysortorder);
                             $this->headers[$index] .= $sortname . ' / ';
                         }
                         $this->headers[$index] = substr($this->headers[$index], 0, -3);
@@ -1209,7 +1241,7 @@ class flexible_table {
                 default:
                 if ($this->is_sortable($column)) {
                     $this->headers[$index] = $this->sort_link($this->headers[$index],
-                            $column, $primary_sort_column == $column, $primary_sort_order);
+                            $column, $primarysortcolumn == $column, $primarysortorder);
                 }
             }
 
@@ -1219,7 +1251,7 @@ class flexible_table {
             );
             if ($this->headers[$index] === NULL) {
                 $content = '&nbsp;';
-            } else if (!empty($this->sess->collapse[$column])) {
+            } else if (!empty($this->prefs['collapse'][$column])) {
                 $content = $icon_hide;
             } else {
                 if (is_array($this->column_style[$column])) {
@@ -1348,7 +1380,7 @@ class table_sql extends flexible_table {
      */
     public $sql = NULL;
     /**
-     * @var array Data fetched from the db.
+     * @var array|\Traversable Data fetched from the db.
      */
     public $rawdata = NULL;
 
@@ -1377,14 +1409,27 @@ class table_sql extends flexible_table {
      * processing each col using either col_{columnname} method or other_cols
      * method or if other_cols returns NULL then put the data straight into the
      * table.
+     *
+     * @return void
      */
     function build_table() {
-        if ($this->rawdata) {
-            foreach ($this->rawdata as $row) {
-                $formattedrow = $this->format_row($row);
-                $this->add_data_keyed($formattedrow,
-                        $this->get_row_class($row));
-            }
+
+        if ($this->rawdata instanceof \Traversable && !$this->rawdata->valid()) {
+            return;
+        }
+        if (!$this->rawdata) {
+            return;
+        }
+
+        foreach ($this->rawdata as $row) {
+            $formattedrow = $this->format_row($row);
+            $this->add_data_keyed($formattedrow,
+                $this->get_row_class($row));
+        }
+
+        if ($this->rawdata instanceof \core\dml\recordset_walk ||
+                $this->rawdata instanceof moodle_recordset) {
+            $this->rawdata->close();
         }
     }
 

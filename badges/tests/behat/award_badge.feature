@@ -16,13 +16,17 @@ Feature: Award badges
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I set the field "type" to "Profile completion"
+    And I expand all fieldsets
     And I set the field "First name" to "1"
     And I set the field "Email address" to "1"
     And I set the field "Phone" to "1"
+    And I set the field "id_description" to "Criterion description"
     When I press "Save"
     Then I should see "Profile completion"
     And I should see "First name"
     And I should see "Email address"
+    And I should see "Phone"
+    And I should see "Criterion description"
     And I should not see "Criteria for this badge have not been set up yet."
     And I press "Enable access"
     And I press "Continue"
@@ -31,7 +35,7 @@ Feature: Award badges
     And I expand all fieldsets
     And I set the field "Phone" to "123456789"
     And I press "Update profile"
-    And I follow "My badges"
+    And I navigate to "My badges" node in "My profile"
     Then I should see "Profile Badge"
     And I should not see "There are no badges available."
 
@@ -64,8 +68,7 @@ Feature: Award badges
     Then I should see "Recipients (2)"
     And I log out
     And I log in as "student"
-    And I expand "My profile" node
-    And I follow "My badges"
+    And I navigate to "My badges" node in "My profile"
     Then I should see "Site Badge"
 
   @javascript
@@ -85,7 +88,7 @@ Feature: Award badges
       | student2 | C1 | student |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
+    And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
@@ -109,8 +112,7 @@ Feature: Award badges
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I expand "My profile" node
-    And I follow "My badges"
+    And I navigate to "My badges" node in "My profile"
     Then I should see "Course Badge"
 
   @javascript
@@ -134,7 +136,7 @@ Feature: Award badges
     And I follow "Edit settings"
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-    And I press "Save changes"
+    And I press "Save and display"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -142,7 +144,7 @@ Feature: Award badges
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
+    And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
@@ -158,14 +160,12 @@ Feature: Award badges
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I expand "My profile" node
-    And I follow "My badges"
+    And I navigate to "My badges" node in "My profile"
     Then I should see "There are no badges available."
     And I follow "Home"
     And I follow "Course 1"
     And I press "Mark as complete: Test assignment name"
-    And I expand "My profile" node
-    And I follow "My badges"
+    And I navigate to "My badges" node in "My profile"
     Then I should see "Course Badge"
 
   @javascript
@@ -189,7 +189,7 @@ Feature: Award badges
     And I follow "Edit settings"
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
-    And I press "Save changes"
+    And I press "Save and display"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment name |
@@ -203,7 +203,7 @@ Feature: Award badges
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
+    And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I follow "Add a new badge"
     And I set the following fields to these values:
       | Name | Course Badge |
@@ -212,16 +212,14 @@ Feature: Award badges
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I set the field "type" to "Course completion"
-    And I set the following fields to these values:
-      | grade_2 | 0 |
+    And I set the field with xpath "//fieldset/input[1]" to "0"
     And I press "Save"
     And I press "Enable access"
     When I press "Continue"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I expand "My profile" node
-    And I follow "My badges"
+    And I navigate to "My badges" node in "My profile"
     Then I should see "There are no badges available."
     And I follow "Home"
     And I follow "Course 1"
@@ -238,6 +236,5 @@ Feature: Award badges
     And I am on homepage
     And I log out
     And I log in as "student1"
-    And I expand "My profile" node
-    And I follow "My badges"
+    And I navigate to "My badges" node in "My profile"
     Then I should see "Course Badge"

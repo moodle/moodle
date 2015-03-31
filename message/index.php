@@ -114,9 +114,7 @@ $user2realuser = !empty($user2) && core_user::is_real_user($user2->id);
 $showactionlinks = $showactionlinks && $user2realuser;
 $systemcontext = context_system::instance();
 
-// Is the user involved in the conversation?
-// Do they have the ability to read other user's conversations?
-if (!message_current_user_is_involved($user1, $user2) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+if ($currentuser === false && !has_capability('moodle/site:readallmessages', $systemcontext)) {
     print_error('accessdenied','admin');
 }
 
@@ -126,7 +124,7 @@ if (substr($viewing, 0, 7) == MESSAGE_VIEW_COURSE) {
     require_capability('moodle/course:viewparticipants', context_course::instance($courseid));
     $PAGE->set_pagelayout('incourse');
 } else {
-    $PAGE->set_pagelayout('course');
+    $PAGE->set_pagelayout('standard');
     $PAGE->set_context(context_user::instance($user1->id));
 }
 if (!empty($user1->id) && $user1->id != $USER->id) {

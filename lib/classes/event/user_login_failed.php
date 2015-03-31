@@ -32,15 +32,16 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string username name of user.
- *      @type int reason failure reason.
+ *      - string username: name of user.
+ *      - int reason: failure reason.
  * }
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_login_failed extends \core\event\base {
+class user_login_failed extends base {
     /**
      * Init method.
      *
@@ -67,7 +68,9 @@ class user_login_failed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'Login failed for user "' . $this->other['username'] . '" for reason id: ' . $this->other['reason'];
+        // Note that username could be any random user input.
+        $username = s($this->other['username']);
+        return "Login failed for the username '{$username}' for the reason with id '{$this->other['reason']}'.";
     }
 
     /**
@@ -100,10 +103,13 @@ class user_login_failed extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
+
         if (!isset($this->other['reason'])) {
-            throw new \coding_exception("other['reason'] has to be specified.");
-        } else if (!isset($this->other['username'])) {
-            throw new \coding_exception("other['username'] has to be specified.");
+            throw new \coding_exception('The \'reason\' value must be set in other.');
+        }
+
+        if (!isset($this->other['username'])) {
+            throw new \coding_exception('The \'username\' value must be set in other.');
         }
     }
 

@@ -138,8 +138,8 @@ class behat_grading extends behat_base {
         // Should work with both templates and own forms.
         $literaltemplate = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('templatepick', 'grading'));
         $literalownform = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('templatepickownform', 'grading'));
-        $usetemplatexpath = "//a[./descendant::div[text()=$literaltemplate]]|" .
-            "//a[./descendant::div[text()=$literalownform]]";
+        $usetemplatexpath = "/a[./descendant::div[text()=$literaltemplate]]|" .
+            "/a[./descendant::div[text()=$literalownform]]";
 
         return array(
             new Given('I go to "' . $this->escape($activityname) . '" advanced grading page'),

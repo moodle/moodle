@@ -30,7 +30,7 @@
 //
 // BasicLTI4Moodle is copyright 2009 by Marc Alier Forment, Jordi Piguillem and Nikolas Galanis
 // of the Universitat Politecnica de Catalunya http://www.upc.edu
-// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu
+// Contact info: Marc Alier Forment granludo @ gmail.com or marc.alier @ upc.edu.
 
 /**
  * This page lists all the instances of lti in a particular course
@@ -48,9 +48,9 @@
 require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/lti/lib.php');
 
-$id = required_param('id', PARAM_INT);   // course id
+$id = required_param('id', PARAM_INT);   // Course id.
 
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 
 require_login($course);
 $PAGE->set_pagelayout('incourse');
@@ -69,16 +69,16 @@ $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 
-// Print the main part of the page
+// Print the main part of the page.
 echo $OUTPUT->heading(get_string("modulenamepluralformatted", "lti"));
 
-// Get all the appropriate data
+// Get all the appropriate data.
 if (! $basicltis = get_all_instances_in_course("lti", $course)) {
     notice(get_string('noltis', 'lti'), "../../course/view.php?id=$course->id");
     die;
 }
 
-// Print the list of instances (your module will probably extend this)
+// Print the list of instances (your module will probably extend this).
 $timenow = time();
 $strname = get_string("name");
 $usesections = course_format_uses_sections($course->format);
@@ -96,10 +96,10 @@ if ($usesections) {
 
 foreach ($basicltis as $basiclti) {
     if (!$basiclti->visible) {
-        //Show dimmed if the mod is hidden
+        // Show dimmed if the mod is hidden.
         $link = "<a class=\"dimmed\" href=\"view.php?id=$basiclti->coursemodule\">$basiclti->name</a>";
     } else {
-        //Show normal if the mod is visible
+        // Show normal if the mod is visible.
         $link = "<a href=\"view.php?id=$basiclti->coursemodule\">$basiclti->name</a>";
     }
 
@@ -114,5 +114,5 @@ echo "<br />";
 
 echo html_writer::table($table);
 
-// Finish the page
+// Finish the page.
 echo $OUTPUT->footer();

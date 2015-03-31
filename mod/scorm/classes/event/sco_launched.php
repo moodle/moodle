@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when sco is loaded.
+ * The mod_scorm sco launched event.
  *
  * @package    mod_scorm
  * @copyright  2013 onwards Ankit Agarwal
@@ -26,16 +26,17 @@ namespace mod_scorm\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a sco is loaded.
+ * The mod_scorm sco launched event class.
  *
  * @property-read array $other {
  *      Extra information about event properties.
  *
- *      @type string loadedcontent A reference to the content loaded.
- *      @type int instanceid Instance id of the scorm activity.
+ *      - string loadedcontent: A reference to the content loaded.
+ *      - int instanceid: (optional) Instance id of the scorm activity.
  * }
  *
  * @package    mod_scorm
+ * @since      Moodle 2.7
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -56,7 +57,8 @@ class sco_launched extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' launched a sco with id ' . $this->objectid;
+        return "The user with id '$this->userid' launched the sco with id '$this->objectid' for the scorm with " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -95,8 +97,9 @@ class sco_launched extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
+
         if (empty($this->other['loadedcontent'])) {
-            throw new \coding_exception('The event mod_scorm\\event\\sco_launched must specify loadedcontent.');
+            throw new \coding_exception('The \'loadedcontent\' value must be set in other.');
         }
     }
 }

@@ -134,10 +134,9 @@ class filter_urltolink extends moodle_text_filter {
 
         // Lookbehind assertions.
         // Is not HTML attribute or CSS URL property. Unfortunately legit text like "url(http://...)" will not be a link.
-        $lookbehindstart = "(?<!=[\"']|\burl\([\"' ]|\burl\()";
         $lookbehindend = "(?<![]),.;])";
 
-        $regex = "$lookbehindstart$urlstart((?:$domainsegment\.)+$domainsegment|$numericip)" .
+        $regex = "$urlstart((?:$domainsegment\.)+$domainsegment|$numericip)" .
                 "($port?$path$querystring?$fragment?)$lookbehindend";
         if ($unicoderegexp) {
             $regex = '#' . $regex . '#ui';
@@ -145,7 +144,38 @@ class filter_urltolink extends moodle_text_filter {
             $regex = '#' . preg_replace(array('\pLl', '\PL'), 'a-z', $regex) . '#i';
         }
 
-        $text = preg_replace($regex, '<a href="http$1://$2$3$4" class="_blanktarget">$0</a>', $text);
+        // Locate any HTML tags.
+        $matches = preg_split('/(<[^<|>]*>)/i', $text, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+
+        // Iterate through the tokenized text to handle chunks (html and content).
+        foreach ($matches as $idx => $chunk) {
+            // Nothing to do. We skip completely any html chunk.
+            if (strpos(trim($chunk), '<') === 0) {
+                continue;
+            }
+
+            // Nothing to do. We skip any content chunk having any of these attributes.
+            if (preg_match('#(background=")|(action=")|(style="background)|(href=")|(src=")|(url [(])#', $chunk)) {
+                continue;
+            }
+
+            // Arrived here, we want to process every word in this chunk.
+            $text = $chunk;
+            $words = explode(' ', $text);
+
+            foreach ($words as $idx2 => $word) {
+                // ReDoS protection. Stop processing if a word is too large.
+                if (strlen($word) < 4096) {
+                    $words[$idx2] = preg_replace($regex, '<a href="http$1://$2$3$4" class="_blanktarget">$0</a>', $word);
+                }
+            }
+            $text = implode(' ', $words);
+
+            // Copy the result back to the array.
+            $matches[$idx] = $text;
+        }
+
+        $text = implode('', $matches);
 
         if (!empty($ignoretags)) {
             $ignoretags = array_reverse($ignoretags); /// Reversed so "progressive" str_replace() will solve some nesting problems.

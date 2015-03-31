@@ -37,7 +37,7 @@ class block_online_users extends block_base {
     }
 
     function get_content() {
-        global $USER, $CFG, $DB, $OUTPUT;
+        global $USER, $CFG, $DB, $OUTPUT, $PAGE;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -167,6 +167,7 @@ class block_online_users extends block_base {
             if (isloggedin() && has_capability('moodle/site:sendmessage', $this->page->context)
                            && !empty($CFG->messaging) && !isguestuser()) {
                 $canshowicon = true;
+                message_messenger_requirejs();
             } else {
                 $canshowicon = false;
             }
@@ -185,7 +186,11 @@ class block_online_users extends block_base {
                 }
                 if ($canshowicon and ($USER->id != $user->id) and !isguestuser($user)) {  // Only when logged in and messaging active etc
                     $anchortagcontents = '<img class="iconsmall" src="'.$OUTPUT->pix_url('t/message') . '" alt="'. get_string('messageselectadd') .'" />';
-                    $anchortag = '<a href="'.$CFG->wwwroot.'/message/index.php?id='.$user->id.'" title="'.get_string('messageselectadd').'">'.$anchortagcontents .'</a>';
+                    $anchorurl = new moodle_url('/message/index.php', array('id' => $user->id));
+                    $anchortag = html_writer::link($anchorurl, $anchortagcontents, array_merge(
+                      message_messenger_sendmessage_link_params($user),
+                      array('title' => get_string('messageselectadd'))
+                    ));
 
                     $this->content->text .= '<div class="message">'.$anchortag.'</div>';
                 }

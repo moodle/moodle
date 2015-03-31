@@ -73,9 +73,12 @@ class qtype_essay_walkthrough_testcase extends qbehaviour_walkthrough_test_base 
     }
 
     public function test_deferred_feedback_html_editor() {
+        global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
         $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
 
         // Create an essay question.
         $q = test_question_maker::make_question('essay', 'editor');
@@ -180,9 +183,12 @@ class qtype_essay_walkthrough_testcase extends qbehaviour_walkthrough_test_base 
     }
 
     public function test_responsetemplate() {
+        global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
         $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
 
         // Create an essay question.
         $q = test_question_maker::make_question('essay', 'responsetemplate');
@@ -234,10 +240,12 @@ class qtype_essay_walkthrough_testcase extends qbehaviour_walkthrough_test_base 
     }
 
     public function test_deferred_feedback_html_editor_with_files_attempt_on_last() {
-        global $CFG, $USER;
+        global $CFG, $USER, $PAGE;
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
         $usercontextid = context_user::instance($USER->id)->id;
         $fs = get_file_storage();
 
@@ -356,10 +364,12 @@ class qtype_essay_walkthrough_testcase extends qbehaviour_walkthrough_test_base 
     }
 
     public function test_deferred_feedback_html_editor_with_files_attempt_on_last_no_files_uploaded() {
-        global $CFG, $USER;
+        global $CFG, $USER, $PAGE;
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
         $usercontextid = context_user::instance($USER->id)->id;
         $fs = get_file_storage();
 

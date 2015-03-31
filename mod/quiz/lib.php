@@ -166,8 +166,23 @@ function quiz_delete_instance($id) {
     quiz_delete_all_attempts($quiz);
     quiz_delete_all_overrides($quiz);
 
+    // Look for random questions that may no longer be used when this quiz is gone.
+    $sql = "SELECT q.id
+              FROM {quiz_slots} slot
+              JOIN {question} q ON q.id = slot.questionid
+             WHERE slot.quizid = ? AND q.qtype = ?";
+    $questionids = $DB->get_fieldset_sql($sql, array($quiz->id, 'random'));
+
+    // We need to do this before we try and delete randoms, otherwise they would still be 'in use'.
     $DB->delete_records('quiz_slots', array('quizid' => $quiz->id));
+
+    foreach ($questionids as $questionid) {
+        question_delete_question($questionid);
+    }
+
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
+
+    quiz_access_manager::delete_settings($quiz);
 
     $events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id));
     foreach ($events as $event) {
@@ -191,6 +206,11 @@ function quiz_delete_instance($id) {
 function quiz_delete_override($quiz, $overrideid) {
     global $DB;
 
+    if (!isset($quiz->cmid)) {
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+        $quiz->cmid = $cm->id;
+    }
+
     $override = $DB->get_record('quiz_overrides', array('id' => $overrideid), '*', MUST_EXIST);
 
     // Delete the events.
@@ -203,6 +223,28 @@ function quiz_delete_override($quiz, $overrideid) {
     }
 
     $DB->delete_records('quiz_overrides', array('id' => $overrideid));
+
+    // Set the common parameters for one of the events we will be triggering.
+    $params = array(
+        'objectid' => $override->id,
+        'context' => context_module::instance($quiz->cmid),
+        'other' => array(
+            'quizid' => $override->quiz
+        )
+    );
+    // Determine which override deleted event to fire.
+    if (!empty($override->userid)) {
+        $params['relateduserid'] = $override->userid;
+        $event = \mod_quiz\event\user_override_deleted::create($params);
+    } else {
+        $params['other']['groupid'] = $override->groupid;
+        $event = \mod_quiz\event\group_override_deleted::create($params);
+    }
+
+    // Trigger the override deleted event.
+    $event->add_record_snapshot('quiz_overrides', $override);
+    $event->trigger();
+
     return true;
 }
 
@@ -592,21 +634,32 @@ function quiz_format_grade($quiz, $grade) {
 }
 
 /**
- * Round a grade to to the correct number of decimal places, and format it for display.
+ * Determine the correct number of decimal places required to format a grade.
+ *
+ * @param object $quiz The quiz table row, only $quiz->decimalpoints is used.
+ * @return integer
+ */
+function quiz_get_grade_format($quiz) {
+    if (empty($quiz->questiondecimalpoints)) {
+        $quiz->questiondecimalpoints = -1;
+    }
+
+    if ($quiz->questiondecimalpoints == -1) {
+        return $quiz->decimalpoints;
+    }
+
+    return $quiz->questiondecimalpoints;
+}
+
+/**
+ * Round a grade to the correct number of decimal places, and format it for display.
  *
  * @param object $quiz The quiz table row, only $quiz->decimalpoints is used.
  * @param float $grade The grade to round.
  * @return float
  */
 function quiz_format_question_grade($quiz, $grade) {
-    if (empty($quiz->questiondecimalpoints)) {
-        $quiz->questiondecimalpoints = -1;
-    }
-    if ($quiz->questiondecimalpoints == -1) {
-        return format_float($grade, $quiz->decimalpoints);
-    } else {
-        return format_float($grade, $quiz->questiondecimalpoints);
-    }
+    return format_float($grade, quiz_get_grade_format($quiz));
 }
 
 /**
@@ -636,34 +689,6 @@ function quiz_update_grades($quiz, $userid = 0, $nullifnone = true) {
     } else {
         quiz_grade_item_update($quiz);
     }
-}
-
-/**
- * Update all grades in gradebook.
- */
-function quiz_upgrade_grades() {
-    global $DB;
-
-    $sql = "SELECT COUNT('x')
-              FROM {quiz} a, {course_modules} cm, {modules} m
-             WHERE m.name='quiz' AND m.id=cm.module AND cm.instance=a.id";
-    $count = $DB->count_records_sql($sql);
-
-    $sql = "SELECT a.*, cm.idnumber AS cmidnumber, a.course AS courseid
-              FROM {quiz} a, {course_modules} cm, {modules} m
-             WHERE m.name='quiz' AND m.id=cm.module AND cm.instance=a.id";
-    $rs = $DB->get_recordset_sql($sql);
-    if ($rs->valid()) {
-        $pbar = new progress_bar('quizupgradegrades', 500, true);
-        $i=0;
-        foreach ($rs as $quiz) {
-            $i++;
-            upgrade_set_timeout(60*5); // Set up timeout, may also abort execution.
-            quiz_update_grades($quiz, 0, false);
-            $pbar->update($i, $count, "Updating Quiz grades ($i/$count).");
-        }
-    }
-    $rs->close();
 }
 
 /**
@@ -820,15 +845,10 @@ function quiz_refresh_events($courseid = 0) {
  */
 function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
         $courseid, $cmid, $userid = 0, $groupid = 0) {
-    global $CFG, $COURSE, $USER, $DB;
+    global $CFG, $USER, $DB;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-    if ($COURSE->id == $courseid) {
-        $course = $COURSE;
-    } else {
-        $course = $DB->get_record('course', array('id' => $courseid));
-    }
-
+    $course = get_course($courseid);
     $modinfo = get_fast_modinfo($course);
 
     $cm = $modinfo->cms[$cmid];
@@ -875,11 +895,6 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
     $grader          = has_capability('mod/quiz:viewreports', $context);
     $groupmode       = groups_get_activity_groupmode($cm, $course);
 
-    if (is_null($modinfo->groups)) {
-        // Load all my groups and cache it in modinfo.
-        $modinfo->groups = groups_get_user_groups($course->id);
-    }
-
     $usersgroups = null;
     $aname = format_string($cm->name, true);
     foreach ($attempts as $attempt) {
@@ -890,16 +905,10 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
             }
 
             if ($groupmode == SEPARATEGROUPS and !$accessallgroups) {
-                if (is_null($usersgroups)) {
-                    $usersgroups = groups_get_all_groups($course->id,
-                            $attempt->userid, $cm->groupingid);
-                    if (is_array($usersgroups)) {
-                        $usersgroups = array_keys($usersgroups);
-                    } else {
-                        $usersgroups = array();
-                    }
-                }
-                if (!array_intersect($usersgroups, $modinfo->groups[$cm->id])) {
+                $usersgroups = groups_get_all_groups($course->id,
+                        $attempt->userid, $cm->groupingid);
+                $usersgroups = array_keys($usersgroups);
+                if (!array_intersect($usersgroups, $modinfo->get_groups($cm->groupingid))) {
                     continue;
                 }
             }
@@ -1261,6 +1270,13 @@ function quiz_update_events($quiz, $override = null) {
 }
 
 /**
+ * List the actions that correspond to a view of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = 'r' and edulevel = LEVEL_PARTICIPATING will
+ *       be considered as view action.
+ *
  * @return array
  */
 function quiz_get_view_actions() {
@@ -1268,6 +1284,13 @@ function quiz_get_view_actions() {
 }
 
 /**
+ * List the actions that correspond to a post of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = ('c' || 'u' || 'd') and edulevel = LEVEL_PARTICIPATING
+ *       will be considered as post action.
+ *
  * @return array
  */
 function quiz_get_post_actions() {
@@ -1299,6 +1322,10 @@ function quiz_reset_course_form_definition($mform) {
     $mform->addElement('header', 'quizheader', get_string('modulenameplural', 'quiz'));
     $mform->addElement('advcheckbox', 'reset_quiz_attempts',
             get_string('removeallquizattempts', 'quiz'));
+    $mform->addElement('advcheckbox', 'reset_quiz_user_overrides',
+            get_string('removealluseroverrides', 'quiz'));
+    $mform->addElement('advcheckbox', 'reset_quiz_group_overrides',
+            get_string('removeallgroupoverrides', 'quiz'));
 }
 
 /**
@@ -1306,7 +1333,9 @@ function quiz_reset_course_form_definition($mform) {
  * @return array the defaults.
  */
 function quiz_reset_course_form_defaults($course) {
-    return array('reset_quiz_attempts' => 1);
+    return array('reset_quiz_attempts' => 1,
+                 'reset_quiz_group_overrides' => 1,
+                 'reset_quiz_user_overrides' => 1);
 }
 
 /**
@@ -1370,6 +1399,25 @@ function quiz_reset_userdata($data) {
         $status[] = array(
             'component' => $componentstr,
             'item' => get_string('gradesdeleted', 'quiz'),
+            'error' => false);
+    }
+
+    // Remove user overrides.
+    if (!empty($data->reset_quiz_user_overrides)) {
+        $DB->delete_records_select('quiz_overrides',
+                'quiz IN (SELECT id FROM {quiz} WHERE course = ?) AND userid IS NOT NULL', array($data->courseid));
+        $status[] = array(
+            'component' => $componentstr,
+            'item' => get_string('useroverridesdeleted', 'quiz'),
+            'error' => false);
+    }
+    // Remove group overrides.
+    if (!empty($data->reset_quiz_group_overrides)) {
+        $DB->delete_records_select('quiz_overrides',
+                'quiz IN (SELECT id FROM {quiz} WHERE course = ?) AND groupid IS NOT NULL', array($data->courseid));
+        $status[] = array(
+            'component' => $componentstr,
+            'item' => get_string('groupoverridesdeleted', 'quiz'),
             'error' => false);
     }
 
@@ -1545,9 +1593,9 @@ function quiz_supports($feature) {
     switch($feature) {
         case FEATURE_GROUPS:                    return true;
         case FEATURE_GROUPINGS:                 return true;
-        case FEATURE_GROUPMEMBERSONLY:          return true;
         case FEATURE_MOD_INTRO:                 return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS:   return true;
+        case FEATURE_COMPLETION_HAS_RULES:      return true;
         case FEATURE_GRADE_HAS_GRADE:           return true;
         case FEATURE_GRADE_OUTCOMES:            return true;
         case FEATURE_BACKUP_MOODLE2:            return true;
@@ -1777,4 +1825,54 @@ function quiz_get_navigation_options() {
         QUIZ_NAVMETHOD_FREE => get_string('navmethod_free', 'quiz'),
         QUIZ_NAVMETHOD_SEQ  => get_string('navmethod_seq', 'quiz')
     );
+}
+
+/**
+ * Obtains the automatic completion state for this quiz on any conditions
+ * in quiz settings, such as if all attempts are used or a certain grade is achieved.
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not. (If no conditions, then return
+ *   value depends on comparison type)
+ */
+function quiz_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
+    global $CFG;
+
+    $quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
+    if (!$quiz->completionattemptsexhausted && !$quiz->completionpass) {
+        return $type;
+    }
+
+    // Check if the user has used up all attempts.
+    if ($quiz->completionattemptsexhausted) {
+        $attempts = quiz_get_user_attempts($quiz->id, $userid, 'finished', true);
+        if ($attempts) {
+            $lastfinishedattempt = end($attempts);
+            $context = context_module::instance($cm->id);
+            $quizobj = quiz::create($quiz->id, $userid);
+            $accessmanager = new quiz_access_manager($quizobj, time(),
+                    has_capability('mod/quiz:ignoretimelimits', $context, $userid, false));
+            if ($accessmanager->is_finished(count($attempts), $lastfinishedattempt)) {
+                return true;
+            }
+        }
+    }
+
+    // Check for passing grade.
+    if ($quiz->completionpass) {
+        require_once($CFG->libdir . '/gradelib.php');
+        $item = grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod',
+                'itemmodule' => 'quiz', 'iteminstance' => $cm->instance, 'outcomeid' => null));
+        if ($item) {
+            $grades = grade_grade::fetch_users_grades($item, array($userid), false);
+            if (!empty($grades[$userid])) {
+                return $grades[$userid]->is_passed($item);
+            }
+        }
+    }
+    return false;
 }

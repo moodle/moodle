@@ -308,4 +308,91 @@ class page_editor {
 
         return $DB->delete_records('assignfeedback_editpdf_annot', array('id'=>$annotationid));
     }
+
+    /**
+     * Copy annotations, comments, pages, and other required content from the source user to the current group member
+     * being procssed when using applytoall.
+     *
+     * @param int|\assign $assignment
+     * @param stdClass $grade
+     * @param int $sourceuserid
+     * @return bool
+     */
+    public static function copy_drafts_from_to($assignment, $grade, $sourceuserid) {
+        global $DB;
+
+        // Delete any existing annotations and comments from current user.
+        $DB->delete_records('assignfeedback_editpdf_annot', array('gradeid' => $grade->id));
+        $DB->delete_records('assignfeedback_editpdf_cmnt', array('gradeid' => $grade->id));
+        // Get gradeid, annotations and comments from sourceuserid.
+        $sourceusergrade = $assignment->get_user_grade($sourceuserid, true, $grade->attemptnumber);
+        $annotations = $DB->get_records('assignfeedback_editpdf_annot', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
+        $comments = $DB->get_records('assignfeedback_editpdf_cmnt', array('gradeid' => $sourceusergrade->id, 'draft' => 1));
+        $contextid = $assignment->get_context()->id;
+        $sourceitemid = $sourceusergrade->id;
+
+        // Add annotations and comments to current user to generate feedback file.
+        foreach ($annotations as $annotation) {
+            $annotation->gradeid = $grade->id;
+            $DB->insert_record('assignfeedback_editpdf_annot', $annotation);
+        }
+        foreach ($comments as $comment) {
+            $comment->gradeid = $grade->id;
+            $DB->insert_record('assignfeedback_editpdf_cmnt', $comment);
+        }
+
+        $fs = get_file_storage();
+
+        // Copy the stamp files.
+        self::replace_files_from_to($fs, $contextid, $sourceitemid, $grade->id, document_services::STAMPS_FILEAREA, true);
+
+        // Copy the PAGE_IMAGE_FILEAREA files.
+        self::replace_files_from_to($fs, $contextid, $sourceitemid, $grade->id, document_services::PAGE_IMAGE_FILEAREA);
+
+        return true;
+    }
+
+    /**
+     * Replace the area files in the specified area with those in the source item id.
+     *
+     * @param \file_storage $fs The file storage class
+     * @param int $contextid The ID of the context for the assignment.
+     * @param int $sourceitemid The itemid to copy from - typically the source grade id.
+     * @param int $itemid The itemid to copy to - typically the target grade id.
+     * @param string $area The file storage area.
+     * @param bool $includesubdirs Whether to copy the content of sub-directories too.
+     */
+    public static function replace_files_from_to($fs, $contextid, $sourceitemid, $itemid, $area, $includesubdirs = false) {
+        $component = 'assignfeedback_editpdf';
+        // Remove the existing files within this area.
+        $fs->delete_area_files($contextid, $component, $area, $itemid);
+
+        // Copy the files from the source area.
+        if ($files = $fs->get_area_files($contextid, $component, $area, $sourceitemid,
+                                         "filename", $includesubdirs)) {
+            foreach ($files as $file) {
+                $newrecord = new \stdClass();
+                $newrecord->contextid = $contextid;
+                $newrecord->itemid = $itemid;
+                $fs->create_file_from_storedfile($newrecord, $file);
+            }
+        }
+    }
+
+    /**
+     * Delete the draft annotations and comments.
+     *
+     * This is intended to be used when the version of the PDF has changed and the annotations
+     * might not be relevant any more, therefore we should delete them.
+     *
+     * @param int $gradeid The grade ID.
+     * @return bool
+     */
+    public static function delete_draft_content($gradeid) {
+        global $DB;
+        $conditions = array('gradeid' => $gradeid, 'draft' => 1);
+        $result = $DB->delete_records('assignfeedback_editpdf_annot', $conditions);
+        $result = $result && $DB->delete_records('assignfeedback_editpdf_cmnt', $conditions);
+        return $result;
+    }
 }

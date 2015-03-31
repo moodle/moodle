@@ -40,7 +40,7 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
     And I follow "Course 1"
     And I follow "Choice 1"
     Then I should not see "Student 1"
-    And I should not see "User choose this option"
+    And I should not see "Users who chose this option"
     And I hover ".results .graph img" "css_element"
 
   @javascript
@@ -61,4 +61,4 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
     And I follow "Course 1"
     And I follow "Choice 1"
     Then I should see "Student 1"
-    And I should see "User choose this option"
+    And I should see "Users who chose this option"

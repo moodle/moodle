@@ -1,6 +1,20 @@
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
+=== 2.9 ===
+
+* Do not update user->firstaccess from any auth plugin, the complete_user_login() does it automatically.
+
+* Add user_add_password_history() to user_signup() method.
+
+=== 2.8 ===
+
+* \core\session\manager::session_exists() now verifies the session is active
+  instead of only checking the session data is present in low level session handler
+
+* MNet is no longer sending logs between the client and parent sites. auth_plugin_mnet::refresh_log() is now deprecated. There is
+  no alternative. Please don't use this function.
+
 === 2.7 ===
 
 * If you are returning a url in method change_password_url() from config, please make sure it is set before trying to use it.

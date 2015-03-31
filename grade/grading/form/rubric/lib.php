@@ -668,15 +668,15 @@ class gradingform_rubric_controller extends gradingform_controller {
         $rubric_criteria = new external_multiple_structure(
             new external_single_structure(
                 array(
-                   'id'   => new external_value(PARAM_INT, 'criterion id'),
-                   'sortorder' => new external_value(PARAM_INT, 'sortorder'),
+                   'id'   => new external_value(PARAM_INT, 'criterion id', VALUE_OPTIONAL),
+                   'sortorder' => new external_value(PARAM_INT, 'sortorder', VALUE_OPTIONAL),
                    'description' => new external_value(PARAM_RAW, 'description', VALUE_OPTIONAL),
                    'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
                    'levels' => new external_multiple_structure(
                                    new external_single_structure(
                                        array(
-                                        'id' => new external_value(PARAM_INT, 'level id'),
-                                        'score' => new external_value(PARAM_FLOAT, 'score'),
+                                        'id' => new external_value(PARAM_INT, 'level id', VALUE_OPTIONAL),
+                                        'score' => new external_value(PARAM_FLOAT, 'score', VALUE_OPTIONAL),
                                         'definition' => new external_value(PARAM_RAW, 'definition', VALUE_OPTIONAL),
                                         'definitionformat' => new external_format_value('definition', VALUE_OPTIONAL)
                                        )
@@ -754,6 +754,37 @@ class gradingform_rubric_instance extends gradingform_instance {
             $DB->insert_record('gradingform_rubric_fillings', $params);
         }
         return $instanceid;
+    }
+
+    /**
+     * Determines whether the submitted form was empty.
+     *
+     * @param array $elementvalue value of element submitted from the form
+     * @return boolean true if the form is empty
+     */
+    public function is_empty_form($elementvalue) {
+        $criteria = $this->get_controller()->get_definition()->rubric_criteria;
+
+        foreach ($criteria as $id => $criterion) {
+            if (isset($elementvalue['criteria'][$id]['levelid'])
+                    || !empty($elementvalue['criteria'][$id]['remark'])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Removes the attempt from the gradingform_guide_fillings table
+     * @param array $data the attempt data
+     */
+    public function clear_attempt($data) {
+        global $DB;
+
+        foreach ($data['criteria'] as $criterionid => $record) {
+            $DB->delete_records('gradingform_rubric_fillings',
+                array('criterionid' => $criterionid, 'instanceid' => $this->get_id()));
+        }
     }
 
     /**

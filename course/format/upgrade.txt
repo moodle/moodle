@@ -2,8 +2,22 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 2.9 ===
+* Course formats may support deleting sections, see MDL-10405 for more details.
+  format_section_renderer_base::section_edit_controls() is now also called for
+  stealth sections and it also returns "delete" control.
+
+=== 2.8 ===
+* The activity chooser now uses M.course.format.get_sectionwrapperclass()
+  to determine the section selector, rather than a hard-coded `li.section`.
+* Activity duplication in /course/modduplicate.php is deprecated and is now done in /course/mod.php.  Deprecated calls will be honored by
+  redirecting to /course/mod.php for 3rd party plugin support.
+* New method format_base::section_get_available_hook() allows plugins to override section availability.
+
 === 2.7 ===
 * The ->testedbrowsers array no longer needs to be defined in supports_ajax().
+* format_section_renderer_base::section_hidden has an new second optional argument $courseorid.
+  If provided the section name is printed in the not available string when displaying the hidden section.
 
 === 2.6 ===
 

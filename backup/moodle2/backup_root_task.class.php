@@ -129,11 +129,10 @@ class backup_root_task extends backup_task {
         $activities->add_dependency($badges);
         $users->add_dependency($badges);
 
-        // Define calendar events (dependent of users)
+        // Define calendar events.
         $events = new backup_calendarevents_setting('calendarevents', base_setting::IS_BOOLEAN, true);
         $events->set_ui(new backup_setting_ui_checkbox($events, get_string('rootsettingcalendarevents', 'backup')));
         $this->add_setting($events);
-        $users->add_dependency($events);
 
         // Define completion (dependent of users)
         $completion = new backup_userscompletion_setting('userscompletion', base_setting::IS_BOOLEAN, true);
@@ -152,10 +151,17 @@ class backup_root_task extends backup_task {
         $gradehistories->set_ui(new backup_setting_ui_checkbox($gradehistories, get_string('rootsettinggradehistories', 'backup')));
         $this->add_setting($gradehistories);
         $users->add_dependency($gradehistories);
+        // The restore does not process the grade histories when some activities are ignored.
+        // So let's define a dependency to prevent false expectations from our users.
+        $activities->add_dependency($gradehistories);
 
         // Define question bank inclusion setting.
         $questionbank = new backup_generic_setting('questionbank', base_setting::IS_BOOLEAN, true);
         $questionbank->set_ui(new backup_setting_ui_checkbox($questionbank, get_string('rootsettingquestionbank', 'backup')));
         $this->add_setting($questionbank);
+
+        $groups = new backup_groups_setting('groups', base_setting::IS_BOOLEAN, true);
+        $groups->set_ui(new backup_setting_ui_checkbox($groups, get_string('rootsettinggroups', 'backup')));
+        $this->add_setting($groups);
     }
 }

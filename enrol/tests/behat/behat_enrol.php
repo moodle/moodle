@@ -58,4 +58,42 @@ class behat_enrol extends behat_base {
         );
     }
 
+    /**
+     * Enrols the specified user in the current course without options.
+     *
+     * This is a simple step, to set enrolment options would be better to
+     * create a separate step as a TableNode will be required.
+     *
+     * @Given /^I enrol "(?P<user_fullname_string>(?:[^"]|\\")*)" user as "(?P<rolename_string>(?:[^"]|\\")*)"$/
+     * @param string $userfullname
+     * @param string $rolename
+     * @return Given[]
+     */
+    public function i_enrol_user_as($userfullname, $rolename) {
+
+        $steps = array(
+            new Given('I follow "' . get_string('enrolledusers', 'enrol') . '"'),
+            new Given('I press "' . get_string('enrolusers', 'enrol') . '"')
+        );
+
+        if ($this->running_javascript()) {
+
+            // We have a div here, not a tr.
+            $userliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($userfullname);
+            $userrowxpath = "//div[contains(concat(' ',normalize-space(@class),' '),' user ')][contains(., $userliteral)]";
+
+            $steps[] = new Given('I set the field "' . get_string('assignroles', 'role') . '" to "' . $rolename . '"');
+            $steps[] = new Given('I click on "' . get_string('enrol', 'enrol') . '" "button" in the "' . $userrowxpath . '" "xpath_element"');
+            $steps[] = new Given('I press "' . get_string('finishenrollingusers', 'enrol') . '"');
+
+        } else {
+
+            $steps[] = new Given('I set the field "' . get_string('assignrole', 'role') . '" to "' . $rolename . '"');
+            $steps[] = new Given('I set the field "addselect" to "' . $userfullname . '"');
+            $steps[] = new Given('I press "add"');
+        }
+
+        return $steps;
+    }
+
 }

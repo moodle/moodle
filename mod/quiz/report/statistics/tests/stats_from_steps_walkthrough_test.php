@@ -72,48 +72,13 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
      */
     public function test_walkthrough_from_csv($quizsettings, $csvdata) {
 
-        // CSV data files for these tests were generated using :
-        // https://github.com/jamiepratt/moodle-quiz-tools/tree/master/responsegenerator
+        $this->create_quiz_simulate_attempts_and_check_results($quizsettings, $csvdata);
 
-        $this->resetAfterTest(true);
-        question_bank::get_qtype('random')->clear_caches_before_testing();
-
-        $this->create_quiz($quizsettings, $csvdata['questions']);
-
-        $attemptids = $this->walkthrough_attempts($csvdata['steps']);
-
-        if (isset($csvdata['results'])) {
-            $this->check_attempts_results($csvdata['results'], $attemptids);
-        }
-
-        $this->report = new quiz_statistics_report();
         $whichattempts = QUIZ_GRADEAVERAGE; // All attempts.
         $whichtries = question_attempt::ALL_TRIES;
         $groupstudents = array();
-        $questions = $this->report->load_and_initialise_questions_for_calculations($this->quiz);
-        list($quizstats, $questionstats) = $this->report->get_all_stats_and_analysis($this->quiz,
-                                                                                     $whichattempts,
-                                                                                     $whichtries,
-                                                                                     $groupstudents,
-                                                                                     $questions);
-
-        $qubaids = quiz_statistics_qubaids_condition($this->quiz->id, $groupstudents, $whichattempts);
-
-        // We will create some quiz and question stat calculator instances and some response analyser instances, just in order
-        // to check the last analysed time then returned.
-        $quizcalc = new \quiz_statistics\calculator();
-        // Should not be a delay of more than one second between the calculation of stats above and here.
-        $this->assertTimeCurrent($quizcalc->get_last_calculated_time($qubaids));
-
-        $qcalc = new \core_question\statistics\questions\calculator($questions);
-        $this->assertTimeCurrent($qcalc->get_last_calculated_time($qubaids));
-
-        if (isset($csvdata['responsecounts'])) {
-            $this->check_response_counts($csvdata['responsecounts'], $qubaids, $questions, $whichtries);
-        }
-        if (isset($csvdata['qstats'])) {
-            $this->check_question_stats($csvdata['qstats'], $questionstats);
-        }
+        list($questions, $quizstats, $questionstats, $qubaids) =
+                    $this->check_stats_calculations_and_response_analysis($csvdata, $whichattempts, $whichtries, $groupstudents);
         if ($quizsettings['testnumber'] === '00') {
             $this->check_variants_count_for_quiz_00($questions, $questionstats, $whichtries, $qubaids);
             $this->check_quiz_stats_for_quiz_00($quizstats);
@@ -387,6 +352,46 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
         foreach ($quizstatsexpected as $statname => $statvalue) {
             $this->assertEquals($statvalue, $quizstats->$statname, $quizstats->$statname, abs($statvalue) * 1.5e-5);
         }
+    }
+
+    /**
+     * Check the question stats and the response counts used in the statistics report. If the appropriate files exist in fixtures/.
+     *
+     * @param PHPUnit_Extensions_Database_DataSet_ITable[] $csvdata Data loaded from csv files for this test.
+     * @param string $whichattempts
+     * @param string $whichtries
+     * @param int[] $groupstudents
+     * @return array with contents 0 => $questions, 1 => $quizstats, 2=> $questionstats, 3=> $qubaids Might be needed for further
+     *               testing.
+     */
+    protected function check_stats_calculations_and_response_analysis($csvdata, $whichattempts, $whichtries, $groupstudents) {
+        $this->report = new quiz_statistics_report();
+        $questions = $this->report->load_and_initialise_questions_for_calculations($this->quiz);
+        list($quizstats, $questionstats) = $this->report->get_all_stats_and_analysis($this->quiz,
+                                                                                     $whichattempts,
+                                                                                     $whichtries,
+                                                                                     $groupstudents,
+                                                                                     $questions);
+
+        $qubaids = quiz_statistics_qubaids_condition($this->quiz->id, $groupstudents, $whichattempts);
+
+        // We will create some quiz and question stat calculator instances and some response analyser instances, just in order
+        // to check the last analysed time then returned.
+        $quizcalc = new \quiz_statistics\calculator();
+        // Should not be a delay of more than one second between the calculation of stats above and here.
+        $this->assertTimeCurrent($quizcalc->get_last_calculated_time($qubaids));
+
+        $qcalc = new \core_question\statistics\questions\calculator($questions);
+        $this->assertTimeCurrent($qcalc->get_last_calculated_time($qubaids));
+
+        if (isset($csvdata['responsecounts'])) {
+            $this->check_response_counts($csvdata['responsecounts'], $qubaids, $questions, $whichtries);
+        }
+        if (isset($csvdata['qstats'])) {
+            $this->check_question_stats($csvdata['qstats'], $questionstats);
+            return array($questions, $quizstats, $questionstats, $qubaids);
+        }
+        return array($questions, $quizstats, $questionstats, $qubaids);
     }
 
 }

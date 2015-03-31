@@ -96,6 +96,8 @@ if (empty($pending)) {
     echo $OUTPUT->heading(get_string('nopendingcourses'));
 } else {
     echo $OUTPUT->heading(get_string('coursespending'));
+    $role = $DB->get_record('role', array('id' => $CFG->creatornewroleid), '*', MUST_EXIST);
+    echo $OUTPUT->notification(get_string('courserequestwarning', 'core', role_get_name($role)), 'notifyproblem');
 
 /// Build a table of all the requests.
     $table = new html_table();
@@ -116,7 +118,7 @@ if (empty($pending)) {
         $row[] = format_string($course->shortname);
         $row[] = format_string($course->fullname);
         $row[] = fullname($course->get_requester());
-        $row[] = $course->summary;
+        $row[] = format_text($course->summary, $course->summaryformat);
         $row[] = $category->get_formatted_name();
         $row[] = format_string($course->reason);
         $row[] = $OUTPUT->single_button(new moodle_url($baseurl, array('approve' => $course->id, 'sesskey' => sesskey())), get_string('approve'), 'get') .

@@ -59,6 +59,17 @@ final class t3lib_div {
 	const SYSLOG_SEVERITY_ERROR = 3;
 	const SYSLOG_SEVERITY_FATAL = 4;
 
+	const ENV_TRUSTED_HOSTS_PATTERN_ALLOW_ALL = '.*';
+	const ENV_TRUSTED_HOSTS_PATTERN_SERVER_NAME = 'SERVER_NAME';
+
+	/**
+	 * State of host header value security check
+	 * in order to avoid unnecessary multiple checks during one request
+	 *
+	 * @var bool
+	 */
+	static protected $allowHostHeaderValue = FALSE;
+
 	/**
 	 * Singleton instances returned by makeInstance, using the class names as
 	 * array keys
@@ -3570,6 +3581,12 @@ final class t3lib_div {
 						$retVal = $host;
 					}
 				}
+				if (!self::isAllowedHostHeaderValue($retVal)) {
+					throw new UnexpectedValueException(
+						'The current host header value does not match the configured trusted hosts pattern! Check the pattern defined in $GLOBALS[\'TYPO3_CONF_VARS\'][\'SYS\'][\'trustedHostsPattern\'] and adapt it, if you want to allow the current host header \'' . $retVal . '\' for your installation.',
+						1396795884
+					);
+				}
 				break;
 				// These are let through without modification
 			case 'HTTP_REFERER':
@@ -3688,6 +3705,51 @@ final class t3lib_div {
 				break;
 		}
 		return $retVal;
+	}
+
+	/**
+	 * Checks if the provided host header value matches the trusted hosts pattern.
+	 * If the pattern is not defined (which only can happen early in the bootstrap), deny any value.
+	 *
+	 * @param string $hostHeaderValue HTTP_HOST header value as sent during the request (may include port)
+	 * @return bool
+	 */
+	static public function isAllowedHostHeaderValue($hostHeaderValue) {
+		if (self::$allowHostHeaderValue === TRUE) {
+			return TRUE;
+		}
+
+		// Allow all install tool requests
+		// We accept this risk to have the install tool always available
+		// Also CLI needs to be allowed as unfortunately AbstractUserAuthentication::getAuthInfoArray() accesses HTTP_HOST without reason on CLI
+		if (defined('TYPO3_REQUESTTYPE') && (TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL) || (TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_CLI)) {
+			return self::$allowHostHeaderValue = TRUE;
+		}
+
+		// Deny the value if trusted host patterns is empty, which means we are early in the bootstrap
+		if (empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['trustedHostsPattern'])) {
+			return FALSE;
+		}
+
+		if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['trustedHostsPattern'] === self::ENV_TRUSTED_HOSTS_PATTERN_ALLOW_ALL) {
+			self::$allowHostHeaderValue = TRUE;
+		} elseif ($GLOBALS['TYPO3_CONF_VARS']['SYS']['trustedHostsPattern'] === self::ENV_TRUSTED_HOSTS_PATTERN_SERVER_NAME) {
+			// Allow values that equal the server name
+			// Note that this is only secure if name base virtual host are configured correctly in the webserver
+			$defaultPort = self::getIndpEnv('TYPO3_SSL') ? '443' : '80';
+			$parsedHostValue = parse_url('http://' . $hostHeaderValue);
+			if (isset($parsedHostValue['port'])) {
+				self::$allowHostHeaderValue = ($parsedHostValue['host'] === $_SERVER['SERVER_NAME'] && (string)$parsedHostValue['port'] === $_SERVER['SERVER_PORT']);
+			} else {
+				self::$allowHostHeaderValue = ($hostHeaderValue === $_SERVER['SERVER_NAME'] && $defaultPort === $_SERVER['SERVER_PORT']);
+			}
+		} else {
+			// In case name based virtual hosts are not possible, we allow setting a trusted host pattern
+			// See https://typo3.org/teams/security/security-bulletins/typo3-core/typo3-core-sa-2014-001/ for further details
+			self::$allowHostHeaderValue = (bool)preg_match('/^' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['trustedHostsPattern'] . '$/', $hostHeaderValue);
+		}
+
+		return self::$allowHostHeaderValue;
 	}
 
 	/**
@@ -4846,21 +4908,61 @@ final class t3lib_div {
 		}
 
 			// Create new instance and call constructor with parameters
-		if (func_num_args() > 1) {
-			$constructorArguments = func_get_args();
-			array_shift($constructorArguments);
-
-			$reflectedClass = new ReflectionClass($finalClassName);
-			$instance = $reflectedClass->newInstanceArgs($constructorArguments);
-		} else {
-			$instance = new $finalClassName;
-		}
+		$instance = static::instantiateClass($finalClassName, func_get_args());
 
 			// Register new singleton instance
 		if ($instance instanceof t3lib_Singleton) {
 			self::$singletonInstances[$finalClassName] = $instance;
 		}
 
+		return $instance;
+	}
+
+	/**
+	 * Speed optimized alternative to ReflectionClass::newInstanceArgs()
+	 *
+	 * @param string $className Name of the class to instantiate
+	 * @param array $arguments Arguments passed to self::makeInstance() thus the first one with index 0 holds the requested class name
+	 * @return mixed
+	 */
+	protected static function instantiateClass($className, $arguments) {
+		switch (count($arguments)) {
+			case 1:
+				$instance = new $className();
+				break;
+			case 2:
+				$instance = new $className($arguments[1]);
+				break;
+			case 3:
+				$instance = new $className($arguments[1], $arguments[2]);
+				break;
+			case 4:
+				$instance = new $className($arguments[1], $arguments[2], $arguments[3]);
+				break;
+			case 5:
+				$instance = new $className($arguments[1], $arguments[2], $arguments[3], $arguments[4]);
+				break;
+			case 6:
+				$instance = new $className($arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5]);
+				break;
+			case 7:
+				$instance = new $className($arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5], $arguments[6]);
+				break;
+			case 8:
+				$instance = new $className($arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5], $arguments[6], $arguments[7]);
+				break;
+			case 9:
+				$instance = new $className($arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5], $arguments[6], $arguments[7], $arguments[8]);
+				break;
+			default:
+				// The default case for classes with constructors that have more than 8 arguments.
+				// This will fail when one of the arguments shall be passed by reference.
+				// In case we really need to support this edge case, we can implement the solution from here: https://review.typo3.org/26344
+				$class = new ReflectionClass($className);
+				array_shift($arguments);
+				$instance = $class->newInstanceArgs($arguments);
+				return $instance;
+		}
 		return $instance;
 	}
 

@@ -3,6 +3,46 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
+=== 2.9 ===
+
+* The deprecated functions can not be added to services anymore and
+  a debugging message for developers is triggered when viewing an existing
+  services using them. It is recommended to replace calls to the deprecated
+  functions for calls to the proposed replacements. If you are using a moodle
+  mobile app fork, it is recommended to update your customisations on top of
+  the latest moodle mobile app version.
+
+  The web services functions that will be finally deprecated in the next
+  moodle version are:
+    - moodle_course_create_courses
+    - moodle_course_get_courses
+    - moodle_enrol_get_enrolled_users
+    - moodle_enrol_get_users_courses
+    - moodle_enrol_manual_enrol_users
+    - moodle_file_get_files
+    - moodle_file_upload
+    - moodle_group_add_groupmembers
+    - moodle_group_create_groups
+    - moodle_group_delete_groupmembers
+    - moodle_group_delete_groups
+    - moodle_group_get_course_groups
+    - moodle_group_get_groupmembers
+    - moodle_group_get_groups
+    - moodle_message_send_instantmessages
+    - moodle_notes_create_notes
+    - moodle_role_assign
+    - moodle_role_unassign
+    - moodle_user_create_users
+    - moodle_user_delete_users
+    - moodle_user_get_course_participants_by_id
+    - moodle_user_get_users_by_courseid
+    - moodle_user_get_users_by_id
+    - moodle_user_update_users
+    - core_grade_get_definitions
+    - core_user_get_users_by_id
+    - moodle_webservice_get_siteinfo
+
+
 === 2.7 ===
 
 * All webservice server.php and simpleserver.php scripts must define('WS_SERVER', true)

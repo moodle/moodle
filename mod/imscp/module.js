@@ -33,6 +33,10 @@ M.mod_imscp.init = function(Y) {
 
     Y.use('yui2-resize', 'yui2-dragdrop', 'yui2-container', 'yui2-button', 'yui2-layout', 'yui2-treeview', 'yui2-json', 'yui2-event', function(Y) {
 
+        var imscp_activate_item_by_index = function(index) {
+            imscp_activate_item(Y.YUI2.widget.TreeView.getNode('imscp_tree', index));
+        };
+
         var imscp_activate_item = function(node) {
             if (!node) {
                 return;
@@ -41,21 +45,53 @@ M.mod_imscp.init = function(Y) {
             imscp_current_node.highlight();
 
             var content = new Y.YUI2.util.Element('imscp_content');
-            try {
-                // first try IE way - it can not set name attribute later
-                // and also it has some restrictions on DOM access from object tag
-                var obj = document.createElement('<iframe id="imscp_object" src="'+node.href+'">');
-            } catch (e) {
-                var obj = document.createElement('object');
-                obj.setAttribute('id', 'imscp_object');
-                obj.setAttribute('type', 'text/html');
-                obj.setAttribute('data', node.href);
+            var obj;
+            if (node.href) {
+                try {
+                    // First try IE way - it can not set name attribute later
+                    // and also it has some restrictions on DOM access from object tag.
+                    obj = document.createElement('<iframe id="imscp_object" src="' + node.href + '">');
+                } catch (e) {
+                    obj = document.createElement('object');
+                    obj.setAttribute('id', 'imscp_object');
+                    obj.setAttribute('type', 'text/html');
+                    obj.setAttribute('data', node.href);
+                }
+            } else {
+                // No href, so create links to children.
+                obj = document.createElement('div');
+                obj.setAttribute('id', 'imscp_child_list');
+
+                var title = document.createElement('h2');
+                title.appendChild(document.createTextNode(node.label));
+                title.setAttribute('class', 'sectionname');
+                obj.appendChild(title);
+
+                var ul = document.createElement('ul');
+                obj.appendChild(ul);
+                for (var i = 0; i < node.children.length; i++) {
+                    var childnode = node.children[i];
+                    var li = document.createElement('li');
+                    var a = document.createElement('a');
+                    a.appendChild(document.createTextNode(childnode.label));
+                    a.setAttribute('id', 'ref_' + childnode.index);
+                    Y.YUI2.util.Event.addListener(a, "click", function () {
+                        imscp_activate_item_by_index(this.id.substr(4));
+                    });
+                    ul.appendChild(li);
+                    li.appendChild(a);
+                }
             }
             var old = Y.YUI2.util.Dom.get('imscp_object');
             if (old) {
                 content.replaceChild(obj, old);
             } else {
-                content.appendChild(obj);
+                old = Y.YUI2.util.Dom.get('imscp_child_list');
+                if (old) {
+                    content.replaceChild(obj, old);
+                } else {
+                    content.appendChild(obj);
+                }
             }
             imscp_resize_frame();
 
@@ -75,17 +111,16 @@ M.mod_imscp.init = function(Y) {
             imscp_buttons[4].set('disabled', (imscp_skipnext(imscp_current_node) == null));
         };
 
-
         var imscp_resize_layout = function(alsowidth) {
             if (alsowidth) {
                 var layout = Y.YUI2.util.Dom.get('imscp_layout');
                 var newwidth = imscp_get_htmlelement_size('maincontent', 'width');
                 layout.style.width = '600px';
                 if (newwidth > 600) {
-                    layout.style.width = newwidth+'px';
+                    layout.style.width = newwidth + 'px';
                 }
             }
-            // make sure that the max width of the TOC doesn't go to far
+            // Make sure that the max width of the TOC doesn't go to far.
 
             var left = imscp_layout_widget.getUnitByPosition('left');
             var maxwidth = parseInt(Y.YUI2.util.Dom.getStyle('imscp_layout', 'width'));
@@ -101,7 +136,7 @@ M.mod_imscp.init = function(Y) {
             if (newheight < 400) {
                 newheight = 400;
             }
-            imscp_layout_widget.setStyle('height', newheight+'px');
+            imscp_layout_widget.setStyle('height', newheight + 'px');
 
             imscp_layout_widget.render();
             imscp_resize_frame();
@@ -111,7 +146,7 @@ M.mod_imscp.init = function(Y) {
             var val = Y.YUI2.util.Dom.getStyle(el, prop);
             if (val == 'auto') {
                 if (el.get) {
-                    el = el.get('element'); // get real HTMLElement from YUI element
+                    el = el.get('element'); // Get real HTMLElement from YUI element.
                 }
                 val = Y.YUI2.util.Dom.getComputedStyle(Y.YUI2.util.Dom.get(el), prop);
             }
@@ -119,23 +154,34 @@ M.mod_imscp.init = function(Y) {
         };
 
         var imscp_resize_frame = function() {
-            var obj = Y.YUI2.util.Dom.get('imscp_object');
+            obj = Y.YUI2.util.Dom.get('imscp_object');
             if (obj) {
                 var content = imscp_layout_widget.getUnitByPosition('center').get('wrap');
-                // basically trap IE6 and 7
+                // Basically trap IE6 and 7.
                 if (Y.YUI2.env.ua.ie > 5 && Y.YUI2.env.ua.ie < 8) {
                     if( obj.style.setAttribute ) {
-                        obj.style.setAttribute("cssText", 'width: ' +(content.offsetWidth - 6)+'px; height: ' + (content.offsetHeight - 10)+'px;');
+                        obj.style.setAttribute("cssText", 'width: ' + (content.offsetWidth - 6) + 'px; height: ' + (content.offsetHeight - 10) + 'px;');
                     }
                     else {
-                        obj.style.setAttribute('width', (content.offsetWidth - 6)+'px', 0);
-                        obj.style.setAttribute('height', (content.offsetHeight - 10)+'px', 0);
+                        obj.style.setAttribute('width', (content.offsetWidth - 6) + 'px', 0);
+                        obj.style.setAttribute('height', (content.offsetHeight - 10) + 'px', 0);
                     }
                 }
                 else {
-                    obj.style.width = (content.offsetWidth - 6)+'px';
-                    obj.style.height = (content.offsetHeight - 10)+'px';
+                    obj.style.width = (content.offsetWidth - 6) + 'px';
+                    obj.style.height = (content.offsetHeight - 10) + 'px';
                 }
+            }
+        };
+
+        var imscp_firstlinked = function(node) {
+            // Return first item with an href.
+            if (node.href) {
+                return node;
+            } else if (node.children) {
+                return imscp_firstlinked(node.children[0]);
+            } else {
+                return null;
             }
         };
 
@@ -148,7 +194,7 @@ M.mod_imscp.init = function(Y) {
 
         var imscp_lastchild = function(node) {
             if (node.children.length) {
-                return imscp_lastchild(node.children[node.children.length-1]);
+                return imscp_lastchild(node.children[node.children.length - 1]);
             } else {
                 return node;
             }
@@ -186,16 +232,15 @@ M.mod_imscp.init = function(Y) {
             return null;
         };
 
-
-        // layout
-        Y.YUI2.widget.LayoutUnit.prototype.STR_COLLAPSE = M.str.moodle.hide;
-        Y.YUI2.widget.LayoutUnit.prototype.STR_EXPAND = M.str.moodle.show;
+        // Layout.
+        Y.YUI2.widget.LayoutUnit.prototype.STR_COLLAPSE = M.util.get_string('hide', 'moodle');
+        Y.YUI2.widget.LayoutUnit.prototype.STR_EXPAND = M.util.get_string('show', 'moodle');
 
         imscp_layout_widget = new Y.YUI2.widget.Layout('imscp_layout', {
             minWidth: 600,
             minHeight: 400,
             units: [
-                { position: 'left', body: 'imscp_toc', header: M.str.imscp.toc, width: 250, resize: true, gutter: '2px 5px 5px 2px', collapse: true, minWidth:150},
+                { position: 'left', body: 'imscp_toc', header: M.util.get_string('toc', 'imscp'), width: 250, resize: true, gutter: '2px 5px 5px 2px', collapse: true, minWidth:150},
                 { position: 'center', body: '<div id="imscp_content"></div>', gutter: '2px 5px 5px 2px', scroll: true}
             ]
         });
@@ -208,18 +253,18 @@ M.mod_imscp.init = function(Y) {
             imscp_resize_frame();
         });
 
-        // ugly resizing hack that works around problems with resizing of iframes and objects
+        // Ugly resizing hack that works around problems with resizing of iframes and objects.
         left._resize.on('startResize', function() {
-            var obj = Y.YUI2.util.Dom.get('imscp_object');
+            obj = Y.YUI2.util.Dom.get('imscp_object');
             obj.style.display = 'none';
         });
         left._resize.on('endResize', function() {
-            var obj = Y.YUI2.util.Dom.get('imscp_object');
+            obj = Y.YUI2.util.Dom.get('imscp_object');
             obj.style.display = 'block';
             imscp_resize_frame();
         });
 
-        // TOC tree
+        // TOC tree.
         var tree = new Y.YUI2.widget.TreeView('imscp_tree');
         tree.singleNodeHighlight = true;
         tree.subscribe('clickEvent', function(oArgs) {
@@ -248,7 +293,7 @@ M.mod_imscp.init = function(Y) {
         var navbar = Y.YUI2.util.Dom.get('imscp_nav');
         navbar.style.display = 'block';
 
-        // navigation
+        // Navigation.
         imscp_buttons[0] = new Y.YUI2.widget.Button('nav_skipprev');
         imscp_buttons[1] = new Y.YUI2.widget.Button('nav_prev');
         imscp_buttons[2] = new Y.YUI2.widget.Button('nav_up');
@@ -270,13 +315,13 @@ M.mod_imscp.init = function(Y) {
             imscp_activate_item(imscp_skipnext(imscp_current_node));
         });
 
-        // finally activate the first item
-        imscp_activate_item(tree.getRoot().children[0]);
+        // Finally activate the first item.
+        imscp_activate_item(imscp_firstlinked(tree.getRoot().children[0]));
 
-        // resizing
+        // Resizing.
         imscp_resize_layout(false);
 
-        // fix layout if window resized
+        // Fix layout if window resized.
         window.onresize = function() {
             imscp_resize_layout(true);
         };

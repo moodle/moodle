@@ -27,14 +27,18 @@ namespace mod_forum\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_forum post updated event.
+ * The mod_forum post updated event class.
  *
- * @property-read array $other Extra information about the event.
- *     - int discussionid: The discussion id the post is part of.
- *     - int forumid: The forum id the post is part of.
- *     - string forumtype: The type of forum the post is part of.
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int discussionid: The discussion id the post is part of.
+ *      - int forumid: The forum id the post is part of.
+ *      - string forumtype: The type of forum the post is part of.
+ * }
  *
  * @package    mod_forum
+ * @since      Moodle 2.7
  * @copyright  2014 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -56,8 +60,8 @@ class post_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user {$this->userid} has created updated the post {$this->objectid} ".
-            " in discussion {$this->other['discussionid']}.";
+        return "The user with id '$this->userid' has updated the post with id '$this->objectid' in the discussion with " .
+            "id '{$this->other['discussionid']}' in the forum with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -79,7 +83,7 @@ class post_updated extends \core\event\base {
             // Single discussion forums are an exception. We show
             // the forum itself since it only has one discussion
             // thread.
-            $url = new \moodle_url('/mod/forum/view.php', array('id' => $this->other['forumid']));
+            $url = new \moodle_url('/mod/forum/view.php', array('f' => $this->other['forumid']));
         } else {
             $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $this->other['discussionid']));
         }
@@ -108,24 +112,20 @@ class post_updated extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
 
-        if (!isset($this->objectid)) {
-            throw new \coding_exception('objectid must be set to the postid.');
-        }
-
         if (!isset($this->other['discussionid'])) {
-            throw new \coding_exception('discussionid must be set in other.');
+            throw new \coding_exception('The \'discussionid\' value must be set in other.');
         }
 
         if (!isset($this->other['forumid'])) {
-            throw new \coding_exception('forumid must be set in other.');
+            throw new \coding_exception('The \'forumid\' value must be set in other.');
         }
 
         if (!isset($this->other['forumtype'])) {
-            throw new \coding_exception('forumtype must be set in other.');
+            throw new \coding_exception('The \'forumtype\' value must be set in other.');
         }
 
         if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context passed must be module context.');
+            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
         }
     }
 }

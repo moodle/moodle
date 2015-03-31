@@ -106,6 +106,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
         if (!$this->_flagFrozen) {
             $mode = gradingform_rubric_controller::DISPLAY_EDIT_FULL;
             $module = array('name'=>'gradingform_rubriceditor', 'fullpath'=>'/grade/grading/form/rubric/js/rubriceditor.js',
+                'requires' => array('base', 'dom', 'event', 'event-touch', 'escape'),
                 'strings' => array(array('confirmdeletecriterion', 'gradingform_rubric'), array('confirmdeletelevel', 'gradingform_rubric'),
                     array('criterionempty', 'gradingform_rubric'), array('levelempty', 'gradingform_rubric')
                     ));
@@ -220,7 +221,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                             'score' => 0,
                         );
                         foreach ($criterion['levels'] as $lastlevel) {
-                            if ($level['score'] < $lastlevel['score'] + 1) {
+                            if (isset($lastlevel['score']) && $level['score'] < $lastlevel['score'] + 1) {
                                 $level['score'] = $lastlevel['score'] + 1;
                             }
                         }

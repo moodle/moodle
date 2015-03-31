@@ -38,7 +38,7 @@ require_login();
 $header = "$SITE->shortname: ".get_string('publicprofile')." (".get_string('myprofile', 'admin').")";
 
 $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');
-admin_externalpage_setup('profilepage', '', null, '', array('pagelayout' => 'mydashboard'));
+admin_externalpage_setup('profilepage', '', null, '', array('pagelayout' => 'mypublic'));
 
 // Override pagetype to show blocks properly.
 $PAGE->set_pagetype('user-profile');
@@ -56,6 +56,6 @@ $PAGE->set_subpage($currentpage->id);
 
 echo $OUTPUT->header();
 
-echo $OUTPUT->blocks_for_region('content');
+echo $OUTPUT->custom_block_region('content');
 
 echo $OUTPUT->footer();

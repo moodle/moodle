@@ -64,10 +64,14 @@ implements CAS_Request_MultiRequestInterface
     public function addRequest (CAS_Request_RequestInterface $request)
     {
         if ($this->_sent) {
-            throw new CAS_OutOfSequenceException('Request has already been sent cannot '.__METHOD__);
+            throw new CAS_OutOfSequenceException(
+                'Request has already been sent cannot '.__METHOD__
+            );
         }
         if (!$request instanceof CAS_Request_CurlRequest) {
-            throw new CAS_InvalidArgumentException('As a CAS_Request_CurlMultiRequest, I can only work with CAS_Request_CurlRequest objects.');
+            throw new CAS_InvalidArgumentException(
+                'As a CAS_Request_CurlMultiRequest, I can only work with CAS_Request_CurlRequest objects.'
+            );
         }
 
         $this->_requests[] = $request;
@@ -81,7 +85,9 @@ implements CAS_Request_MultiRequestInterface
     public function getNumRequests()
     {
         if ($this->_sent) {
-            throw new CAS_OutOfSequenceException('Request has already been sent cannot '.__METHOD__);
+            throw new CAS_OutOfSequenceException(
+                'Request has already been sent cannot '.__METHOD__
+            );
         }
         return count($this->_requests);
     }
@@ -100,10 +106,14 @@ implements CAS_Request_MultiRequestInterface
     public function send ()
     {
         if ($this->_sent) {
-            throw new CAS_OutOfSequenceException('Request has already been sent cannot send again.');
+            throw new CAS_OutOfSequenceException(
+                'Request has already been sent cannot send again.'
+            );
         }
         if (!count($this->_requests)) {
-            throw new CAS_OutOfSequenceException('At least one request must be added via addRequest() before the multi-request can be sent.');
+            throw new CAS_OutOfSequenceException(
+                'At least one request must be added via addRequest() before the multi-request can be sent.'
+            );
         }
 
         $this->_sent = true;

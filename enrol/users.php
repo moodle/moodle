@@ -35,10 +35,11 @@ $search  = optional_param('search', '', PARAM_RAW);
 $role    = optional_param('role', 0, PARAM_INT);
 $fgroup  = optional_param('filtergroup', 0, PARAM_INT);
 $status  = optional_param('status', -1, PARAM_INT);
+$newcourse = optional_param('newcourse', false, PARAM_BOOL);
 
 // When users reset the form, redirect back to first page without other params.
 if (optional_param('resetbutton', '', PARAM_RAW) !== '') {
-    redirect('users.php?id=' . $id);
+    redirect('users.php?id=' . $id . '&newcourse=' . $newcourse);
 }
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
@@ -54,7 +55,7 @@ $PAGE->set_pagelayout('admin');
 
 $manager = new course_enrolment_manager($PAGE, $course, $filter, $role, $search, $fgroup, $status);
 $table = new course_enrolment_users_table($manager, $PAGE);
-$PAGE->set_url('/enrol/users.php', $manager->get_url_params()+$table->get_url_params());
+$PAGE->set_url('/enrol/users.php', $manager->get_url_params()+$table->get_url_params()+array('newcourse' => $newcourse));
 navigation_node::override_active_url(new moodle_url('/enrol/users.php', array('id' => $id)));
 
 // Check if there is an action to take
@@ -174,11 +175,25 @@ if ($action) {
 
 
 $renderer = $PAGE->get_renderer('core_enrol');
-$userdetails = array (
-    'picture' => false,
-    'firstname' => get_string('firstname'),
-    'lastname' => get_string('lastname'),
-);
+$userdetails = array('picture' => false);
+// Get all the user names in a reasonable default order.
+$allusernames = get_all_user_name_fields(false, null, null, null, true);
+// Initialise the variable for the user's names in the table header.
+$usernameheader = null;
+// Get the alternative full name format for users with the viewfullnames capability.
+$fullusernames = $CFG->alternativefullnameformat;
+// If fullusernames is empty or accidentally set to language then fall back on the $allusernames set up.
+if ($fullusernames == 'language' || empty($fullusernames)) {
+    $usernameheader = $allusernames;
+} else {
+    // If everything is as expected then put them in the order specified by the alternative full name format setting.
+    $usernameheader = order_in_string($allusernames, $fullusernames);
+}
+
+// Loop through each name and return the language string.
+foreach ($usernameheader as $key => $username) {
+    $userdetails[$username] = get_string($username);
+}
 $extrafields = get_extra_user_fields($context);
 foreach ($extrafields as $field) {
     $userdetails[$field] = get_user_field_name($field);
@@ -186,7 +201,7 @@ foreach ($extrafields as $field) {
 
 $fields = array(
     'userdetails' => $userdetails,
-    'lastseen' => get_string('lastaccess'),
+    'lastcourseaccess' => get_string('lastcourseaccess'),
     'role' => get_string('roles', 'role'),
     'group' => get_string('groups', 'group'),
     'enrol' => get_string('enrolmentinstances', 'enrol')
@@ -196,16 +211,16 @@ $fields = array(
 if (!has_capability('moodle/course:viewhiddenuserfields', $context)) {
     $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
     if (isset($hiddenfields['lastaccess'])) {
-        unset($fields['lastseen']);
+        unset($fields['lastcourseaccess']);
     }
     if (isset($hiddenfields['groups'])) {
         unset($fields['group']);
     }
 }
 
-$filterform = new enrol_users_filter_form('users.php', array('manager' => $manager, 'id' => $id),
+$filterform = new enrol_users_filter_form('users.php', array('manager' => $manager, 'id' => $id, 'newcourse' => $newcourse),
         'get', '', array('id' => 'filterform'));
-$filterform->set_data(array('search' => $search, 'ifilter' => $filter, 'role' => $role));
+$filterform->set_data(array('search' => $search, 'ifilter' => $filter, 'role' => $role, 'filtergroup' => $fgroup));
 
 $table->set_fields($fields, $renderer);
 
@@ -226,4 +241,8 @@ $PAGE->set_heading($PAGE->title);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('enrolledusers', 'enrol'));
 echo $renderer->render_course_enrolment_users_table($table, $filterform);
+if ($newcourse == 1) {
+    echo $OUTPUT->single_button(new moodle_url('/course/view.php', array('id' => $id)),
+    get_string('proceedtocourse', 'enrol'), 'GET', array('class' => 'enrol-users-page-action'));
+}
 echo $OUTPUT->footer();

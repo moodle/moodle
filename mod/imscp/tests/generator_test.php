@@ -53,14 +53,14 @@ class mod_imscp_generator_testcase extends advanced_testcase {
         $this->assertEquals('Another imscp', $records[$imscp->id]->name);
 
         // Examples of specifying the package file (do not validate anything, just check for exceptions).
-        // 1. As path to the file in filesystem:
+        // 1. As path to the file in filesystem...
         $params = array(
             'course' => $course->id,
             'packagepath' => $CFG->dirroot.'/mod/imscp/tests/packages/singlescobasic.zip'
         );
         $imscp = $this->getDataGenerator()->create_module('imscp', $params);
 
-        // 2. As file draft area id:
+        // 2. As file draft area id...
         $fs = get_file_storage();
         $params = array(
             'course' => $course->id,

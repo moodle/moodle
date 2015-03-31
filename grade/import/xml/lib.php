@@ -82,7 +82,7 @@ function import_xml_grades($text, $course, &$error) {
             $newgrade->importer   = $USER->id;
 
             // check grade value exists and is a numeric grade
-            if (isset($result['#']['score'][0]['#'])) {
+            if (isset($result['#']['score'][0]['#']) && $result['#']['score'][0]['#'] !== '-') {
                 if (is_numeric($result['#']['score'][0]['#'])) {
                     $newgrade->finalgrade = $result['#']['score'][0]['#'];
                 } else {

@@ -1,12 +1,12 @@
 <?php
-/** 
- * @version V5.18 3 Sep 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
- * Released under both BSD license and Lesser GPL library license. 
- * Whenever there is any discrepancy between the two licenses, 
- * the BSD license will take precedence. 
+/**
+ * @version V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+ * Released under both BSD license and Lesser GPL library license.
+ * Whenever there is any discrepancy between the two licenses,
+ * the BSD license will take precedence.
  *
  * Set tabs to 4 for best viewing.
- * 
+ *
  * The following code is adapted from the PEAR DB error handling code.
  * Portions (c)1997-2002 The PHP Group.
  */
@@ -62,27 +62,27 @@ function adodb_error($provider,$dbType,$errno)
 {
 	//var_dump($errno);
 	if (is_numeric($errno) && $errno == 0) return 0;
-	switch($provider) { 
+	switch($provider) {
 	case 'mysql': $map = adodb_error_mysql(); break;
-	
+
 	case 'oracle':
 	case 'oci8': $map = adodb_error_oci8(); break;
-	
+
 	case 'ibase': $map = adodb_error_ibase(); break;
-	
+
 	case 'odbc': $map = adodb_error_odbc(); break;
-	
+
 	case 'mssql':
 	case 'sybase': $map = adodb_error_mssql(); break;
-	
+
 	case 'informix': $map = adodb_error_ifx(); break;
-	
+
 	case 'postgres': return adodb_error_pg($errno); break;
-	
+
 	case 'sqlite': return $map = adodb_error_sqlite(); break;
 	default:
 		return DB_ERROR;
-	}	
+	}
 	//print_r($map);
 	//var_dump($errno);
 	if (isset($map[$errno])) return $map[$errno];
@@ -95,29 +95,29 @@ function adodb_error_pg($errormsg)
 {
 	if (is_numeric($errormsg)) return (integer) $errormsg;
 	// Postgres has no lock-wait timeout.  The best we could do would be to set a statement timeout.
-    static $error_regexps = array(
-            '/(Table does not exist\.|Relation [\"\'].*[\"\'] does not exist|sequence does not exist|class ".+" not found)$/i' => DB_ERROR_NOSUCHTABLE,
-            '/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*|duplicate key.*violates unique constraint/i'     => DB_ERROR_ALREADY_EXISTS,
-            '/database ".+" does not exist$/i'       => DB_ERROR_NOSUCHDB,
-            '/(divide|division) by zero$/i'          => DB_ERROR_DIVZERO,
-            '/pg_atoi: error in .*: can\'t parse /i' => DB_ERROR_INVALID_NUMBER,
-            '/ttribute [\"\'].*[\"\'] not found|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']/i' => DB_ERROR_NOSUCHFIELD,
-            '/(parser: parse|syntax) error at or near \"/i'   => DB_ERROR_SYNTAX,
-            '/referential integrity violation/i'     => DB_ERROR_CONSTRAINT,
-            '/deadlock detected$/i'                  => DB_ERROR_DEADLOCK,
-            '/canceling statement due to statement timeout$/i' => DB_ERROR_STATEMENT_TIMEOUT,
-            '/could not serialize access due to/i'   => DB_ERROR_SERIALIZATION_FAILURE
-        );
+	static $error_regexps = array(
+			'(Table does not exist\.|Relation [\"\'].*[\"\'] does not exist|sequence does not exist|class ".+" not found)$' => DB_ERROR_NOSUCHTABLE,
+			'Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*|duplicate key.*violates unique constraint'     => DB_ERROR_ALREADY_EXISTS,
+			'database ".+" does not exist$'       => DB_ERROR_NOSUCHDB,
+			'(divide|division) by zero$'          => DB_ERROR_DIVZERO,
+			'pg_atoi: error in .*: can\'t parse ' => DB_ERROR_INVALID_NUMBER,
+			'ttribute [\"\'].*[\"\'] not found|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']' => DB_ERROR_NOSUCHFIELD,
+			'(parser: parse|syntax) error at or near \"'   => DB_ERROR_SYNTAX,
+			'referential integrity violation'     => DB_ERROR_CONSTRAINT,
+			'deadlock detected$'                  => DB_ERROR_DEADLOCK,
+			'canceling statement due to statement timeout$' => DB_ERROR_STATEMENT_TIMEOUT,
+			'could not serialize access due to'   => DB_ERROR_SERIALIZATION_FAILURE
+		);
 	reset($error_regexps);
-    while (list($regexp,$code) = each($error_regexps)) {
-        if (preg_match($regexp, $errormsg)) {
-            return $code;
-        }
-    }
-    // Fall back to DB_ERROR if there was no mapping.
-    return DB_ERROR;
+	while (list($regexp,$code) = each($error_regexps)) {
+		if (preg_match("/$regexp/mi", $errormsg)) {
+			return $code;
+		}
+	}
+	// Fall back to DB_ERROR if there was no mapping.
+	return DB_ERROR;
 }
-	
+
 function adodb_error_odbc()
 {
 static $MAP = array(
@@ -175,7 +175,7 @@ static $MAP = array(
             -923 => DB_ERROR_CONNECT_FAILED,
             -924 => DB_ERROR_CONNECT_FAILED
         );
-		
+
 		return $MAP;
 }
 
@@ -193,7 +193,7 @@ static $MAP = array(
             '-1210'   => DB_ERROR_INVALID_DATE,
             '-1212'   => DB_ERROR_INVALID_DATE
        );
-	   
+
 	   return $MAP;
 }
 
@@ -212,7 +212,7 @@ static $MAP = array(
             2291 => DB_ERROR_CONSTRAINT,
             2449 => DB_ERROR_CONSTRAINT
         );
-	   
+
 	return $MAP;
 }
 
@@ -222,7 +222,7 @@ static $MAP = array(
 		  208 => DB_ERROR_NOSUCHTABLE,
           2601 => DB_ERROR_ALREADY_EXISTS
        );
-	   
+
 	return $MAP;
 }
 
@@ -231,7 +231,7 @@ function adodb_error_sqlite()
 static $MAP = array(
 		  1 => DB_ERROR_SYNTAX
        );
-	   
+
 	return $MAP;
 }
 
@@ -258,7 +258,6 @@ static $MAP = array(
 		    2002 => DB_ERROR_CONNECT_FAILED,
 			2005 => DB_ERROR_CONNECT_FAILED
        );
-	   
+
 	return $MAP;
 }
-?>

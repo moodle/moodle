@@ -8,8 +8,14 @@
 .assignfeedback_editpdf_widget .drawingcanvas {
     position: relative;
     min-width: 817px;
-    min-height: 1169px;
+    min-height: 400px;
     cursor: crosshair;
+    background-repeat: no-repeat;
+    background-color: #ccc;
+}
+.assignfeedback_editpdf_widget .drawingregion {
+    overflow: auto;
+    width: 842px; /* A4 portrait should not need a horizontal scrollbar */
 }
 
 .assignfeedback_editpdf_widget {
@@ -279,4 +285,8 @@ ul.assignfeedback_editpdf_menu {
 }
 .assignfeedback_editpdf_widget .drawingcanvas .loading .progressbarlabel {
     text-align: center;
+}
+.hideoverflow {
+    overflow: hidden;
+    position: relative;
 }

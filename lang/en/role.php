@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'role', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   role
+ * @package   core_role
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -144,6 +143,7 @@ $string['course:movesections'] = 'Move sections';
 $string['course:publish'] = 'Publish a course into hub';
 $string['course:request'] = 'Request new courses';
 $string['course:reset'] = 'Reset course';
+$string['course:reviewotherusers'] = 'Review other users';
 $string['course:sectionvisibility'] = 'Control section visibility';
 $string['course:setcurrentsection'] = 'Set current section';
 $string['course:update'] = 'Update course settings';
@@ -170,10 +170,10 @@ $string['defaultx'] = 'Default: {$a}';
 $string['defineroles'] = 'Define roles';
 $string['deletecourseoverrides'] = 'Delete all overrides in course';
 $string['deletelocalroles'] = 'Delete all local role assignments';
-$string['deleterolesure'] = 'Are you sure that you want to delete role "{$a->name} ({$a->shortname})"?</p><p>Currently this role is assigned to {$a->count} users.';
+$string['deleterolesure'] = '<p>Are you sure that you want to delete role "{$a->name} ({$a->shortname})"?</p><p>Currently this role is assigned to {$a->count} users.</p>';
 $string['deletexrole'] = 'Delete {$a} role';
 $string['duplicaterole'] = 'Duplicate role';
-$string['duplicaterolesure'] = 'Are you sure that you want to duplicate role "{$a->name} ({$a->shortname})"?</p>';
+$string['duplicaterolesure'] = '<p>Are you sure that you want to duplicate role "{$a->name} ({$a->shortname})"?</p>';
 $string['editingrolex'] = 'Editing role \'{$a}\'';
 $string['editrole'] = 'Edit role';
 $string['editxrole'] = 'Edit {$a} role';
@@ -217,7 +217,6 @@ $string['grade:unlock'] = 'Unlock grades or items';
 $string['grade:view'] = 'View own grades';
 $string['grade:viewall'] = 'View grades of other users';
 $string['grade:viewhidden'] = 'View hidden grades for owner';
-$string['hidden'] = 'Hidden';
 $string['highlightedcellsshowdefault'] = 'The permissions highlighted in the table below are the defaults for the role archetype currently selected above.';
 $string['highlightedcellsshowinherit'] = 'The highlighted cells in the table below show the permission (if any) that will be inherited. Apart from the capabilities whose permission you actually want to alter, you should leave everything set to Inherit.';
 $string['checkglobalpermissions'] = 'Check system permissions';
@@ -422,3 +421,7 @@ $string['whydoesuserhavecap'] = 'Why does {$a->fullname} have capability {$a->ca
 $string['whydoesusernothavecap'] = 'Why does {$a->fullname} not have capability {$a->capability} in context {$a->context}?';
 $string['xroleassignments'] = '{$a}\'s role assignments';
 $string['xuserswiththerole'] = 'Users with the role "{$a->role}"';
+
+// Deprecated since Moodle 2.8.
+
+$string['hidden'] = 'Hidden';

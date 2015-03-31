@@ -25,7 +25,7 @@
 namespace logstore_database\log;
 defined('MOODLE_INTERNAL') || die();
 
-class store implements \tool_log\log\writer, \core\log\sql_select_reader {
+class store implements \tool_log\log\writer, \core\log\sql_reader {
     use \tool_log\helper\store,
         \tool_log\helper\reader,
         \tool_log\helper\buffered_writer {
@@ -38,11 +38,11 @@ class store implements \tool_log\log\writer, \core\log\sql_select_reader {
     /** @var bool $logguests true if logging guest access */
     protected $logguests;
 
-    /** @var array $excludelevels An array of education levels to exclude */
-    protected $excludelevels = array();
+    /** @var array $includelevels An array of education levels to include */
+    protected $includelevels = array();
 
-    /** @var array $excludeactions An array of actions types to exclude */
-    protected $excludeactions = array();
+    /** @var array $includeactions An array of actions types to include */
+    protected $includeactions = array();
 
     /**
      * Construct
@@ -53,10 +53,10 @@ class store implements \tool_log\log\writer, \core\log\sql_select_reader {
         $this->helper_setup($manager);
         $this->buffersize = $this->get_config('buffersize', 50);
         $this->logguests = $this->get_config('logguests', 1);
-        $actions = $this->get_config('excludeactions', '');
-        $levels = $this->get_config('excludelevels', '');
-        $this->excludeactions = $actions === '' ? array() : explode(',', $actions);
-        $this->excludelevels = $levels === '' ? array() : explode(',', $levels);
+        $actions = $this->get_config('includeactions', '');
+        $levels = $this->get_config('includelevels', '');
+        $this->includeactions = $actions === '' ? array() : explode(',', $actions);
+        $this->includelevels = $levels === '' ? array() : explode(',', $levels);
     }
 
     /**
@@ -113,8 +113,8 @@ class store implements \tool_log\log\writer, \core\log\sql_select_reader {
      * @return bool
      */
     protected function is_event_ignored(\core\event\base $event) {
-        if (in_array($event->crud, $this->excludeactions) ||
-            in_array($event->edulevel, $this->excludelevels)
+        if (!in_array($event->crud, $this->includeactions) &&
+            !in_array($event->edulevel, $this->includelevels)
         ) {
             // Ignore event if the store settings do not want to store it.
             return true;
@@ -167,30 +167,75 @@ class store implements \tool_log\log\writer, \core\log\sql_select_reader {
             return array();
         }
 
+        $sort = self::tweak_sort_by_id($sort);
+
         $events = array();
         $records = $this->extdb->get_records_select($dbtable, $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
 
         foreach ($records as $data) {
-            $extra = array('origin' => $data->origin, 'realuserid' => $data->realuserid, 'ip' => $data->ip);
-            $data = (array)$data;
-            $id = $data['id'];
-            $data['other'] = unserialize($data['other']);
-            if ($data['other'] === false) {
-                $data['other'] = array();
-            }
-            unset($data['origin']);
-            unset($data['ip']);
-            unset($data['realuserid']);
-            unset($data['id']);
-
-            $event = \core\event\base::restore($data, $extra);
-            // Add event to list if it's valid.
-            if ($event) {
-                $events[$id] = $event;
+            if ($event = $this->get_log_event($data)) {
+                $events[$data->id] = $event;
             }
         }
 
         return $events;
+    }
+
+    /**
+     * Fetch records using given criteria returning a Traversable object.
+     *
+     * Note that the traversable object contains a moodle_recordset, so
+     * remember that is important that you call close() once you finish
+     * using it.
+     *
+     * @param string $selectwhere
+     * @param array $params
+     * @param string $sort
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return \core\dml\recordset_walk|\core\event\base[]
+     */
+    public function get_events_select_iterator($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
+        if (!$this->init()) {
+            return array();
+        }
+
+        if (!$dbtable = $this->get_config('dbtable')) {
+            return array();
+        }
+
+        $sort = self::tweak_sort_by_id($sort);
+
+        $recordset = $this->extdb->get_recordset_select($dbtable, $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
+
+        return new \core\dml\recordset_walk($recordset, array($this, 'get_log_event'));
+    }
+
+    /**
+     * Returns an event from the log data.
+     *
+     * @param stdClass $data Log data
+     * @return \core\event\base
+     */
+    public function get_log_event($data) {
+
+        $extra = array('origin' => $data->origin, 'ip' => $data->ip, 'realuserid' => $data->realuserid);
+        $data = (array)$data;
+        $id = $data['id'];
+        $data['other'] = unserialize($data['other']);
+        if ($data['other'] === false) {
+            $data['other'] = array();
+        }
+        unset($data['origin']);
+        unset($data['ip']);
+        unset($data['realuserid']);
+        unset($data['id']);
+
+        if (!$event = \core\event\base::restore($data, $extra)) {
+            return null;
+        }
+
+        return $event;
     }
 
     /**

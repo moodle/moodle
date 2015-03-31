@@ -81,7 +81,7 @@ class mariadb_native_moodle_database extends mysqli_native_moodle_database {
     public function get_server_info() {
         $version = $this->mysqli->server_info;
         $matches = null;
-        if (preg_match('/^5\.5\.5-(10\..+)-MariaDB$/i', $version, $matches)) {
+        if (preg_match('/^5\.5\.5-(10\..+)-MariaDB/i', $version, $matches)) {
             // Looks like MariaDB decided to use these weird version numbers for better BC with MySQL...
             $version = $matches[1];
         }
@@ -100,25 +100,5 @@ class mariadb_native_moodle_database extends mysqli_native_moodle_database {
             return parent::transactions_supported();
         }
         return true;
-    }
-
-    /**
-     * Returns the current db engine.
-     *
-     * MyISAM is NOT supported!
-     *
-     * @return string or null MySQL engine name
-     */
-    public function get_dbengine() {
-        if ($this->external) {
-            return null;
-        }
-
-        $engine = parent::get_dbengine();
-        if ($engine === 'MyISAM') {
-            debugging('MyISAM tables are not supported in MariaDB driver!');
-            $engine = 'XtraDB';
-        }
-        return $engine;
     }
 }

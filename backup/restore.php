@@ -6,13 +6,14 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 $contextid   = required_param('contextid', PARAM_INT);
 $stage       = optional_param('stage', restore_ui::STAGE_CONFIRM, PARAM_INT);
+$cancel      = optional_param('cancel', '', PARAM_ALPHA);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
 navigation_node::override_active_url(new moodle_url('/backup/restorefile.php', array('contextid'=>$contextid)));
 $PAGE->set_url(new moodle_url('/backup/restore.php', array('contextid'=>$contextid)));
 $PAGE->set_context($context);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 
 require_login($course, null, $cm);
 require_capability('moodle/restore:restorecourse', $context);
@@ -30,7 +31,10 @@ $PAGE->set_title($courseshortname . ': ' . get_string('restore'));
 $PAGE->set_heading($coursefullname);
 
 $renderer = $PAGE->get_renderer('core','backup');
-echo $OUTPUT->header();
+if (empty($cancel)) {
+    // Do not print the header if user cancelled the process, as we are going to redirect the user.
+    echo $OUTPUT->header();
+}
 
 // Prepare a progress bar which can display optionally during long-running
 // operations while setting up the UI.

@@ -481,6 +481,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
                     events_update_definition($component);
                     \core\task\manager::reset_scheduled_tasks_for_component($component);
                     message_update_providers($component);
+                    \core\message\inbound\manager::update_handlers_for_component($component);
                     if ($type === 'message') {
                         message_update_processors($plug);
                     }
@@ -518,6 +519,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             \core\task\manager::reset_scheduled_tasks_for_component($component);
             message_update_providers($component);
+            \core\message\inbound\manager::update_handlers_for_component($component);
             if ($type === 'message') {
                 message_update_processors($plug);
             }
@@ -550,6 +552,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             \core\task\manager::reset_scheduled_tasks_for_component($component);
             message_update_providers($component);
+            \core\message\inbound\manager::update_handlers_for_component($component);
             if ($type === 'message') {
                 // Ugly hack!
                 message_update_processors($plug);
@@ -650,6 +653,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
                     events_update_definition($component);
                     \core\task\manager::reset_scheduled_tasks_for_component($component);
                     message_update_providers($component);
+                    \core\message\inbound\manager::update_handlers_for_component($component);
                     upgrade_plugin_mnet_functions($component);
                     $endcallback($component, true, $verbose);
                 }
@@ -683,6 +687,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             \core\task\manager::reset_scheduled_tasks_for_component($component);
             message_update_providers($component);
+            \core\message\inbound\manager::update_handlers_for_component($component);
             upgrade_plugin_mnet_functions($component);
 
             $endcallback($component, true, $verbose);
@@ -718,6 +723,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             \core\task\manager::reset_scheduled_tasks_for_component($component);
             message_update_providers($component);
+            \core\message\inbound\manager::update_handlers_for_component($component);
             upgrade_plugin_mnet_functions($component);
 
             $endcallback($component, false, $verbose);
@@ -837,6 +843,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
                     events_update_definition($component);
                     \core\task\manager::reset_scheduled_tasks_for_component($component);
                     message_update_providers($component);
+                    \core\message\inbound\manager::update_handlers_for_component($component);
                     upgrade_plugin_mnet_functions($component);
                     $endcallback($component, true, $verbose);
                 }
@@ -876,6 +883,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             \core\task\manager::reset_scheduled_tasks_for_component($component);
             message_update_providers($component);
+            \core\message\inbound\manager::update_handlers_for_component($component);
             upgrade_plugin_mnet_functions($component);
 
             $endcallback($component, true, $verbose);
@@ -910,6 +918,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
             events_update_definition($component);
             \core\task\manager::reset_scheduled_tasks_for_component($component);
             message_update_providers($component);
+            \core\message\inbound\manager::update_handlers_for_component($component);
             upgrade_plugin_mnet_functions($component);
 
             $endcallback($component, false, $verbose);
@@ -1511,6 +1520,7 @@ function install_core($version, $verbose) {
         events_update_definition('moodle');
         \core\task\manager::reset_scheduled_tasks_for_component('moodle');
         message_update_providers('moodle');
+        \core\message\inbound\manager::update_handlers_for_component('moodle');
 
         // Write default settings unconditionally
         admin_apply_default_settings(NULL, true);
@@ -1574,6 +1584,7 @@ function upgrade_core($version, $verbose) {
         events_update_definition('moodle');
         \core\task\manager::reset_scheduled_tasks_for_component('moodle');
         message_update_providers('moodle');
+        \core\message\inbound\manager::update_handlers_for_component('moodle');
         // Update core definitions.
         cache_helper::update_definitions(true);
 
@@ -1999,7 +2010,7 @@ function upgrade_save_orphaned_questions() {
  * @see backup_cron_automated_helper::remove_excess_backups()
  * @link http://tracker.moodle.org/browse/MDL-35116
  * @return void
- * @since 2.4
+ * @since Moodle 2.4
  */
 function upgrade_rename_old_backup_files_using_shortname() {
     global $CFG;
@@ -2097,31 +2108,39 @@ function upgrade_grade_item_fix_sortorder() {
     // to do it more efficiently by doing a series of update statements rather than updating
     // every single grade item in affected courses.
 
-    $transaction = $DB->start_delegated_transaction();
-
-    $sql = "SELECT DISTINCT g1.id, g1.courseid, g1.sortorder
+    $sql = "SELECT DISTINCT g1.courseid
               FROM {grade_items} g1
               JOIN {grade_items} g2 ON g1.courseid = g2.courseid
              WHERE g1.sortorder = g2.sortorder AND g1.id != g2.id
-             ORDER BY g1.courseid ASC, g1.sortorder DESC, g1.id DESC";
+             ORDER BY g1.courseid ASC";
+    foreach ($DB->get_fieldset_sql($sql) as $courseid) {
+        $transaction = $DB->start_delegated_transaction();
+        $items = $DB->get_records('grade_items', array('courseid' => $courseid), '', 'id, sortorder, sortorder AS oldsort');
 
-    // Get all duplicates in course order, highest sort order, and higest id first so that we can make space at the
-    // bottom higher end of the sort orders and work down by id.
-    $rs = $DB->get_recordset_sql($sql);
+        // Get all duplicates in course order, highest sort order, and higest id first so that we can make space at the
+        // bottom higher end of the sort orders and work down by id.
+        $sql = "SELECT DISTINCT g1.id, g1.sortorder
+                FROM {grade_items} g1
+                JOIN {grade_items} g2 ON g1.courseid = g2.courseid
+                WHERE g1.sortorder = g2.sortorder AND g1.id != g2.id AND g1.courseid = :courseid
+                ORDER BY g1.sortorder DESC, g1.id DESC";
 
-    foreach($rs as $duplicate) {
-        $DB->execute("UPDATE {grade_items}
-                         SET sortorder = sortorder + 1
-                       WHERE courseid = :courseid AND
-                       (sortorder > :sortorder OR (sortorder = :sortorder2 AND id > :id))",
-            array('courseid' => $duplicate->courseid,
-                'sortorder' => $duplicate->sortorder,
-                'sortorder2' => $duplicate->sortorder,
-                'id' => $duplicate->id));
+        // This is the O(N*N) like the database version we're replacing, but at least the constants are a billion times smaller...
+        foreach ($DB->get_records_sql($sql, array('courseid' => $courseid)) as $duplicate) {
+            foreach ($items as $item) {
+                if ($item->sortorder > $duplicate->sortorder || ($item->sortorder == $duplicate->sortorder && $item->id > $duplicate->id)) {
+                    $item->sortorder += 1;
+                }
+            }
+        }
+        foreach ($items as $item) {
+            if ($item->sortorder != $item->oldsort) {
+                $DB->update_record('grade_items', array('id' => $item->id, 'sortorder' => $item->sortorder));
+            }
+        }
+
+        $transaction->allow_commit();
     }
-    $rs->close();
-
-    $transaction->allow_commit();
 }
 
 /**
@@ -2153,4 +2172,58 @@ function upgrade_fix_missing_root_folders() {
     }
     $rs->close();
     $transaction->allow_commit();
+}
+
+/**
+ * Detect draft file areas with missing root directory records and add them.
+ */
+function upgrade_fix_missing_root_folders_draft() {
+    global $DB;
+
+    $transaction = $DB->start_delegated_transaction();
+
+    $sql = "SELECT contextid, itemid, MAX(timecreated) AS timecreated, MAX(timemodified) AS timemodified
+              FROM {files}
+             WHERE (component = 'user' AND filearea = 'draft')
+          GROUP BY contextid, itemid
+            HAVING MAX(CASE WHEN filename = '.' AND filepath = '/' THEN 1 ELSE 0 END) = 0";
+
+    $rs = $DB->get_recordset_sql($sql);
+    $defaults = array('component' => 'user',
+        'filearea' => 'draft',
+        'filepath' => '/',
+        'filename' => '.',
+        'userid' => 0, // Don't rely on any particular user for these system records.
+        'filesize' => 0,
+        'contenthash' => sha1(''));
+    foreach ($rs as $r) {
+        $r->pathnamehash = sha1("/$r->contextid/user/draft/$r->itemid/.");
+        $DB->insert_record('files', (array)$r + $defaults);
+    }
+    $rs->close();
+    $transaction->allow_commit();
+}
+
+/**
+ * This function verifies that the database is not using an unsupported storage engine.
+ *
+ * @param environment_results $result object to update, if relevant
+ * @return environment_results|null updated results object, or null if the storage engine is supported
+ */
+function check_database_storage_engine(environment_results $result) {
+    global $DB;
+
+    // Check if MySQL is the DB family (this will also be the same for MariaDB).
+    if ($DB->get_dbfamily() == 'mysql') {
+        // Get the database engine we will either be using to install the tables, or what we are currently using.
+        $engine = $DB->get_dbengine();
+        // Check if MyISAM is the storage engine that will be used, if so, do not proceed and display an error.
+        if ($engine == 'MyISAM') {
+            $result->setInfo('unsupported_db_storage_engine');
+            $result->setStatus(false);
+            return $result;
+        }
+    }
+
+    return null;
 }

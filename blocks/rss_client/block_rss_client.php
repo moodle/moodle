@@ -28,10 +28,6 @@
         $this->title = get_string('pluginname', 'block_rss_client');
     }
 
-    function preferred_width() {
-        return 210;
-    }
-
     function applicable_formats() {
         return array('all' => true, 'tag' => false);   // Needs work to make it work on tags MDL-11960
     }
@@ -142,7 +138,7 @@
             $feed->set_cache_duration($CFG->block_rss_client_timeout*60);
         }
 
-        if(debugging() && $feed->error()){
+        if ($CFG->debugdeveloper && $feed->error()) {
             return '<p>'. $feedrecord->url .' Failed with code: '.$feed->error().'</p>';
         }
 
@@ -314,8 +310,7 @@
             $feed->init();
 
             if ($feed->error()) {
-                mtrace ('error');
-                mtrace ('SimplePie failed with error:'.$feed->error());
+                mtrace('Error: could not load/find the RSS feed');
                 $status = false;
             } else {
                 mtrace ('ok');

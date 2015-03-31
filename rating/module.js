@@ -1,7 +1,7 @@
-M.core_rating={
+M.core_rating = {
 
     Y : null,
-    api: M.cfg.wwwroot+'/rating/rate_ajax.php',
+    api: M.cfg.wwwroot + '/rating/rate_ajax.php',
 
     init : function(Y){
         this.Y = Y;
@@ -20,9 +20,8 @@ M.core_rating={
         var thedata = [];
 
         var inputssize = theinputs.size();
-        for ( var i=0; i<inputssize; i++ )
-        {
-            if(theinputs.item(i).get("name")!="returnurl") {//dont include return url for ajax requests
+        for (var i = 0; i < inputssize; i++) {
+            if(theinputs.item(i).get("name") != "returnurl") { // Dont include return url for ajax requests.
                 thedata[theinputs.item(i).get("name")] = theinputs.item(i).get("value");
             }
         }
@@ -44,24 +43,24 @@ M.core_rating={
                             if (data.itemid) { //do not test data.aggregate or data.count otherwise it doesn't refresh value=0 or no value
                                 var itemid = data.itemid;
 
-                                var node = scope.Y.one('#ratingaggregate'+itemid);
+                                var node = scope.Y.one('#ratingaggregate' + itemid);
                                 node.set('innerHTML',data.aggregate);
 
-                                //empty the count value if no ratings
-                                var node = scope.Y.one('#ratingcount'+itemid);
+                                // Empty the count value if no ratings.
+                                var node = scope.Y.one('#ratingcount' + itemid);
                                 if (data.count > 0) {
-                                    node.set('innerHTML',"("+data.count+")");
+                                    node.set('innerHTML', "(" + data.count + ")");
                                 } else {
-                                    node.set('innerHTML',"");
+                                    node.set('innerHTML', "");
                                 }
                             }
                             return true;
                         }
-                        else if (data.error){
+                        else if (data.error) {
                             alert(data.error);
                         }
                     } catch(e) {
-                        alert(e.message+" "+outcome.responseText);
+                        alert(e.message + " " + outcome.responseText);
                     }
                     return false;
                 }

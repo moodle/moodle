@@ -4,7 +4,7 @@ Description of import of various YUI libraries into Moodle:
 * copy of 2in3 without older version
 * exact version specified in lib/setup.php
 
-2/ YUI3 version 3.15.0:
+2/ YUI3 version 3.17.2:
 * full copy of the "build" directory. Unit test code coverage files (*-coverage.js)
   are removed but no other changes are made.
 * make sure there are no @VERSION@ leftovers - replace them with current version

@@ -137,20 +137,6 @@ class all_calculated_for_qubaid_condition {
     }
 
     /**
-     * Array of variants of one randomly selected question that have appeared in the attempt data.
-     *
-     * @param int $questionid The id for the sub question.
-     * @return int[] The variant nos.
-     */
-    public function get_variants_for_subq($questionid) {
-        if (count($this->subquestionstats[$questionid]->variantstats) > 1) {
-            return array_keys($this->subquestionstats[$questionid]->variantstats);
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Get position stats instance for a slot and optional variant no.
      *
      * @param int  $slot The slot no.
@@ -284,7 +270,7 @@ class all_calculated_for_qubaid_condition {
             foreach ($this->for_slot($slot)->get_sub_question_ids() as $subqid) {
                 if ($this->for_subq($subqid)->differentweights) {
                     $name = $this->for_subq($subqid)->question->name;
-                    $errors[] = get_string('erroritemappearsmorethanoncewithdifferentweight', 'quiz_statistics', $name);
+                    $errors[] = get_string('erroritemappearsmorethanoncewithdifferentweight', 'question', $name);
                 }
             }
         }
@@ -351,7 +337,7 @@ class all_calculated_for_qubaid_condition {
         $toreturn = array();
         $displayorder = 1;
         foreach ($this->for_slot($slot)->get_sub_question_ids() as $subqid) {
-            if ($variants = $this->get_variants_for_subq($subqid)) {
+            if ($variants = $this->for_subq($subqid)->get_variants()) {
                 foreach ($variants as $variant) {
                     $toreturn[] = $this->make_new_subq_stat_for($displayorder, $slot, $subqid, $variant);
                 }
@@ -406,7 +392,7 @@ class all_calculated_for_qubaid_condition {
             $displaynumber = 1;
             foreach ($this->for_slot($slot)->get_sub_question_ids() as $subqid) {
                 $toreturn[] = $this->make_new_subq_stat_for($displaynumber, $slot, $subqid);
-                if ($variants = $this->get_variants_for_subq($subqid)) {
+                if ($variants = $this->for_subq($subqid)->get_variants()) {
                     foreach ($variants as $variant) {
                         $toreturn[] = $this->make_new_subq_stat_for($displaynumber, $slot, $subqid, $variant);
                     }

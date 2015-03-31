@@ -79,6 +79,16 @@ class manager {
             self::initialise_user_session($newsid);
             self::check_security();
 
+            // Link global $USER and $SESSION,
+            // this is tricky because PHP does not allow references to references
+            // and global keyword uses internally once reference to the $GLOBALS array.
+            // The solution is to use the $GLOBALS['USER'] and $GLOBALS['$SESSION']
+            // as the main storage of data and put references to $_SESSION.
+            $GLOBALS['USER'] = $_SESSION['USER'];
+            $_SESSION['USER'] =& $GLOBALS['USER'];
+            $GLOBALS['SESSION'] = $_SESSION['SESSION'];
+            $_SESSION['SESSION'] =& $GLOBALS['SESSION'];
+
         } catch (\Exception $ex) {
             @session_write_close();
             self::init_empty_session();
@@ -139,31 +149,29 @@ class manager {
 
     /**
      * Empty current session, fill it with not-logged-in user info.
+     *
+     * This is intended for installation scripts, unit tests and other
+     * special areas. Do NOT use for logout and session termination
+     * in normal requests!
      */
-    protected static function init_empty_session() {
+    public static function init_empty_session() {
         global $CFG;
 
-        // Session not used at all.
-        $_SESSION = array();
-        $_SESSION['SESSION']  = new \stdClass();
-        $_SESSION['USER']     = new \stdClass();
-        $_SESSION['USER']->id = 0;
+        $GLOBALS['SESSION'] = new \stdClass();
+
+        $GLOBALS['USER'] = new \stdClass();
+        $GLOBALS['USER']->id = 0;
         if (isset($CFG->mnet_localhost_id)) {
-            $_SESSION['USER']->mnethostid = $CFG->mnet_localhost_id;
+            $GLOBALS['USER']->mnethostid = $CFG->mnet_localhost_id;
         } else {
             // Not installed yet, the future host id will be most probably 1.
-            $_SESSION['USER']->mnethostid = 1;
+            $GLOBALS['USER']->mnethostid = 1;
         }
 
-        if (PHPUNIT_TEST or defined('BEHAT_TEST')) {
-            // Phpunit tests and behat init use reversed reference,
-            // the reason is we can not point global to $_SESSION outside of global scope.
-            global $USER, $SESSION;
-            $USER = $_SESSION['USER'];
-            $SESSION = $_SESSION['SESSION'];
-            $_SESSION['USER'] =& $USER;
-            $_SESSION['SESSION'] =& $SESSION;
-        }
+        // Link global $USER and $SESSION.
+        $_SESSION = array();
+        $_SESSION['USER'] =& $GLOBALS['USER'];
+        $_SESSION['SESSION'] =& $GLOBALS['SESSION'];
     }
 
     /**
@@ -172,7 +180,7 @@ class manager {
     protected static function prepare_cookies() {
         global $CFG;
 
-        if (!isset($CFG->cookiesecure) or (strpos($CFG->wwwroot, 'https://') !== 0 and empty($CFG->sslproxy))) {
+        if (!isset($CFG->cookiesecure) or (!is_https() and empty($CFG->sslproxy))) {
             $CFG->cookiesecure = 0;
         }
 
@@ -249,8 +257,10 @@ class manager {
     }
 
     /**
-     * Initialise $USER and $SESSION objects, handles google access
+     * Initialise $_SESSION, handles google access
      * and sets up not-logged-in user properly.
+     *
+     * WARNING: $USER and $SESSION are set up later, do not use them yet!
      *
      * @param bool $newsid is this a new session in first http request?
      */
@@ -416,6 +426,8 @@ class manager {
 
     /**
      * Do various session security checks.
+     *
+     * WARNING: $USER and $SESSION are set up later, do not use them yet!
      */
     protected static function check_security() {
         global $CFG;
@@ -489,7 +501,7 @@ class manager {
         session_regenerate_id(true);
         $DB->delete_records('sessions', array('sid'=>$sid));
         self::init_empty_session();
-        self::add_session_record($_SESSION['USER']->id);
+        self::add_session_record($_SESSION['USER']->id); // Do not use $USER here because it may not be set up yet.
         session_write_close();
         self::$sessionactive = false;
     }
@@ -512,12 +524,34 @@ class manager {
     /**
      * Does the PHP session with given id exist?
      *
-     * Note: this does not actually verify the presence of sessions record.
+     * The session must exist both in session table and actual
+     * session backend and the session must not be timed out.
+     *
+     * Timeout evaluation is simplified, the auth hooks are not executed.
      *
      * @param string $sid
      * @return bool
      */
     public static function session_exists($sid) {
+        global $DB, $CFG;
+
+        if (empty($CFG->version)) {
+            // Not installed yet, do not try to access database.
+            return false;
+        }
+
+        // Note: add sessions->state checking here if it gets implemented.
+        if (!$record = $DB->get_record('sessions', array('sid' => $sid), 'id, userid, timemodified')) {
+            return false;
+        }
+
+        if (empty($record->userid) or isguestuser($record->userid)) {
+            // Ignore guest and not-logged-in timeouts, there is very little risk here.
+        } else if ($record->timemodified < time() - $CFG->sessiontimeout) {
+            return false;
+        }
+
+        // There is no need the existence of handler storage in public API.
         self::load_handler();
         return self::$handler->session_exists($sid);
     }
@@ -574,12 +608,72 @@ class manager {
     /**
      * Terminate all sessions of given user unconditionally.
      * @param int $userid
+     * @param string $keepsid keep this sid if present
      */
-    public static function kill_user_sessions($userid) {
+    public static function kill_user_sessions($userid, $keepsid = null) {
         global $DB;
 
         $sessions = $DB->get_records('sessions', array('userid'=>$userid), 'id DESC', 'id, sid');
         foreach ($sessions as $session) {
+            if ($keepsid and $keepsid === $session->sid) {
+                continue;
+            }
+            self::kill_session($session->sid);
+        }
+    }
+
+    /**
+     * Terminate other sessions of current user depending
+     * on $CFG->limitconcurrentlogins restriction.
+     *
+     * This is expected to be called right after complete_user_login().
+     *
+     * NOTE:
+     *  * Do not use from SSO auth plugins, this would not work.
+     *  * Do not use from web services because they do not have sessions.
+     *
+     * @param int $userid
+     * @param string $sid session id to be always keep, usually the current one
+     * @return void
+     */
+    public static function apply_concurrent_login_limit($userid, $sid = null) {
+        global $CFG, $DB;
+
+        // NOTE: the $sid parameter is here mainly to allow testing,
+        //       in most cases it should be current session id.
+
+        if (isguestuser($userid) or empty($userid)) {
+            // This applies to real users only!
+            return;
+        }
+
+        if (empty($CFG->limitconcurrentlogins) or $CFG->limitconcurrentlogins < 0) {
+            return;
+        }
+
+        $count = $DB->count_records('sessions', array('userid' => $userid));
+
+        if ($count <= $CFG->limitconcurrentlogins) {
+            return;
+        }
+
+        $i = 0;
+        $select = "userid = :userid";
+        $params = array('userid' => $userid);
+        if ($sid) {
+            if ($DB->record_exists('sessions', array('sid' => $sid, 'userid' => $userid))) {
+                $select .= " AND sid <> :sid";
+                $params['sid'] = $sid;
+                $i = 1;
+            }
+        }
+
+        $sessions = $DB->get_records_select('sessions', $select, $params, 'timecreated DESC', 'id, sid');
+        foreach ($sessions as $session) {
+            $i++;
+            if ($i <= $CFG->limitconcurrentlogins) {
+                continue;
+            }
             self::kill_session($session->sid);
         }
     }
@@ -590,22 +684,19 @@ class manager {
      * @param \stdClass $user record
      */
     public static function set_user(\stdClass $user) {
-        $_SESSION['USER'] = $user;
-        unset($_SESSION['USER']->description); // Conserve memory.
-        unset($_SESSION['USER']->password);    // Improve security.
-        if (isset($_SESSION['USER']->lang)) {
+        $GLOBALS['USER'] = $user;
+        unset($GLOBALS['USER']->description); // Conserve memory.
+        unset($GLOBALS['USER']->password);    // Improve security.
+        if (isset($GLOBALS['USER']->lang)) {
             // Make sure it is a valid lang pack name.
-            $_SESSION['USER']->lang = clean_param($_SESSION['USER']->lang, PARAM_LANG);
+            $GLOBALS['USER']->lang = clean_param($GLOBALS['USER']->lang, PARAM_LANG);
         }
-        sesskey(); // Init session key.
 
-        if (PHPUNIT_TEST or defined('BEHAT_TEST')) {
-            // Phpunit tests and behat init use reversed reference,
-            // the reason is we can not point global to $_SESSION outside of global scope.
-            global $USER;
-            $USER = $_SESSION['USER'];
-            $_SESSION['USER'] =& $USER;
-        }
+        // Relink session with global $USER just in case it got unlinked somehow.
+        $_SESSION['USER'] =& $GLOBALS['USER'];
+
+        // Init session key.
+        sesskey();
     }
 
     /**
@@ -697,7 +788,7 @@ class manager {
      * @return bool
      */
     public static function is_loggedinas() {
-        return !empty($_SESSION['USER']->realuser);
+        return !empty($GLOBALS['USER']->realuser);
     }
 
     /**
@@ -708,7 +799,7 @@ class manager {
         if (self::is_loggedinas()) {
             return $_SESSION['REALUSER'];
         } else {
-            return $_SESSION['USER'];
+            return $GLOBALS['USER'];
         }
     }
 
@@ -725,12 +816,14 @@ class manager {
             return;
         }
 
-        // Switch to fresh new $SESSION.
-        $_SESSION['REALSESSION'] = $_SESSION['SESSION'];
-        $_SESSION['SESSION']     = new \stdClass();
+        // Switch to fresh new $_SESSION.
+        $_SESSION = array();
+        $_SESSION['REALSESSION'] = clone($GLOBALS['SESSION']);
+        $GLOBALS['SESSION'] = new \stdClass();
+        $_SESSION['SESSION'] =& $GLOBALS['SESSION'];
 
         // Create the new $USER object with all details and reload needed capabilities.
-        $_SESSION['REALUSER'] = $_SESSION['USER'];
+        $_SESSION['REALUSER'] = clone($GLOBALS['USER']);
         $user = get_complete_user_data('id', $userid);
         $user->realuser       = $_SESSION['REALUSER']->id;
         $user->loginascontext = $context;
@@ -754,4 +847,41 @@ class manager {
         \core\session\manager::set_user($user);
         $event->trigger();
     }
+
+    /**
+     * Add a JS session keepalive to the page.
+     *
+     * A JS session keepalive script will be called to update the session modification time every $frequency seconds.
+     *
+     * Upon failure, the specified error message will be shown to the user.
+     *
+     * @param string $identifier The string identifier for the message to show on failure.
+     * @param string $component The string component for the message to show on failure.
+     * @param int $frequency The update frequency in seconds.
+     * @throws coding_exception IF the frequency is longer than the session lifetime.
+     */
+    public static function keepalive($identifier = 'sessionerroruser', $component = 'error', $frequency = null) {
+        global $CFG, $PAGE;
+
+        if ($frequency) {
+            if ($frequency > $CFG->sessiontimeout) {
+                // Sanity check the frequency.
+                throw new \coding_exception('Keepalive frequency is longer than the session lifespan.');
+            }
+        } else {
+            // A frequency of sessiontimeout / 3 allows for one missed request whilst still preserving the session.
+            $frequency = $CFG->sessiontimeout / 3;
+        }
+
+        // Add the session keepalive script to the list of page output requirements.
+        $sessionkeepaliveurl = new \moodle_url('/lib/sessionkeepalive_ajax.php');
+        $PAGE->requires->string_for_js($identifier, $component);
+        $PAGE->requires->yui_module('moodle-core-checknet', 'M.core.checknet.init', array(array(
+            // The JS config takes this is milliseconds rather than seconds.
+            'frequency' => $frequency * 1000,
+            'message' => array($identifier, $component),
+            'uri' => $sessionkeepaliveurl->out(),
+        )));
+    }
+
 }

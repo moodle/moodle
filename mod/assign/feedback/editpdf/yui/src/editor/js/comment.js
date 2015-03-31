@@ -33,7 +33,7 @@
  * @param String colour
  * @param String rawtext
  */
-COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
+var COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
 
     /**
      * Reference to M.assignfeedback_editpdf.editor.
@@ -193,6 +193,7 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         container.setStyle('position', 'absolute');
         container.setX(position.x);
         container.setY(position.y);
+        drawable.store_position(container, position.x, position.y);
         drawable.nodes.push(container);
         node.set('value', this.rawtext);
         scrollheight = node.get('scrollHeight'),
@@ -300,6 +301,7 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
             windowlocation = this.editor.get_window_coordinates(newlocation);
             node.ancestor().setX(windowlocation.x);
             node.ancestor().setY(windowlocation.y);
+            this.drawable.store_position(node.ancestor(), windowlocation.x, windowlocation.y);
         }, null, this);
 
         this.menu = new M.assignfeedback_editpdf.commentmenu({

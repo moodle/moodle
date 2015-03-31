@@ -18,7 +18,7 @@
 /**
  * This file contains the class definition for the mahara portfolio plugin
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package moodlecore
  * @subpackage portfolio
  * @copyright 2009 Penny Leach

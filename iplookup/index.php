@@ -27,7 +27,11 @@
 require('../config.php');
 require_once('lib.php');
 
-require_login();
+require_login(0, false);
+if (isguestuser()) {
+    // Guest users cannot perform lookups.
+    throw new require_login_exception('Guests are not allowed here.');
+}
 
 $ip   = optional_param('ip', getremoteaddr(), PARAM_HOST);
 $user = optional_param('user', 0, PARAM_INT);
@@ -94,7 +98,7 @@ if (empty($CFG->googlemapkey3)) {
     echo '<div id="note">'.$info['note'].'</div>';
 
 } else {
-    if (strpos($CFG->wwwroot, 'https:') === 0) {
+    if (is_https()) {
         $PAGE->requires->js(new moodle_url('https://maps.googleapis.com/maps/api/js', array('key'=>$CFG->googlemapkey3, 'sensor'=>'false')));
     } else {
         $PAGE->requires->js(new moodle_url('http://maps.googleapis.com/maps/api/js', array('key'=>$CFG->googlemapkey3, 'sensor'=>'false')));

@@ -67,7 +67,7 @@ class MoodleQuickForm_text extends HTML_QuickForm_text{
     /**
      * Freeze the element so that only its value is returned and set persistantfreeze to false
      *
-     * @since     2.4
+     * @since     Moodle 2.4
      * @access    public
      * @return    void
      */
@@ -81,7 +81,7 @@ class MoodleQuickForm_text extends HTML_QuickForm_text{
     /**
      * Returns the html to be used when the element is frozen
      *
-     * @since     2.4
+     * @since     Moodle 2.4
      * @return    string Frozen html
      */
     function getFrozenHtml()

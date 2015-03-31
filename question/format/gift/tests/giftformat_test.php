@@ -1070,4 +1070,49 @@ FALSE#42 is the Ultimate Answer.#You gave the right answer.}";
 
         $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
     }
+
+    public function test_import_pre_content() {
+        $gift = '
+::Q001::[html]<p>What would running the test method print?</p>
+<pre>
+    public void test() \{
+        method1();
+        method2();
+        method3();
+    \}
+</pre>
+{}';
+        $lines = preg_split('/[\\n\\r]/', str_replace("\r\n", "\n", $gift));
+
+        $importer = new qformat_gift();
+        $q = $importer->readquestion($lines);
+
+        $expectedq = (object) array(
+            'name' => 'Q001',
+            'questiontext' => '<p>What would running the test method print?</p>
+<pre>
+    public void test() {
+        method1();
+        method2();
+        method3();
+    }
+</pre>',
+            'questiontextformat' => FORMAT_HTML,
+            'generalfeedback' => '',
+            'generalfeedbackformat' => FORMAT_HTML,
+            'qtype' => 'essay',
+            'defaultmark' => 1,
+            'penalty' => 0.3333333,
+            'length' => 1,
+            'responseformat' => 'editor',
+            'responsefieldlines' => 15,
+            'attachments' => 0,
+            'graderinfo' => array(
+                'text' => '',
+                'format' => FORMAT_HTML,
+                'files' => array()),
+        );
+
+        $this->assert(new question_check_specified_fields_expectation($expectedq), $q);
+    }
 }

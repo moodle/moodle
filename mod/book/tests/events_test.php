@@ -47,14 +47,11 @@ class mod_book_events_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
         $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
+        $context = context_module::instance($book->cmid);
 
         $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
 
-        $params = array(
-            'context' => context_module::instance($book->cmid),
-            'objectid' => $chapter->id
-        );
-        $event = \mod_book\event\chapter_created::create($params);
+        $event = \mod_book\event\chapter_created::create_from_chapter($book, $context, $chapter);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -80,14 +77,11 @@ class mod_book_events_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
         $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
+        $context = context_module::instance($book->cmid);
 
         $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
 
-        $params = array(
-            'context' => context_module::instance($book->cmid),
-            'objectid' => $chapter->id
-        );
-        $event = \mod_book\event\chapter_updated::create($params);
+        $event = \mod_book\event\chapter_updated::create_from_chapter($book, $context, $chapter);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -113,16 +107,12 @@ class mod_book_events_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
         $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
+        $context = context_module::instance($book->cmid);
 
         $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
 
-        $params = array(
-            'context' => context_module::instance($book->cmid),
-            'objectid' => $chapter->id
-        );
-        $event = \mod_book\event\chapter_deleted::create($params);
-        $event->add_record_snapshot('book_chapters', $chapter);
-        $event->set_legacy_logdata(array('1', 2, false));
+        $event = \mod_book\event\chapter_deleted::create_from_chapter($book, $context, $chapter);
+        $legacy = array($course->id, 'book', 'update', 'view.php?id='.$book->cmid, $book->id, $book->cmid);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -136,7 +126,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $this->assertEquals(context_module::instance($book->cmid), $event->get_context());
         $this->assertEquals($chapter->id, $event->objectid);
         $this->assertEquals($chapter, $event->get_record_snapshot('book_chapters', $chapter->id));
-        $this->assertEventLegacyLogData(array('1', 2, false), $event);
+        $this->assertEventLegacyLogData($legacy, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -201,14 +191,11 @@ class mod_book_events_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $book = $this->getDataGenerator()->create_module('book', array('course' => $course->id));
         $bookgenerator = $this->getDataGenerator()->get_plugin_generator('mod_book');
+        $context = context_module::instance($book->cmid);
 
         $chapter = $bookgenerator->create_chapter(array('bookid' => $book->id));
 
-        $params = array(
-            'context' => context_module::instance($book->cmid),
-            'objectid' => $chapter->id
-        );
-        $event = \mod_book\event\chapter_viewed::create($params);
+        $event = \mod_book\event\chapter_viewed::create_from_chapter($book, $context, $chapter);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();

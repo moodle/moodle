@@ -89,11 +89,11 @@ class restore_logs_processor {
             }
             // Arrived here log is empty, no rule was able to perform the conversion, log the problem
             if (empty($newlog)) {
-                self::$task->log('Log module-action "' . $keyname . ' process problem. Not restored', backup::LOG_DEBUG);
+                self::$task->log('Log module-action "' . $keyname . '" process problem. Not restored', backup::LOG_DEBUG);
             }
 
         } else { // Action not found log the problem
-            self::$task->log('Log module-action "' . $keyname . ' unknown. Not restored', backup::LOG_DEBUG);
+            self::$task->log('Log module-action "' . $keyname . '" unknown. Not restored', backup::LOG_DEBUG);
             $newlog = false;
 
         }

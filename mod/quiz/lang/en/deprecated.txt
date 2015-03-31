@@ -1,0 +1,10 @@
+categories,mod_quiz
+category,mod_quiz
+export,mod_quiz
+import,mod_quiz
+invalidnumericanswer,mod_quiz
+invalidnumerictolerance,mod_quiz
+multiplier,mod_quiz
+timelimitmin,mod_quiz
+timelimitsec,mod_quiz
+unusedcategorydeleted,mod_quiz

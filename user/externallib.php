@@ -186,7 +186,7 @@ class core_user_external extends external_api {
             // End of user info validation.
 
             // Create the user data now!
-            $user['id'] = user_create_user($user);
+            $user['id'] = user_create_user($user, true, false);
 
             // Custom fields.
             if (!empty($user['customfields'])) {
@@ -197,6 +197,9 @@ class core_user_external extends external_api {
                 }
                 profile_save_data((object) $user);
             }
+
+            // Trigger event.
+            \core\event\user_created::create_from_userid($user['id'])->trigger();
 
             // Preferences.
             if (!empty($user['preferences'])) {
@@ -400,7 +403,7 @@ class core_user_external extends external_api {
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($params['users'] as $user) {
-            user_update_user($user);
+            user_update_user($user, true, false);
             // Update user custom fields.
             if (!empty($user['customfields'])) {
 
@@ -411,6 +414,9 @@ class core_user_external extends external_api {
                 }
                 profile_save_data((object) $user);
             }
+
+            // Trigger event.
+            \core\event\user_updated::create_from_userid($user['id'])->trigger();
 
             // Preferences.
             if (!empty($user['preferences'])) {
@@ -802,6 +808,15 @@ class core_user_external extends external_api {
     }
 
     /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_users_by_id_is_deprecated() {
+        return true;
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
@@ -1113,30 +1128,34 @@ class core_user_external extends external_api {
             return $warnings;
         }
 
-        // The same key can't exists for the same platform.
-        if ($DB->get_record('user_devices', array('pushid' => $params['pushid'], 'platform' => $params['platform']))) {
-            $warnings['warning'][] = array(
-                'item' => $params['pushid'],
-                'warningcode' => 'existingkeyforplatform',
-                'message' => 'This key is already stored for other device using the same platform'
-            );
-            return $warnings;
-        }
+        // Notice that we can have multiple devices because previously it was allowed to have repeated ones.
+        // Since we don't have a clear way to decide which one is the more appropiate, we update all.
+        if ($userdevices = $DB->get_records('user_devices', array('uuid' => $params['uuid'],
+                'appid' => $params['appid'], 'userid' => $USER->id))) {
 
-        $userdevice = new stdclass;
-        $userdevice->userid     = $USER->id;
-        $userdevice->appid      = $params['appid'];
-        $userdevice->name       = $params['name'];
-        $userdevice->model      = $params['model'];
-        $userdevice->platform   = $params['platform'];
-        $userdevice->version    = $params['version'];
-        $userdevice->pushid     = $params['pushid'];
-        $userdevice->uuid       = $params['uuid'];
-        $userdevice->timecreated  = time();
-        $userdevice->timemodified = $userdevice->timecreated;
+            foreach ($userdevices as $userdevice) {
+                $userdevice->version    = $params['version'];   // Maybe the user upgraded the device.
+                $userdevice->pushid     = $params['pushid'];
+                $userdevice->timemodified  = time();
+                $DB->update_record('user_devices', $userdevice);
+            }
 
-        if (!$DB->insert_record('user_devices', $userdevice)) {
-            throw new moodle_exception("There was a problem saving in the database the device with key: " . $params['pushid']);
+        } else {
+            $userdevice = new stdclass;
+            $userdevice->userid     = $USER->id;
+            $userdevice->appid      = $params['appid'];
+            $userdevice->name       = $params['name'];
+            $userdevice->model      = $params['model'];
+            $userdevice->platform   = $params['platform'];
+            $userdevice->version    = $params['version'];
+            $userdevice->pushid     = $params['pushid'];
+            $userdevice->uuid       = $params['uuid'];
+            $userdevice->timecreated  = time();
+            $userdevice->timemodified = $userdevice->timecreated;
+
+            if (!$DB->insert_record('user_devices', $userdevice)) {
+                throw new moodle_exception("There was a problem saving in the database the device with key: " . $params['pushid']);
+            }
         }
 
         return $warnings;
@@ -1151,6 +1170,76 @@ class core_user_external extends external_api {
     public static function add_user_device_returns() {
         return new external_multiple_structure(
            new external_warnings()
+        );
+    }
+
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9
+     */
+    public static function remove_user_device_parameters() {
+        return new external_function_parameters(
+            array(
+                'uuid'  => new external_value(PARAM_RAW, 'the device UUID'),
+                'appid' => new external_value(PARAM_NOTAGS,
+                                                'the app id, if empty devices matching the UUID for the user will be removed',
+                                                VALUE_DEFAULT, ''),
+            )
+        );
+    }
+
+    /**
+     * Remove a user device from the Moodle database (for PUSH notifications usually).
+     *
+     * @param string $uuid The device UUID.
+     * @param string $appid The app id, opitonal parameter. If empty all the devices fmatching the UUID or the user will be removed.
+     * @return array List of possible warnings and removal status.
+     * @since Moodle 2.9
+     */
+    public static function remove_user_device($uuid, $appid = "") {
+        global $CFG;
+        require_once($CFG->dirroot . "/user/lib.php");
+
+        $params = self::validate_parameters(self::remove_user_device_parameters(), array('uuid' => $uuid, 'appid' => $appid));
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        $removed = user_remove_user_device($params['uuid'], $params['appid']);
+
+        if (!$removed) {
+            $warnings[] = array(
+                'item' => $params['uuid'],
+                'warningcode' => 'devicedoesnotexist',
+                'message' => 'The device doesn\'t exists in the database'
+            );
+        }
+
+        $result = array(
+            'removed' => $removed,
+            'warnings' => $warnings
+        );
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_multiple_structure
+     * @since Moodle 2.9
+     */
+    public static function remove_user_device_returns() {
+        return new external_single_structure(
+            array(
+                'removed' => new external_value(PARAM_BOOL, 'True if removed, false if not removed because it doesn\'t exists'),
+                'warnings' => new external_warnings(),
+            )
         );
     }
 
@@ -1205,6 +1294,14 @@ class moodle_user_external extends external_api {
         return core_user_external::create_users_returns();
     }
 
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function create_users_is_deprecated() {
+        return true;
+    }
 
     /**
      * Returns description of method parameters
@@ -1243,6 +1340,14 @@ class moodle_user_external extends external_api {
         return core_user_external::delete_users_returns();
     }
 
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function delete_users_is_deprecated() {
+        return true;
+    }
 
     /**
      * Returns description of method parameters
@@ -1279,6 +1384,15 @@ class moodle_user_external extends external_api {
      */
     public static function update_users_returns() {
         return core_user_external::update_users_returns();
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function update_users_is_deprecated() {
+        return true;
     }
 
     /**
@@ -1320,6 +1434,16 @@ class moodle_user_external extends external_api {
     public static function get_users_by_id_returns() {
         return core_user_external::get_users_by_id_returns();
     }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_users_by_id_is_deprecated() {
+        return true;
+    }
+
     /**
      * Returns description of method parameters
      *
@@ -1358,6 +1482,15 @@ class moodle_user_external extends external_api {
     }
 
     /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_course_participants_by_id_is_deprecated() {
+        return true;
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
@@ -1384,7 +1517,7 @@ class moodle_user_external extends external_api {
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
      * @see core_enrol_external::get_enrolled_users()
      */
-    public static function get_users_by_courseid($courseid, $options) {
+    public static function get_users_by_courseid($courseid, $options = array()) {
         global $CFG;
         require_once($CFG->dirroot . '/enrol/externallib.php');
         return core_enrol_external::get_enrolled_users($courseid, $options);
@@ -1401,5 +1534,14 @@ class moodle_user_external extends external_api {
         global $CFG;
         require_once($CFG->dirroot . '/enrol/externallib.php');
         return core_enrol_external::get_enrolled_users_returns();
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_users_by_courseid_is_deprecated() {
+        return true;
     }
 }

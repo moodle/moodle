@@ -31,36 +31,82 @@ abstract class grade_export {
     public $course;      // course object
     public $columns;     // array of grade_items selected for export
 
-    public $previewrows;     // number of rows in preview
     public $export_letters;  // export letters
     public $export_feedback; // export feedback
     public $userkey;         // export using private user key
 
     public $updatedgradesonly; // only export updated grades
-    public $displaytype; // display type (e.g. real, percentages, letter) for exports
+
+    /**
+     *  Grade display type (real, percentages or letter).
+     *
+     *  This attribute is an integer for XML file export. Otherwise is an array for all other formats (ODS, XLS and TXT).
+     *
+     *  @var $displaytype Grade display type constant (1, 2 or 3) or an array of display types where the key is the name
+     *                    and the value is the grade display type constant or 0 for unchecked display types.
+     * @access public.
+     */
+    public $displaytype;
     public $decimalpoints; // number of decimal points for exports
     public $onlyactive; // only include users with an active enrolment
     public $usercustomfields; // include users custom fields
 
     /**
-     * Constructor should set up all the private variables ready to be pulled
+     * @deprecated since Moodle 2.8
+     * @var $previewrows Number of rows in preview.
+     */
+    public $previewrows;
+
+    /**
+     * Constructor should set up all the private variables ready to be pulled.
+     *
+     * This constructor used to accept the individual parameters as separate arguments, in
+     * 2.8 this was simplified to just accept the data from the moodle form.
+     *
      * @access public
      * @param object $course
-     * @param int $groupid id of selected group, 0 means all
-     * @param string $itemlist comma separated list of item ids, empty means all
-     * @param boolean $export_feedback
-     * @param boolean $updatedgradesonly
-     * @param string $displaytype
-     * @param int $decimalpoints
-     * @param boolean $onlyactive
-     * @param boolean $usercustomfields include user custom field in export
+     * @param int $groupid
+     * @param stdClass|null $formdata
      * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
-    public function grade_export($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2, $onlyactive = false, $usercustomfields = false) {
+    public function __construct($course, $groupid, $formdata) {
+        if (func_num_args() != 3 || ($formdata != null && get_class($formdata) != "stdClass")) {
+            $args = func_get_args();
+            return call_user_func_array(array($this, "deprecated_constructor"), $args);
+        }
         $this->course = $course;
         $this->groupid = $groupid;
+
         $this->grade_items = grade_item::fetch_all(array('courseid'=>$this->course->id));
 
+        $this->process_form($formdata);
+    }
+
+    /**
+     * Old deprecated constructor.
+     *
+     * This deprecated constructor accepts the individual parameters as separate arguments, in
+     * 2.8 this was simplified to just accept the data from the moodle form.
+     *
+     * @deprecated since 2.8 MDL-46548. Instead call the shortened constructor which accepts the data
+     * directly from the grade_export_form.
+     */
+    protected function deprecated_constructor($course,
+                                              $groupid=0,
+                                              $itemlist='',
+                                              $export_feedback=false,
+                                              $updatedgradesonly = false,
+                                              $displaytype = GRADE_DISPLAY_TYPE_REAL,
+                                              $decimalpoints = 2,
+                                              $onlyactive = false,
+                                              $usercustomfields = false) {
+
+        debugging('Many argument constructor for class "grade_export" is deprecated. Call the 3 argument version instead.', DEBUG_DEVELOPER);
+
+        $this->course = $course;
+        $this->groupid = $groupid;
+
+        $this->grade_items = grade_item::fetch_all(array('courseid'=>$this->course->id));
         //Populating the columns here is required by /grade/export/(whatever)/export.php
         //however index.php, when the form is submitted, will construct the collection here
         //with an empty $itemlist then reconstruct it in process_form() using $formdata
@@ -126,6 +172,10 @@ abstract class grade_export {
             $this->userkey = $formdata->key;
         }
 
+        if (isset($formdata->decimals)) {
+            $this->decimalpoints = $formdata->decimals;
+        }
+
         if (isset($formdata->export_letters)) {
             $this->export_letters = $formdata->export_letters;
         }
@@ -142,6 +192,19 @@ abstract class grade_export {
             $this->previewrows = $formdata->previewrows;
         }
 
+        if (isset($formdata->display)) {
+            $this->displaytype = $formdata->display;
+
+            // Used by grade exports which accept multiple display types.
+            // If the checkbox value is 0 (unchecked) then remove it.
+            if (is_array($formdata->display)) {
+                $this->displaytype = array_filter($formdata->display);
+            }
+        }
+
+        if (isset($formdata->updatedgradesonly)) {
+            $this->updatedgradesonly = $formdata->updatedgradesonly;
+        }
     }
 
     /**
@@ -165,31 +228,38 @@ abstract class grade_export {
 
     /**
      * Returns string representation of final grade
-     * @param $object $grade instance of grade_grade class
+     * @param object $grade instance of grade_grade class
+     * @param integer $gradedisplayconst grade display type constant.
      * @return string
      */
-    public function format_grade($grade) {
-        return grade_format_gradevalue($grade->finalgrade, $this->grade_items[$grade->itemid], false, $this->displaytype, $this->decimalpoints);
+    public function format_grade($grade, $gradedisplayconst = null) {
+        $displaytype = $this->displaytype;
+        if (is_array($this->displaytype) && !is_null($gradedisplayconst)) {
+            $displaytype = $gradedisplayconst;
+        }
+        return grade_format_gradevalue($grade->finalgrade, $this->grade_items[$grade->itemid], false, $displaytype, $this->decimalpoints);
     }
 
     /**
      * Returns the name of column in export
      * @param object $grade_item
-     * @param boolena $feedback feedback colum
-     * &return string
+     * @param boolean $feedback feedback colum
+     * @param string $gradedisplayname grade display name.
+     * @return string
      */
-    public function format_column_name($grade_item, $feedback=false) {
+    public function format_column_name($grade_item, $feedback=false, $gradedisplayname = null) {
+        $column = new stdClass();
+
         if ($grade_item->itemtype == 'mod') {
-            $name = get_string('modulename', $grade_item->itemmodule).get_string('labelsep', 'langconfig').$grade_item->get_name();
+            $column->name = get_string('modulename', $grade_item->itemmodule).get_string('labelsep', 'langconfig').$grade_item->get_name();
         } else {
-            $name = $grade_item->get_name();
+            $column->name = $grade_item->get_name();
         }
 
-        if ($feedback) {
-            $name .= ' ('.get_string('feedback').')';
-        }
+        // We can't have feedback and display type at the same time.
+        $column->extra = ($feedback) ? get_string('feedback') : get_string($gradedisplayname, 'grades');
 
-        return html_to_text($name, 0, false);
+        return html_to_text(get_string('gradeexportcolumntype', 'grades', $column), 0, false);
     }
 
     /**
@@ -209,9 +279,12 @@ abstract class grade_export {
     /**
      * Prints preview of exported grades on screen as a feedback mechanism
      * @param bool $require_user_idnumber true means skip users without idnumber
+     * @deprecated since 2.8 MDL-46548. Previews are not useful on export.
      */
     public function display_preview($require_user_idnumber=false) {
         global $OUTPUT;
+
+        debugging('function grade_export::display_preview is deprecated.', DEBUG_DEVELOPER);
 
         $userprofilefields = grade_helper::get_user_profile_fields($this->course->id, $this->usercustomfields);
         $formatoptions = new stdClass();
@@ -310,16 +383,30 @@ abstract class grade_export {
             $itemidsparam = '-1';
         }
 
-        $params = array('id'                =>$this->course->id,
-                        'groupid'           =>$this->groupid,
-                        'itemids'           =>$itemidsparam,
-                        'export_letters'    =>$this->export_letters,
-                        'export_feedback'   =>$this->export_feedback,
-                        'updatedgradesonly' =>$this->updatedgradesonly,
-                        'displaytype'       =>$this->displaytype,
-                        'decimalpoints'     =>$this->decimalpoints,
-                        'export_onlyactive' =>$this->onlyactive,
-                        'usercustomfields'  =>$this->usercustomfields);
+        // We have a single grade display type constant.
+        if (!is_array($this->displaytype)) {
+            $displaytypes = $this->displaytype;
+        } else {
+            // Implode the grade display types array as moodle_url function doesn't accept arrays.
+            $displaytypes = implode(',', $this->displaytype);
+        }
+
+        if (!empty($this->updatedgradesonly)) {
+            $updatedgradesonly = $this->updatedgradesonly;
+        } else {
+            $updatedgradesonly = 0;
+        }
+        $params = array('id'                => $this->course->id,
+                        'groupid'           => $this->groupid,
+                        'itemids'           => $itemidsparam,
+                        'export_letters'    => $this->export_letters,
+                        'export_feedback'   => $this->export_feedback,
+                        'updatedgradesonly' => $updatedgradesonly,
+                        'decimalpoints'     => $this->decimalpoints,
+                        'export_onlyactive' => $this->onlyactive,
+                        'usercustomfields'  => $this->usercustomfields,
+                        'displaytype'       => $displaytypes,
+                        'key'               => $this->userkey);
 
         return $params;
     }
@@ -327,19 +414,25 @@ abstract class grade_export {
     /**
      * Either prints a "Export" box, which will redirect the user to the download page,
      * or prints the URL for the published data.
+     *
+     * @deprecated since 2.8 MDL-46548. Call get_export_url and set the
+     *             action of the grade_export_form instead.
      * @return void
      */
     public function print_continue() {
         global $CFG, $OUTPUT;
 
+        debugging('function grade_export::print_continue is deprecated.', DEBUG_DEVELOPER);
         $params = $this->get_export_params();
 
         echo $OUTPUT->heading(get_string('export', 'grades'));
 
         echo $OUTPUT->container_start('gradeexportlink');
 
-        if (!$this->userkey) {      // this button should trigger a download prompt
-            echo $OUTPUT->single_button(new moodle_url('/grade/export/'.$this->plugin.'/export.php', $params), get_string('download', 'admin'));
+        if (!$this->userkey) {
+            // This button should trigger a download prompt.
+            $url = new moodle_url('/grade/export/'.$this->plugin.'/export.php', $params);
+            echo $OUTPUT->single_button($url, get_string('download', 'admin'));
 
         } else {
             $paramstr = '';
@@ -354,6 +447,153 @@ abstract class grade_export {
             echo get_string('download', 'admin').': ' . html_writer::link($link, $link);
         }
         echo $OUTPUT->container_end();
+
+        return;
+    }
+
+    /**
+     * Generate the export url.
+     *
+     * Get submitted form data and create the url to be used on the grade publish feature.
+     *
+     * @return moodle_url the url of grade publishing export.
+     */
+    public function get_export_url() {
+        return new moodle_url('/grade/export/'.$this->plugin.'/dump.php', $this->get_export_params());
+    }
+
+    /**
+     * Convert the grade display types parameter into the required array to grade exporting class.
+     *
+     * In order to export, the array key must be the display type name and the value must be the grade display type
+     * constant.
+     *
+     * Note: Added support for combined display types constants like the (GRADE_DISPLAY_TYPE_PERCENTAGE_REAL) as
+     *       the $CFG->grade_export_displaytype config is still used on 2.7 in case of missing displaytype url param.
+     *       In these cases, the file will be exported with a column for each display type.
+     *
+     * @param string $displaytypes can be a single or multiple display type constants comma separated.
+     * @return array $types
+     */
+    public static function convert_flat_displaytypes_to_array($displaytypes) {
+        $types = array();
+
+        // We have a single grade display type constant.
+        if (is_int($displaytypes)) {
+            $displaytype = clean_param($displaytypes, PARAM_INT);
+
+            // Let's set a default value, will be replaced below by the grade display type constant.
+            $display[$displaytype] = 1;
+        } else {
+            // Multiple grade display types constants.
+            $display = array_flip(explode(',', $displaytypes));
+        }
+
+        // Now, create the array in the required format by grade exporting class.
+        foreach ($display as $type => $value) {
+            $type = clean_param($type, PARAM_INT);
+            if ($type == GRADE_DISPLAY_TYPE_LETTER) {
+                $types['letter'] = GRADE_DISPLAY_TYPE_LETTER;
+            } else if ($type == GRADE_DISPLAY_TYPE_PERCENTAGE) {
+                $types['percentage'] = GRADE_DISPLAY_TYPE_PERCENTAGE;
+            } else if ($type == GRADE_DISPLAY_TYPE_REAL) {
+                $types['real'] = GRADE_DISPLAY_TYPE_REAL;
+            } else if ($type == GRADE_DISPLAY_TYPE_REAL_PERCENTAGE) {
+                $types['real'] = GRADE_DISPLAY_TYPE_REAL;
+                $types['percentage'] = GRADE_DISPLAY_TYPE_PERCENTAGE;
+            } else if ($type == GRADE_DISPLAY_TYPE_REAL_LETTER) {
+                $types['real'] = GRADE_DISPLAY_TYPE_REAL;
+                $types['letter'] = GRADE_DISPLAY_TYPE_LETTER;
+            } else if ($type == GRADE_DISPLAY_TYPE_LETTER_REAL) {
+                $types['letter'] = GRADE_DISPLAY_TYPE_LETTER;
+                $types['real'] = GRADE_DISPLAY_TYPE_REAL;
+            } else if ($type == GRADE_DISPLAY_TYPE_LETTER_PERCENTAGE) {
+                $types['letter'] = GRADE_DISPLAY_TYPE_LETTER;
+                $types['percentage'] = GRADE_DISPLAY_TYPE_PERCENTAGE;
+            } else if ($type == GRADE_DISPLAY_TYPE_PERCENTAGE_LETTER) {
+                $types['percentage'] = GRADE_DISPLAY_TYPE_PERCENTAGE;
+                $types['letter'] = GRADE_DISPLAY_TYPE_LETTER;
+            } else if ($type == GRADE_DISPLAY_TYPE_PERCENTAGE_REAL) {
+                $types['percentage'] = GRADE_DISPLAY_TYPE_PERCENTAGE;
+                $types['real'] = GRADE_DISPLAY_TYPE_REAL;
+            }
+        }
+        return $types;
+    }
+
+    /**
+     * Convert the item ids parameter into the required array to grade exporting class.
+     *
+     * In order to export, the array key must be the grade item id and all values must be one.
+     *
+     * @param string $itemids can be a single item id or many item ids comma separated.
+     * @return array $items correctly formatted array.
+     */
+    public static function convert_flat_itemids_to_array($itemids) {
+        $items = array();
+
+        // We just have one single item id.
+        if (is_int($itemids)) {
+            $itemid = clean_param($itemids, PARAM_INT);
+            $items[$itemid] = 1;
+        } else {
+            // Few grade items.
+            $items = array_flip(explode(',', $itemids));
+            foreach ($items as $itemid => $value) {
+                $itemid = clean_param($itemid, PARAM_INT);
+                $items[$itemid] = 1;
+            }
+        }
+        return $items;
+    }
+
+    /**
+     * Create the html code of the grade publishing feature.
+     *
+     * @return string $output html code of the grade publishing.
+     */
+    public function get_grade_publishing_url() {
+        $url = $this->get_export_url();
+        $output =  html_writer::start_div();
+        $output .= html_writer::tag('p', get_string('gradepublishinglink', 'grades', html_writer::link($url, $url)));
+        $output .=  html_writer::end_div();
+        return $output;
+    }
+
+    /**
+     * Create a stdClass object from URL parameters to be used by grade_export class.
+     *
+     * @param int $id course id.
+     * @param string $itemids grade items comma separated.
+     * @param bool $exportfeedback export feedback option.
+     * @param bool $onlyactive only enrolled active students.
+     * @param string $displaytype grade display type constants comma separated.
+     * @param int $decimalpoints grade decimal points.
+     * @param null $updatedgradesonly recently updated grades only (Used by XML exporting only).
+     * @param null $separator separator character: tab, comma, colon and semicolon (Used by TXT exporting only).
+     *
+     * @return stdClass $formdata
+     */
+    public static function export_bulk_export_data($id, $itemids, $exportfeedback, $onlyactive, $displaytype,
+                                                   $decimalpoints, $updatedgradesonly = null, $separator = null) {
+
+        $formdata = new \stdClass();
+        $formdata->id = $id;
+        $formdata->itemids = self::convert_flat_itemids_to_array($itemids);
+        $formdata->exportfeedback = $exportfeedback;
+        $formdata->export_onlyactive = $onlyactive;
+        $formdata->display = self::convert_flat_displaytypes_to_array($displaytype);
+        $formdata->decimals = $decimalpoints;
+
+        if (!empty($updatedgradesonly)) {
+            $formdata->updatedgradesonly = $updatedgradesonly;
+        }
+
+        if (!empty($separator)) {
+            $formdata->separator = $separator;
+        }
+
+        return $formdata;
     }
 }
 

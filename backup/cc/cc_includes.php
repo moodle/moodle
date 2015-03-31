@@ -13,13 +13,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
-* Main include for IMS Common Cartridge export classes
-*
-* @package    backup-convert
-* @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
-* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Main include for IMS Common Cartridge export classes
+ *
+ * @package    backup-convert
+ * @copyright  2011 Darko Miletic <dmiletic@moodlerooms.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once($CFG->dirroot .'/backup/cc/cc_lib/xmlbase.php');
 require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_resources.php');
@@ -40,4 +41,5 @@ require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_converter_resource.php');
 require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_converter_quiz.php');
 require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_converter_page.php');
 require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_converter_label.php');
+require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_converter_folder.php');
 require_once($CFG->dirroot .'/backup/cc/cc_lib/cc_convert_moodle2.php');

@@ -17,7 +17,7 @@
 /**
  * This plugin is used to access alfresco repository
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_alfresco
  * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
  * repository_alfresco class
  * This is a class used to browse files from alfresco
  *
- * @since      2.0
+ * @since      Moodle 2.0
  * @package    repository_alfresco
  * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -207,9 +207,11 @@ class repository_alfresco extends repository {
 
     public function print_search() {
         $str = parent::print_search();
-        $str .= html_writer::label(get_string('space', 'repository_alfresco'), 'space', false, array('class' => 'accesshide'));
-        $str .= html_writer::empty_tag('br');
-        $str .= '<select id="space" name="space">';
+        $str .= html_writer::label(get_string('space', 'repository_alfresco'),
+                                   'repository_alfresco_space',
+                                   false,
+                                   array('class' => 'accesshide'));
+        $str .= '<select id="repository_alfresco_space" class="alfresco-workplace" name="space">';
         foreach ($this->user_session->stores as $v) {
             $str .= '<option ';
             if ($v->__toString() === 'workspace://SpacesStore') {

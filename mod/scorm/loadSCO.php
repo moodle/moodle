@@ -19,25 +19,25 @@ require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
 $id    = optional_param('id', '', PARAM_INT);    // Course Module ID, or
 $a     = optional_param('a', '', PARAM_INT);     // scorm ID
-$scoid = required_param('scoid', PARAM_INT);     // sco ID
+$scoid = required_param('scoid', PARAM_INT);     // sco ID.
 
-$delayseconds = 2;  // Delay time before sco launch, used to give time to browser to define API
+$delayseconds = 2;  // Delay time before sco launch, used to give time to browser to define API.
 
 if (!empty($id)) {
     if (! $cm = get_coursemodule_from_id('scorm', $id)) {
         print_error('invalidcoursemodule');
     }
-    if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
+    if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
         print_error('coursemisconf');
     }
-    if (! $scorm = $DB->get_record('scorm', array('id'=>$cm->instance))) {
+    if (! $scorm = $DB->get_record('scorm', array('id' => $cm->instance))) {
         print_error('invalidcoursemodule');
     }
 } else if (!empty($a)) {
-    if (! $scorm = $DB->get_record('scorm', array('id'=>$a))) {
+    if (! $scorm = $DB->get_record('scorm', array('id' => $a))) {
         print_error('coursemisconf');
     }
-    if (! $course = $DB->get_record('course', array('id'=>$scorm->course))) {
+    if (! $course = $DB->get_record('course', array('id' => $scorm->course))) {
         print_error('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
@@ -47,7 +47,7 @@ if (!empty($id)) {
     print_error('missingparameter');
 }
 
-$PAGE->set_url('/mod/scorm/loadSCO.php', array('scoid'=>$scoid, 'id'=>$cm->id));
+$PAGE->set_url('/mod/scorm/loadSCO.php', array('scoid' => $scoid, 'id' => $cm->id));
 
 if (!isloggedin()) { // Prevent login page from being shown in iframe.
     // Using simple html instead of exceptions here as shown inside iframe/object.
@@ -60,9 +60,9 @@ if (!isloggedin()) { // Prevent login page from being shown in iframe.
 
 require_login($course, false, $cm, false); // Call require_login anyway to set up globals correctly.
 
-//check if scorm closed
+// Check if scorm closed.
 $timenow = time();
-if ($scorm->timeclose !=0) {
+if ($scorm->timeclose != 0) {
     if ($scorm->timeopen > $timenow) {
         print_error('notopenyet', 'scorm', null, userdate($scorm->timeopen));
     } else if ($timenow > $scorm->timeclose) {
@@ -73,12 +73,10 @@ if ($scorm->timeclose !=0) {
 $context = context_module::instance($cm->id);
 
 if (!empty($scoid)) {
-    //
-    // Direct SCO request
-    //
+    // Direct SCO request.
     if ($sco = scorm_get_sco($scoid)) {
         if ($sco->launch == '') {
-            // Search for the next launchable sco
+            // Search for the next launchable sco.
             if ($scoes = $DB->get_records_select(
                     'scorm_scoes',
                     'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true).' AND id > ?',
@@ -89,9 +87,8 @@ if (!empty($scoid)) {
         }
     }
 }
-//
-// If no sco was found get the first of SCORM package
-//
+
+// If no sco was found get the first of SCORM package.
 if (!isset($sco)) {
     $scoes = $DB->get_records_select(
         'scorm_scoes',
@@ -104,14 +101,12 @@ if (!isset($sco)) {
 
 if ($sco->scormtype == 'asset') {
     $attempt = scorm_get_last_attempt($scorm->id, $USER->id);
-    $element = (scorm_version_check($scorm->version, SCORM_13)) ? 'cmi.completion_status':'cmi.core.lesson_status';
+    $element = (scorm_version_check($scorm->version, SCORM_13)) ? 'cmi.completion_status' : 'cmi.core.lesson_status';
     $value = 'completed';
     $result = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
 }
 
-//
-// Forge SCO URL
-//
+// Forge SCO URL.
 $connector = '';
 $version = substr($scorm->version, 0, 4);
 if ((isset($sco->parameters) && (!empty($sco->parameters))) || ($version == 'AICC')) {
@@ -127,15 +122,15 @@ if ((isset($sco->parameters) && (!empty($sco->parameters))) || ($version == 'AIC
 
 if ($version == 'AICC') {
     require_once("$CFG->dirroot/mod/scorm/datamodels/aicclib.php");
-    $aicc_sid = scorm_aicc_get_hacp_session($scorm->id);
-    if (empty($aicc_sid)) {
-        $aicc_sid = sesskey();
+    $aiccsid = scorm_aicc_get_hacp_session($scorm->id);
+    if (empty($aiccsid)) {
+        $aiccsid = sesskey();
     }
-    $sco_params = '';
+    $scoparams = '';
     if (isset($sco->parameters) && (!empty($sco->parameters))) {
-        $sco_params = '&'. $sco->parameters;
+        $scoparams = '&'. $sco->parameters;
     }
-    $launcher = $sco->launch.$connector.'aicc_sid='.$aicc_sid.'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$sco_params;
+    $launcher = $sco->launch.$connector.'aicc_sid='.$aiccsid.'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$scoparams;
 } else {
     if (isset($sco->parameters) && (!empty($sco->parameters))) {
         $launcher = $sco->launch.$connector.$sco->parameters;
@@ -145,7 +140,7 @@ if ($version == 'AICC') {
 }
 
 if (scorm_external_link($sco->launch)) {
-    //TODO: does this happen?
+    // TODO: does this happen?
     $result = $launcher;
 } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL) {
     // Remote learning activity.
@@ -176,80 +171,84 @@ if ($sco->scormtype == 'asset') {
     // HTTP 302 Found => Moved Temporarily.
     header('Location: ' . $result);
     // Provide a short feedback in case of slow network connection.
-    echo '<html><body><p>' . get_string('activitypleasewait', 'scorm'). '</p></body></html>';
+    echo html_writer::start_tag('html');
+    echo html_writer::tag('body', html_writer::tag('p', get_string('activitypleasewait', 'scorm')));
+    echo html_writer::end_tag('html');
     exit;
 }
 
 // We expect a SCO: select which API are we looking for.
-$LMS_api = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'API' : 'API_1484_11';
+$lmsapi = (scorm_version_check($scorm->version, SCORM_12) || empty($scorm->version)) ? 'API' : 'API_1484_11';
 
+echo html_writer::start_tag('html');
+echo html_writer::start_tag('head');
+echo html_writer::tag('title', 'LoadSCO');
 ?>
-<html>
-    <head>
-        <title>LoadSCO</title>
-        <script type="text/javascript">
-        //<![CDATA[
-        var myApiHandle = null;
-        var myFindAPITries = 0;
+    <script type="text/javascript">
+    //<![CDATA[
+    var myApiHandle = null;
+    var myFindAPITries = 0;
 
-        function myGetAPIHandle() {
-           myFindAPITries = 0;
-           if (myApiHandle == null) {
-              myApiHandle = myGetAPI();
-           }
-           return myApiHandle;
-        }
+    function myGetAPIHandle() {
+       myFindAPITries = 0;
+       if (myApiHandle == null) {
+          myApiHandle = myGetAPI();
+       }
+       return myApiHandle;
+    }
 
-        function myFindAPI(win) {
-           while ((win.<?php echo $LMS_api; ?> == null) && (win.parent != null) && (win.parent != win)) {
-              myFindAPITries++;
-              // Note: 7 is an arbitrary number, but should be more than sufficient
-              if (myFindAPITries > 7) {
-                 return null;
-              }
-              win = win.parent;
-           }
-           return win.<?php echo $LMS_api; ?>;
-        }
+    function myFindAPI(win) {
+       while ((win.<?php echo $lmsapi; ?> == null) && (win.parent != null) && (win.parent != win)) {
+          myFindAPITries++;
+          // Note: 7 is an arbitrary number, but should be more than sufficient
+          if (myFindAPITries > 7) {
+             return null;
+          }
+          win = win.parent;
+       }
+       return win.<?php echo $lmsapi; ?>;
+    }
 
-        // hun for the API - needs to be loaded before we can launch the package
-        function myGetAPI() {
-           var theAPI = myFindAPI(window);
-           if ((theAPI == null) && (window.opener != null) && (typeof(window.opener) != "undefined")) {
-              theAPI = myFindAPI(window.opener);
-           }
-           if (theAPI == null) {
-              return null;
-           }
-           return theAPI;
-        }
+    // hun for the API - needs to be loaded before we can launch the package
+    function myGetAPI() {
+       var theAPI = myFindAPI(window);
+       if ((theAPI == null) && (window.opener != null) && (typeof(window.opener) != "undefined")) {
+          theAPI = myFindAPI(window.opener);
+       }
+       if (theAPI == null) {
+          return null;
+       }
+       return theAPI;
+    }
 
-       function doredirect() {
-            if (myGetAPIHandle() != null) {
-                location = "<?php echo $result ?>";
-            }
-            else {
-                document.body.innerHTML = "<p><?php echo get_string('activityloading', 'scorm');?> <span id='countdown'><?php echo $delayseconds ?></span> <?php echo get_string('numseconds', 'moodle', '');?>. &nbsp; <img src='<?php echo $OUTPUT->pix_url('wait', 'scorm') ?>'><p>";
-                var e = document.getElementById("countdown");
-                var cSeconds = parseInt(e.innerHTML);
-                var timer = setInterval(function() {
-                                                if( cSeconds && myGetAPIHandle() == null ) {
-                                                    e.innerHTML = --cSeconds;
-                                                } else {
-                                                    clearInterval(timer);
-                                                    document.body.innerHTML = "<p><?php echo get_string('activitypleasewait', 'scorm');?></p>";
-                                                    location = "<?php echo $result ?>";
-                                                }
-                                            }, 1000);
-            }
+   function doredirect() {
+        if (myGetAPIHandle() != null) {
+            location = "<?php echo $result ?>";
         }
-        //]]>
-        </script>
-        <noscript>
-            <meta http-equiv="refresh" content="0;url=<?php echo $result ?>" />
-        </noscript>
-    </head>
-    <body onload="doredirect();">
-        <p><?php echo get_string('activitypleasewait', 'scorm');?></p>
-    </body>
-</html>
+        else {
+            document.body.innerHTML = "<p><?php echo get_string('activityloading', 'scorm');?>" +
+                                        "<span id='countdown'><?php echo $delayseconds ?></span> " +
+                                        "<?php echo get_string('numseconds', 'moodle', '');?>. &nbsp; " +
+                                        "<img src='<?php echo $OUTPUT->pix_url('wait', 'scorm') ?>'></p>";
+            var e = document.getElementById("countdown");
+            var cSeconds = parseInt(e.innerHTML);
+            var timer = setInterval(function() {
+                                            if( cSeconds && myGetAPIHandle() == null ) {
+                                                e.innerHTML = --cSeconds;
+                                            } else {
+                                                clearInterval(timer);
+                                                document.body.innerHTML = "<p><?php echo get_string('activitypleasewait', 'scorm');?></p>";
+                                                location = "<?php echo $result ?>";
+                                            }
+                                        }, 1000);
+        }
+    }
+    //]]>
+    </script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=<?php echo $result ?>" />
+    </noscript>
+<?php
+echo html_writer::end_tag('head');
+echo html_writer::tag('body', html_writer::tag('p', get_string('activitypleasewait', 'scorm')), array('onload' => "doredirect();"));
+echo html_writer::end_tag('html');

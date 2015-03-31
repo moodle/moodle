@@ -66,6 +66,11 @@ class group_form extends moodleform {
         $mform->addHelpButton('enrolmentkey', 'enrolmentkey', 'group');
         $mform->setType('enrolmentkey', PARAM_RAW);
 
+        $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
+
+        $mform->addElement('checkbox', 'deletepicture', get_string('delete'));
+        $mform->setDefault('deletepicture', 0);
+
         $options = array(get_string('no'), get_string('yes'));
         $mform->addElement('select', 'hidepicture', get_string('hidepicture'), $options);
 
@@ -79,6 +84,37 @@ class group_form extends moodleform {
         $mform->setType('courseid', PARAM_INT);
 
         $this->add_action_buttons();
+    }
+
+    /**
+     * Extend the form definition after the data has been parsed.
+     */
+    public function definition_after_data() {
+        global $COURSE, $DB;
+
+        $mform = $this->_form;
+        $groupid = $mform->getElementValue('id');
+
+        if ($group = $DB->get_record('groups', array('id' => $groupid))) {
+
+            // Print picture.
+            if (!($pic = print_group_picture($group, $COURSE->id, true, true, false))) {
+                $pic = get_string('none');
+                if ($mform->elementExists('deletepicture')) {
+                    $mform->removeElement('deletepicture');
+                }
+            }
+            $imageelement = $mform->getElement('currentpicture');
+            $imageelement->setValue($pic);
+        } else {
+            if ($mform->elementExists('currentpicture')) {
+                $mform->removeElement('currentpicture');
+            }
+            if ($mform->elementExists('deletepicture')) {
+                $mform->removeElement('deletepicture');
+            }
+        }
+
     }
 
     /**
@@ -111,11 +147,19 @@ class group_form extends moodleform {
                 }
             }
 
-            if (!empty($CFG->groupenrolmentkeypolicy) and $data['enrolmentkey'] != '' and $group->enrolmentkey !== $data['enrolmentkey']) {
-                // enforce password policy only if changing password
+            if ($data['enrolmentkey'] != '') {
                 $errmsg = '';
-                if (!check_password_policy($data['enrolmentkey'], $errmsg)) {
+                if (!empty($CFG->groupenrolmentkeypolicy) && $group->enrolmentkey !== $data['enrolmentkey']
+                        && !check_password_policy($data['enrolmentkey'], $errmsg)) {
+                    // Enforce password policy when the password is changed.
                     $errors['enrolmentkey'] = $errmsg;
+                } else {
+                    // Prevent twice the same enrolment key in course groups.
+                    $sql = "SELECT id FROM {groups} WHERE id <> :groupid AND courseid = :courseid AND enrolmentkey = :key";
+                    $params = array('groupid' => $data['id'], 'courseid' => $COURSE->id, 'key' => $data['enrolmentkey']);
+                    if ($DB->record_exists_sql($sql, $params)) {
+                        $errors['enrolmentkey'] = get_string('enrolmentkeyalreadyinuse', 'group');
+                    }
                 }
             }
 
@@ -123,6 +167,15 @@ class group_form extends moodleform {
             $errors['name'] = get_string('groupnameexists', 'group', $name);
         } else if (!empty($idnumber) && groups_get_group_by_idnumber($COURSE->id, $idnumber)) {
             $errors['idnumber']= get_string('idnumbertaken');
+        } else if ($data['enrolmentkey'] != '') {
+            $errmsg = '';
+            if (!empty($CFG->groupenrolmentkeypolicy) && !check_password_policy($data['enrolmentkey'], $errmsg)) {
+                // Enforce password policy.
+                $errors['enrolmentkey'] = $errmsg;
+            } else if ($DB->record_exists('groups', array('courseid' => $COURSE->id, 'enrolmentkey' => $data['enrolmentkey']))) {
+                // Prevent the same enrolment key from being used multiple times in course groups.
+                $errors['enrolmentkey'] = get_string('enrolmentkeyalreadyinuse', 'group');
+            }
         }
 
         return $errors;

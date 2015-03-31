@@ -250,6 +250,26 @@ class core_text_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the strrev method.
+     */
+    public function test_strrev() {
+        $strings = array(
+            "Žluťoučký koníček" => "kečínok ýkčuoťulŽ",
+            'ŽLUŤOUČKÝ KONÍČEK' => "KEČÍNOK ÝKČUOŤULŽ",
+            '言語設定' => '定設語言',
+            '简体中文' => '文中体简',
+            "Der eine stößt den Speer zum Mann" => "nnaM muz reepS ned tßöts enie reD"
+        );
+        foreach ($strings as $before => $after) {
+            // Make sure we can reverse it both ways and that it comes out the same.
+            $this->assertSame($after, core_text::strrev($before));
+            $this->assertSame($before, core_text::strrev($after));
+            // Reverse it twice to be doubly sure.
+            $this->assertSame($after, core_text::strrev(core_text::strrev($after)));
+        }
+    }
+
+    /**
      * Tests the static strpos method.
      */
     public function test_strpos() {
@@ -346,27 +366,6 @@ class core_text_testcase extends advanced_testcase {
     public function test_strtotitle() {
         $str = "žluťoučký koníček";
         $this->assertSame("Žluťoučký Koníček", core_text::strtotitle($str));
-    }
-
-    public function test_deprecated_textlib() {
-        $this->assertSame(textlib::strtolower('HUH'), core_text::strtolower('HUH'));
-    }
-
-    /**
-     * Tests the deprecated method of textlib that still require an instance.
-     */
-    public function test_deprecated_textlib_get_instance() {
-        $textlib = textlib_get_instance();
-        $this->assertDebuggingCalled();
-        $this->assertSame($textlib->substr('abc', 1, 1), 'b');
-        $this->assertSame($textlib->strlen('abc'), 3);
-        $this->assertSame($textlib->strtoupper('Abc'), 'ABC');
-        $this->assertSame($textlib->strtolower('Abc'), 'abc');
-        $this->assertSame($textlib->strpos('abc', 'a'), 0);
-        $this->assertSame($textlib->strpos('abc', 'd'), false);
-        $this->assertSame($textlib->strrpos('abcabc', 'a'), 3);
-        $this->assertSame($textlib->specialtoascii('ábc'), 'abc');
-        $this->assertSame($textlib->strtotitle('abc ABC'), 'Abc Abc');
     }
 
     /**

@@ -78,7 +78,7 @@ class block_badges extends block_base {
         }
 
         // Number of badges to display.
-        if (empty($this->config->numberofbadges)) {
+        if (!isset($this->config->numberofbadges)) {
             $this->config->numberofbadges = 10;
         }
 

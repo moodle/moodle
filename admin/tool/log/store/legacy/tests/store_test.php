@@ -50,7 +50,7 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         $this->assertEquals(array('logstore_legacy'), array_keys($stores));
         $store = $stores['logstore_legacy'];
         $this->assertInstanceOf('logstore_legacy\log\store', $store);
-        $this->assertInstanceOf('core\log\sql_select_reader', $store);
+        $this->assertInstanceOf('core\log\sql_reader', $store);
         $this->assertTrue($store->is_logging());
 
         $logs = $DB->get_records('log', array(), 'id ASC');
@@ -70,10 +70,10 @@ class logstore_legacy_store_testcase extends advanced_testcase {
 
         $this->setUser($user2);
         add_to_log($course1->id, 'xxxx', 'yyyy', '', '7', 0, 0);
-        //$this->assertDebuggingCalled();
+        $this->assertDebuggingCalled();
 
         add_to_log($course2->id, 'aaa', 'bbb', 'info.php', '666', $module2->cmid, $user1->id);
-        //$this->assertDebuggingCalled();
+        $this->assertDebuggingCalled();
 
         $logs = $DB->get_records('log', array(), 'id ASC');
         $this->assertCount(4, $logs);
@@ -143,7 +143,7 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         \logstore_legacy\event\unittest_executed::create(
             array('context' => \context_system::instance(), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         add_to_log($course1->id, 'xxxx', 'yyyy', '', '7', 0, 0);
-        //$this->assertDebuggingCalled();
+        $this->assertDebuggingCalled();
         $this->assertEquals(4, $DB->count_records('log'));
 
         // Another way to disable legacy completely.
@@ -154,7 +154,7 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         \logstore_legacy\event\unittest_executed::create(
             array('context' => \context_system::instance(), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         add_to_log($course1->id, 'xxxx', 'yyyy', '', '7', 0, 0);
-        //$this->assertDebuggingCalled();
+        $this->assertDebuggingCalled();
         $this->assertEquals(4, $DB->count_records('log'));
         // Set everything back.
         set_config('enabled_stores', '', 'tool_log');

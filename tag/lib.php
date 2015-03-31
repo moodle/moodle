@@ -240,10 +240,23 @@ function tag_set_delete($record_type, $record_id, $tag, $component = null, $cont
 function tag_type_set($tagid, $type) {
     global $DB;
 
-    if ($tag = $DB->get_record('tag', array('id'=>$tagid), 'id')) {
+    if ($tag = $DB->get_record('tag', array('id' => $tagid), 'id, userid, name, rawname')) {
         $tag->tagtype = $type;
         $tag->timemodified = time();
-        return $DB->update_record('tag', $tag);
+        $DB->update_record('tag', $tag);
+
+        $event = \core\event\tag_updated::create(array(
+            'objectid' => $tag->id,
+            'relateduserid' => $tag->userid,
+            'context' => context_system::instance(),
+            'other' => array(
+                'name' => $tag->name,
+                'rawname' => $tag->rawname
+            )
+        ));
+        $event->trigger();
+
+        return true;
     }
     return false;
 }
@@ -263,12 +276,26 @@ function tag_type_set($tagid, $type) {
 function tag_description_set($tagid, $description, $descriptionformat) {
     global $DB;
 
-    if ($tag = $DB->get_record('tag', array('id'=>$tagid),'id')) {
+    if ($tag = $DB->get_record('tag', array('id' => $tagid), 'id, userid, name, rawname')) {
         $tag->description = $description;
         $tag->descriptionformat = $descriptionformat;
         $tag->timemodified = time();
-        return $DB->update_record('tag', $tag);
+        $DB->update_record('tag', $tag);
+
+        $event = \core\event\tag_updated::create(array(
+            'objectid' => $tag->id,
+            'relateduserid' => $tag->userid,
+            'context' => context_system::instance(),
+            'other' => array(
+                'name' => $tag->name,
+                'rawname' => $tag->rawname
+            )
+        ));
+        $event->trigger();
+
+        return true;
     }
+
     return false;
 }
 
@@ -565,7 +592,7 @@ function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
  * @return   bool     true on success, false otherwise
  */
 function tag_rename($tagid, $newrawname) {
-    global $DB;
+    global $COURSE, $DB;
 
     $norm = tag_normalize($newrawname, TAG_CASE_ORIGINAL);
     if (! $newrawname_clean = array_shift($norm) ) {
@@ -583,11 +610,28 @@ function tag_rename($tagid, $newrawname) {
         }
     }
 
-    if ($tag = tag_get('id', $tagid, 'id, name, rawname')) {
-        $tag->rawname      = $newrawname_clean;
-        $tag->name         = $newname_clean;
+    if ($tag = tag_get('id', $tagid, 'id, userid, name, rawname')) {
+        // Store the name before we change it.
+        $oldname = $tag->name;
+
+        $tag->rawname = $newrawname_clean;
+        $tag->name = $newname_clean;
         $tag->timemodified = time();
-        return $DB->update_record('tag', $tag);
+        $DB->update_record('tag', $tag);
+
+        $event = \core\event\tag_updated::create(array(
+            'objectid' => $tag->id,
+            'relateduserid' => $tag->userid,
+            'context' => context_system::instance(),
+            'other' => array(
+                'name' => $newname_clean,
+                'rawname' => $newrawname_clean
+            )
+        ));
+        $event->set_legacy_logdata(array($COURSE->id, 'tag', 'update', 'index.php?id='. $tag->id, $oldname . '->'. $tag->name));
+        $event->trigger();
+
+        return true;
     }
     return false;
 }
@@ -609,27 +653,133 @@ function tag_delete($tagids) {
         $tagids = array($tagids);
     }
 
-    $success = true;
-    $context = context_system::instance();
-    foreach ($tagids as $tagid) {
-        if (is_null($tagid)) { // can happen if tag doesn't exists
-            continue;
-        }
-        // only delete the main entry if there were no problems deleting all the
-        // instances - that (and the fact we won't often delete lots of tags)
-        // is the reason for not using $DB->delete_records_select()
-        if ($DB->delete_records('tag_instance', array('tagid'=>$tagid)) && $DB->delete_records('tag_correlation', array('tagid' => $tagid))) {
-            $success &= (bool) $DB->delete_records('tag', array('id'=>$tagid));
-            // Delete all files associated with this tag
-            $fs = get_file_storage();
-            $files = $fs->get_area_files($context->id, 'tag', 'description', $tagid);
-            foreach ($files as $file) {
-                $file->delete();
+    // Use the tagids to create a select statement to be used later.
+    list($tagsql, $tagparams) = $DB->get_in_or_equal($tagids);
+
+    // Store the tags and tag instances we are going to delete.
+    $tags = $DB->get_records_select('tag', 'id ' . $tagsql, $tagparams);
+    $taginstances = $DB->get_records_select('tag_instance', 'tagid ' . $tagsql, $tagparams);
+
+    // Delete all the tag instances.
+    $select = 'WHERE tagid ' . $tagsql;
+    $sql = "DELETE FROM {tag_instance} $select";
+    $DB->execute($sql, $tagparams);
+
+    // Delete all the tag correlations.
+    $sql = "DELETE FROM {tag_correlation} $select";
+    $DB->execute($sql, $tagparams);
+
+    // Delete all the tags.
+    $select = 'WHERE id ' . $tagsql;
+    $sql = "DELETE FROM {tag} $select";
+    $DB->execute($sql, $tagparams);
+
+    // Fire an event that these items were untagged.
+    if ($taginstances) {
+        // Save the system context in case the 'contextid' column in the 'tag_instance' table is null.
+        $syscontextid = context_system::instance()->id;
+        // Loop through the tag instances and fire a 'tag_removed'' event.
+        foreach ($taginstances as $taginstance) {
+            // We can not fire an event with 'null' as the contextid.
+            if (is_null($taginstance->contextid)) {
+                $taginstance->contextid = $syscontextid;
             }
+
+            // Trigger tag removed event.
+            $event = \core\event\tag_removed::create(array(
+                'objectid' => $taginstance->id,
+                'contextid' => $taginstance->contextid,
+                'other' => array(
+                    'tagid' => $taginstance->tagid,
+                    'tagname' => $tags[$taginstance->tagid]->name,
+                    'tagrawname' => $tags[$taginstance->tagid]->rawname,
+                    'itemid' => $taginstance->itemid,
+                    'itemtype' => $taginstance->itemtype
+                )
+            ));
+            $event->add_record_snapshot('tag_instance', $taginstance);
+            $event->trigger();
         }
     }
 
-    return $success;
+    // Fire an event that these tags were deleted.
+    if ($tags) {
+        $context = context_system::instance();
+        foreach ($tags as $tag) {
+            // Delete all files associated with this tag
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($context->id, 'tag', 'description', $tag->id);
+            foreach ($files as $file) {
+                $file->delete();
+            }
+
+            // Trigger an event for deleting this tag.
+            $event = \core\event\tag_deleted::create(array(
+                'objectid' => $tag->id,
+                'relateduserid' => $tag->userid,
+                'context' => $context,
+                'other' => array(
+                    'name' => $tag->name,
+                    'rawname' => $tag->rawname
+                )
+            ));
+            $event->add_record_snapshot('tag', $tag);
+            $event->trigger();
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Deletes all the tag instances given a component and an optional contextid.
+ *
+ * @param string $component
+ * @param int $contextid if null, then we delete all tag instances for the $component
+ */
+function tag_delete_instances($component, $contextid = null) {
+    global $DB;
+
+    $sql = "SELECT ti.*, t.name, t.rawname
+              FROM {tag_instance} ti
+              JOIN {tag} t
+                ON ti.tagid = t.id ";
+    if (is_null($contextid)) {
+        $params = array('component' => $component);
+        $sql .= "WHERE ti.component = :component";
+    } else {
+        $params = array('component' => $component, 'contextid' => $contextid);
+        $sql .= "WHERE ti.component = :component
+                   AND ti.contextid = :contextid";
+    }
+    if ($taginstances = $DB->get_records_sql($sql, $params)) {
+        // Now remove all the tag instances.
+        $DB->delete_records('tag_instance',$params);
+        // Save the system context in case the 'contextid' column in the 'tag_instance' table is null.
+        $syscontextid = context_system::instance()->id;
+        // Loop through the tag instances and fire an 'tag_removed' event.
+        foreach ($taginstances as $taginstance) {
+            // We can not fire an event with 'null' as the contextid.
+            if (is_null($taginstance->contextid)) {
+                $taginstance->contextid = $syscontextid;
+            }
+
+            // Trigger tag removed event.
+            $event = \core\event\tag_removed::create(array(
+                'objectid' => $taginstance->id,
+                'contextid' => $taginstance->contextid,
+                'other' => array(
+                    'tagid' => $taginstance->tagid,
+                    'tagname' => $taginstance->name,
+                    'tagrawname' => $taginstance->rawname,
+                    'itemid' => $taginstance->itemid,
+                    'itemtype' => $taginstance->itemtype
+                )
+            ));
+            $event->add_record_snapshot('tag_instance', $taginstance);
+            $event->trigger();
+        }
+    }
 }
 
 /**
@@ -641,20 +791,50 @@ function tag_delete($tagids) {
  * @param    string $record_type the type of the record for which to remove the instance
  * @param    int    $record_id   the id of the record for which to remove the instance
  * @param    int    $tagid       the tagid that needs to be removed
+ * @param    int    $userid      (optional) the userid
  * @return   bool   true on success, false otherwise
  */
-function tag_delete_instance($record_type, $record_id, $tagid) {
-    global $CFG, $DB;
+function tag_delete_instance($record_type, $record_id, $tagid, $userid = null) {
+    global $DB;
 
-    if ($DB->delete_records('tag_instance', array('tagid'=>$tagid, 'itemtype'=>$record_type, 'itemid'=>$record_id))) {
-        if (!$DB->record_exists_sql("SELECT * ".
-                                      "FROM {tag} tg ".
-                                     "WHERE tg.id = ? AND ( tg.tagtype = 'official' OR ".
-                                        "EXISTS (SELECT 1
-                                                   FROM {tag_instance} ti
-                                                  WHERE ti.tagid = ?) )",
-                                     array($tagid, $tagid))) {
-            return tag_delete($tagid);
+    if (is_null($userid)) {
+        $taginstance = $DB->get_record('tag_instance', array('tagid' => $tagid, 'itemtype' => $record_type, 'itemid' => $record_id));
+    } else {
+        $taginstance = $DB->get_record('tag_instance', array('tagid' => $tagid, 'itemtype' => $record_type, 'itemid' => $record_id,
+            'tiuserid' => $userid));
+    }
+    if ($taginstance) {
+        // Get the tag.
+        $tag = $DB->get_record('tag', array('id' => $tagid));
+
+        $DB->delete_records('tag_instance', array('id' => $taginstance->id));
+
+        // We can not fire an event with 'null' as the contextid.
+        if (is_null($taginstance->contextid)) {
+            $taginstance->contextid = context_system::instance()->id;
+        }
+
+        // Trigger tag removed event.
+        $event = \core\event\tag_removed::create(array(
+            'objectid' => $taginstance->id,
+            'contextid' => $taginstance->contextid,
+            'other' => array(
+                'tagid' => $tag->id,
+                'tagname' => $tag->name,
+                'tagrawname' => $tag->rawname,
+                'itemid' => $taginstance->itemid,
+                'itemtype' => $taginstance->itemtype
+            )
+        ));
+        $event->add_record_snapshot('tag_instance', $taginstance);
+        $event->trigger();
+
+        // If there are no other instances of the tag then consider deleting the tag as well.
+        if (!$DB->record_exists('tag_instance', array('tagid' => $tagid))) {
+            // If the tag is a personal tag then delete it - don't delete official tags.
+            if ($tag->tagtype == 'default') {
+                tag_delete($tagid);
+            }
         }
     } else {
         return false;
@@ -773,6 +953,17 @@ function tag_add($tags, $type="default") {
             $tag_object->name    = $tag_name_lc;
             //var_dump($tag_object);
             $tags_ids[$tag_name_lc] = $DB->insert_record('tag', $tag_object);
+
+            $event = \core\event\tag_created::create(array(
+                'objectid' => $tags_ids[$tag_name_lc],
+                'relateduserid' => $tag_object->userid,
+                'context' => context_system::instance(),
+                'other' => array(
+                    'name' => $tag_object->name,
+                    'rawname' => $tag_object->rawname
+                )
+            ));
+            $event->trigger();
         }
     }
 
@@ -801,10 +992,14 @@ function tag_assign($record_type, $record_id, $tagid, $ordering, $userid = 0, $c
             DEBUG_DEVELOPER);
     }
 
+    // Get the tag.
+    $tag = $DB->get_record('tag', array('id' => $tagid), 'name, rawname', MUST_EXIST);
+
     if ( $tag_instance_object = $DB->get_record('tag_instance', array('tagid'=>$tagid, 'itemtype'=>$record_type, 'itemid'=>$record_id, 'tiuserid'=>$userid), 'id')) {
         $tag_instance_object->ordering     = $ordering;
         $tag_instance_object->timemodified = time();
-        return $DB->update_record('tag_instance', $tag_instance_object);
+
+        $DB->update_record('tag_instance', $tag_instance_object);
     } else {
         $tag_instance_object = new StdClass;
         $tag_instance_object->tagid        = $tagid;
@@ -817,8 +1012,29 @@ function tag_assign($record_type, $record_id, $tagid, $ordering, $userid = 0, $c
         $tag_instance_object->timemodified = $tag_instance_object->timecreated;
         $tag_instance_object->tiuserid     = $userid;
 
-        return $DB->insert_record('tag_instance', $tag_instance_object);
+        $tag_instance_object->id = $DB->insert_record('tag_instance', $tag_instance_object);
     }
+
+    // We can not fire an event with 'null' as the contextid.
+    if (is_null($contextid)) {
+        $contextid = context_system::instance()->id;
+    }
+
+    // Trigger tag added event.
+    $event = \core\event\tag_added::create(array(
+        'objectid' => $tag_instance_object->id,
+        'contextid' => $contextid,
+        'other' => array(
+            'tagid' => $tagid,
+            'tagname' => $tag->name,
+            'tagrawname' => $tag->rawname,
+            'itemid' => $record_id,
+            'itemtype' => $record_type
+        )
+    ));
+    $event->trigger();
+
+    return true;
 }
 
 /**
@@ -850,35 +1066,56 @@ function tag_autocomplete($text) {
 function tag_cleanup() {
     global $DB;
 
-    $instances = $DB->get_recordset('tag_instance');
+    // Get ids to delete from instances where the tag has been deleted. This should never happen apparently.
+    $sql = "SELECT ti.id
+              FROM {tag_instance} ti
+         LEFT JOIN {tag} t ON t.id = ti.tagid
+             WHERE t.id IS null";
+    $tagids = $DB->get_records_sql($sql);
+    $tagarray = array();
+    foreach ($tagids as $tagid) {
+        $tagarray[] = $tagid->id;
+    }
 
-    // cleanup tag instances
-    foreach ($instances as $instance) {
-        $delete = false;
+    // Next get ids from instances that have an owner that has been deleted.
+    $sql = "SELECT ti.id
+              FROM {tag_instance} ti, {user} u
+             WHERE ti.itemid = u.id
+               AND ti.itemtype = 'user'
+               AND u.deleted = 1";
+    $tagids = $DB->get_records_sql($sql);
+    foreach ($tagids as $tagid) {
+        $tagarray[] = $tagid->id;
+    }
 
-        if (!$DB->record_exists('tag', array('id'=>$instance->tagid))) {
-            // if the tag has been removed, instance should be deleted.
-            $delete = true;
-        } else {
-            switch ($instance->itemtype) {
-                case 'user': // users are marked as deleted, but not actually deleted
-                    if ($DB->record_exists('user', array('id'=>$instance->itemid, 'deleted'=>1))) {
-                        $delete = true;
-                    }
-                    break;
-                default: // anything else, if the instance is not there, delete.
-                    if (!$DB->record_exists($instance->itemtype, array('id'=>$instance->itemid))) {
-                        $delete = true;
-                    }
-                    break;
-            }
-        }
-        if ($delete) {
-            tag_delete_instance($instance->itemtype, $instance->itemid, $instance->tagid);
-            //debugging('deleting tag_instance #'. $instance->id .', linked to tag id #'. $instance->tagid, DEBUG_DEVELOPER);
+    // Get the other itemtypes.
+    $sql = "SELECT itemtype
+              FROM {tag_instance}
+             WHERE itemtype <> 'user'
+          GROUP BY itemtype";
+    $tagitemtypes = $DB->get_records_sql($sql);
+    foreach ($tagitemtypes as $key => $notused) {
+        $sql = 'SELECT ti.id
+                  FROM {tag_instance} ti
+             LEFT JOIN {' . $key . '} it ON it.id = ti.itemid
+                 WHERE it.id IS null
+                 AND ti.itemtype = \'' . $key . '\'';
+        $tagids = $DB->get_records_sql($sql);
+        foreach ($tagids as $tagid) {
+            $tagarray[] = $tagid->id;
         }
     }
-    $instances->close();
+
+    // Get instances for each of the ids to be deleted.
+    if (count($tagarray) > 0) {
+        list($sqlin, $params) = $DB->get_in_or_equal($tagarray);
+        $sql = "SELECT ti.*, COALESCE(t.name, 'deleted') AS name, COALESCE(t.rawname, 'deleted') AS rawname
+                  FROM {tag_instance} ti
+             LEFT JOIN {tag} t ON t.id = ti.tagid
+                 WHERE ti.id $sqlin";
+        $instances = $DB->get_records_sql($sql, $params);
+        tag_bulk_delete_instances($instances);
+    }
 
     // TODO MDL-31212 this will only clean tags of type 'default'.  This is good as
     // it won't delete 'official' tags, but the day we get more than two
@@ -898,6 +1135,48 @@ function tag_cleanup() {
         //debugging('deleting unused tag #'. $unused_tag->id,  DEBUG_DEVELOPER);
     }
     $unused_tags->close();
+}
+
+/**
+ * This function will delete numerous tag instances efficiently.
+ * This removes tag instances only. It doesn't check to see if it is the last use of a tag.
+ *
+ * @param array $instances An array of tag instance objects with the addition of the tagname and tagrawname
+ *        (used for recording a delete event).
+ */
+function tag_bulk_delete_instances($instances) {
+    global $DB;
+
+    $instanceids = array();
+    foreach ($instances as $instance) {
+        $instanceids[] = $instance->id;
+    }
+
+    // This is a multi db compatible method of creating the correct sql when using the 'IN' value.
+    // $insql is the sql statement, $params are the id numbers.
+    list($insql, $params) = $DB->get_in_or_equal($instanceids);
+    $sql = 'id ' . $insql;
+    $DB->delete_records_select('tag_instance', $sql, $params);
+
+    // Now go through and record each tag individually with the event system.
+    foreach ($instances as $instance) {
+        // Trigger tag removed event (i.e. The tag instance has been removed).
+        $event = \core\event\tag_removed::create(array(
+            'objectid' => $instance->id,
+            'contextid' => $instance->contextid,
+            'other' => array(
+                'tagid' => $instance->tagid,
+                'tagname' => $instance->name,
+                'tagrawname' => $instance->rawname,
+                'itemid' => $instance->itemid,
+                'itemtype' => $instance->itemtype
+            )
+        ));
+        unset($instance->name);
+        unset($instance->rawname);
+        $event->add_record_snapshot('tag_instance', $instance);
+        $event->trigger();
+    }
 }
 
 /**
@@ -1191,42 +1470,85 @@ function tag_record_tagged_with($record_type, $record_id, $tag) {
 }
 
 /**
- * Flag a tag as inapropriate
+ * Flag a tag as inappropriate.
  *
- * @package core_tag
- * @access  private
- * @param   int|array $tagids a single tagid, or an array of tagids
+ * @param int|array $tagids a single tagid, or an array of tagids
  */
 function tag_set_flag($tagids) {
     global $DB;
 
-    $tagids = (array)$tagids;
-    foreach ($tagids as $tagid) {
-        $tag = $DB->get_record('tag', array('id'=>$tagid), 'id, flag');
-        $tag->flag++;
-        $tag->timemodified = time();
-        $DB->update_record('tag', $tag);
+    $tagids = (array) $tagids;
+
+    // Use the tagids to create a select statement to be used later.
+    list($tagsql, $tagparams) = $DB->get_in_or_equal($tagids, SQL_PARAMS_NAMED);
+
+    // Update all the tags to flagged.
+    $sql = "UPDATE {tag}
+               SET flag = flag + 1, timemodified = :time
+             WHERE id $tagsql";
+
+    // Update all the tags.
+    $DB->execute($sql, array_merge(array('time' => time()), $tagparams));
+
+    // Get all the tags.
+    if ($tags = $DB->get_records_select('tag', 'id '. $tagsql, $tagparams, 'id ASC')) {
+        // Loop through and fire an event for each tag that it was flagged.
+        foreach ($tags as $tag) {
+            $event = \core\event\tag_flagged::create(array(
+                'objectid' => $tag->id,
+                'relateduserid' => $tag->userid,
+                'context' => context_system::instance(),
+                'other' => array(
+                    'name' => $tag->name,
+                    'rawname' => $tag->rawname
+                )
+
+            ));
+            $event->add_record_snapshot('tag', $tag);
+            $event->trigger();
+        }
     }
 }
 
 /**
- * Remove the inapropriate flag on a tag
+ * Remove the inappropriate flag on a tag.
  *
- * @package core_tag
- * @access  private
- * @param   int|array $tagids a single tagid, or an array of tagids
- * @return  bool      true    if function succeeds, false otherwise
+ * @param int|array $tagids a single tagid, or an array of tagids
  */
 function tag_unset_flag($tagids) {
     global $DB;
 
-    if ( is_array($tagids) ) {
-        $tagids = implode(',', $tagids);
-    }
-    $timemodified = time();
-    return $DB->execute("UPDATE {tag} SET flag = 0, timemodified = ? WHERE id IN ($tagids)", array($timemodified));
-}
+    $tagids = (array) $tagids;
 
+    // Use the tagids to create a select statement to be used later.
+    list($tagsql, $tagparams) = $DB->get_in_or_equal($tagids, SQL_PARAMS_NAMED);
+
+    // Update all the tags to unflagged.
+    $sql = "UPDATE {tag}
+               SET flag = 0, timemodified = :time
+             WHERE id $tagsql";
+
+    // Update all the tags.
+    $DB->execute($sql, array_merge(array('time' => time()), $tagparams));
+
+    // Get all the tags.
+    if ($tags = $DB->get_records_select('tag', 'id '. $tagsql, $tagparams, 'id ASC')) {
+        // Loop through and fire an event for each tag that it was unflagged.
+        foreach ($tags as $tag) {
+            $event = \core\event\tag_unflagged::create(array(
+                'objectid' => $tag->id,
+                'relateduserid' => $tag->userid,
+                'context' => context_system::instance(),
+                'other' => array(
+                    'name' => $tag->name,
+                    'rawname' => $tag->rawname
+                )
+            ));
+            $event->add_record_snapshot('tag', $tag);
+            $event->trigger();
+        }
+    }
+}
 
 /**
  * Return a list of page types

@@ -44,8 +44,8 @@ abstract class enrol_bulk_enrolment_change_form extends moodleform {
         $statusoptions = $this->get_status_options();
         $form->addElement('html', $this->get_users_table($users, $statusoptions));
         $form->addElement('select', 'status', get_string('alterstatus', 'enrol_manual'), $statusoptions, array('optional' => true));
-        $form->addElement('date_selector', 'timestart', get_string('altertimestart', 'enrol_manual'), array('optional' => true));
-        $form->addElement('date_selector', 'timeend', get_string('altertimeend', 'enrol_manual'), array('optional' => true));
+        $form->addElement('date_time_selector', 'timestart', get_string('altertimestart', 'enrol_manual'), array('optional' => true));
+        $form->addElement('date_time_selector', 'timeend', get_string('altertimeend', 'enrol_manual'), array('optional' => true));
 
         $this->add_action_buttons();
     }

@@ -27,9 +27,10 @@ namespace mod_resource\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_resource course module viewed event.
+ * The mod_resource course module viewed event class.
  *
  * @package    mod_resource
+ * @since      Moodle 2.7
  * @copyright  2014 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -69,3 +69,4 @@ $string['pluginname'] = 'Deferred feedback with CBM';
 $string['slightlyoverconfident'] = 'a bit over-confident';
 $string['slightlyunderconfident'] = 'a bit under-confident';
 $string['underconfident'] = 'under-confident';
+$string['weightx'] = 'Weight {$a}';

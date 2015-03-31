@@ -18,7 +18,7 @@
 /**
  * This plugin is used to access webdav files
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_webdav
  * @copyright  2010 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,7 +29,7 @@ require_once($CFG->libdir.'/webdavlib.php');
 /**
  * repository_webdav class
  *
- * @since 2.0
+ * @since Moodle 2.0
  * @package    repository_webdav
  * @copyright  2009 Dongsheng Cai {@link http://dongsheng.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

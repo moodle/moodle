@@ -11,7 +11,7 @@ Feature: Test we can both create and delete a course.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on category "Cat 1" in the management interface
     # Redirect
     And I should see the "Course categories and courses" management page
@@ -23,10 +23,9 @@ Feature: Test we can both create and delete a course.
       | Course short name | TCCAC |
       | Course ID number | TC3401 |
       | Course summary | This course has been created by automated tests. |
-    And I press "Save changes"
+    And I press "Save and return"
     # Redirect
-    And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on category "Cat 1" in the management interface
     # Redirect
     And I should see the "Course categories and courses" management page
@@ -44,7 +43,7 @@ Feature: Test we can both create and delete a course.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on category "Cat 1" in the management interface
     # Redirect
     And I should see the "Course categories and courses" management page
@@ -76,7 +75,7 @@ Feature: Test we can both create and delete a course.
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on category "Cat 1" in the management interface
     # Redirect
     And I should see the "Course categories and courses" management page

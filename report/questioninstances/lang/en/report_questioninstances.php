@@ -24,6 +24,7 @@
  */
 
 $string['editquestionshere'] = 'Edit questions in this context';
+$string['eventreportviewed'] = 'Report viewed';
 $string['getreport'] = 'Get the report';
 $string['hiddenquestions'] = 'Hidden';
 $string['intro'] = 'This report lists all the contexts in the system where there are questions of a particular type.';

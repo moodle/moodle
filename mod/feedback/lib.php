@@ -52,7 +52,6 @@ function feedback_get_extra_capabilities() {
 /**
  * @uses FEATURE_GROUPS
  * @uses FEATURE_GROUPINGS
- * @uses FEATURE_GROUPMEMBERSONLY
  * @uses FEATURE_MOD_INTRO
  * @uses FEATURE_COMPLETION_TRACKS_VIEWS
  * @uses FEATURE_GRADE_HAS_GRADE
@@ -64,7 +63,6 @@ function feedback_supports($feature) {
     switch($feature) {
         case FEATURE_GROUPS:                  return true;
         case FEATURE_GROUPINGS:               return true;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
         case FEATURE_MOD_INTRO:               return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_COMPLETION_HAS_RULES:    return true;
@@ -385,7 +383,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index,
 
     $sqlargs = array();
 
-    $userfields = user_picture::fields('u', null, 'userid');
+    $userfields = user_picture::fields('u', null, 'useridagain');
     $sql = " SELECT fk . * , fc . * , $userfields
                 FROM {feedback_completed} fc
                     JOIN {feedback} fk ON fk.id = fc.feedback
@@ -395,9 +393,12 @@ function feedback_get_recent_mod_activity(&$activities, &$index,
         $sql .= " JOIN {groups_members} gm ON  gm.userid=u.id ";
     }
 
-    $sql .= " WHERE fc.timemodified > ? AND fk.id = ? ";
+    $sql .= " WHERE fc.timemodified > ?
+                AND fk.id = ?
+                AND fc.anonymous_response = ?";
     $sqlargs[] = $timemodified;
     $sqlargs[] = $cm->instance;
+    $sqlargs[] = FEEDBACK_ANONYMOUS_NO;
 
     if ($userid) {
         $sql .= " AND u.id = ? ";
@@ -423,11 +424,6 @@ function feedback_get_recent_mod_activity(&$activities, &$index,
     $viewfullnames   = has_capability('moodle/site:viewfullnames', $cm_context);
     $groupmode       = groups_get_activity_groupmode($cm, $course);
 
-    if (is_null($modinfo->groups)) {
-        // load all my groups and cache it in modinfo
-        $modinfo->groups = groups_get_user_groups($course->id);
-    }
-
     $aname = format_string($cm->name, true);
     foreach ($feedbackitems as $feedbackitem) {
         if ($feedbackitem->userid != $USER->id) {
@@ -440,7 +436,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index,
                     continue;
                 }
                 $usersgroups = array_keys($usersgroups);
-                $intersect = array_intersect($usersgroups, $modinfo->groups[$cm->id]);
+                $intersect = array_intersect($usersgroups, $modinfo->get_groups($cm->groupingid));
                 if (empty($intersect)) {
                     continue;
                 }
@@ -459,19 +455,7 @@ function feedback_get_recent_mod_activity(&$activities, &$index,
         $tmpactivity->content->feedbackid = $feedbackitem->id;
         $tmpactivity->content->feedbackuserid = $feedbackitem->userid;
 
-        $userfields = explode(',', user_picture::fields());
-        $tmpactivity->user = new stdClass();
-        foreach ($userfields as $userfield) {
-            if ($userfield == 'id') {
-                $tmpactivity->user->{$userfield} = $feedbackitem->userid; // aliased in SQL above
-            } else {
-                if (!empty($feedbackitem->{$userfield})) {
-                    $tmpactivity->user->{$userfield} = $feedbackitem->{$userfield};
-                } else {
-                    $tmpactivity->user->{$userfield} = null;
-                }
-            }
-        }
+        $tmpactivity->user = user_picture::unalias($feedbackitem, null, 'useridagain');
         $tmpactivity->user->fullname = fullname($feedbackitem, $viewfullnames);
 
         $activities[$index++] = $tmpactivity;
@@ -589,6 +573,13 @@ function feedback_scale_used_anywhere($scaleid) {
 }
 
 /**
+ * List the actions that correspond to a view of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = 'r' and edulevel = LEVEL_PARTICIPATING will
+ *       be considered as view action.
+ *
  * @return array
  */
 function feedback_get_view_actions() {
@@ -596,6 +587,13 @@ function feedback_get_view_actions() {
 }
 
 /**
+ * List the actions that correspond to a post of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = ('c' || 'u' || 'd') and edulevel = LEVEL_PARTICIPATING
+ *       will be considered as post action.
+ *
  * @return array
  */
 function feedback_get_post_actions() {
@@ -865,14 +863,14 @@ function feedback_check_is_switchrole() {
  *
  * @global object
  * @uses CONTEXT_MODULE
- * @param object $cm
+ * @param cm_info $cm Course-module object
  * @param int $group single groupid
  * @param string $sort
  * @param int $startpage
  * @param int $pagecount
  * @return object the userrecords
  */
-function feedback_get_incomplete_users($cm,
+function feedback_get_incomplete_users(cm_info $cm,
                                        $group = false,
                                        $sort = '',
                                        $startpage = false,
@@ -896,6 +894,10 @@ function feedback_get_incomplete_users($cm,
                                             true)) {
         return false;
     }
+    // Filter users that are not in the correct group/grouping.
+    $info = new \core_availability\info_module($cm);
+    $allusers = $info->filter_user_list($allusers);
+
     $allusers = array_keys($allusers);
 
     //now get all completeds
@@ -2233,6 +2235,22 @@ function feedback_check_values($firstitem, $lastitem) {
             $value = optional_param($formvalname, null, PARAM_RAW);
         }
         $value = $itemobj->clean_input_value($value);
+
+        // If the item is not visible due to its dependency so it shouldn't be required.
+        // Many thanks to Pau Ferrer Ocaña.
+        if ($item->dependitem > 0 AND $item->required == 1) {
+            $comparevalue = false;
+            if ($feedbackcompletedtmp = feedback_get_current_completed($item->feedback, true)) {
+                $comparevalue = feedback_compare_item_value($feedbackcompletedtmp->id,
+                                                            $item->dependitem,
+                                                            $item->dependvalue,
+                                                            true);
+            }
+
+            if (!$comparevalue) {
+                $item->required = 0; // Override the required property.
+            }
+        }
 
         //check if the value is set
         if (is_null($value) AND $item->required == 1) {

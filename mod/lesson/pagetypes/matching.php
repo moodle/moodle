@@ -54,6 +54,18 @@ class lesson_page_type_matching extends lesson_page {
         $data->id = $PAGE->cm->id;
         $data->pageid = $this->properties->id;
         $mform->set_data($data);
+
+        // Trigger an event question viewed.
+        $eventparams = array(
+            'context' => context_module::instance($PAGE->cm->id),
+            'objectid' => $this->properties->id,
+            'other' => array(
+                    'pagetype' => $this->get_typestring()
+                )
+            );
+
+        $event = \mod_lesson\event\question_viewed::create($eventparams);
+        $event->trigger();
         return $mform->display();
     }
 
@@ -96,12 +108,15 @@ class lesson_page_type_matching extends lesson_page {
     }
 
     public function create_answers($properties) {
-        global $DB;
+        global $DB, $PAGE;
         // now add the answers
         $newanswer = new stdClass;
         $newanswer->lessonid = $this->lesson->id;
         $newanswer->pageid = $this->properties->id;
         $newanswer->timecreated = $this->properties->timecreated;
+
+        $cm = get_coursemodule_from_instance('lesson', $this->lesson->id, $this->lesson->course);
+        $context = context_module::instance($cm->id);
 
         $answers = array();
 
@@ -127,6 +142,8 @@ class lesson_page_type_matching extends lesson_page {
 
             if (isset($answer->answer) && $answer->answer != '') {
                 $answer->id = $DB->insert_record("lesson_answers", $answer);
+                $this->save_answers_files($context, $PAGE->course->maxbytes,
+                        $answer, $properties->answer_editor[$i]);
                 $answers[$answer->id] = new lesson_page_answer($answer);
             } else if ($i < 2) {
                 $answer->id = $DB->insert_record("lesson_answers", $answer);
@@ -159,6 +176,9 @@ class lesson_page_type_matching extends lesson_page {
 
         $response = $data->response;
         $getanswers = $this->get_answers();
+        foreach ($getanswers as $key => $answer) {
+            $getanswers[$key] = parent::rewrite_answers_urls($answer);
+        }
 
         $correct = array_shift($getanswers);
         $wrong   = array_shift($getanswers);
@@ -220,6 +240,7 @@ class lesson_page_type_matching extends lesson_page {
         $n = 0;
 
         foreach ($answers as $answer) {
+            $answer = parent::rewrite_answers_urls($answer);
             if ($n < 2) {
                 if ($answer->answer != null) {
                     $cells = array();
@@ -300,6 +321,9 @@ class lesson_page_type_matching extends lesson_page {
         $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes), context_module::instance($PAGE->cm->id), 'mod_lesson', 'page_contents', $properties->id);
         $DB->update_record("lesson_pages", $properties);
 
+        // Trigger an event: page updated.
+        \mod_lesson\event\page_updated::create_from_lesson_page($this, $context)->trigger();
+
         // need to add two to offset correct response and wrong response
         $this->lesson->maxanswers += 2;
         for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
@@ -333,6 +357,8 @@ class lesson_page_type_matching extends lesson_page {
                 } else {
                     $DB->update_record("lesson_answers", $this->answers[$i]->properties());
                 }
+                // Save files in answers (no response_editor for matching questions).
+                $this->save_answers_files($context, $maxbytes, $this->answers[$i], $properties->answer_editor[$i]);
             } else if ($i < 2) {
                 if (!isset($this->answers[$i]->id)) {
                     $this->answers[$i]->id =  $DB->insert_record("lesson_answers", $this->answers[$i]);
@@ -340,6 +366,8 @@ class lesson_page_type_matching extends lesson_page {
                     $DB->update_record("lesson_answers", $this->answers[$i]->properties());
                 }
 
+                // Save files in answers (no response_editor for matching questions).
+                $this->save_answers_files($context, $maxbytes, $this->answers[$i], $properties->answer_editor[$i]);
             } else if (isset($this->answers[$i]->id)) {
                 $DB->delete_records('lesson_answers', array('id'=>$this->answers[$i]->id));
                 unset($this->answers[$i]);
@@ -460,18 +488,27 @@ class lesson_add_page_form_matching extends lesson_add_page_form_base {
     public function custom_definition() {
 
         $this->_form->addElement('header', 'correctresponse', get_string('correctresponse', 'lesson'));
-        $this->_form->addElement('editor', 'answer_editor[0]', get_string('correctresponse', 'lesson'), array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
+        $this->_form->addElement('editor', 'answer_editor[0]', get_string('correctresponse', 'lesson'),
+                array('rows' => '4', 'columns' => '80'),
+                array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $this->_customdata['maxbytes']));
+        $this->_form->setType('answer_editor[0]', PARAM_RAW);
+        $this->_form->setDefault('answer_editor[0]', array('text' => '', 'format' => FORMAT_HTML));
         $this->add_jumpto(0, get_string('correctanswerjump','lesson'), LESSON_NEXTPAGE);
         $this->add_score(0, get_string("correctanswerscore", "lesson"), 1);
 
         $this->_form->addElement('header', 'wrongresponse', get_string('wrongresponse', 'lesson'));
-        $this->_form->addElement('editor', 'answer_editor[1]', get_string('wrongresponse', 'lesson'), array('rows'=>'4', 'columns'=>'80'), array('noclean'=>true));
+        $this->_form->addElement('editor', 'answer_editor[1]', get_string('wrongresponse', 'lesson'),
+                array('rows' => '4', 'columns' => '80'),
+                array('noclean' => true, 'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $this->_customdata['maxbytes']));
+        $this->_form->setType('answer_editor[1]', PARAM_RAW);
+        $this->_form->setDefault('answer_editor[1]', array('text' => '', 'format' => FORMAT_HTML));
+
         $this->add_jumpto(1, get_string('wronganswerjump','lesson'), LESSON_THISPAGE);
         $this->add_score(1, get_string("wronganswerscore", "lesson"), 0);
 
         for ($i = 2; $i < $this->_customdata['lesson']->maxanswers+2; $i++) {
             $this->_form->addElement('header', 'matchingpair'.($i-1), get_string('matchingpair', 'lesson', $i-1));
-            $this->add_answer($i, null, ($i < 4));
+            $this->add_answer($i, null, ($i < 4), LESSON_ANSWER_HTML);
             $required = ($i < 4);
             $label = get_string('matchesanswer','lesson');
             $count = $i;
@@ -488,13 +525,16 @@ class lesson_add_page_form_matching extends lesson_add_page_form_base {
 class lesson_display_answer_form_matching extends moodleform {
 
     public function definition() {
-        global $USER, $OUTPUT;
+        global $USER, $OUTPUT, $PAGE;
         $mform = $this->_form;
         $answers = $this->_customdata['answers'];
         $useranswers = $this->_customdata['useranswers'];
         $responseoptions = $this->_customdata['responseoptions'];
         $lessonid = $this->_customdata['lessonid'];
         $contents = $this->_customdata['contents'];
+
+        // Disable shortforms.
+        $mform->setDisableShortforms();
 
         $mform->addElement('header', 'pageheader');
 
@@ -529,6 +569,9 @@ class lesson_display_answer_form_matching extends moodleform {
                     // Temporary fixed until MDL-38885 gets integrated
                     $mform->setType('response', PARAM_TEXT);
                 }
+                $context = context_module::instance($PAGE->cm->id);
+                $answer->answer = file_rewrite_pluginfile_urls($answer->answer, 'pluginfile.php', $context->id,
+                        'mod_lesson', 'page_answers', $answer->id);
                 $mform->addElement('select', $responseid, format_text($answer->answer,$answer->answerformat,$options), $responseoptions, $disabled);
                 $mform->setType($responseid, PARAM_TEXT);
                 if ($hasattempt) {

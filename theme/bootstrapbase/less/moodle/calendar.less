@@ -58,6 +58,8 @@
         }
     }
     .cal_courses_flt {
+        float: left;
+
         label {
             margin-right: .45em;
         }
@@ -157,34 +159,38 @@
             }
         }
         .eventlist {
+            margin: 0;
+
             .event {
-                width: 100%;
+                width: 92%;
                 border-spacing: 0;
                 border-collapse: separate;
                 position: relative;
-                padding: 19px;
+                padding: 20px 4%;
                 margin-bottom: 20px;
                 background-color: lighten(@wellBackground, 3%);
                 border: 1px solid darken(@wellBackground, 7%);
                 .border-radius(@baseBorderRadius);
                 .box-shadow(inset 0 1px 1px rgba(0,0,0,.05));
-                .picture {
-                    vertical-align: text-top;
+                list-style-type: none;
+
+                > img {
+                    padding-top: 3px;
+                    float: left;
                 }
-                .topic {
-                    .name {
-                        font-size: @fontSizeLarge;
-                        font-weight: 200;
-                        line-height: 24px;
-                        float: left;
-                    }
-                    .name,
-                    .course {
-                        margin-bottom: 5px;
-                    }
-                    .date {
-                        float: right;
-                    }
+                .name {
+                    font-size: @fontSizeLarge;
+                    font-weight: 200;
+                    line-height: 24px;
+                    float: left;
+                    margin: 0;
+                }
+                .name,
+                .course {
+                    margin-bottom: 5px;
+                }
+                .date {
+                    float: right;
                 }
                 .course,
                 .subscription {
@@ -197,6 +203,7 @@
                 .description {
                     background-color: @white;
                     padding: 5px;
+                    clear: both;
                     .commands {
                         position: absolute;
                         right: 0;
@@ -205,6 +212,9 @@
                     }
                 }
                 .commands {
+                    position: absolute;
+                    top: 2px;
+                    right: 2px;
                     a {
                         margin: 0 3px;
                     }
@@ -217,6 +227,7 @@
 // RTL overrides for main calendar.
 .dir-rtl.path-calendar {
     .cal_courses_flt {
+        float: right;
         label {
             margin-left: .45em;
             margin-right: 0;
@@ -254,13 +265,14 @@
         }
         .eventlist {
             .event {
-                .topic {
-                    .name {
-                        float: right;
-                    }
-                    .date {
-                        float: left;
-                    }
+                > img {
+                    float: right;
+                }
+                .name {
+                    float: right;
+                }
+                .date {
+                    float: left;
                 }
                 .description {
                     .commands {
@@ -272,6 +284,10 @@
                 .subscription {
                     float: right;
                     clear: right;
+                }
+                .commands {
+                    left: 2px;
+                    right: inherit;
                 }
             }
         }
@@ -299,6 +315,17 @@
             &.weekend {
                 .muted;
             }
+            a {
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+        }
+        caption {
+            font-size: inherit;
+            font-weight: inherit;
+            line-height: inherit;
+            text-align: center;
         }
     }
     .calendar-event-panel {
@@ -389,6 +416,25 @@
             }
         }
     }
+}
+
+.ical-link {
+    font-size: 10px;
+    font-weight: bold;
+    background-color: #f60;
+    padding: 0px 5px;
+    color: #fff;
+    border-top: 1px solid #f93;
+    border-left: 1px solid #f93;
+    border-bottom: 1px solid #013;
+    border-right: 1px solid #013;
+}
+.ical-link:hover,
+.ical-link:active,
+.ical-link:focus,
+.ical-link:visited {
+    color: #fff;
+    text-decoration: none;
 }
 
 @media (min-width: 768px) {

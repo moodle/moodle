@@ -17,7 +17,7 @@
 /**
  * Grade edited event.
  *
- * @package    core_grades
+ * @package    core
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,16 +32,20 @@ defined('MOODLE_INTERNAL') || die();
  * Note: use grade_grades_history table if you need to know
  *       the history of grades.
  *
- * @property-read array $other Extra information about the event.
- *     -int itemid: grade item id.
- *     -bool overridden: Is this grade override?
- *     -float finalgrade: the final grade value.
+ * @property-read array $other {
+ *      Extra information about the event.
  *
- * @package    core_grades
+ *      - int itemid: grade item id.
+ *      - bool overridden: (optional) Is this grade override?
+ *      - float finalgrade: (optional) the final grade value.
+ * }
+ *
+ * @package    core
+ * @since      Moodle 2.7
  * @copyright  2013 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_graded extends \core\event\base {
+class user_graded extends base {
     /** @var \grade_grade $grade */
     protected $grade;
 
@@ -68,6 +72,7 @@ class user_graded extends \core\event\base {
     /**
      * Get grade object.
      *
+     * @throws \coding_exception
      * @return \grade_grade
      */
     public function get_grade() {
@@ -103,7 +108,8 @@ class user_graded extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} edited grade of user {$this->objectid} for grade item " . $this->other['itemid'];
+        return "The user with id '$this->userid' updated the grade with id '$this->objectid' for the user with " .
+            "id '$this->relateduserid' for the grade item with id '{$this->other['itemid']}'.";
     }
 
     /**
@@ -131,5 +137,23 @@ class user_graded extends \core\event\base {
         $url = '/report/grader/index.php?id=' . $this->courseid;
 
         return array($this->courseid, 'grade', 'update', $url, $info);
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception when validation does not pass.
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        if (!isset($this->other['itemid'])) {
+            throw new \coding_exception('The \'itemid\' value must be set in other.');
+        }
     }
 }

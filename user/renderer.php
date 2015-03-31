@@ -158,7 +158,7 @@ class core_user_renderer extends plugin_renderer_base {
         $content .= html_writer::end_tag('div');
 
         $content .= html_writer::end_tag('div');
-        $content .= html_writer::tag('div', '&nbsp');
+        $content .= html_writer::tag('div', '&nbsp;');
         $content .= html_writer::end_tag('form');
 
         return $content;

@@ -34,6 +34,12 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testing_data_generator {
+    /** @var int The number of grade categories created */
+    protected $gradecategorycounter = 0;
+    /** @var int The number of grade items created */
+    protected $gradeitemcounter = 0;
+    /** @var int The number of grade outcomes created */
+    protected $gradeoutcomecounter = 0;
     protected $usercounter = 0;
     protected $categorycount = 0;
     protected $cohortcount = 0;
@@ -166,7 +172,7 @@ EOD;
             $record['firstnamephonetic'] = $this->firstnames[$firstnamephonetic];
         }
 
-        if (!isset($record['lasttnamephonetic'])) {
+        if (!isset($record['lastnamephonetic'])) {
             $lastnamephonetic = rand(0, 59);
             $record['lastnamephonetic'] = $this->lastnames[$lastnamephonetic];
         }
@@ -219,7 +225,23 @@ EOD;
         }
 
         if (!isset($record['maildisplay'])) {
-            $record['maildisplay'] = 1;
+            $record['maildisplay'] = $CFG->defaultpreference_maildisplay;
+        }
+
+        if (!isset($record['mailformat'])) {
+            $record['mailformat'] = $CFG->defaultpreference_mailformat;
+        }
+
+        if (!isset($record['maildigest'])) {
+            $record['maildigest'] = $CFG->defaultpreference_maildigest;
+        }
+
+        if (!isset($record['autosubscribe'])) {
+            $record['autosubscribe'] = $CFG->defaultpreference_autosubscribe;
+        }
+
+        if (!isset($record['trackforums'])) {
+            $record['trackforums'] = $CFG->defaultpreference_trackforums;
         }
 
         if (!isset($record['deleted'])) {
@@ -316,6 +338,10 @@ EOD;
 
         if (!isset($record['descriptionformat'])) {
             $record['descriptionformat'] = FORMAT_MOODLE;
+        }
+
+        if (!isset($record['visible'])) {
+            $record['visible'] = 1;
         }
 
         if (!isset($record['component'])) {
@@ -588,7 +614,7 @@ EOD;
      * @param array|stdClass $record data to use to up set the instance.
      * @param array $options options
      * @return stdClass repository instance record
-     * @since 2.5.1
+     * @since Moodle 2.5.1
      */
     public function create_repository($type, $record=null, array $options = null) {
         $generator = $this->get_plugin_generator('repository_'.$type);
@@ -602,7 +628,7 @@ EOD;
      * @param array|stdClass $record data to use to up set the instance.
      * @param array $options options
      * @return repository_type object
-     * @since 2.5.1
+     * @since Moodle 2.5.1
      */
     public function create_repository_type($type, $record=null, array $options = null) {
         $generator = $this->get_plugin_generator('repository_'.$type);
@@ -883,4 +909,104 @@ EOD;
         return role_assign($roleid, $userid, $contextid);
     }
 
+    /**
+     * Create a grade_category.
+     *
+     * @param array|stdClass $record
+     * @return stdClass the grade category record
+     */
+    public function create_grade_category($record = null) {
+        global $CFG;
+
+        $this->gradecategorycounter++;
+
+        $record = (array)$record;
+
+        if (empty($record['courseid'])) {
+            throw new coding_exception('courseid must be present in testing::create_grade_category() $record');
+        }
+
+        if (!isset($record['fullname'])) {
+            $record['fullname'] = 'Grade category ' . $this->gradecategorycounter;
+        }
+
+        // For gradelib classes.
+        require_once($CFG->libdir . '/gradelib.php');
+        // Create new grading category in this course.
+        $gradecategory = new grade_category(array('courseid' => $record['courseid']), false);
+        $gradecategory->apply_default_settings();
+        grade_category::set_properties($gradecategory, $record);
+        $gradecategory->apply_forced_settings();
+        $gradecategory->insert();
+
+        // This creates a default grade item for the category
+        $gradeitem = $gradecategory->load_grade_item();
+
+        $gradecategory->update_from_db();
+        return $gradecategory->get_record_data();
+    }
+
+    /**
+     * Create a grade_item.
+     *
+     * @param array|stdClass $record
+     * @return stdClass the grade item record
+     */
+    public function create_grade_item($record = null) {
+        global $CFG;
+        require_once("$CFG->libdir/gradelib.php");
+
+        $this->gradeitemcounter++;
+
+        if (!isset($record['itemtype'])) {
+            $record['itemtype'] = 'manual';
+        }
+
+        if (!isset($record['itemname'])) {
+            $record['itemname'] = 'Grade item ' . $this->gradeitemcounter;
+        }
+
+        if (isset($record['outcomeid'])) {
+            $outcome = new grade_outcome(array('id' => $record['outcomeid']));
+            $record['scaleid'] = $outcome->scaleid;
+        }
+        if (isset($record['scaleid'])) {
+            $record['gradetype'] = GRADE_TYPE_SCALE;
+        } else if (!isset($record['gradetype'])) {
+            $record['gradetype'] = GRADE_TYPE_VALUE;
+        }
+
+        // Create new grade item in this course.
+        $gradeitem = new grade_item($record, false);
+        $gradeitem->insert();
+
+        $gradeitem->update_from_db();
+        return $gradeitem->get_record_data();
+    }
+
+    /**
+     * Create a grade_outcome.
+     *
+     * @param array|stdClass $record
+     * @return stdClass the grade outcome record
+     */
+    public function create_grade_outcome($record = null) {
+        global $CFG;
+
+        $this->gradeoutcomecounter++;
+        $i = $this->gradeoutcomecounter;
+
+        if (!isset($record['fullname'])) {
+            $record['fullname'] = 'Grade outcome ' . $i;
+        }
+
+        // For gradelib classes.
+        require_once($CFG->libdir . '/gradelib.php');
+        // Create new grading outcome in this course.
+        $gradeoutcome = new grade_outcome($record, false);
+        $gradeoutcome->insert();
+
+        $gradeoutcome->update_from_db();
+        return $gradeoutcome->get_record_data();
+    }
 }

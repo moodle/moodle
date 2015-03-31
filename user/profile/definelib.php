@@ -318,9 +318,8 @@ function profile_delete_field($id) {
         print_error('cannotdeletecustomfield');
     }
 
-    // Delete any module dependencies for this field.
-    $DB->delete_records('course_modules_avail_fields', array('customfieldid' => $id));
-    $DB->delete_records('course_sections_avail_fields', array('customfieldid' => $id));
+    // Note: Any availability conditions that depend on this field will remain,
+    // but show the field as missing until manually corrected to something else.
 
     // Need to rebuild course cache to update the info.
     rebuild_course_cache();
@@ -452,9 +451,9 @@ function profile_list_categories() {
  * @param string $redirect
  */
 function profile_edit_category($id, $redirect) {
-    global $DB, $OUTPUT;
+    global $DB, $OUTPUT, $CFG;
 
-    require_once('index_category_form.php');
+    require_once($CFG->dirroot.'/user/profile/index_category_form.php');
     $categoryform = new category_form();
 
     if ($category = $DB->get_record('user_info_category', array('id' => $id))) {
@@ -516,7 +515,7 @@ function profile_edit_field($id, $datatype, $redirect) {
     $field->description = clean_text($field->description, $field->descriptionformat);
     $field->description = array('text' => $field->description, 'format' => $field->descriptionformat, 'itemid' => 0);
 
-    require_once('index_field_form.php');
+    require_once($CFG->dirroot.'/user/profile/index_field_form.php');
     $fieldform = new field_form(null, $field->datatype);
 
     // Convert the data format for.

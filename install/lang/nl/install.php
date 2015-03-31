@@ -34,8 +34,8 @@ $string['admindirname'] = 'Admin-map';
 $string['availablelangs'] = 'Beschikbare taalpakketten';
 $string['chooselanguagehead'] = 'Kies een taal';
 $string['chooselanguagesub'] = 'Kies een taal voor de installatie. Deze taal zal ook als standaardtaal voor de site gebruikt worden, maar die instelling kun je later nog wijzigen.';
-$string['clialreadyconfigured'] = 'Bestand config.php bestaat al, maak aub gebruik van admin/cli/install_database.php indien je deze site wenst te installeren.';
-$string['clialreadyinstalled'] = 'Bestand config.php bestaat al. Gebruik admin/cil/upgrade.php om je site te upgraden.';
+$string['clialreadyconfigured'] = 'Het configuratiebestand config.php bestaat al. Maak aub gebruik van admin/cli/install_database.php als je Moodle voor deze site wenst te installeren.';
+$string['clialreadyinstalled'] = 'Het configuratiebestand config.php bestaat al. Maak aub gebruik van admin/cli/install_database.php als je Moodle voor deze site wenst te upgraden.';
 $string['cliinstallheader'] = 'Moodle {$a} command line installatieprogramma';
 $string['databasehost'] = 'Databank host:';
 $string['databasename'] = 'Datanbanknaam:';
@@ -67,10 +67,15 @@ $string['pathshead'] = 'Bevestig paden';
 $string['pathsrodataroot'] = 'De dataroot map is niet beschrijfbaar.';
 $string['pathsroparentdataroot'] = 'De bovenliggende map ({$a->parent}) is niet beschrijfbaar. De datamap ({$a->dataroot}) kan niet aangemaakt worden door het installatiescript';
 $string['pathssubadmindir'] = 'Sommige webhosts gebruiken /admin als een speciale url om toegang tot bijvoorbeeld een controlepaneel te krijgen. Dit kan conflicten veroorzaken met de standaardlocatie van de Moodle admin scripts. Je kunt dit oplossen door de admin map van Moodle te hernoemen en de nieuwe naam hier te zetten. Bijvoorbeeld <em>moodleadmin</em>. Dat zal de admin links in Moodle herstellen.';
-$string['pathssubdataroot'] = 'Je hebt een plaats nodig waar Moodle geüploade bestanden kan bewaren. Deze map moet leesbaar en BESCHRIJFBAAR zijn door de webserver gebruiker (gewoonlijk \'nobody\', \'apache\' of www-data\') en mag niet rechtstreeks toegankelijk zijn vanaf het internet.';
-$string['pathssubdirroot'] = 'Volledig pad naar de Moodle-installatie.';
-$string['pathssubwwwroot'] = 'Volledig webadres waarlangs de toegang naar Moodle zal gebeuren. Het is niet mogelijk toegang tot Moodle te krijgen via meerdere adressen. Als je site meerdere publieke adressen heeft, dan zul je permanente verwijzingen moeten opzetten voor al die adressen, behalve voor wat je hier invult. Als je site zowel van het internet als van een intranet toegankelijk is, zet dat het internetadres hier en wijzig je DNS-instellingen zodanig dat intranetgebruikers dit publieke adres ook gebruiken.
-Als het adres niet juist is, wijzig dan de URL in je browser om de installatie met een andere waarde te starten.';
+$string['pathssubdataroot'] = '<p>Een map waar Moodle geüploade bestanden kan bewaren.</p>
+<p>Deze map moet leesbaar en BESCHRIJFBAAR zijn door de webserver gebruiker (gewoonlijk \'nobody\', \'apache\' of www-data\').</p>
+<p>Ze mag niet rechtstreeks toegankelijk zijn vanaf het internet.</p>
+<p>Als de map niet bestaat, zal het installatieproces ze proberen te maken.</p>';
+$string['pathssubdirroot'] = '<p>Het volledig pad naar de Moodle-code.</p>';
+$string['pathssubwwwroot'] = '<p>Het volledige webadres waarlangs de toegang naar Moodle zal gebeuren - het adres dat gebruikers zullen ingeven om Moodle te bereiken.</p>
+<p>Het is niet mogelijk toegang tot Moodle te krijgen via meerdere adressen. Als je site meerdere publieke adressen heeft, dan zul je permanente verwijzingen moeten opzetten voor al die andere adressen.</p>
+<p>Als je site zowel vanaf het internet als vanaf een intranet toegankelijk is, zet dat het internetadres hier.</p>
+<p>Als het adres niet juist is, wijzig dan de URL in je browser en herstart de installatie.</p>';
 $string['pathsunsecuredataroot'] = 'De plaats van de datamap is niet veilig.';
 $string['pathswrongadmindir'] = 'De adminmap bestaat niet';
 $string['phpextension'] = '{$a} PHP-extentie';

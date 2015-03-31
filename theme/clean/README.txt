@@ -43,8 +43,24 @@ version.php
     (Contains some elements that require renaming as well as the filename itself).
 /layout/
     This directory contains all the layout files for this theme.
-/layout/general.php
-    Layout file for front page and general pages combined.
+/layout/columns1.php
+    Layout file for a one column layout (content only).
+    (Contains some elements that require renaming).
+/layout/columns2.php
+    Layout file for a two column layout (side-pre and content).
+    (Contains some elements that require renaming).
+/layout/columns3.php
+    Layout file for a three column layout (side-pre, content and side-post) and the front page.
+    (Contains some elements that require renaming).
+/layout/embedded.php
+    Embedded layout file for embeded pages, like iframe/object embeded in moodleform.
+    (Contains some elements that require renaming).
+/layout/maintenance.php
+    Maintenance layout file which does not have any blocks, links, or API calls that would lead to database or cache interaction.
+    (Contains some elements that require renaming).
+/layout/secure.php
+    Secure layout file for safebrowser and securewindow.
+    (Contains some elements that require renaming).
 /style/
     This directory contains all the CSS files for this theme.
 /style/custom.css
@@ -83,3 +99,8 @@ Customisation using custom theme settings
 The settings page for the Clean theme can be located by navigating to:
 
 Administration > Site Administration > Appearance > Themes > Clean
+
+Moodle documentation
+--------------------
+
+Further information can be found on Moodle Docs: http://docs.moodle.org/dev/Clean_theme

@@ -296,7 +296,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
                                 unset($wrapped->options->tolerance);
                             }
                             if ($subanswer->feedback) {
-                                $parsableanswerdef .= "#$subanswer->feedback";
+                                $parsableanswerdef .= "#{$subanswer->feedback}";
                             }
                             $separator = '~';
                         }

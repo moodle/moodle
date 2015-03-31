@@ -14,6 +14,10 @@
     text-align: left;
 }
 
+.dir-rtl.path-admin .admintable .leftalign {
+    text-align: right;
+}
+
 .environmenttable {
     p.warn {
         background-color : @warningBackground;
@@ -747,12 +751,6 @@ img.iconsmall {
     padding-bottom: 0;
 }
 
-// Hacks for badly marked up admin warnings.
-#page-admin-roles-assign div.box.generalbox {
-    .alert;
-    .alert-danger;
-}
-
 .maintenancewarning {
     padding: 3px 1em;
     text-align: center;
@@ -772,4 +770,9 @@ img.iconsmall {
         background-color: @warningBackground;
         border: 2px solid @warningBorder;
     }
+}
+
+#adminsettings .form-overridden {
+    color: @infoText;
+    background-color: @infoBackground;
 }

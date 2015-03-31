@@ -1,7 +1,7 @@
       <MOD>
         <ID>[#mod_instance#]</ID>
         <MODTYPE>forum</MODTYPE>
-        <TYPE>news</TYPE>
+        <TYPE>general</TYPE>
         <NAME>[#mod_forum_title#]</NAME>
         <INTRO>[#mod_forum_intro#]</INTRO>
         <ASSESSED>0</ASSESSED>

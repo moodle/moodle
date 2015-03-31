@@ -348,3 +348,185 @@ function upgrade_course_modules_sequences() {
 
     // Note that we don't need to reset course cache here because it is reset automatically after upgrade.
 }
+
+/**
+ * Updates a single item (course module or course section) to transfer the
+ * availability settings from the old to the new format.
+ *
+ * Note: We do not convert groupmembersonly for modules at present. If we did,
+ * $groupmembersonly would be set to the groupmembersonly option for the
+ * module. Since we don't, it will be set to 0 for modules, and 1 for sections
+ * if they have a grouping.
+ *
+ * @param int $groupmembersonly 1 if activity has groupmembersonly option
+ * @param int $groupingid Grouping id (0 = none)
+ * @param int $availablefrom Available from time (0 = none)
+ * @param int $availableuntil Available until time (0 = none)
+ * @param int $showavailability Show availability (1) or hide activity entirely
+ * @param array $availrecs Records from course_modules/sections_availability
+ * @param array $fieldrecs Records from course_modules/sections_avail_fields
+ */
+function upgrade_availability_item($groupmembersonly, $groupingid,
+        $availablefrom, $availableuntil, $showavailability,
+        array $availrecs, array $fieldrecs) {
+    global $CFG, $DB;
+    $conditions = array();
+    $shows = array();
+
+    // Group members only condition (if enabled).
+    if ($CFG->enablegroupmembersonly && $groupmembersonly) {
+        if ($groupingid) {
+            $conditions[] = '{"type":"grouping"' .
+                    ($groupingid ? ',"id":' . $groupingid : '') . '}';
+        } else {
+            // No grouping specified, so allow any group.
+            $conditions[] = '{"type":"group"}';
+        }
+        // Group members only condition was not displayed to students.
+        $shows[] = 'false';
+
+        // In the unlikely event that the site had enablegroupmembers only
+        // but NOT enableavailability, we need to turn this on now.
+        if (!$CFG->enableavailability) {
+            set_config('enableavailability', 1);
+        }
+    }
+
+    // Date conditions.
+    if ($availablefrom) {
+        $conditions[] = '{"type":"date","d":">=","t":' . $availablefrom . '}';
+        $shows[] = $showavailability ? 'true' : 'false';
+    }
+    if ($availableuntil) {
+        $conditions[] = '{"type":"date","d":"<","t":' . $availableuntil . '}';
+        // Until dates never showed to students.
+        $shows[] = 'false';
+    }
+
+    // Conditions from _availability table.
+    foreach ($availrecs as $rec) {
+        if (!empty($rec->sourcecmid)) {
+            // Completion condition.
+            $conditions[] = '{"type":"completion","cm":' . $rec->sourcecmid .
+                    ',"e":' . $rec->requiredcompletion . '}';
+        } else {
+            // Grade condition.
+            $minmax = '';
+            if (!empty($rec->grademin)) {
+                $minmax .= ',"min":' . sprintf('%.5f', $rec->grademin);
+            }
+            if (!empty($rec->grademax)) {
+                $minmax .= ',"max":' . sprintf('%.5f', $rec->grademax);
+            }
+            $conditions[] = '{"type":"grade","id":' . $rec->gradeitemid . $minmax . '}';
+        }
+        $shows[] = $showavailability ? 'true' : 'false';
+    }
+
+    // Conditions from _fields table.
+    foreach ($fieldrecs as $rec) {
+        if (isset($rec->userfield)) {
+            // Standard field.
+            $fieldbit = ',"sf":' . json_encode($rec->userfield);
+        } else {
+            // Custom field.
+            $fieldbit = ',"cf":' . json_encode($rec->shortname);
+        }
+        // Value is not included for certain operators.
+        switch($rec->operator) {
+            case 'isempty':
+            case 'isnotempty':
+                $valuebit = '';
+                break;
+
+            default:
+                $valuebit = ',"v":' . json_encode($rec->value);
+                break;
+        }
+        $conditions[] = '{"type":"profile","op":"' . $rec->operator . '"' .
+                $fieldbit . $valuebit . '}';
+        $shows[] = $showavailability ? 'true' : 'false';
+    }
+
+    // If there are some conditions, set them into database.
+    if ($conditions) {
+        return '{"op":"&","showc":[' . implode(',', $shows) . '],' .
+                '"c":[' . implode(',', $conditions) . ']}';
+    } else {
+        return null;
+    }
+}
+
+/**
+ * Using data for a single course-module that has groupmembersonly enabled,
+ * returns the new availability value that incorporates the correct
+ * groupmembersonly option.
+ *
+ * Included as a function so that it can be shared between upgrade and restore,
+ * and unit-tested.
+ *
+ * @param int $groupingid Grouping id for the course-module (0 if none)
+ * @param string $availability Availability JSON data for the module (null if none)
+ * @return string New value for availability for the module
+ */
+function upgrade_group_members_only($groupingid, $availability) {
+    // Work out the new JSON object representing this option.
+    if ($groupingid) {
+        // Require specific grouping.
+        $condition = (object)array('type' => 'grouping', 'id' => (int)$groupingid);
+    } else {
+        // No grouping specified, so require membership of any group.
+        $condition = (object)array('type' => 'group');
+    }
+
+    if (is_null($availability)) {
+        // If there are no conditions using the new API then just set it.
+        $tree = (object)array('op' => '&', 'c' => array($condition), 'showc' => array(false));
+    } else {
+        // There are existing conditions.
+        $tree = json_decode($availability);
+        switch ($tree->op) {
+            case '&' :
+                // For & conditions we can just add this one.
+                $tree->c[] = $condition;
+                $tree->showc[] = false;
+                break;
+            case '!|' :
+                // For 'not or' conditions we can add this one
+                // but negated.
+                $tree->c[] = (object)array('op' => '!&', 'c' => array($condition));
+                $tree->showc[] = false;
+                break;
+            default:
+                // For the other two (OR and NOT AND) we have to add
+                // an extra level to the tree.
+                $tree = (object)array('op' => '&', 'c' => array($tree, $condition),
+                        'showc' => array($tree->show, false));
+                // Inner trees do not have a show option, so remove it.
+                unset($tree->c[0]->show);
+                break;
+        }
+    }
+
+    return json_encode($tree);
+}
+
+/**
+ * Updates the mime-types for files that exist in the database, based on their
+ * file extension.
+ *
+ * @param array $filetypes Array with file extension as the key, and mimetype as the value
+ */
+function upgrade_mimetypes($filetypes) {
+    global $DB;
+    $select = $DB->sql_like('filename', '?', false);
+    foreach ($filetypes as $extension=>$mimetype) {
+        $DB->set_field_select(
+            'files',
+            'mimetype',
+            $mimetype,
+            $select,
+            array($extension)
+        );
+    }
+}

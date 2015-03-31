@@ -117,15 +117,41 @@ class core_weblib_testcase extends advanced_testcase {
     }
 
     public function test_highlight() {
-        $this->assertSame('This is <span class="highlight">good</span>', highlight('good', 'This is good'));
-        $this->assertSame('<span class="highlight">span</span>', highlight('SpaN', 'span'));
-        $this->assertSame('<span class="highlight">SpaN</span>', highlight('span', 'SpaN'));
-        $this->assertSame('<span><span class="highlight">span</span></span>', highlight('span', '<span>span</span>'));
-        $this->assertSame('He <span class="highlight">is</span> <span class="highlight">good</span>', highlight('good is', 'He is good'));
-        $this->assertSame('This is <span class="highlight">good</span>', highlight('+good', 'This is good'));
-        $this->assertSame('This is good', highlight('-good', 'This is good'));
-        $this->assertSame('This is goodness', highlight('+good', 'This is goodness'));
-        $this->assertSame('This is <span class="highlight">good</span>ness', highlight('good', 'This is goodness'));
+        $this->assertSame('This is <span class="highlight">good</span>',
+                highlight('good', 'This is good'));
+
+        $this->assertSame('<span class="highlight">span</span>',
+                highlight('SpaN', 'span'));
+
+        $this->assertSame('<span class="highlight">SpaN</span>',
+                highlight('span', 'SpaN'));
+
+        $this->assertSame('<span><span class="highlight">span</span></span>',
+                highlight('span', '<span>span</span>'));
+
+        $this->assertSame('He <span class="highlight">is</span> <span class="highlight">good</span>',
+                highlight('good is', 'He is good'));
+
+        $this->assertSame('This is <span class="highlight">good</span>',
+                highlight('+good', 'This is good'));
+
+        $this->assertSame('This is good',
+                highlight('-good', 'This is good'));
+
+        $this->assertSame('This is goodness',
+                highlight('+good', 'This is goodness'));
+
+        $this->assertSame('This is <span class="highlight">good</span>ness',
+                highlight('good', 'This is goodness'));
+
+        $this->assertSame('<p><b>test</b> <b>1</b></p><p><b>1</b></p>',
+                highlight('test 1', '<p>test 1</p><p>1</p>', false, '<b>', '</b>'));
+
+        $this->assertSame('<p><b>test</b> <b>1</b></p><p><b>1</b></p>',
+                    highlight('test +1', '<p>test 1</p><p>1</p>', false, '<b>', '</b>'));
+
+        $this->assertSame('<p><b>test</b> 1</p><p>1</p>',
+                    highlight('test -1', '<p>test 1</p><p>1</p>', false, '<b>', '</b>'));
     }
 
     public function test_replace_ampersands() {
@@ -256,6 +282,16 @@ class core_weblib_testcase extends advanced_testcase {
 
         $url2 = new moodle_url('index.php', array('var2' => 2, 'var1' => 1));
 
+        $this->assertTrue($url1->compare($url2, URL_MATCH_BASE));
+        $this->assertTrue($url1->compare($url2, URL_MATCH_PARAMS));
+        $this->assertTrue($url1->compare($url2, URL_MATCH_EXACT));
+
+        $url1->set_anchor('test');
+        $this->assertTrue($url1->compare($url2, URL_MATCH_BASE));
+        $this->assertTrue($url1->compare($url2, URL_MATCH_PARAMS));
+        $this->assertFalse($url1->compare($url2, URL_MATCH_EXACT));
+
+        $url2->set_anchor('test');
         $this->assertTrue($url1->compare($url2, URL_MATCH_BASE));
         $this->assertTrue($url1->compare($url2, URL_MATCH_PARAMS));
         $this->assertTrue($url1->compare($url2, URL_MATCH_EXACT));

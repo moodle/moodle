@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * This file contains the restore user interface class
  *
- * @package   moodlecore
+ * @package   core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,23 +28,55 @@
  * The restore user interface class manages the user interface and restore for
  * Moodle.
  *
+ * @package   core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_ui extends base_ui {
     /**
      * The stages of the restore user interface.
+     * Confirm the backup you are going to restore.
      */
     const STAGE_CONFIRM = 1;
+
+    /**
+     * The stages of the restore user interface.
+     * Select the destination for the restore.
+     */
     const STAGE_DESTINATION = 2;
+
+    /**
+     * The stages of the restore user interface.
+     * Alter the setting for the restore.
+     */
     const STAGE_SETTINGS = 4;
+
+    /**
+     * The stages of the restore user interface.
+     * Alter and review the schema that you are going to restore.
+     */
     const STAGE_SCHEMA = 8;
+
+    /**
+     * The stages of the restore user interface.
+     * The final review before the restore is run.
+     */
     const STAGE_REVIEW = 16;
+
+    /**
+     * The stages of the restore user interface.
+     * The restore is in process right now.
+     */
     const STAGE_PROCESS = 32;
+
+    /**
+     * The stages of the restore user interface.
+     * The process is complete.
+     */
     const STAGE_COMPLETE = 64;
 
     /**
-     *
+     * The current UI stage.
      * @var restore_ui_stage
      */
     protected $stage = null;
@@ -68,14 +99,17 @@ class restore_ui extends base_ui {
         restore_ui::STAGE_PROCESS       => 'process',
         restore_ui::STAGE_COMPLETE      => 'complete'
     );
+
     /**
      * Intialises what ever stage is requested. If none are requested we check
      * params for 'stage' and default to initial
      *
+     * @throws restore_ui_exception for an invalid stage
      * @param int|null $stage The desired stage to intialise or null for the default
+     * @param array $params
      * @return restore_ui_stage_initial|restore_ui_stage_schema|restore_ui_stage_confirmation|restore_ui_stage_final
      */
-    protected function initialise_stage($stage = null, array $params=null) {
+    protected function initialise_stage($stage = null, array $params = null) {
         if ($stage == null) {
             $stage = optional_param('stage', self::STAGE_CONFIRM, PARAM_INT);
         }
@@ -86,8 +120,10 @@ class restore_ui extends base_ui {
         $stage = new $class($this, $params);
         return $stage;
     }
+
     /**
      * This processes the current stage of the restore
+     * @throws restore_ui_exception if the progress is wrong.
      * @return bool
      */
     public function process() {
@@ -101,16 +137,17 @@ class restore_ui extends base_ui {
             return false;
         }
 
-        // Process the stage
+        // Process the stage.
         $processoutcome = $this->stage->process();
-        if ($processoutcome !== false && !($this->get_stage()==self::STAGE_PROCESS && optional_param('substage', false, PARAM_BOOL))) {
+        if ($processoutcome !== false && !($this->get_stage() == self::STAGE_PROCESS && optional_param('substage', false, PARAM_BOOL))) {
             $this->stage = $this->initialise_stage($this->stage->get_next_stage(), $this->stage->get_params());
         }
 
-        // Process UI event after to check changes are valid
+        // Process UI event after to check changes are valid.
         $this->controller->process_ui_event();
         return $processoutcome;
     }
+
     /**
      * Returns true if the stage is independent (not requiring a restore controller)
      * @return bool
@@ -118,6 +155,7 @@ class restore_ui extends base_ui {
     public function is_independent() {
         return false;
     }
+
     /**
      * Gets the unique ID associated with this UI
      * @return string
@@ -125,6 +163,7 @@ class restore_ui extends base_ui {
     public function get_uniqueid() {
         return $this->get_restoreid();
     }
+
     /**
      * Gets the restore id from the controller
      * @return string
@@ -158,7 +197,7 @@ class restore_ui extends base_ui {
     /**
      * Sets the progress reporter that will be returned by get_progress_reporter.
      *
-     * @param c\core\progress\base$progressreporter Progress reporter
+     * @param \core\progress\base $progressreporter Progress reporter
      */
     public function set_progress_reporter(\core\progress\base $progressreporter) {
         $this->progressreporter = $progressreporter;
@@ -166,6 +205,7 @@ class restore_ui extends base_ui {
 
     /**
      * Executes the restore plan
+     * @throws restore_ui_exception if the progress or stage is wrong.
      * @return bool
      */
     public function execute() {
@@ -204,7 +244,7 @@ class restore_ui extends base_ui {
      */
     protected function is_temporary_course_created($courseid) {
         global $DB;
-        //Check if current controller instance has created new course.
+        // Check if current controller instance has created new course.
         if ($this->controller->get_target() == backup::TARGET_NEW_COURSE) {
             $results = $DB->record_exists_sql("SELECT bc.itemid
                                                FROM {backup_controllers} bc, {course} c
@@ -226,16 +266,18 @@ class restore_ui extends base_ui {
     public function enforce_changed_dependencies() {
         return ($this->dependencychanges > 0);
     }
+
     /**
      * Loads the restore controller if we are tracking one
-     * @return restore_controller|false
+     * @param string|bool $restoreid
+     * @return string
      */
-    final public static function load_controller($restoreid=false) {
-        // Get the restore id optional param
+    final public static function load_controller($restoreid = false) {
+        // Get the restore id optional param.
         if ($restoreid) {
             try {
                 // Try to load the controller with it.
-                // If it fails at this point it is likely because this is the first load
+                // If it fails at this point it is likely because this is the first load.
                 $controller = restore_controller::load_controller($restoreid);
                 return $controller;
             } catch (Exception $e) {
@@ -244,9 +286,11 @@ class restore_ui extends base_ui {
         }
         return $restoreid;
     }
+
     /**
      * Initialised the requested independent stage
      *
+     * @throws restore_ui_exception
      * @param int $stage One of self::STAGE_*
      * @param int $contextid
      * @return restore_ui_stage_confirm|restore_ui_stage_destination
@@ -261,16 +305,18 @@ class restore_ui extends base_ui {
         }
         return new $class($contextid);
     }
+
     /**
      * Cancels the current restore and redirects the user back to the relevant place
      */
     public function cancel_process() {
-        //Delete temporary restore course if exists.
+        // Delete temporary restore course if exists.
         if ($this->controller->get_target() == backup::TARGET_NEW_COURSE) {
             $this->cleanup();
         }
         parent::cancel_process();
     }
+
     /**
      * Gets an array of progress bar items that can be displayed through the restore renderer.
      * @return array Array of items for the progress bar
@@ -283,22 +329,23 @@ class restore_ui extends base_ui {
         $items = array();
         while ($stage > 0) {
             $classes = array('backup_stage');
-            if (floor($stage/2) == $currentstage) {
+            if (floor($stage / 2) == $currentstage) {
                 $classes[] = 'backup_stage_next';
             } else if ($stage == $currentstage) {
                 $classes[] = 'backup_stage_current';
             } else if ($stage < $currentstage) {
                 $classes[] = 'backup_stage_complete';
             }
-            $item = array('text' => strlen(decbin($stage)).'. '.get_string('restorestage'.$stage, 'backup'),'class' => join(' ', $classes));
+            $item = array('text' => strlen(decbin($stage)).'. '.get_string('restorestage'.$stage, 'backup'), 'class' => join(' ', $classes));
             if ($stage < $currentstage && $currentstage < self::STAGE_COMPLETE && $stage > self::STAGE_DESTINATION) {
-                $item['link'] = new moodle_url($PAGE->url, array('restore'=>$this->get_restoreid(), 'stage'=>$stage));
+                $item['link'] = new moodle_url($PAGE->url, array('restore' => $this->get_restoreid(), 'stage' => $stage));
             }
             array_unshift($items, $item);
-            $stage = floor($stage/2);
+            $stage = floor($stage / 2);
         }
         return $items;
     }
+
     /**
      * Gets the name of this UI
      * @return string
@@ -306,6 +353,7 @@ class restore_ui extends base_ui {
     public function get_name() {
         return 'restore';
     }
+
     /**
      * Gets the first stage for this UI
      * @return int STAGE_CONFIRM
@@ -313,6 +361,7 @@ class restore_ui extends base_ui {
     public function get_first_stage_id() {
         return self::STAGE_CONFIRM;
     }
+
     /**
      * Returns true if this stage has substages of which at least one needs to be displayed
      * @return bool
@@ -320,9 +369,11 @@ class restore_ui extends base_ui {
     public function requires_substage() {
         return ($this->stage->has_sub_stages() && !$this->stage->process());
     }
+
     /**
      * Displays this stage
      *
+     * @throws base_ui_exception if the progress is wrong.
      * @param core_backup_renderer $renderer
      * @return string HTML code to echo
      */
@@ -335,6 +386,10 @@ class restore_ui extends base_ui {
 }
 
 /**
- * restore user interface exception. Modelled off the restore_exception class
+ * Restore user interface exception. Modelled off the restore_exception class
+ *
+ * @package   core_backup
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_ui_exception extends base_ui_exception {}

@@ -1,1 +1,0 @@
-this pear/XML package will be removed soon, please do not use it

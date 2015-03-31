@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Role assigned event.
+ *
+ * @package    core
+ * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
@@ -24,17 +32,21 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int id role assigned id.
- *      @type string component name of component.
- *      @type int itemid id of item.
+ *      - int id: role assigned id.
+ *      - string component: name of component.
+ *      - int itemid: (optional) id of the item.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class role_assigned extends base {
+
+    /**
+     * Set basic properties for the event.
+     */
     protected function init() {
         $this->data['objecttable'] = 'role';
         $this->data['crud'] = 'c';
@@ -56,7 +68,8 @@ class role_assigned extends base {
      * @return string
      */
     public function get_description() {
-        return 'Role '.$this->objectid.' was assigned to user '.$this->relateduserid.' in context '.$this->contextid;
+        return "The user with id '$this->userid' assigned the role with id '$this->objectid' to the user with id " .
+            "'$this->relateduserid'.";
     }
 
     /**
@@ -82,7 +95,7 @@ class role_assigned extends base {
      * @return mixed
      */
     protected function get_legacy_eventdata() {
-        return $this->get_record_snapshot('role_assignments', $this->data['other']['id']);
+        return $this->get_record_snapshot('role_assignments', $this->other['id']);
     }
 
     /**
@@ -95,5 +108,27 @@ class role_assigned extends base {
         $rolenames = role_fix_names($roles, $this->get_context(), ROLENAME_ORIGINAL, true);
         return array($this->courseid, 'role', 'assign', 'admin/roles/assign.php?contextid='.$this->contextid.'&roleid='.$this->objectid,
                 $rolenames[$this->objectid], '', $this->userid);
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        if (!isset($this->other['id'])) {
+            throw new \coding_exception('The \'id\' value must be set in other.');
+        }
+
+        if (!isset($this->other['component'])) {
+            throw new \coding_exception('The \'component\' value must be set in other.');
+        }
     }
 }

@@ -2,16 +2,16 @@
 
 
 /*
-V5.18 3 Sep 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
-  Released under both BSD license and Lesser GPL library license. 
-  Whenever there is any discrepancy between the two licenses, 
+V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+  Released under both BSD license and Lesser GPL library license.
+  Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
   Set tabs to 8.
- 
-*/ 
+
+*/
 
 class ADODB_pdo_mysql extends ADODB_pdo {
-	var $metaTablesSQL = "SHOW TABLES";	
+	var $metaTablesSQL = "SHOW TABLES";
 	var $metaColumnsSQL = "SHOW COLUMNS FROM `%s`";
 	var $sysDate = 'CURDATE()';
 	var $sysTimeStamp = 'NOW()';
@@ -23,59 +23,59 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 
 	function _init($parentDriver)
 	{
-	
+
 		$parentDriver->hasTransactions = false;
 		#$parentDriver->_bindInputArray = false;
 		$parentDriver->hasInsertID = true;
 		$parentDriver->_connectionID->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,true);
 	}
-	
+
 		// dayFraction is a day in floating point
 	function OffsetDate($dayFraction,$date=false)
-	{		
+	{
 		if (!$date) $date = $this->sysDate;
-		
+
 		$fraction = $dayFraction * 24 * 3600;
 		return $date . ' + INTERVAL ' .	 $fraction.' SECOND';
-		
+
 //		return "from_unixtime(unix_timestamp($date)+$fraction)";
 	}
-	
-	function Concat() 
-	{	
+
+	function Concat()
+	{
 		$s = "";
 		$arr = func_get_args();
 
 		// suggestion by andrew005#mnogo.ru
 		$s = implode(',',$arr);
-		if (strlen($s) > 0) return "CONCAT($s)"; return ''; 
+		if (strlen($s) > 0) return "CONCAT($s)"; return '';
 	}
-	
+
 	function ServerInfo()
 	{
 		$arr['description'] = ADOConnection::GetOne("select version()");
 		$arr['version'] = ADOConnection::_findvers($arr['description']);
 		return $arr;
 	}
-	
-	function MetaTables($ttype=false,$showSchema=false,$mask=false) 
-	{	
+
+	function MetaTables($ttype=false,$showSchema=false,$mask=false)
+	{
 		$save = $this->metaTablesSQL;
 		if ($showSchema && is_string($showSchema)) {
 			$this->metaTablesSQL .= " from $showSchema";
 		}
-		
+
 		if ($mask) {
 			$mask = $this->qstr($mask);
 			$this->metaTablesSQL .= " like $mask";
 		}
 		$ret = ADOConnection::MetaTables($ttype,$showSchema);
-		
+
 		$this->metaTablesSQL = $save;
 		return $ret;
 	}
-	
-	function SetTransactionMode( $transaction_mode ) 
+
+	function SetTransactionMode( $transaction_mode )
 	{
 		$this->_transmode  = $transaction_mode;
 		if (empty($transaction_mode)) {
@@ -85,7 +85,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 		if (!stristr($transaction_mode,'isolation')) $transaction_mode = 'ISOLATION LEVEL '.$transaction_mode;
 		$this->Execute("SET SESSION TRANSACTION ".$transaction_mode);
 	}
-	
+
  	function MetaColumns($table,$normalize=true)
 	{
 		$this->_findschema($table,$schema);
@@ -96,27 +96,27 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 		global $ADODB_FETCH_MODE;
 		$save = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		
+
 		if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
 		$rs = $this->Execute(sprintf($this->metaColumnsSQL,$table));
-		
+
 		if ($schema) {
 			$this->SelectDB($dbName);
 		}
-		
+
 		if (isset($savem)) $this->SetFetchMode($savem);
 		$ADODB_FETCH_MODE = $save;
 		if (!is_object($rs)) {
 			$false = false;
 			return $false;
 		}
-			
+
 		$retarr = array();
 		while (!$rs->EOF){
 			$fld = new ADOFieldObject();
 			$fld->name = $rs->fields[0];
 			$type = $rs->fields[1];
-			
+
 			// split type into type(length):
 			$fld->scale = null;
 			if (preg_match("/^(.+)\((\d+),(\d+)/", $type, $query_array)) {
@@ -141,7 +141,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 			$fld->auto_increment = (strpos($rs->fields[5], 'auto_increment') !== false);
 			$fld->binary = (strpos($type,'blob') !== false);
 			$fld->unsigned = (strpos($type,'unsigned') !== false);
-				
+
 			if (!$fld->binary) {
 				$d = $rs->fields[4];
 				if ($d != '' && $d != 'NULL') {
@@ -151,7 +151,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 					$fld->has_default = false;
 				}
 			}
-			
+
 			if ($save == ADODB_FETCH_NUM) {
 				$retarr[] = $fld;
 			} else {
@@ -159,19 +159,19 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 			}
 				$rs->MoveNext();
 			}
-		
+
 			$rs->Close();
-			return $retarr;	
+			return $retarr;
 	}
-		
-	
+
+
 	// parameters use PostgreSQL convention, not MySQL
 	function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs=0)
 	{
 		$offsetStr =($offset>=0) ? "$offset," : '';
 		// jason judge, see http://phplens.com/lens/lensforum/msgs.php?id=9220
-		if ($nrows < 0) $nrows = '18446744073709551615'; 
-		
+		if ($nrows < 0) $nrows = '18446744073709551615';
+
 		if ($secs)
 			$rs = $this->CacheExecute($secs,$sql." LIMIT $offsetStr$nrows",$inputarr);
 		else
@@ -179,4 +179,3 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 		return $rs;
 	}
 }
-?>

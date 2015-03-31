@@ -142,8 +142,8 @@ class core_calendar_external extends external_api {
                                              "Time from which events should be returned",
                                              VALUE_DEFAULT, 0, NULL_ALLOWED),
                                     'timeend' => new external_value(PARAM_INT,
-                                             "Time to which the events should be returned",
-                                             VALUE_DEFAULT, time(), NULL_ALLOWED),
+                                             "Time to which the events should be returned. We treat 0 and null as no end",
+                                             VALUE_DEFAULT, 0, NULL_ALLOWED),
                                     'ignorehidden' => new external_value(PARAM_BOOL,
                                              "Ignore hidden events or not",
                                              VALUE_DEFAULT, true, NULL_ALLOWED),
@@ -173,13 +173,19 @@ class core_calendar_external extends external_api {
 
         // Let us findout courses that we can return events from.
         if (!$hassystemcap) {
-            $courses = enrol_get_my_courses();
-            $courses = array_keys($courses);
             foreach ($params['events']['courseids'] as $id) {
-                if (in_array($id, $courses)) {
+               try {
+                    $context = context_course::instance($id);
+                    self::validate_context($context);
                     $funcparam['courses'][] = $id;
-                } else {
-                    $warnings[] = array('item' => $id, 'warningcode' => 'nopermissions', 'message' => 'you do not have permissions to access this course');
+                } catch (Exception $e) {
+                    $warnings[] = array(
+                        'item' => 'course',
+                        'itemid' => $id,
+                        'warningcode' => 'nopermissions',
+                        'message' => 'No access rights in course context '.$e->getMessage().$e->getTraceAsString()
+                    );
+                    continue;
                 }
             }
         } else {
@@ -215,6 +221,11 @@ class core_calendar_external extends external_api {
             $funcparam['courses'][] = $SITE->id;
         }
 
+        // We treat 0 and null as no end.
+        if (empty($params['options']['timeend'])) {
+            $params['options']['timeend'] = PHP_INT_MAX;
+        }
+
         $eventlist = calendar_get_events($params['options']['timestart'], $params['options']['timeend'], $funcparam['users'], $funcparam['groups'],
                 $funcparam['courses'], true, $params['options']['ignorehidden']);
         // WS expects arrays.
@@ -235,7 +246,7 @@ class core_calendar_external extends external_api {
                 $events[$eventid] = $event;
             } else if (!empty($eventobj->modulename)) {
                 $cm = get_coursemodule_from_instance($eventobj->modulename, $eventobj->instance);
-                if (groups_course_module_visible($cm)) {
+                if (\core_availability\info_module::is_user_visible($cm, 0, false)) {
                     $events[$eventid] = $event;
                 }
             } else {

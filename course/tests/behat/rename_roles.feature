@@ -25,7 +25,7 @@ Feature: Rename roles within a course
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | Tutor |
       | Your word for 'Student' | Learner |
-    And I press "Save changes"
+    And I press "Save and display"
     And I expand "Switch role to..." node
     Then I should see "Tutor"
     And I should see "Learner"
@@ -37,7 +37,7 @@ Feature: Rename roles within a course
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | |
       | Your word for 'Student' | |
-    And I press "Save changes"
+    And I press "Save and display"
     And I expand "Switch role to..." node
     And I should see "Teacher"
     And I should see "Student"

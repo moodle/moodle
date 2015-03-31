@@ -45,7 +45,7 @@ require_login($course);
 
 //page settings
 $PAGE->set_url('/course/publish/metadata.php', array('id' => $course->id));
-$PAGE->set_pagelayout('course');
+$PAGE->set_pagelayout('incourse');
 $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
 

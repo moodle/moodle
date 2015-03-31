@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * core_group updated event.
+ * Group updated event.
  *
  * @package    core_group
  * @copyright  2013 Frédéric Massart
@@ -26,13 +26,14 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * core_group updated event class.
+ * Group updated event class.
  *
- * @package    core_group
+ * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class group_updated extends \core\event\base {
+class group_updated extends base {
 
     /**
      * Returns description of what happened.
@@ -40,13 +41,13 @@ class group_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} updated the group {$this->objectid}.";
+        return "The user with id '$this->userid' updated the group with id '$this->objectid'.";
     }
 
     /**
      * Legacy event data if get_legacy_eventname() is not empty.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         return $this->get_record_snapshot('groups', $this->objectid);
@@ -67,7 +68,7 @@ class group_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_group_updated', 'group');
+        return get_string('eventgroupupdated', 'group');
     }
 
     /**
@@ -89,5 +90,4 @@ class group_updated extends \core\event\base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'groups';
     }
-
 }

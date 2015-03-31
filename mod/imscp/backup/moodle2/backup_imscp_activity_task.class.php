@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -30,6 +29,9 @@ require_once($CFG->dirroot . '/mod/imscp/backup/moodle2/backup_imscp_stepslib.ph
 
 /**
  * Provides the steps to perform one complete backup of the IMSCP instance
+ *
+ * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_imscp_activity_task extends backup_activity_task {
 
@@ -55,15 +57,15 @@ class backup_imscp_activity_task extends backup_activity_task {
     static public function encode_content_links($content) {
         global $CFG;
 
-        $base = preg_quote($CFG->wwwroot,"/");
+        $base = preg_quote($CFG->wwwroot, "/");
 
-        // Link to the list of imscps
-        $search="/(".$base."\/mod\/imscp\/index.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@IMSCPINDEX*$2@$', $content);
+        // Link to the list of imscps.
+        $search = "/(" . $base . "\/mod\/imscp\/index.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@IMSCPINDEX*$2@$', $content);
 
-        // Link to imscp view by moduleid
-        $search="/(".$base."\/mod\/imscp\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@IMSCPVIEWBYID*$2@$', $content);
+        // Link to imscp view by moduleid.
+        $search = "/(" . $base . "\/mod\/imscp\/view.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@IMSCPVIEWBYID*$2@$', $content);
 
         return $content;
     }

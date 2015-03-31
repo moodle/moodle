@@ -27,7 +27,7 @@ class data_field_picture extends data_field_base {
     var $previewwidth  = 50;
     var $previewheight = 50;
 
-    function display_add_field($recordid=0) {
+    function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $USER, $PAGE;
 
         $file        = false;
@@ -37,7 +37,14 @@ class data_field_picture extends data_field_base {
         $itemid = null;
         $fs = get_file_storage();
 
-        if ($recordid) {
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id . '_file';
+            $itemid = $formdata->$fieldname;
+            $fieldname = 'field_' . $this->field->id . '_alttext';
+            if (isset($formdata->$fieldname)) {
+                $alttext = $formdata->$fieldname;
+            }
+        } else if ($recordid) {
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
                 file_prepare_draft_area($itemid, $this->context->id, 'mod_data', 'content', $content->id);
                 if (!empty($content->content)) {
@@ -64,9 +71,17 @@ class data_field_picture extends data_field_base {
         } else {
             $itemid = file_get_unused_draft_itemid();
         }
+        $str = '<div title="' . s($this->field->description) . '">';
+        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name;
 
-        $str = '<div title="'.s($this->field->description).'">';
-        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
+        if ($this->field->required) {
+            $str .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';
+            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= html_writer::div($image);
+        } else {
+            $str .= '</span></legend>';
+        }
         $str .= '<noscript>';
         if ($file) {
             $src = file_encode_url($CFG->wwwroot.'/pluginfile.php/', $this->context->id.'/mod_data/content/'.$content->id.'/'.$file->get_filename());
@@ -100,23 +115,6 @@ class data_field_picture extends data_field_base {
 
         $str .= '</fieldset>';
         $str .= '</div>';
-
-        $module = array(
-            'name'=>'form_filemanager',
-            'fullpath'=>'/lib/form/filemanager.js',
-            'requires' => array('core_filepicker', 'base', 'io-base', 'node',
-                    'json', 'core_dndupload', 'panel', 'resize-plugin', 'dd-plugin'),
-            'strings' => array(
-                array('error', 'moodle'), array('info', 'moodle'), array('confirmdeletefile', 'repository'),
-                array('draftareanofiles', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
-                array('invalidjson', 'repository'), array('popupblockeddownload', 'repository'),
-                array('unknownoriginal', 'repository'), array('confirmdeletefolder', 'repository'),
-                array('confirmdeletefilewithhref', 'repository'), array('confirmrenamefolder', 'repository'),
-                array('confirmrenamefile', 'repository'), array('edit', 'moodle')
-            )
-        );
-
-        $PAGE->requires->js_init_call('M.form_filemanager.init', array($fm->options), true, $module);
 
         return $str;
     }
@@ -307,6 +305,24 @@ class data_field_picture extends data_field_base {
     function file_ok($path) {
         return true;
     }
+
+    /**
+     * Custom notempty function
+     *
+     * @param string $value
+     * @param string $name
+     * @return bool
+     */
+    function notemptyfield($value, $name) {
+        global $USER;
+
+        $names = explode('_', $name);
+        if ($names[2] == 'file') {
+            $usercontext = context_user::instance($USER->id);
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $value);
+            return count($files) >= 2;
+        }
+        return false;
+    }
 }
-
-

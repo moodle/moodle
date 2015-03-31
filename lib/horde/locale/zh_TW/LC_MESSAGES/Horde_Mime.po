@@ -1,0 +1,72 @@
+# Chinese translations for Horde_Mime module.
+# Copyright 2010-2014 Horde LLC (http://www.horde.org/)
+# This file is distributed under the same license as the Horde_Mime module.
+# Automatically generated, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Horde_Mime\n"
+"Report-Msgid-Bugs-To: dev@lists.horde.org\n"
+"POT-Creation-Date: 2010-10-13 01:27+0200\n"
+"PO-Revision-Date: 2010-10-13 01:27+0200\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: i18n@lists.horde.org\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lib/Horde/Mime/Mdn.php:202
+msgid "Disposition Notification"
+msgstr "傳送回條"
+
+#: lib/Horde/Mime/Mail.php:460
+msgid "HTML Version of Message"
+msgstr "HTML 格式郵件"
+
+#: lib/Horde/Mime/Mail.php:404
+#, php-format
+msgid "Invalid character in e-mail address: %s."
+msgstr "電子郵件住址: %s 含有無效的字元."
+
+#: lib/Horde/Mime/Headers.php:519
+msgid "List-Archive"
+msgstr "討論群組-檔案櫃"
+
+#: lib/Horde/Mime/Headers.php:514
+msgid "List-Help"
+msgstr "討論群組-求助"
+
+#: lib/Horde/Mime/Headers.php:521
+msgid "List-Id"
+msgstr "討論群組-識別號碼"
+
+#: lib/Horde/Mime/Headers.php:517
+msgid "List-Owner"
+msgstr "討論群組-擁有者"
+
+#: lib/Horde/Mime/Headers.php:518
+msgid "List-Post"
+msgstr "討論群組-寄件人"
+
+#: lib/Horde/Mime/Headers.php:516
+msgid "List-Subscribe"
+msgstr "討論群組-訂閱"
+
+#: lib/Horde/Mime/Headers.php:515
+msgid "List-Unsubscribe"
+msgstr "討論群組-取消訂閱"
+
+#: lib/Horde/Mime/Mail.php:458
+msgid "Plaintext Version of Message"
+msgstr "純文字格式的郵件"
+
+#: lib/Horde/Mime/Mdn.php:213
+#, php-format
+msgid ""
+"The message sent on %s to %s with subject \"%s\" has been displayed.\n"
+"\n"
+"This is no guarantee that the message has been read or understood."
+msgstr ""
+"你曾於 %s 寄給 %s 一封主旨為 \"%s\" 的信件已被開啟.\n"
+"\n"
+"但這並不能保證該信件的內容已完全被收件人看完或了解."

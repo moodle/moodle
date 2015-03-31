@@ -191,6 +191,7 @@
         $passtype["plaintext"] = get_string("plaintext", "auth");
         $passtype["md5"]       = get_string("md5", "auth");
         $passtype["sha1"]      = get_string("sha1", "auth");
+        $passtype["saltedcrypt"]      = get_string("auth_dbsaltedcrypt", "auth_db");
         $passtype["internal"]  = get_string("internal", "auth");
         echo html_writer::select($passtype, "passtype", $config->passtype, false);
 
@@ -269,7 +270,7 @@
 
 <?php
 
-print_auth_lock_options($this->authtype, $user_fields, get_string('auth_dbextrafields', 'auth_db'), true, true);
+print_auth_lock_options($this->authtype, $user_fields, get_string('auth_dbextrafields', 'auth_db'), true, true, $this->get_custom_user_profile_fields());
 
 ?>
 </table>

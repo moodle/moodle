@@ -195,37 +195,10 @@ function wiki_reset_course_form_definition(&$mform) {
 }
 
 /**
- * Return a small object with summary information about what a
- * user has done with a given particular instance of this module
- * Used for user activity reports.
- * $return->time = the time they did it
- * $return->info = a short text description
- *
- * @return null
- * @todo Finish documenting this function
- **/
-function wiki_user_outline($course, $user, $mod, $wiki) {
-    $return = NULL;
-    return $return;
-}
-
-/**
- * Print a detailed representation of what a user has done with
- * a given particular instance of this module, for user activity reports.
- *
- * @return boolean
- * @todo Finish documenting this function
- **/
-function wiki_user_complete($course, $user, $mod, $wiki) {
-    return true;
-}
-
-/**
  * Indicates API features that the wiki supports.
  *
  * @uses FEATURE_GROUPS
  * @uses FEATURE_GROUPINGS
- * @uses FEATURE_GROUPMEMBERSONLY
  * @uses FEATURE_MOD_INTRO
  * @uses FEATURE_COMPLETION_TRACKS_VIEWS
  * @uses FEATURE_COMPLETION_HAS_RULES
@@ -239,8 +212,6 @@ function wiki_supports($feature) {
     case FEATURE_GROUPS:
         return true;
     case FEATURE_GROUPINGS:
-        return true;
-    case FEATURE_GROUPMEMBERSONLY:
         return true;
     case FEATURE_MOD_INTRO:
         return true;
@@ -443,7 +414,7 @@ function wiki_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
     }
 }
 
-function wiki_search_form($cm, $search = '') {
+function wiki_search_form($cm, $search = '', $subwiki = null) {
     global $CFG, $OUTPUT;
 
     $output = '<div class="wikisearch">';
@@ -454,6 +425,9 @@ function wiki_search_form($cm, $search = '') {
     $output .= '<input id="searchwiki" name="searchstring" type="text" size="18" value="' . s($search, true) . '" alt="search" />';
     $output .= '<input name="courseid" type="hidden" value="' . $cm->course . '" />';
     $output .= '<input name="cmid" type="hidden" value="' . $cm->id . '" />';
+    if (!empty($subwiki->id)) {
+        $output .= '<input name="subwikiid" type="hidden" value="' . $subwiki->id . '" />';
+    }
     $output .= '<input name="searchwikicontent" type="hidden" value="1" />';
     $output .= '<input value="' . get_string('searchwikis', 'wiki') . '" type="submit" />';
     $output .= '</fieldset>';

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * core webservice token_created event.
+ * Web service token created event.
  *
  * @package    core
  * @copyright  2013 Frédéric Massart
@@ -26,19 +26,20 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * core webservice token_created event class.
+ * Web service token created event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type bool auto automatically created.
+ *      - bool auto: true if it was automatically created.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_token_created extends \core\event\base {
+class webservice_token_created extends base {
 
     /**
      * Returns description of what happened.
@@ -46,7 +47,7 @@ class webservice_token_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "A web service token has been created for the user $this->relateduserid.";
+        return "The user with id '$this->userid' created a web service token for the user with id '$this->relateduserid'.";
     }
 
     /**
@@ -67,7 +68,7 @@ class webservice_token_created extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_webservice_token_created', 'webservice');
+        return get_string('eventwebservicetokencreated', 'webservice');
     }
 
     /**
@@ -100,8 +101,11 @@ class webservice_token_created extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->relateduserid)) {
-           throw new \coding_exception('The property \'relateduserid\' must be set.');
+           throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+
+        if (!isset($this->other['auto'])) {
+            throw new \coding_exception('The \'auto\' value must be set in other.');
         }
     }
-
 }

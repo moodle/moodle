@@ -48,7 +48,12 @@ class cachestore_mongodb_addinstance_form extends cachestore_addinstance_form {
      * The forms custom definitions.
      */
     protected function configuration_definition() {
+        global $OUTPUT;
         $form = $this->_form;
+
+        if (!class_exists('MongoClient')) {
+            $form->addElement('html', $OUTPUT->notification(get_string('pleaseupgrademongo', 'cachestore_mongodb')));
+        }
 
         $form->addElement('text', 'server', get_string('server', 'cachestore_mongodb'), array('size' => 72));
         $form->addHelpButton('server', 'server', 'cachestore_mongodb');

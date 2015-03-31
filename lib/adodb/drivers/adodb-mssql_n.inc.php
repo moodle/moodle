@@ -9,7 +9,7 @@
 // ADOdb  - Database Abstraction Library for PHP                         //
 //          http://adodb.sourceforge.net/                                //
 //                                                                       //
-// Copyright (c) 2000-2012 John Lim (jlim\@natsoft.com.my)               //
+// Copyright (c) 2000-2014 John Lim (jlim\@natsoft.com.my)               //
 //          All rights reserved.                                         //
 //          Released under both BSD license and LGPL library license.    //
 //          Whenever there is any discrepancy between the two licenses,  //
@@ -52,7 +52,7 @@ include_once(ADODB_DIR.'/drivers/adodb-mssql.inc.php');
 
 class ADODB_mssql_n extends ADODB_mssql {
 	var $databaseType = "mssql_n";
-	
+
 	function ADODB_mssqlpo()
 	{
 		ADODB_mssql::ADODB_mssql();
@@ -168,4 +168,3 @@ class ADORecordset_mssql_n extends ADORecordset_mssql {
 		$this->ADORecordset_mssql($id,$mode);
 	}
 }
-?>

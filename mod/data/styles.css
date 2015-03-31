@@ -63,7 +63,12 @@
 #page-mod-data-templates .template_heading {
      text-align:center;
 }
+#page-mod-data-templates #availabletags_wrapper {max-width:250px;}
 
 .dir-rtl .mod-data-default-template .template-field {text-align:left;}
 .dir-rtl .mod-data-default-template .template-token {text-align:right;}
 .dir-rtl .mod-data-default-template searchcontrols {text-align:left;}
+
+#page-mod-data-edit .req {
+    cursor: help;
+}

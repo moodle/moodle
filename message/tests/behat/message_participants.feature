@@ -30,8 +30,7 @@ Feature: An user can message course participants
     And I press "Preview"
     And I press "Send message"
     And I follow "Home"
-    And I expand "My profile" node
-    And I follow "Messages"
+    And I navigate to "Messages" node in "My profile"
     And I set the field "Message navigation:" to "Recent conversations"
     Then I should see "Here it is, the message content"
     And I should see "Student 1"

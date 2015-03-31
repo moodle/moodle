@@ -32,6 +32,7 @@ use Behat\Behat\Context\Step\Given as Given,
     Behat\Behat\Context\Step\When as When,
     Behat\Behat\Context\Step\Then as Then,
     Behat\Gherkin\Node\TableNode as TableNode,
+    Behat\Gherkin\Node\PyStringNode as PyStringNode,
     Behat\Mink\Element\NodeElement as NodeElement,
     Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
@@ -98,6 +99,10 @@ class behat_forms extends behat_base {
      * @return void
      */
     protected function expand_all_fields() {
+        // Expand only if JS mode, else not needed.
+        if (!$this->running_javascript()) {
+            return;
+        }
 
         // We already know that we waited for the DOM and the JS to be loaded, even the editor
         // so, we will use the reduced timeout as it is a common task and we should save time.
@@ -156,6 +161,34 @@ class behat_forms extends behat_base {
     }
 
     /**
+     * Sets the specified value to the field.
+     *
+     * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to multiline$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field
+     * @param PyStringNode $value
+     * @return void
+     */
+    public function i_set_the_field_to_multiline($field, PyStringNode $value) {
+        $this->set_field_value($field, (string)$value);
+    }
+
+    /**
+     * Sets the specified value to the field with xpath.
+     *
+     * @Given /^I set the field with xpath "(?P<fieldxpath_string>(?:[^"]|\\")*)" to "(?P<field_value_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field
+     * @param string $value
+     * @return void
+     */
+    public function i_set_the_field_with_xpath_to($fieldxpath, $value) {
+        $fieldNode = $this->find('xpath', $fieldxpath);
+        $field = behat_field_manager::get_form_field($fieldNode, $this->getSession());
+        $field->set_value($value);
+    }
+
+    /**
      * Checks, the field matches the value. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
      *
      * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" matches value "(?P<field_value_string>(?:[^"]|\\")*)"$/
@@ -166,10 +199,8 @@ class behat_forms extends behat_base {
      */
     public function the_field_matches_value($field, $value) {
 
-        $fieldnode = $this->find_field($field);
-
         // Get the field.
-        $formfield = behat_field_manager::get_form_field($fieldnode, $this->getSession());
+        $formfield = behat_field_manager::get_form_field_from_label($field, $this);
 
         // Checks if the provided value matches the current field value.
         if (!$formfield->matches($value)) {
@@ -193,10 +224,8 @@ class behat_forms extends behat_base {
      */
     public function the_field_does_not_match_value($field, $value) {
 
-        $fieldnode = $this->find_field($field);
-
         // Get the field.
-        $formfield = behat_field_manager::get_form_field($fieldnode, $this->getSession());
+        $formfield = behat_field_manager::get_form_field_from_label($field, $this);
 
         // Checks if the provided value matches the current field value.
         if ($formfield->matches($value)) {
@@ -348,11 +377,9 @@ class behat_forms extends behat_base {
      */
     protected function set_field_value($fieldlocator, $value) {
 
-        $node = $this->find_field($fieldlocator);
-
         // We delegate to behat_form_field class, it will
         // guess the type properly as it is a select tag.
-        $field = behat_field_manager::get_form_field($node, $this->getSession());
+        $field = behat_field_manager::get_form_field_from_label($fieldlocator, $this);
         $field->set_value($value);
     }
 

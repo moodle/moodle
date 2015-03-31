@@ -60,7 +60,7 @@ $PAGE->set_url($url);
 $PAGE->set_title("$course->fullname: $fullname: $strportfolios");
 $PAGE->set_heading($course->fullname);
 $PAGE->set_context(context_user::instance($user->id));
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('report');
 
 echo $OUTPUT->header();
 

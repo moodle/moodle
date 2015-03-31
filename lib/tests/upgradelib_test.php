@@ -200,4 +200,157 @@ class core_upgradelib_testcase extends advanced_testcase {
         // Verify the hash is correctly created.
         $this->assertSame($oldrecord->pathnamehash, $newrecord->pathnamehash);
     }
+
+    public function test_upgrade_fix_missing_root_folders_draft() {
+        global $DB, $SITE;
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $usercontext = context_user::instance($user->id);
+        $this->setUser($user);
+        $resource1 = $this->getDataGenerator()->get_plugin_generator('mod_resource')
+            ->create_instance(array('course' => $SITE->id));
+        $context = context_module::instance($resource1->cmid);
+        $draftitemid = 0;
+        file_prepare_draft_area($draftitemid, $context->id, 'mod_resource', 'content', 0);
+
+        $queryparams = array(
+            'component' => 'user',
+            'contextid' => $usercontext->id,
+            'filearea' => 'draft',
+            'itemid' => $draftitemid,
+        );
+
+        // Make sure there are two records in files for the draft file area and one of them has filename '.'.
+        $records = $DB->get_records_menu('files', $queryparams, '', 'id, filename');
+        $this->assertEquals(2, count($records));
+        $this->assertTrue(in_array('.', $records));
+        $originalhash = $DB->get_field('files', 'pathnamehash', $queryparams + array('filename' => '.'));
+
+        // Delete record with filename '.' and make sure it does not exist any more.
+        $DB->delete_records('files', $queryparams + array('filename' => '.'));
+
+        $records = $DB->get_records_menu('files', $queryparams, '', 'id, filename');
+        $this->assertEquals(1, count($records));
+        $this->assertFalse(in_array('.', $records));
+
+        // Run upgrade script and make sure the record is restored.
+        upgrade_fix_missing_root_folders_draft();
+
+        $records = $DB->get_records_menu('files', $queryparams, '', 'id, filename');
+        $this->assertEquals(2, count($records));
+        $this->assertTrue(in_array('.', $records));
+        $newhash = $DB->get_field('files', 'pathnamehash', $queryparams + array('filename' => '.'));
+        $this->assertEquals($originalhash, $newhash);
+    }
+
+    /**
+     * Tests the upgrade of an individual course-module or section from the
+     * old to new availability system. (This test does not use the database
+     * so it can run any time.)
+     */
+    public function test_upgrade_availability_item() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        // This function is in the other upgradelib.
+        require_once($CFG->libdir . '/db/upgradelib.php');
+
+        // Groupmembersonly (or nothing). Show option on but ignored.
+        // Note: This $CFG option doesn't exist any more but we are testing the
+        // upgrade function so it did exist then...
+        $CFG->enablegroupmembersonly = 0;
+        $this->assertNull(
+                upgrade_availability_item(1, 0, 0, 0, 1, array(), array()));
+        $CFG->enablegroupmembersonly = 1;
+        $this->assertNull(
+                upgrade_availability_item(0, 0, 0, 0, 1, array(), array()));
+        $this->assertEquals(
+                '{"op":"&","showc":[false],"c":[{"type":"group"}]}',
+                upgrade_availability_item(1, 0, 0, 0, 1, array(), array()));
+        $this->assertEquals(
+                '{"op":"&","showc":[false],"c":[{"type":"grouping","id":4}]}',
+                upgrade_availability_item(1, 4, 0, 0, 1, array(), array()));
+
+        // Dates (with show/hide options - until date always hides).
+        $this->assertEquals(
+                '{"op":"&","showc":[true],"c":[{"type":"date","d":">=","t":996}]}',
+                upgrade_availability_item(0, 0, 996, 0, 1, array(), array()));
+        $this->assertEquals(
+                '{"op":"&","showc":[false],"c":[{"type":"date","d":">=","t":997}]}',
+                upgrade_availability_item(0, 0, 997, 0, 0, array(), array()));
+        $this->assertEquals(
+                '{"op":"&","showc":[false],"c":[{"type":"date","d":"<","t":998}]}',
+                upgrade_availability_item(0, 0, 0, 998, 1, array(), array()));
+        $this->assertEquals(
+                '{"op":"&","showc":[true,false],"c":[' .
+                '{"type":"date","d":">=","t":995},{"type":"date","d":"<","t":999}]}',
+                upgrade_availability_item(0, 0, 995, 999, 1, array(), array()));
+
+        // Grade (show option works as normal).
+        $availrec = (object)array(
+                'sourcecmid' => null, 'requiredcompletion' => null,
+                'gradeitemid' => 13, 'grademin' => null, 'grademax' => null);
+        $this->assertEquals(
+                '{"op":"&","showc":[true],"c":[{"type":"grade","id":13}]}',
+                upgrade_availability_item(0, 0, 0, 0, 1, array($availrec), array()));
+        $availrec->grademin = 4.1;
+        $this->assertEquals(
+                '{"op":"&","showc":[false],"c":[{"type":"grade","id":13,"min":4.10000}]}',
+                upgrade_availability_item(0, 0, 0, 0, 0, array($availrec), array()));
+        $availrec->grademax = 9.9;
+        $this->assertEquals(
+                '{"op":"&","showc":[true],"c":[{"type":"grade","id":13,"min":4.10000,"max":9.90000}]}',
+                upgrade_availability_item(0, 0, 0, 0, 1, array($availrec), array()));
+        $availrec->grademin = null;
+        $this->assertEquals(
+                '{"op":"&","showc":[true],"c":[{"type":"grade","id":13,"max":9.90000}]}',
+                upgrade_availability_item(0, 0, 0, 0, 1, array($availrec), array()));
+
+        // Completion (show option normal).
+        $availrec->grademax = null;
+        $availrec->gradeitemid = null;
+        $availrec->sourcecmid = 666;
+        $availrec->requiredcompletion = 1;
+        $this->assertEquals(
+                '{"op":"&","showc":[true],"c":[{"type":"completion","cm":666,"e":1}]}',
+                upgrade_availability_item(0, 0, 0, 0, 1, array($availrec), array()));
+        $this->assertEquals(
+                '{"op":"&","showc":[false],"c":[{"type":"completion","cm":666,"e":1}]}',
+                upgrade_availability_item(0, 0, 0, 0, 0, array($availrec), array()));
+
+        // Profile conditions (custom/standard field, values/not, show option normal).
+        $fieldrec = (object)array('userfield' => 'email', 'operator' => 'isempty',
+                'value' => '', 'shortname' => null);
+        $this->assertEquals(
+                '{"op":"&","showc":[true],"c":[{"type":"profile","op":"isempty","sf":"email"}]}',
+                upgrade_availability_item(0, 0, 0, 0, 1, array(), array($fieldrec)));
+        $fieldrec->value = '@';
+        $fieldrec->operator = 'contains';
+        $this->assertEquals(
+                '{"op":"&","showc":[true],"c":[{"type":"profile","op":"contains","sf":"email","v":"@"}]}',
+                upgrade_availability_item(0, 0, 0, 0, 1, array(), array($fieldrec)));
+        $fieldrec->operator = 'isnotempty';
+        $fieldrec->userfield = null;
+        $fieldrec->shortname = 'frogtype';
+        $this->assertEquals(
+                '{"op":"&","showc":[false],"c":[{"type":"profile","op":"isnotempty","cf":"frogtype"}]}',
+                upgrade_availability_item(0, 0, 0, 0, 0, array(), array($fieldrec)));
+
+        // Everything at once.
+        $this->assertEquals('{"op":"&","showc":[false,true,false,true,true,true],' .
+                '"c":[{"type":"grouping","id":13},' .
+                '{"type":"date","d":">=","t":990},' .
+                '{"type":"date","d":"<","t":991},' .
+                '{"type":"grade","id":665,"min":70.00000},' .
+                '{"type":"completion","cm":42,"e":2},' .
+                '{"type":"profile","op":"isempty","sf":"email"}]}',
+                upgrade_availability_item(1, 13, 990, 991, 1, array(
+                    (object)array('sourcecmid' => null, 'gradeitemid' => 665, 'grademin' => 70),
+                    (object)array('sourcecmid' => 42, 'gradeitemid' => null, 'requiredcompletion' => 2)
+                ), array(
+                    (object)array('userfield' => 'email', 'shortname' => null, 'operator' => 'isempty'),
+                )));
+    }
 }

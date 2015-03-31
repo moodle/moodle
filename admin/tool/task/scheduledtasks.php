@@ -59,9 +59,9 @@ if ($task) {
     $mform = new tool_task_edit_scheduled_task_form(null, $task);
 }
 
-if ($mform && $mform->is_cancelled()) {
+if ($mform && ($mform->is_cancelled() || !empty($CFG->preventscheduledtaskchanges))) {
     redirect(new moodle_url('/admin/tool/task/scheduledtasks.php'));
-} else if ($action == 'edit') {
+} else if ($action == 'edit' && empty($CFG->preventscheduledtaskchanges)) {
 
     if ($data = $mform->get_data()) {
 
@@ -104,11 +104,11 @@ if ($mform && $mform->is_cancelled()) {
 
 } else {
     echo $OUTPUT->header();
-    $error = optional_param('error', '', PARAM_RAW);
+    $error = optional_param('error', '', PARAM_NOTAGS);
     if ($error) {
         echo $OUTPUT->notification($error, 'notifyerror');
     }
-    $success = optional_param('success', '', PARAM_RAW);
+    $success = optional_param('success', '', PARAM_NOTAGS);
     if ($success) {
         echo $OUTPUT->notification($success, 'notifysuccess');
     }

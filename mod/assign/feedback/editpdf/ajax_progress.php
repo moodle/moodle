@@ -49,6 +49,7 @@ try {
         throw new coding_exception('grade not found');
     }
 
+    // No need to handle the readonly files here, the should be already generated.
     $component = 'assignfeedback_editpdf';
     $filearea = document_services::PAGE_IMAGE_FILEAREA;
     $filepath = '/';

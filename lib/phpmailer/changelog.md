@@ -1,5 +1,68 @@
 # ChangeLog
 
+## Version 5.2.9 (Sept 25th 2014)
+* **Important: The autoloader is no longer autoloaded by the PHPMailer class**
+* Update html2text from https://github.com/mtibben/html2text
+* Improve Arabic translations (Thanks to @tarekdj)
+* Consistent handling of connection variables in SMTP and POP3
+* PHPDoc cleanup
+* Update composer to use PHPUnit 4.1
+* Pass consistent params to callbacks
+* More consistent handling of error states and debug output
+* Use property defaults, remove constructors
+* Remove unreachable code
+* Use older regex validation pattern for troublesome PCRE library versions
+* Improve PCRE detection in older PHP versions
+* Handle debug output consistently, and always in UTF-8
+* Allow user-defined debug output method via a callable
+* msgHTML now converts data URIs to embedded images
+* SMTP::getLastReply() will now always be populated
+* Improved example code in README
+* Ensure long filenames in Content-Disposition are encoded correctly
+* Simplify SMTP debug output mechanism, clarify levels with constants
+* Add SMTP connection check example
+* Simplify examples, don't use mysql* functions
+
+## Version 5.2.8 (May 14th 2014)
+* Increase timeout to match RFC2821 section 4.5.3.2 and thus not fail greetdelays, fixes #104
+* Add timestamps to default debug output
+* Add connection events and new level 3 to debug output options
+* Chinese language update (Thanks to @binaryoung)
+* Allow custom Mailer types (Thanks to @michield)
+* Cope with spaces around SMTP host specs
+* Fix processing of multiple hosts in connect string
+* Added Galician translation (Thanks to @donatorouco)
+* Autoloader now prepends
+* Docs updates
+* Add Latvian translation (Thanks to @eddsstudio)
+* Add Belarusian translation (Thanks to @amaksymiuk)
+* Make autoloader work better on older PHP versions
+* Avoid double-encoding if mbstring is overloading mail()
+* Add Portuguese translation (Thanks to @Jonadabe)
+* Make quoted-printable encoder respect line ending setting
+* Improve Chinese translation (Thanks to @PeterDaveHello)
+* Add Georgian translation (Thanks to @akalongman)
+* Add Greek translation (Thanks to @lenasterg)
+* Fix serverHostname on PHP < 5.3
+* Improve performance of SMTP class
+* Implement automatic 7bit downgrade
+* Add Vietnamese translation (Thanks to @vinades)
+* Improve example images, switch to PNG
+* Add Croatian translation (Thanks to @hrvoj3e)
+* Remove setting the Return-Path and deprecate the Return-path property - it's just wrong!
+* Fix language file loading if CWD has changed (@stephandesouza)
+* Add HTML5 email validation pattern
+* Improve Turkish translations (Thanks to @yasinaydin)
+* Improve Romanian translations (Thanks to @aflorea)
+* Check php.ini for path to sendmail/qmail before using default
+* Improve Farsi translation (Thanks to @MHM5000)
+* Don't use quoted-printable encoding for multipart types
+* Add Serbian translation (Thanks to ajevremovic at gmail.com)
+* Remove useless PHP5 check
+* Use SVG for build status badges
+* Store MessageDate on creation
+* Better default behaviour for validateAddress
+
 ## Version 5.2.7 (September 12th 2013)
 * Add Ukranian translation from @Krezalis
 * Support for do_verp
@@ -122,7 +185,7 @@
                #52, #31, #41, #5. #70, #69
 
 ## Version 5.2.1 (January 16, 2012)
-* Closed several bugs#5
+* Closed several bugs #5
 * Performance improvements
 * MsgHTML() now returns the message as required.
 * New method: GetSentMIMEMessage() (returns full copy of sent message)
@@ -251,11 +314,11 @@ NOTE: WE HAVE A NEW LANGUAGE VARIABLE FOR DIGITALLY SIGNED S/MIME EMAILS. IF YOU
     to, an error was thrown for the date() functions used (line 1565 and 1569).
     This is NOT a PHPMailer error, it is the result of an incorrectly configured
     PHP5 installation. The fix is to modify your 'php.ini' file and include the
-    date.timezone = America/New York
+    date.timezone = Etc/UTC (or your own zone)
     directive, to your own server timezone
   - If you do get this error, and are unable to access your php.ini file:
     In your PHP script, add
-    `date_default_timezone_set('America/Toronto');`
+    `date_default_timezone_set('Etc/UTC');`
   - do not try to use
     `$myVar = date_default_timezone_get();`
     as a test, it will throw an error.
@@ -295,31 +358,6 @@ Please note, this is BETA software
 * included example showing how to use PHPMailer with GMAIL
 * fixed the missing Cc in SendMail() and Mail()
 
-******************
-A note on sending bulk emails:
-
-If the email you are sending is not personalized, consider using the
-"undisclosed-recipient:;" strategy. That is, put all of your recipients
-in the Bcc field and set the To field to "undisclosed-recipients:;".
-It's a lot faster (only one send) and saves quite a bit on resources.
-Contrary to some opinions, this will not get you listed in spam engines -
-it's a legitimate way for you to send emails.
-
-A partial example for use with PHPMailer:
-
-```
-$mail->AddAddress("undisclosed-recipients:;");
-$mail->AddBCC("email1@anydomain.com,email2@anyotherdomain.com,email3@anyalternatedomain.com");
-```
-
-Many email service providers restrict the number of emails that can be sent
-in any given time period. Often that is between 50 - 60 emails maximum
-per hour or per send session.
-
-If that's the case, then break up your Bcc lists into chunks that are one
-less than your limit, and put a pause in your script.
-*******************
-
 ## Version 2.0.0 rc1 (Thu, Nov 08 2007), interim release
 * dramatically simplified using inline graphics ... it's fully automated and requires no user input
 * added automatic document type detection for attachments and pictures
@@ -332,26 +370,8 @@ less than your limit, and put a pause in your script.
 * added Estonian language file by Indrek P&auml;ri
 * added header injection patch
 * added "set" method to permit users to create their own pseudo-properties like 'X-Headers', etc.
-  example of use:
-
-```
-$mail->set('X-Priority', '3');
-$mail->set('X-MSMail-Priority', 'Normal');
-```
-
 * fixed warning message in SMTP get_lines method
-* added TLS/SSL SMTP support. Example of use:
-
-```
-$mail = new PHPMailer();
-$mail->Mailer = "smtp";
-$mail->Host = "smtp.example.com";
-$mail->SMTPSecure   = "tls"; // option
-//$mail->SMTPSecure   = "ssl";  // option
-...
-$mail->Send();
-```
-
+* added TLS/SSL SMTP support.
 * PHPMailer has been tested with PHP4 (4.4.7) and PHP5 (5.2.7)
 * Works with PHP installed as a module or as CGI-PHP
 NOTE: will NOT work with PHP5 in E_STRICT error mode

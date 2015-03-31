@@ -25,7 +25,7 @@
 class data_field_file extends data_field_base {
     var $type = 'file';
 
-    function display_add_field($recordid=0) {
+    function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $PAGE, $USER;
 
         $file        = false;
@@ -36,7 +36,10 @@ class data_field_file extends data_field_base {
         $itemid = null;
 
         // editing an existing database entry
-        if ($recordid){
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id . '_file';
+            $itemid = $formdata->$fieldname;
+        } else if ($recordid) {
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
 
                 file_prepare_draft_area($itemid, $this->context->id, 'mod_data', 'content', $content->id);
@@ -62,10 +65,18 @@ class data_field_file extends data_field_base {
             $itemid = file_get_unused_draft_itemid();
         }
 
-        $html = '';
         // database entry label
-        $html .= '<div title="'.s($this->field->description).'">';
-        $html .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
+        $html = '<div title="' . s($this->field->description) . '">';
+        $html .= '<fieldset><legend><span class="accesshide">'.$this->field->name;
+
+        if ($this->field->required) {
+            $html .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';
+            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $html .= html_writer::div($image);
+        } else {
+            $html .= '</span></legend>';
+        }
 
         // itemid element
         $html .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.$itemid.'" />';
@@ -83,26 +94,8 @@ class data_field_file extends data_field_base {
 
         $output = $PAGE->get_renderer('core', 'files');
         $html .= $output->render($fm);
-
         $html .= '</fieldset>';
         $html .= '</div>';
-
-        $module = array(
-            'name'=>'form_filemanager',
-            'fullpath'=>'/lib/form/filemanager.js',
-            'requires' => array('core_filepicker', 'base', 'io-base', 'node',
-                    'json', 'core_dndupload', 'panel', 'resize-plugin', 'dd-plugin'),
-            'strings' => array(
-                array('error', 'moodle'), array('info', 'moodle'), array('confirmdeletefile', 'repository'),
-                array('draftareanofiles', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
-                array('invalidjson', 'repository'), array('popupblockeddownload', 'repository'),
-                array('unknownoriginal', 'repository'), array('confirmdeletefolder', 'repository'),
-                array('confirmdeletefilewithhref', 'repository'), array('confirmrenamefolder', 'repository'),
-                array('confirmrenamefile', 'repository'), array('edit', 'moodle')
-            )
-        );
-
-        $PAGE->requires->js_init_call('M.form_filemanager.init', array($fm->options), true, $module);
 
         return $html;
     }
@@ -221,6 +214,24 @@ class data_field_file extends data_field_base {
         return true;
     }
 
+    /**
+     * Custom notempty function
+     *
+     * @param string $value
+     * @param string $name
+     * @return bool
+     */
+    function notemptyfield($value, $name) {
+        global $USER;
+
+        $names = explode('_', $name);
+        if ($names[2] == 'file') {
+            $usercontext = context_user::instance($USER->id);
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $value);
+            return count($files) >= 2;
+        }
+        return false;
+    }
+
 }
-
-

@@ -232,8 +232,12 @@ M.course_dndupload = {
     types_includes: function(e, type) {
         var i;
         var types = e._event.dataTransfer.types;
+        type = type.toLowerCase();
         for (i=0; i<types.length; i++) {
-            if (types[i] == type) {
+            if (!types.hasOwnProperty(i)) {
+                continue;
+            }
+            if (types[i].toLowerCase() === type) {
                 return true;
             }
         }
@@ -631,13 +635,14 @@ M.course_dndupload = {
             bodyContent: content,
             width: '350px',
             modal: true,
-            visible: true,
+            visible: false,
             render: true,
             align: {
                 node: null,
                 points: [Y.WidgetPositionAlign.CC, Y.WidgetPositionAlign.CC]
             }
         });
+        panel.show();
         // When the panel is hidden - destroy it and then check for other pending uploads
         panel.after("visibleChange", function(e) {
             if (!panel.get('visible')) {

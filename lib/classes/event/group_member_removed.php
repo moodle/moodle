@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * core_group member removed event.
+ * Group member removed event.
  *
- * @package    core_group
+ * @package    core
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,13 +26,14 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * core_group member removed event class.
+ * Group member removed event class.
  *
- * @package    core_group
+ * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class group_member_removed extends \core\event\base {
+class group_member_removed extends base {
 
     /**
      * Returns description of what happened.
@@ -40,7 +41,8 @@ class group_member_removed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} removed user {$this->relateduserid} from group {$this->objectid}.";
+        return "The user with id '$this->userid' removed the user with id '$this->relateduserid' to the group with " .
+            "id '$this->objectid'.";
     }
 
     /**
@@ -70,7 +72,7 @@ class group_member_removed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_group_member_removed', 'group');
+        return get_string('eventgroupmemberremoved', 'group');
     }
 
     /**
@@ -93,4 +95,17 @@ class group_member_removed extends \core\event\base {
         $this->data['objecttable'] = 'groups';
     }
 
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
+    }
 }

@@ -265,14 +265,6 @@ if ($mform->is_cancelled()) {
         $grade_item->force_regrading();
     }
 
-    $grade_grade = new grade_grade(array('userid'=>$data->userid, 'itemid'=>$grade_item->id), true);
-    if ($old_grade_grade->finalgrade != $grade_grade->finalgrade
-        or empty($old_grade_grade->overridden) != empty($grade_grade->overridden)
-    ) {
-        $grade_grade->grade_item = $grade_item;
-        \core\event\user_graded::create_from_grade($grade_grade)->trigger();
-    }
-
     redirect($returnurl);
 }
 

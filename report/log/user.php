@@ -80,11 +80,23 @@ $event->trigger();
 
 echo $OUTPUT->header();
 
+// Time to filter records from.
+if ($mode === 'today') {
+    $timefrom = usergetmidnight(time());
+} else {
+    $timefrom = 0;
+}
+
 $output = $PAGE->get_renderer('report_log');
 $reportlog = new report_log_renderable($logreader, $course, $user->id, 0, '', -1, -1, false, false, true, false, $PAGE->url,
-        usergetmidnight(time()), '', $page, $perpage, 'timecreated DESC');
-$reportlog->setup_table();
-$reportlog->tablelog->is_downloadable(false);
+        $timefrom, '', $page, $perpage, 'timecreated DESC');
+
+// Setup table if log reader is enabled.
+if (!empty($reportlog->selectedlogreader)) {
+    $reportlog->setup_table();
+    $reportlog->tablelog->is_downloadable(false);
+}
+
 echo $output->reader_selector($reportlog);
 
 if ($mode === 'today') {

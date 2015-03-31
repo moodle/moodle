@@ -10,9 +10,7 @@ Feature: Add badges to the system
 
   @javascript
   Scenario: Setting badges settings
-    Given I expand "Site administration" node
-    And I expand "Badges" node
-    And I follow "Badges settings"
+    Given I navigate to "Badges settings" node in "Site administration > Badges"
     And I set the field "Default badge issuer name" to "Test Badge Site"
     And I set the field "Default badge issuer contact details" to "testuser@test-badge-site.com"
     And I press "Save changes"
@@ -22,15 +20,12 @@ Feature: Add badges to the system
 
   @javascript
   Scenario: Accessing the badges
-    Given I expand "Site pages" node
-    And I follow "Site badges"
+    Given I navigate to "Site badges" node in "Site pages"
     Then I should see "There are no badges available."
 
   @javascript
   Scenario: Add a badge
-    Given I expand "Site administration" node
-    And I expand "Badges" node
-    And I follow "Add a new badge"
+    Given I navigate to "Add a new badge" node in "Site administration > Badges"
     And I set the following fields to these values:
       | Name | Test Badge |
       | Description | Test badge description |

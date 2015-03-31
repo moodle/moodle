@@ -39,7 +39,6 @@ A folder may be used
 * To provide a shared uploading space for teachers on the course page (keeping the folder hidden so that only teachers can see it)';
 $string['modulename_link'] = 'mod/folder/view';
 $string['modulenameplural'] = 'Folders';
-$string['neverseen'] = 'Never seen';
 $string['page-mod-folder-x'] = 'Any folder module page';
 $string['page-mod-folder-view'] = 'Folder module main page';
 $string['pluginadministration'] = 'Folder administration';

@@ -100,7 +100,7 @@ abstract class question_bank {
         include_once($file);
         $class = 'qtype_' . $qtypename;
         if (!class_exists($class)) {
-            throw new coding_exception("Class $class must be defined in $file");
+            throw new coding_exception("Class {$class} must be defined in {$file}.");
         }
         self::$questiontypes[$qtypename] = new $class();
         return self::$questiontypes[$qtypename];
@@ -381,8 +381,8 @@ abstract class question_bank {
         // The the positive grades in descending order.
         foreach ($rawfractions as $fraction) {
             $percentage = format_float(100 * $fraction, 5, true, true) . '%';
-            self::$fractionoptions["$fraction"] = $percentage;
-            self::$fractionoptionsfull["$fraction"] = $percentage;
+            self::$fractionoptions["{$fraction}"] = $percentage;
+            self::$fractionoptionsfull["{$fraction}"] = $percentage;
         }
 
         // The the negative grades in descending order.
@@ -499,10 +499,10 @@ class question_finder implements cache_data_source {
         }
 
         return $DB->get_records_select_menu('question',
-                "category $qcsql
+                "category {$qcsql}
                  AND parent = 0
                  AND hidden = 0
-                 $extraconditions", $qcparams + $extraparams, '', 'id,id AS id2');
+                 {$extraconditions}", $qcparams + $extraparams, '', 'id,id AS id2');
     }
 
     /* See cache_data_source::load_for_cache. */

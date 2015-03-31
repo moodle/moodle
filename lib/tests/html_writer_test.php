@@ -168,4 +168,88 @@ class core_html_writer_testcase extends basic_testcase {
     public function test_end_span() {
         $this->assertSame('</span>', html_writer::end_span());
     }
+
+    public function test_table() {
+        $row = new html_table_row();
+
+        // The attribute will get overwritten by the ID.
+        $row->id = 'Bob';
+        $row->attributes['id'] = 'will get overwritten';
+
+        // The data-name will be present in the output.
+        $row->attributes['data-name'] = 'Fred';
+        $row->class = 'this is a table row';
+
+        $cell = new html_table_cell();
+
+        // The attribute will get overwritten by the ID.
+        $cell->id = 'Jeremy';
+        $cell->attributes['id'] = 'will get overwritten';
+
+        // The data-name will be present in the output.
+        $cell->attributes['data-name'] = 'John';
+        $cell->class = 'this is a table cell';
+
+        $row->cells[] = $cell;
+
+        $table = new html_table();
+        // The attribute will get overwritten by the ID.
+        $table->id = 'Jeffrey';
+        $table->attributes['id'] = 'will get overwritten';
+
+        // The data-name will be present in the output.
+        $table->attributes['data-name'] = 'Colin';
+        // The attribute will get overwritten by the ID above.
+        $table->data[] = $row;
+
+        // Specify a caption to be output.
+        $table->caption = "A table of meaningless data.";
+
+        $output = html_writer::table($table);
+
+        $expected = <<<EOF
+<table class="generaltable" id="Jeffrey" data-name="Colin">
+<caption>A table of meaningless data.</caption><tbody><tr class="lastrow" id="Bob" data-name="Fred">
+<td class="cell c0 lastcol" id="Jeremy" data-name="John" style=""></td>
+</tr>
+</tbody>
+</table>
+
+EOF;
+        $this->assertSame($expected, $output);
+    }
+
+    public function test_table_hidden_caption() {
+
+        $table = new html_table();
+        $table->id = "whodat";
+        $table->data = array(
+            array('fred', 'MDK'),
+            array('bob',  'Burgers'),
+            array('dave', 'Competitiveness')
+        );
+        $table->caption = "Who even knows?";
+        $table->captionhide = true;
+
+        $output = html_writer::table($table);
+        $expected = <<<EOF
+<table class="generaltable" id="whodat">
+<caption class="accesshide">Who even knows?</caption><tbody><tr class="">
+<td class="cell c0" style="">fred</td>
+<td class="cell c1 lastcol" style="">MDK</td>
+</tr>
+<tr class="">
+<td class="cell c0" style="">bob</td>
+<td class="cell c1 lastcol" style="">Burgers</td>
+</tr>
+<tr class="lastrow">
+<td class="cell c0" style="">dave</td>
+<td class="cell c1 lastcol" style="">Competitiveness</td>
+</tr>
+</tbody>
+</table>
+
+EOF;
+        $this->assertSame($expected, $output);
+    }
 }

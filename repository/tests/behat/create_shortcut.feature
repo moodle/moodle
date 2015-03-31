@@ -16,8 +16,7 @@ Feature: Create shortcuts
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     When I log in as "teacher1"
-    And I expand "My profile" node
-    And I follow "My private files"
+    And I navigate to "My private files" node in "My profile"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     Then I should see "empty.txt" in the "div.fp-content" "css_element"
     And I press "Save changes"

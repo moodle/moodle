@@ -59,6 +59,69 @@ class assign_submission_onlinetext extends assign_submission_plugin {
     }
 
     /**
+     * Get the settings for onlinetext submission plugin
+     *
+     * @param MoodleQuickForm $mform The form to add elements to
+     * @return void
+     */
+    public function get_settings(MoodleQuickForm $mform) {
+        global $CFG, $COURSE;
+
+        $defaultwordlimit = $this->get_config('wordlimit') == 0 ? '' : $this->get_config('wordlimit');
+        $defaultwordlimitenabled = $this->get_config('wordlimitenabled');
+
+        $options = array('size' => '6', 'maxlength' => '6');
+        $name = get_string('wordlimit', 'assignsubmission_onlinetext');
+
+        // Create a text box that can be enabled/disabled for onlinetext word limit.
+        $wordlimitgrp = array();
+        $wordlimitgrp[] = $mform->createElement('text', 'assignsubmission_onlinetext_wordlimit', '', $options);
+        $wordlimitgrp[] = $mform->createElement('checkbox', 'assignsubmission_onlinetext_wordlimit_enabled',
+                '', get_string('enable'));
+        $mform->addGroup($wordlimitgrp, 'assignsubmission_onlinetext_wordlimit_group', $name, ' ', false);
+        $mform->addHelpButton('assignsubmission_onlinetext_wordlimit_group',
+                              'wordlimit',
+                              'assignsubmission_onlinetext');
+        $mform->disabledIf('assignsubmission_onlinetext_wordlimit',
+                           'assignsubmission_onlinetext_wordlimit_enabled',
+                           'notchecked');
+
+        // Add numeric rule to text field.
+        $wordlimitgrprules = array();
+        $wordlimitgrprules['assignsubmission_onlinetext_wordlimit'][] = array(null, 'numeric', null, 'client');
+        $mform->addGroupRule('assignsubmission_onlinetext_wordlimit_group', $wordlimitgrprules);
+
+        // Rest of group setup.
+        $mform->setDefault('assignsubmission_onlinetext_wordlimit', $defaultwordlimit);
+        $mform->setDefault('assignsubmission_onlinetext_wordlimit_enabled', $defaultwordlimitenabled);
+        $mform->setType('assignsubmission_onlinetext_wordlimit', PARAM_INT);
+        $mform->disabledIf('assignsubmission_onlinetext_wordlimit_group',
+                           'assignsubmission_onlinetext_enabled',
+                           'notchecked');
+    }
+
+    /**
+     * Save the settings for onlinetext submission plugin
+     *
+     * @param stdClass $data
+     * @return bool
+     */
+    public function save_settings(stdClass $data) {
+        if (empty($data->assignsubmission_onlinetext_wordlimit) || empty($data->assignsubmission_onlinetext_wordlimit_enabled)) {
+            $wordlimit = 0;
+            $wordlimitenabled = 0;
+        } else {
+            $wordlimit = $data->assignsubmission_onlinetext_wordlimit;
+            $wordlimitenabled = 1;
+        }
+
+        $this->set_config('wordlimit', $wordlimit);
+        $this->set_config('wordlimitenabled', $wordlimitenabled);
+
+        return true;
+    }
+
+    /**
      * Add form elements for settings
      *
      * @param mixed $submission can be null
@@ -148,6 +211,13 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                                      'id',
                                      false);
 
+        // Check word count before submitting anything.
+        $exceeded = $this->check_word_count(trim($data->onlinetext));
+        if ($exceeded) {
+            $this->set_error($exceeded);
+            return false;
+        }
+
         $params = array(
             'context' => context_module::instance($this->assignment->get_course_module()->id),
             'courseid' => $this->assignment->get_course()->id,
@@ -158,6 +228,9 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                 'format' => $data->onlinetext_editor['format']
             )
         );
+        if (!empty($submission->userid) && ($submission->userid != $USER->id)) {
+            $params['relateduserid'] = $submission->userid;
+        }
         $event = \assignsubmission_onlinetext\event\assessable_uploaded::create($params);
         $event->trigger();
 
@@ -192,6 +265,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             $params['objectid'] = $onlinetextsubmission->id;
             $updatestatus = $DB->update_record('assignsubmission_onlinetext', $onlinetextsubmission);
             $event = \assignsubmission_onlinetext\event\submission_updated::create($params);
+            $event->set_assign($this->assignment);
             $event->trigger();
             return $updatestatus;
         } else {
@@ -205,6 +279,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             $onlinetextsubmission->id = $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
             $params['objectid'] = $onlinetextsubmission->id;
             $event = \assignsubmission_onlinetext\event\submission_created::create($params);
+            $event->set_assign($this->assignment);
             $event->trigger();
             return $onlinetextsubmission->id > 0;
         }
@@ -318,7 +393,8 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             $formattedtext = format_text($finaltext,
                                          $onlinetextsubmission->onlineformat,
                                          array('context'=>$this->assignment->get_context()));
-            $submissioncontent = '<html><body>'. $formattedtext . '</body></html>';
+            $head = '<head><meta charset="UTF-8"></head>';
+            $submissioncontent = '<!DOCTYPE html><html>' . $head . '<body>'. $formattedtext . '</body></html>';
 
             $filename = get_string('onlinetextfilename', 'assignsubmission_onlinetext');
             $files[$filename] = array($submissioncontent);
@@ -532,6 +608,33 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                               'itemid' => new external_value(PARAM_INT, 'The draft area id for files attached to the submission'));
         $editorstructure = new external_single_structure($editorparams);
         return array('onlinetext_editor' => $editorstructure);
+    }
+
+    /**
+     * Compare word count of onlinetext submission to word limit, and return result.
+     *
+     * @param string $submissiontext Onlinetext submission text from editor
+     * @return string Error message if limit is enabled and exceeded, otherwise null
+     */
+    public function check_word_count($submissiontext) {
+        global $OUTPUT;
+
+        $wordlimitenabled = $this->get_config('wordlimitenabled');
+        $wordlimit = $this->get_config('wordlimit');
+
+        if ($wordlimitenabled == 0) {
+            return null;
+        }
+
+        // Count words and compare to limit.
+        $wordcount = count_words($submissiontext);
+        if ($wordcount <= $wordlimit) {
+            return null;
+        } else {
+            $errormsg = get_string('wordlimitexceeded', 'assignsubmission_onlinetext',
+                    array('limit' => $wordlimit, 'count' => $wordcount));
+            return $OUTPUT->error_text($errormsg);
+        }
     }
 
 }

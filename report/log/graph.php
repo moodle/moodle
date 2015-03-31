@@ -121,7 +121,7 @@ if ($type === "usercourse.png") {
         $timestart = $timefinish;
     }
 
-    $rawlogs = report_log_usercourse($user->id, $courseselect, $coursestart);
+    $rawlogs = report_log_usercourse($user->id, $courseselect, $coursestart, $logreader);
 
     if (empty($rawlogs)) {
         return;
@@ -142,6 +142,16 @@ if ($type === "usercourse.png") {
 
     $graph->y_data['logs']   = $logs;
     $graph->y_order = array('logs');
+
+    // Make sure the Y-axis gridlines correspond to the integer values.
+    if (count($logs) && ($ymax = max($logs)) && ($graph->parameter['y_axis_gridlines'] > 1)) {
+        if ($ymax < $graph->parameter['y_axis_gridlines'] - 1) {
+            $graph->parameter['y_axis_gridlines'] = $ymax + 1;
+        } else if ($ymax % ($graph->parameter['y_axis_gridlines'] - 1)) {
+            $graph->parameter['y_max_left'] = $graph->parameter['y_max_right'] =
+                ceil($ymax/($graph->parameter['y_axis_gridlines'] - 1)) * ($graph->parameter['y_axis_gridlines'] - 1);
+        }
+    }
 
     if (!empty($CFG->preferlinegraphs)) {
         $graph->y_format['logs'] = array('colour' => 'blue', 'line' => 'line');
@@ -185,7 +195,7 @@ if ($type === "usercourse.png") {
         $hours[$i] = $i;
     }
 
-    $rawlogs = report_log_userday($user->id, $courseselect, $daystart);
+    $rawlogs = report_log_userday($user->id, $courseselect, $daystart, $logreader);
 
     if (empty($rawlogs)) {
         return;
@@ -205,6 +215,16 @@ if ($type === "usercourse.png") {
     $graph->x_data = $hours;
     $graph->y_data['logs'] = $logs;
     $graph->y_order = array('logs');
+
+    // Make sure the Y-axis gridlines correspond to the integer values.
+    if (count($logs) && ($ymax = max($logs)) && ($graph->parameter['y_axis_gridlines'] > 1)) {
+        if ($ymax < $graph->parameter['y_axis_gridlines'] - 1) {
+            $graph->parameter['y_axis_gridlines'] = $ymax + 1;
+        } else if ($ymax % ($graph->parameter['y_axis_gridlines'] - 1)) {
+            $graph->parameter['y_max_left'] = $graph->parameter['y_max_right'] =
+                ceil($ymax/($graph->parameter['y_axis_gridlines'] - 1)) * ($graph->parameter['y_axis_gridlines'] - 1);
+        }
+    }
 
     if (!empty($CFG->preferlinegraphs)) {
         $graph->y_format['logs'] = array('colour' => 'blue', 'line' => 'line');

@@ -48,21 +48,23 @@ var manager = {
     /**
      * The ID of the first checkbox on the page.
      *
-     * @property _firstCheckboxId
-     * @type String
+     * @property _firstCheckbox
+     * @type Node
      * @private
      */
-    _firstCheckboxId: null,
+    _firstCheckbox: null,
 
     /**
      * Set up the Question Bank Manager.
      *
      * @method init
-     * @param {String} firstCheckboxId The ID of the first checkbox on the page.
      */
-    init: function(firstCheckboxId) {
+    init: function() {
         // Find the header checkbox, and set the initial values.
         this._header = Y.one('#qbheadercheckbox');
+        if (!this._header) {
+            return;
+        }
         this._header.setAttrs({
             disabled: false,
             title: M.util.get_string('selectall', 'moodle')
@@ -71,7 +73,8 @@ var manager = {
         this._header.on('click', this._headerClick, this);
 
         // Store the first checkbox details.
-        this._firstCheckboxId = firstCheckboxId;
+        var table = this._header.ancestor('table');
+        this._firstCheckbox = table.one('tbody tr td.checkbox input');
     },
 
     /**
@@ -86,9 +89,7 @@ var manager = {
                 .all('[type=checkbox],[type=radio]');
 
         // We base the state of all of the questions on the state of the first.
-        firstCheckbox = Y.one('#' + this._firstCheckboxId);
-
-        if (firstCheckbox.get('checked')) {
+        if (this._firstCheckbox.get('checked')) {
             categoryQuestions.set('checked', false);
             this._header.setAttribute('title', M.util.get_string('selectall', 'moodle'));
         } else {

@@ -1,0 +1,26 @@
+# Finnish translations for Horde_Exception module.
+# Copyright 2010-2014 Horde LLC (http://www.horde.org/)
+# This file is distributed under the same license as the Horde_Exception module.
+# Leena Heino <liinu@uta.fi>, 2010-2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Horde_Exception\n"
+"Report-Msgid-Bugs-To: dev@lists.horde.org\n"
+"POT-Creation-Date: 2011-02-02 16:17+0100\n"
+"PO-Revision-Date: 2012-03-07 15:05:44+0200\n"
+"Last-Translator: Leena Heino <liinu@uta.fi>\n"
+"Language-Team: Finnish <i18n@lists.horde.org>\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/Horde/Exception/NotFound.php:27
+msgid "Not Found"
+msgstr "Ei löytynyt"
+
+#: lib/Horde/Exception/PermissionDenied.php:27
+msgid "Permission Denied"
+msgstr "Käyttö kielletty"

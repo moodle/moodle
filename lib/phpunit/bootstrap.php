@@ -26,6 +26,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+if (isset($_SERVER['REMOTE_ADDR'])) {
+    die; // No access from web!
+}
+
 // we want to know about all problems
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', '1');
@@ -181,6 +185,7 @@ $CFG->dboptions = isset($CFG->phpunit_dboptions) ? $CFG->phpunit_dboptions : $CF
 $allowed = array('wwwroot', 'dataroot', 'dirroot', 'admin', 'directorypermissions', 'filepermissions',
                  'dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'prefix', 'dboptions',
                  'proxyhost', 'proxyport', 'proxytype', 'proxyuser', 'proxypassword', 'proxybypass', // keep proxy settings from config.php
+                 'altcacheconfigpath', 'pathtogs', 'pathtoclam', 'pathtodu', 'aspellpath', 'pathtodot'
                 );
 $productioncfg = (array)$CFG;
 $CFG = new stdClass();
@@ -203,8 +208,6 @@ $CFG->debugdisplay = 1;
 error_reporting($CFG->debug);
 ini_set('display_errors', '1');
 ini_set('log_errors', '1');
-
-$CFG->noemailever = true; // better not mail anybody from tests, override temporarily if necessary
 
 // some ugly hacks
 $CFG->themerev = 1;

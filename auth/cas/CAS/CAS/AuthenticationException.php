@@ -74,7 +74,7 @@ implements CAS_Exception
         printf(
             $lang->getYouWereNotAuthenticated(),
             htmlentities($client->getURL()),
-            $_SERVER['SERVER_ADMIN']
+            isset($_SERVER['SERVER_ADMIN']) ? $_SERVER['SERVER_ADMIN']:''
         );
         phpCAS::trace('CAS URL: '.$cas_url);
         phpCAS::trace('Authentication failure: '.$failure);
@@ -89,6 +89,7 @@ implements CAS_Exception
                     phpCAS::trace('Reason: CAS error');
                     break;
                 case CAS_VERSION_2_0:
+                case CAS_VERSION_3_0:
                     if ( empty($err_code) ) {
                         phpCAS::trace('Reason: no CAS error');
                     } else {

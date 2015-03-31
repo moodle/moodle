@@ -202,7 +202,7 @@ class qtype_match_question extends question_graded_automatically_with_countback 
             } else if ($choicetochoiceno[$choice]) {
                 $choiceselectvalue = $choicenotochoiceselectvalue[$choicetochoiceno[$choice]];
             } else {
-                throw new coding_exception("Unknown choice $choice in matching question - {$this->name}.");
+                throw new coding_exception("Unknown choice {$choice} in matching question - {$this->name}.");
             }
             $postdata[$this->field($shuffledstemno)] = $choiceselectvalue;
         }

@@ -27,13 +27,17 @@ namespace mod_forum\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_forum discussion moved event.
+ * The mod_forum discussion moved event class.
  *
- * @property-read array $other Extra information about the event.
- *     - int fromforumid: The id of the forum the discussion is being moved from
- *     - int toforumid: The id of the forum the discussion is being moved to
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int fromforumid: The id of the forum the discussion is being moved from.
+ *      - int toforumid: The id of the forum the discussion is being moved to.
+ * }
  *
  * @package    mod_forum
+ * @since      Moodle 2.7
  * @copyright  2014 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -55,8 +59,8 @@ class discussion_moved extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user {$this->userid} has moved the forum discussion {$this->objectid} ".
-            "from forum {$this->other['fromforumid']} to forum {$this->other['toforumid']}";
+        return "The user with id '$this->userid' has moved the discussion with id '$this->objectid' from the " .
+            "forum with id '{$this->other['fromforumid']}' to the forum with id '{$this->other['toforumid']}'.";
     }
 
     /**
@@ -96,19 +100,15 @@ class discussion_moved extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['fromforumid'])) {
-            throw new \coding_exception('fromforumid must be set in $other.');
+            throw new \coding_exception('The \'fromforumid\' value must be set in other.');
         }
 
         if (!isset($this->other['toforumid'])) {
-            throw new \coding_exception('toforumid must be set in $other.');
+            throw new \coding_exception('The \'toforumid\' value must be set in other.');
         }
 
         if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context passed must be module context.');
-        }
-
-        if (!isset($this->objectid)) {
-            throw new \coding_exception('objectid must be set to the discussionid.');
+            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
         }
     }
 }

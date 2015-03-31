@@ -31,10 +31,11 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string sessionid session id.
+ *      - string sessionid: (optional) session id.
  * }
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -65,7 +66,7 @@ class user_loggedout extends base {
      * @return string
      */
     public function get_description() {
-        return 'User '.$this->objectid.' logged out.';
+        return "The user with id '$this->objectid' has logged out.";
     }
 
     /**

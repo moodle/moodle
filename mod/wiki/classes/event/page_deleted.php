@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki page deleted.
+ * The mod_wiki page deleted event.
  *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -26,15 +26,16 @@ namespace mod_wiki\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki page deleted.
+ * The mod_wiki page deleted event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int subwikiid id subwiki.
+ *      - int subwikiid: (optional) id subwiki.
  * }
  *
  * @package    mod_wiki
+ * @since      Moodle 2.7
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -65,7 +66,8 @@ class page_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' deleted wiki page id ' . $this->objectid;
+        return "The user with id '$this->userid' deleted the page with id '$this->objectid' for the wiki with " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**

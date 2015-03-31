@@ -89,15 +89,21 @@ class auth_plugin_email extends auth_plugin_base {
         require_once($CFG->dirroot.'/user/profile/lib.php');
         require_once($CFG->dirroot.'/user/lib.php');
 
+        $plainpassword = $user->password;
         $user->password = hash_internal_user_password($user->password);
         if (empty($user->calendartype)) {
             $user->calendartype = $CFG->calendartype;
         }
 
-        $user->id = user_create_user($user, false);
+        $user->id = user_create_user($user, false, false);
+
+        user_add_password_history($user->id, $plainpassword);
 
         // Save any custom profile field information.
         profile_save_data($user);
+
+        // Trigger event.
+        \core\event\user_created::create_from_userid($user->id)->trigger();
 
         if (! send_confirmation_email($user)) {
             print_error('auth_emailnoemail','auth_email');
@@ -144,9 +150,6 @@ class auth_plugin_email extends auth_plugin_base {
 
             } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
                 $DB->set_field("user", "confirmed", 1, array("id"=>$user->id));
-                if ($user->firstaccess == 0) {
-                    $DB->set_field("user", "firstaccess", time(), array("id"=>$user->id));
-                }
                 return AUTH_CONFIRM_OK;
             }
         } else {

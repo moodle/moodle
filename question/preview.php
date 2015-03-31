@@ -227,8 +227,10 @@ $technical[] = get_string('behaviourbeingused', 'question',
         question_engine::get_behaviour_name($qa->get_behaviour_name()));
 $technical[] = get_string('technicalinfominfraction',     'question', $qa->get_min_fraction());
 $technical[] = get_string('technicalinfomaxfraction',     'question', $qa->get_max_fraction());
+$technical[] = get_string('technicalinfovariant',         'question', $qa->get_variant());
 $technical[] = get_string('technicalinfoquestionsummary', 'question', s($qa->get_question_summary()));
 $technical[] = get_string('technicalinforightsummary',    'question', s($qa->get_right_answer_summary()));
+$technical[] = get_string('technicalinforesponsesummary', 'question', s($qa->get_response_summary()));
 $technical[] = get_string('technicalinfostate',           'question', '' . $qa->get_state());
 
 // Start output.

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains an event for when a feedback activity is viewed.
+ * The mod_feedback course module viewed event.
  *
  * @package    mod_feedback
  * @copyright  2013 Ankit Agarwal
@@ -26,16 +26,16 @@ namespace mod_feedback\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event for when a feedback activity is viewed.
+ * The mod_feedback course module viewed event class.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int anonymous if feedback is anonymous.
- *      @type int cmid course module id.
+ *      - int anonymous if feedback is anonymous.
  * }
  *
  * @package    mod_feedback
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -92,12 +92,11 @@ class course_module_viewed extends \core\event\course_module_viewed {
      * @throws \coding_exception in case of any problems.
      */
     protected function validate_data() {
-        if (!isset($this->other['anonymous'])) {
-            throw new \coding_exception("Field other['anonymous'] cannot be empty");
-        }
-
-        // Call parent validations.
         parent::validate_data();
+
+        if (!isset($this->other['anonymous'])) {
+            throw new \coding_exception('The \'anonymous\' value must be set in other.');
+        }
     }
 }
 

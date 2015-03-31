@@ -100,3 +100,54 @@ Feature: Automatic updating of groups and groupings
     And the "idnumber" "field" should be readonly
     And the field "idnumber" matches value "An ID"
 
+  @javascript
+  Scenario: Update groups with enrolment key
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 2 | C2 |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | teacher1 | C2 | editingteacher |
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I expand "Users" node
+    And I follow "Groups"
+    And I set the field "groups" to "Group (with ID)"
+    And I press "Edit group settings"
+    And I set the following fields to these values:
+      | Enrolment key | badpasswd |
+    When I press "Save changes"
+    Then I should see "Passwords must have at least 1 digit(s)"
+    And I set the following fields to these values:
+      | Enrolment key | Abcdef-1 |
+    And I press "Save changes"
+    And I set the field "groups" to "Group (with ID)"
+    And I press "Edit group settings"
+    And I press "Save changes"
+    And I should not see "This enrolment key is already used for another group."
+    And I set the field "groups" to "Group (without ID)"
+    And I press "Edit group settings"
+    And I set the following fields to these values:
+      | Enrolment key | Abcdef-1 |
+    And I press "Save changes"
+    And I should see "This enrolment key is already used for another group."
+    And I set the following fields to these values:
+      | Enrolment key | Abcdef-2 |
+    And I press "Save changes"
+    And I should not see "This enrolment key is already used for another group."
+    And I am on homepage
+    And I follow "Course 2"
+    And I expand "Users" node
+    And I follow "Groups"
+    And I press "Create group"
+    And I set the following fields to these values:
+      | Group name | Group A |
+    And I press "Save changes"
+    And I should not see "This enrolment key is already used for another group."
+    And I set the field "groups" to "Group A"
+    And I press "Edit group settings"
+    And I set the following fields to these values:
+      | Enrolment key | Abcdef-1 |
+    And I press "Save changes"
+    And I should not see "This enrolment key is already used for another group."

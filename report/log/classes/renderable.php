@@ -105,7 +105,7 @@ class report_log_renderable implements renderable {
      * @param bool $showreport (optional) show report.
      * @param bool $showselectorform (optional) show selector form.
      * @param moodle_url|string $url (optional) page url.
-     * @param int $date date (optional) from which records will be fetched.
+     * @param int $date date (optional) timestamp of start of the day for which logs will be displayed.
      * @param string $logformat log format.
      * @param int $page (optional) page number.
      * @param int $perpage (optional) number of records to show per page.
@@ -134,6 +134,7 @@ class report_log_renderable implements renderable {
             $url = new moodle_url($url);
         }
         $this->selectedlogreader = $logreader;
+        $url->param('logreader', $logreader);
 
         // Use site course id, if course is empty.
         if (!empty($course) && is_int($course)) {
@@ -159,17 +160,17 @@ class report_log_renderable implements renderable {
     }
 
     /**
-     * Get a list of enabled sql_select_reader objects/name
+     * Get a list of enabled sql_reader objects/name
      *
      * @param bool $nameonly if true only reader names will be returned.
-     * @return array core\log\sql_select_reader object or name.
+     * @return array core\log\sql_reader object or name.
      */
     public function get_readers($nameonly = false) {
-        if (!isset($this->manager)) {
+        if (!isset($this->logmanager)) {
             $this->logmanager = get_log_manager();
         }
 
-        $readers = $this->logmanager->get_readers('core\log\sql_select_reader');
+        $readers = $this->logmanager->get_readers('core\log\sql_reader');
         if ($nameonly) {
             foreach ($readers as $pluginname => $reader) {
                 $readers[$pluginname] = $reader->get_name();
@@ -188,7 +189,7 @@ class report_log_renderable implements renderable {
 
         // For site just return site errors option.
         $sitecontext = context_system::instance();
-        if (empty($this->course) && has_capability('report/log:view', $sitecontext)) {
+        if ($this->course->id == SITEID && has_capability('report/log:view', $sitecontext)) {
             $activities["site_errors"] = get_string("siteerrors");
             return $activities;
         }
@@ -309,32 +310,22 @@ class report_log_renderable implements renderable {
         $sitecontext = context_system::instance();
         // First check to see if we can override showcourses and showusers.
         $numcourses = $DB->count_records("course");
+        if ($numcourses < COURSE_MAX_COURSES_PER_DROPDOWN && !$this->showcourses) {
+            $this->showcourses = 1;
+        }
+
         // Check if course filter should be shown.
-        if ((has_capability('report/log:view', $sitecontext)) && ($this->showcourses ||
-                (empty($this->showcourses) && ($numcourses < COURSE_MAX_COURSES_PER_DROPDOWN)))) {
-            $courses[0] = get_string('sitelogs');
-            $this->showcourses = true;
+        if (has_capability('report/log:view', $sitecontext) && $this->showcourses) {
             if ($courserecords = $DB->get_records("course", null, "fullname", "id,shortname,fullname,category")) {
                 foreach ($courserecords as $course) {
-                    if ($course->category) {
-                        $courses[$course->id] = format_string(get_course_display_name_for_list($course));
+                    if ($course->id == SITEID) {
+                        $courses[$course->id] = format_string($course->fullname) . ' (' . get_string('site') . ')';
                     } else {
-                        $courses[$course->id] = $SITE->shortname;
+                        $courses[$course->id] = format_string(get_course_display_name_for_list($course));
                     }
                 }
             }
             core_collator::asort($courses);
-        } else {
-            if (!empty($this->course->id)) {
-                $coursecontext = context_course::instance($this->course->id);
-                if (has_capability('report/log:view', $coursecontext)) {
-                    $courses[$this->course->id] = format_string(get_course_display_name_for_list($this->course));
-                } else {
-                    $this->showcourses = false;
-                }
-            } else {
-                $this->showcourses = false;
-            }
         }
         return $courses;
     }
@@ -384,9 +375,12 @@ class report_log_renderable implements renderable {
         $courseusers = get_enrolled_users($context, '', $this->groupid, 'u.id, ' . get_all_user_name_fields(true, 'u'),
                 null, $limitfrom, $limitnum);
 
+        if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$this->showusers) {
+            $this->showusers = 1;
+        }
+
         $users = array();
-        if (($this->showusers) || (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && empty($this->showusers))) {
-            $this->showusers = true;
+        if ($this->showusers) {
             if ($courseusers) {
                 foreach ($courseusers as $courseuser) {
                      $users[$courseuser->id] = fullname($courseuser, has_capability('moodle/site:viewfullnames', $context));

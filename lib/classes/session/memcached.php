@@ -44,7 +44,7 @@ class memcached extends handler {
     protected $acquiretimeout = 120;
     /**
      * @var int $lockexpire how long to wait before expiring the lock so that other requests
-     * may continue execution, ignored if memcached <= 2.1.0.
+     * may continue execution, ignored if PECL memcached is below version 2.2.0.
      */
     protected $lockexpire = 7200;
 
@@ -63,7 +63,7 @@ class memcached extends handler {
         if (empty($this->savepath)) {
             $this->servers = array();
         } else {
-            $this->servers = self::connection_string_to_servers($this->savepath);
+            $this->servers = util::connection_string_to_memcache_servers($this->savepath);
         }
 
         if (empty($CFG->session_memcached_prefix)) {
@@ -86,7 +86,7 @@ class memcached extends handler {
      * @return bool success
      */
     public function start() {
-        // NOTE: memcached <= 2.1.0 expires session locks automatically after max_execution_time,
+        // NOTE: memcached before 2.2.0 expires session locks automatically after max_execution_time,
         //       this leads to major difference compared to other session drivers that timeout
         //       and stop the second request execution instead.
 
@@ -119,15 +119,15 @@ class memcached extends handler {
         ini_set('memcached.sess_prefix', $this->prefix);
         ini_set('memcached.sess_locking', '1'); // Locking is required!
 
-        // Try to configure lock and expire timeouts - ignored if memcached <=2.1.0.
+        // Try to configure lock and expire timeouts - ignored if memcached is before version 2.2.0.
         ini_set('memcached.sess_lock_max_wait', $this->acquiretimeout);
         ini_set('memcached.sess_lock_expire', $this->lockexpire);
     }
 
     /**
-     * Check for existing session with id $sid.
+     * Check the backend contains data for this session id.
      *
-     * Note: this verifies the storage backend only, not the actual session records.
+     * Note: this is intended to be called from manager::session_exists() only.
      *
      * @param string $sid
      * @return bool true if session found.
@@ -137,12 +137,22 @@ class memcached extends handler {
             return false;
         }
 
-        $memcached = new \Memcached();
-        $memcached->addServers($this->servers);
-        $value = $memcached->get($this->prefix.$sid);
-        $memcached->quit();
+        // Go through the list of all servers because
+        // we do not know where the session handler put the
+        // data.
 
-        return ($value !== false);
+        foreach ($this->servers as $server) {
+            list($host, $port) = $server;
+            $memcached = new \Memcached();
+            $memcached->addServer($host, $port);
+            $value = $memcached->get($this->prefix . $sid);
+            $memcached->quit();
+            if ($value !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -155,19 +165,32 @@ class memcached extends handler {
             return;
         }
 
-        $memcached = new \Memcached();
-        $memcached->addServers($this->servers);
+        // Go through the list of all servers because
+        // we do not know where the session handler put the
+        // data.
+
+        $memcacheds = array();
+        foreach ($this->servers as $server) {
+            list($host, $port) = $server;
+            $memcached = new \Memcached();
+            $memcached->addServer($host, $port);
+            $memcacheds[] = $memcached;
+        }
 
         // Note: this can be significantly improved by fetching keys from memcached,
         //       but we need to make sure we are not deleting somebody else's sessions.
 
         $rs = $DB->get_recordset('sessions', array(), 'id DESC', 'id, sid');
         foreach ($rs as $record) {
-            $memcached->delete($this->prefix.$record->sid);
+            foreach ($memcacheds as $memcached) {
+                $memcached->delete($this->prefix . $record->sid);
+            }
         }
         $rs->close();
 
-        $memcached->quit();
+        foreach ($memcacheds as $memcached) {
+            $memcached->quit();
+        }
     }
 
     /**
@@ -179,45 +202,17 @@ class memcached extends handler {
             return;
         }
 
-        $memcached = new \Memcached();
-        $memcached->addServers($this->servers);
-        $memcached->delete($this->prefix.$sid);
+        // Go through the list of all servers because
+        // we do not know where the session handler put the
+        // data.
 
-        $memcached->quit();
-    }
-
-    /**
-     * Convert a connection string to an array of servers
-     *
-     * EG: Converts: "abc:123, xyz:789" to
-     *
-     *  array(
-     *      array('abc', '123'),
-     *      array('xyz', '789'),
-     *  )
-     *
-     * @copyright  2013 Moodlerooms Inc. (http://www.moodlerooms.com)
-     * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-     * @author     Mark Nielsen
-     *
-     * @param string $str save_path value containing memcached connection string
-     * @return array
-     */
-    protected static function connection_string_to_servers($str) {
-        $servers = array();
-        $parts   = explode(',', $str);
-        foreach ($parts as $part) {
-            $part = trim($part);
-            $pos  = strrpos($part, ':');
-            if ($pos !== false) {
-                $host = substr($part, 0, $pos);
-                $port = substr($part, ($pos + 1));
-            } else {
-                $host = $part;
-                $port = 11211;
-            }
-            $servers[] = array($host, $port);
+        foreach ($this->servers as $server) {
+            list($host, $port) = $server;
+            $memcached = new \Memcached();
+            $memcached->addServer($host, $port);
+            $memcached->delete($this->prefix . $sid);
+            $memcached->quit();
         }
-        return $servers;
     }
+
 }

@@ -6,12 +6,12 @@
     margin: 0px auto;
 }
 
-.path-mod-workshop .manual-allocator .allocations .r0 {
+.path-mod-workshop .manual-allocator .allocations tbody tr:nth-of-type(odd) {
     background-color: #eee;
 }
 
-.path-mod-workshop .manual-allocator .allocations .r0.highlightreviewerof,
-.path-mod-workshop .manual-allocator .allocations .r0.highlightreviewedby {
+.path-mod-workshop .manual-allocator .allocations tbody tr:nth-of-type(odd).highlightreviewerof,
+.path-mod-workshop .manual-allocator .allocations tbody tr:nth-of-type(odd).highlightreviewedby {
     background-color: inherit;
 }
 

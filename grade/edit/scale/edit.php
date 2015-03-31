@@ -32,6 +32,8 @@ $id       = optional_param('id', 0, PARAM_INT);
 
 $PAGE->set_url('/grade/edit/scale/edit.php', array('id' => $id, 'courseid' => $courseid));
 $PAGE->set_pagelayout('admin');
+navigation_node::override_active_url(new moodle_url('/grade/edit/scale/index.php',
+    array('id' => $courseid)));
 
 $systemcontext = context_system::instance();
 $heading = '';
@@ -145,11 +147,7 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-if ($courseid) {
-    print_grade_page_head($course->id, 'scale', 'edit', $heading);
-} else {
-    echo $OUTPUT->header();
-}
+print_grade_page_head($COURSE->id, 'scale', null, $heading, false, false, false);
 
 $mform->display();
 

@@ -75,7 +75,6 @@ A file may be used
 * To provide draft files of certain software programs (eg Photoshop .psd) so students can edit and submit them for assessment';
 $string['modulename_link'] = 'mod/resource/view';
 $string['modulenameplural'] = 'Files';
-$string['neverseen'] = 'Never seen';
 $string['notmigrated'] = 'This legacy resource type ({$a}) was not yet migrated, sorry.';
 $string['optionsheader'] = 'Display options';
 $string['page-mod-resource-x'] = 'Any file module page';

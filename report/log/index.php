@@ -44,6 +44,12 @@ $logreader      = optional_param('logreader', '', PARAM_COMPONENT); // Reader wh
 $edulevel    = optional_param('edulevel', -1, PARAM_INT); // Educational level.
 
 $params = array();
+if (!empty($id)) {
+    $params['id'] = $id;
+} else {
+    $site = get_site();
+    $id = $site->id;
+}
 if ($group !== 0) {
     $params['group'] = $group;
 }
@@ -131,8 +137,6 @@ if ($PAGE->user_allowed_editing() && $adminediting != -1) {
     $USER->editing = $adminediting;
 }
 
-\core\session\manager::write_close();
-
 if (empty($course) || ($course->id == $SITE->id)) {
     admin_externalpage_setup('reportlog', '', null, '', array('pagelayout' => 'report'));
     $PAGE->set_title($SITE->shortname .': '. $strlogs);
@@ -148,7 +152,7 @@ $output = $PAGE->get_renderer('report_log');
 
 if (empty($readers)) {
     echo $output->header();
-    echo $output->heading(get_string('noreaderenabled'));
+    echo $output->heading(get_string('nologreaderenabled', 'report_log'));
 } else {
     if (!empty($chooselog)) {
         // Delay creation of table, till called by user with filter.
@@ -171,6 +175,7 @@ if (empty($readers)) {
             }
             echo $output->render($reportlog);
         } else {
+            \core\session\manager::write_close();
             $reportlog->download();
             exit();
         }

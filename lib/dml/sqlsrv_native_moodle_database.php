@@ -1324,16 +1324,16 @@ class sqlsrv_native_moodle_database extends moodle_database {
         }
 
         if ($length === false) {
-            return "SUBSTRING($expr, $start, (LEN($expr) - $start + 1))";
+            return "SUBSTRING($expr, " . $this->sql_cast_char2int($start) . ", 2^31-1)";
         } else {
-            return "SUBSTRING($expr, $start, $length)";
+            return "SUBSTRING($expr, " . $this->sql_cast_char2int($start) . ", " . $this->sql_cast_char2int($length) . ")";
         }
     }
 
     /**
      * Does this driver support tool_replace?
      *
-     * @since 2.6.1
+     * @since Moodle 2.6.1
      * @return bool
      */
     public function replace_all_text_supported() {

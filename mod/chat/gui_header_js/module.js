@@ -1,4 +1,3 @@
-
 /*
  * NOTE: the /mod/chat/gui_header_js/ is not a real plugin,
  * ideally this code should be in /mod/chat/module.js
@@ -116,7 +115,7 @@ M.mod_chat_header.init_users = function(Y, users) {
         start : function() {
             this.timer = setTimeout(function(self) {
                 self.update();
-            }, this.timeout*1000, this);
+            }, this.timeout * 1000, this);
         },
         /**
          * Stops the update timeout
@@ -134,11 +133,11 @@ M.mod_chat_header.init_users = function(Y, users) {
          */
         update : function() {
             for (var i in this.users) {
-                var el  = Y.one('#uidle'+this.users[i]);
+                var el  = Y.one('#uidle' + this.users[i]);
                 if (el) {
                     var parts = el.get('innerHTML').split(':');
-                    var time = this.timeout + (parseInt(parts[0], 10)*60) + parseInt(parts[1], 10);
-                    var min = Math.floor(time/60);
+                    var time = this.timeout + (parseInt(parts[0], 10) * 60) + parseInt(parts[1], 10);
+                    var min = Math.floor(time / 60);
                     var sec = time % 60;
                     el.set('innerHTML', ((min < 10) ? "0" : "") + min + ":" + ((sec < 10) ? "0" : "") + sec);
                 }

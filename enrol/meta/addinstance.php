@@ -27,6 +27,7 @@ require_once("$CFG->dirroot/enrol/meta/addinstance_form.php");
 require_once("$CFG->dirroot/enrol/meta/locallib.php");
 
 $id = required_param('id', PARAM_INT); // course id
+$message = optional_param('message', null, PARAM_TEXT);
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
@@ -52,13 +53,22 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data()) {
     $eid = $enrol->add_instance($course, array('customint1'=>$data->link));
     enrol_meta_sync($course->id);
-    redirect(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
+    if (!empty($data->submitbuttonnext)) {
+        redirect(new moodle_url('/enrol/meta/addinstance.php',
+                array('id' => $course->id, 'message' => 'added')));
+    } else {
+        redirect(new moodle_url('/enrol/instances.php', array('id' => $course->id)));
+    }
 }
 
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title(get_string('pluginname', 'enrol_meta'));
 
 echo $OUTPUT->header();
+
+if ($message === 'added') {
+    echo $OUTPUT->notification(get_string('instanceadded', 'enrol'), 'notifysuccess');
+}
 
 $mform->display();
 

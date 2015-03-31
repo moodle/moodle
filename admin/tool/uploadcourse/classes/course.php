@@ -875,7 +875,6 @@ class tool_uploadcourse_course {
         $resetdata = new stdClass();
         $resetdata->id = $course->id;
         $resetdata->reset_start_date = time();
-        $resetdata->reset_logs = true;
         $resetdata->reset_events = true;
         $resetdata->reset_notes = true;
         $resetdata->delete_blog_associations = true;

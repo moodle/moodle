@@ -35,26 +35,31 @@ defined('MOODLE_INTERNAL') || die();
  * @package   moodlecore
  */
 class csv_import_reader {
+
     /**
      * @var int import identifier
      */
-    var $_iid;
+    private $_iid;
+
     /**
      * @var string which script imports?
      */
-    var $_type;
+    private $_type;
+
     /**
      * @var string|null Null if ok, error msg otherwise
      */
-    var $_error;
+    private $_error;
+
     /**
      * @var array cached columns
      */
-    var $_columns;
+    private $_columns;
+
     /**
      * @var object file handle used during import
      */
-    var $_fp;
+    private $_fp;
 
     /**
      * Contructor
@@ -62,24 +67,29 @@ class csv_import_reader {
      * @param int $iid import identifier
      * @param string $type which script imports?
      */
-    function csv_import_reader($iid, $type) {
+    public function __construct($iid, $type) {
         $this->_iid  = $iid;
         $this->_type = $type;
     }
 
     /**
+     * Make sure the file is closed when this object is discarded.
+     */
+    public function __destruct() {
+        $this->close();
+    }
+
+    /**
      * Parse this content
      *
-     * @global object
-     * @global object
-     * @param string $content passed by ref for memory reasons, unset after return
+     * @param string $content the content to parse.
      * @param string $encoding content encoding
      * @param string $delimiter_name separator (comma, semicolon, colon, cfg)
      * @param string $column_validation name of function for columns validation, must have one param $columns
      * @param string $enclosure field wrapper. One character only.
      * @return bool false if error, count of data lines if ok; use get_error() to get error string
      */
-    function load_csv_content(&$content, $encoding, $delimiter_name, $column_validation=null, $enclosure='"') {
+    public function load_csv_content($content, $encoding, $delimiter_name, $column_validation=null, $enclosure='"') {
         global $USER, $CFG;
 
         $this->close();
@@ -104,7 +114,7 @@ class csv_import_reader {
         // Create a temporary file and store the csv file there,
         // do not try using fgetcsv() because there is nothing
         // to split rows properly - fgetcsv() itself can not do it.
-        $tempfile = tempnam(make_temp_directory('/cvsimport'), 'tmp');
+        $tempfile = tempnam(make_temp_directory('/csvimport'), 'tmp');
         if (!$fp = fopen($tempfile, 'w+b')) {
             $this->_error = get_string('cannotsavedata', 'error');
             @unlink($tempfile);
@@ -182,7 +192,7 @@ class csv_import_reader {
      *
      * @return array
      */
-    function get_columns() {
+    public function get_columns() {
         if (isset($this->_columns)) {
             return $this->_columns;
         }
@@ -210,7 +220,7 @@ class csv_import_reader {
      * @global object
      * @return bool Success
      */
-    function init() {
+    public function init() {
         global $CFG, $USER;
 
         if (!empty($this->_fp)) {
@@ -232,7 +242,7 @@ class csv_import_reader {
      *
      * @return mixed false, or an array of values
      */
-    function next() {
+    public function next() {
         if (empty($this->_fp) or feof($this->_fp)) {
             return false;
         }
@@ -248,7 +258,7 @@ class csv_import_reader {
      *
      * @return void
      */
-    function close() {
+    public function close() {
         if (!empty($this->_fp)) {
             fclose($this->_fp);
             $this->_fp = null;
@@ -260,7 +270,7 @@ class csv_import_reader {
      *
      * @return string error text of null if none
      */
-    function get_error() {
+    public function get_error() {
         return $this->_error;
     }
 
@@ -271,7 +281,7 @@ class csv_import_reader {
      * @global object
      * @param boolean $full true means do a full cleanup - all sessions for current user, false only the active iid
      */
-    function cleanup($full=false) {
+    public function cleanup($full=false) {
         global $USER, $CFG;
 
         if ($full) {
@@ -286,7 +296,7 @@ class csv_import_reader {
      *
      * @return array suitable for selection box
      */
-    static function get_delimiter_list() {
+    public static function get_delimiter_list() {
         global $CFG;
         $delimiters = array('comma'=>',', 'semicolon'=>';', 'colon'=>':', 'tab'=>'\\t');
         if (isset($CFG->CSV_DELIMITER) and strlen($CFG->CSV_DELIMITER) === 1 and !in_array($CFG->CSV_DELIMITER, $delimiters)) {
@@ -301,7 +311,7 @@ class csv_import_reader {
      * @param string separator name
      * @return string delimiter char
      */
-    static function get_delimiter($delimiter_name) {
+    public static function get_delimiter($delimiter_name) {
         global $CFG;
         switch ($delimiter_name) {
             case 'colon':     return ':';
@@ -320,7 +330,7 @@ class csv_import_reader {
      * @param string separator name
      * @return string encoded delimiter char
      */
-    static function get_encoded_delimiter($delimiter_name) {
+    public static function get_encoded_delimiter($delimiter_name) {
         global $CFG;
         if ($delimiter_name == 'cfg' and isset($CFG->CSV_ENCODE)) {
             return $CFG->CSV_ENCODE;
@@ -336,7 +346,7 @@ class csv_import_reader {
      * @param string who imports?
      * @return int iid
      */
-    static function get_new_iid($type) {
+    public static function get_new_iid($type) {
         global $USER;
 
         $filename = make_temp_directory('csvimport/'.$type.'/'.$USER->id);
@@ -350,6 +360,7 @@ class csv_import_reader {
         return $iiid;
     }
 }
+
 
 /**
  * Utitily class for exporting of CSV files.
@@ -471,7 +482,12 @@ class csv_export_writer {
      */
     protected function send_header() {
         global $CFG;
-        if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+
+        if (defined('BEHAT_SITE_RUNNING')) {
+            // For text based formats - we cannot test the output with behat if we force a file download.
+            return;
+        }
+        if (is_https()) { // HTTPS sites - watch out for IE! KB812935 and KB316431.
             header('Cache-Control: max-age=10');
             header('Pragma: ');
         } else { //normal http - prevent caching at all cost

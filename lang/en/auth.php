@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'auth', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   auth
+ * @package   core_auth
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -79,9 +78,10 @@ $string['errorminpassworddigits'] = 'Passwords must have at least {$a} digit(s).
 $string['errorminpasswordlength'] = 'Passwords must be at least {$a} characters long.';
 $string['errorminpasswordlower'] = 'Passwords must have at least {$a} lower case letter(s).';
 $string['errorminpasswordnonalphanum'] = 'Passwords must have at least {$a} non-alphanumeric character(s).';
+$string['errorpasswordreused'] = 'This password has been used before, and is not permitted to be reused';
 $string['errorminpasswordupper'] = 'Passwords must have at least {$a} upper case letter(s).';
 $string['errorpasswordupdate'] = 'Error updating password, password not changed';
-$string['event_user_loggedin'] = 'User has logged in';
+$string['eventuserloggedin'] = 'User has logged in';
 $string['eventuserloggedinas'] = 'User logged in as another user';
 $string['eventuserloginfailed'] = 'User login failed';
 $string['forcechangepassword'] = 'Force change password';
@@ -96,19 +96,22 @@ $string['guestloginbutton'] = 'Guest login button';
 $string['changepassword'] = 'Change password URL';
 $string['changepasswordhelp'] = 'Here you can specify a location at which your users can recover or change their username/password if they\'ve forgotten it. This will be provided to users as a button on the login page and their user page. If you leave this blank the button will not be printed.';
 $string['chooseauthmethod'] = 'Choose an authentication method';
-$string['chooseauthmethod_help'] = 'This setting determines the authentication method used when the user logs in. Only enabled authentication plugins should be chosen, otherwise the user will no longer be able to login. To block the user from logging in, select "No login".';
+$string['chooseauthmethod_help'] = 'This setting determines the authentication method used when the user logs in. Only enabled authentication plugins should be chosen, otherwise the user will no longer be able to log in. To block the user from logging in, select "No login".';
 $string['incorrectpleasetryagain'] = 'Incorrect. Please try again.';
 $string['infilefield'] = 'Field required in file';
 $string['informminpassworddigits'] = 'at least {$a} digit(s)';
 $string['informminpasswordlength'] = 'at least {$a} characters';
 $string['informminpasswordlower'] = 'at least {$a} lower case letter(s)';
 $string['informminpasswordnonalphanum'] = 'at least {$a} non-alphanumeric character(s)';
+$string['informminpasswordreuselimit'] = 'Passwords can be reused after {$a} changes';
 $string['informminpasswordupper'] = 'at least {$a} upper case letter(s)';
 $string['informpasswordpolicy'] = 'The password must have {$a}';
 $string['instructions'] = 'Instructions';
 $string['internal'] = 'Internal';
+$string['limitconcurrentlogins'] = 'Limit concurrent logins';
+$string['limitconcurrentlogins_desc'] = 'If enabled the number of concurrent browser logins for each user is restricted. The oldest session is terminated after reaching the limit, please note that users may lose all unsaved work. This setting is not compatible with single sign-on (SSO) authentication plugins.';
 $string['locked'] = 'Locked';
-$string['authloginviaemail'] = 'Allow login via email';
+$string['authloginviaemail'] = 'Allow log in via email';
 $string['authloginviaemail_desc'] = 'Allow users to use both username and email address (if unique) for site login.';
 $string['md5'] = 'MD5 hash';
 $string['nopasswordchange'] = 'Password can not be changed';
@@ -127,6 +130,7 @@ $string['recaptcha_help'] = 'The CAPTCHA is for preventing abuse from automated 
 
 If you are not sure what the words are, you can try getting another CAPTCHA or an audio CAPTCHA.';
 $string['recaptcha_link'] = 'auth/email';
+$string['security_question'] = 'Security question';
 $string['selfregistration'] = 'Self registration';
 $string['selfregistration_help'] = 'If an authentication plugin, such as email-based self-registration, is selected, then it enables potential users to register themselves and create accounts. This results in the possibility of spammers creating accounts in order to use forum posts, blog entries etc. for spam. To avoid this risk, self-registration should be disabled or limited by <em>Allowed email domains</em> setting.';
 $string['sha1'] = 'SHA-1 hash';

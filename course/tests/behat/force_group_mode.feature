@@ -27,7 +27,7 @@ Feature: Force group mode in a course
     Given I set the following fields to these values:
       | Group mode | Separate groups |
       | Force group mode | Yes |
-    When I press "Save changes"
+    When I press "Save and display"
     Then "//a/child::img[contains(@alt, 'Separate groups (forced mode)')]" "xpath_element" should not exist
     And "//img[contains(@alt, 'Separate groups (forced mode)')]" "xpath_element" should not exist
 
@@ -36,7 +36,7 @@ Feature: Force group mode in a course
     Given I set the following fields to these values:
       | Group mode | Visible groups |
       | Force group mode | Yes |
-    And I press "Save changes"
+    And I press "Save and display"
     Then "//a/child::img[contains(@alt, 'Visible groups (forced mode)')]" "xpath_element" should not exist
     And "//img[contains(@alt, 'Visible groups (forced mode)')]" "xpath_element" should not exist
 
@@ -45,7 +45,7 @@ Feature: Force group mode in a course
     Given I set the following fields to these values:
       | Group mode | No groups |
       | Force group mode | Yes |
-    And I press "Save changes"
+    And I press "Save and display"
     Then "//a/child::img[contains(@alt, 'No groups (forced mode)')]" "xpath_element" should not exist
     And "//img[contains(@alt, 'No groups (forced mode)')]" "xpath_element" should not exist
 

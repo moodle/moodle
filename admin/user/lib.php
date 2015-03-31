@@ -35,12 +35,12 @@ function get_selection_data($ufiltering) {
 
     if ($scount) {
         if ($scount < MAX_BULK_USERS) {
-            $in = implode(',', $SESSION->bulk_users);
+            $bulkusers = $SESSION->bulk_users;
         } else {
             $bulkusers = array_slice($SESSION->bulk_users, 0, MAX_BULK_USERS, true);
-            $in = implode(',', $bulkusers);
         }
-        $userlist['susers'] = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
+        list($in, $inparams) = $DB->get_in_or_equal($bulkusers);
+        $userlist['susers'] = $DB->get_records_select_menu('user', "id $in", $inparams, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
     }
 
     return $userlist;

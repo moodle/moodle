@@ -361,7 +361,141 @@ class core_tablelib_testcase extends basic_testcase {
         $table->define_columns($columns);
         $table->define_headers($headers);
         $table->define_baseurl('/invalid.php');
+
         $row = $table->get_row_html($data);
         $this->assertRegExp('/row 0 col 0/', $row);
+        $this->assertRegExp('/<tr class=""/', $row);
+        $this->assertRegExp('/<td class="cell c0"/', $row);
+    }
+
+    public function test_persistent_table() {
+        global $SESSION;
+
+        $data = $this->generate_data(5, 5);
+        $columns = $this->generate_columns(5);
+        $headers = $this->generate_headers(5);
+
+        // Testing without persistence first to verify that the results are different.
+        $table1 = new flexible_table('tablelib_test');
+        $table1->define_columns($columns);
+        $table1->define_headers($headers);
+        $table1->define_baseurl('/invalid.php');
+
+        $table1->sortable(true);
+        $table1->collapsible(true);
+
+        $table1->is_persistent(false);
+        $_GET['thide'] = 'column0';
+        $_GET['tsort'] = 'column1';
+        $_GET['tifirst'] = 'A';
+        $_GET['tilast'] = 'Z';
+
+        foreach ($data as $row) {
+            $table1->add_data_keyed($row);
+        }
+        $table1->setup();
+
+        // Clear session data between each new table.
+        unset($SESSION->flextable);
+
+        $table2 = new flexible_table('tablelib_test');
+        $table2->define_columns($columns);
+        $table2->define_headers($headers);
+        $table2->define_baseurl('/invalid.php');
+
+        $table2->sortable(true);
+        $table2->collapsible(true);
+
+        $table2->is_persistent(false);
+        unset($_GET);
+
+        foreach ($data as $row) {
+            $table2->add_data_keyed($row);
+        }
+        $table2->setup();
+
+        $this->assertNotEquals($table1, $table2);
+
+        unset($SESSION->flextable);
+
+        // Now testing with persistence to check that the tables are the same.
+        $table3 = new flexible_table('tablelib_test');
+        $table3->define_columns($columns);
+        $table3->define_headers($headers);
+        $table3->define_baseurl('/invalid.php');
+
+        $table3->sortable(true);
+        $table3->collapsible(true);
+
+        $table3->is_persistent(true);
+        $_GET['thide'] = 'column0';
+        $_GET['tsort'] = 'column1';
+        $_GET['tifirst'] = 'A';
+        $_GET['tilast'] = 'Z';
+
+        foreach ($data as $row) {
+            $table3->add_data_keyed($row);
+        }
+        $table3->setup();
+
+        unset($SESSION->flextable);
+
+        $table4 = new flexible_table('tablelib_test');
+        $table4->define_columns($columns);
+        $table4->define_headers($headers);
+        $table4->define_baseurl('/invalid.php');
+
+        $table4->sortable(true);
+        $table4->collapsible(true);
+
+        $table4->is_persistent(true);
+        unset($_GET);
+
+        foreach ($data as $row) {
+            $table4->add_data_keyed($row);
+        }
+        $table4->setup();
+
+        $this->assertEquals($table3, $table4);
+
+        unset($SESSION->flextable);
+
+        // Finally, another test with no persistence, but without clearing the session data.
+        $table5 = new flexible_table('tablelib_test');
+        $table5->define_columns($columns);
+        $table5->define_headers($headers);
+        $table5->define_baseurl('/invalid.php');
+
+        $table5->sortable(true);
+        $table5->collapsible(true);
+
+        $table5->is_persistent(true);
+        $_GET['thide'] = 'column0';
+        $_GET['tsort'] = 'column1';
+        $_GET['tifirst'] = 'A';
+        $_GET['tilast'] = 'Z';
+
+        foreach ($data as $row) {
+            $table5->add_data_keyed($row);
+        }
+        $table5->setup();
+
+        $table6 = new flexible_table('tablelib_test');
+        $table6->define_columns($columns);
+        $table6->define_headers($headers);
+        $table6->define_baseurl('/invalid.php');
+
+        $table6->sortable(true);
+        $table6->collapsible(true);
+
+        $table6->is_persistent(true);
+        unset($_GET);
+
+        foreach ($data as $row) {
+            $table6->add_data_keyed($row);
+        }
+        $table6->setup();
+
+        $this->assertEquals($table5, $table6);
     }
 }

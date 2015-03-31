@@ -134,7 +134,7 @@ class qformat_blackboard_six_base extends qformat_based_on_xml {
                 $dirpath = dirname($path);
                 $filename = basename($path);
                 $newfilename = $this->store_file_for_text_field($data, $this->filebase, $dirpath, $filename);
-                $text = preg_replace("|$path|", "@@PLUGINFILE@@/" . $newfilename, $text);
+                $text = preg_replace("|{$path}|", "@@PLUGINFILE@@/" . $newfilename, $text);
                 $filepaths[] = $path;
             }
 

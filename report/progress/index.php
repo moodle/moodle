@@ -47,8 +47,8 @@ $csv = $format == 'csv' || $excel;
 
 // Paging
 $start   = optional_param('start', 0, PARAM_INT);
-$sifirst = optional_param('sifirst', 'all', PARAM_ALPHA);
-$silast  = optional_param('silast', 'all', PARAM_ALPHA);
+$sifirst = optional_param('sifirst', 'all', PARAM_NOTAGS);
+$silast  = optional_param('silast', 'all', PARAM_NOTAGS);
 $start   = optional_param('start', 0, PARAM_INT);
 
 // Whether to show extra user identity information

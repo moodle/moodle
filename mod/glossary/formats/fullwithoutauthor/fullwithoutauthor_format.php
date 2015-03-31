@@ -20,7 +20,6 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
         echo '<td class="entryattachment">';
 
         glossary_print_entry_approval($cm, $entry, $mode);
-        glossary_print_entry_attachment($entry, $cm, 'html', 'right');
         echo '</td>';
 
         echo '</tr>';
@@ -29,6 +28,7 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
         echo '<td width="100%" colspan="2" class="entry">';
 
         glossary_print_entry_definition($entry, $glossary, $cm);
+        glossary_print_entry_attachment($entry, $cm, 'html');
 
         echo '</td></tr>';
         echo '<tr valign="top"><td colspan="2" class="entrylowersection">';

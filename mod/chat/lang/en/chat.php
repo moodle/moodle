@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -64,8 +63,8 @@ $string['chatreport'] = 'Chat sessions';
 $string['chat:talk'] = 'Talk in a chat';
 $string['chattime'] = 'Next chat time';
 $string['entermessage'] = "Enter your message";
-$string['event_message_sent'] = 'Message sent';
-$string['event_sessions_viewed'] = 'Sessions viewed';
+$string['eventmessagesent'] = 'Message sent';
+$string['eventsessionsviewed'] = 'Sessions viewed';
 $string['idle'] = 'Idle';
 $string['inputarea'] = 'Input area';
 $string['invalidid'] = 'Could not find that chat room!';

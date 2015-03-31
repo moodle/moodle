@@ -799,10 +799,7 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
                         'completiongradeitemnumber' => null,
                         'completionview'            => 0,
                         'completionexpected'        => 0,
-                        'availablefrom'             => 0,
-                        'availableuntil'            => 0,
-                        'showavailability'          => 0,
-                        'availability_info'         => array(),
+                        'availability'              => null,
                         'visibleold'                => 1,
                         'showdescription'           => 0,
                     ),
@@ -1295,7 +1292,9 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
      * Closes the questions wrapper
      */
     public function on_questions_end() {
-        $this->xmlwriter->end_tag('questions');
+        if ($this->questionswrapperwritten) {
+            $this->xmlwriter->end_tag('questions');
+        }
     }
 
     /**

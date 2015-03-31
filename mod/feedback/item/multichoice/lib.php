@@ -308,11 +308,12 @@ class feedback_item_multichoice extends feedback_item_base {
         $align = right_to_left() ? 'right' : 'left';
 
         $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
-        $str_required_mark = '<span class="feedback_required_mark">*</span>';
+        $strrequiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
+            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
 
         //test if required and no value is set so we have to mark this item
         //we have to differ check and the other subtypes
-        $requiredmark =  ($item->required == 1) ? $str_required_mark : '';
+        $requiredmark = ($item->required == 1) ? $strrequiredmark : '';
 
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
@@ -407,45 +408,40 @@ class feedback_item_multichoice extends feedback_item_base {
             $value = array();
         }
         $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
-        $str_required_mark = '<span class="feedback_required_mark">*</span>';
+        $strrequiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
+            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
 
         //test if required and no value is set so we have to mark this item
         //we have to differ check and the other subtypes
-        // if ($info->subtype == 'c') {
-            if (is_array($value)) {
-                $values = $value;
-            } else {
-                $values = explode(FEEDBACK_MULTICHOICE_LINE_SEP, $value);
-            }
-            $highlight = '';
-            if ($highlightrequire AND $item->required) {
-                if (count($values) == 0 OR $values[0] == '' OR $values[0] == 0) {
-                    $highlight = ' missingrequire';
-                }
-            }
-            $requiredmark = ($item->required == 1) ? $str_required_mark : '';
-        // } else {
-            // if ($highlightrequire AND $item->required AND intval($value) <= 0) {
-                // $highlight = ' missingrequire';
-            // } else {
-                // $highlight = '';
-            // }
-            // $requiredmark = ($item->required == 1) ? $str_required_mark : '';
-        // }
+        if (is_array($value)) {
+            $values = $value;
+        } else {
+            $values = explode(FEEDBACK_MULTICHOICE_LINE_SEP, $value);
+        }
+        $requiredmark = ($item->required == 1) ? $strrequiredmark : '';
 
         //print the question and label
-        echo '<div class="feedback_item_label_'.$align.$highlight.'">';
+        $inputname = $item->typ . '_' . $item->id;
+        echo '<div class="feedback_item_label_'.$align.'">';
         if ($info->subtype == 'd') {
-            echo '<label for="'. $item->typ . '_' . $item->id .'">';
-            echo format_text($item->name . $requiredmark, FORMAT_HTML, array('noclean' => true, 'para' => false));
+            echo '<label for="'. $inputname .'">';
+            echo format_text($item->name.$requiredmark, true, false, false);
+            if ($highlightrequire AND $item->required AND (count($values) == 0 OR $values[0] == '' OR $values[0] == 0)) {
+                echo '<br class="error"><span id="id_error_'.$inputname.'" class="error"> '.get_string('err_required', 'form').
+                    '</span><br id="id_error_break_'.$inputname.'" class="error" >';
+            }
             echo '</label>';
         } else {
             echo format_text($item->name . $requiredmark, FORMAT_HTML, array('noclean' => true, 'para' => false));
+            if ($highlightrequire AND $item->required AND (count($values) == 0 OR $values[0] == '' OR $values[0] == 0)) {
+                echo '<br class="error"><span id="id_error_'.$inputname.'" class="error"> '.get_string('err_required', 'form').
+                    '</span><br id="id_error_break_'.$inputname.'" class="error" >';
+            }
         }
         echo '</div>';
 
         //print the presentation
-        echo '<div class="feedback_item_presentation_'.$align.$highlight.'">';
+        echo '<div class="feedback_item_presentation_'.$align.'">';
 
         if ($info->subtype == 'r' || $info->subtype == 'c') {
             // if (r)adio buttons or (c)heckboxes
@@ -534,7 +530,8 @@ class feedback_item_multichoice extends feedback_item_base {
         }
         $requiredmark = '';
         if ($item->required == 1) {
-            $requiredmark = '<span class="feedback_required_mark">*</span>';
+            $requiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
+                get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
         }
 
         //print the question and label

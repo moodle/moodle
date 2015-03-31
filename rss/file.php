@@ -27,8 +27,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-/** NO_DEBUG_DISPLAY - bool, Disable moodle specific debug messages and any errors in output. Set to false to see any error messages during RSS generation */
+/** NO_DEBUG_DISPLAY - bool, Disable moodle debug and error messages. Set to false to see any errors during RSS generation */
 define('NO_DEBUG_DISPLAY', true);
 
 /** NO_MOODLE_COOKIES - bool, Disable the use of sessions/cookies - we recreate $USER for every call. */
@@ -38,21 +37,19 @@ require_once('../config.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/rsslib.php');
 
-// RSS feeds must be enabled site-wide
+// RSS feeds must be enabled site-wide.
 if (empty($CFG->enablerssfeeds)) {
     debugging('DISABLED (admin variables)');
     rss_error();
 }
 
-
-// All the arguments are in the path
+// All the arguments are in the path.
 $relativepath = get_file_argument();
 if (!$relativepath) {
     rss_error();
 }
 
-
-// Extract relative path components into variables
+// Extract relative path components into variables.
 $args = explode('/', trim($relativepath, '/'));
 if (count($args) < 5) {
     rss_error();
@@ -62,25 +59,25 @@ $contextid   = (int)$args[0];
 $token  = clean_param($args[1], PARAM_ALPHANUM);
 $componentname = clean_param($args[2], PARAM_FILE);
 
-//check if they have requested a 1.9 RSS feed
-//if token is an int its a user id (1.9 request)
-//if token contains any letters its a token (2.0 request)
+// Check if they have requested a 1.9 RSS feed.
+// If token is an int it is a user id (1.9 request).
+// If token contains any letters it is a token (2.0 request).
 $inttoken = intval($token);
-if ($token==="$inttoken") {
-    //they've requested a feed using a 1.9 url. redirect them to the 2.0 url using the guest account
+if ($token === "$inttoken") {
+    // They have requested a feed using a 1.9 url. redirect them to the 2.0 url using the guest account.
 
     $instanceid  = clean_param($args[3], PARAM_INT);
 
-    //1.9 URL puts course id where the context id is in 2.0 URLs
+    // 1.9 URL puts course id where the context id is in 2.0 URLs.
     $courseid = $contextid;
     unset($contextid);
 
-    //find the context id
+    // Find the context id.
     if ($course = $DB->get_record('course', array('id' => $courseid))) {
         $modinfo = get_fast_modinfo($course);
 
-        foreach ($modinfo->get_instances_of($componentname) as $modinstanceid=>$cm) {
-            if ($modinstanceid==$instanceid) {
+        foreach ($modinfo->get_instances_of($componentname) as $modinstanceid => $cm) {
+            if ($modinstanceid == $instanceid) {
                 $context = context_module::instance($cm->id, IGNORE_MISSING);
                 break;
             }
@@ -88,47 +85,47 @@ if ($token==="$inttoken") {
     }
 
     if (empty($context)) {
-        //this shouldnt happen. something bad is going on.
+        // This shouldnt happen. something bad is going on.
         rss_error('rsserror');
     }
 
-    //make sure that $CFG->siteguest is set
+    // Make sure that $CFG->siteguest is set.
     if (empty($CFG->siteguest)) {
-        if (!$guestid = $DB->get_field('user', 'id', array('username'=>'guest', 'mnethostid'=>$CFG->mnet_localhost_id))) {
-            // guest does not exist yet, weird
+        if (!$guestid = $DB->get_field('user', 'id', array('username' => 'guest', 'mnethostid' => $CFG->mnet_localhost_id))) {
+            // Guest does not exist yet, weird.
             rss_error('rsserror');
         }
         set_config('siteguest', $guestid);
     }
     $guesttoken = rss_get_token($CFG->siteguest);
 
-    //change forum to mod_forum (for example)
+    // Change forum to mod_forum (for example).
     $componentname = 'mod_'.$componentname;
 
     $url = $PAGE->url;
     $url->set_slashargument("/{$context->id}/$guesttoken/$componentname/$instanceid/rss.xml");
 
-    //redirect to the 2.0 rss URL
+    // Redirect to the 2.0 rss URL.
     redirect($url);
 } else {
-    // Authenticate the user from the token
+    // Authenticate the user from the token.
     $userid = rss_get_userid_from_token($token);
     if (!$userid) {
         rss_error('rsserrorauth');
     }
 }
 
-// Check the context actually exists
+// Check the context actually exists.
 list($context, $course, $cm) = get_context_info_array($contextid);
 
 $PAGE->set_context($context);
 
 $user = get_complete_user_data('id', $userid);
 
-// let enrol plugins deal with new enrolments if necessary
+// Let enrol plugins deal with new enrolments if necessary.
 enrol_check_plugins($user);
 
-\core\session\manager::set_user($user); //for login and capability checks
+\core\session\manager::set_user($user); // For login and capability checks.
 
 try {
     $autologinguest = true;
@@ -143,12 +140,11 @@ try {
     }
 }
 
-// Work out which component in Moodle we want (from the frankenstyle name)
+// Work out which component in Moodle we want (from the frankenstyle name).
 $componentdir = core_component::get_component_directory($componentname);
 list($type, $plugin) = core_component::normalize_component($componentname);
 
-
-// Call the component to check/update the feed and tell us the path to the cached file
+// Call the component to check/update the feed and tell us the path to the cached file.
 $pathname = null;
 
 if (file_exists($componentdir)) {
@@ -156,8 +152,8 @@ if (file_exists($componentdir)) {
     $functionname = $plugin.'_rss_get_feed';
 
     if (function_exists($functionname)) {
-        // $pathname will be null if there was a problem (eg user doesn't have the necessary capabilities)
-        // NOTE:the component providing the feed must do its own capability checks and security
+        // The $pathname will be null if there was a problem (eg user doesn't have the necessary capabilities).
+        // NOTE:the component providing the feed must do its own capability checks and security.
         try {
             $pathname = $functionname($context, $args);
         } catch (Exception $e) {
@@ -166,15 +162,13 @@ if (file_exists($componentdir)) {
     }
 }
 
-
-// Check that file exists
+// Check that file exists.
 if (empty($pathname) || !file_exists($pathname)) {
     rss_error();
 }
 
 // Send the RSS file to the user!
-send_file($pathname, 'rss.xml', 3600);   // Cached by browsers for 1 hour
-
+send_file($pathname, 'rss.xml', 3600);   // Cached by browsers for 1 hour.
 
 /**
  * Sends an error formatted as an rss file and then exits

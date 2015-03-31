@@ -75,6 +75,15 @@ class award_criteria_course extends award_criteria {
         }
         echo $OUTPUT->heading($this->get_title() . $OUTPUT->help_icon('criteria_' . $this->criteriatype, 'badges'), 3, 'main help');
 
+        if (!empty($this->description)) {
+            echo $OUTPUT->box(
+                format_text($this->description, $this->descriptionformat,
+                        array('context' => context_course::instance($this->courseid))
+                ),
+                'criteria-description'
+            );
+        }
+
         if (!empty($this->params)) {
             echo $OUTPUT->box(get_string('criteria_descr_' . $this->criteriatype, 'badges') . $this->get_details(), array('clearfix'));
         }

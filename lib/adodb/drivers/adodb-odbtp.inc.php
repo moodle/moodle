@@ -1,6 +1,6 @@
 <?php
 /*
-  V5.18 3 Sep 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
+  V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence. See License.txt.
@@ -61,23 +61,23 @@ class ADODB_odbtp extends ADOConnection{
 	{
 		if (empty($d) && $d !== 0) return 'null';
 		if ($isfld) return "convert(date, $d, 120)";
-		
+
 		if (is_string($d)) $d = ADORecordSet::UnixDate($d);
 		$d = adodb_date($this->fmtDate,$d);
-		return "convert(date, $d, 120)"; 
+		return "convert(date, $d, 120)";
 	}
-	
+
 	function DBTimeStamp($d,$isfld=false)
 	{
 		if (empty($d) && $d !== 0) return 'null';
 		if ($isfld) return "convert(datetime, $d, 120)";
-		
+
 		if (is_string($d)) $d = ADORecordSet::UnixDate($d);
 		$d = adodb_date($this->fmtDate,$d);
-		return "convert(datetime, $d, 120)"; 
+		return "convert(datetime, $d, 120)";
 	}
 */
-	
+
 	function _insertid()
 	{
 	// SCOPE_IDENTITY()
@@ -180,9 +180,9 @@ class ADODB_odbtp extends ADOConnection{
 			$this->_errorMsg = $this->ErrorMsg() ;
 			return false;
 		}
-		
+
 		odbtp_convert_datetime($this->_connectionID,true);
-		
+
 		if ($this->_dontPoolDBC) {
 			if (function_exists('odbtp_dont_pool_dbc'))
 				@odbtp_dont_pool_dbc($this->_connectionID);
@@ -193,7 +193,7 @@ class ADODB_odbtp extends ADOConnection{
 		$this->odbc_driver = @odbtp_get_attr(ODB_ATTR_DRIVER, $this->_connectionID);
 		$dbms = strtolower(@odbtp_get_attr(ODB_ATTR_DBMSNAME, $this->_connectionID));
 		$this->odbc_name = $dbms;
-		
+
 		// Account for inconsistent DBMS names
 		if( $this->odbc_driver == ODB_DRIVER_ORACLE )
 			$dbms = 'oracle';
@@ -298,7 +298,7 @@ class ADODB_odbtp extends ADOConnection{
 		$this->databaseName = $dbName; # obsolete, retained for compat with older adodb versions
 		return true;
 	}
-	
+
 	function MetaTables($ttype='',$showSchema=false,$mask=false)
 	{
 	global $ADODB_FETCH_MODE;
@@ -306,9 +306,9 @@ class ADODB_odbtp extends ADOConnection{
 		$savem = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		if ($this->fetchMode !== false) $savefm = $this->SetFetchMode(false);
-		
+
 		$arr = $this->GetArray("||SQLTables||||$ttype");
-		
+
 		if (isset($savefm)) $this->SetFetchMode($savefm);
 		$ADODB_FETCH_MODE = $savem;
 
@@ -320,7 +320,7 @@ class ADODB_odbtp extends ADOConnection{
 		}
 		return $arr2;
 	}
-	
+
 	function MetaColumns($table,$upper=true)
 	{
 	global $ADODB_FETCH_MODE;
@@ -332,9 +332,9 @@ class ADODB_odbtp extends ADOConnection{
 		$savem = $ADODB_FETCH_MODE;
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 		if ($this->fetchMode !== false) $savefm = $this->SetFetchMode(false);
-		
+
 		$rs = $this->Execute( "||SQLColumns||$schema|$table" );
-		
+
 		if (isset($savefm)) $this->SetFetchMode($savefm);
 		$ADODB_FETCH_MODE = $savem;
 
@@ -402,7 +402,7 @@ class ADODB_odbtp extends ADOConnection{
 			$false = false;
 			return $false;
 		}
-		
+
 		$arr2 = array();
 
 		foreach($arr as $k => $v) {
@@ -463,10 +463,10 @@ class ADODB_odbtp extends ADOConnection{
 	function Prepare($sql)
 	{
 		if (! $this->_bindInputArray) return $sql; // no binding
-		
+
         $this->_errorMsg = false;
 		$this->_errorCode = false;
-		
+
 		$stmt = @odbtp_prepare($sql,$this->_connectionID);
 		if (!$stmt) {
 		//	print "Prepare Error for ($sql) ".$this->ErrorMsg()."<br>";
@@ -481,7 +481,7 @@ class ADODB_odbtp extends ADOConnection{
 
         $this->_errorMsg = false;
 		$this->_errorCode = false;
-		
+
 		$stmt = @odbtp_prepare_proc($sql,$this->_connectionID);
 		if (!$stmt) return false;
 		return array($sql,$stmt);
@@ -553,16 +553,16 @@ class ADODB_odbtp extends ADOConnection{
 				return array();
 		}
 	}
-	
+
 	function MetaIndexes_mssql($table,$primary=false, $owner = false)
 	{
 		$table = strtolower($this->qstr($table));
 
-		$sql = "SELECT i.name AS ind_name, C.name AS col_name, USER_NAME(O.uid) AS Owner, c.colid, k.Keyno, 
+		$sql = "SELECT i.name AS ind_name, C.name AS col_name, USER_NAME(O.uid) AS Owner, c.colid, k.Keyno,
 			CASE WHEN I.indid BETWEEN 1 AND 254 AND (I.status & 2048 = 2048 OR I.Status = 16402 AND O.XType = 'V') THEN 1 ELSE 0 END AS IsPK,
 			CASE WHEN I.status & 2 = 2 THEN 1 ELSE 0 END AS IsUnique
-			FROM dbo.sysobjects o INNER JOIN dbo.sysindexes I ON o.id = i.id 
-			INNER JOIN dbo.sysindexkeys K ON I.id = K.id AND I.Indid = K.Indid 
+			FROM dbo.sysobjects o INNER JOIN dbo.sysindexes I ON o.id = i.id
+			INNER JOIN dbo.sysindexkeys K ON I.id = K.id AND I.Indid = K.Indid
 			INNER JOIN dbo.syscolumns c ON K.id = C.id AND K.colid = C.Colid
 			WHERE LEFT(i.name, 8) <> '_WA_Sys_' AND o.status >= 0 AND lower(O.Name) = $table
 			ORDER BY O.name, I.Name, K.keyno";
@@ -573,7 +573,7 @@ class ADODB_odbtp extends ADOConnection{
         if ($this->fetchMode !== FALSE) {
         	$savem = $this->SetFetchMode(FALSE);
         }
-        
+
         $rs = $this->Execute($sql);
         if (isset($savem)) {
         	$this->SetFetchMode($savem);
@@ -587,13 +587,13 @@ class ADODB_odbtp extends ADOConnection{
 		$indexes = array();
 		while ($row = $rs->FetchRow()) {
 			if ($primary && !$row[5]) continue;
-			
+
             $indexes[$row[0]]['unique'] = $row[6];
             $indexes[$row[0]]['columns'][] = $row[1];
     	}
         return $indexes;
 	}
-	
+
 	function IfNull( $field, $ifNull )
 	{
 		switch( $this->odbc_driver ) {
@@ -608,10 +608,10 @@ class ADODB_odbtp extends ADOConnection{
 	function _query($sql,$inputarr=false)
 	{
 	global $php_errormsg;
-	
+
         $this->_errorMsg = false;
 		$this->_errorCode = false;
-		
+
  		if ($inputarr) {
 			if (is_array($sql)) {
 				$stmtid = $sql[1];
@@ -628,7 +628,7 @@ class ADODB_odbtp extends ADOConnection{
 				@odbtp_input( $stmtid, $param );
 				@odbtp_set( $stmtid, $param, $inputarr[$param-1] );
 			}*/
-			
+
 			$param = 1;
 			foreach($inputarr as $v) {
 				@odbtp_input( $stmtid, $param );
@@ -636,7 +636,7 @@ class ADODB_odbtp extends ADOConnection{
 				$param += 1;
 				if ($param > $num_params) break;
 			}
-			
+
 			if (!@odbtp_execute($stmtid) ) {
 				return false;
 			}
@@ -836,4 +836,3 @@ class ADORecordSet_odbtp_sybase extends ADORecordSet_odbtp {
 		return $this->ADORecordSet_odbtp($id,$mode);
 	}
 }
-?>

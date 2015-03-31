@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event when user stats report is viewed.
+ * The report_stats user report viewed event.
  *
  * @package    report_stats
  * @copyright  2013 Ankit Agarwal
@@ -23,10 +23,13 @@
  */
 namespace report_stats\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Event triggered, when user stats report is viewed.
+ * The report_stats user report viewed event class.
  *
  * @package    report_stats
+ * @since      Moodle 2.7
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -57,7 +60,7 @@ class user_report_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The user with id ' . $this->userid . ' viewed user statistics report for user with id ' . $this->relateduserid;
+        return "The user with id '$this->userid' viewed the user statistics report for the user with id '$this->relateduserid'.";
     }
 
     /**
@@ -87,8 +90,8 @@ class user_report_viewed extends \core\event\base {
      */
     protected function validate_data() {
         parent::validate_data();
-        if (empty($this->data['relateduserid'])) {
-            throw new \coding_exception('The property relateduserid must be set.');
+        if (empty($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
 }

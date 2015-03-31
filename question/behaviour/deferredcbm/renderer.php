@@ -95,13 +95,14 @@ class qbehaviour_deferredcbm_renderer extends qbehaviour_renderer {
 
     public function marked_out_of_max(question_attempt $qa, core_question_renderer $qoutput,
             question_display_options $options) {
-        return get_string('basemark', 'qbehaviour_deferredcbm', $qa->format_fraction_as_mark(
+        return get_string('weightx', 'qbehaviour_deferredcbm', $qa->format_fraction_as_mark(
                 question_cbm::adjust_fraction(1, question_cbm::default_certainty()),
                 $options->markdp));
     }
 
     public function mark_out_of_max(question_attempt $qa, core_question_renderer $qoutput,
             question_display_options $options) {
-        return get_string('cbmmark', 'qbehaviour_deferredcbm', $qa->format_mark($options->markdp));
+        return get_string('cbmmark', 'qbehaviour_deferredcbm', $qa->format_mark($options->markdp)) .
+                '<br>' . $this->marked_out_of_max($qa, $qoutput, $options);
     }
 }

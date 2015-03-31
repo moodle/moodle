@@ -184,10 +184,10 @@ class cache_factory_disabled extends cache_factory {
      *
      * @param string $component
      * @param string $area
-     * @param string $aggregate Unused.
+     * @param string $unused Used to be datasourceaggregate but that was removed and this is now unused.
      * @return cache_definition
      */
-    public function create_definition($component, $area, $aggregate = null) {
+    public function create_definition($component, $area, $unused = null) {
         return cache_definition::load_adhoc(cache_store::MODE_REQUEST, $component, $area);
     }
 
@@ -208,11 +208,11 @@ class cache_factory_disabled extends cache_factory {
      * @param string $component
      * @param string $area
      * @param array $identifiers
-     * @param string $aggregate
+     * @param string $unused Used to be datasourceaggregate but that was removed and this is now unused.
      * @return cache_application|cache_session|cache_request
      */
-    public function create_cache_from_definition($component, $area, array $identifiers = array(), $aggregate = null) {
-        $definition = $this->create_definition($component, $area, $aggregate);
+    public function create_cache_from_definition($component, $area, array $identifiers = array(), $unused = null) {
+        $definition = $this->create_definition($component, $area);
         $cache = $this->create_cache($definition, $identifiers);
         return $cache;
     }

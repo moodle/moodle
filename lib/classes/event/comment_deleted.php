@@ -34,14 +34,15 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type int itemid id of item for which comment is deleted.
+ *      - int itemid: id of item for which comment is deleted.
  * }
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class comment_deleted extends \core\event\base {
+abstract class comment_deleted extends base {
 
     /**
      * Init method.
@@ -69,8 +70,8 @@ abstract class comment_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' deleted comment for ' . $this->component . ' with instance id ' .
-                $this->contextinstanceid;
+        return "The user with id '$this->userid' deleted the comment with id '$this->objectid' from the '$this->component' " .
+            "with course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -96,7 +97,7 @@ abstract class comment_deleted extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['itemid'])) {
-            throw new \coding_exception('The itemid needs to be set in $other');
+            throw new \coding_exception('The \'itemid\' value must be set in other.');
         }
     }
 }

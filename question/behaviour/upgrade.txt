@@ -1,14 +1,26 @@
 This files describes API changes for question behaviour plugins.
 
+=== 2.9 ===
+
+1) New method question_behaviour::can_finish_during_attempt. This returns false
+   by default. You should override it if, with your behaviour, questions may
+   finish just through the student interacting with them (e.g. by clicking the
+   Check button within the question.)
+
+
 === 2.7 ===
 
-1) question_behaviour_type has a new method allows_multiple_submitted_responses which defaults to false but should return
-      true if this question behaviour accepts multiple submissions of responses within one attempt eg. multiple tries for the
-      interactive or adaptive question behaviours.
-   question_behaviour has a new method step_has_a_submitted_response($step). For question behaviours where it is not only the
-      final response that is submitted by the student, you need to override this method to return true for other steps where a
-      student has submitted a response. See question_behaviour_with_multiple_tries::step_has_a_submitted_response($step) for
-      example. This method only needs to be overriden if you are returning true from allows_multiple_response_submissions
+1) question_behaviour_type has a new method allows_multiple_submitted_responses
+      which defaults to false but should return true if this question behaviour
+      accepts multiple submissions of responses within one attempt eg. multiple
+      tries for the interactive or adaptive question behaviours.
+   question_behaviour has a new method step_has_a_submitted_response($step). For
+      question behaviours where it is not only the final response that is
+      submitted by the student, you need to override this method to return true
+      for other steps where a student has submitted a response. See
+      question_behaviour_with_multiple_tries::step_has_a_submitted_response($step)
+      for example. This method only needs to be overriden if you are returning
+      true from allows_multiple_response_submissions.
 
 
 === 2.6 ===

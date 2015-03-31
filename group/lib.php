@@ -344,18 +344,25 @@ function groups_update_group_icon($group, $data, $editform) {
 
     $fs = get_file_storage();
     $context = context_course::instance($group->courseid, MUST_EXIST);
+    $newpicture = $group->picture;
 
-    //TODO: it would make sense to allow picture deleting too (skodak)
-    if ($iconfile = $editform->save_temp_file('imagefile')) {
-        if (process_new_icon($context, 'group', 'icon', $group->id, $iconfile)) {
-            $DB->set_field('groups', 'picture', 1, array('id'=>$group->id));
-            $group->picture = 1;
+    if (!empty($data->deletepicture)) {
+        $fs->delete_area_files($context->id, 'group', 'icon', $group->id);
+        $newpicture = 0;
+    } else if ($iconfile = $editform->save_temp_file('imagefile')) {
+        if ($rev = process_new_icon($context, 'group', 'icon', $group->id, $iconfile)) {
+            $newpicture = $rev;
         } else {
             $fs->delete_area_files($context->id, 'group', 'icon', $group->id);
-            $DB->set_field('groups', 'picture', 0, array('id'=>$group->id));
-            $group->picture = 0;
+            $newpicture = 0;
         }
         @unlink($iconfile);
+    }
+
+    if ($newpicture != $group->picture) {
+        $DB->set_field('groups', 'picture', $newpicture, array('id' => $group->id));
+        $group->picture = $newpicture;
+
         // Invalidate the group data as we've updated the group record.
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($group->courseid));
     }
@@ -375,7 +382,9 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
     $context = context_course::instance($data->courseid);
 
     $data->timemodified = time();
-    $data->name         = trim($data->name);
+    if (isset($data->name)) {
+        $data->name = trim($data->name);
+    }
     if (isset($data->idnumber)) {
         $data->idnumber = trim($data->idnumber);
         if (($existing = groups_get_group_by_idnumber($data->courseid, $data->idnumber)) && $existing->id != $data->id) {
@@ -420,7 +429,9 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
 function groups_update_grouping($data, $editoroptions=null) {
     global $DB;
     $data->timemodified = time();
-    $data->name         = trim($data->name);
+    if (isset($data->name)) {
+        $data->name = trim($data->name);
+    }
     if (isset($data->idnumber)) {
         $data->idnumber = trim($data->idnumber);
         if (($existing = groups_get_grouping_by_idnumber($data->courseid, $data->idnumber)) && $existing->id != $data->id) {
@@ -707,41 +718,76 @@ function groups_get_possible_roles($context) {
  *
  * @param int $courseid The id of the course
  * @param int $roleid The role to select users from
- * @param int $cohortid restrict to cohort id
+ * @param mixed $source restrict to cohort, grouping or group id
  * @param string $orderby The column to sort users by
+ * @param int $notingroup restrict to users not in existing groups
  * @return array An array of the users
  */
-function groups_get_potential_members($courseid, $roleid = null, $cohortid = null, $orderby = 'lastname ASC, firstname ASC') {
+function groups_get_potential_members($courseid, $roleid = null, $source = null,
+                                      $orderby = 'lastname ASC, firstname ASC',
+                                      $notingroup = null) {
     global $DB;
 
     $context = context_course::instance($courseid);
 
     list($esql, $params) = get_enrolled_sql($context);
 
+    $notingroupsql = "";
+    if ($notingroup) {
+        // We want to eliminate users that are already associated with a course group.
+        $notingroupsql = "u.id NOT IN (SELECT userid
+                                         FROM {groups_members}
+                                        WHERE groupid IN (SELECT id
+                                                            FROM {groups}
+                                                           WHERE courseid = :courseid))";
+        $params['courseid'] = $courseid;
+    }
+
     if ($roleid) {
         // We are looking for all users with this role assigned in this context or higher.
-        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true),
+                                                                       SQL_PARAMS_NAMED,
+                                                                       'relatedctx');
 
         $params = array_merge($params, $relatedctxparams, array('roleid' => $roleid));
         $where = "WHERE u.id IN (SELECT userid
                                    FROM {role_assignments}
                                   WHERE roleid = :roleid AND contextid $relatedctxsql)";
+        $where .= $notingroup ? "AND $notingroupsql" : "";
+    } else if ($notingroup) {
+        $where = "WHERE $notingroupsql";
     } else {
         $where = "";
     }
 
-    if ($cohortid) {
-        $cohortjoin = "JOIN {cohort_members} cm ON (cm.userid = u.id AND cm.cohortid = :cohortid)";
-        $params['cohortid'] = $cohortid;
+    $sourcejoin = "";
+    if (is_int($source)) {
+        $sourcejoin .= "JOIN {cohort_members} cm ON (cm.userid = u.id AND cm.cohortid = :cohortid) ";
+        $params['cohortid'] = $source;
     } else {
-        $cohortjoin = "";
+        // Auto-create groups from an existing cohort membership.
+        if (isset($source['cohortid'])) {
+            $sourcejoin .= "JOIN {cohort_members} cm ON (cm.userid = u.id AND cm.cohortid = :cohortid) ";
+            $params['cohortid'] = $source['cohortid'];
+        }
+        // Auto-create groups from an existing group membership.
+        if (isset($source['groupid'])) {
+            $sourcejoin .= "JOIN {groups_members} gp ON (gp.userid = u.id AND gp.groupid = :groupid) ";
+            $params['groupid'] = $source['groupid'];
+        }
+        // Auto-create groups from an existing grouping membership.
+        if (isset($source['groupingid'])) {
+            $sourcejoin .= "JOIN {groupings_groups} gg ON gg.groupingid = :groupingid ";
+            $sourcejoin .= "JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = gg.groupid) ";
+            $params['groupingid'] = $source['groupingid'];
+        }
     }
 
     $allusernamefields = get_all_user_name_fields(true, 'u');
-    $sql = "SELECT u.id, u.username, $allusernamefields, u.idnumber
+    $sql = "SELECT DISTINCT u.id, u.username, $allusernamefields, u.idnumber
               FROM {user} u
               JOIN ($esql) e ON e.id = u.id
-       $cohortjoin
+       $sourcejoin
             $where
           ORDER BY $orderby";
 

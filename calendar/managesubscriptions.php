@@ -41,7 +41,7 @@ if ($courseid != SITEID) {
 }
 navigation_node::override_active_url(new moodle_url('/calendar/view.php', array('view' => 'month')));
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('admin');
 $PAGE->navbar->add(get_string('managesubscriptions', 'calendar'));
 
 if ($courseid != SITEID && !empty($courseid)) {

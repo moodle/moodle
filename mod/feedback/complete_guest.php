@@ -363,21 +363,22 @@ if ($feedback_can_submit) {
         echo $OUTPUT->continue_button($url);
     } else {
         if (isset($savereturn) && $savereturn == 'failed') {
-            echo $OUTPUT->box_start('mform error');
-            echo get_string('saving_failed', 'feedback');
+            echo $OUTPUT->box_start('mform');
+            echo '<span class="error">'.get_string('saving_failed', 'feedback').'</span>';
             echo $OUTPUT->box_end();
         }
 
         if (isset($savereturn) && $savereturn == 'missing') {
-            echo $OUTPUT->box_start('mform error');
-            echo get_string('saving_failed_because_missing_or_false_values', 'feedback');
+            echo $OUTPUT->box_start('mform');
+            echo '<span class="error">'.get_string('saving_failed_because_missing_or_false_values', 'feedback').'</span>';
             echo $OUTPUT->box_end();
         }
 
         //print the items
         if (is_array($feedbackitems)) {
             echo $OUTPUT->box_start('feedback_form');
-            echo '<form action="complete_guest.php" method="post" onsubmit=" ">';
+            echo '<form action="complete_guest.php" class="mform" method="post" onsubmit=" ">';
+            echo '<fieldset>';
             echo '<input type="hidden" name="anonymous" value="0" />';
             $inputvalue = 'value="'.FEEDBACK_ANONYMOUS_YES.'"';
             echo '<input type="hidden" name="anonymous_response" '.$inputvalue.' />';
@@ -386,9 +387,10 @@ if ($feedback_can_submit) {
             $params = array('feedback'=>$feedback->id, 'required'=>1);
             $countreq = $DB->count_records('feedback_item', $params);
             if ($countreq > 0) {
-                echo '<span class="feedback_required_mark">(*)';
-                echo get_string('items_are_required', 'feedback');
-                echo '</span>';
+                echo '<div class="fdescription required">';
+                echo get_string('somefieldsrequired', 'form', '<img alt="'.get_string('requiredelement', 'form').
+                    '" src="'.$OUTPUT->pix_url('req') .'" class="req" />');
+                echo '</div>';
             }
             echo $OUTPUT->box_start('feedback_items');
 

@@ -1,6 +1,11 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 2.9 ===
+default values changes in code:
+* core_calendar_external::get_calendar_events_parameters() 'timeend' default option changed; now, by default,
+  all events are returned, not only the past ones.
+
 === 2.5 ===
 required changes in code:
 * calendar_add_icalendar_event() now requires a valid subscriptionid

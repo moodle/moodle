@@ -168,18 +168,26 @@ function min_enable_zlib_compression() {
  * Note: ".php" is NOT allowed in slasharguments,
  *       it is intended for ASCII characters only.
  *
+ * @param boolean $clean - Should we do cleaning on this path argument. If you set this
+ *                         to false you MUST be very careful and do the cleaning manually.
  * @return string
  */
-function min_get_slash_argument() {
-    // Note: This code has to work in the same cases as normal get_slash_argument(),
+function min_get_slash_argument($clean = true) {
+    // Note: This code has to work in the same cases as normal get_file_argument(),
     //       but at the same time it may be simpler because we do not have to deal
     //       with encodings and other tricky stuff.
 
     $relativepath = '';
 
     if (!empty($_GET['file']) and strpos($_GET['file'], '/') === 0) {
-        // server is using url rewriting, most probably IIS
-        return $_GET['file'];
+        // Server is using url rewriting, most probably IIS.
+        // Always clean the result of this function as it may be used in unsafe calls to send_file.
+        $relativepath = $_GET['file'];
+        if ($clean) {
+            $relativepath = min_clean_param($relativepath, 'SAFEPATH');
+        }
+
+        return $relativepath;
 
     } else if (stripos($_SERVER['SERVER_SOFTWARE'], 'iis') !== false) {
         if (isset($_SERVER['PATH_INFO']) and $_SERVER['PATH_INFO'] !== '') {
@@ -197,5 +205,9 @@ function min_get_slash_argument() {
         $relativepath = $matches[1];
     }
 
+    // Always clean the result of this function as it may be used in unsafe calls to send_file.
+    if ($clean) {
+        $relativepath = min_clean_param($relativepath, 'SAFEPATH');
+    }
     return $relativepath;
 }

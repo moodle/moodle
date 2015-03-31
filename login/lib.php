@@ -169,13 +169,16 @@ function core_login_process_password_reset_request() {
     echo $OUTPUT->footer();
 }
 
-/** This function processes a user's submitted token to validate the request to set a new password.
- *  If the user's token is validated, they are prompted to set a new password.
+/**
+ * This function processes a user's submitted token to validate the request to set a new password.
+ * If the user's token is validated, they are prompted to set a new password.
  * @param string $token the one-use identifier which should verify the password reset request as being valid.
- * @return null
+ * @return void
  */
 function core_login_process_password_set($token) {
     global $DB, $CFG, $OUTPUT, $PAGE, $SESSION;
+    require_once($CFG->dirroot.'/user/lib.php');
+
     $pwresettime = isset($CFG->pwresettime) ? $CFG->pwresettime : 1800;
     $sql = "SELECT u.*, upr.token, upr.timerequested, upr.id as tokenid
               FROM {user} u
@@ -214,7 +217,7 @@ function core_login_process_password_set($token) {
     }
 
     // Token is correct, and unexpired.
-    $mform = new login_set_password_form(null, null, 'post', '', 'autocomplete="yes"');
+    $mform = new login_set_password_form(null, $user, 'post', '', 'autocomplete="yes"');
     $data = $mform->get_data();
     if (empty($data)) {
         // User hasn't submitted form, they got here directly from email link.
@@ -238,7 +241,10 @@ function core_login_process_password_set($token) {
         if (!$userauth->user_update_password($user, $data->password)) {
             print_error('errorpasswordupdate', 'auth');
         }
-        add_to_log(SITEID, 'user', 'set password', "view.php?id=$user->id&amp;course=" . SITEID, $user->id);
+        user_add_password_history($user->id, $data->password);
+        if (!empty($CFG->passwordchangelogout)) {
+            \core\session\manager::kill_user_sessions($user->id, session_id());
+        }
         // Reset login lockout (if present) before a new password is set.
         login_unlock_account($user);
         // Clear any requirement to change passwords.
@@ -249,8 +255,10 @@ function core_login_process_password_set($token) {
             // Unset previous session language - use user preference instead.
             unset($SESSION->lang);
         }
-        add_to_log(SITEID, 'user', 'login', "view.php?id=$user->id&course=".SITEID, $user->id, 0, $user->id);
-        complete_user_login($user);
+        complete_user_login($user); // Triggers the login event.
+
+        \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
+
         $urltogo = core_login_get_return_url();
         unset($SESSION->wantsurl);
         redirect($urltogo, get_string('passwordset'), 1);

@@ -642,7 +642,7 @@ class moodle_page {
     /**
      * Returns an array of minipulations or false if there are none to make.
      *
-     * @since 2.5.1 2.6
+     * @since Moodle 2.5.1 2.6
      * @return bool|array
      */
     protected function magic_get_blockmanipulations() {
@@ -803,7 +803,6 @@ class moodle_page {
      * @return renderer_base
      */
     public function get_renderer($component, $subtype = null, $target = null) {
-        $target = null;
         if ($this->pagelayout === 'maintenance') {
             // If the page is using the maintenance layout then we're going to force target to maintenance.
             // This leads to a special core renderer that is designed to block access to API's that are likely unavailable for this
@@ -966,7 +965,11 @@ class moodle_page {
             } else {
                 // We do not want devs to do weird switching of context levels on the fly because we might have used
                 // the context already such as in text filter in page title.
-                debugging("Coding problem: unsupported modification of PAGE->context from {$current} to {$context->contextlevel}");
+                // This is explicitly allowed for webservices though which may
+                // call "external_api::validate_context on many contexts in a single request.
+                if (!WS_SERVER) {
+                    debugging("Coding problem: unsupported modification of PAGE->context from {$current} to {$context->contextlevel}");
+                }
             }
         }
 
@@ -1429,7 +1432,7 @@ class moodle_page {
 
         // Now the real test and redirect!
         // NOTE: do NOT use this test for detection of https on current page because this code is not compatible with SSL proxies,
-        //       instead use (strpos($CFG->httpswwwroot, 'https:') === 0).
+        //       instead use is_https().
         if (strpos($FULLME, 'https:') !== 0) {
             // This may lead to infinite redirect on an incorrectly configured site.
             // In that case set $CFG->loginhttps=0; within /config.php.
@@ -1907,7 +1910,7 @@ class moodle_page {
     /**
      * Returns the block region having made any required theme manipulations.
      *
-     * @since 2.5.1 2.6
+     * @since Moodle 2.5.1 2.6
      * @param string $region
      * @return string
      */

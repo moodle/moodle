@@ -100,6 +100,7 @@ class core_message_events_testcase extends advanced_testcase {
 
         // Create a user to add to the admin's contact list.
         $user = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
 
         // Add the user to the admin's contact list.
         message_add_contact($user->id);
@@ -114,6 +115,20 @@ class core_message_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\message_contact_blocked', $event);
         $this->assertEquals(context_user::instance(2), $event->get_context());
         $expected = array(SITEID, 'message', 'block contact', 'index.php?user1=' . $user->id . '&amp;user2=2', $user->id);
+        $this->assertEventLegacyLogData($expected, $event);
+        $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
+        $this->assertEquals($url, $event->get_url());
+
+        // Now blocking a user that is not a contact.
+        $sink->clear();
+        message_block_contact($user2->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\message_contact_blocked', $event);
+        $this->assertEquals(context_user::instance(2), $event->get_context());
+        $expected = array(SITEID, 'message', 'block contact', 'index.php?user1=' . $user2->id . '&amp;user2=2', $user2->id);
         $this->assertEventLegacyLogData($expected, $event);
         $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
         $this->assertEquals($url, $event->get_url());
@@ -179,9 +194,9 @@ class core_message_events_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the message read event.
+     * Test the message viewed event.
      */
-    public function test_message_read() {
+    public function test_message_viewed() {
         global $DB;
 
         // Create a message to mark as read.
@@ -199,7 +214,7 @@ class core_message_events_testcase extends advanced_testcase {
         $event = reset($events);
 
         // Check that the event data is valid.
-        $this->assertInstanceOf('\core\event\message_read', $event);
+        $this->assertInstanceOf('\core\event\message_viewed', $event);
         $this->assertEquals(context_user::instance(2), $event->get_context());
         $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
         $this->assertEquals($url, $event->get_url());

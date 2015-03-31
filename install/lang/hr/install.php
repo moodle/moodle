@@ -56,7 +56,7 @@ $string['memorylimithelp'] = '<p>PHP ograničenje memorije na poslužitelju je t
 
 <p>Preporučujemo da konfigurirate PHP s većim ograničenjem ako je moguće, recimo 40M. Postoji nekoliko načina na koje to možete napraviti:</p>
 <ol>
-<li>Ako možete, rekompajlirajte PHP s <i>--enable-memory-limit</i>. Ovo će dozvoliti Moodle sustavu samostalno postavljanje memorijskog ograničenja.</li>
+<li>Ako možete, rekompajlirajte PHP s <i>--enable-memory-limit</i>. Ovo će dopustiti Moodle sustavu samostalno postavljanje memorijskog ograničenja.</li>
 <li>Ako imate pristup php.ini datoteci, možete promijeniti <b>memory_limit</b> vrijednost na 40M. Ako nemate pristup toj datoteci možete pitati svog administratora da to uradi.</li>
 <li>Na nekim PHP poslužiteljima možete napraviti .htaccess datoteku u Moodle mapi koja sadrži red: <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Uzmite u obzir da će na nekim poslužiteljima to spriječiti prikazivanje <b>svih</b> PHP stranica (bit će vam prikazana poruka o grešci), pa ćete na takvim poslužiteljima morati ukloniti .htaccess datoteku.</p></li> </ol>';

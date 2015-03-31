@@ -34,7 +34,13 @@ function atto_accessibilitychecker_strings_for_js() {
     $PAGE->requires->strings_for_js(array('nowarnings',
                                     'report',
                                     'imagesmissingalt',
-                                    'needsmorecontrast'),
+                                    'needsmorecontrast',
+                                    'needsmoreheadings',
+                                    'tableswithmergedcells',
+                                    'tablesmissingcaption',
+                                    'emptytext',
+                                    'entiredocument',
+                                    'tablesmissingheaders'),
                                     'atto_accessibilitychecker');
 }
 

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event when course module completion is updated.
+ * Course module completion updated event.
  *
  * @package    core
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -27,9 +27,10 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event when course module completion is updated.
+ * Course module completion updated event class.
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -58,7 +59,7 @@ class course_completion_updated extends base {
      * @return string
      */
     public function get_description() {
-        return 'Course completion for course' . $this->courseid . ' is updated by user ' . $this->userid;
+        return "The user with id '$this->userid' updated the requirements to complete the course with id '$this->courseid'.";
     }
 
     /**

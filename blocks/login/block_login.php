@@ -70,10 +70,15 @@ class block_login extends block_base {
         $this->content->text = '';
 
         if (!isloggedin() or isguestuser()) {   // Show the block
+            if (empty($CFG->authloginviaemail)) {
+                $strusername = get_string('username');
+            } else {
+                $strusername = get_string('usernameemail');
+            }
 
             $this->content->text .= "\n".'<form class="loginform" id="login" method="post" action="'.get_login_url().'" '.$autocomplete.'>';
 
-            $this->content->text .= '<div class="c1 fld username"><label for="login_username">'.get_string('username').'</label>';
+            $this->content->text .= '<div class="c1 fld username"><label for="login_username">'.$strusername.'</label>';
             $this->content->text .= '<input type="text" name="username" id="login_username" value="'.s($username).'" /></div>';
 
             $this->content->text .= '<div class="c1 fld password"><label for="login_password">'.get_string('password').'</label>';

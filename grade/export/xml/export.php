@@ -20,13 +20,7 @@ require_once $CFG->dirroot.'/grade/export/lib.php';
 require_once 'grade_export_xml.php';
 
 $id                = required_param('id', PARAM_INT); // course id
-$groupid           = optional_param('groupid', 0, PARAM_INT);
-$itemids           = required_param('itemids', PARAM_RAW);
-$export_feedback   = optional_param('export_feedback', 0, PARAM_BOOL);
-$updatedgradesonly = optional_param('updatedgradesonly', false, PARAM_BOOL);
-$displaytype       = optional_param('displaytype', $CFG->grade_export_displaytype, PARAM_INT);
-$decimalpoints     = optional_param('decimalpoints', $CFG->grade_export_decimalpoints, PARAM_INT);
-$onlyactive        = optional_param('export_onlyactive', 0, PARAM_BOOL);
+$PAGE->set_url('/grade/export/xml/export.php', array('id'=>$id));
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('nocourseid');
@@ -34,18 +28,35 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 
 require_login($course);
 $context = context_course::instance($id);
+$groupid = groups_get_course_group($course, true);
 
 require_capability('moodle/grade:export', $context);
 require_capability('gradeexport/xml:view', $context);
+
+// We need to call this method here before any print otherwise the menu won't display.
+// If you use this method without this check, will break the direct grade exporting (without publishing).
+$key = optional_param('key', '', PARAM_RAW);
+if (!empty($CFG->gradepublishing) && !empty($key)) {
+    print_grade_page_head($COURSE->id, 'export', 'xml', get_string('exportto', 'grades') . ' ' . get_string('pluginname', 'gradeexport_xml'));
+}
 
 if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
     if (!groups_is_member($groupid, $USER->id)) {
         print_error('cannotaccessgroup', 'grades');
     }
 }
+$mform = new grade_export_form(null, array('publishing' => true, 'simpleui' => true, 'multipledisplaytypes' => false,
+        'idnumberrequired' => true, 'updategradesonly' => true));
+$formdata = $mform->get_data();
+$export = new grade_export_xml($course, $groupid, $formdata);
 
-// print all the exported data here
-$export = new grade_export_xml($course, $groupid, $itemids, $export_feedback, $updatedgradesonly, $displaytype, $decimalpoints, $onlyactive);
-$export->print_grades();
+// If the gradepublishing is enabled and user key is selected print the grade publishing link.
+if (!empty($CFG->gradepublishing) && !empty($key)) {
+    groups_print_course_menu($course, 'index.php?id='.$id);
+    echo $export->get_grade_publishing_url();
+    echo $OUTPUT->footer();
+} else {
+    $export->print_grades();
+}
 
 

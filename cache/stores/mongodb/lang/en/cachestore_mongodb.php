@@ -28,13 +28,15 @@ $string['extendedmode'] = 'Use extended keys';
 $string['extendedmode_help'] = 'If enabled full key sets will be used when working with the plugin. This isn\'t used internally yet but would allow you to easily search and investigate the MongoDB plugin manually if you so choose. Turning this on will add an small overhead so should only be done if you require it.';
 $string['password'] = 'Password';
 $string['password_help'] = 'The password of the user being used for the connection.';
+$string['pleaseupgrademongo'] = 'You are using an old version of the PHP Mongo extension (< 1.3). Support for old versions of the Mongo extension will be dropped in the future. Please consider upgrading.';
 $string['pluginname'] = 'MongoDB';
 $string['replicaset'] = 'Replica set';
 $string['replicaset_help'] = 'The name of the replica set to connect to. If this is given the master will be determined by using the ismaster database command on the seeds, so the driver may end up connecting to a server that was not even listed.';
 $string['server'] = 'Server';
 $string['server_help'] = 'This is the connection string for the server you want to use. Multiple servers can be specified using a comma-separated list.';
 $string['testserver'] = 'Test server';
-$string['testserver_desc'] = 'This is the connection string for the test server you want to use. Test servers are entirely optional, by specifiying a test server you can run PHPunit tests for this store and can run the performance tests.';
+$string['testserver_desc'] = 'The connection string for a server to use for testing. If a test server has been specified then MongoDB performance can be tested using the cache performance page in the administration block.
+As an example: mongodb://127.0.0.1:27017';
 $string['username'] = 'Username';
 $string['username_help'] = 'The username to use when making a connection.';
 $string['usesafe'] = 'Use safe';

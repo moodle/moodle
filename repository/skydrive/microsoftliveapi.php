@@ -77,7 +77,7 @@ class microsoft_skydrive extends oauth2_client {
      * @return string the auth url
      */
     protected function auth_url() {
-        return 'https://oauth.live.com/authorize';
+        return 'https://login.live.com/oauth20_authorize.srf';
     }
 
     /**
@@ -85,7 +85,7 @@ class microsoft_skydrive extends oauth2_client {
      * @return string the auth url
      */
     protected function token_url() {
-        return 'https://oauth.live.com/token';
+        return 'https://login.live.com/oauth20_token.srf';
     }
 
     /**

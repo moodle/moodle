@@ -120,8 +120,6 @@ switch ($action) {
             } else {
                 $json_object->gradevalue = $finalvalue;
 
-                $old_grade_grade = new grade_grade(array('userid' => $userid, 'itemid' => $grade_item->id), true);
-
                 if ($grade_item->update_final_grade($userid, $finalgrade, 'gradebook', $feedback, FORMAT_MOODLE)) {
                     $json_object->result = 'success';
                     $json_object->message = false;
@@ -130,14 +128,6 @@ switch ($action) {
                     $json_object->message = "TO BE LOCALISED: Failure to update final grade!";
                     echo json_encode($json_object);
                     die();
-                }
-
-                $grade_grade = new grade_grade(array('userid' => $userid, 'itemid' => $grade_item->id), true);
-                if ($old_grade_grade->finalgrade != $grade_grade->finalgrade
-                    or empty($old_grade_grade->overridden) != empty($grade_grade->overridden)
-                ) {
-                    $grade_grade->load_grade_item();
-                    \core\event\user_graded::create_from_grade($grade_grade)->trigger();
                 }
 
                 // Get row data

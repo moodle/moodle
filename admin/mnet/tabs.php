@@ -34,21 +34,12 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 $strmnetservices   = get_string('mnetservices', 'mnet');
-$strmnetlog        = get_string('mnetlog', 'mnet');
 $strmnetedithost   = get_string('reviewhostdetails', 'mnet');
 
-$logurl = $CFG->wwwroot.
-          '/report/log/index.php?chooselog=1&amp;showusers=1&amp;showcourses=1&amp;host_course='.$mnet_peer->id.
-          '%2F1&amp;user='.'0'.
-          '&amp;date=0'.
-          '&amp;modid=&amp;modaction=0&amp;logformat=showashtml';
 $tabs = array();
 if (isset($mnet_peer->id) && $mnet_peer->id > 0) {
     $tabs[] = new tabobject('mnetdetails', 'peers.php?step=update&amp;hostid='.$mnet_peer->id, $strmnetedithost, $strmnetedithost, false);
     $tabs[] = new tabobject('mnetservices', 'services.php?hostid='.$mnet_peer->id, $strmnetservices, $strmnetservices, false);
-    if ($mnet_peer->application->name == 'moodle' && $mnet_peer->id != $CFG->mnet_all_hosts_id) {
-        $tabs[] = new tabobject('mnetlog', $logurl, $strmnetlog, $strmnetlog, false);
-    }
     $tabs[] = new tabobject('mnetprofilefields', 'profilefields.php?hostid=' . $mnet_peer->id, get_string('profilefields', 'mnet'), get_string('profilefields', 'mnet'), false);
 } else {
     $tabs[] = new tabobject('mnetdetails', '#', $strmnetedithost, $strmnetedithost, false);

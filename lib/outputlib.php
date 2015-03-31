@@ -269,7 +269,7 @@ class theme_config {
     public $rarrow = null;
 
     /**
-     * @var string Accessibility: Right arrow-like character is
+     * @var string Accessibility: Left arrow-like character is
      * used in the breadcrumb trail, course navigation menu
      * (previous/next activity), calendar, and search forum block.
      * If the theme does not set characters, appropriate defaults
@@ -277,6 +277,15 @@ class theme_config {
      * use &lt; &gt; &raquo; - these are confusing for blind users.
      */
     public $larrow = null;
+
+    /**
+     * @var string Accessibility: Up arrow-like character is used in
+     * the book heirarchical navigation.
+     * If the theme does not set characters, appropriate defaults
+     * are set automatically. Please DO NOT
+     * use ^ - this is confusing for blind users.
+     */
+    public $uarrow = null;
 
     /**
      * @var bool Some themes may want to disable ajax course editing.
@@ -381,6 +390,13 @@ class theme_config {
     public $lessvariablescallback = null;
 
     /**
+     * Sets the render method that should be used for rendering custom block regions by scripts such as my/index.php
+     * Defaults to {@link core_renderer::blocks_for_region()}
+     * @var string
+     */
+    public $blockrendermethod = null;
+
+    /**
      * Load the config.php file for a particular theme, and return an instance
      * of this class. (That is, this is a factory method.)
      *
@@ -445,10 +461,13 @@ class theme_config {
             $baseconfig = $config;
         }
 
-        $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'javascripts', 'javascripts_footer',
-                              'parents_exclude_javascripts', 'layouts', 'enable_dock', 'enablecourseajax', 'supportscssoptimisation',
-                              'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'hidefromselector', 'doctype',
-                              'yuicssmodules', 'blockrtlmanipulations', 'lessfile', 'extralesscallback', 'lessvariablescallback');
+        $configurable = array(
+            'parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets',
+            'javascripts', 'javascripts_footer', 'parents_exclude_javascripts',
+            'layouts', 'enable_dock', 'enablecourseajax', 'supportscssoptimisation',
+            'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'uarrow',
+            'hidefromselector', 'doctype', 'yuicssmodules', 'blockrtlmanipulations',
+            'lessfile', 'extralesscallback', 'lessvariablescallback', 'blockrendermethod');
 
         foreach ($config as $key=>$value) {
             if (in_array($key, $configurable)) {
@@ -525,7 +544,7 @@ class theme_config {
     }
 
     /**
-     * Checks if arrows $THEME->rarrow, $THEME->larrow have been set (theme/-/config.php).
+     * Checks if arrows $THEME->rarrow, $THEME->larrow, $THEME->uarrow have been set (theme/-/config.php).
      * If not it applies sensible defaults.
      *
      * Accessibility: right and left arrow Unicode characters for breadcrumb, calendar,
@@ -538,6 +557,7 @@ class theme_config {
             // Also OK in Win 9x/2K/IE 5.x
             $this->rarrow = '&#x25BA;';
             $this->larrow = '&#x25C4;';
+            $this->uarrow = '&#x25B2;';
             if (empty($_SERVER['HTTP_USER_AGENT'])) {
                 $uagent = '';
             } else {
@@ -556,6 +576,7 @@ class theme_config {
                 // So we use the same ones Konqueror uses.
                 $this->rarrow = '&rarr;';
                 $this->larrow = '&larr;';
+                $this->uarrow = '&uarr;';
             }
             elseif (isset($_SERVER['HTTP_ACCEPT_CHARSET'])
                 && false === stripos($_SERVER['HTTP_ACCEPT_CHARSET'], 'utf-8')) {
@@ -563,6 +584,7 @@ class theme_config {
                 // To be safe, non-Unicode browsers!
                 $this->rarrow = '&gt;';
                 $this->larrow = '&lt;';
+                $this->uarrow = '^';
             }
 
             // RTL support - in RTL languages, swap r and l arrows
@@ -670,10 +692,10 @@ class theme_config {
         $urls = array();
 
         $svg = $this->use_svg_icons();
+        $separate = (core_useragent::is_ie() && !core_useragent::check_ie_version('10'));
 
         if ($rev > -1) {
             $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
-            $separate = (core_useragent::is_ie() && !core_useragent::check_ie_version('10'));
             if (!empty($CFG->slasharguments)) {
                 $slashargs = '';
                 if (!$svg) {
@@ -709,6 +731,10 @@ class theme_config {
                 // We do this because all modern browsers support SVG and this param will one day be removed.
                 $baseurl->param('svg', '0');
             }
+            if ($separate) {
+                // We might need to chunk long files.
+                $baseurl->param('chunk', '0');
+            }
             if (core_useragent::is_ie()) {
                 // Lalala, IE does not allow more than 31 linked CSS files from main document.
                 $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'plugins'));
@@ -718,7 +744,7 @@ class theme_config {
                 }
                 if (!empty($this->lessfile)) {
                     // No need to define the type as IE here.
-                    $urls[] = new moodle_url($baseurl, array('theme' => $this->name, 'type' => 'less', 'chunk' => 0));
+                    $urls[] = new moodle_url($baseurl, array('theme' => $this->name, 'type' => 'less'));
                 }
                 $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'theme'));
 
@@ -845,6 +871,13 @@ class theme_config {
                 }
             } else if ($subtype === 'theme') {
                 $cssfiles = $css['theme'];
+                foreach ($cssfiles as $key => $value) {
+                    if ($this->lessfile && $key === $this->lessfile) {
+                        // Remove the LESS file from the theme CSS files.
+                        // The LESS files use the type 'less', not 'ie'.
+                        unset($cssfiles[$key]);
+                    }
+                }
             }
 
         } else if ($type === 'plugin') {
@@ -1456,6 +1489,10 @@ class theme_config {
             $lifetime = 0;
         } else {
             $lifetime = 60*60*24*60;
+            // By default, theme files must be cache-able by both browsers and proxies.
+            if (!array_key_exists('cacheability', $options)) {
+                $options['cacheability'] = 'public';
+            }
         }
 
         $fs = get_file_storage();
@@ -1844,7 +1881,7 @@ class theme_config {
     public function setup_blocks($pagelayout, $blockmanager) {
         $layoutinfo = $this->layout_info_for_page($pagelayout);
         if (!empty($layoutinfo['regions'])) {
-            $blockmanager->add_regions($layoutinfo['regions']);
+            $blockmanager->add_regions($layoutinfo['regions'], false);
             $blockmanager->set_default_region($layoutinfo['defaultregion']);
         }
     }
@@ -1898,6 +1935,32 @@ class theme_config {
      */
     public function get_theme_name() {
         return get_string('pluginname', 'theme_'.$this->name);
+    }
+
+    /**
+     * Returns the block render method.
+     *
+     * It is set by the theme via:
+     *     $THEME->blockrendermethod = '...';
+     *
+     * It can be one of two values, blocks or blocks_for_region.
+     * It should be set to the method being used by the theme layouts.
+     *
+     * @return string
+     */
+    public function get_block_render_method() {
+        if ($this->blockrendermethod) {
+            // Return the specified block render method.
+            return $this->blockrendermethod;
+        }
+        // Its not explicitly set, check the parent theme configs.
+        foreach ($this->parent_configs as $config) {
+            if (isset($config->blockrendermethod)) {
+                return $config->blockrendermethod;
+            }
+        }
+        // Default it to blocks.
+        return 'blocks';
     }
 }
 

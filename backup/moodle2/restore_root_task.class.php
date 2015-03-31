@@ -195,7 +195,7 @@ class restore_root_task extends restore_task {
         $activities->add_dependency($badges);
         $users->add_dependency($badges);
 
-        // Define Calendar events (dependent of users)
+        // Define Calendar events.
         $defaultvalue = false;                      // Safer default
         $changeable = false;
         if (isset($rootsettings['calendarevents']) && $rootsettings['calendarevents']) { // Only enabled when available
@@ -206,7 +206,6 @@ class restore_root_task extends restore_task {
         $events->set_ui(new backup_setting_ui_checkbox($events, get_string('rootsettingcalendarevents', 'backup')));
         $events->get_ui()->set_changeable($changeable);
         $this->add_setting($events);
-        $users->add_dependency($events);
 
         // Define completion (dependent of users)
         $defaultvalue = false;                      // Safer default
@@ -246,5 +245,26 @@ class restore_root_task extends restore_task {
         $gradehistories->get_ui()->set_changeable($changeable);
         $this->add_setting($gradehistories);
         $users->add_dependency($gradehistories);
+
+        // The restore does not process the grade histories when some activities are ignored.
+        // So let's define a dependency to prevent false expectations from our users.
+        $activities->add_dependency($gradehistories);
+
+        // Define groups and groupings.
+        $defaultvalue = false;
+        $changeable = false;
+        if (isset($rootsettings['groups']) && $rootsettings['groups']) { // Only enabled when available.
+            $defaultvalue = true;
+            $changeable = true;
+        } else if (!isset($rootsettings['groups'])) {
+            // It is likely this is an older backup that does not contain information on the group setting,
+            // in which case groups should be restored and this setting can be changed.
+            $defaultvalue = true;
+            $changeable = true;
+        }
+        $groups = new restore_groups_setting('groups', base_setting::IS_BOOLEAN, $defaultvalue);
+        $groups->set_ui(new backup_setting_ui_checkbox($groups, get_string('rootsettinggroups', 'backup')));
+        $groups->get_ui()->set_changeable($changeable);
+        $this->add_setting($groups);
     }
 }

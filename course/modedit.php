@@ -28,7 +28,6 @@ require_once("lib.php");
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->libdir.'/completionlib.php');
-require_once($CFG->libdir.'/conditionlib.php');
 require_once($CFG->libdir.'/plagiarismlib.php');
 require_once($CFG->dirroot . '/course/modlib.php');
 
@@ -73,7 +72,6 @@ if (!empty($add)) {
     $data->modulename       = $module->name;
     $data->groupmode        = $course->groupmode;
     $data->groupingid       = $course->defaultgroupingid;
-    $data->groupmembersonly = 0;
     $data->id               = '';
     $data->instance         = '';
     $data->coursemodule     = '';
@@ -146,7 +144,6 @@ if (!empty($add)) {
     $data->cmidnumber         = $cm->idnumber;          // The cm IDnumber
     $data->groupmode          = groups_get_activity_groupmode($cm); // locked later if forced
     $data->groupingid         = $cm->groupingid;
-    $data->groupmembersonly   = $cm->groupmembersonly;
     $data->course             = $course->id;
     $data->module             = $module->id;
     $data->modulename         = $module->name;
@@ -160,9 +157,7 @@ if (!empty($add)) {
     $data->completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
     $data->showdescription    = $cm->showdescription;
     if (!empty($CFG->enableavailability)) {
-        $data->availablefrom      = $cm->availablefrom;
-        $data->availableuntil     = $cm->availableuntil;
-        $data->showavailability   = $cm->showavailability;
+        $data->availabilityconditionsjson = $cm->availability;
     }
 
     if (plugin_supports('mod', $data->modulename, FEATURE_MOD_INTRO, true)) {
@@ -194,6 +189,10 @@ if (!empty($add)) {
                                              'iteminstance'=>$data->instance, 'courseid'=>$course->id))) {
         // add existing outcomes
         foreach ($items as $item) {
+            if (!empty($item->gradepass)) {
+                $decimalpoints = $item->get_decimals();
+                $data->gradepass = format_float($item->gradepass, $decimalpoints);
+            }
             if (!empty($item->outcomeid)) {
                 $data->{'outcome_'.$item->outcomeid} = 1;
             }

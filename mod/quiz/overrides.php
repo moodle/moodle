@@ -32,13 +32,8 @@ require_once($CFG->dirroot.'/mod/quiz/override_form.php');
 $cmid = required_param('cmid', PARAM_INT);
 $mode = optional_param('mode', '', PARAM_ALPHA); // One of 'user' or 'group', default is 'group'.
 
-if (! $cm = get_coursemodule_from_id('quiz', $cmid)) {
-    print_error('invalidcoursemodule');
-}
-if (! $quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
-    print_error('invalidcoursemodule');
-}
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'quiz');
+$quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
 
 // Get the course groups.
 $groups = groups_get_all_groups($cm->course);
@@ -138,9 +133,8 @@ foreach ($overrides as $override) {
         if (!has_capability('mod/quiz:attempt', $context, $override->userid)) {
             // User not allowed to take the quiz.
             $active = false;
-        } else if (!empty($CFG->enablegroupmembersonly) && $cm->groupmembersonly &&
-                !groups_has_membership($cm, $override->userid)) {
-            // User does not belong to the current grouping.
+        } else if (!\core_availability\info_module::is_user_visible($cm, $override->userid)) {
+            // User cannot access the module.
             $active = false;
         }
     }
@@ -267,17 +261,9 @@ if ($groupmode) {
 } else {
     $users = array();
     // See if there are any students in the quiz.
-    if (!empty($CFG->enablegroupmembersonly) && $cm->groupmembersonly) {
-        // Restrict to grouping.
-        $limitgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid);
-        if (!empty($limitgroups)) {
-            $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id',
-                    '', '', 1, array_keys($limitgroups)); // Limit to one user for speed.
-        }
-    } else {
-        // Limit to one user for speed.
-        $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id');
-    }
+    $users = get_users_by_capability($context, 'mod/quiz:attempt', 'u.id');
+    $info = new \core_availability\info_module($cm);
+    $users = $info->filter_user_list($users);
 
     if (empty($users)) {
         // There are no students.
@@ -286,7 +272,7 @@ if ($groupmode) {
     }
     echo $OUTPUT->single_button($overrideediturl->out(true,
             array('action' => 'adduser', 'cmid' => $cm->id)),
-            get_string('addnewuseroverride', 'quiz'), 'post', $options);
+            get_string('addnewuseroverride', 'quiz'), 'get', $options);
 }
 echo html_writer::end_tag('div');
 echo html_writer::end_tag('div');

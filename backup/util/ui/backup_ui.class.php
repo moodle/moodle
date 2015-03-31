@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * This file contains the backup user interface class
  *
- * @package   moodlecore
+ * @package   core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,20 +25,41 @@
 /**
  * This is the backup user interface class
  *
- * The backup user interface class manages the user interface and backup for
- * Moodle.
+ * The backup user interface class manages the user interface and backup for Moodle.
  *
+ * @package core_backup
  * @copyright 2010 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_ui extends base_ui {
     /**
      * The stages of the backup user interface.
+     * The initial stage of the backup - settings are here.
      */
     const STAGE_INITIAL = 1;
+
+    /**
+     * The stages of the backup user interface.
+     * The schema stage of the backup - here you choose the bits you include.
+     */
     const STAGE_SCHEMA = 2;
+
+    /**
+     * The stages of the backup user interface.
+     * The confirmation stage of the backup.
+     */
     const STAGE_CONFIRMATION = 4;
+
+    /**
+     * The stages of the backup user interface.
+     * The final stage of the backup - where it is being processed.
+     */
     const STAGE_FINAL = 8;
+
+    /**
+     * The stages of the backup user interface.
+     * The backup is now complete.
+     */
     const STAGE_COMPLETE = 16;
 
     /**
@@ -52,10 +72,11 @@ class backup_ui extends base_ui {
      * Intialises what ever stage is requested. If none are requested we check
      * params for 'stage' and default to initial
      *
-     * @param int|null $stage The desired stage to intialise or null for the default
+     * @param int $stage The desired stage to intialise or null for the default
+     * @param array $params
      * @return backup_ui_stage_initial|backup_ui_stage_schema|backup_ui_stage_confirmation|backup_ui_stage_final
      */
-    protected function initialise_stage($stage = null, array $params=null) {
+    protected function initialise_stage($stage = null, array $params = null) {
         if ($stage == null) {
             $stage = optional_param('stage', self::STAGE_INITIAL, PARAM_INT);
         }
@@ -81,6 +102,7 @@ class backup_ui extends base_ui {
         }
         return $stage;
     }
+
     /**
      * Returns the backup id
      * @return string
@@ -88,6 +110,7 @@ class backup_ui extends base_ui {
     public function get_uniqueid() {
         return $this->get_backupid();
     }
+
     /**
      * Gets the backup id from the controller
      * @return string
@@ -95,8 +118,10 @@ class backup_ui extends base_ui {
     public function get_backupid() {
         return $this->controller->get_backupid();
     }
+
     /**
      * Executes the backup plan
+     * @throws backup_ui_exception when the steps are wrong.
      * @return bool
      */
     public function execute() {
@@ -112,16 +137,18 @@ class backup_ui extends base_ui {
         $this->stage = new backup_ui_stage_complete($this, $this->stage->get_params(), $this->controller->get_results());
         return true;
     }
+
     /**
      * Loads the backup controller if we are tracking one
+     * @param string $backupid
      * @return backup_controller|false
      */
-    final public static function load_controller($backupid=false) {
-        // Get the backup id optional param
+    final public static function load_controller($backupid = false) {
+        // Get the backup id optional param.
         if ($backupid) {
             try {
                 // Try to load the controller with it.
-                // If it fails at this point it is likely because this is the first load
+                // If it fails at this point it is likely because this is the first load.
                 $controller = backup_controller::load_controller($backupid);
                 return $controller;
             } catch (Exception $e) {
@@ -143,24 +170,24 @@ class backup_ui extends base_ui {
         $items = array();
         while ($stage > 0) {
             $classes = array('backup_stage');
-            if (floor($stage/2) == $currentstage) {
+            if (floor($stage / 2) == $currentstage) {
                 $classes[] = 'backup_stage_next';
             } else if ($stage == $currentstage) {
                 $classes[] = 'backup_stage_current';
             } else if ($stage < $currentstage) {
                 $classes[] = 'backup_stage_complete';
             }
-            $item = array('text' => strlen(decbin($stage)).'. '.get_string('currentstage'.$stage, 'backup'),'class' => join(' ', $classes));
-            if ($stage < $currentstage && $currentstage < self::STAGE_COMPLETE && (!self::$skipcurrentstage || ($stage*2) != $currentstage)) {
+            $item = array('text' => strlen(decbin($stage)).'. '.get_string('currentstage'.$stage, 'backup'), 'class' => join(' ', $classes));
+            if ($stage < $currentstage && $currentstage < self::STAGE_COMPLETE && (!self::$skipcurrentstage || ($stage * 2) != $currentstage)) {
                 $params = $this->stage->get_params();
                 if (empty($params)) {
                     $params = array();
                 }
-                $params = array_merge($params, array('backup'=>$this->get_backupid(), 'stage'=>$stage));
+                $params = array_merge($params, array('backup' => $this->get_backupid(), 'stage' => $stage));
                 $item['link'] = new moodle_url($PAGE->url, $params);
             }
             array_unshift($items, $item);
-            $stage = floor($stage/2);
+            $stage = floor($stage / 2);
         }
         return $items;
     }
@@ -181,13 +208,18 @@ class backup_ui extends base_ui {
     /**
      * If called with default arg the current stage gets skipped.
      * @static
+     * @param bool $setting Set to true (default) if you want to skip this stage, false otherwise.
      */
-    public static function skip_current_stage($setting=true) {
+    public static function skip_current_stage($setting = true) {
         self::$skipcurrentstage = $setting;
     }
 }
 
 /**
  * Backup user interface exception. Modelled off the backup_exception class
+ *
+ * @package   core_backup
+ * @copyright 2010 Sam Hemelryk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_ui_exception extends base_ui_exception {}

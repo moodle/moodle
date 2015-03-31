@@ -189,6 +189,7 @@ if (is_null($assessment->grade) and !$assessmenteditable) {
         if (count((array)$coredata) > 1 ) {
             $DB->update_record('workshop_assessments', $coredata);
             $params = array(
+                'relateduserid' => $submission->authorid,
                 'objectid' => $assessment->id,
                 'context' => $workshop->context,
                 'other' => array(

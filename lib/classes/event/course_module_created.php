@@ -17,14 +17,6 @@
 /**
  * Event to be triggered when a new course module is created.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type string modulename name of module created.
- *      @type string name title of module.
- *      @type string instanceid id of module instance.
- * }
- *
  * @package    core
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
@@ -38,7 +30,16 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Class for event to be triggered when a new course module is created.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - string modulename: name of module created.
+ *      - string name: title of module.
+ *      - string instanceid: id of module instance.
+ * }
+ *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
@@ -51,6 +52,35 @@ class course_module_created extends base {
         $this->data['objecttable'] = 'course_modules';
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
+    }
+
+    /**
+     * Api to Create new event from course module.
+     *
+     * @since Moodle 2.6.4, 2.7.1
+     * @param \cm_info|\stdClass $cm course module instance, as returned by {@link get_coursemodule_from_id}
+     *                               or {@link get_coursemodule_from_instance}.
+     * @param \context_module $modcontext module context instance
+     *
+     * @return \core\event\base returns instance of new event
+     */
+    public static final function create_from_cm($cm, $modcontext = null) {
+        // If not set, get the module context.
+        if (empty($modcontext)) {
+            $modcontext = \context_module::instance($cm->id);
+        }
+
+        // Create event object for course module update action.
+        $event = static::create(array(
+            'context'  => $modcontext,
+            'objectid' => $cm->id,
+            'other'    => array(
+                'modulename' => $cm->modname,
+                'instanceid' => $cm->instance,
+                'name'       => $cm->name,
+            )
+        ));
+        return $event;
     }
 
     /**
@@ -68,8 +98,8 @@ class course_module_created extends base {
      * @return string
      */
     public function get_description() {
-        return 'The '. $this->other['modulename'] . ' module with instance id ' . $this->other['instanceid'] .
-                ' was created by user with id ' . $this->userid;
+        return "The user with id '$this->userid' created the '{$this->other['modulename']}' activity with " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -110,25 +140,29 @@ class course_module_created extends base {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        return array ($this->courseid, "course", "add mod", "../mod/" . $this->other['modulename'] . "/view.php?id=" .
+        $log1 = array($this->courseid, "course", "add mod", "../mod/" . $this->other['modulename'] . "/view.php?id=" .
                 $this->objectid, $this->other['modulename'] . " " . $this->other['instanceid']);
+        $log2 = array($this->courseid, $this->other['modulename'], "add",
+            "view.php?id={$this->objectid}",
+                "{$this->other['instanceid']}", $this->objectid);
+        return array($log1, $log2);
     }
 
     /**
-     * custom validations
+     * Custom validation.
      *
-     * Throw \coding_exception notice in case of any problems.
+     * @throw \coding_exception
      */
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['modulename'])) {
-            throw new \coding_exception("Field other['modulename'] cannot be empty");
+            throw new \coding_exception('The \'modulename\' value must be set in other.');
         }
         if (!isset($this->other['instanceid'])) {
-            throw new \coding_exception("Field other['instanceid'] cannot be empty");
+            throw new \coding_exception('The \'instanceid\' value must be set in other.');
         }
         if (!isset($this->other['name'])) {
-            throw new \coding_exception("Field other['name'] cannot be empty");
+            throw new \coding_exception('The \'name\' value must be set in other.');
         }
     }
 }

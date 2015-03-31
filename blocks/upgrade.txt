@@ -1,6 +1,23 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 2.9 ===
+
+* The obsolete method preferred_width() was removed (it was not doing anything)
+* Deprecated block_base::config_save as is not called anywhere and should not be used.
+
+=== 2.8 ===
+
+* The instance_config_print() function was removed. It was deprecated in
+  Moodle 2.0, but without debugging notices. Since it was no longer a part
+  of the code path, debugging notices would not have been displayed.
+* Deprecated functions were removed from the block_base class:
+** _print_block()
+** _print_shadow()
+** _title_html()
+** _add_edit_controls()
+** config_print()
+
 === 2.6 ===
 
 * Deprecated /admin/block.php was removed, make sure blocks are using settings.php instead.

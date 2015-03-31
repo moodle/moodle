@@ -1,4 +1,4 @@
-Description of Typo3 libraries (v 4.7.15) import into Moodle
+Description of Typo3 libraries (v 4.7.19) import into Moodle
 
 Changes:
 1/ hacked relative include of class.t3lib_utility_debug.php

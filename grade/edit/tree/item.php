@@ -37,6 +37,8 @@ if ($id !== 0) {
 }
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
+navigation_node::override_active_url(new moodle_url('/grade/edit/tree/index.php',
+    array('id'=>$courseid)));
 
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
@@ -97,6 +99,9 @@ if ($parent_category->aggregation == GRADE_AGGREGATE_SUM or $parent_category->ag
 } else {
     $item->aggregationcoef = format_float($item->aggregationcoef, 4);
 }
+if ($parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+    $item->aggregationcoef2 = format_float($item->aggregationcoef2 * 100.0);
+}
 $item->cancontrolvisibility = $grade_item->can_control_visibility();
 
 $mform = new edit_item_form(null, array('current'=>$item, 'gpr'=>$gpr));
@@ -132,11 +137,14 @@ if ($mform->is_cancelled()) {
     unset($data->locked);
     unset($data->locktime);
 
-    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef');
+    $convert = array('grademax', 'grademin', 'gradepass', 'multfactor', 'plusfactor', 'aggregationcoef', 'aggregationcoef2');
     foreach ($convert as $param) {
         if (property_exists($data, $param)) {
             $data->$param = unformat_float($data->$param);
         }
+    }
+    if (isset($data->aggregationcoef2) && $parent_category->aggregation == GRADE_AGGREGATE_SUM) {
+        $data->aggregationcoef2 = $data->aggregationcoef2 / 100.0;
     }
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));
@@ -174,10 +182,8 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
 
-$return = false;
-$buttons = false;
-$shownavigation = false;
-print_grade_page_head($courseid, 'edittree', null, $heading, $return, $buttons, $shownavigation);
+$PAGE->navbar->add($heading);
+print_grade_page_head($courseid, 'settings', null, $heading, false, false, false);
 
 $mform->display();
 

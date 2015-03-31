@@ -177,12 +177,12 @@ class tool_behat_renderer extends plugin_renderer_base {
 
         // List of steps.
         $html .= $this->output->box_start();
-        $html .= html_writer::tag('h1', get_string('infoheading', 'tool_behat'));
+        $html .= html_writer::tag('h3', get_string('infoheading', 'tool_behat'));
         $html .= html_writer::tag('div', get_string('aim', 'tool_behat'));
-        $html .= html_writer::empty_tag('div');
-        $html .= html_writer::empty_tag('ul');
-        $html .= html_writer::empty_tag('li');
-        $html .= implode(html_writer::end_tag('li') . html_writer::empty_tag('li'), $infos);
+        $html .= html_writer::start_tag('div');
+        $html .= html_writer::start_tag('ul');
+        $html .= html_writer::start_tag('li');
+        $html .= implode(html_writer::end_tag('li') . html_writer::start_tag('li'), $infos);
         $html .= html_writer::end_tag('li');
         $html .= html_writer::end_tag('ul');
         $html .= html_writer::end_tag('div');

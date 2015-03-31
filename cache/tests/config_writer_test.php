@@ -47,7 +47,7 @@ class core_cache_config_writer_testcase extends advanced_testcase {
     public function setUp() {
         parent::setUp();
         cache_factory::reset();
-        cache_config_phpunittest::create_default_configuration();
+        cache_config_testing::create_default_configuration();
     }
 
     /**
@@ -261,7 +261,7 @@ class core_cache_config_writer_testcase extends advanced_testcase {
      * Test setting some definition mappings.
      */
     public function test_set_definition_mappings() {
-        $config = cache_config_phpunittest::instance(true);
+        $config = cache_config_testing::instance(true);
         $config->phpunit_add_definition('phpunit/testdefinition', array(
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',

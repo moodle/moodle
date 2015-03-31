@@ -93,6 +93,10 @@ foreach($authsequence as $authname) {
 /// Define variables used in page
 $site = get_site();
 
+// Ignore any active pages in the navigation/settings.
+// We do this because there won't be an active page there, and by ignoring the active pages the
+// navigation and settings won't be initialised unless something else needs them.
+$PAGE->navbar->ignore_active();
 $loginsite = get_string("loginsite");
 $PAGE->navbar->add($loginsite);
 
@@ -137,7 +141,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         $frm = false;
     } else {
         if (empty($errormsg)) {
-            $user = authenticate_user_login($frm->username, $frm->password);
+            $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode);
         }
     }
 
@@ -179,6 +183,8 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
 
     /// Let's get them all set up.
         complete_user_login($user);
+
+        \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
 
         // sets the username cookie
         if (!empty($CFG->nolastloggedin)) {
@@ -233,8 +239,12 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
 
     } else {
         if (empty($errormsg)) {
-            $errormsg = get_string("invalidlogin");
-            $errorcode = 3;
+            if ($errorcode == AUTH_LOGIN_UNAUTHORISED) {
+                $errormsg = get_string("unauthorisedlogin", "", $frm->username);
+            } else {
+                $errormsg = get_string("invalidlogin");
+                $errorcode = 3;
+            }
         }
     }
 }

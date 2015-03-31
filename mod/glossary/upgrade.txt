@@ -1,0 +1,10 @@
+This files describes API changes in /mod/glossary/*,
+information provided here is intended especially for developers.
+
+=== 2.8 ===
+* The glossary_print_entry_attachment function no longer takes an `align`
+  or `insidetable` property. Instead the attachments are printed within a
+  div whose class is `attachments` and which can be targetted using
+  appropriate CSS rules.
+* The glossary_print_entry_attachment function now displays the attachments
+  on the left by default.

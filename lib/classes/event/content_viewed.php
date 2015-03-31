@@ -36,7 +36,14 @@ debugging('core\event\content_viewed has been deprecated. Please extend base eve
  *
  * This class has been deprecated, please extend base event or other relevent abstract class.
  *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - string content: name of the content viewed.
+ * }
+ *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Ankit Agarwal
  * @deprecated since Moodle 2.7
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -85,7 +92,7 @@ abstract class content_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed content';
+        return "The user with id '$this->userid' viewed content.";
     }
 
     /**
@@ -116,7 +123,7 @@ abstract class content_viewed extends base {
         parent::validate_data();
         // Make sure this class is never used without a content identifier.
         if (empty($this->other['content'])) {
-            throw new \coding_exception('content_viewed event must define content identifier.');
+            throw new \coding_exception('The \'content\' value must be set in other.');
         }
     }
 }

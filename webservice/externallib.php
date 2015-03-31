@@ -76,8 +76,9 @@ class core_webservice_external extends external_api {
         $params = self::validate_parameters(self::get_site_info_parameters(),
                       array('serviceshortnames'=>$serviceshortnames));
 
+        $context = context_user::instance($USER->id);
         $profileimageurl = moodle_url::make_pluginfile_url(
-                context_user::instance($USER->id)->id, 'user', 'icon', null, '/', 'f1');
+                $context->id, 'user', 'icon', null, '/', 'f1');
 
         // Site information.
         $siteinfo =  array(
@@ -160,6 +161,35 @@ class core_webservice_external extends external_api {
         // Mobile CSS theme and alternative login url.
         $siteinfo['mobilecssurl'] = $CFG->mobilecssurl;
 
+        // Retrieve some advanced features. Only enable/disable ones (bool).
+        $advancedfeatures = array("usecomments", "usetags", "enablenotes", "messaging", "enableblogs",
+                                    "enablecompletion", "enablebadges");
+        foreach ($advancedfeatures as $feature) {
+            if (isset($CFG->{$feature})) {
+                $siteinfo['advancedfeatures'][] = array(
+                    'name' => $feature,
+                    'value' => (int) $CFG->{$feature}
+                );
+            }
+        }
+        // Special case mnet_dispatcher_mode.
+        $siteinfo['advancedfeatures'][] = array(
+            'name' => 'mnet_dispatcher_mode',
+            'value' => ($CFG->mnet_dispatcher_mode == 'strict') ? 1 : 0
+        );
+
+        // User can manage own files.
+        $siteinfo['usercanmanageownfiles'] = has_capability('moodle/user:manageownfiles', $context);
+
+        // User quota. 0 means user can ignore the quota.
+        $siteinfo['userquota'] = 0;
+        if (!has_capability('moodle/user:ignoreuserquota', $context)) {
+            $siteinfo['userquota'] = $CFG->userquota;
+        }
+
+        // User max upload file size. -1 means the user can ignore the upload file size.
+        $siteinfo['usermaxuploadfilesize'] = get_user_max_upload_file_size($context, $CFG->maxbytes);
+
         return $siteinfo;
     }
 
@@ -200,7 +230,25 @@ class core_webservice_external extends external_api {
                                                        VALUE_OPTIONAL),
                 'release'  => new external_value(PARAM_TEXT, 'Moodle release number', VALUE_OPTIONAL),
                 'version'  => new external_value(PARAM_TEXT, 'Moodle version number', VALUE_OPTIONAL),
-                'mobilecssurl'  => new external_value(PARAM_URL, 'Mobile custom CSS theme', VALUE_OPTIONAL)
+                'mobilecssurl'  => new external_value(PARAM_URL, 'Mobile custom CSS theme', VALUE_OPTIONAL),
+                'advancedfeatures' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name'  => new external_value(PARAM_ALPHANUMEXT, 'feature name'),
+                            'value' => new external_value(PARAM_INT, 'feature value. Usually 1 means enabled.')
+                        ),
+                        'Advanced features availability'
+                    ),
+                    'Advanced features availability',
+                    VALUE_OPTIONAL
+                ),
+                'usercanmanageownfiles' => new external_value(PARAM_BOOL,
+                                            'true if the user can manage his own files', VALUE_OPTIONAL),
+                'userquota' => new external_value(PARAM_INT,
+                                    'user quota (bytes). 0 means user can ignore the quota', VALUE_OPTIONAL),
+                'usermaxuploadfilesize' => new external_value(PARAM_INT,
+                                            'user max upload file size (bytes). -1 means the user can ignore the upload file size',
+                                            VALUE_OPTIONAL)
             )
         );
     }
@@ -256,5 +304,14 @@ class moodle_webservice_external extends external_api {
      */
     public static function get_siteinfo_returns() {
         return core_webservice_external::get_site_info_returns();
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_siteinfo_is_deprecated() {
+        return true;
     }
 }

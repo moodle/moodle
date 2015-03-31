@@ -1,0 +1,10 @@
+{
+    "name": "moodle-report_eventlist-eventfilter",
+    "builds": {
+        "moodle-report_eventlist-eventfilter": {
+            "jsfiles": [
+                "eventfilter.js"
+            ]
+        }
+    }
+}

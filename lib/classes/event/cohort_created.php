@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * Cohort created event class.
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -51,7 +52,7 @@ class cohort_created extends base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_cohort_created', 'core_cohort');
+        return get_string('eventcohortcreated', 'core_cohort');
     }
 
     /**
@@ -60,7 +61,7 @@ class cohort_created extends base {
      * @return string
      */
     public function get_description() {
-        return 'Cohort '.$this->objectid.' was created by '.$this->userid.' at context '.$this->contextid;
+        return "The user with id '$this->userid' created the cohort with id '$this->objectid'.";
     }
 
     /**
@@ -84,7 +85,7 @@ class cohort_created extends base {
     /**
      * Return legacy event data.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function get_legacy_eventdata() {
         return $this->get_record_snapshot('cohort', $this->objectid);

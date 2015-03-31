@@ -1,0 +1,8 @@
+{
+    "moodle-mod_forum-subscriptiontoggle": {
+        "requires": [
+            "base-base",
+            "io-base"
+        ]
+    }
+}

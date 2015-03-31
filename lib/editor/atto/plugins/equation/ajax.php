@@ -28,11 +28,12 @@ define('AJAX_SCRIPT', true);
 require_once(dirname(__FILE__) . '/../../../../../config.php');
 
 $contextid = required_param('contextid', PARAM_INT);
-$context = context::instance_by_id($contextid, MUST_EXIST);
+
+list($context, $course, $cm) = get_context_info_array($contextid);
 $PAGE->set_url('/lib/editor/atto/plugins/equation/ajax.php');
 $PAGE->set_context($context);
 
-require_login();
+require_login($course, false, $cm);
 require_sesskey();
 
 $action = required_param('action', PARAM_ALPHA);

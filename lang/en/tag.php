@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'tag', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   tag
+ * @package   core_tag
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,9 +33,15 @@ $string['deletedcoursetags'] = 'Deleted - Course tags';
 $string['description'] = 'Description';
 $string['edittag'] = 'Edit this tag';
 $string['entertags'] = 'Enter tags separated by commas';
-$string['errordeleting'] = 'Error deleting tag with id {$a}, please report to your system administrator.';
 $string['errortagfrontpage'] = 'Tagging the site main page is not allowed';
 $string['errorupdatingrecord'] = 'Error updating tag record';
+$string['eventtagadded'] = 'Tag added to an item';
+$string['eventtagcreated'] = 'Tag created';
+$string['eventtagdeleted'] = 'Tag deleted';
+$string['eventtagflagged'] = 'Tag flagged';
+$string['eventtagremoved'] = 'Tag removed from an item';
+$string['eventtagunflagged'] = 'Tag unflagged';
+$string['eventtagupdated'] = 'Tag updated';
 $string['flag'] = 'Flag';
 $string['flagasinappropriate'] = 'Flag as inappropriate';
 $string['helprelatedtags'] = 'Comma separated related tags';

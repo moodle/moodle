@@ -21,7 +21,7 @@ Feature: Test category management actions
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "edit" action for "Cat 1" in management category listing
     # Redirect
     And I should see "Edit category settings"
@@ -55,7 +55,7 @@ Feature: Test category management actions
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
     And I should see "Cat 2" in the "#category-listing ul.ml" "css_element"
     And I should see "Cat 3" in the "#category-listing ul.ml" "css_element"
@@ -81,7 +81,7 @@ Feature: Test category management actions
     And I should see "Deleted course category Cat 2"
     And I press "Continue"
     # Redirect
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
     And I should not see "Cat 2" in the "#category-listing ul.ml" "css_element"
     And I should see "Cat 3" in the "#category-listing ul.ml" "css_element"
@@ -113,7 +113,7 @@ Feature: Test category management actions
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "assignroles" action for "Cat 1" in management category listing
     # Redirect
     And I should see "Assign roles in Category: Cat 1"
@@ -133,7 +133,7 @@ Feature: Test category management actions
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "permissions" action for "Cat 1" in management category listing
     # Redirect
     And I should see "Permissions in Category: Cat 1"
@@ -152,7 +152,7 @@ Feature: Test category management actions
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "cohorts" action for "Cat 1" in management category listing
     # Redirect
     And I should see "Category: Cat 1: available cohorts"
@@ -167,7 +167,7 @@ Feature: Test category management actions
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "filters" action for "Cat 1" in management category listing
     # Redirect
     And I should see "Filter settings in Category: Cat 1"
@@ -183,11 +183,12 @@ Feature: Test category management actions
       | Cat 1 | 0 | CAT1 |
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I click on "Create new category" "link" in the ".category-listing-actions" "css_element"
     # Redirect.
     And I should see "Add new category"
     And I set the following fields to these values:
+      | Parent category | Top |
       | Category name | Test category 2 |
       | Category ID number | TC2 |
     And I press "Create category"
@@ -200,6 +201,7 @@ Feature: Test category management actions
     # Redirect
     And I should see "Add new category"
     And I set the following fields to these values:
+      | Parent category | Top |
       | Category name | Test category 3 |
       | Category ID number | TC3 |
     And I press "Create category"
@@ -219,7 +221,7 @@ Feature: Test category management actions
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
     And I should see "Cat 2" in the "#category-listing ul.ml" "css_element"
     And I should see "Cat 3" in the "#category-listing ul.ml" "css_element"
@@ -250,7 +252,7 @@ Feature: Test category management actions
 
     And I log in as "admin"
     And I go to the courses management page
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
     And I should see "Cat 2" in the "#category-listing ul.ml" "css_element"
     And I should see "Cat 3" in the "#category-listing ul.ml" "css_element"

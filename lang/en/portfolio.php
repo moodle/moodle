@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'portfolio', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   portfolio
+ * @package   core_portfolio
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -83,7 +82,6 @@ $string['format_richhtml'] = 'HTML with attachments';
 $string['format_spreadsheet'] = 'Spreadsheet';
 $string['format_text'] = 'Plain text';
 $string['format_video'] = 'Video';
-$string['hidden'] = 'Hidden';
 $string['highdbsizethreshold'] = 'High transfer dbsize';
 $string['highdbsizethresholddesc'] = 'Number of db records over which will be considered to take a high amount of time to transfer';
 $string['highfilesizethreshold'] = 'High transfer filesize';
@@ -181,3 +179,7 @@ $string['unknownplugin'] = 'Unknown (may have since been removed by an administr
 $string['wait'] = 'Wait';
 $string['wanttowait_high'] = 'It is not recommended that you wait for this transfer to complete, but you can if you\'re sure and know what you\'re doing';
 $string['wanttowait_moderate'] = 'Do you want to wait for this transfer? It might take a few minutes';
+
+// Deprecated since Moodle 2.8.
+
+$string['hidden'] = 'Hidden';

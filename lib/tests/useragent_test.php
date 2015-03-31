@@ -31,132 +31,1068 @@
  */
 class core_useragent_testcase extends basic_testcase {
 
-    /**
-     * User agents we'll be using to test.
-     * @var array
-     */
-    protected $user_agents = array(
-        'MSIE' => array(
-            '5.0' => array(
-                'Windows 98' => 'Mozilla/4.0 (compatible; MSIE 5.00; Windows 98)'
+    public function user_agents_providers() {
+        // Note: When adding new entries to this list, please ensure that any new browser versions are added to the corresponding list.
+        // This ensures that regression tests are applied to all known user agents.
+        return array(
+            // Windows 98; Internet Explorer 5.0.
+            array(
+                'Mozilla/4.0 (compatible; MSIE 5.00; Windows 98)',
+                array(
+                    // MSIE 5.0 is not considered a browser at all: known false results.
+                    'is_ie'                         => false,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                    ),
+                    'versionclasses'                => array(
+                        // IE 5.0 is not considered a browser.
+                    ),
+
+                    // IE 5.0 is a legacy browser.
+                    'devicetype'                    => 'legacy',
+
+                    'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
+                ),
             ),
-            '5.5' => array(
-                'Windows 2000' => 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)'
+
+            // Windows 2000; Internet Explorer 5.5.
+            array(
+                'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                    ),
+                    'versionclasses'                => array(
+                        'ie',
+                    ),
+
+                    // IE 6.0 is a legacy browser.
+                    'devicetype'                    => 'legacy',
+
+                    'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
+                ),
             ),
-            '6.0' => array(
-                'Windows XP SP2' => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)'
+
+            // Windows XP SP2; Internet Explorer 6.0.
+            array(
+                'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                    ),
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie6',
+                    ),
+
+                    // IE 7.0 is a legacy browser.
+                    'devicetype'                    => 'legacy',
+
+                    'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
+                ),
             ),
-            '7.0' => array(
-                'Windows XP SP2' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; YPC 3.0.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)'
+
+            // Windows XP SP2; Internet Explorer 7.0.
+            array(
+                'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; YPC 3.0.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                    ),
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie7',
+                    ),
+
+                    'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
+                ),
             ),
-            '8.0' => array(
-                'Windows Vista' => 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 1.1.4322; .NET CLR 3.0.04506.30; .NET CLR 3.0.04506.648)'
+
+            // Windows XP SP2; Internet Explorer 7.0; Meridio extension.
+            array(
+                'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Meridio for Excel 5.0.251; Meridio for PowerPoint 5.0.251; Meridio for Word 5.0.251; Meridio Protocol; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30; .NET CLR 3.0.04506.648; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                    ),
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie7',
+                    ),
+
+                    'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
+                ),
             ),
-            '9.0' => array(
-                'Windows 7' => 'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)'
+
+            // Windows Vista; Internet Explorer 8.0.
+            array(
+                'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 1.1.4322; .NET CLR 3.0.04506.30; .NET CLR 3.0.04506.648)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                        '8.0'                       => true,
+                    ),
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie8',
+                    ),
+
+                    'supports_svg'                  => false,
+                ),
             ),
-            '9.0i' => array(
-                'Windows 7' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0)'
+
+            // Windows 7; Internet Explorer 9.0.
+            array(
+                'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                        '8.0'                       => true,
+                        '9.0'                       => true,
+                    ),
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie9',
+                    ),
+                ),
             ),
-            '10.0' => array(
-                'Windows 8' => 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0; Touch)'
+
+            // Windows 7; Internet Explorer 9.0i.
+            array(
+                'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                        '8.0'                       => true,
+                        '9.0'                       => true,
+                    ),
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie9',
+                    ),
+                    'iecompatibility'               => true,
+
+                    // IE 9 in Compatiblity mode does not support SVG.
+                    'supports_svg'                  => false,
+
+                    // IE in Compatiblity mode does not support JSON ContentType.
+                    'supports_json_contenttype'     => false,
+                ),
             ),
-            '10.0i' => array(
-                'Windows 8' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.2; Trident/6.0; Touch; .NET4.0E; .NET4.0C; Tablet PC 2.0)'
+
+            // Windows 8; Internet Explorer 10.0.
+            array(
+                'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0; Touch)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                        '8.0'                       => true,
+                        '9.0'                       => true,
+                        '10'                        => true,
+                    ),
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie10',
+                    ),
+                ),
             ),
-            '11.0' => array(
-                'Windows 8.1' => 'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0)'
+
+            // Windows 8; Internet Explorer 10.0i.
+            array(
+                'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.2; Trident/6.0; Touch; .NET4.0E; .NET4.0C; Tablet PC 2.0)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                        '8.0'                       => true,
+                        '9.0'                       => true,
+                        '10'                        => true,
+                    ),
+                    'iecompatibility'               => true,
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie10',
+                    ),
+
+                    // IE in Compatiblity mode does not support JSON ContentType.
+                    'supports_json_contenttype'     => false,
+                ),
             ),
-            '11.0i' => array(
-                'Windows 8.1' => ' Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.3; Trident/7.0; .NET4.0E; .NET4.0C)'
+
+            // Windows 8.1; Internet Explorer 11.0.
+            array(
+                'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                        '8.0'                       => true,
+                        '9.0'                       => true,
+                        '10'                        => true,
+                        '11'                        => true,
+                    ),
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie11',
+                    ),
+                ),
             ),
-        ),
-        'Firefox' => array(
-            '1.0.6' => array(
-                'Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.10) Gecko/20050716 Firefox/1.0.6'
+
+            // Windows 8.1; Internet Explorer 11.0i.
+            array(
+                ' Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.3; Trident/7.0; .NET4.0E; .NET4.0C)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                        '8.0'                       => true,
+                        '9.0'                       => true,
+                        '10'                        => true,
+                        '11'                        => true,
+                    ),
+                    'iecompatibility'               => true,
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie11',
+                    ),
+
+                    // IE in Compatiblity mode does not support JSON ContentType.
+                    'supports_json_contenttype'     => false,
+                ),
             ),
-            '1.5' => array(
-                'Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; nl; rv:1.8) Gecko/20051107 Firefox/1.5'
+
+            // Windows XP; Firefox 1.0.6.
+            array(
+                'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.10) Gecko/20050716 Firefox/1.0.6',
+                array(
+                    'is_firefox'                    => true,
+
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                        'gecko17',
+                    ),
+                ),
             ),
-            '1.5.0.1' => array(
-                'Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.0.1) Gecko/20060111 Firefox/1.5.0.1'
+
+            // Windows XP; Firefox 1.0.6.
+            array(
+                'Mozilla/5.0 (Windows; U; Windows NT 5.1; nl; rv:1.8) Gecko/20051107 Firefox/1.5',
+                array(
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                    ),
+
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                        'gecko18',
+                    ),
+                ),
             ),
-            '2.0' => array(
-                'Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1',
-                'Ubuntu Linux AMD64' => 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.8.1) Gecko/20060601 Firefox/2.0 (Ubuntu-edgy)'
+
+            // Windows XP; Firefox 1.5.0.1.
+            array(
+                'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.0.1) Gecko/20060111 Firefox/1.5.0.1',
+                array(
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                    ),
+
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                        'gecko18',
+                    ),
+                ),
             ),
-            '3.0.6' => array(
-                'SUSE' => 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.0.6) Gecko/2009012700 SUSE/3.0.6-1.4 Firefox/3.0.6'
+
+            // Windows XP; Firefox 2.0.
+            array(
+                'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1',
+                array(
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                    ),
+
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '2'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                        '2006010100'                => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                        'gecko18',
+                    ),
+                ),
             ),
-            '3.6' => array(
-                'Linux' => 'Mozilla/5.0 (X11; Linux i686; rv:2.0) Gecko/20100101 Firefox/3.6'
+
+            // Ubuntu Linux amd64; Firefox 2.0.
+            array(
+                'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.8.1) Gecko/20060601 Firefox/2.0 (Ubuntu-edgy)',
+                array(
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                    ),
+
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '2'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                        '2006010100'                => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                        'gecko18',
+                    ),
+                ),
             ),
-            '11.0' => array(
-                'Windows' => 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:11.0) Gecko Firefox/11.0'
+
+            // SUSE; Firefox 3.0.6.
+            array(
+                'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.0.6) Gecko/2009012700 SUSE/3.0.6-1.4 Firefox/3.0.6',
+                array(
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                        '3.0'                       => true,
+                    ),
+
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '2'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                        '2006010100'                => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                        'gecko19',
+                    ),
+                ),
             ),
-            '15.0a2' => array(
-                'Windows' => 'Mozilla/5.0 (Windows NT 6.1; rv:15.0) Gecko/20120716 Firefox/15.0a2'
+
+            // Linux i686; Firefox 3.6.
+            array(
+                'Mozilla/5.0 (X11; Linux i686; rv:2.0) Gecko/20100101 Firefox/3.6',
+                array(
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                        '3.0'                       => true,
+                    ),
+
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '2'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                        '2006010100'                => true,
+                        '3.6'                       => true,
+                        '20100101'                  => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                        'gecko20',
+                    ),
+                ),
             ),
-            '18.0' => array(
-                'Mac OS X' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:18.0) Gecko/18.0 Firefox/18.0'
+
+            // Windows; Firefox 11.0.
+            array(
+                'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:11.0) Gecko Firefox/11.0',
+                array(
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                        '3.0'                       => true,
+                        '4'                         => true,
+                        '10'                        => true,
+                    ),
+
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '2'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                        '2006010100'                => true,
+                        '20100101'                  => true,
+                        '3.6'                       => true,
+                        '4.0'                       => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                    ),
+                ),
             ),
-        ),
-        'SeaMonkey' => array(
-            '2.0' => array(
-                'Windows' => 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1b3pre) Gecko/20081208 SeaMonkey/2.0'
+
+            // Windows; Firefox 15.0a2.
+            array(
+                'Mozilla/5.0 (Windows NT 6.1; rv:15.0) Gecko/20120716 Firefox/15.0a2',
+                array(
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                        '3.0'                       => true,
+                        '4'                         => true,
+                        '10'                        => true,
+                        '15'                        => true,
+                    ),
+
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '2'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                        '2006010100'                => true,
+                        '20100101'                  => true,
+                        '3.6'                       => true,
+                        '4.0'                       => true,
+                        '15.0'                      => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                    ),
+                ),
             ),
-            '2.1' => array(
-                'Linux' => 'Mozilla/5.0 (X11; Linux x86_64; rv:2.0.1) Gecko/20110609 Firefox/4.0.1 SeaMonkey/2.1'
+
+            // Firefox 18; Mac OS X 10.
+            array(
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:18.0) Gecko/18.0 Firefox/18.0',
+                array(
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                        '3.0'                       => true,
+                        '4'                         => true,
+                        '10'                        => true,
+                        '15'                        => true,
+                        '18'                        => true,
+                    ),
+
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '2'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                        '2006010100'                => true,
+                        '3.6'                       => true,
+                        '4.0'                       => true,
+                        '15.0'                      => true,
+                        '18.0'                      => true,
+                        '20100101'                  => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                    ),
+                ),
             ),
-            '2.3' => array(
-                'FreeBSD' => 'Mozilla/5.0 (X11; FreeBSD amd64; rv:6.0) Gecko/20110818 Firefox/6.0 SeaMonkey/2.3'
+
+            // Firefox 33; Mac OS X 10.10.
+            array(
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:33.0) Gecko/20100101 Firefox/33.0',
+                array(
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                        '3.0'                       => true,
+                        '4'                         => true,
+                        '10'                        => true,
+                        '15'                        => true,
+                        '18'                        => true,
+                        '19'                        => true,
+                        '33'                        => true,
+                    ),
+
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '2'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                        '2006010100'                => true,
+                        '3.6'                       => true,
+                        '4.0'                       => true,
+                        '15.0'                      => true,
+                        '18.0'                      => true,
+                        '19.0'                      => true,
+                        '20100101'                  => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                    ),
+                ),
             ),
-        ),
-        'Safari' => array(
-            '312' => array(
-                'Mac OS X' => 'Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-us) AppleWebKit/312.1 (KHTML, like Gecko) Safari/312'
+
+            // SeaMonkey 2.0; Windows.
+            array(
+                'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1b3pre) Gecko/20081208 SeaMonkey/2.0',
+                array(
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '2'                         => true,
+                        '20030516'                  => true,
+                        '20051106'                  => true,
+                        '20051116'                  => true,
+                        '2006010100'                => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                        'gecko19',
+                    ),
+                ),
             ),
-            '412' => array(
-                'Mac OS X' => 'Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/412 (KHTML, like Gecko) Safari/412'
+
+            // SeaMonkey 2.1; Linux.
+            array(
+                'Mozilla/5.0 (X11; Linux x86_64; rv:2.0.1) Gecko/20110609 Firefox/4.0.1 SeaMonkey/2.1',
+                array(
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '2'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                        '2006010100'                => true,
+                        '20100101'                  => true,
+                        '3.6'                       => true,
+                        '4.0'                       => true,
+                    ),
+
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                        '3.0'                       => true,
+                        '4'                         => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                        'gecko20',
+                    ),
+                ),
             ),
-            '2.0' => array(
-                'Mac OS X' => 'Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/412 (KHTML, like Gecko) Safari/412'
-            )
-        ),
-        'Safari iOS' => array(
-            '528' => array(
-                'iPhone' => 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_1_2 like Mac OS X; cs-cz) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7D11 Safari/528.16'
+
+            // SeaMonkey 2.3; FreeBSD.
+            array(
+                'Mozilla/5.0 (X11; FreeBSD amd64; rv:6.0) Gecko/20110818 Firefox/6.0 SeaMonkey/2.3',
+                array(
+                    'is_gecko'                      => true,
+                    'check_gecko_version'           => array(
+                        '1'                         => true,
+                        '2'                         => true,
+                        '20030516'                  => true,
+                        '20051116'                  => true,
+                        '2006010100'                => true,
+                        '20100101'                  => true,
+                        '3.6'                       => true,
+                        '4.0'                       => true,
+                    ),
+
+                    'is_firefox'                    => true,
+                    'check_firefox_version'         => array(
+                        '1.5'                       => true,
+                        '3.0'                       => true,
+                        '4'                         => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'gecko',
+                    ),
+                ),
             ),
-            '533' => array(
-                'iPad' => 'Mozilla/5.0 (iPad; U; CPU OS 4_2_1 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C148 Safari/6533.18.5'
+
+            // Windows 7; MS Word 2010.
+            array(
+                'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E; ms-office)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                        '8.0'                       => true,
+                    ),
+                    'iecompatibility'               => true,
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie8',
+                    ),
+
+                    'is_msword'                     => true,
+
+                    'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
+                ),
             ),
-        ),
-        'WebKit Android' => array(
-            '525' => array(
-                'G1 Phone' => 'Mozilla/5.0 (Linux; U; Android 1.1; en-gb; dream) AppleWebKit/525.10+ (KHTML, like Gecko) Version/3.0.4 Mobile Safari/523.12.2 – G1 Phone'
+
+            // Windows 7; MS Outlook 2010.
+            array(
+                'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E; Microsoft Outlook 14.0.7113; ms-office; MSOffice 14)',
+                array(
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                        '8.0'                       => true,
+                    ),
+                    'iecompatibility'               => true,
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie8',
+                    ),
+
+                    // Note: Outlook is deliberately not considered to be MS Word.
+                    'is_msword'                     => false,
+
+                    'supports_svg'                  => false,
+                    'supports_json_contenttype'     => false,
+                ),
             ),
-            '530' => array(
-                'Nexus' => 'Mozilla/5.0 (Linux; U; Android 2.1; en-us; Nexus One Build/ERD62) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 –Nexus'
+
+            // Mac OS X; MS Word 14.
+            array(
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X) Word/14.38.0',
+                array(
+                    'versionclasses'                => array(
+                    ),
+
+                    'is_msword'                     => true,
+                ),
             ),
-            '537' => array(
-                'Samsung GT-9505' => 'Mozilla/5.0 (Linux; Android 4.3; it-it; SAMSUNG GT-I9505/I9505XXUEMJ7 Build/JSS15J) AppleWebKit/537.36 (KHTML, like Gecko) Version/1.5 Chrome/28.0.1500.94 Mobile Safari/537.36'
-            )
-        ),
-        'Chrome' => array(
-            '8' => array(
-                'Mac OS X' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_5; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.215 Safari/534.10'
+
+            // Safari 312; Max OS X.
+            array(
+                'Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-us) AppleWebKit/312.1 (KHTML, like Gecko) Safari/312',
+                array(
+                    'is_safari'                     => true,
+                    'check_safari_version'          => array(
+                        '1'                         => true,
+                        '312'                       => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'versionclasses'                => array(
+                        'safari',
+                    ),
+                ),
             ),
-        ),
-        'Opera' => array(
-            '8.51' => array(
-                'Windows XP' => 'Opera/8.51 (Windows NT 5.1; U; en)'
+
+            // Safari 412; Max OS X.
+            array(
+                'Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/412 (KHTML, like Gecko) Safari/412',
+                array(
+                    'is_safari'                     => true,
+                    'check_safari_version'          => array(
+                        '1'                         => true,
+                        '312'                       => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'versionclasses'                => array(
+                        'safari',
+                    ),
+                ),
             ),
-            '9.0'  => array(
-                'Windows XP' => 'Opera/9.0 (Windows NT 5.1; U; en)',
-                'Debian Linux' => 'Opera/9.01 (X11; Linux i686; U; en)'
-            )
-        )
-    );
+
+            // Safari 2.0; Max OS X.
+            array(
+                'Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/412 (KHTML, like Gecko) Safari/412',
+                array(
+                    'is_safari'                     => true,
+                    'check_safari_version'          => array(
+                        '1'                         => true,
+                        '312'                       => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'versionclasses'                => array(
+                        'safari',
+                    ),
+                ),
+            ),
+
+            // iOS Safari 528; iPhone.
+            array(
+                'Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_1_2 like Mac OS X; cs-cz) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7D11 Safari/528.16',
+                array(
+                    // Note: We do *not* identify mobile Safari as Safari.
+                    'is_safari_ios'                 => true,
+                    'check_safari_ios_version'      => array(
+                        '527'                       => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'versionclasses'                => array(
+                        'safari',
+                        'ios',
+                    ),
+
+                    'devicetype'                    => 'mobile',
+               ),
+            ),
+
+            // Safari; iPhone 6 Plus; iOS 8.1; Build 12B411.
+            array(
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 10_10 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Version/8.0 Mobile/12B411 Safari/600.1.4',
+                array(
+                    // Note: We do *not* identify mobile Safari as Safari.
+                    'is_safari_ios'                 => true,
+                    'check_safari_ios_version'      => array(
+                        '527'                       => true,
+                        '590'                       => true,
+                        '600'                       => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'versionclasses'                => array(
+                        'safari',
+                        'ios',
+                    ),
+
+                    'devicetype'                    => 'mobile',
+               ),
+            ),
+
+            // iOS Safari 533; iPad.
+            array(
+                'Mozilla/5.0 (iPad; U; CPU OS 4_2_1 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C148 Safari/6533.18.5',
+                array(
+                    // Note: We do *not* identify mobile Safari as Safari.
+                    'is_safari_ios'                 => true,
+                    'check_safari_ios_version'      => array(
+                        '527'                       => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'versionclasses'                => array(
+                        'safari',
+                        'ios',
+                    ),
+
+                    'devicetype'                    => 'tablet',
+               ),
+            ),
+
+            // Android WebKit 525; G1 Phone.
+            array(
+                'Mozilla/5.0 (Linux; U; Android 1.1; en-gb; dream) AppleWebKit/525.10+ (KHTML, like Gecko) Version/3.0.4 Mobile Safari/523.12.2 – G1 Phone',
+                array(
+                    'is_webkit_android'             => true,
+                    'check_webkit_android_version'  => array(
+                        '525'                       => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'versionclasses'                => array(
+                        'android',
+                        'safari',
+                    ),
+
+                    'devicetype'                    => 'mobile',
+
+                    'supports_svg'                  => false,
+               ),
+            ),
+
+            // Android WebKit 530; Nexus.
+            array(
+                'Mozilla/5.0 (Linux; U; Android 2.1; en-us; Nexus One Build/ERD62) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 –Nexus',
+                array(
+                    'is_webkit_android'             => true,
+                    'check_webkit_android_version'  => array(
+                        '525'                       => true,
+                        '527'                       => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'versionclasses'                => array(
+                        'android',
+                        'safari',
+                    ),
+
+                    'devicetype'                    => 'mobile',
+
+                    'supports_svg'                  => false,
+               ),
+            ),
+
+            // Android WebKit 537; Samsung GT-9505.
+            array(
+                'Mozilla/5.0 (Linux; Android 4.3; it-it; SAMSUNG GT-I9505/I9505XXUEMJ7 Build/JSS15J) AppleWebKit/537.36 (KHTML, like Gecko) Version/1.5 Chrome/28.0.1500.94 Mobile Safari/537.36',
+                array(
+                    'is_webkit_android'             => true,
+                    'check_webkit_android_version'  => array(
+                        '525'                       => true,
+                        '527'                       => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'is_chrome'                     => true,
+                    'check_chrome_version'          => array(
+                        '7'                         => true,
+                        '8'                         => true,
+                        '10'                        => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'safari',
+                        'android',
+                    ),
+
+                    'devicetype'                    => 'mobile',
+                ),
+            ),
+
+            // Android WebKit 537; Nexus 5.
+            array(
+                'Mozilla/5.0 (Linux; Android 5.0; Nexus 5 Build/LPX13D) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.102 Mobile Safari/537.36',
+                array(
+                    'is_webkit_android'             => true,
+                    'check_webkit_android_version'  => array(
+                        '525'                       => true,
+                        '527'                       => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'is_chrome'                     => true,
+                    'check_chrome_version'          => array(
+                        '7'                         => true,
+                        '8'                         => true,
+                        '10'                        => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'safari',
+                        'android',
+                    ),
+
+                    'devicetype'                    => 'mobile',
+                ),
+            ),
+
+            // Chrome 8; Mac OS X.
+            array(
+                'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_5; en-US) AppleWebKit/534.10 (KHTML, like Gecko) Chrome/8.0.552.215 Safari/534.10',
+                array(
+                    'is_chrome'                     => true,
+                    'check_chrome_version'          => array(
+                        '7'                         => true,
+                        '8'                         => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'versionclasses'                => array(
+                        'safari',
+                    ),
+                ),
+            ),
+
+            // Chrome 39; Mac OS X.
+            array(
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
+                array(
+                    'is_chrome'                     => true,
+                    'check_chrome_version'          => array(
+                        '7'                         => true,
+                        '8'                         => true,
+                        '10'                        => true,
+                        '39'                        => true,
+                    ),
+
+                    'is_webkit'                     => true,
+
+                    'versionclasses'                => array(
+                        'safari',
+                    ),
+                ),
+            ),
+
+            // Opera 8.51; Windows XP.
+            array(
+                'Opera/8.51 (Windows NT 5.1; U; en)',
+                array(
+                    'is_opera'                      => true,
+                    'check_opera_version'           => array(
+                        '8.0'                       => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'opera',
+                    ),
+
+                    'supports_svg'                  => false,
+               ),
+            ),
+
+            // Opera 9.0; Windows XP.
+            array(
+                'Opera/9.0 (Windows NT 5.1; U; en)',
+                array(
+                    'is_opera'                      => true,
+                    'check_opera_version'           => array(
+                        '8.0'                       => true,
+                        '9.0'                       => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'opera',
+                    ),
+
+                    'supports_svg'                  => false,
+               ),
+            ),
+
+            // Opera 12.15 (Build 1748); Mac OS X.
+            array(
+                'Opera/9.80 (Macintosh; Intel Mac OS X 10.10.0; Edition MAS) Presto/2.12.388 Version/12.15',
+                array(
+                    'is_opera'                      => true,
+                    'check_opera_version'           => array(
+                        '8.0'                       => true,
+                        '9.0'                       => true,
+                        '10.0'                      => true,
+                        '12.15'                     => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'opera',
+                    ),
+
+                    'supports_svg'                  => false,
+               ),
+            ),
+
+            // Opera 9.0; Debian Linux.
+            array(
+                'Opera/9.01 (X11; Linux i686; U; en)',
+                array(
+                    'is_opera'                      => true,
+                    'check_opera_version'           => array(
+                        '8.0'                       => true,
+                        '9.0'                       => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'opera',
+                    ),
+
+                    'supports_svg'                  => false,
+               ),
+            ),
+        );
+    }
 
     /**
      * Test instance generation.
@@ -167,378 +1103,426 @@ class core_useragent_testcase extends basic_testcase {
     }
 
     /**
-     * Modifies $_SERVER['HTTP_USER_AGENT'] manually to check if check_browser_version
-     * works as expected.
+     * @dataProvider user_agents_providers
      */
-    public function test_check_browser_version() {
-        core_useragent::instance(true, $this->user_agents['Safari']['412']['Mac OS X']);
-        $this->assertTrue(core_useragent::is_safari());
-        $this->assertTrue(core_useragent::check_safari_version());
-        $this->assertTrue(core_useragent::is_webkit());
-        $this->assertTrue(core_useragent::check_webkit_version());
-        $this->assertTrue(core_useragent::check_safari_version('312'));
-        $this->assertFalse(core_useragent::check_safari_version('500'));
-        $this->assertFalse(core_useragent::is_chrome());
-        $this->assertFalse(core_useragent::check_chrome_version());
-        $this->assertFalse(core_useragent::is_safari_ios());
-        $this->assertFalse(core_useragent::check_safari_ios_version());
+    public function test_useragent_ie($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
 
-        core_useragent::instance(true, $this->user_agents['Safari iOS']['528']['iPhone']);
-        $this->assertTrue(core_useragent::is_safari_ios());
-        $this->assertTrue(core_useragent::check_safari_ios_version());
-        $this->assertTrue(core_useragent::is_webkit());
-        $this->assertTrue(core_useragent::check_webkit_version());
-        $this->assertTrue(core_useragent::check_safari_ios_version('527'));
-        $this->assertFalse(core_useragent::check_safari_ios_version(590));
-        $this->assertFalse(core_useragent::check_safari_version('312'));
-        $this->assertFalse(core_useragent::check_safari_version('500'));
-        $this->assertFalse(core_useragent::is_chrome());
-        $this->assertFalse(core_useragent::check_chrome_version());
+        // IE Tests.
+        if (isset($tests['is_ie']) && $tests['is_ie']) {
+            $this->assertTrue(core_useragent::is_ie());
+        } else {
+            $this->assertFalse(core_useragent::is_ie());
+        }
 
-        core_useragent::instance(true, $this->user_agents['WebKit Android']['530']['Nexus']);
-        $this->assertTrue(core_useragent::is_webkit());
-        $this->assertTrue(core_useragent::check_webkit_version());
-        $this->assertTrue(core_useragent::check_webkit_android_version('527'));
-        $this->assertFalse(core_useragent::check_webkit_android_version(590));
-        $this->assertFalse(core_useragent::is_safari());
-        $this->assertFalse(core_useragent::check_safari_version());
-        $this->assertFalse(core_useragent::is_chrome());
-        $this->assertFalse(core_useragent::check_chrome_version());
+        $versions = array(
+            // New versions of should be added here.
+            '0'    => false,
+            '5.0'  => false,
+            '5.5'  => false,
+            '6.0'  => false,
+            '7.0'  => false,
+            '8.0'  => false,
+            '9.0'  => false,
+            '10'   => false,
+            '11'   => false,
+            '12'   => false,
+            '13'   => false,
+            '14'   => false,
+        );
 
-        core_useragent::instance(true, $this->user_agents['Chrome']['8']['Mac OS X']);
-        $this->assertTrue(core_useragent::is_chrome());
-        $this->assertTrue(core_useragent::check_chrome_version());
-        $this->assertTrue(core_useragent::is_webkit());
-        $this->assertTrue(core_useragent::check_webkit_version());
-        $this->assertTrue(core_useragent::check_chrome_version(8));
-        $this->assertFalse(core_useragent::check_chrome_version(10));
-        $this->assertFalse(core_useragent::check_safari_version('1'));
+        if (isset($tests['check_ie_version'])) {
+            // The test provider has overwritten some of the above checks.
+            // Must use the '+' operator, because array_merge will incorrectly rewrite the array keys for integer-based indexes.
+            $versions = $tests['check_ie_version'] + $versions;
+        }
 
-        core_useragent::instance(true, $this->user_agents['Opera']['9.0']['Windows XP']);
-        $this->assertTrue(core_useragent::is_opera());
-        $this->assertTrue(core_useragent::check_opera_version());
-        $this->assertTrue(core_useragent::check_opera_version('8.0'));
-        $this->assertFalse(core_useragent::check_opera_version('10.0'));
+        foreach ($versions as $version => $result) {
+            $this->assertEquals($result, core_useragent::check_ie_version($version),
+                "Version incorrectly determined for IE version '{$version}'");
+        }
 
-        core_useragent::instance(true, $this->user_agents['MSIE']['6.0']['Windows XP SP2']);
-        $this->assertTrue(core_useragent::is_ie());
-        $this->assertTrue(core_useragent::check_ie_version());
-        $this->assertTrue(core_useragent::check_ie_version('5.0'));
-        $this->assertFalse(core_useragent::check_ie_compatibility_view());
-        $this->assertFalse(core_useragent::check_ie_version('7.0'));
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['5.0']['Windows 98']);
-        $this->assertFalse(core_useragent::is_ie());
-        $this->assertFalse(core_useragent::check_ie_version());
-        $this->assertTrue(core_useragent::check_ie_version(0));
-        $this->assertTrue(core_useragent::check_ie_version('5.0'));
-        $this->assertFalse(core_useragent::check_ie_compatibility_view());
-        $this->assertFalse(core_useragent::check_ie_version('7.0'));
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['9.0']['Windows 7']);
-        $this->assertTrue(core_useragent::is_ie());
-        $this->assertTrue(core_useragent::check_ie_version());
-        $this->assertTrue(core_useragent::check_ie_version(0));
-        $this->assertTrue(core_useragent::check_ie_version('5.0'));
-        $this->assertTrue(core_useragent::check_ie_version('9.0'));
-        $this->assertFalse(core_useragent::check_ie_compatibility_view());
-        $this->assertFalse(core_useragent::check_ie_version('10'));
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['9.0i']['Windows 7']);
-        $this->assertTrue(core_useragent::is_ie());
-        $this->assertTrue(core_useragent::check_ie_version());
-        $this->assertTrue(core_useragent::check_ie_version(0));
-        $this->assertTrue(core_useragent::check_ie_version('5.0'));
-        $this->assertTrue(core_useragent::check_ie_version('9.0'));
-        $this->assertTrue(core_useragent::check_ie_compatibility_view());
-        $this->assertFalse(core_useragent::check_ie_version('10'));
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['10.0']['Windows 8']);
-        $this->assertTrue(core_useragent::is_ie());
-        $this->assertTrue(core_useragent::check_ie_version());
-        $this->assertTrue(core_useragent::check_ie_version(0));
-        $this->assertTrue(core_useragent::check_ie_version('5.0'));
-        $this->assertTrue(core_useragent::check_ie_version('9.0'));
-        $this->assertTrue(core_useragent::check_ie_version('10'));
-        $this->assertFalse(core_useragent::check_ie_compatibility_view());
-        $this->assertFalse(core_useragent::check_ie_version('11'));
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['10.0i']['Windows 8']);
-        $this->assertTrue(core_useragent::is_ie());
-        $this->assertTrue(core_useragent::check_ie_version());
-        $this->assertTrue(core_useragent::check_ie_version(0));
-        $this->assertTrue(core_useragent::check_ie_version('5.0'));
-        $this->assertTrue(core_useragent::check_ie_version('9.0'));
-        $this->assertTrue(core_useragent::check_ie_version('10'));
-        $this->assertTrue(core_useragent::check_ie_compatibility_view());
-        $this->assertFalse(core_useragent::check_ie_version('11'));
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['11.0']['Windows 8.1']);
-        $this->assertTrue(core_useragent::is_ie());
-        $this->assertTrue(core_useragent::check_ie_version());
-        $this->assertTrue(core_useragent::check_ie_version(0));
-        $this->assertTrue(core_useragent::check_ie_version('5.0'));
-        $this->assertTrue(core_useragent::check_ie_version('9.0'));
-        $this->assertTrue(core_useragent::check_ie_version('10'));
-        $this->assertTrue(core_useragent::check_ie_version('11'));
-        $this->assertFalse(core_useragent::check_ie_compatibility_view());
-        $this->assertFalse(core_useragent::check_ie_version('12'));
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['11.0i']['Windows 8.1']);
-        $this->assertTrue(core_useragent::is_ie());
-        $this->assertTrue(core_useragent::check_ie_version());
-        $this->assertTrue(core_useragent::check_ie_version(0));
-        $this->assertTrue(core_useragent::check_ie_version('5.0'));
-        $this->assertTrue(core_useragent::check_ie_version('9.0'));
-        $this->assertTrue(core_useragent::check_ie_version('10'));
-        $this->assertTrue(core_useragent::check_ie_version('11'));
-        $this->assertTrue(core_useragent::check_ie_compatibility_view());
-        $this->assertFalse(core_useragent::check_ie_version('12'));
-
-        core_useragent::instance(true, $this->user_agents['Firefox']['2.0']['Windows XP']);
-        $this->assertTrue(core_useragent::is_firefox());
-        $this->assertTrue(core_useragent::check_firefox_version());
-        $this->assertTrue(core_useragent::check_firefox_version('1.5'));
-        $this->assertFalse(core_useragent::check_firefox_version('3.0'));
-        $this->assertTrue(core_useragent::check_gecko_version('2'));
-        $this->assertTrue(core_useragent::check_gecko_version(20030516));
-        $this->assertTrue(core_useragent::check_gecko_version(20051106));
-        $this->assertTrue(core_useragent::check_gecko_version(2006010100));
-
-        core_useragent::instance(true, $this->user_agents['Firefox']['1.0.6']['Windows XP']);
-        $this->assertTrue(core_useragent::is_firefox());
-        $this->assertTrue(core_useragent::check_firefox_version());
-        $this->assertTrue(core_useragent::check_gecko_version('1'));
-        $this->assertFalse(core_useragent::check_gecko_version(20030516));
-        $this->assertFalse(core_useragent::check_gecko_version(20051106));
-        $this->assertFalse(core_useragent::check_gecko_version(2006010100));
-        $this->assertFalse(core_useragent::check_firefox_version('1.5'));
-        $this->assertFalse(core_useragent::check_firefox_version('3.0'));
-        $this->assertFalse(core_useragent::check_gecko_version('2'));
-
-        core_useragent::instance(true, $this->user_agents['Firefox']['2.0']['Windows XP']);
-        $this->assertTrue(core_useragent::is_firefox());
-        $this->assertTrue(core_useragent::check_firefox_version());
-        $this->assertTrue(core_useragent::check_firefox_version('1.5'));
-        $this->assertTrue(core_useragent::check_gecko_version('1'));
-        $this->assertTrue(core_useragent::check_gecko_version('2'));
-        $this->assertTrue(core_useragent::check_gecko_version(20030516));
-        $this->assertTrue(core_useragent::check_gecko_version(20051106));
-        $this->assertTrue(core_useragent::check_gecko_version(2006010100));
-        $this->assertFalse(core_useragent::check_firefox_version('3.0'));
-
-        core_useragent::instance(true, $this->user_agents['Firefox']['3.6']['Linux']);
-        $this->assertTrue(core_useragent::is_firefox());
-        $this->assertTrue(core_useragent::check_firefox_version());
-        $this->assertTrue(core_useragent::check_firefox_version('1.5'));
-        $this->assertTrue(core_useragent::check_firefox_version('3.0'));
-        $this->assertTrue(core_useragent::check_gecko_version('2'));
-        $this->assertTrue(core_useragent::check_gecko_version('3.6'));
-        $this->assertTrue(core_useragent::check_gecko_version(20030516));
-        $this->assertTrue(core_useragent::check_gecko_version(20051106));
-        $this->assertTrue(core_useragent::check_gecko_version(2006010100));
-        $this->assertFalse(core_useragent::check_firefox_version('4'));
-        $this->assertFalse(core_useragent::check_firefox_version('10'));
-
-        core_useragent::instance(true, $this->user_agents['Firefox']['3.6']['Linux']);
-        $this->assertTrue(core_useragent::is_firefox());
-        $this->assertTrue(core_useragent::check_firefox_version());
-        $this->assertTrue(core_useragent::check_firefox_version('1.5'));
-        $this->assertTrue(core_useragent::check_firefox_version('3.0'));
-        $this->assertTrue(core_useragent::check_gecko_version('2'));
-        $this->assertTrue(core_useragent::check_gecko_version('3.6'));
-        $this->assertTrue(core_useragent::check_gecko_version(20030516));
-        $this->assertTrue(core_useragent::check_gecko_version(20051106));
-        $this->assertTrue(core_useragent::check_gecko_version(2006010100));
-        $this->assertFalse(core_useragent::check_firefox_version('4'));
-        $this->assertFalse(core_useragent::check_firefox_version('10'));
-        $this->assertFalse(core_useragent::check_firefox_version('18'));
-        $this->assertFalse(core_useragent::check_gecko_version('4'));
-
-        core_useragent::instance(true, $this->user_agents['Firefox']['15.0a2']['Windows']);
-        $this->assertTrue(core_useragent::is_firefox());
-        $this->assertTrue(core_useragent::check_firefox_version());
-        $this->assertTrue(core_useragent::check_firefox_version('1.5'));
-        $this->assertTrue(core_useragent::check_firefox_version('3.0'));
-        $this->assertTrue(core_useragent::check_gecko_version('2'));
-        $this->assertTrue(core_useragent::check_gecko_version('3.6'));
-        $this->assertTrue(core_useragent::check_gecko_version('15.0'));
-        $this->assertTrue(core_useragent::check_gecko_version(20030516));
-        $this->assertTrue(core_useragent::check_gecko_version(20051106));
-        $this->assertTrue(core_useragent::check_gecko_version(2006010100));
-        $this->assertTrue(core_useragent::check_firefox_version('4'));
-        $this->assertTrue(core_useragent::check_firefox_version('10'));
-        $this->assertTrue(core_useragent::check_firefox_version('15'));
-        $this->assertFalse(core_useragent::check_firefox_version('18'));
-        $this->assertFalse(core_useragent::check_gecko_version('18'));
-
-        core_useragent::instance(true, $this->user_agents['Firefox']['18.0']['Mac OS X']);
-        $this->assertTrue(core_useragent::is_firefox());
-        $this->assertTrue(core_useragent::check_firefox_version());
-        $this->assertTrue(core_useragent::check_firefox_version('1.5'));
-        $this->assertTrue(core_useragent::check_firefox_version('3.0'));
-        $this->assertTrue(core_useragent::check_gecko_version('2'));
-        $this->assertTrue(core_useragent::check_gecko_version('3.6'));
-        $this->assertTrue(core_useragent::check_gecko_version('15.0'));
-        $this->assertTrue(core_useragent::check_gecko_version('18.0'));
-        $this->assertTrue(core_useragent::check_gecko_version(20030516));
-        $this->assertTrue(core_useragent::check_gecko_version(20051106));
-        $this->assertTrue(core_useragent::check_gecko_version(2006010100));
-        $this->assertTrue(core_useragent::check_firefox_version('4'));
-        $this->assertTrue(core_useragent::check_firefox_version('10'));
-        $this->assertTrue(core_useragent::check_firefox_version('15'));
-        $this->assertTrue(core_useragent::check_firefox_version('18'));
-        $this->assertFalse(core_useragent::check_firefox_version('19'));
-        $this->assertFalse(core_useragent::check_gecko_version('19'));
-
-        core_useragent::instance(true, $this->user_agents['SeaMonkey']['2.0']['Windows']);
-        $this->assertTrue(core_useragent::check_gecko_version('2'));
-        $this->assertTrue(core_useragent::check_gecko_version(20030516));
-        $this->assertTrue(core_useragent::check_gecko_version(20051106));
-        $this->assertTrue(core_useragent::check_gecko_version(2006010100));
-        $this->assertFalse(core_useragent::check_gecko_version('3.6'));
-        $this->assertFalse(core_useragent::check_gecko_version('4.0'));
-        $this->assertFalse(core_useragent::is_firefox());
-        $this->assertFalse(core_useragent::check_firefox_version());
-
-        core_useragent::instance(true, $this->user_agents['SeaMonkey']['2.1']['Linux']);
-        $this->assertTrue(core_useragent::check_gecko_version('2'));
-        $this->assertTrue(core_useragent::check_gecko_version('3.6'));
-        $this->assertTrue(core_useragent::check_gecko_version('4.0'));
-        $this->assertTrue(core_useragent::check_gecko_version(20030516));
-        $this->assertTrue(core_useragent::check_gecko_version(20051106));
-        $this->assertTrue(core_useragent::check_gecko_version(2006010100));
-        $this->assertTrue(core_useragent::is_firefox());
-        $this->assertTrue(core_useragent::check_firefox_version());
-        $this->assertTrue(core_useragent::check_firefox_version(4.0));
-        $this->assertFalse(core_useragent::check_firefox_version(5));
-        $this->assertFalse(core_useragent::check_gecko_version('18.0'));
+        // IE Compatibility mode.
+        if (isset($tests['iecompatibility']) && $tests['iecompatibility']) {
+            $this->assertTrue(core_useragent::check_ie_compatibility_view(), "IE Compability false negative");
+        } else {
+            $this->assertFalse(core_useragent::check_ie_compatibility_view(), "IE Compability false positive");
+        }
 
     }
 
     /**
-     * Modifies $_SERVER['HTTP_USER_AGENT'] manually to check if supports_svg
-     * works as expected.
+     * @dataProvider user_agents_providers
      */
-    public function test_supports_svg() {
-        $this->assertTrue(core_useragent::supports_svg());
+    public function test_useragent_msword($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
 
-        // MSIE 5.0 is not considered a browser at all: known false positive.
-        core_useragent::instance(true, $this->user_agents['MSIE']['5.0']['Windows 98']);
-        $this->assertTrue(core_useragent::supports_svg());
+        // MSWord Tests.
+        if (isset($tests['is_msword']) && $tests['is_msword']) {
+            $this->assertTrue(core_useragent::is_msword());
+        } else {
+            $this->assertFalse(core_useragent::is_msword());
+        }
+    }
 
-        core_useragent::instance(true, $this->user_agents['MSIE']['5.5']['Windows 2000']);
-        $this->assertFalse(core_useragent::supports_svg());
 
-        core_useragent::instance(true, $this->user_agents['MSIE']['6.0']['Windows XP SP2']);
-        $this->assertFalse(core_useragent::supports_svg());
+    /**
+     * @dataProvider user_agents_providers
+     */
+    public function test_useragent_supports($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
 
-        core_useragent::instance(true, $this->user_agents['MSIE']['7.0']['Windows XP SP2']);
-        $this->assertFalse(core_useragent::supports_svg());
+        // Supports SVG.
+        if (!isset($tests['supports_svg']) || $tests['supports_svg']) {
+            $this->assertTrue(core_useragent::supports_svg(),
+                "SVG Support was not reported (and should have been)");
+        } else {
+            $this->assertFalse(core_useragent::supports_svg(),
+                "SVG Support was reported (and should not have been)");
+        }
 
-        core_useragent::instance(true, $this->user_agents['MSIE']['8.0']['Windows Vista']);
-        $this->assertFalse(core_useragent::supports_svg());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['9.0']['Windows 7']);
-        $this->assertTrue(core_useragent::supports_svg());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['9.0i']['Windows 7']);
-        $this->assertFalse(core_useragent::supports_svg());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['10.0']['Windows 8']);
-        $this->assertTrue(core_useragent::supports_svg());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['10.0i']['Windows 8']);
-        $this->assertTrue(core_useragent::supports_svg());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['11.0']['Windows 8.1']);
-        $this->assertTrue(core_useragent::supports_svg());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['11.0i']['Windows 8.1']);
-        $this->assertTrue(core_useragent::supports_svg());
-
-        core_useragent::instance(true, $this->user_agents['WebKit Android']['525']['G1 Phone']);
-        $this->assertFalse(core_useragent::supports_svg());
-
-        core_useragent::instance(true, $this->user_agents['WebKit Android']['530']['Nexus']);
-        $this->assertFalse(core_useragent::supports_svg());
-
-        core_useragent::instance(true, $this->user_agents['WebKit Android']['537']['Samsung GT-9505']);
-        $this->assertTrue(core_useragent::supports_svg());
-
-        core_useragent::instance(true, $this->user_agents['Opera']['9.0']['Windows XP']);
-        $this->assertFalse(core_useragent::supports_svg());
-
-        core_useragent::instance(true, $this->user_agents['Chrome']['8']['Mac OS X']);
-        $this->assertTrue(core_useragent::supports_svg());
-
-        core_useragent::instance(true, $this->user_agents['Firefox']['18.0']['Mac OS X']);
-        $this->assertTrue(core_useragent::supports_svg());
+        // Supports JSON ContentType.
+        if (!isset($tests['supports_json_contenttype']) || $tests['supports_json_contenttype']) {
+            $this->assertTrue(core_useragent::supports_json_contenttype(),
+                "JSON ContentType Support was not reported (and should have been)");
+        } else {
+            $this->assertFalse(core_useragent::supports_json_contenttype(),
+                "JSON ContentType Support was reported (and should not have been)");
+        }
     }
 
     /**
-     * Test browser version classes functionality.
+     * @dataProvider user_agents_providers
      */
-    public function test_get_browser_version_classes() {
-        core_useragent::instance(true, $this->user_agents['Safari']['412']['Mac OS X']);
-        $this->assertEquals(array('safari'), core_useragent::get_browser_version_classes());
+    public function test_useragent_webkit($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
 
-        core_useragent::instance(true, $this->user_agents['Chrome']['8']['Mac OS X']);
-        $this->assertEquals(array('safari'), core_useragent::get_browser_version_classes());
+        if (isset($tests['is_webkit']) && $tests['is_webkit']) {
+            $this->assertTrue(core_useragent::is_webkit(),
+                "Browser was not identified as a webkit browser");
+            $this->assertTrue(core_useragent::check_webkit_version());
+        } else {
+            $this->assertFalse(core_useragent::is_webkit(),
+                "Browser was incorrectly identified as a webkit browser");
+            $this->assertFalse(core_useragent::check_webkit_version());
+        }
 
-        core_useragent::instance(true, $this->user_agents['Safari iOS']['528']['iPhone']);
-        $this->assertEquals(array('safari', 'ios'), core_useragent::get_browser_version_classes());
+        $versions = array(
+            // New versions should be added here.
+        );
 
-        core_useragent::instance(true, $this->user_agents['WebKit Android']['530']['Nexus']);
-        $this->assertEquals(array('safari', 'android'), core_useragent::get_browser_version_classes());
+        if (isset($tests['check_webkit_version'])) {
+            // The test provider has overwritten some of the above checks.
+            // Must use the '+' operator, because array_merge will incorrectly rewrite the array keys for integer-based indexes.
+            $versions = $tests['check_webkit_version'] + $versions;
+        }
 
-        core_useragent::instance(true, $this->user_agents['Chrome']['8']['Mac OS X']);
-        $this->assertEquals(array('safari'), core_useragent::get_browser_version_classes());
-
-        core_useragent::instance(true, $this->user_agents['Opera']['9.0']['Windows XP']);
-        $this->assertEquals(array('opera'), core_useragent::get_browser_version_classes());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['6.0']['Windows XP SP2']);
-        $this->assertEquals(array('ie', 'ie6'), core_useragent::get_browser_version_classes());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['7.0']['Windows XP SP2']);
-        $this->assertEquals(array('ie', 'ie7'), core_useragent::get_browser_version_classes());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['8.0']['Windows Vista']);
-        $this->assertEquals(array('ie', 'ie8'), core_useragent::get_browser_version_classes());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['9.0']['Windows 7']);
-        $this->assertEquals(array('ie', 'ie9'), core_useragent::get_browser_version_classes());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['9.0i']['Windows 7']);
-        $this->assertEquals(array('ie', 'ie9'), core_useragent::get_browser_version_classes());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['10.0']['Windows 8']);
-        $this->assertEquals(array('ie', 'ie10'), core_useragent::get_browser_version_classes());
-
-        core_useragent::instance(true, $this->user_agents['MSIE']['10.0i']['Windows 8']);
-        $this->assertEquals(array('ie', 'ie10'), core_useragent::get_browser_version_classes());
-
-        core_useragent::instance(true, $this->user_agents['Firefox']['2.0']['Windows XP']);
-        $this->assertEquals(array('gecko', 'gecko18'), core_useragent::get_browser_version_classes());
-
-        core_useragent::instance(true, $this->user_agents['Firefox']['3.0.6']['SUSE']);
-        $this->assertEquals(array('gecko', 'gecko19'), core_useragent::get_browser_version_classes());
+        foreach ($versions as $version => $result) {
+            $this->assertEquals($result, core_useragent::check_webkit_version($version),
+                "Version incorrectly determined for Webkit version '{$version}'");
+        }
     }
 
     /**
-     * Test device type detection.
+     * @dataProvider user_agents_providers
      */
-    public function test_get_device_type() {
-        // IE8 (common pattern ~1.5% of IE7/8 users have embedded IE6 agent).
-        $ie8 = 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; BT Openworld BB; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; Hotbar 10.2.197.0; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET CLR 2.0.50727)';
-        core_useragent::instance(true, $ie8);
-        $this->assertEquals('default', core_useragent::get_device_type());
-        // Genuine IE6.
-        $ie6 = 'Mozilla/4.0 (compatible; MSIE 6.0; AOL 9.0; Windows NT 5.1; SV1; FunWebProducts; .NET CLR 1.0.3705; Media Center PC 2.8)';
-        core_useragent::instance(true, $ie6);
-        $this->assertEquals('legacy', core_useragent::get_device_type());
+    public function test_useragent_webkit_android($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
 
-        core_useragent::instance(true);
+        if (isset($tests['is_webkit_android']) && $tests['is_webkit_android']) {
+            $this->assertTrue(core_useragent::is_webkit_android(),
+                "Browser was not identified as an Android webkit browser");
+            $this->assertTrue(core_useragent::check_webkit_android_version());
+        } else {
+            $this->assertFalse(core_useragent::is_webkit_android(),
+                "Browser was incorrectly identified as an Android webkit browser");
+            $this->assertFalse(core_useragent::check_webkit_android_version());
+        }
+
+        $versions = array(
+            // New versions should be added here.
+            '525'       => false,
+            '527'       => false,
+            '590'       => false,
+        );
+
+        if (isset($tests['check_webkit_android_version'])) {
+            // The test provider has overwritten some of the above checks.
+            // Must use the '+' operator, because array_merge will incorrectly rewrite the array keys for integer-based indexes.
+            $versions = $tests['check_webkit_android_version'] + $versions;
+        }
+
+        foreach ($versions as $version => $result) {
+            $this->assertEquals($result, core_useragent::check_webkit_android_version($version),
+                "Version incorrectly determined for Android webkit version '{$version}'");
+        }
+    }
+
+    /**
+     * @dataProvider user_agents_providers
+     */
+    public function test_useragent_chrome($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
+
+        if (isset($tests['is_chrome']) && $tests['is_chrome']) {
+            $this->assertTrue(core_useragent::is_chrome(),
+                "Browser was not identified as a chrome browser");
+            $this->assertTrue(core_useragent::check_chrome_version());
+        } else {
+            $this->assertFalse(core_useragent::is_chrome(),
+                "Browser was incorrectly identified as a chrome browser");
+            $this->assertFalse(core_useragent::check_chrome_version());
+        }
+
+        $versions = array(
+            // New versions should be added here.
+            '7'         => false,
+            '8'         => false,
+            '10'        => false,
+            '39'        => false,
+        );
+
+        if (isset($tests['check_chrome_version'])) {
+            // The test provider has overwritten some of the above checks.
+            // Must use the '+' operator, because array_merge will incorrectly rewrite the array keys for integer-based indexes.
+            $versions = $tests['check_chrome_version'] + $versions;
+        }
+
+        foreach ($versions as $version => $result) {
+            $this->assertEquals($result, core_useragent::check_chrome_version($version),
+                "Version incorrectly determined for Chrome version '{$version}'");
+        }
+    }
+
+    /**
+     * @dataProvider user_agents_providers
+     */
+    public function test_useragent_safari($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
+
+        if (isset($tests['is_safari']) && $tests['is_safari']) {
+            $this->assertTrue(core_useragent::is_safari(),
+                "Browser was not identified as a safari browser");
+            $this->assertTrue(core_useragent::check_safari_version());
+        } else {
+            $this->assertFalse(core_useragent::is_safari(),
+                "Browser was incorrectly identified as a safari browser");
+            $this->assertFalse(core_useragent::check_safari_version());
+        }
+
+        // Check Safari (generic).
+        $versions = array(
+            // New versions should be added here.
+            '1'         => false,
+            '312'       => false,
+            '500'       => false,
+        );
+
+        if (isset($tests['check_safari_version'])) {
+            // The test provider has overwritten some of the above checks.
+            // Must use the '+' operator, because array_merge will incorrectly rewrite the array keys for integer-based indexes.
+            $versions = $tests['check_safari_version'] + $versions;
+        }
+
+        foreach ($versions as $version => $result) {
+            $this->assertEquals($result, core_useragent::check_safari_version($version),
+                "Version incorrectly determined for Safari (generic) version '{$version}'");
+        }
+    }
+
+    /**
+     * @dataProvider user_agents_providers
+     */
+    public function test_useragent_ios_safari($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
+
+        if (isset($tests['is_safari_ios']) && $tests['is_safari_ios']) {
+            $this->assertTrue(core_useragent::is_safari_ios(),
+                "Browser was not identified as an iOS safari browser");
+            $this->assertTrue(core_useragent::check_safari_ios_version());
+        } else {
+            $this->assertFalse(core_useragent::is_safari_ios(),
+                "Browser was incorrectly identified as an iOS safari browser");
+            $this->assertFalse(core_useragent::check_safari_ios_version());
+        }
+
+        // Check iOS Safari.
+        $versions = array(
+            // New versions should be added here.
+            '527'       => false,
+            '590'       => false,
+            '600'       => false,
+        );
+
+        if (isset($tests['check_safari_ios_version'])) {
+            // The test provider has overwritten some of the above checks.
+            // Must use the '+' operator, because array_merge will incorrectly rewrite the array keys for integer-based indexes.
+            $versions = $tests['check_safari_ios_version'] + $versions;
+        }
+
+        foreach ($versions as $version => $result) {
+            $this->assertEquals($result, core_useragent::check_safari_ios_version($version),
+                "Version incorrectly determined for iOS Safari version '{$version}'");
+        }
+    }
+
+    /**
+     * @dataProvider user_agents_providers
+     */
+    public function test_useragent_gecko($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
+
+        if (isset($tests['is_gecko']) && $tests['is_gecko']) {
+            $this->assertTrue(core_useragent::is_gecko(),
+                "Browser was not identified as a gecko browser");
+            $this->assertTrue(core_useragent::check_gecko_version());
+        } else {
+            $this->assertFalse(core_useragent::is_gecko(),
+                "Browser was incorrectly identified as a gecko browser");
+            $this->assertFalse(core_useragent::check_gecko_version());
+        }
+
+        $versions = array(
+            // New versions should be added here.
+            '1'             => false,
+            '2'             => false,
+            '3.6'           => false,
+            '4.0'           => false,
+            '20030516'      => false,
+            '20051116'      => false,
+            '2006010100'    => false,
+            '20100101'      => false,
+            '15.0'          => false,
+            '18.0'          => false,
+            '19.0'          => false,
+        );
+
+        if (isset($tests['check_gecko_version'])) {
+            // The test provider has overwritten some of the above checks.
+            // Must use the '+' operator, because array_merge will incorrectly rewrite the array keys for integer-based indexes.
+            $versions = $tests['check_gecko_version'] + $versions;
+        }
+
+        foreach ($versions as $version => $result) {
+            $this->assertEquals($result, core_useragent::check_gecko_version($version),
+                "Version incorrectly determined for Gecko version '{$version}'");
+        }
+    }
+
+    /**
+     * @dataProvider user_agents_providers
+     */
+    public function test_useragent_firefox($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
+
+        if (isset($tests['is_firefox']) && $tests['is_firefox']) {
+            $this->assertTrue(core_useragent::is_firefox(),
+                "Browser was not identified as a firefox browser");
+            $this->assertTrue(core_useragent::check_firefox_version());
+        } else {
+            $this->assertFalse(core_useragent::is_firefox(),
+                "Browser was incorrectly identified as a firefox browser");
+            $this->assertFalse(core_useragent::check_firefox_version());
+        }
+
+        $versions = array(
+            // New versions should be added here.
+            '1.5'       => false,
+            '3.0'       => false,
+            '4'         => false,
+            '10'        => false,
+            '15'        => false,
+            '18'        => false,
+            '19'        => false,
+            '33'        => false,
+        );
+
+        if (isset($tests['check_firefox_version'])) {
+            // The test provider has overwritten some of the above checks.
+            // Must use the '+' operator, because array_merge will incorrectly rewrite the array keys for integer-based indexes.
+            $versions = $tests['check_firefox_version'] + $versions;
+        }
+
+        foreach ($versions as $version => $result) {
+            $this->assertEquals($result, core_useragent::check_firefox_version($version),
+                "Version incorrectly determined for Firefox version '{$version}'");
+        }
+    }
+
+    /**
+     * @dataProvider user_agents_providers
+     */
+    public function test_useragent_opera($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
+
+        if (isset($tests['is_opera']) && $tests['is_opera']) {
+            $this->assertTrue(core_useragent::is_opera(),
+                "Browser was not identified as a opera browser");
+            $this->assertTrue(core_useragent::check_opera_version());
+        } else {
+            $this->assertFalse(core_useragent::is_opera(),
+                "Browser was incorrectly identified as a opera browser");
+            $this->assertFalse(core_useragent::check_opera_version());
+        }
+
+        $versions = array(
+            // New versions should be added here.
+            '8.0'       => false,
+            '9.0'       => false,
+            '10.0'      => false,
+            '12.15'     => false,
+        );
+
+        if (isset($tests['check_opera_version'])) {
+            // The test provider has overwritten some of the above checks.
+            // Must use the '+' operator, because array_merge will incorrectly rewrite the array keys for integer-based indexes.
+            $versions = $tests['check_opera_version'] + $versions;
+        }
+
+        foreach ($versions as $version => $result) {
+            $this->assertEquals($result, core_useragent::check_opera_version($version),
+                "Version incorrectly determined for Opera version '{$version}'");
+        }
+    }
+
+    /**
+     * @dataProvider user_agents_providers
+     */
+    public function test_get_device_type($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
+
+        $expected = 'default';
+        if (isset($tests['devicetype'])) {
+            $expected = $tests['devicetype'];
+        }
+
+        $this->assertEquals($expected, core_useragent::get_device_type(),
+            "Device Type was not correctly identified");
+    }
+
+    /**
+     * @dataProvider user_agents_providers
+     */
+    public function test_get_browser_version_classes($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
+
+        $actual = core_useragent::get_browser_version_classes();
+        foreach ($tests['versionclasses'] as $expectedclass) {
+            $this->assertContains($expectedclass, $actual);
+        }
+        $this->assertCount(count($tests['versionclasses']), $actual);
     }
 }

@@ -27,7 +27,7 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
   Scenario: Allow guest access without password
     Given I set the following fields to these values:
       | Allow guest access | Yes |
-    And I press "Save changes"
+    And I press "Save and display"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
@@ -39,7 +39,7 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
     Given I set the following fields to these values:
       | Allow guest access | Yes |
       | Password | moodle_rules |
-    And I press "Save changes"
+    And I press "Save and display"
     And I log out
     And I log in as "student1"
     When I follow "Course 1"

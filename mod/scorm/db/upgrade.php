@@ -83,6 +83,7 @@ function xmldb_scorm_upgrade($oldversion) {
 
     // Remove old imsrepository type - convert any existing records to external type to help prevent major errors.
     if ($oldversion < 2013081301) {
+        require_once($CFG->dirroot . '/mod/scorm/lib.php');
         $scorms = $DB->get_recordset('scorm', array('scormtype' => 'imsrepository'));
         foreach ($scorms as $scorm) {
             $scorm->scormtype = SCORM_TYPE_EXTERNAL;
@@ -274,6 +275,27 @@ function xmldb_scorm_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2014040200, 'scorm');
     }
+
+    // Moodle v2.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2014072500) {
+
+        // Define field autocommit to be added to scorm.
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field('autocommit', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'displayactivityname');
+
+        // Conditionally launch add field autocommit.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Scorm savepoint reached.
+        upgrade_mod_savepoint(true, 2014072500, 'scorm');
+    }
+
+    // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }

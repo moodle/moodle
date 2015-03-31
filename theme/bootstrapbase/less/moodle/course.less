@@ -159,7 +159,7 @@
     }
 }
 
-.dir-rtl.editing .section {
+.dir-rtl .section {
     .activity {
         .editing_move {
             /* Move the move icon to the start of the line */
@@ -875,11 +875,12 @@ span.editinstructions {
         text-align:center;
         padding:0.4rem 0.3rem 0.3rem;
         line-height:2.2em;
+        > a,
         > .moodle-actionmenu {
             display:inline-block;
-            .menu a {
-                padding-left:1rem;
-            }
+        }
+        > .moodle-actionmenu .menu a {
+             padding-left:1rem;
         }
         .moodle-actionmenu:not([data-enhanced]) {
             li {line-height:normal;}
@@ -941,15 +942,16 @@ span.editinstructions {
         margin-right:1em;
         display:inline-block;
         display:initial;
-        img {
+        > a img,
+        .menubar img {
             margin: 0 4px;
             height:12px;
             padding: 0;
             vertical-align: inherit;
         }
         &.show .menu {
-            a {
-                padding:4px 1em 4px 4px;
+            li {
+                line-height: 20px;
             }
             img {
                 width: 12px;
@@ -1194,6 +1196,11 @@ span.editinstructions {
         }
         .course-count {
             margin-left:2rem;
+
+            .smallicon {
+                margin-left: 0px;
+                margin-right: 4px;
+            }
         }
         .bulk-action-checkbox {
             margin-left: -3px;

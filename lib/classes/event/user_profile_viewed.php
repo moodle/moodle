@@ -15,15 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the user profile viewed event.
- *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type int courseid id of course.
- *      @type string courseshortname short name of course.
- *      @type string coursefullname fullname of course.
- * }
+ * The user profile viewed event.
  *
  * @package    core
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -34,6 +26,22 @@ namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * The user profile viewed event class.
+ *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - int courseid: (optional) id of course.
+ *      - string courseshortname: (optional) shortname of course.
+ *      - string coursefullname: (optional) fullname of course.
+ * }
+ *
+ * @package    core
+ * @since      Moodle 2.6
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class user_profile_viewed extends base {
 
     /**
@@ -60,8 +68,9 @@ class user_profile_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return 'User ' . $this->userid . ' viewed the profile for user ' . $this->relateduserid . ' in the course ' .
-            $this->other['courseid'];
+        $desc = "The user with id '$this->userid' viewed the profile for the user with id '$this->relateduserid'";
+        $desc .= ($this->contextlevel == CONTEXT_COURSE) ? " in the course with id '$this->courseid'." : ".";
+        return $desc;
     }
 
     /**
@@ -70,7 +79,10 @@ class user_profile_viewed extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/user/view.php', array('id' => $this->relateduserid, 'course' => $this->other['courseid']));
+        if ($this->contextlevel == CONTEXT_COURSE) {
+            return new \moodle_url('/user/view.php', array('id' => $this->relateduserid, 'course' => $this->courseid));
+        }
+        return new \moodle_url('/user/profile.php', array('id' => $this->relateduserid));
     }
 
     /**
@@ -79,7 +91,24 @@ class user_profile_viewed extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array($this->other['courseid'], 'user', 'view', 'view.php?id=' . $this->relateduserid . '&course=' .
-            $this->other['courseid'], $this->relateduserid);
+        if ($this->contextlevel == CONTEXT_COURSE) {
+            return array($this->courseid, 'user', 'view', 'view.php?id=' . $this->relateduserid . '&course=' .
+                $this->courseid, $this->relateduserid);
+        }
+        return null;
+    }
+
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception when validation does not pass.
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('The \'relateduserid\' must be set.');
+        }
     }
 }

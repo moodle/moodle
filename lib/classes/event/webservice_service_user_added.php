@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * core webservice service user added event.
+ * Web service service user added event.
  *
  * @package    core
  * @copyright  2013 Frédéric Massart
@@ -26,13 +26,14 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * core webservice service user added event class.
+ * Web service service user added event class.
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_service_user_added extends \core\event\base {
+class webservice_service_user_added extends base {
 
     /**
      * Returns description of what happened.
@@ -40,7 +41,8 @@ class webservice_service_user_added extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user $this->relateduserid has been added to the web service service $this->objectid.";
+        return "The user with id '$this->userid' added the user with id '$this->relateduserid' to the web service " .
+            "with id '$this->objectid'.";
     }
 
     /**
@@ -60,7 +62,7 @@ class webservice_service_user_added extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_webservice_service_user_added', 'webservice');
+        return get_string('eventwebserviceserviceuseradded', 'webservice');
     }
 
     /**
@@ -87,13 +89,13 @@ class webservice_service_user_added extends \core\event\base {
     /**
      * Custom validation.
      *
+     * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->relateduserid)) {
-            throw new \coding_exception('The relateduserid must be set.');
+            throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
-
 }

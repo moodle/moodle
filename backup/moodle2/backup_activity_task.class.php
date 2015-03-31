@@ -137,8 +137,10 @@ abstract class backup_activity_task extends backup_task {
         // activity and from its related course_modules record and availability
         $this->add_step(new backup_module_structure_step('module_info', 'module.xml'));
 
-        // Annotate the groups used in already annotated groupings
-        $this->add_step(new backup_annotate_groups_from_groupings('annotate_groups'));
+        // Annotate the groups used in already annotated groupings if groups are to be backed up.
+        if ($this->get_setting_value('groups')) {
+            $this->add_step(new backup_annotate_groups_from_groupings('annotate_groups'));
+        }
 
         // Here we add all the common steps for any activity and, in the point of interest
         // we call to define_my_steps() is order to get the particular ones inserted in place.
@@ -180,6 +182,9 @@ abstract class backup_activity_task extends backup_task {
 
         // Generate the grading file (conditionally)
         $this->add_step(new backup_activity_grading_structure_step('activity_grading', 'grading.xml'));
+
+        // Generate the grade history file. The setting 'grade_histories' is handled in the step.
+        $this->add_step(new backup_activity_grade_history_structure_step('activity_grade_history', 'grade_history.xml'));
 
         // Annotate the scales used in already annotated outcomes
         $this->add_step(new backup_annotate_scales_from_outcomes('annotate_scales'));

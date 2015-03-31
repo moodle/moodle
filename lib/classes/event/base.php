@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * All other event classes must extend this class.
  *
  * @package    core
+ * @since      Moodle 2.6
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -45,7 +46,7 @@ defined('MOODLE_INTERNAL') || die();
  * @property-read int $contextlevel
  * @property-read int $contextinstanceid
  * @property-read int $userid who did this?
- * @property-read int $courseid
+ * @property-read int $courseid the courseid of the event context, 0 for contexts above course
  * @property-read int $relateduserid
  * @property-read int $anonymous 1 means event should not be visible in reports, 0 means normal event,
  *                    create() argument may be also true/false.
@@ -338,7 +339,7 @@ abstract class base implements \IteratorAggregate {
         }
 
         if (!class_exists($classname)) {
-            return false;
+            return self::restore_unknown($data, $logextra);
         }
         $event = new $classname();
         if (!($event instanceof \core\event\base)) {
@@ -366,6 +367,27 @@ abstract class base implements \IteratorAggregate {
             }
         }
         $event->data = $data;
+
+        return $event;
+    }
+
+    /**
+     * Restore unknown event.
+     *
+     * @param array $data
+     * @param array $logextra
+     * @return unknown_logged
+     */
+    protected static final function restore_unknown(array $data, array $logextra) {
+        $classname = '\core\event\unknown_logged';
+
+        /** @var unknown_logged $event */
+        $event = new $classname();
+        $event->restored = true;
+        $event->triggered = true;
+        $event->dispatched = true;
+        $event->data = $data;
+        $event->logextra = $logextra;
 
         return $event;
     }
@@ -454,6 +476,69 @@ abstract class base implements \IteratorAggregate {
         $event->data['other'] = (array)$legacy;
 
         return $event;
+    }
+
+    /**
+     * Get static information about an event.
+     * This is used in reports and is not for general use.
+     *
+     * @return array Static information about the event.
+     */
+    public static final function get_static_info() {
+        /** Var \core\event\base $event. */
+        $event = new static();
+        // Set static event data specific for child class.
+        $event->init();
+        return array(
+            'eventname' => $event->data['eventname'],
+            'component' => $event->data['component'],
+            'target' => $event->data['target'],
+            'action' => $event->data['action'],
+            'crud' => $event->data['crud'],
+            'edulevel' => $event->data['edulevel'],
+            'objecttable' => $event->data['objecttable'],
+        );
+    }
+
+    /**
+     * Get an explanation of what the class does.
+     * By default returns the phpdocs from the child event class. Ideally this should
+     * be overridden to return a translatable get_string style markdown.
+     * e.g. return new lang_string('eventyourspecialevent', 'plugin_type');
+     *
+     * @return string An explanation of the event formatted in markdown style.
+     */
+    public static function get_explanation() {
+        $ref = new \ReflectionClass(get_called_class());
+        $docblock = $ref->getDocComment();
+
+        // Check that there is something to work on.
+        if (empty($docblock)) {
+            return null;
+        }
+
+        $docblocklines = explode("\n", $docblock);
+        // Remove the bulk of the comment characters.
+        $pattern = "/(^\s*\/\*\*|^\s+\*\s|^\s+\*)/";
+        $cleanline = array();
+        foreach ($docblocklines as $line) {
+            $templine = preg_replace($pattern, '', $line);
+            // If there is nothing on the line then don't add it to the array.
+            if (!empty($templine)) {
+                $cleanline[] = rtrim($templine);
+            }
+            // If we get to a line starting with an @ symbol then we don't want the rest.
+            if (preg_match("/^@|\//", $templine)) {
+                // Get rid of the last entry (it contains an @ symbol).
+                array_pop($cleanline);
+                // Break out of this foreach loop.
+                break;
+            }
+        }
+        // Add a line break to the sanitised lines.
+        $explanation = implode("\n", $cleanline);
+
+        return $explanation;
     }
 
     /**
@@ -615,7 +700,14 @@ abstract class base implements \IteratorAggregate {
             if ($data = $this->get_legacy_logdata()) {
                 $manager = get_log_manager();
                 if (method_exists($manager, 'legacy_add_to_log')) {
-                    call_user_func_array(array($manager, 'legacy_add_to_log'), $data);
+                    if (is_array($data[0])) {
+                        // Some events require several entries in 'log' table.
+                        foreach ($data as $d) {
+                            call_user_func_array(array($manager, 'legacy_add_to_log'), $d);
+                        }
+                    } else {
+                        call_user_func_array(array($manager, 'legacy_add_to_log'), $data);
+                    }
                 }
             }
         }

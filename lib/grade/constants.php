@@ -68,7 +68,7 @@ define('GRADE_AGGREGATE_WEIGHTED_MEAN2', 11);
 define('GRADE_AGGREGATE_EXTRACREDIT_MEAN', 12);
 
 /**
- * GRADE_AGGREGATE_WEIGHTED_MEAN2 - Use the sum of grades in the category for grade aggregation.
+ * GRADE_AGGREGATE_WEIGHTED_MEAN2 - Use Natural in the category for grade aggregation.
  */
 define('GRADE_AGGREGATE_SUM', 13);
 

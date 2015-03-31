@@ -37,6 +37,10 @@ class tool_generator_course_backend extends tool_generator_backend {
      */
     private static $paramsections = array(1, 10, 100, 500, 1000, 2000);
     /**
+     * @var array Number of assignments in course
+     */
+    private static $paramassignments = array(1, 10, 100, 500, 1000, 2000);
+    /**
      * @var array Number of Page activities in course
      */
     private static $parampages = array(1, 50, 200, 1000, 5000, 10000);
@@ -80,6 +84,21 @@ class tool_generator_course_backend extends tool_generator_backend {
     private $shortname;
 
     /**
+     * @var string Course fullname.
+     */
+    private $fullname = "";
+
+    /**
+     * @var string Course summary.
+     */
+    private $summary = "";
+
+    /**
+     * @var string Course summary format, defaults to FORMAT_HTML.
+     */
+    private $summaryformat = FORMAT_HTML;
+
+    /**
      * @var testing_data_generator Data generator
      */
     protected $generator;
@@ -103,10 +122,37 @@ class tool_generator_course_backend extends tool_generator_backend {
      * @param int|bool $filesizelimit The max number of bytes for a generated file
      * @param bool $progress True if progress information should be displayed
      */
-    public function __construct($shortname, $size, $fixeddataset = false, $filesizelimit = false, $progress = true) {
+    public function __construct(
+        $shortname,
+        $size,
+        $fixeddataset = false,
+        $filesizelimit = false,
+        $progress = true,
+        $fullname = null,
+        $summary = null,
+        $summaryformat = FORMAT_HTML) {
 
         // Set parameters.
         $this->shortname = $shortname;
+
+        // We can't allow fullname to be set to an empty string.
+        if (empty($fullname)) {
+            $this->fullname = get_string(
+                'fullname',
+                'tool_generator',
+                array(
+                    'size' => get_string('shortsize_' . $size, 'tool_generator')
+                )
+            );
+        } else {
+            $this->fullname = $fullname;
+        }
+
+        // Summary, on the other hand, should be empty-able.
+        if (!is_null($summary)) {
+            $this->summary = $summary;
+            $this->summaryformat = $summaryformat;
+        }
 
         parent::__construct($size, $fixeddataset, $filesizelimit, $progress);
     }
@@ -179,6 +225,7 @@ class tool_generator_course_backend extends tool_generator_backend {
         // Make course.
         $this->course = $this->create_course();
         $this->create_users();
+        $this->create_assignments();
         $this->create_pages();
         $this->create_small_files();
         $this->create_big_files();
@@ -203,10 +250,16 @@ class tool_generator_course_backend extends tool_generator_backend {
      */
     private function create_course() {
         $this->log('createcourse', $this->shortname);
-        $courserecord = array('shortname' => $this->shortname,
-                'fullname' => get_string('fullname', 'tool_generator',
-                    array('size' => get_string('shortsize_' . $this->size, 'tool_generator'))),
-                'numsections' => self::$paramsections[$this->size]);
+        $courserecord = array(
+            'shortname' => $this->shortname,
+            'fullname' => $this->fullname,
+            'numsections' => self::$paramsections[$this->size]
+        );
+        if (strlen($this->summary) > 0) {
+            $courserecord['summary'] = $this->summary;
+            $courserecord['summary_format'] = $this->summaryformat;
+        }
+
         return $this->generator->create_course($courserecord, array('createsections' => true));
     }
 
@@ -303,8 +356,7 @@ class tool_generator_course_backend extends tool_generator_backend {
             $username = 'tool_generator_' . $textnumber;
 
             // Create user account.
-            $record = array('firstname' => get_string('firstname', 'tool_generator'),
-                    'lastname' => $number, 'username' => $username);
+            $record = array('username' => $username, 'idnumber' => $number);
 
             // We add a user password if it has been specified.
             if (!empty($CFG->tool_generator_users_password)) {
@@ -315,6 +367,26 @@ class tool_generator_course_backend extends tool_generator_backend {
             $this->userids[$number] = (int)$user->id;
             $this->dot($done, $count);
         }
+        $this->end_log();
+    }
+
+    /**
+     * Creates a number of Assignment activities.
+     */
+    private function create_assignments() {
+        // Set up generator.
+        $assigngenerator = $this->generator->get_plugin_generator('mod_assign');
+
+        // Create assignments.
+        $number = self::$paramassignments[$this->size];
+        $this->log('createassignments', $number, true);
+        for ($i = 0; $i < $number; $i++) {
+            $record = array('course' => $this->course);
+            $options = array('section' => $this->get_target_section());
+            $assigngenerator->create_instance($record, $options);
+            $this->dot($i, $number);
+        }
+
         $this->end_log();
     }
 

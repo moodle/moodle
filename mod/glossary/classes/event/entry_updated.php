@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_glossary entry updated event.
+ * The mod_glossary entry updated event.
  *
  * @package    mod_glossary
  * @copyright  2014 Marina Glancy
@@ -26,15 +26,16 @@ namespace mod_glossary\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_glossary entry updated event.
+ * The mod_glossary entry updated event.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      @type string concept the concept of updated entry (after update).
+ *      - string concept: (optional) the concept of updated entry (after update).
  * }
  *
  * @package    mod_glossary
+ * @since      Moodle 2.7
  * @copyright  2014 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -63,7 +64,8 @@ class entry_updated extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has updated a glossary entry with id {$this->objectid}.";
+        return "The user with id '$this->userid' has updated the glossary entry with id '$this->objectid' in " .
+            "the glossary activity with course module id '$this->contextinstanceid'.";
     }
 
     /**

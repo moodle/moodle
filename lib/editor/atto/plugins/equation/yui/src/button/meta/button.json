@@ -2,9 +2,11 @@
     "moodle-atto_equation-button": {
         "requires": [
             "moodle-editor_atto-plugin",
+            "moodle-core-event",
             "io",
             "event-valuechange",
-            "tabview"
+            "tabview",
+            "array-extras"
         ]
     }
 }

@@ -44,6 +44,7 @@ Structure of the user enroller panel
 
 .user-enroller-panel .uep-content {text-align:center;position:relative;width:100%;border-top:1px solid #999;border-bottom:1px solid #999;}
 .user-enroller-panel .uep-content .uep-controls {margin:0;padding:3px;background-color:#ddd;text-align:left;border-bottom:1px solid #BBB;}
+.user-enroller-panel .uep-content .uep-controls label {display: inline;padding-right:5px;}
 .user-enroller-panel .uep-content .uep-controls .uep-enrolment-option input {vertical-align:middle;margin-left:1em;}
 .user-enroller-panel .uep-ajax-content {height:375px;overflow:auto;}
 .user-enroller-panel .uep-search-results .totalusers {background-color:#eee;padding:5px;border-bottom:1px solid #BBB;font-size:7pt;font-weight: bold;}
@@ -57,6 +58,14 @@ Structure of the user enroller panel
 .user-enroller-panel .uep-search-results .user.enrolled .count {width:40px;color:#eee;}
 .user-enroller-panel .uep-search-results .uep-more-results {background-color:#eee;padding:5px;border-top:1px solid #BBB;}
 
+.user-enroller-panel .uep-search-results .totalcohorts {background-color:#eee;padding:5px;border-bottom:1px solid #BBB;font-size:7pt;font-weight: bold;}
+.user-enroller-panel .uep-search-results .cohort {width:100%;text-align:left;font-size:9pt;border-bottom:1px solid #ddd;border-top:1px solid #eee;}
+.user-enroller-panel .uep-search-results .cohort .count {width:20px;float:left;font-size:7pt;line-height:27px;border-right:1px solid #ddd;background-color:#EEE;text-align:right;padding:2px;}
+.user-enroller-panel .uep-search-results .cohort .details {width:250px;float:left;margin:5px;}
+.user-enroller-panel .uep-search-results .cohort .options {padding-right:7px;font-size:8pt;margin:3px;}
+.user-enroller-panel .uep-search-results .cohort .options .enrol {margin:3px;float:right;cursor:pointer;}
+.user-enroller-panel .uep-search-results .cohort.enrolled .count {width:40px;color:#eee;}
+
 .user-enroller-panel .uep-loading-lightbox {position:absolute;width:100%;height:100%;top:0;left:0;background-color:#FFF;min-width:50px;min-height:50px;}
 .user-enroller-panel .uep-loading-lightbox.hidden {display:none;}
 .user-enroller-panel .uep-loading-lightbox .loading-icon {margin:auto;vertical-align:middle;margin-top:125px;}
@@ -67,7 +76,7 @@ Structure of the user enroller panel
 .user-enroller-panel .uep-search input {width:50%;}
 .user-enroller-panel .uep-search input.uep-search-btn {width:20%;}
 .user-enroller-panel .uep-searchoptions {margin:3px;cursor:pointer;}
-.user-enroller-panel .uep-searchoptions select {margin-left:1em;}
+.user-enroller-panel .uep-controls select {margin-left:1em;margin-bottom:0;}
 .user-enroller-panel .collapsibleheading img {margin-right:8px;}
 .user-enroller-panel .collapsiblearea {border:1px solid #bbb;background-color:#f6f6f6;}
 .user-enroller-panel .collapsiblearea.hidden {display:none;}
@@ -76,3 +85,4 @@ Structure of the user enroller panel
 .dir-rtl .user-enroller-panel .uep-header .close {right: auto;left:1em;}
 .dir-rtl .user-enroller-panel .uep-search-results .user { text-align: right;}
 .dir-rtl .user-enroller-panel .uep-content .uep-controls { text-align: right;}
+.dir-rtl .user-enroller-panel .uep-search-results .cohort { text-align: right;}

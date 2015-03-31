@@ -1,27 +1,33 @@
 Google APIs Client Library for PHP
 ==================================
 
-Only the source and the README files have been kept in this directory.
+Only the source and the README files have been kept in this directory:
 
-The configuration (local_config.php) of this API specifies a different ioClass
-than the default one. This new ioClass has been defined in curlio.php and is
-named moodle_google_curlio, extending Google_CurlIO. The only reason to do
-that was that we could force Google lib to use our implementation of curl.
-If you upgrade the library, please check if the method Google_CurlIO::makeRequest()
-has been updated and would require change in moodle_google_curlio.
+- Copy /src/Google to /Google
+- Copy /LICENSE to LICENSE
+- Copy /README.md to README.md
 
-Library hack
-------------
+Here are the files that we have added.
 
-* The file Google_Client.php resets the timezone to UTC. The line
-  date_default_timezone_set('UTC'); should be commented out. See MDL-42808.
+/lib.php
+
+    Is a wrapper to get a Google_Client object with the default configuration
+    that should be used throughout Moodle. It also takes care of including the
+    required files and updating the include_path.
+
+/curlio.php
+
+    An override of the default Google_IO_Curl class to use our Curl class
+    rather then their implementation. When upgrading the library the default
+    Curl class should be checked to ensure that its functionalities are covered
+    in this file.
+
 
 Information
 -----------
 
-URL: http://code.google.com/p/google-api-php-client/
-Download from: http://code.google.com/p/google-api-php-client/downloads/list
-Documentation: http://code.google.com/p/google-api-php-client/w/list
+Repository: https://github.com/google/google-api-php-client
+Documentation: https://developers.google.com/api-client-library/php/
 Global documentation: https://developers.google.com
 
-Downloaded version: 0.6.0
+Downloaded version: 1.0.5-beta

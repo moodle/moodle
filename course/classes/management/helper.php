@@ -221,12 +221,22 @@ class helper {
             $actions['resortbyname'] = array(
                 'url' => new \moodle_url($baseurl, array('action' => 'resortcategories', 'resort' => 'name')),
                 'icon' => new \pix_icon('t/sort', new \lang_string('sort')),
-                'string' => new \lang_string('resortsubcategoriesbyname', 'moodle')
+                'string' => new \lang_string('resortsubcategoriesby', 'moodle' , get_string('categoryname'))
+            );
+            $actions['resortbynamedesc'] = array(
+                'url' => new \moodle_url($baseurl, array('action' => 'resortcategories', 'resort' => 'namedesc')),
+                'icon' => new \pix_icon('t/sort', new \lang_string('sort')),
+                'string' => new \lang_string('resortsubcategoriesbyreverse', 'moodle', get_string('categoryname'))
             );
             $actions['resortbyidnumber'] = array(
                 'url' => new \moodle_url($baseurl, array('action' => 'resortcategories', 'resort' => 'idnumber')),
                 'icon' => new \pix_icon('t/sort', new \lang_string('sort')),
-                'string' => new \lang_string('resortsubcategoriesbyidnumber', 'moodle')
+                'string' => new \lang_string('resortsubcategoriesby', 'moodle', get_string('idnumbercoursecategory'))
+            );
+            $actions['resortbyidnumberdesc'] = array(
+                'url' => new \moodle_url($baseurl, array('action' => 'resortcategories', 'resort' => 'idnumberdesc')),
+                'icon' => new \pix_icon('t/sort', new \lang_string('sort')),
+                'string' => new \lang_string('resortsubcategoriesbyreverse', 'moodle', get_string('idnumbercoursecategory'))
             );
         }
 
@@ -305,7 +315,7 @@ class helper {
         // Edit.
         if ($course->can_edit()) {
             $actions[] = array(
-                'url' => new \moodle_url('/course/edit.php', array('id' => $course->id)),
+                'url' => new \moodle_url('/course/edit.php', array('id' => $course->id, 'returnto' => 'catmanage')),
                 'icon' => new \pix_icon('t/edit', \get_string('edit')),
                 'attributes' => array('class' => 'action-edit')
             );
@@ -794,8 +804,7 @@ class helper {
         }
 
         list($where, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
-        $params['categoryid'] = $moveto->id;
-        $sql = "SELECT c.id, c.category FROM {course} c WHERE c.id {$where} AND c.category <> :categoryid";
+        $sql = "SELECT c.id, c.category FROM {course} c WHERE c.id {$where}";
         $courses = $DB->get_records_sql($sql, $params);
         $checks = array();
         foreach ($courseids as $id) {

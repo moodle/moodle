@@ -34,18 +34,18 @@ class moodle1_mod_lti_handler extends moodle1_mod_handler {
     protected $moduleid = null;
 
     /**
-    * Declare the paths in moodle.xml we are able to convert
-    *
-    * The method returns list of {@link convert_path} instances.
-    * For each path returned, the corresponding conversion method must be
-    * defined.
-    *
-    * Note that the path /MOODLE_BACKUP/COURSE/MODULES/MOD/LTI does not
-    * actually exist in the file. The last element with the module name was
-    * appended by the moodle1_converter class.
-    *
-    * @return array of {@link convert_path} instances
-    */
+     * Declare the paths in moodle.xml we are able to convert
+     *
+     * The method returns list of {@link convert_path} instances.
+     * For each path returned, the corresponding conversion method must be
+     * defined.
+     *
+     * Note that the path /MOODLE_BACKUP/COURSE/MODULES/MOD/LTI does not
+     * actually exist in the file. The last element with the module name was
+     * appended by the moodle1_converter class.
+     *
+     * @return array of {@link convert_path} instances
+     */
     public function get_paths() {
 
         return array(
@@ -57,33 +57,33 @@ class moodle1_mod_lti_handler extends moodle1_mod_handler {
     }
 
     /**
-    * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/LTI
-    * data available
-    */
+     * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/LTI
+     * data available
+     */
     public function process_basiclti($data) {
         global $DB;
 
-        // get the course module id and context id
+        // Get the course module id and context id.
         $instanceid     = $data['id'];
         $cminfo         = $this->get_cminfo($instanceid);
         $this->moduleid = $cminfo['id'];
         $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
-        // get a fresh new file manager for this instance
+        // Get a fresh new file manager for this instance.
         $this->fileman = $this->converter->get_file_manager($contextid, 'mod_lti');
 
-        // convert course files embedded into the intro
+        // Convert course files embedded into the intro.
         $this->fileman->filearea = 'intro';
         $this->fileman->itemid   = 0;
         $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
 
-        // start writing assignment.xml
+        // Start writing assignment.xml.
         $this->open_xml_writer("activities/lti_{$this->moduleid}/lti.xml");
         $this->xmlwriter->begin_tag('activity', array('id' => $instanceid, 'moduleid' => $this->moduleid,
                 'modulename' => 'lti', 'contextid' => $contextid));
         $this->xmlwriter->begin_tag('lti', array('id' => $instanceid));
 
-        $ignore_fields = array('id', 'modtype');
+        $ignorefields = array('id', 'modtype');
         if (!$DB->record_exists('lti_types', array('id' => $data['typeid']))) {
             $ntypeid = $DB->get_field('lti_types_config',
                                       'typeid',
@@ -105,7 +105,7 @@ class moodle1_mod_lti_handler extends moodle1_mod_handler {
             $data['servicesalt'] = uniqid('', true);
         }
         foreach ($data as $field => $value) {
-            if (!in_array($field, $ignore_fields)) {
+            if (!in_array($field, $ignorefields)) {
                 $this->xmlwriter->full_tag($field, $value);
             }
         }
@@ -114,15 +114,15 @@ class moodle1_mod_lti_handler extends moodle1_mod_handler {
     }
 
     /**
-    * This is executed when we reach the closing </MOD> tag of our 'lti' path
-    */
+     * This is executed when we reach the closing </MOD> tag of our 'lti' path
+     */
     public function on_basiclti_end() {
-        // finish writing basiclti.xml
+        // Finish writing basiclti.xml.
         $this->xmlwriter->end_tag('lti');
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
 
-        // write inforef.xml
+        // Write inforef.xml.
         $this->open_xml_writer("activities/lti_{$this->moduleid}/inforef.xml");
         $this->xmlwriter->begin_tag('inforef');
         $this->xmlwriter->begin_tag('fileref');

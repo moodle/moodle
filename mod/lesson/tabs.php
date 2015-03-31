@@ -50,8 +50,11 @@ $attemptscount = $DB->count_records('lesson_grades', array('lessonid'=>$lesson->
 
 $row[] = new tabobject('view', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id", get_string('preview', 'lesson'), get_string('previewlesson', 'lesson', format_string($lesson->name)));
 $row[] = new tabobject('edit', "$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id", get_string('edit', 'lesson'), get_string('edita', 'moodle', format_string($lesson->name)));
-$row[] = new tabobject('reports', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id", get_string('reports', 'lesson'), get_string('viewreports2', 'lesson', $attemptscount));
-if (has_capability('mod/lesson:edit', $context)) {
+if (has_capability('mod/lesson:viewreports', $context)) {
+    $row[] = new tabobject('reports', "$CFG->wwwroot/mod/lesson/report.php?id=$cm->id", get_string('reports', 'lesson'),
+            get_string('viewreports2', 'lesson', $attemptscount));
+}
+if (has_capability('mod/lesson:grade', $context)) {
     $row[] = new tabobject('essay', "$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id", get_string('manualgrading', 'lesson'));
 }
 if ($lesson->highscores) {

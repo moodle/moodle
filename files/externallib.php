@@ -52,7 +52,7 @@ class core_files_external extends external_api {
                 'filearea'     => new external_value(PARAM_TEXT, 'file area'),
                 'itemid'       => new external_value(PARAM_INT, 'associated id'),
                 'filepath'     => new external_value(PARAM_PATH, 'file path'),
-                'filename'     => new external_value(PARAM_FILE, 'file name'),
+                'filename'     => new external_value(PARAM_TEXT, 'file name'),
                 'modified'     => new external_value(PARAM_INT, 'timestamp to return files changed after this time.', VALUE_DEFAULT, null),
                 'contextlevel' => new external_value(PARAM_ALPHA, 'The context level for the file location.', VALUE_DEFAULT, null),
                 'instanceid'   => new external_value(PARAM_INT, 'The instance id for where the file is located.', VALUE_DEFAULT, null)
@@ -74,6 +74,7 @@ class core_files_external extends external_api {
      * @param string $contextlevel The context level for the file location.
      * @param int $instanceid The instance id for where the file is located.
      * @return array
+     * @since Moodle 2.9 Returns additional fields (timecreated, filesize, author, license)
      * @since Moodle 2.2
      */
     public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename, $modified = null,
@@ -112,9 +113,6 @@ class core_files_external extends external_api {
         if (empty($fileinfo['filearea'])) {
             $fileinfo['filearea'] = null;
         }
-        if (empty($fileinfo['itemid'])) {
-            $fileinfo['itemid'] = null;
-        }
         if (empty($fileinfo['filename'])) {
             $fileinfo['filename'] = null;
         }
@@ -142,6 +140,7 @@ class core_files_external extends external_api {
 
                 $params = $child->get_params();
                 $timemodified = $child->get_timemodified();
+                $timecreated = $child->get_timecreated();
 
                 if ($child->is_directory()) {
                     if ((is_null($modified)) or ($modified < $timemodified)) {
@@ -154,7 +153,11 @@ class core_files_external extends external_api {
                             'filename'  => $child->get_visible_name(),
                             'url'       => null,
                             'isdir'     => true,
-                            'timemodified' => $timemodified
+                            'timemodified' => $timemodified,
+                            'timecreated' => $timecreated,
+                            'filesize' => 0,
+                            'author' => null,
+                            'license' => null
                            );
                            $list[] = $node;
                     }
@@ -169,7 +172,11 @@ class core_files_external extends external_api {
                             'filename'  => $child->get_visible_name(),
                             'url'       => $child->get_url(),
                             'isdir'     => false,
-                            'timemodified' => $timemodified
+                            'timemodified' => $timemodified,
+                            'timecreated' => $timecreated,
+                            'filesize' => $child->get_filesize(),
+                            'author' => $child->get_author(),
+                            'license' => $child->get_license()
                         );
                            $list[] = $node;
                     }
@@ -184,6 +191,7 @@ class core_files_external extends external_api {
      * Returns description of get_files returns
      *
      * @return external_single_structure
+     * @since Moodle 2.9 Returns additional fields for files (timecreated, filesize, author, license)
      * @since Moodle 2.2
      */
     public static function get_files_returns() {
@@ -209,10 +217,14 @@ class core_files_external extends external_api {
                             'filearea'  => new external_value(PARAM_AREA, ''),
                             'itemid'   => new external_value(PARAM_INT, ''),
                             'filepath' => new external_value(PARAM_TEXT, ''),
-                            'filename' => new external_value(PARAM_FILE, ''),
+                            'filename' => new external_value(PARAM_TEXT, ''),
                             'isdir'    => new external_value(PARAM_BOOL, ''),
                             'url'      => new external_value(PARAM_TEXT, ''),
                             'timemodified' => new external_value(PARAM_INT, ''),
+                            'timecreated' => new external_value(PARAM_INT, 'Time created', VALUE_OPTIONAL),
+                            'filesize' => new external_value(PARAM_INT, 'File size', VALUE_OPTIONAL),
+                            'author' => new external_value(PARAM_TEXT, 'File owner', VALUE_OPTIONAL),
+                            'license' => new external_value(PARAM_TEXT, 'File license', VALUE_OPTIONAL),
                         )
                     )
                 )
@@ -407,13 +419,18 @@ class moodle_file_external extends external_api {
      * @param int $itemid
      * @param string $filepath
      * @param string $filename
+     * @param int $modified timestamp to return files changed after this time.
+     * @param string $contextlevel The context level for the file location.
+     * @param int $instanceid The instance id for where the file is located.
      * @return array
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
      * @see core_files_external::get_files()
      */
-    public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename) {
-        return core_files_external::get_files($contextid, $component, $filearea, $itemid, $filepath, $filename);
+    public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename, $modified = null,
+                                     $contextlevel = null, $instanceid = null) {
+        return core_files_external::get_files($contextid, $component, $filearea, $itemid, $filepath, $filename,
+            $modified, $contextlevel, $instanceid);
     }
 
     /**
@@ -426,6 +443,15 @@ class moodle_file_external extends external_api {
      */
     public static function get_files_returns() {
         return core_files_external::get_files_returns();
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_files_is_deprecated() {
+        return true;
     }
 
     /**
@@ -450,13 +476,16 @@ class moodle_file_external extends external_api {
      * @param string $filepath
      * @param string $filename
      * @param string $filecontent
+     * @param string $contextlevel Context level (block, course, coursecat, system, user or module)
+     * @param int    $instanceid   Instance id of the item associated with the context level
      * @return array
      * @since Moodle 2.0
      * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
      * @see core_files_external::upload()
      */
-    public static function upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent) {
-        return core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent);
+    public static function upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent, $contextlevel, $instanceid) {
+        return core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename,
+            $filecontent, $contextlevel, $instanceid);
     }
 
     /**
@@ -470,4 +499,14 @@ class moodle_file_external extends external_api {
     public static function upload_returns() {
         return core_files_external::upload_returns();
     }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function upload_is_deprecated() {
+        return true;
+    }
+
 }

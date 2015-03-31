@@ -68,18 +68,52 @@ class filter_mediaplugin extends moodle_text_filter {
         // Check SWF permissions.
         $this->trusted = !empty($options['noclean']) or !empty($CFG->allowobjectembed);
 
-        // Handle all links that contain any 'embeddable' marker text (it could
-        // do all links, but the embeddable markers thing should make it faster
-        // by meaning for most links it doesn't drop into PHP code).
-        $newtext = preg_replace_callback($re = '~<a\s[^>]*href="([^"]*(?:' .
-                $this->embedmarkers . ')[^"]*)"[^>]*>([^>]*)</a>~is',
-                array($this, 'callback'), $text);
+        // Looking for tags.
+        $matches = preg_split('/(<[^>]*>)/i', $text, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 
-        if (empty($newtext) or $newtext === $text) {
-            // error or not filtered
+        if (!$matches) {
             return $text;
         }
 
+        // Regex to find media extensions in an <a> tag.
+        $re = '~<a\s[^>]*href="([^"]*(?:' .  $this->embedmarkers . ')[^"]*)"[^>]*>([^>]*)</a>~is';
+
+        $newtext = '';
+        $validtag = '';
+        $sizeofmatches = count($matches);
+
+        // We iterate through the given string to find valid <a> tags
+        // and build them so that the callback function can check it for
+        // embedded content. Then we rebuild the string.
+        foreach ($matches as $idx => $tag) {
+            if (preg_match('|</a>|', $tag) && !empty($validtag)) {
+                $validtag .= $tag;
+
+                // Given we now have a valid <a> tag to process it's time for
+                // ReDoS protection. Stop processing if a word is too large.
+                if (strlen($validtag) < 4096) {
+                    $processed = preg_replace_callback($re, array($this, 'callback'), $validtag);
+                }
+                // Rebuilding the string with our new processed text.
+                $newtext .= !empty($processed) ? $processed : $validtag;
+                // Wipe it so we can catch any more instances to filter.
+                $validtag = '';
+                $processed = '';
+            } else if (preg_match('/<a\s[^>]*/', $tag) && $sizeofmatches > 1) {
+                // Looking for a starting <a> tag.
+                $validtag = $tag;
+            } else {
+                // If we have a validtag add to that to process later,
+                // else add straight onto our newtext string.
+                if (!empty($validtag)) {
+                    $validtag .= $tag;
+                } else {
+                    $newtext .= $tag;
+                }
+            }
+        }
+
+        // Return the same string except processed by the above.
         return $newtext;
     }
 

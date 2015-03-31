@@ -40,7 +40,7 @@ if ($id) { // if entry is specified
 
     $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
     if (!has_capability('mod/glossary:manageentries', $context) and !($entry->userid == $USER->id and ($ineditperiod and has_capability('mod/glossary:write', $context)))) {
-        if ($USER->id != $fromdb->userid) {
+        if ($USER->id != $entry->userid) {
             print_error('errcannoteditothers', 'glossary', "view.php?id=$cm->id&amp;mode=entry&amp;hook=$id");
         } elseif (!$ineditperiod) {
             print_error('erredittimeexpired', 'glossary', "view.php?id=$cm->id&amp;mode=entry&amp;hook=$id");
@@ -185,6 +185,17 @@ if ($mform->is_cancelled()){
             $completion->update_state($cm, COMPLETION_COMPLETE);
         }
     }
+
+    // Reset caches.
+    if ($isnewentry) {
+        if ($entry->usedynalink and $entry->approved) {
+            \mod_glossary\local\concept_cache::reset_glossary($glossary);
+        }
+    } else {
+        // So many things may affect the linking, let's just purge the cache always on edit.
+        \mod_glossary\local\concept_cache::reset_glossary($glossary);
+    }
+
 
     redirect("view.php?id=$cm->id&mode=entry&hook=$entry->id");
 }

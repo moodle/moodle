@@ -52,6 +52,13 @@ class assignfeedback_editpdf_testcase extends mod_assign_base_testcase {
         parent::setUp();
     }
 
+    /**
+     * Tidy up open files that may be left open.
+     */
+    protected function tearDown() {
+        gc_collect_cycles();
+    }
+
     protected function create_assign_and_submit_pdf() {
         global $CFG;
         $assign = $this->create_instance(array('assignsubmission_onlinetext_enabled' => 1,

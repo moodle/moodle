@@ -198,7 +198,7 @@ if (!$cache) {
     // let's ignore legacy IE breakage here too.
     css_send_uncached_css($csscontent);
 
-} else if ($chunk and file_exists($candidatesheet)) {
+} else if ($chunk !== null and file_exists($candidatesheet)) {
     // Greetings stupid legacy IEs!
     css_send_cached_css($candidatesheet, $etag);
 

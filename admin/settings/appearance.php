@@ -23,6 +23,17 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     $temp->add(new admin_setting_configcheckbox('allowuserblockhiding', new lang_string('allowuserblockhiding', 'admin'), new lang_string('configallowuserblockhiding', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('allowblockstodock', new lang_string('allowblockstodock', 'admin'), new lang_string('configallowblockstodock', 'admin'), 1));
     $temp->add(new admin_setting_configtextarea('custommenuitems', new lang_string('custommenuitems', 'admin'), new lang_string('configcustommenuitems', 'admin'), '', PARAM_TEXT, '50', '10'));
+    $temp->add(new admin_setting_configtextarea(
+        'customusermenuitems',
+        new lang_string('customusermenuitems', 'admin'),
+        new lang_string('configcustomusermenuitems', 'admin'),
+        'messages,message|/message/index.php|message
+myfiles,moodle|/user/files.php|download
+mybadges,badges|/badges/mybadges.php|award',
+        PARAM_TEXT,
+        '50',
+        '10'
+    ));
     $temp->add(new admin_setting_configcheckbox('enabledevicedetection', new lang_string('enabledevicedetection', 'admin'), new lang_string('configenabledevicedetection', 'admin'), 1));
     $temp->add(new admin_setting_devicedetectregex('devicedetectregex', new lang_string('devicedetectregex', 'admin'), new lang_string('devicedetectregex_desc', 'admin'), ''));
     $ADMIN->add('themes', $temp);
@@ -64,11 +75,24 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
             6 => new lang_string('saturday', 'calendar')
         )));
     $temp->add(new admin_setting_special_calendar_weekend());
-    $options = array();
-    for ($i=1; $i<=99; $i++) {
-        $options[$i] = $i;
-    }
-    $temp->add(new admin_setting_configselect('calendar_lookahead',new lang_string('configlookahead','admin'),new lang_string('helpupcominglookahead', 'admin'),21,$options));
+    $options = array(365 => new lang_string('numyear', '', 1),
+            270 => new lang_string('nummonths', '', 9),
+            180 => new lang_string('nummonths', '', 6),
+            150 => new lang_string('nummonths', '', 5),
+            120 => new lang_string('nummonths', '', 4),
+            90  => new lang_string('nummonths', '', 3),
+            60  => new lang_string('nummonths', '', 2),
+            30  => new lang_string('nummonth', '', 1),
+            21  => new lang_string('numweeks', '', 3),
+            14  => new lang_string('numweeks', '', 2),
+            7  => new lang_string('numweek', '', 1),
+            6  => new lang_string('numdays', '', 6),
+            5  => new lang_string('numdays', '', 5),
+            4  => new lang_string('numdays', '', 4),
+            3  => new lang_string('numdays', '', 3),
+            2  => new lang_string('numdays', '', 2),
+            1  => new lang_string('numday', '', 1));
+    $temp->add(new admin_setting_configselect('calendar_lookahead', new lang_string('configlookahead', 'admin'), new lang_string('helpupcominglookahead', 'admin'), 21, $options));
     $options = array();
     for ($i=1; $i<=20; $i++) {
         $options[$i] = $i;
@@ -122,6 +146,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     $temp->add(new admin_setting_configcheckbox('navshowcategories', new lang_string('navshowcategories', 'admin'), new lang_string('confignavshowcategories', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('navshowmycoursecategories', new lang_string('navshowmycoursecategories', 'admin'), new lang_string('navshowmycoursecategories_help', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('navshowallcourses', new lang_string('navshowallcourses', 'admin'), new lang_string('confignavshowallcourses', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('navexpandmycourses', new lang_string('navexpandmycourses', 'admin'), new lang_string('navexpandmycourses_desc', 'admin'), 1));
     $sortoptions = array(
         'sortorder' => new lang_string('sort_sortorder', 'admin'),
         'fullname' => new lang_string('sort_fullname', 'admin'),
@@ -132,6 +157,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     $temp->add(new admin_setting_configtext('navcourselimit',new lang_string('navcourselimit','admin'),new lang_string('confignavcourselimit', 'admin'),20,PARAM_INT));
     $temp->add(new admin_setting_configcheckbox('usesitenameforsitepages', new lang_string('usesitenameforsitepages', 'admin'), new lang_string('configusesitenameforsitepages', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('linkadmincategories', new lang_string('linkadmincategories', 'admin'), new lang_string('linkadmincategories_help', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('linkcoursesections', new lang_string('linkcoursesections', 'admin'), new lang_string('linkcoursesections_help', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('navshowfrontpagemods', new lang_string('navshowfrontpagemods', 'admin'), new lang_string('navshowfrontpagemods_help', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('navadduserpostslinks', new lang_string('navadduserpostslinks', 'admin'), new lang_string('navadduserpostslinks_help', 'admin'), 1));
 

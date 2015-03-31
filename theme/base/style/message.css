@@ -5,7 +5,7 @@
 .message .noframesjslink {font-size:0.8em;}
 .message .link {font-size:0.8em;}
 
-.message .heading {font-size:1.0em;font-weight:bold;}
+.message .heading {font-size:1.0em;font-weight:bold;clear:both;}
 
 .message .author {font-weight: bold;}
 .message .time {font-style: italic;}
@@ -26,20 +26,97 @@ table.message_search_results td {border-color:#DDDDDD;}
 .message .note {padding:10px;}
 table.message .searchresults td {padding:5px;}
 
-.message .contactselector {width:24%;float:left;}
-.message .contactselector .contact {text-align:left;}
-.message .contactselector .messageselecteduser {font-weight:bold;}
-.message .contactselector .paging {z-index:1;position:relative;}
+.message .contactselector {
+    width: 24%;
+    float: left;
+}
+.message .contactselector .paging {
+    z-index: 1;
+    position: relative;
+}
+.message .message-contacts {
+    list-style-type: none;
+    margin: 0;
+}
+
+.message .message-contacts li {
+    clear: both;
+    position: relative;
+}
+
+.message .message-contacts li .pix {
+    left: 0;
+    position: absolute;
+}
+.dir-rtl .message .message-contacts li .pix {
+    left: auto;
+    right: 0;
+}
+.message .message-contacts li .contact {
+    font-weight: bold;
+    margin: 0 24% 0 25px;
+    text-align: left;
+}
+.dir-rtl .message .message-contacts li .contact {
+    text-align: right;
+    margin: 0 25px 0 24%;
+}
+.message .message-contacts li .contact.nolinks {
+    margin-right: 5px;
+}
+.dir-rtl .message .message-contacts li .contact.nolinks {
+    margin-left: 5px;
+    margin-right: 25px;
+}
+.message .message-contacts li .link {
+    float: right;
+    max-width: 30%;
+}
+.dir-rtl .message .message-contacts li .link {
+    float: left;
+}
 
 .message .messagearea  {padding-left:1%;border-left:1px solid LightGrey;width:74%;float:right;min-height:200px;}
 .message .messagearea .messagehistorytype {clear:both;padding-bottom:20px;}
 
-.message .messagearea .messagehistory .message_user_pictures {margin-left: auto;margin-right: auto;}
-.message .messagearea .messagehistory .message_user_pictures #user1 {vertical-align:top;width:200px;}
-.message .messagearea .messagehistory .message_user_pictures #user2 {vertical-align:top;width:200px;}
-.message .messagearea .messagehistory .message_user_pictures .useractionlinks {font-size:0.9em;}
 
-.message .messagearea .messagehistory .heading {width:100%;clear:both;}
+.message .messagearea .messagehistory .user {
+    vertical-align: top;
+    width: 32%;
+    min-width: 100px;
+    float: left;
+}
+.message .messagearea .messagehistory .user:first-child {
+    margin-left: 13%;
+}
+.message .messagearea .messagehistory .user:last-child {
+    margin-right: 13%;
+}
+.dir-rtl .message .messagearea .messagehistory .user:first-child {
+    margin-right: 13%;
+    margin-left: 0;
+}
+.dir-rtl .message .messagearea .messagehistory .user:last-child {
+    margin-left: 13%;
+    margin-right: 0;
+}
+.message .messagearea .messagehistory .user > div {
+    text-align: center;
+    border: none;
+}
+.message .messagearea .messagehistory .between {
+    float: left;
+    width: 16px;
+    margin: 0 3%;
+    padding-top: 40px;
+}
+.dir-rtl .message .messagearea .messagehistory .between,
+.dir-rtl .message .messagearea .messagehistory .user {
+    float: right;
+}
+
+.message .messagearea .messagehistory .heading,
+.message .messagearea .messagehistory h3 {width:100%;clear:both;}
 .message .messagearea .messagehistory .left {padding-bottom:10px;width:50%;float:left;clear:both;}
 .dir-rtl .message .messagearea .messagehistory .left { float: right; }
 .message .messagearea .messagehistory .right {padding-bottom:10px;width:50%;float:right;clear:both;}
@@ -71,3 +148,59 @@ table.message .searchresults td {padding:5px;}
 #newmessageoverlay {background-color:LightGrey;border:1px solid black;padding:20px;position:fixed;bottom:0;right:0;}
 #newmessageoverlay #usermessage {padding:10px;}
 .ie6 #newmessageoverlay {position:static;}
+
+/** Messenger send message dialog */
+.core_message-messenger-sendmessage-hidden {
+    display:none;
+}
+.core_message-messenger-sendmessage .message.actions {
+    position: relative;
+}
+.core_message-messenger-sendmessage .message-area {
+    height: 240px;
+    max-height: 100%;
+    position: relative;
+    margin-bottom: 10px;
+}
+.core_message-messenger-sendmessage .message-input {
+    width: 100%;
+    height: 100%;
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+.core_message-messenger-sendmessage .message-send {
+    margin: 0;
+    float: right;
+}
+.core_message-messenger-sendmessage .message-notice-area {
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+}
+.core_message-messenger-sendmessage .message-notice {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+.core_message-messenger-sendmessage .message-notice > div {
+    background: #eee;
+    padding: 5px;
+    font-size: 12px;
+}
+.core_message-messenger-sendmessage .message-footer {
+    margin-top: 3px;
+    line-height: 20px;
+}
+.core_message-messenger-sendmessage .message-history {
+    position: absolute;
+    bottom: 0;
+}
+.dir-rtl .core_message-messenger-sendmessage .message-send {
+    float: left;
+}

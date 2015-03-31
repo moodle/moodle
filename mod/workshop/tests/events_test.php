@@ -80,22 +80,20 @@ class mod_workshop_events_testcase extends advanced_testcase {
         $this->workshop->phaseswitchassessment = 1;
         $this->workshop->submissionend = time() - 1;
 
-        $event = \mod_workshop\event\phase_switched::create(array(
-            'objectid' => $this->workshop->id,
-            'context'  => $this->context,
-            'courseid' => $this->course->id,
-            'other'    => array('workshopphase' => $this->workshop->phase)
-        ));
+        $cm = get_coursemodule_from_instance('workshop', $this->workshop->id, $this->course->id, false, MUST_EXIST);
+        $workshop = new testable_workshop($this->workshop, $cm, $this->course);
 
+        // The phase that we are switching to.
+        $newphase = 30;
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $event->trigger();
+        $workshop->switch_phase($newphase);
         $events = $sink->get_events();
         $event = reset($events);
 
         // Check that the legacy log data is valid.
-        $expected = array($this->course->id, 'workshop', 'update switch phase', 'view.php?id=' . $this->workshop->id,
-            $this->workshop->phase, $this->cm->id);
+        $expected = array($this->course->id, 'workshop', 'update switch phase', 'view.php?id=' . $this->cm->id,
+            $newphase, $this->cm->id);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
@@ -165,9 +163,9 @@ class mod_workshop_events_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         $event = \mod_workshop\event\assessment_evaluations_reset::create(array(
-            'objectid' => $this->workshop->id,
             'context'  => $this->context,
             'courseid' => $this->course->id,
+            'other' => array('workshopid' => $this->workshop->id)
         ));
 
         // Trigger and capture the event.
@@ -177,7 +175,7 @@ class mod_workshop_events_testcase extends advanced_testcase {
         $event = reset($events);
 
         // Check that the legacy log data is valid.
-        $expected = array($this->course->id, 'workshop', 'update clear aggregated grade', 'view.php?id=' . $this->workshop->id,
+        $expected = array($this->course->id, 'workshop', 'update clear aggregated grade', 'view.php?id=' . $this->cm->id,
             $this->workshop->id, $this->cm->id);
         $this->assertEventLegacyLogData($expected, $event);
 
@@ -225,7 +223,7 @@ class mod_workshop_events_testcase extends advanced_testcase {
                 'courseid'      => $this->course->id,
                 'relateduserid' => $user->id,
                 'other'         => array(
-                    'workshopid' => $this->workshop->id
+                    'submissiontitle' => 'The submission title'
                 )
             )
         );
@@ -238,7 +236,7 @@ class mod_workshop_events_testcase extends advanced_testcase {
 
         // Check that the legacy log data is valid.
         $expected = array($this->course->id, 'workshop', 'add submission',
-            'submission.php?cmid=' . $this->workshop->id . '&id=' . $submissionid, $submissionid, $this->cm->id);
+            'submission.php?cmid=' . $this->cm->id . '&id=' . $submissionid, $submissionid, $this->cm->id);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
@@ -261,7 +259,7 @@ class mod_workshop_events_testcase extends advanced_testcase {
                 'courseid'      => $this->course->id,
                 'relateduserid' => $user->id,
                 'other'         => array(
-                    'workshopid' => $this->workshop->id
+                    'submissiontitle' => 'The submission title'
                 )
             )
         );
@@ -274,7 +272,7 @@ class mod_workshop_events_testcase extends advanced_testcase {
 
         // Check that the legacy log data is valid.
         $expected = array($this->course->id, 'workshop', 'update submission',
-            'submission.php?cmid=' . $this->workshop->id . '&id=' . $submissionid, $submissionid, $this->cm->id);
+            'submission.php?cmid=' . $this->cm->id . '&id=' . $submissionid, $submissionid, $this->cm->id);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
@@ -310,7 +308,7 @@ class mod_workshop_events_testcase extends advanced_testcase {
 
         // Check that the legacy log data is valid.
         $expected = array($this->course->id, 'workshop', 'view submission',
-            'submission.php?cmid=' . $this->workshop->id . '&id=' . $submissionid, $submissionid, $this->cm->id);
+            'submission.php?cmid=' . $this->cm->id . '&id=' . $submissionid, $submissionid, $this->cm->id);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 

@@ -172,7 +172,7 @@ class block_recent_activity extends block_base {
                     $changelist[$log->cmid] = array('action' => 'delete mod',
                         'module' => (object)array(
                             'modname' => $log->modname,
-                            'modfullname' => $modnames[$log->modname]
+                            'modfullname' => isset($modnames[$log->modname]) ? $modnames[$log->modname] : $log->modname
                          ));
 
                 } else if (!$wasdeleted && isset($modinfo->cms[$log->cmid]) && $canviewupdated) {
@@ -294,12 +294,12 @@ class block_recent_activity extends block_base {
                 if (!isset($modinfo->instances[$modname][$instanceid])) {
                     continue;
                 }
-                $entry['cmid'] = $modinfo->instances[$modname][$instanceid]->id;
                 if ($log->action == 'add mod') {
                     $entry['action'] = 0;
                 } else {
                     $entry['action'] = 1;
                 }
+                $entry['cmid'] = $modinfo->instances[$modname][$instanceid]->id;
             }
             $entries[] = $entry;
         }

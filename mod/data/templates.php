@@ -234,7 +234,7 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
     echo $OUTPUT->help_icon('availabletags', 'data');
     echo '<br />';
 
-
+    echo '<div class="no-overflow" id="availabletags_wrapper">';
     echo '<select name="fields1[]" id="availabletags" size="12" onclick="insert_field_tags(this)">';
 
     $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
@@ -276,6 +276,7 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
         echo '<option value="##timeadded##">'.get_string('timeadded', 'data'). ' - ##timeadded##</option>';
         echo '<option value="##timemodified##">'.get_string('timemodified', 'data'). ' - ##timemodified##</option>';
         echo '<option value="##user##">' .get_string('user'). ' - ##user##</option>';
+        echo '<option value="##userpicture##">' . get_string('userpic') . ' - ##userpicture##</option>';
         if ($mode != 'singletemplate') {
             // more points to single template - not useable there
             echo '<option value="##comments##">' .get_string('comments', 'data'). ' - ##comments##</option>';
@@ -291,6 +292,7 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
     }
 
     echo '</select>';
+    echo '</div>';
     echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
     echo '<br /><br />';
     if ($usehtmleditor) {

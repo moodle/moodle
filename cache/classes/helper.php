@@ -280,13 +280,6 @@ class cache_helper {
     /**
      * Purges the cache for a specific definition.
      *
-     * If you need to purge a definition that requires identifiers or an aggregate and you don't
-     * know the details of those please use cache_helper::purge_stores_used_by_definition instead.
-     * It is a more aggressive purge and will purge all data within the store, not just the data
-     * belonging to the given definition.
-     *
-     * @todo MDL-36660: Change the signature: $aggregate must be added.
-     *
      * @param string $component
      * @param string $area
      * @param array $identifiers
@@ -298,7 +291,6 @@ class cache_helper {
         // Initialise, in case of a store.
         if ($cache instanceof cache_store) {
             $factory = cache_factory::instance();
-            // TODO MDL-36660: Providing $aggregate is required for purging purposes: $definition->get_id()
             $definition = $factory->create_definition($component, $area, null);
             $definition->set_identifiers($identifiers);
             $cache->initialise($definition);
@@ -354,9 +346,10 @@ class cache_helper {
     /**
      * Ensure that the stats array is ready to collect information for the given store and definition.
      * @param string $store
-     * @param string $definition
+     * @param string $definition A string that identifies the definition.
+     * @param int $mode One of cache_store::MODE_*. Since 2.9.
      */
-    protected static function ensure_ready_for_stats($store, $definition) {
+    protected static function ensure_ready_for_stats($store, $definition, $mode = cache_store::MODE_APPLICATION) {
         // This function is performance-sensitive, so exit as quickly as possible
         // if we do not need to do anything.
         if (isset(self::$stats[$definition][$store])) {
@@ -364,14 +357,17 @@ class cache_helper {
         }
         if (!array_key_exists($definition, self::$stats)) {
             self::$stats[$definition] = array(
-                $store => array(
-                    'hits' => 0,
-                    'misses' => 0,
-                    'sets' => 0,
+                'mode' => $mode,
+                'stores' => array(
+                    $store => array(
+                        'hits' => 0,
+                        'misses' => 0,
+                        'sets' => 0,
+                    )
                 )
             );
         } else if (!array_key_exists($store, self::$stats[$definition])) {
-            self::$stats[$definition][$store] = array(
+            self::$stats[$definition]['stores'][$store] = array(
                 'hits' => 0,
                 'misses' => 0,
                 'sets' => 0,
@@ -380,42 +376,79 @@ class cache_helper {
     }
 
     /**
+     * Returns a string to describe the definition.
+     *
+     * This method supports the definition as a string due to legacy requirements.
+     * It is backwards compatible when a string is passed but is not accurate.
+     *
+     * @since 2.9
+     * @param cache_definition|string $definition
+     * @return string
+     */
+    protected static function get_definition_stat_id_and_mode($definition) {
+        if (!($definition instanceof cache_definition)) {
+            // All core calls to this method have been updated, this is the legacy state.
+            // We'll use application as the default as that is the most common, really this is not accurate of course but
+            // at this point we can only guess and as it only affects calls to cache stat outside of core (of which there should
+            // be none) I think that is fine.
+            debugging('Please update you cache stat calls to pass the definition rather than just its ID.', DEBUG_DEVELOPER);
+            return array((string)$definition, cache_store::MODE_APPLICATION);
+        }
+        return array($definition->get_id(), $definition->get_mode());
+    }
+
+    /**
      * Record a cache hit in the stats for the given store and definition.
      *
+     * In Moodle 2.9 the $definition argument changed from accepting only a string to accepting a string or a
+     * cache_definition instance. It is preferable to pass a cache definition instance.
+     *
      * @internal
-     * @param string $store
-     * @param string $definition
+     * @param cache_definition $store
+     * @param cache_definition $definition You used to be able to pass a string here, however that is deprecated please pass the
+     *      actual cache_definition object now.
      * @param int $hits The number of hits to record (by default 1)
      */
     public static function record_cache_hit($store, $definition, $hits = 1) {
-        self::ensure_ready_for_stats($store, $definition);
-        self::$stats[$definition][$store]['hits'] += $hits;
+        list($definitionstr, $mode) = self::get_definition_stat_id_and_mode($definition);
+        self::ensure_ready_for_stats($store, $definitionstr, $mode);
+        self::$stats[$definitionstr]['stores'][$store]['hits'] += $hits;
     }
 
     /**
      * Record a cache miss in the stats for the given store and definition.
      *
+     * In Moodle 2.9 the $definition argument changed from accepting only a string to accepting a string or a
+     * cache_definition instance. It is preferable to pass a cache definition instance.
+     *
      * @internal
      * @param string $store
-     * @param string $definition
+     * @param cache_definition $definition You used to be able to pass a string here, however that is deprecated please pass the
+     *      actual cache_definition object now.
      * @param int $misses The number of misses to record (by default 1)
      */
     public static function record_cache_miss($store, $definition, $misses = 1) {
-        self::ensure_ready_for_stats($store, $definition);
-        self::$stats[$definition][$store]['misses'] += $misses;
+        list($definitionstr, $mode) = self::get_definition_stat_id_and_mode($definition);
+        self::ensure_ready_for_stats($store, $definitionstr, $mode);
+        self::$stats[$definitionstr]['stores'][$store]['misses'] += $misses;
     }
 
     /**
      * Record a cache set in the stats for the given store and definition.
      *
+     * In Moodle 2.9 the $definition argument changed from accepting only a string to accepting a string or a
+     * cache_definition instance. It is preferable to pass a cache definition instance.
+     *
      * @internal
      * @param string $store
-     * @param string $definition
+     * @param cache_definition $definition You used to be able to pass a string here, however that is deprecated please pass the
+     *      actual cache_definition object now.
      * @param int $sets The number of sets to record (by default 1)
      */
     public static function record_cache_set($store, $definition, $sets = 1) {
-        self::ensure_ready_for_stats($store, $definition);
-        self::$stats[$definition][$store]['sets'] += $sets;
+        list($definitionstr, $mode) = self::get_definition_stat_id_and_mode($definition);
+        self::ensure_ready_for_stats($store, $definitionstr, $mode);
+        self::$stats[$definitionstr]['stores'][$store]['sets'] += $sets;
     }
 
     /**
@@ -719,7 +752,8 @@ class cache_helper {
             return $stores;
         } else {
             $stores = self::get_cache_stores($definition);
-            if (count($stores) === 0) {
+            // If mappingsonly is set, having 0 stores is ok.
+            if ((count($stores) === 0) && (!$definition->is_for_mappings_only())) {
                 // No suitable stores we found for the definition. We need to come up with a sensible default.
                 // If this has happened we can be sure that the user has mapped custom stores to either the
                 // mode of the definition. The first alternative to try is the system default for the mode.
@@ -734,5 +768,29 @@ class cache_helper {
             }
         }
         return $stores;
+    }
+
+    /**
+     * Returns an array of warnings from the cache API.
+     *
+     * The warning returned here are for things like conflicting store instance configurations etc.
+     * These get shown on the admin notifications page for example.
+     *
+     * @param array|null $stores An array of stores to get warnings for, or null for all.
+     * @return string[]
+     */
+    public static function warnings(array $stores = null) {
+        global $CFG;
+        if ($stores === null) {
+            require_once($CFG->dirroot.'/cache/locallib.php');
+            $stores = cache_administration_helper::get_store_instance_summaries();
+        }
+        $warnings = array();
+        foreach ($stores as $store) {
+            if (!empty($store['warnings'])) {
+                $warnings = array_merge($warnings, $store['warnings']);
+            }
+        }
+        return $warnings;
     }
 }

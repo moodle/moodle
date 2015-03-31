@@ -66,6 +66,32 @@ editor.set("value", "' . $value . '");
     }
 
     /**
+     * Select all the text in the form field.
+     *
+     */
+    public function select_text() {
+        // NodeElement.keyPress simply doesn't work.
+        if (!$this->running_javascript()) {
+            throw new coding_exception('Selecting text requires javascript.');
+        }
+
+        $editorid = $this->field->getAttribute('id');
+        $js = ' (function() {
+    var e = document.getElementById("'.$editorid.'editable"),
+        r = rangy.createRange(),
+        s = rangy.getSelection();
+
+    while ((e.firstChild !== null) && (e.firstChild.nodeType != document.TEXT_NODE)) {
+        e = e.firstChild;
+    }
+    e.focus();
+    r.selectNodeContents(e);
+    s.setSingleRange(r);
+}()); ';
+        $this->session->executeScript($js);
+    }
+
+    /**
      * Matches the provided value against the current field value.
      *
      * @param string $expectedvalue

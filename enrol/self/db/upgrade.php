@@ -62,6 +62,12 @@ function xmldb_enrol_self_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013112100, 'enrol', 'self');
     }
 
+    // Moodle v2.7.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
 

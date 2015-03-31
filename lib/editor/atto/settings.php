@@ -35,7 +35,7 @@ if ($ADMIN->fulltree) {
     $default = 'collapse = collapse
 style1 = title, bold, italic
 list = unorderedlist, orderedlist
-links = link, unlink, noautolink
+links = link
 files = image, media, managefiles
 style2 = underline, strike, subscript, superscript
 align = align
@@ -48,6 +48,13 @@ other = html';
 
     $settings->add($setting);
 }
+
+$name = new lang_string('autosavefrequency', 'editor_atto');
+$desc = new lang_string('autosavefrequency_desc', 'editor_atto');
+$default = 60;
+$setting = new admin_setting_configduration('editor_atto/autosavefrequency', $name, $desc, $default);
+$settings->add($setting);
+
 $ADMIN->add('editoratto', $settings);
 
 foreach (core_plugin_manager::instance()->get_plugins_of_type('atto') as $plugin) {

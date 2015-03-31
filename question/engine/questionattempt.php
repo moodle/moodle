@@ -1164,6 +1164,16 @@ class question_attempt {
     }
 
     /**
+     * Whether this attempt at this question could be completed just by the
+     * student interacting with the question, before {@link finish()} is called.
+     *
+     * @return boolean whether this attempt can finish naturally.
+     */
+    public function can_finish_during_attempt() {
+        return $this->behaviour->can_finish_during_attempt();
+    }
+
+    /**
      * Perform the action described by $submitteddata.
      * @param array $submitteddata the submitted data the determines the action.
      * @param int $timestamp the time to record for the action. (If not given, use now.)
@@ -1177,6 +1187,9 @@ class question_attempt {
             $this->add_step($pendingstep);
             if ($pendingstep->response_summary_changed()) {
                 $this->responsesummary = $pendingstep->get_new_response_summary();
+            }
+            if ($pendingstep->variant_number_changed()) {
+                $this->variant = $pendingstep->get_new_variant_number();
             }
         }
     }
@@ -1351,7 +1364,7 @@ class question_attempt {
         while ($record->questionattemptid != $questionattemptid) {
             $record = $records->next();
             if (!$records->valid()) {
-                throw new coding_exception("Question attempt $questionattemptid not found in the database.");
+                throw new coding_exception("Question attempt {$questionattemptid} not found in the database.");
             }
             $record = $records->current();
         }

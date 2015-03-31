@@ -69,13 +69,14 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // alot goes into it but nothing relational other than course when will
         // need to be corrected upon restore
         $lesson = new backup_nested_element('lesson', array('id'), array(
-            'course','name','practice','modattempts','usepassword','password',
-            'dependency','conditions','grade','custom','ongoing','usemaxgrade',
-            'maxanswers','maxattempts','review','nextpagedefault','feedback',
-            'minquestions','maxpages','timed','maxtime','retake','activitylink',
-            'mediafile','mediaheight','mediawidth','mediaclose','slideshow',
-            'width','height','bgcolor','displayleft','displayleftif','progressbar',
-            'showhighscores','maxhighscores','available','deadline','timemodified'
+            'course', 'name', 'practice', 'modattempts', 'usepassword', 'password',
+            'dependency', 'conditions', 'grade', 'custom', 'ongoing', 'usemaxgrade',
+            'maxanswers', 'maxattempts', 'review', 'nextpagedefault', 'feedback',
+            'minquestions', 'maxpages', 'timelimit', 'retake', 'activitylink',
+            'mediafile', 'mediaheight', 'mediawidth', 'mediaclose', 'slideshow',
+            'width', 'height', 'bgcolor', 'displayleft', 'displayleftif', 'progressbar',
+            'showhighscores', 'maxhighscores', 'available', 'deadline', 'timemodified',
+            'completionendreached', 'completiontimespent'
         ));
         // Tell the lesson element about the showhighscores elements mapping to the highscores
         // database field.
@@ -118,7 +119,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // and user.
         $branches = new backup_nested_element('branches');
         $branch = new backup_nested_element('branch', array('id'), array(
-            'userid','retry','flag','timeseen'
+             'userid', 'retry', 'flag', 'timeseen', 'nextpageid'
         ));
 
         // The lesson_grades table
@@ -140,7 +141,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // Grouped by a `timers` element this is relational to the lesson and user.
         $timers = new backup_nested_element('timers');
         $timer = new backup_nested_element('timer', array('id'), array(
-            'userid','starttime','lessontime'
+            'userid', 'starttime', 'lessontime', 'completed'
         ));
 
         // Now that we have all of the elements created we've got to put them
@@ -190,6 +191,9 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // Annotate the file areas in user by the lesson module.
         $lesson->annotate_files('mod_lesson', 'mediafile', null);
         $page->annotate_files('mod_lesson', 'page_contents', 'id');
+        $answer->annotate_files('mod_lesson', 'page_answers', 'id');
+        $answer->annotate_files('mod_lesson', 'page_responses', 'id');
+        $attempt->annotate_files('mod_lesson', 'essay_responses', 'id');
 
         // Prepare and return the structure we have just created for the lesson module.
         return $this->prepare_activity_structure($lesson);

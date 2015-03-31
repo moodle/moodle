@@ -29,12 +29,16 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Calendar event deleted event.
  *
- * @property-read array $other Extra information about the event.
- *     -int timestart: timestamp for event time start.
- *     -string name: Name of the event.
- *     -int repeatid: Id of the parent event if present, else 0.
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int repeatid: id of the parent event if present, else 0.
+ *      - int timestart: timestamp for event time start.
+ *      - string name: name of the event.
+ * }
  *
  * @package    core
+ * @since      Moodle 2.7
  * @copyright  2014 onwards Ankit Agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -66,25 +70,26 @@ class calendar_event_deleted extends base {
      * @return string
      */
     public function get_description() {
-        return "An event '" . s($this->other['name']) . "' was deleted by user with id {$this->userid}";
+        $eventname = s($this->other['name']);
+        return "The user with id '$this->userid' deleted the event '$eventname' with id '$this->objectid'.";
     }
 
     /**
-     * custom validations
+     * Custom validation.
      *
      * Throw \coding_exception notice in case of any problems.
      */
     protected function validate_data() {
+        parent::validate_data();
+
         if (!isset($this->other['repeatid'])) {
-            throw new \coding_exception("Field other['repeatid'] must be set");
+            throw new \coding_exception('The \'repeatid\' value must be set in other.');
         }
         if (empty($this->other['name'])) {
-            throw new \coding_exception("Field other['name'] cannot be empty");
+            throw new \coding_exception('The \'name\' value must be set in other.');
         }
-        if (empty($this->other['timestart'])) {
-            throw new \coding_exception("Field other['timestart'] cannot be empty");
+        if (!isset($this->other['timestart'])) {
+            throw new \coding_exception('The \'timestart\' value must be set in other.');
         }
-
-        parent::validate_data();
     }
 }

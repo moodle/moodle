@@ -11,3 +11,9 @@
 @formActionsBackground: @wellBackground;
 @paginationActiveBackground: @wellBackground;
 @hrBorder: darken(@wellBackground, 5%);
+
+// Remove unwanted text shadow, this can look odd with random colours.
+.breadcrumb li,
+.nav-header {
+    text-shadow: none;
+}

@@ -29,11 +29,47 @@ require_once('edit_form.php');
 $id = optional_param('id', 0, PARAM_INT); // Course id.
 $categoryid = optional_param('category', 0, PARAM_INT); // Course category - can be changed in edit form.
 $returnto = optional_param('returnto', 0, PARAM_ALPHANUM); // Generic navigation return page switch.
+$returnurl = optional_param('returnurl', '', PARAM_LOCALURL); // A return URL. returnto must also be set to 'url'.
+
+if ($returnto === 'url' && confirm_sesskey() && $returnurl) {
+    // If returnto is 'url' then $returnurl may be used as the destination to return to after saving or cancelling.
+    // Sesskey must be specified, and would be set by the form anyway.
+    $returnurl = new moodle_url($returnurl);
+} else {
+    if (!empty($id)) {
+        $returnurl = new moodle_url($CFG->wwwroot . '/course/view.php', array('id' => $id));
+    } else {
+        $returnurl = new moodle_url($CFG->wwwroot . '/course/');
+    }
+    if ($returnto !== 0) {
+        switch ($returnto) {
+            case 'category':
+                $returnurl = new moodle_url($CFG->wwwroot . '/course/index.php', array('categoryid' => $categoryid));
+                break;
+            case 'catmanage':
+                $returnurl = new moodle_url($CFG->wwwroot . '/course/management.php', array('categoryid' => $categoryid));
+                break;
+            case 'topcatmanage':
+                $returnurl = new moodle_url($CFG->wwwroot . '/course/management.php');
+                break;
+            case 'topcat':
+                $returnurl = new moodle_url($CFG->wwwroot . '/course/');
+                break;
+        }
+    }
+}
 
 $PAGE->set_pagelayout('admin');
-$pageparams = array('id'=>$id);
-if (empty($id)) {
-    $pageparams = array('category'=>$categoryid);
+if ($id) {
+    $pageparams = array('id' => $id);
+} else {
+    $pageparams = array('category' => $categoryid);
+}
+if ($returnto !== 0) {
+    $pageparams['returnto'] = $returnto;
+    if ($returnto === 'url' && $returnurl) {
+        $pageparams['returnurl'] = $returnurl;
+    }
 }
 $PAGE->set_url('/course/edit.php', $pageparams);
 
@@ -97,31 +133,17 @@ if (!empty($course)) {
 }
 
 // First create the form.
-$editform = new course_edit_form(NULL, array('course'=>$course, 'category'=>$category, 'editoroptions'=>$editoroptions, 'returnto'=>$returnto));
+$args = array(
+    'course' => $course,
+    'category' => $category,
+    'editoroptions' => $editoroptions,
+    'returnto' => $returnto,
+    'returnurl' => $returnurl
+);
+$editform = new course_edit_form(null, $args);
 if ($editform->is_cancelled()) {
-        switch ($returnto) {
-            case 'category':
-                $url = new moodle_url($CFG->wwwroot.'/course/index.php', array('categoryid' => $categoryid));
-                break;
-            case 'catmanage':
-                $url = new moodle_url($CFG->wwwroot.'/course/management.php', array('categoryid' => $categoryid));
-                break;
-            case 'topcatmanage':
-                $url = new moodle_url($CFG->wwwroot.'/course/management.php');
-                break;
-            case 'topcat':
-                $url = new moodle_url($CFG->wwwroot.'/course/');
-                break;
-            default:
-                if (!empty($course->id)) {
-                    $url = new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$course->id));
-                } else {
-                    $url = new moodle_url($CFG->wwwroot.'/course/');
-                }
-                break;
-        }
-        redirect($url);
-
+    // The form has been cancelled, take them back to what ever the return to is.
+    redirect($returnurl);
 } else if ($data = $editform->get_data()) {
     // Process data if submitted.
     if (empty($course->id)) {
@@ -135,14 +157,20 @@ if ($editform->is_cancelled()) {
             // Deal with course creators - enrol them internally with default role.
             enrol_try_internal_enrol($course->id, $USER->id, $CFG->creatornewroleid);
         }
-        if (!is_enrolled($context)) {
+
+        // The URL to take them to if they chose save and display.
+        $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
+
+        // If they choose to save and display, and they are not enrolled take them to the enrolments page instead.
+        if (!is_enrolled($context) && isset($data->saveanddisplay)) {
             // Redirect to manual enrolment page if possible.
             $instances = enrol_get_instances($course->id, true);
             foreach($instances as $instance) {
                 if ($plugin = enrol_get_plugin($instance->enrol)) {
                     if ($plugin->get_manual_enrol_link($instance)) {
                         // We know that the ajax enrol UI will have an option to enrol.
-                        redirect(new moodle_url('/enrol/users.php', array('id'=>$course->id)));
+                        $courseurl = new moodle_url('/enrol/users.php', array('id' => $course->id, 'newcourse' => 1));
+                        break;
                     }
                 }
             }
@@ -150,10 +178,17 @@ if ($editform->is_cancelled()) {
     } else {
         // Save any changes to the files used in the editor.
         update_course($data, $editoroptions);
+        // Set the URL to take them too if they choose save and display.
+        $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
     }
 
-    // Redirect user to newly created/updated course.
-    redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
+    if (isset($data->saveanddisplay)) {
+        // Redirect user to newly created/updated course.
+        redirect($courseurl);
+    } else {
+        // Save and return. Take them back to wherever.
+        redirect($returnurl);
+    }
 }
 
 // Print the form.
@@ -166,22 +201,37 @@ $stradministration = get_string("administration");
 $strcategories = get_string("categories");
 
 if (!empty($course->id)) {
-    $PAGE->navbar->add($streditcoursesettings);
+    // Navigation note: The user is editing a course, the course will exist within the navigation and settings.
+    // The navigation will automatically find the Edit settings page under course navigation.
+    $pagedesc = $streditcoursesettings;
     $title = $streditcoursesettings;
     $fullname = $course->fullname;
 } else {
-    $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php'));
-    $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));
-    $PAGE->navbar->add($straddnewcourse);
+    // The user is adding a course, this page isn't presented in the site navigation/admin.
+    // Adding a new course is part of course category management territory.
+    // We'd prefer to use the management interface URL without args.
+    $managementurl = new moodle_url('/course/management.php');
+    // These are the caps required in order to see the management interface.
+    $managementcaps = array('moodle/category:manage', 'moodle/course:create');
+    if ($categoryid && !has_any_capability($managementcaps, context_system::instance())) {
+        // If the user doesn't have either manage caps then they can only manage within the given category.
+        $managementurl->param('categoryid', $categoryid);
+    }
+    // Because the course category management interfaces are buried in the admin tree and that is loaded by ajax
+    // we need to manually tell the navigation we need it loaded. The second arg does this.
+    navigation_node::override_active_url($managementurl, true);
+
+    $pagedesc = $straddnewcourse;
     $title = "$site->shortname: $straddnewcourse";
     $fullname = $site->fullname;
+    $PAGE->navbar->add($pagedesc);
 }
 
 $PAGE->set_title($title);
 $PAGE->set_heading($fullname);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($streditcoursesettings);
+echo $OUTPUT->heading($pagedesc);
 
 $editform->display();
 

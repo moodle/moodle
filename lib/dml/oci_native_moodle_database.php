@@ -978,7 +978,8 @@ class oci_native_moodle_database extends moodle_database {
 
                     default: // Bind as CHAR (applying dirty hack)
                         // TODO: Optimise
-                        oci_bind_by_name($stmt, $key, $this->oracle_dirty_hack($tablename, $columnname, $params[$key]));
+                        $params[$key] = $this->oracle_dirty_hack($tablename, $columnname, $params[$key]);
+                        oci_bind_by_name($stmt, $key, $params[$key]);
                 }
             }
         }
@@ -1729,6 +1730,16 @@ class oci_native_moodle_database extends moodle_database {
             }
             $this->change_database_structure($sql);
         }
+    }
+
+    /**
+     * Does this driver support tool_replace?
+     *
+     * @since Moodle 2.8
+     * @return bool
+     */
+    public function replace_all_text_supported() {
+        return true;
     }
 
     public function session_lock_supported() {

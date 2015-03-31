@@ -45,7 +45,7 @@
         $message = '<br /><br />';
         $message .= $CFG->tempdir.'/olson.txt<br />';
         $message .= $CFG->tempdir.'/timezone.txt<br />';
-        $message .= '<a href="http://download.moodle.org/timezone/">http://download.moodle.org/timezone/</a><br />';
+        $message .= '<a href="https://download.moodle.org/timezone/">https://download.moodle.org/timezone/</a><br />';
         $message .= '<a href="'.$CFG->wwwroot.'/lib/timezone.txt">'.$CFG->dirroot.'/lib/timezone.txt</a><br />';
         $message .= '<br />';
 
@@ -83,7 +83,7 @@
     }
 
 /// Otherwise, let's try moodle.org's copy
-    $source = 'http://download.moodle.org/timezone/';
+    $source = 'https://download.moodle.org/timezone/';
     if (!$importdone && ($content=download_file_content($source))) {
         if ($file = fopen($CFG->tempdir.'/timezone.txt', 'w')) {            // Make local copy
             fwrite($file, $content);
@@ -113,8 +113,7 @@
         $a = new stdClass();
         $a->count = count($timezones);
         $a->source  = $importdone;
-        echo $OUTPUT->heading(get_string('importtimezonescount', 'tool_timezoneimport', $a), 3);
-
+        echo $OUTPUT->notification(get_string('importtimezonescount', 'tool_timezoneimport', $a), 'notifysuccess');
         echo $OUTPUT->continue_button(new moodle_url('/admin/index.php'));
 
         $timezonelist = array();
@@ -130,15 +129,26 @@
         }
         ksort($timezonelist);
 
-        echo "<br />";
-        echo $OUTPUT->box_start();
+        $timezonetable = new html_table();
+        $timezonetable->head = array(
+            get_string('timezone', 'moodle'),
+            get_string('entries', 'moodle')
+        );
+        $rows = array();
         foreach ($timezonelist as $name => $count) {
-            echo "$name ($count)<br />";
+            $row = new html_table_row(
+                array(
+                    new html_table_cell($name),
+                    new html_table_cell($count)
+                )
+            );
+            $rows[] = $row;
         }
-        echo $OUTPUT->box_end();
+        $timezonetable->data = $rows;
+        echo html_writer::table($timezonetable);
 
     } else {
-        echo $OUTPUT->heading(get_string('importtimezonesfailed', 'tool_timezoneimport'), 3);
+        echo $OUTPUT->notification(get_string('importtimezonesfailed', 'tool_timezoneimport'));
         echo $OUTPUT->continue_button(new moodle_url('/admin/index.php'));
     }
 

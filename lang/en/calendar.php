@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'calendar', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   calendar
+ * @package   core_calendar
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,20 +38,20 @@ $string['collastupdated'] = 'Last updated';
 $string['colpoll'] = 'Update';
 $string['colactions'] = 'Actions';
 $string['commontasks'] = 'Options';
-$string['confirmeventdelete'] = 'Are you sure you want to delete this event?';
+$string['confirmeventdelete'] = 'Are you sure you want to delete the "{$a}" event?';
 $string['course'] = 'Course';
 $string['courseevent'] = 'Course event';
 $string['courseevents'] = 'Course events';
 $string['courses'] = 'Courses';
 $string['customexport'] = 'Custom range ({$a->timestart} - {$a->timeend})';
 $string['daily'] = 'Daily';
-$string['dayview'] = 'Day view';
+$string['dayviewfor'] = 'Day view for:';
 $string['dayviewtitle'] = 'Day view: {$a}';
 $string['daywithnoevents'] = 'There are no events this day.';
 $string['default'] = 'Default';
 $string['deleteevent'] = 'Delete event';
 $string['deleteevents'] = 'Delete events';
-$string['detailedmonthview'] = 'Detailed month view';
+$string['detailedmonthviewfor'] = 'Detailed month view for:';
 $string['detailedmonthviewtitle'] = 'Detailed month view: {$a}';
 $string['durationminutes'] = 'Duration in minutes';
 $string['durationnone'] = 'Without duration';
@@ -111,7 +110,6 @@ $string['gotocalendar'] = 'Go to calendar';
 $string['group'] = 'Group';
 $string['groupevent'] = 'Group event';
 $string['groupevents'] = 'Group events';
-$string['hidden'] = 'hidden';
 $string['hidecourseevents'] = 'Hide course events';
 $string['hideglobalevents'] = 'Hide global events';
 $string['hidegroupsevents'] = 'Hide group events';
@@ -205,6 +203,7 @@ $string['typegroup'] = 'Group event';
 $string['typesite'] = 'Site event';
 $string['typeuser'] = 'User event';
 $string['upcomingevents'] = 'Upcoming events';
+$string['upcomingeventsfor'] = 'Upcoming events for:';
 $string['urlforical'] = 'URL for iCalendar export, for subscribing to calendar';
 $string['user'] = 'User';
 $string['userevent'] = 'User event';
@@ -216,3 +215,7 @@ $string['weeknext'] = 'Next week';
 $string['weekthis'] = 'This week';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';
+
+// Deprecated since Moodle 2.8.
+
+$string['hidden'] = 'hidden';

@@ -64,9 +64,7 @@ $string['invertdesc'] = 'Swaps text and background for the navbar at the top of 
 $string['linkcolor'] = 'Link colour';
 $string['linkcolor_desc'] = 'The colour of the links.';
 $string['logo'] = 'Logo';
-$string['logodesc'] = 'Please upload your custom logo here if you want to add it to the header.<br>
-If the height of your logo is more than 75px add the following CSS rule to the Custom CSS box below.<br>
-a.logo {height: 100px;} or whatever height in pixels the logo is.';
+$string['logodesc'] = 'The logo is displayed in the header.<br /> If the height of your logo is more than 75px add div.logo {height: 100px;} to the Custom CSS box below, amending accordingly if the height is other than 100px.';
 
 $string['pluginname'] = 'More';
 

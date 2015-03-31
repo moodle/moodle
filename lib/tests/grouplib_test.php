@@ -767,4 +767,144 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertEquals('Group 1', $groups[0]->name);
         $this->assertEquals('Group 2', $groups[1]->name);
     }
+
+    /**
+     * Tests for groups_get_user_groups() method.
+     */
+    public function test_groups_get_user_groups() {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        // Create courses.
+        $course1 = $generator->create_course();
+        $course2 = $generator->create_course();
+
+        // Create users.
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+
+        // Enrol users.
+        $generator->enrol_user($user1->id, $course1->id);
+        $generator->enrol_user($user1->id, $course2->id);
+        $generator->enrol_user($user2->id, $course2->id);
+        $generator->enrol_user($user3->id, $course2->id);
+
+        // Create groups.
+        $group1 = $generator->create_group(array('courseid' => $course1->id));
+        $group2 = $generator->create_group(array('courseid' => $course2->id));
+        $group3 = $generator->create_group(array('courseid' => $course2->id));
+
+        // Assign users to groups.
+        $this->assertTrue($generator->create_group_member(array('groupid' => $group1->id, 'userid' => $user1->id)));
+        $this->assertTrue($generator->create_group_member(array('groupid' => $group2->id, 'userid' => $user2->id)));
+
+        // Get user groups.
+        $usergroups1 = groups_get_user_groups($course1->id, $user1->id);
+        $usergroups2 = groups_get_user_groups($course2->id, $user2->id);;
+
+        // Assert return data.
+        $this->assertEquals($group1->id, $usergroups1[0][0]);
+        $this->assertEquals($group2->id, $usergroups2[0][0]);
+
+        // Now, test with groupings.
+        $grouping1 = $generator->create_grouping(array('courseid' => $course1->id));
+        $grouping2 = $generator->create_grouping(array('courseid' => $course2->id));
+
+        // Assign the groups to grouping.
+        groups_assign_grouping($grouping1->id, $group1->id);
+        groups_assign_grouping($grouping2->id, $group2->id);
+        groups_assign_grouping($grouping2->id, $group3->id);
+
+        // Test with grouping.
+        $usergroups1 = groups_get_user_groups($course1->id, $user1->id);
+        $usergroups2 = groups_get_user_groups($course2->id, $user2->id);
+        $this->assertArrayHasKey($grouping1->id, $usergroups1);
+        $this->assertArrayHasKey($grouping2->id, $usergroups2);
+
+        // Test user without a group.
+        $usergroups1 = groups_get_user_groups($course2->id, $user3->id);
+        $this->assertCount(0, $usergroups1[0]);
+
+        // Test with userid = 0.
+        $usergroups1 = groups_get_user_groups($course1->id, 0);
+        $usergroups2 = groups_get_user_groups($course2->id, 0);
+        $this->assertCount(0, $usergroups1[0]);
+        $this->assertCount(0, $usergroups2[0]);
+
+        // Test with courseid = 0.
+        $usergroups1 = groups_get_user_groups(0, $user1->id);
+        $usergroups2 = groups_get_user_groups(0, $user2->id);
+        $this->assertCount(0, $usergroups1[0]);
+        $this->assertCount(0, $usergroups2[0]);
+    }
+
+    /**
+     * Create dummy groups array for use in menu tests
+     * @param int $number
+     * @return array
+     */
+    protected function make_group_list($number) {
+        $testgroups = array();
+        for ($a = 0; $a < $number; $a++) {
+            $grp = new stdClass();
+            $grp->id = 100 + $a;
+            $grp->name = 'test group ' . $grp->id;
+            $testgroups[$grp->id] = $grp;
+        }
+        return $testgroups;
+    }
+
+    public function test_groups_sort_menu_options_empty() {
+        $this->assertEquals(array(), groups_sort_menu_options(array(), array()));
+    }
+
+    public function test_groups_sort_menu_options_allowed_goups_only() {
+        $this->assertEquals(array(
+            100 => 'test group 100',
+            101 => 'test group 101',
+        ), groups_sort_menu_options($this->make_group_list(2), array()));
+    }
+
+    public function test_groups_sort_menu_options_user_goups_only() {
+        $this->assertEquals(array(
+            100 => 'test group 100',
+            101 => 'test group 101',
+        ), groups_sort_menu_options(array(), $this->make_group_list(2)));
+    }
+
+    public function test_groups_sort_menu_options_user_both() {
+        $this->assertEquals(array(
+            1 => array(get_string('mygroups', 'group') => array(
+                100 => 'test group 100',
+                101 => 'test group 101',
+            )),
+            2 => array(get_string('othergroups', 'group') => array(
+                102 => 'test group 102',
+                103 => 'test group 103',
+            )),
+        ), groups_sort_menu_options($this->make_group_list(4), $this->make_group_list(2)));
+    }
+
+    public function test_groups_sort_menu_options_user_both_many_groups() {
+        $this->assertEquals(array(
+            1 => array(get_string('mygroups', 'group') => array(
+                100 => 'test group 100',
+                101 => 'test group 101',
+            )),
+            2 => array (get_string('othergroups', 'group') => array(
+                102 => 'test group 102',
+                103 => 'test group 103',
+                104 => 'test group 104',
+                105 => 'test group 105',
+                106 => 'test group 106',
+                107 => 'test group 107',
+                108 => 'test group 108',
+                109 => 'test group 109',
+                110 => 'test group 110',
+                111 => 'test group 111',
+                112 => 'test group 112',
+            )),
+        ), groups_sort_menu_options($this->make_group_list(13), $this->make_group_list(2)));
+    }
 }

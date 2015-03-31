@@ -46,6 +46,10 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('moodle/grade:manage', $context);
 
+$PAGE->set_pagelayout('admin');
+navigation_node::override_active_url(new moodle_url('/grade/edit/tree/index.php',
+    array('id'=>$course->id)));
+
 // default return url
 $gpr = new grade_plugin_return();
 $returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/report/index.php?id='.$course->id);
@@ -109,10 +113,8 @@ $strgrades          = get_string('grades');
 $strgraderreport    = get_string('graderreport', 'grades');
 $strcalculationedit = get_string('editcalculation', 'grades');
 
-grade_build_nav(__FILE__, $strcalculationedit, array('courseid' => $courseid));
-$PAGE->set_title($strgrades . ': ' . $strgraderreport);
-$PAGE->set_heading($course->fullname);
-echo $OUTPUT->header();
+$PAGE->navbar->add($strcalculationedit);
+print_grade_page_head($courseid, 'settings', null, $strcalculationedit, false, false, false);
 
 $mform->display();
 // Now show the gradetree with the idnumbers add/edit form

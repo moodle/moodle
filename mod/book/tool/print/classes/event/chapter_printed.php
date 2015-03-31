@@ -29,10 +29,32 @@ defined('MOODLE_INTERNAL') || die();
  * booktool_print chapter printed event class.
  *
  * @package    booktool_print
+ * @since      Moodle 2.6
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class chapter_printed extends \core\event\base {
+    /**
+     * Create instance of event.
+     *
+     * @since Moodle 2.7
+     *
+     * @param \stdClass $book
+     * @param \context_module $context
+     * @param \stdClass $chapter
+     * @return chapter_printed
+     */
+    public static function create_from_chapter(\stdClass $book, \context_module $context, \stdClass $chapter) {
+        $data = array(
+            'context' => $context,
+            'objectid' => $chapter->id,
+        );
+        /** @var chapter_printed $event */
+        $event = self::create($data);
+        $event->add_record_snapshot('book', $book);
+        $event->add_record_snapshot('book_chapters', $chapter);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.
@@ -40,8 +62,8 @@ class chapter_printed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user " . $this->userid . " has printed the chapter $this->objectid of the book module " .
-                $this->contextinstanceid;
+        return "The user with id '$this->userid' has printed the chapter with id '$this->objectid' of the book with " .
+            "course module id '$this->contextinstanceid'.";
     }
 
     /**
@@ -60,7 +82,7 @@ class chapter_printed extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_chapter_printed', 'booktool_print');
+        return get_string('eventchapterprinted', 'booktool_print');
     }
 
     /**

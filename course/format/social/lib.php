@@ -17,7 +17,7 @@
 /**
  * This file contains main class for the course format Social
  *
- * @since     2.0
+ * @since     Moodle 2.0
  * @package   format_social
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -74,5 +74,39 @@ class format_social extends format_base {
             BLOCK_POS_RIGHT => array('search_forums', 'calendar_upcoming', 'social_activities',
                 'recent_activity', 'course_list')
         );
+    }
+
+    /**
+     * Definitions of the additional options that this course format uses for course
+     *
+     * social format uses the following options:
+     * - numdiscussions
+     *
+     * @param bool $foreditform
+     * @return array of options
+     */
+    public function course_format_options($foreditform = false) {
+        static $courseformatoptions = false;
+        if ($courseformatoptions === false) {
+            $courseformatoptions = array(
+                'numdiscussions' => array(
+                    'default' => 10,
+                    'type' => PARAM_INT,
+                )
+            );
+        }
+
+        if ($foreditform && !isset($courseformatoptions['numdiscussions']['label'])) {
+            $courseformatoptionsedit = array(
+                'numdiscussions' => array(
+                    'label' => new lang_string('numberdiscussions', 'format_social'),
+                    'help' => 'numberdiscussions',
+                    'help_component' => 'format_social',
+                    'element_type' => 'text',
+                )
+            );
+            $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);
+        }
+        return $courseformatoptions;
     }
 }

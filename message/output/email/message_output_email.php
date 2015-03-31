@@ -39,9 +39,6 @@ class message_output_email extends message_output {
     function send_message($eventdata) {
         global $CFG;
 
-        // Ignore $CFG->noemailever here because we want to test this code,
-        // the message sending fails later in email_to_user().
-
         // skip any messaging suspended and deleted users
         if ($eventdata->userto->auth === 'nologin' or $eventdata->userto->suspended or $eventdata->userto->deleted) {
             return true;
@@ -77,18 +74,29 @@ class message_output_email extends message_output {
             } else {
                 // Copy attachment file to a temporary directory and get the file path.
                 $attachment = $eventdata->attachment->copy_content_to_temp();
-                // Function email_to_user() adds $CFG->dataroot to file path, so removing it here.
-                $attachment = str_replace($CFG->dataroot, '', $attachment);
+
                 // Get attachment file name.
                 $attachname = clean_filename($eventdata->attachname);
             }
         }
 
+        // Configure mail replies - this is used for incoming mail replies.
+        $replyto = '';
+        $replytoname = '';
+        if (isset($eventdata->replyto)) {
+            $replyto = $eventdata->replyto;
+            if (isset($eventdata->replytoname)) {
+                $replytoname = $eventdata->replytoname;
+            }
+        }
+
         $result = email_to_user($recipient, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage,
-                                $eventdata->fullmessagehtml, $attachment, $attachname);
+                                $eventdata->fullmessagehtml, $attachment, $attachname, true, $replyto, $replytoname);
 
         // Remove an attachment file if any.
-        @unlink($attachment);
+        if (!empty($attachment) && file_exists($attachment)) {
+            unlink($attachment);
+        }
 
         return $result;
     }

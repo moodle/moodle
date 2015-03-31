@@ -40,15 +40,33 @@ $PAGE->requires->jquery_plugin('migrate');
 
 echo $OUTPUT->header();
 
-// Note: the example was copied from http://jqueryui.com/accordion/ page.
+// Note: the examples were copied from http://jqueryui.com/accordion/, and
+// http://jqueryui.com/progressbar/#label.
 
 ?>
 
 <script>
     $(function() {
         $( "#accordion" ).accordion();
+        $( "#progressbar" ).progressbar({
+            value: false
+        });
     });
 </script>
+<style>
+  .ui-progressbar {
+    position: relative;
+  }
+  .progress-label {
+    position: absolute;
+    left: 50%;
+    top: 4px;
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #fff;
+  }
+</style>
+
+<div id="progressbar"><div class="progress-label">Loading...</div></div>
 
 <div id="accordion">
   <h3>Section 1</h3>

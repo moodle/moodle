@@ -12,6 +12,15 @@ require_once($CFG->libdir . '/filelib.php'); // download_file_content() used her
 
 class mnet_peer {
 
+    /** No SSL verification. */
+    const SSL_NONE = 0;
+
+    /** SSL verification for host. */
+    const SSL_HOST = 1;
+
+    /** SSL verification for host and peer. */
+    const SSL_HOST_AND_PEER = 2;
+
     var $id                 = 0;
     var $wwwroot            = '';
     var $ip_address         = '';
@@ -26,6 +35,9 @@ class mnet_peer {
     var $keypair            = array();
     var $error              = array();
     var $bootstrapped       = false; // set when the object is populated
+
+    /** @var int $sslverification The level of SSL verification to apply. */
+    public $sslverification = self::SSL_HOST_AND_PEER;
 
     function mnet_peer() {
         return true;
@@ -192,6 +204,7 @@ class mnet_peer {
         $obj->force_theme           = $this->force_theme;
         $obj->theme                 = $this->theme;
         $obj->applicationid         = $this->applicationid;
+        $obj->sslverification       = $this->sslverification;
 
         if (isset($this->id) && $this->id > 0) {
             $obj->id = $this->id;
@@ -286,6 +299,7 @@ class mnet_peer {
         $this->force_theme          = $hostinfo->force_theme;
         $this->theme                = $hostinfo->theme;
         $this->applicationid        = $hostinfo->applicationid;
+        $this->sslverification      = $hostinfo->sslverification;
         $this->application = $DB->get_record('mnet_application', array('id'=>$this->applicationid));
         $this->bootstrapped = true;
     }

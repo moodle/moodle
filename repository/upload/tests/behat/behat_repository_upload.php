@@ -98,7 +98,7 @@ class behat_repository_upload extends behat_files {
      * Uploads a file to filemanager
      *
      * @throws ExpectationException Thrown by behat_base::find
-     * @param string $filepath
+     * @param string $filepath Normally a path relative to $CFG->dirroot, but can be an absolute path too.
      * @param string $filemanagerelement
      * @param TableNode $data Data to fill in upload form
      * @param false|string $overwriteaction false if we don't expect that file with the same name already exists,
@@ -130,24 +130,26 @@ class behat_repository_upload extends behat_files {
 
         // Attaching specified file to the node.
         // Replace 'admin/' if it is in start of path with $CFG->admin .
-        $pos = strpos($filepath, 'admin/');
-        if ($pos === 0) {
-            $filepath = $CFG->admin . DIRECTORY_SEPARATOR . substr($filepath, 6);
+        if (substr($filepath, 0, 6) === 'admin/') {
+            $filepath = $CFG->dirroot . DIRECTORY_SEPARATOR . $CFG->admin .
+                    DIRECTORY_SEPARATOR . substr($filepath, 6);
         }
         $filepath = str_replace('/', DIRECTORY_SEPARATOR, $filepath);
-        $fileabsolutepath = $CFG->dirroot . DIRECTORY_SEPARATOR . $filepath;
-        $file->attachFile($fileabsolutepath);
+        if (!is_readable($filepath)) {
+            $filepath = $CFG->dirroot . DIRECTORY_SEPARATOR . $filepath;
+            if (!is_readable($filepath)) {
+                throw new ExpectationException('The file to be uploaded does not exist.', $this->getSession());
+            }
+        }
+        $file->attachFile($filepath);
 
         // Fill the form in Upload window.
         $datahash = $data->getRowsHash();
 
         // The action depends on the field type.
         foreach ($datahash as $locator => $value) {
-            // Getting the node element pointed by the label.
-            $fieldnode = $this->find_field($locator);
 
-            // Gets the field type from a parent node.
-            $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
+            $field = behat_field_manager::get_form_field_from_label($locator, $this);
 
             // Delegates to the field class.
             $field->set_value($value);

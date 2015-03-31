@@ -68,7 +68,10 @@ class restore_assignfeedback_editpdf_subplugin extends restore_subplugin {
         $data = (object)$data;
 
         // In this case the id is the old gradeid which will be mapped.
-        $this->add_related_files('assignfeedback_editpdf', 'download', 'grade', null, $data->gradeid);
+        $this->add_related_files('assignfeedback_editpdf',
+            \assignfeedback_editpdf\document_services::FINAL_PDF_FILEAREA, 'grade', null, $data->gradeid);
+        $this->add_related_files('assignfeedback_editpdf',
+            \assignfeedback_editpdf\document_services::PAGE_IMAGE_READONLY_FILEAREA, 'grade', null, $data->gradeid);
         $this->add_related_files('assignfeedback_editpdf', 'stamps', 'grade', null, $data->gradeid);
     }
 

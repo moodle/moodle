@@ -190,5 +190,7 @@ class enrol_users_filter_form extends moodleform {
         // Add hidden fields required by page.
         $mform->addElement('hidden', 'id', $this->_customdata['id']);
         $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'newcourse', $this->_customdata['newcourse']);
+        $mform->setType('newcourse', PARAM_BOOL);
     }
 }

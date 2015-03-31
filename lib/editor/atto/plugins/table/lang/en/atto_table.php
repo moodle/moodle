@@ -22,21 +22,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['createtable'] = 'Create table';
-$string['pluginname'] = 'Table';
-$string['numberofcolumns'] = 'Number of columns';
-$string['numberofrows'] = 'Number of rows';
-$string['caption'] = 'Caption';
-$string['headers'] = 'Define headers on';
-$string['columns'] = 'Columns';
-$string['rows'] = 'Rows';
+$string['addcolumnafter'] = 'Insert column after';
+$string['addrowafter'] = 'Insert row after';
 $string['both'] = 'Both';
+$string['caption'] = 'Caption';
+$string['columns'] = 'Columns';
+$string['createtable'] = 'Create table';
+$string['deletecolumn'] = 'Delete column';
+$string['deleterow'] = 'Delete row';
 $string['edittable'] = 'Edit table';
-$string['addrowafter'] = 'Insert row after current cell';
-$string['addcolumnafter'] = 'Insert column after current cell';
-$string['moverowup'] = 'Move row up';
-$string['moverowdown'] = 'Move row down';
+$string['headers'] = 'Define headers on';
 $string['movecolumnleft'] = 'Move column left';
 $string['movecolumnright'] = 'Move column right';
-$string['deleterow'] = 'Delete row';
-$string['deletecolumn'] = 'Delete column';
+$string['moverowdown'] = 'Move row down';
+$string['moverowup'] = 'Move row up';
+$string['numberofcolumns'] = 'Number of columns';
+$string['numberofrows'] = 'Number of rows';
+$string['pluginname'] = 'Table';
+$string['rows'] = 'Rows';
+$string['updatetable'] = 'Update table';

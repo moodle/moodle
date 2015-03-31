@@ -1,14 +1,14 @@
 <?php
 /*
-V5.18 3 Sep 2012  (c) 2000-2012 John Lim (jlim#natsoft.com). All rights reserved.
-  Released under both BSD license and Lesser GPL library license. 
-  Whenever there is any discrepancy between the two licenses, 
+V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+  Released under both BSD license and Lesser GPL library license.
+  Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
 
   Latest version is available at http://adodb.sourceforge.net
-  
+
   Oracle data driver. Requires Oracle client. Works on Windows and Unix and Oracle 7.
-  
+
   If you are using Oracle 8 or later, use the oci8 driver which is much better and more reliable.
 */
 
@@ -21,13 +21,13 @@ class ADODB_oracle extends ADOConnection {
 	var $concat_operator='||';
 	var $_curs;
 	var $_initdate = true; // init date to YYYY-MM-DD
-	var $metaTablesSQL = 'select table_name from cat';	
+	var $metaTablesSQL = 'select table_name from cat';
 	var $metaColumnsSQL = "select cname,coltype,width from col where tname='%s' order by colno";
 	var $sysDate = "TO_DATE(TO_CHAR(SYSDATE,'YYYY-MM-DD'),'YYYY-MM-DD')";
 	var $sysTimeStamp = 'SYSDATE';
 	var $connectSID = true;
-	
-	function ADODB_oracle() 
+
+	function ADODB_oracle()
 	{
 	}
 
@@ -39,7 +39,7 @@ class ADODB_oracle extends ADOConnection {
 		else $ds = adodb_date($this->fmtDate,$d);
 		return 'TO_DATE('.$ds.",'YYYY-MM-DD')";
 	}
-	
+
 	// format and return date string in database timestamp format
 	function DBTimeStamp($ts)
 	{
@@ -49,43 +49,43 @@ class ADODB_oracle extends ADOConnection {
 		else $ds = adodb_date($this->fmtTimeStamp,$ts);
 		return 'TO_DATE('.$ds.",'RRRR-MM-DD, HH:MI:SS AM')";
 	}
-	
-	
+
+
 	function BindDate($d)
 	{
 		$d = ADOConnection::DBDate($d);
 		if (strncmp($d,"'",1)) return $d;
-		
+
 		return substr($d,1,strlen($d)-2);
 	}
-	
+
 	function BindTimeStamp($d)
 	{
 		$d = ADOConnection::DBTimeStamp($d);
 		if (strncmp($d,"'",1)) return $d;
-		
+
 		return substr($d,1,strlen($d)-2);
 	}
-	
 
-	
+
+
 	function BeginTrans()
-	{	  
+	{
 		 $this->autoCommit = false;
 		 ora_commitoff($this->_connectionID);
 		 return true;
 	}
 
-	
-	function CommitTrans($ok=true) 
-	{ 
+
+	function CommitTrans($ok=true)
+	{
 		   if (!$ok) return $this->RollbackTrans();
 		   $ret = ora_commit($this->_connectionID);
 		   ora_commiton($this->_connectionID);
 		   return $ret;
 	}
 
-	
+
 	function RollbackTrans()
 	{
 		$ret = ora_rollback($this->_connectionID);
@@ -95,8 +95,8 @@ class ADODB_oracle extends ADOConnection {
 
 
 	/* there seems to be a bug in the oracle extension -- always returns ORA-00000 - no error */
-	function ErrorMsg() 
- 	{   
+	function ErrorMsg()
+ 	{
         if ($this->_errorMsg !== false) return $this->_errorMsg;
 
         if (is_resource($this->_curs)) $this->_errorMsg = @ora_error($this->_curs);
@@ -104,8 +104,8 @@ class ADODB_oracle extends ADOConnection {
 		return $this->_errorMsg;
 	}
 
- 
-	function ErrorNo() 
+
+	function ErrorNo()
 	{
 		if ($this->_errorCode !== false) return $this->_errorCode;
 
@@ -114,17 +114,17 @@ class ADODB_oracle extends ADOConnection {
         return $this->_errorCode;
 	}
 
-	
+
 
 		// returns true or false
 		function _connect($argHostname, $argUsername, $argPassword, $argDatabasename, $mode=0)
 		{
 			if (!function_exists('ora_plogon')) return null;
-				
+
             // <G. Giunta 2003/03/03/> Reset error messages before connecting
             $this->_errorMsg = false;
 		    $this->_errorCode = false;
-        
+
             // G. Giunta 2003/08/13 - This looks danegrously suspicious: why should we want to set
             // the oracle home to the host name of remote DB?
 //			if ($argHostname) putenv("ORACLE_HOME=$argHostname");
@@ -184,7 +184,7 @@ class ADODB_oracle extends ADOConnection {
 		    $this->_errorCode = false;
 
 			$curs = ora_open($this->_connectionID);
-		 
+
 		 	if ($curs === false) return false;
 			$this->_curs = $curs;
 			if (!ora_parse($curs,$sql)) return false;
@@ -193,7 +193,7 @@ class ADODB_oracle extends ADOConnection {
             // that we can obtain ONLY from the cursor (and not from the connection)
             $this->_errorCode = @ora_errorcode($curs);
             $this->_errorMsg = @ora_error($curs);
-            // </G. Giunta 2004/03/03>            
+            // </G. Giunta 2004/03/03>
 		 	@ora_close($curs);
 			return false;
 		}
@@ -221,15 +221,15 @@ class ADORecordset_oracle extends ADORecordSet {
 
 	function ADORecordset_oracle($queryID,$mode=false)
 	{
-		
-		if ($mode === false) { 
+
+		if ($mode === false) {
 			global $ADODB_FETCH_MODE;
 			$mode = $ADODB_FETCH_MODE;
 		}
 		$this->fetchMode = $mode;
-		
+
 		$this->_queryID = $queryID;
-	
+
 		$this->_inited = true;
 		$this->fields = array();
 		if ($queryID) {
@@ -241,7 +241,7 @@ class ADORecordset_oracle extends ADORecordSet {
 			$this->_numOfFields = 0;
 			$this->EOF = true;
 		}
-		
+
 		return $this->_queryID;
 	}
 
@@ -271,10 +271,10 @@ class ADORecordset_oracle extends ADORecordSet {
 				$this->bind[strtoupper($o->name)] = $i;
 			}
 		}
-		
+
 		 return $this->fields[$this->bind[strtoupper($colname)]];
 	}
-	
+
    function _initrs()
    {
 		   $this->_numOfRows = -1;
@@ -291,14 +291,14 @@ class ADORecordset_oracle extends ADORecordSet {
 // should remove call by reference, but ora_fetch_into requires it in 4.0.3pl1
 		if ($this->fetchMode & ADODB_FETCH_ASSOC)
 			return @ora_fetch_into($this->_queryID,$this->fields,ORA_FETCHINTO_NULLS|ORA_FETCHINTO_ASSOC);
-   		else 
+   		else
 			return @ora_fetch_into($this->_queryID,$this->fields,ORA_FETCHINTO_NULLS);
    }
 
    /*		close() only needs to be called if you are worried about using too much memory while your script
 		   is running. All associated result memory for the specified result identifier will automatically be freed.		*/
 
-   function _close() 
+   function _close()
 {
 		   return @ora_close($this->_queryID);
    }
@@ -310,7 +310,7 @@ class ADORecordset_oracle extends ADORecordSet {
 			$t = $fieldobj->type;
 			$len = $fieldobj->max_length;
 		}
-		
+
 		switch (strtoupper($t)) {
 		case 'VARCHAR':
 		case 'VARCHAR2':
@@ -326,17 +326,16 @@ class ADORecordset_oracle extends ADORecordSet {
 		case 'LONG VARBINARY':
 		case 'BLOB':
 				return 'B';
-		
+
 		case 'DATE': return 'D';
-		
+
 		//case 'T': return 'T';
-		
+
 		case 'BIT': return 'L';
-		case 'INT': 
+		case 'INT':
 		case 'SMALLINT':
 		case 'INTEGER': return 'I';
 		default: return 'N';
 		}
 	}
 }
-?>

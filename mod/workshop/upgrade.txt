@@ -1,0 +1,7 @@
+This files describes API changes in /mod/workshop - activity modules,
+information provided here is intended especially for developers.
+
+=== 2.7 ===
+
+* The method workshop::log() has been deprecated in the workshop module. Please use the event classes instead
+  (mod/workshop/classes/event).

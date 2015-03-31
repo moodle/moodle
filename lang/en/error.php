@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * Strings for component 'error', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   error
+ * @package   core
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -145,6 +144,7 @@ $string['cannotsetupblock'] = 'Blocks tables could NOT be set up successfully!';
 $string['cannotsetupcapformod'] = 'Could not set up the capabilities for {$a}';
 $string['cannotsetupcapforplugin'] = 'Could not set up the capabilities for {$a}';
 $string['cannotshowhidecoursesincategory'] = 'Cannot show/hide the courses in category {$a}.';
+$string['cannotsignup'] = 'You cannot create a new account because you are already logged in as {$a}.';
 $string['cannotunassigncap'] = 'Could not unassign deprecated capability {$a->cap} from role {$a->role}';
 $string['cannotunassignrolefrom'] = 'Cannot unassign this user from role id: {$a}';
 $string['cannotunzipfile'] = 'Cannot unzip file';
@@ -230,6 +230,7 @@ $string['errorcreatingfile'] = 'Error creating file "{$a}"';
 $string['errorcreatingrole'] = 'Error creating role';
 $string['errorfetchingrssfeed'] = 'Error fetching RSS feed.';
 $string['erroronline'] = 'Error on line {$a}';
+$string['erroroutput'] = 'Error output, so disabling automatic redirect.';
 $string['errorparsingxml'] = 'Error parsing XML: {$a->errorstring} at line {$a->errorline}, char {$a->errorchar}';
 $string['errorreadingfile'] = 'Error reading file "{$a}"';
 $string['errorsavingrequest'] = 'An error occurred when trying to save your request.';
@@ -262,6 +263,7 @@ $string['groupnotaddedtogroupingerror'] = 'Group "{$a->groupname}" not added to 
 $string['groupingnotaddederror'] = 'Grouping "{$a}" not added';
 $string['groupunknown'] = 'Group {$a} not associated to specified course';
 $string['groupusernotmember'] = 'User is not member of this group.';
+$string['guestcantaccessprofiles'] = 'Guests cannot access user profiles. Log in with a full user account to continue.';
 $string['guestnocomment'] = 'Guests are not allowed to post comments!';
 $string['guestnoeditprofile'] = 'The guest user cannot edit their profile';
 $string['guestnoeditprofileother'] = 'The guest user profile cannot be edited';
@@ -376,7 +378,7 @@ $string['missingvarname'] = 'Required variable name is missing!';
 $string['missing_moodle_backup_xml_file'] = 'Backup is missing XML file: {$a}';
 $string['mixedtypesqlparam'] = 'ERROR: Mixed types of sql query parameters!!';
 $string['mnetdisable'] = 'MNET is disabled';
-$string['mnetlocal'] = 'Remote MNET users cannot login locally';
+$string['mnetlocal'] = 'Remote MNET users cannot log in locally';
 $string['moduledisable'] = 'This module ({$a}) has been disabled for this particular course';
 $string['moduledoesnotexist'] = 'This module does not exist';
 $string['moduleinstancedoesnotexist'] = 'The instance of this module does not exist';
@@ -406,7 +408,7 @@ $string['nofolder'] = 'Requested directory does not exist';
 $string['noformdesc'] = 'No formslib form description file found for this activity.';
 $string['noguest'] = 'No guests here!';
 $string['noinstances'] = 'There are no instances of {$a} in this course!';
-$string['nologinas'] = 'You are not allowed to login as that user';
+$string['nologinas'] = 'You are not allowed to log in as that user';
 $string['nonmeaningfulcontent'] = 'Non meaningful content';
 $string['noparticipants'] = 'No participants found for this course';
 $string['noparticipatorycms'] = 'Sorry, but you have no participatory course modules to report on';
@@ -471,10 +473,10 @@ $string['serverconnection'] = 'Error connecting to the server';
 $string['servicedonotexist'] = 'The service does not exist';
 $string['sessionwaiterr'] = 'Timed out while waiting for session lock.<br />Wait for your current requests to finish and try again later.';
 $string['sessioncookiesdisable'] = 'Incorrect use of require_key_login() - session cookies must be disabled!';
-$string['sessiondiskfull'] = 'The session partition is full. It is not possible to login at this time. Please notify the server administrator.';
+$string['sessiondiskfull'] = 'The session partition is full. It is not possible to log in at this time. Please notify the server administrator.';
 $string['sessionhandlerproblem'] = 'Session handler is misconfigured';
-$string['sessionerroruser'] = 'Your session has timed out.  Please login again.';
-$string['sessionerroruser2'] = 'A server error that affects your login session was detected. Please login again or restart your browser.';
+$string['sessionerroruser'] = 'Your session has timed out. Please log in again.';
+$string['sessionerroruser2'] = 'A server error that affects your login session was detected. Please log in again or restart your browser.';
 $string['sessionipnomatch'] = 'Sorry, but your IP number seems to have changed from when you first logged in.  This security feature prevents crackers stealing your identity while logged in to this site.  Normal users should not be seeing this message - please ask the site administrator for help.';
 $string['sessionipnomatch2'] = '<p>Sorry, but your IP number seems to have changed from when you first logged in. This security feature prevents crackers stealing your identity while logged in to this site. You may see this error if you use wireless networks or if you are roaming between different networks. Please ask the site administrator for more help.</p>
 <p>If you want to continue please press F5 key to refresh this page.</p>';
@@ -489,7 +491,7 @@ $string['statsnodata'] = 'There is no available data for that combination of cou
 $string['storedfilecannotcreatefile'] = 'Can not create local file pool file, please verify permissions in dataroot and available disk space.';
 $string['storedfilecannotcreatefiledirs'] = 'Can not create local file pool directories, please verify permissions in dataroot.';
 $string['storedfilecannotread'] = 'Can not read file, either file does not exist or there are permission problems';
-$string['storedfilenotcreated'] = 'Can not create file "{$a->contextid}/{$a->component}/{$a->filearea}/{$a->itemid}/{$a->filepath}/{$a->filename}"';
+$string['storedfilenotcreated'] = 'Can not create file "{$a->contextid}/{$a->component}/{$a->filearea}/{$a->itemid}{$a->filepath}{$a->filename}"';
 $string['storedfileproblem'] = 'Unknown exception related to local files ({$a})';
 $string['tagdisabled'] = 'Tags are disabled!';
 $string['tagnotfound'] = 'The specified tag was not found in the database';

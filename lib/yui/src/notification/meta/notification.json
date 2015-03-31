@@ -13,6 +13,7 @@
         "base",
         "node",
         "panel",
+        "escape",
         "event-key",
         "dd-plugin",
         "moodle-core-widget-focusafterclose",

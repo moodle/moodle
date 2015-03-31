@@ -89,7 +89,7 @@ M.mod_quiz.autosave = {
      */
     SELECTORS: {
         QUIZ_FORM:             '#responseform',
-        VALUE_CHANGE_ELEMENTS: 'input, textarea',
+        VALUE_CHANGE_ELEMENTS: 'input, textarea, [contenteditable="true"]',
         CHANGE_ELEMENTS:       'input, select',
         HIDDEN_INPUTS:         'input[type=hidden]',
         CONNECTION_ERROR:      '#connection-error',
@@ -192,7 +192,7 @@ M.mod_quiz.autosave = {
     init: function(delay) {
         this.form = Y.one(this.SELECTORS.QUIZ_FORM);
         if (!this.form) {
-            Y.log('No response form found. Why did you try to set up autosave?');
+            Y.log('No response form found. Why did you try to set up autosave?', 'debug', 'moodle-mod_quiz-autosave');
             return;
         }
 
@@ -250,18 +250,18 @@ M.mod_quiz.autosave = {
      * @param {Number} repeatcount The number of attempts made so far.
      */
     init_tinymce: function(repeatcount) {
-        if (typeof tinyMCE === 'undefined') {
+        if (typeof window.tinyMCE === 'undefined') {
             if (repeatcount > 0) {
                 Y.later(this.TINYMCE_DETECTION_DELAY, this, this.init_tinymce, [repeatcount - 1]);
             } else {
-                Y.log('Gave up looking for TinyMCE.');
+                Y.log('Gave up looking for TinyMCE.', 'debug', 'moodle-mod_quiz-autosave');
             }
             return;
         }
 
-        Y.log('Found TinyMCE.');
+        Y.log('Found TinyMCE.', 'debug', 'moodle-mod_quiz-autosave');
         this.editor_change_handler = Y.bind(this.editor_changed, this);
-        tinyMCE.onAddEditor.add(Y.bind(this.init_tinymce_editor, this));
+        window.tinyMCE.onAddEditor.add(Y.bind(this.init_tinymce_editor, this));
     },
 
     /**
@@ -272,7 +272,7 @@ M.mod_quiz.autosave = {
      * @param {Object} editor The TinyMCE editor object
      */
     init_tinymce_editor: function(e, editor) {
-        Y.log('Found TinyMCE editor ' + editor.id + '.');
+        Y.log('Found TinyMCE editor ' + editor.id + '.', 'debug', 'moodle-mod_quiz-autosave');
         editor.onChange.add(this.editor_change_handler);
         editor.onRedo.add(this.editor_change_handler);
         editor.onUndo.add(this.editor_change_handler);
@@ -280,16 +280,19 @@ M.mod_quiz.autosave = {
     },
 
     value_changed: function(e) {
-        if (e.target.get('name') === 'thispage' || e.target.get('name') === 'scrollpos' ||
-                e.target.get('name').match(/_:flagged$/)) {
+        var name = e.target.getAttribute('name');
+        if (name === 'thispage' || name === 'scrollpos' || (name && name.match(/_:flagged$/))) {
             return; // Not interesting.
         }
-        Y.log('Detected a value change in element ' + e.target.get('name') + '.');
+
+        // Fallback to the ID when the name is not present (in the case of content editable).
+        name = name || '#' + e.target.getAttribute('id');
+        Y.log('Detected a value change in element ' + name + '.', 'debug', 'moodle-mod_quiz-autosave');
         this.start_save_timer_if_necessary();
     },
 
     editor_changed: function(editor) {
-        Y.log('Detected a value change in editor ' + editor.id + '.');
+        Y.log('Detected a value change in editor ' + editor.id + '.', 'debug', 'moodle-mod_quiz-autosave');
         this.start_save_timer_if_necessary();
     },
 
@@ -321,14 +324,14 @@ M.mod_quiz.autosave = {
         this.dirty = false;
 
         if (this.is_time_nearly_over()) {
-            Y.log('No more saving, time is nearly over.');
+            Y.log('No more saving, time is nearly over.', 'debug', 'moodle-mod_quiz-autosave');
             this.stop_autosaving();
             return;
         }
 
-        Y.log('Doing a save.');
-        if (typeof tinyMCE !== 'undefined') {
-            tinyMCE.triggerSave();
+        Y.log('Doing a save.', 'debug', 'moodle-mod_quiz-autosave');
+        if (typeof window.tinyMCE !== 'undefined') {
+            window.tinyMCE.triggerSave();
         }
         this.save_transaction = Y.io(this.AUTOSAVE_HANDLER, {
             method:  'POST',
@@ -341,12 +344,19 @@ M.mod_quiz.autosave = {
         });
     },
 
-    save_done: function() {
-        Y.log('Save completed.');
+    save_done: function(transactionid, response) {
+        if (response.responseText !== 'OK') {
+            // Because IIS is useless, Moodle can't send proper HTTP response
+            // codes, so we have to detect failures manually.
+            this.save_failed(transactionid, response);
+            return;
+        }
+
+        Y.log('Save completed.', 'debug', 'moodle-mod_quiz-autosave');
         this.save_transaction = null;
 
         if (this.dirty) {
-            Y.log('Dirty after save.');
+            Y.log('Dirty after save.', 'debug', 'moodle-mod_quiz-autosave');
             this.start_save_timer();
         }
 
@@ -361,7 +371,7 @@ M.mod_quiz.autosave = {
     },
 
     save_failed: function() {
-        Y.log('Save failed.');
+        Y.log('Save failed.', 'debug', 'moodle-mod_quiz-autosave');
         this.save_transaction = null;
 
         // We want to retry soon.
