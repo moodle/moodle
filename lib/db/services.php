@@ -1068,6 +1068,7 @@ $services = array(
             'core_course_view_course',
             'core_completion_get_activities_completion_status',
             'core_notes_get_course_notes',
+            'mod_forum_view_forum_discussion',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
