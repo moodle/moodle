@@ -27,6 +27,9 @@ $string['aicchacptimeout'] = 'AICC HACP timeout';
 $string['aicchacptimeout_desc'] = 'Length of time in minutes that an external AICC HACP session can remain open';
 $string['aicchacpkeepsessiondata'] = 'AICC HACP session data';
 $string['aicchacpkeepsessiondata_desc'] = 'Length of time in days to keep the external AICC HACP session data (a high setting will fill up the table with old data but may be useful when debugging)';
+$string['aiccuserid'] = 'AICC pass numeric user id';
+$string['aiccuserid_desc'] = 'The AICC standard for usernames is very restrictive compared with Moodle so we pass the user->id instead. If disabled this passes the moodle username to the AICC package.
+The AICC standard allows for alpha-numeric characters with the two additional characters dash(-) and the underscore(_). Periods, spaces and the @ symbol are not permitted.';
 $string['activation'] = 'Activation';
 $string['activityloading'] = 'You will be automatically redirected to the activity in';
 $string['activityoverview'] = 'You have SCORM packages that need attention';
