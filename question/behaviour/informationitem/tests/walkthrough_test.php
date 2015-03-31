@@ -18,12 +18,11 @@
  * This file contains tests that walks a question through the information item
  * behaviour.
  *
- * @package    qbehaviour
- * @subpackage informationitem
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qbehaviour_informationitem
+ * @category  test
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,10 +34,10 @@ require_once(dirname(__FILE__) . '/../../../engine/tests/helpers.php');
 /**
  * Unit tests for the information item behaviour.
  *
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_informationitem_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class qbehaviour_informationitem_walkthrough_testcase extends qbehaviour_walkthrough_test_base {
     public function test_informationitem_feedback_description() {
 
         // Create a true-false question with correct answer true.
