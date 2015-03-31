@@ -355,16 +355,7 @@ class file_storage {
             return false;
         }
 
-        // getimagesizefromstring() is available from PHP 5.4 but we need to support
-        // lower versions, so...
-        $tmproot = make_temp_directory('thumbnails');
-        $tmpfilepath = $tmproot.'/'.$file->get_contenthash().'_'.$mode;
-        file_put_contents($tmpfilepath, $data);
-        $imageinfo = getimagesize($tmpfilepath);
-        unlink($tmpfilepath);
-
         $context = context_system::instance();
-
         $record = array(
             'contextid' => $context->id,
             'component' => 'core',
@@ -374,6 +365,7 @@ class file_storage {
             'filename'  => $file->get_contenthash(),
         );
 
+        $imageinfo = getimagesizefromstring($data);
         if ($imageinfo) {
             $record['mimetype'] = $imageinfo['mime'];
         }
