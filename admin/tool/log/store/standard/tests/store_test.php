@@ -249,15 +249,9 @@ class logstore_standard_store_testcase extends advanced_testcase {
         // Remove all logs before "today".
         set_config('loglifetime', 1, 'logstore_standard');
 
-        try {
-            ob_start();
-            $clean = new \logstore_standard\task\cleanup_task();
-            $clean->execute();
-            ob_end_clean();
-        } catch (Exception $e) {
-            ob_end_clean();
-            throw $e;
-        }
+        $this->expectOutputString(" Deleted old log records from standard store.\n");
+        $clean = new \logstore_standard\task\cleanup_task();
+        $clean->execute();
 
         $this->assertEquals(1, $DB->count_records('logstore_standard_log'));
     }
