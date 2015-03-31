@@ -522,7 +522,7 @@ class file_storage {
      * @param int $repositoryid
      * @param string $sort A fragment of SQL to use for sorting
      */
-    public function get_external_files($repositoryid, $sort = 'sortorder, itemid, filepath, filename') {
+    public function get_external_files($repositoryid, $sort = '') {
         global $DB;
         $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                   FROM {files} f
