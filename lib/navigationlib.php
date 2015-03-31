@@ -4492,16 +4492,6 @@ class settings_navigation extends navigation_node {
             }
         }
 
-        // Add reports node.
-        $reporttab = $usersetting->add(get_string('activityreports'));
-        $reports = get_plugin_list_with_function('report', 'extend_navigation_user', 'lib.php');
-        foreach ($reports as $reportfunction) {
-            $reportfunction($reporttab, $user, $course);
-        }
-
-        // Check the number of nodes in the report node... if there are none remove the node.
-        $reporttab->trim_if_empty();
-
         // Login as ...
         if (!$user->deleted and !$currentuser && !\core\session\manager::is_loggedinas() &&
                 has_capability('moodle/user:loginas', $coursecontext) && !is_siteadmin($user->id)) {
