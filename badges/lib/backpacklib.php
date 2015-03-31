@@ -66,6 +66,7 @@ class OpenBadgesBackpackHandler {
             'FORBID_REUSE'      => true,
             'HEADER'            => 0,
             'CONNECTTIMEOUT'    => 3,
+            // Follow redirects with the same type of request when sent 301, or 302 redirects.
             'CURLOPT_POSTREDIR' => 3
         );
 
