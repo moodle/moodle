@@ -172,6 +172,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $assign1 = self::getDataGenerator()->create_module('assign', array(
             'course' => $course1->id,
             'name' => 'lightwork assignment',
+            'intro' => 'the assignment intro text here',
             'markingworkflow' => 1,
             'markingallocation' => 1
         ));
@@ -196,6 +197,13 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
             'userid' => $USER->id
         ));
 
+        // Add a file as assignment attachment.
+        $filerecord = array('component' => 'mod_assign', 'filearea' => ASSIGN_INTROATTACHMENT_FILEAREA,
+                'contextid' => $context->id, 'itemid' => 0,
+                'filename' => 'introattachment.txt', 'filepath' => '/');
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecord, 'Test intro attachment file');
+
         $result = mod_assign_external::get_assignments();
 
         // We need to execute the return values cleaning process to simulate the web service server.
@@ -210,8 +218,16 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($assign1->id, $assignment['id']);
         $this->assertEquals($course1->id, $assignment['course']);
         $this->assertEquals('lightwork assignment', $assignment['name']);
+        $this->assertEquals('the assignment intro text here', $assignment['intro']);
         $this->assertEquals(1, $assignment['markingworkflow']);
         $this->assertEquals(1, $assignment['markingallocation']);
+
+        $this->assertCount(1, $assignment['introattachments']);
+        $this->assertEquals('introattachment.txt', $assignment['introattachments'][0]['filename']);
+
+        // Now, hide the descritption until the submission from date.
+        $DB->set_field('assign', 'alwaysshowdescription', 0, array('id' => $assign1->id));
+        $DB->set_field('assign', 'allowsubmissionsfromdate', time() + DAYSECS, array('id' => $assign1->id));
 
         $result = mod_assign_external::get_assignments(array($course1->id));
 
@@ -226,6 +242,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($assign1->id, $assignment['id']);
         $this->assertEquals($course1->id, $assignment['course']);
         $this->assertEquals('lightwork assignment', $assignment['name']);
+        $this->assertArrayNotHasKey('intro', $assignment);
+        $this->assertArrayNotHasKey('introattachments', $assignment);
         $this->assertEquals(1, $assignment['markingworkflow']);
         $this->assertEquals(1, $assignment['markingallocation']);
 
