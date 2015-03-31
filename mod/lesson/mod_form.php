@@ -187,34 +187,49 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->disabledIf('passwordunmask', 'usepassword', 'eq', 0);
 
         // Dependent on.
-        $mform->addElement('header', 'dependencyon', get_string('prerequisitelesson', 'lesson'));
+        if ($this->current && isset($this->current->dependency) && $this->current->dependency) {
+            $mform->addElement('header', 'dependencyon', get_string('prerequisitelesson', 'lesson'));
+            $mform->addElement('static', 'warningobsolete',
+                get_string('warning', 'lesson'),
+                get_string('prerequisiteisobsolete', 'lesson'));
+            $options = array(0 => get_string('none'));
+            if ($lessons = get_all_instances_in_course('lesson', $COURSE)) {
+                foreach ($lessons as $lesson) {
+                    if ($lesson->id != $this->_instance) {
+                        $options[$lesson->id] = format_string($lesson->name, true);
+                    }
 
-        $options = array(0=>get_string('none'));
-        if ($lessons = get_all_instances_in_course('lesson', $COURSE)) {
-            foreach($lessons as $lesson) {
-                if ($lesson->id != $this->_instance){
-                    $options[$lesson->id] = format_string($lesson->name, true);
                 }
-
             }
+            $mform->addElement('select', 'dependency', get_string('dependencyon', 'lesson'), $options);
+            $mform->addHelpButton('dependency', 'dependencyon', 'lesson');
+            $mform->setDefault('dependency', 0);
+
+            $mform->addElement('text', 'timespent', get_string('timespentminutes', 'lesson'));
+            $mform->setDefault('timespent', 0);
+            $mform->setType('timespent', PARAM_INT);
+            $mform->disabledIf('timespent', 'dependency', 'eq', 0);
+
+            $mform->addElement('checkbox', 'completed', get_string('completed', 'lesson'));
+            $mform->setDefault('completed', 0);
+            $mform->disabledIf('completed', 'dependency', 'eq', 0);
+
+            $mform->addElement('text', 'gradebetterthan', get_string('gradebetterthan', 'lesson'));
+            $mform->setDefault('gradebetterthan', 0);
+            $mform->setType('gradebetterthan', PARAM_INT);
+            $mform->disabledIf('gradebetterthan', 'dependency', 'eq', 0);
+        } else {
+            $mform->addElement('hidden', 'dependency', 0);
+            $mform->setType('dependency', PARAM_INT);
+            $mform->addElement('hidden', 'timespent', 0);
+            $mform->setType('timespent', PARAM_INT);
+            $mform->addElement('hidden', 'completed', 0);
+            $mform->setType('completed', PARAM_INT);
+            $mform->addElement('hidden', 'gradebetterthan', 0);
+            $mform->setType('gradebetterthan', PARAM_INT);
+            $mform->setConstants(array('dependency' => 0, 'timespent' => 0,
+                    'completed' => 0, 'gradebetterthan' => 0));
         }
-        $mform->addElement('select', 'dependency', get_string('dependencyon', 'lesson'), $options);
-        $mform->addHelpButton('dependency', 'dependencyon', 'lesson');
-        $mform->setDefault('dependency', 0);
-
-        $mform->addElement('text', 'timespent', get_string('timespentminutes', 'lesson'));
-        $mform->setDefault('timespent', 0);
-        $mform->setType('timespent', PARAM_INT);
-        $mform->disabledIf('timespent', 'dependency', 'eq', 0);
-
-        $mform->addElement('checkbox', 'completed', get_string('completed', 'lesson'));
-        $mform->setDefault('completed', 0);
-        $mform->disabledIf('completed', 'dependency', 'eq', 0);
-
-        $mform->addElement('text', 'gradebetterthan', get_string('gradebetterthan', 'lesson'));
-        $mform->setDefault('gradebetterthan', 0);
-        $mform->setType('gradebetterthan', PARAM_INT);
-        $mform->disabledIf('gradebetterthan', 'dependency', 'eq', 0);
 
         // Flow control.
         $mform->addElement('header', 'flowcontrol', get_string('flowcontrol', 'lesson'));
