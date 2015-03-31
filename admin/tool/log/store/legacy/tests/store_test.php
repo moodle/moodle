@@ -296,15 +296,9 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         // Remove all logs before "today".
         set_config('loglifetime', 1);
 
-        try {
-            ob_start();
-            $clean = new \logstore_legacy\task\cleanup_task();
-            $clean->execute();
-            ob_end_clean();
-        } catch (Exception $e) {
-            ob_end_clean();
-            throw $e;
-        }
+        $this->expectOutputString(" Deleted old legacy log records\n");
+        $clean = new \logstore_legacy\task\cleanup_task();
+        $clean->execute();
 
         $this->assertEquals(1, $DB->count_records('log'));
     }
