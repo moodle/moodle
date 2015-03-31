@@ -56,12 +56,12 @@ Feature: Lesson user override
       | deadline[hour]      | 08 |
       | deadline[minute]    | 00 |
     And I press "Save"
-    And I should see "Wednesday, 1 January 2020, 8:00 am"
+    And I should see "Wednesday, 1 January 2020, 8:00"
     Then I click on "Edit" "link"
     And I set the following fields to these values:
       | deadline[year] | 2030 |
     And I press "Save"
-    And I should see "Tuesday, 1 January 2030, 8:00 am"
+    And I should see "Tuesday, 1 January 2030, 8:00"
     And I click on "Delete" "link"
     And I press "Continue"
     And I should not see "Sam1 Student1"
@@ -79,13 +79,13 @@ Feature: Lesson user override
       | deadline[hour]      | 08 |
       | deadline[minute]    | 00 |
     And I press "Save"
-    And I should see "Wednesday, 1 January 2020, 8:00 am"
+    And I should see "Wednesday, 1 January 2020, 8:00"
     Then I click on "copy" "link"
     And I set the following fields to these values:
       | Override user  | Student2  |
       | deadline[year] | 2030 |
     And I press "Save"
-    And I should see "Tuesday, 1 January 2030, 8:00 am"
+    And I should see "Tuesday, 1 January 2030, 8:00"
     And I should see "Sam2 Student2"
 
   Scenario: Allow a single user to have re-take the lesson

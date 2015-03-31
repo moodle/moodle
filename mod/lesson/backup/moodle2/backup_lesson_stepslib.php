@@ -20,27 +20,27 @@
  *
  * This is the "graphical" structure of the lesson module:
  *
- *                  lesson ------------>---------------|-------------->-----------|------------->------------|
- *               (CL,pk->id)                           |                          |                          |
- *                     |                               |                          |                          |
- *                     |                         lesson_grades              lesson_high_scores         lesson_timer
- *                     |                  (UL, pk->id,fk->lessonid)    (UL, pk->id,fk->lessonid)   (UL, pk->id,fk->lessonid)
- *                     |                               |
- *                     |                               |
- *                     |                               |
- *                     |                               |
- *              lesson_pages----------->---------lesson_branch
- *          (CL,pk->id,fk->lessonid)       (UL, pk->id,fk->pageid)
- *                     |
- *                     |
- *                     |
- *               lesson_answers
- *            (CL,pk->id,fk->pageid)
- *                     |
- *                     |
- *                     |
- *               lesson_attempts
- *          (UL,pk->id,fk->answerid)
+ *         lesson ---------->-------------|------------>---------|----------->----------|----------->----------|
+ *      (CL,pk->id)                       |                      |                      |                      |
+ *            |                           |                      |                      |                      |
+ *            |                     lesson_grades          lesson_high_scores     lesson_timer           lesson_overrides
+ *            |            (UL, pk->id,fk->lessonid) (UL, pk->id,fk->lessonid) (UL, pk->id,fk->lessonid) (UL, pk->id,fk->lessonid)
+ *            |                           |
+ *            |                           |
+ *            |                           |
+ *            |                           |
+ *      lesson_pages-------->-------lesson_branch
+ *   (CL,pk->id,fk->lessonid)     (UL, pk->id,fk->pageid)
+ *            |
+ *            |
+ *            |
+ *      lesson_answers
+ *   (CL,pk->id,fk->pageid)
+ *            |
+ *            |
+ *            |
+ *      lesson_attempts
+ *  (UL,pk->id,fk->answerid)
  *
  * Meaning: pk->primary key field of the table
  *          fk->foreign key to link with parent

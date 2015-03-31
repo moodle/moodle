@@ -132,16 +132,8 @@ class lesson_override_form extends moodleform {
                 $mform->freeze('userid');
             } else {
                 // Prepare the list of users.
-                $users = array();
-                list($sort, $sortparams) = users_order_by_sql('u');
-                if (!empty($sortparams)) {
-                    throw new coding_exception('users_order_by_sql returned some query parameters. ' .
-                            'This is unexpected, and a problem because there is no way to pass these ' .
-                            'parameters to get_users_by_capability. See MDL-34657.');
-                }
                 $users = get_enrolled_users($this->context, '', 0,
-                        'u.id, u.email, ' . get_all_user_name_fields(true, 'u'),
-                        $sort);
+                        'u.id, u.email, ' . get_all_user_name_fields(true, 'u'));
 
                 // Filter users based on any fixed restrictions (groups, profile).
                 $info = new \core_availability\info_module($cm);

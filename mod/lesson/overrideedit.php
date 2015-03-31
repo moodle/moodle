@@ -89,16 +89,16 @@ foreach ($keys as $key) {
     }
 }
 
+// True if group-based override.
+$groupmode = !empty($data->groupid) || ($action === 'addgroup' && empty($overrideid));
+
 // If we are duplicating an override, then clear the user/group and override id
 // since they will change.
 if ($action === 'duplicate') {
-    $override->id = null;
-    $override->userid = null;
-    $override->groupid = null;
+    $override->id = $data->id = null;
+    $override->userid = $data->userid = null;
+    $override->groupid = $data->groupid = null;
 }
-
-// True if group-based override.
-$groupmode = !empty($data->groupid) || ($action === 'addgroup' && empty($overrideid));
 
 $overridelisturl = new moodle_url('/mod/lesson/overrides.php', array('cmid' => $cm->id));
 if (!$groupmode) {

@@ -63,12 +63,12 @@ Feature: Lesson user override
       | deadline[hour]      | 08 |
       | deadline[minute]    | 00 |
     And I press "Save"
-    And I should see "Wednesday, 1 January 2020, 8:00 am"
+    And I should see "Wednesday, 1 January 2020, 8:00"
     Then I click on "Edit" "link"
     And I set the following fields to these values:
       | deadline[year] | 2030 |
     And I press "Save"
-    And I should see "Tuesday, 1 January 2030, 8:00 am"
+    And I should see "Tuesday, 1 January 2030, 8:00"
     And I click on "Delete" "link"
     And I press "Continue"
     And I should not see "Group 1"
@@ -86,13 +86,13 @@ Feature: Lesson user override
       | deadline[hour]      | 08 |
       | deadline[minute]    | 00 |
     And I press "Save"
-    And I should see "Wednesday, 1 January 2020, 8:00 am"
+    And I should see "Wednesday, 1 January 2020, 8:00"
     Then I click on "copy" "link"
     And I set the following fields to these values:
       | Override group | Group 2  |
       | deadline[year] | 2030 |
     And I press "Save"
-    And I should see "Tuesday, 1 January 2030, 8:00 am"
+    And I should see "Tuesday, 1 January 2030, 8:00"
     And I should see "Group 2"
 
   Scenario: Allow a single group to have re-take the lesson
@@ -310,7 +310,7 @@ Feature: Lesson user override
       | available[hour]      | 08 |
       | available[minute]    | 00 |
     And I press "Save"
-    And I should see "Wednesday, 1 January 2020, 8:00 am"
+    And I should see "Wednesday, 1 January 2020, 8:00"
     And I navigate to "User overrides" node in "Lesson administration"
     And I press "Add user override"
     And I set the following fields to these values:
@@ -322,7 +322,7 @@ Feature: Lesson user override
       | available[hour]      | 08 |
       | available[minute]    | 00 |
     And I press "Save"
-    And I should see "Friday, 1 January 2021, 8:00 am"
+    And I should see "Friday, 1 January 2021, 8:00"
     And I log out
     Then I log in as "student1"
     And I follow "Course 1"

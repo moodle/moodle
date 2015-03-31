@@ -642,21 +642,31 @@ function lesson_get_media_html($lesson, $context) {
  * Logic to happen when a/some group(s) has/have been deleted in a course.
  *
  * @param int $courseid The course ID.
+ * @param int $groupid The group id if it is known
  * @return void
  */
-function lesson_process_group_deleted_in_course($courseid) {
+function lesson_process_group_deleted_in_course($courseid, $groupid = null) {
     global $DB;
 
-    // It would be nice if we got the groupid that was deleted.
-    // Instead, we just update all lesson with orphaned group overrides.
-    $sql = "SELECT o.id, o.lesson
-              FROM {lesson_overrides} o
-              JOIN {lesson} lesson ON lesson.id = o.lessonid
-         LEFT JOIN {groups} grp ON grp.id = o.groupid
-             WHERE lesson.course = :courseid
-               AND o.groupid IS NOT NULL
-               AND grp.id IS NULL";
     $params = array('courseid' => $courseid);
+    if ($groupid) {
+        $params['groupid'] = $groupid;
+        // We just update the group that was deleted.
+        $sql = "SELECT o.id, o.lessonid
+                  FROM {lesson_overrides} o
+                  JOIN {lesson} lesson ON lesson.id = o.lessonid
+                 WHERE lesson.course = :courseid
+                   AND o.groupid = :groupid";
+    } else {
+        // No groupid, we update all orphaned group overrides for all lessons in course.
+        $sql = "SELECT o.id, o.lessonid
+                  FROM {lesson_overrides} o
+                  JOIN {lesson} lesson ON lesson.id = o.lessonid
+             LEFT JOIN {groups} grp ON grp.id = o.groupid
+                 WHERE lesson.course = :courseid
+                   AND o.groupid IS NOT NULL
+                   AND grp.id IS NULL";
+    }
     $records = $DB->get_records_sql_menu($sql, $params);
     if (!$records) {
         return; // Nothing to do.

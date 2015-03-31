@@ -80,6 +80,6 @@ class group_observers {
             // We will take care of that once the course reset ends.
             return;
         }
-        lesson_process_group_deleted_in_course($event->courseid);
+        lesson_process_group_deleted_in_course($event->courseid, $event->objectid);
     }
 }
