@@ -486,14 +486,15 @@ class question_usage_by_activity {
      * @param int $variant which variant of the question to use. Must be between
      *      1 and ->get_num_variants($slot) inclusive. If not give, a variant is
      *      chosen at random.
+     * @param int $timestamp optional, the timstamp to record for this action. Defaults to now.
      */
-    public function start_question($slot, $variant = null) {
+    public function start_question($slot, $variant = null, $timenow = null) {
         if (is_null($variant)) {
             $variant = rand(1, $this->get_num_variants($slot));
         }
 
         $qa = $this->get_question_attempt($slot);
-        $qa->start($this->preferredbehaviour, $variant);
+        $qa->start($this->preferredbehaviour, $variant, array(), $timenow);
         $this->observer->notify_attempt_modified($qa);
     }
 

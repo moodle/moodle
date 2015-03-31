@@ -161,6 +161,18 @@ abstract class question_engine {
     }
 
     /**
+     * Get the number of times each variant has been used for each question in a list
+     * in a set of usages.
+     * @param array $questionids of question ids.
+     * @param qubaid_condition $qubaids ids of the usages to consider.
+     * @return array questionid => variant number => num uses.
+     */
+    public static function load_used_variants(array $questionids, qubaid_condition $qubaids) {
+        $dm = new question_engine_data_mapper();
+        return $dm->load_used_variants($questionids, $qubaids);
+    }
+
+    /**
      * Create an archetypal behaviour for a particular question attempt.
      * Used by {@link question_definition::make_behaviour()}.
      *
