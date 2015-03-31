@@ -10,6 +10,7 @@ Feature: Course paged mode
       | fullname | shortname | category | format | coursedisplay | numsections |
       | Course 1 | C1 | 0 | <courseformat> | 1 | 3 |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     Then I click on <section2> "link" in the <section2> "section"
     And I follow "C1"
@@ -43,6 +44,7 @@ Feature: Course paged mode
       | fullname | shortname | category | format | coursedisplay | numsections |
       | Course 1 | C1 | 0 | <courseformat> | 1 | 3 |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     Then I click on <section2> "link" in the <section2> "section"
     And I follow "C1"

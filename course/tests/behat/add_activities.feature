@@ -17,6 +17,7 @@ Feature: Add activities to courses
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
 

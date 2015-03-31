@@ -34,7 +34,7 @@ Feature: Restrict activities availability
     Given I log in as "admin"
     And I set the following system permissions of "Teacher" role:
       | mod/chat:addinstance | Prohibit |
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Permissions"
