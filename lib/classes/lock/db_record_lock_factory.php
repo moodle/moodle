@@ -103,40 +103,8 @@ class db_record_lock_factory implements lock_factory {
      * to duplicates in a clustered environment (especially on VMs due to poor time precision).
      */
     protected function generate_unique_token() {
-        $uuid = '';
-
-        if (function_exists("uuid_create")) {
-            $context = null;
-            uuid_create($context);
-
-            uuid_make($context, UUID_MAKE_V4);
-            uuid_export($context, UUID_FMT_STR, $uuid);
-        } else {
-            // Fallback uuid generation based on:
-            // "http://www.php.net/manual/en/function.uniqid.php#94959".
-            $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-
-                // 32 bits for "time_low".
-                mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-
-                // 16 bits for "time_mid".
-                mt_rand(0, 0xffff),
-
-                // 16 bits for "time_hi_and_version",
-                // four most significant bits holds version number 4.
-                mt_rand(0, 0x0fff) | 0x4000,
-
-                // 16 bits, 8 bits for "clk_seq_hi_res",
-                // 8 bits for "clk_seq_low",
-                // two most significant bits holds zero and one for variant DCE1.1.
-                mt_rand(0, 0x3fff) | 0x8000,
-
-                // 48 bits for "node".
-                mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
-        }
-        return trim($uuid);
+        return generate_uuid();
     }
-
 
     /**
      * Create and get a lock

@@ -576,6 +576,52 @@ function get_exception_info($ex) {
 }
 
 /**
+ * Generate a uuid.
+ *
+ * Unique is hard. Very hard. Attempt to use the PECL UUID functions if available, and if not then revert to
+ * constructing the uuid using mt_rand.
+ *
+ * It is important that this token is not solely based on time as this could lead
+ * to duplicates in a clustered environment (especially on VMs due to poor time precision).
+ *
+ * @return string The uuid.
+ */
+function generate_uuid() {
+    $uuid = '';
+
+    if (function_exists("uuid_create")) {
+        $context = null;
+        uuid_create($context);
+
+        uuid_make($context, UUID_MAKE_V4);
+        uuid_export($context, UUID_FMT_STR, $uuid);
+    } else {
+        // Fallback uuid generation based on:
+        // "http://www.php.net/manual/en/function.uniqid.php#94959".
+        $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+
+            // 32 bits for "time_low".
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+
+            // 16 bits for "time_mid".
+            mt_rand(0, 0xffff),
+
+            // 16 bits for "time_hi_and_version",
+            // four most significant bits holds version number 4.
+            mt_rand(0, 0x0fff) | 0x4000,
+
+            // 16 bits, 8 bits for "clk_seq_hi_res",
+            // 8 bits for "clk_seq_low",
+            // two most significant bits holds zero and one for variant DCE1.1.
+            mt_rand(0, 0x3fff) | 0x8000,
+
+            // 48 bits for "node".
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
+    }
+    return trim($uuid);
+}
+
+/**
  * Returns the Moodle Docs URL in the users language for a given 'More help' link.
  *
  * There are three cases:
@@ -1344,6 +1390,50 @@ function check_dir_exists($dir, $create = true, $recursive = true) {
 }
 
 /**
+ * Create a new unique directory within the specified directory.
+ *
+ * @param string $basedir The directory to create your new unique directory within.
+ * @param bool $exceptiononerror throw exception if error encountered
+ * @return string The created directory
+ * @throws invalid_dataroot_permissions
+ */
+function make_unique_writable_directory($basedir, $exceptiononerror = true) {
+    if (!is_dir($basedir) || !is_writable($basedir)) {
+        // The basedir is not writable. We will not be able to create the child directory.
+        if ($exceptiononerror) {
+            throw new invalid_dataroot_permissions($basedir . ' is not writable. Unable to create a unique directory within it.');
+        } else {
+            return false;
+        }
+    }
+
+    do {
+        // Generate a new (hopefully unique) directory name.
+        $uniquedir = $basedir . DIRECTORY_SEPARATOR . generate_uuid();
+    } while (
+            // Ensure that basedir is still writable - if we do not check, we could get stuck in a loop here.
+            is_writable($basedir) &&
+
+            // Make the new unique directory. If the directory already exists, it will return false.
+            !make_writable_directory($uniquedir, $exceptiononerror) &&
+
+            // Ensure that the directory now exists
+            file_exists($uniquedir) && is_dir($uniquedir)
+        );
+
+    // Check that the directory was correctly created.
+    if (!file_exists($uniquedir) || !is_dir($uniquedir) || !is_writable($uniquedir)) {
+        if ($exceptiononerror) {
+            throw new invalid_dataroot_permissions('Unique directory creation failed.');
+        } else {
+            return false;
+        }
+    }
+
+    return $uniquedir;
+}
+
+/**
  * Create a directory and make sure it is writable.
  *
  * @private
@@ -1435,8 +1525,61 @@ function make_upload_directory($directory, $exceptiononerror = true) {
 }
 
 /**
+ * Get a per-request storage directory in the tempdir.
+ *
+ * The directory is automatically cleaned up during the shutdown handler.
+ *
+ * @param bool $exceptiononerror throw exception if error encountered
+ * @return string|false Returns full path to directory if successful, false if not; may throw exception
+ */
+function get_request_storage_directory($exceptiononerror = true) {
+    global $CFG;
+
+    static $requestdir = null;
+
+    if (!$requestdir || !file_exists($requestdir) || !is_dir($requestdir) || !is_writable($requestdir)) {
+        if ($CFG->localcachedir !== "$CFG->dataroot/localcache") {
+            check_dir_exists($CFG->localcachedir, true, true);
+            protect_directory($CFG->localcachedir);
+        } else {
+            protect_directory($CFG->dataroot);
+        }
+
+        if ($requestdir = make_unique_writable_directory($CFG->localcachedir, $exceptiononerror)) {
+            // Register a shutdown handler to remove the directory.
+            \core_shutdown_manager::register_function('remove_dir', array($requestdir));
+        }
+    }
+
+    return $requestdir;
+}
+
+/**
+ * Create a per-request directory and make sure it is writable.
+ * This can only be used during the current request and will be tidied away
+ * automatically afterwards.
+ *
+ * A new, unique directory is always created within the current request directory.
+ *
+ * @param bool $exceptiononerror throw exception if error encountered
+ * @return string full path to directory if successful, false if not; may throw exception
+ */
+function make_request_directory($exceptiononerror = true) {
+    $basedir = get_request_storage_directory($exceptiononerror);
+    return make_unique_writable_directory($basedir, $exceptiononerror);
+}
+
+/**
  * Create a directory under tempdir and make sure it is writable.
- * Temporary files should be used during the current request only!
+ *
+ * Where possible, please use make_request_directory() and limit the scope
+ * of your data to the current HTTP request.
+ *
+ * Do not use for storing cache files - see make_cache_directory(), and
+ * make_localcache_directory() instead for this purpose.
+ *
+ * Temporary files must be on a shared storage, and heavy usage is
+ * discouraged due to the performance impact upon clustered environments.
  *
  * @param string $directory  the full path of the directory to be created under $CFG->tempdir
  * @param bool $exceptiononerror throw exception if error encountered
