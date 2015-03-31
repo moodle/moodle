@@ -29,7 +29,7 @@ class Less_Tree_Anonymous extends Less_Tree{
 		return new Less_Tree_Anonymous($this->value, $this->index, $this->currentFileInfo, $this->mapLines);
 	}
 
-	function compare($x){
+    public function compare($x){
 		if( !is_object($x) ){
 			return -1;
 		}
