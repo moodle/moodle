@@ -147,6 +147,9 @@ if ($ADMIN->fulltree) {
         get_string('aicchacpkeepsessiondata', 'scorm'), get_string('aicchacpkeepsessiondata_desc', 'scorm'),
         1, PARAM_INT));
 
+    $settings->add(new admin_setting_configcheckbox('scorm/aiccuserid', get_string('aiccuserid', 'scorm'),
+                                                    get_string('aiccuserid_desc', 'scorm'), 1));
+
     $settings->add(new admin_setting_configcheckbox('scorm/forcejavascript', get_string('forcejavascript', 'scorm'),
                                                     get_string('forcejavascript_desc', 'scorm'), 1));
 
