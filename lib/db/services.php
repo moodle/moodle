@@ -1004,6 +1004,14 @@ $functions = array(
         'description' => 'Update completion status for the current user in an activity, only for activities with manual tracking.',
         'type'        => 'write',
     ),
+
+    // Rating functions.
+    'core_rating_get_item_ratings' => array(
+        'classname'   => 'core_rating_external',
+        'methodname'  => 'get_item_ratings',
+        'description' => 'Retrieving all the ratings for an item.',
+        'type'        => 'read',
+    ),
 );
 
 $services = array(
@@ -1068,6 +1076,7 @@ $services = array(
             'core_course_view_course',
             'core_completion_get_activities_completion_status',
             'core_notes_get_course_notes',
+            'core_rating_get_item_ratings',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
