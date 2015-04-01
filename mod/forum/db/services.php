@@ -62,4 +62,13 @@ $functions = array(
         'type' => 'read',
         'capabilities' => 'mod/forum:viewdiscussion, mod/forum:viewqandawithoutposting'
     ),
+
+    'mod_forum_view_forum' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'view_forum',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Simulate the view.php web interface page: trigger events, completion, etc...',
+        'type' => 'write',
+        'capabilities' => 'mod/forum:viewdiscussion'
+    ),
 );

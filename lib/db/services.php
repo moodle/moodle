@@ -1035,6 +1035,7 @@ $services = array(
             'core_completion_update_activity_completion_status_manually',
             'mod_data_get_databases_by_courses',
             'core_comment_get_comments',
+            'mod_forum_view_forum',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
