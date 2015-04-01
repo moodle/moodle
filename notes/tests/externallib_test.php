@@ -303,7 +303,14 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $result = core_notes_external::get_course_notes($course1->id, $student1->id);
         $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEquals($notes1->id, $result['sitenotes'][0]['id']);
-        $this->assertEquals($notea1->id, $result['coursenotes'][0]['id']);
+        $this->assertCount(2, $result['coursenotes']);
+
+        foreach ($result['coursenotes'] as $coursenote) {
+            if ($coursenote['id'] != $notea1->id and $coursenote['id'] != $notea2->id) {
+                $this->fail('the returned notes ids does not match with the created ones');
+            }
+        }
+
         $this->assertEquals($notep1->id, $result['personalnotes'][0]['id']);
 
         // Try to get notes from a course the user is not enrolled.
@@ -317,8 +324,13 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $result = core_notes_external::get_course_notes(0, $student1->id);
         $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEmpty($result['sitenotes']);
-        $this->assertEquals($notea1->id, $result['coursenotes'][0]['id']);
-        $this->assertEquals($notea2->id, $result['coursenotes'][1]['id']);
+
+        foreach ($result['coursenotes'] as $coursenote) {
+            if ($coursenote['id'] != $notea1->id and $coursenote['id'] != $notea2->id) {
+                $this->fail('the returned notes ids does not match with the created ones');
+            }
+        }
+
         $this->assertCount(2, $result['coursenotes']);
 
         $this->setAdminUser();
@@ -338,15 +350,26 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $result = core_notes_external::get_course_notes($course1->id, $student1->id);
         $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEquals($notes1->id, $result['sitenotes'][0]['id']);
-        $this->assertEquals($notea1->id, $result['coursenotes'][0]['id']);
+
+        foreach ($result['coursenotes'] as $coursenote) {
+            if ($coursenote['id'] != $notea1->id and $coursenote['id'] != $notea2->id) {
+                $this->fail('the returned notes ids does not match with the created ones');
+            }
+        }
+
         $this->assertCount(1, $result['sitenotes']);
         $this->assertCount(2, $result['coursenotes']);
 
         $result = core_notes_external::get_course_notes($course1->id, 0);
         $result = external_api::clean_returnvalue(core_notes_external::get_course_notes_returns(), $result);
         $this->assertEquals($notes1->id, $result['sitenotes'][0]['id']);
-        $this->assertEquals($notea1->id, $result['coursenotes'][0]['id']);
-        $this->assertEquals($notea2->id, $result['coursenotes'][1]['id']);
+
+        foreach ($result['coursenotes'] as $coursenote) {
+            if ($coursenote['id'] != $notea1->id and $coursenote['id'] != $notea2->id) {
+                $this->fail('the returned notes ids does not match with the created ones');
+            }
+        }
+
         $this->assertCount(1, $result['sitenotes']);
         $this->assertCount(2, $result['coursenotes']);
 
