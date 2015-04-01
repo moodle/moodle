@@ -25,6 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * COHORT_CREATEGROUP constant for automatically creating a group for a cohort.
+ */
+define('COHORT_CREATE_GROUP', -1);
+
+/**
  * Cohort enrolment plugin implementation.
  * @author Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -333,15 +338,28 @@ function enrol_cohort_allow_group_member_remove($itemid, $groupid, $userid) {
  */
 function enrol_cohort_create_new_group($courseid, $cohortid) {
     global $DB;
-    $cohort = $DB->get_record('cohort', array('id' => $cohortid));
-    $groupid = $DB->get_record('groups', array('name' => $cohort->name, 'courseid' => $courseid));
-    if (isset($groupid->id)) {
-        $groupid = $groupid->id;
-    } else {
-        $groupdata = new stdClass();
-        $groupdata->courseid = $courseid;
-        $groupdata->name = $cohort->name;
-        $groupid = groups_create_group($groupdata);
+
+    $groupname = $DB->get_field('cohort', 'name', array('id' => $cohortid), MUST_EXIST);
+    $a = new stdClass();
+    $a->name = $groupname;
+    $a->increment = '';
+    $groupname = get_string('defaultgroupnametext', 'enrol_cohort', $a);
+    // Check to see if the cohort group name already exists. Add an incremented number if it does.
+    while ($DB->record_exists('groups', array('name' => $groupname))) {
+        $matches = array();
+        if (!preg_match('/(.*?)\(([0-9]+)\)$/', $groupname, $matches)) {
+            $a->increment = '(2)';
+        } else {
+            $a->increment = '(' . $matches[2]+1 . ')';
+        }
+        $newshortname = get_string('defaultgroupnametext', 'enrol_cohort', $a);
+        $groupname = $newshortname;
     }
+    // Create a new group for the cohort.
+    $groupdata = new stdClass();
+    $groupdata->courseid = $courseid;
+    $groupdata->name = $groupname;
+    $groupid = groups_create_group($groupdata);
+
     return $groupid;
 }

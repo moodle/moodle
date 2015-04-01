@@ -89,14 +89,16 @@ if ($mform->is_cancelled()) {
         $instance->roleid       = $data->roleid;
         $instance->customint2   = $data->customint2;
         $instance->timemodified = time();
-        if ((int)$data->customint2 == -1) {
+        // Create a new group for the cohort if requested.
+        if ($data->customint2 == COHORT_CREATE_GROUP) {
             require_capability('moodle/course:managegroups', $context);
             $groupid = enrol_cohort_create_new_group($course->id, $data->customint1);
             $instance->customint2 = $groupid;
         }
         $DB->update_record('enrol', $instance);
     }  else {
-        if ((int)$data->customint2 == -1) {
+        // Create a new group for the cohort if requested.
+        if ($data->customint2 == COHORT_CREATE_GROUP) {
             require_capability('moodle/course:managegroups', $context);
             $groupid = enrol_cohort_create_new_group($course->id, $data->customint1);
             $enrol->add_instance($course, array('name' => $data->name, 'status' => $data->status,
