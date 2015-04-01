@@ -17,6 +17,7 @@ Feature: View the user page for the outline report
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Folder" to section "1" and I fill the form with:
@@ -47,10 +48,16 @@ Feature: View the user page for the outline report
     And I follow "URL name"
     And I follow "URL name"
     And I follow "URL name"
-    When I navigate to "Outline report" node in "My profile settings > Activity reports"
+    And I click on "Student 1" "link"
+    And I follow "My profile" in the open menu
+    And I follow "Course 1"
+    When I follow "Outline report"
     Then I should see "4 views" in the "Folder name" "table_row"
     And I should see "3 views" in the "URL name" "table_row"
-    And I navigate to "Complete report" node in "My profile settings > Activity reports"
+    And I click on "Student 1" "link"
+    And I follow "My profile" in the open menu
+    And I follow "Course 1"
+    When I follow "Complete report"
     And I should see "4 views"
     And I should see "3 views"
 
@@ -72,10 +79,14 @@ Feature: View the user page for the outline report
     And I follow "URL name"
     And I follow "URL name"
     And I follow "URL name"
-    When I navigate to "Outline report" node in "My profile settings > Activity reports"
+    And I follow "My profile" in the user menu
+    And I follow "Course 1"
+    When I follow "Outline report"
     Then I should see "4 views" in the "Folder name" "table_row"
     And I should see "3 views" in the "URL name" "table_row"
-    And I navigate to "Complete report" node in "My profile settings > Activity reports"
+    And I follow "My profile" in the user menu
+    And I follow "Course 1"
+    When I follow "Complete report"
     And I should see "4 views"
     And I should see "3 views"
 
@@ -99,9 +110,13 @@ Feature: View the user page for the outline report
     And I follow "URL name"
     And I follow "URL name"
     And I follow "URL name"
-    When I navigate to "Outline report" node in "My profile settings > Activity reports"
+    And I follow "My profile" in the user menu
+    And I follow "Course 1"
+    When I follow "Outline report"
     Then I should see "4 views" in the "Folder name" "table_row"
     And I should see "3 views" in the "URL name" "table_row"
-    And I navigate to "Complete report" node in "My profile settings > Activity reports"
+    And I follow "My profile" in the user menu
+    And I follow "Course 1"
+    When I follow "Complete report"
     And I should see "4 views"
     And I should see "3 views"
