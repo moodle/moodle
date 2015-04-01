@@ -161,8 +161,8 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
         $result = external_api::clean_returnvalue(
             core_completion_external::get_activities_completion_status_returns(), $result);
 
-        // We added 3 activities, but only 2 with completion enabled.
-        $this->assertCount(2, $result['statuses']);
+        // We added 4 activities, but only 3 with completion enabled and one of those is hidden.
+        $this->assertCount(3, $result['statuses']);
 
         // Change teacher role capabilities (disable access al goups).
         $context = context_course::instance($course->id);
@@ -182,8 +182,8 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(
             core_completion_external::get_activities_completion_status_returns(), $result);
-        // We added 3 activities, but only 2 with completion enabled.
-        $this->assertCount(2, $result['statuses']);
+        // We added 4 activities, but only 3 with completion enabled and one of those is hidden.
+        $this->assertCount(3, $result['statuses']);
     }
 
 }
