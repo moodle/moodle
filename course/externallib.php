@@ -2087,6 +2087,18 @@ class core_course_external extends external_api {
         $context = context_course::instance($course->id);
         self::validate_context($context);
 
+        if (!empty($params['sectionnumber'])) {
+
+            // Get section details and check it exists.
+            $modinfo = get_fast_modinfo($course);
+            $coursesection = $modinfo->get_section_info($params['sectionnumber'], MUST_EXIST);
+
+            // Check user is allowed to see it.
+            if (!$coursesection->uservisible) {
+                require_capability('moodle/course:viewhiddensections', $context);
+            }
+        }
+
         course_view($context, $params['sectionnumber']);
 
         $result = array();
