@@ -16,11 +16,9 @@ Feature: Restrict sections availability through completion or grade conditions
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable completion tracking | 1 |
-      | Enable conditional access | 1 |
-    And I log out
+    And the following config values are set as admin:
+      | enablecompletion   | 1 |
+      | enableavailability | 1 |
 
   @javascript
   Scenario: Show section greyed-out to student when completion condition is not satisfied

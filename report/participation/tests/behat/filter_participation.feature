@@ -34,8 +34,8 @@ Feature: In a participation report, admin can filter student actions
     And I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
     And I click on "Disable" "link" in the "Standard log" "table_row"
     And I click on "Enable" "link" in the "Legacy log" "table_row"
-    And I set the following administration settings values:
-      | Log legacy data | 1 |
+    And the following config values are set as admin:
+      | loglegacy | 1 | logstore_legacy |
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
@@ -55,8 +55,8 @@ Feature: In a participation report, admin can filter student actions
     And I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
     And I click on "Disable" "link" in the "Standard log" "table_row"
     And I click on "Enable" "link" in the "Legacy log" "table_row"
-    And I set the following administration settings values:
-      | Log legacy data | 1 |
+    And the following config values are set as admin:
+      | loglegacy | 1 | logstore_legacy |
     And I log out
     And I log in as "student1"
     And I follow "Course 1"

@@ -11,8 +11,8 @@ Feature: In a report, admin can see loglive data
     And I log in as "admin"
     And I navigate to "Manage log stores" node in "Site administration > Plugins > Logging"
     And I click on "Enable" "link" in the "Legacy log" "table_row"
-    And I set the following administration settings values:
-      | Log legacy data | 1 |
+    And the following config values are set as admin:
+      | loglegacy | 1 | logstore_legacy |
     And I am on homepage
     And I follow "Course 1"
     And I turn editing mode on
