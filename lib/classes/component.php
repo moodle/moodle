@@ -1102,7 +1102,7 @@ $cache = '.var_export($cache, true).';
                 $plugin = new stdClass();
                 $plugin->version = null;
                 $module = $plugin;
-                @include($fullplug.'/version.php');
+                include($fullplug.'/version.php');
                 $versions[$type.'_'.$plug] = $plugin->version;
             }
         }

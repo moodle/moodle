@@ -291,7 +291,7 @@ class core_plugin_manager {
                 $plugin = new stdClass();
                 $plugin->version = null;
                 $module = $plugin;
-                @include($fullplug.'/version.php');
+                include($fullplug.'/version.php');
                 $this->presentplugins[$type][$plug] = $plugin;
             }
         }
