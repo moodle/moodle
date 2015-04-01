@@ -873,7 +873,7 @@ class view {
             $DB->set_field('question', 'hidden', 0, array('id' => $unhide));
 
             // Purge these questions from the cache.
-            \core_question_bank::notify_question_edited($unhide);
+            \question_bank::notify_question_edited($unhide);
 
             redirect($this->baseurl);
         }
