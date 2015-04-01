@@ -16,11 +16,10 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following config values are set as admin:
+     | enablecompletion | 1 |
     And I log in as "admin"
-    And I set the following administration settings values:
-     | Enable completion tracking | 1 |
-    And I expand "Grades" node
-    And I follow "Grade item settings"
+    And I navigate to "Grade item settings" node in "Site administration > Grades"
     And I set the field "Advanced grade item options" to "hiddenuntil"
     And I press "Save changes"
     And I log out

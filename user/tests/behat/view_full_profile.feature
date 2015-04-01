@@ -40,10 +40,8 @@ Feature: Access to full profiles of users
 
   @javascript
   Scenario: Viewing full profiles with forceloginforprofiles off
-    Given I log in as "admin"
-    And I set the following administration settings values:
-      |  Force users to log in for profiles | 0 |
-    And I log out
+    Given the following config values are set as admin:
+      |  forceloginforprofiles | 0 |
     When I log in as "student1"
     And I follow "Course 1"
     And I navigate to "Participants" node in "Current course > C1"

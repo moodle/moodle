@@ -17,10 +17,8 @@ Feature: A teacher can set whether glossary entries are always editable or not
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Maximum time to edit posts | 1 minutes |
-    And I log out
+    And the following config values are set as admin:
+      | maxeditingtime | 60 |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on

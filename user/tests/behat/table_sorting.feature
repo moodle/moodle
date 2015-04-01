@@ -12,9 +12,9 @@ Feature: Tables can be sorted by additional names
     | student3 | Travis | Sutcliff | Peter | Mr T | student3@mail.com | s3 |
     And I log in as "admin"
     And I navigate to "User policies" node in "Site administration > Users > Permissions"
-    And I set the following administration settings values:
-    | Full name format | firstname middlename lastname |
-    | Alternative full name format | firstname middlename alternatename lastname |
+    And the following config values are set as admin:
+    | fullnamedisplay | firstname middlename lastname |
+    | alternativefullnameformat | firstname middlename alternatename lastname |
 
   @javascript
   Scenario: All user names are show and sortable in the administration user list.
