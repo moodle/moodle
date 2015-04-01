@@ -87,6 +87,7 @@ $string['rulecopysuccess'] = 'Rule successfully duplicated';
 $string['ruledeletesuccess'] = 'Rule successfully deleted';
 $string['rulehelp'] = 'Rule details';
 $string['rulehelp_help'] = 'This rule listens for when the event \'{$a->eventname}\' in \'{$a->eventcomponent}\' has been triggered {$a->frequency} time(s) in {$a->minutes} minute(s).';
+$string['rulenopermission'] = 'You do not have permission to subscribe to any events.';
 $string['rulenopermissions'] = 'You do not have permissions to "{$a} a rule"';
 $string['rulescansubscribe'] = 'Rules you can subscribe to';
 $string['selectacourse'] = 'Select a course';
