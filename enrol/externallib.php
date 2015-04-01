@@ -322,7 +322,7 @@ class core_enrol_external extends external_api {
             $enrolledusercount = $DB->count_records_sql($enrolledsql, $enrolledparams);
 
             list($course->summary, $course->summaryformat) =
-                external_format_text($course->summary, $course->summaryformat, $context->id, 'course', 'summary', 0);
+                external_format_text($course->summary, $course->summaryformat, $context->id, 'course', 'summary', null);
 
             $result[] = array('id' => $course->id, 'shortname' => $course->shortname, 'fullname' => $course->fullname,
                 'idnumber' => $course->idnumber, 'visible' => $course->visible, 'enrolledusercount' => $enrolledusercount,
