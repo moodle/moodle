@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
 
 * Add user_add_password_history() to user_signup() method.
 
+* New auth hook - pre_loginpage_hook() - available, triggered before redirecting to the login page.
+
 === 2.8 ===
 
 * \core\session\manager::session_exists() now verifies the session is active
