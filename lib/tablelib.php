@@ -55,11 +55,6 @@ class flexible_table {
     var $uniqueid        = NULL;
     var $attributes      = array();
     var $headers         = array();
-
-    /**
-     * @var string For create header with help icon.
-     */
-    private $helpforheaders = array();
     var $columns         = array();
     var $column_style    = array();
     var $column_class    = array();
@@ -425,19 +420,6 @@ class flexible_table {
      */
     function define_headers($headers) {
         $this->headers = $headers;
-    }
-
-    /**
-     * Must be called after {@link define_headers()}.
-     * Always use this function if you need to create header with sorting and help icon.
-     * @param int $index of header.
-     * @param string $identifier the keyword that defines a help page.
-     * @param string $component component name.
-     * @param string|bool $linktext true means use $title as link text, string means link text value.
-     */
-    public function define_help_for_header($index, $identifier, $component = 'moodle', $linktext = '') {
-        global $OUTPUT;
-        $this->helpforheaders[$index] = $OUTPUT->help_icon($identifier, $component, $linktext);
     }
 
     /**
@@ -1243,12 +1225,8 @@ class flexible_table {
                         // Done this way for the possibility of more than two sortable full name display fields.
                         $this->headers[$index] = '';
                         foreach ($requirednames as $name) {
-                            $helpicon = '';
-                            if (isset($this->helpforheaders[$index])) {
-                                $helpicon = $this->helpforheaders[$index];
-                            }
                             $sortname = $this->sort_link(get_string($name),
-                                    $name, $primarysortcolumn === $name, $primarysortorder, $helpicon);
+                                    $name, $primarysortcolumn === $name, $primarysortorder);
                             $this->headers[$index] .= $sortname . ' / ';
                         }
                         $this->headers[$index] = substr($this->headers[$index], 0, -3);
@@ -1262,12 +1240,8 @@ class flexible_table {
 
                 default:
                 if ($this->is_sortable($column)) {
-                    $helpicon = '';
-                    if (isset($this->helpforheaders[$index])) {
-                        $helpicon = $this->helpforheaders[$index];
-                    }
                     $this->headers[$index] = $this->sort_link($this->headers[$index],
-                            $column, $primarysortcolumn == $column, $primarysortorder, $helpicon);
+                            $column, $primarysortcolumn == $column, $primarysortorder);
                 }
             }
 
@@ -1283,11 +1257,7 @@ class flexible_table {
                 if (is_array($this->column_style[$column])) {
                     $attributes['style'] = $this->make_styles_string($this->column_style[$column]);
                 }
-                $helpicon = '';
-                if (isset($this->helpforheaders[$index]) && !$this->is_sortable($column)) {
-                    $helpicon  = $this->helpforheaders[$index];
-                }
-                $content = $this->headers[$index] . $helpicon . html_writer::tag('div',
+                $content = $this->headers[$index] . html_writer::tag('div',
                         $icon_hide, array('class' => 'commands'));
             }
             echo html_writer::tag('th', $content, $attributes);
@@ -1340,15 +1310,14 @@ class flexible_table {
      * @param string $column the column name, may be a fake column like 'firstname' or a real one.
      * @param bool $isprimary whether the is column is the current primary sort column.
      * @param int $order SORT_ASC or SORT_DESC
-     * @param string $helpicon if the header contains helpicon must be used exactly this param.
      * @return string HTML fragment.
      */
-    protected function sort_link($text, $column, $isprimary, $order, $helpicon = '') {
+    protected function sort_link($text, $column, $isprimary, $order) {
         return html_writer::link($this->baseurl->out(false,
                 array($this->request[TABLE_VAR_SORT] => $column)),
                 $text . get_accesshide(get_string('sortby') . ' ' .
                 $text . ' ' . $this->sort_order_name($isprimary, $order))) . ' ' .
-                $helpicon . ' ' . $this->sort_icon($isprimary, $order);
+                $this->sort_icon($isprimary, $order);
     }
 
     /**
