@@ -1007,10 +1007,11 @@ $functions = array(
 
     // Rating functions.
     'core_rating_get_item_ratings' => array(
-        'classname'   => 'core_rating_external',
-        'methodname'  => 'get_item_ratings',
-        'description' => 'Retrieving all the ratings for an item.',
-        'type'        => 'read',
+        'classname'     => 'core_rating_external',
+        'methodname'    => 'get_item_ratings',
+        'description'   => 'Retrieve all the ratings for an item.',
+        'type'          => 'read',
+        'capabilities'  => 'moodle/rating:view'
     ),
 );
 
