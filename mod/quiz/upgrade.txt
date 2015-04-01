@@ -11,6 +11,16 @@ This files describes API changes in the quiz code.
   + initialise_editing_javascript has had some redundant arguments removed.
   Hopefully, with these changes, we will have less need to make other changes in future.
 
+* Due to MDL-40992, you should be aware that extra slots can get added to an attempt.
+  You may get slot numbers beyone the end of the original quiz layout, and you
+  may want to call $attemptobj->get_original_slot to find where the question
+  originally came from.
+
+* You now need to pass an instance of the mod_quiz_renderer if you call
+  $attemptobj->render_question or $attemptobj->render_question_at_step.
+
+* The array values in mod_quiz_links_to_other_attempts may now be either a moodle_url,
+  or renderable (or null). Previously they could only be a moodle_url or null.
 
 === 2.8 ===
 

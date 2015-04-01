@@ -128,6 +128,12 @@ if ($ADMIN->fulltree) {
             get_string('howquestionsbehave', 'question'), get_string('howquestionsbehave_desc', 'quiz'),
             'deferredfeedback'));
 
+    // Can redo completed questions.
+    $quizsettings->add(new admin_setting_configselect_with_advanced('quiz/canredoquestions',
+            get_string('canredoquestions', 'quiz'), get_string('canredoquestions_desc', 'quiz'),
+            array('value' => 0, 'adv' => true),
+            array(0 => get_string('no'), 1 => get_string('canredoquestionsyes', 'quiz'))));
+
     // Each attempt builds on last.
     $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/attemptonlast',
             get_string('eachattemptbuildsonthelast', 'quiz'),

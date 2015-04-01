@@ -56,6 +56,10 @@ class qbehaviour_interactivecountback_type_test extends basic_testcase {
                 $this->behaviourtype->get_unused_display_options());
     }
 
+    public function test_can_questions_finish_during_the_attempt() {
+        $this->assertTrue($this->behaviourtype->can_questions_finish_during_the_attempt());
+    }
+
     public function test_adjust_random_guess_score() {
         $this->assertEquals(0, $this->behaviourtype->adjust_random_guess_score(0));
         $this->assertEquals(1, $this->behaviourtype->adjust_random_guess_score(1));

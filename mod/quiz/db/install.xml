@@ -17,6 +17,7 @@
         <FIELD NAME="overduehandling" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="autoabandon" SEQUENCE="false" COMMENT="The method used to handle overdue attempts. 'autosubmit', 'graceperiod' or 'autoabandon'."/>
         <FIELD NAME="graceperiod" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The amount of time (in seconds) after the time limit runs out during which attempts can still be submitted, if overduehandling is set to allow it."/>
         <FIELD NAME="preferredbehaviour" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The behaviour to ask questions to use."/>
+        <FIELD NAME="canredoquestions" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Allows students to redo any completed question within a quiz attempt."/>
         <FIELD NAME="attempts" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The maximum number of attempts a student is allowed."/>
         <FIELD NAME="attemptonlast" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether subsequent attempts start from teh answer to the previous attempt (1) or start blank (0)."/>
         <FIELD NAME="grademethod" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="One of the values QUIZ_GRADEHIGHEST, QUIZ_GRADEAVERAGE, QUIZ_ATTEMPTFIRST or QUIZ_ATTEMPTLAST."/>

@@ -144,6 +144,7 @@ class core_question_renderer extends plugin_renderer_base {
         $output .= $this->number($number);
         $output .= $this->status($qa, $behaviouroutput, $options);
         $output .= $this->mark_summary($qa, $behaviouroutput, $options);
+        $output .= $options->extrainfocontent;
         $output .= $this->question_flag($qa, $options->flags);
         $output .= $this->edit_question_link($qa, $options);
         return $output;
@@ -485,8 +486,10 @@ class core_question_renderer extends plugin_renderer_base {
         }
 
         return html_writer::tag('h4', get_string('responsehistory', 'question'),
-                array('class' => 'responsehistoryheader')) . html_writer::tag('div',
-                html_writer::table($table, true), array('class' => 'responsehistoryheader'));
+                        array('class' => 'responsehistoryheader')) .
+                $options->extrahistorycontent .
+                html_writer::tag('div', html_writer::table($table, true),
+                        array('class' => 'responsehistoryheader'));
     }
 
 }

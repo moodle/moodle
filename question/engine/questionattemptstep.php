@@ -371,6 +371,48 @@ class question_attempt_step {
     }
 
     /**
+     * Set a metadata variable.
+     *
+     * Do not call this method directly from  your code. It is for internal
+     * use only. You should call {@link question_usage::set_question_attempt_metadata()}.
+     *
+     * @param string $name the name of the variable to set. [a-z][a-z0-9]*.
+     * @param string $value the value to set.
+     */
+    public function set_metadata_var($name, $value) {
+        $this->data[':_' . $name] = $value;
+    }
+
+    /**
+     * Whether this step has a metadata variable.
+     *
+     * Do not call this method directly from  your code. It is for internal
+     * use only. You should call {@link question_usage::get_question_attempt_metadata()}.
+     *
+     * @param string $name the name of the variable to set. [a-z][a-z0-9]*.
+     * @return bool the value to set previously, or null if this variable was never set.
+     */
+    public function has_metadata_var($name) {
+        return isset($this->data[':_' . $name]);
+    }
+
+    /**
+     * Get a metadata variable.
+     *
+     * Do not call this method directly from  your code. It is for internal
+     * use only. You should call {@link question_usage::get_question_attempt_metadata()}.
+     *
+     * @param string $name the name of the variable to set. [a-z][a-z0-9]*.
+     * @return string the value to set previously, or null if this variable was never set.
+     */
+    public function get_metadata_var($name) {
+        if (!$this->has_metadata_var($name)) {
+            return null;
+        }
+        return $this->data[':_' . $name];
+    }
+
+    /**
      * Create a question_attempt_step from records loaded from the database.
      * @param Iterator $records Raw records loaded from the database.
      * @param int $stepid The id of the records to extract.

@@ -62,6 +62,11 @@ class question_engine_test extends advanced_testcase {
                 question_engine::get_behaviour_unused_display_options('manualgraded'));
     }
 
+    public function test_can_questions_finish_during_the_attempt() {
+        $this->assertFalse(question_engine::can_questions_finish_during_the_attempt('deferredfeedback'));
+        $this->assertTrue(question_engine::can_questions_finish_during_the_attempt('interactive'));
+    }
+
     public function test_sort_behaviours() {
         $in = array('b1' => 'Behave 1', 'b2' => 'Behave 2', 'b3' => 'Behave 3', 'b4' => 'Behave 4', 'b5' => 'Behave 5', 'b6' => 'Behave 6');
 

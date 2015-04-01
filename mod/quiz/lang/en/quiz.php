@@ -140,6 +140,14 @@ $string['cannotstartgradesmismatch'] = 'Cannot start an attempt at this quiz. Th
 $string['cannotstartmissingquestion'] = 'Cannot start an attempt at this quiz. The quiz definition includes a question that does not exist.';
 $string['cannotstartnoquestions'] = 'Cannot start an attempt at this quiz. The quiz has not been set up yet. No questions have been added.';
 $string['cannotwrite'] = 'Cannot write to export file ({$a})';
+$string['canredoquestions'] = 'Allow redo within an attempt';
+$string['canredoquestions_desc'] = 'If enabled, then when students have finished attempting particular question, they will see a Redo question button. This allows them to attempt another version of the same question, without having to submit the entire quiz attempt and start another one. This option is mainly useful for practice quizzes.
+
+This setting only affects questions (for example not Essay questions) and behaviours (for example Immediate feedback, or Interactive with multiple tries) where it is possible for student to finish the question before the attempt is submitted.';
+$string['canredoquestions_help'] = 'If enabled, then when students have finished attempting particular question, they will see a Redo question button. This allows them to attempt another version of the same question, without having to submit the entire quiz attempt and start another one. This option is mainly useful for practice quizzes.
+
+This setting only affects questions (for example not Essay questions) and behaviours (for example Immediate feedback, or Interactive with multiple tries) where it is possible for student to finish the question before the attempt is submitted.';
+$string['canredoquestionsyes'] = 'Students may redo another version of any finished question';
 $string['caseno'] = 'No, case is unimportant';
 $string['casesensitive'] = 'Case sensitivity';
 $string['caseyes'] = 'Yes, case must match';
@@ -448,6 +456,7 @@ $string['manualgrading'] = 'Grading';
 $string['mark'] = 'Submit';
 $string['markall'] = 'Submit page';
 $string['marks'] = 'Marks';
+$string['marks_help'] = 'The numerical marks for each question, and the overall attempt score.';
 $string['match'] = 'Matching';
 $string['matchanswer'] = 'Matching answer';
 $string['matchanswerno'] = 'Matching answer {$a}';
@@ -688,6 +697,8 @@ $string['readytosend'] = 'You are about to send your whole quiz to be graded.  A
 $string['reattemptquiz'] = 'Re-attempt quiz';
 $string['recentlyaddedquestion'] = 'Recently added question!';
 $string['recurse'] = 'Include questions from subcategories too';
+$string['redoquestion'] = 'Redo question';
+$string['redoesofthisquestion'] = 'Other questions attempted here: {$a}';
 $string['regrade'] = 'Regrade all attempts';
 $string['regradecomplete'] = 'All attempts have been regraded';
 $string['regradecount'] = '{$a->changed} out of {$a->attempt} grades were changed';
@@ -752,8 +763,6 @@ $string['reviewbefore'] = 'Allow review while quiz is open';
 $string['reviewclosed'] = 'After the quiz is closed';
 $string['reviewduring'] = 'During the attempt';
 $string['reviewimmediately'] = 'Immediately after the attempt';
-$string['marks'] = 'Marks';
-$string['marks_help'] = 'The numerical marks for each question, and the overall attempt score.';
 $string['reviewnever'] = 'Never allow review';
 $string['reviewofattempt'] = 'Review of attempt {$a}';
 $string['reviewofpreview'] = 'Review of preview';
