@@ -2046,6 +2046,70 @@ class core_course_external extends external_api {
     public static function delete_modules_returns() {
         return null;
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9
+     */
+    public static function view_course_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'id of the course'),
+                'sectionnumber' => new external_value(PARAM_INT, 'section number', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Simulate the view.php web interface page, logging events, completion, etc...
+     *
+     * @param int $courseid id of course
+     * @param int $sectionnumber sectionnumber (0, 1, 2...)
+     * @return array of warnings and status result
+     * @since Moodle 2.9
+     * @throws moodle_exception
+     */
+    public static function view_course($courseid, $sectionnumber = 0) {
+        global $CFG;
+        require_once($CFG->dirroot . "/course/lib.php");
+
+        $params = self::validate_parameters(self::view_course_parameters(),
+                                            array(
+                                                'courseid' => $courseid,
+                                                'sectionnumber' => $sectionnumber
+                                            ));
+
+        $warnings = array();
+
+        $course = get_course($params['courseid']);
+        $context = context_course::instance($course->id);
+        self::validate_context($context);
+
+        course_view($context, $params['sectionnumber']);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 2.9
+     */
+    public static function view_course_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
 
 /**
