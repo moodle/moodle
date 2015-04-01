@@ -17,10 +17,8 @@ Feature: Set end of lesson reached as a completion condition for a lesson
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable completion tracking | 1 |
-    And I log out
+    And the following config settings values are set as admin:
+      | enablecompletion | 1 |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on

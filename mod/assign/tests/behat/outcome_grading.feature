@@ -18,11 +18,10 @@ Feature: Outcome grading
       | teacher1 | C1 | editingteacher |
       | student0 | C1 | student |
       | student1 | C1 | student |
+    And the following config values are set as admin:
+      | enableoutcomes | 1 |
     And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable outcomes | 1 |
-    And I expand "Grades" node
-    And I follow "Scales"
+    And I navigate to "Scales" node in "Site administration > Grades"
     And I press "Add a new scale"
     And I set the following fields to these values:
       | Name | Test Scale |
