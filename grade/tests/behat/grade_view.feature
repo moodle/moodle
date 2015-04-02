@@ -77,8 +77,8 @@ Feature: We can enter in grades and view reports from the gradebook
       | Grade item | Grade | Range | Percentage |
       | Course total | 90.00 | 0–100 | 90.00 % |
     And I set the field "Grade report" to "Overview report"
-    And "C1" row "Grade" column of "overview-grade" table should contain "170.00"
-    And "C1" row "Grade" column of "overview-grade" table should not contain "90.00"
+    And "Course 1" row "Grade" column of "overview-grade" table should contain "170.00"
+    And "Course 1" row "Grade" column of "overview-grade" table should not contain "90.00"
 
   @javascript
   Scenario: We can add a weighting to a grade item and it is displayed properly in the user report
