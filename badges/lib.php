@@ -37,14 +37,13 @@ defined('MOODLE_INTERNAL') || die();
 function core_badges_myprofile_navigation(\core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
     global $CFG, $PAGE, $USER, $SITE;
     require_once($CFG->dirroot . '/badges/renderer.php');
-    if (empty($CFG->enablebadges) || (!empty($course) || empty($CFG->badges_allowcoursebadges))) {
+    if (empty($CFG->enablebadges) || (!empty($course) && empty($CFG->badges_allowcoursebadges))) {
         // Y U NO LIKE BADGES ?
         return true;
     }
-    $category = new core_user\output\myprofile\category('badges', get_string('badges', 'badges'), null);
-    $url = new moodle_url("/badges/mybadges.php");
 
     // Add category.
+    $category = new core_user\output\myprofile\category('badges', get_string('badges', 'badges'), null);
     $tree->add_category($category);
 
     // Determine context.

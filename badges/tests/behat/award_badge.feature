@@ -30,12 +30,13 @@ Feature: Award badges
     And I should not see "Criteria for this badge have not been set up yet."
     And I press "Enable access"
     And I press "Continue"
-    And I expand "My profile settings" node
+    And I click on "Admin User" "link"
+    And I follow "My profile" in the open menu
     And I follow "Edit profile"
     And I expand all fieldsets
     And I set the field "Phone" to "123456789"
     And I press "Update profile"
-    And I navigate to "My badges" node in "My profile"
+    And I follow "My profile" in the user menu
     Then I should see "Profile Badge"
     And I should not see "There are no badges available."
 
@@ -68,7 +69,7 @@ Feature: Award badges
     Then I should see "Recipients (2)"
     And I log out
     And I log in as "student"
-    And I navigate to "My badges" node in "My profile"
+    And I follow "My profile" in the user menu
     Then I should see "Site Badge"
 
   @javascript
@@ -111,9 +112,9 @@ Feature: Award badges
     Then I should see "Recipients (2)"
     And I log out
     And I log in as "student1"
+    And I follow "My profile" in the user menu
     And I follow "Course 1"
-    And I navigate to "My badges" node in "My profile"
-    Then I should see "Course Badge"
+    And I should see "Course Badge"
 
   @javascript
   Scenario: Award badge on activity completion
@@ -156,13 +157,14 @@ Feature: Award badges
     When I press "Continue"
     And I log out
     And I log in as "student1"
+    And I follow "My profile" in the user menu
     And I follow "Course 1"
-    And I navigate to "My badges" node in "My profile"
-    Then I should see "There are no badges available."
-    And I follow "Home"
+    Then I should not see "badges"
+    And I am on homepage
     And I follow "Course 1"
     And I press "Mark as complete: Test assignment name"
-    And I navigate to "My badges" node in "My profile"
+    And I follow "My profile" in the user menu
+    And I follow "Course 1"
     Then I should see "Course Badge"
 
   @javascript
@@ -212,10 +214,10 @@ Feature: Award badges
     When I press "Continue"
     And I log out
     And I log in as "student1"
+    And I follow "My profile" in the user menu
     And I follow "Course 1"
-    And I navigate to "My badges" node in "My profile"
-    Then I should see "There are no badges available."
-    And I follow "Home"
+    Then I should not see "badges"
+    And I am on homepage
     And I follow "Course 1"
     And I press "Mark as complete: Test assignment name"
     And I log out
@@ -227,8 +229,8 @@ Feature: Award badges
     And I wait "61" seconds
     And I trigger cron
     # Finally the admin goes back to homepage to continue the user story.
-    And I am on homepage
+    And I am on site homepage
     And I log out
     And I log in as "student1"
-    And I navigate to "My badges" node in "My profile"
+    And I follow "My profile" in the user menu
     Then I should see "Course Badge"
