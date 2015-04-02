@@ -258,10 +258,52 @@ function lesson_print_overview($courses, &$htmlarray) {
         return;
     }
 
-/// Get Necessary Strings
-    $strlesson       = get_string('modulename', 'lesson');
-    $strnotattempted = get_string('nolessonattempts', 'lesson');
-    $strattempted    = get_string('lessonattempted', 'lesson');
+    // Get all of the current users attempts on all lessons.
+    $params = array($USER->id);
+    $sql = 'SELECT lessonid, userid, count(userid) as attempts
+              FROM {lesson_grades}
+             WHERE userid = ?
+          GROUP BY lessonid, userid';
+    $allattempts = $DB->get_records_sql($sql, $params);
+    $completedattempts = array();
+    foreach ($allattempts as $myattempt) {
+        $completedattempts[$myattempt->lessonid] = $myattempt->attempts;
+    }
+
+    // Get the current course ID.
+    $listoflessons = array();
+    foreach ($lessons as $lesson) {
+        $listoflessons[] = $lesson->id;
+    }
+    // Get the last page viewed by the current user for every lesson in this course.
+    list($insql, $inparams) = $DB->get_in_or_equal($listoflessons, SQL_PARAMS_NAMED);
+    $dbparams = array_merge($inparams, array('userid1' => $USER->id, 'userid2' => $USER->id));
+
+    $lastattempts = $DB->get_records_sql("SELECT l.id, l.timeseen,l.lessonid, l.userid,
+                                                 l.retry, l.pageid, l.nextpageid, p.qtype FROM (
+                                          SELECT lessonid, userid, pageid, timeseen, retry, id, answerid AS nextpageid
+                                            FROM {lesson_attempts}
+                                           WHERE userid = :userid1
+                                           UNION
+                                          SELECT lessonid, userid, pageid, timeseen, retry, id, nextpageid
+                                            FROM {lesson_branch}
+                                           WHERE userid = :userid2) l
+                                            JOIN {lesson_pages} p
+                                              ON l.pageid = p.id
+                                           WHERE l.lessonid $insql
+                                        ORDER BY l.lessonid asc, l.timeseen desc", $dbparams);
+
+    $lastviewed = array();
+    foreach ($lastattempts as $lastattempt) {
+        if (!isset($lastviewed[$lastattempt->lessonid])) {
+            $lastviewed[$lastattempt->lessonid] = $lastattempt;
+        } else if ($lastviewed[$lastattempt->lessonid]->timeseen < $lastattempt->timeseen) {
+                $lastviewed[$lastattempt->lessonid] = $lastattempt;
+        }
+    }
+
+    // Since we have lessons in this course, now include the constants we need.
+    require_once($CFG->dirroot . '/mod/lesson/locallib.php');
 
     $now = time();
     foreach ($lessons as $lesson) {
@@ -269,37 +311,84 @@ function lesson_print_overview($courses, &$htmlarray) {
             and $lesson->deadline >= $now                                  // And it is before the deadline has been met
             and ($lesson->available == 0 or $lesson->available <= $now)) { // And the lesson is available
 
-            // Lesson name
-            if (!$lesson->visible) {
-                $class = ' class="dimmed"';
-            } else {
-                $class = '';
-            }
-            $str = $OUTPUT->box("$strlesson: <a$class href=\"$CFG->wwwroot/mod/lesson/view.php?id=$lesson->coursemodule\">".
-                             format_string($lesson->name).'</a>', 'name');
+            // Visibility.
+            $class = (!$lesson->visible) ? 'dimmed' : '';
 
-            // Deadline
+            // Context.
+            $context = context_module::instance($lesson->coursemodule);
+
+            // Link to activity.
+            $url = new moodle_url('/mod/lesson/view.php', array('id' => $lesson->coursemodule));
+            $url = html_writer::link($url, format_string($lesson->name, true, array('context' => $context)), array('class' => $class));
+            $str = $OUTPUT->box(get_string('lessonname', 'lesson', $url), 'name');
+
+            // Deadline.
             $str .= $OUTPUT->box(get_string('lessoncloseson', 'lesson', userdate($lesson->deadline)), 'info');
 
-            // Attempt information
-            if (has_capability('mod/lesson:manage', context_module::instance($lesson->coursemodule))) {
-                // Number of user attempts
+            // Attempt information.
+            if (has_capability('mod/lesson:manage', $context)) {
+                // This is a teacher, Get the Number of user attempts.
                 $attempts = $DB->count_records('lesson_grades', array('lessonid' => $lesson->id));
                 $str     .= $OUTPUT->box(get_string('xattempts', 'lesson', $attempts), 'info');
+                $str      = $OUTPUT->box($str, 'lesson overview');
             } else {
-                // Determine if the user has attempted the lesson or not
-                if ($DB->count_records('lesson_attempts', array('lessonid'=>$lesson->id, 'userid'=>$USER->id))) {
-                    $str .= $OUTPUT->box($strattempted, 'info');
+                // This is a student, See if the user has at least started the lesson.
+                if (isset($lastviewed[$lesson->id]->timeseen)) {
+                    // See if the user has finished this attempt.
+                    if (isset($completedattempts[$lesson->id]) &&
+                             ($completedattempts[$lesson->id] == ($lastviewed[$lesson->id]->retry + 1))) {
+                        // Are additional attempts allowed?
+                        if ($lesson->retake) {
+                            // User can retake the lesson.
+                            $str .= $OUTPUT->box(get_string('additionalattemptsremaining', 'lesson'), 'info');
+                            $str = $OUTPUT->box($str, 'lesson overview');
+                        } else {
+                            // User has completed the lesson and no retakes are allowed.
+                            $str = '';
+                        }
+
+                    } else {
+                        // The last attempt was not finished or the lesson does not contain questions.
+                        // See if the last page viewed was a branchtable.
+                        require_once($CFG->dirroot . '/mod/lesson/pagetypes/branchtable.php');
+                        if ($lastviewed[$lesson->id]->qtype == LESSON_PAGE_BRANCHTABLE) {
+                            // See if the next pageid is the end of lesson.
+                            if ($lastviewed[$lesson->id]->nextpageid == LESSON_EOL) {
+                                // The last page viewed was the End of Lesson.
+                                if ($lesson->retake) {
+                                    // User can retake the lesson.
+                                    $str .= $OUTPUT->box(get_string('additionalattemptsremaining', 'lesson'), 'info');
+                                    $str = $OUTPUT->box($str, 'lesson overview');
+                                } else {
+                                    // User has completed the lesson and no retakes are allowed.
+                                    $str = '';
+                                }
+
+                            } else {
+                                // The last page viewed was NOT the end of lesson.
+                                $str .= $OUTPUT->box(get_string('notyetcompleted', 'lesson'), 'info');
+                                $str = $OUTPUT->box($str, 'lesson overview');
+                            }
+
+                        } else {
+                            // Last page was a question page, so the attempt is not completed yet.
+                            $str .= $OUTPUT->box(get_string('notyetcompleted', 'lesson'), 'info');
+                            $str = $OUTPUT->box($str, 'lesson overview');
+                        }
+                    }
+
                 } else {
-                    $str .= $OUTPUT->box($strnotattempted, 'info');
+                    // User has not yet started this lesson.
+                    $str .= $OUTPUT->box(get_string('nolessonattempts', 'lesson'), 'info');
+                    $str = $OUTPUT->box($str, 'lesson overview');
                 }
             }
-            $str = $OUTPUT->box($str, 'lesson overview');
-
-            if (empty($htmlarray[$lesson->course]['lesson'])) {
-                $htmlarray[$lesson->course]['lesson'] = $str;
-            } else {
-                $htmlarray[$lesson->course]['lesson'] .= $str;
+            if (!empty($str)) {
+                if (empty($htmlarray[$lesson->course]['lesson'])) {
+                    $htmlarray[$lesson->course]['lesson'] = $str;
+                } else {
+                    $htmlarray[$lesson->course]['lesson'] .= $str;
+                }
             }
         }
     }
