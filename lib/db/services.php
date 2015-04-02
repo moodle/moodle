@@ -336,6 +336,7 @@ $functions = array(
     'core_notes_get_course_notes' => array(
         'classname'     => 'core_notes_external',
         'methodname'    => 'get_course_notes',
+        'classpath'     => 'notes/externallib.php',
         'description'   => 'Returns all notes in specified course (or site) for the specified user.',
         'type'          => 'read',
         'capabilities'  => 'moodle/notes:view',

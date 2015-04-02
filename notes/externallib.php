@@ -25,6 +25,7 @@
  */
 
 require_once("$CFG->libdir/externallib.php");
+require_once($CFG->dirroot . "/notes/lib.php");
 
 /**
  * Notes external functions
@@ -73,7 +74,6 @@ class core_notes_external extends external_api {
      */
     public static function create_notes($notes = array()) {
         global $CFG, $DB;
-        require_once($CFG->dirroot . "/notes/lib.php");
 
         $params = self::validate_parameters(self::create_notes_parameters(), array('notes' => $notes));
 
@@ -224,7 +224,6 @@ class core_notes_external extends external_api {
      */
     public static function delete_notes($notes = array()) {
         global $CFG;
-        require_once($CFG->dirroot . "/notes/lib.php");
 
         $params = self::validate_parameters(self::delete_notes_parameters(), array('notes' => $notes));
 
@@ -293,7 +292,6 @@ class core_notes_external extends external_api {
      */
     public static function get_notes($notes) {
         global $CFG;
-        require_once($CFG->dirroot . "/notes/lib.php");
 
         $params = self::validate_parameters(self::get_notes_parameters(), array('notes' => $notes));
         // Check if note system is enabled.
@@ -393,7 +391,6 @@ class core_notes_external extends external_api {
      */
     public static function update_notes($notes = array()) {
         global $CFG, $DB;
-        require_once($CFG->dirroot . "/notes/lib.php");
 
         $params = self::validate_parameters(self::update_notes_parameters(), array('notes' => $notes));
 
