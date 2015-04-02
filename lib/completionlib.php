@@ -921,7 +921,7 @@ class completion_info {
         }
 
         // Not there, get via SQL
-        if ($wholecourse) {
+        if ($usecache && $wholecourse) {
             // Get whole course data for cache
             $alldatabycmc = $DB->get_records_sql("
     SELECT
@@ -1019,18 +1019,6 @@ class completion_info {
         $cmcontext = context_module::instance($data->coursemoduleid, MUST_EXIST);
         $coursecontext = $cmcontext->get_parent_context();
 
-        // Trigger an event for course module completion changed.
-        $event = \core\event\course_module_completion_updated::create(array(
-            'objectid' => $data->id,
-            'context' => $cmcontext,
-            'relateduserid' => $data->userid,
-            'other' => array(
-                'relateduserid' => $data->userid
-            )
-        ));
-        $event->add_record_snapshot('course_modules_completion', $data);
-        $event->trigger();
-
         $completioncache = cache::make('core', 'completion');
         if ($data->userid == $USER->id) {
             // Update module completion in user's cache.
@@ -1047,6 +1035,18 @@ class completion_info {
             // Remove another user's completion cache for this course.
             $completioncache->delete($data->userid . '_' . $cm->course);
         }
+
+        // Trigger an event for course module completion changed.
+        $event = \core\event\course_module_completion_updated::create(array(
+            'objectid' => $data->id,
+            'context' => $cmcontext,
+            'relateduserid' => $data->userid,
+            'other' => array(
+                'relateduserid' => $data->userid
+            )
+        ));
+        $event->add_record_snapshot('course_modules_completion', $data);
+        $event->trigger();
     }
 
      /**
