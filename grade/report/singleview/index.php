@@ -40,6 +40,11 @@ $itemtype = optional_param('item', $defaulttype, PARAM_TEXT);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 100, PARAM_INT);
 
+if ($itemid < 1){
+    $itemid = $userid;
+    $itemtype = $defaulttype;
+}
+
 $courseparams = array('id' => $courseid);
 $PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $courseparams));
 $PAGE->set_pagelayout('incourse');
