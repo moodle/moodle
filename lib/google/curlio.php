@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/filelib.php');
-require_once($CFG->libdir . '/google/Google/IO/Curl.php');
-require_once($CFG->libdir . '/google/Google/IO/Exception.php');
+require_once($CFG->libdir . '/google/src/Google/IO/Curl.php');
+require_once($CFG->libdir . '/google/src/Google/IO/Exception.php');
 
 /**
  * Class moodle_google_curlio.
