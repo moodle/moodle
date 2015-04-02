@@ -248,7 +248,7 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Natural aggregation on outcome items with natural weights
-    And the following config settings values are set as admin:
+    And the following config values are set as admin:
       | enableoutcomes | 1 |
     And the following "scales" exist:
       | name       | scale                                     |
@@ -314,7 +314,7 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Natural aggregation on outcome items with modified weights
-    And the following config settings values are set as admin:
+    And the following config values are set as admin:
       | enableoutcomes | 1 |
     And the following "scales" exist:
       | name       | scale                                     |

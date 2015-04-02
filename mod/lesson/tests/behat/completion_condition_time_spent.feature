@@ -17,7 +17,7 @@ Feature: Set time spent as a completion condition for a lesson
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And the following config settings values are set as admin:
+    And the following config values are set as admin:
       | enablecompletion | 1 |
     And I log in as "teacher1"
     And I follow "Course 1"

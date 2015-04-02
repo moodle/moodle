@@ -12,7 +12,7 @@ Feature: Users can send messages to each other
 
   @javascript
   Scenario: Using the 'Send message' dialog on one's profile
-    Given the following config settings values are set as admin:
+    Given the following config values are set as admin:
       | forceloginforprofiles | 0 |
     And I log in as "user1"
     And I navigate to "Messages" node in "My profile"

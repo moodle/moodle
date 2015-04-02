@@ -385,7 +385,7 @@ Feature: Set up contextual data for tests
     And the following "grade outcomes" exist:
       | fullname        | shortname | course | scale        |
       | Grade outcome 2 | OT2       | C1     | Test Scale 1 |
-    And the following config settings values are set as admin:
+    And the following config values are set as admin:
       | enableoutcomes | 1 |
     When I log in as "admin"
     And I follow "Home"
@@ -414,7 +414,7 @@ Feature: Set up contextual data for tests
      And the following "grade items" exist:
        | itemname                  | course | outcome | gradecategory    |
        | Test Outcome Grade Item 1 | C1     | OT1     | Grade category 1 |
-    And the following config settings values are set as admin:
+    And the following config values are set as admin:
       | enableoutcomes | 1 |
     When I log in as "admin"
     And I follow "Home"

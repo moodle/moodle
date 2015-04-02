@@ -32,7 +32,7 @@ Feature: Control the aggregation of the scales
     And the following "grade items" exist:
       | itemname | course | scale       |
       | Scale me | C1     | Letterscale |
-    And the following config settings values are set as admin:
+    And the following config values are set as admin:
       | grade_includescalesinaggregation | 0 |
     And I log out
 
@@ -98,7 +98,7 @@ Feature: Control the aggregation of the scales
     And I follow "Show more..."
     And I should not see "Weight adjusted"
     And I should not see "Weight"
-    And the following config settings values are set as admin:
+    And the following config values are set as admin:
       | grade_includescalesinaggregation | 1 |
     And I follow "Course 1"
     And I follow "Grades"

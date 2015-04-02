@@ -16,7 +16,7 @@ Feature: Set a quiz to be marked complete when the student passes
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And the following config settings values are set as admin:
+    And the following config values are set as admin:
      | enablecompletion | 1 |
     And I log in as "admin"
     And I navigate to "Grade item settings" node in "Site administration > Grades"
