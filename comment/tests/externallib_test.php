@@ -106,6 +106,7 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
         $cmtid1 = $DB->insert_record('comments', $newcmt);
 
         $newcmt->content  = 'New comment 2';
+        $newcmt->timecreated  = time() + 1;
         $cmtid2 = $DB->insert_record('comments', $newcmt);
 
         $contextlevel = 'module';
@@ -126,7 +127,7 @@ class core_comment_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($user->id, $result['comments'][0]['userid']);
         $this->assertEquals($user->id, $result['comments'][1]['userid']);
 
-        $this->assertEquals($cmtid1, $result['comments'][0]['id']);
-        $this->assertEquals($cmtid2, $result['comments'][1]['id']);
+        $this->assertEquals($cmtid2, $result['comments'][0]['id']);
+        $this->assertEquals($cmtid1, $result['comments'][1]['id']);
     }
 }
