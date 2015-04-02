@@ -30,7 +30,6 @@ Y.extend(MODFORM, Y.Base, {
         this.qppSelect = Y.one('#id_questionsperpage');
         this.qppInitialValue = this.qppSelect.get('value');
         this.qppSelect.on('change', this.qppChanged, this);
-        Y.one('#id_shufflequestions').on('change', this.qppChanged, this);
     },
 
     qppChanged: function() {
@@ -43,7 +42,7 @@ Y.extend(MODFORM, Y.Base, {
 
 });
 
-// Ensure that M.course exists and that coursebase is initialised correctly
+// Ensure that M.mod_quiz exists and that coursebase is initialised correctly
 M.mod_quiz = M.mod_quiz || {};
 M.mod_quiz.modform = M.mod_quiz.modform || new MODFORM();
 M.mod_quiz.modform.init = function() {

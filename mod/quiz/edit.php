@@ -134,6 +134,17 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
     redirect($afteractionurl);
 }
 
+if (optional_param('addsection', false, PARAM_BOOL)) {
+    $structure->check_can_be_edited();
+
+    // Add a section to the quiz.
+    if ($addonpage = optional_param('addonpage', 0, PARAM_INT)) {
+        $structure->add_section_heading($addonpage);
+    }
+    quiz_delete_previews($quiz);
+    redirect($afteractionurl);
+}
+
 if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
     // Add random questions to the quiz.
     $structure->check_can_be_edited();

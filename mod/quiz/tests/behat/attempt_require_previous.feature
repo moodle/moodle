@@ -126,18 +126,21 @@ Feature: Attemp a quiz where some questions require that the previous question h
     And I should not see "This question cannot be attempted until the previous question has been completed."
 
   @javascript
-  Scenario: A questions cannot be blocked in a shuffled quiz (despite what is set in the DB).
+  Scenario: Questions cannot be blocked in a shuffled section (despite what is set in the DB).
     Given the following "questions" exist:
       | questioncategory | qtype       | name  | questiontext    |
       | Test questions   | truefalse   | TF1   | First question  |
       | Test questions   | truefalse   | TF2   | Second question |
     And the following "activities" exist:
-      | activity   | name   | intro              | course | idnumber | preferredbehaviour | shufflequestions | questionsperpage |
-      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | immediatefeedback  | 1                | 2                |
+      | activity   | name   | intro              | course | idnumber | preferredbehaviour | questionsperpage |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | immediatefeedback  | 2                |
     And quiz "Quiz 1" contains the following questions:
       | question | page | requireprevious |
       | TF1      | 1    | 1               |
-      | TF2      | 1    | 1               |
+      | TF2      | 2    | 1               |
+    And quiz "Quiz 1" contains the following sections:
+      | heading   | firstslot | shuffle |
+      | Section 1 | 1         | 1       |
 
     When I log in as "student"
     And I follow "Course 1"
@@ -146,6 +149,33 @@ Feature: Attemp a quiz where some questions require that the previous question h
 
     Then I should see "First question"
     And I should see "Second question"
+    And I should not see "This question cannot be attempted until the previous question has been completed."
+
+  @javascript
+  Scenario: Question dependency cannot apply to the first questions in section when the previous section is shuffled
+    Given the following "questions" exist:
+      | questioncategory | qtype       | name  | questiontext    |
+      | Test questions   | truefalse   | TF1   | First question  |
+      | Test questions   | truefalse   | TF2   | Second question |
+    And the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber | preferredbehaviour | questionsperpage |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | immediatefeedback  | 2                |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page | requireprevious |
+      | TF1      | 1    | 1               |
+      | TF2      | 2    | 1               |
+    And quiz "Quiz 1" contains the following sections:
+      | heading   | firstslot | shuffle |
+      | Section 1 | 1         | 1       |
+      | Section 2 | 2         | 0       |
+
+    When I log in as "student"
+    And I follow "Course 1"
+    And I follow "Quiz 1"
+    And I press "Attempt quiz now"
+    And I press "Next"
+
+    Then I should see "Second question"
     And I should not see "This question cannot be attempted until the previous question has been completed."
 
   @javascript

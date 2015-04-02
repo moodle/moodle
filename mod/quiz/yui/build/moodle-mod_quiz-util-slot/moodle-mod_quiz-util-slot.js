@@ -162,7 +162,20 @@ Y.Moodle.mod_quiz.util.slot = {
      * @return {node|false} The previous slot node or false.
      */
     getPreviousNumbered: function(slot) {
-        return slot.previous(this.SELECTORS.SLOT + ':not(' + this.SELECTORS.QUESTIONTYPEDESCRIPTION + ')');
+        var previous = slot.previous(this.SELECTORS.SLOT + ':not(' + this.SELECTORS.QUESTIONTYPEDESCRIPTION + ')');
+        if (previous) {
+            return previous;
+        }
+
+        var section = slot.ancestor('li.section').previous('li.section');
+        while (section) {
+            var questions = section.all(this.SELECTORS.SLOT + ':not(' + this.SELECTORS.QUESTIONTYPEDESCRIPTION + ')');
+            if (questions.size() > 0) {
+                return questions.item(questions.size() - 1);
+            }
+            section = section.previous('li.section');
+        }
+        return false;
     },
 
     /**
@@ -195,6 +208,22 @@ Y.Moodle.mod_quiz.util.slot = {
 
             // Set slot number.
             this.setNumber(slot, previousslotnumber + 1);
+        }, this);
+    },
+
+    /**
+     * Add class only-has-one-slot to those sections that need it.
+     *
+     * @method updateOneSlotSections
+     * @return void
+     */
+    updateOneSlotSections: function() {
+        Y.all('.mod-quiz-edit-content ul.slots li.section').each(function(section) {
+            if (section.all(this.SELECTORS.SLOT).size() > 1) {
+                section.removeClass('only-has-one-slot');
+            } else {
+                section.addClass('only-has-one-slot');
+            }
         }, this);
     },
 
@@ -280,16 +309,17 @@ Y.Moodle.mod_quiz.util.slot = {
         // Get list of slot nodes.
         var slots = this.getSlots(), slotnumber = 0;
         // Loop through slots incrementing the number each time.
-        slots.each (function(slot, key) {
+        slots.each(function(slot, key) {
             slotnumber++;
             var pagebreak = this.getPageBreak(slot);
-            // Last slot won't have a page break.
-            if (!pagebreak && key === slots.size() - 1) {
+            var nextitem = slot.next('li.activity');
+            if (!nextitem) {
+                // Last slot in a section. Should not have an icon.
                 return;
             }
 
             // No pagebreak and not last slot. Add one.
-            if (!pagebreak && key !== slots.size() - 1) {
+            if (!pagebreak) {
                 pagebreak = this.addPageBreak(slot);
             }
 
@@ -303,7 +333,7 @@ Y.Moodle.mod_quiz.util.slot = {
 
             // Get the correct title.
             var action = '', iconname = '';
-            if (Y.Moodle.mod_quiz.util.page.isPage(slot.next('li.activity'))) {
+            if (Y.Moodle.mod_quiz.util.page.isPage(nextitem)) {
                 action = 'removepagebreak';
                 iconname = 'e/remove_page_break';
             } else {

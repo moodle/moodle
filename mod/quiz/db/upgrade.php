@@ -228,7 +228,7 @@ function xmldb_quiz_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012040200) {
-        // Define index userid to be dropped form quiz_attempts
+        // Define index userid to be dropped form quiz_attempts.
         $table = new xmldb_table('quiz_attempts');
         $index = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
 
@@ -327,7 +327,7 @@ function xmldb_quiz_upgrade($oldversion) {
     }
 
     // Moodle v2.3.0 release upgrade line
-    // Put any upgrade step following this
+    // Put any upgrade step following this.
 
     if ($oldversion < 2012061702) {
 
@@ -361,29 +361,29 @@ function xmldb_quiz_upgrade($oldversion) {
 
     if ($oldversion < 2012100801) {
 
-        // Define field timecheckstate to be added to quiz_attempts
+        // Define field timecheckstate to be added to quiz_attempts.
         $table = new xmldb_table('quiz_attempts');
         $field = new xmldb_field('timecheckstate', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', 'timemodified');
 
-        // Conditionally launch add field timecheckstate
+        // Conditionally launch add field timecheckstate.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        // Define index state-timecheckstate (not unique) to be added to quiz_attempts
+        // Define index state-timecheckstate (not unique) to be added to quiz_attempts.
         $table = new xmldb_table('quiz_attempts');
         $index = new xmldb_index('state-timecheckstate', XMLDB_INDEX_NOTUNIQUE, array('state', 'timecheckstate'));
 
-        // Conditionally launch add index state-timecheckstate
+        // Conditionally launch add index state-timecheckstate.
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
 
-        // Overdue cron no longer needs these
+        // Overdue cron no longer needs these.
         unset_config('overduelastrun', 'quiz');
         unset_config('overduedoneto', 'quiz');
 
-        // Update timecheckstate on all open attempts
+        // Update timecheckstate on all open attempts.
         require_once($CFG->dirroot . '/mod/quiz/locallib.php');
         quiz_update_open_attempts(array());
 
@@ -392,7 +392,7 @@ function xmldb_quiz_upgrade($oldversion) {
     }
 
     // Moodle v2.4.0 release upgrade line
-    // Put any upgrade step following this
+    // Put any upgrade step following this.
 
     if ($oldversion < 2013031900) {
         // Quiz manual grading UI should be controlled by mod/quiz:grade, not :viewreports.
@@ -404,7 +404,6 @@ function xmldb_quiz_upgrade($oldversion) {
 
     // Moodle v2.5.0 release upgrade line.
     // Put any upgrade step following this.
-
 
     // Moodle v2.6.0 release upgrade line.
     // Put any upgrade step following this.
@@ -833,6 +832,73 @@ function xmldb_quiz_upgrade($oldversion) {
 
         // Quiz savepoint reached.
         upgrade_mod_savepoint(true, 2015030900, 'quiz');
+    }
+
+    if ($oldversion < 2015032300) {
+
+        // Define table quiz_sections to be created.
+        $table = new xmldb_table('quiz_sections');
+
+        // Adding fields to table quiz_sections.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('quizid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('firstslot', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('heading', XMLDB_TYPE_CHAR, '1333', null, null, null, null);
+        $table->add_field('shufflequestions', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table quiz_sections.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('quizid', XMLDB_KEY_FOREIGN, array('quizid'), 'quiz', array('id'));
+
+        // Adding indexes to table quiz_sections.
+        $table->add_index('quizid-firstslot', XMLDB_INDEX_UNIQUE, array('quizid', 'firstslot'));
+
+        // Conditionally launch create table for quiz_sections.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2015032300, 'quiz');
+    }
+
+    if ($oldversion < 2015032301) {
+
+        // Create a section for each quiz.
+        $DB->execute("
+                INSERT INTO {quiz_sections}
+                            (quizid, firstslot, heading, shufflequestions)
+                     SELECT  id,     1,         ?,       shufflequestions
+                       FROM {quiz}
+                ", array(''));
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2015032301, 'quiz');
+    }
+
+    if ($oldversion < 2015032302) {
+
+        // Define field shufflequestions to be dropped from quiz.
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('shufflequestions');
+
+        // Conditionally launch drop field shufflequestions.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2015032302, 'quiz');
+    }
+
+    if ($oldversion < 2015032303) {
+
+        // Drop corresponding admin settings.
+        unset_config('shufflequestions', 'quiz');
+        unset_config('shufflequestions_adv', 'quiz');
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2015032303, 'quiz');
     }
 
     return true;

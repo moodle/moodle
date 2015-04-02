@@ -22,6 +22,12 @@ This files describes API changes in the quiz code.
 * The array values in mod_quiz_links_to_other_attempts may now be either a moodle_url,
   or renderable (or null). Previously they could only be a moodle_url or null.
 
+* The contents of the navigation block is now not just quiz_nav_question_button-s.
+  It can also contain quiz_nav_section_heading-s. If you have overridden
+  mod_quiz_renderer::navigation_panel, then you may need to account for this.
+  This change also has implications for the Edit quiz page.
+
+
 === 2.8 ===
 
 * Classes that were defined in various lib files have been moved to the classes

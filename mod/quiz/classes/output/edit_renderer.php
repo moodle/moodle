@@ -66,17 +66,17 @@ class edit_renderer extends \plugin_renderer_base {
         // Show the questions organised into sections and pages.
         $output .= $this->start_section_list();
 
-        $sections = $structure->get_quiz_sections();
-        $lastsection = end($sections);
-        foreach ($sections as $section) {
-            $output .= $this->start_section($section);
+        foreach ($structure->get_sections() as $section) {
+            $output .= $this->start_section($structure, $section);
             $output .= $this->questions_in_section($structure, $section, $contexts, $pagevars, $pageurl);
-            if ($section === $lastsection) {
+
+            if ($structure->is_last_section($section)) {
                 $output .= \html_writer::start_div('last-add-menu');
                 $output .= html_writer::tag('span', $this->add_menu_actions($structure, 0,
                         $pageurl, $contexts, $pagevars), array('class' => 'add-menu-outer'));
                 $output .= \html_writer::end_div();
             }
+
             $output .= $this->end_section();
         }
 
@@ -271,26 +271,85 @@ class edit_renderer extends \plugin_renderer_base {
     /**
      * Display the start of a section, before the questions.
      *
+     * @param structure $structure the structure of the quiz being edited.
      * @param \stdClass $section The quiz_section entry from DB
      * @return string HTML to output.
      */
-    protected function start_section($section) {
+    protected function start_section($structure, $section) {
 
         $output = '';
+
         $sectionstyle = '';
+        if ($structure->is_only_one_slot_in_section($section)) {
+            $sectionstyle = ' only-has-one-slot';
+        }
 
         $output .= html_writer::start_tag('li', array('id' => 'section-'.$section->id,
             'class' => 'section main clearfix'.$sectionstyle, 'role' => 'region',
             'aria-label' => $section->heading));
 
-        $leftcontent = $this->section_left_content($section);
-        $output .= html_writer::div($leftcontent, 'left side');
-
-        $rightcontent = $this->section_right_content($section);
-        $output .= html_writer::div($rightcontent, 'right side');
         $output .= html_writer::start_div('content');
 
+        $output .= html_writer::start_div('section-heading');
+
+        $headingtext = $this->heading(html_writer::span(
+                html_writer::span($section->heading, 'instancesection'), 'sectioninstance'), 3);
+
+        if (!$structure->can_be_edited()) {
+            $editsectionheadingicon = '';
+        } else {
+            $editsectionheadingicon = html_writer::link(new \moodle_url('#'),
+                $this->pix_icon('t/editstring', get_string('sectionheadingedit', 'quiz', $section->heading),
+                        'moodle', array('class' => 'editicon visibleifjs')),
+                        array('class' => 'editing_section', 'data-action' => 'edit_section_title'));
+        }
+        $output .= html_writer::div($headingtext . $editsectionheadingicon, 'instancesectioncontainer');
+
+        if (!$structure->is_first_section($section) && $structure->can_be_edited()) {
+            $output .= $this->section_remove_icon($section);
+        }
+        $output .= $this->section_shuffle_questions($structure, $section);
+
+        $output .= html_writer::end_div($output, 'section-heading');
+
         return $output;
+    }
+
+    /**
+     * Display a checkbox for shuffling question within a section.
+     *
+     * @param structure $structure object containing the structure of the quiz.
+     * @param \stdClass $section data from the quiz_section table.
+     * @return string HTML to output.
+     */
+    public function section_shuffle_questions(structure $structure, $section) {
+        $checkboxattributes = array(
+            'type' => 'checkbox',
+            'id' => 'shuffle-' . $section->id,
+            'value' => 1,
+            'data-action' => 'shuffle_questions',
+            'class' => 'cm-edit-action',
+        );
+
+        if (!$structure->can_be_edited()) {
+            $checkboxattributes['disabled'] = 'disabled';
+        }
+        if ($section->shufflequestions) {
+            $checkboxattributes['checked'] = 'checked';
+        }
+
+        if ($structure->is_first_section($section)) {
+            $help = $this->help_icon('shufflequestions', 'quiz');
+        } else {
+            $help = '';
+        }
+
+        $progressspan = html_writer::span('', 'shuffle-progress');
+        $checkbox = html_writer::empty_tag('input', $checkboxattributes);
+        $label = html_writer::label(get_string('shufflequestions', 'quiz') . ' ' . $help,
+                $checkboxattributes['id'], false);
+        return html_writer::span($progressspan . $checkbox . $label,
+                'instanceshufflequestions', array('data-action' => 'shuffle_questions'));
     }
 
     /**
@@ -306,23 +365,18 @@ class edit_renderer extends \plugin_renderer_base {
     }
 
     /**
-     * Generate the content to be displayed on the left part of a section.
+     * Render an icon to remove a section from the quiz.
      *
-     * @param \stdClass $section The quiz_section entry from DB
+     * @param object $section the section to be removed.
      * @return string HTML to output.
      */
-    protected function section_left_content($section) {
-        return $this->output->spacer();
-    }
-
-    /**
-     * Generate the content to displayed on the right part of a section.
-     *
-     * @param \stdClass $section The quiz_section entry from DB
-     * @return string HTML to output.
-     */
-    protected function section_right_content($section) {
-        return $this->output->spacer();
+    public function section_remove_icon($section) {
+        $title = get_string('sectionheadingremove', 'quiz', $section->heading);
+        $url = new \moodle_url('/mod/quiz/edit.php',
+                array('sesskey' => sesskey(), 'removesection' => '1', 'sectionid' => $section->id));
+        $image = $this->pix_icon('t/delete', $title);
+        return $this->action_link($url, $image, null, array(
+                'class' => 'cm-edit-action editing_delete', 'data-action' => 'deletesection'));
     }
 
     /**
@@ -364,10 +418,10 @@ class edit_renderer extends \plugin_renderer_base {
 
         // Page split/join icon.
         $joinhtml = '';
-        if ($structure->can_be_edited() && !$structure->is_last_slot_in_quiz($slot)) {
+        if ($structure->can_be_edited() && !$structure->is_last_slot_in_quiz($slot) &&
+                                            !$structure->is_last_slot_in_section($slot)) {
             $joinhtml = $this->page_split_join_button($structure, $slot);
         }
-
         // Question HTML.
         $questionhtml = $this->question($structure, $slot, $pageurl);
         $qtype = $structure->get_question_type_for_slot($slot);
@@ -395,9 +449,8 @@ class edit_renderer extends \plugin_renderer_base {
 
         $pagenumber = $structure->get_page_number_for_slot($slot);
 
-        // Put page in a span for easier styling.
-        $page = html_writer::tag('span', get_string('page') . ' ' . $pagenumber,
-                array('class' => 'text'));
+        // Put page in a heading for accessibility and styling.
+        $page = $this->heading(get_string('page') . ' ' . $pagenumber, 4);
 
         if ($structure->is_first_slot_on_page($slot)) {
             // Add the add-menu at the page level.
@@ -432,7 +485,7 @@ class edit_renderer extends \plugin_renderer_base {
             return '';
         }
         $menu = new \action_menu();
-        $menu->set_alignment(\action_menu::TR, \action_menu::BR);
+        $menu->set_alignment(\action_menu::TR, \action_menu::TR);
         $menu->set_constraint('.mod-quiz-edit-content');
         $trigger = html_writer::tag('span', get_string('add', 'quiz'), array('class' => 'add-menu'));
         $menu->set_menu_trigger($trigger);
@@ -472,12 +525,25 @@ class edit_renderer extends \plugin_renderer_base {
         $questioncategoryid = question_get_category_id_from_pagevars($pagevars);
         static $str;
         if (!isset($str)) {
-            $str = get_strings(array('addaquestion', 'addarandomquestion',
+            $str = get_strings(array('addasection', 'addaquestion', 'addarandomquestion',
                     'addarandomselectedquestion', 'questionbank'), 'quiz');
         }
 
         // Get section, page, slotnumber and maxmark.
         $actions = array();
+
+        // Add a new section to the add_menu if possible. This is always added to the HTML
+        // then hidden with CSS when no needed, so that as things are re-ordered, etc. with
+        // Ajax it can be relevaled again when necessary.
+        $returnurl = new \moodle_url($pageurl, array('addonpage' => $page));
+        $params = array('returnurl' => $returnurl, 'cmid' => $structure->get_cmid(),
+                'addonpage' => $page, 'appendqnumstring' => 'addasection', 'addsection' => '1');
+
+        $actions['addasection'] = new \action_menu_link_secondary(
+                new \moodle_url($pageurl, $params),
+                new \pix_icon('t/add', $str->addasection, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                $str->addasection, array('class' => 'cm-edit-action addasection', 'data-action' => 'addasection')
+        );
 
         // Add a new question to the quiz.
         $returnurl = new \moodle_url($pageurl, array('addonpage' => $page));
@@ -981,10 +1047,13 @@ class edit_renderer extends \plugin_renderer_base {
 
         $this->page->requires->strings_for_js(array(
                 'addpagebreak',
+                'confirmremovesectionheading',
                 'confirmremovequestion',
                 'dragtoafter',
                 'dragtostart',
                 'numquestionsx',
+                'sectionheadingedit',
+                'sectionheadingremove',
                 'removepagebreak',
                 'questiondependencyadd',
                 'questiondependencyfree',

@@ -44,6 +44,8 @@ $sequence   = optional_param('sequence', '', PARAM_SEQUENCE);
 $visible    = optional_param('visible', 0, PARAM_INT);
 $pageaction = optional_param('action', '', PARAM_ALPHA); // Used to simulate a DELETE command.
 $maxmark    = optional_param('maxmark', '', PARAM_FLOAT);
+$newheading = optional_param('newheading', '', PARAM_TEXT);
+$shuffle    = optional_param('newshuffle', 0, PARAM_INT);
 $page       = optional_param('page', '', PARAM_INT);
 $PAGE->set_url('/mod/quiz/edit-rest.php',
         array('quizid' => $quizid, 'class' => $class));
@@ -71,15 +73,39 @@ if ($pageaction == 'DELETE') {
 switch($requestmethod) {
     case 'POST':
     case 'GET': // For debugging.
-
         switch ($class) {
             case 'section':
+                $table = 'quiz_sections';
+                switch ($field) {
+                    case 'getsectiontitle':
+                        require_capability('mod/quiz:manage', $modcontext);
+                        $section = $structure->get_section_by_id($id);
+                        echo json_encode(array('instancesection' => $section->heading));
+                        break;
+                    case 'updatesectiontitle':
+                        require_capability('mod/quiz:manage', $modcontext);
+                        $structure->set_section_heading($id, $newheading);
+                        echo json_encode(array('instancesection' => format_string($newheading)));
+                        break;
+                    case 'updateshufflequestions':
+                        require_capability('mod/quiz:manage', $modcontext);
+                        $structure->set_section_shuffle($id, $shuffle);
+                        echo json_encode(array('instanceshuffle' => $section->shufflequestions));
+                        break;
+                }
                 break;
 
             case 'resource':
                 switch ($field) {
                     case 'move':
                         require_capability('mod/quiz:manage', $modcontext);
+                        if (!$previousid) {
+                            $section = $structure->get_section_by_id($sectionid);
+                            if ($section->firstslot > 1) {
+                                $previousid = $structure->get_slot_id_for_slot($section->firstslot - 1);
+                                $page = $structure->get_page_number_for_slot($section->firstslot);
+                            }
+                        }
                         $structure->move_slot($id, $previousid, $page);
                         quiz_delete_previews($quiz);
                         echo json_encode(array('visible' => true));
@@ -109,7 +135,7 @@ switch($requestmethod) {
 
                     case 'updatepagebreak':
                         require_capability('mod/quiz:manage', $modcontext);
-                        $slots = $structure->update_page_break($quiz, $id, $value);
+                        $slots = $structure->update_page_break($id, $value);
                         $json = array();
                         foreach ($slots as $slot) {
                             $json[$slot->slot] = array('id' => $slot->id, 'slot' => $slot->slot,
@@ -132,12 +158,18 @@ switch($requestmethod) {
 
     case 'DELETE':
         switch ($class) {
+            case 'section':
+                require_capability('mod/quiz:manage', $modcontext);
+                $structure->remove_section_heading($id);
+                echo json_encode(array('deleted' => true));
+                break;
+
             case 'resource':
                 require_capability('mod/quiz:manage', $modcontext);
                 if (!$slot = $DB->get_record('quiz_slots', array('quizid' => $quiz->id, 'id' => $id))) {
                     throw new moodle_exception('AJAX commands.php: Bad slot ID '.$id);
                 }
-                $structure->remove_slot($quiz, $slot->slot);
+                $structure->remove_slot($slot->slot);
                 quiz_delete_previews($quiz);
                 quiz_update_sumgrades($quiz);
                 echo json_encode(array('newsummarks' => quiz_format_grade($quiz, $quiz->sumgrades),

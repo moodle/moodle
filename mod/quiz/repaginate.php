@@ -45,6 +45,6 @@ $repage = new \mod_quiz\repaginate($quizid);
 $repage->repaginate_slots($slotnumber, $repagtype);
 
 $structure = $quizobj->get_structure();
-$slots = $structure->refresh_page_numbers_and_update_db($structure->get_quiz());
+$slots = $structure->refresh_page_numbers_and_update_db();
 
 redirect(new moodle_url('edit.php', array('cmid' => $quizobj->get_cmid())));

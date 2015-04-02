@@ -88,6 +88,10 @@ function quiz_add_instance($quiz) {
     // Try to store it in the database.
     $quiz->id = $DB->insert_record('quiz', $quiz);
 
+    // Create the first section for this quiz.
+    $DB->insert_record('quiz_sections', array('quizid' => $quiz->id,
+            'firstslot' => 1, 'heading' => '', 'shufflequestions' => 0));
+
     // Do the processing required after an add or an update.
     quiz_after_add_or_update($quiz);
 
@@ -143,7 +147,7 @@ function quiz_update_instance($quiz, $mform) {
     quiz_delete_previews($quiz);
 
     // Repaginate, if asked to.
-    if (!$quiz->shufflequestions && !empty($quiz->repaginatenow)) {
+    if (!empty($quiz->repaginatenow)) {
         quiz_repaginate_questions($quiz->id, $quiz->questionsperpage);
     }
 
@@ -175,6 +179,7 @@ function quiz_delete_instance($id) {
 
     // We need to do this before we try and delete randoms, otherwise they would still be 'in use'.
     $DB->delete_records('quiz_slots', array('quizid' => $quiz->id));
+    $DB->delete_records('quiz_sections', array('quizid' => $quiz->id));
 
     foreach ($questionids as $questionid) {
         question_delete_question($questionid);

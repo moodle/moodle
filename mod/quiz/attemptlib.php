@@ -60,15 +60,22 @@ class moodle_quiz_exception extends moodle_exception {
  * @since      Moodle 2.0
  */
 class quiz {
-    // Fields initialised in the constructor.
+    /** @var stdClass the course settings from the database. */
     protected $course;
+    /** @var stdClass the course_module settings from the database. */
     protected $cm;
+    /** @var stdClass the quiz settings from the database. */
     protected $quiz;
+    /** @var context the quiz context. */
     protected $context;
 
-    // Fields set later if that data is needed.
+    /** @var array of questions augmented with slot information. */
     protected $questions = null;
+    /** @var array of quiz_section rows. */
+    protected $sections = null;
+    /** @var quiz_access_manager the access manager for this quiz. */
     protected $accessmanager = null;
+    /** @var bool whether the current user has capability mod/quiz:preview. */
     protected $ispreviewuser = null;
 
     // Constructor =============================================================
@@ -262,6 +269,21 @@ class quiz {
     }
 
     /**
+     * Get all the sections in this quiz.
+     * @return array 0, 1, 2, ... => quiz_sections row from the database.
+     */
+    public function get_sections() {
+        global $DB;
+        if ($this->sections === null) {
+            $this->sections = array_values($DB->get_records('quiz_sections',
+                    array('quizid' => $this->get_quizid()), 'firstslot'));
+        }
+        return $this->sections;
+    }
+
+    /**
+     * Return quiz_access_manager and instance of the quiz_access_manager class
+     * for this quiz at this time.
      * @param int $timenow the current time as a unix timestamp.
      * @return quiz_access_manager and instance of the quiz_access_manager class
      *      for this quiz at this time.
@@ -455,8 +477,17 @@ class quiz_attempt {
     /** @var question_usage_by_activity the question usage for this quiz attempt. */
     protected $quba;
 
-    /** @var array of quiz_slots rows. */
+    /**
+     * @var array of slot information. These objects contain ->slot (int),
+     *      ->requireprevious (bool), ->questionids (int) the original question for random questions,
+     *      ->firstinsection (bool), ->section (stdClass from $this->sections).
+     *      This does not contain page - get that from {@link get_question_page()} -
+     *      or maxmark - get that from $this->quba.
+     */
     protected $slots;
+
+    /** @var array of quiz_sections rows, with a ->lastslot field added. */
+    protected $sections;
 
     /** @var array page no => array of slot numbers on the page in order. */
     protected $pagelayout;
@@ -494,8 +525,11 @@ class quiz_attempt {
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
         $this->slots = $DB->get_records('quiz_slots',
                 array('quizid' => $this->get_quizid()), 'slot',
-                'slot, page, requireprevious, questionid, maxmark');
+                'slot, requireprevious, questionid');
+        $this->sections = array_values($DB->get_records('quiz_sections',
+                array('quizid' => $this->get_quizid()), 'firstslot'));
 
+        $this->link_sections_and_slots();
         $this->determine_layout();
         $this->number_questions();
     }
@@ -547,6 +581,22 @@ class quiz_attempt {
     }
 
     /**
+     * Let each slot know which section it is part of.
+     */
+    protected function link_sections_and_slots() {
+        foreach ($this->sections as $i => $section) {
+            if (isset($this->sections[$i + 1])) {
+                $section->lastslot = $this->sections[$i + 1]->firstslot - 1;
+            } else {
+                $section->lastslot = count($this->slots);
+            }
+            for ($slot = $section->firstslot; $slot <= $section->lastslot; $slot += 1) {
+                $this->slots[$slot]->section = $section;
+            }
+        }
+    }
+
+    /**
      * Parse attempt->layout to populate the other arrays the represent the layout.
      */
     protected function determine_layout() {
@@ -561,6 +611,11 @@ class quiz_attempt {
         }
 
         // File the ids into the arrays.
+        // Tracking which is the first slot in each section in this attempt is
+        // trickier than you might guess, since the slots in this section
+        // may be shuffled, so $section->firstslot (the lowest numbered slot in
+        // the section) may not be the first one.
+        $unseensections = $this->sections;
         $this->pagelayout = array();
         foreach ($pagelayouts as $page => $pagelayout) {
             $pagelayout = trim($pagelayout, ',');
@@ -568,6 +623,15 @@ class quiz_attempt {
                 continue;
             }
             $this->pagelayout[$page] = explode(',', $pagelayout);
+            foreach ($this->pagelayout[$page] as $slot) {
+                $sectionkey = array_search($this->slots[$slot]->section, $unseensections);
+                if ($sectionkey !== false) {
+                    $this->slots[$slot]->firstinsection = true;
+                    unset($unseensections[$sectionkey]);
+                } else {
+                    $this->slots[$slot]->firstinsection = false;
+                }
+            }
         }
     }
 
@@ -1038,7 +1102,8 @@ class quiz_attempt {
      */
     public function is_blocked_by_previous_question($slot) {
         return $slot > 1 && isset($this->slots[$slot]) && $this->slots[$slot]->requireprevious &&
-                !$this->get_quiz()->shufflequestions &&
+                !$this->slots[$slot]->section->shufflequestions &&
+                !$this->slots[$slot - 1]->section->shufflequestions &&
                 $this->get_navigation_method() != QUIZ_NAVMETHOD_SEQ &&
                 !$this->get_question_state($slot - 1)->is_finished() &&
                 $this->quba->can_question_finish_during_attempt($slot - 1);
@@ -1081,6 +1146,20 @@ class quiz_attempt {
     }
 
     /**
+     * If the section heading, if any, that should come just before this slot.
+     * @param int $slot identifies a particular question in this attempt.
+     * @return string the required heading, or null if there is not one here.
+     */
+    public function get_heading_before_slot($slot) {
+        if ($this->slots[$slot]->firstinsection) {
+            return $this->slots[$slot]->section->heading;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return the page of the quiz where this question appears.
      * @param int $slot the number used to identify this question within this attempt.
      * @return int the page of the quiz this question appears on.
      */
@@ -1809,7 +1888,7 @@ class quiz_attempt {
         global $DB;
         if ($this->attempt->timecheckstate !== $time) {
             $this->attempt->timecheckstate = $time;
-            $DB->set_field('quiz_attempts', 'timecheckstate', $time, array('id'=>$this->attempt->id));
+            $DB->set_field('quiz_attempts', 'timecheckstate', $time, array('id' => $this->attempt->id));
         }
     }
 
@@ -1966,6 +2045,27 @@ class quiz_attempt {
 
 
 /**
+ * Represents a heading in the navigation panel.
+ *
+ * @copyright  2015 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 2.9
+ */
+class quiz_nav_section_heading implements renderable {
+    /** @var string the heading text. */
+    public $heading;
+
+    /**
+     * Constructor.
+     * @param string $heading the heading text
+     */
+    public function __construct($heading) {
+        $this->heading = $heading;
+    }
+}
+
+
+/**
  * Represents a single link in the navigation panel.
  *
  * @copyright  2011 The Open University
@@ -2018,9 +2118,17 @@ abstract class quiz_nav_panel_base {
         $this->showall = $showall;
     }
 
+    /**
+     * Get the buttons and section headings to go in the quiz navigation block.
+     * @return renderable[] the buttons, possibly interleaved with section headings.
+     */
     public function get_question_buttons() {
         $buttons = array();
         foreach ($this->attemptobj->get_slots() as $slot) {
+            if ($heading = $this->attemptobj->get_heading_before_slot($slot)) {
+                $buttons[] = new quiz_nav_section_heading(format_string($heading));
+            }
+
             $qa = $this->attemptobj->get_question_attempt($slot);
             $showcorrectness = $this->options->correctness && $qa->has_marks();
 

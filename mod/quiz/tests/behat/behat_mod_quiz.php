@@ -150,6 +150,88 @@ class behat_mod_quiz extends behat_question_base {
     }
 
     /**
+     * Put the specified section headings to start at specified pages of a given quiz.
+     *
+     * The first row should be column names:
+     * | heading | firstslot | shufflequestions |
+     *
+     * heading   is the section heading text
+     * firstslot is the slot number where the section starts
+     * shuffle   whether this section is shuffled (0 or 1)
+     *
+     * Then there should be a number of rows of data, one for each section you want to add.
+     *
+     * @param string $quizname the name of the quiz to add sections to.
+     * @param TableNode $data information about the sections to add.
+     *
+     * @Given /^quiz "([^"]*)" contains the following sections:$/
+     */
+    public function quiz_contains_the_following_sections($quizname, TableNode $data) {
+        global $DB;
+
+        $quiz = $DB->get_record('quiz', array('name' => $quizname), '*', MUST_EXIST);
+
+        // Add the sections.
+        $previousfirstslot = 0;
+        foreach ($data->getHash() as $rownumber => $sectiondata) {
+            if (!array_key_exists('heading', $sectiondata)) {
+                throw new ExpectationException('When adding sections to a quiz, ' .
+                        'the heading name column is required.', $this->getSession());
+            }
+            if (!array_key_exists('firstslot', $sectiondata)) {
+                throw new ExpectationException('When adding sections to a quiz, ' .
+                        'the firstslot name column is required.', $this->getSession());
+            }
+            if (!array_key_exists('shuffle', $sectiondata)) {
+                throw new ExpectationException('When adding sections to a quiz, ' .
+                        'the shuffle name column is required.', $this->getSession());
+            }
+
+            if ($rownumber == 0) {
+                $section = $DB->get_record('quiz_sections', array('quizid' => $quiz->id), '*', MUST_EXIST);
+            } else {
+                $section = new stdClass();
+                $section->quizid = $quiz->id;
+            }
+
+            // Heading.
+            $section->heading = $sectiondata['heading'];
+
+            // First slot.
+            $section->firstslot = clean_param($sectiondata['firstslot'], PARAM_INT);
+            if ($section->firstslot <= $previousfirstslot ||
+                    (string) $section->firstslot !== $sectiondata['firstslot']) {
+                throw new ExpectationException('The firstslot number for section "' .
+                        $sectiondata['heading'] . '" must an integer greater than the previous section firstslot.',
+                        $this->getSession());
+            }
+            if ($rownumber == 0 && $section->firstslot != 1) {
+                throw new ExpectationException('The first section must have firstslot set to 1.',
+                        $this->getSession());
+            }
+
+            // Shuffle.
+            $section->shufflequestions = clean_param($sectiondata['shuffle'], PARAM_INT);
+            if ((string) $section->shufflequestions !== $sectiondata['shuffle']) {
+                throw new ExpectationException('The shuffle value for section "' .
+                        $sectiondata['heading'] . '" must be 0 or 1.',
+                        $this->getSession());
+            }
+
+            if ($rownumber == 0) {
+                $DB->update_record('quiz_sections', $section);
+            } else {
+                $DB->insert_record('quiz_sections', $section);
+            }
+        }
+
+        if ($section->firstslot > $DB->count_records('quiz_slots', array('quizid' => $quiz->id))) {
+            throw new ExpectationException('The section firstslot must be less than the total number of slots in the quiz.',
+                    $this->getSession());
+        }
+    }
+
+    /**
      * Adds a question to the existing quiz with filling the form.
      *
      * The form for creating a question should be on one page.
@@ -357,6 +439,55 @@ class behat_mod_quiz extends behat_question_base {
     }
 
     /**
+     * Set Shuffle for shuffling questions within sections
+     *
+     * @param string $heading the heading of the section to change shuffle for.
+     *
+     * @Given /^I click on shuffle for section "([^"]*)" on the quiz edit page$/
+     */
+    public function i_click_on_shuffle_for_section($heading) {
+        $xpath = $this->get_xpath_for_shuffle_checkbox($heading);
+        $checkbox = $this->find('xpath', $xpath);
+        $this->ensure_node_is_visible($checkbox);
+        $checkbox->click();
+    }
+
+    /**
+     * Check the shuffle checkbox for a particular section.
+     *
+     * @param string $heading the heading of the section to check shuffle for
+     * @param int $value whether the shuffle checkbox should be on or off.
+     *
+     * @Given /^shuffle for section "([^"]*)" should be "(On|Off)" on the quiz edit page$/
+     */
+    public function shuffle_for_section_should_be($heading, $value) {
+        $xpath = $this->get_xpath_for_shuffle_checkbox($heading);
+        $checkbox = $this->find('xpath', $xpath);
+        $this->ensure_node_is_visible($checkbox);
+        if ($value == 'On' && !$checkbox->isChecked()) {
+            $msg = "Shuffle for section '$heading' is not checked, but you are expecting it to be checked ($value). " .
+                    "Check the line with: \nshuffle for section \"$heading\" should be \"$value\" on the quiz edit page" .
+                    "\nin your behat script";
+            throw new ExpectationException($msg, $this->getSession());
+        } else if ($value == 'Off' && $checkbox->isChecked()) {
+            $msg = "Shuffle for section '$heading' is checked, but you are expecting it not to be ($value). " .
+                    "Check the line with: \nshuffle for section \"$heading\" should be \"$value\" on the quiz edit page" .
+                    "\nin your behat script";
+            throw new ExpectationException($msg, $this->getSession());
+        }
+    }
+
+    /**
+     * Return the xpath for shuffle checkbox in section heading
+     * @param strung $heading
+     * @return string
+     */
+    protected function get_xpath_for_shuffle_checkbox($heading) {
+         return "//div[contains(@class, 'section-heading') and contains(., '" . $this->escape($heading) .
+                "')]//input[@type = 'checkbox']";
+    }
+
+    /**
      * Move a question on the Edit quiz page by first clicking on the Move icon,
      * then clicking one of the "After ..." links.
      * @When /^I move "(?P<question_name>(?:[^"]|\\")*)" to "(?P<target>(?:[^"]|\\")*)" in the quiz by clicking the move icon$/
@@ -407,5 +538,42 @@ class behat_mod_quiz extends behat_question_base {
             new Given('I click on "' . $slotxpath . $deletexpath . '" "xpath_element"'),
             new Given('I click on "Yes" "button" in the "Confirm" "dialogue"'),
         );
+    }
+
+    /**
+     * Set the section heading for a given section on the Edit quiz page
+     *
+     * @When /^I change quiz section heading "(?P<section_name_string>(?:[^"]|\\")*)" to "(?P<new_section_heading_string>(?:[^"]|\\")*)"$/
+     * @param string $sectionname the heading to change.
+     * @param string $sectionheading the new heading to set.
+     */
+    public function i_set_the_section_heading_for($sectionname, $sectionheading) {
+        return array(
+                new Given('I follow "' . $this->escape("Edit heading '{$sectionname}'") . '"'),
+                new Given('I should see "' . $this->escape(get_string('edittitleinstructions')) . '"'),
+                new Given('I set the field "section" to "' . $this->escape($sectionheading) . chr(10) . '"'),
+        );
+    }
+
+    /**
+     * Check that a given question comes after a given section heading in the
+     * quiz navigation block.
+     *
+     * @Then /^I should see question "(?P<questionnumber>\d+)" in section "(?P<section_heading_string>(?:[^"]|\\")*)" in the quiz navigation$/
+     * @param int $questionnumber the number of the question to check.
+     * @param string $sectionheading which section heading it should appear after.
+     */
+    public function i_should_see_question_in_section_in_the_quiz_navigation($questionnumber, $sectionheading) {
+
+        // Using xpath literal to avoid quotes problems.
+        $questionnumberliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral('Question ' . $questionnumber);
+        $headingliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($sectionheading);
+
+        // Split in two checkings to give more feedback in case of exception.
+        $exception = new ExpectationException('Question "' . $questionnumber . '" is not in section "' .
+                $sectionheading . '" in the quiz navigation.', $this->getSession());
+        $xpath = "//div[@id = 'mod_quiz_navblock']//*[contains(concat(' ', normalize-space(@class), ' '), ' qnbutton ') and " .
+                "contains(., {$questionnumberliteral}) and contains(preceding-sibling::h3[1], {$headingliteral})]";
+        $this->find('xpath', $xpath);
     }
 }

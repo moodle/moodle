@@ -20,7 +20,7 @@ var CSS = {
     PAGE : 'page',
     PAGECONTENT: 'page-content',
     RIGHT: 'right',
-    SECTION: 'section',
+    SECTION: 'slots',
     SECTIONADDMENUS: 'section_add_menus',
     SECTIONHANDLE: 'section-handle',
     SLOTS: 'slots',

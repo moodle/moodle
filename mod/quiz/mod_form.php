@@ -151,16 +151,6 @@ class mod_quiz_mod_form extends moodleform_mod {
         // -------------------------------------------------------------------------------
         $mform->addElement('header', 'layouthdr', get_string('layout', 'quiz'));
 
-        // Shuffle questions.
-        $shuffleoptions = array(
-            0 => get_string('asshownoneditscreen', 'quiz'),
-            1 => get_string('shuffledrandomly', 'quiz')
-        );
-        $mform->addElement('select', 'shufflequestions', get_string('questionorder', 'quiz'),
-                $shuffleoptions, array('id' => 'id_shufflequestions'));
-        $mform->setAdvanced('shufflequestions', $quizconfig->shufflequestions_adv);
-        $mform->setDefault('shufflequestions', $quizconfig->shufflequestions);
-
         $pagegroup = array();
         $pagegroup[] = $mform->createElement('select', 'questionsperpage',
                 get_string('newpage', 'quiz'), quiz_questions_per_page_options(), array('id' => 'id_questionsperpage'));
@@ -169,7 +159,6 @@ class mod_quiz_mod_form extends moodleform_mod {
         if (!empty($this->_cm)) {
             $pagegroup[] = $mform->createElement('checkbox', 'repaginatenow', '',
                     get_string('repaginatenow', 'quiz'), array('id' => 'id_repaginatenow'));
-            $mform->disabledIf('repaginatenow', 'shufflequestions', 'eq', 1);
         }
 
         $mform->addGroup($pagegroup, 'questionsperpagegrp',
