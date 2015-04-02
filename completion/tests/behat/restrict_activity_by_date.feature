@@ -19,6 +19,7 @@ Feature: Restrict activity availability through date conditions
     And the following config values are set as admin:
       | enableavailability | 1 |
     And I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     # Adding the page like this because id_available*_enabled needs to be clicked to trigger the action.
@@ -40,6 +41,7 @@ Feature: Restrict activity availability through date conditions
     And I press "Save and return to course"
     And I log out
     When I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
     Then I should see "Available from 31 December 2037"
     And "Test assignment 1" activity should be hidden
@@ -63,5 +65,6 @@ Feature: Restrict activity availability through date conditions
     And I press "Save and return to course"
     And I log out
     When I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
     Then I should not see "Test assignment 2"
