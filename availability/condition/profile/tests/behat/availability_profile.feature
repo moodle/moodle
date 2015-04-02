@@ -23,6 +23,7 @@ Feature: availability_profile
   Scenario: Test condition
     # Basic setup.
     Given I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
 
@@ -57,6 +58,7 @@ Feature: availability_profile
     # Log back in as student.
     When I log out
     And I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
 
     # I see P1 but not P2.
@@ -82,7 +84,7 @@ Feature: availability_profile
     And I click on "Update profile" "button"
 
     # Set Page activity which has requirement on this field.
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Page" to section "1"
@@ -109,5 +111,6 @@ Feature: availability_profile
     # Log out and back in as student. Should be able to see activity.
     And I log out
     And I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
     Then I should see "P1" in the "region-main" "region"

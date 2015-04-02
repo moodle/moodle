@@ -23,6 +23,7 @@ Feature: availability_group
   Scenario: Test condition
     # Basic setup.
     Given I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
 
@@ -40,7 +41,7 @@ Feature: availability_group
       | G2       | C1     | GI2      |
     # This step used to be 'And I follow "C1"', but Chrome thinks the breadcrumb
     # is not clickable, so we'll go via the home page instead.
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I add a "Page" to section "1"
     And I expand all fieldsets
@@ -86,6 +87,7 @@ Feature: availability_group
     # Log back in as student.
     When I log out
     And I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
 
     # No pages should appear yet.
@@ -99,6 +101,7 @@ Feature: availability_group
       | student1 | GI1   |
     And I log out
     And I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
 
     # P1 (any groups) and P2 should show but not P3.
