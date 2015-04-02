@@ -109,25 +109,29 @@ if ($execute = $options['execute']) {
 
     $predbqueries = $DB->perf_get_queries();
     $pretime = microtime(true);
+
+    mtrace("Scheduled task: " . $task->get_name());
+    // NOTE: it would be tricky to move this code to \core\task\manager class,
+    //       because we want to do detailed error reporting.
+    $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+    if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
+        mtrace('Cannot obtain cron lock');
+        exit(129);
+    }
+    if (!$lock = $cronlockfactory->get_lock('\\' . get_class($task), 10)) {
+        $cronlock->release();
+        mtrace('Cannot obtain task lock');
+        exit(130);
+    }
+
+    $task->set_lock($lock);
+    if (!$task->is_blocking()) {
+        $cronlock->release();
+    } else {
+        $task->set_cron_lock($cronlock);
+    }
+
     try {
-        mtrace("Scheduled task: " . $task->get_name());
-        // NOTE: it would be tricky to move this code to \core\task\manager class,
-        //       because we want to do detailed error reporting.
-        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
-        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
-            mtrace('Cannot obtain cron lock');
-            exit(129);
-        }
-        if (!$lock = $cronlockfactory->get_lock('\\' . get_class($task), 10)) {
-            mtrace('Cannot obtain task lock');
-            exit(130);
-        }
-        $task->set_lock($lock);
-        if (!$task->is_blocking()) {
-            $cronlock->release();
-        } else {
-            $task->set_cron_lock($cronlock);
-        }
         get_mailer('buffer');
         $task->execute();
         if (isset($predbqueries)) {
