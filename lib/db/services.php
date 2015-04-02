@@ -99,6 +99,7 @@ $functions = array(
         'type'        => 'read',
         'capabilities'=> 'moodle/cohort:view',
     ),
+
     // Comments related functions.
 
     'core_comment_get_comments' => array(
@@ -107,6 +108,16 @@ $functions = array(
         'description'   => 'Returns comments.',
         'type'          => 'read',
         'capabilities'  => 'moodle/comment:view',
+    ),
+
+    // Completion related functions.
+
+    'core_completion_get_activities_completion_status' => array(
+        'classname'     => 'core_completion_external',
+        'methodname'    => 'get_activities_completion_status',
+        'description'   => 'Return the activities completion status for a user in a course.',
+        'type'          => 'read',
+        'capabilities'  => '',
     ),
 
     // Grade related functions.
@@ -1046,6 +1057,7 @@ $services = array(
             'core_comment_get_comments',
             'mod_forum_view_forum',
             'core_course_view_course',
+            'core_completion_get_activities_completion_status',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,

@@ -1056,3 +1056,44 @@ function groups_get_course_data($courseid, cache $cache = null) {
     }
     return $data;
 }
+
+/**
+ * Determine if the current user can see at least one of the groups of the specified user.
+ *
+ * @param stdClass $course  Course object.
+ * @param int $userid  user id to check against.
+ * @param stdClass $cm Course module object. Optional, just for checking at activity level instead course one.
+ * @return boolean true if visible, false otherwise
+ * @since Moodle 2.9
+ */
+function groups_user_groups_visible($course, $userid, $cm = null) {
+    global $USER;
+
+    $groupmode = empty($cm) ? groups_get_course_groupmode($course) : groups_get_activity_groupmode($cm, $course);
+    if ($groupmode == NOGROUPS || $groupmode == VISIBLEGROUPS) {
+        // Groups are not used, or everything is visible, no need to go any further.
+        return true;
+    }
+
+    $context = empty($cm) ? context_course::instance($course->id) : context_module::instance($cm->id);
+    if (has_capability('moodle/site:accessallgroups', $context)) {
+        // User can see everything.
+        return true;
+    } else {
+        // Group mode is separate, and user doesn't have access all groups capability.
+        if (empty($cm)) {
+            $usergroups = groups_get_all_groups($course->id, $userid);
+            $currentusergroups = groups_get_all_groups($course->id, $USER->id);
+        } else {
+            $usergroups = groups_get_activity_allowed_groups($cm, $userid);
+            $currentusergroups = groups_get_activity_allowed_groups($cm, $USER->id);
+        }
+
+        $samegroups = array_intersect_key($currentusergroups, $usergroups);
+        if (!empty($samegroups)) {
+            // We share groups!
+            return true;
+        }
+    }
+    return false;
+}

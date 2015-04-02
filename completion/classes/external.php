@@ -114,4 +114,124 @@ class core_completion_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9
+     */
+    public static function get_activities_completion_status_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'Course ID'),
+                'userid'   => new external_value(PARAM_INT, 'User ID'),
+            )
+        );
+    }
+
+    /**
+     * Get Activities completion status
+     *
+     * @param int $courseid ID of the Course
+     * @param int $userid ID of the User
+     * @return array of activities progress and warnings
+     * @throws moodle_exception
+     * @since Moodle 2.9
+     * @throws moodle_exception
+     */
+    public static function get_activities_completion_status($courseid, $userid) {
+        global $CFG, $USER;
+        require_once($CFG->libdir . '/grouplib.php');
+
+        $warnings = array();
+        $arrayparams = array(
+            'courseid' => $courseid,
+            'userid'   => $userid,
+        );
+
+        $params = self::validate_parameters(self::get_activities_completion_status_parameters(), $arrayparams);
+
+        $course = get_course($params['courseid']);
+        $user = core_user::get_user($params['userid'], 'id', MUST_EXIST);
+
+        $context = context_course::instance($course->id);
+        self::validate_context($context);
+
+        // Check that current user have permissions to see this user's activities.
+        if ($user->id != $USER->id) {
+            require_capability('report/progress:view', $context);
+            if (!groups_user_groups_visible($course, $user->id)) {
+                // We are not in the same group!
+                throw new moodle_exception('accessdenied', 'admin');
+            }
+        }
+
+        $completion = new completion_info($course);
+        $activities = $completion->get_activities();
+        $progresses = $completion->get_progress_all();
+        $userprogress = $progresses[$user->id];
+
+        $results = array();
+        foreach ($activities as $activity) {
+
+            // Check if current user has visibility on this activity.
+            if (!$activity->uservisible) {
+                continue;
+            }
+
+            // Get progress information and state.
+            if (array_key_exists($activity->id, $userprogress->progress)) {
+                $thisprogress  = $userprogress->progress[$activity->id];
+                $state         = $thisprogress->completionstate;
+                $timecompleted = $thisprogress->timemodified;
+            } else {
+                $state = COMPLETION_INCOMPLETE;
+                $timecompleted = 0;
+            }
+
+            $results[] = array(
+                       'cmid'          => $activity->id,
+                       'modname'       => $activity->modname,
+                       'instance'      => $activity->instance,
+                       'state'         => $state,
+                       'timecompleted' => $timecompleted,
+                       'tracking'      => $activity->completion
+            );
+        }
+
+        $results = array(
+            'statuses' => $results,
+            'warnings' => $warnings
+        );
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 2.9
+     */
+    public static function get_activities_completion_status_returns() {
+        return new external_single_structure(
+            array(
+                'statuses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'cmid'          => new external_value(PARAM_INT, 'comment ID'),
+                            'modname'       => new external_value(PARAM_PLUGIN, 'activity module name'),
+                            'instance'      => new external_value(PARAM_INT, 'instance ID'),
+                            'state'         => new external_value(PARAM_INT, 'completion state value:
+                                                                    0 means incomplete, 1 complete,
+                                                                    2 complete pass, 3 complete fail'),
+                            'timecompleted' => new external_value(PARAM_INT, 'timestamp for completed activity'),
+                            'tracking'      => new external_value(PARAM_INT, 'type of tracking:
+                                                                    0 means none, 1 manual, 2 automatic'),
+                        ), 'Activity'
+                    ), 'List of activities status'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

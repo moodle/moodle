@@ -907,4 +907,449 @@ class core_grouplib_testcase extends advanced_testcase {
             )),
         ), groups_sort_menu_options($this->make_group_list(13), $this->make_group_list(2)));
     }
+
+    /**
+     * Tests for groups_user_groups_visible.
+     */
+    public function test_groups_user_groups_visible() {
+        global $CFG, $DB;
+
+        $generator = $this->getDataGenerator();
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course category, course and groups.
+        $cat = $generator->create_category(array('parent' => 0));
+        $course = $generator->create_course(array('category' => $cat->id));
+        $coursecontext = context_course::instance($course->id);
+        $group1 = $generator->create_group(array('courseid' => $course->id, 'name' => 'Group 1'));
+        $group2 = $generator->create_group(array('courseid' => $course->id, 'name' => 'Group 2'));
+        $group3 = $generator->create_group(array('courseid' => $course->id, 'name' => 'Group 3'));
+        $group4 = $generator->create_group(array('courseid' => $course->id, 'name' => 'Group 4'));
+
+        // Create cm.
+        $assign = $generator->create_module("assign", array('course' => $course->id));
+        $cm = get_coursemodule_from_instance("assign", $assign->id);
+
+        // Create users.
+        $user1 = $generator->create_user(); // Normal user.
+        $user2 = $generator->create_user(); // Normal user.
+        $user3 = $generator->create_user(); // Teacher, access all groups.
+        $user4 = $generator->create_user(); // Normal user.
+
+        // Enrol users into the course.
+        $generator->enrol_user($user1->id, $course->id);
+        $generator->enrol_user($user2->id, $course->id);
+        $generator->enrol_user($user4->id, $course->id);
+
+        // Assign groups.
+        // User1 and User4 share groups.
+        groups_add_member($group1, $user1);
+        groups_add_member($group2, $user2);
+        groups_add_member($group1, $user4);
+
+        // Give capability at course level to the user to access all groups.
+        $role = $DB->get_field("role", "id", array("shortname" => "manager"));
+        $generator->enrol_user($user3->id, $course->id, $role);
+        // Make sure the user has the capability.
+        assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $role, $coursecontext->id);
+
+        // Normal users in different groups.
+        $this->setUser($user1);
+
+        // No groups , not forced.
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertTrue($result);
+
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertFalse($result); // Cm with separate groups.
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // No groups, forced.
+        $course->groupmode = NOGROUPS;
+        $course->groupmodeforce = true;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertTrue($result);
+
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // Visible groups, forced.
+        $course->groupmode = VISIBLEGROUPS;
+        $course->groupmodeforce = true;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertTrue($result);
+
+        $cm->groupmode = NOGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // Visible groups, not forced.
+        $course->groupmode = VISIBLEGROUPS;
+        $course->groupmodeforce = false;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertTrue($result);
+
+        $cm->groupmode = NOGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertFalse($result); // Cm with separate groups.
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // Separate groups, forced.
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = true;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertFalse($result);
+
+        $result = groups_user_groups_visible($course, $user3->id);
+        $this->assertFalse($result); // Requesting all groups.
+
+        $cm->groupmode = NOGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertFalse($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertFalse($result); // Cm with separate groups.
+
+        $result = groups_user_groups_visible($course, $user3->id, $cm);
+        $this->assertTrue($result);
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertFalse($result); // Cm with visible groups.
+
+        // Separate groups, not forced.
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = false;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertFalse($result);
+
+        $result = groups_user_groups_visible($course, $user3->id);
+        $this->assertFalse($result); // Requesting all groups.
+
+        $cm->groupmode = NOGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertFalse($result); // Cm with separate groups.
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // Users sharing groups.
+
+        // No groups , not forced.
+        $course->groupmode = NOGROUPS;
+        $course->groupmodeforce = false;
+        update_course($course);
+
+        $result = groups_user_groups_visible($course, $user4->id);
+        $this->assertTrue($result);
+
+        $result = groups_user_groups_visible($course, $user4->id);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // No groups, forced.
+        $course->groupmode = NOGROUPS;
+        $course->groupmodeforce = true;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user4->id);
+        $this->assertTrue($result);
+
+        $result = groups_user_groups_visible($course, $user4->id);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // Visible groups, forced.
+        $course->groupmode = VISIBLEGROUPS;
+        $course->groupmodeforce = true;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user4->id);
+        $this->assertTrue($result);
+
+        $cm->groupmode = NOGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // Visible groups, not forced.
+        $course->groupmode = VISIBLEGROUPS;
+        $course->groupmodeforce = false;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user4->id);
+        $this->assertTrue($result);
+
+        $cm->groupmode = NOGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // Separate groups, forced.
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = true;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user4->id);
+        $this->assertTrue($result);
+
+        $result = groups_user_groups_visible($course, $user3->id);
+        $this->assertFalse($result); // Requesting all groups.
+
+        $cm->groupmode = NOGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $result = groups_user_groups_visible($course, $user3->id, $cm);
+        $this->assertTrue($result);
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // Separate groups, not forced.
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = false;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user4->id);
+        $this->assertTrue($result);
+
+        $result = groups_user_groups_visible($course, $user3->id);
+        $this->assertFalse($result); // Requesting all groups.
+
+        $cm->groupmode = NOGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user4->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // For teacher with access all groups.
+
+        // No groups , not forced.
+        $course->groupmode = NOGROUPS;
+        $course->groupmodeforce = false;
+        update_course($course);
+
+        $this->setUser($user3);
+
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result);
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result); // Requesting all groups.
+
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // No groups, forced.
+        $course->groupmode = NOGROUPS;
+        $course->groupmodeforce = true;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result);
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result); // Requesting all groups.
+
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // Visible groups, forced.
+        $course->groupmode = VISIBLEGROUPS;
+        $course->groupmodeforce = true;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result);
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result); // Requesting all groups.
+
+        $cm->groupmode = NOGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // Visible groups, not forced.
+        $course->groupmode = VISIBLEGROUPS;
+        $course->groupmodeforce = false;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result);
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result); // Requesting all groups.
+
+        $cm->groupmode = NOGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // Separate groups, forced.
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = true;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result);
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertTrue($result);
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertTrue($result); // Requesting all groups.
+        $result = groups_user_groups_visible($course, $user3->id);
+        $this->assertTrue($result); // Requesting all groups.
+        $result = groups_user_groups_visible($course, $user3->id);
+        $this->assertTrue($result);
+
+        $cm->groupmode = NOGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+        $result = groups_user_groups_visible($course, $user3->id, $cm);
+        $this->assertTrue($result);
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+
+        // Separate groups, not forced.
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = false;
+        update_course($course);
+        $result = groups_user_groups_visible($course, $user1->id);
+        $this->assertTrue($result);
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertTrue($result);
+        $result = groups_user_groups_visible($course, $user2->id);
+        $this->assertTrue($result); // Requesting all groups.
+        $result = groups_user_groups_visible($course, $user3->id);
+        $this->assertTrue($result); // Requesting all groups.
+
+        $cm->groupmode = NOGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with no groups.
+
+        $cm->groupmode = SEPARATEGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+        $result = groups_user_groups_visible($course, $user2->id, $cm);
+        $this->assertTrue($result); // Cm with separate groups.
+
+        $cm->groupmode = VISIBLEGROUPS;
+        $result = groups_user_groups_visible($course, $user1->id, $cm);
+        $this->assertTrue($result); // Cm with visible groups.
+    }
 }
