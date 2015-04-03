@@ -3836,11 +3836,9 @@ function data_process_submission(stdClass $mod, $fields, stdClass $datarecord) {
             $requiredfieldsfilled = false;
         }
 
-        if ($fieldhascontent) {
-            // The field has content so it should be updatable.
-            foreach ($submitteddata[$fieldrecord->id] as $value) {
-                $result->fields[$value->fieldname] = $field;
-            }
+        // Update the field.
+        foreach ($submitteddata[$fieldrecord->id] as $value) {
+            $result->fields[$value->fieldname] = $field;
         }
     }
 
