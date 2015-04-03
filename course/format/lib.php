@@ -1044,7 +1044,7 @@ class format_site extends format_base {
      * @return null|moodle_url
      */
     public function get_view_url($section, $options = array()) {
-        return new moodle_url('/');
+        return new moodle_url('/', array('redirect' => 0));
     }
 
     /**
