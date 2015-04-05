@@ -111,15 +111,15 @@ class toolsettings extends \mod_lti\local\ltiservice\service_base {
             if (!$simpleformat) {
                 $json .= "    {\n      \"@type\":\"{$type}\",\n";
                 $json .= "      \"@id\":\"{$resource->get_endpoint()}\",\n";
-                $json .= '      "custom":';
-                $json .= "{";
+                $json .= "      \"custom\":{\n";
+                $json .= "        \"@id\":\"{$resource->get_endpoint()}/custom\"";
                 $indent = '      ';
             }
-            $isfirst = true;
+            $isfirst = $simpleformat;
             if (!empty($settings)) {
                 foreach ($settings as $key => $value) {
                     if (!$isfirst) {
-                        $json .= ",";
+                        $json .= ',';
                     } else {
                         $isfirst = false;
                     }
