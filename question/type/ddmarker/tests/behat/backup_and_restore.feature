@@ -1,4 +1,4 @@
-@ou @ou_vle @qtype @qtype_ddmarker
+@qtype @qtype_ddmarker
 Feature: Test duplicating a quiz containing a drag and drop markers question
   As a teacher
   In order re-use my courses containing drag and drop markers questions

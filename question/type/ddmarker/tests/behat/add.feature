@@ -1,4 +1,4 @@
-@ou @ou_vle @qtype @qtype_ddmarker
+@qtype @qtype_ddmarker
 Feature: Test creating a drag and drop markers question
   As a teacher
   In order to test my students

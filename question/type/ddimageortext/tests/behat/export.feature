@@ -1,4 +1,4 @@
-@ou @ou_vle @qtype @qtype_ddimageortext
+@qtype @qtype_ddimageortext
 Feature: Test exporting drag and drop onto image questions
   As a teacher
   In order to be able to reuse my drag and drop onto image questions

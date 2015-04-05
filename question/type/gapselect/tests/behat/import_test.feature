@@ -1,4 +1,4 @@
-@ou @ou_vle @qtype @qtype_gapselect
+@qtype @qtype_gapselect
 Feature: Import and export select missing words questions
   As a teacher
   In order to reuse my select missing words questions

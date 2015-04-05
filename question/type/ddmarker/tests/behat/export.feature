@@ -1,4 +1,4 @@
-@ou @ou_vle @qtype @qtype_ddmarker
+@qtype @qtype_ddmarker
 Feature: Test exporting drag and drop markers questions
   As a teacher
   In order to be able to reuse my drag and drop markers questions

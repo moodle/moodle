@@ -1,4 +1,4 @@
-@ou @ou_vle @qtype @qtype_gapselect
+@qtype @qtype_gapselect
 Feature: Test all the basic functionality of this question type
   In order to evaluate students responses, As a teacher I need to
   create and preview gapselect (Select missing words) questions.

@@ -1,4 +1,4 @@
-@ou @ou_vle @qtype @qtype_ddimageortext
+@qtype @qtype_ddimageortext
 Feature: Test duplicating a quiz containing a drag and drop onto image question
   As a teacher
   In order re-use my courses containing drag and drop onto image questions

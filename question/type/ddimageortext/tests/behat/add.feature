@@ -1,4 +1,4 @@
-@ou @ou_vle @qtype @qtype_ddimageortext
+@qtype @qtype_ddimageortext
 Feature: Test creating a drag and drop onto image question
   As a teacher
   In order to test my students
