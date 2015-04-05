@@ -1111,7 +1111,8 @@ class core_plugin_manager {
 
             'qtype' => array(
                 'calculated', 'calculatedmulti', 'calculatedsimple',
-                'description', 'essay', 'match', 'missingtype', 'multianswer',
+                'ddimageortext', 'ddmarker', 'ddwtos', 'description',
+                'essay', 'gapselect', 'match', 'missingtype', 'multianswer',
                 'multichoice', 'numerical', 'random', 'randomsamatch',
                 'shortanswer', 'truefalse'
             ),
