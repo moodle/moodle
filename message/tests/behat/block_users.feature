@@ -11,7 +11,7 @@ Feature: Block users from contacting me
       | user1 | User | One | one@asd.com |
       | user2 | User | Two | two@asd.com |
     And I log in as "user1"
-    And I navigate to "Messages" node in "My profile"
+    And I follow "Messages" in the user menu
     And I set the field "Search people and messages" to "User Two"
     And I press "Search people and messages"
     When I click on "Block contact" "link" in the "User Two" "table_row"
@@ -20,7 +20,7 @@ Feature: Block users from contacting me
     And I should see "User Two"
     And I log out
     And I log in as "user2"
-    And I navigate to "Messages" node in "My profile"
+    And I follow "Messages" in the user menu
     And I set the field "Search people and messages" to "User One"
     And I press "Search people and messages"
     And I follow "Send message to User One"

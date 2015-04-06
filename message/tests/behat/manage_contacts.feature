@@ -1,4 +1,4 @@
-@core @core_message
+@core @core_message @javascrript
 Feature: Manage contacts
   In order to easily access the users I interact more with
   As a user
@@ -12,7 +12,7 @@ Feature: Manage contacts
     And I log in as "user1"
     And I send "Message 1 from user1 to user2" message to "User Two" user
     And I send "Message 2 from user1 to user2" message to "User Two" user
-    And I navigate to "Messages" node in "My profile"
+    And I follow "Messages" in the user menu
     And I set the field "Search people and messages" to "User Two"
     And I press "Search people and messages"
     When I click on "Add contact" "link" in the "User Two" "table_row"
@@ -29,4 +29,4 @@ Feature: Manage contacts
   @javascript
   Scenario: Adding and removing contacts with Javascript enabled
 
-  Scenario: Adding and removing contacts with Javascript disabled
+#  Scenario: Adding and removing contacts with Javascript disabled
