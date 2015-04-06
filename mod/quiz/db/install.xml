@@ -76,7 +76,7 @@
     <TABLE NAME="quiz_sections" COMMENT="Stores sections of a quiz with section name (heading), from slot-number N and whether the question order should be shuffled.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id."/>
+        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key references quiz.id."/>
         <FIELD NAME="firstslot" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Number of the first slot in the section. The section runs from here to the start of the next section, or the end of the quiz."/>
         <FIELD NAME="heading" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="The text of the heading. May be an empty string/null. Multilang format."/>
         <FIELD NAME="shufflequestions" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the question order within this section should be shuffled for each attempt."/>
