@@ -21,7 +21,7 @@
     }
 
     // Get visible tabs for the format and check tab needs to be displayed.
-    $dt = glossary_get_visible_tabs($dp->showtabs);
+    $dt = glossary_get_visible_tabs($dp);
 
     if (in_array(GLOSSARY_STANDARD, $dt)) {
         $browserow[] = new tabobject(GLOSSARY_STANDARD_VIEW,
@@ -62,12 +62,15 @@
         $tabrows[] = $toolsrow;
     }
 
-
 ?>
   <div class="glossarydisplay">
 
 
-<?php if ($showcommonelements) { print_tabs($tabrows, $tab, $inactive, $activated); } ?>
+<?php
+if ($showcommonelements && (count($tabrows[0]) > 1)) {
+    print_tabs($tabrows, $tab, $inactive, $activated);
+}
+?>
 
   <div class="entrybox">
 

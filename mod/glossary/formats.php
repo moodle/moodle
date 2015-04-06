@@ -261,7 +261,7 @@ echo '<table width="90%" align="center" class="generalbox">';
         // Get all glossary tabs.
         $glossarytabs = glossary_get_all_tabs();
         // Extract showtabs value in an array.
-        $visibletabs = glossary_get_visible_tabs($displayformat->showtabs);
+        $visibletabs = glossary_get_visible_tabs($displayformat);
         $size = min(10, count($glossarytabs));
         ?>
     <select id="visibletabs" name="visibletabs[]" size="<?php echo $size ?>" multiple="multiple">
@@ -277,7 +277,7 @@ foreach ($glossarytabs as $tabkey => $tabvalue) {
     <option value="<?php echo $tabkey ?>"><?php echo $tabvalue ?></option>
     <?php
     }
-    }
+}
     ?>
     </select>
     </td>

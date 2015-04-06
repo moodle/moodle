@@ -917,10 +917,11 @@ function glossary_get_available_formats() {
                     $gf->name = $format;
                     $gf->popupformatname = $format;
                     $gf->visible = 1;
-                    $DB->insert_record("glossary_formats",$gf);
+                    $id = $DB->insert_record('glossary_formats', $gf);
+                    $rec = $DB->get_record('glossary_formats', array('id' => $id));
                 }
 
-                if(is_null($rec->showtabs)) {
+                if (empty($rec->showtabs)) {
                     glossary_set_default_visible_tabs($rec);
                 }
             }
@@ -3061,24 +3062,28 @@ function glossary_get_completion_state($course,$cm,$userid,$type) {
 function glossary_extend_navigation($navigation, $course, $module, $cm) {
     global $CFG, $DB;
 
-    $glossarytabs = $DB->get_field('glossary_formats', 'showtabs', array('name' => $module->displayformat));
+    $displayformat = $DB->get_record('glossary_formats', array('name' => $module->displayformat));
     // Get visible tabs for the format and check if the menu needs to be displayed.
-    $showtabs = glossary_get_visible_tabs($glossarytabs);
+    $showtabs = glossary_get_visible_tabs($displayformat);
 
     foreach ($showtabs as $showtabkey => $showtabvalue) {
 
         switch($showtabvalue) {
             case GLOSSARY_STANDARD :
-                $navigation->add(get_string('standardview', 'glossary'), new moodle_url('/mod/glossary/view.php', array('id' => $cm->id, 'mode' => 'letter')));
+                $navigation->add(get_string('standardview', 'glossary'), new moodle_url('/mod/glossary/view.php',
+                        array('id' => $cm->id, 'mode' => 'letter')));
                 break;
             case GLOSSARY_CATEGORY :
-                $navigation->add(get_string('categoryview', 'glossary'), new moodle_url('/mod/glossary/view.php', array('id' => $cm->id, 'mode' => 'cat')));
+                $navigation->add(get_string('categoryview', 'glossary'), new moodle_url('/mod/glossary/view.php',
+                        array('id' => $cm->id, 'mode' => 'cat')));
                 break;
             case GLOSSARY_DATE :
-                $navigation->add(get_string('dateview', 'glossary'), new moodle_url('/mod/glossary/view.php', array('id' => $cm->id, 'mode' => 'date')));
+                $navigation->add(get_string('dateview', 'glossary'), new moodle_url('/mod/glossary/view.php',
+                        array('id' => $cm->id, 'mode' => 'date')));
                 break;
             case GLOSSARY_AUTHOR :
-                $navigation->add(get_string('authorview', 'glossary'), new moodle_url('/mod/glossary/view.php', array('id' => $cm->id, 'mode' => 'author')));
+                $navigation->add(get_string('authorview', 'glossary'), new moodle_url('/mod/glossary/view.php',
+                        array('id' => $cm->id, 'mode' => 'author')));
                 break;
         }
     }
@@ -3230,8 +3235,8 @@ function glossary_page_type_list($pagetype, $parentcontext, $currentcontext) {
 
 /**
  * Return list of all glossary tabs.
- * @return array
  * @throws coding_exception
+ * @return array
  */
 function glossary_get_all_tabs() {
 
@@ -3244,7 +3249,7 @@ function glossary_get_all_tabs() {
 
 /**
  * Set 'showtabs' value for glossary formats
- * @param $glossaryformat
+ * @param stdClass $glossaryformat record from 'glossary_formats' table
  */
 function glossary_set_default_visible_tabs($glossaryformat) {
     global $DB;
@@ -3255,25 +3260,38 @@ function glossary_set_default_visible_tabs($glossaryformat) {
             break;
         case GLOSSARY_DICTIONARY:
             $showtabs = 'standard';
+            // Special code for upgraded instances that already had categories set up
+            // in this format - enable "category" tab.
+            // In new instances only 'standard' tab will be visible.
+            if ($DB->record_exists_sql("SELECT 1
+                    FROM {glossary} g, {glossary_categories} gc
+                    WHERE g.id = gc.glossaryid and g.displayformat = ?",
+                    array(GLOSSARY_DICTIONARY))) {
+                $showtabs .= ',category';
+            }
             break;
         case GLOSSARY_FULLWITHOUTAUTHOR:
             $showtabs = 'standard,category,date';
             break;
         default:
-            $showtabs = 'standard,author,category,date';
+            $showtabs = 'standard,category,date,author';
             break;
     }
 
     $DB->set_field('glossary_formats', 'showtabs', $showtabs, array('id' => $glossaryformat->id));
+    $glossaryformat->showtabs = $showtabs;
 }
 
 /**
  * Convert 'showtabs' string to array
- * @param $glossarytabs
+ * @param stdClass $displayformat record from 'glossary_formats' table
  * @return array
  */
-function glossary_get_visible_tabs($glossarytabs) {
-    $showtabs = preg_split('/,/', $glossarytabs, -1, PREG_SPLIT_NO_EMPTY);
+function glossary_get_visible_tabs($displayformat) {
+    if (empty($displayformat->showtabs)) {
+        glossary_set_default_visible_tabs($displayformat);
+    }
+    $showtabs = preg_split('/,/', $displayformat->showtabs, -1, PREG_SPLIT_NO_EMPTY);
 
     return $showtabs;
 }

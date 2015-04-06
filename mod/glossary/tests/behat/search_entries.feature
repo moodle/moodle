@@ -16,12 +16,11 @@ Feature: Glossary entries can be searched or browsed by alphabet, category, date
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activities" exist:
+      | activity | name               | intro                     | displayformat  | course | idnumber |
+      | glossary | Test glossary name | Test glossary description | fullwithauthor | C1     | g1       |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Glossary" to section "1" and I fill the form with:
-      | Name | Test glossary name |
-      | Description | Test glossary description |
     And I follow "Test glossary name"
     And I add a glossary entries category named "The ones I like"
     And I add a glossary entries category named "All for you"

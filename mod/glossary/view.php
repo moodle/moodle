@@ -73,14 +73,11 @@ if ($page != 0 && $offset == 0) {
     $offset = $page * $entriesbypage;
 }
 
-// Get visible tabs for this glossary format.
-$glossarytabs = $DB->get_field('glossary_formats', 'showtabs', array('name' => $glossary->displayformat));
-$showtabs = glossary_get_visible_tabs($glossarytabs);
-
 /// setting the default values for the display mode of the current glossary
 /// only if the glossary is viewed by the first time
 if ( $dp = $DB->get_record('glossary_formats', array('name'=>$glossary->displayformat)) ) {
 /// Based on format->defaultmode, we build the defaulttab to be showed sometimes
+    $showtabs = glossary_get_visible_tabs($dp);
     switch ($dp->defaultmode) {
         case 'cat':
             $defaulttab = GLOSSARY_CATEGORY_VIEW;
@@ -122,6 +119,7 @@ if ( $dp = $DB->get_record('glossary_formats', array('name'=>$glossary->displayf
     }
 } else {
     $defaulttab = GLOSSARY_STANDARD_VIEW;
+    $showtabs = array($defaulttab);
     $printpivot = 1;
     if ( $mode == '' and $hook == '' and $show == '') {
         $mode = 'letter';
