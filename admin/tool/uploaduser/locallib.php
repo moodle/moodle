@@ -196,7 +196,7 @@ function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $pr
             // hack: somebody wrote uppercase in csv file, but the system knows only lowercase profile field
             $newfield = $lcfield;
 
-        } else if (preg_match('/^(cohort|course|group|type|role|enrolperiod|enrolstatus)\d+$/', $lcfield)) {
+        } else if (preg_match('/^(sysrole|cohort|course|group|type|role|enrolperiod|enrolstatus)\d+$/', $lcfield)) {
             // special fields for enrolments
             $newfield = $lcfield;
 
@@ -357,6 +357,25 @@ function uu_allowed_roles_cache() {
         $rolecache[$rid]->id   = $rid;
         $rolecache[$rid]->name = $rname;
         if (!is_numeric($rname)) { // only non-numeric shortnames are supported!!!
+            $rolecache[$rname] = new stdClass();
+            $rolecache[$rname]->id   = $rid;
+            $rolecache[$rname]->name = $rname;
+        }
+    }
+    return $rolecache;
+}
+
+/**
+ * Returns mapping of all system roles using short role name as index.
+ * @return array
+ */
+function uu_allowed_sysroles_cache() {
+    $allowedroles = get_assignable_roles(context_system::instance(), ROLENAME_SHORT);
+    foreach ($allowedroles as $rid => $rname) {
+        $rolecache[$rid] = new stdClass();
+        $rolecache[$rid]->id   = $rid;
+        $rolecache[$rid]->name = $rname;
+        if (!is_numeric($rname)) { // Only non-numeric shortnames are supported!
             $rolecache[$rname] = new stdClass();
             $rolecache[$rname]->id   = $rid;
             $rolecache[$rname]->name = $rname;
