@@ -186,4 +186,135 @@ class core_completion_externallib_testcase extends externallib_advanced_testcase
         $this->assertCount(3, $result['statuses']);
     }
 
+    /**
+     * Test get_course_completion_status
+     */
+    public function test_get_course_completion_status() {
+        global $DB, $CFG, $COMPLETION_CRITERIA_TYPES;
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_self.php');
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_date.php');
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_unenrol.php');
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_activity.php');
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_duration.php');
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_grade.php');
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_role.php');
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_course.php');
+
+        $this->resetAfterTest(true);
+
+        $CFG->enablecompletion = true;
+        $student = $this->getDataGenerator()->create_user();
+        $teacher = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1,
+                                                                    'groupmode' => SEPARATEGROUPS,
+                                                                    'groupmodeforce' => 1));
+
+        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id),
+                                                             array('completion' => 1));
+        $forum = $this->getDataGenerator()->create_module('forum',  array('course' => $course->id),
+                                                             array('completion' => 1));
+        $assign = $this->getDataGenerator()->create_module('assign',  array('course' => $course->id));
+
+        $cmdata = get_coursemodule_from_id('data', $data->cmid);
+        $cmforum = get_coursemodule_from_id('forum', $forum->cmid);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        // Teacher and student in different groups initially.
+        groups_add_member($group1->id, $student->id);
+        groups_add_member($group2->id, $teacher->id);
+
+        // Set completion rules.
+        $completion = new completion_info($course);
+
+        // Loop through each criteria type and run its update_config() method.
+
+        $criteriadata = new stdClass();
+        $criteriadata->id = $course->id;
+        $criteriadata->criteria_activity = array();
+        // Some activities.
+        $criteriadata->criteria_activity[$cmdata->id] = 1;
+        $criteriadata->criteria_activity[$cmforum->id] = 1;
+
+        // In a week criteria date value.
+        $criteriadata->criteria_date_value = time() + WEEKSECS;
+
+        // Self completion.
+        $criteriadata->criteria_self = 1;
+
+        foreach ($COMPLETION_CRITERIA_TYPES as $type) {
+            $class = 'completion_criteria_'.$type;
+            $criterion = new $class();
+            $criterion->update_config($criteriadata);
+        }
+
+        // Handle overall aggregation.
+        $aggdata = array(
+            'course'        => $course->id,
+            'criteriatype'  => null
+        );
+        $aggregation = new completion_aggregation($aggdata);
+        $aggregation->setMethod(COMPLETION_AGGREGATION_ALL);
+        $aggregation->save();
+
+        $aggdata['criteriatype'] = COMPLETION_CRITERIA_TYPE_ACTIVITY;
+        $aggregation = new completion_aggregation($aggdata);
+        $aggregation->setMethod(COMPLETION_AGGREGATION_ALL);
+        $aggregation->save();
+
+        $this->setUser($student);
+
+        $result = core_completion_external::get_course_completion_status($course->id, $student->id);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $studentresult = external_api::clean_returnvalue(
+            core_completion_external::get_course_completion_status_returns(), $result);
+
+        // 3 different criteria.
+        $this->assertCount(3, $studentresult['completionstatus']['completions']);
+
+        $this->assertEquals(COMPLETION_AGGREGATION_ALL, $studentresult['completionstatus']['aggregation']);
+        $this->assertFalse($studentresult['completionstatus']['completed']);
+
+        $this->assertEquals('No', $studentresult['completionstatus']['completions'][0]['status']);
+        $this->assertEquals('No', $studentresult['completionstatus']['completions'][1]['status']);
+        $this->assertEquals('No', $studentresult['completionstatus']['completions'][2]['status']);
+
+        // Teacher should see students status, they are in different groups but the teacher can access all groups.
+        $this->setUser($teacher);
+        $result = core_completion_external::get_course_completion_status($course->id, $student->id);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $teacherresult = external_api::clean_returnvalue(
+            core_completion_external::get_course_completion_status_returns(), $result);
+
+        $this->assertEquals($studentresult, $teacherresult);
+
+        // Change teacher role capabilities (disable access al goups).
+        $context = context_course::instance($course->id);
+        assign_capability('moodle/site:accessallgroups', CAP_PROHIBIT, $teacherrole->id, $context);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        try {
+            $result = core_completion_external::get_course_completion_status($course->id, $student->id);
+            $this->fail('Exception expected due to groups permissions.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('accessdenied', $e->errorcode);
+        }
+
+        // Now add the teacher in the same group.
+        groups_add_member($group1->id, $teacher->id);
+        $result = core_completion_external::get_course_completion_status($course->id, $student->id);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $teacherresult = external_api::clean_returnvalue(
+            core_completion_external::get_course_completion_status_returns(), $result);
+
+        $this->assertEquals($studentresult, $teacherresult);
+
+    }
+
 }

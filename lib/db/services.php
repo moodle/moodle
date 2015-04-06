@@ -110,16 +110,6 @@ $functions = array(
         'capabilities'  => 'moodle/comment:view',
     ),
 
-    // Completion related functions.
-
-    'core_completion_get_activities_completion_status' => array(
-        'classname'     => 'core_completion_external',
-        'methodname'    => 'get_activities_completion_status',
-        'description'   => 'Return the activities completion status for a user in a course.',
-        'type'          => 'read',
-        'capabilities'  => '',
-    ),
-
     // Grade related functions.
 
     'core_grades_get_grades' => array(
@@ -1004,6 +994,22 @@ $functions = array(
         'description' => 'Update completion status for the current user in an activity, only for activities with manual tracking.',
         'type'        => 'write',
     ),
+
+    'core_completion_get_activities_completion_status' => array(
+        'classname'     => 'core_completion_external',
+        'methodname'    => 'get_activities_completion_status',
+        'description'   => 'Return the activities completion status for a user in a course.',
+        'type'          => 'read',
+        'capabilities'  => '',
+    ),
+
+    'core_completion_get_course_completion_status' => array(
+        'classname'    => 'core_completion_external',
+        'methodname'   => 'get_course_completion_status',
+        'description'  => 'Returns course completion status.',
+        'type'         => 'read',
+        'capabilities' => 'report/completion:view',
+    ),
 );
 
 $services = array(
@@ -1068,6 +1074,7 @@ $services = array(
             'core_course_view_course',
             'core_completion_get_activities_completion_status',
             'core_notes_get_course_notes',
+            'core_completion_get_course_completion_status',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
