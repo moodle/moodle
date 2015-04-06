@@ -437,6 +437,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         Y.Moodle.mod_quiz.util.slot.reorderSlots();
         Y.Moodle.mod_quiz.util.slot.reorderPageBreaks();
         Y.Moodle.mod_quiz.util.page.reorderPages();
+        Y.Moodle.mod_quiz.util.slot.updateOneSlotSections();
         Y.Moodle.mod_quiz.util.slot.updateAllDependencyIcons();
     },
 

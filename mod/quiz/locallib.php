@@ -172,9 +172,11 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
     $slot = 0;
     $questions = array();
     $maxmark = array();
+    $page = array();
     foreach ($quizobj->get_questions() as $questiondata) {
         $slot += 1;
         $maxmark[$slot] = $questiondata->maxmark;
+        $page[$slot] = $questiondata->page;
         if ($questiondata->qtype == 'random') {
             $randomfound = true;
             continue;
@@ -251,33 +253,47 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
     $quba->start_all_questions($variantstrategy, $timenow);
 
     // Work out the attempt layout.
-    $layout = array();
-    if ($quizobj->get_quiz()->shufflequestions) {
-        $slots = $quba->get_slots();
-        shuffle($slots);
-
-        $questionsonthispage = 0;
-        foreach ($slots as $slot) {
-            if ($questionsonthispage && $questionsonthispage == $quizobj->get_quiz()->questionsperpage) {
-                $layout[] = 0;
-                $questionsonthispage = 0;
-            }
-            $layout[] = $slot;
-            $questionsonthispage += 1;
-        }
-
-    } else {
-        $currentpage = null;
-        foreach ($quizobj->get_questions() as $slot) {
-            if ($currentpage !== null && $slot->page != $currentpage) {
-                $layout[] = 0;
-            }
-            $layout[] = $slot->slot;
-            $currentpage = $slot->page;
+    $sections = $quizobj->get_sections();
+    foreach ($sections as $i => $section) {
+        if (isset($sections[$i + 1])) {
+            $sections[$i]->lastslot = $sections[$i + 1]->firstslot - 1;
+        } else {
+            $sections[$i]->lastslot = count($questions);
         }
     }
 
-    $layout[] = 0;
+    $layout = array();
+    foreach ($sections as $section) {
+        if ($section->shufflequestions) {
+            $questionsinthissection = array();
+            for ($slot = $section->firstslot; $slot <= $section->lastslot; $slot += 1) {
+                $questionsinthissection[] = $slot;
+            }
+            shuffle($questionsinthissection);
+            $questionsonthispage = 0;
+            foreach ($questionsinthissection as $slot) {
+                if ($questionsonthispage && $questionsonthispage == $quizobj->get_quiz()->questionsperpage) {
+                    $layout[] = 0;
+                    $questionsonthispage = 0;
+                }
+                $layout[] = $slot;
+                $questionsonthispage += 1;
+            }
+
+        } else {
+            $currentpage = $page[$section->firstslot];
+            for ($slot = $section->firstslot; $slot <= $section->lastslot; $slot += 1) {
+                if ($currentpage !== null && $page[$slot] != $currentpage) {
+                    $layout[] = 0;
+                }
+                $layout[] = $slot;
+                $currentpage = $page[$slot];
+            }
+        }
+
+        // Each section ends with a page break.
+        $layout[] = 0;
+    }
     $attempt->layout = implode(',', $layout);
 
     return $attempt;
@@ -468,13 +484,22 @@ function quiz_repaginate_questions($quizid, $slotsperpage) {
     global $DB;
     $trans = $DB->start_delegated_transaction();
 
+    $sections = $DB->get_records('quiz_sections', array('quizid' => $quizid), 'firstslot ASC');
+    $firstslots = array();
+    foreach ($sections as $section) {
+        if ((int)$section->firstslot === 1) {
+            continue;
+        }
+        $firstslots[] = $section->firstslot;
+    }
+
     $slots = $DB->get_records('quiz_slots', array('quizid' => $quizid),
             'slot');
-
     $currentpage = 1;
     $slotsonthispage = 0;
     foreach ($slots as $slot) {
-        if ($slotsonthispage && $slotsonthispage == $slotsperpage) {
+        if (($firstslots && in_array($slot->slot, $firstslots)) ||
+            ($slotsonthispage && $slotsonthispage == $slotsperpage)) {
             $currentpage += 1;
             $slotsonthispage = 0;
         }
@@ -2006,6 +2031,13 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         }
         $slot->slot = $lastslotbefore + 1;
         $slot->page = min($page, $maxpage + 1);
+
+        $DB->execute("
+                UPDATE {quiz_sections}
+                   SET firstslot = firstslot + 1
+                 WHERE quizid = ?
+                   AND firstslot > ?
+                ", array($quiz->id, max($lastslotbefore, 1)));
 
     } else {
         $lastslot = end($slots);

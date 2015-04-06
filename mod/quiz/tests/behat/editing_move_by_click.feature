@@ -14,21 +14,26 @@ Feature: Edit quiz page - drag-and-drop
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following "question categories" exist:
+      | contextlevel | reference | name           |
+      | Course       | C1        | Test questions |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name       | questiontext        |
+      | Test questions   | truefalse | Question A | This is question 01 |
+      | Test questions   | truefalse | Question B | This is question 02 |
+      | Test questions   | truefalse | Question C | This is question 03 |
     And the following "activities" exist:
       | activity   | name   | course | idnumber |
       | quiz       | Quiz 1 | C1     | quiz1    |
+    And quiz "Quiz 1" contains the following questions:
+      | question   | page |
+      | Question A | 1    |
+      | Question B | 1    |
+      | Question C | 2    |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I add a "True/False" question to the "Quiz 1" quiz with:
-      | Question name | Question A |
-      | Question text | Answer me  |
-    And I add a "True/False" question to the "Quiz 1" quiz with:
-      | Question name | Question B   |
-      | Question text | Answer again |
-    And I add a "True/False" question to the "Quiz 1" quiz with:
-      | Question name | Question C |
-      | Question text | And again  |
-    And I click on the "Add" page break icon after question "Question B"
+    And I follow "Quiz 1"
+    And I follow "Edit quiz"
 
   @javascript
   Scenario: Re-order questions by clicking on the move icon.

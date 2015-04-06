@@ -96,6 +96,15 @@ body.jsenabled .questionflagcheckbox {
     vertical-align: bottom;
 }
 
+.path-mod-quiz #mod_quiz_navblock h3.mod_quiz-section-heading {
+    padding: 0.7em 0 0;
+    margin: 0;
+    clear: both;
+}
+.path-mod-quiz #mod_quiz_navblock h3.mod_quiz-section-heading:first-child {
+    padding-top: 0;
+}
+
 .path-mod-quiz .qnbutton {
     display: block;
     position: relative;
@@ -541,6 +550,11 @@ table.quizreviewsummary td.cell {
     position: relative;
 }
 
+#page-mod-quiz-edit ul.section li.pagenumber:first-child .add-menu-outer ul.menu li:first-child,
+#page-mod-quiz-edit .last-add-menu .add-menu-outer ul.menu li:first-child {
+    display: none;
+}
+
 #page-mod-quiz-edit .last-add-menu {
     position: relative;
     height: 1.5em;
@@ -548,7 +562,6 @@ table.quizreviewsummary td.cell {
 }
 #page-mod-quiz-edit .add-menu-outer {
     position: absolute;
-    top: 0;
     right: 0;
 }
 #page-mod-quiz-edit.dir-rtl .add-menu-outer {
@@ -564,54 +577,61 @@ table.quizreviewsummary td.cell {
     display: inline-block;
 }
 
+#page-mod-quiz-edit .section-heading {
+    font-size: 24px;
+    margin-left: 20px;
+    margin-bottom: 0;
+    height: 40px;
+}
+#page-mod-quiz-edit .section-heading .instancesectioncontainer {
+    display: inline;
+}
+#page-mod-quiz-edit .section-heading .instancesectioncontainer h3 {
+    display: inline;
+    color: #999;
+}
+#page-mod-quiz-edit .section-heading .editing_section,
+#page-mod-quiz-edit .section-heading .editing_delete {
+    margin-left: 10px;
+}
+#page-mod-quiz-edit .section-heading .sectioninstance {
+    position: relative;
+}
+#page-mod-quiz-edit .section-heading form {
+    display: inline;
+    position: relative;
+    top: 3px;
+    left: -7px;
+}
+#page-mod-quiz-edit .section-heading form input {
+    font-size: 24px;
+    font-weight: bold;
+    width: 50%;
+}
+
+#page-mod-quiz-edit .section-heading .instanceshufflequestions {
+    float: right;
+    margin: 0.3em 20px 0 0;
+}
+
 #page-mod-quiz-edit ul.section {
     margin: 0;
     padding: 0 20px;
+}
+#page-mod-quiz-edit ul.slots {
+    margin: 0;
 }
 #page-mod-quiz-edit ul.slots li.section {
     border: 0;
 }
 #page-mod-quiz-edit ul.slots li.section .content {
     background-color:#FAFAFA;
-    padding: 0;
-}
-#page-mod-quiz-edit ul.slots li.section .content h3 {
-    margin: 0;
-    color: #777;
-    font-weight: normal;
-}
-#page-mod-quiz-edit ul.slots li.section .left {
-    padding: 4px 0;
-}
-#page-mod-quiz-edit ul.slots li.section .right {
-    padding: 4px 0;
-}
-#page-mod-quiz-edit ul.slots {
-    margin: 0;
+    padding: 1px 0;
 }
 #page-mod-quiz-edit ul.slots li.section {
     list-style: none;
     margin: 0;
     padding: 0;
-}
-#page-mod-quiz-edit ul.slots li.section .left {
-    float: left;
-}
-#page-mod-quiz-edit ul.slots li.section .right {
-    float: right;
-}
-#page-mod-quiz-edit ul.slots li.section .left,
-#page-mod-quiz-edit ul.slots li.section .right {
-    width: 40px;
-    text-align: center;
-    padding: 6px 0;
-}
-#page-mod-quiz-edit ul.slots li.section .right img.icon {
-    padding: 0 0 4px 0;
-}
-#page-mod-quiz-edit ul.slots li.section .left .section-handle img.icon {
-    padding: 0;
-    vertical-align: baseline;
 }
 #page-mod-quiz-edit ul.slots li.section li.activity {
     background: #E6E6E6;
@@ -620,6 +640,11 @@ table.quizreviewsummary td.cell {
 }
 #page-mod-quiz-edit ul.slots li.section li.activity.page {
     background: transparent;
+}
+#page-mod-quiz-edit ul.slots li.section li.activity.page h4 {
+    display: inline;
+    font-weight: normal;
+    font-size: 1em;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
@@ -692,6 +717,10 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit ul.slots li.section li.activity .editing_delete,
 #page-mod-quiz-edit ul.slots li.section li.activity .editing_maxmark {
     margin: 0 2px;
+}
+#page-mod-quiz-edit ul.slots li.section.only-has-one-slot li.activity .editing_move,
+#page-mod-quiz-edit ul.slots li.section.only-has-one-slot li.activity .editing_delete {
+    visibility: hidden;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .question_dependency_wrapper {

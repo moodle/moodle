@@ -97,11 +97,6 @@ if ($ADMIN->fulltree) {
     $quizsettings->add(new admin_setting_configtext('quiz/maximumgrade',
             get_string('maximumgrade'), get_string('configmaximumgrade', 'quiz'), 10, PARAM_INT));
 
-    // Shuffle questions.
-    $quizsettings->add(new admin_setting_configcheckbox_with_advanced('quiz/shufflequestions',
-            get_string('shufflequestions', 'quiz'), get_string('configshufflequestions', 'quiz'),
-            array('value' => 0, 'adv' => false)));
-
     // Questions per page.
     $perpage = array();
     $perpage[0] = get_string('never');

@@ -313,7 +313,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $panel->render_before_button_bits($this);
 
         $bcc = $panel->get_button_container_class();
-        $output .= html_writer::start_tag('div', array('class' => "qn_buttons $bcc"));
+        $output .= html_writer::start_tag('div', array('class' => "qn_buttons clearfix $bcc"));
         foreach ($panel->get_question_buttons() as $button) {
             $output .= $this->render($button);
         }
@@ -329,9 +329,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Returns the quizzes navigation button
+     * Display a quiz navigation button.
      *
      * @param quiz_nav_question_button $button
+     * @return string HTML fragment.
      */
     protected function render_quiz_nav_question_button(quiz_nav_question_button $button) {
         $classes = array('qnbutton', $button->stateclass, $button->navmethod);
@@ -371,6 +372,16 @@ class mod_quiz_renderer extends plugin_renderer_base {
         } else {
             return html_writer::tag('span', $tagcontents, $tagattributes);
         }
+    }
+
+    /**
+     * Display a quiz navigation heading.
+     *
+     * @param quiz_nav_section_heading $heading the heading.
+     * @return string HTML fragment.
+     */
+    protected function render_quiz_nav_section_heading(quiz_nav_section_heading $heading) {
+        return $this->heading($heading->heading, 3, 'mod_quiz-section-heading');
     }
 
     /**
@@ -607,14 +618,27 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $table->align[] = 'left';
             $table->size[] = '';
         }
+        $tablewidth = count($table->align);
         $table->data = array();
 
         // Get the summary info for each question.
         $slots = $attemptobj->get_slots();
         foreach ($slots as $slot) {
+            // Add a section headings if we need one here.
+            $heading = $attemptobj->get_heading_before_slot($slot);
+            if ($heading) {
+                $cell = new html_table_cell(format_string($heading));
+                $cell->header = true;
+                $cell->colspan = $tablewidth;
+                $table->data[] = array($cell);
+            }
+
+            // Don't display information items.
             if (!$attemptobj->is_real_question($slot)) {
                 continue;
             }
+
+            // Real question, show it.
             $flag = '';
             if ($attemptobj->is_question_flagged($slot)) {
                 $flag = html_writer::empty_tag('img', array('src' => $this->pix_url('i/flagged'),

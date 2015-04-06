@@ -32,7 +32,7 @@ Y.Moodle.mod_quiz.util.page = {
         ACTIONMENUMENU: 'ul.menu',
         PAGE: 'li.page',
         INSTANCENAME: '.instancename',
-        NUMBER: 'span.text'
+        NUMBER: 'h4'
     },
 
     /**

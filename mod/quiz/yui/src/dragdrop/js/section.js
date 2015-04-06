@@ -14,15 +14,15 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
     initializer: function() {
         // Set group for parent class
         this.groups = [ CSS.SECTIONDRAGGABLE ];
-        this.samenodeclass = M.mod_quiz.edit.get_sectionwrapperclass();
-        this.parentnodeclass = M.mod_quiz.edit.get_containerclass();
+        this.samenodeclass = 'section';
+        this.parentnodeclass = 'slots';
 
         // Check if we are in single section mode
         if (Y.Node.one('.' + CSS.JUMPMENU)) {
             return false;
         }
         // Initialise sections dragging
-        this.sectionlistselector = M.mod_quiz.edit.get_section_wrapper(Y);
+        this.sectionlistselector = 'li.section';
         if (this.sectionlistselector) {
             this.sectionlistselector = '.' + CSS.COURSECONTENT + ' ' + this.sectionlistselector;
 
@@ -95,12 +95,8 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         // Get our drag object
         var drag = e.target;
         // Creat a dummy structure of the outer elemnents for clean styles application
-        var containernode = Y.Node.create('<' + M.mod_quiz.edit.get_containernode() + '>' +
-                                          '</' + M.mod_quiz.edit.get_containernode() + '>');
-        containernode.addClass(M.mod_quiz.edit.get_containerclass());
-        var sectionnode = Y.Node.create('<' + M.mod_quiz.edit.get_sectionwrappernode() + '>' +
-                                        '</' + M.mod_quiz.edit.get_sectionwrappernode() + '>');
-        sectionnode.addClass( M.mod_quiz.edit.get_sectionwrapperclass());
+        var containernode = Y.Node.create('<ul class="slots"></ul>');
+        var sectionnode = Y.Node.create('<ul class="section"></ul>');
         sectionnode.setStyle('margin', 0);
         sectionnode.setContent(drag.get('node').get('innerHTML'));
         containernode.appendChild(sectionnode);
@@ -116,7 +112,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
     },
 
     get_section_index: function(node) {
-        var sectionlistselector = '.' + CSS.COURSECONTENT + ' ' + M.mod_quiz.edit.get_section_selector(Y),
+        var sectionlistselector = '.' + CSS.COURSECONTENT + ' li.section',
             sectionList = Y.all(sectionlistselector),
             nodeIndex = sectionList.indexOf(node),
             zeroIndex = sectionList.indexOf(Y.one('#section-0'));
