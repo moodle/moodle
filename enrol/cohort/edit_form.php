@@ -38,8 +38,11 @@ class enrol_cohort_edit_form extends moodleform {
 
         $enrol = enrol_get_plugin('cohort');
 
-
         $groups = array(0 => get_string('none'));
+        if (has_capability('moodle/course:managegroups', $coursecontext)) {
+            $groups[COHORT_CREATE_GROUP] = get_string('creategroup', 'enrol_cohort');
+        }
+
         foreach (groups_get_all_groups($course->id) as $group) {
             $groups[$group->id] = format_string($group->name, true, array('context'=>$coursecontext));
         }
