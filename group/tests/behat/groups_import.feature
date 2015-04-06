@@ -80,6 +80,7 @@ Feature: Importing of groups and groupings
   @javascript
   Scenario: Import groups with idnumber when the user does not have proper permissions for the idnumber field
     Given I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Permissions"
