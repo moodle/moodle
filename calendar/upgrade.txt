@@ -5,6 +5,7 @@ information provided here is intended especially for developers.
 default values changes in code:
 * core_calendar_external::get_calendar_events_parameters() 'timeend' default option changed; now, by default,
   all events are returned, not only the past ones.
+* calendar types need to be updated to be compatible with standard PHP date/time code
 
 === 2.5 ===
 required changes in code:

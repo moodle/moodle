@@ -1914,54 +1914,6 @@ function calendar_add_event_allowed($event) {
 }
 
 /**
- * Convert region timezone to php supported timezone
- *
- * @param string $tz value from ical file
- * @return string $tz php supported timezone
- */
-function calendar_normalize_tz($tz) {
-    switch ($tz) {
-        case('CST'):
-        case('Central Time'):
-        case('Central Standard Time'):
-            $tz = 'America/Chicago';
-            break;
-        case('CET'):
-        case('Central European Time'):
-            $tz = 'Europe/Berlin';
-            break;
-        case('EST'):
-        case('Eastern Time'):
-        case('Eastern Standard Time'):
-            $tz = 'America/New_York';
-            break;
-        case('PST'):
-        case('Pacific Time'):
-        case('Pacific Standard Time'):
-            $tz = 'America/Los_Angeles';
-            break;
-        case('China Time'):
-        case('China Standard Time'):
-            $tz = 'Asia/Beijing';
-            break;
-        case('IST'):
-        case('India Time'):
-        case('India Standard Time'):
-            $tz = 'Asia/New_Delhi';
-            break;
-        case('JST');
-        case('Japan Time'):
-        case('Japan Standard Time'):
-            $tz = 'Asia/Tokyo';
-            break;
-        case('Romance Standard Time'):
-            $tz = 'Europe/Brussels';
-            break;
-    }
-    return $tz;
-}
-
-/**
  * Manage calendar events
  *
  * This class provides the required functionality in order to manage calendar events.
@@ -2329,9 +2281,13 @@ class calendar_event {
                 $eventcopy = clone($this->properties);
                 unset($eventcopy->id);
 
+                $timestart = new DateTime('@' . $eventcopy->timestart);
+                $timestart->setTimezone(core_date::get_user_timezone_object());
+
                 for($i = 1; $i < $eventcopy->repeats; $i++) {
 
-                    $eventcopy->timestart = ($eventcopy->timestart+WEEKSECS) + dst_offset_on($eventcopy->timestart) - dst_offset_on($eventcopy->timestart+WEEKSECS);
+                    $timestart->add(new DateInterval('P7D'));
+                    $eventcopy->timestart = $timestart->getTimestamp();
 
                     // Get the event id for the log record.
                     $eventcopyid = $DB->insert_record('event', $eventcopy);
@@ -2988,17 +2944,16 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid, $timez
         return 0;
     }
 
-    $defaulttz = date_default_timezone_get();
     $tz = isset($event->properties['DTSTART'][0]->parameters['TZID']) ? $event->properties['DTSTART'][0]->parameters['TZID'] :
             $timezone;
-    $tz = calendar_normalize_tz($tz);
+    $tz = core_date::normalise_timezone($tz);
     $eventrecord->timestart = strtotime($event->properties['DTSTART'][0]->value . ' ' . $tz);
     if (empty($event->properties['DTEND'])) {
         $eventrecord->timeduration = 0; // no duration if no end time specified
     } else {
         $endtz = isset($event->properties['DTEND'][0]->parameters['TZID']) ? $event->properties['DTEND'][0]->parameters['TZID'] :
                 $timezone;
-        $endtz = calendar_normalize_tz($endtz);
+        $endtz = core_date::normalise_timezone($endtz);
         $eventrecord->timeduration = strtotime($event->properties['DTEND'][0]->value . ' ' . $endtz) - $eventrecord->timestart;
     }
 
@@ -3010,7 +2965,7 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid, $timez
             // This event should be an all day event.
             $eventrecord->timeduration = 0;
         }
-        date_default_timezone_set($defaulttz);
+        core_date::set_default_server_timezone();
     }
 
     $eventrecord->uuid = $event->properties['UID'][0]->value;

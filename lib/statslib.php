@@ -983,42 +983,33 @@ function stats_get_start_from($str) {
 /**
  * Start of day
  * @param int $time timestamp
- * @return start of day
+ * @return int start of day
  */
 function stats_get_base_daily($time=0) {
-    global $CFG;
-
     if (empty($time)) {
         $time = time();
     }
-    if ($CFG->timezone == 99) {
-        $time = strtotime(date('d-M-Y', $time));
-        return $time;
-    } else {
-        $offset = get_timezone_offset($CFG->timezone);
-        $gtime = $time + $offset;
-        $gtime = intval($gtime / (60*60*24)) * 60*60*24;
-        return $gtime - $offset;
-    }
+
+    core_date::set_default_server_timezone();
+    $time = strtotime(date('d-M-Y', $time));
+
+    return $time;
 }
 
 /**
  * Start of week
  * @param int $time timestamp
- * @return start of week
+ * @return int start of week
  */
 function stats_get_base_weekly($time=0) {
     global $CFG;
 
     $time = stats_get_base_daily($time);
     $startday = $CFG->calendar_startwday;
-    if ($CFG->timezone == 99) {
-        $thisday = date('w', $time);
-    } else {
-        $offset = get_timezone_offset($CFG->timezone);
-        $gtime = $time + $offset;
-        $thisday = gmdate('w', $gtime);
-    }
+
+    core_date::set_default_server_timezone();
+    $thisday = date('w', $time);
+
     if ($thisday > $startday) {
         $time = $time - (($thisday - $startday) * 60*60*24);
     } else if ($thisday < $startday) {
@@ -1030,27 +1021,17 @@ function stats_get_base_weekly($time=0) {
 /**
  * Start of month
  * @param int $time timestamp
- * @return start of month
+ * @return int start of month
  */
 function stats_get_base_monthly($time=0) {
-    global $CFG;
-
     if (empty($time)) {
         $time = time();
     }
-    if ($CFG->timezone == 99) {
-        return strtotime(date('1-M-Y', $time));
 
-    } else {
-        $time = stats_get_base_daily($time);
-        $offset = get_timezone_offset($CFG->timezone);
-        $gtime = $time + $offset;
-        $day = gmdate('d', $gtime);
-        if ($day == 1) {
-            return $time;
-        }
-        return $gtime - (($day-1) * 60*60*24);
-    }
+    core_date::set_default_server_timezone();
+    $return = strtotime(date('1-M-Y', $time));
+
+    return $return;
 }
 
 /**

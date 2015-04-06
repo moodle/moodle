@@ -332,10 +332,7 @@ abstract class scheduled_task extends task_base {
         $validhours = $this->eval_cron_field($this->hour, self::HOURMIN, self::HOURMAX);
 
         // We need to change to the server timezone before using php date() functions.
-        $origtz = date_default_timezone_get();
-        if (!empty($CFG->timezone) && $CFG->timezone != 99) {
-            date_default_timezone_set($CFG->timezone);
-        }
+        \core_date::set_default_server_timezone();
 
         $daysinmonth = date("t");
         $validdays = $this->eval_cron_field($this->day, 1, $daysinmonth);
@@ -403,11 +400,6 @@ abstract class scheduled_task extends task_base {
                            $nextvalidmonth,
                            $nextvaliddayofmonth,
                            $nextvalidyear);
-
-        // We need to change the timezone back so other date functions in moodle do not get confused.
-        if (!empty($CFG->timezone) && $CFG->timezone != 99) {
-            date_default_timezone_set($origtz);
-        }
 
         return $nexttime;
     }

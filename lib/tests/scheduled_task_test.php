@@ -51,6 +51,11 @@ class core_scheduled_task_testcase extends advanced_testcase {
     }
 
     public function test_get_next_scheduled_time() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $this->setTimezone('Europe/London');
+
         // Test job run at 1 am.
         $testclass = new \core\task\scheduled_test_task();
 
@@ -60,11 +65,13 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Next valid time should be 1am of the next day.
         $nexttime = $testclass->get_next_scheduled_time();
 
-        $oneam = mktime(1, 0, 0);
+        $oneamdate = new DateTime('now', new DateTimeZone('Europe/London'));
+        $oneamdate->setTime(1, 0, 0);
         // Make it 1 am tomorrow if the time is after 1am.
-        if ($oneam < time()) {
-            $oneam += 86400;
+        if ($oneamdate->getTimestamp() < time()) {
+            $oneamdate->add(new DateInterval('P1D'));
         }
+        $oneam = $oneamdate->getTimestamp();
 
         $this->assertEquals($oneam, $nexttime, 'Next scheduled time is 1am.');
 
@@ -118,22 +125,9 @@ class core_scheduled_task_testcase extends advanced_testcase {
         global $CFG, $USER;
 
         // The timezones used in this test are chosen because they do not use DST - that would break the test.
+        $this->resetAfterTest();
 
-        $currenttimezonephp = date_default_timezone_get();
-        $currenttimezonecfg = null;
-        if (!empty($CFG->timezone)) {
-            $currenttimezonecfg = $CFG->timezone;
-        }
-        $userstimezone = null;
-        if (!empty($USER->timezone)) {
-            $userstimezone = $USER->timezone;
-        }
-
-        // We are testing a difference between $CFG->timezone and the php.ini timezone.
-        // GMT+8.
-        date_default_timezone_set('Australia/Perth');
-        // GMT-04:30.
-        $CFG->timezone = 'America/Caracas';
+        $this->setTimezone('America/Caracas');
 
         $testclass = new \core\task\scheduled_test_task();
 
@@ -152,9 +146,6 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // I used http://www.timeanddate.com/worldclock/fixedtime.html?msg=Moodle+Test&iso=20140314T01&p1=58
         // to verify this time.
         $this->assertContains('11:15 AM', core_text::strtoupper($userdate));
-
-        $CFG->timezone = $currenttimezonecfg;
-        date_default_timezone_set($currenttimezonephp);
     }
 
     public function test_reset_scheduled_tasks_for_component() {

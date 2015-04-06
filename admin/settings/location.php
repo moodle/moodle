@@ -4,11 +4,26 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     // "locations" settingpage
     $temp = new admin_settingpage('locationsettings', new lang_string('locationsettings', 'admin'));
-    $options = get_list_of_timezones();
-    $options[99] = new lang_string('serverlocaltime');
-    $temp->add(new admin_setting_configselect('timezone', new lang_string('timezone','admin'), new lang_string('configtimezone', 'admin'), 99, $options));
+
+    $current = isset($CFG->timezone) ? $CFG->timezone : null;
+    $options = core_date::get_list_of_timezones($current, false);
+    $default = core_date::get_default_php_timezone();
+    if ($current == 99) {
+        // Do not show 99 unless it is current value, we want to get rid of it over time.
+        $options['99'] = new lang_string('timezonephpdefault', 'core_admin', $default);
+    }
+    if ($default === 'UTC') {
+        // Nobody really wants UTC, so instead default selection to the country that is confused by the UTC the most.
+        $default = 'Europe/London';
+    }
+    $temp->add(new admin_setting_configselect('timezone', new lang_string('timezone', 'admin'),
+        new lang_string('configtimezone', 'admin'), $default, $options));
+
+    $options = core_date::get_list_of_timezones(isset($CFG->forcetimezone) ? $CFG->forcetimezone : null, true);
     $options[99] = new lang_string('timezonenotforced', 'admin');
-    $temp->add(new admin_setting_configselect('forcetimezone', new lang_string('forcetimezone', 'admin'), new lang_string('helpforcetimezone', 'admin'), 99, $options));
+    $temp->add(new admin_setting_configselect('forcetimezone', new lang_string('forcetimezone', 'admin'),
+        new lang_string('helpforcetimezone', 'admin'), 99, $options));
+
     $temp->add(new admin_settings_country_select('country', new lang_string('country', 'admin'), new lang_string('configcountry', 'admin'), 0));
     $temp->add(new admin_setting_configtext('defaultcity', new lang_string('defaultcity', 'admin'), new lang_string('defaultcity_help', 'admin'), ''));
 

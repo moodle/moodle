@@ -181,14 +181,16 @@ function useredit_update_interests($user, $interests) {
  * Powerful function that is used by edit and editadvanced to add common form elements/rules/etc.
  *
  * @param moodleform $mform
- * @param array|null $editoroptions
- * @param array|null $filemanageroptions
+ * @param array $editoroptions
+ * @param array $filemanageroptions
+ * @param stdClass $user
  */
-function useredit_shared_definition(&$mform, $editoroptions = null, $filemanageroptions = null) {
+function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions, $user) {
     global $CFG, $USER, $DB;
 
-    $user = $DB->get_record('user', array('id' => $USER->id));
-    useredit_load_preferences($user, false);
+    if ($user->id > 0) {
+        useredit_load_preferences($user, false);
+    }
 
     $strrequired = get_string('required');
 
@@ -207,7 +209,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     }
 
     // Do not show email field if change confirmation is pending.
-    if (!empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
+    if ($user->id > 0 and !empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
         $notice = get_string('emailchangepending', 'auth', $user);
         $notice .= '<br /><a href="edit.php?cancelemailchange=1&amp;id='.$user->id.'">'
                 . get_string('emailchangecancel', 'auth') . '</a>';
@@ -231,13 +233,14 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
         $mform->setDefault('country', $CFG->country);
     }
 
-    $choices = get_list_of_timezones();
-    $choices['99'] = get_string('serverlocaltime');
-    if ($CFG->forcetimezone != 99) {
+    if (isset($CFG->forcetimezone) and $CFG->forcetimezone != 99) {
+        $choices = core_date::get_list_of_timezones($CFG->forcetimezone);
         $mform->addElement('static', 'forcedtimezone', get_string('timezone'), $choices[$CFG->forcetimezone]);
+        $mform->addElement('hidden', 'timezone');
+        $mform->setType('timezone', PARAM_TIMEZONE);
     } else {
+        $choices = core_date::get_list_of_timezones($user->timezone, true);
         $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
-        $mform->setDefault('timezone', '99');
     }
 
     // Multi-Calendar Support - see MDL-18375.

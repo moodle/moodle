@@ -121,10 +121,11 @@ $olddir = getcwd();
 chdir(dirname($_SERVER['argv'][0]));
 
 // Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
-// This is a quick hack.  Ideally we should ask the admin for a value.  See MDL-22625 for more on this.
-if (function_exists('date_default_timezone_set') and function_exists('date_default_timezone_get')) {
-    @date_default_timezone_set(@date_default_timezone_get());
+if (!function_exists('date_default_timezone_set') or !function_exists('date_default_timezone_get')) {
+    fwrite(STDERR, "Timezone functions are not available.\n");
+    exit(1);
 }
+date_default_timezone_set(@date_default_timezone_get());
 
 // make sure PHP errors are displayed - helps with diagnosing of problems
 @error_reporting(E_ALL);

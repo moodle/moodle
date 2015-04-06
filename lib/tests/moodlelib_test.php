@@ -934,22 +934,9 @@ class core_moodlelib_testcase extends advanced_testcase {
         global $USER, $CFG, $DB;
         $this->resetAfterTest();
 
-        // Check if forcetimezone is set then save it and set it to use user timezone.
-        $cfgforcetimezone = null;
-        if (isset($CFG->forcetimezone)) {
-            $cfgforcetimezone = $CFG->forcetimezone;
-            $CFG->forcetimezone = 99; // Get user default timezone.
-        }
-
         $this->setAdminUser();
 
-        $userstimezone = $USER->timezone;
         $USER->timezone = 2;// Set the timezone to a known state.
-
-        // The string version of date comes from server locale setting and does
-        // not respect user language, so it is necessary to reset that.
-        $oldlocale = setlocale(LC_TIME, '0');
-        setlocale(LC_TIME, 'en_AU.UTF-8');
 
         $ts = 1261540267; // The time this function was created.
 
@@ -981,15 +968,6 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame(356, $yday);
         $this->assertSame('Wednesday', $weekday);
         $this->assertSame('December', $month);
-        // Set the timezone back to what it was.
-        $USER->timezone = $userstimezone;
-
-        // Restore forcetimezone if changed.
-        if (!is_null($cfgforcetimezone)) {
-            $CFG->forcetimezone = $cfgforcetimezone;
-        }
-
-        setlocale(LC_TIME, $oldlocale);
     }
 
     public function test_mark_user_preferences_changed() {
@@ -1356,30 +1334,15 @@ class core_moodlelib_testcase extends advanced_testcase {
             ),
             array(
                 'time' => '1293876000 ',
-                'usertimezone' => '14', // Server time zone.
+                'usertimezone' => '20', // Fallback to server time zone.
                 'timezone' => '99',     // This should show user time.
                 'expectedoutput' => 'Saturday, 1 January 2011, 6:00 PM'
             ),
         );
 
-        // Check if forcetimezone is set then save it and set it to use user timezone.
-        $cfgforcetimezone = null;
-        if (isset($CFG->forcetimezone)) {
-            $cfgforcetimezone = $CFG->forcetimezone;
-            $CFG->forcetimezone = 99; // Get user default timezone.
-        }
-        // Store user default timezone to restore later.
-        $userstimezone = $USER->timezone;
-
-        // The string version of date comes from server locale setting and does
-        // not respect user language, so it is necessary to reset that.
-        $oldlocale = setlocale(LC_TIME, '0');
-        setlocale(LC_TIME, 'en_AU.UTF-8');
-
         // Set default timezone to Australia/Perth, else time calculated
-        // will not match expected values. Before that save system defaults.
-        $systemdefaulttimezone = date_default_timezone_get();
-        date_default_timezone_set('Australia/Perth');
+        // will not match expected values.
+        $this->setTimezone(99, 'Australia/Perth');
 
         foreach ($testvalues as $vals) {
             $USER->timezone = $vals['usertimezone'];
@@ -1390,21 +1353,8 @@ class core_moodlelib_testcase extends advanced_testcase {
             $actualoutput = core_text::strtolower($actualoutput);
 
             $this->assertSame($vals['expectedoutput'], $actualoutput,
-                "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
-                Please check if timezones are updated (Site adminstration -> location -> update timezone)");
+                "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput} \ndata: " . var_export($vals, true));
         }
-
-        // Restore user timezone back to what it was.
-        $USER->timezone = $userstimezone;
-
-        // Restore forcetimezone.
-        if (!is_null($cfgforcetimezone)) {
-            $CFG->forcetimezone = $cfgforcetimezone;
-        }
-
-        // Restore system default values.
-        date_default_timezone_set($systemdefaulttimezone);
-        setlocale(LC_TIME, $oldlocale);
     }
 
     public function test_make_timestamp() {
@@ -1536,25 +1486,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             )
         );
 
-        // Check if forcetimezone is set then save it and set it to use user timezone.
-        $cfgforcetimezone = null;
-        if (isset($CFG->forcetimezone)) {
-            $cfgforcetimezone = $CFG->forcetimezone;
-            $CFG->forcetimezone = 99; // Get user default timezone.
-        }
-
-        // Store user default timezone to restore later.
-        $userstimezone = $USER->timezone;
-
-        // The string version of date comes from server locale setting and does
-        // not respect user language, so it is necessary to reset that.
-        $oldlocale = setlocale(LC_TIME, '0');
-        setlocale(LC_TIME, 'en_AU.UTF-8');
-
         // Set default timezone to Australia/Perth, else time calculated
-        // Will not match expected values. Before that save system defaults.
-        $systemdefaulttimezone = date_default_timezone_get();
-        date_default_timezone_set('Australia/Perth');
+        // will not match expected values.
+        $this->setTimezone(99, 'Australia/Perth');
 
         // Test make_timestamp with all testvals and assert if anything wrong.
         foreach ($testvalues as $vals) {
@@ -1578,18 +1512,6 @@ class core_moodlelib_testcase extends advanced_testcase {
                 "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
                 Please check if timezones are updated (Site adminstration -> location -> update timezone)");
         }
-
-        // Restore user timezone back to what it was.
-        $USER->timezone = $userstimezone;
-
-        // Restore forcetimezone.
-        if (!is_null($cfgforcetimezone)) {
-            $CFG->forcetimezone = $cfgforcetimezone;
-        }
-
-        // Restore system default values.
-        date_default_timezone_set($systemdefaulttimezone);
-        setlocale(LC_TIME, $oldlocale);
     }
 
     /**
@@ -1956,15 +1878,8 @@ class core_moodlelib_testcase extends advanced_testcase {
     public function test_date_format_string() {
         global $CFG;
 
-        // Forcing locale and timezone.
-        $oldlocale = setlocale(LC_TIME, '0');
-        if ($CFG->ostype == 'WINDOWS') {
-            setlocale(LC_TIME, 'English_Australia.1252');
-        } else {
-            setlocale(LC_TIME, 'en_AU.UTF-8');
-        }
-        $systemdefaulttimezone = date_default_timezone_get();
-        date_default_timezone_set('Australia/Perth');
+        $this->resetAfterTest();
+        $this->setTimezone(99, 'Australia/Perth');
 
         $tests = array(
             array(
@@ -1978,9 +1893,11 @@ class core_moodlelib_testcase extends advanced_testcase {
                 'expected' => 'Saturday, 01 January 2011, 10:00 AM'
             ),
             array(
-                'tz' => -12,
+                // Note: this function expected the timestamp in weird format before,
+                // since 2.9 it uses UTC.
+                'tz' => 'Pacific/Auckland',
                 'str' => '%A, %d %B %Y, %I:%M %p',
-                'expected' => 'Saturday, 01 January 2011, 10:00 AM'
+                'expected' => 'Saturday, 01 January 2011, 11:00 PM'
             ),
             // Following tests pass on Windows only because en lang pack does
             // not contain localewincharset, in real life lang pack maintainers
@@ -2011,10 +1928,6 @@ class core_moodlelib_testcase extends advanced_testcase {
             $str = date_format_string(1293876000, $test['str'], $test['tz']);
             $this->assertSame(core_text::strtolower($test['expected']), core_text::strtolower($str));
         }
-
-        // Restore system default values.
-        date_default_timezone_set($systemdefaulttimezone);
-        setlocale(LC_TIME, $oldlocale);
     }
 
     public function test_get_config() {

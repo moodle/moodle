@@ -27,17 +27,14 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /** @var stdClass a dummy event */
     protected $event;
 
-    /** @var string system timezone */
-    protected $tz;
-
     /**
      * Set up method.
      */
     protected function setUp() {
-        global $DB;
+        global $DB, $CFG;
         $this->resetAfterTest();
-        $this->tz = date_default_timezone_get();
-        date_default_timezone_set('Australia/Perth');
+
+        $this->setTimezone('Australia/Perth');
 
         $user = $this->getDataGenerator()->create_user();
         $sub = new stdClass();
@@ -63,13 +60,6 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
         $DB->set_field('event', 'repeatid', $eventobj->id, array('id' => $eventobj->id));
         $eventobj->repeatid = $eventobj->id;
         $this->event = $eventobj;
-    }
-
-    /**
-     * Tear down method.
-     */
-    protected function tearDown() {
-        date_default_timezone_set($this->tz);
     }
 
     /**

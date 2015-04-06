@@ -502,6 +502,19 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Change server and default php timezones.
+     *
+     * @param string $servertimezone timezone to set in $CFG->timezone (not validated)
+     * @param string $defaultphptimezone timezone to fake default php timezone (must be valid)
+     */
+    public static function setTimezone($servertimezone = 'Australia/Perth', $defaultphptimezone = 'Australia/Perth') {
+        global $CFG;
+        $CFG->timezone = $servertimezone;
+        core_date::phpunit_override_default_php_timezone($defaultphptimezone);
+        core_date::set_default_server_timezone();
+    }
+
+    /**
      * Get data generator
      * @static
      * @return testing_data_generator

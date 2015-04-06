@@ -140,11 +140,6 @@ if (defined('BEHAT_SITE_RUNNING')) {
     }
 }
 
-// Force timezone to be Australia/Perth for behat tests, so we don't get time zone problems.
-if (defined('BEHAT_SITE_RUNNING') || defined('BEHAT_TEST') || defined('BEHAT_UTIL')) {
-    @date_default_timezone_set('Australia/Perth');
-}
-
 // Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
 if (!isset($CFG->dataroot)) {
     if (isset($_SERVER['REMOTE_ADDR'])) {
@@ -284,14 +279,8 @@ if (!defined('CACHE_DISABLE_STORES')) {
     define('CACHE_DISABLE_STORES', false);
 }
 
-// Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
-// This is a quick hack.  Ideally we should ask the admin for a value.  See MDL-22625 for more on this.
-if (function_exists('date_default_timezone_set') and function_exists('date_default_timezone_get')) {
-    $olddebug = error_reporting(0);
-    date_default_timezone_set(date_default_timezone_get());
-    error_reporting($olddebug);
-    unset($olddebug);
-}
+// Servers should define a default timezone in php.ini, but if they don't then make sure no errors are shown.
+date_default_timezone_set(@date_default_timezone_get());
 
 // Detect CLI scripts - CLI scripts are executed from command line, do not have session and we do not want HTML in output
 // In your new CLI scripts just add "define('CLI_SCRIPT', true);" before requiring config.php.
@@ -589,6 +578,9 @@ if (defined('COMPONENT_CLASSLOADER')) {
     spl_autoload_register('core_component::classloader');
 }
 
+// Remember the default PHP timezone, we will need it later.
+core_date::store_default_php_timezone();
+
 // Load up standard libraries
 require_once($CFG->libdir .'/filterlib.php');       // Functions for filtering test as it is output
 require_once($CFG->libdir .'/ajax/ajaxlib.php');    // Functions for managing our use of JavaScript and YUI
@@ -711,6 +703,9 @@ ini_set('arg_separator.output', '&amp;');
 
 // Work around for a PHP bug   see MDL-11237
 ini_set('pcre.backtrack_limit', 20971520);  // 20 MB
+
+// Set PHP default timezone to server timezone.
+core_date::set_default_server_timezone();
 
 // Location of standard files
 $CFG->wordlist = $CFG->libdir .'/wordlist.txt';

@@ -325,6 +325,11 @@ if (isset($identityfields['email']) and ($currentuser
     echo html_writer::tag('dd', obfuscate_mailto($user->email, ''));
 }
 
+if (!isset($hiddenfields['timezone'])) {
+    echo html_writer::tag('dt', get_string('timezone'));
+    echo html_writer::tag('dd', core_date::get_localised_timezone(core_date::get_user_timezone($user)));
+}
+
 if ($user->url && !isset($hiddenfields['webpage'])) {
     $url = $user->url;
     if (strpos($user->url, '://') === false) {

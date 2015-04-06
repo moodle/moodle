@@ -114,7 +114,7 @@ abstract class backup_cron_automated_helper {
             core_php_time_limit::raise();
             raise_memory_limit(MEMORY_EXTRA);
 
-            $nextstarttime = backup_cron_automated_helper::calculate_next_automated_backup($admin->timezone, $now);
+            $nextstarttime = backup_cron_automated_helper::calculate_next_automated_backup(null, $now);
             $showtime = "undefined";
             if ($nextstarttime > 0) {
                 $showtime = date('r', $nextstarttime);
@@ -315,24 +315,24 @@ abstract class backup_cron_automated_helper {
     /**
      * Works out the next time the automated backup should be run.
      *
-     * @param mixed $timezone user timezone
+     * @param mixed $ignroedtimezone all settings are in server timezone!
      * @param int $now timestamp, should not be in the past, most likely time()
      * @return int timestamp of the next execution at server time
      */
-    public static function calculate_next_automated_backup($timezone, $now) {
+    public static function calculate_next_automated_backup($ignroedtimezone, $now) {
 
-        $result = 0;
         $config = get_config('backup');
-        $autohour = $config->backup_auto_hour;
-        $automin = $config->backup_auto_minute;
 
-        // Gets the user time relatively to the server time.
-        $date = usergetdate($now, $timezone);
-        $usertime = mktime($date['hours'], $date['minutes'], $date['seconds'], $date['mon'], $date['mday'], $date['year']);
-        $diff = $now - $usertime;
+        $backuptime = new DateTime('@' . $now);
+        $backuptime->setTimezone(core_date::get_server_timezone_object());
+        $backuptime->setTime($config->backup_auto_hour, $config->backup_auto_minute);
 
-        // Get number of days (from user's today) to execute backups.
-        $automateddays = substr($config->backup_auto_weekdays, $date['wday']) . $config->backup_auto_weekdays;
+        while ($backuptime->getTimestamp() < $now) {
+            $backuptime->add(new DateInterval('P1D'));
+        }
+
+        // Get number of days from backup date to execute backups.
+        $automateddays = substr($config->backup_auto_weekdays, $backuptime->format('w')) . $config->backup_auto_weekdays;
         $daysfromnow = strpos($automateddays, "1");
 
         // Error, there are no days to schedule the backup for.
@@ -340,25 +340,11 @@ abstract class backup_cron_automated_helper {
             return 0;
         }
 
-        // Checks if the date would happen in the future (of the user).
-        $userresult = mktime($autohour, $automin, 0, $date['mon'], $date['mday'] + $daysfromnow, $date['year']);
-        if ($userresult <= $usertime) {
-            // If not, we skip the first scheduled day, that should fix it.
-            $daysfromnow = strpos($automateddays, "1", 1);
-            $userresult = mktime($autohour, $automin, 0, $date['mon'], $date['mday'] + $daysfromnow, $date['year']);
+        if ($daysfromnow > 0) {
+            $backuptime->add(new DateInterval('P' . $daysfromnow . 'D'));
         }
 
-        // Now we generate the time relative to the server.
-        $result = $userresult + $diff;
-
-        // If that time is past, call the function recursively to obtain the next valid day.
-        if ($result <= $now) {
-            // Checking time() in here works, but makes PHPUnit Tests extremely hard to predict.
-            // $now should never be earlier than time() anyway...
-            $result = self::calculate_next_automated_backup($timezone, $now + DAYSECS);
-        }
-
-        return $result;
+        return $backuptime->getTimestamp();
     }
 
     /**
