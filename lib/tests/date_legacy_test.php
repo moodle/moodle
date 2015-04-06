@@ -377,10 +377,10 @@ class core_date_legacy_testcase extends advanced_testcase {
         $this->assertSame('Europe/Prague', usertimezone());
 
         $USER->timezone = '1';
-        $this->assertSame('Etc/GMT-1', usertimezone());
+        $this->assertSame('UTC+1', usertimezone());
 
         $USER->timezone = '0';
-        $this->assertSame('Etc/GMT', usertimezone());
+        $this->assertSame('UTC', usertimezone());
 
         $USER->timezone = '99';
         $this->assertSame('Pacific/Auckland', usertimezone());
