@@ -350,7 +350,7 @@ function enrol_cohort_create_new_group($courseid, $cohortid) {
         if (!preg_match('/(.*?)\(([0-9]+)\)$/', $groupname, $matches)) {
             $a->increment = '(2)';
         } else {
-            $a->increment = '(' . $matches[2]+1 . ')';
+            $a->increment = '(' . ($matches[2] + 1) . ')';
         }
         $newshortname = get_string('defaultgroupnametext', 'enrol_cohort', $a);
         $groupname = $newshortname;

@@ -18,7 +18,7 @@
  * Cohort enrolment sync functional test.
  *
  * @package    enrol_cohort
- * @category   phpunit
+ * @category   test
  * @copyright  2015 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -60,7 +60,7 @@ class enrol_cohort_lib_testcase extends advanced_testcase {
         // Group course id should match the course id.
         $this->assertEquals($course->id, $group->courseid);
 
-        // Create a group that will have the same name as the cohort
+        // Create a group that will have the same name as the cohort.
         $groupdata = new stdClass();
         $groupdata->courseid = $course2->id;
         $groupdata->name = $cohort->name . ' cohort';
@@ -70,5 +70,17 @@ class enrol_cohort_lib_testcase extends advanced_testcase {
         $groupinfo = $DB->get_record('groups', array('id' => $groupid));
         // Check that the group name has been changed.
         $this->assertEquals($cohort->name . ' cohort(2)', $groupinfo->name);
+
+        // Create another group that will have the same name as a generated cohort.
+        $groupdata = new stdClass();
+        $groupdata->courseid = $course2->id;
+        $groupdata->name = $cohort->name . ' cohort(2)';
+        groups_create_group($groupdata);
+        // Create a group for the cohort in course 2.
+        $groupid = enrol_cohort_create_new_group($course2->id, $cohort->id);
+        $groupinfo = $DB->get_record('groups', array('id' => $groupid));
+        // Check that the group name has been changed.
+        $this->assertEquals($cohort->name . ' cohort(3)', $groupinfo->name);
+
     }
 }
