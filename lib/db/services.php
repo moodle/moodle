@@ -1046,6 +1046,15 @@ $functions = array(
         'type'         => 'read',
         'capabilities' => 'report/completion:view',
     ),
+
+    // Rating functions.
+    'core_rating_get_item_ratings' => array(
+        'classname'     => 'core_rating_external',
+        'methodname'    => 'get_item_ratings',
+        'description'   => 'Retrieve all the ratings for an item.',
+        'type'          => 'read',
+        'capabilities'  => 'moodle/rating:view'
+    ),
 );
 
 $services = array(
@@ -1117,6 +1126,7 @@ $services = array(
             'mod_forum_view_forum_discussion',
             'core_user_view_user_profile',
             'gradereport_user_view_grade_report',
+            'core_rating_get_item_ratings',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
