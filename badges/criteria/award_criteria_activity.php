@@ -86,7 +86,7 @@ class award_criteria_activity extends award_criteria {
             if (!$mod) {
                 $str = $OUTPUT->error_text(get_string('error:nosuchmod', 'badges'));
             } else {
-                $str = html_writer::tag('b', '"' . ucfirst($mod->modname) . ' - ' . $mod->name . '"');
+                $str = html_writer::tag('b', '"' . get_string('modulename', $mod->modname) . ' - ' . $mod->name . '"');
                 if (isset($p['bydate'])) {
                     $str .= get_string('criteria_descr_bydate', 'badges', userdate($p['bydate'], get_string('strftimedate', 'core_langconfig')));
                 }
@@ -139,7 +139,7 @@ class award_criteria_activity extends award_criteria {
                 }
                 $param = array('id' => $mod->id,
                         'checked' => $checked,
-                        'name' => ucfirst($mod->modname) . ' - ' . $mod->name,
+                        'name' => get_string('modulename', $mod->modname) . ' - ' . $mod->name,
                         'error' => false
                         );
 
