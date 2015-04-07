@@ -927,6 +927,84 @@ class core_message_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since 2.9
+     */
+    public static function mark_message_read_parameters() {
+        return new external_function_parameters(
+            array(
+                'messageid' => new external_value(PARAM_INT, 'id of the message (in the message table)'),
+                'timeread' => new external_value(PARAM_INT, 'timestamp for when the message should be marked read')
+            )
+        );
+    }
+
+    /**
+     * Mark a single message as read, trigger message_viewed event
+     *
+     * @param  int $messageid id of the message (in the message table)
+     * @param  int $timeread timestamp for when the message should be marked read
+     * @return external_description
+     * @throws invalid_parameter_exception
+     * @throws moodle_exception
+     * @since 2.9
+     */
+    public static function mark_message_read($messageid, $timeread) {
+        global $CFG, $DB, $USER;
+        require_once($CFG->dirroot . "/message/lib.php");
+
+        // Check if private messaging between users is allowed.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        // Validate params.
+        $params = array(
+            'messageid' => $messageid,
+            'timeread' => $timeread
+        );
+        $params = self::validate_parameters(self::mark_message_read_parameters(), $params);
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $message = $DB->get_record('message', array('id' => $params['messageid']), '*', MUST_EXIST);
+
+        if ($message->useridto != $USER->id) {
+            throw new invalid_parameter_exception('Invalid messageid, you don\'t have permissions to mark this message as read');
+        }
+
+        $messageid = message_mark_message_read($message, $params['timeread']);
+
+        $results = array(
+            'messageid' => $messageid,
+            'warnings' => $warnings
+        );
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since 2.9
+     */
+    public static function mark_message_read_returns() {
+        return new external_single_structure(
+            array(
+                'messageid' => new external_value(PARAM_INT, 'the id of the message in the message_read table'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
 
 /**

@@ -618,4 +618,64 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
     }
 
+    /**
+     * Test mark_message_read.
+     */
+    public function test_mark_message_read() {
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // Login as user1.
+        $this->setUser($user1);
+        $this->assertEquals(array(), core_message_external::create_contacts(
+            array($user2->id, $user3->id)));
+
+        // The user2 sends a couple of messages to user1.
+        $this->send_message($user2, $user1, 'Hello there!');
+        $this->send_message($user2, $user1, 'How you goin?');
+        $this->send_message($user3, $user1, 'How you goin?');
+        $this->send_message($user3, $user2, 'How you goin?');
+
+        // Retrieve all messages sent by user2 (they are currently unread).
+        $lastmessages = message_get_messages($user1->id, $user2->id, 0, false);
+
+        $messageids = array();
+        foreach ($lastmessages as $m) {
+            $messageid = core_message_external::mark_message_read($m->id, time());
+            $messageids[] = external_api::clean_returnvalue(core_message_external::mark_message_read_returns(), $messageid);
+        }
+
+        // Retrieve all messages sent (they are currently read).
+        $lastmessages = message_get_messages($user1->id, $user2->id, 0, true);
+        $this->assertCount(2, $lastmessages);
+        $this->assertArrayHasKey($messageids[0]['messageid'], $lastmessages);
+        $this->assertArrayHasKey($messageids[1]['messageid'], $lastmessages);
+
+        // Retrieve all messages sent by any user (that are currently unread).
+        $lastmessages = message_get_messages($user1->id, 0, 0, false);
+        $this->assertCount(1, $lastmessages);
+
+        // Invalid message ids.
+        try {
+            $messageid = core_message_external::mark_message_read($messageids[0]['messageid'] * 2, time());
+            $this->fail('Exception expected due invalid messageid.');
+        } catch (dml_missing_record_exception $e) {
+            $this->assertEquals('invalidrecord', $e->errorcode);
+        }
+
+        // A message to a different user.
+        $lastmessages = message_get_messages($user2->id, $user3->id, 0, false);
+        $messageid = array_pop($lastmessages)->id;
+        try {
+            $messageid = core_message_external::mark_message_read($messageid, time());
+            $this->fail('Exception expected due invalid messageid.');
+        } catch (invalid_parameter_exception $e) {
+            $this->assertEquals('invalidparameter', $e->errorcode);
+        }
+
+    }
+
 }
