@@ -216,7 +216,7 @@ class db_record_lock_factory implements lock_factory {
         // Called from the shutdown handler. Must release all open locks.
         foreach ($this->openlocks as $key => $unused) {
             $lock = new lock($key, $this);
-            $this->release_lock($lock);
+            $lock->release();
         }
     }
 }
