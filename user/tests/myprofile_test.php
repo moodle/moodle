@@ -41,14 +41,15 @@ class core_user_myprofile_testcase extends advanced_testcase {
      */
     public function test_node__construct() {
         $node = new \core_user\output\myprofile\node('parentcat', 'nodename',
-                'nodetitle', 'after', 'www.google.com', 'description');
+                'nodetitle', 'after', 'www.google.com', 'description', new pix_icon('i/course', ''), 'class1 class2');
         $this->assertSame('parentcat', $node->parentcat);
         $this->assertSame('nodename', $node->name);
         $this->assertSame('nodetitle', $node->title);
         $this->assertSame('after', $node->after);
         $url = new moodle_url('www.google.com');
         $this->assertEquals($url, $node->url);
-        $this->assertSame('description', $node->content);
+        $this->assertEquals(new pix_icon('i/course', ''), $node->icon);
+        $this->assertSame('class1 class2', $node->classes);
     }
 
     /**
@@ -80,10 +81,45 @@ class core_user_myprofile_testcase extends advanced_testcase {
      * Test category::__construct().
      */
     public function test_category__construct() {
-        $category = new \core_user\output\myprofile\category('categoryname', 'title', 'after');
+        $category = new \core_user\output\myprofile\category('categoryname', 'title', 'after', 'class1 class2');
         $this->assertSame('categoryname', $category->name);
         $this->assertSame('title', $category->title);
         $this->assertSame('after', $category->after);
+        $this->assertSame('class1 class2', $category->classes);
+    }
+
+    public function test_validate_after_order1() {
+        $category = new \phpunit_fixture_myprofile_category('category', 'title', null);
+
+        // Create nodes.
+        $node1 = new \core_user\output\myprofile\node('category', 'node1', 'nodetitle', null, null, 'content');
+        $node2 = new \core_user\output\myprofile\node('category', 'node2', 'nodetitle', 'node1', null, 'content');
+        $node3 = new \core_user\output\myprofile\node('category', 'node3', 'nodetitle', 'node2', null, null);
+
+        $category->add_node($node3);
+        $category->add_node($node2);
+        $category->add_node($node1);
+
+        $this->setExpectedException('coding_exception');
+        $category->validate_after_order();
+
+    }
+
+    public function test_validate_after_order2() {
+        $category = new \phpunit_fixture_myprofile_category('category', 'title', null);
+
+        // Create nodes.
+        $node1 = new \core_user\output\myprofile\node('category', 'node1', 'nodetitle', null, null, null);
+        $node2 = new \core_user\output\myprofile\node('category', 'node2', 'nodetitle', 'node1', null, 'content');
+        $node3 = new \core_user\output\myprofile\node('category', 'node3', 'nodetitle', 'node2', null, null);
+
+        $category->add_node($node3);
+        $category->add_node($node2);
+        $category->add_node($node1);
+
+        $this->setExpectedException('coding_exception');
+        $category->validate_after_order();
+
     }
 
     /**
@@ -132,7 +168,7 @@ class core_user_myprofile_testcase extends advanced_testcase {
     /**
      * Test category::sort_nodes().
      */
-    public function test_sort_nodes() {
+    public function test_sort_nodes1() {
         $category = new \phpunit_fixture_myprofile_category('category', 'title', null);
 
         // Create nodes.
@@ -175,10 +211,50 @@ class core_user_myprofile_testcase extends advanced_testcase {
         $this->assertCount(2, $return);
 
         // Add a node with invalid 'after' and make sure an exception is thrown.
-        $node7 = new \core_user\output\myprofile\node('category', 'node6', 'nodetitle', 'noderandom');
+        $node7 = new \core_user\output\myprofile\node('category', 'node7', 'nodetitle', 'noderandom');
         $category->add_node($node7);
         $this->setExpectedException('coding_exception');
         $category->sort_nodes();
+    }
+
+    /**
+     * Test category::sort_nodes() with a mix of content and non content nodes.
+     */
+    public function test_sort_nodes2() {
+        $category = new \phpunit_fixture_myprofile_category('category', 'title', null);
+
+        // Create nodes.
+        $node1 = new \core_user\output\myprofile\node('category', 'node1', 'nodetitle', null, null, 'content');
+        $node2 = new \core_user\output\myprofile\node('category', 'node2', 'nodetitle', 'node1', null, 'content');
+        $node3 = new \core_user\output\myprofile\node('category', 'node3', 'nodetitle', null);
+        $node4 = new \core_user\output\myprofile\node('category', 'node4', 'nodetitle', 'node3');
+        $node5 = new \core_user\output\myprofile\node('category', 'node5', 'nodetitle', 'node3');
+        $node6 = new \core_user\output\myprofile\node('category', 'node6', 'nodetitle', 'node1', null, 'content');
+
+        // Add the nodes in random order.
+        $category->add_node($node3);
+        $category->add_node($node2);
+        $category->add_node($node4);
+        $category->add_node($node1);
+        $category->add_node($node5);
+        $category->add_node($node6);
+
+        // After node 1 we should have node2 - node6 - node3 - node4 - node5.
+        $category->sort_nodes();
+        $nodes = $category->nodes;
+        $this->assertCount(6, $nodes);
+        $node = array_shift($nodes);
+        $this->assertEquals($node1, $node);
+        $node = array_shift($nodes);
+        $this->assertEquals($node2, $node);
+        $node = array_shift($nodes);
+        $this->assertEquals($node6, $node);
+        $node = array_shift($nodes);
+        $this->assertEquals($node3, $node);
+        $node = array_shift($nodes);
+        $this->assertEquals($node4, $node);
+        $node = array_shift($nodes);
+        $this->assertEquals($node5, $node);
     }
 
     /**

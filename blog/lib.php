@@ -1013,3 +1013,31 @@ function blog_page_type_list($pagetype, $parentcontext, $currentcontext) {
         'blog-edit'=>get_string('page-blog-edit', 'blog')
     );
 }
+
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ *
+ * @return bool
+ */
+function core_blog_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    if (!blog_is_enabled_for_user() || isguestuser($user)) {
+        // The guest user cannot post, so it is not possible to view any posts.
+        // Also blogs might be disabled.
+        // May as well just bail aggressively here.
+        return true;
+    }
+    $url = new moodle_url("/blog/index.php", array('userid' => $user->id));
+    if ($iscurrentuser) {
+        $title = get_string('myprofilemyblogs', 'core_blog');
+    } else {
+        $title = get_string('myprofileuserblogs', 'core_blog', fullname($user));
+    }
+    $blognode = new core_user\output\myprofile\node('miscellaneous', 'blogs', $title, null, $url);
+    $tree->add_node($blognode);
+    return true;
+}

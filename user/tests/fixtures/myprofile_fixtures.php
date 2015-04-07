@@ -40,6 +40,13 @@ class phpunit_fixture_myprofile_category extends \core_user\output\myprofile\cat
     public function find_nodes_after($node) {
         return parent::find_nodes_after($node);
     }
+
+    /**
+     * Make protected method public for testing.
+     */
+    public function validate_after_order() {
+        parent::validate_after_order();
+    }
 }
 
 /**

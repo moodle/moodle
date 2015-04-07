@@ -6,6 +6,8 @@
 .userprofile dl dt, .userprofile dl dd {padding-top:3px;  padding-bottom:3px;}
 .userprofile dl dt {margin:0; font-weight:bold; display:block; float:left; width:110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .userprofile dl dd {margin:0; margin-left:120px;}
+.userprofile .profile_tree { column-count: 2; -webkit-column-count: 2; -moz-column-count: 2; }
+.userprofile .profile_tree section { display: inline-block; width: 100%; }
 
 .user-box {margin:8px;width:115px;height:160px;text-align:center;float:left;clear: none;}
 

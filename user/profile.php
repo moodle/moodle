@@ -41,7 +41,6 @@ require_once($CFG->libdir.'/filelib.php');
 $userid         = optional_param('id', 0, PARAM_INT);
 $edit           = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off.
 $reset          = optional_param('reset', null, PARAM_BOOL);
-$showallcourses = optional_param('showallcourses', 0, PARAM_INT);
 
 $PAGE->set_url('/user/profile.php', array('id' => $userid));
 
@@ -113,18 +112,6 @@ if (isguestuser()) {     // Guests can never edit their profile.
     } else {
         $PAGE->set_blocks_editing_capability('moodle/user:manageblocks');
     }
-}
-
-if (has_capability('moodle/user:viewhiddendetails', $context)) {
-    $hiddenfields = array();
-} else {
-    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
-}
-
-if (has_capability('moodle/site:viewuseridentity', $context)) {
-    $identityfields = array_flip(explode(',', $CFG->showuseridentity));
-} else {
-    $identityfields = array();
 }
 
 // Start setting up the page.
@@ -213,240 +200,26 @@ profile_view($user, $usercontext);
 echo $OUTPUT->header();
 echo '<div class="userprofile">';
 
-// Print the standard content of this page, the basic profile info.
-echo $OUTPUT->heading(fullname($user));
-
-if (is_mnet_remote_user($user)) {
-    $sql = "SELECT h.id, h.name, h.wwwroot,
-                   a.name as application, a.display_name
-              FROM {mnet_host} h, {mnet_application} a
-             WHERE h.id = ? AND h.applicationid = a.id";
-
-    $remotehost = $DB->get_record_sql($sql, array($user->mnethostid));
-    $a = new stdclass();
-    $a->remotetype = $remotehost->display_name;
-    $a->remotename = $remotehost->name;
-    $a->remoteurl  = $remotehost->wwwroot;
-
-    echo $OUTPUT->box(get_string('remoteuserinfo', 'mnet', $a), 'remoteuserinfo');
-}
-
-echo '<div class="userprofilebox clearfix"><div class="profilepicture">';
-echo $OUTPUT->user_picture($user, array('size' => 100));
-echo '</div>';
-
-echo '<div class="descriptionbox"><div class="description">';
-// Print the description.
 if ($user->description && !isset($hiddenfields['description'])) {
+    echo '<div class="description">';
     if (!empty($CFG->profilesforenrolledusersonly) && !$currentuser &&
         !$DB->record_exists('role_assignments', array('userid' => $user->id))) {
         echo get_string('profilenotshown', 'moodle');
     } else {
         $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user',
                                                           'profile', null);
-        $options = array('overflowdiv' => true);
-        echo format_text($user->description, $user->descriptionformat, $options);
+        echo format_text($user->description, $user->descriptionformat);
     }
+    echo '</div>';
 }
-echo '</div>';
-
-
-// Print all the little details in a list.
-echo html_writer::start_tag('dl', array('class' => 'list'));
-if (!isset($hiddenfields['country']) && $user->country) {
-    echo html_writer::tag('dt', get_string('country'));
-    echo html_writer::tag('dd', get_string($user->country, 'countries'));
-}
-
-if (!isset($hiddenfields['city']) && $user->city) {
-    echo html_writer::tag('dt', get_string('city'));
-    echo html_writer::tag('dd', $user->city);
-}
-
-if (isset($identityfields['address']) && $user->address) {
-    echo html_writer::tag('dt', get_string('address'));
-    echo html_writer::tag('dd', $user->address);
-}
-
-if (isset($identityfields['phone1']) && $user->phone1) {
-    echo html_writer::tag('dt', get_string('phone'));
-    echo html_writer::tag('dd', $user->phone1);
-}
-
-if (isset($identityfields['phone2']) && $user->phone2) {
-    echo html_writer::tag('dt', get_string('phone2'));
-    echo html_writer::tag('dd', $user->phone2);
-}
-
-if (isset($identityfields['institution']) && $user->institution) {
-    echo html_writer::tag('dt', get_string('institution'));
-    echo html_writer::tag('dd', $user->institution);
-}
-
-if (isset($identityfields['department']) && $user->department) {
-    echo html_writer::tag('dt', get_string('department'));
-    echo html_writer::tag('dd', $user->department);
-}
-
-if (isset($identityfields['idnumber']) && $user->idnumber) {
-    echo html_writer::tag('dt', get_string('idnumber'));
-    echo html_writer::tag('dd', $user->idnumber);
-}
-
-if (isset($identityfields['email']) and ($currentuser
-  or $user->maildisplay == 1
-  or has_capability('moodle/course:useremail', $context)
-  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER)))) {
-    echo html_writer::tag('dt', get_string('email'));
-    echo html_writer::tag('dd', obfuscate_mailto($user->email, ''));
-}
-
-if (!isset($hiddenfields['timezone'])) {
-    echo html_writer::tag('dt', get_string('timezone'));
-    echo html_writer::tag('dd', core_date::get_localised_timezone(core_date::get_user_timezone($user)));
-}
-
-if ($user->url && !isset($hiddenfields['webpage'])) {
-    $url = $user->url;
-    if (strpos($user->url, '://') === false) {
-        $url = 'http://'. $url;
-    }
-    $webpageurl = new moodle_url($url);
-    echo html_writer::tag('dt', get_string('webpage'));
-    echo html_writer::tag('dd', html_writer::link($webpageurl, s($user->url)));
-}
-
-if ($user->icq && !isset($hiddenfields['icqnumber'])) {
-    $imurl = new moodle_url('http://web.icq.com/wwp', array('uin' => $user->icq) );
-    $iconurl = new moodle_url('http://web.icq.com/whitepages/online', array('icq' => $user->icq, 'img' => '5'));
-    $statusicon = html_writer::tag('img', '', array('src' => $iconurl, 'class' => 'icon icon-post', 'alt' => get_string('status')));
-    echo html_writer::tag('dt', get_string('icqnumber'));
-    echo html_writer::tag('dd', html_writer::link($imurl, s($user->icq) . $statusicon));
-}
-
-if ($user->skype && !isset($hiddenfields['skypeid'])) {
-    $imurl = 'skype:'.urlencode($user->skype).'?call';
-    $iconurl = new moodle_url('http://mystatus.skype.com/smallicon/'.urlencode($user->skype));
-    if (is_https()) {
-        // Bad luck, skype devs are lazy to set up SSL on their servers - see MDL-37233.
-        $statusicon = '';
-    } else {
-        $statusicon = html_writer::empty_tag('img',
-            array('src' => $iconurl, 'class' => 'icon icon-post', 'alt' => get_string('status')));
-    }
-    echo html_writer::tag('dt', get_string('skypeid'));
-    echo html_writer::tag('dd', html_writer::link($imurl, s($user->skype) . $statusicon));
-}
-if ($user->yahoo && !isset($hiddenfields['yahooid'])) {
-    $imurl = new moodle_url('http://edit.yahoo.com/config/send_webmesg', array('.target' => $user->yahoo, '.src' => 'pg'));
-    $iconurl = new moodle_url('http://opi.yahoo.com/online', array('u' => $user->yahoo, 'm' => 'g', 't' => '0'));
-    $statusicon = html_writer::tag('img', '',
-        array('src' => $iconurl, 'class' => 'iconsmall icon-post', 'alt' => get_string('status')));
-    echo html_writer::tag('dt', get_string('yahooid'));
-    echo html_writer::tag('dd', html_writer::link($imurl, s($user->yahoo) . $statusicon));
-}
-if ($user->aim && !isset($hiddenfields['aimid'])) {
-    $imurl = 'aim:goim?screenname='.urlencode($user->aim);
-    echo html_writer::tag('dt', get_string('aimid'));
-    echo html_writer::tag('dd', html_writer::link($imurl, s($user->aim)));
-}
-if ($user->msn && !isset($hiddenfields['msnid'])) {
-    echo html_writer::tag('dt', get_string('msnid'));
-    echo html_writer::tag('dd', s($user->msn));
-}
-
-// Print the Custom User Fields.
-profile_display_fields($user->id);
-
-
-if (!isset($hiddenfields['mycourses'])) {
-    if ($mycourses = enrol_get_all_users_courses($user->id, true, null, 'visible DESC, sortorder ASC')) {
-        $shown = 0;
-        $courselisting = '';
-        foreach ($mycourses as $mycourse) {
-            if ($mycourse->category) {
-                context_helper::preload_from_record($mycourse);
-                $ccontext = context_course::instance($mycourse->id);
-                $linkattributes = null;
-                if ($mycourse->visible == 0) {
-                    if (!has_capability('moodle/course:viewhiddencourses', $ccontext)) {
-                        continue;
-                    }
-                    $linkattributes['class'] = 'dimmed';
-                }
-                $params = array('id' => $user->id, 'course' => $mycourse->id);
-                if ($showallcourses) {
-                    $params['showallcourses'] = 1;
-                }
-                $url = new moodle_url('/user/view.php', $params);
-                $courselisting .= html_writer::link($url, $ccontext->get_context_name(false), $linkattributes);
-                $courselisting .= ', ';
-            }
-            $shown++;
-            if (!$showallcourses && $shown == $CFG->navcourselimit) {
-                $url = new moodle_url('/user/profile.php', array('id' => $user->id, 'showallcourses' => 1));
-                $courselisting .= html_writer::link($url, '...', array('title' => get_string('viewmore')));
-                break;
-            }
-        }
-        echo html_writer::tag('dt', get_string('courseprofiles'));
-        echo html_writer::tag('dd', rtrim($courselisting, ', '));
-    }
-}
-if (!isset($hiddenfields['firstaccess'])) {
-    if ($user->firstaccess) {
-        $datestring = userdate($user->firstaccess)."&nbsp; (".format_time(time() - $user->firstaccess).")";
-    } else {
-        $datestring = get_string("never");
-    }
-    echo html_writer::tag('dt', get_string('firstsiteaccess'));
-    echo html_writer::tag('dd', $datestring);
-}
-if (!isset($hiddenfields['lastaccess'])) {
-    if ($user->lastaccess) {
-        $datestring = userdate($user->lastaccess)."&nbsp; (".format_time(time() - $user->lastaccess).")";
-    } else {
-        $datestring = get_string("never");
-    }
-    echo html_writer::tag('dt', get_string('lastsiteaccess'));
-    echo html_writer::tag('dd', $datestring);
-}
-
-if (has_capability('moodle/user:viewlastip', $usercontext) && !isset($hiddenfields['lastip'])) {
-    if ($user->lastip) {
-        $iplookupurl = new moodle_url('/iplookup/index.php', array('ip' => $user->lastip, 'user' => $user->id));
-        $ipstring = html_writer::link($iplookupurl, $user->lastip);
-    } else {
-        $ipstring = get_string("none");
-    }
-    echo html_writer::tag('dt', get_string('lastip'));
-    echo html_writer::tag('dd', $ipstring);
-}
-
-// Printing tagged interests.
-if (!empty($CFG->usetags)) {
-    if ($interests = tag_get_tags_csv('user', $user->id) ) {
-        echo html_writer::tag('dt', get_string('interests'));
-        echo html_writer::tag('dd', $interests);
-    }
-}
-
-if (!isset($hiddenfields['suspended'])) {
-    if ($user->suspended) {
-        echo html_writer::tag('dt', '&nbsp;');
-        echo html_writer::tag('dd', get_string('suspended', 'auth'));
-    }
-}
-
-require_once($CFG->libdir . '/badgeslib.php');
-if (!empty($CFG->enablebadges)) {
-    profile_display_badges($user->id);
-}
-
-echo html_writer::end_tag('dl');
-echo "</div></div>"; // Closing desriptionbox and userprofilebox.
 
 echo $OUTPUT->custom_block_region('content');
 
+// Render custom blocks.
+$renderer = $PAGE->get_renderer('core_user', 'myprofile');
+$tree = core_user\output\myprofile\manager::build_tree($user, $currentuser);
+echo $renderer->render($tree);
+
 echo '</div>';  // Userprofile class.
+
 echo $OUTPUT->footer();
