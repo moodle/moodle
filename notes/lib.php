@@ -366,4 +366,3 @@ function note_view($context, $userid) {
     ));
     $event->trigger();
 }
-
