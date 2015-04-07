@@ -640,12 +640,25 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->getDataGenerator()->create_grouping_group(array('groupid' => $this->groups[0]->id, 'groupingid' => $grouping->id));
         $this->getDataGenerator()->create_grouping_group(array('groupid' => $this->groups[1]->id, 'groupingid' => $grouping->id));
 
-        // No active group => 2 groups + the default one.
-        $assign2 = $this->create_instance(array('teamsubmission' => 1, 'teamsubmissiongroupingid' => $grouping->id));
+        // No active group and non group submissions allowed => 2 groups + the default one.
+        $params = array(
+            'teamsubmission' => 1,
+            'teamsubmissiongroupingid' => $grouping->id,
+            'preventsubmissionnotingroup' => false
+        );
+        $assign2 = $this->create_instance($params);
         $this->assertEquals(3, $assign2->count_teams());
 
         // An active group => Just the selected one.
         $this->assertEquals(1, $assign2->count_teams($this->groups[0]->id));
+
+        // No active group and non group submissions allowed => 2 groups + no default one.
+        $params = array('teamsubmission' => 1, 'teamsubmissiongroupingid' => $grouping->id, 'preventsubmissionnotingroup' => true);
+        $assign3 = $this->create_instance($params);
+        $this->assertEquals(2, $assign3->count_teams());
+
+        $assign4 = $this->create_instance(array('teamsubmission' => 1, 'preventsubmissionnotingroup' => true));
+        $this->assertEquals(self::GROUP_COUNT, $assign4->count_teams());
     }
 
     public function test_submit_to_default_group() {
