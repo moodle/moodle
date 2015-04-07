@@ -1116,6 +1116,7 @@ $services = array(
             'core_notes_view_notes',
             'mod_forum_view_forum_discussion',
             'core_user_view_user_profile',
+            'gradereport_user_view_grade_report',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,

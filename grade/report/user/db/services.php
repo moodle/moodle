@@ -31,5 +31,13 @@ $functions = array(
         'description' => 'Get the user/s report grades table for a course',
         'type' => 'read',
         'capabilities' => 'gradereport/user:view'
+    ),
+    'gradereport_user_view_grade_report' => array(
+        'classname' => 'gradereport_user_external',
+        'methodname' => 'view_grade_report',
+        'classpath' => 'grade/report/user/externallib.php',
+        'description' => 'Trigger the report view event',
+        'type' => 'write',
+        'capabilities' => 'gradereport/user:view'
     )
 );
