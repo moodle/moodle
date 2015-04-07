@@ -184,6 +184,9 @@ div.editor_atto_content:hover .atto_control {
 .editor_atto_wrap {
     position: relative;
 }
+.dir-rtl .editor_atto_wrap textarea {
+    direction: ltr;
+}
 .editor_atto_notification{
     position: absolute;
     bottom: -1.5em;
