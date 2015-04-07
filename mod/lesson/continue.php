@@ -36,6 +36,9 @@ $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*'
 require_login($course, false, $cm);
 require_sesskey();
 
+// Apply overrides.
+$lesson->update_effective_access($USER->id);
+
 $context = context_module::instance($cm->id);
 $canmanage = has_capability('mod/lesson:manage', $context);
 $lessonoutput = $PAGE->get_renderer('mod_lesson');

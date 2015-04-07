@@ -638,6 +638,41 @@ function lesson_get_media_html($lesson, $context) {
     return $code;
 }
 
+/**
+ * Logic to happen when a/some group(s) has/have been deleted in a course.
+ *
+ * @param int $courseid The course ID.
+ * @param int $groupid The group id if it is known
+ * @return void
+ */
+function lesson_process_group_deleted_in_course($courseid, $groupid = null) {
+    global $DB;
+
+    $params = array('courseid' => $courseid);
+    if ($groupid) {
+        $params['groupid'] = $groupid;
+        // We just update the group that was deleted.
+        $sql = "SELECT o.id, o.lessonid
+                  FROM {lesson_overrides} o
+                  JOIN {lesson} lesson ON lesson.id = o.lessonid
+                 WHERE lesson.course = :courseid
+                   AND o.groupid = :groupid";
+    } else {
+        // No groupid, we update all orphaned group overrides for all lessons in course.
+        $sql = "SELECT o.id, o.lessonid
+                  FROM {lesson_overrides} o
+                  JOIN {lesson} lesson ON lesson.id = o.lessonid
+             LEFT JOIN {groups} grp ON grp.id = o.groupid
+                 WHERE lesson.course = :courseid
+                   AND o.groupid IS NOT NULL
+                   AND grp.id IS NULL";
+    }
+    $records = $DB->get_records_sql_menu($sql, $params);
+    if (!$records) {
+        return; // Nothing to do.
+    }
+    $DB->delete_records_list('lesson_overrides', 'id', array_keys($records));
+}
 
 /**
  * Abstract class that page type's MUST inherit from.
@@ -988,6 +1023,8 @@ class lesson extends lesson_base {
         $cm = get_coursemodule_from_instance('lesson', $this->properties->id, $this->properties->course);
         $context = context_module::instance($cm->id);
 
+        $this->delete_all_overrides();
+
         $DB->delete_records("lesson", array("id"=>$this->properties->id));
         $DB->delete_records("lesson_pages", array("lessonid"=>$this->properties->id));
         $DB->delete_records("lesson_answers", array("lessonid"=>$this->properties->id));
@@ -1009,6 +1046,204 @@ class lesson extends lesson_base {
 
         grade_update('mod/lesson', $this->properties->course, 'mod', 'lesson', $this->properties->id, 0, null, array('deleted'=>1));
         return true;
+    }
+
+    /**
+     * Deletes a lesson override from the database and clears any corresponding calendar events
+     *
+     * @param int $overrideid The id of the override being deleted
+     * @return bool true on success
+     */
+    public function delete_override($overrideid) {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot . '/calendar/lib.php');
+
+        $cm = get_coursemodule_from_instance('lesson', $this->properties->id, $this->properties->course);
+
+        $override = $DB->get_record('lesson_overrides', array('id' => $overrideid), '*', MUST_EXIST);
+
+        // Delete the events.
+        $conds = array('modulename' => 'lesson',
+                'instance' => $this->properties->id);
+        if (isset($override->userid)) {
+            $conds['userid'] = $override->userid;
+        } else {
+            $conds['groupid'] = $override->groupid;
+        }
+        $events = $DB->get_records('event', $conds);
+        foreach ($events as $event) {
+            $eventold = calendar_event::load($event);
+            $eventold->delete();
+        }
+
+        $DB->delete_records('lesson_overrides', array('id' => $overrideid));
+
+        // Set the common parameters for one of the events we will be triggering.
+        $params = array(
+            'objectid' => $override->id,
+            'context' => context_module::instance($cm->id),
+            'other' => array(
+                'lessonid' => $override->lessonid
+            )
+        );
+        // Determine which override deleted event to fire.
+        if (!empty($override->userid)) {
+            $params['relateduserid'] = $override->userid;
+            $event = \mod_lesson\event\user_override_deleted::create($params);
+        } else {
+            $params['other']['groupid'] = $override->groupid;
+            $event = \mod_lesson\event\group_override_deleted::create($params);
+        }
+
+        // Trigger the override deleted event.
+        $event->add_record_snapshot('lesson_overrides', $override);
+        $event->trigger();
+
+        return true;
+    }
+
+    /**
+     * Deletes all lesson overrides from the database and clears any corresponding calendar events
+     */
+    public function delete_all_overrides() {
+        global $DB;
+
+        $overrides = $DB->get_records('lesson_overrides', array('lessonid' => $this->properties->id), 'id');
+        foreach ($overrides as $override) {
+            $this->delete_override($override->id);
+        }
+    }
+
+    /**
+     * Updates the lesson properties with override information for a user.
+     *
+     * Algorithm:  For each lesson setting, if there is a matching user-specific override,
+     *   then use that otherwise, if there are group-specific overrides, return the most
+     *   lenient combination of them.  If neither applies, leave the quiz setting unchanged.
+     *
+     *   Special case: if there is more than one password that applies to the user, then
+     *   lesson->extrapasswords will contain an array of strings giving the remaining
+     *   passwords.
+     *
+     * @param int $userid The userid.
+     */
+    public function update_effective_access($userid) {
+        global $DB;
+
+        // Check for user override.
+        $override = $DB->get_record('lesson_overrides', array('lessonid' => $this->properties->id, 'userid' => $userid));
+
+        if (!$override) {
+            $override = new stdClass();
+            $override->available = null;
+            $override->deadline = null;
+            $override->timelimit = null;
+            $override->review = null;
+            $override->maxattempts = null;
+            $override->retake = null;
+            $override->password = null;
+        }
+
+        // Check for group overrides.
+        $groupings = groups_get_user_groups($this->properties->course, $userid);
+
+        if (!empty($groupings[0])) {
+            // Select all overrides that apply to the User's groups.
+            list($extra, $params) = $DB->get_in_or_equal(array_values($groupings[0]));
+            $sql = "SELECT * FROM {lesson_overrides}
+                    WHERE groupid $extra AND lessonid = ?";
+            $params[] = $this->properties->id;
+            $records = $DB->get_records_sql($sql, $params);
+
+            // Combine the overrides.
+            $availables = array();
+            $deadlines = array();
+            $timelimits = array();
+            $reviews = array();
+            $attempts = array();
+            $retakes = array();
+            $passwords = array();
+
+            foreach ($records as $gpoverride) {
+                if (isset($gpoverride->available)) {
+                    $availables[] = $gpoverride->available;
+                }
+                if (isset($gpoverride->deadline)) {
+                    $deadlines[] = $gpoverride->deadline;
+                }
+                if (isset($gpoverride->timelimit)) {
+                    $timelimits[] = $gpoverride->timelimit;
+                }
+                if (isset($gpoverride->review)) {
+                    $reviews[] = $gpoverride->review;
+                }
+                if (isset($gpoverride->maxattempts)) {
+                    $attempts[] = $gpoverride->maxattempts;
+                }
+                if (isset($gpoverride->retake)) {
+                    $retakes[] = $gpoverride->retake;
+                }
+                if (isset($gpoverride->password)) {
+                    $passwords[] = $gpoverride->password;
+                }
+            }
+            // If there is a user override for a setting, ignore the group override.
+            if (is_null($override->available) && count($availables)) {
+                $override->available = min($availables);
+            }
+            if (is_null($override->deadline) && count($deadlines)) {
+                if (in_array(0, $deadlines)) {
+                    $override->deadline = 0;
+                } else {
+                    $override->deadline = max($deadlines);
+                }
+            }
+            if (is_null($override->timelimit) && count($timelimits)) {
+                if (in_array(0, $timelimits)) {
+                    $override->timelimit = 0;
+                } else {
+                    $override->timelimit = max($timelimits);
+                }
+            }
+            if (is_null($override->review) && count($reviews)) {
+                $override->review = max($reviews);
+            }
+            if (is_null($override->maxattempts) && count($attempts)) {
+                $override->maxattempts = max($attempts);
+            }
+            if (is_null($override->retake) && count($retakes)) {
+                $override->retake = max($retakes);
+            }
+            if (is_null($override->password) && count($passwords)) {
+                $override->password = array_shift($passwords);
+                if (count($passwords)) {
+                    $override->extrapasswords = $passwords;
+                }
+            }
+
+        }
+
+        // Merge with lesson defaults.
+        $keys = array('available', 'deadline', 'timelimit', 'maxattempts', 'review', 'retake');
+        foreach ($keys as $key) {
+            if (isset($override->{$key})) {
+                $this->properties->{$key} = $override->{$key};
+            }
+        }
+
+        // Special handling of lesson usepassword and password.
+        if (isset($override->password)) {
+            if ($override->password == '') {
+                $this->properties->usepassword = 0;
+            } else {
+                $this->properties->usepassword = 1;
+                $this->properties->password = $override->password;
+                if (isset($override->extrapasswords)) {
+                    $this->properties->extrapasswords = $override->extrapasswords;
+                }
+            }
+        }
     }
 
     /**
@@ -1452,7 +1687,7 @@ class lesson extends lesson_base {
      * @return string
      */
     public function time_remaining($starttime) {
-        $timeleft = $starttime + $this->timelimit - time();
+        $timeleft = $starttime + $this->properties->timelimit - time();
         $hours = floor($timeleft/3600);
         $timeleft = $timeleft - ($hours * 3600);
         $minutes = floor($timeleft/60);

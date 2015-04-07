@@ -263,5 +263,38 @@ function xmldb_lesson_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015032700, 'lesson');
     }
 
+    if ($oldversion < 2015033100) {
+
+        // Define table lesson_overrides to be created.
+        $table = new xmldb_table('lesson_overrides');
+
+        // Adding fields to table lesson_overrides.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('lessonid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('available', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('deadline', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('timelimit', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('review', XMLDB_TYPE_INTEGER, '3', null, null, null, null);
+        $table->add_field('maxattempts', XMLDB_TYPE_INTEGER, '3', null, null, null, null);
+        $table->add_field('retake', XMLDB_TYPE_INTEGER, '3', null, null, null, null);
+        $table->add_field('password', XMLDB_TYPE_CHAR, '32', null, null, null, null);
+
+        // Adding keys to table lesson_overrides.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('lessonid', XMLDB_KEY_FOREIGN, array('lessonid'), 'lesson', array('id'));
+        $table->add_key('groupid', XMLDB_KEY_FOREIGN, array('groupid'), 'groups', array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+        // Conditionally launch create table for lesson_overrides.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Lesson savepoint reached.
+        upgrade_mod_savepoint(true, 2015033100, 'lesson');
+    }
+
     return true;
 }

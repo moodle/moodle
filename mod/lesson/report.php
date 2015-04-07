@@ -410,6 +410,11 @@ if ($action === 'delete') {
     $userid = optional_param('userid', null, PARAM_INT); // if empty, then will display the general detailed view
     $try    = optional_param('try', null, PARAM_INT);
 
+    if (!empty($userid)) {
+        // Apply overrides.
+        $lesson->update_effective_access($userid);
+    }
+
     $lessonpages = $lesson->load_all_pages();
     foreach ($lessonpages as $lessonpage) {
         if ($lessonpage->prevpageid == 0) {
