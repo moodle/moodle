@@ -226,7 +226,6 @@ M.mod_quiz.secure_window = {
         Y.delegate('cut',         M.mod_quiz.secure_window.prevent, document, '*');
         Y.delegate('copy',        M.mod_quiz.secure_window.prevent, document, '*');
         Y.delegate('paste',       M.mod_quiz.secure_window.prevent, document, '*');
-        M.mod_quiz.secure_window.clear_status;
         Y.on('beforeprint', function() {
             Y.one(document.body).setStyle('display', 'none');
         }, window);
@@ -239,11 +238,6 @@ M.mod_quiz.secure_window = {
         Y.on('key', M.mod_quiz.secure_window.prevent, '*', 'press:67,86,88+meta');
         Y.on('key', M.mod_quiz.secure_window.prevent, '*', 'up:67,86,88+meta');
         Y.on('key', M.mod_quiz.secure_window.prevent, '*', 'down:67,86,88+meta');
-    },
-
-    clear_status: function() {
-        window.status = '';
-        setTimeout(M.mod_quiz.secure_window.clear_status, 10);
     },
 
     is_content_editable: function(n) {
