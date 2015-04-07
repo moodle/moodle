@@ -68,15 +68,18 @@ list($options, $unrecognized) = cli_get_params(
 $help = "
 Behat utilities to manage the test environment
 
+Usage:
+  php util.php [--install|--drop|--enable|--disable|--diag|--updatesteps|--help] [--parallel=value [--maxruns=value]]
+
 Options:
 --install      Installs the test environment for acceptance tests
 --drop         Drops the database tables and the dataroot contents
 --enable       Enables test environment and updates tests list
 --disable      Disables test environment
 --diag         Get behat test environment status code
+--updatesteps  Update feature step file.
 -j, --parallel Number of parallel behat run operation
 -m, --maxruns  Max parallel processes to be executed at one time.
---updatesteps  Update feature step file.
 
 -h, --help     Print out this help
 
@@ -205,8 +208,12 @@ if ($options['install']) {
 } else if ($options['disable']) {
     echo "Acceptance tests environment disabled for " . $options['parallel'] . " parallel sites" . PHP_EOL;
 
+} else if ($options['diag']) {
+    // Valid option, so nothing to do.
 } else {
     echo $help;
+    chdir($cwd);
+    exit(1);
 }
 
 chdir($cwd);

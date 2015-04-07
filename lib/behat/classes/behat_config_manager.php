@@ -130,21 +130,44 @@ class behat_config_manager {
             return $features;
         }
         $newfeaturelist = array();
-        $tagstosearch = explode('&&', $tags);
+        // Split tags in and and or.
+        $tags = explode('&&', $tags);
+        $andtags = array();
+        $ortags = array();
+        foreach ($tags as $tag) {
+            // Explode all tags seperated by , and add it to ortags.
+            $ortags = array_merge($ortags, explode(',', $tag));
+            // And tags will be the first one before comma(,).
+            $andtags[] = preg_replace('/,.*/', '', $tag);
+        }
+
         foreach ($features as $featurefile) {
             $contents = file_get_contents($featurefile);
             $includefeature = true;
-            foreach ($tagstosearch as $tag) {
+            foreach ($andtags as $tag) {
                 // If negitive tag, then ensure it don't exist.
                 if (strpos($tag, '~') !== false) {
                     $tag = substr($tag, 1);
                     if ($contents && strpos($contents, $tag) !== false) {
                         $includefeature = false;
+                        break;
                     }
                 } else if ($contents && strpos($contents, $tag) === false) {
                     $includefeature = false;
+                    break;
                 }
             }
+
+            // If feature not included then check or tags.
+            if (!$includefeature && !empty($ortags)) {
+                foreach ($ortags as $tag) {
+                    if ($contents && (strpos($tag, '~') === false) && (strpos($contents, $tag) !== false)) {
+                        $includefeature = true;
+                        break;
+                    }
+                }
+            }
+
             if ($includefeature) {
                 $newfeaturelist[] = $featurefile;
             }
@@ -354,7 +377,12 @@ class behat_config_manager {
                 // Pull out the features for just this worker.
                 if (count($features)) {
                     $features = array_chunk($features, ceil(count($features) / max(1, $parallelruns)));
-                    $features = $features[$CFG->behatrunprocess - 1];
+                    // Check if there is any feature file for this process.
+                    if (!empty($features[$CFG->behatrunprocess - 1])) {
+                        $features = $features[$CFG->behatrunprocess - 1];
+                    } else {
+                        $features = null;
+                    }
                 }
             }
             // Set proper selenium2 wd_host if defined.

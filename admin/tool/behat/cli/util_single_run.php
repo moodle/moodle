@@ -61,6 +61,9 @@ if ($options['install'] or $options['drop']) {
 $help = "
 Behat utilities to manage the test environment
 
+Usage:
+  php util_single_run.php [--install|--drop|--enable|--disable|--diag|--updatesteps|--help]
+
 Options:
 --install     Installs the test environment for acceptance tests
 --drop        Drops the database tables and the dataroot contents
