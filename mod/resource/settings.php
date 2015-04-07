@@ -46,8 +46,6 @@ if ($ADMIN->fulltree) {
     //--- general settings -----------------------------------------------------------------------------------
     $settings->add(new admin_setting_configtext('resource/framesize',
         get_string('framesize', 'resource'), get_string('configframesize', 'resource'), 130, PARAM_INT));
-    $settings->add(new admin_setting_configcheckbox('resource/requiremodintro',
-        get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 0));
     $settings->add(new admin_setting_configmultiselect('resource/displayoptions',
         get_string('displayoptions', 'resource'), get_string('configdisplayoptions', 'resource'),
         $defaultdisplayoptions, $displayoptions));

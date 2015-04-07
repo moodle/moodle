@@ -680,11 +680,31 @@ abstract class moodleform_mod extends moodleform {
         }
     }
 
-    function add_intro_editor($required=false, $customlabel=null) {
-        if (!$this->_features->introeditor) {
-            // intro editor not supported in this module
-            return;
-        }
+    /**
+     * Add an editor for an activity's introduction field.
+     * @deprecated since MDL-49101 - use moodleform_mod::standard_intro_elements() instead.
+     * @param null $required Override system default for requiremodintro
+     * @param null $customlabel Override default label for editor
+     * @throws coding_exception
+     */
+    protected function add_intro_editor($required=null, $customlabel=null) {
+        $str = "Function moodleform_mod::add_intro_editor() is deprecated, use moodleform_mod::standard_intro_elements() instead.";
+        debugging($str, DEBUG_DEVELOPER);
+
+        $this->standard_intro_elements($customlabel);
+    }
+
+
+    /**
+     * Add an editor for an activity's introduction field.
+     *
+     * @param null $customlabel Override default label for editor
+     * @throws coding_exception
+     */
+    protected function standard_intro_elements($customlabel=null) {
+        global $CFG;
+
+        $required = $CFG->requiremodintro;
 
         $mform = $this->_form;
         $label = is_null($customlabel) ? get_string('moduleintro') : $customlabel;

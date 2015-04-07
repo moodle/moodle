@@ -56,7 +56,7 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $this->add_intro_editor(true, get_string('description', 'assign'));
+        $this->standard_intro_elements(get_string('description', 'assign'));
 
         $mform->addElement('filemanager', 'introattachments',
                             get_string('introattachments', 'assign'),

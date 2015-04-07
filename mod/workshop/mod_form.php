@@ -75,7 +75,7 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         // Introduction
-        $this->add_intro_editor(false, get_string('introduction', 'workshop'));
+        $this->standard_intro_elements(get_string('introduction', 'workshop'));
 
         // Grading settings -----------------------------------------------------------
         $mform->addElement('header', 'gradingsettings', get_string('gradingsettings', 'workshop'));
