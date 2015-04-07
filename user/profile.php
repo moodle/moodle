@@ -225,13 +225,7 @@ if ($currentpage->userid == 0) {
 }
 
 // Trigger a user profile viewed event.
-$event = \core\event\user_profile_viewed::create(array(
-    'objectid' => $user->id,
-    'relateduserid' => $user->id,
-    'context' => $usercontext
-));
-$event->add_record_snapshot('user', $user);
-$event->trigger();
+profile_view($user, $usercontext);
 
 // TODO WORK OUT WHERE THE NAV BAR IS!
 echo $OUTPUT->header();

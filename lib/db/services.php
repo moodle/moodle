@@ -512,6 +512,15 @@ $functions = array(
         'capabilities'  => 'moodle/course:viewparticipants',
     ),
 
+    'core_user_view_user_profile' => array(
+        'classname'     => 'core_user_external',
+        'methodname'    => 'view_user_profile',
+        'classpath'     => 'user/externallib.php',
+        'description'   => 'Simulates the web-interface view of user/view.php and user/profile.php (triggering events).',
+        'type'          => 'write',
+        'capabilities'  => 'moodle/user:viewdetails',
+    ),
+
     // === enrol related functions ===
 
     'core_enrol_get_enrolled_users_with_capability' => array(
@@ -1106,6 +1115,7 @@ $services = array(
             'core_message_mark_message_read',
             'core_notes_view_notes',
             'mod_forum_view_forum_discussion',
+            'core_user_view_user_profile',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
