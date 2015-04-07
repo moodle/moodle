@@ -273,6 +273,13 @@ class behat_config_manager {
      * @return int
      */
     public final static function get_parallel_test_runs($runprocess = 0) {
+        global $CFG;
+
+        // Optimise reading this information from file.
+        if (!empty($CFG->behatparallelprocesses)) {
+            return $CFG->behatparallelprocesses;
+        }
+
         $parallelrun = 0;
         // Get parallel run info from first file and last file.
         $parallelrunconfigfile = self::get_parallel_test_file_path($runprocess);
@@ -281,6 +288,8 @@ class behat_config_manager {
                 $parallelrun = (int) $parallel;
             }
         }
+
+        $CFG->behatparallelprocesses = $parallelrun;
 
         return $parallelrun;
     }
