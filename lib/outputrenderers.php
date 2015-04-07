@@ -2848,7 +2848,108 @@ EOD;
      * @return string the HTML to output.
      */
     public function notification($message, $classes = 'notifyproblem') {
-        return html_writer::tag('div', clean_text($message), array('class' => renderer_base::prepare_classes($classes)));
+
+        $classmappings = array(
+            'notifyproblem' => \core\output\notification::NOTIFY_PROBLEM,
+            'notifytiny' => \core\output\notification::NOTIFY_PROBLEM,
+            'notifysuccess' => \core\output\notification::NOTIFY_SUCCESS,
+            'notifymessage' => \core\output\notification::NOTIFY_MESSAGE,
+            'redirectmessage' => \core\output\notification::NOTIFY_REDIRECT
+        );
+
+        // Identify what type of notification this is.
+        $type = \core\output\notification::NOTIFY_PROBLEM;
+        $classarray = explode(' ', self::prepare_classes($classes));
+        if (count($classarray) > 0) {
+            foreach ($classarray as $class) {
+                if (isset($classmappings[$class])) {
+                    $type = $classmappings[$class];
+                    break;
+                }
+            }
+        }
+
+        $n = new \core\output\notification($message, $type);
+        return $this->render($n);
+
+    }
+
+    /**
+     * Output a notification at a particular level - in this case, NOTIFY_PROBLEM.
+     *
+     * @param string $message the message to print out
+     * @return string HTML fragment.
+     */
+    public function notify_problem($message) {
+        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_PROBLEM);
+        return $this->render($n);
+    }
+
+    /**
+     * Output a notification at a particular level - in this case, NOTIFY_SUCCESS.
+     *
+     * @param string $message the message to print out
+     * @return string HTML fragment.
+     */
+    public function notify_success($message) {
+        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_SUCCESS);
+        return $this->render($n);
+    }
+
+    /**
+     * Output a notification at a particular level - in this case, NOTIFY_MESSAGE.
+     *
+     * @param string $message the message to print out
+     * @return string HTML fragment.
+     */
+    public function notify_message($message) {
+        $n = new notification($message, notification::NOTIFY_MESSAGE);
+        return $this->render($n);
+    }
+
+    /**
+     * Output a notification at a particular level - in this case, NOTIFY_REDIRECT.
+     *
+     * @param string $message the message to print out
+     * @return string HTML fragment.
+     */
+    public function notify_redirect($message) {
+        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_REDIRECT);
+        return $this->render($n);
+    }
+
+    /**
+     * Render a notification (that is, a status message about something that has
+     * just happened).
+     *
+     * @param \core\output\notification $notification the notification to print out
+     * @return string the HTML to output.
+     */
+    protected function render_notification(\core\output\notification $notification) {
+
+        $data = $notification->export_for_template($this);
+
+        $templatename = '';
+        switch($data->type) {
+            case \core\output\notification::NOTIFY_MESSAGE:
+                $templatename = 'core/output/notification_message';
+                break;
+            case \core\output\notification::NOTIFY_SUCCESS:
+                $templatename = 'core/output/notification_success';
+                break;
+            case \core\output\notification::NOTIFY_PROBLEM:
+                $templatename = 'core/output/notification_problem';
+                break;
+            case \core\output\notification::NOTIFY_REDIRECT:
+                $templatename = 'core/output/notification_redirect';
+                break;
+            default:
+                $templatename = 'core/output/notification_message';
+                break;
+        }
+
+        return self::render_from_template($templatename, $data);
+
     }
 
     /**
