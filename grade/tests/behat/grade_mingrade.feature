@@ -25,7 +25,7 @@ Feature: We can use a minimum grade different than zero
     And I log in as "admin"
     And I set the following administration settings values:
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Grades"
     And I navigate to "Categories and items" node in "Grade administration > Setup"
