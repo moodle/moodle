@@ -1243,6 +1243,81 @@ class core_user_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9
+     */
+    public static function view_user_list_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'id of the course, 0 for site')
+            )
+        );
+    }
+
+    /**
+     * Simulate the /user/index.php web interface page triggering events
+     *
+     * @param int $courseid id of course
+     * @return array of warnings and status result
+     * @since Moodle 2.9
+     * @throws moodle_exception
+     */
+    public static function view_user_list($courseid) {
+        global $CFG;
+        require_once($CFG->dirroot . "/user/lib.php");
+
+        $params = self::validate_parameters(self::view_user_list_parameters(),
+                                            array(
+                                                'courseid' => $courseid
+                                            ));
+
+        $warnings = array();
+
+        if (empty($params['courseid'])) {
+            $params['courseid'] = SITEID;
+        }
+
+        $course = get_course($params['courseid']);
+
+        if ($course->id == SITEID) {
+            $context = context_system::instance();
+        } else {
+            $context = context_course::instance($course->id);
+        }
+        self::validate_context($context);
+
+        if ($course->id == SITEID) {
+            require_capability('moodle/site:viewparticipants', $context);
+        } else {
+            require_capability('moodle/course:viewparticipants', $context);
+        }
+
+        user_list_view($course, $context);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 2.9
+     */
+    public static function view_user_list_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
 
  /**
