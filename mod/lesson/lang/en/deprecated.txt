@@ -1,1 +1,2 @@
 essayemailmessage,mod_lesson
+lessonattempted,mod_lesson
