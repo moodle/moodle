@@ -1296,6 +1296,44 @@ class mod_forum_lib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test forum_discussion_view.
+     */
+    public function test_forum_discussion_view() {
+        global $CFG, $USER;
+
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $discussion = $this->create_single_discussion_with_replies($forum, $USER, 2);
+
+        $context = context_module::instance($forum->cmid);
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $this->setAdminUser();
+        forum_discussion_view($context, $forum, $discussion);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_pop($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_forum\event\discussion_viewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'view discussion', "discuss.php?d={$discussion->id}",
+            $discussion->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+
+        $this->assertNotEmpty($event->get_name());
+
+    }
+
+    /**
      * Create a new course, forum, and user with a number of discussions and replies.
      *
      * @param int $discussioncount The number of discussions to create

@@ -172,14 +172,8 @@ if ($move > 0 and confirm_sesskey()) {
     redirect($return.'&moved=-1&sesskey='.sesskey());
 }
 
-$params = array(
-    'context' => $modcontext,
-    'objectid' => $discussion->id,
-);
-$event = \mod_forum\event\discussion_viewed::create($params);
-$event->add_record_snapshot('forum_discussions', $discussion);
-$event->add_record_snapshot('forum', $forum);
-$event->trigger();
+// Trigger discussion viewed event.
+forum_discussion_view($modcontext, $forum, $discussion);
 
 unset($SESSION->fromdiscussion);
 

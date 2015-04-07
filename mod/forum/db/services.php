@@ -71,4 +71,13 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'mod/forum:viewdiscussion'
     ),
+
+    'mod_forum_view_forum_discussion' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'view_forum_discussion',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Simulate the forum/discuss.php web interface page: trigger events, completion, etc...',
+        'type' => 'write',
+        'capabilities' => 'mod/forum:viewdiscussion'
+    ),
 );

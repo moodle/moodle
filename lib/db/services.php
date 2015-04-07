@@ -1105,6 +1105,7 @@ $services = array(
             'core_user_view_user_list',
             'core_message_mark_message_read',
             'core_notes_view_notes',
+            'mod_forum_view_forum_discussion',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
