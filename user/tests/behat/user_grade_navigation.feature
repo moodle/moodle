@@ -38,13 +38,12 @@ Feature: The student can navigate to the My grades page and user grade report.
 
   Scenario: Navigation to My grades and the user grade report.
     When I log in as "student1"
-    And I follow "Student 1"
     And I follow "My grades"
     Then the following should exist in the "overview-grade" table:
     | Course name | Grade |
-    | C2 | - |
-    | C1 | 217.00 |
-    And I follow "C1"
+    | Course 2 | - |
+    | Course 1 | 217.00 |
+    And I follow "Course 1"
     And the following should exist in the "user-grade" table:
     | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |
     | Test assignment one | 75.00 % | 150.00 | 0–300 | 50.00 % | 37.50 % |
@@ -65,6 +64,7 @@ Feature: The student can navigate to the My grades page and user grade report.
   @javascript
   Scenario: Log in as a parent and view a childs grades.
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Turn editing on"
     And I add the "Mentees" block
     And I navigate to "Define roles" node in "Site administration > Users > Permissions"
@@ -81,19 +81,21 @@ Feature: The student can navigate to the My grades page and user grade report.
     And I click on "Create this role" "button"
     And I navigate to "Browse list of users" node in "Site administration > Users > Accounts"
     And I follow "Student 1"
-    And I navigate to "Assign roles relative to this user" node in "Profile settings for Student 1 > Roles"
+    And I follow "Student 1's preferences"
+    And I follow "Assign roles relative to this user"
     And I follow "Parent"
     And I click on "//select[@id='addselect']/descendant::option[contains(., 'Parent 1 (parent1@asd.com)')]" "xpath_element"
     And I click on "Add" "button"
     And I log out
     And I log in as "parent1"
+    And I am on site homepage
     And I follow "Student 1"
     And I follow "Grades"
     Then the following should exist in the "overview-grade" table:
     | Course name | Grade |
-    | C2 | - |
-    | C1 | 217.00 |
-    And I follow "C1"
+    | Course 2 | - |
+    | Course 1 | 217.00 |
+    And I follow "Course 1"
     And the following should exist in the "user-grade" table:
     | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |
     | Test assignment one | 75.00 % | 150.00 | 0–300 | 50.00 % | 37.50 % |

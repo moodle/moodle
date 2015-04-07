@@ -12,6 +12,7 @@ Feature: Filter users by idnumber
       | student2 | Student2 | 1 | student2@asd.com | 2000000 |
       | student3 | Student3 | 1 | student3@asd.com | 3000000 |
     And I log in as "admin"
+    And I am on site homepage
     And I expand "Site administration" node
     # Front page settings also has a "Users" node.
     And I expand "Users" node
