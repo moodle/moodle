@@ -16,6 +16,9 @@
 
 /**
  * Library of functions and constants for notes
+ *
+ * @package   core_notes
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -347,3 +350,20 @@ function note_delete_all($courseid) {
 function note_page_type_list($pagetype, $parentcontext, $currentcontext) {
     return array('notes-*' => get_string('page-notes-x', 'notes'));
 }
+
+/**
+ * Trigger notes viewed event
+ *
+ * @param  stdClass $context context object
+ * @param  int $userid  user id (the user we are viewing the notes)
+ * @since Moodle 2.9
+ */
+function note_view($context, $userid) {
+
+    $event = \core\event\notes_viewed::create(array(
+        'relateduserid' => $userid,
+        'context' => $context
+    ));
+    $event->trigger();
+}
+

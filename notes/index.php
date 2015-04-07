@@ -87,11 +87,7 @@ require_capability('moodle/notes:view', $coursecontext);
 $systemcontext = context_system::instance();
 
 // Trigger event.
-$event = \core\event\notes_viewed::create(array(
-    'relateduserid' => $userid,
-    'context' => $coursecontext
-));
-$event->trigger();
+note_view($coursecontext, $userid);
 
 $strnotes = get_string('notes', 'notes');
 if ($userid) {

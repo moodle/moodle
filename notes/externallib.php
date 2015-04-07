@@ -628,6 +628,102 @@ class core_notes_external extends external_api {
             ), 'notes'
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9
+     */
+    public static function view_notes_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'course id, 0 for notes at system level'),
+                'userid' => new external_value(PARAM_INT, 'user id, 0 means view all the user notes', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Simulates the web interface view of notes/index.php: trigger events
+     *
+     * @param int $courseid id of the course
+     * @param int $userid id of the user
+     * @return array of warnings and status result
+     * @since Moodle 2.9
+     * @throws moodle_exception
+     */
+    public static function view_notes($courseid, $userid = 0) {
+        global $CFG;
+        require_once($CFG->dirroot . "/notes/lib.php");
+
+        if (empty($CFG->enablenotes)) {
+            throw new moodle_exception('notesdisabled', 'notes');
+        }
+
+        $warnings = array();
+        $arrayparams = array(
+            'courseid' => $courseid,
+            'userid' => $userid
+        );
+        $params = self::validate_parameters(self::view_notes_parameters(), $arrayparams);
+
+        if (empty($params['courseid'])) {
+            $params['courseid'] = SITEID;
+        }
+
+        $course = get_course($params['courseid']);
+
+        if ($course->id == SITEID) {
+            $context = context_system::instance();
+        } else {
+            $context = context_course::instance($course->id);
+        }
+
+        // First of all, validate the context before do further permission checks.
+        self::validate_context($context);
+        require_capability('moodle/notes:view', $context);
+
+        if (!empty($params['userid'])) {
+            $user = core_user::get_user($params['userid'], 'id, deleted', MUST_EXIST);
+
+            if ($user->deleted) {
+                throw new moodle_exception('userdeleted');
+            }
+
+            if (isguestuser($user)) {
+                throw new moodle_exception('invaliduserid');
+            }
+
+            if ($course->id != SITEID and !is_enrolled($context, $user, '', true)) {
+                throw new moodle_exception('notenrolledprofile');
+            }
+        }
+
+        note_view($context, $params['userid']);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 2.9
+     */
+    public static function view_notes_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
 
 /**
