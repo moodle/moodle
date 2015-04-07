@@ -4,6 +4,7 @@
 
 .path-mod-workshop .manual-allocator .allocations {
     margin: 0px auto;
+    width: 100%;
 }
 
 .path-mod-workshop .manual-allocator .allocations tbody tr:nth-of-type(odd) {

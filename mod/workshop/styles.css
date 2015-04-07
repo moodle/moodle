@@ -169,7 +169,7 @@
 .path-mod-workshop .message {
     padding: 5px 5em 5px 15px;
     margin: 0px auto 20px auto;
-    width: 60%;
+    width: 100%;
     font-size: 80%;
     position: relative;
 }
@@ -200,7 +200,7 @@
 
 .path-mod-workshop .allocation-init-results {
     margin: 10px auto;
-    width: 60%;
+    width: 100%;
     font-size: 80%;
 }
 
@@ -232,11 +232,10 @@
  * User plan
  */
 .path-mod-workshop .userplan {
-    width: 70%;
+    width: 100%;
     margin: 1em auto 1em auto;
     font-size: 80%;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+    border: 1px solid #ddd;
 }
 
 .path-mod-workshop .userplan th {
@@ -429,7 +428,7 @@
  * Grading report
  */
 .path-mod-workshop .grading-report {
-    width: 90%;
+    width: 100%;
     margin: 1em auto 1em auto;
     font-size: 80%;
     border: 1px solid #ddd;
@@ -535,7 +534,7 @@
 .path-mod-workshop .feedback {
     border: 1px solid #ddd;
     margin: 0px auto 1em auto;
-    width: 80%;
+    width: 100%;
 }
 
 .path-mod-workshop .feedback .header {
