@@ -138,8 +138,9 @@ Feature: Edit quiz page - section headings
     And I follow "Remove heading 'Heading 2'"
     And I should see "Are you sure you want to remove the 'Heading 2' section heading?"
     And I click on "Yes" "button" in the "Confirm" "dialogue"
-    Then I should not see "Heading 2"
-    And I should see "Heading 1"
+    And I wait until the page is ready
+    Then I should see "Heading 1"
+    And I should not see "Heading 2"
     And I should see "Heading 3"
 
   @javascript
