@@ -158,7 +158,7 @@ class grade_report_overview extends grade_report {
                     continue;
                 }
 
-                $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
+                $courseshortname = format_string(get_course_display_name_for_list($course), true, array('context' => $coursecontext));
                 $courselink = html_writer::link(new moodle_url('/grade/report/user/index.php', array('id' => $course->id, 'userid' => $this->user->id)), $courseshortname);
                 $canviewhidden = has_capability('moodle/grade:viewhidden', $coursecontext);
 
