@@ -34,6 +34,7 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
       | G1       | G1G2    |
       | G2       | G2G1    |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:

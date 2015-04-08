@@ -15,6 +15,7 @@ Feature: A user can control their own subscription preferences for a forum
       | user | course | role |
       | student1 | C1 | student |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
 

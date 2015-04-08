@@ -2,7 +2,7 @@
 Feature: Test the display of the choice module on my home
   In order to know my status in a choice activity
   As a user
-  I need to see it in My home.
+  I need to see it in My dashboard.
 
   Background:
     Given the following "users" exist:
@@ -39,7 +39,7 @@ Feature: Test the display of the choice module on my home
   @javascript
   Scenario: View my home as a student before answering the choice
     Given I log in as "student1"
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have Choices that need attention"
     And I click on ".collapsibleregioncaption" "css_element"
     And I should see "Not answered yet"
@@ -52,7 +52,7 @@ Feature: Test the display of the choice module on my home
     And I should see "Your selection: Option 1"
     And I should see "Your choice has been saved"
     And "Save my choice" "button" should not exist
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should not see "You have Choices that need attention"
     And I log out
 
@@ -66,7 +66,7 @@ Feature: Test the display of the choice module on my home
     And "Save my choice" "button" should not exist
     And I log out
     When I log in as "teacher1"
-    And I click on "My home" "link" in the "Navigation" "block"
+    And I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have Choices that need attention"
     And I click on ".collapsibleregioncaption" "css_element"
     And I should see "View 1 responses"
