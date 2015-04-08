@@ -4270,7 +4270,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015032000.00);
     }
 
-<<<<<<< HEAD
     if ($oldversion < 2015040200.01) {
         // Force uninstall of deleted tool.
         if (!file_exists("$CFG->dirroot/$CFG->admin/tool/timezoneimport")) {
@@ -4337,6 +4336,17 @@ function xmldb_main_upgrade($oldversion) {
 
         upgrade_main_savepoint(true, 2015040800.02);
     }
+
+    if ($oldversion < 2015040800.03) {
+        // Change the setting to the new default.
+        $oldconfig = get_config('core', 'defaulthomepage');
+        if ($oldconfig == HOMEPAGE_SITE) {
+            set_config('defaulthomepage', HOMEPAGE_MY);
+        }
+
+        upgrade_main_savepoint(true, 2015040800.03);
+    }
+
 
     return true;
 }
