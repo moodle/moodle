@@ -22,7 +22,7 @@
  */
 require_once($CFG->libdir.'/portfolio/plugin.php');
 require_once($CFG->libdir . '/google/lib.php');
-require_once($CFG->libdir . '/google/Google/Service/Drive.php');
+require_once($CFG->libdir . '/google/src/Google/Service/Drive.php');
 
 class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
     /**
