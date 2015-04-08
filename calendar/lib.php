@@ -2993,7 +2993,7 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid, $timez
             $rrule = new \core_calendar\rrule_manager($event->properties['RRULE'][0]->value);
             $rrule->parse_rrule();
             $rrule->create_events($createdevent);
-            date_default_timezone_set($defaulttz); // Change time zone back to what it was.
+            core_date::set_default_server_timezone(); // Change time zone back to what it was.
         }
         return $return;
     } else {
