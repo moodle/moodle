@@ -3837,8 +3837,10 @@ function data_process_submission(stdClass $mod, $fields, stdClass $datarecord) {
         }
 
         // Update the field.
-        foreach ($submitteddata[$fieldrecord->id] as $value) {
-            $result->fields[$value->fieldname] = $field;
+        if (isset($submitteddata[$fieldrecord->id])) {
+            foreach ($submitteddata[$fieldrecord->id] as $value) {
+                $result->fields[$value->fieldname] = $field;
+            }
         }
     }
 
