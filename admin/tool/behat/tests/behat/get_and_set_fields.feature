@@ -39,7 +39,7 @@ Feature: Verify that all form fields values can be get and set
     # Select (multi-select) - We will check "I set the field...".
     And I set the field "otagsadd" to "OT1, OT2, OT3, OT4, OT5"
     And I press "Add official tags"
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I follow "Test this one"

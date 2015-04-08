@@ -27,6 +27,7 @@ Feature: Set up contextual data for tests
       | Course 2 | COURSE2 | CAT3 |
       | Course 3 | COURSE3 | 0 |
     When I log in as "admin"
+    And I am on site homepage
     Then I should see "Course 1"
     And I should see "Course 2"
     And I should see "Course 3"
@@ -56,6 +57,7 @@ Feature: Set up contextual data for tests
       | Grouping 1 | C1 | GG1 |
       | Grouping 2 | C1 | GG2 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Groups"
@@ -86,6 +88,7 @@ Feature: Set up contextual data for tests
       | mod/forum:editanypost | Allow | student | Course | C1 |
       | mod/forum:replynews | Prevent | editingteacher | Course | C1 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Permissions"
@@ -138,22 +141,27 @@ Feature: Set up contextual data for tests
       | user3 | editingteacher | Course       | C1        |
       | user5 | custom2        | System       |           |
     When I log in as "user1"
+    And I am on site homepage
     Then I should see "Front page settings"
     And I log out
     And I log in as "user2"
+    And I am on site homepage
     And I follow "Course 1"
     And I should see "Turn editing on"
     And I log out
     And I log in as "user3"
+    And I am on site homepage
     And I follow "Course 1"
     And I should see "Turn editing on"
     And I log out
     And I log in as "user4"
+    And I am on site homepage
     And I follow "Course 1"
     And I should see "Turn editing on"
     And I log out
     And I log in as "user5"
     And I should see "You are logged in as"
+    And I am on site homepage
     And I follow "Course 1"
     And I should see "You can not enrol yourself in this course."
 
@@ -192,6 +200,7 @@ Feature: Set up contextual data for tests
       | activity   | name                            | intro                         | course | idnumber    | grade |
       | assign     | Test assignment name with scale | Test assignment description   | C1     | assign1     | Test Scale 1 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     Then I should see "Test assignment name"
     # Assignment 2.2 module type is disabled by default
@@ -253,6 +262,7 @@ Feature: Set up contextual data for tests
       | grouping | group |
       | GG1 | G1 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Groups"
@@ -312,6 +322,7 @@ Feature: Set up contextual data for tests
       | fullname | course | gradecategory |
       | Grade sub category 2 | C1 | Grade category 1 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Courses"
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
@@ -336,6 +347,7 @@ Feature: Set up contextual data for tests
       | Test Grade Item 2 | C1 | Grade category 1 |
       | Test Grade Item 3 | C1 | Grade sub category 2 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Grades"
     And I expand "Setup" node
@@ -366,6 +378,7 @@ Feature: Set up contextual data for tests
       | name | scale |
       | Test Scale 1 | Disappointing, Good, Very good, Excellent |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Grades"
     And I follow "Scales"
@@ -388,7 +401,7 @@ Feature: Set up contextual data for tests
     And the following config values are set as admin:
       | enableoutcomes | 1 |
     When I log in as "admin"
-    And I follow "Home"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Outcomes"
     Then I should see "Grade outcome 1" in the "#addoutcomes" "css_element"
@@ -417,7 +430,7 @@ Feature: Set up contextual data for tests
     And the following config values are set as admin:
       | enableoutcomes | 1 |
     When I log in as "admin"
-    And I follow "Home"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Grades"
     And I expand "Setup" node

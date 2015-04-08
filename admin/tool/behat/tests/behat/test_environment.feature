@@ -5,5 +5,5 @@ Feature: Set up the testing environment
   I need to use the test environment instead of the regular environment
 
   Scenario: Accessing the site
-    When I am on homepage
+    When I am on site homepage
     Then I should see "Acceptance test site"
