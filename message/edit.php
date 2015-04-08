@@ -24,6 +24,7 @@
 
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->dirroot . '/message/lib.php');
+require_once($CFG->dirroot . '/user/lib.php');
 
 $userid = optional_param('id', 0, PARAM_INT);    // User id.
 $disableall = optional_param('disableall', 0, PARAM_BOOL); //disable all of this user's notifications
@@ -129,6 +130,9 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         print_error('cannotupdateusermsgpref');
     }
 
+    $user->mailformat = $form->mailformat;
+    user_update_user($user, false, false);
+
     redirect("$CFG->wwwroot/message/edit.php?id=$user->id");
 }
 
@@ -161,11 +165,13 @@ foreach ($processors as $processor) {
 //load general messaging preferences
 $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $user->id);
 $preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $user->id);
+$preferences->mailformat        =  $user->mailformat;
+$preferences->mailcharset       =  get_user_preferences( 'mailcharset', '', $user->id);
 
 /// Display page header
 $strmessaging = get_string('messaging', 'message');
 $PAGE->set_title($strmessaging);
-$PAGE->set_heading(fullname($USER));
+$PAGE->set_heading(fullname($user));
 
 // Grab the renderer
 $renderer = $PAGE->get_renderer('core', 'message');

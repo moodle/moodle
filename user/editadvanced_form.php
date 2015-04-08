@@ -146,16 +146,6 @@ class user_editadvanced_form extends moodleform {
             $user = false;
         }
 
-        // If language does not exist, use site default lang.
-        if ($langsel = $mform->getElementValue('lang')) {
-            $lang = reset($langsel);
-            // Check lang exists.
-            if (!get_string_manager()->translation_exists($lang, false)) {
-                $langel =& $mform->getElement('lang');
-                $langel->setValue($CFG->lang);
-            }
-        }
-
         // User can not change own auth method.
         if ($userid == $USER->id) {
             $mform->hardFreeze('auth');

@@ -4357,6 +4357,33 @@ class settings_navigation extends navigation_node {
             $useraccount->add(get_string("changepassword"), $passwordchangeurl, self::TYPE_SETTING, null, 'changepassword');
         }
 
+        if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
+            if ($currentuser && has_capability('moodle/user:editownprofile', $systemcontext) ||
+                    has_capability('moodle/user:editprofile', $usercontext)) {
+                $url = new moodle_url('/user/language.php', array('id'=>$user->id, 'course'=>$course->id));
+                $useraccount->add(get_string('preferredlanguage'), $url, self::TYPE_SETTING);
+            }
+        }
+        $pluginmanager = core_plugin_manager::instance();
+        $enabled = $pluginmanager->get_enabled_plugins('mod');
+        if (isset($enabled['forum']) && isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
+            if ($currentuser && has_capability('moodle/user:editownprofile', $systemcontext) ||
+                    has_capability('moodle/user:editprofile', $usercontext)) {
+                $url = new moodle_url('/user/forum.php', array('id'=>$user->id, 'course'=>$course->id));
+                $useraccount->add(get_string('forumpreferences'), $url, self::TYPE_SETTING);
+            }
+        }
+        $editors = editors_get_enabled();
+        if (count($editors) > 1) {
+            if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
+                if ($currentuser && has_capability('moodle/user:editownprofile', $systemcontext) ||
+                        has_capability('moodle/user:editprofile', $usercontext)) {
+                    $url = new moodle_url('/user/editor.php', array('id'=>$user->id, 'course'=>$course->id));
+                    $useraccount->add(get_string('editorpreferences'), $url, self::TYPE_SETTING);
+                }
+            }
+        }
+
         // View the roles settings.
         if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:manage'),
                 $usercontext)) {

@@ -284,7 +284,7 @@ if ($usernew = $userform->get_data()) {
     }
 
     if (!$emailchanged || !$CFG->emailchangeconfirmation) {
-        redirect("$CFG->wwwroot/user/preferences.php?id=$user->id&course=$course->id");
+        redirect("$CFG->wwwroot/user/preferences.php?userid=$user->id");
     }
 }
 

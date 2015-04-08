@@ -34,6 +34,99 @@ function cancel_email_update($userid) {
 }
 
 /**
+ * Performs the common access checks and page setup for all
+ * user preference pages.
+ *
+ * @param int $userid The user id to edit taken from the page params.
+ * @param int $courseid The optional course id if we came from a course context.
+ * @return array containing the user and course records.
+ */
+function useredit_setup_preference_page($userid, $courseid) {
+    global $PAGE, $SESSION, $DB, $CFG, $OUTPUT, $USER;
+
+    // Guest can not edit.
+    if (isguestuser()) {
+        print_error('guestnoeditprofile');
+    }
+
+    if (!$course = $DB->get_record('course', array('id' => $courseid))) {
+        print_error('invalidcourseid');
+    }
+
+    if ($course->id != SITEID) {
+        require_login($course);
+    } else if (!isloggedin()) {
+        if (empty($SESSION->wantsurl)) {
+            $SESSION->wantsurl = $CFG->httpswwwroot.'/user/preferences.php';
+        }
+        redirect(get_login_url());
+    } else {
+        $PAGE->set_context(context_system::instance());
+    }
+
+    // The user profile we are editing.
+    if (!$user = $DB->get_record('user', array('id' => $userid))) {
+        print_error('invaliduserid');
+    }
+
+    // Guest can not be edited.
+    if (isguestuser($user)) {
+        print_error('guestnoeditprofile');
+    }
+
+    // Remote users cannot be edited.
+    if (is_mnet_remote_user($user)) {
+        if (user_not_fully_set_up($user)) {
+            $hostwwwroot = $DB->get_field('mnet_host', 'wwwroot', array('id' => $user->mnethostid));
+            print_error('usernotfullysetup', 'mnet', '', $hostwwwroot);
+        }
+        redirect($CFG->wwwroot . "/user/view.php?course={$course->id}");
+    }
+
+    $systemcontext   = context_system::instance();
+    $personalcontext = context_user::instance($user->id);
+
+    // Check access control.
+    if ($user->id == $USER->id) {
+        // Editing own profile - require_login() MUST NOT be used here, it would result in infinite loop!
+        if (!has_capability('moodle/user:editownprofile', $systemcontext)) {
+            print_error('cannotedityourprofile');
+        }
+
+    } else {
+        // Teachers, parents, etc.
+        require_capability('moodle/user:editprofile', $personalcontext);
+        // No editing of guest user account.
+        if (isguestuser($user->id)) {
+            print_error('guestnoeditprofileother');
+        }
+        // No editing of primary admin!
+        if (is_siteadmin($user) and !is_siteadmin($USER)) {  // Only admins may edit other admins.
+            print_error('useradmineditadmin');
+        }
+    }
+
+    if ($user->deleted) {
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('userdeleted'));
+        echo $OUTPUT->footer();
+        die;
+    }
+
+    $PAGE->set_pagelayout('admin');
+    $PAGE->set_context($personalcontext);
+    if ($USER->id != $user->id) {
+        $PAGE->navigation->extend_for_user($user);
+    } else {
+        if ($node = $PAGE->navigation->find('myprofile', navigation_node::TYPE_ROOTNODE)) {
+            $node->force_open();
+        }
+    }
+
+    return array($user, $course);
+}
+
+/**
  * Loads the given users preferences into the given user object.
  *
  * @param stdClass $user The user object, modified by reference.
@@ -220,6 +313,13 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
         $mform->setType('email', PARAM_RAW_TRIMMED);
     }
 
+    $choices = array();
+    $choices['0'] = get_string('emaildisplayno');
+    $choices['1'] = get_string('emaildisplayyes');
+    $choices['2'] = get_string('emaildisplaycourse');
+    $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
+    $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
+
     $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="21"');
     $mform->setType('city', PARAM_TEXT);
     if (!empty($CFG->defaultcity)) {
@@ -266,9 +366,6 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
     $mform->addElement('editor', 'description_editor', get_string('userdescription'), null, $editoroptions);
     $mform->setType('description_editor', PARAM_CLEANHTML);
     $mform->addHelpButton('description_editor', 'userdescription');
-
-    $mform->addElement('header', 'moodle_userpreferences', get_string('preferences'));
-    useredit_shared_definition_preferences($user, $mform, $editoroptions, $filemanageroptions);
 
     if (empty($USER->newadminuser)) {
         $mform->addElement('header', 'moodle_picture', get_string('pictureofuser'));
