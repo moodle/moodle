@@ -65,8 +65,11 @@ class enrol_meta_addinstance_form extends moodleform {
         $rs->close();
 
         $groups = array(0 => get_string('none'));
+        if (has_capability('moodle/course:managegroups', context_course::instance($course->id))) {
+            $groups[ENROL_META_CREATE_GROUP] = get_string('creategroup', 'enrol_meta');
+        }
         foreach (groups_get_all_groups($course->id) as $group) {
-            $groups[$group->id] = format_string($group->name, true, array('context' => course_context::instance($course->id)));
+            $groups[$group->id] = format_string($group->name, true, array('context' => context_course::instance($course->id)));
         }
 
         $mform->addElement('header','general', get_string('pluginname', 'enrol_meta'));

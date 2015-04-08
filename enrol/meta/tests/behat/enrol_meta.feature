@@ -69,6 +69,24 @@ Feature: Enrolments are synchronised with meta courses
     And I should not see "Groupcourse 2" in the "Student 4" "table_row"
 
   @javascript
+  Scenario: Add meta enrolment instance with auto-created groups
+    When I follow "Course 3"
+    And I navigate to "Enrolment methods" node in "Course administration > Users"
+    And I set the field "Add method" to "Course meta link"
+    And I wait to be redirected
+    And I set the following fields to these values:
+      | Link course  | Course 1      |
+      | Add to group | Create new group |
+    And I press "Add method"
+    And I navigate to "Enrolled users" node in "Course administration > Users"
+    Then I should see "Course 1 course" in the "Student 1" "table_row"
+    And I should see "Course 1 course" in the "Student 2" "table_row"
+    And I should see "Course 1 course" in the "Student 3" "table_row"
+    And I should see "Course 1 course" in the "Student 4" "table_row"
+    And I navigate to "Groups" node in "Course administration > Users"
+    And the "Groups" select box should contain "Course 1 course (4)"
+
+  @javascript
   Scenario: Backup and restore of meta enrolment instance
     When I follow "Course 3"
     And I navigate to "Enrolment methods" node in "Course administration > Users"

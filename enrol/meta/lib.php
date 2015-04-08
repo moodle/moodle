@@ -25,6 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * ENROL_META_CREATE_GROUP constant for automatically creating a group for a meta course.
+ */
+define('ENROL_META_CREATE_GROUP', -1);
+
+/**
  * Meta course enrolment plugin.
  * @author Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

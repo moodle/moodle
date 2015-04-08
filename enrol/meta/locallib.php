@@ -599,3 +599,35 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
 
     return 0;
 }
+
+/**
+ * Create a new group with the course's name.
+ *
+ * @param int $courseid
+ * @param int $linkedcourseid
+ * @return int $groupid Group ID for this cohort.
+ */
+function enrol_meta_create_new_group($courseid, $linkedcourseid) {
+    global $DB, $CFG;
+
+    require_once($CFG->dirroot.'/group/lib.php');
+
+    $coursename = $DB->get_field('course', 'fullname', array('id' => $linkedcourseid), MUST_EXIST);
+    $a = new stdClass();
+    $a->name = $coursename;
+    $a->increment = '';
+    $inc = 1;
+    $groupname = trim(get_string('defaultgroupnametext', 'enrol_meta', $a));
+    // Check to see if the group name already exists in this course. Add an incremented number if it does.
+    while ($DB->record_exists('groups', array('name' => $groupname, 'courseid' => $courseid))) {
+        $a->increment = '(' . (++$inc) . ')';
+        $groupname = trim(get_string('defaultgroupnametext', 'enrol_meta', $a));
+    }
+    // Create a new group for the course meta sync.
+    $groupdata = new stdClass();
+    $groupdata->courseid = $courseid;
+    $groupdata->name = $groupname;
+    $groupid = groups_create_group($groupdata);
+
+    return $groupid;
+}

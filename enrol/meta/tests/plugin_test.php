@@ -644,4 +644,41 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         $this->assertEventLegacyData($expectedlegacyeventdata, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test that a new group with the name of the course is created.
+     */
+    public function test_enrol_meta_create_new_group() {
+        global $DB;
+        $this->resetAfterTest();
+        // Create two courses.
+        $course = $this->getDataGenerator()->create_course(array('fullname' => 'Mathematics'));
+        $course2 = $this->getDataGenerator()->create_course(array('fullname' => 'Physics'));
+        $metacourse = $this->getDataGenerator()->create_course(array('fullname' => 'All sciences'));
+        // Run the function.
+        $groupid = enrol_meta_create_new_group($metacourse->id, $course->id);
+        // Check the results.
+        $group = $DB->get_record('groups', array('id' => $groupid));
+        // The group name should match the course name.
+        $this->assertEquals('Mathematics course', $group->name);
+        // Group course id should match the course id.
+        $this->assertEquals($metacourse->id, $group->courseid);
+
+        // Create a group that will have the same name as the course.
+        $groupdata = new stdClass();
+        $groupdata->courseid = $metacourse->id;
+        $groupdata->name = 'Physics course';
+        groups_create_group($groupdata);
+        // Create a group for the course 2 in metacourse.
+        $groupid = enrol_meta_create_new_group($metacourse->id, $course2->id);
+        $groupinfo = $DB->get_record('groups', array('id' => $groupid));
+        // Check that the group name has been changed.
+        $this->assertEquals('Physics course (2)', $groupinfo->name);
+
+        // Create a group for the course 2 in metacourse.
+        $groupid = enrol_meta_create_new_group($metacourse->id, $course2->id);
+        $groupinfo = $DB->get_record('groups', array('id' => $groupid));
+        // Check that the group name has been changed.
+        $this->assertEquals('Physics course (3)', $groupinfo->name);
+    }
 }
