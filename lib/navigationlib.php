@@ -4192,10 +4192,13 @@ class settings_navigation extends navigation_node {
 
         // Add a user setting branch.
         if ($gstitle == 'usercurrentsettings') {
-            $dashboard = $this->add('Dashboard', new moodle_url('/my/'), self::TYPE_CONTAINER, null, 'dashboard');
+            $dashboard = $this->add(get_string('myhome'), new moodle_url('/my/'), self::TYPE_CONTAINER, null, 'dashboard');
             // This should be set to false as we don't want to show this to the user. It's only for generating the correct
             // breadcrumb.
             $dashboard->display = false;
+            if (get_home_page() == HOMEPAGE_MY) {
+                $dashboard->mainnavonly = true;
+            }
 
             $iscurrentuser = ($user->id == $USER->id);
 

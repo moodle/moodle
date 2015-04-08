@@ -37,11 +37,6 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
             return '';
         }
 
-        // Remove the Dashboard node from the breadcrumb. This saves doubling up of the same link.
-        if (get_home_page()) {
-            array_shift($items);
-        }
-
         $breadcrumbs = array();
         foreach ($items as $item) {
             $item->hideicon = true;
