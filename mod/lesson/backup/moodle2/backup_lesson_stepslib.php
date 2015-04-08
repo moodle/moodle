@@ -190,8 +190,10 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
             $grade->set_source_table('lesson_grades', array('lessonid'=>backup::VAR_PARENTID));
             $highscore->set_source_table('lesson_high_scores', array('lessonid' => backup::VAR_PARENTID));
             $timer->set_source_table('lesson_timer', array('lessonid' => backup::VAR_PARENTID));
+        } else {
             $overrideparams['userid'] = backup_helper::is_sqlparam(null); //  Without userinfo, skip user overrides.
         }
+
         $override->set_source_table('lesson_overrides', $overrideparams);
 
         // Annotate the user id's where required.
