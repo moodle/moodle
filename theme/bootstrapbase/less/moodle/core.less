@@ -2090,11 +2090,11 @@ img#persona_signin {
 }
 
 /** Header-bar styles **/
-.header-mc-heady-head {
+.page-context-header {
     // We need to be explicit about the height of the header.
     @pageHeaderHeight: 140px;
 
-    // Do not remove these rule.
+    // Do not remove these rules.
     overflow: hidden;
 
     .page-header-image,
@@ -2103,20 +2103,20 @@ img#persona_signin {
         position: relative;
     }
     .page-header-image {
-        margin: 1em;
+        margin-bottom: 1em;
+        z-index: 1;
+
     }
     .page-header-headings {
-        margin: 1em 0;
+        margin-top: 30px;
+        margin-bottom: 10px;
 
         h1 {
             display: block;
         }
-        .fuckensubheading {
-            display: block;
-        }
     }
 
-    .page-header-headings .fuckensubheading,
+    .page-header-headings,
     .header-button-group {
         position: relative;
         line-height: 24px;
@@ -2129,42 +2129,32 @@ img#persona_signin {
         a {
             position: relative;
 
-            // Don't touch it unless you know exactly what the fuck.
-
+            // Don't touch it unless you know exactly what you are doing.
             top: -0.4em;
         }
     }
 }
 
-.dir-ltr .header-mc-heady-head {
+.dir-ltr .page-context-header {
     .page-header-image {
-    //.page-header-headings {
         float: left;
+        margin-right: 1em;
     }
 
     .header-button-group{
         float: right;
     }
-
-    .fuckensubheading {
-        float: left;
-    }
-
 }
 
-.dir-rtl .header-mc-heady-head {
+.dir-rtl .page-context-header {
     .page-header-image {
-    //.page-header-headings {
         float: right;
+        margin-left: 1em;
     }
 
     .header-button-group{
         float: left;
         right: -15px;
-    }
-
-    .fuckensubheading {
-        float: right;
     }
 }
 

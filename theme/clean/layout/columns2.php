@@ -70,7 +70,7 @@ echo $OUTPUT->doctype() ?>
 </header>
 
 <div id="page" class="container-fluid">
-    <?php echo $OUTPUT->full_header(); ?>
+    <?php echo $OUTPUT->full_header($html->heading); ?>
     <div id="page-content" class="row-fluid">
         <section id="region-main" class="<?php echo $regionmain; ?>">
             <?php

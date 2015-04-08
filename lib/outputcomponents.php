@@ -3087,7 +3087,15 @@ class tabobject implements renderable {
 class context_header implements renderable {
 
     /**
-     * @var stdClass $imagedata Image information to retrieve a picture for the header.
+     * @var string $heading Main heading.
+     */
+    public $heading;
+    /**
+     * @var int $headinglevel Main heading 'h' tag level.
+     */
+    public $headinglevel;
+    /**
+     * @var string $imagedata HTML for the Image for the header.
      */
     public $imagedata;
     /**
@@ -3099,57 +3107,50 @@ class context_header implements renderable {
      *                       page => page object. Don't include if the image is an external image.
      */
     public $additionalbuttons;
-    /**
-     * @var $subheading Secondary information to show with the header.
-     */
-    public $subheading;
-
-    public $shownavbar;
-    public $showbutton;
-
-    public $type = 'generic';
 
     /**
      * Constructor.
      *
+     * @param string $heading Main heading data.
+     * @param int $headinglevel Main heading 'h' tag level.
      * @param object $imagedata Information needed to include a picture in the header.
      * @param string $additionalbuttons Buttons for the header e.g. Messaging button for the user header.
-     * @param string $subheading Secondary text for the header.
-     * @param bool $shownavbar Switch for showing the navigation bar.
-     * @param bool $showbutton Switch for showing the editing button for the page.
      */
-    public function __construct($imagedata = null, $additionalbuttons = null, $subheading = null, $shownavbar = true,
-            $showbutton = true, $type = null) {
-        // Check to see if the image id is for a user or something else (course, module);
+    public function __construct($heading = null, $headinglevel = 1, $imagedata = null, $additionalbuttons = null) {
+
+        $this->heading = $heading;
+        $this->headinglevel = $headinglevel;
         $this->imagedata = $imagedata;
         $this->additionalbuttons = $additionalbuttons;
-        $this->subheading = $subheading;
-        $this->shownavbar = $shownavbar;
-        $this->showbutton = $showbutton;
+        // If we have buttons then format them.
         if (isset($this->additionalbuttons)) {
             $this->format_button_images();
         }
-        if (!empty($type)) {
-            $this->type = $type;
-        }
     }
 
+    /**
+     * Adds an array element for a formatted image.
+     */
     protected function format_button_images() {
 
         foreach ($this->additionalbuttons as $buttontype => $button) {
             $page = $button['page'];
+            // If no image is provided then just use the title.
             if (!isset($button['image'])) {
                 $this->additionalbuttons[$buttontype]['formattedimage'] = $button['title'];
             } else {
-                // TODO Check to see if this is an external url or an internal image.
+                // Check to see if this is an internal Moodle icon.
                 $internalimage = $page->theme->resolve_image_location('t/' . $button['image'], 'moodle');
-                if (!$internalimage) {
-                    $this->additionalbuttons[$buttontype]['formattedimage'] = $button['image'];
-                } else {
+                if ($internalimage) {
                     $this->additionalbuttons[$buttontype]['formattedimage'] = 't/' . $button['image'];
+                } else {
+                    // Treat as an external image.
+                    $this->additionalbuttons[$buttontype]['formattedimage'] = $button['image'];
                 }
             }
-            $this->additionalbuttons[$buttontype]['linkattributes'] = array_merge($button['linkattributes'], array('class' => 'btn'));
+            // Add the bootstrap 'btn' class for formatting.
+            $this->additionalbuttons[$buttontype]['linkattributes'] = array_merge($button['linkattributes'],
+                    array('class' => 'btn'));
         }
     }
 }
