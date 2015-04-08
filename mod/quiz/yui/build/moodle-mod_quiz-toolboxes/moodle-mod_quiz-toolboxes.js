@@ -906,10 +906,11 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
                             M.util.get_string('sectionheadingedit', 'quiz', response.instancesection));
                     activity.one(SELECTOR.EDITSECTIONICON).set('alt',
                             M.util.get_string('sectionheadingedit', 'quiz', response.instancesection));
-                    activity.one(SELECTOR.DELETESECTIONICON).set('title',
-                            M.util.get_string('sectionheadingremove', 'quiz', response.instancesection));
-                    activity.one(SELECTOR.DELETESECTIONICON).set('alt',
-                            M.util.get_string('sectionheadingremove', 'quiz', response.instancesection));
+                    var deleteicon = activity.one(SELECTOR.DELETESECTIONICON);
+                    if (deleteicon) {
+                        deleteicon.set('title', M.util.get_string('sectionheadingremove', 'quiz', response.instancesection));
+                        deleteicon.set('alt', M.util.get_string('sectionheadingremove', 'quiz', response.instancesection));
+                    }
                 }
             });
         }

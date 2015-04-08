@@ -41,6 +41,17 @@ Feature: Edit quiz page - section headings
     Then I should see "Shuffle"
 
   @javascript
+  Scenario: Modify the default section headings
+    Given the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    |
+    When I follow "Course 1"
+    And I follow "Quiz 1"
+    And I follow "Edit quiz"
+    And I change quiz section heading "" to "This is section one"
+    Then I should see "This is section one"
+
+ @javascript
   Scenario: Modify section headings
     Given the following "activities" exist:
       | activity   | name   | intro              | course | idnumber |
