@@ -72,3 +72,6 @@ $string['reportallusers'] = 'All department users';
 $string['allusers'] = 'Show all users';
 $string['licensename'] = 'License name';
 $string['isusing'] = 'In use';
+$string['licensesendreminder'] = 'Do you wish to send a reminder email to this list of users?';
+$string['sendreminderemail'] = 'Send a reminder email';
+$string['licenseemailsent'] = 'Emails have been sent';

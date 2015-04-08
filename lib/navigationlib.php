@@ -2965,12 +2965,22 @@ class global_navigation_for_ajax extends global_navigation {
             $limit = (int)$CFG->navcourselimit;
         }
 
+        if (iomad::is_company_user()) {
+            $companyid = iomad::get_my_companyid(context_system::instance());
+            $sharedsql = " AND ( cc.id IN (
+                               SELECT category FROM {company_course}
+                               WHERE companyid = $companyid)) ";
+        } else {
+            $sharedsql = "";
+        }
+
         $catcontextsql = context_helper::get_preload_record_columns_sql('ctx');
         $sql = "SELECT cc.*, $catcontextsql
                   FROM {course_categories} cc
                   JOIN {context} ctx ON cc.id = ctx.instanceid
                  WHERE ctx.contextlevel = ".CONTEXT_COURSECAT." AND
                        (cc.id = :categoryid1 OR cc.parent = :categoryid2)
+                       $sharedsql
               ORDER BY cc.depth ASC, cc.sortorder ASC, cc.id ASC";
         $params = array('categoryid1' => $categoryid, 'categoryid2' => $categoryid);
         $categories = $DB->get_recordset_sql($sql, $params, 0, $limit);
@@ -3030,7 +3040,7 @@ class global_navigation_for_ajax extends global_navigation {
             foreach ($courses as $course) {
                 // Add course if it's in category.
                 if (in_array($course->category, $categorylist)) {
-                    $this->add_course($course, true, self::COURSE_MY);
+                    //$this->add_course($course, true, self::COURSE_MY);
                 }
             }
         } else {

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once( '../../config.php');
+require_once( '../../local_lib.php');
 require_once($CFG->dirroot . '/local/iomad/lib/blockpage.php');
 require_once($CFG->dirroot . '/blocks/iomad_company_admin/lib.php');
 require_once( 'config.php');
@@ -28,7 +28,7 @@ $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page.
 
-global $DB, $email;
+$email = local_email_get_templates();
 
 $block = 'local_email';
 

@@ -19,13 +19,11 @@ require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/excellib.class.php');
 require_once(dirname(__FILE__).'/select_form.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
-//require_once($CFG->dirroot.'/local/iomad/pchart/pChart/pData.class');
-//require_once($CFG->dirroot.'/local/iomad/pchart/pChart/pChart.class');
 require_once($CFG->dirroot.'/local/iomad/pchart2/class/pData.class.php');
 require_once($CFG->dirroot.'/local/iomad/pchart2/class/pDraw.class.php');
 require_once($CFG->dirroot.'/local/iomad/pchart2/class/pImage.class.php');
 require_once($CFG->dirroot.'/local/iomad/pchart2/class/pPie.class.php');
-//require_once(dirname(__FILE__).'/lib.php');
+require_once($CFG->dirroot."/local/email/lib.php");
 
 // chart stuff
 define('PCHART_SIZEX', 500);
@@ -35,6 +33,7 @@ define('PCHART_SIZEY', 500);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $participant = optional_param('participant', 0, PARAM_INT);
 $dodownload = optional_param('dodownload', 0, PARAM_INT);
+$sendemail = optional_param('sendemail', false, PARAM_BOOL);
 $firstname       = optional_param('firstname', 0, PARAM_CLEAN);
 $lastname      = optional_param('lastname', '', PARAM_CLEAN);
 $showsuspended = optional_param('showsuspended', 0, PARAM_INT);
@@ -51,6 +50,9 @@ $comptoraw = optional_param_array('compto', null, PARAM_INT);
 $completiontype = optional_param('completiontype', 0, PARAM_INT);
 $charttype = optional_param('charttype', '', PARAM_CLEAN);
 $showchart = optional_param('showchart', false, PARAM_BOOL);
+$confirm = optional_param('confirm', '', PARAM_ALPHANUM);
+$emailsent = optional_param('emailsent', false, PARAM_BOOL);
+$showused = optional_param('showused', true, PARAM_BOOL);
 
 require_login($SITE);
 $context = context_system::instance();
@@ -95,6 +97,10 @@ if ($showsuspended) {
 if ($charttype) {
     $params['charttype'] = $charttype;
 }
+if ($sendemail) {
+    $params['sendemail'] = $sendemail;
+}
+$params['showused'] = $showused;
 
 if ($compfromraw) {
     if (is_array($compfromraw)) {
@@ -171,18 +177,6 @@ $select->label = get_string('department', 'block_iomad_company_admin');
 $select->formid = 'choosedepartment';
 $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_company_selector'));
 
-// Get the appropriate list of departments.
-$selectparams = $params;
-$selecturl = new moodle_url('/local/report_license/index.php', $selectparams);
-$completiontypelist = array('0' => get_string('all'),
-                            '1' => get_string('notstartedusers', 'local_report_license'),
-                            '2' => get_string('inprogressusers', 'local_report_license'),
-                            '3' => get_string('completedusers', 'local_report_license'));
-$select = new single_select($selecturl, 'completiontype', $completiontypelist, $completiontype);
-$select->label = get_string('choosecompletiontype', 'block_iomad_company_admin');
-$select->formid = 'choosecompletiontype';
-$completiontypeselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_completiontype_selector'));
-
 if (!(iomad::has_capability('block/iomad_company_admin:editusers', $context) or
       iomad::has_capability('block/iomad_company_admin:editallusers', $context))) {
     print_error('nopermissions', 'error', '', 'report on users');
@@ -196,18 +190,21 @@ $options = $params;
 $options['dodownload'] = 1;
 
 // Only print the header if we are not downloading.
-if (empty($dodownload) && empty($showchart)) {
+if (empty($dodownload) && empty($showchart) && !$sendemail) {
     echo $OUTPUT->header();
+    if ($emailsent) {
+        echo "<h2>".get_string('licenseemailsent', 'local_report_license')."</h2>";
+    }
 }
 
 // Get the data.
 if (!empty($companyid)) {
-    if (empty($dodownload) && empty($showchart)) {
+    if (empty($dodownload) && empty($showchart) && !$sendemail) {
         echo $fwselectoutput;
     }
 }
 
-if (empty($dodownload) && empty($showchart)) {
+if (empty($dodownload) && empty($showchart) && !$sendemail) {
     echo "<h3>".get_string('coursesummary', 'local_report_license')."</h3>";
     if (!empty($courseid)) {
         // Navigation and header.
@@ -215,6 +212,9 @@ if (empty($dodownload) && empty($showchart)) {
         $options['charttype'] = 'summary';
         $options['dodownload'] = false;
         echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("summarychart", 'local_report_license'));
+        $options['charttype'] = '';
+        $options['sendemail'] = true;
+        echo $OUTPUT->single_button(new moodle_url('index.php', $options), get_string("sendreminderemail", 'local_report_license'));
     } else {
         $options['charttype'] = 'summary';
         $options['dodownload'] = false;
@@ -237,10 +237,9 @@ $coursecomptable->head = array(
     get_string('coursename', 'local_report_license'),
     get_string('numallocated', 'local_report_license'),
     get_string('unused', 'local_report_license'),
-    get_string('used', 'local_report_license'),
     ' ',
 );
-$coursecomptable->align = array('left', 'center', 'center', 'center', 'center');
+$coursecomptable->align = array('left', 'center', 'center', 'center');
 //$coursecomptable->width = '95%';
 $chartdata = array();
 
@@ -279,7 +278,6 @@ foreach ($courseinfo as $id => $coursedata) {
         $coursedata->coursename,
         $coursedata->numlicenses,
         $coursedata->numunused,
-        $coursedata->numused,
         '<a class="btn" style="margin:2px" href="' . $courseuserslink . '">' . get_string('usersummary', 'local_report_license') . '</a>&nbsp;' .
         '<a class="btn" style="margin:2px" href="' . $coursechartlink . '">' . get_string('cchart', 'local_report_license') . '</a>',
     );
@@ -287,10 +285,8 @@ foreach ($courseinfo as $id => $coursedata) {
         $chartname[] = $coursedata->coursename;
         $chartnumusers[] = $coursedata->numlicenses;
         $chartinprogress[] = $coursedata->numunused;
-        $chartcompleted[] = $coursedata->numused;
     } else if ($charttype == 'course' && $courseid == $coursedata->id ) {
-        $seriesdata = array($coursedata->numunused,
-                            $coursedata->numused);
+        $seriesdata = array($coursedata->numunused);
     }
 }
 
@@ -299,24 +295,19 @@ if (!empty($charttype)) {
     if ($charttype == 'summary') {
         $chartdata->addPoints($chartnotstarted, 's_notstarted' );
         $chartdata->addPoints($chartinprogress, 's_inprogress' );
-        $chartdata->addPoints($chartcompleted, 's_completed' );
     } else if ($charttype == 'course') {
         $chartdata->addPoints($seriesdata, 'Value');
     }
     $chartdata->addPoints(array(
         get_string('notstartedusers', 'local_report_license'),
         get_string('inprogressusers', 'local_report_license'),
-        get_string('completedusers', 'local_report_license'),
     ), 'Legend');
     $chartdata->setAbscissa('Legend');
 }
 
-if (empty($dodownload) && empty($showchart)) {
+if (empty($dodownload) && empty($showchart) && !$sendemail) {
     if (empty($courseid)) {
         echo html_writer::table($coursecomptable);
-    }
-    if (!empty($courseid)  && empty($charttype)) {
-        echo $completiontypeselectoutput;
     }
 }
 
@@ -324,14 +315,14 @@ if (empty($dodownload) && empty($showchart)) {
 if (empty($charttype)) {
     if (!empty($courseid)) {
         // Get the course license information.
-        if (empty($dodownload)) {
+        if (empty($dodownload) || !$sendemail) {
             if (empty($idlist['0'])) {
                 // Only want the data for the page we are on.
                 // courseid==1 is ALL users.
                 if ($courseid == 1) {
                     $coursedataobj = iomad::get_all_user_course_license_data($searchinfo, $page, $perpage);
                 } else {
-                    $coursedataobj = iomad::get_user_course_license_data($searchinfo, $courseid, $page, $perpage);
+                    $coursedataobj = iomad::get_user_course_license_data($searchinfo, $courseid, $page, $perpage, $showsuspended, $showused);
                 }
                 $coursedata = $coursedataobj->users;
                 $totalcount = $coursedataobj->totalcount;
@@ -341,14 +332,54 @@ if (empty($charttype)) {
                 if ($courseid == 1) {
                     $coursedataobj = iomad::get_all_user_course_license_data($searchinfo);
                 } else {
-                    $coursedataobj = iomad::get_user_course_license_data($searchinfo, $courseid);
+                    $coursedataobj = iomad::get_user_course_license_data($searchinfo, $courseid, 0, 0, $showsuspended, $showused);
                 }
                 $coursedata = $coursedataobj->users;
                 $totalcount = $coursedataobj->totalcount;
             }
         }
-    
-        if (empty($dodownload)) {
+
+        if ($sendemail) {
+            if ($confirm && confirm_sesskey()) {
+                // Send everyone a reminder email.
+                foreach ($coursedata as $user) {
+                    if ($userdata = $DB->get_record('user', array('id' => $user->uid))) {
+                        $license = $DB->get_record('companylicense', array('id' => $user->licenseid));
+                        $licensedata = new stdclass();
+                        $licensedata->length = $license->validlength;
+                        $licensedata->valid = date('d M Y', $license->expirydate);
+                        EmailTemplate::send('license_reminder', array('course' => $user->courseid,
+                                                                      'user' => $userdata,
+                                                                      'license' => $licensedata));
+                    }
+                }
+                $params['sendemail'] = false;
+                $params['emailsent'] = true;
+                redirect(new moodle_url('/local/report_license/index.php', $params));
+            } else {
+                echo $OUTPUT->header();
+                $params['confirm'] = true;
+                $params['sesskey'] = sesskey();
+                $buttons = $OUTPUT->single_button(
+                    new moodle_url('/local/report_license/index.php', $params),
+                    get_string('send_button', 'local_email')
+                );
+                $params['confirm'] = false;
+                $params['sendemail'] = false;
+                $buttons .= $OUTPUT->single_button(
+                    new moodle_url('/local/report_license/index.php', $params),
+                    get_string('cancel')
+                );
+                echo $OUTPUT->box_start('generalbox', 'notice');
+                echo $OUTPUT->box(get_string('licensesendreminder', 'local_report_license'));
+                echo $OUTPUT->box($buttons, 'buttons');
+                echo $OUTPUT->box_end();
+                echo $OUTPUT->footer();
+            }
+            die;
+        }
+
+        if (empty($dodownload) && !$sendemail) {
             if ($courseid == 1) {
                 echo "<h3>".get_string('reportallusers', 'local_report_license')."</h3>";
             } else {
@@ -359,16 +390,35 @@ if (empty($charttype)) {
         $compusertable->id = 'ReportTable';
     
         // Deal with table columns.
-        $columns = array('firstname',
-                         'lastname',
-                         'department',
-                         'email',
-                         'licensename',
-                         'coursename',
-                         'isusing');
+        if ($showused) {
+            $columns = array('firstname',
+                             'lastname',
+                             'department',
+                             'email',
+                             'lastaccess',
+                             'licensename',
+                             'coursename',
+                             'isusing');
+        } else {
+            $columns = array('firstname',
+                             'lastname',
+                             'department',
+                             'email',
+                             'lastaccess',
+                             'licensename',
+                             'coursename');
+        }
     
         foreach ($columns as $column) {
-            $string[$column] = get_string($column, 'local_report_license');
+            if ($column == 'lastaccess') {
+                $string[$column] = get_string('lastaccess');
+            } else if ($column == 'firstname') {
+                $string[$column] = get_string('firstname');
+            } else if ($column == 'lastname') {
+                $string[$column] = get_string('lastname');
+            } else {
+                $string[$column] = get_string($column, 'local_report_license');
+            }
             if ($sort != $column) {
                 $columnicon = "";
                 $columndir = "ASC";
@@ -389,12 +439,22 @@ if (empty($charttype)) {
             } else {
                 echo $courseinfo[$courseid]->coursename."\n";
             }
-            echo '"'.get_string('name', 'local_report_license').'","'
-                 .get_string('email', 'local_report_license').'","'
-                 .get_string('course').'","'
-                 .get_string('department', 'block_iomad_company_admin').'","'
-                 .get_string('licensename', 'local_report_license').'","'
-                 .get_string('isusing', 'local_report_license')."\"\n";
+            if ($showused) {
+                echo '"'.get_string('name', 'local_report_license').'","'
+                     .get_string('email', 'local_report_license').'","'
+                     .get_string('course').'","'
+                     .get_string('department', 'block_iomad_company_admin').'","'
+                     .get_string('lastaccess').'","'
+                     .get_string('licensename', 'local_report_license').'","'
+                     .get_string('isusing', 'local_report_license')."\"\n";
+            } else {
+                echo '"'.get_string('name', 'local_report_license').'","'
+                     .get_string('email', 'local_report_license').'","'
+                     .get_string('course').'","'
+                     .get_string('department', 'block_iomad_company_admin').'","'
+                     .get_string('lastaccess').'","'
+                     .get_string('licensename', 'local_report_license')."\"\n";
+            }
             $xlsrow = 1;
         }
         // Set the initial parameters for the table header links.
@@ -418,6 +478,8 @@ if (empty($charttype)) {
             $departmenturl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'email';
             $emailurl = new moodle_url('index.php', $linkparams);
+            $linkparams['sort'] = 'lastaccess';
+            $lastaccessurl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'licensename';
             $licensenameurl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'coursename';
@@ -463,6 +525,15 @@ if (empty($charttype)) {
                         $linkparams['dir'] = 'ASC';
                         $emailurl = new moodle_url('index.php', $linkparams);
                     }
+                } else if ($params['sort'] == 'lastaccess') {
+                    $linkparams['sort'] = 'lastaccess';
+                    if ($params['dir'] == 'ASC') {
+                        $linkparams['dir'] = 'DESC';
+                        $lastaccessurl = new moodle_url('index.php', $linkparams);
+                    } else {
+                        $linkparams['dir'] = 'ASC';
+                        $lastaccessurl = new moodle_url('index.php', $linkparams);
+                    }
                 } else if ($params['sort'] == 'licensename') {
                     $linkparams['sort'] = 'licensename';
                     if ($params['dir'] == 'ASC') {
@@ -494,13 +565,24 @@ if (empty($charttype)) {
             }
         }
         $fullnamedisplay = $OUTPUT->action_link($firstnameurl, $firstname) ." / ". $OUTPUT->action_link($lastnameurl, $lastname);
-        $compusertable->head = array ($fullnamedisplay,
-                                      $OUTPUT->action_link($emailurl, $email),
-                                      get_string('course'),
-                                      $OUTPUT->action_link($departmenturl, $department),
-                                      $OUTPUT->action_link($licensenameurl, $licensename),
-                                      $OUTPUT->action_link($isusingurl, $isusing));
-        $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center');
+        if ($showused) {
+            $compusertable->head = array ($fullnamedisplay,
+                                          $OUTPUT->action_link($emailurl, $email),
+                                          get_string('course'),
+                                          $OUTPUT->action_link($departmenturl, $department),
+                                          $OUTPUT->action_link($lastaccessurl, $lastaccess),
+                                          $OUTPUT->action_link($licensenameurl, $licensename),
+                                          $OUTPUT->action_link($isusingurl, $isusing));
+            $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center');
+        } else {
+            $compusertable->head = array ($fullnamedisplay,
+                                          $OUTPUT->action_link($emailurl, $email),
+                                          get_string('course'),
+                                          $OUTPUT->action_link($departmenturl, $department),
+                                          $OUTPUT->action_link($lastaccessurl, $lastaccess),
+                                          $OUTPUT->action_link($licensenameurl, $licensename));
+            $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', );
+        }
         $compusertable->width = '95%';
     
         $userurl = '/local/report_users/userdisplay.php';
@@ -514,24 +596,54 @@ if (empty($charttype)) {
                 } else {
                     $user->isusing = get_string('no');
                 }
+                if ($user->lastaccess == 0) {
+                    $datestring = get_string('never');
+                } else {
+                    $datestring = userdate($user->lastaccess)."&nbsp; (".format_time(time() - $user->lastaccess).")";
+                }
                 $user->fullname = $user->firstname . ' ' . $user->lastname;
-                $compusertable->data[] = array("<a href='".new moodle_url($userurl,
-                                                                          array('userid' => $user->uid,
-                                                                                'courseid' => $courseid)).
-                                               "'>$user->fullname</a>",
-                                                $user->email,
-                                                $user->coursename,
-                                                $user->department,
-                                                $user->licensename,
-                                                $user->isusing);
-                if (!empty($dodownload)) {
-                    echo '"'.$user->fullname.
-                         '","'.$user->email.
-                         '","'.$user->coursename.
-                         '","'.$user->department.
-                         '","'.$user->licensename.
-                         '","'.$user->isusing.
-                         "\"\n";
+                if (empty($dodownload)) {
+                    if ($showused) {
+                        $compusertable->data[] = array("<a href='".new moodle_url($userurl,
+                                                                                  array('userid' => $user->uid,
+                                                                                        'courseid' => $courseid)).
+                                                       "'>$user->fullname</a>",
+                                                        $user->email,
+                                                        $user->coursename,
+                                                        $user->department,
+                                                        $datestring,
+                                                        $user->licensename,
+                                                        $user->isusing);
+                    } else {
+                        $compusertable->data[] = array("<a href='".new moodle_url($userurl,
+                                                                                  array('userid' => $user->uid,
+                                                                                        'courseid' => $courseid)).
+                                                       "'>$user->fullname</a>",
+                                                        $user->email,
+                                                        $user->coursename,
+                                                        $user->department,
+                                                        $datestring,
+                                                        $user->licensename);
+                    }
+                } else {
+                    if ($showused) {
+                        echo '"'.$user->fullname.
+                             '","'.$user->email.
+                             '","'.$user->coursename.
+                             '","'.$user->department.
+                             '","'.$datestring.
+                             '","'.$user->licensename.
+                             '","'.$user->isusing.
+                             "\"\n";
+                    } else {
+                        echo '"'.$user->fullname.
+                             '","'.$user->email.
+                             '","'.$user->coursename.
+                             '","'.$user->department.
+                             '","'.$datestring.
+                             '","'.$user->licensename.
+                             "\"\n";
+                    }
                 }
             }
         }

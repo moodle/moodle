@@ -173,7 +173,8 @@ class company_users_course_form extends moodleform {
                             $DB->insert_record('companylicense_users',
                                                array('userid' => $this->userid,
                                                      'licenseid' => $licenserecord['id'],
-                                                     'licensecourseid' => $addcourse->id));
+                                                     'licensecourseid' => $addcourse->id,
+                                                     'issuedate' => time()));
     
                             // Create an email event.
                             $license = new stdclass();

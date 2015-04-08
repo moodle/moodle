@@ -201,6 +201,19 @@ class company_user {
         $DB->set_field('company_users', 'suspended', 1, array('userid' => $userid,
                                                               'companyid' => $company->id));
 
+        // Clear up any unused licenses.
+        if ($userlicenses = $DB->get_records('companylicense_users', array('userid' => $userid,
+                                                                       'isusing' => 0))) {
+            foreach ($userlicenes as $userlicense) {
+                $DB->delete_records('companylicense_users', array('id' => $userlicense->id));
+                if ($licenserecord = $DB->get_record('companylicense', array('id' => $userlicense->licenseid))) {
+                    $licensecount = $DB->count_records('companylicense_users', array('licenseid' => $licenserecord->id));
+                    $licenserecord->used = $licensecount;
+                    $DB->update_record('companylicense', $licenserecord);
+                }
+            }
+        }
+
         // Mark user as suspended.
         $DB->set_field('user', 'suspended', 1, array('id' => $userid));
 

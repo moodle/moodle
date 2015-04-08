@@ -159,6 +159,11 @@ $string['license_allocated_body'] = 'Dear {User_FirstName},
 
 You have been granted access to the online training for {Course_FullName}.  Please visit {CourseURL} to partake in this training.
 Once you have entered the course you will have access to it for {License_Length} days.  Unused access will expire after {License_Valid}';
+$string['license_reminder_subject'] = 'Reminder: you have been allocated the course {Course_FullName}';
+$string['license_reminder_body'] = 'Dear {User_FirstName},
+
+You have been granted access to the online training for {Course_FullName}.  Please visit {CourseURL} to partake in this training.
+Once you have entered the course you will have access to it for {License_Length} days.  Unused access will expire after {License_Valid}';
 $string['license_removed_subject'] = 'Access to course {Course_FullName} removed';
 $string['license_removed_body'] = 'Your access to course {Course_FullName} has been revoked.  If you feel this is in error, please contact your training manager';
 $string['password_update_subject'] = 'Password change notification for {User_FirstName}';

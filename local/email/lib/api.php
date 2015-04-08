@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(__FILE__) . '/../config.php');
+require_once(dirname(__FILE__) . '/../local_lib.php');
 require_once(dirname(__FILE__) . '/../../../user/profile/lib.php');
 require_once(dirname(__FILE__) . '/../../../local/iomad/lib/company.php');
 
@@ -135,7 +135,7 @@ class EmailTemplate {
         if (!isset($sender) || is_siteadmin($USER->id)) {
             if ($USER->id == 0 || is_siteadmin($USER->id)) {
                 // We are being run from cron.
-                $sender =& self::get_sender($user);
+                $sender = self::get_sender($user);
             } else {
                 // Not been defined explicitly, use the current user.
                 $sender = $USER;
@@ -353,12 +353,13 @@ class EmailTemplate {
      *
      **/
     private function get_template($templatename) {
-        global $DB, $email;
+        global $DB;
 
         if (isset($this->company->id)) {
             $companyid = $this->company->id;
         }
 
+        $email = local_email_get_templates();
         // Try to get it out of the database, otherwise get it from config file.
         if (!isset($companyid) || !$template = $DB->get_record('email_template', array('name' => $templatename,
                                                                                        'companyid' => $companyid), '*')) {

@@ -222,7 +222,8 @@ class company_license_users_form extends moodleform {
                         if ($allow) {
                             $recordarray = array('licensecourseid' => $course,
                                                  'userid' => $adduser->id,
-                                                 'licenseid' => $this->licenseid);
+                                                 'licenseid' => $this->licenseid,
+                                                 'issuedate' => time());
                             if (!$DB->get_record('companylicense_users', $recordarray)) {
                                 $DB->insert_record('companylicense_users', $recordarray);
                                 $count++;

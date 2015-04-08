@@ -51,6 +51,8 @@ $comptoraw = optional_param_array('compto', null, PARAM_INT);
 $completiontype = optional_param('completiontype', 0, PARAM_INT);
 $charttype = optional_param('charttype', '', PARAM_CLEAN);
 $showchart = optional_param('showchart', false, PARAM_BOOL);
+$confirm = optiona_param('confirm', false, PARAM_BOOL);
+
 
 require_login($SITE);
 $context = context_system::instance();

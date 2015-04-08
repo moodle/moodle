@@ -983,14 +983,18 @@ class iomad {
             $courseobj->id = $course->courseid;
             $courseobj->numlicenses = $DB->count_records_sql("SELECT COUNT(clu.id) FROM {companylicense_users} clu
                                                    JOIN {".$temptablename."} tt ON (clu.userid = tt.userid)
-                                                   WHERE
-                                                   clu.licensecourseid = :courseid", array('courseid' => $course->courseid));
-            $courseobj->numused = $DB->count_records_sql("SELECT COUNT(clu.id) FROM {companylicense_users} clu
-                                                   JOIN {".$temptablename."} tt ON (clu.userid = tt.userid)
+                                                   JOIN {companylicense} cl ON (cl.id = clu.licenseid)
                                                    WHERE
                                                    clu.licensecourseid = :courseid
+                                                   AND cl.expirydate > unix_timestamp()", array('courseid' => $course->courseid));
+            $courseobj->numused = $DB->count_records_sql("SELECT COUNT(clu.id) FROM {companylicense_users} clu
+                                                   JOIN {".$temptablename."} tt ON (clu.userid = tt.userid)
+                                                   JOIN {companylicense} cl ON (cl.id = clu.licenseid)
+                                                   WHERE
+                                                   clu.licensecourseid = :courseid
+                                                   AND cl.expirydate > unix_timestamp()
                                                    AND
-                                                   isusing = 1", array('courseid' => $course->courseid));
+                                                   clu.isusing = 1", array('courseid' => $course->courseid));
             $courseobj->numunused = $courseobj->numlicenses - $courseobj->numused;
 
             if (!$courseobj->coursename = $DB->get_field('course', 'fullname', array('id' => $course->courseid))) {
@@ -1010,7 +1014,7 @@ class iomad {
      *
      * Return array();
      **/
-    public static function get_all_user_course_license_data($searchinfo, $page=0, $perpage=0, $completiontype=0) {
+    public static function get_all_user_course_license_data($searchinfo, $page=0, $perpage=0, $completiontype=0, $showsuspended = false, $showused = false) {
         global $DB;
 
         $completiondata = new stdclass();
@@ -1031,7 +1035,18 @@ class iomad {
         } else {
             $completionsql = "";
         }
-                
+
+        if (!$showsuspended) {
+            $showsuspendedsql = "AND u.suspended = 0";
+        } else {
+            $showsuspendedsql = "";
+        }                
+
+        if (!$showused) {
+            $showusedsql = "AND clu.isusing = 0";
+        } else {
+            $showusedsql = "";
+        }                
 
         // Get the user details.
         $countsql = "SELECT CONCAT(co.id, u.id) AS id ";
@@ -1042,8 +1057,10 @@ class iomad {
                 u.firstname AS firstname,
                 u.lastname AS lastname,
                 u.email AS email,
+                u.lastaccess AS lastaccess,
                 co.shortname AS coursename,
                 co.id AS courseid,
+                cl.id AS licenseid,
                 cl.name AS licensename,
                 d.name as department,
                 cl.name,
@@ -1058,10 +1075,14 @@ class iomad {
                 AND du.userid = u.id
                 AND d.id = du.departmentid
                 AND cl.id = clu.licenseid
+                AND cl.expirydate > unix_timestamp()
+                $showusedsql
+                $showsuspendedsql
                 $completionsql
                 $searchinfo->sqlsort ";
-
+$DB->set_debug(true);
         $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
+$DB->set_debug(false);
         $countusers = $DB->get_records_sql($countsql.$fromsql, $searchinfo->searchparams);
         $numusers = count($countusers);
 
@@ -1116,7 +1137,7 @@ class iomad {
      *
      * Return array();
      **/
-    public static function get_user_course_license_data($searchinfo, $courseid, $page=0, $perpage=0, $completiontype=0) {
+    public static function get_user_course_license_data($searchinfo, $courseid, $page=0, $perpage=0, $completiontype=0, $showsuspended = false, $showused = false) {
         global $DB;
 
         $completiondata = new stdclass();
@@ -1126,15 +1147,31 @@ class iomad {
         $temptablename = 'tmp_clcomp_users_'.time();
         list($dbman, $table) = self::populate_temporary_users($temptablename, $searchinfo);
 
+        if (!$showsuspended) {
+            $showsuspendedsql = "AND u.suspended = 0";
+        } else {
+            $showsuspendedsql = "";
+        }                
+
+        if (!$showused) {
+            $showusedsql = "AND clu.isusing = 0";
+        } else {
+            $showusedsql = "";
+        }                
+
         // Get the user details.
         $shortname = addslashes($course->shortname);
-        $countsql = "SELECT u.id ";
-        $selectsql = "SELECT u.id,
+        $countsql = "SELECT CONCAT(clu.id, u.id) AS id";
+        $selectsql = "SELECT
+                CONCAT(clu.id, u.id) AS id, 
+                u.id AS uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,
                 u.email AS email,
+                u.lastaccess AS lastaccess,
                 '{$shortname}' AS coursename,
                 '$courseid' AS courseid,
+                clu.licenseid AS licenseid,
                 clu.isusing AS isusing,
                 d.name AS department,
                 cl.name AS licensename ";
@@ -1147,6 +1184,9 @@ class iomad {
                     AND du.userid = u.id
                     AND d.id = du.departmentid
                     AND cl.id = clu.licenseid
+                    AND cl.expirydate > unix_timestamp()
+                    $showsuspendedsql
+                    $showusedsql
                     $searchinfo->sqlsort ";
 
         $searchinfo->searchparams['courseid'] = $courseid;
