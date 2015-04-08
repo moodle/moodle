@@ -100,13 +100,6 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         $teacher = $DB->get_record('role', array('shortname'=>'teacher'));
         $manager = $DB->get_record('role', array('shortname'=>'manager'));
 
-        $id = groups_create_group((object)array('name'=>'Group 1', 'courseid'=>$course1->id));
-        $group1 = $DB->get_record('groups', array('id'=>$id), '*', MUST_EXIST);
-        $id = groups_create_group((object)array('name'=>'Group 2', 'courseid'=>$course1->id));
-        $group2 = $DB->get_record('groups', array('id'=>$id), '*', MUST_EXIST);
-        $id = groups_create_group((object)array('name'=>'Group 3', 'courseid'=>$course2->id));
-        $group3 = $DB->get_record('groups', array('id'=>$id), '*', MUST_EXIST);
-
         $this->disable_plugin();
 
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id, $student->id);
@@ -135,14 +128,12 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         $this->assertEquals(7, $DB->count_records('user_enrolments'));
         $this->assertEquals(6, $DB->count_records('role_assignments'));
 
-        $e1 = $metalplugin->add_instance($course3, array('customint1'=>$course1->id, 'customint2'=>$group1->id));
-        $e2 = $metalplugin->add_instance($course3, array('customint1'=>$course2->id, 'customint2'=>$group2->id));
+        $e1 = $metalplugin->add_instance($course3, array('customint1'=>$course1->id));
+        $e2 = $metalplugin->add_instance($course3, array('customint1'=>$course2->id));
         $e3 = $metalplugin->add_instance($course4, array('customint1'=>$course2->id));
-        $e4 = $metalplugin->add_instance($course4, array('customint1'=>$course2->id, 'customint2'=>$group3->id));
         $enrol1 = $DB->get_record('enrol', array('id'=>$e1));
         $enrol2 = $DB->get_record('enrol', array('id'=>$e2));
         $enrol3 = $DB->get_record('enrol', array('id'=>$e3));
-        $enrol4 = $DB->get_record('enrol', array('id'=>$e3));
 
         enrol_meta_sync($course4->id, false);
         $this->assertEquals(9, $DB->count_records('user_enrolments'));
@@ -184,34 +175,6 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         $this->assertEquals(14, $DB->count_records('user_enrolments', array('status'=>ENROL_USER_ACTIVE)));
 
         $this->enable_plugin();
-
-        $this->assertTrue(is_enrolled(context_course::instance($course1->id), $user4));
-        $this->assertTrue(groups_add_member($group1, $user4));
-        $this->assertTrue(groups_add_member($group2, $user4));
-
-        $this->assertFalse(groups_is_member($group1->id, $user1->id));
-        groups_add_member($group1->id, $user1->id);
-        $this->assertTrue(groups_is_member($group1->id, $user1->id));
-        $this->assertTrue($DB->record_exists('groups_members', array('groupid'=>$group1->id, 'userid'=>$user1->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
-
-        groups_add_member($group1->id, $user4->id);
-        $this->assertTrue(groups_is_member($group1->id, $user4->id));
-        $this->assertFalse($DB->record_exists('groups_members', array('groupid'=>$group1->id, 'userid'=>$user4->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
-
-        set_config('unenrolaction', ENROL_EXT_REMOVED_UNENROL, 'enrol_meta');
-
-        groups_remove_member($group1->id, $user1->id);
-        $this->assertFalse(groups_is_member($group1->id, $user1->id));
-
-        groups_remove_member($group1->id, $user4->id);
-        $this->assertTrue(groups_is_member($group1->id, $user4->id));
-        $this->assertTrue(groups_is_member($group2->id, $user4->id));
-
-        set_config('unenrolaction', ENROL_EXT_REMOVED_SUSPENDNOROLES, 'enrol_meta');
-        groups_add_member($group1->id, $user1->id);
-
-        groups_remove_member($group1->id, $user1->id);
-        $this->assertTrue(groups_is_member($group1->id, $user1->id));
 
         set_config('unenrolaction', ENROL_EXT_REMOVED_SUSPEND, 'enrol_meta');
         enrol_meta_sync($course4->id, false);
@@ -475,6 +438,98 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         delete_course($course3, false);
         delete_course($course4, false);
 
+    }
+
+    public function test_add_to_group() {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot.'/group/lib.php');
+
+        $this->resetAfterTest(true);
+
+        $metalplugin = enrol_get_plugin('meta');
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+        $manualenrol1 = $DB->get_record('enrol', array('courseid' => $course1->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+        $manualenrol2 = $DB->get_record('enrol', array('courseid' => $course2->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+
+        $student = $DB->get_record('role', array('shortname' => 'student'));
+        $teacher = $DB->get_record('role', array('shortname' => 'teacher'));
+
+        $id = groups_create_group((object)array('name' => 'Group 1 in course 3', 'courseid' => $course3->id));
+        $group31 = $DB->get_record('groups', array('id' => $id), '*', MUST_EXIST);
+        $id = groups_create_group((object)array('name' => 'Group 2 in course 4', 'courseid' => $course3->id));
+        $group32 = $DB->get_record('groups', array('id' => $id), '*', MUST_EXIST);
+
+        $this->enable_plugin();
+
+        $e1 = $metalplugin->add_instance($course3, array('customint1' => $course1->id, 'customint2' => $group31->id));
+        $e2 = $metalplugin->add_instance($course3, array('customint1' => $course2->id, 'customint2' => $group32->id));
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, $student->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course1->id, $teacher->id);
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id, $student->id);
+
+        // Now make sure users are in the correct groups.
+        $this->assertTrue(groups_is_member($group31->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $group31->id, 'userid' => $user1->id,
+            'component' => 'enrol_meta', 'itemid' => $e1)));
+        $this->assertTrue(groups_is_member($group32->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $group32->id, 'userid' => $user1->id,
+            'component' => 'enrol_meta', 'itemid' => $e2)));
+
+        $this->assertTrue(groups_is_member($group31->id, $user4->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $group31->id, 'userid' => $user4->id,
+            'component' => 'enrol_meta', 'itemid' => $e1)));
+
+        // Make sure everything is the same after sync.
+        enrol_meta_sync(null, false);
+        $this->assertTrue(groups_is_member($group31->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $group31->id, 'userid' => $user1->id,
+            'component' => 'enrol_meta', 'itemid' => $e1)));
+        $this->assertTrue(groups_is_member($group32->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $group32->id, 'userid' => $user1->id,
+            'component' => 'enrol_meta', 'itemid' => $e2)));
+
+        $this->assertTrue(groups_is_member($group31->id, $user4->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $group31->id, 'userid' => $user4->id,
+            'component' => 'enrol_meta', 'itemid' => $e1)));
+
+        set_config('unenrolaction', ENROL_EXT_REMOVED_UNENROL, 'enrol_meta');
+
+        // When user 1 is unenrolled from course1, he is removed from group31 but still present in group32.
+        enrol_get_plugin('manual')->unenrol_user($manualenrol1, $user1->id);
+        $this->assertFalse(groups_is_member($group31->id, $user1->id));
+        $this->assertTrue(groups_is_member($group32->id, $user1->id));
+        $this->assertTrue(is_enrolled(context_course::instance($course3->id), $user1, '', true)); // He still has active enrolment.
+        // And the same after sync.
+        enrol_meta_sync(null, false);
+        $this->assertFalse(groups_is_member($group31->id, $user1->id));
+        $this->assertTrue(groups_is_member($group32->id, $user1->id));
+        $this->assertTrue(is_enrolled(context_course::instance($course3->id), $user1, '', true));
+
+        // Unenroll user1 from course2 and make sure he is completely unenrolled from course3.
+        enrol_get_plugin('manual')->unenrol_user($manualenrol2, $user1->id);
+        $this->assertFalse(groups_is_member($group32->id, $user1->id));
+        $this->assertFalse(is_enrolled(context_course::instance($course3->id), $user1));
+
+        set_config('unenrolaction', ENROL_EXT_REMOVED_SUSPENDNOROLES, 'enrol_meta');
+
+        // When user is unenrolled in this case, he is still a member of a group (but enrolment is suspended).
+        enrol_get_plugin('manual')->unenrol_user($manualenrol1, $user4->id);
+        $this->assertTrue(groups_is_member($group31->id, $user4->id));
+        $this->assertTrue(is_enrolled(context_course::instance($course3->id), $user4));
+        $this->assertFalse(is_enrolled(context_course::instance($course3->id), $user4, '', true));
+        enrol_meta_sync(null, false);
+        $this->assertTrue(groups_is_member($group31->id, $user4->id));
+        $this->assertTrue(is_enrolled(context_course::instance($course3->id), $user4));
+        $this->assertFalse(is_enrolled(context_course::instance($course3->id), $user4, '', true));
     }
 
     /**

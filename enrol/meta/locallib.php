@@ -150,13 +150,11 @@ class enrol_meta_handler {
             }
         }
 
-
         // enrol user if not enrolled yet or fix status
         if ($ue) {
             if ($parentstatus != $ue->status) {
                 $plugin->update_user_enrol($instance, $userid, $parentstatus);
                 $ue->status = $parentstatus;
-                groups_add_member($instance->customint2, $userid, 'enrol_meta', $instance->courseid);
             }
         } else {
             $plugin->enrol_user($instance, $userid, NULL, 0, 0, $parentstatus);
@@ -164,7 +162,9 @@ class enrol_meta_handler {
             $ue->userid = $userid;
             $ue->enrolid = $instance->id;
             $ue->status = $parentstatus;
-            groups_add_member($instance->customint2, $userid, 'enrol_meta', $instance->courseid);
+            if ($instance->customint2) {
+                groups_add_member($instance->customint2, $userid, 'enrol_meta', $instance->id);
+            }
         }
 
         $unenrolaction = $plugin->get_config('unenrolaction', ENROL_EXT_REMOVED_SUSPENDNOROLES);
@@ -174,7 +174,6 @@ class enrol_meta_handler {
             if ($unenrolaction == ENROL_EXT_REMOVED_SUSPEND) {
                 // Always keep the roles.
             } else if ($roles) {
-                groups_remove_member($instance->customint2, $userid);
                 role_unassign_all(array('userid'=>$userid, 'contextid'=>$context->id, 'component'=>'enrol_meta', 'itemid'=>$instance->id));
             }
             return;
@@ -184,7 +183,6 @@ class enrol_meta_handler {
         foreach ($parentroles as $rid) {
             if (!isset($roles[$rid])) {
                 role_assign($rid, $userid, $context->id, 'enrol_meta', $instance->id);
-                groups_add_member($instance->customint2, $userid, 'enrol_meta', $instance->courseid);
             }
         }
 
@@ -232,8 +230,6 @@ class enrol_meta_handler {
             if ($ue->status != ENROL_USER_SUSPENDED) {
                 $plugin->update_user_enrol($instance, $userid, ENROL_USER_SUSPENDED);
             }
-            // Remove from metagroup.
-            groups_remove_member($instance->customint2, $userid);
             role_unassign_all(array('userid'=>$userid, 'contextid'=>$context->id, 'component'=>'enrol_meta', 'itemid'=>$instance->id));
 
         } else {
@@ -318,6 +314,9 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
         }
 
         $meta->enrol_user($instance, $ue->userid, $ue->status);
+        if ($instance->customint2) {
+            groups_add_member($instance->customint2, $ue->userid, 'enrol_meta', $instance->id);
+        }
         if ($verbose) {
             mtrace("  enrolling: $ue->userid ==> $instance->courseid");
         }
@@ -568,7 +567,9 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach ($rs as $gm) {
         groups_remove_member($gm->groupid, $gm->userid);
-        mtrace("removing user from group: $gm->userid ==> $gm->courseid - $gm->groupname", 1);
+        if ($verbose) {
+            mtrace("removing user from group: $gm->userid ==> $gm->courseid - $gm->groupname", 1);
+        }
     }
     $rs->close();
 
@@ -586,7 +587,9 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach ($rs as $ue) {
         groups_add_member($ue->groupid, $ue->userid, 'enrol_meta', $ue->enrolid);
-        mtrace("adding user to group: $ue->userid ==> $ue->courseid - $ue->groupname", 1);
+        if ($verbose) {
+            mtrace("adding user to group: $ue->userid ==> $ue->courseid - $ue->groupname", 1);
+        }
     }
     $rs->close();
 

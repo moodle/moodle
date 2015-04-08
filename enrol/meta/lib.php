@@ -170,4 +170,82 @@ class enrol_meta_plugin extends enrol_plugin {
         $context = context_course::instance($instance->courseid);
         return has_capability('enrol/meta:config', $context);
     }
+
+    /**
+     * Restore instance and map settings.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $course
+     * @param int $oldid
+     */
+    public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+        global $DB, $CFG;
+
+        if (!$step->get_task()->is_samesite()) {
+            // No meta restore from other sites.
+            $step->set_mapping('enrol', $oldid, 0);
+            return;
+        }
+
+        if (!empty($data->customint2)) {
+            $data->customint2 = $step->get_mappingid('group', $data->customint2);
+        }
+
+        if ($DB->record_exists('course', array('id' => $data->customint1))) {
+            $instance = $DB->get_record('enrol', array('roleid' => $data->roleid, 'customint1' => $data->customint1,
+                'courseid' => $course->id, 'enrol' => $this->get_name()));
+            if ($instance) {
+                $instanceid = $instance->id;
+            } else {
+                $instanceid = $this->add_instance($course, (array)$data);
+            }
+            $step->set_mapping('enrol', $oldid, $instanceid);
+
+            require_once("$CFG->dirroot/enrol/meta/locallib.php");
+            enrol_meta_sync($data->customint1);
+
+        } else {
+            $step->set_mapping('enrol', $oldid, 0);
+        }
+    }
+
+    /**
+     * Restore user enrolment.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $instance
+     * @param int $userid
+     * @param int $oldinstancestatus
+     */
+    public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
+        global $DB;
+
+        if ($this->get_config('unenrolaction') != ENROL_EXT_REMOVED_SUSPENDNOROLES) {
+            // Enrolments were already synchronised in restore_instance(), we do not want any suspended leftovers.
+            return;
+        }
+
+        // ENROL_EXT_REMOVED_SUSPENDNOROLES means all previous enrolments are restored
+        // but without roles and suspended.
+
+        if (!$DB->record_exists('user_enrolments', array('enrolid' => $instance->id, 'userid' => $userid))) {
+            $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, ENROL_USER_SUSPENDED);
+            if ($instance->customint2) {
+                groups_add_member($instance->customint2, $userid, 'enrol_meta', $instance->id);
+            }
+        }
+    }
+
+    /**
+     * Restore user group membership.
+     * @param stdClass $instance
+     * @param int $groupid
+     * @param int $userid
+     */
+    public function restore_group_member($instance, $groupid, $userid) {
+        // Nothing to do here, the group members are added in $this->restore_group_restored().
+        return;
+    }
 }
