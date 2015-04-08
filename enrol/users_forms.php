@@ -99,7 +99,8 @@ class enrol_users_addmember_form extends moodleform {
 
         $mform->addElement('header','general', fullname($user));
 
-        $mform->addElement('select', 'groupid', get_string('addgroup', 'group'), $options);
+        $mform->addElement('select', 'groupids', get_string('addgroup', 'group'), $options, array('multiple' => 'multiple'));
+        $mform->addRule('groupids', null, 'required');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

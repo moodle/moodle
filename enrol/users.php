@@ -144,7 +144,12 @@ if ($action) {
                 $mform = new enrol_users_addmember_form(NULL, array('user'=>$user, 'course'=>$course, 'allgroups'=>$manager->get_all_groups()));
                 $mform->set_data($PAGE->url->params());
                 $data = $mform->get_data();
-                if ($mform->is_cancelled() || ($data && $manager->add_user_to_group($user, $data->groupid))) {
+                if ($mform->is_cancelled()) {
+                    redirect($PAGE->url);
+                } if (!empty($data->groupids)) {
+                    foreach ($data->groupids as $groupid) {
+                        $manager->add_user_to_group($user, $groupid);
+                    }
                     redirect($PAGE->url);
                 } else {
                     $pagetitle = get_string('addgroup', 'group');
