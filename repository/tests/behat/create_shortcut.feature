@@ -16,11 +16,11 @@ Feature: Create shortcuts
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     When I log in as "teacher1"
-    And I navigate to "My private files" node in "My profile"
+    And I follow "Manage my private files"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     Then I should see "empty.txt" in the "div.fp-content" "css_element"
     And I press "Save changes"
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Folder" to section "1"
