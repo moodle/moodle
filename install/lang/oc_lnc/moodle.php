@@ -32,5 +32,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'Lenga';
 $string['next'] = 'Seguent';
-$string['previous'] = 'Précédent';
+$string['previous'] = 'Precedent';
 $string['reload'] = 'Actualizar';
