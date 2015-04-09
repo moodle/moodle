@@ -35,19 +35,21 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
             $('[data-region="displaytemplateheader"]').text(s);
         }).fail(notification.exception);
 
-        // Remove the GPL from the start of the template.
+        // Find the comment section marked with @template component/template.
+        var marker = "@template " + templateName;
 
         var sections = source.match(/{{!([\s\S]*?)}}/g);
         var i = 0;
 
-        // Find the first non-empty comment that is not the GPL.
         // If no sections match - show the entire file.
         if (sections !== null) {
             for (i = 0; i < sections.length; i++) {
                 var section = sections[i];
-                if ((section.trim() !== '') && (section.indexOf('GNU General Public License') === -1)) {
+                var start = section.indexOf(marker);
+                if (start !== -1) {
                     // Remove {{! and }} from start and end.
-                    section = section.substr(3, section.length - 5);
+                    var offset = start + marker.length + 1;
+                    section = section.substr(offset, section.length - 2 - offset);
                     source = section;
                     break;
                 }

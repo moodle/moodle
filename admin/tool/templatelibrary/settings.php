@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die;
-// Manage competency frameworks page.
+// Template library page.
 $temp = new admin_externalpage(
     'tooltemplatelibrary',
     get_string('pluginname', 'tool_templatelibrary'),
