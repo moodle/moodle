@@ -42,13 +42,13 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $paths[] = new restore_path_element('lesson', '/activity/lesson');
         $paths[] = new restore_path_element('lesson_page', '/activity/lesson/pages/page');
         $paths[] = new restore_path_element('lesson_answer', '/activity/lesson/pages/page/answers/answer');
+        $paths[] = new restore_path_element('lesson_override', '/activity/lesson/overrides/override');
         if ($userinfo) {
             $paths[] = new restore_path_element('lesson_attempt', '/activity/lesson/pages/page/answers/answer/attempts/attempt');
             $paths[] = new restore_path_element('lesson_grade', '/activity/lesson/grades/grade');
             $paths[] = new restore_path_element('lesson_branch', '/activity/lesson/pages/page/branches/branch');
             $paths[] = new restore_path_element('lesson_highscore', '/activity/lesson/highscores/highscore');
             $paths[] = new restore_path_element('lesson_timer', '/activity/lesson/timers/timer');
-            $paths[] = new restore_path_element('lesson_override', '/activity/lesson/overrides/override');
         }
 
         // Return the paths wrapped into standard activity structure
@@ -226,8 +226,12 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
 
         $data->lessonid = $this->get_new_parentid('lesson');
 
-        $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->groupid = $this->get_mappingid('group', $data->groupid);
+        if (!is_null($data->userid)) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+        }
+        if (!is_null($data->groupid)) {
+            $data->groupid = $this->get_mappingid('group', $data->groupid);
+        }
 
         $data->available = $this->apply_date_offset($data->available);
         $data->deadline = $this->apply_date_offset($data->deadline);
