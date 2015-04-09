@@ -77,18 +77,21 @@ function tool_monitor_extend_navigation_frontpage($navigation, $course, $context
 function tool_monitor_extend_navigation_user_settings($navigation, $user, $usercontext, $course, $coursecontext) {
     global $USER, $SITE;
 
-    // The $course->id will always be the course that corresponds to the current context.
-    $courseid = $course->id;
-    // A $course->id of $SITE->id might either be the frontpage or the site. So if we get the site ID back, check the...
-    // ...courseid parameter passed to the page so we can know if we are looking at the frontpage rules or site level rules.
-    if ($course->id == $SITE->id && optional_param('courseid', $course->id, PARAM_INT) == 0) {
-        $courseid = 0;
-    }
-    $url = new moodle_url('/admin/tool/monitor/index.php', array('courseid' => $courseid));
-    $subsnode = navigation_node::create(get_string('managesubscriptions', 'tool_monitor'), $url,
-            navigation_node::TYPE_SETTING, null, 'monitor', new pix_icon('i/settings', ''));
+    // Don't show the setting if the event monitor isn't turned on.
+    if (get_config('tool_monitor', 'enablemonitor')) {
+        // The $course->id will always be the course that corresponds to the current context.
+        $courseid = $course->id;
+        // A $course->id of $SITE->id might either be the frontpage or the site. So if we get the site ID back, check the...
+        // ...courseid parameter passed to the page so we can know if we are looking at the frontpage rules or site level rules.
+        if ($course->id == $SITE->id && optional_param('courseid', $course->id, PARAM_INT) == 0) {
+            $courseid = 0;
+        }
+        $url = new moodle_url('/admin/tool/monitor/index.php', array('courseid' => $courseid));
+        $subsnode = navigation_node::create(get_string('managesubscriptions', 'tool_monitor'), $url,
+                navigation_node::TYPE_SETTING, null, 'monitor', new pix_icon('i/settings', ''));
 
-    if (isset($subsnode) && !empty($navigation)) {
-        $navigation->add_node($subsnode);
+        if (isset($subsnode) && !empty($navigation)) {
+            $navigation->add_node($subsnode);
+        }
     }
 }

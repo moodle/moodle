@@ -33,6 +33,12 @@ $subscriptionid = optional_param('subscriptionid', 0, PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 
 require_login();
+
+// We need to explicitly check that the course id is something legitimate.
+if (empty($courseid)) {
+    $courseid = SITEID;
+}
+
 $coursecontext = context_course::instance($courseid);
 
 if (!get_config('tool_monitor', 'enablemonitor')) {
