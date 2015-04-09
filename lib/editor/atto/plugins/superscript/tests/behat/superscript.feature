@@ -5,13 +5,17 @@ Feature: Atto superscript button
   @javascript
   Scenario: Subscript some text
     Given I log in as "admin"
-    And I navigate to "Edit profile" node in "My profile settings"
+    And I follow "My profile" in the user menu
+    And I follow "Edit profile"
     And I set the field "Description" to "Helicopter"
-    And I set the field "Text editor" to "Plain text area"
     And I select the text in the "Description" Atto editor
     And I click on "Show more buttons" "button"
     When I click on "Superscript" "button"
     And I press "Update profile"
+    And I follow "My preferences" in the user menu
+    And I follow "Editor preferences"
+    And I set the field "Text editor" to "Plain text area"
+    And I press "Save changes"
     And I follow "Edit profile"
     Then I should see "<sup>Helicopter</sup>"
 

@@ -5,9 +5,8 @@ Feature: Atto tables
   @javascript
   Scenario: Create a table
     Given I log in as "admin"
-    And I am on homepage
-    And I expand "My profile" node
-    And I expand "Blogs" node
+    And I follow "My profile" in the user menu
+    And I follow "My blog entries"
     And I follow "Add a new entry"
     And I set the field "Entry title" to "How to make a table"
     And I set the field "Blog entry body" to "Table test"
@@ -22,9 +21,8 @@ Feature: Atto tables
   @javascript
   Scenario: Edit a table
     Given I log in as "admin"
-    And I am on homepage
-    And I expand "My profile" node
-    And I expand "Blogs" node
+    And I follow "My profile" in the user menu
+    And I follow "My blog entries"
     And I follow "Add a new entry"
     And I set the field "Entry title" to "How to make a table"
     And I set the field "Blog entry body" to "<table><tr><td>Cell</td></tr></table>"
