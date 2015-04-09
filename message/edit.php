@@ -130,7 +130,9 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         print_error('cannotupdateusermsgpref');
     }
 
-    $user->mailformat = clean_param($form->mailformat, PARAM_INT);
+    if (isset($form->mailformat)) {
+        $user->mailformat = clean_param($form->mailformat, PARAM_INT);
+    }
     user_update_user($user, false, false);
 
     redirect("$CFG->wwwroot/message/edit.php?id=$user->id");
