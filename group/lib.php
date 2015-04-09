@@ -1021,3 +1021,63 @@ function groups_calculate_role_people($rs, $context) {
     // Return list of roles containing their users
     return $roles;
 }
+
+/**
+ * Synchronises enrolments with the group membership
+ *
+ * Designed for enrolment methods provide automatic synchronisation between enrolled users
+ * and group membership, such as enrol_cohort and enrol_meta .
+ *
+ * @param string $enrolname name of enrolment method without prefix
+ * @param int $courseid course id where sync needs to be performed (0 for all courses)
+ * @param string $gidfield name of the field in 'enrol' table that stores group id
+ * @return array Returns the list of removed and added users. Each record contains fields:
+ *                  userid, enrolid, courseid, groupid, groupname
+ */
+function groups_sync_with_enrolment($enrolname, $courseid = 0, $gidfield = 'customint2') {
+    global $DB;
+    $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
+    $params = array(
+        'enrolname' => $enrolname,
+        'component' => 'enrol_'.$enrolname,
+        'courseid' => $courseid
+    );
+
+    $affectedusers = array(
+        'removed' => array(),
+        'added' => array()
+    );
+
+    // Remove invalid.
+    $sql = "SELECT ue.userid, ue.enrolid, e.courseid, g.id AS groupid, g.name AS groupname
+              FROM {groups_members} gm
+              JOIN {groups} g ON (g.id = gm.groupid)
+              JOIN {enrol} e ON (e.enrol = :enrolname AND e.courseid = g.courseid $onecourse)
+              JOIN {user_enrolments} ue ON (ue.userid = gm.userid AND ue.enrolid = e.id)
+             WHERE gm.component=:component AND gm.itemid = e.id AND g.id <> e.{$gidfield}";
+
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $gm) {
+        groups_remove_member($gm->groupid, $gm->userid);
+        $affectedusers['removed'][] = $gm;
+    }
+    $rs->close();
+
+    // Add missing.
+    $sql = "SELECT ue.userid, ue.enrolid, e.courseid, g.id AS groupid, g.name AS groupname
+              FROM {user_enrolments} ue
+              JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = :enrolname $onecourse)
+              JOIN {groups} g ON (g.courseid = e.courseid AND g.id = e.{$gidfield})
+              JOIN {user} u ON (u.id = ue.userid AND u.deleted = 0)
+         LEFT JOIN {groups_members} gm ON (gm.groupid = g.id AND gm.userid = ue.userid)
+             WHERE gm.id IS NULL";
+
+    $rs = $DB->get_recordset_sql($sql, $params);
+    foreach ($rs as $ue) {
+        groups_add_member($ue->groupid, $ue->userid, 'enrol_'.$enrolname, $ue->enrolid);
+        $affectedusers['added'][] = $ue;
+    }
+    $rs->close();
+
+    return $affectedusers;
+}
