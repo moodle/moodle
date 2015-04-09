@@ -95,6 +95,8 @@ Feature: Submit assignment without group
     And I should see "Submitted for grading" in the "Student 1" "table_row"
     And I should see "Submitted for grading" in the "Student 2" "table_row"
 
+    And I am on homepage
+    And I follow "Course 1"
     And I follow "Require group membership"
     And I should see "0" in the "Groups" "table_row"
     And I should see "The setting 'Require group to make submission' is turned on and some users are not allocated to groups, this will prevent them from submitting assignments."
