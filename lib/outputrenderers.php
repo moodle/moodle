@@ -2932,19 +2932,19 @@ EOD;
         $templatename = '';
         switch($data->type) {
             case \core\output\notification::NOTIFY_MESSAGE:
-                $templatename = 'core/output/notification_message';
+                $templatename = 'core/notification_message';
                 break;
             case \core\output\notification::NOTIFY_SUCCESS:
-                $templatename = 'core/output/notification_success';
+                $templatename = 'core/notification_success';
                 break;
             case \core\output\notification::NOTIFY_PROBLEM:
-                $templatename = 'core/output/notification_problem';
+                $templatename = 'core/notification_problem';
                 break;
             case \core\output\notification::NOTIFY_REDIRECT:
-                $templatename = 'core/output/notification_redirect';
+                $templatename = 'core/notification_redirect';
                 break;
             default:
-                $templatename = 'core/output/notification_message';
+                $templatename = 'core/notification_message';
                 break;
         }
 
