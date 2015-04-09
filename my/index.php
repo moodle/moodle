@@ -90,8 +90,10 @@ if (!isguestuser()) {   // Skip default home page for guests
         if (optional_param('setdefaulthome', false, PARAM_BOOL)) {
             set_user_preference('user_home_page_preference', HOMEPAGE_MY);
         } else if (!empty($CFG->defaulthomepage) && $CFG->defaulthomepage == HOMEPAGE_USER) {
-            $PAGE->settingsnav->find('usercurrentsettings', null)->add(get_string('makethismyhome'),
-                    new moodle_url('/my/', array('setdefaulthome' => true)), navigation_node::TYPE_SETTING);
+            $frontpagenode = $PAGE->settingsnav->add(get_string('frontpagesettings'), null, navigation_node::TYPE_SETTING, null);
+            $frontpagenode->force_open();
+            $frontpagenode->add(get_string('makethismyhome'), new moodle_url('/my/', array('setdefaulthome' => true)),
+                    navigation_node::TYPE_SETTING);
         }
     }
 }
