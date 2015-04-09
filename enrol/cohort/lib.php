@@ -343,12 +343,12 @@ function enrol_cohort_create_new_group($courseid, $cohortid) {
     $a = new stdClass();
     $a->name = $groupname;
     $a->increment = '';
-    $groupname = get_string('defaultgroupnametext', 'enrol_cohort', $a);
+    $groupname = trim(get_string('defaultgroupnametext', 'enrol_cohort', $a));
     $inc = 1;
     // Check to see if the cohort group name already exists. Add an incremented number if it does.
     while ($DB->record_exists('groups', array('name' => $groupname, 'courseid' => $courseid))) {
         $a->increment = '(' . (++$inc) . ')';
-        $newshortname = get_string('defaultgroupnametext', 'enrol_cohort', $a);
+        $newshortname = trim(get_string('defaultgroupnametext', 'enrol_cohort', $a));
         $groupname = $newshortname;
     }
     // Create a new group for the cohort.
