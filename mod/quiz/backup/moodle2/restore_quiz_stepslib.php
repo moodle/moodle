@@ -304,8 +304,13 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $data->quiz = $this->get_new_parentid('quiz');
 
-        $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->groupid = $this->get_mappingid('group', $data->groupid);
+        if ($data->userid !== null) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+        }
+
+        if ($data->groupid !== null) {
+            $data->groupid = $this->get_mappingid('group', $data->groupid);
+        }
 
         $data->timeopen = $this->apply_date_offset($data->timeopen);
         $data->timeclose = $this->apply_date_offset($data->timeclose);
