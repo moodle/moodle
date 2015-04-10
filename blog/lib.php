@@ -1032,6 +1032,9 @@ function core_blog_myprofile_navigation(core_user\output\myprofile\tree $tree, $
         return true;
     }
     $url = new moodle_url("/blog/index.php", array('userid' => $user->id));
+    if (!empty($course)) {
+        $url->param('courseid', $course->id);
+    }
     if ($iscurrentuser) {
         $title = get_string('myprofilemyblogs', 'core_blog');
     } else {

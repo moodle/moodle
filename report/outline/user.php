@@ -66,6 +66,17 @@ $PAGE->set_url('/report/outline/user.php', array('id'=>$user->id, 'course'=>$cou
 $PAGE->navigation->extend_for_user($user);
 $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
 $PAGE->set_title("$course->shortname: $stractivityreport");
+
+// Create the appropriate breadcrumb.
+$newusernode = $PAGE->navigation->find('user' . $user->id, null);
+$reportnode = $newusernode->add(get_string('reports'));
+$url = new moodle_url('/report/outline/user.php', array('id' => $user->id, 'course' => $course->id, 'mode' => $mode));
+if ($mode === 'complete') {
+    $reportnode->add(get_string('completereport'), $url, navigation_node::TYPE_COURSE);
+} else {
+    $reportnode->add(get_string('outlinereport'), $url, navigation_node::TYPE_COURSE);
+}
+
 if ($courseid == SITEID) {
     $PAGE->set_heading(fullname($user));
 } else {

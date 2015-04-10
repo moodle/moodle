@@ -4508,13 +4508,6 @@ class settings_navigation extends navigation_node {
             }
         }
 
-        // Login as ...
-        if (!$user->deleted and !$currentuser && !\core\session\manager::is_loggedinas() &&
-                has_capability('moodle/user:loginas', $coursecontext) && !is_siteadmin($user->id)) {
-            $url = new moodle_url('/course/loginas.php', array('id'=>$course->id, 'user'=>$user->id, 'sesskey'=>sesskey()));
-            $useraccount->add(get_string('loginas'), $url, self::TYPE_SETTING);
-        }
-
         // Let admin tools hook into user settings navigation.
         $tools = get_plugin_list_with_function('tool', 'extend_navigation_user_settings', 'lib.php');
         foreach ($tools as $toolfunction) {

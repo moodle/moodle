@@ -58,11 +58,6 @@ dir-rtl.path-grade-report-singleview div.groupselector select {
   margin: 0 2px;
 }
 
-.path-grade-report-singleview #region-main h2, .paging{
-   text-align: center;
-   clear: both;
-}
-
 .path-grade-report-singleview .itemnav {
     font-size: small;
     display: inline;

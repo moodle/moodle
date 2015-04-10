@@ -77,8 +77,8 @@ function tool_monitor_extend_navigation_frontpage($navigation, $course, $context
 function tool_monitor_extend_navigation_user_settings($navigation, $user, $usercontext, $course, $coursecontext) {
     global $USER, $SITE;
 
-    // Don't show the setting if the event monitor isn't turned on.
-    if (get_config('tool_monitor', 'enablemonitor')) {
+    // Don't show the setting if the event monitor isn't turned on. No access to other peoples subscriptions.
+    if (get_config('tool_monitor', 'enablemonitor') && $USER->id == $user->id) {
         // The $course->id will always be the course that corresponds to the current context.
         $courseid = $course->id;
         // A $course->id of $SITE->id might either be the frontpage or the site. So if we get the site ID back, check the...

@@ -7840,7 +7840,7 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
 
     $discussionssurl = new moodle_url('/mod/forum/user.php', array('id' => $user->id, 'mode' => 'discussions'));
     if (!empty($course)) {
-        $postsurl->param('course', $course->id);
+        $discussionssurl->param('course', $course->id);
     }
     $string = $iscurrentuser ? get_string('myprofileowndis', 'mod_forum') :
             get_string('myprofileotherdis', 'mod_forum');
