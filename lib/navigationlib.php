@@ -1106,7 +1106,7 @@ class global_navigation extends navigation_node {
         $this->rootnodes['site'] = $this->add_course($SITE);
         $this->rootnodes['myprofile'] = $this->add(get_string('myprofile'), null, self::TYPE_USER, null, 'myprofile');
         $this->rootnodes['currentcourse'] = $this->add(get_string('currentcourse'), null, self::TYPE_ROOTNODE, null, 'currentcourse');
-        $this->rootnodes['mycourses'] = $this->add(get_string('mycourses'), new moodle_url('/my/'), self::TYPE_ROOTNODE, null, 'mycourses');
+        $this->rootnodes['mycourses'] = $this->add(get_string('mycourses'), null, self::TYPE_ROOTNODE, null, 'mycourses');
         $this->rootnodes['courses'] = $this->add(get_string('courses'), new moodle_url('/course/index.php'), self::TYPE_ROOTNODE, null, 'courses');
         $this->rootnodes['users'] = $this->add(get_string('users'), null, self::TYPE_ROOTNODE, null, 'users');
 
@@ -1135,7 +1135,8 @@ class global_navigation extends navigation_node {
 
         // Load the users enrolled courses if they are viewing the My Moodle page AND the admin has not
         // set that they wish to keep the My Courses branch collapsed by default.
-        if (!empty($CFG->navexpandmycourses) && $this->rootnodes['mycourses']->isactive){
+        if (!empty($CFG->navexpandmycourses) && $this->page->pagelayout === 'mydashboard'){
+            $this->rootnodes['mycourses']->forceopen = true;
             $this->load_courses_enrolled();
         } else {
             $this->rootnodes['mycourses']->collapse = true;
