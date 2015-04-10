@@ -74,6 +74,7 @@ Feature: Access visible and hidden cohorts
   @javascript
   Scenario: System manager can see all cohorts defined in the above contexts
     When I log in as "user1"
+    And I am on site homepage
     And I follow "Course 1"
     And I navigate to "Enrolment methods" node in "Course administration > Users"
     And I set the field "Add method" to "Cohort sync"
@@ -101,6 +102,7 @@ Feature: Access visible and hidden cohorts
   @javascript
   Scenario: Category manager can see all cohorts defined in his category and visible cohorts defined above
     When I log in as "user2"
+    And I am on site homepage
     And I follow "Course 1"
     And I navigate to "Enrolment methods" node in "Course administration > Users"
     And I set the field "Add method" to "Cohort sync"

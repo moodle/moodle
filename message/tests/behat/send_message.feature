@@ -45,6 +45,7 @@ Feature: Users can send messages to each other
     When I press "Message"
     And I set the field "Message to send" to "Lorem ipsum sa messagus textus"
     And I press "Send message"
+    And I am on homepage
     And I follow "Messages" in the user menu
     And I set the field "Search people and messages" to "User Two"
     And I press "Search people and messages"

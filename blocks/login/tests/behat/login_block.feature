@@ -9,6 +9,7 @@ Feature: Login from a block
       | username | password | firstname | lastname | email |
       | testuser | testpass | Test      | User     | student1@asd.com |
     And I log in as "admin"
+    And I am on site homepage
     And I navigate to "Turn editing on" node in "Front page settings"
     And I add the "Login" block
 

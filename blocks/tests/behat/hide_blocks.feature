@@ -9,7 +9,7 @@ Feature: Block visibility
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Turn editing on"
 

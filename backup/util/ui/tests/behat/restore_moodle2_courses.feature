@@ -15,6 +15,7 @@ Feature: Restore Moodle 2 course backups
       | assign | C3 | assign1 | Test assign name | Assign description | 1 |
       | data | C3 | data1 | Test database name | Database description | 2 |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:

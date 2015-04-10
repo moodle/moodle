@@ -135,7 +135,7 @@ if ($roleid) {
     }
 }
 
-if ($user->id != $USER->id) {
+if (!empty($user) && ($user->id != $USER->id)) {
     $PAGE->navigation->extend_for_user($user);
     $PAGE->navbar->includesettingsbase = true;
 }
