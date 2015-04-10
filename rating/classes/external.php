@@ -139,13 +139,19 @@ class core_rating_external extends external_api {
                 if ($rating->rating > $maxrating) {
                     $rating->rating = $maxrating;
                 }
-                $usercontext = context_user::instance($rating->userid);
-                $profileimageurl = moodle_url::make_webservice_pluginfile_url($usercontext->id, 'user', 'icon', null, '/', 'f1');
+
+                $profileimageurl = '';
+                // We can have ratings from deleted users. In this case, those users don't have a valid context.
+                $usercontext = context_user::instance($rating->userid, IGNORE_MISSING);
+                if ($usercontext) {
+                    $profileimageurl = moodle_url::make_webservice_pluginfile_url($usercontext->id, 'user', 'icon', null,
+                                                                                    '/', 'f1')->out(false);
+                }
 
                 $result = array();
                 $result['id'] = $rating->id;
                 $result['userid'] = $rating->userid;
-                $result['userpictureurl'] = $profileimageurl->out(false);
+                $result['userpictureurl'] = $profileimageurl;
                 $result['userfullname'] = fullname($rating);
                 $result['rating'] = $scalemenu[$rating->rating];
                 $result['timemodified'] = $rating->timemodified;
