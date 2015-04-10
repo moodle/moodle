@@ -106,7 +106,7 @@ class override extends grade_attribute_format implements be_checked, be_disabled
         $state = $value == 0 ? false : true;
 
         $this->grade->set_overridden($state);
-        $this->grade->grade_item->get_parent_category()->force_regrading();
+        $this->grade->grade_item->force_regrading();
         return false;
     }
 }
