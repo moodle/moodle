@@ -1035,7 +1035,7 @@ function core_blog_myprofile_navigation(core_user\output\myprofile\tree $tree, $
     if ($iscurrentuser) {
         $title = get_string('myprofilemyblogs', 'core_blog');
     } else {
-        $title = get_string('myprofileuserblogs', 'core_blog', fullname($user));
+        $title = get_string('myprofileuserblogs', 'core_blog');
     }
     $blognode = new core_user\output\myprofile\node('miscellaneous', 'blogs', $title, null, $url);
     $tree->add_node($blognode);
