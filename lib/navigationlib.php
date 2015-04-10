@@ -3817,6 +3817,18 @@ class settings_navigation extends navigation_node {
         $reportavailable = false;
         if (has_capability('moodle/grade:viewall', $coursecontext)) {
             $reportavailable = true;
+        } else if (!empty($course->showgrades)) {
+            $reports = core_component::get_plugin_list('gradereport');
+            if (is_array($reports) && count($reports)>0) {     // Get all installed reports
+                arsort($reports); // user is last, we want to test it first
+                foreach ($reports as $plugin => $plugindir) {
+                    if (has_capability('gradereport/'.$plugin.':view', $coursecontext)) {
+                        //stop when the first visible plugin is found
+                        $reportavailable = true;
+                        break;
+                    }
+                }
+            }
         }
         if ($reportavailable) {
             $url = new moodle_url('/grade/report/index.php', array('id'=>$course->id));
