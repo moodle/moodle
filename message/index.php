@@ -207,7 +207,7 @@ $usernode->remove();
 $settings = $PAGE->settingsnav->find('messages', null);
 // Add the user we are contacting to the breadcrumb.
 if (!empty($user2realuser)) {
-    $usernode = $settings->add(fullname($user2), new moodle_url('/user/profile.php', array('id' => $user2->id)));
+    $usernode = $settings->add(fullname($user2), $url);
     $usernode->make_active();
 } else {
     $settings->make_active();
