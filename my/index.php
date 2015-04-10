@@ -59,12 +59,14 @@ if (isguestuser()) {  // Force them to see system default, no editing allowed
     $context = context_system::instance();
     $PAGE->set_blocks_editing_capability('moodle/my:configsyspages');  // unlikely :)
     $header = "$SITE->shortname: $strmymoodle (GUEST)";
+    $pagetitle = $header;
 
 } else {        // We are trying to view or edit our own My Moodle page
     $userid = $USER->id;  // Owner of the page
     $context = context_user::instance($USER->id);
     $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
     $header = fullname($USER);
+    $pagetitle = $strmymoodle;
 }
 
 // Get the My Moodle page info.  Should always return something unless the database is broken.
@@ -80,7 +82,7 @@ $PAGE->set_pagelayout('mydashboard');
 $PAGE->set_pagetype('my-index');
 $PAGE->blocks->add_region('content');
 $PAGE->set_subpage($currentpage->id);
-$PAGE->set_title($header);
+$PAGE->set_title($pagetitle);
 $PAGE->set_heading($header);
 
 if (!isguestuser()) {   // Skip default home page for guests
