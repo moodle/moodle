@@ -144,12 +144,13 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
         $tree->add_node($node);
     }
 
-    // Printing tagged interests. We want this only for full profile.
-    if (!empty($CFG->usetags) && empty($course)) {
-        if ($interests = tag_get_tags_csv('user', $user->id) ) {
-            $node = new core_user\output\myprofile\node('contact', 'interests', get_string('interests'), null, null, $interests);
-            $tree->add_node($node);
-        }
+    if (isset($identityfields['email']) and ($iscurrentuser
+                                             or $user->maildisplay == 1
+                                             or has_capability('moodle/course:useremail', $usercontext)
+                                             or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER)))) {
+        $node = new core_user\output\myprofile\node('contact', 'email', get_string('email'), null, null,
+            obfuscate_mailto($user->email, ''));
+        $tree->add_node($node);
     }
 
     if (!isset($hiddenfields['country']) && $user->country) {
@@ -196,15 +197,6 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
         $tree->add_node($node);
     }
 
-    if (isset($identityfields['email']) and ($iscurrentuser
-                                             or $user->maildisplay == 1
-                                             or has_capability('moodle/course:useremail', $usercontext)
-                                             or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER)))) {
-        $node = new core_user\output\myprofile\node('contact', 'email', get_string('email'), null, null,
-            obfuscate_mailto($user->email, ''));
-        $tree->add_node($node);
-    }
-
     if ($user->url && !isset($hiddenfields['webpage'])) {
         $url = $user->url;
         if (strpos($user->url, '://') === false) {
@@ -213,6 +205,14 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
         $webpageurl = new moodle_url($url);
         $node = new core_user\output\myprofile\node('contact', 'webpage', get_string('webpage'), null, $webpageurl);
         $tree->add_node($node);
+    }
+
+    // Printing tagged interests. We want this only for full profile.
+    if (!empty($CFG->usetags) && empty($course)) {
+        if ($interests = tag_get_tags_csv('user', $user->id) ) {
+            $node = new core_user\output\myprofile\node('contact', 'interests', get_string('interests'), null, null, $interests);
+            $tree->add_node($node);
+        }
     }
 
     if (!isset($hiddenfields['mycourses'])) {
