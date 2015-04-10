@@ -7,7 +7,7 @@ Feature: People Block used on frontpage
   Background:
     Given the following "users" exist:
       | username    | firstname | lastname | email            |
-      | student1    | Sam       | Student  | student1@asd.com |
+      | student1    | Sam       | Student  | student1@example.com |
     And I log in as "admin"
     And I navigate to "Turn editing on" node in "Front page settings"
     And I add the "People" block

@@ -69,8 +69,8 @@ Feature: Set up contextual data for tests
   Scenario: Role overrides
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
@@ -99,7 +99,7 @@ Feature: Set up contextual data for tests
   Scenario: Add course enrolments
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -117,11 +117,11 @@ Feature: Set up contextual data for tests
       | Custom student         | custom2   |                  |                |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | user1 | User | 1 | user1@moodlemoodle.com |
-      | user2 | User | 2 | user2@moodlemoodle.com |
-      | user3 | User | 3 | user3@moodlemoodle.com |
-      | user4 | User | 4 | user4@moodlemoodle.com |
-      | user5 | User | 5 | user5@moodlemoodle.com |
+      | user1 | User | 1 | user1@example.com |
+      | user2 | User | 2 | user2@example.com |
+      | user3 | User | 3 | user3@example.com |
+      | user4 | User | 4 | user4@example.com |
+      | user5 | User | 5 | user5@example.com |
     And the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
@@ -219,8 +219,8 @@ Feature: Set up contextual data for tests
   Scenario: Add relations between users and groups
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1 |
@@ -259,8 +259,8 @@ Feature: Set up contextual data for tests
       | Cat 1 | 0        | CAT1     |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "cohorts" exist:
       | name            | idnumber |
       | System cohort A | CHSA     |
