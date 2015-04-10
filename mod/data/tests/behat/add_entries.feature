@@ -25,6 +25,9 @@ Feature: Users can add entries to database activities
     And I add a "Text input" field to "Test database name" database and I fill the form with:
       | Field name | Test field name |
       | Field description | Test field description |
+    And I add a "Text input" field to "Test database name" database and I fill the form with:
+      | Field name | Test field 2 name |
+      | Field description | Test field 2 description |
     # To generate the default templates.
     And I follow "Templates"
     And I log out
@@ -32,8 +35,15 @@ Feature: Users can add entries to database activities
     And I follow "Course 1"
     And I add an entry to "Test database name" database with:
       | Test field name | Student original entry |
+      | Test field 2 name | Student original entry 2 |
     And I press "Save and view"
     Then I should see "Student original entry"
+    And I follow "Edit"
+    And I set the following fields to these values:
+      | Test field name | Student original entry |
+      | Test field 2 name |  |
+    And I press "Save and view"
+    Then I should not see "Student original entry 2"
     And I follow "Edit"
     And I set the following fields to these values:
       | Test field name | Student edited entry |
