@@ -10,7 +10,7 @@ Feature: Block appearances
       | Course 1 | C1 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | teacher | 1 | teacher1@asd.com |
+      | teacher1 | teacher | 1 | teacher1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |

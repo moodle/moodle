@@ -7,9 +7,9 @@ Feature: Tables can be sorted by additional names
   Background:
     Given the following "users" exist:
     | username | firstname | lastname | middlename | alternatename | email | idnumber |
-    | student1 | Annie | Edison | Faith | Anne | student1@mail.com | s1 |
-    | student2 | George | Bradley | David | Gman | student2@mail.com | s2 |
-    | student3 | Travis | Sutcliff | Peter | Mr T | student3@mail.com | s3 |
+    | student1 | Annie | Edison | Faith | Anne | student1@example.com | s1 |
+    | student2 | George | Bradley | David | Gman | student2@example.com | s2 |
+    | student3 | Travis | Sutcliff | Peter | Mr T | student3@example.com | s3 |
     And I log in as "admin"
     And I navigate to "User policies" node in "Site administration > Users > Permissions"
     And the following config values are set as admin:
@@ -21,10 +21,10 @@ Feature: Tables can be sorted by additional names
     Given I navigate to "Browse list of users" node in "Site administration > Users > Accounts"
     Then the following should exist in the "users" table:
     | First name / Middle name / Alternate name / Surname | Email address |
-    | Admin User | moodle@moodlemoodle.com |
-    | Annie Faith Anne Edison | student1@mail.com |
-    | George David Gman Bradley | student2@mail.com |
-    | Travis Peter Mr T Sutcliff | student3@mail.com |
+    | Admin User | moodle@example.com |
+    | Annie Faith Anne Edison | student1@example.com |
+    | George David Gman Bradley | student2@example.com |
+    | Travis Peter Mr T Sutcliff | student3@example.com |
     And "Annie Faith Anne Edison" "table_row" should appear before "George David Gman Bradley" "table_row"
     And "George David Gman Bradley" "table_row" should appear before "Travis Peter Mr T Sutcliff" "table_row"
     And I follow "Middle name"

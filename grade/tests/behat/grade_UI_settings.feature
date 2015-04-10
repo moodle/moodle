@@ -10,7 +10,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
       | Course 1 | C1 | 0 | topics |
     And the following "users" exist:
       | username | firstname | lastname | email | idnumber |
-      | student1 | Student | 1 | student1@asd.com | s1 |
+      | student1 | Student | 1 | student1@example.com | s1 |
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |

@@ -16,7 +16,7 @@ Feature: Authentication
   Scenario: Log in as an existing admin user filling the form
     Given the following "users" exist:
       | username | password | firstname | lastname | email |
-      | testuser | testuser | Test | User | moodle@moodlemoodle.com |
+      | testuser | testuser | Test | User | moodle@example.com |
     And I am on homepage
     When I follow "Log in"
     And I set the field "Username" to "testuser"
@@ -27,7 +27,7 @@ Feature: Authentication
   Scenario: Log in as an unexisting user filling the form
     Given the following "users" exist:
       | username | password | firstname | lastname | email |
-      | testuser | testuser | Test | User | moodle@moodlemoodle.com |
+      | testuser | testuser | Test | User | moodle@example.com |
     And I am on homepage
     When I follow "Log in"
     And I set the field "Username" to "testuser"
