@@ -4304,7 +4304,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015040700.01);
     }
 
-    if ($oldversion < 2015040800.01) {
+    if ($oldversion < 2015040900.01) {
         // Add "My grades" to the user menu.
         $oldconfig = get_config('core', 'customusermenuitems');
         if (strpos("mygrades,grades|/grade/report/mygrades.php|grades", $oldconfig) === false) {
@@ -4312,10 +4312,10 @@ function xmldb_main_upgrade($oldversion) {
             set_config('customusermenuitems', $newconfig);
         }
 
-        upgrade_main_savepoint(true, 2015040800.01);
+        upgrade_main_savepoint(true, 2015040900.01);
     }
 
-    if ($oldversion < 2015040800.02) {
+    if ($oldversion < 2015040900.02) {
         // Update the default user menu (add preferences, remove my files and my badges).
         $oldconfig = get_config('core', 'customusermenuitems');
 
@@ -4334,17 +4334,17 @@ function xmldb_main_upgrade($oldversion) {
         $newconfig = preg_replace('/(\r\n)+/', "\n", $newconfig);
         set_config('customusermenuitems', $newconfig);
 
-        upgrade_main_savepoint(true, 2015040800.02);
+        upgrade_main_savepoint(true, 2015040900.02);
     }
 
-    if ($oldversion < 2015040800.03) {
+    if ($oldversion < 2015040900.03) {
         // Change the setting to the new default.
         $oldconfig = get_config('core', 'defaulthomepage');
         if ($oldconfig == HOMEPAGE_SITE) {
             set_config('defaulthomepage', HOMEPAGE_MY);
         }
 
-        upgrade_main_savepoint(true, 2015040800.03);
+        upgrade_main_savepoint(true, 2015040900.03);
     }
 
 
