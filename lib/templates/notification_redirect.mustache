@@ -15,9 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core/notification_redirect
+
     Moodle notification template.
 
-    The purpose of this template is to render a success notification.
+    The purpose of this template is to render a message notification.
 
     Classes required for JS:
     * none
@@ -27,5 +29,8 @@
 
     Context variables required for this template:
     * message A cleaned string (use clean_text()) to display.
+
+    Example context (json):
+    { "message": "Your pants are on fire!" }
 }}
-<div class="alert alert-success">{{{message}}}</div>
+<div class="alert alert-block alert-info">{{{message}}}</div>
