@@ -70,6 +70,12 @@ if ($action == 'accept') {
     redirect($redirect);
 }
 
+if (lti_request_is_using_ssl() && !empty($type->lti_secureicon)) {
+    $type->oldicon = $type->lti_secureicon;
+} else {
+    $type->oldicon = $type->lti_icon;
+}
+
 $form = new mod_lti_edit_types_form($pageurl, (object)array('isadmin' => true, 'istool' => true));
 
 if ($data = $form->get_data()) {
