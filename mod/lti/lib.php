@@ -252,32 +252,41 @@ function lti_get_coursemodule_info($coursemodule) {
     require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
     if (!$lti = $DB->get_record('lti', array('id' => $coursemodule->instance),
-            'icon, secureicon, intro, introformat, name, toolurl, launchcontainer')) {
+            'icon, secureicon, intro, introformat, name, typeid, toolurl, launchcontainer')) {
         return null;
     }
 
     $info = new cached_cm_info();
-
-    // We want to use the right icon based on whether the
-    // current page is being requested over http or https.
-    if (lti_request_is_using_ssl() && !empty($lti->secureicon)) {
-        $info->iconurl = new moodle_url($lti->secureicon);
-    } else if (!empty($lti->icon)) {
-        $info->iconurl = new moodle_url($lti->icon);
-    }
 
     if ($coursemodule->showdescription) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
         $info->content = format_module_intro('lti', $lti, $coursemodule->id, false);
     }
 
-    // Does the link open in a new window?
-    $tool = lti_get_tool_by_url_match($lti->toolurl);
-    if ($tool) {
+    if (!empty($lti->typeid)) {
+        $toolconfig = lti_get_type_config($lti->typeid);
+    } else if ($tool = lti_get_tool_by_url_match($lti->toolurl)) {
         $toolconfig = lti_get_type_config($tool->id);
     } else {
         $toolconfig = array();
     }
+
+    // We want to use the right icon based on whether the
+    // current page is being requested over http or https.
+    if (lti_request_is_using_ssl() &&
+        (!empty($lti->secureicon) || (isset($toolconfig['secureicon']) && !empty($toolconfig['secureicon'])))) {
+        if (!empty($lti->secureicon)) {
+            $info->iconurl = new moodle_url($lti->secureicon);
+        } else {
+            $info->iconurl = new moodle_url($toolconfig['secureicon']);
+        }
+    } else if (!empty($lti->icon)) {
+        $info->iconurl = new moodle_url($lti->icon);
+    } else if (isset($toolconfig['icon']) && !empty($toolconfig['icon'])) {
+        $info->iconurl = new moodle_url($toolconfig['icon']);
+    }
+
+    // Does the link open in a new window?
     $launchcontainer = lti_get_launch_container($lti, $toolconfig);
     if ($launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW) {
         $launchurl = new moodle_url('/mod/lti/launch.php', array('id' => $coursemodule->id));
