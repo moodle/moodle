@@ -315,11 +315,11 @@ abstract class backup_cron_automated_helper {
     /**
      * Works out the next time the automated backup should be run.
      *
-     * @param mixed $ignroedtimezone all settings are in server timezone!
+     * @param mixed $ignoredtimezone all settings are in server timezone!
      * @param int $now timestamp, should not be in the past, most likely time()
      * @return int timestamp of the next execution at server time
      */
-    public static function calculate_next_automated_backup($ignroedtimezone, $now) {
+    public static function calculate_next_automated_backup($ignoredtimezone, $now) {
 
         $config = get_config('backup');
 

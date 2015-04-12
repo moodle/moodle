@@ -75,7 +75,7 @@ function get_timezone_offset($tz) {
  * @return array
  */
 function get_list_of_timezones() {
-    debugging('update_timezone_records() is deprecated, use core_date::get_list_of_timezones() instead', DEBUG_DEVELOPER);
+    debugging('get_list_of_timezones() is deprecated, use core_date::get_list_of_timezones() instead', DEBUG_DEVELOPER);
     return core_date::get_list_of_timezones();
 }
 
