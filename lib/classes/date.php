@@ -296,7 +296,8 @@ class core_date {
      * To be called from lib/setup.php only!
      */
     public static function store_default_php_timezone() {
-        if (defined('PHPUNIT_TEST') or defined('BEHAT_SITE_RUNNING') or defined('BEHAT_TEST') or defined('BEHAT_UTIL')) {
+        if ((defined('PHPUNIT_TEST') and PHPUNIT_TEST)
+            or defined('BEHAT_SITE_RUNNING') or defined('BEHAT_TEST') or defined('BEHAT_UTIL')) {
             // We want all test sites to be consistent by default.
             self::$defaultphptimezone = 'Australia/Perth';
             return;
