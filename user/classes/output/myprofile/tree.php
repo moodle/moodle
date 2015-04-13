@@ -121,7 +121,7 @@ class tree implements \renderable {
 
     /**
      * Find all category nodes that should be displayed after a given a category node.
-     * 
+     *
      * @param category $category category object
      *
      * @return category[] array of category objects
