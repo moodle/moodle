@@ -3,7 +3,7 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
   In order to know the number of student attempts to a lesson
   As a teacher
   I need to see it in Dashboard
-  
+
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
