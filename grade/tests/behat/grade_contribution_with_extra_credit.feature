@@ -19,7 +19,7 @@ Feature: Extra credit contributions are normalised when going out of bounds
     And I log in as "admin"
     And I set the following administration settings values:
       | grade_aggregations_visible | Simple weighted mean of grades,Mean of grades (with extra credits),Natural |
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Grades"
     And I navigate to "Categories and items" node in "Grade administration > Setup"

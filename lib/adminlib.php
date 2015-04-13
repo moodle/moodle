@@ -5200,6 +5200,52 @@ class admin_setting_grade_profilereport extends admin_setting_configselect {
     }
 }
 
+/**
+ * Provides a selection of grade reports to be used for "my grades".
+ *
+ * @copyright 2015 Adrian Greeve <adrian@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_my_grades_report extends admin_setting_configselect {
+
+    /**
+     * Calls parent::__construct with specific arguments.
+     */
+    public function __construct() {
+        parent::__construct('grade_mygrades_report', new lang_string('mygrades', 'grades'),
+                new lang_string('mygrades_desc', 'grades'), 'overview', null);
+    }
+
+    /**
+     * Loads an array of choices for the configselect control.
+     *
+     * @return bool always returns true.
+     */
+    public function load_choices() {
+        global $CFG; // Remove this line and behold the horror of behat test failures!
+        $this->choices = array();
+        foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
+            if (file_exists($plugindir . '/lib.php')) {
+                require_once($plugindir . '/lib.php');
+                // Check to see if the class exists. Check the correct plugin convention first.
+                if (class_exists('gradereport_' . $plugin)) {
+                    $classname = 'gradereport_' . $plugin;
+                } else if (class_exists('grade_report_' . $plugin)) {
+                    // We are using the old plugin naming convention.
+                    $classname = 'grade_report_' . $plugin;
+                } else {
+                    continue;
+                }
+                if ($classname::supports_mygrades()) {
+                    $this->choices[$plugin] = get_string('pluginname', 'gradereport_' . $plugin);
+                }
+            }
+        }
+        // Add an option to specify an external url.
+        $this->choices['external'] = get_string('externalurl', 'grades');
+        return true;
+    }
+}
 
 /**
  * Special class for register auth selection

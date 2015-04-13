@@ -54,14 +54,14 @@ $systemcontext = context_system::instance();
 $manage_link = '&nbsp;';
 
 $PAGE->set_title(get_string('tags', 'tag'));
-$PAGE->set_heading($SITE->fullname.': '.$PAGE->title);
+$PAGE->set_heading($SITE->fullname);
 echo $OUTPUT->header();
+
+echo $OUTPUT->heading(get_string('searchtags', 'tag'), 2);
 
 if ( has_capability('moodle/tag:manage',$systemcontext) ) {
     echo '<div class="managelink"><a href="'. $CFG->wwwroot .'/tag/manage.php">' . get_string('managetags', 'tag') . '</a></div>' ;
 }
-
-echo $OUTPUT->heading(get_string('searchtags', 'tag'), 2);
 
 tag_print_search_box();
 

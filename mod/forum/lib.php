@@ -7802,7 +7802,6 @@ function forum_view($forum, $course, $cm, $context) {
  * @since Moodle 2.9
  */
 function forum_discussion_view($modcontext, $forum, $discussion) {
-
     $params = array(
         'context' => $modcontext,
         'objectid' => $discussion->id,
@@ -7812,4 +7811,42 @@ function forum_discussion_view($modcontext, $forum, $discussion) {
     $event->add_record_snapshot('forum_discussions', $discussion);
     $event->add_record_snapshot('forum', $forum);
     $event->trigger();
+}
+
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ *
+ * @return bool
+ */
+function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    if (isguestuser($user)) {
+        // The guest user cannot post, so it is not possible to view any posts.
+        // May as well just bail aggressively here.
+        return false;
+    }
+    $postsurl = new moodle_url('/mod/forum/user.php', array('id' => $user->id));
+    if (!empty($course)) {
+        $postsurl->param('course', $course->id);
+    }
+    $string = $iscurrentuser ? get_string('myprofileownpost', 'mod_forum') :
+            get_string('forumposts', 'mod_forum');
+    $node = new core_user\output\myprofile\node('miscellaneous', 'forumposts', $string, null, $postsurl);
+    $tree->add_node($node);
+
+    $discussionssurl = new moodle_url('/mod/forum/user.php', array('id' => $user->id, 'mode' => 'discussions'));
+    if (!empty($course)) {
+        $discussionssurl->param('course', $course->id);
+    }
+    $string = $iscurrentuser ? get_string('myprofileowndis', 'mod_forum') :
+            get_string('myprofileotherdis', 'mod_forum');
+    $node = new core_user\output\myprofile\node('miscellaneous', 'forumdiscussions', $string, null,
+        $discussionssurl);
+    $tree->add_node($node);
+
+    return true;
 }

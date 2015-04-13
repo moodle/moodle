@@ -13,6 +13,7 @@ Feature: Course files
       | legacyfilesinnewcourses | 1 |
       | legacyfilesaddallowed   | 1 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     Then I should see "Legacy course files"
     And I follow "Legacy course files"
@@ -29,6 +30,7 @@ Feature: Course files
       | legacyfilesinnewcourses | 1 |
       | legacyfilesaddallowed   | 0 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     Then I should see "Legacy course files"
     And I follow "Legacy course files"

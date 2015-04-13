@@ -2089,6 +2089,75 @@ img#persona_signin {
     margin: 0;
 }
 
+/** Header-bar styles **/
+.page-context-header {
+    // We need to be explicit about the height of the header.
+    @pageHeaderHeight: 140px;
+
+    // Do not remove these rules.
+    overflow: hidden;
+
+    .page-header-image,
+    .page-header-headings {
+        display: block;
+        position: relative;
+    }
+    .page-header-image {
+        margin-bottom: 1em;
+        z-index: 1;
+
+    }
+    .page-header-headings {
+        margin-top: 30px;
+        margin-bottom: 10px;
+
+        h1 {
+            display: block;
+        }
+    }
+
+    .page-header-headings,
+    .header-button-group {
+        position: relative;
+        line-height: 24px;
+        vertical-align: middle;
+    }
+
+    .header-button-group {
+        display: block;
+
+        a {
+            position: relative;
+
+            // Don't touch it unless you know exactly what you are doing.
+            top: -0.4em;
+        }
+    }
+}
+
+.dir-ltr .page-context-header {
+    .page-header-image {
+        float: left;
+        margin-right: 1em;
+    }
+
+    .header-button-group{
+        float: right;
+    }
+}
+
+.dir-rtl .page-context-header {
+    .page-header-image {
+        float: right;
+        margin-left: 1em;
+    }
+
+    .header-button-group{
+        float: left;
+        right: -15px;
+    }
+}
+
 /** Action menu component styles **/
 .moodle-actionmenu,
 .moodle-actionmenu > ul,

@@ -94,6 +94,7 @@ $string['backpackimport'] = 'Badge import settings';
 $string['backpackimport_help'] = 'After backpack connection is successfully established, badges from your backpack can be displayed on your "My Badges" page and your profile page.
 
 In this area, you can select collections of badges from your backpack that you would like to display in your profile.';
+$string['badges'] = 'Badges';
 $string['badgedetails'] = 'Badge details';
 $string['badgeimage'] = 'Image';
 $string['badgeimage_help'] = 'This is an image that will be used when this badge is issued.
@@ -330,6 +331,7 @@ $string['numawards'] = 'This badge has been issued to <a href="{$a->link}">{$a->
 $string['numawardstat'] = 'This badge has been issued {$a} user(s).';
 $string['overallcrit'] = 'of the selected criteria are complete.';
 $string['potentialrecipients'] = 'Potential badge recipients';
+$string['preferences'] = 'Badge preferences';
 $string['recipients'] = 'Badge recipients';
 $string['recipientdetails'] = 'Recipient details';
 $string['recipientidentificationproblem'] = 'Cannot find a recipient of this badge among the existing users.';

@@ -4220,3 +4220,134 @@ function message_current_user_is_involved($user1, $user2) {
     }
     return true;
 }
+
+/**
+ * Print badges on user profile page.
+ *
+ * @deprecated since Moodle 2.9 MDL-45898 - please do not use this function any more.
+ * @param int $userid User ID.
+ * @param int $courseid Course if we need to filter badges (optional).
+ */
+function profile_display_badges($userid, $courseid = 0) {
+    global $CFG, $PAGE, $USER, $SITE;
+    require_once($CFG->dirroot . '/badges/renderer.php');
+
+    debugging('profile_display_badges() is deprecated.', DEBUG_DEVELOPER);
+
+    // Determine context.
+    if (isloggedin()) {
+        $context = context_user::instance($USER->id);
+    } else {
+        $context = context_system::instance();
+    }
+
+    if ($USER->id == $userid || has_capability('moodle/badges:viewotherbadges', $context)) {
+        $records = badges_get_user_badges($userid, $courseid, null, null, null, true);
+        $renderer = new core_badges_renderer($PAGE, '');
+
+        // Print local badges.
+        if ($records) {
+            $left = get_string('localbadgesp', 'badges', format_string($SITE->fullname));
+            $right = $renderer->print_badges_list($records, $userid, true);
+            echo html_writer::tag('dt', $left);
+            echo html_writer::tag('dd', $right);
+        }
+
+        // Print external badges.
+        if ($courseid == 0 && !empty($CFG->badges_allowexternalbackpack)) {
+            $backpack = get_backpack_settings($userid);
+            if (isset($backpack->totalbadges) && $backpack->totalbadges !== 0) {
+                $left = get_string('externalbadgesp', 'badges');
+                $right = $renderer->print_badges_list($backpack->badges, $userid, true, true);
+                echo html_writer::tag('dt', $left);
+                echo html_writer::tag('dd', $right);
+            }
+        }
+    }
+}
+
+/**
+ * Adds user preferences elements to user edit form.
+ *
+ * @deprecated since Moodle 2.9 MDL-45774 - Please do not use this function any more.
+ * @todo MDL-49784 Remove this function in Moodle 3.1
+ * @param stdClass $user
+ * @param moodleform $mform
+ * @param array|null $editoroptions
+ * @param array|null $filemanageroptions
+ */
+function useredit_shared_definition_preferences($user, &$mform, $editoroptions = null, $filemanageroptions = null) {
+    global $CFG;
+
+    debugging('useredit_shared_definition_preferences() is deprecated.', DEBUG_DEVELOPER, backtrace);
+
+    $choices = array();
+    $choices['0'] = get_string('emaildisplayno');
+    $choices['1'] = get_string('emaildisplayyes');
+    $choices['2'] = get_string('emaildisplaycourse');
+    $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
+    $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
+
+    $choices = array();
+    $choices['0'] = get_string('textformat');
+    $choices['1'] = get_string('htmlformat');
+    $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
+    $mform->setDefault('mailformat', $CFG->defaultpreference_mailformat);
+
+    if (!empty($CFG->allowusermailcharset)) {
+        $choices = array();
+        $charsets = get_list_of_charsets();
+        if (!empty($CFG->sitemailcharset)) {
+            $choices['0'] = get_string('site').' ('.$CFG->sitemailcharset.')';
+        } else {
+            $choices['0'] = get_string('site').' (UTF-8)';
+        }
+        $choices = array_merge($choices, $charsets);
+        $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);
+    }
+
+    $choices = array();
+    $choices['0'] = get_string('emaildigestoff');
+    $choices['1'] = get_string('emaildigestcomplete');
+    $choices['2'] = get_string('emaildigestsubjects');
+    $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
+    $mform->setDefault('maildigest', $CFG->defaultpreference_maildigest);
+    $mform->addHelpButton('maildigest', 'emaildigest');
+
+    $choices = array();
+    $choices['1'] = get_string('autosubscribeyes');
+    $choices['0'] = get_string('autosubscribeno');
+    $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
+    $mform->setDefault('autosubscribe', $CFG->defaultpreference_autosubscribe);
+
+    if (!empty($CFG->forum_trackreadposts)) {
+        $choices = array();
+        $choices['0'] = get_string('trackforumsno');
+        $choices['1'] = get_string('trackforumsyes');
+        $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
+        $mform->setDefault('trackforums', $CFG->defaultpreference_trackforums);
+    }
+
+    $editors = editors_get_enabled();
+    if (count($editors) > 1) {
+        $choices = array('' => get_string('defaulteditor'));
+        $firsteditor = '';
+        foreach (array_keys($editors) as $editor) {
+            if (!$firsteditor) {
+                $firsteditor = $editor;
+            }
+            $choices[$editor] = get_string('pluginname', 'editor_' . $editor);
+        }
+        $mform->addElement('select', 'preference_htmleditor', get_string('textediting'), $choices);
+        $mform->setDefault('preference_htmleditor', '');
+    } else {
+        // Empty string means use the first chosen text editor.
+        $mform->addElement('hidden', 'preference_htmleditor');
+        $mform->setDefault('preference_htmleditor', '');
+        $mform->setType('preference_htmleditor', PARAM_PLUGIN);
+    }
+
+    $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
+    $mform->setDefault('lang', $CFG->lang);
+
+}

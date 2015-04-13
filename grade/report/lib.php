@@ -354,6 +354,13 @@ abstract class grade_report {
     }
 
     /**
+     * Shows support for being used as a 'My grades' report.
+     */
+    public static function supports_mygrades() {
+        return false;
+    }
+
+    /**
      * Sets up this object's group variables, mainly to restrict the selection of users to display.
      */
     protected function setup_groups() {

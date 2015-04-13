@@ -119,11 +119,12 @@ class user_report_viewed extends \core\event\base {
         {
             case CONTEXT_COURSE:
             case CONTEXT_SYSTEM:
+            case CONTEXT_USER:
                 // OK, expected context level.
                 break;
             default:
                 // Unexpected contextlevel.
-                throw new \coding_exception('Context level must be either CONTEXT_SYSTEM or CONTEXT_COURSE.');
+                throw new \coding_exception('Context level must be either CONTEXT_SYSTEM, CONTEXT_COURSE or CONTEXT_USER.');
         }
     }
 

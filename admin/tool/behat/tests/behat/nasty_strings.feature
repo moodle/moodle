@@ -5,13 +5,15 @@ Feature: Transform steps arguments
   I need to apply some transformations to the steps arguments
 
   Background:
-    Given I am on homepage
+    Given I am on site homepage
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"
-    And I navigate to "Edit profile" node in "My profile settings"
+    And I follow "My preferences" in the user menu
+    And I follow "Edit profile"
 
+  @javascript
   Scenario: Use nasty strings on steps arguments
     When I set the field "Surname" to "$NASTYSTRING1"
     And I set the field "Description" to "$NASTYSTRING2"
@@ -22,6 +24,7 @@ Feature: Transform steps arguments
     And the field "Surname" matches value "$NASTYSTRING1"
     And the field "City/town" matches value "$NASTYSTRING3"
 
+  @javascript
   Scenario: Use nasty strings on table nodes
     When I set the following fields to these values:
       | Surname | $NASTYSTRING1 |
@@ -33,6 +36,7 @@ Feature: Transform steps arguments
     And the field "Surname" matches value "$NASTYSTRING1"
     And the field "City/town" matches value "$NASTYSTRING3"
 
+  @javascript
   Scenario: Use double quotes
     When I set the following fields to these values:
       | First name | va"lue1 |

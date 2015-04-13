@@ -78,6 +78,7 @@ if ($id == -1) {
     require_capability('moodle/user:update', $systemcontext);
     $user = $DB->get_record('user', array('id' => $id), '*', MUST_EXIST);
     $PAGE->set_context(context_user::instance($user->id));
+    $PAGE->navbar->includesettingsbase = true;
     if ($user->id != $USER->id) {
         $PAGE->navigation->extend_for_user($user);
     } else {
@@ -292,7 +293,7 @@ if ($usernew = $userform->get_data()) {
             // Somebody double clicked when editing admin user during install.
             redirect("$CFG->wwwroot/$CFG->admin/");
         } else {
-            redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
+            redirect("$CFG->wwwroot/user/preferences.php?userid=$USER->id&course=$course->id");
         }
     } else {
         \core\session\manager::gc(); // Remove stale sessions.
@@ -310,9 +311,9 @@ if ($user->id == -1 or ($user->id != $USER->id)) {
     if ($user->id == -1) {
         echo $OUTPUT->header();
     } else {
-        $PAGE->set_heading($SITE->fullname);
-        echo $OUTPUT->header();
         $userfullname = fullname($user, true);
+        $PAGE->set_heading($userfullname);
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($userfullname);
     }
 } else if (!empty($USER->newadminuser)) {
@@ -334,10 +335,10 @@ if ($user->id == -1 or ($user->id != $USER->id)) {
     $userfullname     = fullname($user, true);
 
     $PAGE->set_title("$course->shortname: $streditmyprofile");
-    $PAGE->set_heading($course->fullname);
+    $PAGE->set_heading($userfullname);
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($userfullname);
+    echo $OUTPUT->heading($streditmyprofile);
 }
 
 // Finally display THE form.

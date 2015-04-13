@@ -15,6 +15,7 @@ Feature: People Block used in a course
       | user        | course | role           |
       | student1    | C101   | student        |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add the "People" block

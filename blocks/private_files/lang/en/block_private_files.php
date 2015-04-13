@@ -25,5 +25,5 @@
 $string['pluginname'] = 'My private files';
 $string['privatefiles'] = 'Private files';
 $string['private_files:addinstance'] = 'Add a new private files block';
-$string['private_files:myaddinstance'] = 'Add a new my private files block to My home';
+$string['private_files:myaddinstance'] = 'Add a new my private files block to Dashboard';
 

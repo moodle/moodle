@@ -5,11 +5,11 @@ Feature: Add links to Atto
   @javascript
   Scenario: Insert a links
     Given I log in as "admin"
-    And I navigate to "My private files" node in "My profile"
+    And I follow "Manage my private files..."
     And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
     And I click on "Save changes" "button"
-    When I navigate to "Edit profile" node in "My profile settings"
-    And I set the field "Text editor" to "Plain text area"
+    When I follow "My profile" in the user menu
+    And I follow "Edit profile"
     And I set the field "Description" to "Super cool"
     And I select the text in the "Description" Atto editor
     And I click on "Link" "button"
@@ -18,6 +18,10 @@ Feature: Add links to Atto
     And I click on "moodle-logo.png" "link"
     And I click on "Select this file" "button"
     And I click on "Update profile" "button"
+    And I follow "My preferences" in the user menu
+    And I follow "Editor preferences"
+    And I set the field "Text editor" to "Plain text area"
+    And I press "Save changes"
     And I follow "Edit profile"
     Then I should see "Super cool</a>"
 

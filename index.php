@@ -71,10 +71,19 @@ if (get_home_page() != HOMEPAGE_SITE) {
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY) && $redirect === 1) {
         redirect($CFG->wwwroot .'/my/');
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER)) {
-        $PAGE->settingsnav->get('usercurrentsettings')->add(
-            get_string('makethismyhome'),
-            new moodle_url('/', array('setdefaulthome' => true)),
-            navigation_node::TYPE_SETTING);
+        $frontpagenode = $PAGE->settingsnav->find('frontpage', null);
+        if ($frontpagenode) {
+            $frontpagenode->add(
+                get_string('makethismyhome'),
+                new moodle_url('/', array('setdefaulthome' => true)),
+                navigation_node::TYPE_SETTING);
+        } else {
+            $frontpagenode = $PAGE->settingsnav->add(get_string('frontpagesettings'), null, navigation_node::TYPE_SETTING, null);
+            $frontpagenode->force_open();
+            $frontpagenode->add(get_string('makethismyhome'),
+                new moodle_url('/', array('setdefaulthome' => true)),
+                navigation_node::TYPE_SETTING);
+        }
     }
 }
 

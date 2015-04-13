@@ -100,8 +100,8 @@ Feature: View gradebook when scales are used
       | Course total        | 5.00      |
     And I log out
     And I log in as "student2"
+    And I follow "My grades" in the user menu
     And I follow "Course 1"
-    And I follow "Grades"
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage | Contribution to course total |
       | Test assignment one | B     | F–A   | 75.00 %    | 80.00 %                      |
@@ -148,8 +148,8 @@ Feature: View gradebook when scales are used
       | Course total<aggregation>.   |           |
     And I log out
     And I log in as "student2"
+    And I follow "My grades" in the user menu
     And I follow "Course 1"
-    And I follow "Grades"
     And the following should exist in the "user-grade" table:
       | Grade item                   | Grade          | Range | Percentage    | Contribution to course total |
       | Test assignment one          | B              | F–A   | 75.00 %       | <contrib2>                   |

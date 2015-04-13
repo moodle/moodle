@@ -72,6 +72,7 @@ if ($userid) {
 } else {
     $filtertype = 'course';
     $filterselect = $course->id;
+    $user = $USER;
 }
 
 require_login($course);
@@ -93,6 +94,10 @@ $strnotes = get_string('notes', 'notes');
 if ($userid) {
     $PAGE->set_context(context_user::instance($user->id));
     $PAGE->navigation->extend_for_user($user);
+    // If we are looking at our own notes, then change focus to 'my notes'.
+    if ($userid == $USER->id) {
+        $notenode = $PAGE->navigation->find('notes', null)->make_inactive();
+    }
 } else {
     $link = null;
     if (has_capability('moodle/course:viewparticipants', $coursecontext)
@@ -103,15 +108,11 @@ if ($userid) {
 }
 
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_title($course->shortname . ': ' . $strnotes);
+$PAGE->set_title($course->fullname);
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
-if ($userid) {
-    echo $OUTPUT->heading(fullname($user).': '.$strnotes);
-} else {
-    echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $coursecontext)).': '.$strnotes);
-}
+echo $OUTPUT->heading($strnotes);
 
 $strsitenotes = get_string('sitenotes', 'notes');
 $strcoursenotes = get_string('coursenotes', 'notes');

@@ -381,7 +381,8 @@ class core_message_renderer extends plugin_renderer_base {
 
         $output .= html_writer::end_tag('fieldset');
         $output .= html_writer::start_tag('div', array('class' => 'mdl-align'));
-        $output .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('updatemyprofile'), 'class' => 'form-submit'));
+        $output .= html_writer::empty_tag('input', array('type' => 'submit',
+            'value' => get_string('savechanges'), 'class' => 'form-submit'));
         $output .= html_writer::end_tag('div');
 
         $output .= html_writer::end_tag('form');

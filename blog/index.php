@@ -57,9 +57,25 @@ if (!empty($tag)) {
     }
 }
 
+// Set the userid to the entry author if we have the entry ID.
+if ($entryid and !isset($userid)) {
+    $entry = new blog_entry($entryid);
+    $userid = $entry->userid;
+}
+
+if (isset($userid)) {
+    $context = context_user::instance($userid);
+} else {
+    $context = context_system::instance();
+}
+$PAGE->set_context($context);
+
 $sitecontext = context_system::instance();
-// Blogs are always in system context.
-$PAGE->set_context($sitecontext);
+
+if (isset($userid) && $USER->id == $userid) {
+    $blognode = $PAGE->navigation->find('siteblog', null);
+    $blognode->make_inactive();
+}
 
 // Check basic permissions.
 if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
@@ -225,9 +241,11 @@ if ($CFG->enablerssfeeds) {
         blog_rss_add_http_header($rsscontext, $rsstitle, $filtertype, $thingid, $tagid);
     }
 }
+if (isset($userid)) {
+    $PAGE->set_heading(fullname($user));
+}
 
 echo $OUTPUT->header();
-
 echo $OUTPUT->heading($blogheaders['heading'], 2);
 
 $bloglisting = new blog_listing($blogheaders['filters']);

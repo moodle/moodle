@@ -25,42 +25,37 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$courseid = optional_param('courseid', 0, PARAM_INT);
+$courseid = optional_param('courseid', SITEID, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $ruleid = optional_param('ruleid', 0, PARAM_INT);
 $subscriptionid = optional_param('subscriptionid', 0, PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 
-// Validate course id.
+require_login();
+
+// We need to explicitly check that the course id is something legitimate.
 if (empty($courseid)) {
-    require_login();
-} else {
-    // They might want to see rules for this course.
-    $course = get_course($courseid);
-    require_login($course);
-    $coursecontext = context_course::instance($course->id);
-    // Check for caps.
-    require_capability('tool/monitor:subscribe', $coursecontext);
-    $coursename = format_string($course->fullname, true, array('context' => $coursecontext));
+    $courseid = SITEID;
 }
+
+$coursecontext = context_course::instance($courseid);
 
 if (!get_config('tool_monitor', 'enablemonitor')) {
     // This should never happen as the this page does not appear in navigation when the tool is disabled.
     throw new coding_exception('Event monitoring is disabled');
 }
 
-// Always build the page in site context.
-$context = context_system::instance();
-$sitename = format_string($SITE->fullname, true, array('context' => $context));
-$PAGE->set_context($context);
+$sitename = format_string($SITE->fullname, true, array('context' => $coursecontext));
+$PAGE->set_context(context_user::instance($USER->id));
 
 // Set up the page.
 $indexurl = new moodle_url('/admin/tool/monitor/index.php', array('courseid' => $courseid));
 $PAGE->set_url($indexurl);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($sitename);
-$PAGE->set_heading($sitename);
+$PAGE->set_heading(fullname($USER));
+$settingsnode = $PAGE->settingsnav->find('monitor', null)->make_active();
 
 // Create/delete subscription if needed.
 if (!empty($action)) {
@@ -91,7 +86,7 @@ if (!empty($action)) {
             } else {
                 $subscription = \tool_monitor\subscription_manager::get_subscription($subscriptionid);
                 echo $OUTPUT->header();
-                echo $OUTPUT->confirm(get_string('subareyousure', 'tool_monitor', $subscription->get_name($context)),
+                echo $OUTPUT->confirm(get_string('subareyousure', 'tool_monitor', $subscription->get_name($coursecontext)),
                     $confirmurl, $cancelurl);
                 echo $OUTPUT->footer();
                 exit();
@@ -103,9 +98,22 @@ if (!empty($action)) {
     echo $OUTPUT->header();
 }
 
+$renderer = $PAGE->get_renderer('tool_monitor', 'managesubs');
+
+// Render the course selector.
+$totalrules = \tool_monitor\rule_manager::count_rules_by_courseid($courseid);
+$rules = new \tool_monitor\output\managesubs\rules('toolmonitorrules', $indexurl, $courseid);
+
+$usercourses = $rules->get_user_courses_select();
+if (!empty($usercourses)) {
+    echo $renderer->render($usercourses);
+} else {
+    // Nothing to show at all. Show a notification.
+    echo $OUTPUT->notification(get_string('rulenopermission', 'tool_monitor'), 'notifyproblem');
+}
+
 // Render the current subscriptions list.
 $totalsubs = \tool_monitor\subscription_manager::count_user_subscriptions();
-$renderer = $PAGE->get_renderer('tool_monitor', 'managesubs');
 if (!empty($totalsubs)) {
     // Show the subscriptions section only if there are subscriptions.
     $subs = new \tool_monitor\output\managesubs\subs('toolmonitorsubs', $indexurl, $courseid);
@@ -114,17 +122,15 @@ if (!empty($totalsubs)) {
 }
 
 // Render the potential rules list.
-$totalrules = \tool_monitor\rule_manager::count_rules_by_courseid($courseid);
-echo $OUTPUT->heading(get_string('rulescansubscribe', 'tool_monitor'), 3);
-$rules = new \tool_monitor\output\managesubs\rules('toolmonitorrules', $indexurl, $courseid);
-echo $renderer->render($rules);
+// Check the capability here before displaying any rules to subscribe to.
+if (has_capability('tool/monitor:subscribe', $coursecontext)) {
+    echo $OUTPUT->heading(get_string('rulescansubscribe', 'tool_monitor'), 3);
+    echo $renderer->render($rules);
+}
 
 // Check if the user can manage the course rules we are viewing.
-if (empty($courseid)) {
-    $canmanagerules = has_capability('tool/monitor:managerules', $context);
-} else {
-    $canmanagerules = has_capability('tool/monitor:managerules', $coursecontext);
-}
+$canmanagerules = has_capability('tool/monitor:managerules', $coursecontext);
+
 if (empty($totalrules)) {
     // No rules present. Show a link to manage rules page if permissions permit.
     echo html_writer::start_div();

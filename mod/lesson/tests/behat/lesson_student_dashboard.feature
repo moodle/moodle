@@ -1,8 +1,8 @@
 @mod @mod_lesson
-Feature: In My home, a student can see their current status on all lessons with an upcoming due date
+Feature: In Dashboard, a student can see their current status on all lessons with an upcoming due date
   In order to know my status on a lesson
   As a student
-  I need to see it in My home
+  I need to see it in Dashboard
 
   Background:
     Given the following "users" exist:
@@ -67,7 +67,7 @@ Feature: In My home, a student can see their current status on all lessons with 
     And I press "Submit"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
     And I click on ".collapsibleregioncaption" "css_element"
     And I should see "Completed, You can re-attempt this lesson"
@@ -120,7 +120,7 @@ Feature: In My home, a student can see their current status on all lessons with 
     And I press "Submit"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should not see "You have lessons that are due"
 
   @javascript
@@ -150,7 +150,7 @@ Feature: In My home, a student can see their current status on all lessons with 
     And I press "Next page"
     And I should see "Second page contents"
     And I press "End of lesson"
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
     And I click on ".collapsibleregioncaption" "css_element"
     And I should see "Completed, You can re-attempt this lesson"
@@ -186,7 +186,7 @@ Feature: In My home, a student can see their current status on all lessons with 
     And I press "Next page"
     And I should see "Second page contents"
     And I press "End of lesson"
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should not see "You have lessons that are due"
 
   @javascript
@@ -227,7 +227,7 @@ Feature: In My home, a student can see their current status on all lessons with 
       | False | 1 |
     And I press "Submit"
     And I press "Continue"
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
     And I click on ".collapsibleregioncaption" "css_element"
     And I should see "Lesson has been started, but not yet completed"
@@ -258,7 +258,7 @@ Feature: In My home, a student can see their current status on all lessons with 
     And I should see "First page contents"
     And I press "Next page"
     And I should see "Second page contents"
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
     And I click on ".collapsibleregioncaption" "css_element"
     And I should see "Lesson has been started, but not yet completed"
@@ -294,7 +294,7 @@ Feature: In My home, a student can see their current status on all lessons with 
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
     And I click on ".collapsibleregioncaption" "css_element"
     And I should see "No attempts have been made on this lesson"
@@ -320,7 +320,7 @@ Feature: In My home, a student can see their current status on all lessons with 
     And I press "Save page"
     And I log out
     And I log in as "student1"
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
     And I click on ".collapsibleregioncaption" "css_element"
     And I should see "No attempts have been made on this lesson"

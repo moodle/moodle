@@ -6,6 +6,14 @@
 .userprofile .description {
     margin-bottom: 20px;
 }
+
+.userprofile .profile_tree {
+    .content-columns(2);
+}
+.userprofile .profile_tree section {
+    display: inline-block;
+    width: 100%;
+}
 .userprofile dl.list {
     .dl-horizontal;
 }
@@ -17,6 +25,22 @@
     float: left;
     clear: none;
 }
+#page-user-profile .node_category, .path-user .node_category {
+    li {
+        list-style-type: square;
+
+        &.contentnode {
+            list-style-type: none;
+        }
+    }
+}
+#page-user-profile.dir-ltr .node_category .contentnode, .path-user.dir-ltr .node_category .contentnode {
+    margin-left: -25px;
+}
+#page-user-profile.dir-rtl .node_category .contentnode , .path-user.dir-rtl .node_category .contentnode {
+    margin-right: -25px;
+}
+
 .dir-rtl {
     .userprofile .description {
         margin-right:0;
@@ -33,6 +57,14 @@
         margin-left:0;
     }
 }
+
+@media (max-width: 480px) {
+    .userprofile .profile_tree {
+        /** Display the profile on one column on phones. */
+        .content-columns(1);
+    }
+}
+
 .userlist .action-icon img {
     vertical-align: middle;
 }
@@ -177,9 +209,6 @@
     margin-right: auto;
 }
 /** Overide for RTL layout **/
-.dir-rtl .userprofilebox .descriptionbox {
-    margin: 0;
-}
 .dir-rtl .userlist table#participants td,
 .dir-rtl .userlist table#participants th {
     text-align: right;
@@ -224,5 +253,19 @@
     .members {
         float: right;
         text-align: right;
+    }
+}
+
+/** Preferences page */
+.preferences-group {
+    ul {
+        list-style: none;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+.dir-rtl {
+    .preferences-group {
+        float: right;
     }
 }

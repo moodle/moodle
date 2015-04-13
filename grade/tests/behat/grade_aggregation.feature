@@ -78,9 +78,7 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "My grades" in the user menu
     And I should see "30.42 (30.42 %)" in the "overview-grade" "table"
 
   @javascript
@@ -103,9 +101,7 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "My grades" in the user menu
     And I should see "26.94 (26.94 %)" in the "overview-grade" "table"
 
   @javascript
@@ -126,9 +122,7 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "My grades" in the user menu
     And I should see "48.57 (48.57 %)" in the "overview-grade" "table"
 
   @javascript
@@ -149,9 +143,7 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "My grades" in the user menu
     And I should see "47.22 (47.22 %)" in the "overview-grade" "table"
 
   @javascript
@@ -170,9 +162,7 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "My grades" in the user menu
     And I should see "25.83 (25.83 %)" in the "overview-grade" "table"
 
   @javascript
@@ -195,9 +185,7 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "My grades" in the user menu
     And I should see "0.00 (0.00 %)" in the "overview-grade" "table"
 
   @javascript
@@ -218,9 +206,7 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "My grades" in the user menu
     And I should see "50.00 (50.00 %)" in the "overview-grade" "table"
 
   @javascript
@@ -241,9 +227,7 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "My grades" in the user menu
     And I should see "50.00 (50.00 %)" in the "overview-grade" "table"
 
   @javascript
@@ -275,11 +259,10 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
+    And I follow "My grades" in the user menu
+    Then I should see "114.82 (18.27 %)" in the "overview-grade" "table"
     And I follow "Course 1"
-    And I follow "Grades"
-    Then "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
-    And I set the field "Grade report" to "Overview report"
-    And I should see "114.82 (18.27 %)" in the "overview-grade" "table"
+    And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
@@ -290,11 +273,10 @@ Feature: We can use calculated grade totals
      | Extra credit     | 1   |
     And I log out
     And I log in as "student1"
+    And I follow "My grades" in the user menu
+    Then I should see "114.00 (18.39 %)" in the "overview-grade" "table"
     And I follow "Course 1"
-    And I follow "Grades"
-    Then "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
-    And I set the field "Grade report" to "Overview report"
-    And I should see "114.00 (18.39 %)" in the "overview-grade" "table"
+    And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
@@ -306,11 +288,10 @@ Feature: We can use calculated grade totals
       | Include outcomes in aggregation | 0       |
     And I log out
     And I log in as "student1"
+    And I follow "My grades" in the user menu
+    Then I should see "110.00 (17.74 %)" in the "overview-grade" "table"
     And I follow "Course 1"
-    And I follow "Grades"
-    Then "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
-    And I set the field "Grade report" to "Overview report"
-    And I should see "110.00 (17.74 %)" in the "overview-grade" "table"
+    And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
 
   @javascript
   Scenario: Natural aggregation on outcome items with modified weights
@@ -344,11 +325,10 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
+    And I follow "My grades" in the user menu
+    Then I should see "4.00 (100.00 %)" in the "overview-grade" "table"
     And I follow "Course 1"
-    And I follow "Grades"
-    Then "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
-    And I set the field "Grade report" to "Overview report"
-    And I should see "4.00 (100.00 %)" in the "overview-grade" "table"
+    And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
 
   @javascript
   Scenario: Natural aggregation
@@ -390,11 +370,9 @@ Feature: We can use calculated grade totals
       | Test assignment four | 24.00 % | - | 0–150 | 0.00 % |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "My grades" in the user menu
     And I should see "113.75 (23.45 %)" in the "overview-grade" "table"
-    And I set the field "Grade report" to "User report"
+    And I follow "Course 1"
     And the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Contribution to course total |
       | Test assignment six | 70.00 % | 5.00 (50.00 %) | 0–10 | 1.80 % |
@@ -409,6 +387,7 @@ Feature: We can use calculated grade totals
   Scenario: Natural aggregation with drop lowest
     When I log out
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Grades"
     And I turn editing mode on
@@ -580,11 +559,9 @@ Feature: We can use calculated grade totals
       | Test assignment four  | 33.71 %           | -               | 0.00                         |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "My grades" in the user menu
     And I should see "45.00 (13.85 %)" in the "overview-grade" "table"
-    And I set the field "Grade report" to "User report"
+    And I follow "Course 1"
     And the following should exist in the "user-grade" table:
       | Grade item            | Calculated weight | Grade           | Contribution to course total |
       | Test assignment six   | 0.00 %            | 5.00 (50.00 %)  | 0.00 %                         |

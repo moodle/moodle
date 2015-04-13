@@ -148,3 +148,37 @@ function report_log_page_type_list($pagetype, $parentcontext, $currentcontext) {
     );
     return $array;
 }
+
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ *
+ * @return bool
+ */
+function report_log_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    if (empty($course)) {
+        // We want to display these reports under the site context.
+        $course = get_fast_modinfo(SITEID)->get_course();
+    }
+    list($all, $today) = report_log_can_access_user_report($user, $course);
+    if ($today) {
+        // Today's log.
+        $url = new moodle_url('/report/log/user.php',
+            array('id' => $user->id, 'course' => $course->id, 'mode' => 'today'));
+        $node = new core_user\output\myprofile\node('reports', 'todayslogs', get_string('todaylogs'), null, $url);
+        $tree->add_node($node);
+    }
+
+    if ($all) {
+        // All logs.
+        $url = new moodle_url('/report/log/user.php',
+            array('id' => $user->id, 'course' => $course->id, 'mode' => 'all'));
+        $node = new core_user\output\myprofile\node('reports', 'alllogs', get_string('alllogs'), null, $url);
+        $tree->add_node($node);
+    }
+    return true;
+}

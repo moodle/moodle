@@ -23,6 +23,7 @@ Feature: availability_grade
   Scenario: Test condition
     # Basic setup.
     Given I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
 
@@ -78,6 +79,7 @@ Feature: availability_grade
     # Log in as student without a grade yet.
     When I log out
     And I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
 
     # Do the assignment.
@@ -96,6 +98,7 @@ Feature: availability_grade
     # Log back in as teacher.
     When I log out
     And I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
 
     # Give the assignment 40%.
@@ -109,6 +112,7 @@ Feature: availability_grade
     # Log back in as student.
     And I log out
     And I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
 
     # Check pages are visible.

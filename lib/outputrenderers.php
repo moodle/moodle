@@ -3946,6 +3946,199 @@ EOD;
     public function favicon() {
         return $this->pix_url('favicon', 'theme');
     }
+
+    /**
+     * Renders preferences groups.
+     *
+     * @param  preferences_groups $renderable The renderable
+     * @return string The output.
+     */
+    public function render_preferences_groups(preferences_groups $renderable) {
+        $html = '';
+        $html .= html_writer::start_div('row-fluid');
+        $html .= html_writer::start_tag('div', array('class' => 'span12 preferences-groups'));
+        $i = 0;
+        $open = false;
+        foreach ($renderable->groups as $group) {
+            if ($i == 0 || $i % 3 == 0) {
+                if ($open) {
+                    $html .= html_writer::end_tag('div');
+                }
+                $html .= html_writer::start_tag('div', array('class' => 'row-fluid'));
+                $open = true;
+            }
+            $html .= $this->render($group);
+            $i++;
+        }
+
+        $html .= html_writer::end_tag('div');
+
+        $html .= html_writer::end_tag('ul');
+        $html .= html_writer::end_tag('div');
+        $html .= html_writer::end_div();
+        return $html;
+    }
+
+    /**
+     * Renders preferences group.
+     *
+     * @param  preferences_group $renderable The renderable
+     * @return string The output.
+     */
+    public function render_preferences_group(preferences_group $renderable) {
+        $html = '';
+        $html .= html_writer::start_tag('div', array('class' => 'span4 preferences-group'));
+        $html .= $this->heading($renderable->title, 3);
+        $html .= html_writer::start_tag('ul');
+        foreach ($renderable->nodes as $node) {
+            if ($node->has_children()) {
+                debugging('Preferences nodes do not support children', DEBUG_DEVELOPER);
+            }
+            $html .= html_writer::tag('li', $this->render($node));
+        }
+        $html .= html_writer::end_tag('ul');
+        $html .= html_writer::end_tag('div');
+        return $html;
+    }
+
+    /**
+     * Returns the header bar.
+     *
+     * @since Moodle 2.9
+     * @param array $headerinfo An array of header information, dependant on what type of header is being displayed. The following
+     *                          array example is user specific.
+     *                          heading => Override the page heading.
+     *                          user => User object.
+     *                          usercontext => user context.
+     * @param int $headinglevel What level the 'h' tag will be.
+     * @return string HTML for the header bar.
+     */
+    public function context_header($headerinfo = null, $headinglevel = 1) {
+        global $DB, $USER;
+        $context = $this->page->context;
+        // Make sure to use the heading if it has been set.
+        if (isset($headerinfo['heading'])) {
+            $heading = $headerinfo['heading'];
+        } else {
+            $heading = null;
+        }
+        $imagedata = null;
+        $subheader = null;
+        $userbuttons = null;
+        // The user context currently has images and buttons. Other contexts may follow.
+        if (isset($headerinfo['user']) || $context->contextlevel == CONTEXT_USER) {
+            if (isset($headerinfo['user'])) {
+                $user = $headerinfo['user'];
+            } else {
+                // Look up the user information if it is not supplied.
+                $user = $DB->get_record('user', array('id' => $context->instanceid));
+            }
+            // If the user context is set, then use that for capability checks.
+            if (isset($headerinfo['usercontext'])) {
+                $context = $headerinfo['usercontext'];
+            }
+            // Use the user's full name if the heading isn't set.
+            if (!isset($heading)) {
+                $heading = fullname($user);
+            }
+
+            $imagedata = $this->user_picture($user, array('size' => 100));
+            // Check to see if we should be displaying a message button.
+            if ($USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
+                $userbuttons = array(
+                    'messages' => array(
+                        'buttontype' => 'message',
+                        'title' => get_string('message', 'message'),
+                        'url' => new moodle_url('/message/index.php', array('id' => $user->id)),
+                        'image' => 'message',
+                        'linkattributes' => message_messenger_sendmessage_link_params($user),
+                        'page' => $this->page
+                    )
+                );
+            }
+        }
+
+        $contextheader = new context_header($heading, $headinglevel, $imagedata, $userbuttons);
+        return $this->render_context_header($contextheader);
+    }
+
+     /**
+      * Renders the header bar.
+      *
+      * @param context_header $contextheader Header bar object.
+      * @return string HTML for the header bar.
+      */
+    protected function render_context_header(context_header $contextheader) {
+
+        // All the html stuff goes here.
+        $html = html_writer::start_div('page-context-header');
+
+        // Image data.
+        if (isset($contextheader->imagedata)) {
+            // Header specific image.
+            $html .= html_writer::div($contextheader->imagedata, 'page-header-image');
+        }
+
+        // Headings.
+        if (!isset($contextheader->heading)) {
+            $headings = $this->heading($this->page->heading, $contextheader->headinglevel);
+        } else {
+            $headings = $this->heading($contextheader->heading, $contextheader->headinglevel);
+        }
+
+        $html .= html_writer::tag('div', $headings, array('class' => 'page-header-headings'));
+
+        // Buttons.
+        if (isset($contextheader->additionalbuttons)) {
+            $html .= html_writer::start_div('btn-group header-button-group');
+            foreach ($contextheader->additionalbuttons as $button) {
+                if (!isset($button->page)) {
+                    // Include js for messaging.
+                    if ($button['buttontype'] === 'message') {
+                        message_messenger_requirejs();
+                    }
+                    $image = $this->pix_icon($button['formattedimage'], $button['title'], 'moodle', array(
+                        'class' => 'iconsmall',
+                        'role' => 'presentation'
+                    ));
+                    $image .= html_writer::span($button['title'], 'header-button-title');
+                } else {
+                    $image = html_writer::empty_tag('img', array(
+                        'src' => $button['formattedimage'],
+                        'role' => 'presentation'
+                    ));
+                }
+                $html .= html_writer::link($button['url'], html_writer::tag('span', $image), $button['linkattributes']);
+            }
+            $html .= html_writer::end_div();
+        }
+        $html .= html_writer::end_div();
+
+        return $html;
+    }
+
+    /**
+     * Wrapper for header elements.
+     *
+     * @param string $heading Heading to be used for the main header.
+     * @return string HTML to display the main header.
+     */
+    public function full_header($heading = null) {
+        $html = html_writer::start_tag('header', array('id' => 'page-header', 'class' => 'clearfix'));
+        // This is to ensure that the logo completely overwrites the header if set.
+        if (isset($heading) && $heading == '<div class="logo"></div>') {
+            $html .= $heading;
+        } else {
+            $html .= $this->context_header(array('heading' => $heading));
+        }
+        $html .= html_writer::start_div('clearfix', array('id' => 'page-navbar'));
+        $html .= html_writer::tag('nav', $this->navbar(), array('class' => 'breadcrumb-nav'));
+        $html .= html_writer::div($this->page_heading_button(), 'breadcrumb-button');
+        $html .= html_writer::end_div();
+        $html .= html_writer::tag('div', $this->course_header(), array('id' => 'course-header'));
+        $html .= html_writer::end_tag('header');
+        return $html;
+    }
 }
 
 /**

@@ -3076,6 +3076,86 @@ class tabobject implements renderable {
 }
 
 /**
+ * Renderable for the main page header.
+ *
+ * @package core
+ * @category output
+ * @since 2.9
+ * @copyright 2015 Adrian Greeve <adrian@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class context_header implements renderable {
+
+    /**
+     * @var string $heading Main heading.
+     */
+    public $heading;
+    /**
+     * @var int $headinglevel Main heading 'h' tag level.
+     */
+    public $headinglevel;
+    /**
+     * @var string $imagedata HTML for the Image for the header.
+     */
+    public $imagedata;
+    /**
+     * @var array $additionalbuttons Additional buttons for the header e.g. Messaging button for the user header.
+     *      array elements - title => alternate text for the image, or if no image is available the button text.
+     *                       url => Link for the button to head to. Should be a moodle_url.
+     *                       image => location to the image, or name of the image in /pix/t/{image name}.
+     *                       linkattributes => additional attributes for the <a href> element.
+     *                       page => page object. Don't include if the image is an external image.
+     */
+    public $additionalbuttons;
+
+    /**
+     * Constructor.
+     *
+     * @param string $heading Main heading data.
+     * @param int $headinglevel Main heading 'h' tag level.
+     * @param object $imagedata Information needed to include a picture in the header.
+     * @param string $additionalbuttons Buttons for the header e.g. Messaging button for the user header.
+     */
+    public function __construct($heading = null, $headinglevel = 1, $imagedata = null, $additionalbuttons = null) {
+
+        $this->heading = $heading;
+        $this->headinglevel = $headinglevel;
+        $this->imagedata = $imagedata;
+        $this->additionalbuttons = $additionalbuttons;
+        // If we have buttons then format them.
+        if (isset($this->additionalbuttons)) {
+            $this->format_button_images();
+        }
+    }
+
+    /**
+     * Adds an array element for a formatted image.
+     */
+    protected function format_button_images() {
+
+        foreach ($this->additionalbuttons as $buttontype => $button) {
+            $page = $button['page'];
+            // If no image is provided then just use the title.
+            if (!isset($button['image'])) {
+                $this->additionalbuttons[$buttontype]['formattedimage'] = $button['title'];
+            } else {
+                // Check to see if this is an internal Moodle icon.
+                $internalimage = $page->theme->resolve_image_location('t/' . $button['image'], 'moodle');
+                if ($internalimage) {
+                    $this->additionalbuttons[$buttontype]['formattedimage'] = 't/' . $button['image'];
+                } else {
+                    // Treat as an external image.
+                    $this->additionalbuttons[$buttontype]['formattedimage'] = $button['image'];
+                }
+            }
+            // Add the bootstrap 'btn' class for formatting.
+            $this->additionalbuttons[$buttontype]['linkattributes'] = array_merge($button['linkattributes'],
+                    array('class' => 'btn'));
+        }
+    }
+}
+
+/**
  * Stores tabs list
  *
  * Example how to print a single line tabs:
@@ -3594,5 +3674,64 @@ class action_menu_link_secondary extends action_menu_link {
      */
     public function __construct(moodle_url $url, pix_icon $icon = null, $text, array $attributes = array()) {
         parent::__construct($url, $icon, $text, false, $attributes);
+    }
+}
+
+/**
+ * Represents a set of preferences groups.
+ *
+ * @package core
+ * @category output
+ * @copyright 2015 Frédéric Massart - FMCorz.net
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class preferences_groups implements renderable {
+
+    /**
+     * Array of preferences_group.
+     * @var array
+     */
+    public $groups;
+
+    /**
+     * Constructor.
+     * @param array $groups of preferences_group
+     */
+    public function __construct($groups) {
+        $this->groups = $groups;
+    }
+
+}
+
+/**
+ * Represents a group of preferences page link.
+ *
+ * @package core
+ * @category output
+ * @copyright 2015 Frédéric Massart - FMCorz.net
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class preferences_group implements renderable {
+
+    /**
+     * Title of the group.
+     * @var string
+     */
+    public $title;
+
+    /**
+     * Array of navigation_node.
+     * @var array
+     */
+    public $nodes;
+
+    /**
+     * Constructor.
+     * @param string $title The title.
+     * @param array $nodes of navigation_node.
+     */
+    public function __construct($title, $nodes) {
+        $this->title = $title;
+        $this->nodes = $nodes;
     }
 }

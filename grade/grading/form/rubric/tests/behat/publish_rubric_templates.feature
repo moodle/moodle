@@ -23,6 +23,7 @@ Feature: Publish rubrics as templates
       | user | role | contextlevel | reference |
       | manager1 | manager | System | |
     And I log in as "manager1"
+    And I am on site homepage
     And I follow "Course 1"
     And I go to "Test assignment 1 name" advanced grading definition page
     And I set the following fields to these values:

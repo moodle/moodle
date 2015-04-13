@@ -47,6 +47,7 @@ $delete = optional_param('delete', 0, PARAM_INT);
 $PAGE->set_url('/report/usersessions/user.php');
 $PAGE->set_context($context);
 $PAGE->set_title(get_string('navigationlink', 'report_usersessions'));
+$PAGE->set_heading(fullname($USER));
 $PAGE->set_pagelayout('admin');
 
 if ($delete and confirm_sesskey()) {

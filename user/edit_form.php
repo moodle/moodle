@@ -99,16 +99,6 @@ class user_edit_form extends moodleform {
         $mform = $this->_form;
         $userid = $mform->getElementValue('id');
 
-        // If language does not exist, use site default lang.
-        if ($langsel = $mform->getElementValue('lang')) {
-            $lang = reset($langsel);
-            // Check lang exists.
-            if (!get_string_manager()->translation_exists($lang, false)) {
-                $langel =& $mform->getElement('lang');
-                $langel->setValue($CFG->lang);
-            }
-        }
-
         if ($user = $DB->get_record('user', array('id' => $userid))) {
 
             // Remove description.

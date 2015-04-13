@@ -33,7 +33,7 @@ Feature: Upload users
     And I should see "Tom Jones"
     And I should see "Trent Reznor"
     And I should see "reznor@someplace.edu"
-    And I am on homepage
+    And I am on site homepage
     And I follow "Maths"
     And I expand "Users" node
     And I follow "Groups"

@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 2.9 ===
 
+* The default home page for users has been changed to the dashboard (formely my home). See MDL-45774.
 * Support for rendering templates from php or javascript has been added. See MDL-49152.
 * Support for loading AMD javascript modules has been added. See MDL-49046.
 * Webservice core_course_delete_courses now return warning messages on any failures and does not try to rollback the entire deletion.
@@ -38,6 +39,7 @@ information provided here is intended especially for developers.
   for the library. See MDL-49519 for details.
 * The outdated lib/google/Google_Client.php and related files have been completely removed. To use
   the new client, read lib/google/readme_moodle.txt, please.
+* profile_display_badges() has been deprecated. See MDL-48935 for details.
 
 === 2.8 ===
 

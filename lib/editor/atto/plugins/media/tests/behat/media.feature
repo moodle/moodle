@@ -5,12 +5,11 @@ Feature: Add media to Atto
   @javascript
   Scenario: Insert some media
     Given I log in as "admin"
-    And I navigate to "My private files" node in "My profile"
+    And I follow "Manage my private files..."
     And I upload "lib/editor/atto/tests/fixtures/moodle-logo.webm" file to "Files" filemanager
     And I click on "Save changes" "button"
-    When I am on homepage
-    And I expand "My profile" node
-    And I expand "Blogs" node
+    When I follow "My profile" in the user menu
+    And I follow "My blog entries"
     And I follow "Add a new entry"
     And I set the field "Blog entry body" to "<p>Media test</p>"
     And I select the text in the "Blog entry body" Atto editor

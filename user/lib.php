@@ -674,6 +674,11 @@ function user_convert_text_to_menu_items($text, $page) {
             $bits[1] = null;
             $child->itemtype = "invalid";
         } else {
+            // Nasty hack to replace the my grades with the direct url.
+            if (strpos($bits[1], '/grade/report/mygrades.php') !== false) {
+                $bits[1] = user_mygrades_url();
+            }
+
             // Make sure the url is a moodle url.
             $bits[1] = new moodle_url(trim($bits[1]));
         }
@@ -801,7 +806,7 @@ function user_get_user_navigation_info($user, $page) {
         }
     }
 
-    // Links: My Home.
+    // Links: Dashboard.
     $myhome = new stdClass();
     $myhome->itemtype = 'link';
     $myhome->url = new moodle_url('/my/');
@@ -1022,4 +1027,31 @@ function user_list_view($course, $context) {
         )
     ));
     $event->trigger();
+}
+
+/**
+ * Returns the url to use for the "My grades" link in the user navigation.
+ *
+ * @param int $userid The user's ID.
+ * @param int $courseid The course ID if available.
+ * @return mixed A URL to be directed to for "My grades".
+ */
+function user_mygrades_url($userid = null, $courseid = SITEID) {
+    global $CFG, $USER;
+    $url = null;
+    if (isset($CFG->grade_mygrades_report) && $CFG->grade_mygrades_report != 'external') {
+        if (isset($userid) && $USER->id != $userid) {
+            // Send to the gradebook report.
+            $url = new moodle_url('/grade/report/' . $CFG->grade_mygrades_report . '/index.php',
+                    array('id' => $courseid, 'userid' => $userid));
+        } else {
+            $url = new moodle_url('/grade/report/' . $CFG->grade_mygrades_report . '/index.php');
+        }
+    } else if (isset($CFG->grade_mygrades_report) && $CFG->grade_mygrades_report == 'external'
+            && !empty($CFG->gradereport_mygradeurl)) {
+        $url = $CFG->gradereport_mygradeurl;
+    } else {
+        $url = $CFG->wwwroot;
+    }
+    return $url;
 }

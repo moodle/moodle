@@ -6,6 +6,7 @@ Feature: Adding and configuring HTML blocks
 
   Background:
     Given I log in as "admin"
+    And I am on site homepage
     When I click on "Turn editing on" "link" in the "Administration" "block"
     And I add the "HTML" block
 

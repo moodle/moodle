@@ -18,6 +18,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
       | activity | course | idnumber | name | intro |
       | assign | C1 | assign1 | Assignment1 | Assignment 1 intro |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Grades"
     And I turn editing mode on
@@ -29,7 +30,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
     Then I navigate to "General settings" node in "Site administration > Grades"
     And I click on "Show minimum grade" "checkbox"
     And I press "Save changes"
-    And I follow "Home"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Grades"
     And I click on "Edit  assign Assignment1" "link"
@@ -41,7 +42,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
     When I navigate to "Grader report" node in "Site administration > Grades > Report settings"
     And I click on "Show calculations" "checkbox"
     And I press "Save changes"
-    And I follow "Home"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Grades"
     Then "Edit calculation for   Course total" "link" should not exist
@@ -52,7 +53,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
     Then I navigate to "Grade category settings" node in "Site administration > Grades"
     And I click on "Allow category grades to be manually overridden" "checkbox"
     And I press "Save changes"
-    And I follow "Home"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Grades"
     And "tr .course input[type='text']" "css_element" should not exist

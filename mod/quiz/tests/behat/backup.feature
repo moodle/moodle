@@ -26,6 +26,7 @@ Feature: Backup and restore of quizzes
       | question | page |
       | TF1      | 1    |
       | TF2      | 2    |
+    And I am on site homepage
     When I follow "Course 1"
     And I turn editing mode on
     And I duplicate "Quiz 1" activity editing the new copy with:
@@ -37,6 +38,7 @@ Feature: Backup and restore of quizzes
 
   @javascript @_file_upload
   Scenario: Restore a Moodle 2.8 quiz backup
+    And I am on site homepage
     When I follow "Course 1"
     And I navigate to "Restore" node in "Course administration"
     And I press "Manage backup files"

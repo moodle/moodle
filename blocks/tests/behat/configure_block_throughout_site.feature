@@ -15,6 +15,7 @@ Feature: Add and configure blocks throughout the site
       | user | course | role |
       | manager1 | Acceptance test site | manager |
     And I log in as "manager1"
+    And I am on site homepage
     And I follow "Turn editing on"
     And I add the "Comments" block
     And I configure the "Comments" block
@@ -24,7 +25,7 @@ Feature: Add and configure blocks throughout the site
     When I follow "Course 1"
     Then I should see "Comments" in the "Comments" "block"
     And I should see "Save comment" in the "Comments" "block"
-    And I am on homepage
+    And I am on site homepage
     And I configure the "Comments" block
     And I set the following fields to these values:
       | Default weight | -10 (first) |
@@ -33,12 +34,12 @@ Feature: Add and configure blocks throughout the site
     # The first block matching the pattern should be top-left block
     And I should see "Comments" in the "//*[@id='region-pre' or @id='block-region-side-pre']/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' block ')]" "xpath_element"
 
-  Scenario: Blocks on the my home page cannot have roles assigned to them
+  Scenario: Blocks on the dashboard page cannot have roles assigned to them
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | manager1 | Manager | 1 | manager1@asd.com |
     And I log in as "manager1"
-    And I click on "My home" "link" in the "Navigation" "block"
+    And I click on "Dashboard" "link" in the "Navigation" "block"
     When I press "Customise this page"
     Then I should not see "Assign roles in Navigation block"
 
@@ -60,7 +61,7 @@ Feature: Add and configure blocks throughout the site
   @javascript
   Scenario: Blocks can safely be customised
     Given I log in as "admin"
-    And I click on "My home" "link" in the "Navigation" "block"
+    And I click on "Dashboard" "link" in the "Navigation" "block"
     And I press "Customise this page"
     And I add the "HTML" block
     And I configure the "(new HTML block)" block
