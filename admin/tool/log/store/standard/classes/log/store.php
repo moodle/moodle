@@ -72,7 +72,7 @@ class store implements \tool_log\log\writer, \core\log\sql_internal_reader {
         $sort = self::tweak_sort_by_id($sort);
 
         $events = array();
-        $records = $DB->get_records_select('logstore_standard_log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
+        $records = $DB->get_recordset_select('logstore_standard_log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
 
         foreach ($records as $data) {
             $extra = array('origin' => $data->origin, 'ip' => $data->ip, 'realuserid' => $data->realuserid);
@@ -93,6 +93,8 @@ class store implements \tool_log\log\writer, \core\log\sql_internal_reader {
                 $events[$id] = $event;
             }
         }
+
+        $records->close();
 
         return $events;
     }
