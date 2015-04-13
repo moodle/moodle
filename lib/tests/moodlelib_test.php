@@ -1364,7 +1364,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         // DST switching in Prague.
         // From 2AM to 3AM in 1989.
         $date = new DateTime('1989-03-26T01:59:00+01:00');
-        $this->assertSAMe('Sunday, 26 March 1989, 1:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 26 March 1989, 1:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
         $date = new DateTime('1989-03-26T02:01:00+01:00');
         $this->assertSame('Sunday, 26 March 1989, 3:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
         // From 3AM to 2AM in 1989 - not the same as the west Europe.
