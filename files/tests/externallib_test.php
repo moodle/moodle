@@ -61,6 +61,7 @@ class core_files_externallib_testcase extends advanced_testcase {
         // Call the api to create a file.
         $fileinfo = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
                 $filename, $filecontent, $contextlevel, $instanceid);
+        $fileinfo = external_api::clean_returnvalue(core_files_external::upload_returns(), $fileinfo);
         // Get the created draft item id.
         $itemid = $fileinfo['itemid'];
 
@@ -76,6 +77,7 @@ class core_files_externallib_testcase extends advanced_testcase {
         // Call the api to create a file.
         $fileinfo = core_files_external::upload($contextid, $component, $filearea, $itemid,
                 $filepath, $filename, $filecontent, $contextlevel, $instanceid);
+        $fileinfo = external_api::clean_returnvalue(core_files_external::upload_returns(), $fileinfo);
         $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
         $this->assertNotEmpty($file);
 
@@ -88,6 +90,7 @@ class core_files_externallib_testcase extends advanced_testcase {
         $this->assertEmpty($file);
         $fileinfo = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
                 $filename, $filecontent, $contextlevel, $instanceid);
+        $fileinfo = external_api::clean_returnvalue(core_files_external::upload_returns(), $fileinfo);
         $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
         $this->assertNotEmpty($file);
 
@@ -142,7 +145,8 @@ class core_files_externallib_testcase extends advanced_testcase {
         $instanceid = null;
 
         // Make sure the file is created.
-        @core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent);
+        $fileinfo = @core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent);
+        $fileinfo = external_api::clean_returnvalue(core_files_external::upload_returns(), $fileinfo);
         $browser = get_file_browser();
         $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
         $this->assertNotEmpty($file);
@@ -165,7 +169,8 @@ class core_files_externallib_testcase extends advanced_testcase {
         $filename = "Simple4.txt";
         $filecontent = base64_encode("Let us create a nice simple file");
 
-        @core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent);
+        $fileinfo = @core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent);
+        $fileinfo = external_api::clean_returnvalue(core_files_external::upload_returns(), $fileinfo);
 
         // Assert debugging called (deprecation warning).
         $this->assertDebuggingCalled();
@@ -249,6 +254,7 @@ class core_files_externallib_testcase extends advanced_testcase {
         // The first time is with a valid context ID.
         $filename = '';
         $testfilelisting = core_files_external::get_files($context->id, $component, $filearea, $itemid, '/', $filename);
+        $testfilelisting = external_api::clean_returnvalue(core_files_external::get_files_returns(), $testfilelisting);
 
         // With the information that we have provided we should get an object exactly like the one below.
         $coursecontext = context_course::instance($course->id);
@@ -304,6 +310,8 @@ class core_files_externallib_testcase extends advanced_testcase {
         $contextlevel = 'module';
         $instanceid = $module->cmid;
         $testfilelisting = core_files_external::get_files($nocontext, $component, $filearea, $itemid, '/', $filename, $modified, $contextlevel, $instanceid);
+        $testfilelisting = external_api::clean_returnvalue(core_files_external::get_files_returns(), $testfilelisting);
+
         $this->assertEquals($testfilelisting, $testdata);
     }
 }
