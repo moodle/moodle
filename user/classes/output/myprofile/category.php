@@ -113,7 +113,7 @@ class category implements \renderable {
         foreach ($this->nodes as $node) {
             $after = $node->after;
             $content = $node->content;
-            if ($after == null && !empty($content)) {
+            if (($after == null && !empty($content)) || $node->name === 'editprofile') {
                 // Can go anywhere in the cat. Also show content nodes first.
                 $tempnodes = array_merge($tempnodes, array($node->name => $node), $this->find_nodes_after($node));
             }

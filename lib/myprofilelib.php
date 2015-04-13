@@ -72,7 +72,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
         if (($iscurrentuser || is_siteadmin($USER) || !is_siteadmin($user)) && has_capability('moodle/user:update',
                     $systemcontext)) {
             $url = new moodle_url('/user/editadvanced.php', array('id' => $user->id, 'course' => $courseid));
-            $node = new core_user\output\myprofile\node('administration', 'editprofile', get_string('editmyprofile'), null, $url);
+            $node = new core_user\output\myprofile\node('contact', 'editprofile', get_string('editmyprofile'), null, $url);
             $tree->add_node($node);
         } else if ((has_capability('moodle/user:editprofile', $usercontext) && !is_siteadmin($user))
                    || ($iscurrentuser && has_capability('moodle/user:editownprofile', $systemcontext))) {
@@ -89,14 +89,15 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                         $url = new moodle_url('/user/edit.php', array('userid' => $user->id, 'course' => $course->id));
                     }
                 }
-                $node = new core_user\output\myprofile\node('administration', 'editprofile',
+                $node = new core_user\output\myprofile\node('contact', 'editprofile',
                         get_string('editmyprofile'), null, $url);
                 $tree->add_node($node);
             }
         }
     }
-    // Preference page.
-    if ($iscurrentuser || is_siteadmin()) {
+
+    // Preference page. Only visible by administrators.
+    if (is_siteadmin()) {
         $url = new moodle_url('/user/preferences.php', array('userid' => $user->id));
         $title = $iscurrentuser ? get_string('mypreferences') : get_string('userspreferences', 'moodle', fullname($user));
         $node = new core_user\output\myprofile\node('administration', 'preferences', $title, null, $url);
