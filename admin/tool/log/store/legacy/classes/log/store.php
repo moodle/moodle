@@ -91,18 +91,23 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
         // Replace the query with hardcoded mappings required for core.
         list($selectwhere, $params, $sort) = self::replace_sql_legacy($selectwhere, $params, $sort);
 
-        $events = array();
         $records = array();
 
         try {
-            $records = $DB->get_records_select('log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
+            // A custom report + on the fly SQL rewriting = a possible exception.
+            $records = $DB->get_recordset_select('log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
         } catch (\moodle_exception $ex) {
             debugging("error converting legacy event data " . $ex->getMessage() . $ex->debuginfo, DEBUG_DEVELOPER);
+            return array();
         }
+
+        $events = array();
 
         foreach ($records as $data) {
             $events[$data->id] = \logstore_legacy\event\legacy_logged::restore_legacy($data);
         }
+
+        $records->close();
 
         return $events;
     }
