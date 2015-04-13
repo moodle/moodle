@@ -421,11 +421,20 @@ function uu_pre_process_custom_profile_data($data) {
 function uu_check_custom_profile_data(&$data) {
     global $CFG, $DB;
     $noerror = true;
+    $testuserid = null;
 
-    // find custom profile fields and check if data needs to converted.
+    if (!empty($data['username'])) {
+        if (preg_match('/id=(.*)"/i', $data['username'], $result)) {
+            $testuserid = $result[1];
+        }
+    }
+    // Find custom profile fields and check if data needs to converted.
     foreach ($data as $key => $value) {
         if (preg_match('/^profile_field_/', $key)) {
             $shortname = str_replace('profile_field_', '', $key);
+            $testuser = new stdClass();
+            $testuser->{$key} = $value;
+            $testuser->id = $testuserid;
             if ($fields = $DB->get_records('user_info_field', array('shortname' => $shortname))) {
                 foreach ($fields as $field) {
                     require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
@@ -435,6 +444,14 @@ function uu_check_custom_profile_data(&$data) {
                             is_null($formfield->convert_external_data($value))) {
                         $data['status'][] = get_string('invaliduserfield', 'error', $shortname);
                         $noerror = false;
+                    }
+                    // Check for duplicate value.
+                    if (method_exists($formfield, 'edit_validate_field') ) {
+                        $err = $formfield->edit_validate_field($testuser);
+                        if (!empty($err[$key])) {
+                            $data['status'][] = $err[$key].' ('.$key.')';
+                            $noerror = false;
+                        }
                     }
                 }
             }
