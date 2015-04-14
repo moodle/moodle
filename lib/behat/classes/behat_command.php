@@ -177,7 +177,7 @@ class behat_command {
     }
 
     /**
-     * Has the site installed composer with --dev option
+     * Has the site installed composer.
      * @return bool
      */
     public static function are_behat_dependencies_installed() {
