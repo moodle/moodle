@@ -18,8 +18,9 @@ Feature: View subfolders in a course in-line
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Folder" to section "3" and I fill the form with:
-      | Name | Test folder |
-      | Display folder contents | On a separate page |
+      | Name                    | Test folder             |
+      | Description             | Test folder for testing |
+      | Display folder contents | On a separate page      |
     And I should see "Test folder"
     And I follow "Test folder"
     And I press "Edit"
