@@ -103,7 +103,7 @@ Feature: tool_monitor_subscriptions
     And I follow "My preferences" in the user menu
     And I follow "Messaging"
     And I click on "input[name^=tool_monitor_notification_loggedin]" "css_element"
-    And I press "Update profile"
+    And I press "Save changes"
     And I follow "My preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Acceptance test site"
@@ -122,7 +122,7 @@ Feature: tool_monitor_subscriptions
     And I follow "My preferences" in the user menu
     And I follow "Messaging"
     And I click on "input[name^=tool_monitor_notification_loggedin]" "css_element"
-    And I press "Update profile"
+    And I press "Save changes"
     And I follow "My preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
