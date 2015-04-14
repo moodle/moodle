@@ -5418,7 +5418,6 @@ class moodle_database_for_testing extends moodle_database {
     protected function normalise_value($column, $value) {}
     public function set_debug($state) {}
     public function get_debug() {}
-    public function set_logging($state) {}
     public function change_database_structure($sql) {}
     public function execute($sql, array $params=null) {}
     public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {}
