@@ -60,7 +60,7 @@ class core_message_testcase extends advanced_testcase {
         $message->notification = '0';
         $message->contexturl = 'http://GalaxyFarFarAway.com';
         $message->contexturlname = 'Context name';
-        $message->replyto = "random@random.com";
+        $message->replyto = "random@example.com";
         $message->attachname = 'attachment';
         $content = array('*' => array('header' => ' test ', 'footer' => ' test ')); // Extra content for all types of messages.
         $message->set_additional_content('test', $content);

@@ -10,7 +10,7 @@ Feature: Add and configure blocks throughout the site
       | Course 1 | C1 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | manager1 | Manager | 1 | manager1@asd.com |
+      | manager1 | Manager | 1 | manager1@example.com |
     And the following "system role assigns" exist:
       | user | course | role |
       | manager1 | Acceptance test site | manager |
@@ -37,7 +37,7 @@ Feature: Add and configure blocks throughout the site
   Scenario: Blocks on the dashboard page cannot have roles assigned to them
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | manager1 | Manager | 1 | manager1@asd.com |
+      | manager1 | Manager | 1 | manager1@example.com |
     And I log in as "manager1"
     And I click on "Dashboard" "link" in the "Navigation" "block"
     When I press "Customise this page"

@@ -20,8 +20,8 @@ Feature: View cohort list
       | Cohort in category 3 | CH3      | Category     | CAT3      |
     Given the following "users" exist:
       | username | firstname | lastname | email           |
-      | user1    | First     | User     | first@user.com  |
-      | user2    | Second    | User     | second@user.com |
+      | user1    | First     | User     | first@example.com  |
+      | user2    | Second    | User     | second@example.com |
     And the following "role assigns" exist:
       | user  | role    | contextlevel | reference |
       | user1 | manager | System       |           |

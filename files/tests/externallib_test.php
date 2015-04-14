@@ -191,7 +191,7 @@ class core_files_externallib_testcase extends advanced_testcase {
 
         // Set the current user to be the administrator.
         $this->setAdminUser();
-        $USER->email = 'test@moodle.com';
+        $USER->email = 'test@example.com';
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();

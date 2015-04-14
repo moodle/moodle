@@ -7,10 +7,10 @@ Feature: Filter users by idnumber
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email | idnumber |
-      | teacher1 | Teacher  | 1 | teacher@asd.com  | 0000002 |
-      | student1 | Student1 | 1 | student1@asd.com | 0000003 |
-      | student2 | Student2 | 1 | student2@asd.com | 2000000 |
-      | student3 | Student3 | 1 | student3@asd.com | 3000000 |
+      | teacher1 | Teacher  | 1 | teacher@example.com  | 0000002 |
+      | student1 | Student1 | 1 | student1@example.com | 0000003 |
+      | student2 | Student2 | 1 | student2@example.com | 2000000 |
+      | student3 | Student3 | 1 | student3@example.com | 3000000 |
     And I log in as "admin"
     And I am on site homepage
     And I expand "Site administration" node
@@ -23,7 +23,7 @@ Feature: Filter users by idnumber
   @javascript
   Scenario: Filtering id numbers - with case "is empty"
     # We should see see admin on the user list, the following e-mail is admin's e-mail.
-    Then I should see "moodle@moodlemoodle.com" in the "users" "table"
+    Then I should see "moodle@example.com" in the "users" "table"
     And I should see "Teacher" in the "users" "table"
     And I should see "Student1" in the "users" "table"
     And I should see "Student2" in the "users" "table"
@@ -32,7 +32,7 @@ Feature: Filter users by idnumber
     And I set the field "id_idnumber_op" to "is empty"
     When I press "Add filter"
     # We should see admin on the user list, the following e-mail is admin's e-mail.
-    Then I should see "moodle@moodlemoodle.com" in the "users" "table"
+    Then I should see "moodle@example.com" in the "users" "table"
     And I should not see "Teacher" in the "users" "table"
     And I should not see "Student1" in the "users" "table"
     And I should not see "Student2" in the "users" "table"
@@ -41,7 +41,7 @@ Feature: Filter users by idnumber
   @javascript
   Scenario Outline: Filtering id numbers - with all other cases
     # We should see see admin on the user list, the following e-mail is admin's e-mail.
-    Then I should see "moodle@moodlemoodle.com" in the "users" "table"
+    Then I should see "moodle@example.com" in the "users" "table"
     And I should see "Teacher" in the "users" "table"
     And I should see "Student1" in the "users" "table"
     And I should see "Student2" in the "users" "table"
@@ -50,7 +50,7 @@ Feature: Filter users by idnumber
     And I set the field "id_idnumber_op" to "<Category>"
     And I set the field "idnumber" to "<Argument>"
     When I press "Add filter"
-    Then I should <Admin's Visibility> "moodle@moodlemoodle.com" in the "users" "table"
+    Then I should <Admin's Visibility> "moodle@example.com" in the "users" "table"
     And I should <Teacher's Vis> "Teacher" in the "users" "table"
     And I should <S1's Vis> "Student1" in the "users" "table"
     And I should <S2's Vis> "Student2" in the "users" "table"

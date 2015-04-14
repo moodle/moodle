@@ -7,10 +7,10 @@ Feature: The student can navigate to the My grades page and user grade report.
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | parent1 | Parent | 1 | parent1@asd.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | parent1 | Parent | 1 | parent1@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -84,7 +84,7 @@ Feature: The student can navigate to the My grades page and user grade report.
     And I follow "Student 1's preferences"
     And I follow "Assign roles relative to this user"
     And I follow "Parent"
-    And I click on "//select[@id='addselect']/descendant::option[contains(., 'Parent 1 (parent1@asd.com)')]" "xpath_element"
+    And I click on "//select[@id='addselect']/descendant::option[contains(., 'Parent 1 (parent1@example.com)')]" "xpath_element"
     And I click on "Add" "button"
     And I log out
     And I log in as "parent1"

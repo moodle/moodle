@@ -7,10 +7,10 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email | auth | confirmed |
-      | user1 | User | One | one@asd.com | manual | 0 |
-      | user2 | User | Two | two@asd.com | ldap | 1 |
-      | user3 | User | Three | three@asd.com | manual | 1 |
-      | user4 | User | Four | four@asd.com | ldap | 0 |
+      | user1 | User | One | one@example.com | manual | 0 |
+      | user2 | User | Two | two@example.com | ldap | 1 |
+      | user3 | User | Three | three@example.com | manual | 1 |
+      | user4 | User | Four | four@example.com | ldap | 0 |
     And the following "cohorts" exist:
       | name | idnumber |
       | Cohort 1 | CH1 |
@@ -23,8 +23,8 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
       | user2 | C1 | student |
       | user3 | C1 | student |
     And I log in as "admin"
-    And I add "User Two (two@asd.com)" user to "CH1" cohort members
-    And I add "User Three (three@asd.com)" user to "CH1" cohort members
+    And I add "User Two (two@example.com)" user to "CH1" cohort members
+    And I add "User Three (three@example.com)" user to "CH1" cohort members
     And I follow "Browse list of users"
 
   @javascript
