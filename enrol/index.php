@@ -26,6 +26,7 @@ require('../config.php');
 require_once("$CFG->libdir/formslib.php");
 
 $id = required_param('id', PARAM_INT);
+$returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 
 if (!isloggedin()) {
     // do not use require_login here because we are usually coming from it,
@@ -98,6 +99,8 @@ foreach ($forms as $form) {
 if (!$forms) {
     if (isguestuser()) {
         notice(get_string('noguestaccess', 'enrol'), get_login_url());
+    } else if ($returnurl) {
+        notice(get_string('notenrollable', 'enrol'), $returnurl);
     } else {
         notice(get_string('notenrollable', 'enrol'), "$CFG->wwwroot/index.php");
     }
