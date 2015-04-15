@@ -1139,6 +1139,11 @@
           <ON_CHECK message="slashargumentswarning" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_database_tables_row_format" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="unsupporteddbtablerowformat" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
   <MOODLE version="2.8" requires="2.2">
@@ -1265,6 +1270,11 @@
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_slasharguments" level="optional">
         <FEEDBACK>
           <ON_CHECK message="slashargumentswarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_database_tables_row_format" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="unsupporteddbtablerowformat" />
         </FEEDBACK>
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
@@ -1398,6 +1408,11 @@
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_slasharguments" level="optional">
         <FEEDBACK>
           <ON_CHECK message="slashargumentswarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_database_tables_row_format" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="unsupporteddbtablerowformat" />
         </FEEDBACK>
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
