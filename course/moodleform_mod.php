@@ -109,9 +109,9 @@ abstract class moodleform_mod extends moodleform {
         $this->_features->defaultcompletion = plugin_supports('mod', $this->_modname, FEATURE_MODEDIT_DEFAULT_COMPLETION, true);
         $this->_features->rating            = plugin_supports('mod', $this->_modname, FEATURE_RATE, false);
         $this->_features->showdescription   = plugin_supports('mod', $this->_modname, FEATURE_SHOW_DESCRIPTION, false);
-
         $this->_features->gradecat          = ($this->_features->outcomes or $this->_features->hasgrades);
         $this->_features->advancedgrading   = plugin_supports('mod', $this->_modname, FEATURE_ADVANCED_GRADING, false);
+        $this->_features->canrescale = (component_callback_exists('mod_' . $this->_modname, 'rescale_activity_grades') !== false);
     }
 
     /**
@@ -641,6 +641,11 @@ abstract class moodleform_mod extends moodleform {
     public function standard_grading_coursemodule_elements() {
         global $COURSE, $CFG;
         $mform =& $this->_form;
+        $isupdate = !empty($this->_cm);
+        $gradeoptions = array('isupdate' => $isupdate,
+                              'currentgrade' => false,
+                              'hasgrades' => false,
+                              'canrescale' => $this->_features->canrescale);
 
         if ($this->_features->hasgrades) {
 
@@ -650,7 +655,18 @@ abstract class moodleform_mod extends moodleform {
 
             //if supports grades and grades arent being handled via ratings
             if (!$this->_features->rating) {
-                $mform->addElement('modgrade', 'grade', get_string('grade'));
+
+                if ($isupdate) {
+                    $gradeitem = grade_item::fetch(array('itemtype' => 'mod',
+                                                         'itemmodule' => $this->_cm->modname,
+                                                         'iteminstance' => $this->_cm->instance,
+                                                         'itemnumber' => 0,
+                                                         'courseid' => $COURSE->id));
+
+                    $gradeoptions['currentgrade'] = $gradeitem->grademax;
+                    $gradeoptions['hasgrades'] = $gradeitem->has_grades();
+                }
+                $mform->addElement('modgrade', 'grade', get_string('grade'), $gradeoptions);
                 $mform->addHelpButton('grade', 'modgrade', 'grades');
                 $mform->setDefault('grade', $CFG->gradepointdefault);
             }

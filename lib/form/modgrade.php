@@ -43,14 +43,29 @@ require_once($CFG->dirroot.'/lib/grade/grade_scale.php');
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
+class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
+
+    /** @var boolean $isupdate Is this an add or an update ? */
+    public $isupdate = false;
+
+    /** @var float $currentgrade The current grademax for the grade_item */
+    public $currentgrade = false;
+
+    /** @var boolean $hasgrades Has this grade_item got any real grades (with values) */
+    public $hasgrades = false;
+
+    /** @var boolean $canrescale Does this activity support rescaling grades? */
+    public $canrescale = false;
 
     /**
      * Constructor
      *
      * @param string $elementname Element's name
      * @param mixed $elementlabel Label(s) for an element
-     * @param array $options Options to control the element's display. Not used.
+     * @param array $options Options to control the element's display. Required - must contain the following options:
+     *              'isupdate' - is this a new module or are we editing an existing one?
+     *              'currentgrade' - the current grademax in the database for this gradeitem
+     *              'hasgrades' - whether or not the grade_item has existing grade_grades
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      */
     public function __construct($elementname = null, $elementlabel = null, $options = array(), $attributes = null) {
@@ -59,6 +74,13 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
         $this->_persistantFreeze = true;
         $this->_appendName = true;
         $this->_type = 'modgrade';
+        $this->isupdate = !empty($options['isupdate']);
+        $this->currentgrade = false;
+        if (isset($options['currentgrade'])) {
+            $this->currentgrade = $options['currentgrade'];
+        }
+        $this->hasgrades = !empty($options['hasgrades']);
+        $this->canrescale = !empty($options['canrescale']);
     }
 
     /**
@@ -75,7 +97,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
      * Create elements for this group.
      */
     public function _createElements() {
-        global $COURSE, $CFG;
+        global $COURSE, $CFG, $OUTPUT;
         $attributes = $this->getAttributes();
         if (is_null($attributes)) {
             $attributes = array();
@@ -113,6 +135,16 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
         $typeselectid = $this->generate_modgrade_subelement_id('modgrade_type');
         $typeselect->updateAttributes(array('id' => $typeselectid));
 
+        // Check box for options for processing existing grades.
+        if ($this->isupdate && $this->hasgrades && $this->canrescale) {
+            $langrescalegrades = get_string('modgraderescalegrades', 'grades');
+            $rescalegradesselect = @MoodleQuickForm::createElement('selectyesno',
+                                                                     'modgrade_rescalegrades',
+                                                                     $langrescalegrades);
+            $rescalegradesselect->_generateId();
+            $rescalegradesid = $rescalegradesselect->getAttribute('id');
+        }
+
         // Add elements.
 
         // Grade type select box.
@@ -132,6 +164,15 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
         $this->_elements[] = @MoodleQuickForm::createElement('static', 'pointlabel', '', $label);
         $this->_elements[] = $maxgrade;
         $this->_elements[] = @MoodleQuickForm::createElement('static', 'pointspacer', '', '<br />');
+
+        if ($this->isupdate && $this->hasgrades && $this->canrescale) {
+            // We need to know how to apply any changes to maxgrade - ie to either update, or don't touch exising grades.
+            $label = html_writer::tag('label', $rescalegradesselect->getLabel(), array('for' => $rescalegradesid));
+            $labelhelp = new help_icon('modgraderescalegrades', 'grades');
+            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalelabel', '', $label . $OUTPUT->render($labelhelp));
+            $this->_elements[] = $rescalegradesselect;
+            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalespacer', '', '<br />');
+        }
     }
 
     /**
@@ -156,8 +197,9 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
         $type = (isset($vals['modgrade_type'])) ? $vals['modgrade_type'] : 'none';
         $point = (isset($vals['modgrade_point'])) ? $vals['modgrade_point'] : null;
         $scale = (isset($vals['modgrade_scale'])) ? $vals['modgrade_scale'] : null;
+        $rescalegrades = (isset($vals['modgrade_rescalegrades'])) ? $vals['modgrade_rescalegrades'] : null;
         $return = $this->process_value($type, $scale, $point);
-        return array($this->getName() => $return);
+        return array($this->getName() => $return, $this->getName() . '_rescalegrades' => $rescalegrades);
     }
 
     /**
@@ -231,6 +273,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group{
                 // Set disable actions.
                 $caller->disabledIf($name.'[modgrade_scale]', $name.'[modgrade_type]', 'neq', 'scale');
                 $caller->disabledIf($name.'[modgrade_point]', $name.'[modgrade_type]', 'neq', 'point');
+                $caller->disabledIf($name.'[modgrade_rescalegrades]', $name.'[modgrade_type]', 'neq', 'point');
 
                 // Set validation rules for the sub-elements belonging to this element.
                 // A handy note: the parent scope of a closure is the function in which the closure was declared.

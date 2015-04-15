@@ -472,11 +472,21 @@ $string['minimum_show_help'] = 'Minimum grade is used in calculating grades and 
 $string['missingitemtypeoreid'] = 'Array key (itemtype or eid) missing from 2nd param of grade_edit_tree_column_select::get_item_cell($item, $params)';
 $string['missingscale'] = 'Scale must be selected';
 $string['mode'] = 'Mode';
-$string['modgradeerrorbadpoint'] = 'Invalid Grade Value. This must be an integer between 1 and {$a}';
-$string['modgradeerrorbadscale'] = 'Invalid scale selected. Please make sure you select a scale from the selections below.';
 $string['modgrade'] = 'Grade';
 $string['modgrade_help'] = 'Select the type of grading used for this activity. If "scale" is chosen, you can then choose the scale from the "scale" dropdown. If using "point" grading, you can then enter the maximum grade available for this activity.';
+$string['modgradedonotmodify'] = 'Do not modify existing grades';
+$string['modgradeerrorbadpoint'] = 'Invalid Grade Value. This must be an integer between 0 and {$a}';
+$string['modgradeerrorbadscale'] = 'Invalid scale selected. Please make sure you select a scale from the selections below.';
 $string['modgrademaxgrade'] = 'Maximum points';
+$string['modgraderescalegrades'] = 'Rescale existing grades';
+$string['modgraderescalegrades_help'] = 'Changing the maximum points value for an activity has an effect on the percentage of any existing grades for that activity. If this "Rescale existing grades" option is enabled, all existing grades will be scaled so that the same percentage grade is maintained.
+
+Example (with "Rescale existing grades" set to "Yes"):
+
+A student grade of "6 / 10 ( 60 % )" would change to "12 / 20 ( 60 % )" when the maximum points is changed to 20.
+
+';
+$string['modgraderescalegrades_link'] = 'Scaling_Activity_Grades';
 $string['modgradetype'] = 'Type';
 $string['modgradetypenone'] = 'None';
 $string['modgradetypepoint'] = 'Point';

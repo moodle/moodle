@@ -97,6 +97,10 @@ class edit_item_form extends moodleform {
             $mform->setType('grademin', PARAM_RAW);
         }
 
+        $mform->addElement('selectyesno', 'rescalegrades', get_string('modgraderescalegrades', 'grades'));
+        $mform->addHelpButton('rescalegrades', 'modgraderescalegrades', 'grades');
+        $mform->disabledIf('rescalegrades', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
+
         $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
         $mform->addHelpButton('gradepass', 'gradepass', 'grades');
         $mform->disabledIf('gradepass', 'gradetype', 'eq', GRADE_TYPE_NONE);
@@ -269,6 +273,7 @@ class edit_item_form extends moodleform {
                         // the idnumber of grade itemnumber 0 is synced with course_modules
                         $mform->hardFreeze('idnumber');
                     }
+                    $mform->removeElement('rescalegrades');
                     //$mform->removeElement('calculation');
                 }
             }
@@ -342,6 +347,7 @@ class edit_item_form extends moodleform {
             // all new items are manual, children of course category
             $mform->removeElement('plusfactor');
             $mform->removeElement('multfactor');
+            $mform->removeElement('rescalegrades');
         }
 
         // no parent header for course category
@@ -353,12 +359,15 @@ class edit_item_form extends moodleform {
 /// perform extra validation before submission
     function validation($data, $files) {
         global $COURSE;
+        $grade_item = false;
+        if ($data['id']) {
+            $grade_item = new grade_item(array('id' => $data['id'], 'courseid' => $data['courseid']));
+        }
 
         $errors = parent::validation($data, $files);
 
         if (array_key_exists('idnumber', $data)) {
-            if ($data['id']) {
-                $grade_item = new grade_item(array('id'=>$data['id'], 'courseid'=>$data['courseid']));
+            if ($grade_item) {
                 if ($grade_item->itemtype == 'mod') {
                     $cm = get_coursemodule_from_instance($grade_item->itemmodule, $grade_item->iteminstance, $grade_item->courseid);
                 } else {
