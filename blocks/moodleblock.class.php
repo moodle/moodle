@@ -502,6 +502,15 @@ class block_base {
     }
 
     /**
+     * Copy any block-specific data when copying to a new block instance.
+     * @param int $fromid the id number of the block instance to copy from
+     * @return boolean
+     */
+    public function instance_copy($fromid) {
+        return true;
+    }
+
+    /**
      * Delete everything related to this instance if you have been using persistent storage other than the configdata field.
      * @return boolean
      */

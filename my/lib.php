@@ -81,11 +81,17 @@ function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
                                                                 'pagetypepattern' => $pagetype,
                                                                 'subpagepattern' => $systempage->id));
     foreach ($blockinstances as $instance) {
+        $originalid = $instance->id;
         unset($instance->id);
         $instance->parentcontextid = $usercontext->id;
         $instance->subpagepattern = $page->id;
         $instance->id = $DB->insert_record('block_instances', $instance);
         $blockcontext = context_block::instance($instance->id);  // Just creates the context record
+        $block = block_instance($instance->blockname, $instance);
+        if (!$block->instance_copy($originalid)) {
+            debugging("Unable to copy block-specific data for original block instance: $originalid
+                to new block instance: $instance->id", DEBUG_DEVELOPER);
+        }
     }
 
     // FIXME: block position overrides should be merged in with block instance
