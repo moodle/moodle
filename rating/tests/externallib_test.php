@@ -103,6 +103,9 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         $rating2->timemodified = time() + 1;
         $rating2->id = $DB->insert_record('rating', $rating2);
 
+        // Delete teacher2, we must still receive the ratings.
+        delete_user($teacher2);
+
         // Teachers can see all the ratings.
         $this->setUser($teacher1);
 
