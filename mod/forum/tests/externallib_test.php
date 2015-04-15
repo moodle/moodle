@@ -434,7 +434,9 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         // So the user automatically gets mod/forum:viewdiscussion on all forums of the course.
         $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
         $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
-        $this->getDataGenerator()->enrol_user($user3->id, $course1->id);
+
+        // Delete one user, to test that we still receive posts by this user.
+        delete_user($user3);
 
         // Create what we expect to be returned when querying the discussion.
         $expectedposts = array(
@@ -442,8 +444,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'warnings' => array(),
         );
 
-        $userpictureurl = moodle_url::make_webservice_pluginfile_url(
-            context_user::instance($discussion1reply2->userid)->id, 'user', 'icon', null, '/', 'f1')->out(false);
+        // Empty picture since it's a user deleted (user3).
+        $userpictureurl = '';
 
         $expectedposts['posts'][] = array(
             'id' => $discussion1reply2->id,
@@ -576,6 +578,9 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         }
         $enrol->enrol_user($instance1, $user1->id);
 
+        // Delete one user.
+        delete_user($user4);
+
         // Assign capabilities to view discussions for forum 1.
         $cm = get_coursemodule_from_id('forum', $forum1->cmid, 0, false, MUST_EXIST);
         $context = context_module::instance($cm->id);
@@ -585,13 +590,11 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         // Create what we expect to be returned when querying the forums.
 
         $post1 = $DB->get_record('forum_posts', array('id' => $discussion1->firstpost), '*', MUST_EXIST);
-        $userpictureurl = moodle_url::make_pluginfile_url(
+        $userpictureurl = moodle_url::make_webservice_pluginfile_url(
                     context_user::instance($user1->id)->id, 'user', 'icon', null, '/', 'f1');
-        $userpictureurl = str_replace("pluginfile.php", "webservice/pluginfile.php", $userpictureurl);
 
-        $usermodifiedpictureurl = moodle_url::make_pluginfile_url(
-                    context_user::instance($user4->id)->id, 'user', 'icon', null, '/', 'f1');
-        $usermodifiedpictureurl = str_replace("pluginfile.php", "webservice/pluginfile.php", $usermodifiedpictureurl);
+        // We expect an empty URL since we deleted the user4.
+        $usermodifiedpictureurl = '';
 
         $expecteddiscussions = array(
                 'id' => $discussion1->firstpost,
