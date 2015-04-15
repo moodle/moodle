@@ -360,3 +360,29 @@ Feature: Edit quiz page - section headings
     And I click on ".numberofquestions" "css_element"
     And I click on "Add" "link" in the ".last-add-menu" "css_element"
     And "a new section heading" "list_item" in the ".last-add-menu" "css_element" should not be visible
+
+  @javascript
+  Scenario: Verify sections are added in the right place afte ajax changes
+    Given the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    |
+    And the following "questions" exist:
+      | questioncategory | qtype       | name | questiontext    |
+      | Test questions   | truefalse   | TF1  | This is question 01 |
+      | Test questions   | truefalse   | TF2  | This is question 02 |
+      | Test questions   | truefalse   | TF3  | This is question 03 |
+      | Test questions   | truefalse   | TF4  | This is question 04 |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page |
+      | TF1      | 1    |
+      | TF2      | 2    |
+      | TF3      | 3    |
+      | TF4      | 4    |
+
+    When I follow "Course 1"
+    And I follow "Quiz 1"
+    And I follow "Edit quiz"
+    And I click on the "Remove" page break icon after question "TF1"
+    And I open the "Page 2" add to quiz menu
+    And I follow "a new section heading" in the open menu
+    Then "TF3" "list_item" should exist in the "Section heading ..." "list_item"
