@@ -60,6 +60,7 @@ class message_airnotifier_external_testcase extends externallib_advanced_testcas
 
         // In a clean installation, it should be not configured.
         $configured = message_airnotifier_external::is_system_configured();
+        $configured = external_api::clean_returnvalue(message_airnotifier_external::is_system_configured_returns(), $configured);
         $this->assertEquals(0, $configured);
 
         // Fake configuration.
@@ -68,6 +69,7 @@ class message_airnotifier_external_testcase extends externallib_advanced_testcas
         $DB->set_field('message_processors', 'enabled', 1, array('name' => 'airnotifier'));
 
         $configured = message_airnotifier_external::is_system_configured();
+        $configured = external_api::clean_returnvalue(message_airnotifier_external::is_system_configured_returns(), $configured);
         $this->assertEquals(1, $configured);
     }
 
@@ -92,6 +94,8 @@ class message_airnotifier_external_testcase extends externallib_advanced_testcas
         $params = array($user1->id, $user2->id, $user3->id);
 
         $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
+        $returnsdescription = message_airnotifier_external::are_notification_preferences_configured_returns();
+        $preferences = external_api::clean_returnvalue($returnsdescription, $preferences);
 
         $expected = array(
             array(
@@ -107,6 +111,7 @@ class message_airnotifier_external_testcase extends externallib_advanced_testcas
         // Now, remove one user.
         delete_user($user2);
         $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
+        $preferences = external_api::clean_returnvalue($returnsdescription, $preferences);
         $this->assertEquals(1, count($preferences['users']));
         $this->assertEquals($expected, $preferences['users']);
         $this->assertEquals(2, count($preferences['warnings']));
@@ -114,11 +119,13 @@ class message_airnotifier_external_testcase extends externallib_advanced_testcas
         // Now, remove one user1 preference (the user still has one prefernce for airnotifier).
         unset_user_preference('message_provider_moodle_instantmessage_loggedin', $user1);
         $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
+        $preferences = external_api::clean_returnvalue($returnsdescription, $preferences);
         $this->assertEquals($expected, $preferences['users']);
 
         // Delete the last user1 preference.
         unset_user_preference('message_provider_moodle_instantmessage_loggedoff', $user1);
         $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
+        $preferences = external_api::clean_returnvalue($returnsdescription, $preferences);
         $expected = array(
             array(
                 'userid' => $user1->id,
