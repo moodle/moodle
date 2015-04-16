@@ -177,7 +177,8 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $sink = $this->redirectEvents();
 
         $this->setUser($student1);
-        gradereport_user_external::view_grade_report($course->id);
+        $result = gradereport_user_external::view_grade_report($course->id);
+        $result = external_api::clean_returnvalue(gradereport_user_external::view_grade_report_returns(), $result);
         $events = $sink->get_events();
         $this->assertCount(1, $events);
         $event = reset($events);
@@ -188,7 +189,8 @@ class gradereport_user_externallib_testcase extends externallib_advanced_testcas
         $this->assertEquals($USER->id, $event->get_data()['relateduserid']);
 
         $this->setUser($teacher);
-        gradereport_user_external::view_grade_report($course->id, $student1->id);
+        $result = gradereport_user_external::view_grade_report($course->id, $student1->id);
+        $result = external_api::clean_returnvalue(gradereport_user_external::view_grade_report_returns(), $result);
         $events = $sink->get_events();
         $event = reset($events);
         $sink->close();
