@@ -257,6 +257,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             // Call the external function.
             $returnedusers = core_user_external::get_users_by_field($fieldtosearch,
                         array($USER->{$fieldtosearch}, $user1->{$fieldtosearch}, $user2->{$fieldtosearch}));
+            $returnedusers = external_api::clean_returnvalue(core_user_external::get_users_by_field_returns(), $returnedusers);
 
             // Expected result differ following the searched field
             // Admin user in the PHPunit framework doesn't have an idnumber.
@@ -338,6 +339,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         // Call the external function.
         $returnedusers = core_user_external::get_users_by_field('username',
                     array($USER->username, $user1->username, $user2->username));
+        $returnedusers = external_api::clean_returnvalue(core_user_external::get_users_by_field_returns(), $returnedusers);
 
         // Only the own $USER username should be returned
         $this->assertEquals(1, count($returnedusers));
@@ -348,6 +350,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         // Call the external function.
         $returnedusers = core_user_external::get_users_by_field('username',
             array($USER->username, $user1->username, $user2->username));
+        $returnedusers = external_api::clean_returnvalue(core_user_external::get_users_by_field_returns(), $returnedusers);
 
         // Only the own $USER username should be returned still.
         $this->assertEquals(1, count($returnedusers));
@@ -705,6 +708,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         // Call the files api to create a file.
         $draftfile = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
                                                  $filename, $filecontent, $contextlevel, $instanceid);
+        $draftfile = external_api::clean_returnvalue(core_files_external::upload_returns(), $draftfile);
 
         $draftid = $draftfile['itemid'];
         // Make sure the file was created.
@@ -761,6 +765,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $device['pushid'] = 'different than before';
         $warnings = core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
                                                         $device['version'], $device['pushid'], $device['uuid']);
+        $warnings = external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
 
         $this->assertEquals(1, $DB->count_records('user_devices'));
         $updated = $DB->get_record('user_devices', array('pushid' => $device['pushid']));
@@ -771,6 +776,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $device['pushid'] = 'new different than before';
         $warnings = core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
                                                         $device['version'], $device['pushid'], $device['uuid']);
+        $warnings = external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
         $this->assertEquals(2, $DB->count_records('user_devices'));
     }
 
