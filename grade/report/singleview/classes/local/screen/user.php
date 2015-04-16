@@ -352,6 +352,10 @@ class user extends tablelike implements selectable_items {
                     continue;
                 }
 
+                $oldfinalgradefield = "oldfinalgrade_{$gradeitem->id}_{$this->itemid}";
+                if (!empty($data->$oldfinalgradefield)) {
+                    continue;
+                }
                 $grade = grade_grade::fetch(array(
                     'itemid' => $this->itemid,
                     'userid' => $userid
@@ -369,8 +373,12 @@ class user extends tablelike implements selectable_items {
             }
 
             foreach ($data as $varname => $value) {
-                if (preg_match('/override_(\d+)_(\d+)/', $varname, $matches)) {
-                    $data->$matches[0] = '1';
+                if (preg_match('/^oldoverride_(\d+)_(\d+)/', $varname, $matches)) {
+                    // If we've selected override or overriding all grades.
+                    if (!empty($data->$matches[0]) || $filter == 'all') {
+                        $override = "override_{$matches[1]}_{$matches[2]}";
+                        $data->$override = '1';
+                    }
                 }
                 if (!preg_match('/^finalgrade_(\d+)_(\d+)/', $varname, $matches)) {
                     continue;
