@@ -1265,9 +1265,7 @@ class mod_assign_external extends external_api {
      * @since Moodle 2.6
      */
     public static function lock_submissions_returns() {
-        return new external_multiple_structure(
-           new external_warnings()
-        );
+        return new external_warnings();
     }
 
     /**
@@ -1329,9 +1327,7 @@ class mod_assign_external extends external_api {
      * @since Moodle 2.6
      */
     public static function revert_submissions_to_draft_returns() {
-        return new external_multiple_structure(
-           new external_warnings()
-        );
+        return new external_warnings();
     }
 
     /**
@@ -1393,9 +1389,7 @@ class mod_assign_external extends external_api {
      * @since Moodle 2.6
      */
     public static function unlock_submissions_returns() {
-        return new external_multiple_structure(
-           new external_warnings()
-        );
+        return new external_warnings();
     }
 
     /**
@@ -1455,9 +1449,7 @@ class mod_assign_external extends external_api {
      * @since Moodle 2.6
      */
     public static function submit_for_grading_returns() {
-        return new external_multiple_structure(
-           new external_warnings()
-        );
+        return new external_warnings();
     }
 
     /**
@@ -1535,9 +1527,7 @@ class mod_assign_external extends external_api {
      * @since Moodle 2.6
      */
     public static function save_user_extensions_returns() {
-        return new external_multiple_structure(
-           new external_warnings()
-        );
+        return new external_warnings();
     }
 
     /**
@@ -1591,9 +1581,7 @@ class mod_assign_external extends external_api {
      * @since Moodle 2.6
      */
     public static function reveal_identities_returns() {
-        return new external_multiple_structure(
-           new external_warnings()
-        );
+        return new external_warnings();
     }
 
     /**
@@ -1669,9 +1657,7 @@ class mod_assign_external extends external_api {
      * @since Moodle 2.6
      */
     public static function save_submission_returns() {
-        return new external_multiple_structure(
-           new external_warnings()
-        );
+        return new external_warnings();
     }
 
     /**
@@ -2019,8 +2005,6 @@ class mod_assign_external extends external_api {
      * @since Moodle 2.6
      */
     public static function copy_previous_attempt_returns() {
-        return new external_multiple_structure(
-           new external_warnings()
-        );
+        return new external_warnings();
     }
 }
