@@ -848,6 +848,8 @@ class mod_forum_external extends external_api {
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
+        require_capability('mod/forum:viewdiscussion', $context, null, true, 'noviewdiscussionspermission', 'forum');
+
         // Call the forum/lib API.
         forum_view($forum, $course, $cm, $context);
 
@@ -911,6 +913,8 @@ class mod_forum_external extends external_api {
         // Validate the module context. It checks everything that affects the module visibility (including groupings, etc..).
         $modcontext = context_module::instance($cm->id);
         self::validate_context($modcontext);
+
+        require_capability('mod/forum:viewdiscussion', $modcontext, null, true, 'noviewdiscussionspermission', 'forum');
 
         // Call the forum/lib API.
         forum_discussion_view($modcontext, $forum, $discussion);
