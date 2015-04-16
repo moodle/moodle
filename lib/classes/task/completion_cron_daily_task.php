@@ -18,7 +18,7 @@
  * A scheduled task.
  *
  * @package    core
- * @copyright  2013 onwards Martin Dougiamas  http://dougiamas.com
+ * @copyright  2013 onwards Martin Dougiamas  http://dougiamas.com Split Out Scheduled Task By Josh Willcock
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace core\task;
@@ -26,7 +26,7 @@ namespace core\task;
 /**
  * Simple task to run the completion cron.
  */
-class completion_cron_task extends scheduled_task {
+class completion_cron_daily_task extends scheduled_task {
 
     /**
      * Get a descriptive name for this task (shown to admins).
@@ -34,7 +34,7 @@ class completion_cron_task extends scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('taskcompletioncron', 'admin');
+        return get_string('taskcompletioncrondaily', 'admin');
     }
 
     /**
@@ -47,7 +47,7 @@ class completion_cron_task extends scheduled_task {
         if ($CFG->enablecompletion) {
             // Completion cron.
             require_once($CFG->dirroot.'/completion/cron.php');
-            regular_cron();
+            daily_cron();
         }
     }
 
