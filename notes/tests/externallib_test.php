@@ -119,11 +119,13 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $creatednotes = core_notes_external::create_notes($cnotes);
+        $creatednotes = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
         $dnotes3 = array($creatednotes[0]['noteid']);
 
         $this->unassignUserCapability('moodle/notes:manage', $contextid, $roleid);
         $this->setExpectedException('required_capability_exception');
         $deletednotes = core_notes_external::delete_notes($dnotes3);
+        $deletednotes = external_api::clean_returnvalue(core_notes_external::delete_notes_returns(), $deletednotes);
     }
 
     public function test_get_notes() {
@@ -230,6 +232,7 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $creatednotes = core_notes_external::create_notes($notes1);
+        $creatednotes = external_api::clean_returnvalue(core_notes_external::create_notes_returns(), $creatednotes);
         $this->unassignUserCapability('moodle/notes:manage', $contextid, $roleid);
         $this->setExpectedException('required_capability_exception');
         $note2 = array();
@@ -239,5 +242,6 @@ class core_notes_externallib_testcase extends externallib_advanced_testcase {
         $note2['format'] = FORMAT_HTML;
         $notes2 = array($note2);
         $updatednotes = core_notes_external::update_notes($notes2);
+        $updatednotes = external_api::clean_returnvalue(core_notes_external::update_notes_returns(), $updatednotes);
     }
 }
