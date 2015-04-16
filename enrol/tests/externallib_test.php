@@ -271,6 +271,8 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
         // Check if information is returned.
         $enrolmentmethods = core_enrol_external::get_course_enrolment_methods($course1->id);
+        $enrolmentmethods = external_api::clean_returnvalue(core_enrol_external::get_course_enrolment_methods_returns(),
+                                                            $enrolmentmethods);
         // Enrolment information is currently returned by self enrolment plugin, so count == 1.
         // This should be changed as we implement get_enrol_info() for other enrolment plugins.
         $this->assertCount(1, $enrolmentmethods);
@@ -287,6 +289,8 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
                                                                 'customint6' => 1,
                                                                 'password' => 'test'));
         $enrolmentmethods = core_enrol_external::get_course_enrolment_methods($course2->id);
+        $enrolmentmethods = external_api::clean_returnvalue(core_enrol_external::get_course_enrolment_methods_returns(),
+                                                            $enrolmentmethods);
         $this->assertCount(1, $enrolmentmethods);
 
         $enrolmentmethod = $enrolmentmethods[0];
