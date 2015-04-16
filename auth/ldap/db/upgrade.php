@@ -48,5 +48,18 @@ function xmldb_auth_ldap_upgrade($oldversion) {
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014111001) {
+        global $DB;
+        // From now on the default LDAP objectClass setting for AD has been changed, from 'user' to '(samaccounttype=805306368)'.
+        if (is_enabled_auth('ldap')
+                && ($DB->get_field('config_plugins', 'value', array('name' => 'user_type', 'plugin' => 'auth/ldap')) === 'ad')
+                && ($DB->get_field('config_plugins', 'value', array('name' => 'objectclass', 'plugin' => 'auth/ldap')) === '')) {
+            // Save the backwards-compatible default setting.
+            set_config('objectclass', 'user', 'auth/ldap');
+        }
+
+        upgrade_plugin_savepoint(true, 2014111001, 'auth', 'ldap');
+    }
+
     return true;
 }
