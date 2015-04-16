@@ -32,6 +32,8 @@ information provided here is intended especially for developers.
    * forum_get_subscribed_forums
    * forum_get_optional_subscribed_forums
    * forum_get_potential_subscribers
+ * External function mod_forum_external::get_forum_discussions has been deprecated.
+   Use mod_forum_external::get_forum_discussions_paginated instead.
 
 === 2.6 ===
 
