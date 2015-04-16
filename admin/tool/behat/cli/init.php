@@ -59,6 +59,9 @@ list($options, $unrecognized) = cli_get_params(
 $help = "
 Behat utilities to initialise behat tests
 
+Usage:
+  php init.php [--parallel=value [--maxruns=value] [--fromrun=value --torun=value]] [--help]
+
 Options:
 -j, --parallel Number of parallel behat run to initialise
 -m, --maxruns  Max parallel processes to be executed at one time.
@@ -82,7 +85,7 @@ if (!empty($options['help'])) {
 $utilfile = 'util_single_run.php';
 $paralleloption = "";
 // If parallel run then use utilparallel.
-if ($options['parallel']) {
+if ($options['parallel'] && $options['parallel'] > 1) {
     $utilfile = 'util.php';
     $paralleloption = "";
     foreach ($options as $option => $value) {

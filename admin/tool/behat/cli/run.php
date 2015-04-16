@@ -50,24 +50,29 @@ list($options, $unrecognised) = cli_get_params(
         'help'     => false,
         'tags'     => '',
         'profile'  => '',
+        'feature'  => '',
         'fromrun'  => 1,
         'torun'    => 0,
+        'single-run' => false,
     ),
     array(
         'h' => 'help',
         't' => 'tags',
         'p' => 'profile',
+        's' => 'single-run',
     )
 );
 
 // Checking run.php CLI script usage.
 $help = "
 Behat utilities to run behat tests in parallel
+
+Usage:
+  php run.php [--BEHAT_OPTION=\"value\"] [--feature=\"value\"] [--replace] [--fromrun=value --torun=value] [--help]
+
 Options:
--t, --tags         Tags to execute.
--p, --profile      Profile to execute.
---stop-on-failure  Stop on failure in any parallel run.
---verbose          Verbose output
+--BEHAT_OPTION     Any combination of behat option specified in http://behat.readthedocs.org/en/v2.5/guides/6.cli.html
+--feature          Only execute specified feature file (Absolute path of feature file).
 --replace          Replace args string with run process number, useful for output.
 --fromrun          Execute run starting from (Used for parallel runs on different vms)
 --torun            Execute run till (Used for parallel runs on different vms)
@@ -75,7 +80,7 @@ Options:
 -h, --help         Print out this help
 
 Example from Moodle root directory:
-\$ php admin/tool/behat/cli/run.php --parallel=2
+\$ php admin/tool/behat/cli/run.php --tags=\"@javascript\"
 
 More info in http://docs.moodle.org/dev/Acceptance_testing#Running_tests
 ";
@@ -99,25 +104,6 @@ if (extension_loaded('pcntl')) {
         pcntl_signal(SIGTERM, "signal_handler");
         pcntl_signal(SIGINT, "signal_handler");
     }
-}
-
-// If empty parallelrun then just check with user if it's a run single behat test.
-if (empty($parallelrun)) {
-    if (cli_input("This is not a parallel site, do you want to run single behat run? (Y/N)", 'n', array('y', 'n')) == 'y') {
-        $runtestscommand = behat_command::get_behat_command();
-        $runtestscommand .= ' --config ' . behat_config_manager::get_behat_cli_config_filepath();
-        exec("php $runtestscommand", $output, $code);
-        echo implode(PHP_EOL, $output) . PHP_EOL;
-        exit($code);
-    } else {
-        exit(1);
-    }
-}
-
-// Create site symlink if necessary.
-if (!behat_config_manager::create_parallel_site_links($options['fromrun'], $options['torun'])) {
-    echo "Check permissions. If on windows, make sure you are running this command as admin" . PHP_EOL;
-    exit(1);
 }
 
 $time = microtime(true);
@@ -151,6 +137,30 @@ if ($options['tags']) {
     $extraopts[] = '--tags="' . $tags . '"';
 }
 
+// Feature should be added to last, for behat command.
+if ($options['feature']) {
+    $extraopts[] = $options['feature'];
+    // Only run 1 process as process.
+    // Feature file is picked from absolute path provided, so no need to check for behat.yml.
+    $options['torun'] = $options['fromrun'];
+}
+
+// Set of options to pass to behat.
+$extraopts = implode(' ', $extraopts);
+
+// If empty parallelrun then just check with user if it's a run single behat test.
+if (empty($parallelrun)) {
+    $cwd = getcwd();
+    chdir(__DIR__);
+    $runtestscommand = '../../../../' . behat_command::get_behat_command();
+    $runtestscommand .= ' --config ' . behat_config_manager::get_behat_cli_config_filepath();
+    $runtestscommand .= ' ' . $extraopts;
+    echo "Running single behat site:" . PHP_EOL;
+    passthru("php $runtestscommand", $code);
+    chdir($cwd);
+    exit($code);
+}
+
 // Update config file if tags defined.
 if ($tags) {
     // Hack to set proper dataroot and wwwroot.
@@ -158,11 +168,16 @@ if ($tags) {
     $behatwwwroot  = $CFG->behat_wwwroot;
     for ($i = 1; $i <= $parallelrun; $i++) {
         $CFG->behatrunprocess = $i;
-        $CFG->behat_dataroot = $behatdataroot . $i;
-        if (!empty($CFG->behat_parallel_run['behat_wwwroot'][$i - 1]['behat_wwwroot'])) {
-            $CFG->behat_wwwroot = $CFG->behat_parallel_run['behat_wwwroot'][$i - 1]['behat_wwwroot'];
+
+        if (!empty($CFG->behat_parallel_run[$i - 1]['behat_wwwroot'])) {
+            $CFG->behat_wwwroot = $CFG->behat_parallel_run[$i - 1]['behat_wwwroot'];
         } else {
             $CFG->behat_wwwroot = $behatwwwroot . "/" . BEHAT_PARALLEL_SITE_NAME . $i;
+        }
+        if (!empty($CFG->behat_parallel_run[$i - 1]['behat_dataroot'])) {
+            $CFG->behat_dataroot = $CFG->behat_parallel_run[$i - 1]['behat_dataroot'];
+        } else {
+            $CFG->behat_dataroot = $behatdataroot . $i;
         }
         behat_config_manager::update_config_file('', true, $tags);
     }
@@ -172,7 +187,6 @@ if ($tags) {
 }
 
 $cmds = array();
-$extraopts = implode(' ', $extraopts);
 echo "Running " . ($options['torun'] - $options['fromrun'] + 1) . " parallel behat sites:" . PHP_EOL;
 
 for ($i = $options['fromrun']; $i <= $options['torun']; $i++) {
@@ -185,7 +199,7 @@ for ($i = $options['fromrun']; $i <= $options['torun']; $i++) {
     $behatconfigpath = behat_config_manager::get_behat_cli_config_filepath($i);
 
     // Command to execute behat run.
-    $cmds[BEHAT_PARALLEL_SITE_NAME . $i] = $behatcommand . ' --config ' . $behatconfigpath . " " . $myopts;
+    $cmds[BEHAT_PARALLEL_SITE_NAME . $i] = '../../../../' . $behatcommand . ' --config ' . $behatconfigpath . " " . $myopts;
     echo "[" . BEHAT_PARALLEL_SITE_NAME . $i . "] " . $cmds[BEHAT_PARALLEL_SITE_NAME . $i] . PHP_EOL;
 }
 
@@ -194,8 +208,14 @@ if (empty($cmds)) {
     exit(1);
 }
 
+// Create site symlink if necessary.
+if (!behat_config_manager::create_parallel_site_links($options['fromrun'], $options['torun'])) {
+    echo "Check permissions. If on windows, make sure you are running this command as admin" . PHP_EOL;
+    exit(1);
+}
+
 // Execute all commands.
-$processes = cli_execute_parallel($cmds);
+$processes = cli_execute_parallel($cmds, __DIR__);
 $stoponfail = empty($options['stop-on-failure']) ? false : true;
 
 // Print header.
@@ -213,21 +233,31 @@ foreach ($exitcodes as $exitcode) {
     $status = (bool)$status || (bool)$exitcode;
 }
 
+// Run finished. Show exit code and output from individual process.
+$verbose = empty($options['verbose']) ? false : true;
+$verbose = $verbose || $status;
+
 // Show exit code from each process, if any process failed.
-if ($status) {
-    echo "Exit codes: " . implode(" ", $exitcodes) . PHP_EOL;
-    echo "To re-run failed processes, you can use following commands:" . PHP_EOL;
-    foreach ($cmds as $name => $cmd) {
-        if (!empty($exitcodes[$name])) {
-            echo "[" . $name . "] " . $cmd . PHP_EOL;
+if ($verbose) {
+    // Echo exit codes.
+    echo "Exit codes for each behat run: " . PHP_EOL;
+    ksort($exitcodes);
+    foreach ($exitcodes as $run => $exitcode) {
+        echo $run . ": " . $exitcode . PHP_EOL;
+    }
+
+    // Show failed re-run commands.
+    if ($status) {
+        echo "To re-run failed processes, you can use following commands:" . PHP_EOL;
+        foreach ($cmds as $name => $cmd) {
+            if (!empty($exitcodes[$name])) {
+                echo "[" . $name . "] " . $cmd . PHP_EOL;
+            }
         }
     }
     echo PHP_EOL;
 }
 
-// Run finished. Show exit code and output from individual process.
-$verbose = empty($options['verbose']) ? false : true;
-$verbose = $verbose || $status;
 print_each_process_info($processes, $verbose);
 
 // Remove site symlink if necessary.
