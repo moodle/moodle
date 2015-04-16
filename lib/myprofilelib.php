@@ -203,7 +203,8 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
             $url = 'http://'. $url;
         }
         $webpageurl = new moodle_url($url);
-        $node = new core_user\output\myprofile\node('contact', 'webpage', get_string('webpage'), null, $webpageurl);
+        $node = new core_user\output\myprofile\node('contact', 'webpage', get_string('webpage'), null, null,
+            html_writer::link($url, $webpageurl));
         $tree->add_node($node);
     }
 
