@@ -1272,7 +1272,7 @@ class grade_structure {
         // Object holding pix_icon information before instantiation.
         $icon = new stdClass();
         $icon->attributes = array(
-            'class' => 'item itemicon'
+            'class' => 'icon itemicon'
         );
         $icon->component = 'moodle';
 
