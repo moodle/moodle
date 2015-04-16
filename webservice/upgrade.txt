@@ -42,6 +42,12 @@ This information is intended for authors of webservices, not people writing webs
     - core_user_get_users_by_id
     - moodle_webservice_get_siteinfo
 
+* External function core_webservice_external::get_site_info now returns additional optional fields:
+   - advancedfeatures: Array listing Moodle advanced features and if enabled or not.
+   - usercanmanageownfiles: Whether the my files option is disabled.
+   - userquota: User storage quota.
+   - usermaxuploadfilesize: Files upload size limit.
+
 
 === 2.7 ===
 

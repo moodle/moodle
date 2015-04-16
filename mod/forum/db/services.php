@@ -40,7 +40,8 @@ $functions = array(
         'classname' => 'mod_forum_external',
         'methodname' => 'get_forum_discussions',
         'classpath' => 'mod/forum/externallib.php',
-        'description' => 'Returns a list of forum discussions contained within a given set of forums.',
+        'description' => 'DEPRECATED (use mod_forum_get_forum_discussions_paginated instead):
+                            Returns a list of forum discussions contained within a given set of forums.',
         'type' => 'read',
         'capabilities' => 'mod/forum:viewdiscussion, mod/forum:viewqandawithoutposting'
     ),
