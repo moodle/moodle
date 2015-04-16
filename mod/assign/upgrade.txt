@@ -1,6 +1,10 @@
 This files describes API changes in the assign code.
 === 2.9 ===
 * External parameter now returns PARAM_RAW instead of PARAM_TEXT for webservices using feedback comments.
+* External function mod_assign_external::get_assignments now returns additional optional fields:
+   - intro: Assignment intro.
+   - introformat: Intro format.
+   - introattachments: Intro attachments files.
 
 === 2.8 ===
 * Some DB changes were made to simplify the SQL required to query the latest attempt.
