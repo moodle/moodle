@@ -1171,4 +1171,47 @@ function grade_report_user_profilereport($course, $user, $viewasuser = false) {
     }
 }
 
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ */
+function gradereport_user_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    global $CFG, $USER;
+    if (empty($course)) {
+        // We want to display these reports under the site context.
+        $course = get_fast_modinfo(SITEID)->get_course();
+    }
+    $usercontext = context_user::instance($user->id);
+    $anyreport = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
 
+    // Start capability checks.
+    if ($anyreport || ($course->showreports && $user->id == $USER->id)) {
+        // Add grade hardcoded grade report if necessary.
+        $gradeaccess = false;
+        $coursecontext = context_course::instance($course->id);
+        if (has_capability('moodle/grade:viewall', $coursecontext)) {
+            // Can view all course grades.
+            $gradeaccess = true;
+        } else if ($course->showgrades) {
+            if ($iscurrentuser && has_capability('moodle/grade:view', $coursecontext)) {
+                // Can view own grades.
+                $gradeaccess = true;
+            } else if (has_capability('moodle/grade:viewall', $usercontext)) {
+                // Can view grades of this user - parent most probably.
+                $gradeaccess = true;
+            } else if ($anyreport) {
+                // Can view grades of this user - parent most probably.
+                $gradeaccess = true;
+            }
+        }
+        if ($gradeaccess) {
+            $url = new moodle_url('/course/user.php', array('mode' => 'grade', 'id' => $course->id, 'user' => $user->id));
+            $node = new core_user\output\myprofile\node('reports', 'grade', get_string('grade'), null, $url);
+            $tree->add_node($node);
+        }
+    }
+}

@@ -39,6 +39,9 @@ information provided here is intended especially for developers.
 * The outdated lib/google/Google_Client.php and related files have been completely removed. To use
   the new client, read lib/google/readme_moodle.txt, please.
 * profile_display_badges() has been deprecated. See MDL-48935 for details.
+* Added a new method add_report_nodes() to pagelib.php. If you are looking to add links to the user profile page under the heading "Reports"
+  then please use this function to ensure that the breadcrumb and navigation block are created properly for all user profile pages.
+
 
 === 2.8 ===
 
