@@ -69,6 +69,7 @@ Options:
 --prefix=STRING       Table prefix for above database tables. Default is mdl_
 --fullname=STRING     The fullname of the site
 --shortname=STRING    The shortname of the site
+--summary=STRING      The summary to be displayed on the front page
 --adminuser=USERNAME  Username for the moodle admin account. Default is admin
 --adminpass=PASSWORD  Password for the moodle admin account,
                       required in non-interactive mode.
@@ -252,6 +253,7 @@ list($options, $unrecognized) = cli_get_params(
         'prefix'            => 'mdl_',
         'fullname'          => '',
         'shortname'         => '',
+        'summary'           => '',
         'adminuser'         => 'admin',
         'adminpass'         => '',
         'adminemail'        => '',
