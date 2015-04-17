@@ -25,8 +25,10 @@
 require_once('../../config.php');
 require_once($CFG->dirroot . '/user/lib.php');
 
-defined('MOODLE_INTERNAL') || die();
-
+require_login(null, false);
+if (isguestuser()) {
+    throw new require_login_exception('Guests are not allowed here.');
+}
 // Get the url to redirect to.
 $url = user_mygrades_url();
 // Redirect to that page.

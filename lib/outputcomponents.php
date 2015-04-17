@@ -3095,7 +3095,7 @@ class context_header implements renderable {
      */
     public $headinglevel;
     /**
-     * @var string $imagedata HTML for the Image for the header.
+     * @var string|null $imagedata HTML code for the picture in the page header.
      */
     public $imagedata;
     /**
@@ -3113,7 +3113,7 @@ class context_header implements renderable {
      *
      * @param string $heading Main heading data.
      * @param int $headinglevel Main heading 'h' tag level.
-     * @param object $imagedata Information needed to include a picture in the header.
+     * @param string|null $imagedata HTML code for the picture in the page header.
      * @param string $additionalbuttons Buttons for the header e.g. Messaging button for the user header.
      */
     public function __construct($heading = null, $headinglevel = 1, $imagedata = null, $additionalbuttons = null) {

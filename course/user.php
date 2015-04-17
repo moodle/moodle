@@ -175,8 +175,8 @@ switch ($mode) {
 
         break;
     default:
-        // can not be reached ;-)
-        // But just incase let's not break the navigation.
+        // It's unlikely to reach this piece of code, as the mode is never empty and it sets mode as grade in most of the cases.
+        // Display the page header to avoid breaking the navigation. A course/user.php review will be done in MDL-49939.
         echo $OUTPUT->header();
 }
 
