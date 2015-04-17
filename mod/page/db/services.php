@@ -15,16 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Page module version information
+ * Page external functions and service definitions.
  *
- * @package mod_page
- * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @package    mod_page
+ * @category   external
+ * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.0
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2015051101;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015050500;    // Requires this Moodle version
-$plugin->component = 'mod_page';       // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+$functions = array(
+
+    'mod_page_view_page' => array(
+        'classname'     => 'mod_page_external',
+        'methodname'    => 'view_page',
+        'description'   => 'Simulate the view.php web interface page: trigger events, completion, etc...',
+        'type'          => 'write',
+        'capabilities'  => 'mod/page:view'
+    ),
+
+);
