@@ -225,13 +225,14 @@ function edit_module_post_actions($moduleinfo, $course) {
             }
             $moduleinfo->gradecat = $grade_category->id;
         }
-        $gradecategory = $grade_item->get_parent_category();
+
         foreach ($items as $itemid=>$unused) {
             $items[$itemid]->set_parent($moduleinfo->gradecat);
             if ($itemid == $grade_item->id) {
                 // Use updated grade_item.
                 $grade_item = $items[$itemid];
             }
+            $gradecategory = $grade_item->get_parent_category();
             if (!empty($moduleinfo->add)) {
                 if (grade_category::aggregation_uses_aggregationcoef($gradecategory->aggregation)) {
                     if ($gradecategory->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
