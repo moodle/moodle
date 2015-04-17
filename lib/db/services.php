@@ -1139,6 +1139,7 @@ $services = array(
             'mod_url_view_url',
             'core_user_get_users_by_field',
             'core_user_add_user_private_files',
+            'mod_assign_view_grading_table',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
