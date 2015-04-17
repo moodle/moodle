@@ -152,7 +152,7 @@ $extraopts = implode(' ', $extraopts);
 if (empty($parallelrun)) {
     $cwd = getcwd();
     chdir(__DIR__);
-    $runtestscommand = '../../../../' . behat_command::get_behat_command();
+    $runtestscommand = behat_command::get_behat_command(false, false, true);
     $runtestscommand .= ' --config ' . behat_config_manager::get_behat_cli_config_filepath();
     $runtestscommand .= ' ' . $extraopts;
     echo "Running single behat site:" . PHP_EOL;
@@ -195,11 +195,11 @@ for ($i = $options['fromrun']; $i <= $options['torun']; $i++) {
     // Options parameters to be added to each run.
     $myopts = !empty($options['replace']) ? str_replace($options['replace'], $i, $extraopts) : $extraopts;
 
-    $behatcommand = behat_command::get_behat_command();
+    $behatcommand = behat_command::get_behat_command(false, false, true);
     $behatconfigpath = behat_config_manager::get_behat_cli_config_filepath($i);
 
     // Command to execute behat run.
-    $cmds[BEHAT_PARALLEL_SITE_NAME . $i] = '../../../../' . $behatcommand . ' --config ' . $behatconfigpath . " " . $myopts;
+    $cmds[BEHAT_PARALLEL_SITE_NAME . $i] = $behatcommand . ' --config ' . $behatconfigpath . " " . $myopts;
     echo "[" . BEHAT_PARALLEL_SITE_NAME . $i . "] " . $cmds[BEHAT_PARALLEL_SITE_NAME . $i] . PHP_EOL;
 }
 
