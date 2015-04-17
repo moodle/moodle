@@ -4149,8 +4149,8 @@ function forum_print_attachments($post, $cm, $type) {
                 $output .= plagiarism_get_links(array('userid' => $post->userid,
                     'file' => $file,
                     'cmid' => $cm->id,
-                    'course' => $post->course,
-                    'forum' => $post->forum));
+                    'course' => $cm->course,
+                    'forum' => $cm->instance));
                 $output .= '<br />';
             }
         }
