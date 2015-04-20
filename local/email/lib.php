@@ -30,7 +30,7 @@ function email_cron() {
         foreach ($emails as $email) {
             EmailTemplate::send_to_user($email);
             // Adding a sleep to ensure there is no processing confusion.
-            sleep(1);
+            sleep(10);
     
             $email->modifiedtime = $email->sent = time();
             $email->id = $email->id;
