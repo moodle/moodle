@@ -245,7 +245,7 @@ class mod_assign_external extends external_api {
         return new external_function_parameters(
             array(
                 'courseids' => new external_multiple_structure(
-                    new external_value(PARAM_INT, 'course id'),
+                    new external_value(PARAM_INT, 'course id, empty for retrieving all the courses where the user is enroled in'),
                     '0 or more course ids',
                     VALUE_DEFAULT, array()
                 ),
@@ -253,37 +253,57 @@ class mod_assign_external extends external_api {
                     new external_value(PARAM_CAPABILITY, 'capability'),
                     'list of capabilities used to filter courses',
                     VALUE_DEFAULT, array()
-                )
+                ),
+                'includenotenrolledcourses' => new external_value(PARAM_BOOL, 'whether to return courses that the user can see
+                                                                    even if is not enroled in. This requires the parameter courseids
+                                                                    to not be empty.', VALUE_DEFAULT, false)
             )
         );
     }
 
     /**
-     * Returns an array of courses the user is enrolled in, and for each course all of the assignments that the user can
+     * Returns an array of courses the user is enrolled, and for each course all of the assignments that the user can
      * view within that course.
      *
      * @param array $courseids An optional array of course ids. If provided only assignments within the given course
-     * will be returned. If the user is not enrolled in a given course a warning will be generated and returned.
+     * will be returned. If the user is not enrolled in or can't view a given course a warning will be generated and returned.
      * @param array $capabilities An array of additional capability checks you wish to be made on the course context.
+     * @param bool $includenotenrolledcourses Wheter to return courses that the user can see even if is not enroled in.
+     * This requires the parameter $courseids to not be empty.
      * @return An array of courses and warnings.
      * @since  Moodle 2.4
      */
-    public static function get_assignments($courseids = array(), $capabilities = array()) {
+    public static function get_assignments($courseids = array(), $capabilities = array(), $includenotenrolledcourses = false) {
         global $USER, $DB, $CFG;
         require_once("$CFG->dirroot/mod/assign/locallib.php");
 
         $params = self::validate_parameters(
             self::get_assignments_parameters(),
-            array('courseids' => $courseids, 'capabilities' => $capabilities)
+            array(
+                'courseids' => $courseids,
+                'capabilities' => $capabilities,
+                'includenotenrolledcourses' => $includenotenrolledcourses
+            )
         );
 
         $warnings = array();
+        $courses = array();
         $fields = 'sortorder,shortname,fullname,timemodified';
-        $courses = enrol_get_users_courses($USER->id, true, $fields);
-        // Used to test for ids that have been requested but can't be returned.
-        if (count($params['courseids']) > 0) {
+
+        // If the courseids list is empty, we return only the courses where the user is enrolled in.
+        if (empty($params['courseids'])) {
+            $courses = enrol_get_users_courses($USER->id, true, $fields);
+            $courseids = array_keys($courses);
+        } else if ($includenotenrolledcourses) {
+            // In this case, we don't have to check here for enrolmnents. Maybe the user can see the course even if is not enrolled.
+            $courseids = $params['courseids'];
+        } else {
+            // We need to check for enrolments.
+            $mycourses = enrol_get_users_courses($USER->id, true, $fields);
+            $mycourseids = array_keys($mycourses);
+
             foreach ($params['courseids'] as $courseid) {
-                if (!in_array($courseid, array_keys($courses))) {
+                if (!in_array($courseid, $mycourseids)) {
                     unset($courses[$courseid]);
                     $warnings[] = array(
                         'item' => 'course',
@@ -291,28 +311,35 @@ class mod_assign_external extends external_api {
                         'warningcode' => '2',
                         'message' => 'User is not enrolled or does not have requested capability'
                     );
+                } else {
+                    $courses[$courseid] = $mycourses[$courseid];
                 }
             }
+            $courseids = array_keys($courses);
         }
-        foreach ($courses as $id => $course) {
-            if (count($params['courseids']) > 0 && !in_array($id, $params['courseids'])) {
-                unset($courses[$id]);
-            }
-            $context = context_course::instance($id);
+
+        foreach ($courseids as $cid) {
+
             try {
+                $context = context_course::instance($cid);
                 self::validate_context($context);
+
+                // Check if this course was already loaded (by enrol_get_users_courses).
+                if (!isset($courses[$cid])) {
+                    $courses[$cid] = get_course($cid);
+                }
             } catch (Exception $e) {
-                unset($courses[$id]);
+                unset($courses[$cid]);
                 $warnings[] = array(
                     'item' => 'course',
-                    'itemid' => $id,
+                    'itemid' => $cid,
                     'warningcode' => '1',
-                    'message' => 'No access rights in course context '.$e->getMessage().$e->getTraceAsString()
+                    'message' => 'No access rights in course context '.$e->getMessage()
                 );
                 continue;
             }
             if (count($params['capabilities']) > 0 && !has_all_capabilities($params['capabilities'], $context)) {
-                unset($courses[$id]);
+                unset($courses[$cid]);
             }
         }
         $extrafields='m.id as assignmentid, ' .

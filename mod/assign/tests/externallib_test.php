@@ -254,6 +254,35 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
         $this->assertEquals(0, count($result['courses']));
         $this->assertEquals(1, count($result['warnings']));
+
+        // Test with non-enrolled user, but with view capabilities.
+        $this->setAdminUser();
+        $result = mod_assign_external::get_assignments();
+        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $this->assertEquals(0, count($result['courses']));
+        $this->assertEquals(0, count($result['warnings']));
+
+        // Expect no courses, because we are not using the special flag.
+        $result = mod_assign_external::get_assignments(array($course1->id));
+        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $this->assertCount(0, $result['courses']);
+
+        // Now use the special flag to return courses where you are not enroled in.
+        $result = mod_assign_external::get_assignments(array($course1->id), array(), true);
+        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+
+        $course = $result['courses'][0];
+        $this->assertEquals('Lightwork Course 1', $course['fullname']);
+        $this->assertEquals(1, count($course['assignments']));
+        $assignment = $course['assignments'][0];
+        $this->assertEquals($assign1->id, $assignment['id']);
+        $this->assertEquals($course1->id, $assignment['course']);
+        $this->assertEquals('lightwork assignment', $assignment['name']);
+        $this->assertArrayNotHasKey('intro', $assignment);
+        $this->assertArrayNotHasKey('introattachments', $assignment);
+        $this->assertEquals(1, $assignment['markingworkflow']);
+        $this->assertEquals(1, $assignment['markingallocation']);
     }
 
     /**

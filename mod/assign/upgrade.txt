@@ -8,6 +8,8 @@ This files describes API changes in the assign code.
 
 === 3.0 ===
 * assign_submission_status renderable now requires $usergroups in its constructor
+* External function mod_assign_external::get_assignments now have a new optional parameter: includenotenrolledcourses.
+  Its default value is false, setting it to true will return assignments for courses a user can see even if it's not enroled.
 
 === 2.9 ===
 * External parameter now returns PARAM_RAW instead of PARAM_TEXT for webservices using feedback comments.
