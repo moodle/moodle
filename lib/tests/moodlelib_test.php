@@ -2724,7 +2724,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $userinfo->authormiddlename = '';
         $userinfo->authorpicture = 23;
         $userinfo->authorimagealt = 'Michael Jordan draining another basket.';
-        $userinfo->authoremail = 'test@testing.net';
+        $userinfo->authoremail = 'test@example.com';
 
 
         // Return an object with user picture information.
@@ -2740,7 +2740,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $expectedarray->lastnamephonetic = 'カンベッル';
         $expectedarray->middlename = '';
         $expectedarray->alternatename = '';
-        $expectedarray->email = 'test@testing.net';
+        $expectedarray->email = 'test@example.com';
         $expectedarray->picture = 23;
         $expectedarray->imagealt = 'Michael Jordan draining another basket.';
         $this->assertEquals($user, $expectedarray);

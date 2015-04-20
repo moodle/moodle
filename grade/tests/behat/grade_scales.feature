@@ -21,12 +21,12 @@ Feature: View gradebook when scales are used
       | Course 1 | C1        |
     And the following "users" exist:
       | username | firstname | lastname | email            | idnumber |
-      | teacher1 | Teacher   | 1        | teacher1@asd.com | t1       |
-      | student1 | Student   | 1        | student1@asd.com | s1       |
-      | student2 | Student   | 2        | student2@asd.com | s2       |
-      | student3 | Student   | 3        | student3@asd.com | s3       |
-      | student4 | Student   | 4        | student4@asd.com | s4       |
-      | student5 | Student   | 5        | student5@asd.com | s5       |
+      | teacher1 | Teacher   | 1        | teacher1@example.com | t1       |
+      | student1 | Student   | 1        | student1@example.com | s1       |
+      | student2 | Student   | 2        | student2@example.com | s2       |
+      | student3 | Student   | 3        | student3@example.com | s3       |
+      | student4 | Student   | 4        | student4@example.com | s4       |
+      | student5 | Student   | 5        | student5@example.com | s5       |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |

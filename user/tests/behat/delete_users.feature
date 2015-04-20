@@ -7,10 +7,10 @@ Feature: Deleting users
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | user1 | User | One   | one@asd.com |
-      | user2 | User | Two   | two@asd.com |
-      | user3 | User | Three | three@asd.com |
-      | user4 | User | Four  | four@asd.com |
+      | user1 | User | One   | one@example.com |
+      | user2 | User | Two   | two@example.com |
+      | user3 | User | Three | three@example.com |
+      | user4 | User | Four  | four@example.com |
 
   @javascript
   Scenario: Deleting one user at a time

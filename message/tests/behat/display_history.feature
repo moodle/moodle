@@ -7,8 +7,8 @@ Feature: Message history displays correctly
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | user1 | User | One | one@asd.com |
-      | user2 | User | Two | two@asd.com |
+      | user1 | User | One | one@example.com |
+      | user2 | User | Two | two@example.com |
     And I log in as "user1"
     And I send "Message 1 from user1 to user2" message to "User Two" user
     And I send "Message 2 from user1 to user2" message to "User Two" user

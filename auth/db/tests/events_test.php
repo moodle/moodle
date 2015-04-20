@@ -58,7 +58,7 @@ class auth_db_events_testcase extends advanced_testcase {
         $user = new stdClass();
         $user->name = 'mark';
         $user->pass = 'password123';
-        $user->email = 'what@legend.com';
+        $user->email = 'what@example.com';
         $user->id = $DB->insert_record('auth_db_users', $user);
 
         // Run sync_users and capture the user_created event.
@@ -107,7 +107,7 @@ class auth_db_events_testcase extends advanced_testcase {
         $user = new stdClass();
         $user->name = 'mark';
         $user->pass = 'password123';
-        $user->email = 'what@legend.com';
+        $user->email = 'what@example.com';
         $user->id = $DB->insert_record('auth_db_users', $user);
 
         // Set the config to remove the suspension on the user.

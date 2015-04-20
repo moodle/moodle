@@ -7,7 +7,7 @@ Feature: View my courses in navigation block
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "categories" exist:
       | name  | category | idnumber |
       | cat1  | 0        | cat1     |

@@ -7,7 +7,7 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email            |
-      | teacher1 | teacher1  | teacher1 | teacher1@asd.com |
+      | teacher1 | teacher1  | teacher1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |

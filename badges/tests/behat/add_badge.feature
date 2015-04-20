@@ -14,10 +14,10 @@ Feature: Add badges to the system
     And I expand "Badges" node
     And I follow "Badges settings"
     And I set the field "Default badge issuer name" to "Test Badge Site"
-    And I set the field "Default badge issuer contact details" to "testuser@test-badge-site.com"
+    And I set the field "Default badge issuer contact details" to "testuser@example.com"
     And I press "Save changes"
     When I follow "Add a new badge"
-    Then the field "issuercontact" matches value "testuser@test-badge-site.com"
+    Then the field "issuercontact" matches value "testuser@example.com"
     And the field "issuername" matches value "Test Badge Site"
 
   @javascript
@@ -35,7 +35,7 @@ Feature: Add badges to the system
       | Name | Test Badge |
       | Description | Test badge description |
       | issuername | Test Badge Site |
-      | issuercontact | testuser@test-badge-site.com |
+      | issuercontact | testuser@example.com |
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     When I press "Create badge"
     Then I should see "Edit details"
