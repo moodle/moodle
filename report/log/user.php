@@ -77,14 +77,15 @@ $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for
 $PAGE->set_title("$course->shortname: $stractivityreport");
 
 // Create the appropriate breadcrumb.
-$newusernode = $PAGE->navigation->find('user' . $user->id, null);
-$reportnode = $newusernode->add(get_string('reports'));
-$url = new moodle_url('/report/log/user.php', array('id' => $user->id, 'course' => $course->id, 'mode' => $mode));
+$navigationnode = array(
+        'url' => new moodle_url('/report/log/user.php', array('id' => $user->id, 'course' => $course->id, 'mode' => $mode))
+    );
 if ($mode === 'today') {
-    $reportnode->add(get_string('todaylogs'), $url, navigation_node::TYPE_SETTING);
+    $navigationnode['name'] = get_string('todaylogs');
 } else {
-    $reportnode->add(get_string('alllogs'), $url, navigation_node::TYPE_SETTING);
+    $navigationnode['name'] = get_string('alllogs');
 }
+$PAGE->add_report_nodes($user->id, $navigationnode);
 
 if ($courseid == SITEID) {
     $PAGE->set_heading(fullname($user));
