@@ -72,7 +72,7 @@ class core_user_testcase extends advanced_testcase {
 
         // When supportemail is set.
         core_user::reset_internal_users();
-        $CFG->supportemail = 'test@support.moodle.test';
+        $CFG->supportemail = 'test@example.com';
         $supportuser = core_user::get_support_user();
         $this->assertEquals(core_user::SUPPORT_USER, $supportuser->id);
         $this->assertFalse(core_user::is_real_user($supportuser->id));

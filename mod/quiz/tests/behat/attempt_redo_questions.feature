@@ -6,9 +6,9 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email              |
-      | student  | Student   | One      | student@moodle.com |
-      | teacher  | Teacher   | One      | teacher@moodle.com |
+      | username | firstname | lastname | email               |
+      | student  | Student   | One      | student@example.com |
+      | teacher  | Teacher   | One      | teacher@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |

@@ -7,10 +7,10 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | noneditor1 | Non-editing teacher | 1 | noneditor1@asd.com |
-      | noneditor2 | Non-editing teacher | 2 | noneditor2@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | noneditor1 | Non-editing teacher | 1 | noneditor1@example.com |
+      | noneditor2 | Non-editing teacher | 2 | noneditor2@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |

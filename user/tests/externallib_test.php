@@ -49,7 +49,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'idnumber' => 'idnumbertest1',
             'firstname' => 'First Name User Test 1',
             'lastname' => 'Last Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
@@ -208,7 +208,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'idnumber' => 'idnumbertest1',
             'firstname' => 'First Name User Test 1',
             'lastname' => 'Last Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
@@ -370,7 +370,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'idnumber' => 'idnumbertest1',
             'firstname' => 'First Name User Test 1',
             'lastname' => 'Last Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
@@ -418,7 +418,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
 
         // Do the same call as admin to receive all possible fields.
         $this->setAdminUser();
-        $USER->email = "admin@fakeemail.com";
+        $USER->email = "admin@example.com";
 
         // Call the external function.
         $enrolledusers = core_user_external::get_course_user_profiles(array(
@@ -475,7 +475,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'lastnamephonetic' => '最後のお名前のテスト一号',
             'firstnamephonetic' => 'お名前のテスト一号',
             'alternatename' => 'Alternate Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'description' => 'This is a description for user 1',
             'city' => 'Perth',
             'country' => 'au'
@@ -555,7 +555,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'idnumber' => 'idnumbertest1',
             'firstname' => 'First Name User Test 1',
             'lastname' => 'Last Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
@@ -596,7 +596,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
 
         // Do the same call as admin to receive all possible fields.
         $this->setAdminUser();
-        $USER->email = "admin@fakeemail.com";
+        $USER->email = "admin@example.com";
 
         // Call the external function.
         $returnedusers = core_user_external::get_users_by_id(array(
@@ -654,7 +654,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'lastnamephonetic' => '最後のお名前のテスト一号',
             'firstnamephonetic' => 'お名前のテスト一号',
             'alternatename' => 'Alternate Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'description' => 'This is a description for user 1',
             'city' => 'Perth',
             'country' => 'au'

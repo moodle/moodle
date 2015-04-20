@@ -7,8 +7,8 @@ Feature: Users can send messages to each other
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | user1 | User | One | one@asd.com |
-      | user2 | User | Two | two@asd.com |
+      | user1 | User | One | one@example.com |
+      | user2 | User | Two | two@example.com |
 
   @javascript
   Scenario: Using the 'Send message' dialog on one's profile

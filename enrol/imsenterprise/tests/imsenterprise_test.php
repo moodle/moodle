@@ -97,7 +97,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
 
         $user1 = new StdClass();
         $user1->username = 'u1';
-        $user1->email = 'u1@u1.org';
+        $user1->email = 'u1@example.com';
         $user1->firstname = 'U';
         $user1->lastname = '1';
 
@@ -357,7 +357,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
 
         $user1 = new StdClass();
         $user1->username = 'u1';
-        $user1->email = 'u1@u1.org';
+        $user1->email = 'u1@example.com';
         $user1->firstname = 'U';
         $user1->lastname = '1';
 

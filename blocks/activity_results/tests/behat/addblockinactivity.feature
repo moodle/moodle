@@ -7,12 +7,12 @@ Feature: The activity results block displays student scores
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email | idnumber |
-      | teacher1 | Teacher | 1 | teacher1@asd.com | T1 |
-      | student1 | Student | 1 | student1@asd.com | S1 |
-      | student2 | Student | 2 | student2@asd.com | S2 |
-      | student3 | Student | 3 | student3@asd.com | S3 |
-      | student4 | Student | 4 | student4@asd.com | S4 |
-      | student5 | Student | 5 | student5@asd.com | S5 |
+      | teacher1 | Teacher | 1 | teacher1@example.com | T1 |
+      | student1 | Student | 1 | student1@example.com | S1 |
+      | student2 | Student | 2 | student2@example.com | S2 |
+      | student3 | Student | 3 | student3@example.com | S3 |
+      | student4 | Student | 4 | student4@example.com | S4 |
+      | student5 | Student | 5 | student5@example.com | S5 |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |

@@ -7,8 +7,8 @@ Feature: Browse course list and return back from enrolment page
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | user1 | User | 1 | user1@asd.com |
-      | user2 | User | 2 | user2@asd.com |
+      | user1 | User | 1 | user1@example.com |
+      | user2 | User | 2 | user2@example.com |
     And the following "categories" exist:
       | name | category | idnumber |
       | Sample category | 0 | CAT1 |

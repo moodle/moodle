@@ -7,8 +7,8 @@ Feature: Publish rubrics as templates
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | manager1 | Manager | 1 | manager1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | manager1 | Manager | 1 | manager1@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |

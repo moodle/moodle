@@ -7,11 +7,11 @@ Feature: Workshop submission and assessment
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email            |
-      | student1 | Sam1      | Student1 | student1@asd.com |
-      | student2 | Sam2      | Student2 | student2@asd.com |
-      | student3 | Sam3      | Student3 | student3@asd.com |
-      | student4 | Sam4      | Student4 | student3@asd.com |
-      | teacher1 | Terry1    | Teacher1 | teacher1@asd.com |
+      | student1 | Sam1      | Student1 | student1@example.com |
+      | student2 | Sam2      | Student2 | student2@example.com |
+      | student3 | Sam3      | Student3 | student3@example.com |
+      | student4 | Sam4      | Student4 | student3@example.com |
+      | teacher1 | Terry1    | Teacher1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname  | shortname |
       | Course1   | c1        |
