@@ -96,19 +96,28 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $roleid2 = $this->assignUserCapability('mod/forum:viewdiscussion', $context2->id, $newrole);
 
         // Create what we expect to be returned when querying the two courses.
+        unset($forum1->displaywordcount);
+        unset($forum2->displaywordcount);
+
         $expectedforums = array();
         $expectedforums[$forum1->id] = (array) $forum1;
         $expectedforums[$forum2->id] = (array) $forum2;
 
         // Call the external function passing course ids.
         $forums = mod_forum_external::get_forums_by_courses(array($course1->id, $course2->id));
-        external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
-        $this->assertEquals($expectedforums, $forums);
+        $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
+        $this->assertCount(2, $forums);
+        foreach ($forums as $forum) {
+            $this->assertEquals($expectedforums[$forum['id']], $forum);
+        }
 
         // Call the external function without passing course id.
         $forums = mod_forum_external::get_forums_by_courses();
-        external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
-        $this->assertEquals($expectedforums, $forums);
+        $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
+        $this->assertCount(2, $forums);
+        foreach ($forums as $forum) {
+            $this->assertEquals($expectedforums[$forum['id']], $forum);
+        }
 
         // Unenrol user from second course and alter expected forums.
         $enrol->unenrol_user($instance2, $user->id);
@@ -116,25 +125,14 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         // Call the external function without passing course id.
         $forums = mod_forum_external::get_forums_by_courses();
-        external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
-        $this->assertEquals($expectedforums, $forums);
+        $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
+        $this->assertCount(1, $forums);
+        $this->assertEquals($expectedforums[$forum1->id], $forums[0]);
 
-        // Call for the second course we unenrolled the user from, ensure exception thrown.
-        try {
-            mod_forum_external::get_forums_by_courses(array($course2->id));
-            $this->fail('Exception expected due to being unenrolled from the course.');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('requireloginerror', $e->errorcode);
-        }
-
-        // Call without required capability, ensure exception thrown.
-        $this->unassignUserCapability('mod/forum:viewdiscussion', null, null, $course1->id);
-        try {
-            $forums = mod_forum_external::get_forums_by_courses(array($course1->id));
-            $this->fail('Exception expected due to missing capability.');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('nopermissions', $e->errorcode);
-        }
+        // Call for the second course we unenrolled the user from.
+        $forums = mod_forum_external::get_forums_by_courses(array($course2->id));
+        $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
+        $this->assertCount(0, $forums);
     }
 
     /**
