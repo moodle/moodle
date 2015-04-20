@@ -304,9 +304,11 @@ if ($user->id == -1 or ($user->id != $USER->id)) {
     if ($user->id == -1) {
         echo $OUTPUT->header();
     } else {
-        $PAGE->set_heading($SITE->fullname);
-        echo $OUTPUT->header();
+        $streditmyprofile = get_string('editmyprofile');
         $userfullname = fullname($user, true);
+        $PAGE->set_heading($SITE->fullname);
+        $PAGE->set_title("$course->shortname: $streditmyprofile - $userfullname");
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($userfullname);
     }
 } else if (!empty($USER->newadminuser)) {
