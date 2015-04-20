@@ -3243,7 +3243,8 @@ class assign {
         // Get markers to use in drop lists.
         $markingallocationoptions = array();
         if ($markingallocation) {
-            $markers = get_users_by_capability($this->context, 'mod/assign:grade');
+            list($sort, $params) = users_order_by_sql();
+            $markers = get_users_by_capability($this->context, 'mod/assign:grade', '', $sort);
             $markingallocationoptions[''] = get_string('filternone', 'assign');
             $markingallocationoptions[ASSIGN_MARKER_FILTER_NO_MARKER] = get_string('markerfilternomarker', 'assign');
             foreach ($markers as $marker) {
@@ -3781,7 +3782,8 @@ class assign {
             'usershtml' => $usershtml,
         );
 
-        $markers = get_users_by_capability($this->get_context(), 'mod/assign:grade');
+        list($sort, $params) = users_order_by_sql();
+        $markers = get_users_by_capability($this->get_context(), 'mod/assign:grade', '', $sort);
         $markerlist = array();
         foreach ($markers as $marker) {
             $markerlist[$marker->id] = fullname($marker);
@@ -5532,7 +5534,8 @@ class assign {
         if ($markingallocation) {
             $markingallocationoptions[''] = get_string('filternone', 'assign');
             $markingallocationoptions[ASSIGN_MARKER_FILTER_NO_MARKER] = get_string('markerfilternomarker', 'assign');
-            $markers = get_users_by_capability($this->context, 'mod/assign:grade');
+            list($sort, $params) = users_order_by_sql();
+            $markers = get_users_by_capability($this->context, 'mod/assign:grade', '', $sort);
             foreach ($markers as $marker) {
                 $markingallocationoptions[$marker->id] = fullname($marker);
             }
@@ -6109,7 +6112,8 @@ class assign {
             $this->get_instance()->markingallocation &&
             has_capability('mod/assign:manageallocations', $this->context)) {
 
-            $markers = get_users_by_capability($this->context, 'mod/assign:grade');
+            list($sort, $params) = users_order_by_sql();
+            $markers = get_users_by_capability($this->context, 'mod/assign:grade', '', $sort);
             $markerlist = array('' =>  get_string('choosemarker', 'assign'));
             foreach ($markers as $marker) {
                 $markerlist[$marker->id] = fullname($marker);
@@ -6513,7 +6517,8 @@ class assign {
             'usershtml' => ''   // initialise these parameters with real information.
         );
 
-        $markers = get_users_by_capability($this->get_context(), 'mod/assign:grade');
+        list($sort, $params) = users_order_by_sql();
+        $markers = get_users_by_capability($this->get_context(), 'mod/assign:grade', '', $sort);
         $markerlist = array();
         foreach ($markers as $marker) {
             $markerlist[$marker->id] = fullname($marker);
