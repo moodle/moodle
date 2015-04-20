@@ -7,9 +7,9 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
   Scenario: non editing teacher grade essay questions
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | teacher2 | Teacher | 2 | teacher2@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | teacher2 | Teacher | 2 | teacher2@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |

@@ -94,7 +94,7 @@ class behat_util extends testing_util {
 
         // Update admin user info.
         $user = $DB->get_record('user', array('username' => 'admin'));
-        $user->email = 'moodle@moodlemoodle.com';
+        $user->email = 'moodle@example.com';
         $user->firstname = 'Admin';
         $user->lastname = 'User';
         $user->city = 'Perth';

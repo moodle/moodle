@@ -12,8 +12,8 @@ Feature: In an assignment, teacher can annotate PDF files during grading
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -75,11 +75,11 @@ Feature: In an assignment, teacher can annotate PDF files during grading
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
-      | student3 | Student | 3 | student3@asd.com |
-      | student4 | Student | 4 | student4@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
+      | student3 | Student | 3 | student3@example.com |
+      | student4 | Student | 4 | student4@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |

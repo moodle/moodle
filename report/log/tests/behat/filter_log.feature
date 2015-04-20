@@ -10,7 +10,7 @@ Feature: In a report, admin can filter log data
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | admin | C1 | editingteacher |

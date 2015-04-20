@@ -10,8 +10,8 @@ Feature: Course summary block used in a course
       | Course 1 | C101      | Proved the course summary block works! |0        |
     And the following "users" exist:
       | username    | firstname | lastname | email            |
-      | student1    | Sam       | Student  | student1@asd.com |
-      | teacher1    | Teacher   | One      | teacher1@asd.com |
+      | student1    | Sam       | Student  | student1@example.com |
+      | teacher1    | Teacher   | One      | teacher1@example.com |
     And the following "course enrolments" exist:
       | user        | course | role    |
       | student1    | C101   | student |

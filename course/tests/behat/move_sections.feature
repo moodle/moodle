@@ -7,7 +7,7 @@ Feature: Sections can be moved
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | format | coursedisplay | numsections |
       | Course 1 | C1 | topics | 0 | 5 |

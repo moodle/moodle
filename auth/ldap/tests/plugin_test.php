@@ -296,7 +296,7 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
             'lastnamephonetic' => '最後のお名前のテスト一号',
             'firstnamephonetic' => 'お名前のテスト一号',
             'alternatename' => 'Alternate Name User Test 1',
-            'email' => 'usersignuptest1@email.com',
+            'email' => 'usersignuptest1@example.com',
             'description' => 'This is a description for user 1',
             'city' => 'Perth',
             'country' => 'au',

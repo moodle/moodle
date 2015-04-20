@@ -299,7 +299,7 @@
         <IDNUMBER>891220979</IDNUMBER>
         <FIRSTNAME>Admin</FIRSTNAME>
         <LASTNAME>User</LASTNAME>
-        <EMAIL>adamzap@gmail.com</EMAIL>
+        <EMAIL>adamzap@example.com</EMAIL>
         <EMAILSTOP>0</EMAILSTOP>
         <ICQ></ICQ>
         <SKYPE></SKYPE>
@@ -368,7 +368,7 @@
         <IDNUMBER>891111111</IDNUMBER>
         <FIRSTNAME>Adam</FIRSTNAME>
         <LASTNAME>Zapletal</LASTNAME>
-        <EMAIL>azaple1@lsu.edu</EMAIL>
+        <EMAIL>azaple1@example.com</EMAIL>
         <EMAILSTOP>0</EMAILSTOP>
         <ICQ></ICQ>
         <SKYPE></SKYPE>
@@ -481,7 +481,7 @@
         <IDNUMBER></IDNUMBER>
         <FIRSTNAME>Philip</FIRSTNAME>
         <LASTNAME>Cali</LASTNAME>
-        <EMAIL>pcali1@lsu.edu</EMAIL>
+        <EMAIL>pcali1@example.com</EMAIL>
         <EMAILSTOP>0</EMAILSTOP>
         <ICQ></ICQ>
         <SKYPE></SKYPE>

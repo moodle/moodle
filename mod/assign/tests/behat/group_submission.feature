@@ -11,11 +11,11 @@ Feature: Group assignment submissions
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student0 | Student | 0 | student0@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
-      | student3 | Student | 3 | student3@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student0 | Student | 0 | student0@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
+      | student3 | Student | 3 | student3@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -50,8 +50,8 @@ Feature: Group assignment submissions
     And I press "Save changes"
     And I expand "Users" node
     And I follow "Groups"
-    And I add "Student 0 (student0@asd.com)" user to "Group 1" group members
-    And I add "Student 1 (student1@asd.com)" user to "Group 1" group members
+    And I add "Student 0 (student0@example.com)" user to "Group 1" group members
+    And I add "Student 1 (student1@example.com)" user to "Group 1" group members
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I follow "View/grade all submissions"
@@ -71,11 +71,11 @@ Feature: Group assignment submissions
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
-      | student3 | Student | 3 | student3@asd.com |
-      | student4 | Student | 4 | student4@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
+      | student3 | Student | 3 | student3@example.com |
+      | student4 | Student | 4 | student4@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |

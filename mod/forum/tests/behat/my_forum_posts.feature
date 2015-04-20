@@ -7,8 +7,8 @@ Feature: A user can view their posts and discussions
   Scenario: View the student's posts and discussions
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |

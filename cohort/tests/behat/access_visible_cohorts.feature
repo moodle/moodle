@@ -22,10 +22,10 @@ Feature: Access visible and hidden cohorts
       | Cohort empty in category 1  | CVE1     | Category     | CAT1      | 1       |
     Given the following "users" exist:
       | username | firstname | lastname | email            |
-      | user1    | First     | User     | first@user.com   |
-      | user2    | Second    | User     | second@user.com  |
-      | student  | Sam       | User     | student@user.com |
-      | teacher  | Terry     | User     | teacher@user.com |
+      | user1    | First     | User     | first@example.com   |
+      | user2    | Second    | User     | second@example.com  |
+      | student  | Sam       | User     | student@example.com |
+      | teacher  | Terry     | User     | teacher@example.com |
     And the following "cohort members" exist:
       | user    | cohort |
       | student | CV0   |
@@ -60,7 +60,7 @@ Feature: Access visible and hidden cohorts
     And I set the field "Cohort" to "System cohort"
     And I press "Add method"
     And I navigate to "Enrolled users" node in "Course administration > Users"
-    And I should see "student@user.com"
+    And I should see "student@example.com"
     And I navigate to "Groups" node in "Course administration > Users"
     And I press "Auto-create groups"
     And the "Select members from cohort" select box should contain "Cohort in category 1"
@@ -87,7 +87,7 @@ Feature: Access visible and hidden cohorts
     And I set the field "Cohort" to "System cohort"
     And I press "Add method"
     And I navigate to "Enrolled users" node in "Course administration > Users"
-    And I should see "student@user.com"
+    And I should see "student@example.com"
     And I navigate to "Groups" node in "Course administration > Users"
     And I press "Auto-create groups"
     And the "Select members from cohort" select box should contain "Cohort in category 1"
@@ -114,7 +114,7 @@ Feature: Access visible and hidden cohorts
     And I set the field "Cohort" to "System cohort"
     And I press "Add method"
     And I navigate to "Enrolled users" node in "Course administration > Users"
-    And I should see "student@user.com"
+    And I should see "student@example.com"
     And I navigate to "Groups" node in "Course administration > Users"
     And I press "Auto-create groups"
     And the "Select members from cohort" select box should contain "Cohort in category 1"

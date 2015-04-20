@@ -10,8 +10,8 @@ Feature: availability_profile
       | Course 1 | C1        | topics | 1                |
     And the following "users" exist:
       | username | email         |
-      | teacher1 | t@example.org |
-      | student1 | s@example.org |
+      | teacher1 | t@example.com |
+      | student1 | s@example.com |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
@@ -36,7 +36,7 @@ Feature: availability_profile
     And I click on "Add restriction..." "button"
     And I click on "User profile" "button"
     And I set the field "User profile field" to "Email address"
-    And I set the field "Value to compare against" to "s@example.org"
+    And I set the field "Value to compare against" to "s@example.com"
     And I click on ".availability-item .availability-eye img" "css_element"
     And I click on "Save and return to course" "button"
 
@@ -50,7 +50,7 @@ Feature: availability_profile
     And I click on "Add restriction..." "button"
     And I click on "User profile" "button"
     And I set the field "User profile field" to "Email address"
-    And I set the field "Value to compare against" to "q@example.org"
+    And I set the field "Value to compare against" to "q@example.com"
     And I click on ".availability-item .availability-eye img" "css_element"
     And I click on "Save and return to course" "button"
 
@@ -76,7 +76,7 @@ Feature: availability_profile
 
     # Set field value for user.
     And I navigate to "Browse list of users" node in "Site administration > Users > Accounts"
-    And I click on "a[title=Edit]" "css_element" in the "s@example.org" "table_row"
+    And I click on "a[title=Edit]" "css_element" in the "s@example.com" "table_row"
     And I expand all fieldsets
     And I set the field "Super field" to "Bananaman"
     And I click on "Update profile" "button"

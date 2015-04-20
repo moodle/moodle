@@ -8,8 +8,8 @@ Feature: Block users from contacting me
   Scenario: Block users from contacting me with Javascript enabled
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | user1 | User | One | one@asd.com |
-      | user2 | User | Two | two@asd.com |
+      | user1 | User | One | one@example.com |
+      | user2 | User | Two | two@example.com |
     And I log in as "user1"
     And I navigate to "Messages" node in "My profile"
     And I set the field "Search people and messages" to "User Two"
