@@ -412,9 +412,6 @@ function uu_check_custom_profile_data(&$data) {
     foreach ($data as $key => $value) {
         if (preg_match('/^profile_field_/', $key)) {
             $shortname = str_replace('profile_field_', '', $key);
-            $testuser = new stdClass();
-            $testuser->{$key} = $value;
-            $testuser->id = $testuserid;
             if ($fields = $DB->get_records('user_info_field', array('shortname' => $shortname))) {
                 foreach ($fields as $field) {
                     require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
@@ -427,6 +424,9 @@ function uu_check_custom_profile_data(&$data) {
                     }
                     // Check for duplicate value.
                     if (method_exists($formfield, 'edit_validate_field') ) {
+                        $testuser = new stdClass();
+                        $testuser->{$key} = $value;
+                        $testuser->id = $testuserid;
                         $err = $formfield->edit_validate_field($testuser);
                         if (!empty($err[$key])) {
                             $data['status'][] = $err[$key].' ('.$key.')';
