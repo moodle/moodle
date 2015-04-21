@@ -25,9 +25,6 @@
 namespace core_user\output\myprofile;
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->libdir . "/myprofilelib.php");
-
 /**
  * Defines MAnager class for myprofile navigation tree.
  *
@@ -47,9 +44,12 @@ class manager {
      * @return tree Fully build tree to be rendered on my profile page.
      */
     public static function build_tree($user, $iscurrentuser, $course = null) {
+        global $CFG;
         $tree = new tree();
 
         // Add core nodes.
+
+        require_once($CFG->libdir . "/myprofilelib.php");
         core_myprofile_navigation($tree, $user, $iscurrentuser, $course);
 
         // Core components.
