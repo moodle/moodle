@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$string[authenticationtypes'] = 'Select authentication types';
+$string['authenticationtypes'] = 'Select authentication types';
 $string['authenticationtypes_desc'] = 'These are the authentication types which can be used for automatically assigning a user to a company';
 $string['company'] = 'Company users is assigned to';
 $string['configcompany'] = 'This is the company that the user will be assigned to once they have completed the sign up process';
