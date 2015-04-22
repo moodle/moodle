@@ -80,6 +80,7 @@ function lesson_save_question_options($question, $lesson) {
                     $answer = clone($defaultanswer);
                     if ($question->fraction[$key] >=0.5) {
                         $answer->jumpto = LESSON_NEXTPAGE;
+                        $answer->score = 1;
                     }
                     $answer->grade = round($question->fraction[$key] * 100);
                     $answer->answer   = $dataanswer;
@@ -112,12 +113,14 @@ function lesson_save_question_options($question, $lesson) {
             foreach ($question->answer as $key => $dataanswer) {
                 if ($dataanswer != "") {
                     $answer = clone($defaultanswer);
-                    $answer->jumpto = LESSON_NEXTPAGE;
+                    if ($question->fraction[$key] >= 0.5) {
+                        $answer->jumpto = LESSON_NEXTPAGE;
+                        $answer->score = 1;
+                    }
                     $answer->grade = round($question->fraction[$key] * 100);
                     $min = $question->answer[$key] - $question->tolerance[$key];
                     $max = $question->answer[$key] + $question->tolerance[$key];
                     $answer->answer   = $min.":".$max;
-                    // $answer->answer   = $question->min[$key].":".$question->max[$key]; original line for min/max
                     $answer->response = $question->feedback[$key]['text'];
                     $answer->responseformat = $question->feedback[$key]['format'];
                     $answer->id = $DB->insert_record("lesson_answers", $answer);
@@ -146,6 +149,7 @@ function lesson_save_question_options($question, $lesson) {
             $answer->grade = $question->correctanswer * 100;
             if ($answer->grade > 50 ) {
                 $answer->jumpto = LESSON_NEXTPAGE;
+                $answer->score = 1;
             }
             if (isset($question->feedbacktrue)) {
                 $answer->response = $question->feedbacktrue['text'];
@@ -159,6 +163,7 @@ function lesson_save_question_options($question, $lesson) {
             $answer->grade = (1 - (int)$question->correctanswer) * 100;
             if ($answer->grade > 50 ) {
                 $answer->jumpto = LESSON_NEXTPAGE;
+                $answer->score = 1;
             }
             if (isset($question->feedbackfalse)) {
                 $answer->response = $question->feedbackfalse['text'];
@@ -180,17 +185,19 @@ function lesson_save_question_options($question, $lesson) {
                 if ($dataanswer != "") {
                     $answer = clone($defaultanswer);
                     $answer->grade = round($question->fraction[$key] * 100);
-                    // changed some defaults
-                    /* Original Code
-                    if ($answer->grade > 50 ) {
-                        $answer->jumpto = LESSON_NEXTPAGE;
+
+                    if ($question->single) {
+                        if ($answer->grade > 50) {
+                            $answer->jumpto = LESSON_NEXTPAGE;
+                            $answer->score = 1;
+                        }
+                    } else {
+                        // If multi answer allowed, any answer with fraction > 0 is considered correct.
+                        if ($question->fraction[$key] > 0) {
+                            $answer->jumpto = LESSON_NEXTPAGE;
+                            $answer->score = 1;
+                        }
                     }
-                    Replaced with:                    */
-                    if ($answer->grade > 50 ) {
-                        $answer->jumpto = LESSON_NEXTPAGE;
-                        $answer->score = 1;
-                    }
-                    // end Replace
                     $answer->answer   = $dataanswer['text'];
                     $answer->answerformat   = $dataanswer['format'];
                     $answer->response = $question->feedback[$key]['text'];
@@ -231,6 +238,7 @@ function lesson_save_question_options($question, $lesson) {
             $correctanswer = clone($defaultanswer);
             $correctanswer->answer = get_string('thatsthecorrectanswer', 'lesson');
             $correctanswer->jumpto = LESSON_NEXTPAGE;
+            $correctanswer->score = 1;
             $DB->insert_record("lesson_answers", $correctanswer);
 
             // The second answer should always be the wrong answer
