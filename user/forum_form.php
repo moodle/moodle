@@ -75,7 +75,7 @@ class user_edit_forum_form extends moodleform {
         $mform->addElement('hidden', 'course', $COURSE->id);
         $mform->setType('course', PARAM_INT);
 
-        $this->add_action_buttons(false, get_string('savechanges'));
+        $this->add_action_buttons(true, get_string('savechanges'));
     }
 }
 

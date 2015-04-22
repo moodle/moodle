@@ -60,7 +60,7 @@ class user_edit_language_form extends moodleform {
         $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
         $mform->setDefault('lang', $CFG->lang);
 
-        $this->add_action_buttons(false, get_string('savechanges'));
+        $this->add_action_buttons(true, get_string('savechanges'));
     }
 
     /**

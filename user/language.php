@@ -39,7 +39,10 @@ list($user, $course) = useredit_setup_preference_page($userid, $courseid);
 $languageform = new user_edit_language_form(null, array('userid' => $user->id));
 $languageform->set_data($user);
 
-if ($data = $languageform->get_data()) {
+$redirect = new moodle_url("/user/preferences.php", array('userid' => $user->id));
+if ($languageform->is_cancelled()) {
+    redirect($redirect);
+} else if ($data = $languageform->get_data()) {
     $lang = $data->lang;
     // If the specified language does not exist, use the site default.
     if (!get_string_manager()->translation_exists($lang, false)) {
@@ -53,7 +56,7 @@ if ($data = $languageform->get_data()) {
     // Trigger event.
     \core\event\user_updated::create_from_userid($user->id)->trigger();
 
-    redirect("$CFG->wwwroot/user/preferences.php?userid=$user->id");
+    redirect($redirect);
 }
 
 // Display page header.

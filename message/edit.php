@@ -135,7 +135,8 @@ if (($form = data_submitted()) && confirm_sesskey()) {
     }
     user_update_user($user, false, false);
 
-    redirect("$CFG->wwwroot/message/edit.php?id=$user->id");
+    $redirect = new moodle_url("/user/preferences.php", array('userid' => $userid));
+    redirect($redirect);
 }
 
 /// Load preferences
@@ -180,7 +181,8 @@ $renderer = $PAGE->get_renderer('core', 'message');
 // Fetch default (site) preferences
 $defaultpreferences = get_message_output_default_preferences();
 
-$messagingoptions = $renderer->manage_messagingoptions($processors, $providers, $preferences, $defaultpreferences, $user->emailstop);
+$messagingoptions = $renderer->manage_messagingoptions($processors, $providers, $preferences, $defaultpreferences,
+        $user->emailstop, $user->id);
 
 echo $OUTPUT->header();
 echo $messagingoptions;
