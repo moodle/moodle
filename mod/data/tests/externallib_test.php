@@ -106,6 +106,8 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
             $expected1[$field] = $database1->{$field};
             $expected2[$field] = $database2->{$field};
         }
+        $expected1['comments'] = (bool) $expected1['comments'];
+        $expected2['comments'] = (bool) $expected2['comments'];
 
         $expecteddatabases = array();
         $expecteddatabases[] = $expected2;
@@ -113,12 +115,12 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
 
         // Call the external function passing course ids.
         $result = mod_data_external::get_databases_by_courses(array($course2->id, $course1->id));
-        external_api::clean_returnvalue(mod_data_external::get_databases_by_courses_returns(), $result);
+        $result = external_api::clean_returnvalue(mod_data_external::get_databases_by_courses_returns(), $result);
         $this->assertEquals($expecteddatabases, $result['databases']);
 
         // Call the external function without passing course id.
         $result = mod_data_external::get_databases_by_courses();
-        external_api::clean_returnvalue(mod_data_external::get_databases_by_courses_returns(), $result);
+        $result = external_api::clean_returnvalue(mod_data_external::get_databases_by_courses_returns(), $result);
         $this->assertEquals($expecteddatabases, $result['databases']);
 
         // Unenrol user from second course and alter expected databases.
@@ -127,13 +129,13 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
 
         // Call the external function without passing course id.
         $result = mod_data_external::get_databases_by_courses();
-        external_api::clean_returnvalue(mod_data_external::get_databases_by_courses_returns(), $result);
+        $result = external_api::clean_returnvalue(mod_data_external::get_databases_by_courses_returns(), $result);
         $this->assertEquals($expecteddatabases, $result['databases']);
 
         // Call for the second course we unenrolled the user from, expected warning.
         $result = mod_data_external::get_databases_by_courses(array($course2->id));
         $this->assertCount(1, $result['warnings']);
-        $this->assertEquals('2', $result['warnings'][0]['warningcode']);
+        $this->assertEquals('1', $result['warnings'][0]['warningcode']);
         $this->assertEquals($course2->id, $result['warnings'][0]['itemid']);
 
         // Now, try as a teacher for getting all the additional fields.
@@ -145,10 +147,21 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
                                 'assesstimefinish', 'defaultsort', 'defaultsortdir', 'editany', 'notification');
 
         foreach ($additionalfields as $field) {
-            $expecteddatabases[0][$field] = $database1->{$field};
+            if ($field == 'approval' or $field == 'editany') {
+                $expecteddatabases[0][$field] = (bool) $database1->{$field};
+            } else {
+                $expecteddatabases[0][$field] = $database1->{$field};
+            }
         }
         $result = mod_data_external::get_databases_by_courses();
-        external_api::clean_returnvalue(mod_data_external::get_databases_by_courses_returns(), $result);
+        $result = external_api::clean_returnvalue(mod_data_external::get_databases_by_courses_returns(), $result);
+        $this->assertEquals($expecteddatabases, $result['databases']);
+
+        // Admin should get all the information.
+        self::setAdminUser();
+
+        $result = mod_data_external::get_databases_by_courses(array($course1->id));
+        $result = external_api::clean_returnvalue(mod_data_external::get_databases_by_courses_returns(), $result);
         $this->assertEquals($expecteddatabases, $result['databases']);
     }
 }

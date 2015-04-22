@@ -70,23 +70,11 @@ class mod_data_external extends external_api {
         $params = self::validate_parameters(self::get_databases_by_courses_parameters(), array('courseids' => $courseids));
         $warnings = array();
 
-        $courses = enrol_get_my_courses();
-        // Used to test for ids that have been requested but can't be returned.
-        if (count($params['courseids']) > 0) {
-            $courseids = array();
-            foreach ($params['courseids'] as $courseid) {
-                if (!in_array($courseid, array_keys($courses))) {
-                    $warnings[] = array(
-                        'item' => 'course',
-                        'itemid' => $courseid,
-                        'warningcode' => '2',
-                        'message' => 'User is not enrolled or does not have requested capability'
-                    );
-                } else {
-                    $courseids[] = $courseid;
-                }
-            }
+        if (!empty($params['courseids'])) {
+            $courses = array();
+            $courseids = $params['courseids'];
         } else {
+            $courses = enrol_get_my_courses();
             $courseids = array_keys($courses);
         }
 
@@ -100,11 +88,15 @@ class mod_data_external extends external_api {
 
             // Go through the courseids.
             foreach ($courseids as $cid) {
-                $context = context_course::instance($cid);
                 // Check the user can function in this context.
                 try {
+                    $context = context_course::instance($cid);
                     self::validate_context($context);
 
+                    // Check if this course was already loaded (by enrol_get_my_courses).
+                    if (!isset($courses[$cid])) {
+                        $courses[$cid] = get_course($cid);
+                    }
                     $dbcourses[$cid] = $courses[$cid];
 
                 } catch (Exception $e) {
@@ -112,7 +104,7 @@ class mod_data_external extends external_api {
                         'item' => 'course',
                         'itemid' => $cid,
                         'warningcode' => '1',
-                        'message' => 'No access rights in course context '.$e->getMessage().$e->getTraceAsString()
+                        'message' => 'No access rights in course context '.$e->getMessage()
                     );
                 }
             }
@@ -200,13 +192,13 @@ class mod_data_external extends external_api {
                             'name' => new external_value(PARAM_TEXT, 'Database name'),
                             'intro' => new external_value(PARAM_RAW, 'The Database intro'),
                             'introformat' => new external_format_value('intro'),
-                            'comments' => new external_value(PARAM_BOOL, 'comments enabled'),
-                            'timeavailablefrom' => new external_value(PARAM_INT, 'timeavailablefrom field'),
-                            'timeavailableto' => new external_value(PARAM_INT, 'timeavailableto field'),
-                            'timeviewfrom' => new external_value(PARAM_INT, 'timeviewfrom field'),
-                            'timeviewto' => new external_value(PARAM_INT, 'timeviewto field'),
-                            'requiredentries' => new external_value(PARAM_INT, 'requiredentries field'),
-                            'requiredentriestoview' => new external_value(PARAM_INT, 'requiredentriestoview field'),
+                            'comments' => new external_value(PARAM_BOOL, 'comments enabled', VALUE_OPTIONAL),
+                            'timeavailablefrom' => new external_value(PARAM_INT, 'timeavailablefrom field', VALUE_OPTIONAL),
+                            'timeavailableto' => new external_value(PARAM_INT, 'timeavailableto field', VALUE_OPTIONAL),
+                            'timeviewfrom' => new external_value(PARAM_INT, 'timeviewfrom field', VALUE_OPTIONAL),
+                            'timeviewto' => new external_value(PARAM_INT, 'timeviewto field', VALUE_OPTIONAL),
+                            'requiredentries' => new external_value(PARAM_INT, 'requiredentries field', VALUE_OPTIONAL),
+                            'requiredentriestoview' => new external_value(PARAM_INT, 'requiredentriestoview field', VALUE_OPTIONAL),
                             'maxentries' => new external_value(PARAM_INT, 'maxentries field', VALUE_OPTIONAL),
                             'rssarticles' => new external_value(PARAM_INT, 'rssarticles field', VALUE_OPTIONAL),
                             'singletemplate' => new external_value(PARAM_RAW, 'singletemplate field', VALUE_OPTIONAL),
