@@ -96,7 +96,7 @@ function lesson_save_question_options($question, $lesson, $contextid) {
                         $answer->jumpto = LESSON_NEXTPAGE;
                     }
                     $answer->timecreated   = $timenow;
-                    $answer->grade = $question->fraction[$key] * 100;
+                    $answer->grade = round($question->fraction[$key] * 100);
                     $answer->answer   = $dataanswer;
                     $answer->response = $question->feedback[$key]['text'];
                     $answer->responseformat = $question->feedback[$key]['format'];
@@ -132,7 +132,7 @@ function lesson_save_question_options($question, $lesson, $contextid) {
                     $answer->pageid   = $question->id;
                     $answer->jumpto = LESSON_NEXTPAGE;
                     $answer->timecreated   = $timenow;
-                    $answer->grade = $question->fraction[$key] * 100;
+                    $answer->grade = round($question->fraction[$key] * 100);
                     $min = $question->answer[$key] - $question->tolerance[$key];
                     $max = $question->answer[$key] + $question->tolerance[$key];
                     $answer->answer   = $min.":".$max;
@@ -210,7 +210,7 @@ function lesson_save_question_options($question, $lesson, $contextid) {
                     $answer->lessonid   = $question->lessonid;
                     $answer->pageid   = $question->id;
                     $answer->timecreated   = $timenow;
-                    $answer->grade = $question->fraction[$key] * 100;
+                    $answer->grade = round($question->fraction[$key] * 100);
                     // changed some defaults
                     /* Original Code
                     if ($answer->grade > 50 ) {
