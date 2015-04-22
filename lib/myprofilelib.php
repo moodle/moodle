@@ -43,7 +43,8 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
     $courseid = !empty($course) ? $course->id : SITEID;
 
     $contactcategory = new core_user\output\myprofile\category('contact', get_string('userdetails'));
-    $coursedetailscategory = new core_user\output\myprofile\category('coursedetails', get_string('coursedetails'), 'contact');
+    // No after property specified intentionally. It is a hack to make administration block appear towards the end. Refer MDL-49928.
+    $coursedetailscategory = new core_user\output\myprofile\category('coursedetails', get_string('coursedetails'));
     $miscategory = new core_user\output\myprofile\category('miscellaneous', get_string('miscellaneous'), 'coursedetails');
     $reportcategory = new core_user\output\myprofile\category('reports', get_string('reports'), 'miscellaneous');
     $admincategory = new core_user\output\myprofile\category('administration', get_string('administration'), 'reports');
