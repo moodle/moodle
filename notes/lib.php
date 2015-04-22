@@ -379,6 +379,8 @@ function note_view($context, $userid) {
  * @return bool
  */
 function core_notes_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    global $USER;
+
     $url = new moodle_url("/notes/index.php", array('user' => $user->id));
     $title = get_string('notes', 'core_notes');
     if (empty($course)) {
@@ -387,7 +389,9 @@ function core_notes_myprofile_navigation(core_user\output\myprofile\tree $tree, 
             // No cap, nothing to do.
             return false;
         }
-        $url->param('course', 0);
+        if ($user->id != $USER->id) {
+            $url->param('course', 0);
+        }
     } else {
         if (!has_capability('moodle/notes:view', context_course::instance($course->id))) {
             // No cap, nothing to do.
