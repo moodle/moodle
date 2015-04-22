@@ -1080,9 +1080,7 @@ class iomad {
                 $showsuspendedsql
                 $completionsql
                 $searchinfo->sqlsort ";
-$DB->set_debug(true);
         $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
-$DB->set_debug(false);
         $countusers = $DB->get_records_sql($countsql.$fromsql, $searchinfo->searchparams);
         $numusers = count($countusers);
 
