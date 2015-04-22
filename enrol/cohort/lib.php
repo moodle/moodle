@@ -344,14 +344,10 @@ function enrol_cohort_create_new_group($courseid, $cohortid) {
     $a->name = $groupname;
     $a->increment = '';
     $groupname = get_string('defaultgroupnametext', 'enrol_cohort', $a);
+    $inc = 1;
     // Check to see if the cohort group name already exists. Add an incremented number if it does.
-    while ($DB->record_exists('groups', array('name' => $groupname))) {
-        $matches = array();
-        if (!preg_match('/(.*?)\(([0-9]+)\)$/', $groupname, $matches)) {
-            $a->increment = '(2)';
-        } else {
-            $a->increment = '(' . ($matches[2] + 1) . ')';
-        }
+    while ($DB->record_exists('groups', array('name' => $groupname, 'courseid' => $courseid))) {
+        $a->increment = '(' . (++$inc) . ')';
         $newshortname = get_string('defaultgroupnametext', 'enrol_cohort', $a);
         $groupname = $newshortname;
     }
