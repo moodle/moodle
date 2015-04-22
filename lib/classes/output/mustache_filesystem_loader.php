@@ -49,6 +49,9 @@ class mustache_filesystem_loader extends \Mustache_Loader_FilesystemLoader {
             throw new coding_exception('Templates names must be specified as "componentname/templatename" (' . $name . ' requested) ');
         }
         list($component, $templatename) = explode('/', $name, 2);
+        if (strpos($templatename, '/') !== false) {
+            throw new coding_exception('Templates cannot be placed in sub directories (' . $name . ' requested)');
+        }
         return parent::getFileName($templatename);
     }
 }
