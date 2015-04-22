@@ -43,17 +43,19 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
     $courseid = !empty($course) ? $course->id : SITEID;
 
     $contactcategory = new core_user\output\myprofile\category('contact', get_string('userdetails'));
-    $miscategory = new core_user\output\myprofile\category('miscellaneous', get_string('miscellaneous'));
-    $reportcategory = new core_user\output\myprofile\category('reports', get_string('reports'), 'miscellaneous');
-    $admincategory = new core_user\output\myprofile\category('administration', get_string('administration'), 'miscellaneous');
     $coursedetailscategory = new core_user\output\myprofile\category('coursedetails', get_string('coursedetails'), 'contact');
+    $miscategory = new core_user\output\myprofile\category('miscellaneous', get_string('miscellaneous'), 'coursedetails');
+    $reportcategory = new core_user\output\myprofile\category('reports', get_string('reports'), 'miscellaneous');
+    $admincategory = new core_user\output\myprofile\category('administration', get_string('administration'), 'reports');
+    $loginactivitycategory = new core_user\output\myprofile\category('loginactivity', get_string('loginactivity'), 'administration');
 
     // Add categories.
     $tree->add_category($contactcategory);
+    $tree->add_category($coursedetailscategory);
     $tree->add_category($miscategory);
     $tree->add_category($reportcategory);
     $tree->add_category($admincategory);
-    $tree->add_category($coursedetailscategory);
+    $tree->add_category($loginactivitycategory);
 
     // Add core nodes.
     // Full profile node.
@@ -386,7 +388,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
         } else {
             $datestring = get_string("never");
         }
-        $node = new core_user\output\myprofile\node('miscellaneous', 'firstaccess', get_string('firstsiteaccess'), null, null,
+        $node = new core_user\output\myprofile\node('loginactivity', 'firstaccess', get_string('firstsiteaccess'), null, null,
             $datestring);
         $tree->add_node($node);
     }
@@ -409,7 +411,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
             }
         }
 
-        $node = new core_user\output\myprofile\node('miscellaneous', 'lastaccess', $string, null, null,
+        $node = new core_user\output\myprofile\node('loginactivity', 'lastaccess', $string, null, null,
             $datestring);
         $tree->add_node($node);
     }
@@ -422,7 +424,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
         } else {
             $ipstring = get_string("none");
         }
-        $node = new core_user\output\myprofile\node('miscellaneous', 'lastip', get_string('lastip'), null, null,
+        $node = new core_user\output\myprofile\node('loginactivity', 'lastip', get_string('lastip'), null, null,
             $ipstring);
         $tree->add_node($node);
     }

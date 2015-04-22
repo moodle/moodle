@@ -1048,6 +1048,7 @@ $string['loggedinas'] = 'You are logged in as {$a}';
 $string['loggedinasguest'] = 'You are currently using guest access';
 $string['loggedinnot'] = 'You are not logged in.';
 $string['login'] = 'Log in';
+$string['loginactivity'] = 'Login activity';
 $string['loginalready'] = 'You are already logged in';
 $string['loginas'] = 'Log in as';
 $string['loginaspasswordexplain'] = '<p>You must enter the special "loginas password" to use this feature.<br />If you do not know it, ask your server administrator.</p>';
