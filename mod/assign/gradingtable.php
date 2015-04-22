@@ -541,7 +541,8 @@ class assign_grading_table extends table_sql implements renderable {
         static $markers = null;
         static $markerlist = array();
         if ($markers === null) {
-            $markers = get_users_by_capability($this->assignment->get_context(), 'mod/assign:grade');
+            list($sort, $params) = users_order_by_sql();
+            $markers = get_users_by_capability($this->assignment->get_context(), 'mod/assign:grade', '', $sort);
             $markerlist[0] = get_string('choosemarker', 'assign');
             foreach ($markers as $marker) {
                 $markerlist[$marker->id] = fullname($marker);
