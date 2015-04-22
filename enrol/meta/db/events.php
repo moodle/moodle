@@ -52,4 +52,8 @@ $observers = array(
         'eventname'   => '\core\event\course_deleted',
         'callback'    => 'enrol_meta_observer::course_deleted',
     ),
+    array(
+        'eventname'   => '\core\event\enrol_instance_updated',
+        'callback'    => 'enrol_meta_observer::enrol_instance_updated',
+    ),
 );
