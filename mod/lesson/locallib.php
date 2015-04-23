@@ -715,10 +715,34 @@ abstract class lesson_add_page_form_base extends moodleform {
     protected $standard = true;
 
     /**
+     * Answer format supported by question type.
+     */
+    protected $answerformat = '';
+
+    /**
+     * Response format supported by question type.
+     */
+    protected $responseformat = '';
+
+    /**
      * Each page type can and should override this to add any custom elements to
      * the basic form that they want
      */
     public function custom_definition() {}
+
+    /**
+     * Returns answer format used by question type.
+     */
+    public function get_answer_format() {
+        return $this->answerformat;
+    }
+
+    /**
+     * Returns response format used by question type.
+     */
+    public function get_response_format() {
+        return $this->responseformat;
+    }
 
     /**
      * Used to determine if this is a standard page or a special page

@@ -485,6 +485,8 @@ class lesson_add_page_form_matching extends lesson_add_page_form_base {
 
     public $qtype = 'matching';
     public $qtypestring = 'matching';
+    protected $answerformat = LESSON_ANSWER_HTML;
+    protected $responseformat = '';
 
     public function custom_definition() {
 

@@ -112,8 +112,7 @@ if ($edit) {
         $answereditor = 'answer_editor['.$answerscount.']';
         if (is_array($data->$answereditor)) {
             $answerdata = $data->$answereditor;
-            if ($answerdata['format'] != FORMAT_MOODLE) {
-                $answerdata = $data->$answereditor;
+            if ($mform->get_answer_format() === LESSON_ANSWER_HTML) {
                 $answerdraftid = file_get_submitted_draft_itemid($answereditor);
                 $answertext = file_prepare_draft_area($answerdraftid, $PAGE->cm->context->id,
                         'mod_lesson', 'page_answers', $answer->id, $editoroptions, $answerdata['text']);
@@ -126,7 +125,7 @@ if ($edit) {
         $responseeditor = 'response_editor['.$answerscount.']';
         if (is_array($data->$responseeditor)) {
             $responsedata = $data->$responseeditor;
-            if ($responsedata['format'] != FORMAT_MOODLE) {
+            if ($mform->get_response_format() === LESSON_ANSWER_HTML) {
                 $responsedraftid = file_get_submitted_draft_itemid($responseeditor);
                 $responsetext = file_prepare_draft_area($responsedraftid, $PAGE->cm->context->id,
                         'mod_lesson', 'page_responses', $answer->id, $editoroptions, $responsedata['text']);

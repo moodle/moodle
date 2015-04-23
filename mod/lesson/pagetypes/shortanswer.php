@@ -328,6 +328,8 @@ class lesson_page_type_shortanswer extends lesson_page {
 class lesson_add_page_form_shortanswer extends lesson_add_page_form_base {
     public $qtype = 'shortanswer';
     public $qtypestring = 'shortanswer';
+    protected $answerformat = '';
+    protected $responseformat = LESSON_ANSWER_HTML;
 
     public function custom_definition() {
 
