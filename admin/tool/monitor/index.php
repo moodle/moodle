@@ -46,14 +46,13 @@ if (!get_config('tool_monitor', 'enablemonitor')) {
     throw new coding_exception('Event monitoring is disabled');
 }
 
-$sitename = format_string($SITE->fullname, true, array('context' => $coursecontext));
 $PAGE->set_context(context_user::instance($USER->id));
 
 // Set up the page.
 $indexurl = new moodle_url('/admin/tool/monitor/index.php', array('courseid' => $courseid));
 $PAGE->set_url($indexurl);
 $PAGE->set_pagelayout('report');
-$PAGE->set_title($sitename);
+$PAGE->set_title(get_string('managesubscriptions', 'tool_monitor'));
 $PAGE->set_heading(fullname($USER));
 $settingsnode = $PAGE->settingsnav->find('monitor', null)->make_active();
 
