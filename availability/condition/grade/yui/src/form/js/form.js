@@ -92,6 +92,7 @@ M.availability_grade.form.getNode = function(json) {
 
         root.delegate('click', function() {
             updateCheckbox(this, true);
+            M.core_availability.form.update();
         }, '.availability_grade input[type=checkbox]');
 
         root.delegate('valuechange', function() {
