@@ -479,9 +479,9 @@ class core_badges_renderer extends plugin_renderer_base {
                     get_string('downloadall'), 'POST', array('class' => 'activatebadge'));
 
         // Local badges.
-        $localhtml = html_writer::start_tag('fieldset', array('id' => 'issued-badge-table', 'class' => 'generalbox'));
+        $localhtml = html_writer::start_tag('div', array('id' => 'issued-badge-table', 'class' => 'generalbox'));
         $heading = get_string('localbadges', 'badges', format_string($SITE->fullname, true, array('context' => context_system::instance())));
-        $localhtml .= html_writer::tag('legend', $this->output->heading_with_help($heading, 'localbadgesh', 'badges'));
+        $localhtml .= $this->output->heading_with_help($heading, 'localbadgesh', 'badges');
         if ($badges->badges) {
             $downloadbutton = $this->output->heading(get_string('badgesearned', 'badges', $badges->totalcount), 4, 'activatebadge');
             $downloadbutton .= $downloadall;
@@ -491,13 +491,13 @@ class core_badges_renderer extends plugin_renderer_base {
         } else {
             $localhtml .= $searchform . $this->output->notification(get_string('nobadges', 'badges'));
         }
-        $localhtml .= html_writer::end_tag('fieldset');
+        $localhtml .= html_writer::end_tag('div');
 
         // External badges.
         $externalhtml = "";
         if (!empty($CFG->badges_allowexternalbackpack)) {
-            $externalhtml .= html_writer::start_tag('fieldset', array('class' => 'generalbox'));
-            $externalhtml .= html_writer::tag('legend', $this->output->heading_with_help(get_string('externalbadges', 'badges'), 'externalbadges', 'badges'));
+            $externalhtml .= html_writer::start_tag('div', array('class' => 'generalbox'));
+            $externalhtml .= $this->output->heading_with_help(get_string('externalbadges', 'badges'), 'externalbadges', 'badges');
             if (!is_null($backpack)) {
                 if ($backpack->totalcollections == 0) {
                     $externalhtml .= get_string('nobackpackcollections', 'badges', $backpack);
@@ -513,7 +513,7 @@ class core_badges_renderer extends plugin_renderer_base {
                 $externalhtml .= get_string('externalconnectto', 'badges', $mybackpack->out());
             }
 
-            $externalhtml .= html_writer::end_tag('fieldset');
+            $externalhtml .= html_writer::end_tag('div');
         }
 
         return $localhtml . $externalhtml;
