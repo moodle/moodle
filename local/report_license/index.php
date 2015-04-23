@@ -569,7 +569,7 @@ if (empty($charttype)) {
                         $issuedateurl = new moodle_url('index.php', $linkparams);
                     } else {
                         $linkparams['dir'] = 'ASC';
-                        $coursenameurl = new moodle_url('index.php', $linkparams);
+                        $issuedateurl = new moodle_url('index.php', $linkparams);
                     }
                 } else if ($params['sort'] == 'isusing') {
                     $linkparams['sort'] = 'isusing';
