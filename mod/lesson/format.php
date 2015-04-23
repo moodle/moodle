@@ -606,25 +606,34 @@ class qformat_default {
         return $name;
     }
 
-    function defaultquestion() {
-    // returns an "empty" question
-    // Somewhere to specify question parameters that are not handled
-    // by import but are required db fields.
-    // This should not be overridden.
+    /**
+     * return an "empty" question
+     * Somewhere to specify question parameters that are not handled
+     * by import but are required db fields.
+     * This should not be overridden.
+     * @return object default question
+     */
+    protected function defaultquestion() {
         global $CFG;
+        static $defaultshuffleanswers = null;
+        if (is_null($defaultshuffleanswers)) {
+            $defaultshuffleanswers = get_config('quiz', 'shuffleanswers');
+        }
 
         $question = new stdClass();
-        $question->shuffleanswers = get_config('quiz', 'shuffleanswers');
+        $question->shuffleanswers = $defaultshuffleanswers;
         $question->defaultmark = 1;
         $question->image = "";
         $question->usecase = 0;
         $question->multiplier = array();
+        $question->questiontextformat = FORMAT_MOODLE;
         $question->generalfeedback = '';
+        $question->generalfeedbackformat = FORMAT_MOODLE;
         $question->correctfeedback = '';
         $question->partiallycorrectfeedback = '';
         $question->incorrectfeedback = '';
         $question->answernumbering = 'abc';
-        $question->penalty = 0.1;
+        $question->penalty = 0.3333333;
         $question->length = 1;
         $question->qoption = 0;
         $question->layout = 1;
