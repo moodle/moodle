@@ -3127,6 +3127,44 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse(has_capability('mod/forum:addinstance', $coursecontext, $user));
         $this->assertFalse(has_capability('mod/forum:viewdiscussion', $coursecontext, $user));
     }
+
+    /**
+     * Tests count_role_users function.
+     */
+    public function test_count_role_users() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $generator = self::getDataGenerator();
+        // Create a course in a category, and some users.
+        $category = $generator->create_category();
+        $course = $generator->create_course(array('category' => $category->id));
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+        $user4 = $generator->create_user();
+        $user5 = $generator->create_user();
+        $roleid1 = $DB->get_field('role', 'id', array('shortname' => 'manager'), MUST_EXIST);
+        $roleid2 = $DB->get_field('role', 'id', array('shortname' => 'coursecreator'), MUST_EXIST);
+        // Enrol two users as managers onto the course, and 1 onto the category.
+        $generator->enrol_user($user1->id, $course->id, $roleid1);
+        $generator->enrol_user($user2->id, $course->id, $roleid1);
+        $generator->role_assign($roleid1, $user3->id, context_coursecat::instance($category->id));
+        // Enrol 1 user as a coursecreator onto the course, and another onto the category.
+        // This is to ensure we do not count users with roles that are not specified.
+        $generator->enrol_user($user4->id, $course->id, $roleid2);
+        $generator->role_assign($roleid2, $user5->id, context_coursecat::instance($category->id));
+        // Check that the correct users are found on the course.
+        $this->assertEquals(2, count_role_users($roleid1, context_course::instance($course->id), false));
+        $this->assertEquals(3, count_role_users($roleid1, context_course::instance($course->id), true));
+        // Check for the category.
+        $this->assertEquals(1, count_role_users($roleid1, context_coursecat::instance($category->id), false));
+        $this->assertEquals(1, count_role_users($roleid1, context_coursecat::instance($category->id), true));
+        // Have a user with the same role at both the category and course level.
+        $generator->role_assign($roleid1, $user1->id, context_coursecat::instance($category->id));
+        // The course level checks should remain the same.
+        $this->assertEquals(2, count_role_users($roleid1, context_course::instance($course->id), false));
+        $this->assertEquals(3, count_role_users($roleid1, context_course::instance($course->id), true));
+    }
 }
 
 /**
