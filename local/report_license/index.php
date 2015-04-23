@@ -311,23 +311,10 @@ if (empty($dodownload) && empty($showchart) && !$sendemail) {
     }
 }
 
-
 if (empty($charttype)) {
     if (!empty($courseid)) {
         // Get the course license information.
-        if (empty($dodownload) || !$sendemail) {
-            if (empty($idlist['0'])) {
-                // Only want the data for the page we are on.
-                // courseid==1 is ALL users.
-                if ($courseid == 1) {
-                    $coursedataobj = iomad::get_all_user_course_license_data($searchinfo, $page, $perpage);
-                } else {
-                    $coursedataobj = iomad::get_user_course_license_data($searchinfo, $courseid, $page, $perpage, $showsuspended, $showused);
-                }
-                $coursedata = $coursedataobj->users;
-                $totalcount = $coursedataobj->totalcount;
-            }
-        } else {
+        if ($dodownload) {
             if (empty($idlist['0'])) {
                 if ($courseid == 1) {
                     $coursedataobj = iomad::get_all_user_course_license_data($searchinfo);
@@ -337,10 +324,15 @@ if (empty($charttype)) {
                 $coursedata = $coursedataobj->users;
                 $totalcount = $coursedataobj->totalcount;
             }
-        }
-
-        if ($sendemail) {
+        } else if ($sendemail) {
             if ($confirm && confirm_sesskey()) {
+                if ($courseid == 1) {
+                    $coursedataobj = iomad::get_all_user_course_license_data($searchinfo);
+                } else {
+                    $coursedataobj = iomad::get_user_course_license_data($searchinfo, $courseid, 0, 0, $showsuspended, $showused);
+                }
+                $coursedata = $coursedataobj->users;
+                $totalcount = $coursedataobj->totalcount;
                 // Send everyone a reminder email.
                 foreach ($coursedata as $user) {
                     if ($userdata = $DB->get_record('user', array('id' => $user->uid))) {
@@ -377,6 +369,18 @@ if (empty($charttype)) {
                 echo $OUTPUT->footer();
             }
             die;
+        } else {
+            if (empty($idlist['0'])) {
+                // Only want the data for the page we are on.
+                // courseid==1 is ALL users.
+                if ($courseid == 1) {
+                    $coursedataobj = iomad::get_all_user_course_license_data($searchinfo, $page, $perpage);
+                } else {
+                    $coursedataobj = iomad::get_user_course_license_data($searchinfo, $courseid, $page, $perpage, $showsuspended, $showused);
+                }
+                $coursedata = $coursedataobj->users;
+                $totalcount = $coursedataobj->totalcount;
+            }
         }
 
         if (empty($dodownload) && !$sendemail) {
@@ -397,6 +401,7 @@ if (empty($charttype)) {
                              'email',
                              'lastaccess',
                              'licensename',
+                             'issuedate',
                              'coursename',
                              'isusing');
         } else {
@@ -406,6 +411,7 @@ if (empty($charttype)) {
                              'email',
                              'lastaccess',
                              'licensename',
+                             'issuedate',
                              'coursename');
         }
     
@@ -446,6 +452,7 @@ if (empty($charttype)) {
                      .get_string('department', 'block_iomad_company_admin').'","'
                      .get_string('lastaccess').'","'
                      .get_string('licensename', 'local_report_license').'","'
+                     .get_string('issuedate', 'local_report_license').'","'
                      .get_string('isusing', 'local_report_license')."\"\n";
             } else {
                 echo '"'.get_string('name', 'local_report_license').'","'
@@ -453,7 +460,8 @@ if (empty($charttype)) {
                      .get_string('course').'","'
                      .get_string('department', 'block_iomad_company_admin').'","'
                      .get_string('lastaccess').'","'
-                     .get_string('licensename', 'local_report_license')."\"\n";
+                     .get_string('licensename', 'local_report_license').'","'
+                     .get_string('issuedate', 'local_report_license')."\"\n";
             }
             $xlsrow = 1;
         }
@@ -482,6 +490,8 @@ if (empty($charttype)) {
             $lastaccessurl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'licensename';
             $licensenameurl = new moodle_url('index.php', $linkparams);
+            $linkparams['sort'] = 'issuedate';
+            $issuedateurl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'coursename';
             $coursenameurl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'isusing';
@@ -552,6 +562,15 @@ if (empty($charttype)) {
                         $linkparams['dir'] = 'ASC';
                         $coursenameurl = new moodle_url('index.php', $linkparams);
                     }
+                } else if ($params['sort'] == 'issuedate') {
+                    $linkparams['sort'] = 'issuedate';
+                    if ($params['dir'] == 'ASC') {
+                        $linkparams['dir'] = 'DESC';
+                        $issuedateurl = new moodle_url('index.php', $linkparams);
+                    } else {
+                        $linkparams['dir'] = 'ASC';
+                        $coursenameurl = new moodle_url('index.php', $linkparams);
+                    }
                 } else if ($params['sort'] == 'isusing') {
                     $linkparams['sort'] = 'isusing';
                     if ($params['dir'] == 'ASC') {
@@ -572,16 +591,18 @@ if (empty($charttype)) {
                                           $OUTPUT->action_link($departmenturl, $department),
                                           $OUTPUT->action_link($lastaccessurl, $lastaccess),
                                           $OUTPUT->action_link($licensenameurl, $licensename),
+                                          $OUTPUT->action_link($issuedateurl, $issuedate),
                                           $OUTPUT->action_link($isusingurl, $isusing));
-            $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center');
+            $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
         } else {
             $compusertable->head = array ($fullnamedisplay,
                                           $OUTPUT->action_link($emailurl, $email),
                                           get_string('course'),
                                           $OUTPUT->action_link($departmenturl, $department),
                                           $OUTPUT->action_link($lastaccessurl, $lastaccess),
-                                          $OUTPUT->action_link($licensenameurl, $licensename));
-            $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', );
+                                          $OUTPUT->action_link($licensenameurl, $licensename),
+                                          $OUTPUT->action_link($issuedateurl, $issuedate));
+            $compusertable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center');
         }
         $compusertable->width = '95%';
     
@@ -613,6 +634,7 @@ if (empty($charttype)) {
                                                         $user->department,
                                                         $datestring,
                                                         $user->licensename,
+                                                        userdate($user->issuedate)."&nbsp; (".format_time(time() - $user->issuedate).")",
                                                         $user->isusing);
                     } else {
                         $compusertable->data[] = array("<a href='".new moodle_url($userurl,
@@ -623,7 +645,8 @@ if (empty($charttype)) {
                                                         $user->coursename,
                                                         $user->department,
                                                         $datestring,
-                                                        $user->licensename);
+                                                        $user->licensename,
+                                                        userdate($user->issuedate)."&nbsp; (".format_time(time() - $user->issuedate).")");
                     }
                 } else {
                     if ($showused) {
@@ -633,6 +656,7 @@ if (empty($charttype)) {
                              '","'.$user->department.
                              '","'.$datestring.
                              '","'.$user->licensename.
+                             '","'.userdate($user->issuedate)." (".format_time(time() - $user->issuedate).")".
                              '","'.$user->isusing.
                              "\"\n";
                     } else {
@@ -642,6 +666,7 @@ if (empty($charttype)) {
                              '","'.$user->department.
                              '","'.$datestring.
                              '","'.$user->licensename.
+                             '","'.userdate($user->issuedate)." (".format_time(time() - $user->issuedate).")".
                              "\"\n";
                     }
                 }

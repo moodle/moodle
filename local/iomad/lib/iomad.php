@@ -1065,6 +1065,7 @@ class iomad {
                 d.name as department,
                 cl.name,
                 clu.isusing,
+                clu.issuedate,
                 '0' as result ";
         $fromsql = " FROM {user} u, {companylicense_users} clu, {department} d, {company_users} du, {".$temptablename."} tt, {course} co, {companylicense} cl
 
@@ -1171,6 +1172,7 @@ class iomad {
                 '$courseid' AS courseid,
                 clu.licenseid AS licenseid,
                 clu.isusing AS isusing,
+                clu.issuedate AS issuedate,
                 d.name AS department,
                 cl.name AS licensename ";
         $fromsql = " FROM {user} u, {companylicense_users} clu, {department} d, {company_users} du, {".$temptablename."} tt, {companylicense} cl
