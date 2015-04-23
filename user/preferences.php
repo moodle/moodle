@@ -48,7 +48,7 @@ $PAGE->set_context(context_user::instance($userid));
 $PAGE->set_url('/user/preferences.php', array('userid' => $userid));
 $PAGE->set_pagelayout('admin');
 $PAGE->set_pagetype('user-preferences');
-$PAGE->set_title(fullname($user));
+$PAGE->set_title(get_string('preferences'));
 $PAGE->set_heading(fullname($user));
 
 if (!$currentuser) {
