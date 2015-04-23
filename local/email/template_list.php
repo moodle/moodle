@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once( '../../local_lib.php');
+require_once( 'local_lib.php');
 require_once($CFG->dirroot . '/local/iomad/lib/blockpage.php');
 require_once($CFG->dirroot . '/blocks/iomad_company_admin/lib.php');
 require_once( 'config.php');
