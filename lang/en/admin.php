@@ -890,11 +890,11 @@ $string['quizattemptsupgradedmessage'] = 'In Moodle 2.1 there was a major upgrad
 $string['recaptchaprivatekey'] = 'ReCAPTCHA private key';
 $string['recaptchapublickey'] = 'ReCAPTCHA public key';
 $string['register'] = 'Register your site';
-$string['registermoodleorg'] = 'When you register your site with {$a}';
+$string['registermoodleorg'] = 'When you register your site';
 $string['registermoodleorgli1'] = 'You are added to a low-volume mailing list for important notifications such as security alerts and new releases of Moodle.';
 $string['registermoodleorgli2'] = 'Statistics about your site will be added to the {$a} of the worldwide Moodle community.';
 $string['registermoodleorgli3'] = 'Your site is also registered with Moodle.net ({$a}), allowing users with the publish courses capability (by default only managers) the option of publishing courses to Moodle.net.';
-$string['registerwithmoodleorg'] = 'Register with Moodle.org';
+$string['registerwithmoodleorg'] = 'Register your site';
 $string['registration'] = 'Registration';
 $string['registration_help'] = 'Registering your site with Moodle.org is recommended in order to receive security alert notifications, to contribute <a href="http://moodle.org/stats">Moodle usage statistics</a> and to be able to share courses on <a href="http://moodle.net/">Moodle.net</a>.';
 $string['registrationwarning'] = 'Your site is not yet registered.';
