@@ -777,6 +777,7 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     // Union the 2 result sets together looking for the message with the most
     // recent timecreated for each other user.
     // $conversation->id (the array key) is the other user's ID.
+    $conversations = array();
     $conversation_arrays = array($unread, $read);
     foreach ($conversation_arrays as $conversation_array) {
         foreach ($conversation_array as $conversation) {
