@@ -51,6 +51,8 @@ Feature: Attemp a quiz where some questions require that the previous question h
     And I should see "First question"
     And I should see "This question cannot be attempted until the previous question has been completed."
     And I should not see "Second question"
+    And "Question 1" "link" should exist
+    And "Question 2" "link" should not exist
 
   @javascript
   Scenario: A question requires the previous one becomes available when the first one is answered
@@ -76,6 +78,8 @@ Feature: Attemp a quiz where some questions require that the previous question h
     Then I should see "First question"
     And I should not see "This question cannot be attempted until the previous question has been completed."
     And I should see "Second question"
+    And "Question 1" "link" should exist
+    And "Question 2" "link" should exist
 
   @javascript
   Scenario: After quiz submitted, all questions show on the review page

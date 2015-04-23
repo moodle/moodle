@@ -125,6 +125,11 @@ body.jsenabled .questionflagcheckbox {
 .path-mod-quiz.dir-rtl  .qnbutton {
     float: right;
 }
+.path-mod-quiz .qnbutton:visited:hover,
+.path-mod-quiz .qnbutton:link:hover {
+    text-decoration: underline;
+}
+
 .path-mod-quiz .qnbutton .trafficlight,
 .path-mod-quiz .qnbutton .thispageholder {
     display: block;
@@ -146,6 +151,7 @@ body.jsenabled .questionflagcheckbox {
     background: url([[pix:quiz|navflagged]]) no-repeat top right;
 }
 
+.path-mod-quiz .qnbutton.blocked,
 .path-mod-quiz .qnbutton.notyetanswered,
 .path-mod-quiz .qnbutton.requiresgrading,
 .path-mod-quiz .qnbutton.invalidanswer {
@@ -164,16 +170,12 @@ body.jsenabled .questionflagcheckbox {
 .path-mod-quiz .qnbutton.incorrect {
     background-color: #fcc;
 }
+.path-mod-quiz .qnbutton.blocked {
+    color: #999;
+}
 .path-mod-quiz .qnbutton.notanswered .trafficlight,
 .path-mod-quiz .qnbutton.incorrect .trafficlight {
     border-top: 3px solid #800;
-}
-
-.path-mod-quiz .qnbutton.free:hover {
-    text-decoration: underline;
-}
-.path-mod-quiz .qnbutton.free span {
-    cursor: pointer;
 }
 
 .path-mod-quiz .othernav {
