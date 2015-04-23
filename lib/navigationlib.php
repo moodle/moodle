@@ -2553,14 +2553,12 @@ class global_navigation extends navigation_node {
                 if (($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
                    and has_capability('moodle/blog:view', context_system::instance())) {
                     $blogsurls = new moodle_url('/blog/index.php');
-                    if ($course->id == $SITE->id) {
-                        $blogsurls->param('courseid', 0);
-                    } else if ($currentgroup = groups_get_course_group($course, true)) {
+                    if ($currentgroup = groups_get_course_group($course, true)) {
                         $blogsurls->param('groupid', $currentgroup);
                     } else {
                         $blogsurls->param('courseid', $course->id);
                     }
-                    $participants->add(get_string('blogscourse','blog'), $blogsurls->out());
+                    $participants->add(get_string('blogscourse', 'blog'), $blogsurls->out(), self::TYPE_SETTING, null, 'courseblogs');
                 }
             }
             if (!empty($CFG->enablenotes) && (has_capability('moodle/notes:manage', $this->page->context) || has_capability('moodle/notes:view', $this->page->context))) {
@@ -2611,15 +2609,15 @@ class global_navigation extends navigation_node {
             $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CUSTOM, get_string('participants'), 'participants');
         }
 
-        $filterselect = 0;
-
         // Blogs
         if (!empty($CFG->enableblogs)
           and ($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
           and has_capability('moodle/blog:view', context_system::instance())) {
-            $blogsurls = new moodle_url('/blog/index.php', array('courseid' => $filterselect));
+            $blogsurls = new moodle_url('/blog/index.php');
             $coursenode->add(get_string('blogssite', 'blog'), $blogsurls->out(), self::TYPE_SYSTEM, null, 'siteblog');
         }
+
+        $filterselect = 0;
 
         //Badges
         if (!empty($CFG->enablebadges) && has_capability('moodle/badges:viewbadges', $this->page->context)) {
