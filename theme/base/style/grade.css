@@ -261,6 +261,9 @@
 .has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell {
     padding-left: 35px;
 }
+.path-grade-report-grader .gradeparent .clickable {
+    cursor: pointer;
+}
 
 .dir-rtl.has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell,
 .dir-rtl.has_dock.path-grade-report-grader .gradeparent .sideonly.floating > .cell,
