@@ -284,6 +284,7 @@ $string['localbadgesp'] = 'Badges from {$a}:';
 $string['makeprivate'] = 'Make private';
 $string['makepublic'] = 'Make public';
 $string['managebadges'] = 'Manage badges';
+$string['managemybadges'] = 'Manage my badges';
 $string['message'] = 'Message body';
 $string['messagebody'] = '<p>You have been awarded the badge "%badgename%"!</p>
 <p>More information about this badge can be found at %badgelink%.</p>

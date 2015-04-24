@@ -2251,12 +2251,6 @@ class global_navigation extends navigation_node {
                 $usernode->add(get_string('myfiles'), $url, self::TYPE_SETTING);
             }
 
-            if (!empty($CFG->enablebadges) && $iscurrentuser &&
-                    has_capability('moodle/badges:manageownbadges', $usercontext)) {
-                $url = new moodle_url('/badges/mybadges.php');
-                $usernode->add(get_string('mybadges', 'badges'), $url, self::TYPE_SETTING);
-            }
-
             // Add a node to view the users notes if permitted.
             if (!empty($CFG->enablenotes) &&
                     has_any_capability(array('moodle/notes:manage', 'moodle/notes:view'), $coursecontext)) {
@@ -4283,12 +4277,6 @@ class settings_navigation extends navigation_node {
                 $dashboard->add(get_string('myfiles'), $url, self::TYPE_SETTING);
             }
 
-            if (!empty($CFG->enablebadges) && $iscurrentuser &&
-                    has_capability('moodle/badges:manageownbadges', $usercontext)) {
-                $url = new moodle_url('/badges/mybadges.php');
-                $dashboard->add(get_string('mybadges', 'badges'), $url, self::TYPE_SETTING);
-            }
-
             // Add a node to view the users notes if permitted.
             if (!empty($CFG->enablenotes) &&
                     has_any_capability(array('moodle/notes:manage', 'moodle/notes:view'), $coursecontext)) {
@@ -4500,6 +4488,10 @@ class settings_navigation extends navigation_node {
         // Badges.
         if ($currentuser && !empty($CFG->enablebadges)) {
             $badges = $usersetting->add(get_string('badges'), null, navigation_node::TYPE_CONTAINER, null, 'badges');
+            if (has_capability('moodle/badges:manageownbadges', $usercontext)) {
+                $url = new moodle_url('/badges/mybadges.php');
+                $badges->add(get_string('managemybadges', 'badges'), $url, self::TYPE_SETTING);
+            }
             $badges->add(get_string('preferences', 'badges'), new moodle_url('/badges/preferences.php'),
                     navigation_node::TYPE_SETTING);
             if (!empty($CFG->badges_allowexternalbackpack)) {
