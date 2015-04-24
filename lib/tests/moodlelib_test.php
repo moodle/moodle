@@ -1364,70 +1364,70 @@ class core_moodlelib_testcase extends advanced_testcase {
         // DST switching in Prague.
         // From 2AM to 3AM in 1989.
         $date = new DateTime('1989-03-26T01:59:00+01:00');
-        $this->assertSame('Sunday, 26 March 1989, 1:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 26 March 1989, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
         $date = new DateTime('1989-03-26T02:01:00+01:00');
-        $this->assertSame('Sunday, 26 March 1989, 3:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 26 March 1989, 03:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
         // From 3AM to 2AM in 1989 - not the same as the west Europe.
         $date = new DateTime('1989-09-24T01:59:00+01:00');
-        $this->assertSame('Sunday, 24 September 1989, 2:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 24 September 1989, 02:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
         $date = new DateTime('1989-09-24T02:01:00+01:00');
-        $this->assertSame('Sunday, 24 September 1989, 2:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 24 September 1989, 02:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
         // From 2AM to 3AM in 2014.
         $date = new DateTime('2014-03-30T01:59:00+01:00');
-        $this->assertSame('Sunday, 30 March 2014, 1:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 30 March 2014, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
         $date = new DateTime('2014-03-30T02:01:00+01:00');
-        $this->assertSame('Sunday, 30 March 2014, 3:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 30 March 2014, 03:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
         // From 3AM to 2AM in 2014.
         $date = new DateTime('2014-10-26T01:59:00+01:00');
-        $this->assertSame('Sunday, 26 October 2014, 2:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 26 October 2014, 02:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
         $date = new DateTime('2014-10-26T02:01:00+01:00');
-        $this->assertSame('Sunday, 26 October 2014, 2:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 26 October 2014, 02:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
         // From 2AM to 3AM in 2020.
         $date = new DateTime('2020-03-29T01:59:00+01:00');
-        $this->assertSame('Sunday, 29 March 2020, 1:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 29 March 2020, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
         $date = new DateTime('2020-03-29T02:01:00+01:00');
-        $this->assertSame('Sunday, 29 March 2020, 3:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 29 March 2020, 03:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
         // From 3AM to 2AM in 2020.
         $date = new DateTime('2020-10-25T01:59:00+01:00');
-        $this->assertSame('Sunday, 25 October 2020, 2:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 25 October 2020, 02:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
         $date = new DateTime('2020-10-25T02:01:00+01:00');
-        $this->assertSame('Sunday, 25 October 2020, 2:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Europe/Prague'));
+        $this->assertSame('Sunday, 25 October 2020, 02:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Europe/Prague'));
 
         // DST switching in NZ.
         // From 3AM to 2AM in 2015.
         $date = new DateTime('2015-04-05T02:59:00+13:00');
-        $this->assertSame('Sunday, 5 April 2015, 2:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Pacific/Auckland'));
+        $this->assertSame('Sunday, 5 April 2015, 02:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Pacific/Auckland'));
         $date = new DateTime('2015-04-05T03:01:00+13:00');
-        $this->assertSame('Sunday, 5 April 2015, 2:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Pacific/Auckland'));
+        $this->assertSame('Sunday, 5 April 2015, 02:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Pacific/Auckland'));
         // From 2AM to 3AM in 2009.
         $date = new DateTime('2015-09-27T01:59:00+12:00');
-        $this->assertSame('Sunday, 27 September 2015, 1:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Pacific/Auckland'));
+        $this->assertSame('Sunday, 27 September 2015, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Pacific/Auckland'));
         $date = new DateTime('2015-09-27T02:01:00+12:00');
-        $this->assertSame('Sunday, 27 September 2015, 3:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Pacific/Auckland'));
+        $this->assertSame('Sunday, 27 September 2015, 03:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Pacific/Auckland'));
 
         // DST switching in Perth.
         // From 3AM to 2AM in 2009.
         $date = new DateTime('2008-03-30T01:59:00+08:00');
-        $this->assertSame('Sunday, 30 March 2008, 2:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Australia/Perth'));
+        $this->assertSame('Sunday, 30 March 2008, 02:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Australia/Perth'));
         $date = new DateTime('2008-03-30T02:01:00+08:00');
-        $this->assertSame('Sunday, 30 March 2008, 2:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Australia/Perth'));
+        $this->assertSame('Sunday, 30 March 2008, 02:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Australia/Perth'));
         // From 2AM to 3AM in 2009.
         $date = new DateTime('2008-10-26T01:59:00+08:00');
-        $this->assertSame('Sunday, 26 October 2008, 1:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Australia/Perth'));
+        $this->assertSame('Sunday, 26 October 2008, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Australia/Perth'));
         $date = new DateTime('2008-10-26T02:01:00+08:00');
-        $this->assertSame('Sunday, 26 October 2008, 3:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'Australia/Perth'));
+        $this->assertSame('Sunday, 26 October 2008, 03:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'Australia/Perth'));
 
         // DST switching in US.
         // From 2AM to 3AM in 2014.
         $date = new DateTime('2014-03-09T01:59:00-05:00');
-        $this->assertSame('Sunday, 9 March 2014, 1:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'America/New_York'));
+        $this->assertSame('Sunday, 9 March 2014, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'America/New_York'));
         $date = new DateTime('2014-03-09T02:01:00-05:00');
-        $this->assertSame('Sunday, 9 March 2014, 3:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'America/New_York'));
+        $this->assertSame('Sunday, 9 March 2014, 03:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'America/New_York'));
         // From 3AM to 2AM in 2014.
         $date = new DateTime('2014-11-02T01:59:00-04:00');
-        $this->assertSame('Sunday, 2 November 2014, 1:59', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'America/New_York'));
+        $this->assertSame('Sunday, 2 November 2014, 01:59', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'America/New_York'));
         $date = new DateTime('2014-11-02T02:01:00-04:00');
-        $this->assertSame('Sunday, 2 November 2014, 1:01', userdate($date->getTimestamp(), '%A, %d %B %Y,%k:%M', 'America/New_York'));
+        $this->assertSame('Sunday, 2 November 2014, 01:01', userdate($date->getTimestamp(), '%A, %d %B %Y, %H:%M', 'America/New_York'));
     }
 
     public function test_make_timestamp() {
