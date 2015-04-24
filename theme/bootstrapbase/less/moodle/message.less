@@ -43,7 +43,9 @@ table.message .searchresults td {
     padding: 5px;
 }
 .message .contactselector {
-    width: 24%;
+    @media screen and (min-width: 1000px) {
+        width: 24%;
+    }
     float: left;
 }
 .message .contactselector .contact {
@@ -57,9 +59,14 @@ table.message .searchresults td {
     position: relative;
 }
 .message .messagearea  {
-    padding-left: 1%;
-    border-left: 1px solid @tableBorder;
-    width: 74%;
+    @media screen and (min-width: 1000px) {
+        width: 74%;
+        border-left: 1px solid @tableBorder;
+        padding-left: 1%;
+    }
+    @media screen and (max-width: 1000px) {
+        width: 100%;
+    }
     float: right;
     min-height: 200px;
 }
