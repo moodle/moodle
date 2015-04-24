@@ -375,8 +375,8 @@ $table->define_columns($tablecolumns);
 $table->define_headers($tableheaders);
 $table->define_baseurl($baseurl->out());
 
-if (!isset($hiddenfields['lastcourseaccess'])) {
-    $table->sortable(true, 'lastcourseaccess', SORT_DESC);
+if (!isset($hiddenfields['lastaccess'])) {
+    $table->sortable(true, 'lastaccess', SORT_DESC);
 } else {
     $table->sortable(true, 'firstname', SORT_ASC);
 }
