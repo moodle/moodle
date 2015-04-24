@@ -278,9 +278,15 @@ Y.Moodle.mod_quiz.util.page = {
             // Update action-menu-1-menubar
             var menubar = actionmenu.one(this.SELECTORS.ACTIONMENUBAR);
             menubar.set('id', this.CONSTANTS.ACTIONMENUIDPREFIX + id + this.CONSTANTS.ACTIONMENUBARIDSUFFIX);
+
             // Update action-menu-1-menu
             var menumenu = actionmenu.one(this.SELECTORS.ACTIONMENUMENU);
             menumenu.set('id', this.CONSTANTS.ACTIONMENUIDPREFIX + id + this.CONSTANTS.ACTIONMENUMENUIDSUFFIX);
+
+            // Update the URL of the add-section action.
+            menumenu.one('a.addasection').set('href',
+                    menumenu.one('a.addasection').get('href').replace(/\baddsectionatpage=\d/, 'addsectionatpage=' + id));
+
         }, this);
     },
 
