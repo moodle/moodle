@@ -243,15 +243,16 @@ class document_services {
 
         // Detect corrupt generated pdfs and replace with a blank one.
         if ($files) {
+            $pdf = new pdf();
             $pagecount = $pdf->load_pdf($tmpfile);
             if ($pagecount <= 0) {
                 $files = false;
             }
+            $pdf->Close(); // PDF loaded and never saved/outputted needs to be closed.
         }
 
         if (!$files) {
             // This was a blank pdf.
-            unset($pdf);
             $pdf = new pdf();
             $content = $pdf->Output(self::COMBINED_PDF_FILENAME, 'S');
             $file = $fs->create_file_from_string($record, $content);
@@ -314,6 +315,7 @@ class document_services {
         // Get the total number of pages.
         $pdf = new pdf();
         $pagecount = $pdf->set_pdf($combined);
+        $pdf->Close(); // PDF loaded and never saved/outputted needs to be closed.
 
         // Delete temporary folders and files.
         @unlink($combined);
@@ -375,6 +377,7 @@ class document_services {
             $files[$i] = $fs->create_file_from_pathname($record, $tmpdir . '/' . $image);
             @unlink($tmpdir . '/' . $image);
         }
+        $pdf->Close(); // PDF loaded and never saved/outputted needs to be closed.
 
         @unlink($combined);
         @rmdir($tmpdir);
