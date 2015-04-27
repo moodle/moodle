@@ -173,6 +173,7 @@ class lesson_page_type_matching extends lesson_page {
         // get the user's exact responses for record keeping
         $hits = 0;
         $userresponse = array();
+        $result->studentanswerformat = FORMAT_HTML;
         foreach ($response as $id => $value) {
             if ($value == '') {
                 $result->noanswer = true;

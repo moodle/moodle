@@ -57,6 +57,17 @@ function lesson_save_question_options($question, $lesson) {
 
     $timenow = time();
     $result = new stdClass();
+
+    // Default answer to avoid code duplication.
+    $defaultanswer = new stdClass();
+    $defaultanswer->lessonid   = $question->lessonid;
+    $defaultanswer->pageid = $question->id;
+    $defaultanswer->timecreated   = $timenow;
+    $defaultanswer->answerformat = FORMAT_HTML;
+    $defaultanswer->jumpto = LESSON_THISPAGE;
+    $defaultanswer->grade = 0;
+    $defaultanswer->score = 0;
+
     switch ($question->qtype) {
         case LESSON_PAGE_SHORTANSWER:
 
@@ -66,14 +77,12 @@ function lesson_save_question_options($question, $lesson) {
             // Insert all the new answers
             foreach ($question->answer as $key => $dataanswer) {
                 if ($dataanswer != "") {
-                    $answer = new stdClass;
-                    $answer->lessonid   = $question->lessonid;
-                    $answer->pageid   = $question->id;
+                    $answer = clone($defaultanswer);
                     if ($question->fraction[$key] >=0.5) {
                         $answer->jumpto = LESSON_NEXTPAGE;
+                        $answer->score = 1;
                     }
-                    $answer->timecreated   = $timenow;
-                    $answer->grade = $question->fraction[$key] * 100;
+                    $answer->grade = round($question->fraction[$key] * 100);
                     $answer->answer   = $dataanswer;
                     $answer->response = $question->feedback[$key]['text'];
                     $answer->responseformat = $question->feedback[$key]['format'];
@@ -103,16 +112,15 @@ function lesson_save_question_options($question, $lesson) {
             // for each answer store the pair of min and max values even if they are the same
             foreach ($question->answer as $key => $dataanswer) {
                 if ($dataanswer != "") {
-                    $answer = new stdClass;
-                    $answer->lessonid   = $question->lessonid;
-                    $answer->pageid   = $question->id;
-                    $answer->jumpto = LESSON_NEXTPAGE;
-                    $answer->timecreated   = $timenow;
-                    $answer->grade = $question->fraction[$key] * 100;
+                    $answer = clone($defaultanswer);
+                    if ($question->fraction[$key] >= 0.5) {
+                        $answer->jumpto = LESSON_NEXTPAGE;
+                        $answer->score = 1;
+                    }
+                    $answer->grade = round($question->fraction[$key] * 100);
                     $min = $question->answer[$key] - $question->tolerance[$key];
                     $max = $question->answer[$key] + $question->tolerance[$key];
                     $answer->answer   = $min.":".$max;
-                    // $answer->answer   = $question->min[$key].":".$question->max[$key]; original line for min/max
                     $answer->response = $question->feedback[$key]['text'];
                     $answer->responseformat = $question->feedback[$key]['format'];
                     $answer->id = $DB->insert_record("lesson_answers", $answer);
@@ -136,14 +144,12 @@ function lesson_save_question_options($question, $lesson) {
         case LESSON_PAGE_TRUEFALSE:
 
             // the truth
-            $answer = new stdClass();
-            $answer->lessonid   = $question->lessonid;
-            $answer->pageid = $question->id;
-            $answer->timecreated   = $timenow;
+            $answer = clone($defaultanswer);
             $answer->answer = get_string("true", "quiz");
             $answer->grade = $question->correctanswer * 100;
             if ($answer->grade > 50 ) {
                 $answer->jumpto = LESSON_NEXTPAGE;
+                $answer->score = 1;
             }
             if (isset($question->feedbacktrue)) {
                 $answer->response = $question->feedbacktrue['text'];
@@ -152,14 +158,12 @@ function lesson_save_question_options($question, $lesson) {
             $DB->insert_record("lesson_answers", $answer);
 
             // the lie
-            $answer = new stdClass;
-            $answer->lessonid   = $question->lessonid;
-            $answer->pageid = $question->id;
-            $answer->timecreated   = $timenow;
+            $answer = clone($defaultanswer);
             $answer->answer = get_string("false", "quiz");
             $answer->grade = (1 - (int)$question->correctanswer) * 100;
             if ($answer->grade > 50 ) {
                 $answer->jumpto = LESSON_NEXTPAGE;
+                $answer->score = 1;
             }
             if (isset($question->feedbackfalse)) {
                 $answer->response = $question->feedbackfalse['text'];
@@ -179,22 +183,21 @@ function lesson_save_question_options($question, $lesson) {
             // Insert all the new answers
             foreach ($question->answer as $key => $dataanswer) {
                 if ($dataanswer != "") {
-                    $answer = new stdClass;
-                    $answer->lessonid   = $question->lessonid;
-                    $answer->pageid   = $question->id;
-                    $answer->timecreated   = $timenow;
-                    $answer->grade = $question->fraction[$key] * 100;
-                    // changed some defaults
-                    /* Original Code
-                    if ($answer->grade > 50 ) {
-                        $answer->jumpto = LESSON_NEXTPAGE;
+                    $answer = clone($defaultanswer);
+                    $answer->grade = round($question->fraction[$key] * 100);
+
+                    if ($question->single) {
+                        if ($answer->grade > 50) {
+                            $answer->jumpto = LESSON_NEXTPAGE;
+                            $answer->score = 1;
+                        }
+                    } else {
+                        // If multi answer allowed, any answer with fraction > 0 is considered correct.
+                        if ($question->fraction[$key] > 0) {
+                            $answer->jumpto = LESSON_NEXTPAGE;
+                            $answer->score = 1;
+                        }
                     }
-                    Replaced with:                    */
-                    if ($answer->grade > 50 ) {
-                        $answer->jumpto = LESSON_NEXTPAGE;
-                        $answer->score = 1;
-                    }
-                    // end Replace
                     $answer->answer   = $dataanswer['text'];
                     $answer->answerformat   = $dataanswer['format'];
                     $answer->response = $question->feedback[$key]['text'];
@@ -231,16 +234,11 @@ function lesson_save_question_options($question, $lesson) {
 
             $subquestions = array();
 
-            $defaultanswer = new stdClass;
-            $defaultanswer->lessonid   = $question->lessonid;
-            $defaultanswer->pageid   = $question->id;
-            $defaultanswer->timecreated   = $timenow;
-            $defaultanswer->grade = 0;
-
             // The first answer should always be the correct answer
             $correctanswer = clone($defaultanswer);
             $correctanswer->answer = get_string('thatsthecorrectanswer', 'lesson');
             $correctanswer->jumpto = LESSON_NEXTPAGE;
+            $correctanswer->score = 1;
             $DB->insert_record("lesson_answers", $correctanswer);
 
             // The second answer should always be the wrong answer
