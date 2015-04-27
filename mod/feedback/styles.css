@@ -3,46 +3,54 @@
 }
 
 span.feedback_info {
-	font-weight:bold;
+    font-weight:bold;
 }
 div.feedback_item_box_left, div.feedback_item_box_right {
 }
 
+div.feedback_item_box_left div.feedback_item_label_left, div.feedback_item_box_left div.feedback_item_presentation_left {
+    margin-left: 15px;
+}
+
+div.feedback_item_box_right div.feedback_item_label_right, div.feedback_item_box_right div.feedback_item_presentation_right {
+    margin-right: 15px;
+}
+
 div.feedback_depend {
-	background:#DDDDDD;
+    background:#DDDDDD;
 }
 
 div.feedback_complete_depend {
-	background:#EEEEEE;
+    background:#EEEEEE;
 }
 
 span.feedback_depend {
-	color:#ff0000;
+    color:#ff0000;
 }
 
 div.feedback_item_number_left, div.feedback_item_left {
-	float:left;
+    float:left;
 }
 div.feedback_item_number_right, div.feedback_item_right {
-	float:right;
+    float:right;
 }
 
 div.feedback_item_commands_left {
-	float:right;
-	text-align:right;
+    float:right;
+    text-align:right;
 }
 
 div.feedback_item_commands_right {
-	float:left;
-	text-align:left;
+    float:left;
+    text-align:left;
 }
 
 li.feedback_item_check_h_left,
 li.feedback_item_check_h_right,
 li.feedback_item_radio_h_left,
 li.feedback_item_radio_h_right {
-	list-style-type:none;
-	display:inline;
+    list-style-type:none;
+    display:inline;
 }
 
 div.feedback_item_select_h_left,
@@ -54,8 +62,8 @@ li.feedback_item_check_v_left,
 li.feedback_item_check_v_right,
 li.feedback_item_radio_v_left,
 li.feedback_item_radio_v_right {
-	list-style-type:none;
-	display:block;
+    list-style-type:none;
+    display:block;
 }
 
 div.feedback_item_select_v_left,
@@ -69,20 +77,20 @@ div.feedback_items label{
 
 div.feedback_item_captcha_text_left,
 div.feedback_item_captcha_img_left {
-	display:inline;
-	margin: 5px;
+    display:inline;
+    margin: 5px;
 }
 div.feedback_item_captcha_text_right,
 div.feedback_item_captcha_img_right {
-	display:inline;
-	margin: 5px;
+    display:inline;
+    margin: 5px;
 }
 
 hr.feedback_pagebreak {
-	height:8px;
-	color:#aaaaaa;
-	background-color:#aaaaaa;
-	border:0px;
+    height:8px;
+    color:#aaaaaa;
+    background-color:#aaaaaa;
+    border:0px;
 }
 
 .drag_target_active {
