@@ -292,7 +292,7 @@ class user_edit_form extends company_moodleform {
 
         // Validate email.
         if ($DB->record_exists('user', array('email' => $usernew->email, 'mnethostid' => $CFG->mnet_localhost_id))) {
-            $errors['email'] = get_string('emailexists');
+            $errors['email'] = get_string('emailexists');http://img.prntscr.com/img?url=http://i.imgur.com/w6OWets.png
         }
 
         if (!empty($usernew->newpassword)) {
@@ -468,7 +468,9 @@ if ($companyform->is_cancelled() || $mform->is_cancelled()) {
             if ($allow) {
                 $count++;
                 $DB->insert_record('companylicense_users',
-                                    array('userid' => $userdata->id, 'licenseid' => $licenseid,
+                                    array('userid' => $userdata->id,
+                                          'licenseid' => $licenseid,
+                                          'issuedate' => time(),
                                           'licensecourseid' => $licensecourse));
             }
             // Create an email event.
