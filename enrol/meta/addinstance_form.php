@@ -33,10 +33,19 @@ class enrol_meta_addinstance_form extends moodleform {
         global $CFG, $DB;
 
         $mform  = $this->_form;
-        $course = $this->_customdata;
+        $course = $this->_customdata['course'];
+        $instance = $this->_customdata['instance'];
         $this->course = $course;
 
-        $existing = $DB->get_records('enrol', array('enrol'=>'meta', 'courseid'=>$course->id), '', 'customint1, id');
+        if ($instance) {
+            $where = 'WHERE c.id = :courseid';
+            $params = array('courseid' => $instance->customint1);
+            $existing = array();
+        } else {
+            $where = '';
+            $params = array();
+            $existing = $DB->get_records('enrol', array('enrol' => 'meta', 'courseid' => $course->id), '', 'customint1, id');
+        }
 
         // TODO: this has to be done via ajax or else it will fail very badly on large sites!
         $courses = array('' => get_string('choosedots'));
@@ -46,8 +55,8 @@ class enrol_meta_addinstance_form extends moodleform {
         $plugin = enrol_get_plugin('meta');
         $sortorder = 'c.' . $plugin->get_config('coursesort', 'sortorder') . ' ASC';
 
-        $sql = "SELECT c.id, c.fullname, c.shortname, c.visible $select FROM {course} c $join ORDER BY " . $sortorder;
-        $rs = $DB->get_recordset_sql($sql, array('contextlevel' => CONTEXT_COURSE));
+        $sql = "SELECT c.id, c.fullname, c.shortname, c.visible $select FROM {course} c $join $where ORDER BY $sortorder";
+        $rs = $DB->get_recordset_sql($sql, array('contextlevel' => CONTEXT_COURSE) + $params);
         foreach ($rs as $c) {
             if ($c->id == SITEID or $c->id == $course->id or isset($existing[$c->id])) {
                 continue;
@@ -64,17 +73,38 @@ class enrol_meta_addinstance_form extends moodleform {
         }
         $rs->close();
 
+        $groups = array(0 => get_string('none'));
+        if (has_capability('moodle/course:managegroups', context_course::instance($course->id))) {
+            $groups[ENROL_META_CREATE_GROUP] = get_string('creategroup', 'enrol_meta');
+        }
+        foreach (groups_get_all_groups($course->id) as $group) {
+            $groups[$group->id] = format_string($group->name, true, array('context' => context_course::instance($course->id)));
+        }
+
         $mform->addElement('header','general', get_string('pluginname', 'enrol_meta'));
 
         $mform->addElement('select', 'link', get_string('linkedcourse', 'enrol_meta'), $courses);
         $mform->addRule('link', get_string('required'), 'required', null, 'client');
 
+        $mform->addElement('select', 'customint2', get_string('addgroup', 'enrol_meta'), $groups);
+
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);
 
-        $this->add_add_buttons();
+        $mform->addElement('hidden', 'enrolid');
+        $mform->setType('enrolid', PARAM_INT);
 
-        $this->set_data(array('id'=>$course->id));
+        $data = array('id' => $course->id);
+        if ($instance) {
+            $data['link'] = $instance->customint1;
+            $data['enrolid'] = $instance->id;
+            $data['customint2'] = $instance->customint2;
+            $mform->freeze('link');
+            $this->add_action_buttons();
+        } else {
+            $this->add_add_buttons();
+        }
+        $this->set_data($data);
     }
 
     /**
@@ -93,9 +123,15 @@ class enrol_meta_addinstance_form extends moodleform {
     function validation($data, $files) {
         global $DB, $CFG;
 
+        $errors = parent::validation($data, $files);
+
+        if ($this->_customdata['instance']) {
+            // Nothing to validate in case of editing.
+            return $errors;
+        }
+
         // TODO: this is duplicated here because it may be necessary once we implement ajax course selection element
 
-        $errors = parent::validation($data, $files);
         if (!$c = $DB->get_record('course', array('id'=>$data['link']))) {
             $errors['link'] = get_string('required');
         } else {

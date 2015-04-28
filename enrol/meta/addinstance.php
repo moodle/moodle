@@ -28,6 +28,7 @@ require_once("$CFG->dirroot/enrol/meta/locallib.php");
 
 $id = required_param('id', PARAM_INT); // course id
 $message = optional_param('message', null, PARAM_TEXT);
+$instanceid = optional_param('enrolid', 0, PARAM_INT);
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
@@ -41,24 +42,42 @@ require_login($course);
 require_capability('moodle/course:enrolconfig', $context);
 
 $enrol = enrol_get_plugin('meta');
-if (!$enrol->get_newinstance_link($course->id)) {
-    redirect(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
+if ($instanceid) {
+    require_capability('enrol/meta:config', $context);
+    $instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'meta',
+        'id' => $instanceid), '*', MUST_EXIST);
+
+} else {
+    if (!$enrol->get_newinstance_link($course->id)) {
+        redirect(new moodle_url('/enrol/instances.php', array('id' => $course->id)));
+    }
+    $instance = null;
 }
 
-$mform = new enrol_meta_addinstance_form(NULL, $course);
+$mform = new enrol_meta_addinstance_form(null, array('course' => $course, 'instance' => $instance));
 
 if ($mform->is_cancelled()) {
     redirect(new moodle_url('/enrol/instances.php', array('id'=>$course->id)));
 
 } else if ($data = $mform->get_data()) {
-    $eid = $enrol->add_instance($course, array('customint1'=>$data->link));
-    enrol_meta_sync($course->id);
-    if (!empty($data->submitbuttonnext)) {
-        redirect(new moodle_url('/enrol/meta/addinstance.php',
-                array('id' => $course->id, 'message' => 'added')));
-    } else {
-        redirect(new moodle_url('/enrol/instances.php', array('id' => $course->id)));
+    if (!empty($data->customint2) && $data->customint2 == ENROL_META_CREATE_GROUP) {
+        $data->customint2 = enrol_meta_create_new_group($course->id, $data->link);
     }
+    if ($instance) {
+        if ($data->customint2 != $instance->customint2) {
+            $DB->update_record('enrol', array('id' => $instance->id, 'customint2' => $data->customint2));
+            enrol_meta_sync($course->id);
+        }
+    } else {
+        $eid = $enrol->add_instance($course, array('customint1' => $data->link,
+                                               'customint2' => $data->customint2));
+        enrol_meta_sync($course->id);
+        if (!empty($data->submitbuttonnext)) {
+            redirect(new moodle_url('/enrol/meta/addinstance.php',
+                    array('id' => $course->id, 'message' => 'added')));
+        }
+    }
+    redirect(new moodle_url('/enrol/instances.php', array('id' => $course->id)));
 }
 
 $PAGE->set_heading($course->fullname);
