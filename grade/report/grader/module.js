@@ -102,6 +102,13 @@ M.gradereport_grader.classes.report.prototype.get_cell_info = function(arg) {
         return null;
     }
 
+    for (i in this.feedback) {
+        if (this.feedback[i] && this.feedback[i].user == userid && this.feedback[i].item == itemid) {
+            feedback = this.feedback[i].content;
+            break;
+        }
+    }
+
     return {
         id : cell.getAttribute('id'),
         userid : userid,
@@ -111,6 +118,7 @@ M.gradereport_grader.classes.report.prototype.get_cell_info = function(arg) {
         itemtype : this.items[itemid].type,
         itemscale : this.items[itemid].scale,
         itemdp : this.items[itemid].decimals,
+        feedback : feedback,
         cell : cell
     };
 };
@@ -927,7 +935,7 @@ M.gradereport_grader.classes.textfield.prototype.get_feedback = function() {
     }
     var properties = this.report.get_cell_info(this.node);
     if (properties) {
-        return properties.feedback || '';
+        return properties.feedback;
     }
     return '';
 };
@@ -1101,7 +1109,7 @@ M.gradereport_grader.classes.scalefield.prototype.has_changed = function() {
     this.editable = true;
     if (this.editfeedback) {
         var properties = this.report.get_cell_info(this.node);
-        var feedback = properties.feedback || '';
+        var feedback = properties.feedback;
         return (gradef != gradec || this.get_feedback() != feedback);
     }
     return (gradef != gradec);
