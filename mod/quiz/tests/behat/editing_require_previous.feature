@@ -55,6 +55,24 @@ Feature: Edit quizzes where some questions require the previous one to have been
     Then "This question cannot be attempted until the previous question has been completed." "link" should be visible
 
   @javascript
+  Scenario: A question can depend on a random question
+    Given the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber | preferredbehaviour |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | immediatefeedback  |
+    And the following "questions" exist:
+      | questioncategory | qtype       | name                    | questiontext   |
+      | Test questions   | truefalse   | TF1                     | First question |
+      | Test questions   | random      | Random (Test questions) | 0              |
+    And quiz "Quiz 1" contains the following questions:
+      | question                | page | requireprevious |
+      | Random (Test questions) | 1    | 0               |
+      | TF1                     | 1    | 1               |
+    And I follow "Course 1"
+    And I follow "Quiz 1"
+    And I follow "Edit quiz"
+    Then "This question cannot be attempted until the previous question has been completed." "link" should be visible
+
+  @javascript
   Scenario: The second question can be set to depend on the first
     Given the following "activities" exist:
       | activity   | name   | intro              | course | idnumber | preferredbehaviour |
@@ -104,16 +122,19 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | activity   | name   | intro              | course | idnumber | preferredbehaviour |
       | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | deferredfeedback   |
     And the following "questions" exist:
-      | questioncategory | qtype       | name | questiontext    |
-      | Test questions   | truefalse   | TF1  | First question  |
-      | Test questions   | truefalse   | TF2  | Second question |
+      | questioncategory | qtype       | name                    | questiontext    |
+      | Test questions   | truefalse   | TF1                     | First question  |
+      | Test questions   | truefalse   | TF2                     | Second question |
+      | Test questions   | random      | Random (Test questions) | 0               |
     And quiz "Quiz 1" contains the following questions:
-      | question | page | requireprevious |
-      | TF1      | 1    | 0               |
-      | TF2      | 1    | 1               |
+      | question                | page | requireprevious |
+      | Random (Test questions) | 1    | 0               |
+      | TF1                     | 1    | 1               |
+      | TF2                     | 1    | 1               |
     And I follow "Course 1"
     And I follow "Quiz 1"
     And I follow "Edit quiz"
+    Then "be attempted" "link" in the "TF1" "list_item" should not be visible
     Then "be attempted" "link" in the "TF2" "list_item" should not be visible
 
   @javascript
