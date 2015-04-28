@@ -33,3 +33,4 @@ defined('MOODLE_INTERNAL') || die();
 $string['language'] = 'Хэл';
 $string['next'] = 'Дараагийн';
 $string['previous'] = 'Өмнөх';
+$string['reload'] = 'Дахин ачаалах';
