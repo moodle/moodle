@@ -292,7 +292,7 @@ class user_edit_form extends company_moodleform {
 
         // Validate email.
         if ($DB->record_exists('user', array('email' => $usernew->email, 'mnethostid' => $CFG->mnet_localhost_id))) {
-            $errors['email'] = get_string('emailexists');http://img.prntscr.com/img?url=http://i.imgur.com/w6OWets.png
+            $errors['email'] = get_string('emailexists');
         }
 
         if (!empty($usernew->newpassword)) {
