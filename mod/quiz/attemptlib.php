@@ -2145,6 +2145,11 @@ abstract class quiz_nav_panel_base {
             $button->currentpage = $this->showall || $button->page == $this->page;
             $button->flagged     = $qa->is_flagged();
             $button->url         = $this->get_question_url($slot);
+            if ($this->attemptobj->is_blocked_by_previous_question($slot)) {
+                $button->url = null;
+                $button->stateclass = 'blocked';
+                $button->statestring = get_string('questiondependsonprevious', 'quiz');
+            }
             $buttons[] = $button;
         }
 
