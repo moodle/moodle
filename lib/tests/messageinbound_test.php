@@ -45,19 +45,23 @@ class core_messageinbound_testcase extends advanced_testcase {
 
         $mime = Horde_Mime_Part::parseMessage($source);
         if ($plainpartid = $mime->findBody('plain')) {
-            $messagedata = $mime->getPart($plainpartid)->getContents();
+            $messagedata = new stdClass();
+            $messagedata->plain = $mime->getPart($plainpartid)->getContents();
+            $messagedata->html = '';
 
-            $linecount = test_handler::get_linecount_to_remove($messagedata);
-            $actual = test_handler::remove_quoted_text($messagedata, $linecount);
-            $this->assertEquals($expectedplain, $actual);
+            list($message, $format) = test_handler::remove_quoted_text($messagedata);
+            $this->assertEquals($expectedplain, $message);
+            $this->assertEquals(FORMAT_PLAIN, $format);
         }
 
         if ($htmlpartid = $mime->findBody('html')) {
-            $messagedata = html_to_text($mime->getPart($htmlpartid)->getContents());
+            $messagedata = new stdClass();
+            $messagedata->plain = '';
+            $messagedata->html = $mime->getPart($htmlpartid)->getContents();
 
-            $linecount = test_handler::get_linecount_to_remove($messagedata);
-            $actual = test_handler::remove_quoted_text($messagedata, $linecount);
-            $this->assertEquals($expectedhtml, $actual);
+            list($message, $format) = test_handler::remove_quoted_text($messagedata);
+            $this->assertEquals($expectedhtml, $message);
+            $this->assertEquals(FORMAT_PLAIN, $format);
         }
     }
 
@@ -108,9 +112,10 @@ class core_messageinbound_testcase extends advanced_testcase {
             'EXPECTEDHTML'      => true,
         );
         $section = null;
+        $data = array();
         foreach ($tokens as $i => $token) {
             if (null === $section && empty($token)) {
-                continue; // skip leading blank
+                continue; // Skip leading blank.
             }
             if (null === $section) {
                 if (!isset($sections[$token])) {
@@ -140,13 +145,22 @@ class core_messageinbound_testcase extends advanced_testcase {
     }
 }
 
-class test_handler extends \mod_forum\message\inbound\reply_handler {
+/**
+ * Class test_handler
+ */
+class test_handler extends \core\message\inbound\handler {
 
-    public static function remove_quoted_text($text, $linecount = 1) {
-        return parent::remove_quoted_text($text, $linecount);
+    public static function remove_quoted_text($messagedata) {
+        return parent::remove_quoted_text($messagedata);
     }
 
     public static function get_linecount_to_remove($messagedata) {
         return parent::get_linecount_to_remove($messagedata);
     }
+
+    public function get_name() {}
+
+    public function get_description() {}
+
+    public function process_message(stdClass $record, stdClass $messagedata) {}
 }
