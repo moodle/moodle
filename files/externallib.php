@@ -336,6 +336,7 @@ class core_files_external extends external_api {
         $context = self::get_context_from_params($fileinfo);
         self::validate_context($context);
         if (($fileinfo['component'] == 'user' and $fileinfo['filearea'] == 'private')) {
+            require_capability('moodle/user:manageownfiles', $context);
             debugging('Uploading directly to user private files area is deprecated. Upload to a draft area and then move the files with core_user::add_user_private_files');
         }
 
