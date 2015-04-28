@@ -72,6 +72,9 @@ function cron_run() {
         try {
             get_mailer('buffer');
             $task->execute();
+            if ($DB->is_transaction_started()) {
+                throw new coding_exception("Task left transaction open");
+            }
             if (isset($predbqueries)) {
                 mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
                 mtrace("... used " . (microtime(1) - $pretime) . " seconds");
@@ -105,6 +108,9 @@ function cron_run() {
         try {
             get_mailer('buffer');
             $task->execute();
+            if ($DB->is_transaction_started()) {
+                throw new coding_exception("Task left transaction open");
+            }
             if (isset($predbqueries)) {
                 mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
                 mtrace("... used " . (microtime(1) - $pretime) . " seconds");
