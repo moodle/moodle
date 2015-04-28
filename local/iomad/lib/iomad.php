@@ -868,8 +868,12 @@ class iomad {
     public static function get_user_license_sqlsearch($params, $idlist='', $sort, $dir, $departmentid, $nogrades=false) {
         global $DB, $CFG;
 
-        $sqlsort = " GROUP BY u.id, cl.name, d.name";
-        $sqlsearch = "u.id != '-1' and u.deleted = 0";
+        if ($params['courseid'] == 1) {
+            $sqlsort = " GROUP BY co.id, cl.name, d.name, u.id";
+        } else {
+            $sqlsort = " GROUP BY cl.name, d.name, u.id";
+        }
+         $sqlsearch = "u.id != '-1' and u.deleted = 0";
         $sqlsearch .= " AND u.id NOT IN (".$CFG->siteadmins.")";
 
         // Deal with suspended users.
@@ -1049,10 +1053,10 @@ class iomad {
         }                
 
         // Get the user details.
-        $countsql = "SELECT CONCAT(co.id, u.id) AS id ";
+        $countsql = "SELECT clu.id AS id ";
         $selectsql = "
                 SELECT
-                CONCAT(co.id, u.id) AS id, 
+                clu.id AS id, 
                 u.id AS uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,
