@@ -146,14 +146,19 @@ switch ($mode) {
             $url = new moodle_url('/course/user.php', array('id' => $id, 'user' => $user->id, 'mode' => $mode));
             $reportnode = $activenode->add(get_string('pluginname', 'gradereport_user'), $url);
         } else {
+            if ($course->id == SITEID) {
+                $activenode = $PAGE->navigation->find('user' . $user->id, null);
+            } else {
+                $currentcoursenode = $PAGE->navigation->find('currentcourse', null);
+                $activenode = $currentcoursenode->find_active_node();
+            }
             // Check to see if the active node is a user name.
-            $currentcoursenode = $PAGE->navigation->find('currentcourse', null);
-            $activenode = $currentcoursenode->find_active_node();
-            if (strpos($activenode->key, 'user') === false) { // No user name found.
+            if (!preg_match('/^user\d{0,}$/', $activenode->key)) { // No user name found.
                 $userurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $course->id));
                 // Add the user name.
                 $PAGE->navbar->add(fullname($user), $userurl, navigation_node::TYPE_SETTING);
             }
+            $PAGE->navbar->add(get_string('report'));
             $gradeurl = new moodle_url('/course/user.php', array('id' => $id, 'user' => $user->id, 'mode' => $mode));
             // Add the 'grades' node to the navbar.
             $navbar = $PAGE->navbar->add(get_string('grades', 'grades'), $gradeurl, navigation_node::TYPE_SETTING);

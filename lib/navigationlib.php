@@ -4220,7 +4220,7 @@ class settings_navigation extends navigation_node {
 
             // Add the user profile to the dashboard.
             $profilenode = $dashboard->add(get_string('myprofile'), new moodle_url('/user/profile.php',
-                    array('id' => $user->id)), null, 'myprofile');
+                    array('id' => $user->id)), self::TYPE_SETTING, null, 'myprofile');
 
             if (!empty($CFG->navadduserpostslinks)) {
                 // Add nodes for forum posts and discussions if the user can view either or both

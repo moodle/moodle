@@ -55,6 +55,12 @@ if ($delete and confirm_sesskey()) {
     redirect($PAGE->url);
 }
 
+// Create the breadcrumb.
+$PAGE->add_report_nodes($USER->id, array(
+        'name' => get_string('navigationlink', 'report_usersessions'),
+        'url' => new moodle_url('/report/usersessions/user.php')
+    ));
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('mysessions', 'report_usersessions'));
 

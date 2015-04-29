@@ -127,3 +127,28 @@ function report_stats_supports_logstore($instance) {
     }
     return false;
 }
+
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ * @return bool
+ */
+function report_stats_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    global $CFG;
+    if (empty($CFG->enablestats)) {
+        return false;
+    }
+    if (empty($course)) {
+        // We want to display these reports under the site context.
+        $course = get_fast_modinfo(SITEID)->get_course();
+    }
+    if (report_stats_can_access_user_report($user, $course)) {
+        $url = new moodle_url('/report/stats/user.php', array('id' => $user->id, 'course' => $course->id));
+        $node = new core_user\output\myprofile\node('reports', 'stats', get_string('stats'), null, $url);
+        $tree->add_node($node);
+    }
+}
