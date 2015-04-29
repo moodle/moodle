@@ -51,7 +51,7 @@ Feature: Practice mode in a lesson activity
             | True | 1 |
         And I press "Submit"
         Then I should see "View grades"
-        And I follow "My grades" in the user menu
+        And I follow "Grades" in the user menu
         And I follow "Course 1"
         And I should see "Non-practice lesson"
 
@@ -72,7 +72,7 @@ Feature: Practice mode in a lesson activity
             | True | 1 |
         And I press "Submit"
         Then I should not see "View grades"
-        And I follow "My grades" in the user menu
+        And I follow "Grades" in the user menu
         And I follow "Course 1"
         And I should not see "Practice lesson"
 
@@ -94,6 +94,6 @@ Feature: Practice mode in a lesson activity
             | True | 1 |
         And I press "Submit"
         Then I should not see "View grades"
-        And I follow "My grades" in the user menu
+        And I follow "Grades" in the user menu
         And I follow "Course 1"
         And I should not see "Practice lesson with scale"

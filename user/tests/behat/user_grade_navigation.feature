@@ -1,5 +1,5 @@
 @core @core_user
-Feature: The student can navigate to the My grades page and user grade report.
+Feature: The student can navigate to their grades page and user grade report.
   In order to view my grades and the user grade report
   As a user
   I need to log in and browse to my grades.
@@ -29,16 +29,16 @@ Feature: The student can navigate to the My grades page and user grade report.
       | assign | C2 | a4 | Test assignment four | Submit something! | 150 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "150.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "67.00" to the user "Student 1" for the grade item "Test assignment two"
     And I press "Save changes"
     And I log out
 
-  Scenario: Navigation to My grades and the user grade report.
+  Scenario: Navigation to Grades and the user grade report.
     When I log in as "student1"
-    And I follow "My grades"
+    And I follow "Grades"
     Then the following should exist in the "overview-grade" table:
     | Course name | Grade |
     | Course 2 | - |
@@ -50,7 +50,7 @@ Feature: The student can navigate to the My grades page and user grade report.
     | Test assignment two | 25.00 % | 67.00  | 0–100 | 67.00 % | 16.75 % |
     | Test assignment three | 0.00 %( Empty ) | - | 0–150 | - | 0.00 % |
 
-  Scenario: Change My grades settings to go to a custom url.
+  Scenario: Change Grades settings to go to a custom url.
     When I log in as "admin"
     And I set the following administration settings values:
     | grade_mygrades_report | External URL |
@@ -58,7 +58,7 @@ Feature: The student can navigate to the My grades page and user grade report.
     And I log out
     And I log in as "student1"
     And I follow "Student 1"
-    And I follow "My grades"
+    And I follow "Grades"
     Then I should see "My badges from Acceptance test site web site"
 
   @javascript
@@ -90,7 +90,7 @@ Feature: The student can navigate to the My grades page and user grade report.
     And I log in as "parent1"
     And I am on site homepage
     And I follow "Student 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Users > Student 1"
     Then the following should exist in the "overview-grade" table:
     | Course name | Grade |
     | Course 2 | - |

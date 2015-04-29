@@ -320,7 +320,7 @@ class grade_report_overview extends grade_report {
     }
 
     /**
-     * This report supports being set as the 'my grades' report.
+     * This report supports being set as the 'grades' report.
      */
     public static function supports_mygrades() {
         return true;

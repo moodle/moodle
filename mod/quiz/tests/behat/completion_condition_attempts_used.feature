@@ -47,7 +47,7 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
       | Feedback for the response 'True'.  | So you think it is true                 |
       | Feedback for the response 'False'. | So you think it is false                |
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I navigate to "Categories and items" node in "Grade administration > Setup"
     And I follow "Edit  quiz Test quiz name"
     Then I should see "Edit grade item"

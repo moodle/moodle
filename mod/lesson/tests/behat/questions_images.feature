@@ -17,7 +17,7 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I follow "Manage my private files"
+    And I follow "Manage private files"
     And I upload "mod/lesson/tests/fixtures/moodle_logo.jpg" file to "Files" filemanager
     And I click on "Save changes" "button"
     When I am on homepage

@@ -30,7 +30,7 @@ Feature: We can understand the gradebook user report
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "60.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Test assignment two"

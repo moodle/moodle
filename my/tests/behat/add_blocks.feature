@@ -23,6 +23,6 @@ Feature: Add blocks to dashboard page
     When I press "Customise this page"
     And I add the "Latest news" block
     Then I should see "Latest news" in the "Latest news" "block"
-    And I should see "My latest badges" in the "My latest badges" "block"
+    And I should see "Latest badges" in the "Latest badges" "block"
     And I should see "Calendar" in the "Calendar" "block"
     And I should see "Upcoming events" in the "Upcoming events" "block"

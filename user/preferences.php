@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * My preferences.
+ * Preferences.
  *
  * @package    core_user
  * @copyright  2015 Frédéric Massart - FMCorz.net

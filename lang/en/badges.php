@@ -91,7 +91,7 @@ $string['personaconnection_help'] = 'Persona is a system for identifying yoursel
 
 For more information about Persona visit <a href="https://login.persona.org/about">https://login.persona.org/about</a>.';
 $string['backpackimport'] = 'Badge import settings';
-$string['backpackimport_help'] = 'After backpack connection is successfully established, badges from your backpack can be displayed on your "My Badges" page and your profile page.
+$string['backpackimport_help'] = 'After the backpack connection is successfully established, badges from your backpack can be displayed on your badges page and your profile page.
 
 In this area, you can select collections of badges from your backpack that you would like to display in your profile.';
 $string['badges'] = 'Badges';
@@ -104,7 +104,7 @@ To add a new image, browse and select an image (in JPG or PNG format) then click
 $string['badgeprivacysetting'] = 'Badge privacy settings';
 $string['badgeprivacysetting_help'] = 'Badges you earn can be displayed on your account profile page. This setting allows you to automatically set the visibility of the newly earned badges.
 
-You can still control individual badge privacy settings on your "My badges" page.';
+You can still control individual badge privacy settings on your badges page.';
 $string['badgeprivacysetting_str'] = 'Automatically show badges I earn on my profile page';
 $string['badgesalt'] = 'Salt for hashing the recepient\'s email address';
 $string['badgesalt_desc'] = 'Using a hash allows backpack services to confirm the badge earner without having to expose their email address. This setting should only use numbers and letters.
@@ -287,8 +287,8 @@ $string['managebadges'] = 'Manage badges';
 $string['managemybadges'] = 'Manage my badges';
 $string['message'] = 'Message body';
 $string['messagebody'] = '<p>You have been awarded the badge "%badgename%"!</p>
-<p>More information about this badge can be found at %badgelink%.</p>
-<p>You can manage and download the badge from {$a}.</p>';
+<p>More information about this badge can be found on the %badgelink% badge information page.</p>
+<p>You can manage and download the badge from your {$a} page.</p>';
 $string['messagesubject'] = 'Congratulations! You just earned a badge!';
 $string['method'] = 'This criterion is complete when...';
 $string['mingrade'] = 'Minimum grade required';

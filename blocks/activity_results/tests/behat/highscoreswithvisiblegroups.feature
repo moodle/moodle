@@ -54,7 +54,7 @@ Feature: The activity results block displays student scores
       | assignsubmission_file_enabled | 0 |
       | Group mode | Visible groups |
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
@@ -97,7 +97,7 @@ Feature: The activity results block displays student scores
       | assignsubmission_file_enabled | 0 |
       | Group mode | Visible groups |
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
@@ -142,7 +142,7 @@ Feature: The activity results block displays student scores
       | assignsubmission_file_enabled | 0 |
       | Group mode | Visible groups |
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
@@ -187,7 +187,7 @@ Feature: The activity results block displays student scores
       | assignsubmission_file_enabled | 0 |
       | Group mode | Visible groups |
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
@@ -237,7 +237,7 @@ Feature: The activity results block displays student scores
       | assignsubmission_file_enabled | 0 |
       | Group mode | Visible groups |
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
@@ -286,7 +286,7 @@ Feature: The activity results block displays student scores
       | assignsubmission_file_enabled | 0 |
       | Group mode | Visible groups |
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
@@ -335,7 +335,7 @@ Feature: The activity results block displays student scores
       | assignsubmission_file_enabled | 0 |
       | Group mode | Visible groups |
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
@@ -382,7 +382,7 @@ Feature: The activity results block displays student scores
       | assignsubmission_file_enabled | 0 |
       | Group mode | Visible groups |
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"

@@ -169,7 +169,7 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
         // Display a standard page.
         if ($courseid == SITEID) {
             $PAGE->set_pagelayout('standard');
-            $header = get_string('mygrades', 'grades') . ' - ' . fullname($report->user);
+            $header = get_string('grades', 'grades') . ' - ' . fullname($report->user);
             $PAGE->set_title($header);
             $PAGE->set_heading(fullname($report->user));
 
@@ -196,7 +196,7 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
         }
     } else {
         $PAGE->set_pagelayout('standard');
-        $header = get_string('mygrades', 'grades') . ' - ' . fullname($report->user);
+        $header = get_string('grades', 'grades') . ' - ' . fullname($report->user);
         $PAGE->set_title($header);
         $PAGE->set_heading(fullname($report->user));
         echo $OUTPUT->header();

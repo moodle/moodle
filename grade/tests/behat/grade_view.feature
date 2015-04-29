@@ -51,7 +51,7 @@ Feature: We can enter in grades and view reports from the gradebook
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name 1"
     And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment name 2"
@@ -66,7 +66,7 @@ Feature: We can enter in grades and view reports from the gradebook
     And the "Select all or one user" select box should contain "All users (1)"
     And I log out
     And I log in as "student1"
-    And I follow "My grades" in the user menu
+    And I follow "Grades" in the user menu
     And I follow "Course 1"
     Then the following should exist in the "user-grade" table:
       | Grade item | Grade | Range | Percentage |
@@ -76,7 +76,7 @@ Feature: We can enter in grades and view reports from the gradebook
     And the following should not exist in the "user-grade" table:
       | Grade item | Grade | Range | Percentage |
       | Course total | 90.00 | 0–100 | 90.00 % |
-    And I follow "My grades" in the user menu
+    And I follow "Grades" in the user menu
     And "Course 1" row "Grade" column of "overview-grade" table should contain "170.00"
     And "Course 1" row "Grade" column of "overview-grade" table should not contain "90.00"
 
@@ -94,7 +94,7 @@ Feature: We can enter in grades and view reports from the gradebook
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "My grades" in the user menu
+    And I follow "Grades" in the user menu
     And I follow "Course 1"
     Then the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Percentage |

@@ -7833,8 +7833,7 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
     if (!empty($course)) {
         $postsurl->param('course', $course->id);
     }
-    $string = $iscurrentuser ? get_string('myprofileownpost', 'mod_forum') :
-            get_string('forumposts', 'mod_forum');
+    $string = get_string('forumposts', 'mod_forum');
     $node = new core_user\output\myprofile\node('miscellaneous', 'forumposts', $string, null, $postsurl);
     $tree->add_node($node);
 
@@ -7842,8 +7841,7 @@ function mod_forum_myprofile_navigation(core_user\output\myprofile\tree $tree, $
     if (!empty($course)) {
         $discussionssurl->param('course', $course->id);
     }
-    $string = $iscurrentuser ? get_string('myprofileowndis', 'mod_forum') :
-            get_string('myprofileotherdis', 'mod_forum');
+    $string = get_string('myprofileotherdis', 'mod_forum');
     $node = new core_user\output\myprofile\node('miscellaneous', 'forumdiscussions', $string, null,
         $discussionssurl);
     $tree->add_node($node);

@@ -91,7 +91,7 @@ if ($form->is_cancelled()) {
     $fordb->courseid = ($type == BADGE_TYPE_COURSE) ? $courseid : null;
     $fordb->messagesubject = get_string('messagesubject', 'badges');
     $fordb->message = get_string('messagebody', 'badges',
-            html_writer::link($CFG->wwwroot . '/badges/mybadges.php', get_string('mybadges', 'badges')));
+            html_writer::link($CFG->wwwroot . '/badges/mybadges.php', get_string('managebadges', 'badges')));
     $fordb->attachment = 1;
     $fordb->notification = BADGE_MESSAGE_NEVER;
     $fordb->status = BADGE_STATUS_INACTIVE;

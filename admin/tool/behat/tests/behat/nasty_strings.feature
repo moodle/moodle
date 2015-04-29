@@ -10,7 +10,7 @@ Feature: Transform steps arguments
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Edit profile"
 
   @javascript

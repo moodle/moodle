@@ -62,7 +62,7 @@ Feature: View gradebook when scales are used
     And I set the field "Grade" to "F"
     And I press "Save changes"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
@@ -100,7 +100,7 @@ Feature: View gradebook when scales are used
       | Course total        | 5.00      |
     And I log out
     And I log in as "student2"
-    And I follow "My grades" in the user menu
+    And I follow "Grades" in the user menu
     And I follow "Course 1"
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage | Contribution to course total |
@@ -148,7 +148,7 @@ Feature: View gradebook when scales are used
       | Course total<aggregation>.   |           |
     And I log out
     And I log in as "student2"
-    And I follow "My grades" in the user menu
+    And I follow "Grades" in the user menu
     And I follow "Course 1"
     And the following should exist in the "user-grade" table:
       | Grade item                   | Grade          | Range | Percentage    | Contribution to course total |

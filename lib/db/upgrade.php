@@ -4337,5 +4337,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015040900.02);
     }
 
+    if ($oldversion < 2015050400.00) {
+        $config = get_config('core', 'customusermenuitems');
+
+        // Change "My preferences" in the user menu to "Preferences".
+        $config = str_replace("mypreferences,moodle|/user/preferences.php|preferences",
+            "preferences,moodle|/user/preferences.php|preferences", $config);
+
+        // Change "My grades" in the user menu to "Grades".
+        $config = str_replace("mygrades,grades|/grade/report/mygrades.php|grades",
+            "grades,grades|/grade/report/mygrades.php|grades", $config);
+
+        set_config('customusermenuitems', $config);
+
+        upgrade_main_savepoint(true, 2015050400.00);
+    }
+
     return true;
 }

@@ -2637,7 +2637,6 @@ abstract class grade_helper {
      * letter => get_string('letters', 'grades'),
      * export => get_string('export', 'grades'),
      * import => get_string('import'),
-     * preferences => get_string('mypreferences', 'grades'),
      * settings => get_string('settings')
      *
      * @return array
@@ -2741,7 +2740,7 @@ abstract class grade_helper {
             if (file_exists($plugindir.'/preferences.php')) {
                 $url = new moodle_url('/grade/report/'.$plugin.'/preferences.php', array('id'=>$courseid));
                 $gradepreferences[$plugin] = new grade_plugin_info($plugin, $url,
-                    get_string('mypreferences', 'grades') . ': ' . $pluginstr);
+                    get_string('preferences', 'grades') . ': ' . $pluginstr);
             }
         }
         if (count($gradereports) == 0) {

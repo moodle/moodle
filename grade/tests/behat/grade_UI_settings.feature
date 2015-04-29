@@ -20,7 +20,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
     And I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
 
   @javascript
@@ -32,7 +32,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
     And I press "Save changes"
     And I am on site homepage
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I click on "Edit  assign Assignment1" "link"
     And I should not see "Minimum grade"
 
@@ -44,7 +44,7 @@ Feature: Site settings can be used to hide parts of the gradebook UI
     And I press "Save changes"
     And I am on site homepage
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     Then "Edit calculation for   Course total" "link" should not exist
 
   @javascript
@@ -55,5 +55,5 @@ Feature: Site settings can be used to hide parts of the gradebook UI
     And I press "Save changes"
     And I am on site homepage
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And "tr .course input[type='text']" "css_element" should not exist

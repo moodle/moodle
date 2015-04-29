@@ -46,7 +46,7 @@ Feature: Set a quiz to be marked complete when the student passes
       | Feedback for the response 'True'.  | So you think it is true                 |
       | Feedback for the response 'False'. | So you think it is false                |
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I set the field "jump" to "Categories and items"
     And I press "Go"
     And I follow "Edit  quiz Test quiz name"

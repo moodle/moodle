@@ -420,7 +420,7 @@ function blog_get_options_for_user(stdClass $user=null) {
         if ($canview) {
             // We can view our own blogs .... BIG surprise.
             $options['view'] = array(
-                'string' => get_string('viewallmyentries', 'blog'),
+                'string' => get_string('blogentries', 'blog'),
                 'link' => new moodle_url('/blog/index.php', array('userid'=>$USER->id))
             );
         }
@@ -1036,7 +1036,7 @@ function core_blog_myprofile_navigation(core_user\output\myprofile\tree $tree, $
         $url->param('courseid', $course->id);
     }
     if ($iscurrentuser) {
-        $title = get_string('myprofilemyblogs', 'core_blog');
+        $title = get_string('blogentries', 'core_blog');
     } else {
         $title = get_string('myprofileuserblogs', 'core_blog');
     }

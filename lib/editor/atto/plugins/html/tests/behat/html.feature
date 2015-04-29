@@ -5,7 +5,7 @@ Feature: Atto edit HTML
   @javascript
   Scenario: Edit the html source
     Given I log in as "admin"
-    When I follow "My profile" in the user menu
+    When I follow "Profile" in the user menu
     And I follow "Edit profile"
     And I set the field "Description" to "<p style=\"color: blue;\">Smurf</p>"
     And I click on "Show more buttons" "button"

@@ -55,7 +55,7 @@ Feature: tool_monitor_subscriptions
 
   Scenario: Subscribe to a rule on course level
     Given I log in as "teacher1"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     When I follow "Subscribe to rule \"New rule course level\""
@@ -64,7 +64,7 @@ Feature: tool_monitor_subscriptions
 
   Scenario: Delete a subscription on course level
     Given I log in as "teacher1"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     And I follow "Subscribe to rule \"New rule course level\""
@@ -77,7 +77,7 @@ Feature: tool_monitor_subscriptions
 
   Scenario: Subscribe to a rule on site level
     Given I log in as "admin"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Acceptance test site"
     When I follow "Subscribe to rule \"New rule site level\""
@@ -86,7 +86,7 @@ Feature: tool_monitor_subscriptions
 
   Scenario: Delete a subscription on site level
     Given I log in as "admin"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Acceptance test site"
     And I follow "Subscribe to rule \"New rule site level\""
@@ -100,11 +100,11 @@ Feature: tool_monitor_subscriptions
 
   Scenario: Receiving notification on site level
     Given I log in as "admin"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Messaging"
     And I click on "input[name^=tool_monitor_notification_loggedin]" "css_element"
     And I press "Save changes"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Acceptance test site"
     And I follow "Subscribe to rule \"New rule site level\""
@@ -119,11 +119,11 @@ Feature: tool_monitor_subscriptions
 
   Scenario: Receiving notification on course level
     Given I log in as "teacher1"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Messaging"
     And I click on "input[name^=tool_monitor_notification_loggedin]" "css_element"
     And I press "Save changes"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     And I follow "Subscribe to rule \"New rule course level\""
@@ -139,7 +139,7 @@ Feature: tool_monitor_subscriptions
 
   Scenario: Navigating via quick link to rules
     Given I log in as "admin"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     When I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     Then I should see "You can manage rules from the Event monitoring rules page."
@@ -147,7 +147,7 @@ Feature: tool_monitor_subscriptions
     And I should see "You can subscribe to rules from the Event monitoring page."
     And I log out
     And I log in as "teacher1"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     And I should see "You can manage rules from the Event monitoring rules page."
@@ -159,7 +159,7 @@ Feature: tool_monitor_subscriptions
     And I should not see "You can manage rules from the Event monitoring rules page."
     And I log out
     And I log in as "teacher2"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     And I should not see "You can manage rules the from the Event monitoring rules page."
@@ -170,7 +170,7 @@ Feature: tool_monitor_subscriptions
       | tool/monitor:managerules | Prohibit |
     And I log out
     And I log in as "teacher1"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
     When I set the field "Select a course" to "Course 1"
     Then I should see "You can manage rules from the Event monitoring rules page."
@@ -178,7 +178,7 @@ Feature: tool_monitor_subscriptions
     And I should not see "You can manage rules from the Event monitoring rules page."
     And I log out
     And I log in as "teacher2"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     And I should not see "You can manage rules from the Event monitoring rules page."

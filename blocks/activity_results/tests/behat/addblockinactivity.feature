@@ -32,7 +32,7 @@ Feature: The activity results block displays student scores
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "80.00" to the user "Student 2" for the grade item "Test assignment"

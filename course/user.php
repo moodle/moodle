@@ -134,9 +134,9 @@ switch ($mode) {
             require_once($CFG->dirroot . '/user/lib.php');
             // Make the dashboard active so that it shows up in the navbar correctly.
             $gradenode = $PAGE->settingsnav->find('dashboard', null)->make_active();
-            // Get the correct 'My grades' url to point to.
+            // Get the correct 'Grades' url to point to.
             $activeurl = user_mygrades_url();
-            $navbar = $PAGE->navbar->add(get_string('mygrades', 'grades'), $activeurl, navigation_node::TYPE_SETTING);
+            $navbar = $PAGE->navbar->add(get_string('grades', 'grades'), $activeurl, navigation_node::TYPE_SETTING);
             $activenode = $navbar->add($course->shortname);
             $activenode->make_active();
             // Find the course node and collapse it.

@@ -58,9 +58,9 @@ class core_user_menu_testcase extends advanced_testcase {
 
             // And these are combinations containing both valid and invalid.
             array('messages,message|/message/index.php|message
-myfiles,moodle|/user/files.php|download
+privatefiles,moodle|/user/files.php|download
 ###
-mybadges,badges|/badges/mybadges.php|award
+badges,badges|/badges/mybadges.php|award
 -|-|-
 test
 -
@@ -92,7 +92,7 @@ test
         // We always add two dividers as standard.
         $dividercount += 2;
 
-        // The basic entry count will additionally include the wrapper menu, Dashboard, My profile, and the Logout link.
+        // The basic entry count will additionally include the wrapper menu, Dashboard, Profile, and the Logout link.
         $entrycount += 4;
 
         $output = $OUTPUT->user_menu($USER);
