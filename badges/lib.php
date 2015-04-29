@@ -42,8 +42,8 @@ function core_badges_myprofile_navigation(\core_user\output\myprofile\tree $tree
         return true;
     }
 
-    // Add category.
-    $category = new core_user\output\myprofile\category('badges', get_string('badges', 'badges'), null);
+    // Add category. This node should appear after 'contact' so that administration block appears towards the end. Refer MDL-49928.
+    $category = new core_user\output\myprofile\category('badges', get_string('badges', 'badges'), 'contact');
     $tree->add_category($category);
 
     // Determine context.
