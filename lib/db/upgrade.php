@@ -4337,15 +4337,5 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015040900.02);
     }
 
-    if ($oldversion < 2015040900.03) {
-        // Change the setting to the new default.
-        $oldconfig = get_config('core', 'defaulthomepage');
-        if ($oldconfig == HOMEPAGE_SITE) {
-            set_config('defaulthomepage', HOMEPAGE_MY);
-        }
-
-        upgrade_main_savepoint(true, 2015040900.03);
-    }
-
     return true;
 }
