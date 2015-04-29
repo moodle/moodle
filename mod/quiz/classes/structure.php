@@ -182,7 +182,8 @@ class structure {
         }
 
         if ($this->get_question_type_for_slot($slotnumber) == 'random') {
-            return true;
+            return \question_engine::can_questions_finish_during_the_attempt(
+                    $this->quizobj->get_quiz()->preferredbehaviour);
         }
 
         if (isset($this->slotsinorder[$slotnumber]->canfinish)) {
