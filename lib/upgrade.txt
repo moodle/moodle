@@ -39,6 +39,8 @@ information provided here is intended especially for developers.
 * The outdated lib/google/Google_Client.php and related files have been completely removed. To use
   the new client, read lib/google/readme_moodle.txt, please.
 * profile_display_badges() has been deprecated. See MDL-48935 for details.
+* process_new_icon() now does not always return a PNG file. When possible, it will try to keep the format of the original file.
+  Set the new argument $preferpng to true to force PNG. See MDL-46763 and MDL-50041 for details.
 
 === 2.8 ===
 

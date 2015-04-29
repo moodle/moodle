@@ -966,7 +966,7 @@ function badges_process_badge_image(badge $badge, $iconfile) {
     require_once($CFG->libdir. '/gdlib.php');
 
     if (!empty($CFG->gdversion)) {
-        process_new_icon($badge->get_context(), 'badges', 'badgeimage', $badge->id, $iconfile);
+        process_new_icon($badge->get_context(), 'badges', 'badgeimage', $badge->id, $iconfile, true);
         @unlink($iconfile);
 
         // Clean up file draft area after badge image has been saved.

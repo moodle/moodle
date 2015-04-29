@@ -88,16 +88,20 @@ function imagecopybicubic($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $d
 }
 
 /**
- * Stores optimised icon images in icon file area
+ * Stores optimised icon images in icon file area.
+ *
+ * Since 2.9 this function will generate an icon in the same format as the original file when possible.
+ * To counter that behaviour, you can use the argument $preferpng to generate a PNG icon.
  *
  * @param context $context
  * @param string $component
  * @param string filearea
  * @param int $itemid
  * @param string $originalfile
+ * @param boolean $preferpng When true, it will try to generate a PNG file regardless of the original file.
  * @return mixed new unique revision number or false if not saved
  */
-function process_new_icon($context, $component, $filearea, $itemid, $originalfile) {
+function process_new_icon($context, $component, $filearea, $itemid, $originalfile, $preferpng = false) {
     global $CFG;
 
     if (!is_file($originalfile)) {
@@ -139,7 +143,7 @@ function process_new_icon($context, $component, $filearea, $itemid, $originalfil
                 return false;
             }
             // If the user uploads a jpeg them we should process as a jpeg if possible.
-            if (function_exists('imagejpeg')) {
+            if (!$preferpng && function_exists('imagejpeg')) {
                 $imagefnc = 'imagejpeg';
                 $imageext = '.jpg';
                 $filters = null; // Not used.
