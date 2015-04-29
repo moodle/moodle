@@ -4337,5 +4337,26 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015040900.02);
     }
 
+    if ($oldversion < 2015050300.00) {
+        // Make sure we have messages in the user menu because it's no longer in the nav tree.
+        $oldconfig = get_config('core', 'customusermenuitems');
+        $mymessagesconfig = "messages,message|/message/index.php|message";
+        $mypreferencesconfig = "mypreferences,moodle|/user/preferences.php|preferences";
+
+        // See if it exists.
+        if (strpos($oldconfig, $mymessagesconfig) === false) {
+            // See if mypreferences exists.
+            if (strpos($oldconfig, "mypreferences,moodle|/user/preferences.php|preferences") !== false) {
+                // Insert it before my preferences.
+                $newconfig = str_replace($mypreferencesconfig, $mymessagesconfig . "\n" . $mypreferencesconfig, $oldconfig);
+            } else {
+                // Custom config - we can only insert it at the end.
+                $newconfig = $oldconfig . "\n" . $mymessagesconfig;
+            }
+            set_config('customusermenuitems', $newconfig);
+        }
+
+        upgrade_main_savepoint(true, 2015050300.00);
+    }
     return true;
 }
