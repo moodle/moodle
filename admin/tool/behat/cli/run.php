@@ -108,7 +108,7 @@ if (extension_loaded('pcntl')) {
 
 $time = microtime(true);
 array_walk($unrecognised, function (&$v) {
-    if ($x = preg_filter("#^(-+\w+)=(.+)#", "\$1='\$2'", $v)) {
+    if ($x = preg_filter("#^(-+\w+)=(.+)#", "\$1=\"\$2\"", $v)) {
         $v = $x;
     } else if (!preg_match("#^-#", $v)) {
         $v = escapeshellarg($v);
@@ -124,7 +124,7 @@ if ($options['profile']) {
         echo "Invalid profile passed: " . $profile;
         exit(1);
     }
-    $extraopts[] = '--profile=\'' . $profile . "'";
+    $extraopts[] = '--profile="' . $profile . '"';
     // By default, profile tags will be used.
     if (!empty($CFG->behat_config[$profile]['filters']['tags'])) {
         $tags = $CFG->behat_config[$profile]['filters']['tags'];
