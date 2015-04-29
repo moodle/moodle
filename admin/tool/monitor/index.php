@@ -35,6 +35,7 @@ $confirm = optional_param('confirm', false, PARAM_BOOL);
 // Validate course id.
 if (empty($courseid)) {
     require_login();
+    require_capability('tool/monitor:subscribe', context_system::instance());
 } else {
     // They might want to see rules for this course.
     $course = get_course($courseid);

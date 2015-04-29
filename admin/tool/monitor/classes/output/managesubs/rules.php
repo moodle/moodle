@@ -215,7 +215,10 @@ class rules extends \table_sql implements \renderable {
             return false;
         }
         $orderby = 'visible DESC, sortorder ASC';
-        $options = array(0 => get_string('site'));
+        $options = array();
+        if (has_capability('tool/monitor:subscribe', \context_system::instance())) {
+            $options[0] = get_string('site');
+        }
         if ($courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname', $orderby)) {
             foreach ($courses as $course) {
                 $options[$course->id] = format_string($course->fullname, true,
@@ -223,7 +226,7 @@ class rules extends \table_sql implements \renderable {
             }
         }
         $url = new \moodle_url('/admin/tool/monitor/index.php');
-        $select = new \single_select($url, 'courseid', $options, $this->courseid);
+        $select = new \single_select($url, 'courseid', $options, $this->courseid, array());
         $select->set_label(get_string('selectacourse', 'tool_monitor'));
         return $select;
     }
