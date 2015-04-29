@@ -269,7 +269,6 @@ if ($courseid != SITEID) {
     echo $OUTPUT->header();
 }
 
-echo $OUTPUT->header();
 echo $OUTPUT->heading($blogheaders['heading'], 2);
 
 $bloglisting = new blog_listing($blogheaders['filters']);
