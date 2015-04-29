@@ -80,8 +80,7 @@ echo $OUTPUT->doctype() ?>
 </header>
 
 <div id="page" class="container-fluid">
-    <?php echo $OUTPUT->full_header($html->heading); ?>
-
+    <?php echo $OUTPUT->full_header(); ?>
     <div id="page-content" class="row-fluid">
         <div id="region-main-box" class="<?php echo $regionmainbox; ?>">
             <div class="row-fluid">
