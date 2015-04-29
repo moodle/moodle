@@ -37,4 +37,4 @@ Feature: The activity results block displays student scores
     And I set the following fields to these values:
       | id_modgrade_type | None |
     And I press "Save and return to course"
-    Then I should see "There is an error right now with this block: The activity selected is configured to use a grading method that is not supported by this block." in the "Activity results" "block"
+    Then I should see "Error: the activity selected uses a grading method that is not supported by this block." in the "Activity results" "block"
