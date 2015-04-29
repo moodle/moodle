@@ -41,7 +41,8 @@ information provided here is intended especially for developers.
 * profile_display_badges() has been deprecated. See MDL-48935 for details.
 * Added a new method add_report_nodes() to pagelib.php. If you are looking to add links to the user profile page under the heading "Reports"
   then please use this function to ensure that the breadcrumb and navigation block are created properly for all user profile pages.
-
+* process_new_icon() now does not always return a PNG file. When possible, it will try to keep the format of the original file.
+  Set the new argument $preferpng to true to force PNG. See MDL-46763 and MDL-50041 for details.
 
 === 2.8 ===
 
