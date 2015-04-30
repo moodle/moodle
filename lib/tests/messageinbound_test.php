@@ -110,6 +110,7 @@ class core_messageinbound_testcase extends advanced_testcase {
             'FULLSOURCE'        => true,
             'EXPECTEDPLAIN'     => true,
             'EXPECTEDHTML'      => true,
+            'CLIENT'            => true, // Required but not needed for tests, just for documentation.
         );
         $section = null;
         $data = array();
