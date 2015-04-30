@@ -1,11 +1,3 @@
-.que.match .feedback .rightanswer * {
-    display: inline;
-}
-.que.match .feedback .rightanswer script {
-    display: none;
-}
-
-
 /* Editing form. */
 body#page-question-type-match div[id^=fitem_id_][id*=subquestions_] {
     background: #EEE;

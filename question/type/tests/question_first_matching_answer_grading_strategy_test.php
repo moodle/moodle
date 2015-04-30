@@ -15,14 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the question definition base classes.
+ * Unit tests for the question_first_matching_answer_grading_strategy class.
  *
- * @package    moodlecore
- * @subpackage questiontypes
- * @copyright  2008 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_question
+ * @copyright 2008 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,7 +29,7 @@ require_once($CFG->dirroot . '/question/type/questiontypebase.php');
 
 
 /**
- * Unit tests for the question definition base classes.
+ * Helper used by the testcases in this file.
  *
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -52,13 +50,14 @@ class test_response_answer_comparer implements question_response_answer_comparer
     }
 }
 
+
 /**
  * Tests for {@link question_first_matching_answer_grading_strategy}.
  *
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_first_matching_answer_grading_strategy_test extends advanced_testcase {
+class question_first_matching_answer_grading_strategy_testcase extends advanced_testcase {
     protected function setUp() {
     }
 
@@ -92,41 +91,5 @@ class question_first_matching_answer_grading_strategy_test extends advanced_test
         $question = new test_response_answer_comparer(array($answer, $answer2));
         $strategy = new question_first_matching_answer_grading_strategy($question);
         $this->assertNull($strategy->grade(array('answer' => 'toad')));
-    }
-}
-
-
-/**
- * Test for question_hint and subclasses.
- *
- * @copyright  2010 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class question_hint_test extends advanced_testcase {
-    public function test_basic() {
-        $row = new stdClass();
-        $row->id = 123;
-        $row->hint = 'A hint';
-        $row->hintformat = FORMAT_HTML;
-        $hint = question_hint::load_from_record($row);
-        $this->assertEquals($row->id, $hint->id);
-        $this->assertEquals($row->hint, $hint->hint);
-        $this->assertEquals($row->hintformat, $hint->hintformat);
-    }
-
-    public function test_with_parts() {
-        $row = new stdClass();
-        $row->id = 123;
-        $row->hint = 'A hint';
-        $row->hintformat = FORMAT_HTML;
-        $row->shownumcorrect = 1;
-        $row->clearwrong = 1;
-
-        $hint = question_hint_with_parts::load_from_record($row);
-        $this->assertEquals($row->id, $hint->id);
-        $this->assertEquals($row->hint, $hint->hint);
-        $this->assertEquals($row->hintformat, $hint->hintformat);
-        $this->assertNotEmpty($hint->shownumcorrect);
-        $this->assertNotEmpty($hint->clearwrong);
     }
 }
