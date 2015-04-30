@@ -167,6 +167,7 @@ class enrol_users_filter_form extends moodleform {
         // Filter by group.
         $allgroups = $manager->get_all_groups();
         $groupsmenu[0] = get_string('allparticipants');
+        $groupsmenu[-1] = get_string('nogroup', 'enrol');
         foreach($allgroups as $gid => $unused) {
             $groupsmenu[$gid] = $allgroups[$gid]->name;
         }
