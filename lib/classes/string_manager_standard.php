@@ -256,7 +256,8 @@ class core_string_manager_standard implements core_string_manager {
     public function string_deprecated($identifier, $component) {
         $deprecated = $this->load_deprecated_strings();
         list($plugintype, $pluginname) = core_component::normalize_component($component);
-        return isset($deprecated[$identifier . ',' . $plugintype . '_' . $pluginname]);
+        $normcomponent = $pluginname ? ($plugintype . '_' . $pluginname) : $plugintype;
+        return isset($deprecated[$identifier . ',' . $normcomponent]);
     }
 
     /**
@@ -383,7 +384,8 @@ class core_string_manager_standard implements core_string_manager {
             // Display a debugging message if sting exists but was deprecated.
             if ($this->string_deprecated($identifier, $component)) {
                 list($plugintype, $pluginname) = core_component::normalize_component($component);
-                debugging("String [{$identifier},{$plugintype}_{$pluginname}] is deprecated. ".
+                $normcomponent = $pluginname ? ($plugintype . '_' . $pluginname) : $plugintype;
+                debugging("String [{$identifier},{$normcomponent}] is deprecated. ".
                     'Either you should no longer be using that string, or the string has been incorrectly deprecated, in which case you should report this as a bug. '.
                     'Please refer to https://docs.moodle.org/dev/String_deprecation', DEBUG_DEVELOPER);
             }
