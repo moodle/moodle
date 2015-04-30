@@ -46,6 +46,11 @@ $reset  = optional_param('reset', null, PARAM_BOOL);
 
 require_login();
 
+$hassiteconfig = has_capability('moodle/site:config', context_system::instance());
+if ($hassiteconfig && moodle_needs_upgrading()) {
+    redirect(new moodle_url('/admin/index.php'));
+}
+
 $strmymoodle = get_string('myhome');
 
 if (isguestuser()) {  // Force them to see system default, no editing allowed
