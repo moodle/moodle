@@ -161,7 +161,7 @@ $string['configcourserequestnotify'] = 'Type username of user to be notified whe
 $string['configcourserequestnotify2'] = 'Users who will be notified when a course is requested. Only users who can approve course requests are listed here.';
 $string['configcoursesperpage'] = 'Enter the number of courses to be displayed per page in a course listing.';
 $string['configcourseswithsummarieslimit'] = 'The maximum number of courses to display in a course listing including summaries before falling back to a simpler listing.';
-$string['configcronclionly'] = 'If this is set, then the cron script can only be run from the command line instead of via the web. This overrides the cron password setting below. Please note that, running cron from web can expose secure information to site users.';
+$string['configcronclionly'] = 'Running the cron from a web browser can expose privileged information to anonymous users. Thus it is recommended to only run the cron from the command line or set a cron password for remote access.';
 $string['configcronremotepassword'] = 'This means that the cron.php script cannot be run from a web browser without supplying the password using the following form of URL:<pre>
     http://site.example.com/admin/cron.php?password=opensesame
 </pre>If this is left empty, no password is required.';
@@ -908,7 +908,7 @@ $string['reportsmanage'] = 'Manage reports';
 $string['requiredentrieschanged'] = '<strong>IMPORTANT - PLEASE READ<br/>(This warning message will only be displayed during this upgrade)</strong><br/>Due to a bug fix, the behaviour of database activities using the \'Required entries\' and \'Required entries before viewing settings\' settings will change. A more detailed explanation of the changes can be read on <a href="http://moodle.org/mod/forum/discuss.php?d=110928" target="_blank">the database module forum</a>. The expected behavior of these settings can also be read on <a href="http://docs.moodle.org/en/Adding/editing_a_database#Required_entries" target="_blank">Moodle Docs</a>.
 <br/><br/>This change affects the following databases in your system: (Please save this list now, and after the upgrade, check that these activities still work the way that the teacher intends.)<br/><strong>{$a->text}</strong><br/>';
 $string['requiremodintro'] = 'Require activity description';
-$string['requiremodintro_desc'] = 'Enable this option if you want to force users to enter description of each activity.';
+$string['requiremodintro_desc'] = 'If enabled, users will be forced to enter a description for each activity.';
 $string['requires'] = 'Requires';
 $string['purgecaches']= 'Purge all caches';
 $string['purgecachesconfirm']= 'Moodle can cache themes, javascript, language strings, filtered text, rss feeds and many other pieces of calculated data.  Purging these caches will delete that data from the server and force browsers to refetch data, so that you can be sure you are seeing the most up-to-date values produced by the current code.  There is no danger in purging caches, but your site may appear slower for a while until the server and clients calculate new information and cache it.';
@@ -1084,7 +1084,7 @@ $string['updateavailableinstall'] = 'Install this update';
 $string['updateavailablenot'] = 'Your Moodle code is up-to-date!';
 $string['updateavailablerecommendation'] = 'It is strongly recommended that you update your site to the latest version to obtain all recent security and bug fixes.';
 $string['updatenotifications'] = 'Update notifications';
-$string['updatenotificationfooter'] = 'Your Moodle site {$a->siteurl} is configured to automatically check for available updates. You are receiving this message as the administrator of the site. You can disable automatic checks for available updates in the Site administration section of the Administration block. You can customize the delivery of this message via your personal Messaging setting in the My preferences section.';
+$string['updatenotificationfooter'] = 'Your Moodle site {$a->siteurl} is configured to automatically check for available updates. You are receiving this message as the administrator of the site. You can disable automatic checks for available updates in the Site administration section of the Administration block. You can customise the delivery of this message via your personal Messaging setting in My preferences.';
 $string['updatenotificationsubject'] = 'Moodle updates are available ({$a->siteurl})';
 $string['updateautocheck'] = 'Automatically check for available updates';
 $string['updateautocheck_desc'] = 'If enabled, your site will automatically check for available updates for both Moodle code and all additional plugins. If there is a new update available, a notification will be sent to site admins.';

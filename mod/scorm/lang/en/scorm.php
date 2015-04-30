@@ -28,8 +28,7 @@ $string['aicchacptimeout_desc'] = 'Length of time in minutes that an external AI
 $string['aicchacpkeepsessiondata'] = 'AICC HACP session data';
 $string['aicchacpkeepsessiondata_desc'] = 'Length of time in days to keep the external AICC HACP session data (a high setting will fill up the table with old data but may be useful when debugging)';
 $string['aiccuserid'] = 'AICC pass numeric user id';
-$string['aiccuserid_desc'] = 'The AICC standard for usernames is very restrictive compared with Moodle so we pass the user->id instead. If disabled this passes the moodle username to the AICC package.
-The AICC standard allows for alpha-numeric characters with the two additional characters dash(-) and the underscore(_). Periods, spaces and the @ symbol are not permitted.';
+$string['aiccuserid_desc'] = 'The AICC standard for usernames is very restrictive compared with Moodle, and allows for alphanumeric characters, dash and underscore only. Periods, spaces and the @ symbol are not permitted. If enabled, user ID numbers are passed to the AICC package instead of usernames.';
 $string['activation'] = 'Activation';
 $string['activityloading'] = 'You will be automatically redirected to the activity in';
 $string['activityoverview'] = 'You have SCORM packages that need attention';
@@ -141,8 +140,10 @@ $string['forcecompleted'] = 'Force completed';
 $string['forcecompleted_help'] = 'If enabled, the status of the current attempt is forced to "completed". (Only applicable to SCORM 1.2 packages.)';
 $string['forcecompleteddesc'] = 'This preference sets the default value for the force completed setting';
 $string['forcenewattempt'] = 'Force new attempt';
-$string['forcenewattempt_help'] = 'If enabled, each time a SCORM package is accessed will be counted as a new attempt.';
-$string['forcenewattemptdesc'] = 'If enabled, each time a SCORM package is accessed will be counted as a new attempt.';
+$string['forcenewattempt_help'] = 'This setting hides the "Start new attempt" checkbox and prevents review mode.
+
+SCORM allows a student to return to the same attempt at any point and a new attempt is not possible unless the previous attempt has been set as "completed", "passed" or "failed". If the SCORM package does not do this, the student will always re-enter the same attempt.';
+$string['forcenewattemptdesc'] = 'This setting hides the "Start new attempt" checkbox and prevents review mode. SCORM allows a student to return to the same attempt at any point and a new attempt is not possible unless the previous attempt has been set as "completed", "passed" or "failed". If the SCORM package does not do this, the student will always re-enter the same attempt.';
 $string['forcejavascript'] = 'Force users to enable JavaScript';
 $string['forcejavascript_desc'] = 'If enabled (recommended) this prevents access to SCORM objects when JavaScript is not supported/enabled in a users browser. If disabled the user may view the SCORM but API communication will fail and no grade information will be saved.';
 $string['forcejavascriptmessage'] = 'JavaScript is required to view this object, please enable JavaScript in your browser and try again.';
