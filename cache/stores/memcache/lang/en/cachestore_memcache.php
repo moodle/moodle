@@ -51,7 +51,7 @@ ipaddress:port
 servername:port:weight
 </pre>
 
-If *Enable clustered servers* is enabled below, there must be only one server listed here. This would usually be a name that always resolves to the local manchine, like 127.0.0.1 or localhost.';
+If *Enable clustered servers* is enabled below, there must be only one server listed here. This would usually be a name that always resolves to the local machine, like 127.0.0.1 or localhost.';
 $string['serversclusterinvalid'] = 'Exactly one server is required when clustering is enabled.';
 $string['setservers'] = 'Set Servers';
 $string['setservers_help'] = 'This is the list of servers that will updated when data is modified in the cache. Generally the fully qualified name of each server in the pool.
