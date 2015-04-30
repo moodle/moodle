@@ -193,11 +193,7 @@ class document_services {
         $files = self::list_compatible_submission_files_for_attempt($assignment, $userid, $attemptnumber);
 
         $pdf = new pdf();
-        if (!$files) {
-            // No valid submission files - create an empty pdf.
-            $pdf->AddPage();
-        } else {
-
+        if ($files) {
             // Create a mega joined PDF.
             $compatiblepdfs = array();
             foreach ($files as $file) {
@@ -221,12 +217,11 @@ class document_services {
             if ($pagecount == 0) {
                 // We at least want a single blank page.
                 debugging('TCPDF did not produce a valid pdf:' . $tmpfile . '. Replacing with a blank pdf.', DEBUG_DEVELOPER);
-                $pdf = new pdf();
-                $pdf->AddPage();
                 @unlink($tmpfile);
                 $files = false;
             }
         }
+        $pdf->Close(); // No real need to close this pdf, because it has been saved by combine_pdfs(), but for clarity.
 
         $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
         $record = new \stdClass();
@@ -243,19 +238,20 @@ class document_services {
 
         // Detect corrupt generated pdfs and replace with a blank one.
         if ($files) {
-            $pdf = new pdf();
-            $pagecount = $pdf->load_pdf($tmpfile);
+            $verifypdf = new pdf();
+            $pagecount = $verifypdf->load_pdf($tmpfile);
             if ($pagecount <= 0) {
                 $files = false;
             }
-            $pdf->Close(); // PDF loaded and never saved/outputted needs to be closed.
+            $verifypdf->Close(); // PDF loaded and never saved/outputted needs to be closed.
         }
 
         if (!$files) {
             // This was a blank pdf.
-            $pdf = new pdf();
-            $content = $pdf->Output(self::COMBINED_PDF_FILENAME, 'S');
+            $blankpdf = new pdf();
+            $content = $blankpdf->Output(self::COMBINED_PDF_FILENAME, 'S');
             $file = $fs->create_file_from_string($record, $content);
+            $blankpdf->Close(); // No real need to close this pdf, because it has been outputted, but for clarity.
         } else {
             // This was a combined pdf.
             $file = $fs->create_file_from_pathname($record, $tmpfile);
