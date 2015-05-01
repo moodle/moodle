@@ -24,6 +24,7 @@
 
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->dirroot . '/admin/tool/monitor/lib.php');
 
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
@@ -32,10 +33,22 @@ $ruleid = optional_param('ruleid', 0, PARAM_INT);
 $subscriptionid = optional_param('subscriptionid', 0, PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 
+$choose = false;
 // Validate course id.
 if (empty($courseid)) {
     require_login();
     $context = context_system::instance();
+    // check system level capability.
+    if (!has_capability('tool/monitor:subscribe', $context)) {
+        // If not system level then check to see if they have access to any course level rules.
+        if (tool_monitor_get_user_courses()){
+            // Make them choose a course.
+            $choose = true;
+        } else {
+            // return error.
+            print_error('rulenopermission', 'tool_monitor');
+        }
+    }
 } else {
     // They might want to see rules for this course.
     $course = get_course($courseid);
@@ -59,7 +72,10 @@ $PAGE->set_url($indexurl);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title(get_string('managesubscriptions', 'tool_monitor'));
 $PAGE->set_heading(fullname($USER));
-$settingsnode = $PAGE->settingsnav->find('monitor', null)->make_active();
+$settingsnode = $PAGE->settingsnav->find('monitor', null);
+if ($settingsnode) {
+    $settingsnode->make_active();
+}
 
 // Create/delete subscription if needed.
 if (!empty($action)) {
@@ -108,17 +124,13 @@ $renderer = $PAGE->get_renderer('tool_monitor', 'managesubs');
 $totalrules = \tool_monitor\rule_manager::count_rules_by_courseid($courseid);
 $rules = new \tool_monitor\output\managesubs\rules('toolmonitorrules', $indexurl, $courseid);
 
-$usercourses = $rules->get_user_courses_select();
-if (!empty($usercourses)) {
-    echo $renderer->render($usercourses);
-} else {
-    // Nothing to show at all. Show a notification.
-    echo $OUTPUT->notification(get_string('rulenopermission', 'tool_monitor'), 'notifyproblem');
-}
+$usercourses = $rules->get_user_courses_select($choose);
+// There must be user courses otherwise we wouldn't make it this far.
+echo $renderer->render($usercourses);
 
 // Render the current subscriptions list.
 $totalsubs = \tool_monitor\subscription_manager::count_user_subscriptions();
-if (!empty($totalsubs)) {
+if (!empty($totalsubs) && !$choose) {
     // Show the subscriptions section only if there are subscriptions.
     $subs = new \tool_monitor\output\managesubs\subs('toolmonitorsubs', $indexurl, $courseid);
     echo $OUTPUT->heading(get_string('currentsubscriptions', 'tool_monitor'), 3);
@@ -126,8 +138,10 @@ if (!empty($totalsubs)) {
 }
 
 // Render the potential rules list.
-echo $OUTPUT->heading(get_string('rulescansubscribe', 'tool_monitor'), 3);
-echo $renderer->render($rules);
+if (!$choose) {
+    echo $OUTPUT->heading(get_string('rulescansubscribe', 'tool_monitor'), 3);
+    echo $renderer->render($rules);
+}
 
 // Check if the user can manage the course rules we are viewing.
 $canmanagerules = has_capability('tool/monitor:managerules', $context);

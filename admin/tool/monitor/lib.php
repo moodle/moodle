@@ -79,12 +79,40 @@ function tool_monitor_extend_navigation_user_settings($navigation, $user, $userc
 
     // Don't show the setting if the event monitor isn't turned on. No access to other peoples subscriptions.
     if (get_config('tool_monitor', 'enablemonitor') && $USER->id == $user->id) {
-        $url = new moodle_url('/admin/tool/monitor/index.php');
-        $subsnode = navigation_node::create(get_string('managesubscriptions', 'tool_monitor'), $url,
-                navigation_node::TYPE_SETTING, null, 'monitor', new pix_icon('i/settings', ''));
+        // Now let's check to see if the user has any courses / site rules that they can subscribe to.
+        if ($courses = tool_monitor_get_user_courses()) {
+            $url = new moodle_url('/admin/tool/monitor/index.php');
+            $subsnode = navigation_node::create(get_string('managesubscriptions', 'tool_monitor'), $url,
+                    navigation_node::TYPE_SETTING, null, 'monitor', new pix_icon('i/settings', ''));
 
-        if (isset($subsnode) && !empty($navigation)) {
-            $navigation->add_node($subsnode);
+            if (isset($subsnode) && !empty($navigation)) {
+                $navigation->add_node($subsnode);
+            }
         }
+    }
+}
+
+/**
+ * Get a list of courses and also include 'Site' for site wide rules.
+ *
+ * @return array|bool Returns an array of courses or false if the user has no permission to subscribe to rules.
+ */
+function tool_monitor_get_user_courses() {
+    $orderby = 'visible DESC, sortorder ASC';
+    $options = array();
+    if (has_capability('tool/monitor:subscribe', context_system::instance())) {
+        $options[0] = get_string('site');
+    }
+    if ($courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname', $orderby)) {
+        foreach ($courses as $course) {
+            $options[$course->id] = format_string($course->fullname, true,
+                array('context' => context_course::instance($course->id)));
+        }
+    }
+    // If there are no courses and there is no site permission then return false.
+    if (count($options) < 1) {
+        return false;
+    } else {
+        return $options;
     }
 }
