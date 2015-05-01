@@ -59,8 +59,8 @@ class list_templates_page implements renderable, templatable {
         foreach ($components as $component) {
             $info = new stdClass();
             $info->component = $component;
-            if ($component == 'core') {
-                $info->name = get_string('core_component', 'tool_templatelibrary');
+            if (strpos($component, 'core') === 0) {
+                $info->name = get_string('coresubsystem', 'tool_templatelibrary', $component);
             } else {
                 $info->name = $pluginmanager->plugin_name($component);
             }

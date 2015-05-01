@@ -118,53 +118,10 @@ class renderer_base {
 
             $themename = $this->page->theme->name;
             $themerev = theme_get_revision();
-            $target = $this->target;
 
-            $cachedir = make_localcache_directory("mustache/$themerev/$themename/$target");
-            $loaderoptions = array();
+            $cachedir = make_localcache_directory("mustache/$themerev/$themename");
 
-            // Where are all the places we should look for templates?
-
-            $suffix = $this->component;
-            if ($this->subtype !== null) {
-                $suffix .= '_' . $this->subtype;
-            }
-
-            // Start with an empty list.
-            $loader = new Mustache_Loader_CascadingLoader(array());
-            $loaderdir = $CFG->dirroot . '/theme/' . $themename . '/templates/' . $suffix;
-            if (is_dir($loaderdir)) {
-                $loader->addLoader(new \core\output\mustache_filesystem_loader($loaderdir, $loaderoptions));
-            }
-
-            // Search each of the parent themes second.
-            foreach ($this->page->theme->parents as $parent) {
-                $loaderdir = $CFG->dirroot . '/theme/' . $parent . '/templates/' . $suffix;
-                if (is_dir($loaderdir)) {
-                    $loader->addLoader(new \core\output\mustache_filesystem_loader($loaderdir, $loaderoptions));
-                }
-            }
-
-            // Look in a components templates dir for a base implementation.
-
-            $compdirectory = core_component::get_component_directory($suffix);
-            if ($compdirectory) {
-                $loaderdir = $compdirectory . '/templates';
-                if (is_dir($loaderdir)) {
-                    $loader->addLoader(new \core\output\mustache_filesystem_loader($loaderdir, $loaderoptions));
-                }
-            }
-
-            // Look in the core templates dir as a final fallback.
-
-            $compdirectory = $CFG->libdir;
-            if ($compdirectory) {
-                $loaderdir = $compdirectory . '/templates';
-                if (is_dir($loaderdir)) {
-                    $loader->addLoader(new \core\output\mustache_filesystem_loader($loaderdir, $loaderoptions));
-                }
-            }
-
+            $loader = new \core\output\mustache_filesystem_loader();
             $stringhelper = new \core\output\mustache_string_helper();
             $jshelper = new \core\output\mustache_javascript_helper($this->page->requires);
             $pixhelper = new \core\output\mustache_pix_helper($this);

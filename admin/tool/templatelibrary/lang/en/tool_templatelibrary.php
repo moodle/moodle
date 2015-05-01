@@ -24,7 +24,7 @@
 
 $string['all'] = 'All components';
 $string['component'] = 'Component';
-$string['core_component'] = 'Moodle core';
+$string['coresubsystem'] = 'Core subsystem ({$a})';
 $string['documentation'] = 'Documentation';
 $string['example'] = 'Example';
 $string['noresults'] = 'No results';
