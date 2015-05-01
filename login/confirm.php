@@ -77,12 +77,14 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
             print_error('cannotfinduser', '', '', s($username));
         }
 
-        complete_user_login($user);
+        if (!$user->suspended) {
+            complete_user_login($user);
 
-        if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going
-            $goto = $SESSION->wantsurl;
-            unset($SESSION->wantsurl);
-            redirect($goto);
+            if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going.
+                $goto = $SESSION->wantsurl;
+                unset($SESSION->wantsurl);
+                redirect($goto);
+            }
         }
 
         $PAGE->navbar->add(get_string("confirmed"));
