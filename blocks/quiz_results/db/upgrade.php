@@ -52,27 +52,39 @@ function xmldb_block_quiz_results_upgrade($oldversion, $block) {
             // Migrate all instances of block_quiz_results to block_activity_results.
             $records = $DB->get_records('block_instances', array('blockname' => 'quiz_results'));
             foreach ($records as $record) {
-                $config = unserialize(base64_decode($record->configdata));
-                $config->activityparent = 'quiz';
-                $config->activityparentid = $config->quizid;
+                $configdata = '';
 
-                // Set the decimal valuue as appropriate.
-                if ($config->gradeformat == 1) {
-                    // This block is using percentages, do not display any decimal places.
-                    $config->decimalpoints = 0;
-                } else {
-                    // Get the decimal value from the corresponding quiz.
-                    $config->decimalpoints = $DB->get_field('quiz', 'decimalpoints', array('id' => $config->activityparentid));
+                // The block was configured.
+                if (!empty($record->configdata)) {
+
+                    $config = unserialize(base64_decode($record->configdata));
+                    $config->activityparent = 'quiz';
+                    $config->activityparentid = isset($config->quizid) ? $config->quizid : 0;
+                    $config->gradeformat = isset($config->gradeformat) ? $config->gradeformat : 1;
+
+                    // Set the decimal valuue as appropriate.
+                    if ($config->gradeformat == 1) {
+                        // This block is using percentages, do not display any decimal places.
+                        $config->decimalpoints = 0;
+                    } else {
+                        // Get the decimal value from the corresponding quiz.
+                        $config->decimalpoints = $DB->get_field('quiz', 'decimalpoints', array('id' => $config->activityparentid));
+                    }
+
+                    // Get the grade_items record to set the activitygradeitemid.
+                    $info = $DB->get_record('grade_items',
+                            array('iteminstance' => $config->activityparentid, 'itemmodule' => $config->activityparent));
+                    $config->activitygradeitemid = 0;
+                    if ($info) {
+                        $config->activitygradeitemid = $info->id;
+                    }
+
+                    unset($config->quizid);
+                    $configdata = base64_encode(serialize($config));
                 }
 
-                // Get the grade_items record to set the activitygradeitemid.
-                $info = $DB->get_record('grade_items',
-                        array('iteminstance' => $config->activityparentid, 'itemmodule' => $config->activityparent));
-                $config->activitygradeitemid = $info->id;
-                unset($config->quizid);
-
                 // Save the new configuration and update the record.
-                $record->configdata = base64_encode(serialize($config));
+                $record->configdata = $configdata;
                 $record->blockname = 'activity_results';
                 $DB->update_record('block_instances', $record);
             }
