@@ -4356,18 +4356,18 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2015050401.00) {
         // Make sure we have messages in the user menu because it's no longer in the nav tree.
         $oldconfig = get_config('core', 'customusermenuitems');
-        $mymessagesconfig = "messages,message|/message/index.php|message";
-        $mypreferencesconfig = "mypreferences,moodle|/user/preferences.php|preferences";
+        $messagesconfig = "messages,message|/message/index.php|message";
+        $preferencesconfig = "preferences,moodle|/user/preferences.php|preferences";
 
         // See if it exists.
-        if (strpos($oldconfig, $mymessagesconfig) === false) {
-            // See if mypreferences exists.
-            if (strpos($oldconfig, "mypreferences,moodle|/user/preferences.php|preferences") !== false) {
-                // Insert it before my preferences.
-                $newconfig = str_replace($mypreferencesconfig, $mymessagesconfig . "\n" . $mypreferencesconfig, $oldconfig);
+        if (strpos($oldconfig, $messagesconfig) === false) {
+            // See if preferences exists.
+            if (strpos($oldconfig, "preferences,moodle|/user/preferences.php|preferences") !== false) {
+                // Insert it before preferences.
+                $newconfig = str_replace($preferencesconfig, $messagesconfig . "\n" . $preferencesconfig, $oldconfig);
             } else {
                 // Custom config - we can only insert it at the end.
-                $newconfig = $oldconfig . "\n" . $mymessagesconfig;
+                $newconfig = $oldconfig . "\n" . $messagesconfig;
             }
             set_config('customusermenuitems', $newconfig);
         }
