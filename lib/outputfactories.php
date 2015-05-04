@@ -337,10 +337,7 @@ class standard_renderer_factory extends renderer_factory_base {
             throw new coding_exception('Request for an unknown renderer class. Searched for: ' . var_export($classnames, true));
         }
 
-        $renderer = new $classname($page, $target);
-        $renderer->set_component($component);
-        $renderer->set_subtype($subtype);
-        return $renderer;
+        return new $classname($page, $target);
     }
 }
 
@@ -404,10 +401,7 @@ class theme_overridden_renderer_factory extends renderer_factory_base {
                         $newclassname = $prefix . '_' . $classnamedetails['classname'] . $suffix;
                     }
                     if (class_exists($newclassname)) {
-                        $renderer = new $newclassname($page, $target);
-                        $renderer->set_component($component);
-                        $renderer->set_subtype($subtype);
-                        return $renderer;
+                        return new $newclassname($page, $target);
                     }
                 }
             }
@@ -418,10 +412,7 @@ class theme_overridden_renderer_factory extends renderer_factory_base {
                 if (class_exists($newclassname)) {
                     // Use the specialised renderer for given target, default renderer might also decide
                     // to implement support for more targets.
-                    $renderer = new $newclassname($page, $target);
-                    $renderer->set_component($component);
-                    $renderer->set_subtype($subtype);
-                    return $renderer;
+                    return new $newclassname($page, $target);
                 }
             }
         }
@@ -436,10 +427,7 @@ class theme_overridden_renderer_factory extends renderer_factory_base {
                         $newclassname = $prefix . '_' . $classnamedetails['classname'];
                     }
                     if (class_exists($newclassname)) {
-                        $renderer = new $newclassname($page, $target);
-                        $renderer->set_component($component);
-                        $renderer->set_subtype($subtype);
-                        return $renderer;
+                        return new $newclassname($page, $target);
                     }
                 }
             }
@@ -450,10 +438,7 @@ class theme_overridden_renderer_factory extends renderer_factory_base {
             if ($classnamedetails['validwithoutprefix']) {
                 $newclassname = $classnamedetails['classname'];
                 if (class_exists($newclassname)) {
-                    $renderer = new $newclassname($page, $target);
-                    $renderer->set_component($component);
-                    $renderer->set_subtype($subtype);
-                    return $renderer;
+                    return new $newclassname($page, $target);
                 }
             }
         }

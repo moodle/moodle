@@ -72,38 +72,6 @@ class renderer_base {
     private $mustache;
 
     /**
-     * @var string $component The component used when requesting this renderer.
-     */
-    private $component;
-
-    /**
-     * @var string $subtype The subtype used when requesting this renderer.
-     */
-    private $subtype;
-
-    /**
-     * This is not done in the constructor because that would be a
-     * compatibility breaking change, and we can just pass this always in the
-     * renderer factory, immediately after creating the renderer.
-     * @since 2.9
-     * @param string $subtype
-     */
-    public function set_subtype($subtype) {
-        $this->subtype = $subtype;
-    }
-
-    /**
-     * This is not done in the constructor because that would be a
-     * compatibility breaking change, and we can just pass this always in the
-     * renderer factory, immediately after creating the renderer.
-     * @since 2.9
-     * @param string $component
-     */
-    public function set_component($component) {
-        $this->component = $component;
-    }
-
-    /**
      * Return an instance of the mustache class.
      *
      * @since 2.9
