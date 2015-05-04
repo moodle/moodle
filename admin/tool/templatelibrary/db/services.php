@@ -33,5 +33,12 @@ $functions = array(
         'type'        => 'read',
         'capabilities'=> '',
     ),
+    'tool_templatelibrary_load_canonical_template' => array(
+        'classname'   => 'tool_templatelibrary\external',
+        'methodname'  => 'load_canonical_template',
+        'description' => 'Load a canonical template by name (not the theme overidden one).',
+        'type'        => 'read'
+    ),
+
 );
 

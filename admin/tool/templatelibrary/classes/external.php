@@ -95,4 +95,55 @@ class external extends external_api {
     public static function list_templates_returns() {
         return new external_multiple_structure(new external_value(PARAM_RAW, 'The template name (format is component/templatename)'));
     }
+
+    /**
+     * Returns description of load_canonical_template() parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function load_canonical_template_parameters() {
+        return new external_function_parameters(
+                array('component' => new external_value(PARAM_COMPONENT, 'component containing the template'),
+                      'template' => new external_value(PARAM_ALPHANUMEXT, 'name of the template'))
+            );
+    }
+
+    /**
+     * Can this function be called directly from ajax?
+     *
+     * @return boolean
+     * @since Moodle 2.9
+     */
+    public static function load_canonical_template_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Return a mustache template.
+     * Note - this function differs from the function core_output_load_template
+     * because it will never return a theme overridden version of a template.
+     *
+     * @param string $component The component that holds the template.
+     * @param string $template The name of the template.
+     * @return string the template
+     */
+    public static function load_canonical_template($component, $template) {
+        $params = self::validate_parameters(self::load_canonical_template_parameters(),
+                                            array('component' => $component,
+                                                  'template' => $template));
+
+        $component = $params['component'];
+        $template = $params['template'];
+
+        return api::load_canonical_template($component, $template);
+    }
+
+    /**
+     * Returns description of load_canonical_template() result value.
+     *
+     * @return external_description
+     */
+    public static function load_canonical_template_returns() {
+        return new external_value(PARAM_RAW, 'template');
+    }
 }

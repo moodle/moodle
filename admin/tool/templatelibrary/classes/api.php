@@ -23,11 +23,12 @@
  */
 namespace tool_templatelibrary;
 
-use core\output\mustache_template_finder;
-use stdClass;
 use core_component;
+use core\output\mustache_template_finder;
 use coding_exception;
+use moodle_exception;
 use required_capability_exception;
+use stdClass;
 
 /**
  * API exposed by tool_templatelibrary
@@ -102,5 +103,38 @@ class api {
         sort($results);
         return $results;
     }
+
+    /**
+     * Return a mustache template.
+     * Note - this function differs from the function core_output_load_template
+     * because it will never return a theme overridden version of a template.
+     *
+     * @param string $component The component that holds the template.
+     * @param string $template The name of the template.
+     * @return string the template
+     */
+    public static function load_canonical_template($component, $template) {
+        // Get the list of possible template directories.
+        $dirs = mustache_template_finder::get_template_directories_for_component($component);
+        $filename = false;
+
+        foreach ($dirs as $dir) {
+            // Skip theme dirs - we only want the original plugin/core template.
+            if (strpos($dir, "/theme/") === false) {
+                $candidate = $dir . $template . '.mustache';
+                if (file_exists($candidate)) {
+                    $filename = $candidate;
+                    break;
+                }
+            }
+        }
+        if ($filename === false) {
+            throw new moodle_exception('filenotfound', 'error');
+        }
+
+        $templatestr = file_get_contents($filename);
+        return $templatestr;
+    }
+
 
 }

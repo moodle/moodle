@@ -65,5 +65,19 @@ class tool_templatelibrary_external_testcase extends externallib_advanced_testca
         $this->assertEquals($result[0], "tool_templatelibrary/list_templates_page");
     }
 
+    public function test_load_canonical_template() {
+        global $CFG;
 
+        $originaltheme = $CFG->theme;
+        // Change the theme to 'base' because it overrides these templates.
+        $CFG->theme = 'base';
+
+        $template = external::load_canonical_template('core', 'notification_problem');
+
+        // Only the base template should contain the docs.
+        $this->assertContains('@template core/notification_problem', $template);
+
+        // Restore the original theme.
+        $CFG->theme = $originaltheme;
+    }
 }
