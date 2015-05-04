@@ -17,7 +17,7 @@ mybackpack,core_badges
 mybadges,core_badges
 myfiles,core
 myfilesmanage,core
-mygrades,core
+mygrades,core_grades
 mypreferences,core
 mypreferences,core_grades
 myprofile,core
