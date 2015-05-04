@@ -101,7 +101,8 @@ class core_string_manager_standard_testcase extends advanced_testcase {
                 $this->fail('String "'.$string.'" appearing in one of the lang/en/deprecated.txt files does not have correct syntax');
             }
             list($pluginttype, $pluginname) = core_component::normalize_component($matches[2]);
-            if ($matches[2] !== $pluginttype . '_' . $pluginname) {
+            $normcomponent = $pluginname ? ($pluginttype . '_' . $pluginname) : $pluginttype;
+            if ($matches[2] !== $normcomponent) {
                 $this->fail('String "'.$string.'" appearing in one of the lang/en/deprecated.txt files does not have normalised component name');
             }
             if (!$stringman->string_exists($matches[1], $matches[2])) {
