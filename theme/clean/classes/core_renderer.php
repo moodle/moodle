@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once($CFG->dirroot . '/theme/bootstrapbase/renderers.php');
+
 /**
  * Clean core renderers.
  *
@@ -33,9 +35,9 @@ class theme_clean_core_renderer extends theme_bootstrapbase_core_renderer {
      */
     public function full_header($heading = null) {
         if (!empty($this->page->theme->settings->logo)) {
-            return $this->full_header(html_writer::tag('div', '', array('class' => 'logo')));
+            return parent::full_header(html_writer::tag('div', '', array('class' => 'logo')));
         }
-        return $this->full_header();
+        return parent::full_header();
     }
 
 }
