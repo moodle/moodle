@@ -2170,13 +2170,8 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_pix_icon(pix_icon $icon) {
-        $attributes = $icon->attributes;
-        $attributes['src'] = $this->pix_url($icon->pix, $icon->component);
-        $templatecontext = array();
-        foreach ($attributes as $name => $value) {
-            $templatecontext[] = array('name' => $name, 'value' => $value);
-        }
-        return $this->render_from_template('core/pix_icon', array('attributes' => $templatecontext));
+        $data = $icon->export_for_template($this);
+        return $this->render_from_template('core/pix_icon', $data);
     }
 
     /**
