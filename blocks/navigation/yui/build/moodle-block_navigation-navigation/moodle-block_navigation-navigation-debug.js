@@ -634,8 +634,7 @@ BRANCH.prototype = {
             id : this.get('key'),
             type : this.get('type'),
             sesskey : M.cfg.sesskey,
-            instance : this.get('tree').get('instance'),
-            returnurl : location.href
+            instance : this.get('tree').get('instance')
         };
 
         var ajaxfile = '/lib/ajax/getnavbranch.php';

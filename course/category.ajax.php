@@ -29,14 +29,11 @@ define('AJAX_SCRIPT', true);
 
 require_once(dirname(__dir__) . '/config.php');
 
-$returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
-
 if ($CFG->forcelogin) {
     require_login();
 }
 
 $PAGE->set_context(context_system::instance());
 $courserenderer = $PAGE->get_renderer('core', 'course');
-$courserenderer->returnurl = $returnurl;
 
 echo json_encode($courserenderer->coursecat_ajax());
