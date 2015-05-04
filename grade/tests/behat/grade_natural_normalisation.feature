@@ -32,7 +32,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
       | assign | C1 | a7 | Test assignment seven | Submit nothing! | Sub category 1 | 15 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I set the field "Grade report" to "Categories and items"
 
   @javascript

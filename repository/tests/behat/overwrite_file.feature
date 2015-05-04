@@ -16,7 +16,7 @@ Feature: Overwrite file feature
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     When I log in as "teacher1"
-    And I follow "Manage my private files"
+    And I follow "Manage private files"
     And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     Then I should see "1" elements in "Files" filemanager
     And I upload and overwrite "lib/tests/fixtures/empty.txt" file to "Files" filemanager

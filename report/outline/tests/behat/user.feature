@@ -49,13 +49,13 @@ Feature: View the user page for the outline report
     And I follow "URL name"
     And I follow "URL name"
     And I click on "Student 1" "link"
-    And I follow "My profile" in the open menu
+    And I follow "Profile" in the open menu
     And I follow "Course 1"
     When I follow "Outline report"
     Then I should see "4 views" in the "Folder name" "table_row"
     And I should see "3 views" in the "URL name" "table_row"
     And I click on "Student 1" "link"
-    And I follow "My profile" in the open menu
+    And I follow "Profile" in the open menu
     And I follow "Course 1"
     When I follow "Complete report"
     And I should see "4 views"
@@ -79,12 +79,12 @@ Feature: View the user page for the outline report
     And I follow "URL name"
     And I follow "URL name"
     And I follow "URL name"
-    And I follow "My profile" in the user menu
+    And I follow "Profile" in the user menu
     And I follow "Course 1"
     When I follow "Outline report"
     Then I should see "4 views" in the "Folder name" "table_row"
     And I should see "3 views" in the "URL name" "table_row"
-    And I follow "My profile" in the user menu
+    And I follow "Profile" in the user menu
     And I follow "Course 1"
     When I follow "Complete report"
     And I should see "4 views"
@@ -110,12 +110,12 @@ Feature: View the user page for the outline report
     And I follow "URL name"
     And I follow "URL name"
     And I follow "URL name"
-    And I follow "My profile" in the user menu
+    And I follow "Profile" in the user menu
     And I follow "Course 1"
     When I follow "Outline report"
     Then I should see "4 views" in the "Folder name" "table_row"
     And I should see "3 views" in the "URL name" "table_row"
-    And I follow "My profile" in the user menu
+    And I follow "Profile" in the user menu
     And I follow "Course 1"
     When I follow "Complete report"
     And I should see "4 views"

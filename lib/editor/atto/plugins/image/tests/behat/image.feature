@@ -5,10 +5,10 @@ Feature: Add images to Atto
   @javascript
   Scenario: Insert an image
     Given I log in as "admin"
-    And I follow "Manage my private files..."
+    And I follow "Manage private files..."
     And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
     And I click on "Save changes" "button"
-    And I follow "My profile" in the user menu
+    And I follow "Profile" in the user menu
     And I follow "Edit profile"
     When I set the field "Description" to "<p>Image test</p>"
     And I select the text in the "Description" Atto editor
@@ -50,7 +50,7 @@ Feature: Add images to Atto
   @javascript
   Scenario: Manually inserting an image
     Given I log in as "admin"
-    And I follow "My profile" in the user menu
+    And I follow "Profile" in the user menu
     And I follow "Edit profile"
     And I set the field "Description" to "<p>Image: <img src='/nothing/here'>.</p>"
     And I select the text in the "Description" Atto editor

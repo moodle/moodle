@@ -354,7 +354,7 @@ abstract class grade_report {
     }
 
     /**
-     * Shows support for being used as a 'My grades' report.
+     * Shows support for being used as a 'Grades' report.
      */
     public static function supports_mygrades() {
         return false;

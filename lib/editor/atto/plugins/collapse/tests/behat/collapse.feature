@@ -5,7 +5,7 @@ Feature: Atto collapse button
   @javascript
   Scenario: Toggle toolbar
     Given I log in as "admin"
-    And I follow "My profile" in the user menu
+    And I follow "Profile" in the user menu
     And I follow "Edit profile"
     When I click on "Show more buttons" "button"
     Then "Equation editor" "button" should be visible

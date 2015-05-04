@@ -102,7 +102,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
     // Preference page. Only visible by administrators.
     if (is_siteadmin()) {
         $url = new moodle_url('/user/preferences.php', array('userid' => $user->id));
-        $title = $iscurrentuser ? get_string('mypreferences') : get_string('userspreferences', 'moodle', fullname($user));
+        $title = $iscurrentuser ? get_string('preferences') : get_string('userspreferences', 'moodle', fullname($user));
         $node = new core_user\output\myprofile\node('administration', 'preferences', $title, null, $url);
         $tree->add_node($node);
     }

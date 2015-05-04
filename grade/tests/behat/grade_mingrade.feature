@@ -27,7 +27,7 @@ Feature: We can use a minimum grade different than zero
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I am on site homepage
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I navigate to "Categories and items" node in "Grade administration > Setup"
     And I press "Add grade item"
     And I set the following fields to these values:
@@ -86,7 +86,7 @@ Feature: We can use a minimum grade different than zero
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     When I give the grade "-25.00" to the user "Student 1" for the grade item "Manual item 1"
     And I give the grade "50.00" to the user "Student 1" for the grade item "Manual item 2"

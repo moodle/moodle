@@ -7,7 +7,7 @@ Feature: Forms manipulation
   @javascript
   Scenario: Basic forms manipulation
     Given I log in as "admin"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Edit profile"
     When I set the field "First name" to "Field value"
     And I set the field "Select a country" to "Japan"

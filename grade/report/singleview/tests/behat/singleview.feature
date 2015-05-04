@@ -46,7 +46,7 @@ Feature: We can use Single view
       | Test grade item | C1 | Scale |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
 
   @javascript
   Scenario: I can update grades, add feedback and exclude grades.

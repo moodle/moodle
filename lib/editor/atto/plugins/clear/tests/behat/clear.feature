@@ -5,7 +5,7 @@ Feature: Atto clear button
   @javascript
   Scenario: Clear formatting
     Given I log in as "admin"
-    And I follow "My profile" in the user menu
+    And I follow "Profile" in the user menu
     And I follow "Edit profile"
     And I set the field "Description" to "Pisa"
     And I select the text in the "Description" Atto editor
@@ -14,7 +14,7 @@ Feature: Atto clear button
     And I select the text in the "Description" Atto editor
     When I click on "Clear formatting" "button"
     And I press "Update profile"
-    And I follow "My preferences" in the user menu
+    And I follow "Preferences" in the user menu
     And I follow "Editor preferences"
     And I set the field "Text editor" to "Plain text area"
     And I press "Save changes"

@@ -674,7 +674,7 @@ function user_convert_text_to_menu_items($text, $page) {
             $bits[1] = null;
             $child->itemtype = "invalid";
         } else {
-            // Nasty hack to replace the my grades with the direct url.
+            // Nasty hack to replace the grades with the direct url.
             if (strpos($bits[1], '/grade/report/mygrades.php') !== false) {
                 $bits[1] = user_mygrades_url();
             }
@@ -818,7 +818,7 @@ function user_get_user_navigation_info($user, $page) {
     $myprofile = new stdClass();
     $myprofile->itemtype = 'link';
     $myprofile->url = new moodle_url('/user/profile.php', array('id' => $user->id));
-    $myprofile->title = get_string('myprofile');
+    $myprofile->title = get_string('profile');
     $myprofile->pix = "i/user";
     $returnobject->navitems[] = $myprofile;
 
@@ -1030,11 +1030,11 @@ function user_list_view($course, $context) {
 }
 
 /**
- * Returns the url to use for the "My grades" link in the user navigation.
+ * Returns the url to use for the "Grades" link in the user navigation.
  *
  * @param int $userid The user's ID.
  * @param int $courseid The course ID if available.
- * @return mixed A URL to be directed to for "My grades".
+ * @return mixed A URL to be directed to for "Grades".
  */
 function user_mygrades_url($userid = null, $courseid = SITEID) {
     global $CFG, $USER;

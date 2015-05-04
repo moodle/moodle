@@ -30,7 +30,7 @@ Feature: A teacher checks the grade history report in a course
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Rewarding assignment |
       | Description | After writing your behat test go grab a beer! |
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "50.00" to the user "Student 1" for the grade item "The greatest assignment ever"
     And I give the grade "60.00" to the user "Student 1" for the grade item "Rewarding assignment"
@@ -40,7 +40,7 @@ Feature: A teacher checks the grade history report in a course
     And I log out
     And I log in as "teacher2"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "70.00" to the user "Student 1" for the grade item "The greatest assignment ever"
     And I give the grade "80.00" to the user "Student 1" for the grade item "Rewarding assignment"

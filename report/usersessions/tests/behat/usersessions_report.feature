@@ -7,6 +7,6 @@ Feature: In a report, admin can see current sessions
   @javascript
   Scenario: Check usersessions report shows current session
     Given I log in as "admin"
-    And I follow "My profile" in the user menu
+    And I follow "Profile" in the user menu
     When I follow "Browser sessions"
     Then I should see "Current session"

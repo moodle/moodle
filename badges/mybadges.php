@@ -86,7 +86,7 @@ require_capability('moodle/badges:manageownbadges', $context);
 
 $PAGE->set_context($context);
 
-$title = get_string('mybadges', 'badges');
+$title = get_string('badges', 'badges');
 $PAGE->set_title($title);
 $PAGE->set_heading(fullname($USER));
 $PAGE->set_pagelayout('mydashboard');

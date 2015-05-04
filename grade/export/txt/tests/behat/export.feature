@@ -21,7 +21,7 @@ Feature: I need to export grades as text
       | assign | C1 | a1 | Test assignment name | Submit your online text | 1 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name"
     And I press "Save changes"
