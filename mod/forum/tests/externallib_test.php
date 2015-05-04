@@ -250,7 +250,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         // Create what we expect to be returned when querying the forums.
         $expecteddiscussions = array();
-        $expecteddiscussions[$discussion1->id] = array(
+        $expecteddiscussions[] = array(
                 'id' => $discussion1->id,
                 'course' => $discussion1->course,
                 'forum' => $discussion1->forum,
@@ -277,7 +277,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 'lastuserpicture' => $user4->picture,
                 'lastuseremail' => $user4->email
             );
-        $expecteddiscussions[$discussion2->id] = array(
+        $expecteddiscussions[] = array(
                 'id' => $discussion2->id,
                 'course' => $discussion2->course,
                 'forum' => $discussion2->forum,
@@ -307,7 +307,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
         // Call the external function passing forum ids.
         $discussions = mod_forum_external::get_forum_discussions(array($forum1->id, $forum2->id));
-        external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
         $this->assertEquals($expecteddiscussions, $discussions);
         // Some debugging is going to be produced, this is because we switch PAGE contexts in the get_forum_discussions function,
         // the switch happens when the validate_context function is called inside a foreach loop.
