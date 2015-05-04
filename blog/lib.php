@@ -770,8 +770,6 @@ function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=nu
         $blogurl->param('userid', $userid);
         $blogurl->param('courseid', $courseid);
 
-        $PAGE->navbar->add($strblogentries, $blogurl);
-
         $PAGE->set_title($course->fullname);
         $PAGE->set_heading($course->fullname);
 

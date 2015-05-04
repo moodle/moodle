@@ -63,8 +63,10 @@ if ($entryid and !isset($userid)) {
     $userid = $entry->userid;
 }
 
-if (isset($userid)) {
+if (isset($userid) && !isset($courseid)) {
     $context = context_user::instance($userid);
+} else if (isset($courseid) && $courseid != SITEID) {
+    $context = context_course::instance($courseid);
 } else {
     $context = context_system::instance();
 }
@@ -241,11 +243,32 @@ if ($CFG->enablerssfeeds) {
         blog_rss_add_http_header($rsscontext, $rsstitle, $filtertype, $thingid, $tagid);
     }
 }
-if (isset($userid)) {
-    $PAGE->set_heading(fullname($user));
+
+$usernode = $PAGE->navigation->find('user'.$userid, null);
+if ($usernode && $courseid != SITEID) {
+    $courseblogsnode = $PAGE->navigation->find('courseblogs', null);
+    if ($courseblogsnode) {
+        $courseblogsnode->remove();
+    }
+    $blogurl = new moodle_url($PAGE->url);
+    $blognode = $usernode->add(get_string('blogscourse', 'blog'), $blogurl);
+    $blognode->make_active();
 }
 
-echo $OUTPUT->header();
+if ($courseid != SITEID) {
+    $PAGE->set_heading($course->fullname);
+    echo $OUTPUT->header();
+    if (!empty($user)) {
+        $headerinfo = array('heading' => fullname($user), 'user' => $user);
+        echo $OUTPUT->context_header($headerinfo, 2);
+    }
+} else if (isset($userid)) {
+    $PAGE->set_heading(fullname($user));
+    echo $OUTPUT->header();
+} else if ($courseid == SITEID) {
+    echo $OUTPUT->header();
+}
+
 echo $OUTPUT->heading($blogheaders['heading'], 2);
 
 $bloglisting = new blog_listing($blogheaders['filters']);

@@ -23,3 +23,4 @@ mypreferences,core_grades
 myprofile,core
 myprofilemyblogs,core_blog
 viewallmyentries,core_blog
+userspreferences,core_moodle

@@ -387,7 +387,6 @@ function core_notes_myprofile_navigation(core_user\output\myprofile\tree $tree, 
             // No cap, nothing to do.
             return false;
         }
-        $url->param('course', 0);
     } else {
         if (!has_capability('moodle/notes:view', context_course::instance($course->id))) {
             // No cap, nothing to do.

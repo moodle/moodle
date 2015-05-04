@@ -2553,18 +2553,16 @@ class global_navigation extends navigation_node {
                 if (($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
                    and has_capability('moodle/blog:view', context_system::instance())) {
                     $blogsurls = new moodle_url('/blog/index.php');
-                    if ($course->id == $SITE->id) {
-                        $blogsurls->param('courseid', 0);
-                    } else if ($currentgroup = groups_get_course_group($course, true)) {
+                    if ($currentgroup = groups_get_course_group($course, true)) {
                         $blogsurls->param('groupid', $currentgroup);
                     } else {
                         $blogsurls->param('courseid', $course->id);
                     }
-                    $participants->add(get_string('blogscourse','blog'), $blogsurls->out());
+                    $participants->add(get_string('blogscourse', 'blog'), $blogsurls->out(), self::TYPE_SETTING, null, 'courseblogs');
                 }
             }
             if (!empty($CFG->enablenotes) && (has_capability('moodle/notes:manage', $this->page->context) || has_capability('moodle/notes:view', $this->page->context))) {
-                $participants->add(get_string('notes','notes'), new moodle_url('/notes/index.php', array('filtertype'=>'course', 'filterselect'=>$course->id)));
+                $participants->add(get_string('notes', 'notes'), new moodle_url('/notes/index.php', array('filtertype' => 'course', 'filterselect' => $course->id)), self::TYPE_SETTING, null, 'currentcoursenotes');
             }
         } else if (count($this->extendforuser) > 0 || $this->page->course->id == $course->id) {
             $participants = $coursenode->add(get_string('participants'), null, self::TYPE_CONTAINER, get_string('participants'), 'participants');
@@ -2611,15 +2609,15 @@ class global_navigation extends navigation_node {
             $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CUSTOM, get_string('participants'), 'participants');
         }
 
-        $filterselect = 0;
-
         // Blogs
         if (!empty($CFG->enableblogs)
           and ($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
           and has_capability('moodle/blog:view', context_system::instance())) {
-            $blogsurls = new moodle_url('/blog/index.php', array('courseid' => $filterselect));
+            $blogsurls = new moodle_url('/blog/index.php');
             $coursenode->add(get_string('blogssite', 'blog'), $blogsurls->out(), self::TYPE_SYSTEM, null, 'siteblog');
         }
+
+        $filterselect = 0;
 
         //Badges
         if (!empty($CFG->enablebadges) && has_capability('moodle/badges:viewbadges', $this->page->context)) {
@@ -4226,7 +4224,7 @@ class settings_navigation extends navigation_node {
                 // Add nodes for forum posts and discussions if the user can view either or both
                 // There are no capability checks here as the content of the page is based
                 // purely on the forums the current user has access too.
-                $forumtab = $dashboard->add(get_string('forumposts', 'forum'));
+                $forumtab = $profilenode->add(get_string('forumposts', 'forum'));
                 $forumtab->add(get_string('posts', 'forum'), new moodle_url('/mod/forum/user.php', $baseargs), null, 'myposts');
                 $forumtab->add(get_string('discussions', 'forum'), new moodle_url('/mod/forum/user.php',
                         array_merge($baseargs, array('mode' => 'discussions'))), null, 'mydiscussions');
@@ -4244,7 +4242,7 @@ class settings_navigation extends navigation_node {
                 }
 
                 if (count($options) > 0) {
-                    $blogs = $dashboard->add(get_string('blogs', 'blog'), null, navigation_node::TYPE_CONTAINER);
+                    $blogs = $profilenode->add(get_string('blogs', 'blog'), null, navigation_node::TYPE_CONTAINER);
                     foreach ($options as $type => $option) {
                         if ($type == "rss") {
                             $blogs->add($option['string'], $option['link'], self::TYPE_SETTING, null, null,
@@ -4284,7 +4282,7 @@ class settings_navigation extends navigation_node {
                 if ($coursecontext->instanceid != SITEID) {
                     $url->param('course', $coursecontext->instanceid);
                 }
-                $dashboard->add(get_string('notes', 'notes'), $url);
+                $profilenode->add(get_string('notes', 'notes'), $url);
             }
 
             // Show the grades node.
