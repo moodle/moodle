@@ -4372,7 +4372,7 @@ function xmldb_main_upgrade($oldversion) {
             set_config('customusermenuitems', $newconfig);
         }
 
-        upgrade_main_savepoint(true, 2015050300.00);
+        upgrade_main_savepoint(true, 2015050401.00);
     }
 
     return true;
