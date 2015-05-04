@@ -35,14 +35,14 @@ $confirm = optional_param('confirm', false, PARAM_BOOL);
 // Validate course id.
 if (empty($courseid)) {
     require_login();
+    $context = context_system::instance();
 } else {
     // They might want to see rules for this course.
     $course = get_course($courseid);
     require_login($course);
-    $coursecontext = context_course::instance($course->id);
+    $context = context_course::instance($course->id);
     // Check for caps.
-    require_capability('tool/monitor:subscribe', $coursecontext);
-    $coursename = format_string($course->fullname, true, array('context' => $coursecontext));
+    require_capability('tool/monitor:subscribe', $context);
 }
 
 if (!get_config('tool_monitor', 'enablemonitor')) {
@@ -50,9 +50,6 @@ if (!get_config('tool_monitor', 'enablemonitor')) {
     throw new coding_exception('Event monitoring is disabled');
 }
 
-// Set the main context to a system context.
-$systemcontext = context_system::instance();
-$sitename = format_string($SITE->fullname, true, array('context' => $systemcontext));
 // Use the user context here so that the header shows user information.
 $PAGE->set_context(context_user::instance($USER->id));
 
@@ -93,7 +90,7 @@ if (!empty($action)) {
             } else {
                 $subscription = \tool_monitor\subscription_manager::get_subscription($subscriptionid);
                 echo $OUTPUT->header();
-                echo $OUTPUT->confirm(get_string('subareyousure', 'tool_monitor', $subscription->get_name($systemcontext)),
+                echo $OUTPUT->confirm(get_string('subareyousure', 'tool_monitor', $subscription->get_name($context)),
                     $confirmurl, $cancelurl);
                 echo $OUTPUT->footer();
                 exit();
@@ -133,11 +130,7 @@ echo $OUTPUT->heading(get_string('rulescansubscribe', 'tool_monitor'), 3);
 echo $renderer->render($rules);
 
 // Check if the user can manage the course rules we are viewing.
-if (empty($courseid)) {
-    $canmanagerules = has_capability('tool/monitor:managerules', $systemcontext);
-} else {
-    $canmanagerules = has_capability('tool/monitor:managerules', $coursecontext);
-}
+$canmanagerules = has_capability('tool/monitor:managerules', $context);
 
 if (empty($totalrules)) {
     // No rules present. Show a link to manage rules page if permissions permit.
