@@ -4120,17 +4120,11 @@ EOD;
     /**
      * Wrapper for header elements.
      *
-     * @param string $heading Heading to be used for the main header.
      * @return string HTML to display the main header.
      */
-    public function full_header($heading = null) {
+    public function full_header() {
         $html = html_writer::start_tag('header', array('id' => 'page-header', 'class' => 'clearfix'));
-        // This is to ensure that the logo completely overwrites the header if set.
-        if (isset($heading) && $heading == '<div class="logo"></div>') {
-            $html .= $heading;
-        } else {
-            $html .= $this->context_header(array('heading' => $heading));
-        }
+        $html .= $this->context_header();
         $html .= html_writer::start_div('clearfix', array('id' => 'page-navbar'));
         $html .= html_writer::tag('nav', $this->navbar(), array('class' => 'breadcrumb-nav'));
         $html .= html_writer::div($this->page_heading_button(), 'breadcrumb-button');

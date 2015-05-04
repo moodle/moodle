@@ -26,18 +26,21 @@ require_once($CFG->dirroot . '/theme/bootstrapbase/renderers.php');
 class theme_clean_core_renderer extends theme_bootstrapbase_core_renderer {
 
     /**
-     * Wrapper for header elements.
+     * Either returns the parent version of the header bar, or a version with the logo replacing the header.
      *
-     * We override this renderer helper in order to inject the logo into the theme.
-     *
-     * @param string $heading Heading to be used for the main header.
-     * @return string HTML to display the main header.
+     * @since Moodle 2.9
+     * @param array $headerinfo An array of header information, dependant on what type of header is being displayed. The following
+     *                          array example is user specific.
+     *                          heading => Override the page heading.
+     *                          user => User object.
+     *                          usercontext => user context.
+     * @param int $headinglevel What level the 'h' tag will be.
+     * @return string HTML for the header bar.
      */
-    public function full_header($heading = null) {
-        if (!empty($this->page->theme->settings->logo)) {
-            return parent::full_header(html_writer::tag('div', '', array('class' => 'logo')));
+    public function context_header($headerinfo = null, $headinglevel = 1) {
+        if ($headinglevel == 1 && !empty($this->page->theme->settings->logo)) {
+            return html_writer::tag('div', '', array('class' => 'logo'));
         }
-        return parent::full_header();
+        return parent::context_header($headerinfo, $headinglevel);
     }
-
 }
