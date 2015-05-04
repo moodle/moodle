@@ -552,7 +552,17 @@ function tag_get_related_tags($tagid, $type=TAG_RELATED_ALL, $limitnum=10) {
         }
     }
 
-    return array_slice(object_array_unique($related_tags), 0 , $limitnum);
+    // Remove duplicated tags (multiple instances of the same tag).
+    $seen = array();
+    foreach ($related_tags as $instance => $tag) {
+        if (isset($seen[$tag->id])) {
+            unset($related_tags[$instance]);
+        } else {
+            $seen[$tag->id] = 1;
+        }
+    }
+
+    return array_slice($related_tags, 0 , $limitnum);
 }
 
 /**
