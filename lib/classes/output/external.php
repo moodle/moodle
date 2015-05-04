@@ -88,7 +88,7 @@ class external extends external_api {
         $templatename = $component . '/' . $template;
 
         // Will throw exceptions if the template does not exist.
-        $filename = mustache_template_finder::get_template_filename($templatename, $themename);
+        $filename = mustache_template_finder::get_template_filepath($templatename, $themename);
         $templatestr = file_get_contents($filename);
 
         return $templatestr;

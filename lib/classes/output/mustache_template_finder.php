@@ -41,8 +41,8 @@ class mustache_template_finder {
     /**
      * Helper function for getting a list of valid template directories for a specific component.
      *
-     * @param string $component
-     *
+     * @param string $component The component to search
+     * @param string $themename The current theme name
      * @return string[] List of valid directories for templates for this compoonent. Directories are not checked for existence.
      */
     public static function get_template_directories_for_component($component, $themename = '') {
@@ -61,7 +61,7 @@ class mustache_template_finder {
         $dirs = array();
         $compdirectory = core_component::get_component_directory($component);
         if (!$compdirectory) {
-            throw new coding_exception("Component was not valid:" . s($component));
+            throw new coding_exception("Component was not valid: " . s($component));
         }
 
         // Find the parent themes.
@@ -90,20 +90,20 @@ class mustache_template_finder {
      * Helper function for getting a filename for a template from the template name.
      *
      * @param string $name - This is the componentname/templatename combined.
-     *
+     * @param string $themename - This is the current theme name.
      * @return string
      */
-    public static function get_template_filename($name, $themename = '') {
+    public static function get_template_filepath($name, $themename = '') {
         global $CFG, $PAGE;
 
         if (strpos($name, '/') === false) {
             throw new coding_exception('Templates names must be specified as "componentname/templatename"' .
-                                       ' (' . $name . ' requested) ');
+                                       ' (' . s($name) . ' requested) ');
         }
         list($component, $templatename) = explode('/', $name, 2);
         $component = clean_param($component, PARAM_COMPONENT);
         if (strpos($templatename, '/') !== false) {
-            throw new coding_exception('Templates cannot be placed in sub directories (' . $name . ' requested)');
+            throw new coding_exception('Templates cannot be placed in sub directories (' . s($name) . ' requested)');
         }
 
         $dirs = self::get_template_directories_for_component($component, $themename);

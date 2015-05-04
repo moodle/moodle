@@ -24,7 +24,7 @@
 
 $string['all'] = 'All components';
 $string['component'] = 'Component';
-$string['coresubsystem'] = 'Core subsystem ({$a})';
+$string['coresubsystem'] = 'Subsystem ({$a})';
 $string['documentation'] = 'Documentation';
 $string['example'] = 'Example';
 $string['noresults'] = 'No results';

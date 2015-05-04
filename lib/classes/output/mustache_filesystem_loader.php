@@ -44,14 +44,13 @@ class mustache_filesystem_loader extends \Mustache_Loader_FilesystemLoader {
 
     /**
      * Helper function for getting a Mustache template file name.
-     * Use the leading component to restrict us specific directories.
+     * Uses the leading component to restrict us specific directories.
      *
      * @param string $name
-     *
      * @return string Template file name
      */
     protected function getFileName($name) {
         // Call the Moodle template finder.
-        return mustache_template_finder::get_template_filename($name);
+        return mustache_template_finder::get_template_filepath($name);
     }
 }

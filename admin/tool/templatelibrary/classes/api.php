@@ -42,6 +42,7 @@ class api {
      *
      * @param string $component Filter the list to a single component.
      * @param string $search Search string to optionally filter the list of templates.
+     * @param string $themename The name of the current theme.
      * @return array[string] Where each template is in the form "component/templatename".
      */
     public static function list_templates($component = '', $search = '', $themename = '') {
@@ -50,7 +51,7 @@ class api {
         $templatedirs = array();
         $results = array();
 
-        if ($component != '') {
+        if ($component !== '') {
             // Just look at one component for templates.
             $dirs = mustache_template_finder::get_template_directories_for_component($component, $themename);
 
