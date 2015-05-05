@@ -2040,5 +2040,3 @@ $string['yourself'] = 'yourself';
 $string['yourteacher'] = 'your {$a}';
 $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
-// Deprecated since Moodle 2.9
-$string['userspreferences'] = 'User {$a}\'s preferences';
