@@ -12,15 +12,11 @@ lockmethod,core_cache
 lockmethod_help,core_cache
 personalrepositories,core_repository
 siteblog,core_blog
-managemybadges,core_badges
 mybackpack,core_badges
 mybadges,core_badges
 myfiles,core
 myfilesmanage,core
-mygrades,core_grades
-mypreferences,core
 mypreferences,core_grades
 myprofile,core
-myprofilemyblogs,core_blog
 viewallmyentries,core_blog
 userspreferences,core_moodle

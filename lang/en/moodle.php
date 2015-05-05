@@ -1221,7 +1221,6 @@ $string['privatefilesmanage'] = 'Manage private files';
 $string['myhome'] = 'Dashboard';
 $string['mymoodledashboard'] = 'My Moodle dashboard';
 $string['myprofile'] = 'My profile';
-$string['mypreferences'] = 'My preferences';
 $string['name'] = 'Name';
 $string['nameforlink'] = 'What do you want to call this link?';
 $string['nameforpage'] = 'Name';
