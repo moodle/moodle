@@ -162,13 +162,9 @@ class reply_handler extends \core\message\inbound\handler {
         $addpost->parent       = $post->id;
         $addpost->itemid       = file_get_unused_draft_itemid();
 
-        if (!empty($messagedata->html)) {
-            $addpost->message = $messagedata->html;
-            $addpost->messageformat = FORMAT_HTML;
-        } else {
-            $addpost->message = $messagedata->plain;
-            $addpost->messageformat = FORMAT_PLAIN;
-        }
+        list ($message, $format) = self::remove_quoted_text($messagedata);
+        $addpost->message = $message;
+        $addpost->messageformat = $format;
 
         // We don't trust text coming from e-mail.
         $addpost->messagetrust = false;
@@ -288,7 +284,6 @@ class reply_handler extends \core\message\inbound\handler {
         return $fs->create_file_from_string($record, $attachment->content);
     }
 
-
     /**
      * Return the content of any success notification to be sent.
      * Both an HTML and Plain Text variant must be provided.
@@ -308,5 +303,4 @@ class reply_handler extends \core\message\inbound\handler {
         $message->html = get_string('postbymailsuccess_html', 'mod_forum', $a);
         return $message;
     }
-
 }
