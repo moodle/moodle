@@ -5212,7 +5212,7 @@ class admin_setting_my_grades_report extends admin_setting_configselect {
      * Calls parent::__construct with specific arguments.
      */
     public function __construct() {
-        parent::__construct('grade_mygrades_report', new lang_string('grades', 'grades'),
+        parent::__construct('grade_mygrades_report', new lang_string('mygrades', 'grades'),
                 new lang_string('mygrades_desc', 'grades'), 'overview', null);
     }
 
