@@ -1167,7 +1167,7 @@ class global_navigation extends navigation_node {
                 // course node and not populate it.
 
                 // Not enrolled, can't view, and hasn't switched roles
-                if (!can_access_course($course)) {
+                if (!can_access_course($course, null, '', true)) {
                     if ($coursenode->isexpandable === true) {
                         // Obviously the situation has changed, update the cache and adjust the node.
                         // This occurs if the user access to a course has been revoked (one way or another) after
@@ -1183,9 +1183,7 @@ class global_navigation extends navigation_node {
                         $canviewcourseprofile = false;
                         break;
                     }
-                }
-
-                if ($coursenode->isexpandable === false) {
+                } else if ($coursenode->isexpandable === false) {
                     // Obviously the situation has changed, update the cache and adjust the node.
                     // This occurs if the user has been granted access to a course (one way or another) after initially
                     // logging in for this session.
@@ -1230,7 +1228,7 @@ class global_navigation extends navigation_node {
 
                 // If the user is not enrolled then we only want to show the
                 // course node and not populate it.
-                if (!can_access_course($course)) {
+                if (!can_access_course($course, null, '', true)) {
                     $coursenode->make_active();
                     $canviewcourseprofile = false;
                     break;
@@ -1269,7 +1267,7 @@ class global_navigation extends navigation_node {
 
                 // If the user is not enrolled then we only want to show the
                 // course node and not populate it.
-                if (!can_access_course($course)) {
+                if (!can_access_course($course, null, '', true)) {
                     $coursenode->make_active();
                     $canviewcourseprofile = false;
                     break;
@@ -2319,7 +2317,7 @@ class global_navigation extends navigation_node {
                     $usercoursenode->add(get_string('notes', 'notes'), $url, self::TYPE_SETTING);
                 }
 
-                if (can_access_course($usercourse, $user->id)) {
+                if (can_access_course($usercourse, $user->id, '', true)) {
                     $usercoursenode->add(get_string('entercourse'), new moodle_url('/course/view.php', array('id'=>$usercourse->id)), self::TYPE_SETTING, null, null, new pix_icon('i/course', ''));
                 }
 
@@ -2418,6 +2416,7 @@ class global_navigation extends navigation_node {
         } else if ($coursetype == self::COURSE_CURRENT) {
             $parent = $this->rootnodes['currentcourse'];
             $url = new moodle_url('/course/view.php', array('id'=>$course->id));
+            $canexpandcourse = $this->can_expand_course($course);
         } else if ($coursetype == self::COURSE_MY && !$forcegeneric) {
             if (!empty($CFG->navshowmycoursecategories) && ($parent = $this->rootnodes['mycourses']->find($course->category, self::TYPE_MY_CATEGORY))) {
                 // Nothing to do here the above statement set $parent to the category within mycourses.
@@ -2497,7 +2496,7 @@ class global_navigation extends navigation_node {
         $cache = $this->get_expand_course_cache();
         $canexpand = $cache->get($course->id);
         if ($canexpand === false) {
-            $canexpand = isloggedin() && can_access_course($course);
+            $canexpand = isloggedin() && can_access_course($course, null, '', true);
             $canexpand = (int)$canexpand;
             $cache->set($course->id, $canexpand);
         }
@@ -2853,7 +2852,7 @@ class global_navigation_for_ajax extends global_navigation {
                 break;
             case self::TYPE_COURSE :
                 $course = $DB->get_record('course', array('id' => $this->instanceid), '*', MUST_EXIST);
-                if (!can_access_course($course)) {
+                if (!can_access_course($course, null, '', true)) {
                     // Thats OK all courses are expandable by default. We don't need to actually expand it we can just
                     // add the course node and break. This leads to an empty node.
                     $this->add_course($course);
@@ -3247,7 +3246,7 @@ class navbar extends navigation_node {
             }
             $categories[] = $categorynode;
         }
-        if (is_enrolled(context_course::instance($this->page->course->id))) {
+        if (is_enrolled(context_course::instance($this->page->course->id), null, '', true)) {
             $courses = $this->page->navigation->get('mycourses');
         } else {
             $courses = $this->page->navigation->get('courses');
@@ -4137,7 +4136,7 @@ class settings_navigation extends navigation_node {
                 }
             } else {
                 $canviewusercourse = has_capability('moodle/user:viewdetails', $coursecontext);
-                $userisenrolled = is_enrolled($coursecontext, $user->id);
+                $userisenrolled = is_enrolled($coursecontext, $user->id, '', true);
                 if ((!$canviewusercourse && !$canviewuser) || !$userisenrolled) {
                     return false;
                 }
