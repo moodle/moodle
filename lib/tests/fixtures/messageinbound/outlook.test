@@ -7,7 +7,7 @@ Date: 04/05/2015
 ----EXPECTEDPLAIN----
 Sending mail via clent and it seems to go all good...
 
-Havent tried this before and its so slow....
+Havent tried this before and it is awesome....
 
 Cheers
 Rajesh
@@ -15,7 +15,7 @@ Rajesh
 ----EXPECTEDHTML----
 Sending mail via clent and it seems to go all good... 
 
-Havent tried this before and its so slow.... 
+Havent tried this before and it is awesome.... 
 
 Cheers
 
@@ -70,7 +70,7 @@ Content-Transfer-Encoding: quoted-printable
 
 Sending mail via clent and it seems to go all good...
 
-Havent tried this before and its so slow....
+Havent tried this before and it is awesome....
 
 Cheers
 Rajesh
@@ -166,7 +166,7 @@ Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
 <p dir=3D"ltr">Sending mail via clent and it seems to go all good...</p>
-<p dir=3D"ltr">Havent tried this before and its so slow....</p>
+<p dir=3D"ltr">Havent tried this before and it is awesome....</p>
 <p dir=3D"ltr">Cheers<br>
 Rajesh</p>
 <div class=3D"gmail_quote">On 4 May 2015 11:01 am, &quot;Rajesh Taneja&quot=
