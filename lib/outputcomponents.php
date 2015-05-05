@@ -503,7 +503,7 @@ class help_icon implements renderable {
  * @package core
  * @category output
  */
-class pix_icon implements renderable {
+class pix_icon implements renderable, templatable {
 
     /**
      * @var string The icon name
@@ -544,6 +544,24 @@ class pix_icon implements renderable {
             // and some browsers might overwrite it with an empty title.
             unset($this->attributes['title']);
         }
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return array
+     */
+    public function export_for_template(renderer_base $output) {
+        $attributes = $this->attributes;
+        $attributes['src'] = $output->pix_url($this->pix, $this->component);
+        $templatecontext = array();
+        foreach ($attributes as $name => $value) {
+            $templatecontext[] = array('name' => $name, 'value' => $value);
+        }
+        $data = array('attributes' => $templatecontext);
+
+        return $data;
     }
 }
 
