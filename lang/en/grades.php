@@ -459,7 +459,6 @@ $string['movingelement'] = 'Moving {$a}';
 $string['multfactor'] = 'Multiplicator';
 $string['multfactorvalue'] = 'Multiplicator value for {$a}';
 $string['multfactor_help'] = 'The multiplicator is the factor by which all grades for this grade item will be multiplied, with a maximum value of the maximum grade. For example, if the multiplicator is 2 and the maximum grade is 100, then all grades less than 50 are multiplied by 2, and all grades 50 and above are changed to 100.';
-$string['mygrades'] = 'My grades';
 $string['mygrades_desc'] = 'This setting determines the grades link in the user menu. If an external gradebook is used, \'External URL\' should be selected and the URL specified below.';
 $string['mypreferences'] = 'My preferences';
 $string['myreportpreferences'] = 'My report preferences';
