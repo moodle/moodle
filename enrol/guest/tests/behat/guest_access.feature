@@ -23,7 +23,6 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
       | Description | Test forum description |
     And I click on "Edit settings" "link" in the "Administration" "block"
 
-  @javascript
   Scenario: Allow guest access without password
     Given I set the following fields to these values:
       | Allow guest access | Yes |
@@ -35,7 +34,6 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
     When I follow "Test forum name"
     Then I should not see "Subscribe to this forum"
 
-  @javascript
   Scenario: Allow guest access with password
     Given I set the following fields to these values:
       | Allow guest access | Yes |
