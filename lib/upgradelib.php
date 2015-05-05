@@ -371,6 +371,10 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 2.9.
+        '/lib/timezone.txt',
+        // Removed in 2.8.
+        '/course/delete_category_form.php',
         // Removed in 2.7.
         '/admin/tool/qeupgradehelper/version.php',
         // Removed in 2.6.
