@@ -225,7 +225,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
             $generatedcat = $generatedcats[$category['id']];
             $this->assertEquals($category['idnumber'], $generatedcat->idnumber);
             $this->assertEquals($category['name'], $generatedcat->name);
-            $this->assertEquals($category['description'], $generatedcat->description);
+            // Description was converted to the HTML format.
+            $this->assertEquals($category['description'], format_text($generatedcat->description, FORMAT_MOODLE, array('para' => false)));
             $this->assertEquals($category['descriptionformat'], FORMAT_HTML);
         }
 
@@ -560,7 +561,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
             $dbcourse = $generatedcourses[$course['id']];
             $this->assertEquals($course['idnumber'], $dbcourse->idnumber);
             $this->assertEquals($course['fullname'], $dbcourse->fullname);
-            $this->assertEquals($course['summary'], $dbcourse->summary);
+            // Summary was converted to the HTML format.
+            $this->assertEquals($course['summary'], format_text($dbcourse->summary, FORMAT_MOODLE, array('para' => false)));
             $this->assertEquals($course['summaryformat'], FORMAT_HTML);
             $this->assertEquals($course['shortname'], $dbcourse->shortname);
             $this->assertEquals($course['categoryid'], $dbcourse->category);
