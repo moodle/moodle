@@ -223,9 +223,15 @@ class core_message_renderer extends plugin_renderer_base {
      * @param array $preferences Array of objects containing current preferences
      * @param array $defaultpreferences Array of objects containing site default preferences
      * @param bool $notificationsdisabled Indicate if the user's "emailstop" flag is set (shouldn't receive any non-forced notifications)
+     * @param null|int $userid User id, or null if current user.
      * @return string The text to render
      */
-    public function manage_messagingoptions($processors, $providers, $preferences, $defaultpreferences, $notificationsdisabled = false) {
+    public function manage_messagingoptions($processors, $providers, $preferences, $defaultpreferences,
+                                            $notificationsdisabled = false, $userid = null) {
+        global $USER;
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
         // Filter out enabled, available system_configured and user_configured processors only.
         $readyprocessors = array_filter($processors, create_function('$a', 'return $a->enabled && $a->configured && $a->object->is_user_configured();'));
 
@@ -379,10 +385,13 @@ class core_message_renderer extends plugin_renderer_base {
         $disableallcheckbox .= $this->output->help_icon('disableall', 'message');
         $output .= html_writer::nonempty_tag('div', $disableallcheckbox, array('class'=>'disableall'));
 
+        $redirect = new moodle_url("/user/preferences.php", array('userid' => $userid));
         $output .= html_writer::end_tag('fieldset');
         $output .= html_writer::start_tag('div', array('class' => 'mdl-align'));
         $output .= html_writer::empty_tag('input', array('type' => 'submit',
             'value' => get_string('savechanges'), 'class' => 'form-submit'));
+        $output .= html_writer::link($redirect, html_writer::empty_tag('input', array('type' => 'button',
+            'value' => get_string('cancel'), 'class' => 'btn-cancel')));
         $output .= html_writer::end_tag('div');
 
         $output .= html_writer::end_tag('form');

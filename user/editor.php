@@ -41,7 +41,10 @@ $editorform = new user_edit_editor_form(null, array('userid' => $user->id));
 $user->preference_htmleditor = get_user_preferences( 'htmleditor', '', $user->id);
 $editorform->set_data($user);
 
-if ($data = $editorform->get_data()) {
+$redirect = new moodle_url("/user/preferences.php", array('userid' => $user->id));
+if ($editorform->is_cancelled()) {
+    redirect($redirect);
+} else if ($data = $editorform->get_data()) {
 
     $user->preference_htmleditor = $data->preference_htmleditor;
 
@@ -49,7 +52,7 @@ if ($data = $editorform->get_data()) {
     // Trigger event.
     \core\event\user_updated::create_from_userid($user->id)->trigger();
 
-    redirect("$CFG->wwwroot/user/preferences.php?userid=$user->id");
+    redirect($redirect);
 }
 
 // Display page header.

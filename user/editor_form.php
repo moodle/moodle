@@ -63,7 +63,7 @@ class user_edit_editor_form extends moodleform {
             $mform->setType('preference_htmleditor', PARAM_PLUGIN);
         }
 
-        $this->add_action_buttons(false, get_string('savechanges'));
+        $this->add_action_buttons(true, get_string('savechanges'));
     }
 }
 

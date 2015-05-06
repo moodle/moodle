@@ -1,6 +1,9 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 2.9 ===
+* Renderer method \core_message_renderer::manage_messagingoptions now accepts a user id parameter as well.
+
 === 2.6 ===
 * Message processor extending message_output, should return true in can_send_to_any_users()
   if it supports message sending to internal (noreply/support) users.
