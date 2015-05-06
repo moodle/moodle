@@ -62,14 +62,15 @@ class data_field_latlong extends data_field_base {
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
         $str .= '<table><tr><td align="right">';
-        $str .= '<label for="field_'.$this->field->id.'_0">' . get_string('latitude', 'data');
+        $str .= '<label for="field_'.$this->field->id.'_0" class="mod-data-input">' . get_string('latitude', 'data');
         if ($this->field->required) {
             $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
         }
         $str .= '</label></td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="';
         $str .= s($lat).'" size="10" />°N</td></tr>';
-        $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1">' . get_string('longitude', 'data');
+        $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1" class="mod-data-input">';
+        $str .= get_string('longitude', 'data');
         if ($this->field->required) {
             $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
