@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2015021700;
-$plugin->requires = 2014110400;  // Requires this Moodle version
+$plugin->version  = 2015051100;
+$plugin->requires = 2015050500;  // Requires this Moodle version.
 $plugin->component= 'filter_mathjaxloader';
