@@ -78,7 +78,7 @@ class data_field_picture extends data_field_base {
             $str .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';
             $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                       array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
-            $str .= html_writer::div($image);
+            $str .= html_writer::div($image, 'inline-req');
         } else {
             $str .= '</span></legend>';
         }
@@ -105,12 +105,14 @@ class data_field_picture extends data_field_base {
         // Print out file manager.
 
         $output = $PAGE->get_renderer('core', 'files');
+        $str .= '<div class="mod-data-input">';
         $str .= $output->render($fm);
 
         $str .= '<div class="mdl-left">';
         $str .= '<input type="hidden" name="field_'.$this->field->id.'_file" value="'.$itemid.'" />';
         $str .= '<label for="field_'.$this->field->id.'_alttext">'.get_string('alttext','data') .'</label>&nbsp;<input type="text" name="field_'
                 .$this->field->id.'_alttext" id="field_'.$this->field->id.'_alttext" value="'.s($alttext).'" />';
+        $str .= '</div>';
         $str .= '</div>';
 
         $str .= '</fieldset>';
