@@ -885,7 +885,7 @@ function data_tags_check($dataid, $template) {
     // then we generate strings to replace
     $tagsok = true; // let's be optimistic
     foreach ($fields as $field){
-        $pattern="/\[\[".$field->name."\]\]/i";
+        $pattern="/\[\[" . preg_quote($field->name, '/') . "\]\]/i";
         if (preg_match_all($pattern, $template, $dummy)>1){
             $tagsok = false;
             echo $OUTPUT->notification('[['.$field->name.']] - '.get_string('multipletags','data'));
