@@ -25,21 +25,20 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
        function($, ajax, log, notification, templates, config, str) {
 
     /**
-     * Handle a template loaded response.
+     * Search through a template for a template docs comment.
      *
-     * @param {String} templateName The template name
-     * @param {String} source The template source
+     * @param {String} templateSource The raw template
+     * @param {String} templateName The name of the template used to search for docs tag
+     * @return {String|boolean} the correct comment or false
      */
-    var templateLoaded = function(templateName, source) {
-        str.get_string('templateselected', 'tool_templatelibrary', templateName).done(function(s) {
-            $('[data-region="displaytemplateheader"]').text(s);
-        }).fail(notification.exception);
+    var findDocsSection = function(templateSource, templateName) {
 
         // Find the comment section marked with @template component/template.
-        var marker = "@template " + templateName;
+        var marker = "@template " + templateName,
+            i = 0,
+            sections = [];
 
-        var sections = source.match(/{{!([\s\S]*?)}}/g);
-        var i = 0;
+        sections = templateSource.match(/{{!([\s\S]*?)}}/g);
 
         // If no sections match - show the entire file.
         if (sections !== null) {
@@ -50,10 +49,37 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
                     // Remove {{! and }} from start and end.
                     var offset = start + marker.length + 1;
                     section = section.substr(offset, section.length - 2 - offset);
-                    source = section;
-                    break;
+                    return section;
                 }
             }
+        }
+        // No matching comment.
+        return false;
+    };
+
+    /**
+     * Handle a template loaded response.
+     *
+     * @param {String} templateName The template name
+     * @param {String} source The template source
+     * @param {String} originalSource The original template source (not theme overridden)
+     */
+    var templateLoaded = function(templateName, source, originalSource) {
+        str.get_string('templateselected', 'tool_templatelibrary', templateName).done(function(s) {
+            $('[data-region="displaytemplateheader"]').text(s);
+        }).fail(notification.exception);
+
+        // Find the comment section marked with @template component/template.
+        var docs = findDocsSection(source, templateName);
+
+        if (docs === false) {
+            // Docs was not in theme template, try original.
+            docs = findDocsSection(originalSource, templateName);
+        }
+
+        // If we found a docs section, limit the template library to showing this section.
+        if (docs) {
+            source = docs;
         }
 
         $('[data-region="displaytemplatesource"]').text(source);
@@ -86,6 +112,7 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
 
     /**
      * Load the a template source from Moodle.
+     *
      * @param {String} templateName
      */
     var loadTemplate = function(templateName) {
@@ -93,16 +120,26 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
         var component = parts.shift();
         var name = parts.shift();
 
-        ajax.call([{
+        var promises = ajax.call([{
             methodname: 'core_output_load_template',
             args:{
                     component: component,
                     template: name,
                     themename: config.theme
-            },
-            done: function(source) { templateLoaded(templateName, source); },
-            fail: notification.exception
+            }
+        }, {
+            methodname: 'tool_templatelibrary_load_canonical_template',
+            args:{
+                    component: component,
+                    template: name
+            }
         }]);
+
+        // When returns a new promise that is resolved when all the passed in promises are resolved.
+        // The arguments to the done become the values of each resolved promise.
+        $.when.apply($, promises)
+            .done( function(source, originalSource) { templateLoaded(templateName, source, originalSource); })
+            .fail(notification.exception);
     };
 
     // Add the event listeners.
