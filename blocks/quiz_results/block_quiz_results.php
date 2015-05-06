@@ -54,7 +54,7 @@ class block_quiz_results extends block_base {
     }
 
     function instance_allow_multiple() {
-        return false;
+        return true;
     }
 }
 

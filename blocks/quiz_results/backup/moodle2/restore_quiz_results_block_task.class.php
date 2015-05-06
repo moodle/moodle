@@ -61,35 +61,46 @@ class restore_quiz_results_block_task extends restore_block_task {
         $blockid = $this->get_blockid();
 
         // Extract block configdata and update it to point to the new quiz.
-        if ($configdata = $DB->get_field('block_instances', 'configdata', array('id' => $blockid))) {
+        $configdata = $DB->get_field('block_instances', 'configdata', array('id' => $blockid));
+        $newconfigdata = '';
+
+        // The block was configured.
+        if (!empty($configdata)) {
+
             $config = unserialize(base64_decode($configdata));
-            if (!empty($config->quizid)) {
-                // Get quiz mapping and replace it in config.
-                if ($quizmap = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'quiz', $config->quizid)) {
-                    $config->activityparent = 'quiz';
-                    $config->activityparentid = $quizmap->newitemid;
+            $config->activityparent = 'quiz';
+            $config->activityparentid = 0;
+            $config->gradeformat = isset($config->gradeformat) ? $config->gradeformat : 1;
 
-                    // Set the decimal valuue as appropriate.
-                    if ($config->gradeformat == 1) {
-                        // This block is using percentages, do not display any decimal places.
-                        $config->decimalpoints = 0;
-                    } else {
-                        // Get the decimal value from the corresponding quiz.
-                        $config->decimalpoints = $DB->get_field('quiz', 'decimalpoints', array('id' => $config->activityparentid));
-                    }
-
-                    // Get the grade_items record to set the activitygradeitemid.
-                    $info = $DB->get_record('grade_items',
-                            array('iteminstance' => $config->activityparentid, 'itemmodule' => $config->activityparent));
-                    $config->activitygradeitemid = $info->id;
-                    unset($config->quizid);
-
-                    // Save the new configuration and update the record.
-                    $DB->set_field('block_instances', 'configdata', base64_encode(serialize($config)), array('id' => $blockid));
-                    $DB->set_field('block_instances', 'blockname', 'activity_results', array('id' => $blockid));
-                }
+            if (!empty($config->quizid)
+                    && $quizmap = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'quiz', $config->quizid)) {
+                $config->activityparentid = $quizmap->newitemid;
             }
+
+            // Set the decimal valuue as appropriate.
+            if ($config->gradeformat == 1) {
+                // This block is using percentages, do not display any decimal places.
+                $config->decimalpoints = 0;
+            } else {
+                // Get the decimal value from the corresponding quiz.
+                $config->decimalpoints = $DB->get_field('quiz', 'decimalpoints', array('id' => $config->activityparentid));
+            }
+
+            // Get the grade_items record to set the activitygradeitemid.
+            $info = $DB->get_record('grade_items',
+                    array('iteminstance' => $config->activityparentid, 'itemmodule' => $config->activityparent));
+            $config->activitygradeitemid = 0;
+            if ($info) {
+                $config->activitygradeitemid = $info->id;
+            }
+
+            unset($config->quizid);
+            $newconfigdata = base64_encode(serialize($config));
         }
+
+        // Update the configuration and convert the block.
+        $DB->set_field('block_instances', 'configdata', $newconfigdata, array('id' => $blockid));
+        $DB->set_field('block_instances', 'blockname', 'activity_results', array('id' => $blockid));
     }
 
     static public function define_decode_contents() {
