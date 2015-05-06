@@ -118,7 +118,9 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
                 if (enrol_selfenrol_available($course->id)) {
                     $SESSION->wantsurl = qualified_me();
                     $SESSION->enrolcancel = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
-                    redirect($CFG->wwwroot.'/enrol/index.php?id='.$course->id, get_string('youneedtoenrol'));
+                    redirect(new moodle_url('/enrol/index.php', array('id' => $course->id,
+                        'returnurl' => '/mod/forum/view.php?f=' . $forum->id)),
+                        get_string('youneedtoenrol'));
                 }
             }
         }
@@ -187,12 +189,9 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
             if (!is_enrolled($coursecontext)) {  // User is a guest here!
                 $SESSION->wantsurl = qualified_me();
                 $SESSION->enrolcancel = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
-                redirect(new moodle_url('/enrol/index.php', array(
-                                            'id' => $course->id,
-                                            'returnurl' => new moodle_url('/mod/forum/view.php',
-                                                                          array('f' => $forum->id))
-                                       )),
-                         get_string('youneedtoenrol'));
+                redirect(new moodle_url('/enrol/index.php', array('id' => $course->id,
+                    'returnurl' => '/mod/forum/view.php?f=' . $forum->id)),
+                    get_string('youneedtoenrol'));
             }
         }
         print_error('nopostforum', 'forum');

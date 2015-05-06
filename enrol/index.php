@@ -108,7 +108,11 @@ if (!$forms) {
     } else if ($returnurl) {
         notice(get_string('notenrollable', 'enrol'), $returnurl);
     } else {
-        notice(get_string('notenrollable', 'enrol'), "$CFG->wwwroot/index.php");
+        $url = clean_param(get_referer(false), PARAM_LOCALURL);
+        if (empty($url)) {
+            $url = new moodle_url('/index.php');
+        }
+        notice(get_string('notenrollable', 'enrol'), $url);
     }
 }
 

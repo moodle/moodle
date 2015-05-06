@@ -2802,11 +2802,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             if ($setwantsurltome) {
                 $SESSION->wantsurl = qualified_me();
             }
-            $redirecturl = new moodle_url($CFG->wwwroot .'/enrol/index.php', array('id' => $course->id));
-            if ($PAGE->url->get_param('returnurl')) {
-                $redirecturl->param('returnurl', $PAGE->url->get_param('returnurl'));
-            }
-            redirect($redirecturl);
+            redirect($CFG->wwwroot .'/enrol/index.php?id='. $course->id);
         }
     }
 
