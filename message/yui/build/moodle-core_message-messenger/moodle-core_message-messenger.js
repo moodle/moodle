@@ -351,19 +351,18 @@ Y.namespace('M.core_message.messenger').sendMessage = Y.extend(SENDMSGDIALOG, M.
 
                     // Hide the dialog.
                     Y.later(1300, this, function() {
+                        this.setSendLock(false);
                         this.hideNotice();
                         this.hide();
                     });
                 },
                 failure: function() {
+                    this.setSendLock(false);
                     this.hideNotice();
                     new M.core.alert({
                         title: M.util.get_string('error', 'core'),
                         message: M.util.get_string('errorwhilesendingmessage', 'core_message')
                     });
-                },
-                complete: function() {
-                    this.setSendLock(false);
                 }
             },
             context: this
