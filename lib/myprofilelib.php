@@ -74,7 +74,8 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
     if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
         if (($iscurrentuser || is_siteadmin($USER) || !is_siteadmin($user)) && has_capability('moodle/user:update',
                     $systemcontext)) {
-            $url = new moodle_url('/user/editadvanced.php', array('id' => $user->id, 'course' => $courseid));
+            $url = new moodle_url('/user/editadvanced.php', array('id' => $user->id, 'course' => $courseid,
+                'returnto' => 'profile'));
             $node = new core_user\output\myprofile\node('contact', 'editprofile', get_string('editmyprofile'), null, $url);
             $tree->add_node($node);
         } else if ((has_capability('moodle/user:editprofile', $usercontext) && !is_siteadmin($user))
@@ -87,9 +88,10 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                 $url = $userauthplugin->edit_profile_url();
                 if (empty($url)) {
                     if (empty($course)) {
-                        $url = new moodle_url('/user/edit.php', array('userid' => $user->id));
+                        $url = new moodle_url('/user/edit.php', array('userid' => $user->id, 'returnto' => 'profile'));
                     } else {
-                        $url = new moodle_url('/user/edit.php', array('userid' => $user->id, 'course' => $course->id));
+                        $url = new moodle_url('/user/edit.php', array('userid' => $user->id, 'course' => $course->id,
+                            'returnto' => 'profile'));
                     }
                 }
                 $node = new core_user\output\myprofile\node('contact', 'editprofile',
