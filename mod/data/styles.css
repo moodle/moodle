@@ -31,6 +31,11 @@
 #page-mod-data-preset .overwritesettings {margin-bottom: 1em;}
 #page-mod-data-preset table.presets {margin-left: auto;margin-right: auto;}
 
+/** Styles for the search form **/
+#page-mod-data-view .datapreferences label {
+    display: inline-block;
+}
+
 /** Styles for field.php **/
 .path-mod-data-field .fieldadd,
 .path-mod-data-field .sortdefault {margin:1em 0;}
