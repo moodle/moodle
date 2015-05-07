@@ -3388,7 +3388,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     }
 
     if (!empty($post->lastpost)) {
-        $forumpostclass = ' lastpost';
+        $forumpostclass .= ' lastpost';
     }
 
     $postbyuser = new stdClass;
