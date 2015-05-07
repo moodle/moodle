@@ -6,6 +6,11 @@ information provided here is intended especially for theme designer.
 * Themes Bootstrapbase, Clean and More have undergone some changes for RTL layouts see - MDL-48160.
 
 * Themes Clean amd More page header background logo, if loaded, no longer links to the home page.
+* Themes Clean and More have been updated to use the renderer full_header(). This renderer (when in a user context) displays a message button
+  and consequently the link to message users have been removed from various pages. It is recommended that theme developers use this
+  renderer to ensure that they do not suffer from a reduction in access to this feature.
+* $OUTPUT->context_header() has been introduced to produce headers similar to what full_header() creates. This renderer is used for creating
+  subsequent headers in a page. If provided with user information, this render will also display a message button like full_header().
 
 === 2.8 ===
 
