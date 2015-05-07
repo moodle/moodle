@@ -35,6 +35,7 @@ $PAGE->https_required();
 
 $id     = optional_param('id', $USER->id, PARAM_INT);    // User id; -1 if creating new user.
 $course = optional_param('course', SITEID, PARAM_INT);   // Course id (defaults to Site).
+$returnto = optional_param('returnto', null, PARAM_ALPHA);  // Code determining where to return to after save.
 
 $PAGE->set_url('/user/editadvanced.php', array('course' => $course, 'id' => $id));
 
@@ -153,7 +154,7 @@ $filemanageroptions = array('maxbytes'       => $CFG->maxbytes,
 file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'user', 'newicon', 0, $filemanageroptions);
 $user->imagefile = $draftitemid;
 // Create form.
-$userform = new user_editadvanced_form(null, array(
+$userform = new user_editadvanced_form(new moodle_url($PAGE->url, array('returnto' => $returnto)), array(
     'editoroptions' => $editoroptions,
     'filemanageroptions' => $filemanageroptions,
     'user' => $user));
@@ -293,7 +294,16 @@ if ($usernew = $userform->get_data()) {
             // Somebody double clicked when editing admin user during install.
             redirect("$CFG->wwwroot/$CFG->admin/");
         } else {
-            redirect("$CFG->wwwroot/user/preferences.php?userid=$USER->id&course=$course->id");
+            if ($returnto === 'profile') {
+                if ($course->id != SITEID) {
+                    $returnurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $course->id));
+                } else {
+                    $returnurl = new moodle_url('/user/profile.php', array('id' => $user->id));
+                }
+            } else {
+                $returnurl = new moodle_url('/user/preferences.php', array('userid' => $user->id));
+            }
+            redirect($returnurl);
         }
     } else {
         \core\session\manager::gc(); // Remove stale sessions.
