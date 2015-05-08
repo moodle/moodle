@@ -63,6 +63,12 @@ class qtype_ddtoimage_base extends question_type {
         $choiceindexmap = array();
 
         // Store the choices in arrays by group.
+        // This code is weird. The first choice in each group gets key 1 in the
+        // $question->choices[$choice->choice_group()] array, and the others get
+        // key $choice->no. Therefore you need to think carefully whether you
+        // are using the key, or $choice->no. This is presumably a mistake, but
+        // one that is now essentially un-fixable, since many questions of this
+        // type have been attempted, and theys keys get stored in the attempt data.
         foreach ($questiondata->options->drags as $dragdata) {
 
             $choice = $this->make_choice($dragdata);

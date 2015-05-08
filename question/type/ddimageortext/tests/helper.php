@@ -58,8 +58,8 @@ class qtype_ddimageortext_test_helper extends question_test_helper {
         $dd->choices = $this->make_choice_structure(array(
                     new qtype_ddimageortext_drag_item('quick', 1, 1),
                     new qtype_ddimageortext_drag_item('fox', 2, 1),
-                    new qtype_ddimageortext_drag_item('lazy', 1, 2),
-                    new qtype_ddimageortext_drag_item('dog', 2, 2)
+                    new qtype_ddimageortext_drag_item('lazy', 3, 2),
+                    new qtype_ddimageortext_drag_item('dog', 4, 2)
 
         ));
 
@@ -69,7 +69,7 @@ class qtype_ddimageortext_test_helper extends question_test_helper {
                             new qtype_ddimageortext_drop_zone('', 3, 2),
                             new qtype_ddimageortext_drop_zone('', 4, 2)
         ));
-        $dd->rightchoices = array(1 => 1, 2 => 2, 3 => 1, 4 => 2);
+        $dd->rightchoices = array(1 => 1, 2 => 2, 3 => 1, 4 => 4);
 
         return $dd;
     }
@@ -78,9 +78,10 @@ class qtype_ddimageortext_test_helper extends question_test_helper {
         $choicestructure = array();
         foreach ($choices as $choice) {
             if (!isset($choicestructure[$choice->group])) {
-                $choicestructure[$choice->group] = array();
+                $choicestructure[$choice->group][1] = $choice;
+            } else {
+                $choicestructure[$choice->group][$choice->no] = $choice;
             }
-            $choicestructure[$choice->group][$choice->no] = $choice;
         }
         return $choicestructure;
     }

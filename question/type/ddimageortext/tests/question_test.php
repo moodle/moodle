@@ -43,8 +43,8 @@ class qtype_ddimageortext_question_test extends basic_testcase {
         $this->assertEquals('The quick brown fox jumped over the lazy dog.; '.
                 '[[Drop zone 1]] -> {1. quick / 2. fox}; '.
                 '[[Drop zone 2]] -> {1. quick / 2. fox}; '.
-                '[[Drop zone 3]] -> {1. lazy / 2. dog}; '.
-                '[[Drop zone 4]] -> {1. lazy / 2. dog}',
+                '[[Drop zone 3]] -> {3. lazy / 4. dog}; '.
+                '[[Drop zone 4]] -> {3. lazy / 4. dog}',
             $dd->get_question_summary());
     }
 
@@ -66,8 +66,8 @@ class qtype_ddimageortext_question_test extends basic_testcase {
 
         $this->assertEquals('Drop zone 1 -> {1. quick} '.
                 'Drop zone 2 -> {1. quick} '.
-                'Drop zone 3 -> {1. lazy} '.
-                'Drop zone 4 -> {1. lazy}',
+                'Drop zone 3 -> {3. lazy} '.
+                'Drop zone 4 -> {3. lazy}',
             $dd->summarise_response(array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
     }
 
@@ -256,14 +256,14 @@ class qtype_ddimageortext_question_test extends basic_testcase {
         $this->assertEquals(array(
             1 => new question_classified_response(1, '1. quick', 1),
             2 => new question_classified_response(2, '2. fox', 1),
-            3 => new question_classified_response(1, '1. lazy', 1),
-            4 => new question_classified_response(2, '2. dog', 1)
+            3 => new question_classified_response(3, '3. lazy', 1),
+            4 => new question_classified_response(4, '4. dog', 1)
         ), $dd->classify_response(array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2')));
         $this->assertEquals(array(
             1 => question_classified_response::no_response(),
             2 => new question_classified_response(1, '1. quick', 0),
-            3 => new question_classified_response(2, '2. dog', 0),
-            4 => new question_classified_response(2, '2. dog', 1)
+            3 => new question_classified_response(4, '4. dog', 0),
+            4 => new question_classified_response(4, '4. dog', 1)
         ), $dd->classify_response(array('p1' => '', 'p2' => '1', 'p3' => '2', 'p4' => '2')));
     }
 }

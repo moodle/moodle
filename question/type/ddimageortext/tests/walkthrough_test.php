@@ -73,8 +73,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1'),
             $this->get_contains_hidden_expectation(
@@ -97,8 +97,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', 2),
             $this->get_contains_hidden_expectation(
@@ -121,8 +121,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', 2),
             $this->get_contains_hidden_expectation(
@@ -146,8 +146,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', '2'),
             $this->get_contains_hidden_expectation(
@@ -172,8 +172,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', '1'),
             $this->get_contains_hidden_expectation(
@@ -208,8 +208,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1'),
             $this->get_contains_hidden_expectation(
@@ -229,8 +229,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', 2),
             $this->get_contains_hidden_expectation(
@@ -251,8 +251,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', 1),
             $this->get_contains_hidden_expectation(
@@ -274,8 +274,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', 1),
             $this->get_contains_hidden_expectation(
@@ -310,8 +310,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1'),
             $this->get_contains_hidden_expectation(
@@ -333,8 +333,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', ''),
             $this->get_contains_hidden_expectation(
@@ -356,8 +356,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2));
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2));
     }
 
     public function test_deferred_feedback_partial_answer() {
@@ -373,8 +373,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1'),
             $this->get_contains_hidden_expectation(
@@ -395,8 +395,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', 1),
             $this->get_contains_hidden_expectation(
@@ -417,8 +417,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_partcorrect_expectation());
     }
 
@@ -443,8 +443,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1'),
             $this->get_contains_hidden_expectation(
@@ -469,8 +469,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_submit_button_expectation(false),
             $this->get_contains_try_again_button_expectation(true),
             $this->get_does_not_contain_correctness_expectation(),
@@ -505,8 +505,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', 1),
             $this->get_contains_hidden_expectation(
@@ -532,8 +532,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_submit_button_expectation(false),
             $this->get_contains_try_again_button_expectation(true),
             $this->get_does_not_contain_correctness_expectation(),
@@ -561,8 +561,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', 1),
             $this->get_contains_hidden_expectation(
@@ -588,8 +588,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', 1),
             $this->get_contains_hidden_expectation(
@@ -625,8 +625,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1'),
             $this->get_contains_hidden_expectation(
@@ -652,8 +652,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_submit_button_expectation(false),
             $this->get_contains_correct_expectation(),
             $this->get_no_hint_visible_expectation());
@@ -686,8 +686,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1'),
             $this->get_contains_hidden_expectation(
@@ -714,8 +714,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->check_current_output(
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_submit_button_expectation(false),
             $this->get_contains_partcorrect_expectation(),
             $this->get_no_hint_visible_expectation());
@@ -747,8 +747,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
             $this->get_contains_marked_out_of_summary(),
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1'),
             $this->get_contains_hidden_expectation(
@@ -773,8 +773,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
             $this->get_contains_marked_out_of_summary(),
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_submit_button_expectation(false),
             $this->get_contains_hint_expectation('This is the first hint'));
 
@@ -789,8 +789,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
             $this->get_contains_marked_out_of_summary(),
             $this->get_contains_drag_image_home_expectation(1, 1, 1),
             $this->get_contains_drag_image_home_expectation(2, 2, 1),
-            $this->get_contains_drag_image_home_expectation(1, 1, 2),
-            $this->get_contains_drag_image_home_expectation(2, 2, 2),
+            $this->get_contains_drag_image_home_expectation(3, 1, 2),
+            $this->get_contains_drag_image_home_expectation(4, 2, 2),
             $this->get_contains_hidden_expectation(
                 $this->quba->get_field_prefix($this->slot) . 'p1', 0),
             $this->get_contains_hidden_expectation(
@@ -855,8 +855,8 @@ class qtype_ddimageortext_walkthrough_test extends qbehaviour_walkthrough_test_b
         $this->displayoptions->rightanswer = question_display_options::VISIBLE;
         $this->assertEquals('Drop zone 1 -> {1. quick} '.
                 'Drop zone 2 -> {2. fox} '.
-                'Drop zone 3 -> {1. lazy} '.
-                'Drop zone 4 -> {2. dog}',
+                'Drop zone 3 -> {3. lazy} '.
+                'Drop zone 4 -> {4. dog}',
             $dd->get_right_answer_summary());
         $this->check_current_state(question_state::$gradedright);
         $this->check_current_mark(3);
