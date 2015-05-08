@@ -67,7 +67,10 @@ Feature: In a group assignment, teacher can annotate PDF files for all users
     And I follow "Course 1"
     And I follow "Test assignment name"
     When I follow "View annotated PDF..."
+    And I change window size to "large"
     Then I should see "Annotate PDF"
+    And I change window size to "medium"
+    And I wait until the page is ready
     And I click on "Close" "button"
     And I log out
     And I log in as "student2"
