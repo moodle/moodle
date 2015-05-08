@@ -56,6 +56,10 @@ if ($languageform->is_cancelled()) {
     // Trigger event.
     \core\event\user_updated::create_from_userid($user->id)->trigger();
 
+    if ($USER->id == $user->id) {
+        $USER->lang = $lang;
+    }
+
     redirect($redirect);
 }
 
