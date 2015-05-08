@@ -50,8 +50,15 @@ if ($forumform->is_cancelled()) {
     $user->trackforums = $data->trackforums;
 
     user_update_user($user, false, false);
+
     // Trigger event.
     \core\event\user_updated::create_from_userid($user->id)->trigger();
+
+    if ($USER->id == $user->id) {
+        $USER->maildigest = $data->maildigest;
+        $USER->autosubscribe = $data->autosubscribe;
+        $USER->trackforums = $data->trackforums;
+    }
 
     redirect($redirect);
 }
