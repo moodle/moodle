@@ -50,7 +50,9 @@ class core_messageinbound_testcase extends advanced_testcase {
             $messagedata->html = '';
 
             list($message, $format) = test_handler::remove_quoted_text($messagedata);
-            $this->assertEquals($expectedplain, $message);
+
+            // Trim both the expected and the actual - we are not concerned about trailing whitespace.
+            $this->assertEquals(rtrim($expectedplain), rtrim($message));
             $this->assertEquals(FORMAT_PLAIN, $format);
         }
 
@@ -60,7 +62,9 @@ class core_messageinbound_testcase extends advanced_testcase {
             $messagedata->html = $mime->getPart($htmlpartid)->getContents();
 
             list($message, $format) = test_handler::remove_quoted_text($messagedata);
-            $this->assertEquals($expectedhtml, $message);
+
+            // Trim both the expected and the actual - we are not concerned about trailing whitespace.
+            $this->assertEquals(rtrim($expectedhtml), rtrim($message));
             $this->assertEquals(FORMAT_PLAIN, $format);
         }
     }
@@ -103,7 +107,7 @@ class core_messageinbound_testcase extends advanced_testcase {
 
     protected function read_test_file(\SplFileInfo $file, $fixturesdir) {
         // Break on the --[TOKEN]-- tags in the file.
-        $tokens = preg_split('#(?:^|\n*)----([A-Z]+)----\n#', file_get_contents($file->getRealPath()),
+        $tokens = preg_split('#(?:^|[\r]?\n*)----([A-Z]+)----[\r]?\n#', file_get_contents($file->getRealPath()),
                 null, PREG_SPLIT_DELIM_CAPTURE);
         $sections = array(
             // Key              => Required.
