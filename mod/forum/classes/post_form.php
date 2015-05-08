@@ -140,6 +140,7 @@ class mod_forum_post_form extends moodleform {
 
         if (empty($post->id) && $manageactivities) {
             $mform->addElement('checkbox', 'mailnow', get_string('mailnow', 'forum'));
+            $mform->addHelpButton('mailnow', 'mailnow', 'forum');
         }
 
         if (!empty($CFG->forum_enabletimedposts) && !$post->parent && has_capability('mod/forum:viewhiddentimedposts', $coursecontext)) { // hack alert

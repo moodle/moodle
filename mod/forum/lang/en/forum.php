@@ -274,6 +274,7 @@ $string['lastpost'] = 'Last post';
 $string['learningforums'] = 'Learning forums';
 $string['longpost'] = 'Long post';
 $string['mailnow'] = 'Mail now';
+$string['mailnow_help'] = 'Checking this box will post your posting without the 30 minute waiting period for editing. Subscribed users will receive notifications about this posting according to their profile settings for "Email digest type, if subscribed to a forum".';
 $string['manydiscussions'] = 'Discussions per page';
 $string['markalldread'] = 'Mark all posts in this discussion read.';
 $string['markallread'] = 'Mark all posts in this forum read.';
