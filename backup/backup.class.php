@@ -135,7 +135,7 @@ abstract class backup implements checksumable {
     /**
      * Usually same than major release zero version, mainly for informative/historic purposes.
      */
-    const RELEASE = '2.9';
+    const RELEASE = '3.0';
 }
 
 /*
