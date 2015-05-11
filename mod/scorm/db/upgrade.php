@@ -315,6 +315,9 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015031800, 'scorm');
     }
 
+    // Moodle v2.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
 
