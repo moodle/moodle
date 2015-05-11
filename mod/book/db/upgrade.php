@@ -222,5 +222,8 @@ function xmldb_book_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014111800, 'book');
     }
 
+    // Moodle v2.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
