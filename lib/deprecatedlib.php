@@ -30,6 +30,249 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/* === Functions that needs to be kept longer in deprecated lib than normal time period === */
+
+/**
+ * Add an entry to the legacy log table.
+ *
+ * @deprecated since 2.7 use new events instead
+ *
+ * @param    int     $courseid  The course id
+ * @param    string  $module  The module name  e.g. forum, journal, resource, course, user etc
+ * @param    string  $action  'view', 'update', 'add' or 'delete', possibly followed by another word to clarify.
+ * @param    string  $url     The file and parameters used to see the results of the action
+ * @param    string  $info    Additional description information
+ * @param    int     $cm      The course_module->id if there is one
+ * @param    int|stdClass $user If log regards $user other than $USER
+ * @return void
+ */
+function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
+    debugging('add_to_log() has been deprecated, please rewrite your code to the new events API', DEBUG_DEVELOPER);
+
+    // This is a nasty hack that allows us to put all the legacy stuff into legacy storage,
+    // this way we may move all the legacy settings there too.
+    $manager = get_log_manager();
+    if (method_exists($manager, 'legacy_add_to_log')) {
+        $manager->legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user);
+    }
+}
+
+/**
+ * Function to call all event handlers when triggering an event
+ *
+ * @deprecated since 2.6
+ *
+ * @param string $eventname name of the event
+ * @param mixed $eventdata event data object
+ * @return int number of failed events
+ */
+function events_trigger($eventname, $eventdata) {
+    debugging('events_trigger() is deprecated, please use new events instead', DEBUG_DEVELOPER);
+    return events_trigger_legacy($eventname, $eventdata);
+}
+
+/**
+ * List all core subsystems and their location
+ *
+ * This is a whitelist of components that are part of the core and their
+ * language strings are defined in /lang/en/<<subsystem>>.php. If a given
+ * plugin is not listed here and it does not have proper plugintype prefix,
+ * then it is considered as course activity module.
+ *
+ * The location is optionally dirroot relative path. NULL means there is no special
+ * directory for this subsystem. If the location is set, the subsystem's
+ * renderer.php is expected to be there.
+ *
+ * @deprecated since 2.6, use core_component::get_core_subsystems()
+ *
+ * @param bool $fullpaths false means relative paths from dirroot, use true for performance reasons
+ * @return array of (string)name => (string|null)location
+ */
+function get_core_subsystems($fullpaths = false) {
+    global $CFG;
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    $subsystems = core_component::get_core_subsystems();
+
+    if ($fullpaths) {
+        return $subsystems;
+    }
+
+    debugging('Short paths are deprecated when using get_core_subsystems(), please fix the code to use fullpaths instead.', DEBUG_DEVELOPER);
+
+    $dlength = strlen($CFG->dirroot);
+
+    foreach ($subsystems as $k => $v) {
+        if ($v === null) {
+            continue;
+        }
+        $subsystems[$k] = substr($v, $dlength+1);
+    }
+
+    return $subsystems;
+}
+
+/**
+ * Lists all plugin types.
+ *
+ * @deprecated since 2.6, use core_component::get_plugin_types()
+ *
+ * @param bool $fullpaths false means relative paths from dirroot
+ * @return array Array of strings - name=>location
+ */
+function get_plugin_types($fullpaths = true) {
+    global $CFG;
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    $types = core_component::get_plugin_types();
+
+    if ($fullpaths) {
+        return $types;
+    }
+
+    debugging('Short paths are deprecated when using get_plugin_types(), please fix the code to use fullpaths instead.', DEBUG_DEVELOPER);
+
+    $dlength = strlen($CFG->dirroot);
+
+    foreach ($types as $k => $v) {
+        if ($k === 'theme') {
+            $types[$k] = 'theme';
+            continue;
+        }
+        $types[$k] = substr($v, $dlength+1);
+    }
+
+    return $types;
+}
+
+/**
+ * Use when listing real plugins of one type.
+ *
+ * @deprecated since 2.6, use core_component::get_plugin_list()
+ *
+ * @param string $plugintype type of plugin
+ * @return array name=>fulllocation pairs of plugins of given type
+ */
+function get_plugin_list($plugintype) {
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    if ($plugintype === '') {
+        $plugintype = 'mod';
+    }
+
+    return core_component::get_plugin_list($plugintype);
+}
+
+/**
+ * Get a list of all the plugins of a given type that define a certain class
+ * in a certain file. The plugin component names and class names are returned.
+ *
+ * @deprecated since 2.6, use core_component::get_plugin_list_with_class()
+ *
+ * @param string $plugintype the type of plugin, e.g. 'mod' or 'report'.
+ * @param string $class the part of the name of the class after the
+ *      frankenstyle prefix. e.g 'thing' if you are looking for classes with
+ *      names like report_courselist_thing. If you are looking for classes with
+ *      the same name as the plugin name (e.g. qtype_multichoice) then pass ''.
+ * @param string $file the name of file within the plugin that defines the class.
+ * @return array with frankenstyle plugin names as keys (e.g. 'report_courselist', 'mod_forum')
+ *      and the class names as values (e.g. 'report_courselist_thing', 'qtype_multichoice').
+ */
+function get_plugin_list_with_class($plugintype, $class, $file) {
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    return core_component::get_plugin_list_with_class($plugintype, $class, $file);
+}
+
+/**
+ * Returns the exact absolute path to plugin directory.
+ *
+ * @deprecated since 2.6, use core_component::get_plugin_directory()
+ *
+ * @param string $plugintype type of plugin
+ * @param string $name name of the plugin
+ * @return string full path to plugin directory; NULL if not found
+ */
+function get_plugin_directory($plugintype, $name) {
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    if ($plugintype === '') {
+        $plugintype = 'mod';
+    }
+
+    return core_component::get_plugin_directory($plugintype, $name);
+}
+
+/**
+ * Normalize the component name using the "frankenstyle" names.
+ *
+ * @deprecated since 2.6, use core_component::normalize_component()
+ *
+ * @param string $component
+ * @return array as (string)$type => (string)$plugin
+ */
+function normalize_component($component) {
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    return core_component::normalize_component($component);
+}
+
+/**
+ * Return exact absolute path to a plugin directory.
+ *
+ * @deprecated since 2.6, use core_component::normalize_component()
+ *
+ * @param string $component name such as 'moodle', 'mod_forum'
+ * @return string full path to component directory; NULL if not found
+ */
+function get_component_directory($component) {
+
+    // NOTE: do not add any other debugging here, keep forever.
+
+    return core_component::get_component_directory($component);
+}
+
+/**
+ * Get the context instance as an object. This function will create the
+ * context instance if it does not exist yet.
+ *
+ * @deprecated since 2.2, use context_course::instance() or other relevant class instead
+ * @todo This will be deleted in Moodle 2.8, refer MDL-34472
+ * @param integer $contextlevel The context level, for example CONTEXT_COURSE, or CONTEXT_MODULE.
+ * @param integer $instance The instance id. For $level = CONTEXT_COURSE, this would be $course->id,
+ *      for $level = CONTEXT_MODULE, this would be $cm->id. And so on. Defaults to 0
+ * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+ *      MUST_EXIST means throw exception if no record or multiple records found
+ * @return context The context object.
+ */
+function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE_MISSING) {
+
+    debugging('get_context_instance() is deprecated, please use context_xxxx::instance() instead.', DEBUG_DEVELOPER);
+
+    $instances = (array)$instance;
+    $contexts = array();
+
+    $classname = context_helper::get_class_for_level($contextlevel);
+
+    // we do not load multiple contexts any more, PAGE should be responsible for any preloading
+    foreach ($instances as $inst) {
+        $contexts[$inst] = $classname::instance($inst, $strictness);
+    }
+
+    if (is_array($instance)) {
+        return $contexts;
+    } else {
+        return $contexts[$instance];
+    }
+}
+/* === End of long term deprecated api list === */
+
 /**
  * Convert region timezone to php supported timezone
  *
@@ -124,30 +367,7 @@ function get_timezone_record($timezonename) {
     return array();
 }
 
-/**
- * Add an entry to the legacy log table.
- *
- * @deprecated since 2.7 use new events instead
- *
- * @param    int     $courseid  The course id
- * @param    string  $module  The module name  e.g. forum, journal, resource, course, user etc
- * @param    string  $action  'view', 'update', 'add' or 'delete', possibly followed by another word to clarify.
- * @param    string  $url     The file and parameters used to see the results of the action
- * @param    string  $info    Additional description information
- * @param    int     $cm      The course_module->id if there is one
- * @param    int|stdClass $user If log regards $user other than $USER
- * @return void
- */
-function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
-    debugging('add_to_log() has been deprecated, please rewrite your code to the new events API', DEBUG_DEVELOPER);
 
-    // This is a nasty hack that allows us to put all the legacy stuff into legacy storage,
-    // this way we may move all the legacy settings there too.
-    $manager = get_log_manager();
-    if (method_exists($manager, 'legacy_add_to_log')) {
-        $manager->legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user);
-    }
-}
 
 /**
  * Adds a file upload to the log table so that clam can resolve the filename to the user later if necessary
@@ -332,186 +552,6 @@ function css_minify_css($files) {
     throw new coding_exception('css_minify_css() is deprecated, use core_minify::css_files() or core_minify::css() instead.');
 }
 
-/**
- * Function to call all event handlers when triggering an event
- *
- * @deprecated since 2.6
- *
- * @param string $eventname name of the event
- * @param mixed $eventdata event data object
- * @return int number of failed events
- */
-function events_trigger($eventname, $eventdata) {
-    debugging('events_trigger() is deprecated, please use new events instead', DEBUG_DEVELOPER);
-    return events_trigger_legacy($eventname, $eventdata);
-}
-
-/**
- * List all core subsystems and their location
- *
- * This is a whitelist of components that are part of the core and their
- * language strings are defined in /lang/en/<<subsystem>>.php. If a given
- * plugin is not listed here and it does not have proper plugintype prefix,
- * then it is considered as course activity module.
- *
- * The location is optionally dirroot relative path. NULL means there is no special
- * directory for this subsystem. If the location is set, the subsystem's
- * renderer.php is expected to be there.
- *
- * @deprecated since 2.6, use core_component::get_core_subsystems()
- *
- * @param bool $fullpaths false means relative paths from dirroot, use true for performance reasons
- * @return array of (string)name => (string|null)location
- */
-function get_core_subsystems($fullpaths = false) {
-    global $CFG;
-
-    // NOTE: do not add any other debugging here, keep forever.
-
-    $subsystems = core_component::get_core_subsystems();
-
-    if ($fullpaths) {
-        return $subsystems;
-    }
-
-    debugging('Short paths are deprecated when using get_core_subsystems(), please fix the code to use fullpaths instead.', DEBUG_DEVELOPER);
-
-    $dlength = strlen($CFG->dirroot);
-
-    foreach ($subsystems as $k => $v) {
-        if ($v === null) {
-            continue;
-        }
-        $subsystems[$k] = substr($v, $dlength+1);
-    }
-
-    return $subsystems;
-}
-
-/**
- * Lists all plugin types.
- *
- * @deprecated since 2.6, use core_component::get_plugin_types()
- *
- * @param bool $fullpaths false means relative paths from dirroot
- * @return array Array of strings - name=>location
- */
-function get_plugin_types($fullpaths = true) {
-    global $CFG;
-
-    // NOTE: do not add any other debugging here, keep forever.
-
-    $types = core_component::get_plugin_types();
-
-    if ($fullpaths) {
-        return $types;
-    }
-
-    debugging('Short paths are deprecated when using get_plugin_types(), please fix the code to use fullpaths instead.', DEBUG_DEVELOPER);
-
-    $dlength = strlen($CFG->dirroot);
-
-    foreach ($types as $k => $v) {
-        if ($k === 'theme') {
-            $types[$k] = 'theme';
-            continue;
-        }
-        $types[$k] = substr($v, $dlength+1);
-    }
-
-    return $types;
-}
-
-/**
- * Use when listing real plugins of one type.
- *
- * @deprecated since 2.6, use core_component::get_plugin_list()
- *
- * @param string $plugintype type of plugin
- * @return array name=>fulllocation pairs of plugins of given type
- */
-function get_plugin_list($plugintype) {
-
-    // NOTE: do not add any other debugging here, keep forever.
-
-    if ($plugintype === '') {
-        $plugintype = 'mod';
-    }
-
-    return core_component::get_plugin_list($plugintype);
-}
-
-/**
- * Get a list of all the plugins of a given type that define a certain class
- * in a certain file. The plugin component names and class names are returned.
- *
- * @deprecated since 2.6, use core_component::get_plugin_list_with_class()
- *
- * @param string $plugintype the type of plugin, e.g. 'mod' or 'report'.
- * @param string $class the part of the name of the class after the
- *      frankenstyle prefix. e.g 'thing' if you are looking for classes with
- *      names like report_courselist_thing. If you are looking for classes with
- *      the same name as the plugin name (e.g. qtype_multichoice) then pass ''.
- * @param string $file the name of file within the plugin that defines the class.
- * @return array with frankenstyle plugin names as keys (e.g. 'report_courselist', 'mod_forum')
- *      and the class names as values (e.g. 'report_courselist_thing', 'qtype_multichoice').
- */
-function get_plugin_list_with_class($plugintype, $class, $file) {
-
-    // NOTE: do not add any other debugging here, keep forever.
-
-    return core_component::get_plugin_list_with_class($plugintype, $class, $file);
-}
-
-/**
- * Returns the exact absolute path to plugin directory.
- *
- * @deprecated since 2.6, use core_component::get_plugin_directory()
- *
- * @param string $plugintype type of plugin
- * @param string $name name of the plugin
- * @return string full path to plugin directory; NULL if not found
- */
-function get_plugin_directory($plugintype, $name) {
-
-    // NOTE: do not add any other debugging here, keep forever.
-
-    if ($plugintype === '') {
-        $plugintype = 'mod';
-    }
-
-    return core_component::get_plugin_directory($plugintype, $name);
-}
-
-/**
- * Normalize the component name using the "frankenstyle" names.
- *
- * @deprecated since 2.6, use core_component::normalize_component()
- *
- * @param string $component
- * @return array as (string)$type => (string)$plugin
- */
-function normalize_component($component) {
-
-    // NOTE: do not add any other debugging here, keep forever.
-
-    return core_component::normalize_component($component);
-}
-
-/**
- * Return exact absolute path to a plugin directory.
- *
- * @deprecated since 2.6, use core_component::normalize_component()
- *
- * @param string $component name such as 'moodle', 'mod_forum'
- * @return string full path to component directory; NULL if not found
- */
-function get_component_directory($component) {
-
-    // NOTE: do not add any other debugging here, keep forever.
-
-    return core_component::get_component_directory($component);
-}
 
 
 // === Deprecated before 2.6.0 ===
@@ -1776,40 +1816,6 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
  */
 function can_use_rotated_text() {
     debugging('can_use_rotated_text() is deprecated since Moodle 2.5. JS feature detection is used automatically.');
-}
-
-/**
- * Get the context instance as an object. This function will create the
- * context instance if it does not exist yet.
- *
- * @deprecated since 2.2, use context_course::instance() or other relevant class instead
- * @todo This will be deleted in Moodle 2.8, refer MDL-34472
- * @param integer $contextlevel The context level, for example CONTEXT_COURSE, or CONTEXT_MODULE.
- * @param integer $instance The instance id. For $level = CONTEXT_COURSE, this would be $course->id,
- *      for $level = CONTEXT_MODULE, this would be $cm->id. And so on. Defaults to 0
- * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
- *      MUST_EXIST means throw exception if no record or multiple records found
- * @return context The context object.
- */
-function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE_MISSING) {
-
-    debugging('get_context_instance() is deprecated, please use context_xxxx::instance() instead.', DEBUG_DEVELOPER);
-
-    $instances = (array)$instance;
-    $contexts = array();
-
-    $classname = context_helper::get_class_for_level($contextlevel);
-
-    // we do not load multiple contexts any more, PAGE should be responsible for any preloading
-    foreach ($instances as $inst) {
-        $contexts[$inst] = $classname::instance($inst, $strictness);
-    }
-
-    if (is_array($instance)) {
-        return $contexts;
-    } else {
-        return $contexts[$instance];
-    }
 }
 
 /**
