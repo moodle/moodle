@@ -118,6 +118,7 @@ echo $search;
 echo $OUTPUT->paging_bar($cohorts['totalcohorts'], $page, 25, $baseurl);
 
 $data = array();
+$editcolumnisempty = true;
 foreach($cohorts['cohorts'] as $cohort) {
     $line = array();
     $cohortcontext = context::instance_by_id($cohort->contextid);
@@ -148,27 +149,29 @@ foreach($cohorts['cohorts'] as $cohort) {
 
         $urlparams = array('id' => $cohort->id, 'returnurl' => $baseurl->out_as_local_url());
         $showhideurl = new moodle_url('/cohort/edit.php', $urlparams + array('sesskey' => sesskey()));
-        if ($cohort->visible) {
-            $showhideurl->param('hide', 1);
-            $visibleimg = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/hide'), 'alt' => get_string('hide'), 'class' => 'iconsmall'));
-            $buttons[] = html_writer::link($showhideurl, $visibleimg, array('title' => get_string('hide')));
-        } else {
-            $showhideurl->param('show', 1);
-            $visibleimg = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/show'), 'alt' => get_string('show'), 'class' => 'iconsmall'));
-            $buttons[] = html_writer::link($showhideurl, $visibleimg, array('title' => get_string('show')));
-        }
         if ($cohortmanager) {
+            if ($cohort->visible) {
+                $showhideurl->param('hide', 1);
+                $visibleimg = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/hide'), 'alt' => get_string('hide'), 'class' => 'iconsmall'));
+                $buttons[] = html_writer::link($showhideurl, $visibleimg, array('title' => get_string('hide')));
+            } else {
+                $showhideurl->param('show', 1);
+                $visibleimg = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/show'), 'alt' => get_string('show'), 'class' => 'iconsmall'));
+                $buttons[] = html_writer::link($showhideurl, $visibleimg, array('title' => get_string('show')));
+            }
             $buttons[] = html_writer::link(new moodle_url('/cohort/edit.php', $urlparams + array('delete' => 1)),
                 html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/delete'), 'alt' => get_string('delete'), 'class' => 'iconsmall')),
                 array('title' => get_string('delete')));
             $buttons[] = html_writer::link(new moodle_url('/cohort/edit.php', $urlparams),
                 html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/edit'), 'alt' => get_string('edit'), 'class' => 'iconsmall')),
                 array('title' => get_string('edit')));
+            $editcolumnisempty = false;
         }
         if ($cohortcanassign) {
             $buttons[] = html_writer::link(new moodle_url('/cohort/assign.php', $urlparams),
                 html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/users'), 'alt' => get_string('assign', 'core_cohort'), 'class' => 'iconsmall')),
                 array('title' => get_string('assign', 'core_cohort')));
+            $editcolumnisempty = false;
         }
     }
     $line[] = implode(' ', $buttons);
@@ -180,11 +183,20 @@ foreach($cohorts['cohorts'] as $cohort) {
 }
 $table = new html_table();
 $table->head  = array(get_string('name', 'cohort'), get_string('idnumber', 'cohort'), get_string('description', 'cohort'),
-                      get_string('memberscount', 'cohort'), get_string('component', 'cohort'), get_string('edit'));
-$table->colclasses = array('leftalign name', 'leftalign id', 'leftalign description', 'leftalign size','centeralign source', 'centeralign action');
+                      get_string('memberscount', 'cohort'), get_string('component', 'cohort'));
+$table->colclasses = array('leftalign name', 'leftalign id', 'leftalign description', 'leftalign size','centeralign source');
 if ($showall) {
     array_unshift($table->head, get_string('category'));
     array_unshift($table->colclasses, 'leftalign category');
+}
+if (!$editcolumnisempty) {
+    $table->head[] = get_string('edit');
+    $table->colclasses[] = 'centeralign action';
+} else {
+    // Remove last column from $data.
+    foreach ($data as $row) {
+        array_pop($row->cells);
+    }
 }
 $table->id = 'cohorts';
 $table->attributes['class'] = 'admintable generaltable';
