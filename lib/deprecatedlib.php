@@ -274,102 +274,6 @@ function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE
 /* === End of long term deprecated api list === */
 
 /**
- * Convert region timezone to php supported timezone
- *
- * @deprecated since Moodle 2.9
- * @param string $tz value from ical file
- * @return string $tz php supported timezone
- */
-function calendar_normalize_tz($tz) {
-    debugging('calendar_normalize_tz() is deprecated, use core_date::normalise_timezone() instead', DEBUG_DEVELOPER);
-    return core_date::normalise_timezone($tz);
-}
-
-/**
- * Returns a float which represents the user's timezone difference from GMT in hours
- * Checks various settings and picks the most dominant of those which have a value
- * @deprecated since Moodle 2.9
- * @param float|int|string $tz timezone user timezone
- * @return float
- */
-function get_user_timezone_offset($tz = 99) {
-    debugging('get_user_timezone_offset() is deprecated, use PHP DateTimeZone instead', DEBUG_DEVELOPER);
-    $tz = core_date::get_user_timezone($tz);
-    $date = new DateTime('now', new DateTimeZone($tz));
-    return ($date->getOffset() - dst_offset_on(time(), $tz)) / (3600.0);
-}
-
-/**
- * Returns an int which represents the systems's timezone difference from GMT in seconds
- * @deprecated since Moodle 2.9
- * @param float|int|string $tz timezone for which offset is required.
- *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
- * @return int|bool if found, false is timezone 99 or error
- */
-function get_timezone_offset($tz) {
-    debugging('get_timezone_offset() is deprecated, use PHP DateTimeZone instead', DEBUG_DEVELOPER);
-    $date = new DateTime('now', new DateTimeZone(core_date::normalise_timezone($tz)));
-    return $date->getOffset() - dst_offset_on(time(), $tz);
-}
-
-/**
- * Returns a list of timezones in the current language.
- * @deprecated since Moodle 2.9
- * @return array
- */
-function get_list_of_timezones() {
-    debugging('get_list_of_timezones() is deprecated, use core_date::get_list_of_timezones() instead', DEBUG_DEVELOPER);
-    return core_date::get_list_of_timezones();
-}
-
-/**
- * Previous internal API, it was not supposed to be used anywhere.
- * @deprecated since Moodle 2.9
- * @param array $timezones
- */
-function update_timezone_records($timezones) {
-    debugging('update_timezone_records() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
-}
-
-/**
- * Previous internal API, it was not supposed to be used anywhere.
- * @deprecated since Moodle 2.9
- * @param int $fromyear
- * @param int $toyear
- * @param mixed $strtimezone
- * @return bool
- */
-function calculate_user_dst_table($fromyear = null, $toyear = null, $strtimezone = null) {
-    debugging('calculate_user_dst_table() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
-    return false;
-}
-
-/**
- * Previous internal API, it was not supposed to be used anywhere.
- * @deprecated since Moodle 2.9
- * @param int|string $year
- * @param mixed $timezone
- * @return null
- */
-function dst_changes_for_year($year, $timezone) {
-    debugging('dst_changes_for_year() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
-    return null;
-}
-
-/**
- * Previous internal API, it was not supposed to be used anywhere.
- * @deprecated since Moodle 2.9
- * @param string $timezonename
- * @return array
- */
-function get_timezone_record($timezonename) {
-    debugging('get_timezone_record() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
-    return array();
-}
-
-
-
-/**
  * Adds a file upload to the log table so that clam can resolve the filename to the user later if necessary
  *
  * @deprecated since 2.7 - use new file picker instead
@@ -2191,6 +2095,8 @@ function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset 
     throw new coding_exception('enrol_cohort_search_cohorts() is deprecated. This functionality is moved to enrol_manual.');
 }
 
+/* === Apis deprecated in since Moodle 2.9 === */
+
 /**
  * Is $USER one of the supplied users?
  *
@@ -2347,3 +2253,100 @@ function useredit_shared_definition_preferences($user, &$mform, $editoroptions =
     $mform->setDefault('lang', $CFG->lang);
 
 }
+
+
+/**
+ * Convert region timezone to php supported timezone
+ *
+ * @deprecated since Moodle 2.9
+ * @param string $tz value from ical file
+ * @return string $tz php supported timezone
+ */
+function calendar_normalize_tz($tz) {
+    debugging('calendar_normalize_tz() is deprecated, use core_date::normalise_timezone() instead', DEBUG_DEVELOPER);
+    return core_date::normalise_timezone($tz);
+}
+
+/**
+ * Returns a float which represents the user's timezone difference from GMT in hours
+ * Checks various settings and picks the most dominant of those which have a value
+ * @deprecated since Moodle 2.9
+ * @param float|int|string $tz timezone user timezone
+ * @return float
+ */
+function get_user_timezone_offset($tz = 99) {
+    debugging('get_user_timezone_offset() is deprecated, use PHP DateTimeZone instead', DEBUG_DEVELOPER);
+    $tz = core_date::get_user_timezone($tz);
+    $date = new DateTime('now', new DateTimeZone($tz));
+    return ($date->getOffset() - dst_offset_on(time(), $tz)) / (3600.0);
+}
+
+/**
+ * Returns an int which represents the systems's timezone difference from GMT in seconds
+ * @deprecated since Moodle 2.9
+ * @param float|int|string $tz timezone for which offset is required.
+ *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
+ * @return int|bool if found, false is timezone 99 or error
+ */
+function get_timezone_offset($tz) {
+    debugging('get_timezone_offset() is deprecated, use PHP DateTimeZone instead', DEBUG_DEVELOPER);
+    $date = new DateTime('now', new DateTimeZone(core_date::normalise_timezone($tz)));
+    return $date->getOffset() - dst_offset_on(time(), $tz);
+}
+
+/**
+ * Returns a list of timezones in the current language.
+ * @deprecated since Moodle 2.9
+ * @return array
+ */
+function get_list_of_timezones() {
+    debugging('get_list_of_timezones() is deprecated, use core_date::get_list_of_timezones() instead', DEBUG_DEVELOPER);
+    return core_date::get_list_of_timezones();
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ * @deprecated since Moodle 2.9
+ * @param array $timezones
+ */
+function update_timezone_records($timezones) {
+    debugging('update_timezone_records() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ * @deprecated since Moodle 2.9
+ * @param int $fromyear
+ * @param int $toyear
+ * @param mixed $strtimezone
+ * @return bool
+ */
+function calculate_user_dst_table($fromyear = null, $toyear = null, $strtimezone = null) {
+    debugging('calculate_user_dst_table() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
+    return false;
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ * @deprecated since Moodle 2.9
+ * @param int|string $year
+ * @param mixed $timezone
+ * @return null
+ */
+function dst_changes_for_year($year, $timezone) {
+    debugging('dst_changes_for_year() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
+    return null;
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ * @deprecated since Moodle 2.9
+ * @param string $timezonename
+ * @return array
+ */
+function get_timezone_record($timezonename) {
+    debugging('get_timezone_record() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
+    return array();
+}
+
+/* === Apis deprecated in since Moodle 3.0 === */
