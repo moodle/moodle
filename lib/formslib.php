@@ -2138,7 +2138,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
 
 var skipClientValidation = false;
 
-function qf_errorHandler(element, _qfMsg) {
+function qf_errorHandler(element, _qfMsg, escapedName) {
   div = element.parentNode;
 
   if ((div == undefined) || (element.name == undefined)) {
@@ -2147,10 +2147,10 @@ function qf_errorHandler(element, _qfMsg) {
   }
 
   if (_qfMsg != \'\') {
-    var errorSpan = document.getElementById(\'id_error_\'+element.name);
+    var errorSpan = document.getElementById(\'id_error_\' + escapedName);
     if (!errorSpan) {
       errorSpan = document.createElement("span");
-      errorSpan.id = \'id_error_\'+element.name;
+      errorSpan.id = \'id_error_\' + escapedName;
       errorSpan.className = "error";
       element.parentNode.insertBefore(errorSpan, element.parentNode.firstChild);
       document.getElementById(errorSpan.id).setAttribute(\'TabIndex\', \'0\');
@@ -2168,17 +2168,17 @@ function qf_errorHandler(element, _qfMsg) {
         div.className += " error";
         linebreak = document.createElement("br");
         linebreak.className = "error";
-        linebreak.id = \'id_error_break_\'+element.name;
+        linebreak.id = \'id_error_break_\' + escapedName;
         errorSpan.parentNode.insertBefore(linebreak, errorSpan.nextSibling);
     }
 
     return false;
   } else {
-    var errorSpan = document.getElementById(\'id_error_\'+element.name);
+    var errorSpan = document.getElementById(\'id_error_\' + escapedName);
     if (errorSpan) {
       errorSpan.parentNode.removeChild(errorSpan);
     }
-    var linebreak = document.getElementById(\'id_error_break_\'+element.name);
+    var linebreak = document.getElementById(\'id_error_break_\' + escapedName);
     if (linebreak) {
       linebreak.parentNode.removeChild(linebreak);
     }
@@ -2203,7 +2203,7 @@ function qf_errorHandler(element, _qfMsg) {
                 create_function('$matches', 'return sprintf("_%2x",ord($matches[0]));'),
                 $elementName);
             $js .= '
-function validate_' . $this->_formName . '_' . $escapedElementName . '(element) {
+function validate_' . $this->_formName . '_' . $escapedElementName . '(element, escapedName) {
   if (undefined == element) {
      //required element was not found, then let form be submitted without client side validation
      return true;
@@ -2218,7 +2218,7 @@ function validate_' . $this->_formName . '_' . $escapedElementName . '(element) 
         frm = frm.parentNode;
       }
     ' . join("\n", $jsArr) . '
-      return qf_errorHandler(element, _qfMsg);
+      return qf_errorHandler(element, _qfMsg, escapedName);
   } else {
     //element name should be defined else error msg will not be displayed.
     return true;
@@ -2226,12 +2226,12 @@ function validate_' . $this->_formName . '_' . $escapedElementName . '(element) 
 }
 ';
             $validateJS .= '
-  ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\']) && ret;
+  ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\'], \''.$escapedElementName.'\') && ret;
   if (!ret && !first_focus) {
     first_focus = true;
     Y.Global.fire(M.core.globalEvents.FORM_ERROR, {formid: \''. $this->_attributes['id'] .'\',
-                                                   elementid: \'id_error_'.$elementName.'\'});
-    document.getElementById(\'id_error_'.$elementName.'\').focus();
+                                                   elementid: \'id_error_'.$escapedElementName.'\'});
+    document.getElementById(\'id_error_'.$escapedElementName.'\').focus();
   }
 ';
 
@@ -2239,7 +2239,7 @@ function validate_' . $this->_formName . '_' . $escapedElementName . '(element) 
             //unset($element);
             //$element =& $this->getElement($elementName);
             //end of fix
-            $valFunc = 'validate_' . $this->_formName . '_' . $escapedElementName . '(this)';
+            $valFunc = 'validate_' . $this->_formName . '_' . $escapedElementName . '(this, \''.$escapedElementName.'\')';
             $onBlur = $element->getAttribute('onBlur');
             $onChange = $element->getAttribute('onChange');
             $element->updateAttributes(array('onBlur' => $onBlur . $valFunc,
