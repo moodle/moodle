@@ -106,7 +106,9 @@ class behat_calendar extends behat_base {
      * @return Given[]
      */
     public function i_hover_over_today_in_the_calendar() {
-        $todaysday = trim(strftime('%e'));
+        // For window's compatibility, using %d and not %e.
+        $todaysday = trim(strftime('%d'));
+        $todaysday = ltrim($todaysday, '0');
         return $this->i_hover_over_day_of_this_month_in_calendar($todaysday);
     }
 }
