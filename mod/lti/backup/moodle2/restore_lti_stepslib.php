@@ -57,6 +57,8 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
 
         $paths = array();
         $lti = new restore_path_element('lti', '/activity/lti');
+        $paths[] = new restore_path_element('ltitype', '/activity/lti/ltitypes/ltitype');
+        $paths[] = new restore_path_element('ltitypesconfig', '/activity/lti/ltitypesconfigs/ltitypesconfig');
         $paths[] = $lti;
 
         // Add support for subplugin structures.
@@ -78,10 +80,6 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
          // Grade used to be a float (whole numbers only), restore as int.
         $data->grade = (int) $data->grade;
 
-        // Clean any course or site typeid. All modules
-        // are restored as self-contained. Note this is
-        // an interim solution until the issue below is implemented.
-        // TODO: MDL-34161 - Fix restore to support course/site tools & submissions.
         $data->typeid = 0;
 
         // Try to decrypt resourcekey and password. Null if not possible (DB default).
@@ -93,6 +91,72 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
 
         // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
+    }
+
+    /**
+     * Process an lti type restore
+     * @param object $data The data in object form
+     * @return void
+     */
+    protected function process_ltitype($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $data->createdby = $this->get_mappingid('user', $data->createdby);
+        $ltitype = $DB->get_record_sql("SELECT *
+            FROM {lti_types}
+            WHERE id = ?
+            AND baseurl = ?", array($data->id, $data->baseurl));
+
+        // If restore is occurring on the same site, don't add lti_types data if
+        // restoring on the SITEID. If restore isn't occurring on the same site,
+        // always add lti_type data from backup.
+        if ($this->task->is_samesite() && $ltitype->course != SITEID
+                && $ltitype->state == LTI_TOOL_STATE_CONFIGURED) {
+            // If restoring into the same course, use existing data, else re-create.
+            $course = $this->get_courseid();
+            if ($ltitype->course != $course) {
+                $data->course = $course;
+                $ltitype = new stdClass();
+                $ltitype->id = $DB->insert_record('lti_types', $data);
+            }
+        } else if (!$this->task->is_samesite() || !isset($ltitype->id)) {
+            // Either we are restoring into a new site, or didn't find a database match.
+            $data->course = $this->get_courseid();
+            $ltitype = new stdClass();
+            $ltitype->id = $DB->insert_record('lti_types', $data);
+        }
+
+        // Add the typeid entry back to LTI module.
+        $lti = new stdClass();
+        $lti->id = $this->get_new_parentid('lti');
+        $lti->typeid = $ltitype->id;
+        $DB->update_record('lti', $lti);
+    }
+
+    /**
+     * Process an lti config restore
+     * @param object $data The data in object form
+     * @return void
+     */
+    protected function process_ltitypesconfig($data) {
+        global $DB;
+
+        $data = (object)$data;
+
+        $parentid = $this->get_new_parentid('lti');
+        $lti = $DB->get_record_sql("SELECT typeid
+            FROM {lti}
+            WHERE id = ?", array($parentid));
+
+        // Only add configuration if typeid doesn't match new LTI tool.
+        if ($lti->typeid != $data->typeid) {
+            $data->typeid = $lti->typeid;
+            if ($data->name == 'servicesalt') {
+                $data->value = uniqid('', true);
+            }
+            $DB->insert_record('lti_types_config', $data);
+        }
     }
 
     protected function after_execute() {
