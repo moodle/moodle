@@ -844,7 +844,7 @@ class grade_report_grader extends grade_report {
                             'itemid' => $element['object']->id));
                         $singleview = $OUTPUT->action_icon(
                             $url,
-                            new pix_icon('t/editstring', get_string('singleview', 'grades', $element['object']->itemname))
+                            new pix_icon('t/editstring', get_string('singleview', 'grades', $element['object']->get_name()))
                         );
                     }
 
