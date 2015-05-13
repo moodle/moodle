@@ -552,7 +552,17 @@ function tag_get_related_tags($tagid, $type=TAG_RELATED_ALL, $limitnum=10) {
         }
     }
 
-    return array_slice(object_array_unique($related_tags), 0 , $limitnum);
+    // Remove duplicated tags (multiple instances of the same tag).
+    $seen = array();
+    foreach ($related_tags as $instance => $tag) {
+        if (isset($seen[$tag->id])) {
+            unset($related_tags[$instance]);
+        } else {
+            $seen[$tag->id] = 1;
+        }
+    }
+
+    return array_slice($related_tags, 0 , $limitnum);
 }
 
 /**
@@ -1384,10 +1394,11 @@ function tag_get_correlated($tag_id, $limitnum=null) {
     }
 
     // this is (and has to) return the same fields as the query in tag_get_tags
-    $sql = "SELECT DISTINCT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
+    $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
               FROM {tag} tg
         INNER JOIN {tag_instance} ti ON tg.id = ti.tagid
-             WHERE tg.id IN ({$tag_correlation->correlatedtags})";
+             WHERE tg.id IN ({$tag_correlation->correlatedtags})
+          ORDER BY ti.ordering ASC";
     $result = $DB->get_records_sql($sql);
     if (!$result) {
         return array();
