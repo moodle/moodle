@@ -30,7 +30,13 @@
         }
 
         echo '<div class="subscribelink">', forum_get_subscribe_link($forum, $modcontext), '</div>';
-        forum_print_latest_discussions($course, $forum, 10, 'plain', '', false);
+
+        $numdiscussions = course_get_format($course)->get_course()->numdiscussions;
+        if ($numdiscussions < 1) {
+            // Make sure that the value is at least one.
+            $numdiscussions = 1;
+        }
+        forum_print_latest_discussions($course, $forum, $numdiscussions, 'plain', '', false);
 
     } else {
         echo $OUTPUT->notification('Could not find or create a social forum here');

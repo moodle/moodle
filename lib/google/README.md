@@ -12,6 +12,8 @@ This library is in Beta. We're comfortable enough with the stability and feature
 * [PHP 5.2.1 or higher](http://www.php.net/)
 * [PHP JSON extension](http://php.net/manual/en/book.json.php)
 
+*Note*: some features (service accounts and id token verification) require PHP 5.3.0 and above due to cryptographic algorithm requirements. 
+
 ## Developer Documentation ##
 http://developers.google.com/api-client-library/php
 
@@ -23,11 +25,13 @@ For the latest installation and setup instructions, see [the documentation](http
 See the examples/ directory for examples of the key client features.
 ```PHP
 <?php
-  require_once 'Google/Client.php';
-  require_once 'Google/Service/Books.php';
+
+  require_once 'google-api-php-client/autoload.php'; // or wherever autoload.php is located
+  
   $client = new Google_Client();
   $client->setApplicationName("Client_Library_Examples");
   $client->setDeveloperKey("YOUR_APP_KEY");
+  
   $service = new Google_Service_Books($client);
   $optParams = array('filter' => 'free-ebooks');
   $results = $service->volumes->listVolumes('Henry David Thoreau', $optParams);
@@ -35,6 +39,7 @@ See the examples/ directory for examples of the key client features.
   foreach ($results as $item) {
     echo $item['volumeInfo']['title'], "<br /> \n";
   }
+  
 ```
 
 ## Frequently Asked Questions ##
@@ -56,6 +61,16 @@ When we started working on the 1.0.0 branch we knew there were several fundament
 ### Why does Google_..._Service have weird names? ###
 
 The _Service classes are generally automatically generated from the API discovery documents: https://developers.google.com/discovery/. Sometimes new features are added to APIs with unusual names, which can cause some unexpected or non-standard style naming in the PHP classes. 
+
+### How do I deal with non-JSON response types? ###
+
+Some services return XML or similar by default, rather than JSON, which is what the library supports. You can request a JSON response by adding an 'alt' argument to optional params that is normally the last argument to a method call:
+
+```
+$opt_params = array(
+  'alt' => "json"
+);
+```
 
 ## Code Quality ##
 

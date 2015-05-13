@@ -113,7 +113,7 @@ class question_category_list_item extends list_item {
                 array('context' => $this->parentlist->context, 'noclean' => true));
 
         // don't allow delete if this is the last category in this context.
-        if (count($this->parentlist->records) != 1) {
+        if (!question_is_only_toplevel_category_in_context($category->id)) {
             $deleteurl = new moodle_url($this->parentlist->pageurl, array('delete' => $this->id, 'sesskey' => sesskey()));
             $item .= html_writer::link($deleteurl,
                     html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/delete'),

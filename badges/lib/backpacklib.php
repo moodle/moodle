@@ -59,13 +59,15 @@ class OpenBadgesBackpackHandler {
                 break;
         }
 
+        $curl->setHeader(array('Accept: application/json', 'Expect:'));
         $options = array(
-            'FRESH_CONNECT'  => true,
-            'RETURNTRANSFER' => true,
-            'FORBID_REUSE'   => true,
-            'HEADER'         => 0,
-            'HTTPHEADER'     => array('Expect:'),
-            'CONNECTTIMEOUT' => 3,
+            'FRESH_CONNECT'     => true,
+            'RETURNTRANSFER'    => true,
+            'FORBID_REUSE'      => true,
+            'HEADER'            => 0,
+            'CONNECTTIMEOUT'    => 3,
+            // Follow redirects with the same type of request when sent 301, or 302 redirects.
+            'CURLOPT_POSTREDIR' => 3
         );
 
         if ($action == 'user') {

@@ -56,7 +56,7 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $this->add_intro_editor(true, get_string('description', 'assign'));
+        $this->standard_intro_elements(get_string('description', 'assign'));
 
         $mform->addElement('filemanager', 'introattachments',
                             get_string('introattachments', 'assign'),
@@ -137,6 +137,13 @@ class mod_assign_mod_form extends moodleform_mod {
         if ($assignment->has_submissions_or_grades()) {
             $mform->freeze('teamsubmission');
         }
+
+        $name = get_string('preventsubmissionnotingroup', 'assign');
+        $mform->addElement('selectyesno', 'preventsubmissionnotingroup', $name);
+        $mform->addHelpButton('preventsubmissionnotingroup',
+            'preventsubmissionnotingroup',
+            'assign');
+        $mform->setType('preventsubmissionnotingroup', PARAM_BOOL);
 
         $name = get_string('requireallteammemberssubmit', 'assign');
         $mform->addElement('selectyesno', 'requireallteammemberssubmit', $name);

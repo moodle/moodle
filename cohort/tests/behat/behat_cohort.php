@@ -40,7 +40,7 @@ use Behat\Behat\Context\Step\Given as Given;
 class behat_cohort extends behat_base {
 
     /**
-     * Adds the user to the specified cohort. The user should be specified like "Firstname Lastname (user@email.com)".
+     * Adds the user to the specified cohort. The user should be specified like "Firstname Lastname (user@example.com)".
      *
      * @Given /^I add "(?P<user_fullname_string>(?:[^"]|\\")*)" user to "(?P<cohort_idnumber_string>(?:[^"]|\\")*)" cohort members$/
      * @param string $user

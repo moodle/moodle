@@ -1030,4 +1030,33 @@ class stored_file {
             send_file_not_found();
         }
     }
+
+    /**
+     * Generates a thumbnail for this stored_file.
+     *
+     * If the GD library has at least version 2 and PNG support is available, the returned data
+     * is the content of a transparent PNG file containing the thumbnail. Otherwise, the function
+     * returns contents of a JPEG file with black background containing the thumbnail.
+     *
+     * @param   int $width the width of the requested thumbnail
+     * @param   int $height the height of the requested thumbnail
+     * @return  string|bool false if a problem occurs, the thumbnail image data otherwise
+     */
+    public function generate_image_thumbnail($width, $height) {
+        if (empty($width) or empty($height)) {
+            return false;
+        }
+
+        // Fetch the image information for this image.
+        $imageinfo = @getimagesizefromstring($this->get_content());
+        if (empty($imageinfo)) {
+            return false;
+        }
+
+        // Create a new image from the file.
+        $original = @imagecreatefromstring($this->get_content());
+
+        // Generate the thumbnail.
+        return generate_image_thumbnail_from_image($original, $imageinfo, $width, $height);
+    }
 }

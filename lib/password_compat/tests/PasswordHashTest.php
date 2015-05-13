@@ -32,6 +32,16 @@ class PasswordHashTest extends PHPUnit_Framework_TestCase {
         }
     }
 
+    public function testNullBehavior() {
+        $hash = password_hash(null, PASSWORD_BCRYPT, array("salt" => "1234567890123456789012345678901234567890"));
+        $this->assertEquals('$2y$10$123456789012345678901uhihPb9QpE2n03zMu9TDdvO34jDn6mO.', $hash);
+    }
+
+    public function testIntegerBehavior() {
+        $hash = password_hash(12345, PASSWORD_BCRYPT, array("salt" => "1234567890123456789012345678901234567890"));
+        $this->assertEquals('$2y$10$123456789012345678901ujczD5TiARVFtc68bZCAlbEg1fCIexfO', $hash);
+    }    
+
     /**
      * @expectedException PHPUnit_Framework_Error
      */

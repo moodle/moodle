@@ -754,6 +754,9 @@ class checker {
             $text .= get_string('updateavailabledetailslink', 'core_admin', $a) . PHP_EOL;
             $a = array('url' => html_writer::link($CFG->wwwroot.'/'.$CFG->admin.'/index.php', $CFG->wwwroot.'/'.$CFG->admin.'/index.php'));
             $html .= html_writer::tag('p', get_string('updateavailabledetailslink', 'core_admin', $a)) . PHP_EOL;
+
+            $text .= PHP_EOL . get_string('updateavailablerecommendation', 'core_admin') . PHP_EOL;
+            $html .= html_writer::tag('p', get_string('updateavailablerecommendation', 'core_admin')) . PHP_EOL;
         }
 
         if (!empty($pluginupdates)) {
@@ -785,7 +788,7 @@ class checker {
         }
 
         $a = array('siteurl' => $CFG->wwwroot);
-        $text .= get_string('updatenotificationfooter', 'core_admin', $a) . PHP_EOL;
+        $text .= PHP_EOL . get_string('updatenotificationfooter', 'core_admin', $a) . PHP_EOL;
         $a = array('siteurl' => html_writer::link($CFG->wwwroot, $CFG->wwwroot));
         $html .= html_writer::tag('footer', html_writer::tag('p', get_string('updatenotificationfooter', 'core_admin', $a),
             array('style' => 'font-size:smaller; color:#333;')));

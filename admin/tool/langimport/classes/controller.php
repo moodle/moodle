@@ -156,7 +156,7 @@ class controller {
         $updateablelangs = array();
         foreach ($currentlangs as $clang) {
             if (!array_key_exists($clang, $md5array)) {
-                $noticeok[] = get_string('langpackupdateskipped', 'tool_langimport', $clang);
+                $this->info[] = get_string('langpackupdateskipped', 'tool_langimport', $clang);
                 continue;
             }
             $dest1 = $CFG->dataroot.'/lang/'.$clang;
@@ -175,36 +175,10 @@ class controller {
             }
         }
 
-        // Clean-up currently installed versions of the packs.
-        foreach ($neededlangs as $packindex => $pack) {
-            if ($pack == 'en') {
-                continue;
-            }
-
-            // Delete old directories.
-            $dest1 = $CFG->dataroot.'/lang/'.$pack;
-            $dest2 = $CFG->dirroot.'/lang/'.$pack;
-            if (file_exists($dest1)) {
-                if (!remove_dir($dest1)) {
-                    $noticeerror[] = 'Could not delete old directory '.$dest1.', update of '.$pack
-                        .' failed, please check permissions.';
-                    unset($neededlangs[$packindex]);
-                    continue;
-                }
-            }
-            if (file_exists($dest2)) {
-                if (!remove_dir($dest2)) {
-                    $noticeerror[] = 'Could not delete old directory '.$dest2.', update of '.$pack
-                        .' failed, please check permissions.';
-                    unset($neededlangs[$packindex]);
-                    continue;
-                }
-            }
-        }
-
         try {
             $updated = $this->install_languagepacks($neededlangs, true);
         } catch (\moodle_exception $e) {
+            $this->errors[] = 'An exception occurred while installing language packs: ' . $e->getMessage();
             return false;
         }
 

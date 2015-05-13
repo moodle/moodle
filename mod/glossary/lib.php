@@ -736,11 +736,6 @@ function glossary_rating_validate($params) {
         throw new rating_exception('invalidnum');
     }
 
-    if (!$info->approved) {
-        //item isnt approved
-        throw new rating_exception('nopermissiontorate');
-    }
-
     //check the item we're rating was created in the assessable time window
     if (!empty($info->assesstimestart) && !empty($info->assesstimefinish)) {
         if ($info->timecreated < $info->assesstimestart || $info->timecreated > $info->assesstimefinish) {
@@ -2267,6 +2262,13 @@ function glossary_generate_export_csv($entries, $aliases, $categories) {
 function glossary_generate_export_file($glossary, $ignored = "", $hook = 0) {
     global $CFG, $DB;
 
+    // Large exports are likely to take their time and memory.
+    core_php_time_limit::raise();
+    raise_memory_limit(MEMORY_EXTRA);
+
+    $cm = get_coursemodule_from_instance('glossary', $glossary->id, $glossary->course);
+    $context = context_module::instance($cm->id);
+
     $co  = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
     $co .= glossary_start_tag("GLOSSARY",0,true);
@@ -2284,6 +2286,7 @@ function glossary_generate_export_file($glossary, $ignored = "", $hook = 0) {
         $co .= glossary_full_tag("DEFAULTAPPROVAL",2,false,$glossary->defaultapproval);
         $co .= glossary_full_tag("GLOBALGLOSSARY",2,false,$glossary->globalglossary);
         $co .= glossary_full_tag("ENTBYPAGE",2,false,$glossary->entbypage);
+        $co .= glossary_xml_export_files('INTROFILES', 2, $context->id, 'intro', 0);
 
         if ( $entries = $DB->get_records("glossary_entries", array("glossaryid"=>$glossary->id))) {
             $co .= glossary_start_tag("ENTRIES",2,true);
@@ -2342,6 +2345,12 @@ function glossary_generate_export_file($glossary, $ignored = "", $hook = 0) {
                         }
                         $co .= glossary_end_tag("CATEGORIES",4,true);
                     }
+
+                    // Export files embedded in entries.
+                    $co .= glossary_xml_export_files('ENTRYFILES', 4, $context->id, 'entry', $entry->id);
+
+                    // Export attachments.
+                    $co .= glossary_xml_export_files('ATTACHMENTFILES', 4, $context->id, 'attachment', $entry->id);
 
                     $co .= glossary_end_tag("ENTRY",3,true);
                 }
@@ -2423,6 +2432,66 @@ function glossary_full_tag($tag,$level=0,$endline=true,$content) {
         $co = preg_replace("/\r\n|\r/", "\n", s($content));
         $et = glossary_end_tag($tag,0,true);
         return $st.$co.$et;
+}
+
+/**
+ * Prepares file area to export as part of XML export
+ *
+ * @param string $tag XML tag to use for the group
+ * @param int $taglevel
+ * @param int $contextid
+ * @param string $filearea
+ * @param int $itemid
+ * @return string
+ */
+function glossary_xml_export_files($tag, $taglevel, $contextid, $filearea, $itemid) {
+    $co = '';
+    $fs = get_file_storage();
+    if ($files = $fs->get_area_files(
+        $contextid, 'mod_glossary', $filearea, $itemid, 'itemid,filepath,filename', false)) {
+        $co .= glossary_start_tag($tag, $taglevel, true);
+        foreach ($files as $file) {
+            $co .= glossary_start_tag('FILE', $taglevel + 1, true);
+            $co .= glossary_full_tag('FILENAME', $taglevel + 2, false, $file->get_filename());
+            $co .= glossary_full_tag('FILEPATH', $taglevel + 2, false, $file->get_filepath());
+            $co .= glossary_full_tag('CONTENTS', $taglevel + 2, false, base64_encode($file->get_content()));
+            $co .= glossary_end_tag('FILE', $taglevel + 1);
+        }
+        $co .= glossary_end_tag($tag, $taglevel);
+    }
+    return $co;
+}
+
+/**
+ * Parses files from XML import and inserts them into file system
+ *
+ * @param array $xmlparent parent element in parsed XML tree
+ * @param string $tag
+ * @param int $contextid
+ * @param string $filearea
+ * @param int $itemid
+ * @return int
+ */
+function glossary_xml_import_files($xmlparent, $tag, $contextid, $filearea, $itemid) {
+    $count = 0;
+    if (isset($xmlparent[$tag][0]['#']['FILE'])) {
+        $fs = get_file_storage();
+        $files = $xmlparent[$tag][0]['#']['FILE'];
+        foreach ($files as $file) {
+            $filerecord = array(
+                'contextid' => $contextid,
+                'component' => 'mod_glossary',
+                'filearea'  => $filearea,
+                'itemid'    => $itemid,
+                'filepath'  => $file['#']['FILEPATH'][0]['#'],
+                'filename'  => $file['#']['FILENAME'][0]['#'],
+            );
+            $content =  $file['#']['CONTENTS'][0]['#'];
+            $fs->create_file_from_string($filerecord, base64_decode($content));
+            $count++;
+        }
+    }
+    return $count;
 }
 
 /**

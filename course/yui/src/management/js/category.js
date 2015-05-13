@@ -286,7 +286,8 @@ Category.prototype = {
             Y.log('Course was moved but the course listing could not be found to reflect this', 'warn', 'moodle-course-management');
             return false;
         }
-        Y.log('Moved the course ('+course.getName()+') into this category ('+this.getName()+')', 'info', 'moodle-course-management');
+        Y.log('Moved the course (' + course.getName() + ') into this category (' + this.getName() + ')',
+            'debug', 'moodle-course-management');
         this.highlight();
         if (course) {
             if (outcome.paginationtotals) {

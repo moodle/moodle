@@ -685,7 +685,7 @@ class moodle_url {
     public function set_slashargument($path, $parameter = 'file', $supported = null) {
         global $CFG;
         if (is_null($supported)) {
-            $supported = $CFG->slasharguments;
+            $supported = !empty($CFG->slasharguments);
         }
 
         if ($supported) {

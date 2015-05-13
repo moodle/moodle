@@ -49,7 +49,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'idnumber' => 'idnumbertest1',
             'firstname' => 'First Name User Test 1',
             'lastname' => 'Last Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
@@ -208,7 +208,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'idnumber' => 'idnumbertest1',
             'firstname' => 'First Name User Test 1',
             'lastname' => 'Last Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
@@ -257,6 +257,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             // Call the external function.
             $returnedusers = core_user_external::get_users_by_field($fieldtosearch,
                         array($USER->{$fieldtosearch}, $user1->{$fieldtosearch}, $user2->{$fieldtosearch}));
+            $returnedusers = external_api::clean_returnvalue(core_user_external::get_users_by_field_returns(), $returnedusers);
 
             // Expected result differ following the searched field
             // Admin user in the PHPunit framework doesn't have an idnumber.
@@ -338,6 +339,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         // Call the external function.
         $returnedusers = core_user_external::get_users_by_field('username',
                     array($USER->username, $user1->username, $user2->username));
+        $returnedusers = external_api::clean_returnvalue(core_user_external::get_users_by_field_returns(), $returnedusers);
 
         // Only the own $USER username should be returned
         $this->assertEquals(1, count($returnedusers));
@@ -348,6 +350,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         // Call the external function.
         $returnedusers = core_user_external::get_users_by_field('username',
             array($USER->username, $user1->username, $user2->username));
+        $returnedusers = external_api::clean_returnvalue(core_user_external::get_users_by_field_returns(), $returnedusers);
 
         // Only the own $USER username should be returned still.
         $this->assertEquals(1, count($returnedusers));
@@ -367,7 +370,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'idnumber' => 'idnumbertest1',
             'firstname' => 'First Name User Test 1',
             'lastname' => 'Last Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
@@ -415,7 +418,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
 
         // Do the same call as admin to receive all possible fields.
         $this->setAdminUser();
-        $USER->email = "admin@fakeemail.com";
+        $USER->email = "admin@example.com";
 
         // Call the external function.
         $enrolledusers = core_user_external::get_course_user_profiles(array(
@@ -472,7 +475,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'lastnamephonetic' => '最後のお名前のテスト一号',
             'firstnamephonetic' => 'お名前のテスト一号',
             'alternatename' => 'Alternate Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'description' => 'This is a description for user 1',
             'city' => 'Perth',
             'country' => 'au'
@@ -552,7 +555,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'idnumber' => 'idnumbertest1',
             'firstname' => 'First Name User Test 1',
             'lastname' => 'Last Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'address' => '2 Test Street Perth 6000 WA',
             'phone1' => '01010101010',
             'phone2' => '02020203',
@@ -593,7 +596,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
 
         // Do the same call as admin to receive all possible fields.
         $this->setAdminUser();
-        $USER->email = "admin@fakeemail.com";
+        $USER->email = "admin@example.com";
 
         // Call the external function.
         $returnedusers = core_user_external::get_users_by_id(array(
@@ -651,7 +654,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'lastnamephonetic' => '最後のお名前のテスト一号',
             'firstnamephonetic' => 'お名前のテスト一号',
             'alternatename' => 'Alternate Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'description' => 'This is a description for user 1',
             'city' => 'Perth',
             'country' => 'au'
@@ -705,6 +708,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         // Call the files api to create a file.
         $draftfile = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
                                                  $filename, $filecontent, $contextlevel, $instanceid);
+        $draftfile = external_api::clean_returnvalue(core_files_external::upload_returns(), $draftfile);
 
         $draftid = $draftfile['itemid'];
         // Make sure the file was created.
@@ -749,6 +753,85 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $created = (array) $created;
 
         $this->assertEquals($device, array_intersect_key((array)$created, $device));
+
+        // Test reuse the same pushid value.
+        $warnings = core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
+                                                        $device['version'], $device['pushid'], $device['uuid']);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $warnings = external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
+        $this->assertCount(1, $warnings);
+
+        // Test update an existing device.
+        $device['pushid'] = 'different than before';
+        $warnings = core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
+                                                        $device['version'], $device['pushid'], $device['uuid']);
+        $warnings = external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
+
+        $this->assertEquals(1, $DB->count_records('user_devices'));
+        $updated = $DB->get_record('user_devices', array('pushid' => $device['pushid']));
+        $this->assertEquals($device, array_intersect_key((array)$updated, $device));
+
+        // Test creating a new device just changing the uuid.
+        $device['uuid'] = 'newuidforthesameuser';
+        $device['pushid'] = 'new different than before';
+        $warnings = core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
+                                                        $device['version'], $device['pushid'], $device['uuid']);
+        $warnings = external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
+        $this->assertEquals(2, $DB->count_records('user_devices'));
+    }
+
+    /**
+     * Test remove user device
+     */
+    public function test_remove_user_device() {
+        global $USER, $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        $device = array(
+                'appid' => 'com.moodle.moodlemobile',
+                'name' => 'occam',
+                'model' => 'Nexus 4',
+                'platform' => 'Android',
+                'version' => '4.2.2',
+                'pushid' => 'apushdkasdfj4835',
+                'uuid' => 'ABCDE3723ksdfhasfaasef859'
+                );
+
+        // A device with the same properties except the appid and pushid.
+        $device2 = $device;
+        $device2['pushid'] = "0987654321";
+        $device2['appid'] = "other.app.com";
+
+        // Create a user device using the external API function.
+        core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
+                                            $device['version'], $device['pushid'], $device['uuid']);
+
+        // Create the same device but for a different app.
+        core_user_external::add_user_device($device2['appid'], $device2['name'], $device2['model'], $device2['platform'],
+                                            $device2['version'], $device2['pushid'], $device2['uuid']);
+
+        // Try to remove a device that does not exist.
+        $result = core_user_external::remove_user_device('1234567890');
+        $result = external_api::clean_returnvalue(core_user_external::remove_user_device_returns(), $result);
+        $this->assertFalse($result['removed']);
+        $this->assertCount(1, $result['warnings']);
+
+        // Try to remove a device that does not exist for an existing app.
+        $result = core_user_external::remove_user_device('1234567890', $device['appid']);
+        $result = external_api::clean_returnvalue(core_user_external::remove_user_device_returns(), $result);
+        $this->assertFalse($result['removed']);
+        $this->assertCount(1, $result['warnings']);
+
+        // Remove an existing device for an existing app. This will remove one of the two devices.
+        $result = core_user_external::remove_user_device($device['uuid'], $device['appid']);
+        $result = external_api::clean_returnvalue(core_user_external::remove_user_device_returns(), $result);
+        $this->assertTrue($result['removed']);
+
+        // Remove all the devices. This must remove the remaining device.
+        $result = core_user_external::remove_user_device($device['uuid']);
+        $result = external_api::clean_returnvalue(core_user_external::remove_user_device_returns(), $result);
+        $this->assertTrue($result['removed']);
     }
 
 }

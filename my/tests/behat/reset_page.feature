@@ -1,14 +1,14 @@
 @core @core_my
-Feature: Reset my home page to default
-  In order to remove customisations from my home page
+Feature: Reset dashboard page to default
+  In order to remove customisations from dashboard page
   As a user
-  I need to reset my home page
+  I need to reset dashboard page
 
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -17,7 +17,7 @@ Feature: Reset my home page to default
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "student1"
-    And I click on "My home" "link" in the "Navigation" "block"
+    And I click on "Dashboard" "link" in the "Navigation" "block"
 
   Scenario: Add blocks to page and reset
     When I press "Customise this page"
@@ -25,7 +25,7 @@ Feature: Reset my home page to default
     And I add the "Comments" block
     And I press "Reset page to default"
     Then I should not see "Latest news"
-    And I should see "My latest badges"
+    And I should see "Latest badges"
     And I should see "Calendar"
     And I should see "Upcoming events"
     And I should not see "Comments"

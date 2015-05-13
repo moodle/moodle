@@ -43,6 +43,8 @@
  * @author     Jordi Piguillem
  * @author     Nikolas Galanis
  * @author     Chris Scribner
+ * @copyright  2015 Vital Source Technologies http://vitalsource.com
+ * @author     Stephen Vickers
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -168,7 +170,7 @@ if ($ADMIN->fulltree) {
         new Y.YUI2.widget.TabView('lti_tabs');
 
         var setupTools = function(id, sort){
-            var lti_tools = Y.YUI2.util.Dom.get(id + '_tools');
+            var lti_tools = Y.YUI2.util.Dom.get(id);
 
             if(lti_tools){
                 var dataSource = new Y.YUI2.util.DataSource(lti_tools);

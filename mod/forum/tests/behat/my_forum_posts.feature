@@ -1,4 +1,4 @@
-@mod @mod_forum
+@mod @mod_forum @javascript
 Feature: A user can view their posts and discussions
   In order to ensure a user can view their posts and discussions
   As a student
@@ -7,8 +7,8 @@ Feature: A user can view their posts and discussions
   Scenario: View the student's posts and discussions
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -31,9 +31,11 @@ Feature: A user can view their posts and discussions
       | Message | How awesome is this forum discussion? |
     And I reply "Forum discussion 1" post from "Test forum name" forum with:
       | Message | Actually, I've seen better. |
-    When I navigate to "Posts" node in "My profile > Forum posts"
+    When I follow "Profile" in the user menu
+    And I follow "Forum posts"
     Then I should see "How awesome is this forum discussion?"
     And I should see "Actually, I've seen better."
-    And I navigate to "Discussions" node in "My profile > Forum posts"
+    And I follow "Profile" in the user menu
+    And I follow "Forum discussions"
     And I should see "How awesome is this forum discussion?"
     And I should not see "Actually, I've seen better."

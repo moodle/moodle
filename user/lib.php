@@ -615,8 +615,8 @@ function user_count_login_failures($user, $reset = true) {
 }
 
 /**
- * Converts a string into a flat array of links, where each link is a
- * stdClass with fields url, title, pix, and imgsrc.
+ * Converts a string into a flat array of menu items, where each menu items is a
+ * stdClass with fields type, url, title, pix, and imgsrc.
  *
  * @param string $text the menu items definition
  * @param moodle_page $page the current page
@@ -634,7 +634,10 @@ function user_convert_text_to_menu_items($text, $page) {
     foreach ($lines as $line) {
         $line = trim($line);
         $bits = explode('|', $line, 3);
-        if (!array_key_exists(0, $bits) or empty($bits[0])) {
+        $itemtype = 'link';
+        if (preg_match("/^#+$/", $line)) {
+            $itemtype = 'divider';
+        } else if (!array_key_exists(0, $bits) or empty($bits[0])) {
             // Every item must have a name to be valid.
             continue;
         } else {
@@ -643,22 +646,39 @@ function user_convert_text_to_menu_items($text, $page) {
 
         // Create the child.
         $child = new stdClass();
+        $child->itemtype = $itemtype;
+        if ($itemtype === 'divider') {
+            // Add the divider to the list of children and skip link
+            // processing.
+            $children[] = $child;
+            continue;
+        }
 
         // Name processing.
         $namebits = explode(',', $bits[0], 2);
         if (count($namebits) == 2) {
-            // Treat this as a language string.
-            $child->title = get_string($namebits[0], $namebits[1]);
-        } else {
+            // Check the validity of the identifier part of the string.
+            if (clean_param($namebits[0], PARAM_STRINGID) !== '') {
+                // Treat this as a language string.
+                $child->title = get_string($namebits[0], $namebits[1]);
+            }
+        }
+        if (empty($child->title)) {
             // Use it as is, don't even clean it.
             $child->title = $bits[0];
         }
 
         // URL processing.
         if (!array_key_exists(1, $bits) or empty($bits[1])) {
-            // Set the url to null.
+            // Set the url to null, and set the itemtype to invalid.
             $bits[1] = null;
+            $child->itemtype = "invalid";
         } else {
+            // Nasty hack to replace the grades with the direct url.
+            if (strpos($bits[1], '/grade/report/mygrades.php') !== false) {
+                $bits[1] = user_mygrades_url();
+            }
+
             // Make sure the url is a moodle url.
             $bits[1] = new moodle_url(trim($bits[1]));
         }
@@ -786,8 +806,9 @@ function user_get_user_navigation_info($user, $page) {
         }
     }
 
-    // Links: My Home.
+    // Links: Dashboard.
     $myhome = new stdClass();
+    $myhome->itemtype = 'link';
     $myhome->url = new moodle_url('/my/');
     $myhome->title = get_string('mymoodle', 'admin');
     $myhome->pix = "i/course";
@@ -795,8 +816,9 @@ function user_get_user_navigation_info($user, $page) {
 
     // Links: My Profile.
     $myprofile = new stdClass();
+    $myprofile->itemtype = 'link';
     $myprofile->url = new moodle_url('/user/profile.php', array('id' => $user->id));
-    $myprofile->title = get_string('myprofile');
+    $myprofile->title = get_string('profile');
     $myprofile->pix = "i/user";
     $returnobject->navitems[] = $myprofile;
 
@@ -808,6 +830,7 @@ function user_get_user_navigation_info($user, $page) {
         if ($role = $DB->get_record('role', array('id' => $user->access['rsw'][$context->path]))) {
             // Build role-return link instead of logout link.
             $rolereturn = new stdClass();
+            $rolereturn->itemtype = 'link';
             $rolereturn->url = new moodle_url('/course/switchrole.php', array(
                 'id' => $course->id,
                 'sesskey' => sesskey(),
@@ -845,6 +868,7 @@ function user_get_user_navigation_info($user, $page) {
 
         // Build a user-revert link.
         $userrevert = new stdClass();
+        $userrevert->itemtype = 'link';
         $userrevert->url = new moodle_url('/course/loginas.php', array(
             'id' => $course->id,
             'sesskey' => sesskey()
@@ -859,6 +883,7 @@ function user_get_user_navigation_info($user, $page) {
     if ($buildlogout) {
         // Build a logout link.
         $logout = new stdClass();
+        $logout->itemtype = 'link';
         $logout->url = new moodle_url('/login/logout.php', array('sesskey' => sesskey()));
         $logout->pix = "a/logout";
         $logout->title = get_string('logout');
@@ -956,4 +981,77 @@ function user_is_previously_used_password($userid, $password) {
     }
 
     return $reused;
+}
+
+/**
+ * Remove a user device from the Moodle database (for PUSH notifications usually).
+ *
+ * @param string $uuid The device UUID.
+ * @param string $appid The app id. If empty all the devices matching the UUID for the user will be removed.
+ * @return bool true if removed, false if the device didn't exists in the database
+ * @since Moodle 2.9
+ */
+function user_remove_user_device($uuid, $appid = "") {
+    global $DB, $USER;
+
+    $conditions = array('uuid' => $uuid, 'userid' => $USER->id);
+    if (!empty($appid)) {
+        $conditions['appid'] = $appid;
+    }
+
+    if (!$DB->count_records('user_devices', $conditions)) {
+        return false;
+    }
+
+    $DB->delete_records('user_devices', $conditions);
+
+    return true;
+}
+
+/**
+ * Trigger user_list_viewed event.
+ *
+ * @param stdClass  $course course  object
+ * @param stdClass  $context course context object
+ * @since Moodle 2.9
+ */
+function user_list_view($course, $context) {
+
+    $event = \core\event\user_list_viewed::create(array(
+        'objectid' => $course->id,
+        'courseid' => $course->id,
+        'context' => $context,
+        'other' => array(
+            'courseshortname' => $course->shortname,
+            'coursefullname' => $course->fullname
+        )
+    ));
+    $event->trigger();
+}
+
+/**
+ * Returns the url to use for the "Grades" link in the user navigation.
+ *
+ * @param int $userid The user's ID.
+ * @param int $courseid The course ID if available.
+ * @return mixed A URL to be directed to for "Grades".
+ */
+function user_mygrades_url($userid = null, $courseid = SITEID) {
+    global $CFG, $USER;
+    $url = null;
+    if (isset($CFG->grade_mygrades_report) && $CFG->grade_mygrades_report != 'external') {
+        if (isset($userid) && $USER->id != $userid) {
+            // Send to the gradebook report.
+            $url = new moodle_url('/grade/report/' . $CFG->grade_mygrades_report . '/index.php',
+                    array('id' => $courseid, 'userid' => $userid));
+        } else {
+            $url = new moodle_url('/grade/report/' . $CFG->grade_mygrades_report . '/index.php');
+        }
+    } else if (isset($CFG->grade_mygrades_report) && $CFG->grade_mygrades_report == 'external'
+            && !empty($CFG->gradereport_mygradeurl)) {
+        $url = $CFG->gradereport_mygradeurl;
+    } else {
+        $url = $CFG->wwwroot;
+    }
+    return $url;
 }

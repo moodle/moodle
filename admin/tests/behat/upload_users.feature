@@ -21,7 +21,7 @@ Feature: Upload users
     And I should see "Tom"
     And I should see "Jones"
     And I should see "verysecret"
-    And I should see "jonest@someplace.edu"
+    And I should see "jonest@example.com"
     And I should see "Reznor"
     And I should see "course1"
     And I should see "math102"
@@ -32,8 +32,8 @@ Feature: Upload users
     And I follow "Browse list of users"
     And I should see "Tom Jones"
     And I should see "Trent Reznor"
-    And I should see "reznor@someplace.edu"
-    And I am on homepage
+    And I should see "reznor@example.com"
+    And I am on site homepage
     And I follow "Maths"
     And I expand "Users" node
     And I follow "Groups"

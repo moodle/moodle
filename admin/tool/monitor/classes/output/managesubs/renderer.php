@@ -56,7 +56,7 @@ class renderer extends \plugin_renderer_base {
      * @return string to display on the mangesubs page.
      */
     protected function render_rules(rules $renderable) {
-        $o = $this->render_course_select($renderable);
+        $o = '';
         if (!empty($renderable->totalcount)) {
             $o .= $this->render_table($renderable);
         }

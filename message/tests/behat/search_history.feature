@@ -1,4 +1,4 @@
-@core @core_message
+@core @core_message @javascript
 Feature: Users can search their message history
   In order to read old messages
   As a user
@@ -7,11 +7,11 @@ Feature: Users can search their message history
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | user1 | User | One | one@asd.com |
-      | user2 | User | Two | two@asd.com |
+      | user1 | User | One | one@example.com |
+      | user2 | User | Two | two@example.com |
     And I log in as "user1"
     When I send "Give me your biscuits" message to "User Two" user
-    And I navigate to "Messages" node in "My profile"
+    And I follow "Messages" in the user menu
     And I set the field "Search people and messages" to "your biscuits"
     And I press "Search people and messages"
     Then I should see "User Two"

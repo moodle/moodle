@@ -35,6 +35,13 @@ $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 $coursecontext   = context_course::instance($course->id);
 $personalcontext = context_user::instance($user->id);
 
+$pageheading = $course->fullname;
+$userfullname = fullname($user);
+if ($courseid == SITEID) {
+    $PAGE->set_context($personalcontext);
+    $pageheading = $userfullname;
+}
+
 if ($USER->id != $user->id and has_capability('moodle/user:viewuseractivitiesreport', $personalcontext)
         and !is_enrolled($coursecontext, $USER) and is_enrolled($coursecontext, $user)) {
     //TODO: do not require parents to be enrolled in courses - this is a hack!
@@ -55,9 +62,24 @@ $PAGE->set_pagelayout('report');
 $PAGE->set_url('/report/stats/user.php', array('id'=>$user->id, 'course'=>$course->id));
 $PAGE->navigation->extend_for_user($user);
 $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
+// Breadcrumb stuff.
+$navigationnode = array(
+        'name' => get_string('stats'),
+        'url' => new moodle_url('/report/stats/user.php', array('id' => $user->id, 'course' => $course->id))
+    );
+$PAGE->add_report_nodes($user->id, $navigationnode);
+
 $PAGE->set_title("$course->shortname: $stractivityreport");
-$PAGE->set_heading($course->fullname);
+$PAGE->set_heading($pageheading);
 echo $OUTPUT->header();
+if ($courseid != SITEID) {
+    echo $OUTPUT->context_header(
+            array(
+            'heading' => $userfullname,
+            'user' => $user,
+            'usercontext' => $personalcontext
+        ), 2);
+}
 
 // Trigger a user report viewed event.
 $event = \report_stats\event\user_report_viewed::create(array('context' => $coursecontext, 'relateduserid' => $user->id));

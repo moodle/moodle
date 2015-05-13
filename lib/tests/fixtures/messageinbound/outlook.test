@@ -1,0 +1,261 @@
+----CLIENT----
+OS: Win 7
+Mail Client: Outlook 2013
+Client Version: 15.0.4569.1503
+Date: 04/05/2015
+
+----EXPECTEDPLAIN----
+Sending mail via clent and it seems to go all good...
+
+Havent tried this before and it is awesome....
+
+Cheers
+Rajesh
+
+----EXPECTEDHTML----
+Sending mail via clent and it seems to go all good... 
+
+Havent tried this before and it is awesome.... 
+
+Cheers
+
+----FULLSOURCE----
+Delivered-To: moodlehqtest+aaaaaaaaaaiaaaaaaaaabqaaaaaaaaazd63zvl6kcy04ioh+@example.com
+Received: by 10.50.159.130 with SMTP id xc2csp1452325igb;
+        Sun, 3 May 2015 20:06:33 -0700 (PDT)
+X-Received: by 10.182.42.131 with SMTP id o3mr16558872obl.59.1430708792759;
+        Sun, 03 May 2015 20:06:32 -0700 (PDT)
+Return-Path: <rajesh.taneja@example.com>
+Received: from mail-oi0-x232.google.com (mail-oi0-x232.google.com. [2607:f8b0:4003:c06::232])
+        by mx.google.com with ESMTPS id bb9si7457620obb.49.2015.05.03.20.06.32
+        for <moodlehqtest+AAAAAAAAAAIAAAAAAAAABQAAAAAAAAAZD63zvl6KcY04ioh+@example.com>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 03 May 2015 20:06:32 -0700 (PDT)
+Received-SPF: pass (google.com: domain of rajesh.taneja@example.com designates 2607:f8b0:4003:c06::232 as permitted sender) client-ip=2607:f8b0:4003:c06::232;
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of rajesh.taneja@example.com designates 2607:f8b0:4003:c06::232 as permitted sender) smtp.mail=rajesh.taneja@example.com;
+       dkim=pass header.i=@example.com;
+       dmarc=pass (p=NONE dis=NONE) header.from=example.com
+Received: by mail-oi0-x232.google.com with SMTP id o83so103034701oik.1
+        for <moodlehqtest+AAAAAAAAAAIAAAAAAAAABQAAAAAAAAAZD63zvl6KcY04ioh+@example.com>; Sun, 03 May 2015 20:06:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=example.com; s=20120113;
+        h=mime-version:in-reply-to:references:date:message-id:subject:from:to
+         :content-type;
+        bh=PP8NIhvbaEoIB2TwtsICSY6RhRgAhmJDKfcS/XCrsjk=;
+        b=bEJMEs0yNfdFSzchg5vhQXD6W9MuubLtBBZzLRE6UHCW93ZxgTwFJXjyEq5ZAGiWT6
+         2g5feEHEe6CYYOojIVGy10yh0l1XfK6kn4VgnzFTHO65RtqKggrYjijpsqqFY6moE5QC
+         F1gakGp7mpaT72QVx/Pu+L9rwO1MA4vfG2RstjWZMPD/dzS2HlrYwjsI8ScpO4u/oros
+         xl9/xWQ6brRi0co1ISSHgsaYWYAcgt6uSpGzzyL8OAA5vVWnxBSKVg+zYxY3rIo7Xbd+
+         vfg/Ne1CkkQ4mM4ig4P7vDQBtgN5mm6I4GF5y3uSd2asr4Wjsw183vqSc8OhfvNL2owy
+         m59w==
+MIME-Version: 1.0
+X-Received: by 10.202.230.11 with SMTP id d11mr15578479oih.6.1430708792570;
+ Sun, 03 May 2015 20:06:32 -0700 (PDT)
+Received: by 10.202.0.68 with HTTP; Sun, 3 May 2015 20:06:32 -0700 (PDT)
+Received: by 10.202.0.68 with HTTP; Sun, 3 May 2015 20:06:32 -0700 (PDT)
+In-Reply-To: <669f8f3b6ac48139941bed5fcd069b97801de3b6920fe49cf6be18a5e23db0e8@banana.per.in.moodle.com>
+References: <a2cf1c399f255d43697f2ca2094f09ec00779b255ae27bb457557dcc0de72d04@banana.per.in.moodle.com>
+	<669f8f3b6ac48139941bed5fcd069b97801de3b6920fe49cf6be18a5e23db0e8@banana.per.in.moodle.com>
+Date: Mon, 4 May 2015 11:06:32 +0800
+Message-ID: <CAEavSoBRiVHuk3hX9G8hbgPhJPb4KTfcjS-Kq2Qh_gdkP6hgEA@mail.example.com>
+Subject: Re: MDL-48002: Re: Testing of MDL-48002
+From: Rajesh Taneja <rajesh.taneja@example.com>
+To: moodlehqtest+AAAAAAAAAAIAAAAAAAAABQAAAAAAAAAZD63zvl6KcY04ioh+@example.com
+Content-Type: multipart/alternative; boundary=001a1140761a5bdf4c051538d992
+
+--001a1140761a5bdf4c051538d992
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Sending mail via clent and it seems to go all good...
+
+Havent tried this before and it is awesome....
+
+Cheers
+Rajesh
+On 4 May 2015 11:01 am, "Rajesh Taneja" <rajesh.taneja@example.com> wrote:
+
+>  MDL-48002 <http://banana.per.in.moodle.com/mdl48002/course/view.php?id=
+=3D3>
+> =C2=BB Forums
+> <http://banana.per.in.moodle.com/mdl48002/mod/forum/index.php?id=3D3> =C2=
+=BB
+> MDL-48002
+> <http://banana.per.in.moodle.com/mdl48002/mod/forum/view.php?f=3D5> =C2=
+=BB Testing
+> of MDL-48002
+> <http://banana.per.in.moodle.com/mdl48002/mod/forum/discuss.php?d=3D8>
+> [image: Picture of Rajesh Taneja]
+> <http://banana.per.in.moodle.com/mdl48002/user/view.php?id=3D5&course=3D3=
+>
+> Re: Testing of MDL-48002
+> by Rajesh Taneja
+> <http://banana.per.in.moodle.com/mdl48002/user/view.php?id=3D5&course=3D3=
+> -
+> Monday, 4 May 2015, 11:02 AM
+>
+>
+> Sample reply messages:
+>
+> Thanks for offering to help with QA testing. I've added you to the tester=
+s
+> group in the tracker, so you can now pass or fail QA tests. Hopefully the
+> process is fully explained in http://docs.moodle.org/dev/QA_testing but
+> if there's anything you're not sure about, please post in the testing and
+> QA forum.
+>
+>
+> Thanks for offering to help with QA testing. Please create an account in
+> the Moodle Tracker and let me know your Tracker username then I can add y=
+ou
+> to the testers group.
+>
+>
+> Thanks for offering to help with QA testing. We recently finished the
+> Moodle 2.8 QA cycle, so our next QA cycle won't be for a while, however y=
+ou
+> are welcome to try things out on our Moodle QA Testing site
+> http://qa.moodle.net/ and post in the Testing and QA forum
+> http://moodle.org/mod/forum/view.php?id=3D56 about any issues you come
+> across, or any questions you have. If you come across any bugs (obvious
+> problems), please report them in the Moodle tracker.
+>
+>
+> Thanks for helping with QA testing. Your help would be appreciated even
+> more if you could just add a comment when passing a test, such as feedbac=
+k
+> about the feature e.g. =E2=80=9CTeachers are going to love this=E2=80=9D =
+or even simply
+> "This test passes - yippee!" to confirm that the test wasn't accidentally
+> passed without being run.
+>
+> Thanks for helping with QA testing. It has been observed that you assigne=
+d
+> this issue to yourself for testing, but no action has been taken on this.
+> It will be helpful if you can either test this or un-assign yourself, so
+> someone else can take it.
+>
+>
+> Show parent
+> <http://banana.per.in.moodle.com/mdl48002/mod/forum/discuss.php?d=3D8&par=
+ent=3D24>
+> | Reply
+> <http://banana.per.in.moodle.com/mdl48002/mod/forum/post.php?reply=3D25>
+> See this post in context
+> <http://banana.per.in.moodle.com/mdl48002/mod/forum/discuss.php?d=3D8#p25=
+>
+> ------------------------------
+> Unsubscribe from this forum
+> <http://banana.per.in.moodle.com/mdl48002/mod/forum/subscribe.php?id=3D5>=
+ Unsubscribe
+> from this discussion
+> <http://banana.per.in.moodle.com/mdl48002/mod/forum/subscribe.php?id=3D5&=
+d=3D8>
+>  Unsubscribe from all forums
+> <http://banana.per.in.moodle.com/mdl48002/mod/forum/unsubscribeall.php> C=
+hange
+> your forum digest preferences
+> <http://banana.per.in.moodle.com/mdl48002/mod/forum/index.php?id=3D3>
+>
+> You can reply to this via email.
+>
+
+--001a1140761a5bdf4c051538d992
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<p dir=3D"ltr">Sending mail via clent and it seems to go all good...</p>
+<p dir=3D"ltr">Havent tried this before and it is awesome....</p>
+<p dir=3D"ltr">Cheers<br>
+Rajesh</p>
+<div class=3D"gmail_quote">On 4 May 2015 11:01 am, &quot;Rajesh Taneja&quot=
+; &lt;<a href=3D"mailto:rajesh.taneja@example.com">rajesh.taneja@example.com</a=
+>&gt; wrote:<br type=3D"attribution"><blockquote class=3D"gmail_quote" styl=
+e=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">
+<div>
+
+<div><a href=3D"http://banana.per.in.moodle.com/mdl48002/course/view.php?id=
+=3D3" target=3D"_blank">MDL-48002</a> =C2=BB <a href=3D"http://banana.per.i=
+n.moodle.com/mdl48002/mod/forum/index.php?id=3D3" target=3D"_blank">Forums<=
+/a> =C2=BB <a href=3D"http://banana.per.in.moodle.com/mdl48002/mod/forum/vi=
+ew.php?f=3D5" target=3D"_blank">MDL-48002</a> =C2=BB <a href=3D"http://bana=
+na.per.in.moodle.com/mdl48002/mod/forum/discuss.php?d=3D8" target=3D"_blank=
+">Testing of MDL-48002</a></div><table border=3D"0" cellpadding=3D"3" cells=
+pacing=3D"0"><tr><td width=3D"35" valign=3D"top"><a href=3D"http://banana.p=
+er.in.moodle.com/mdl48002/user/view.php?id=3D5&amp;course=3D3" target=3D"_b=
+lank"><img src=3D"http://banana.per.in.moodle.com/mdl48002/theme/image.php/=
+_s/clean/core/1430706779/u/f2" alt=3D"Picture of Rajesh Taneja" title=3D"Pi=
+cture of Rajesh Taneja" width=3D"35" height=3D"35"></a></td><td><div>Re: Te=
+sting of MDL-48002</div><div>by <a href=3D"http://banana.per.in.moodle.com/=
+mdl48002/user/view.php?id=3D5&amp;course=3D3" target=3D"_blank">Rajesh Tane=
+ja</a> - Monday, 4 May 2015, 11:02 AM</div></td></tr><tr><td valign=3D"top"=
+>=C2=A0</td><td><p><b style=3D"font-weight:normal"></b></p><p dir=3D"ltr" s=
+tyle=3D"line-height:1.38;margin-top:0pt;margin-bottom:0pt"><span style=3D"f=
+ont-size:16px;font-family:Arial;color:#000000;background-color:transparent;=
+font-weight:normal;font-style:normal;font-variant:normal;text-decoration:no=
+ne;vertical-align:baseline;white-space:pre-wrap">Sample reply messages:</sp=
+an></p><br><p dir=3D"ltr" style=3D"line-height:1.38;margin-top:0pt;margin-b=
+ottom:0pt"><span style=3D"font-size:16px;font-family:Arial;color:#000000;ba=
+ckground-color:transparent;font-weight:normal;font-style:italic;font-varian=
+t:normal;text-decoration:none;vertical-align:baseline;white-space:pre-wrap"=
+>Thanks for offering to help with QA testing. I&#39;ve added you to the tes=
+ters group in the tracker, so you can now pass or fail QA tests. Hopefully =
+the process is fully explained in <a href=3D"http://docs.moodle.org/dev/QA_=
+testing" target=3D"_blank">http://docs.moodle.org/dev/QA_testing</a> but if=
+ there&#39;s anything you&#39;re not sure about, please post in the testing=
+ and QA forum.</span></p><br><br><p dir=3D"ltr" style=3D"line-height:1.44;m=
+argin-top:0pt;margin-bottom:0pt"><span style=3D"font-size:16px;font-family:=
+Arial;color:#000000;background-color:transparent;font-weight:normal;font-st=
+yle:italic;font-variant:normal;text-decoration:none;vertical-align:baseline=
+;white-space:pre-wrap">Thanks for offering to help with QA testing. Please =
+create an account in the Moodle Tracker and let me know your Tracker userna=
+me then I can add you to the testers group.</span></p><br><br><p dir=3D"ltr=
+" style=3D"line-height:1.44;margin-top:0pt;margin-bottom:0pt"><span style=
+=3D"font-size:16px;font-family:Arial;color:#000000;background-color:transpa=
+rent;font-weight:normal;font-style:italic;font-variant:normal;text-decorati=
+on:none;vertical-align:baseline;white-space:pre-wrap">Thanks for offering t=
+o help with QA testing. We recently finished the Moodle 2.8 QA cycle, so ou=
+r next QA cycle won&#39;t be for a while, however you are welcome to try th=
+ings out on our Moodle QA Testing site <a href=3D"http://qa.moodle.net/" ta=
+rget=3D"_blank">http://qa.moodle.net/</a> and post in the Testing and QA fo=
+rum <a href=3D"http://moodle.org/mod/forum/view.php?id=3D56" target=3D"_bla=
+nk">http://moodle.org/mod/forum/view.php?id=3D56</a> about any issues you c=
+ome across, or any questions you have. If you come across any bugs (obvious=
+ problems), please report them in the Moodle tracker.</span></p><br><br><p =
+dir=3D"ltr" style=3D"line-height:1.44;margin-top:0pt;margin-bottom:0pt"><sp=
+an style=3D"font-size:16px;font-family:Arial;color:#000000;background-color=
+:transparent;font-weight:normal;font-style:italic;font-variant:normal;text-=
+decoration:none;vertical-align:baseline;white-space:pre-wrap">Thanks for he=
+lping with QA testing. Your help would be appreciated even more if you coul=
+d just add a comment when passing a test, such as feedback about the featur=
+e e.g. =E2=80=9CTeachers are going to love this=E2=80=9D or even simply &qu=
+ot;This test passes - yippee!&quot; to confirm that the test wasn&#39;t acc=
+identally passed without being run.</span></p><br><p dir=3D"ltr" style=3D"l=
+ine-height:1.44;margin-top:0pt;margin-bottom:0pt"><span style=3D"font-size:=
+16px;font-family:Arial;color:#000000;background-color:transparent;font-weig=
+ht:normal;font-style:italic;font-variant:normal;text-decoration:none;vertic=
+al-align:baseline;white-space:pre-wrap">Thanks for helping with QA testing.=
+ It has been observed that you assigned this issue to yourself for testing,=
+ but no action has been taken on this.=C2=A0 It will be helpful if you can =
+either test this or un-assign yourself, so someone else can take it.</span>=
+</p><br><br><div><a href=3D"http://banana.per.in.moodle.com/mdl48002/mod/fo=
+rum/discuss.php?d=3D8&amp;parent=3D24" target=3D"_blank">Show parent</a> | =
+<a href=3D"http://banana.per.in.moodle.com/mdl48002/mod/forum/post.php?repl=
+y=3D25" target=3D"_blank">Reply</a></div><div><a href=3D"http://banana.per.=
+in.moodle.com/mdl48002/mod/forum/discuss.php?d=3D8#p25" target=3D"_blank">S=
+ee this post in context</a></div></td></tr></table>
+
+<hr><div><a href=3D"http://banana.per.in.moodle.com/mdl48002/mod/forum/subs=
+cribe.php?id=3D5" target=3D"_blank">Unsubscribe from this forum</a>=C2=A0<a=
+ href=3D"http://banana.per.in.moodle.com/mdl48002/mod/forum/subscribe.php?i=
+d=3D5&amp;d=3D8" target=3D"_blank">Unsubscribe from this discussion</a>=C2=
+=A0<a href=3D"http://banana.per.in.moodle.com/mdl48002/mod/forum/unsubscrib=
+eall.php" target=3D"_blank">Unsubscribe from all forums</a>=C2=A0<a href=3D=
+"http://banana.per.in.moodle.com/mdl48002/mod/forum/index.php?id=3D3" targe=
+t=3D"_blank">Change your forum digest preferences</a></div></div><p>You can=
+ reply to this via email.</p>
+
+</blockquote></div>
+
+--001a1140761a5bdf4c051538d992--

@@ -172,6 +172,9 @@ class data_advanced_search_sql_test extends advanced_testcase {
         $this->finalrecord[6]->lastnamephonetic = $user->lastnamephonetic;
         $this->finalrecord[6]->middlename = $user->middlename;
         $this->finalrecord[6]->alternatename = $user->alternatename;
+        $this->finalrecord[6]->picture = $user->picture;
+        $this->finalrecord[6]->imagealt = $user->imagealt;
+        $this->finalrecord[6]->email = $user->email;
     }
 
     /**

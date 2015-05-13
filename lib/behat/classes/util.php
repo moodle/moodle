@@ -94,7 +94,7 @@ class behat_util extends testing_util {
 
         // Update admin user info.
         $user = $DB->get_record('user', array('username' => 'admin'));
-        $user->email = 'moodle@moodlemoodle.com';
+        $user->email = 'moodle@example.com';
         $user->firstname = 'Admin';
         $user->lastname = 'User';
         $user->city = 'Perth';
@@ -110,6 +110,9 @@ class behat_util extends testing_util {
 
         // Disable some settings that are not wanted on test sites.
         set_config('noemailever', 1);
+
+        // Enable web cron.
+        set_config('cronclionly', 0);
 
         // Keeps the current version of database and dataroot.
         self::store_versions_hash();

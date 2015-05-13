@@ -53,11 +53,11 @@ class login_signup_form extends moodleform {
         $mform->addElement('header', 'supplyinfo', get_string('supplyinfo'),'');
 
         $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="25"');
-        $mform->setType('email', PARAM_NOTAGS);
+        $mform->setType('email', PARAM_RAW_TRIMMED);
         $mform->addRule('email', get_string('missingemail'), 'required', null, 'server');
 
         $mform->addElement('text', 'email2', get_string('emailagain'), 'maxlength="100" size="25"');
-        $mform->setType('email2', PARAM_NOTAGS);
+        $mform->setType('email2', PARAM_RAW_TRIMMED);
         $mform->addRule('email2', get_string('missingemail'), 'required', null, 'server');
 
         $namefields = useredit_get_required_name_fields();
@@ -88,12 +88,12 @@ class login_signup_form extends moodleform {
             $mform->setDefault('country', '');
         }
 
+        profile_signup_fields($mform);
+
         if ($this->signup_captcha_enabled()) {
             $mform->addElement('recaptcha', 'recaptcha_element', get_string('security_question', 'auth'), array('https' => $CFG->loginhttps));
             $mform->addHelpButton('recaptcha_element', 'recaptcha', 'auth');
         }
-
-        profile_signup_fields($mform);
 
         if (!empty($CFG->sitepolicy)) {
             $mform->addElement('header', 'policyagreement', get_string('policyagreement'), '');

@@ -7,9 +7,9 @@ Feature: Outcome grading
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student0 | Student | 0 | student0@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student0 | Student | 0 | student0@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
@@ -18,11 +18,10 @@ Feature: Outcome grading
       | teacher1 | C1 | editingteacher |
       | student0 | C1 | student |
       | student1 | C1 | student |
+    And the following config values are set as admin:
+      | enableoutcomes | 1 |
     And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable outcomes | 1 |
-    And I expand "Grades" node
-    And I follow "Scales"
+    And I navigate to "Scales" node in "Site administration > Grades"
     And I press "Add a new scale"
     And I set the following fields to these values:
       | Name | Test Scale |
@@ -35,7 +34,7 @@ Feature: Outcome grading
       | Short name | OT |
       | Scale | Test Scale |
     And I press "Save changes"
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Outcomes"
     And I set the field "Available standard outcomes" to "Outcome Test"
@@ -75,7 +74,7 @@ Feature: Outcome grading
   Scenario: Giving an outcome to a group submission
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student2 | Student | 2 | student2@asd.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | student2 | C1 | student |
@@ -86,9 +85,9 @@ Feature: Outcome grading
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Groups"
-    And I add "Student 0 (student0@asd.com)" user to "Group 1" group members
-    And I add "Student 1 (student1@asd.com)" user to "Group 1" group members
-    And I am on homepage
+    And I add "Student 0 (student0@example.com)" user to "Group 1" group members
+    And I add "Student 1 (student1@example.com)" user to "Group 1" group members
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:

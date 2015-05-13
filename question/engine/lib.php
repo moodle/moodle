@@ -161,6 +161,18 @@ abstract class question_engine {
     }
 
     /**
+     * Get the number of times each variant has been used for each question in a list
+     * in a set of usages.
+     * @param array $questionids of question ids.
+     * @param qubaid_condition $qubaids ids of the usages to consider.
+     * @return array questionid => variant number => num uses.
+     */
+    public static function load_used_variants(array $questionids, qubaid_condition $qubaids) {
+        $dm = new question_engine_data_mapper();
+        return $dm->load_used_variants($questionids, $qubaids);
+    }
+
+    /**
      * Create an archetypal behaviour for a particular question attempt.
      * Used by {@link question_definition::make_behaviour()}.
      *
@@ -186,6 +198,16 @@ abstract class question_engine {
      */
     public static function get_behaviour_unused_display_options($behaviour) {
         return self::get_behaviour_type($behaviour)->get_unused_display_options();
+    }
+
+    /**
+     * With this behaviour, is it possible that a question might finish as the student
+     * interacts with it, without a call to the {@link question_attempt::finish()} method?
+     * @param string $behaviour the name of a behaviour. E.g. 'deferredfeedback'.
+     * @return bool whether with this behaviour, questions may finish naturally.
+     */
+    public static function can_questions_finish_during_the_attempt($behaviour) {
+        return self::get_behaviour_type($behaviour)->can_questions_finish_during_the_attempt();
     }
 
     /**
@@ -568,6 +590,21 @@ class question_display_options {
      * {@link question_display_options::VISIBLE}
      */
     public $history = self::HIDDEN;
+
+    /**
+     * @since 2.9
+     * @var string extra HTML to include in the info box of the question display.
+     * This is normally shown after the information about the question, and before
+     * any controls like the flag or the edit icon.
+     */
+    public $extrainfocontent = '';
+
+    /**
+     * @since 2.9
+     * @var string extra HTML to include in the history box of the question display,
+     * if it is shown.
+     */
+    public $extrahistorycontent = '';
 
     /**
      * If not empty, then a link to edit the question will be included in

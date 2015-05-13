@@ -1771,9 +1771,10 @@ function delete_mod_from_section($modid, $sectionid) {
  * @param object $course
  * @param int $section Section number (not id!!!)
  * @param int $destination
+ * @param bool $ignorenumsections
  * @return boolean Result
  */
-function move_section_to($course, $section, $destination) {
+function move_section_to($course, $section, $destination, $ignorenumsections = false) {
 /// Moves a whole course section up and down within the course
     global $USER, $DB;
 
@@ -1783,7 +1784,7 @@ function move_section_to($course, $section, $destination) {
 
     // compartibility with course formats using field 'numsections'
     $courseformatoptions = course_get_format($course)->get_format_options();
-    if ((array_key_exists('numsections', $courseformatoptions) &&
+    if ((!$ignorenumsections && array_key_exists('numsections', $courseformatoptions) &&
             ($destination > $courseformatoptions['numsections'])) || ($destination < 1)) {
         return false;
     }
@@ -1822,6 +1823,57 @@ function move_section_to($course, $section, $destination) {
 
     $transaction->allow_commit();
     rebuild_course_cache($course->id, true);
+    return true;
+}
+
+/**
+ * This method will delete a course section and may delete all modules inside it.
+ *
+ * No permissions are checked here, use {@link course_can_delete_section()} to
+ * check if section can actually be deleted.
+ *
+ * @param int|stdClass $course
+ * @param int|stdClass|section_info $section
+ * @param bool $forcedeleteifnotempty if set to false section will not be deleted if it has modules in it.
+ * @return bool whether section was deleted
+ */
+function course_delete_section($course, $section, $forcedeleteifnotempty = true) {
+    return course_get_format($course)->delete_section($section, $forcedeleteifnotempty);
+}
+
+/**
+ * Checks if the current user can delete a section (if course format allows it and user has proper permissions).
+ *
+ * @param int|stdClass $course
+ * @param int|stdClass|section_info $section
+ * @return bool
+ */
+function course_can_delete_section($course, $section) {
+    if (is_object($section)) {
+        $section = $section->section;
+    }
+    if (!$section) {
+        // Not possible to delete 0-section.
+        return false;
+    }
+    // Course format should allow to delete sections.
+    if (!course_get_format($course)->can_delete_section($section)) {
+        return false;
+    }
+    // Make sure user has capability to update course and move sections.
+    $context = context_course::instance(is_object($course) ? $course->id : $course);
+    if (!has_all_capabilities(array('moodle/course:movesections', 'moodle/course:update'), $context)) {
+        return false;
+    }
+    // Make sure user has capability to delete each activity in this section.
+    $modinfo = get_fast_modinfo($course);
+    if (!empty($modinfo->sections[$section])) {
+        foreach ($modinfo->sections[$section] as $cmid) {
+            if (!has_capability('moodle/course:manageactivities', context_module::instance($cmid))) {
+                return false;
+            }
+        }
+    }
     return true;
 }
 
@@ -2385,7 +2437,7 @@ function can_delete_course($courseid) {
     }
 
     $logmanger = get_log_manager();
-    $readers = $logmanger->get_readers('\core\log\sql_select_reader');
+    $readers = $logmanger->get_readers('\core\log\sql_reader');
     $reader = reset($readers);
 
     if (empty($reader)) {
@@ -3703,4 +3755,24 @@ function course_change_sortorder_after_course($courseorid, $moveaftercourseid) {
     fix_course_sortorder();
     cache_helper::purge_by_event('changesincourse');
     return true;
+}
+
+/**
+ * Trigger course viewed event. This API function is used when course view actions happens,
+ * usually in course/view.php but also in external functions.
+ *
+ * @param stdClass  $context course context object
+ * @param int $sectionnumber section number
+ * @since Moodle 2.9
+ */
+function course_view($context, $sectionnumber = 0) {
+
+    $eventdata = array('context' => $context);
+
+    if (!empty($sectionnumber)) {
+        $eventdata['other']['coursesectionnumber'] = $sectionnumber;
+    }
+
+    $event = \core\event\course_viewed::create($eventdata);
+    $event->trigger();
 }

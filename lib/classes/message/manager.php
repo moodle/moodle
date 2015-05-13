@@ -50,13 +50,19 @@ class manager {
      *
      * NOTE: to be used from message_send() only.
      *
-     * @param \stdClass $eventdata fully prepared event data for processors
+     * @param \stdClass|\core\message\message $eventdata fully prepared event data for processors
      * @param \stdClass $savemessage the message saved in 'message' table
      * @param array $processorlist list of processors for target user
      * @return int $messageid the id from 'message' or 'message_read' table (false is not returned)
      */
-    public static function send_message(\stdClass $eventdata, \stdClass $savemessage, array $processorlist) {
+    public static function send_message($eventdata, \stdClass $savemessage, array $processorlist) {
         global $CFG;
+
+        if (!($eventdata instanceof \stdClass) && !($eventdata instanceof message)) {
+            // Not a valid object.
+            throw new \coding_exception('Message should be of type stdClass or \core\message\message');
+        }
+
         require_once($CFG->dirroot.'/message/lib.php'); // This is most probably already included from messagelib.php file.
 
         if (empty($processorlist)) {
@@ -85,12 +91,13 @@ class manager {
     /**
      * Send message to message processors.
      *
-     * @param \stdClass $eventdata
+     * @param \stdClass|\core\message\message $eventdata
      * @param \stdClass $savemessage
      * @param array $processorlist
      * @return int $messageid
      */
-    protected static function send_message_to_processors(\stdClass $eventdata, \stdClass $savemessage, array $processorlist) {
+    protected static function send_message_to_processors($eventdata, \stdClass $savemessage, array
+    $processorlist) {
         global $CFG, $DB;
 
         // We cannot communicate with external systems in DB transactions,
@@ -114,7 +121,9 @@ class manager {
 
         $failed = false;
         foreach ($processorlist as $procname) {
-            if (!$processors[$procname]->object->send_message($eventdata)) {
+            // Let new messaging class add custom content based on the processor.
+            $proceventdata = ($eventdata instanceof message) ? $eventdata->get_eventobject_for_processor($procname) : $eventdata;
+            if (!$processors[$procname]->object->send_message($proceventdata)) {
                 debugging('Error calling message processor ' . $procname);
                 $failed = true;
                 // Previously the $messageid = false here was overridden

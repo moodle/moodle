@@ -114,7 +114,7 @@ abstract class backup_cron_automated_helper {
             core_php_time_limit::raise();
             raise_memory_limit(MEMORY_EXTRA);
 
-            $nextstarttime = backup_cron_automated_helper::calculate_next_automated_backup($admin->timezone, $now);
+            $nextstarttime = backup_cron_automated_helper::calculate_next_automated_backup(null, $now);
             $showtime = "undefined";
             if ($nextstarttime > 0) {
                 $showtime = date('r', $nextstarttime);
@@ -315,24 +315,24 @@ abstract class backup_cron_automated_helper {
     /**
      * Works out the next time the automated backup should be run.
      *
-     * @param mixed $timezone user timezone
+     * @param mixed $ignoredtimezone all settings are in server timezone!
      * @param int $now timestamp, should not be in the past, most likely time()
      * @return int timestamp of the next execution at server time
      */
-    public static function calculate_next_automated_backup($timezone, $now) {
+    public static function calculate_next_automated_backup($ignoredtimezone, $now) {
 
-        $result = 0;
         $config = get_config('backup');
-        $autohour = $config->backup_auto_hour;
-        $automin = $config->backup_auto_minute;
 
-        // Gets the user time relatively to the server time.
-        $date = usergetdate($now, $timezone);
-        $usertime = mktime($date['hours'], $date['minutes'], $date['seconds'], $date['mon'], $date['mday'], $date['year']);
-        $diff = $now - $usertime;
+        $backuptime = new DateTime('@' . $now);
+        $backuptime->setTimezone(core_date::get_server_timezone_object());
+        $backuptime->setTime($config->backup_auto_hour, $config->backup_auto_minute);
 
-        // Get number of days (from user's today) to execute backups.
-        $automateddays = substr($config->backup_auto_weekdays, $date['wday']) . $config->backup_auto_weekdays;
+        while ($backuptime->getTimestamp() < $now) {
+            $backuptime->add(new DateInterval('P1D'));
+        }
+
+        // Get number of days from backup date to execute backups.
+        $automateddays = substr($config->backup_auto_weekdays, $backuptime->format('w')) . $config->backup_auto_weekdays;
         $daysfromnow = strpos($automateddays, "1");
 
         // Error, there are no days to schedule the backup for.
@@ -340,25 +340,11 @@ abstract class backup_cron_automated_helper {
             return 0;
         }
 
-        // Checks if the date would happen in the future (of the user).
-        $userresult = mktime($autohour, $automin, 0, $date['mon'], $date['mday'] + $daysfromnow, $date['year']);
-        if ($userresult <= $usertime) {
-            // If not, we skip the first scheduled day, that should fix it.
-            $daysfromnow = strpos($automateddays, "1", 1);
-            $userresult = mktime($autohour, $automin, 0, $date['mon'], $date['mday'] + $daysfromnow, $date['year']);
+        if ($daysfromnow > 0) {
+            $backuptime->add(new DateInterval('P' . $daysfromnow . 'D'));
         }
 
-        // Now we generate the time relative to the server.
-        $result = $userresult + $diff;
-
-        // If that time is past, call the function recursively to obtain the next valid day.
-        if ($result <= $now) {
-            // Checking time() in here works, but makes PHPUnit Tests extremely hard to predict.
-            // $now should never be earlier than time() anyway...
-            $result = self::calculate_next_automated_backup($timezone, $now + DAYSECS);
-        }
-
-        return $result;
+        return $backuptime->getTimestamp();
     }
 
     /**
@@ -397,16 +383,11 @@ abstract class backup_cron_automated_helper {
             $outcome = self::outcome_from_results($results);
             $file = $results['backup_destination']; // May be empty if file already moved to target location.
 
-            if (empty($dir) && $storage !== 0) {
-                // This is intentionally left as a warning instead of an error because of the current behaviour of backup settings.
-                // See MDL-48266 for details.
-                $bc->log('No directory specified for automated backups',
-                        backup::LOG_WARNING);
-                $outcome = self::BACKUP_STATUS_WARNING;
-            } else if ($storage !== 0 && (!file_exists($dir) || !is_dir($dir) || !is_writable($dir))) {
-                // If we need to copy the backup file to an external dir and it is not writable, change status to error.
-                $bc->log('Specified backup directory is not writable - ',
-                        backup::LOG_ERROR, $dir);
+            // If we need to copy the backup file to an external dir and it is not writable, change status to error.
+            // This is a feature to prevent moodledata to be filled up and break a site when the admin misconfigured
+            // the automated backups storage type and destination directory.
+            if ($storage !== 0 && (empty($dir) || !file_exists($dir) || !is_dir($dir) || !is_writable($dir))) {
+                $bc->log('Specified backup directory is not writable - ', backup::LOG_ERROR, $dir);
                 $dir = null;
                 $outcome = self::BACKUP_STATUS_ERROR;
             }
@@ -661,7 +642,7 @@ abstract class backup_cron_automated_helper {
      */
     protected static function is_course_modified($courseid, $since) {
         $logmang = get_log_manager();
-        $readers = $logmang->get_readers('core\log\sql_select_reader');
+        $readers = $logmang->get_readers('core\log\sql_reader');
         $where = "courseid = :courseid and timecreated > :since and crud <> 'r'";
         $params = array('courseid' => $courseid, 'since' => $since);
         foreach ($readers as $reader) {

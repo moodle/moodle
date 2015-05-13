@@ -3,8 +3,8 @@
 # Markdown  -  A text-to-HTML conversion tool for web writers
 #
 # PHP Markdown
-# Copyright (c) 2004-2014 Michel Fortin
-# <http://michelf.com/projects/php-markdown/>
+# Copyright (c) 2004-2015 Michel Fortin
+# <https://michelf.ca/projects/php-markdown/>
 #
 # Original Markdown
 # Copyright (c) 2004-2006 John Gruber
@@ -32,6 +32,3 @@ interface MarkdownInterface {
   public function transform($text);
 
 }
-
-
-?>

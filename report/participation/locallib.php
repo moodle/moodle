@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return string table name
  */
 function report_participation_get_log_table_name() {
-    // Get prefered sql_internal_reader reader (if enabled).
+    // Get prefered sql_internal_table_reader reader (if enabled).
     $logmanager = get_log_manager();
     $readers = $logmanager->get_readers();
     $logtable = '';
@@ -43,8 +43,8 @@ function report_participation_get_log_table_name() {
                 break;
             }
 
-            // If sql_internal_reader is preferred reader.
-            if ($reader instanceof \core\log\sql_internal_reader) {
+            // If sql_internal_table_reader is preferred reader.
+            if ($reader instanceof \core\log\sql_internal_table_reader) {
                 $logtable = $reader->get_internal_log_table_name();
                 break;
             }

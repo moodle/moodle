@@ -142,11 +142,11 @@ class auth_plugin_email extends auth_plugin_base {
         $user = get_complete_user_data('username', $username);
 
         if (!empty($user)) {
-            if ($user->confirmed) {
-                return AUTH_CONFIRM_ALREADY;
-
-            } else if ($user->auth != $this->authtype) {
+            if ($user->auth != $this->authtype) {
                 return AUTH_CONFIRM_ERROR;
+
+            } else if ($user->secret == $confirmsecret && $user->confirmed) {
+                return AUTH_CONFIRM_ALREADY;
 
             } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
                 $DB->set_field("user", "confirmed", 1, array("id"=>$user->id));

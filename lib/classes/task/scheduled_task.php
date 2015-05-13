@@ -35,10 +35,16 @@ abstract class scheduled_task extends task_base {
     const MINUTEMIN = 0;
     /** Maximum minute value. */
     const MINUTEMAX = 59;
+
     /** Minimum hour value. */
     const HOURMIN = 0;
     /** Maximum hour value. */
     const HOURMAX = 23;
+
+    /** Minimum dayofweek value. */
+    const DAYOFWEEKMIN = 0;
+    /** Maximum dayofweek value. */
+    const DAYOFWEEKMAX = 6;
 
     /** @var string $hour - Pattern to work out the valid hours */
     private $hour = '*';
@@ -173,6 +179,9 @@ abstract class scheduled_task extends task_base {
      * @param string $dayofweek
      */
     public function set_day_of_week($dayofweek) {
+        if ($dayofweek === 'R') {
+            $dayofweek = mt_rand(self::DAYOFWEEKMIN, self::DAYOFWEEKMAX);
+        }
         $this->dayofweek = $dayofweek;
     }
 
@@ -323,10 +332,7 @@ abstract class scheduled_task extends task_base {
         $validhours = $this->eval_cron_field($this->hour, self::HOURMIN, self::HOURMAX);
 
         // We need to change to the server timezone before using php date() functions.
-        $origtz = date_default_timezone_get();
-        if (!empty($CFG->timezone) && $CFG->timezone != 99) {
-            date_default_timezone_set($CFG->timezone);
-        }
+        \core_date::set_default_server_timezone();
 
         $daysinmonth = date("t");
         $validdays = $this->eval_cron_field($this->day, 1, $daysinmonth);
@@ -394,11 +400,6 @@ abstract class scheduled_task extends task_base {
                            $nextvalidmonth,
                            $nextvaliddayofmonth,
                            $nextvalidyear);
-
-        // We need to change the timezone back so other date functions in moodle do not get confused.
-        if (!empty($CFG->timezone) && $CFG->timezone != 99) {
-            date_default_timezone_set($origtz);
-        }
 
         return $nexttime;
     }

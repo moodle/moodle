@@ -285,12 +285,7 @@
     // Trigger course viewed event.
     // We don't trust $context here. Course format inclusion above executes in the global space. We can't assume
     // anything after that point.
-    $eventdata = array('context' => context_course::instance($course->id));
-    if (!empty($section) && (int)$section == $section) {
-        $eventdata['other'] = array('coursesectionnumber' => $section);
-    }
-    $event = \core\event\course_viewed::create($eventdata);
-    $event->trigger();
+    course_view(context_course::instance($course->id), $section);
 
     // Include course AJAX
     include_course_ajax($course, $modnamesused);

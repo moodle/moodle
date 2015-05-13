@@ -529,7 +529,7 @@ function scorm_cron () {
 
     require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
-    $sitetimezone = $CFG->timezone;
+    $sitetimezone = core_date::get_server_timezone();
     // Now see if there are any scorm updates to be done.
 
     if (!isset($CFG->scorm_updatetimelast)) {    // To catch the first time.
@@ -950,6 +950,7 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
         if (!has_capability('moodle/course:manageactivities', $context)) {
             return false;
         }
+        $revision = (int)array_shift($args); // Prevents caching problems - ignored here.
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/mod_scorm/package/0/$relativepath";
         $lifetime = 0; // No caching here.

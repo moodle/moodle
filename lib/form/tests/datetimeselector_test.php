@@ -41,19 +41,9 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright  2012 Rajesh Taneja
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_form_datetimeselector_testcase extends basic_testcase {
+class core_form_datetimeselector_testcase extends advanced_testcase {
     /** @var MoodleQuickForm Keeps reference of dummy form object */
     private $mform;
-    /** @var stdClass saves current user data */
-    private $olduser;
-    /** @var int|float|string saves forcetimezone config variable */
-    private $cfgforcetimezone;
-    /** @var int|float|string saves current user timezone */
-    private $userstimezone;
-    /** @var string saves system locale */
-    private $oldlocale;
-    /** @var string saves system timezone */
-    private $systemdefaulttimezone;
     /** @var array test fixtures */
     private $testvals;
 
@@ -61,7 +51,14 @@ class core_form_datetimeselector_testcase extends basic_testcase {
      * Initalize test wide variable, it is called in start of the testcase
      */
     protected function setUp() {
+        global $CFG;
         parent::setUp();
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->setTimezone('Australia/Perth');
+
         // Get form data.
         $form = new temp_form_datetime();
         $this->mform = $form->getform();
@@ -132,23 +129,11 @@ class core_form_datetimeselector_testcase extends basic_testcase {
     }
 
     /**
-     * Clears the data set in the setUp() method call.
-     * @see datetimeselector_form_element_testcase::setUp()
-     */
-    protected function tearDown() {
-        unset($this->testvals);
-        parent::tearDown();
-    }
-
-    /**
      * Testcase to check exportvalue
      */
     public function test_exportvalue() {
         global $USER;
         $testvals = $this->testvals;
-
-        // Set timezone to Australia/Perth for testing.
-        $this->settimezone();
 
         foreach ($testvals as $vals) {
             // Set user timezone to test value.
@@ -163,9 +148,6 @@ class core_form_datetimeselector_testcase extends basic_testcase {
             $this->assertSame(array('dateselector' => $vals['timestamp']), $el->exportValue($submitvalues),
                     "Please check if timezones are updated (Site adminstration -> location -> update timezone)");
         }
-
-        // Restore user original timezone.
-        $this->restoretimezone();
     }
 
     /**
@@ -176,8 +158,7 @@ class core_form_datetimeselector_testcase extends basic_testcase {
         $testvals = $this->testvals;
         // Get dummy form for data.
         $mform = $this->mform;
-        // Set timezone to Australia/Perth for testing.
-        $this->settimezone();
+
         foreach ($testvals as $vals) {
             // Set user timezone to test value.
             $USER->timezone = $vals['usertimezone'];
@@ -197,58 +178,6 @@ class core_form_datetimeselector_testcase extends basic_testcase {
             $el->onQuickFormEvent('updateValue', null, $mform);
             $this->assertSame($expectedvalues, $el->getValue());
         }
-
-        // Restore user original timezone.
-        $this->restoretimezone();
-    }
-
-    /**
-     * Set user timezone to Australia/Perth for testing
-     */
-    private function settimezone() {
-        global $USER, $CFG, $DB;
-        $this->olduser = $USER;
-        $USER = $DB->get_record('user', array('id'=>2)); //admin
-
-        // Check if forcetimezone is set then save it and set it to use user timezone.
-        $this->cfgforcetimezone = null;
-        if (isset($CFG->forcetimezone)) {
-            $this->cfgforcetimezone = $CFG->forcetimezone;
-            $CFG->forcetimezone = 99; //get user default timezone.
-        }
-
-        // Store user default timezone to restore later.
-        $this->userstimezone = $USER->timezone;
-
-        // The string version of date comes from server locale setting and does
-        // not respect user language, so it is necessary to reset that.
-        $this->oldlocale = setlocale(LC_TIME, '0');
-        setlocale(LC_TIME, 'en_AU.UTF-8');
-
-        // Set default timezone to Australia/Perth, else time calculated
-        // will not match expected values. Before that save system defaults.
-        $this->systemdefaulttimezone = date_default_timezone_get();
-        date_default_timezone_set('Australia/Perth');
-    }
-
-    /**
-     * Restore user timezone to original state
-     */
-    private function restoretimezone() {
-        global $USER, $CFG;
-        // Restore user timezone back to what it was.
-        $USER->timezone = $this->userstimezone;
-
-        // Restore forcetimezone.
-        if (!is_null($this->cfgforcetimezone)) {
-            $CFG->forcetimezone = $this->cfgforcetimezone;
-        }
-
-        // Restore system default values.
-        date_default_timezone_set($this->systemdefaulttimezone);
-        setlocale(LC_TIME, $this->oldlocale);
-
-        $USER = $this->olduser;
     }
 }
 

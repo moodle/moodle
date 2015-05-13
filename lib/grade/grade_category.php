@@ -767,6 +767,8 @@ class grade_category extends grade_object {
      * Set the flags on the grade_grade items to indicate how individual grades are used
      * in the aggregation.
      *
+     * WARNING: This function is called a lot during gradebook recalculation, be very performance considerate.
+     *
      * @param int $userid The user we have aggregated the grades for.
      * @param array $usedweights An array with keys for each of the grade_item columns included in the aggregation. The value are the relative weight.
      * @param array $novalue An array with keys for each of the grade_item columns skipped because
@@ -779,44 +781,32 @@ class grade_category extends grade_object {
     private function set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit) {
         global $DB;
 
-        // First set them all to weight null and status = 'unknown'.
-        if ($allitems = grade_item::fetch_all(array('categoryid'=>$this->id))) {
-            list($itemsql, $itemlist) = $DB->get_in_or_equal(array_keys($allitems), SQL_PARAMS_NAMED, 'g');
+        // Reset aggregation to unknown and 0 for all grade items for this user and category.
+        $params = array('categoryid' => $this->id, 'userid' => $userid);
+        $itemssql = "SELECT id
+                       FROM {grade_items}
+                      WHERE categoryid = :categoryid";
 
-            $itemlist['userid'] = $userid;
+        $sql = "UPDATE {grade_grades}
+                   SET aggregationstatus = 'unknown',
+                       aggregationweight = 0
+                 WHERE userid = :userid
+                   AND itemid IN ($itemssql)";
 
-            $DB->set_field_select('grade_grades',
-                                  'aggregationstatus',
-                                  'unknown',
-                                  "itemid $itemsql AND userid = :userid",
-                                  $itemlist);
-            $DB->set_field_select('grade_grades',
-                                  'aggregationweight',
-                                  0,
-                                  "itemid $itemsql AND userid = :userid",
-                                  $itemlist);
-        }
+        $DB->execute($sql, $params);
 
-        // Included.
+        // Included with weights.
         if (!empty($usedweights)) {
             // The usedweights items are updated individually to record the weights.
             foreach ($usedweights as $gradeitemid => $contribution) {
-                $DB->set_field_select('grade_grades',
-                                      'aggregationweight',
-                                      $contribution,
-                                      "itemid = :itemid AND userid = :userid",
-                                      array('itemid'=>$gradeitemid, 'userid'=>$userid));
+                $sql = "UPDATE {grade_grades}
+                           SET aggregationstatus = 'used',
+                               aggregationweight = :contribution
+                         WHERE itemid = :itemid AND userid = :userid";
+
+                $params = array('contribution' => $contribution, 'itemid' => $gradeitemid, 'userid' => $userid);
+                $DB->execute($sql, $params);
             }
-
-            // Now set the status flag for all these weights.
-            list($itemsql, $itemlist) = $DB->get_in_or_equal(array_keys($usedweights), SQL_PARAMS_NAMED, 'g');
-            $itemlist['userid'] = $userid;
-
-            $DB->set_field_select('grade_grades',
-                                  'aggregationstatus',
-                                  'used',
-                                  "itemid $itemsql AND userid = :userid",
-                                  $itemlist);
         }
 
         // No value.
@@ -844,6 +834,7 @@ class grade_category extends grade_object {
                                   "itemid $itemsql AND userid = :userid",
                                   $itemlist);
         }
+
         // Extra credit.
         if (!empty($extracredit)) {
             list($itemsql, $itemlist) = $DB->get_in_or_equal(array_keys($extracredit), SQL_PARAMS_NAMED, 'g');

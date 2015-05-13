@@ -2,6 +2,8 @@ This files describes API changes in the lti code.
 
 === 2.8 ===
 
+* Support for LTI 2 added, including extensible services implemented as ltiservice plugins.
+* Function sendOAuthBodyPOST removed from OAuthBody.php because it was not being used.
 * The field 'grade' in the table {lti} is now an integer rather than a numeric to bring it
   in line with the 'grade' field in other activities.
 
@@ -10,7 +12,3 @@ This files describes API changes in the lti code.
 * mod_lti\event\unknown_service_api_called now has less data stored in 'other'
   but everything is still available for event observers via method get_message_data()
 
-=== 2.8 ===
-
-* Support for LTI 2 added, including extensible services implemented as ltiservice plugins.
-* Function sendOAuthBodyPOST removed from OAuthBody.php because it was not being used.

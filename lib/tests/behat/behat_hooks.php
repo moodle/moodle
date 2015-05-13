@@ -31,6 +31,8 @@ require_once(__DIR__ . '/../../behat/behat_base.php');
 
 use Behat\Behat\Event\SuiteEvent as SuiteEvent,
     Behat\Behat\Event\ScenarioEvent as ScenarioEvent,
+    Behat\Behat\Event\FeatureEvent as FeatureEvent,
+    Behat\Behat\Event\OutlineExampleEvent as OutlineExampleEvent,
     Behat\Behat\Event\StepEvent as StepEvent,
     Behat\Mink\Exception\DriverException as DriverException,
     WebDriver\Exception\NoSuchWindow as NoSuchWindow,
@@ -85,16 +87,24 @@ class behat_hooks extends behat_base {
     protected static $faildumpdirname = false;
 
     /**
+     * Keeps track of time taken by feature to execute.
+     *
+     * @var array list of feature timings
+     */
+    protected static $timings = array();
+
+    /**
      * Gives access to moodle codebase, ensures all is ready and sets up the test lock.
      *
      * Includes config.php to use moodle codebase with $CFG->behat_*
      * instead of $CFG->prefix and $CFG->dataroot, called once per suite.
      *
+     * @param SuiteEvent $event event before suite.
      * @static
      * @throws Exception
      * @BeforeSuite
      */
-    public static function before_suite($event) {
+    public static function before_suite(SuiteEvent $event) {
         global $CFG;
 
         // Defined only when the behat CLI command is running, the moodle init setup process will
@@ -154,8 +164,64 @@ class behat_hooks extends behat_base {
     }
 
     /**
+     * Gives access to moodle codebase, to keep track of feature start time.
+     *
+     * @param FeatureEvent $event event fired before feature.
+     * @BeforeFeature
+     */
+    public static function before_feature(FeatureEvent $event) {
+        if (!defined('BEHAT_FEATURE_TIMING_FILE')) {
+            return;
+        }
+        $file = $event->getFeature()->getFile();
+        self::$timings[$file] = microtime(true);
+    }
+
+    /**
+     * Gives access to moodle codebase, to keep track of feature end time.
+     *
+     * @param FeatureEvent $event event fired after feature.
+     * @AfterFeature
+     */
+    public static function after_feature(FeatureEvent $event) {
+        if (!defined('BEHAT_FEATURE_TIMING_FILE')) {
+            return;
+        }
+        $file = $event->getFeature()->getFile();
+        self::$timings[$file] = microtime(true) - self::$timings[$file];
+        // Probably didn't actually run this, don't output it.
+        if (self::$timings[$file] < 1) {
+            unset(self::$timings[$file]);
+        }
+    }
+
+    /**
+     * Gives access to moodle codebase, to keep track of suite timings.
+     *
+     * @param SuiteEvent $event event fired after suite.
+     * @AfterSuite
+     */
+    public static function after_suite(SuiteEvent $event) {
+        if (!defined('BEHAT_FEATURE_TIMING_FILE')) {
+            return;
+        }
+        $realroot = realpath(__DIR__.'/../../../').'/';
+        foreach (self::$timings as $k => $v) {
+            $new = str_replace($realroot, '', $k);
+            self::$timings[$new] = round($v, 1);
+            unset(self::$timings[$k]);
+        }
+        if ($existing = @json_decode(file_get_contents(BEHAT_FEATURE_TIMING_FILE), true)) {
+            self::$timings = array_merge($existing, self::$timings);
+        }
+        arsort(self::$timings);
+        @file_put_contents(BEHAT_FEATURE_TIMING_FILE, json_encode(self::$timings, JSON_PRETTY_PRINT));
+    }
+
+    /**
      * Resets the test environment.
      *
+     * @param OutlineExampleEvent|ScenarioEvent $event event fired before scenario.
      * @throws coding_exception If here we are not using the test database it should be because of a coding error
      * @BeforeScenario
      */
@@ -244,9 +310,10 @@ class behat_hooks extends behat_base {
      * default would be at framework level, which will stop the execution of
      * the run.
      *
+     * @param StepEvent $event event fired before step.
      * @BeforeStep @javascript
      */
-    public function before_step_javascript($event) {
+    public function before_step_javascript(StepEvent $event) {
 
         try {
             $this->wait_for_pending_js();
@@ -268,9 +335,10 @@ class behat_hooks extends behat_base {
      * default would be at framework level, which will stop the execution of
      * the run.
      *
+     * @param StepEvent $event event fired after step.
      * @AfterStep @javascript
      */
-    public function after_step_javascript($event) {
+    public function after_step_javascript(StepEvent $event) {
         global $CFG;
 
         // Save a screenshot if the step failed.
@@ -303,9 +371,10 @@ class behat_hooks extends behat_base {
      *
      * This includes creating an HTML dump of the content if there was a failure.
      *
+     * @param StepEvent $event event fired after step.
      * @AfterStep
      */
-    public function after_step($event) {
+    public function after_step(StepEvent $event) {
         global $CFG;
 
         // Save the page content if the step failed.

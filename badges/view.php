@@ -62,17 +62,17 @@ if ($course = $DB->get_record('course', array('id' => $courseid))) {
 }
 
 if ($type == BADGE_TYPE_SITE) {
-    $title = get_string('sitebadges', 'badges');
     $PAGE->set_context(context_system::instance());
     $PAGE->set_pagelayout('admin');
-    $PAGE->set_heading($title);
+    $PAGE->set_heading($SITE->fullname);
+    $title = get_string('sitebadges', 'badges');
 } else {
     require_login($course);
     $coursename = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
     $title = $coursename . ': ' . get_string('coursebadges', 'badges');
     $PAGE->set_context(context_course::instance($course->id));
     $PAGE->set_pagelayout('incourse');
-    $PAGE->set_heading($title);
+    $PAGE->set_heading($coursename);
 }
 
 $PAGE->set_title($title);

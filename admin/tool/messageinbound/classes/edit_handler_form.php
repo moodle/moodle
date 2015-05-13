@@ -66,15 +66,24 @@ class tool_messageinbound_edit_handler_form extends moodleform {
         // Items which can be configured.
         $mform->addElement('header', 'configuration', get_string('configuration'));
 
-        $options = array(
-            HOURSECS => get_string('onehour', 'tool_messageinbound'),
-            DAYSECS => get_string('oneday', 'tool_messageinbound'),
-            WEEKSECS => get_string('oneweek', 'tool_messageinbound'),
-            YEARSECS => get_string('oneyear', 'tool_messageinbound'),
-            0 => get_string('noexpiry', 'tool_messageinbound'),
-        );
-        $mform->addElement('select', 'defaultexpiration', get_string('defaultexpiration', 'tool_messageinbound'), $options);
-        $mform->addHelpButton('defaultexpiration', 'defaultexpiration', 'tool_messageinbound');
+        if ($handler->can_change_defaultexpiration()) {
+            // Show option to change expiry only if the handler supports it.
+            $options = array(
+                HOURSECS => get_string('onehour', 'tool_messageinbound'),
+                DAYSECS => get_string('oneday', 'tool_messageinbound'),
+                WEEKSECS => get_string('oneweek', 'tool_messageinbound'),
+                YEARSECS => get_string('oneyear', 'tool_messageinbound'),
+                0 => get_string('noexpiry', 'tool_messageinbound'),
+            );
+            $mform->addElement('select', 'defaultexpiration', get_string('defaultexpiration', 'tool_messageinbound'), $options);
+            $mform->addHelpButton('defaultexpiration', 'defaultexpiration', 'tool_messageinbound');
+        } else {
+            $text = $this->get_defaultexpiration_text($handler);
+            $mform->addElement('static', 'defaultexpiration_fake', get_string('defaultexpiration', 'tool_messageinbound'), $text);
+            $mform->addElement('hidden', 'defaultexpiration');
+            $mform->addHelpButton('defaultexpiration_fake', 'defaultexpiration', 'tool_messageinbound');
+            $mform->setType('defaultexpiration', PARAM_INT);
+        }
 
         if ($handler->can_change_validateaddress()) {
             $mform->addElement('checkbox', 'validateaddress', get_string('requirevalidation', 'tool_messageinbound'));
@@ -106,5 +115,29 @@ class tool_messageinbound_edit_handler_form extends moodleform {
         }
 
         $this->add_action_buttons(true, get_string('savechanges'));
+    }
+
+    /**
+     * Return a text string representing the selected default expiration for the handler.
+     *
+     * @param \core\message\inbound\handler $handler handler instance.
+     *
+     * @return string localised text string.
+     */
+    protected function get_defaultexpiration_text(\core\message\inbound\handler $handler) {
+        switch($handler->defaultexpiration) {
+            case HOURSECS :
+                    return get_string('onehour', 'tool_messageinbound');
+            case DAYSECS :
+                    return get_string('oneday', 'tool_messageinbound');
+            case WEEKSECS :
+                    return get_string('oneweek', 'tool_messageinbound');
+            case YEARSECS :
+                    return get_string('oneyear', 'tool_messageinbound');
+            case 0:
+                    return get_string('noexpiry', 'tool_messageinbound');
+            default:
+                    return ''; // Should never happen.
+        }
     }
 }

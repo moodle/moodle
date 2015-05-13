@@ -36,6 +36,35 @@ Feature: Add customised file types
     And I press "Save changes"
     And I should see "frog" in the "application/x-7z-compressed" "table_row"
 
+  Scenario: Change the text option (was buggy)
+    Given I log in as "admin"
+    And I navigate to "File types" node in "Site administration > Server"
+    When I click on "Edit 7z" "link"
+    And I set the following fields to these values:
+      | Description type   | Custom description specified in this form |
+      | Custom description | New description for 7z                    |
+    And I press "Save changes"
+    Then I should see "New description" in the "application/x-7z-compressed" "table_row"
+    And I click on "Edit 7z" "link"
+    And I set the field "Description type" to "Default"
+    And I press "Save changes"
+    And I should not see "New description" in the "application/x-7z-compressed" "table_row"
+
+  Scenario: Try to select a text option without entering a value.
+    Given I log in as "admin"
+    And I navigate to "File types" node in "Site administration > Server"
+    When I click on "Edit dmg" "link"
+    And I set the field "Description type" to "Custom description"
+    And I press "Save changes"
+    Then I should see "Required"
+    And I set the field "Description type" to "Alternative language string"
+    And I press "Save changes"
+    And I should see "Required"
+    And I set the field "Description type" to "Default"
+    And I press "Save changes"
+    # Check we're back on the main page now.
+    And "dmg" "table_row" should exist
+
   Scenario: Delete an existing file type
     Given I log in as "admin"
     And I navigate to "File types" node in "Site administration > Server"
@@ -76,7 +105,7 @@ Feature: Add customised file types
     And I press "Yes"
     Then "//img[contains(@src, 'archive')]" "xpath_element" should exist in the "7z" "table_row"
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Create a resource activity which contains a customised file type
     Given the following "courses" exist:
       | fullname | shortname |
@@ -92,7 +121,7 @@ Feature: Add customised file types
       | Custom description | Froggy file                               |
     And I press "Save changes"
     # Create a resource activity and add it to a course
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     When I add a "File" to section "1"

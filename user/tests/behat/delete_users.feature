@@ -7,10 +7,10 @@ Feature: Deleting users
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | user1 | User | One   | one@asd.com |
-      | user2 | User | Two   | two@asd.com |
-      | user3 | User | Three | three@asd.com |
-      | user4 | User | Four  | four@asd.com |
+      | user1 | User | One   | one@example.com |
+      | user2 | User | Two   | two@example.com |
+      | user3 | User | Three | three@example.com |
+      | user4 | User | Four  | four@example.com |
 
   @javascript
   Scenario: Deleting one user at a time
@@ -21,7 +21,7 @@ Feature: Deleting users
     And I press "Add to selection"
     And I set the field "id_action" to "Delete"
     And I press "Go"
-    And I should see "Are you absolutely sure you want to completely delete User Four ?"
+    And I should see "Are you absolutely sure you want to completely delete the user User Four, including their enrolments, activity and other user data?"
     And I press "Yes"
     And I should see "Changes saved"
     And I press "Continue"
@@ -38,7 +38,7 @@ Feature: Deleting users
     And I press "Add to selection"
     And I set the field "id_action" to "Delete"
     And I press "Go"
-    And I should see "Are you absolutely sure you want to completely delete User Four, User Three ?"
+    And I should see "Are you absolutely sure you want to completely delete the user User Four, User Three, including their enrolments, activity and other user data?"
     And I press "Yes"
     And I should see "Changes saved"
     And I press "Continue"

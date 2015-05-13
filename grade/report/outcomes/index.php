@@ -74,7 +74,7 @@ foreach ($outcomes as $outcomeid => $outcome) {
                       FROM {grade_grades}
                      WHERE itemid = ?".
                      $hidesuspendedsql.
-                  "GROUP BY itemid";
+                  " GROUP BY itemid";
             $info = $DB->get_records_sql($sql, $params);
 
             if (!$info) {

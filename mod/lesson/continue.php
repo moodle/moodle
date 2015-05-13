@@ -36,12 +36,16 @@ $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*'
 require_login($course, false, $cm);
 require_sesskey();
 
+// Apply overrides.
+$lesson->update_effective_access($USER->id);
+
 $context = context_module::instance($cm->id);
 $canmanage = has_capability('mod/lesson:manage', $context);
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
 $url = new moodle_url('/mod/lesson/continue.php', array('id'=>$cm->id));
 $PAGE->set_url($url);
+$PAGE->set_pagetype('mod-lesson-view');
 $PAGE->navbar->add(get_string('continue', 'lesson'));
 
 // This is the code updates the lesson time for a timed test
@@ -49,8 +53,8 @@ $PAGE->navbar->add(get_string('continue', 'lesson'));
 if (!$canmanage) {
     $lesson->displayleft = lesson_displayleftif($lesson);
     $timer = $lesson->update_timer();
-    if ($lesson->timed) {
-        $timeleft = ($timer->starttime + $lesson->maxtime * 60) - time();
+    if ($lesson->timelimit) {
+        $timeleft = ($timer->starttime + $lesson->timelimit) - time();
         if ($timeleft <= 0) {
             // Out of time
             $lesson->add_message(get_string('eolstudentoutoftime', 'lesson'));
@@ -156,7 +160,7 @@ if ($canmanage) {
         $lesson->add_message(get_string("teacherjumpwarning", "lesson", $warningvars));
     }
     // Inform teacher that s/he will not see the timer
-    if ($lesson->timed) {
+    if ($lesson->timelimit) {
         $lesson->add_message(get_string("teachertimerwarning", "lesson"));
     }
 }

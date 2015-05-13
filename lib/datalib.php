@@ -1212,30 +1212,6 @@ function get_scales_menu($courseid=0) {
     return $DB->get_records_sql_menu($sql, $params);
 }
 
-
-
-/**
- * Given a set of timezone records, put them in the database,  replacing what is there
- *
- * @global object
- * @param array $timezones An array of timezone records
- * @return void
- */
-function update_timezone_records($timezones) {
-    global $DB;
-
-/// Clear out all the old stuff
-    $DB->delete_records('timezone');
-
-/// Insert all the new stuff
-    foreach ($timezones as $timezone) {
-        if (is_array($timezone)) {
-            $timezone = (object)$timezone;
-        }
-        $DB->insert_record('timezone', $timezone);
-    }
-}
-
 /**
  * Increment standard revision field.
  *
@@ -1700,7 +1676,19 @@ function user_accesstime_log($courseid=0) {
             $last->userid     = $USER->id;
             $last->courseid   = $courseid;
             $last->timeaccess = $timenow;
-            $DB->insert_record_raw('user_lastaccess', $last, false);
+            try {
+                $DB->insert_record_raw('user_lastaccess', $last, false);
+            } catch (dml_write_exception $e) {
+                // During a race condition we can fail to find the data, then it appears.
+                // If we still can't find it, rethrow the exception.
+                $lastaccess = $DB->get_field('user_lastaccess', 'timeaccess', array('userid' => $USER->id,
+                                                                                    'courseid' => $courseid));
+                if ($lastaccess === false) {
+                    throw $e;
+                }
+                // If we did find it, the race condition was true and another thread has inserted the time for us.
+                // We can just continue without having to do anything.
+            }
 
         } else if ($timenow - $lastaccess <  LASTACCESS_UPDATE_SECS) {
             // no need to update now, it was updated recently in concurrent login ;-)

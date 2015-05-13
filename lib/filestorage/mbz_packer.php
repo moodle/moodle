@@ -146,10 +146,11 @@ class mbz_packer extends file_packer {
         global $CFG;
         require_once($CFG->dirroot . '/lib/filestorage/tgz_packer.php');
 
-        if ($CFG->enabletgzbackups) {
-            return get_file_packer('application/x-gzip');
-        } else {
+        if (!empty($CFG->usezipbackups)) {
+            // Allow forced use of zip backups.
             return get_file_packer('application/zip');
+        } else {
+            return get_file_packer('application/x-gzip');
         }
     }
 

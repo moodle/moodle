@@ -35,11 +35,12 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Typical usage would be
  * <pre>
- *     $PAGE->requires->js_init_call('M.mod_forum.init_view');
+ *     $PAGE->requires->js_call_amd('mod_forum/view', 'init');
  * </pre>
  *
- * It also supports obsoleted coding style withouth YUI3 modules.
+ * It also supports obsoleted coding style with/without YUI3 modules.
  * <pre>
+ *     $PAGE->requires->js_init_call('M.mod_forum.init_view');
  *     $PAGE->requires->css('/mod/mymod/userstyles.php?id='.$id); // not overridable via themes!
  *     $PAGE->requires->js('/mod/mymod/script.js');
  *     $PAGE->requires->js('/mod/mymod/small_but_urgent.js', true);
@@ -77,6 +78,11 @@ class page_requirements_manager {
      * @var array Included JS scripts
      */
     protected $jsincludes = array('head'=>array(), 'footer'=>array());
+
+    /**
+     * @var array Inline scripts using RequireJS module loading.
+     */
+    protected $amdjscode = array('');
 
     /**
      * @var array List of needed function calls
@@ -288,6 +294,42 @@ class page_requirements_manager {
     }
 
     /**
+     * Return the safe config values that get set for javascript in "M.cfg".
+     *
+     * @since 2.9
+     * @return array List of safe config values that are available to javascript.
+     */
+    public function get_config_for_javascript(moodle_page $page, renderer_base $renderer) {
+        global $CFG;
+
+        if (empty($this->M_cfg)) {
+            // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
+            // Otherwise, in some situations, users will get warnings about insecure content
+            // on secure pages from their web browser.
+
+            $this->M_cfg = array(
+                'wwwroot'             => $CFG->httpswwwroot, // Yes, really. See above.
+                'sesskey'             => sesskey(),
+                'loadingicon'         => $renderer->pix_url('i/loading_small', 'moodle')->out(false),
+                'themerev'            => theme_get_revision(),
+                'slasharguments'      => (int)(!empty($CFG->slasharguments)),
+                'theme'               => $page->theme->name,
+                'jsrev'               => $this->get_jsrev(),
+                'admin'               => $CFG->admin,
+                'svgicons'            => $page->theme->use_svg_icons()
+            );
+            if ($CFG->debugdeveloper) {
+                $this->M_cfg['developerdebug'] = true;
+            }
+            if (defined('BEHAT_SITE_RUNNING')) {
+                $this->M_cfg['behatsiterunning'] = true;
+            }
+
+        }
+        return $this->M_cfg;
+    }
+
+    /**
      * Initialise with the bits of JavaScript that every Moodle page should have.
      *
      * @param moodle_page $page
@@ -296,26 +338,8 @@ class page_requirements_manager {
     protected function init_requirements_data(moodle_page $page, core_renderer $renderer) {
         global $CFG;
 
-        // JavaScript should always work with $CFG->httpswwwroot rather than $CFG->wwwroot.
-        // Otherwise, in some situations, users will get warnings about insecure content
-        // on secure pages from their web browser.
-
-        $this->M_cfg = array(
-            'wwwroot'             => $CFG->httpswwwroot, // Yes, really. See above.
-            'sesskey'             => sesskey(),
-            'loadingicon'         => $renderer->pix_url('i/loading_small', 'moodle')->out(false),
-            'themerev'            => theme_get_revision(),
-            'slasharguments'      => (int)(!empty($CFG->slasharguments)),
-            'theme'               => $page->theme->name,
-            'jsrev'               => $this->get_jsrev(),
-            'svgicons'            => $page->theme->use_svg_icons()
-        );
-        if ($CFG->debugdeveloper) {
-            $this->M_cfg['developerdebug'] = true;
-        }
-        if (defined('BEHAT_SITE_RUNNING')) {
-            $this->M_cfg['behatsiterunning'] = true;
-        }
+        // Init the js config.
+        $this->get_config_for_javascript($page, $renderer);
 
         // Accessibility stuff.
         $this->skip_link_to('maincontent', get_string('tocontent', 'access'));
@@ -944,6 +968,52 @@ class page_requirements_manager {
     }
 
     /**
+     * This function appends a block of code to the AMD specific javascript block executed
+     * in the page footer, just after loading the requirejs library.
+     *
+     * The code passed here can rely on AMD module loading, e.g. require('jquery', function($) {...});
+     *
+     * @param string $code The JS code to append.
+     */
+    public function js_amd_inline($code) {
+        $this->amdjscode[] = $code;
+    }
+
+    /**
+     * This function creates a minimal JS script that requires and calls a single function from an AMD module with arguments.
+     * If it is called multiple times, it will be executed multiple times.
+     *
+     * @param string $fullmodule The format for module names is <component name>/<module name>.
+     * @param string $func The function from the module to call
+     * @param array $params The params to pass to the function. They will be json encoded, so no nasty classes/types please.
+     */
+    public function js_call_amd($fullmodule, $func, $params = array()) {
+        global $CFG;
+
+        list($component, $module) = explode('/', $fullmodule, 2);
+
+        $component = clean_param($component, PARAM_COMPONENT);
+        $module = clean_param($module, PARAM_ALPHANUMEXT);
+        $func = clean_param($func, PARAM_ALPHANUMEXT);
+
+        $jsonparams = array();
+        foreach ($params as $param) {
+            $jsonparams[] = json_encode($param);
+        }
+        $strparams = implode(', ', $jsonparams);
+        if ($CFG->debugdeveloper) {
+            $toomanyparamslimit = 1024;
+            if (strlen($strparams) > $toomanyparamslimit) {
+                debugging('Too many params passed to js_call_amd("' . $fullmodule . '", "' . $func . '")', DEBUG_DEVELOPER);
+            }
+        }
+
+        $js = 'require(["' . $component . '/' . $module . '"], function(amd) { amd.' . $func . '(' . $strparams . '); });';
+
+        $this->js_amd_inline($js);
+    }
+
+    /**
      * Creates a JavaScript function call that requires one or more modules to be loaded.
      *
      * This function can be used to include all of the standard YUI module types within JavaScript:
@@ -951,6 +1021,9 @@ class page_requirements_manager {
      *     - YUI2 modules    [yui2-*]
      *     - Moodle modules  [moodle-*]
      *     - Gallery modules [gallery-*]
+     *
+     * Before writing new code that makes extensive use of YUI, you should consider it's replacement AMD/JQuery.
+     * @see js_call_amd()
      *
      * @param array|string $modules One or more modules
      * @param string $function The function to call once modules have been loaded
@@ -1206,6 +1279,47 @@ class page_requirements_manager {
     }
 
     /**
+     * Returns js code to load amd module loader, then insert inline script tags
+     * that contain require() calls using RequireJS.
+     * @return string
+     */
+    protected function get_amd_footercode() {
+        global $CFG;
+        $output = '';
+        $jsrev = $this->get_jsrev();
+
+        $jsloader = new moodle_url($CFG->httpswwwroot . '/lib/javascript.php');
+        $jsloader->set_slashargument('/' . $jsrev . '/');
+        $requirejsloader = new moodle_url($CFG->httpswwwroot . '/lib/requirejs.php');
+        $requirejsloader->set_slashargument('/' . $jsrev . '/');
+
+        $requirejsconfig = file_get_contents($CFG->dirroot . '/lib/requirejs/moodle-config.js');
+
+        // No extension required unless slash args is disabled.
+        $jsextension = '.js';
+        if (!empty($CFG->slasharguments)) {
+            $jsextension = '';
+        }
+
+        $requirejsconfig = str_replace('[BASEURL]', $requirejsloader, $requirejsconfig);
+        $requirejsconfig = str_replace('[JSURL]', $jsloader, $requirejsconfig);
+        $requirejsconfig = str_replace('[JSEXT]', $jsextension, $requirejsconfig);
+
+        $output .= html_writer::script($requirejsconfig);
+        if ($CFG->debugdeveloper) {
+            $output .= html_writer::script('', $this->js_fix_url('/lib/requirejs/require.js'));
+        } else {
+            $output .= html_writer::script('', $this->js_fix_url('/lib/requirejs/require.min.js'));
+        }
+
+        // First include must be to a module with no dependencies, this prevents multiple requests.
+        $prefix = "require(['core/first'], function() {\n";
+        $suffix = "\n});";
+        $output .= html_writer::script($prefix . implode(";\n", $this->amdjscode) . $suffix);
+        return $output;
+    }
+
+    /**
      * Returns basic YUI3 JS loading code.
      * YUI3 is using autoloading of both CSS and JS code.
      *
@@ -1426,9 +1540,21 @@ class page_requirements_manager {
      */
     public function get_end_code() {
         global $CFG;
+        $output = '';
+
+        // Set the log level for the JS logging.
+        $logconfig = new stdClass();
+        $logconfig->level = 'warn';
+        if ($CFG->debugdeveloper) {
+            $logconfig->level = 'trace';
+        }
+        $this->js_call_amd('core/log', 'setConfig', array($logconfig));
+
+        // Call amd init functions.
+        $output .= $this->get_amd_footercode();
 
         // Add other requested modules.
-        $output = $this->get_extra_modules_code();
+        $output .= $this->get_extra_modules_code();
 
         $this->js_init_code('M.util.js_complete("init");', true);
 

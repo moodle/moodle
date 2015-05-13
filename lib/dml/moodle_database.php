@@ -1083,11 +1083,13 @@ abstract class moodle_database {
 
     /**
      * Enable/disable detailed sql logging
+     *
+     * @deprecated since Moodle 2.9
+     * @todo MDL-49824 This will be deleted in Moodle 3.1.
      * @param bool $state
      */
     public function set_logging($state) {
-        // adodb sql logging shares one table without prefix per db - this is no longer acceptable :-(
-        // we must create one table shared by all drivers
+        debugging('set_logging() is deprecated and will not be replaced.', DEBUG_DEVELOPER);
     }
 
     /**

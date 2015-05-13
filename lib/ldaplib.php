@@ -64,7 +64,7 @@ function ldap_getdefaults() {
                         'rfc2307' => 'posixaccount',
                         'rfc2307bis' => 'posixaccount',
                         'samba' => 'sambasamaccount',
-                        'ad' => 'user',
+                        'ad' => '(samaccounttype=805306368)',
                         'default' => '*'
                         );
     $default['user_attribute'] = array(

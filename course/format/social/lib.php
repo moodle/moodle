@@ -75,4 +75,38 @@ class format_social extends format_base {
                 'recent_activity', 'course_list')
         );
     }
+
+    /**
+     * Definitions of the additional options that this course format uses for course
+     *
+     * social format uses the following options:
+     * - numdiscussions
+     *
+     * @param bool $foreditform
+     * @return array of options
+     */
+    public function course_format_options($foreditform = false) {
+        static $courseformatoptions = false;
+        if ($courseformatoptions === false) {
+            $courseformatoptions = array(
+                'numdiscussions' => array(
+                    'default' => 10,
+                    'type' => PARAM_INT,
+                )
+            );
+        }
+
+        if ($foreditform && !isset($courseformatoptions['numdiscussions']['label'])) {
+            $courseformatoptionsedit = array(
+                'numdiscussions' => array(
+                    'label' => new lang_string('numberdiscussions', 'format_social'),
+                    'help' => 'numberdiscussions',
+                    'help_component' => 'format_social',
+                    'element_type' => 'text',
+                )
+            );
+            $courseformatoptions = array_merge_recursive($courseformatoptions, $courseformatoptionsedit);
+        }
+        return $courseformatoptions;
+    }
 }

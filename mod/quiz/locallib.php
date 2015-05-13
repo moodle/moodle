@@ -158,46 +158,90 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
  */
 function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow,
                                 $questionids = array(), $forcedvariantsbyslot = array()) {
+
+    // Usages for this user's previous quiz attempts.
+    $qubaids = new \mod_quiz\question\qubaids_for_users_attempts(
+            $quizobj->get_quizid(), $attempt->userid);
+
     // Fully load all the questions in this quiz.
     $quizobj->preload_questions();
     $quizobj->load_questions();
 
-    // Add them all to the $quba.
-    $questionsinuse = array_keys($quizobj->get_questions());
+    // First load all the non-random questions.
+    $randomfound = false;
+    $slot = 0;
+    $questions = array();
+    $maxmark = array();
+    $page = array();
     foreach ($quizobj->get_questions() as $questiondata) {
-        if ($questiondata->qtype != 'random') {
-            if (!$quizobj->get_quiz()->shuffleanswers) {
-                $questiondata->options->shuffleanswers = false;
-            }
-            $question = question_bank::make_question($questiondata);
+        $slot += 1;
+        $maxmark[$slot] = $questiondata->maxmark;
+        $page[$slot] = $questiondata->page;
+        if ($questiondata->qtype == 'random') {
+            $randomfound = true;
+            continue;
+        }
+        if (!$quizobj->get_quiz()->shuffleanswers) {
+            $questiondata->options->shuffleanswers = false;
+        }
+        $questions[$slot] = question_bank::make_question($questiondata);
+    }
 
-        } else {
-            if (!isset($questionids[$quba->next_slot_number()])) {
-                $forcequestionid = null;
+    // Then find a question to go in place of each random question.
+    if ($randomfound) {
+        $slot = 0;
+        $usedquestionids = array();
+        foreach ($questions as $question) {
+            if (isset($usedquestions[$question->id])) {
+                $usedquestionids[$question->id] += 1;
             } else {
-                $forcequestionid = $questionids[$quba->next_slot_number()];
+                $usedquestionids[$question->id] = 1;
+            }
+        }
+        $randomloader = new \core_question\bank\random_question_loader($qubaids, $usedquestionids);
+
+        foreach ($quizobj->get_questions() as $questiondata) {
+            $slot += 1;
+            if ($questiondata->qtype != 'random') {
+                continue;
             }
 
-            $question = question_bank::get_qtype('random')->choose_other_question(
-                $questiondata, $questionsinuse, $quizobj->get_quiz()->shuffleanswers, $forcequestionid);
-            if (is_null($question)) {
+            // Deal with fixed random choices for testing.
+            if (isset($questionids[$quba->next_slot_number()])) {
+                if ($randomloader->is_question_available($questiondata->category,
+                        (bool) $questiondata->questiontext, $questionids[$quba->next_slot_number()])) {
+                    $questions[$slot] = question_bank::load_question(
+                            $questionids[$quba->next_slot_number()], $quizobj->get_quiz()->shuffleanswers);
+                    continue;
+                } else {
+                    throw new coding_exception('Forced question id not available.');
+                }
+            }
+
+            // Normal case, pick one at random.
+            $questionid = $randomloader->get_next_question_id($questiondata->category,
+                        (bool) $questiondata->questiontext);
+            if ($questionid === null) {
                 throw new moodle_exception('notenoughrandomquestions', 'quiz',
                                            $quizobj->view_url(), $questiondata);
             }
-        }
 
-        $quba->add_question($question, $questiondata->maxmark);
-        $questionsinuse[] = $question->id;
+            $questions[$slot] = question_bank::load_question($questionid,
+                    $quizobj->get_quiz()->shuffleanswers);
+        }
+    }
+
+    // Finally add them all to the usage.
+    ksort($questions);
+    foreach ($questions as $slot => $question) {
+        $newslot = $quba->add_question($question, $maxmark[$slot]);
+        if ($newslot != $slot) {
+            throw new coding_exception('Slot numbers have got confused.');
+        }
     }
 
     // Start all the questions.
-    if ($attempt->preview) {
-        $variantoffset = rand(1, 100);
-    } else {
-        $variantoffset = $attemptnumber;
-    }
-    $variantstrategy = new question_variant_pseudorandom_no_repeats_strategy(
-            $variantoffset, $attempt->userid, $quizobj->get_quizid());
+    $variantstrategy = new core_question\engine\variants\least_used_strategy($quba, $qubaids);
 
     if (!empty($forcedvariantsbyslot)) {
         $forcedvariantsbyseed = question_variant_forced_choices_selection_strategy::prepare_forced_choices_array(
@@ -209,33 +253,47 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
     $quba->start_all_questions($variantstrategy, $timenow);
 
     // Work out the attempt layout.
-    $layout = array();
-    if ($quizobj->get_quiz()->shufflequestions) {
-        $slots = $quba->get_slots();
-        shuffle($slots);
-
-        $questionsonthispage = 0;
-        foreach ($slots as $slot) {
-            if ($questionsonthispage && $questionsonthispage == $quizobj->get_quiz()->questionsperpage) {
-                $layout[] = 0;
-                $questionsonthispage = 0;
-            }
-            $layout[] = $slot;
-            $questionsonthispage += 1;
-        }
-
-    } else {
-        $currentpage = null;
-        foreach ($quizobj->get_questions() as $slot) {
-            if ($currentpage !== null && $slot->page != $currentpage) {
-                $layout[] = 0;
-            }
-            $layout[] = $slot->slot;
-            $currentpage = $slot->page;
+    $sections = $quizobj->get_sections();
+    foreach ($sections as $i => $section) {
+        if (isset($sections[$i + 1])) {
+            $sections[$i]->lastslot = $sections[$i + 1]->firstslot - 1;
+        } else {
+            $sections[$i]->lastslot = count($questions);
         }
     }
 
-    $layout[] = 0;
+    $layout = array();
+    foreach ($sections as $section) {
+        if ($section->shufflequestions) {
+            $questionsinthissection = array();
+            for ($slot = $section->firstslot; $slot <= $section->lastslot; $slot += 1) {
+                $questionsinthissection[] = $slot;
+            }
+            shuffle($questionsinthissection);
+            $questionsonthispage = 0;
+            foreach ($questionsinthissection as $slot) {
+                if ($questionsonthispage && $questionsonthispage == $quizobj->get_quiz()->questionsperpage) {
+                    $layout[] = 0;
+                    $questionsonthispage = 0;
+                }
+                $layout[] = $slot;
+                $questionsonthispage += 1;
+            }
+
+        } else {
+            $currentpage = $page[$section->firstslot];
+            for ($slot = $section->firstslot; $slot <= $section->lastslot; $slot += 1) {
+                if ($currentpage !== null && $page[$slot] != $currentpage) {
+                    $layout[] = 0;
+                }
+                $layout[] = $slot;
+                $currentpage = $page[$slot];
+            }
+        }
+
+        // Each section ends with a page break.
+        $layout[] = 0;
+    }
     $attempt->layout = implode(',', $layout);
 
     return $attempt;
@@ -426,13 +484,22 @@ function quiz_repaginate_questions($quizid, $slotsperpage) {
     global $DB;
     $trans = $DB->start_delegated_transaction();
 
+    $sections = $DB->get_records('quiz_sections', array('quizid' => $quizid), 'firstslot ASC');
+    $firstslots = array();
+    foreach ($sections as $section) {
+        if ((int)$section->firstslot === 1) {
+            continue;
+        }
+        $firstslots[] = $section->firstslot;
+    }
+
     $slots = $DB->get_records('quiz_slots', array('quizid' => $quizid),
             'slot');
-
     $currentpage = 1;
     $slotsonthispage = 0;
     foreach ($slots as $slot) {
-        if ($slotsonthispage && $slotsonthispage == $slotsperpage) {
+        if (($firstslots && in_array($slot->slot, $firstslots)) ||
+            ($slotsonthispage && $slotsonthispage == $slotsperpage)) {
             $currentpage += 1;
             $slotsonthispage = 0;
         }
@@ -1964,6 +2031,13 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         }
         $slot->slot = $lastslotbefore + 1;
         $slot->page = min($page, $maxpage + 1);
+
+        $DB->execute("
+                UPDATE {quiz_sections}
+                   SET firstslot = firstslot + 1
+                 WHERE quizid = ?
+                   AND firstslot > ?
+                ", array($quiz->id, max($lastslotbefore, 1)));
 
     } else {
         $lastslot = end($slots);

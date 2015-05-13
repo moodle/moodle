@@ -79,7 +79,7 @@ $PAGE->set_title($course->shortname .': '. $strparticipation);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-$uselegacyreader = false; // Use legacy reader with sql_internal_reader to aggregate records.
+$uselegacyreader = false; // Use legacy reader with sql_internal_table_reader to aggregate records.
 $onlyuselegacyreader = false; // Use only legacy log table to aggregate records.
 
 $logtable = report_participation_get_log_table_name(); // Log table to use for fetaching records.
@@ -100,7 +100,7 @@ if (!$onlyuselegacyreader && empty($logtable)) {
 
 $modinfo = get_fast_modinfo($course);
 
-$minloginternalreader = 0; // Time of first record in sql_internal_reader.
+$minloginternalreader = 0; // Time of first record in sql_internal_table_reader.
 
 if ($onlyuselegacyreader) {
     // If no sql_inrenal_reader enabled then get min. time from log table.
@@ -119,7 +119,7 @@ if ($onlyuselegacyreader) {
         $minlog = $minloginternalreader;
     }
 
-    // If timefrom is greater then first record in sql_internal_reader then get record from sql_internal_reader only.
+    // If timefrom is greater then first record in sql_internal_table_reader then get record from sql_internal_table_reader only.
     if (!empty($timefrom) && ($minloginternalreader < $timefrom)) {
         $uselegacyreader = false;
     }
@@ -270,7 +270,7 @@ if (!empty($instanceid) && !empty($roleid)) {
         }
     }
 
-    // Get record from sql_internal_reader and merge with records got from legacy log (if needed).
+    // Get record from sql_internal_table_reader and merge with records got from legacy log (if needed).
     if (!$onlyuselegacyreader) {
         $sql = "SELECT ra.userid, $usernamefields, u.idnumber, COUNT(l.actioncount) AS count
                   FROM (SELECT DISTINCT userid FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra

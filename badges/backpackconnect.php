@@ -49,7 +49,7 @@ $assertion = filter_input(
 // Audience is the site url scheme + host + port only.
 $wwwparts = parse_url($CFG->wwwroot);
 $audience = $wwwparts['scheme'] . '://' . $wwwparts['host'];
-$audience .= isset($wwwparts['port']) ? $wwwparts['port'] : '';
+$audience .= isset($wwwparts['port']) ? ':' . $wwwparts['port'] : '';
 $params = 'assertion=' . urlencode($assertion) . '&audience=' .
            urlencode($audience);
 

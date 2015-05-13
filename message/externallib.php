@@ -444,12 +444,11 @@ class core_message_external extends external_api {
                     'unread' => $contact->messagecount
                 );
 
-                // Try to get the user picture, but sometimes this method can return null.
-                $userdetails = user_get_user_details($contact, null, array('profileimageurl', 'profileimageurlsmall'));
-                if (!empty($userdetails)) {
-                    $newcontact['profileimageurl'] = $userdetails['profileimageurl'];
-                    $newcontact['profileimageurlsmall'] = $userdetails['profileimageurlsmall'];
-                }
+                $usercontextid = context_user::instance($contact->id)->id;
+                $newcontact['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
+                                                    $usercontextid, 'user', 'icon', null, '/', 'f1')->out(false);
+                $newcontact['profileimageurlsmall'] = moodle_url::make_webservice_pluginfile_url(
+                                                        $usercontextid, 'user', 'icon', null, '/', 'f2')->out(false);
 
                 $allcontacts[$mode][$key] = $newcontact;
             }
@@ -532,6 +531,7 @@ class core_message_external extends external_api {
      */
     public static function search_contacts($searchtext, $onlymycourses = false) {
         global $CFG, $USER;
+        require_once($CFG->dirroot . '/user/lib.php');
 
         // Check if messaging is enabled.
         if (!$CFG->messaging) {
@@ -576,12 +576,11 @@ class core_message_external extends external_api {
             $user->phone1 = null;
             $user->phone2 = null;
 
-            // Try to get the user picture, but sometimes this method can return null.
-            $userdetails = user_get_user_details($user, null, array('profileimageurl', 'profileimageurlsmall'));
-            if (!empty($userdetails)) {
-                $newuser['profileimageurl'] = $userdetails['profileimageurl'];
-                $newuser['profileimageurlsmall'] = $userdetails['profileimageurlsmall'];
-            }
+            $usercontextid = context_user::instance($user->id)->id;
+            $newuser['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
+                                                $usercontextid, 'user', 'icon', null, '/', 'f1')->out(false);
+            $newuser['profileimageurlsmall'] = moodle_url::make_webservice_pluginfile_url(
+                                                    $usercontextid, 'user', 'icon', null, '/', 'f2')->out(false);
 
             $user = $newuser;
         }
@@ -829,6 +828,183 @@ class core_message_external extends external_api {
         );
     }
 
+    /**
+     * Get blocked users parameters description.
+     *
+     * @return external_function_parameters
+     * @since 2.9
+     */
+    public static function get_blocked_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT,
+                                'the user whose blocked users we want to retrieve',
+                                VALUE_REQUIRED),
+            )
+        );
+    }
+
+    /**
+     * Retrieve a list of users blocked
+     *
+     * @param  int $userid the user whose blocked users we want to retrieve
+     * @return external_description
+     * @since 2.9
+     */
+    public static function get_blocked_users($userid) {
+        global $CFG, $USER;
+        require_once($CFG->dirroot . "/message/lib.php");
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        // Validate params.
+        $params = array(
+            'userid' => $userid
+        );
+        $params = self::validate_parameters(self::get_blocked_users_parameters(), $params);
+        $userid = $params['userid'];
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        // Check if private messaging between users is allowed.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $user = core_user::get_user($userid, 'id', MUST_EXIST);
+
+        // Check if we have permissions for retrieve the information.
+        if ($userid != $USER->id and !has_capability('moodle/site:readallmessages', $context)) {
+            throw new moodle_exception('accessdenied', 'admin');
+        }
+
+        // Now, we can get safely all the blocked users.
+        $users = message_get_blocked_users($user);
+
+        $blockedusers = array();
+        foreach ($users as $user) {
+            $newuser = array(
+                'id' => $user->id,
+                'fullname' => fullname($user),
+            );
+            $newuser['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
+                context_user::instance($user->id)->id, 'user', 'icon', null, '/', 'f1')->out(false);
+
+            $blockedusers[] = $newuser;
+        }
+
+        $results = array(
+            'users' => $blockedusers,
+            'warnings' => $warnings
+        );
+        return $results;
+    }
+
+    /**
+     * Get blocked users return description.
+     *
+     * @return external_single_structure
+     * @since 2.9
+     */
+    public static function get_blocked_users_returns() {
+        return new external_single_structure(
+            array(
+                'users' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'User ID'),
+                            'fullname' => new external_value(PARAM_NOTAGS, 'User full name'),
+                            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL', VALUE_OPTIONAL)
+                        )
+                    ),
+                    'List of blocked users'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since 2.9
+     */
+    public static function mark_message_read_parameters() {
+        return new external_function_parameters(
+            array(
+                'messageid' => new external_value(PARAM_INT, 'id of the message (in the message table)'),
+                'timeread' => new external_value(PARAM_INT, 'timestamp for when the message should be marked read')
+            )
+        );
+    }
+
+    /**
+     * Mark a single message as read, trigger message_viewed event
+     *
+     * @param  int $messageid id of the message (in the message table)
+     * @param  int $timeread timestamp for when the message should be marked read
+     * @return external_description
+     * @throws invalid_parameter_exception
+     * @throws moodle_exception
+     * @since 2.9
+     */
+    public static function mark_message_read($messageid, $timeread) {
+        global $CFG, $DB, $USER;
+        require_once($CFG->dirroot . "/message/lib.php");
+
+        // Check if private messaging between users is allowed.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        // Validate params.
+        $params = array(
+            'messageid' => $messageid,
+            'timeread' => $timeread
+        );
+        $params = self::validate_parameters(self::mark_message_read_parameters(), $params);
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $message = $DB->get_record('message', array('id' => $params['messageid']), '*', MUST_EXIST);
+
+        if ($message->useridto != $USER->id) {
+            throw new invalid_parameter_exception('Invalid messageid, you don\'t have permissions to mark this message as read');
+        }
+
+        $messageid = message_mark_message_read($message, $params['timeread']);
+
+        $results = array(
+            'messageid' => $messageid,
+            'warnings' => $warnings
+        );
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since 2.9
+     */
+    public static function mark_message_read_returns() {
+        return new external_single_structure(
+            array(
+                'messageid' => new external_value(PARAM_INT, 'the id of the message in the message_read table'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
 
 /**
@@ -880,4 +1056,12 @@ class moodle_message_external extends external_api {
         return core_message_external::send_instant_messages_returns();
     }
 
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function send_instantmessages_is_deprecated() {
+        return true;
+    }
 }

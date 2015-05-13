@@ -90,7 +90,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $this->add_intro_editor($config->requiremodintro);
+        $this->standard_intro_elements();
 
         // Appearance.
         $mform->addElement('header', 'appearancehdr', get_string('appearance'));
@@ -171,22 +171,10 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'deadline', get_string('deadline', 'lesson'), array('optional'=>true));
         $mform->setDefault('deadline', 0);
 
-        // Create a text box that can be enabled/disabled for lesson time limit
-        $timedgrp = array();
-        $timedgrp[] = &$mform->createElement('text', 'maxtime');
-        $timedgrp[] = &$mform->createElement('checkbox', 'timed', '', get_string('enable'));
-        $mform->addGroup($timedgrp, 'timedgrp', get_string('maxtime', 'lesson'), array(' '), false);
-        $mform->disabledIf('timedgrp', 'timed');
-
-        // Add numeric rule to text field
-        $timedgrprules = array();
-        $timedgrprules['maxtime'][] = array(null, 'numeric', null, 'client');
-        $mform->addGroupRule('timedgrp', $timedgrprules);
-
-        // Rest of group setup
-        $mform->setDefault('timed', 0);
-        $mform->setDefault('maxtime', 20);
-        $mform->setType('maxtime', PARAM_INT);
+        // Time limit.
+        $mform->addElement('duration', 'timelimit', get_string('timelimit', 'lesson'),
+                array('optional' => true));
+        $mform->addHelpButton('timelimit', 'timelimit', 'lesson');
 
         $mform->addElement('selectyesno', 'usepassword', get_string('usepassword', 'lesson'));
         $mform->addHelpButton('usepassword', 'usepassword', 'lesson');
@@ -199,34 +187,49 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->disabledIf('passwordunmask', 'usepassword', 'eq', 0);
 
         // Dependent on.
-        $mform->addElement('header', 'dependencyon', get_string('prerequisitelesson', 'lesson'));
+        if ($this->current && isset($this->current->dependency) && $this->current->dependency) {
+            $mform->addElement('header', 'dependencyon', get_string('prerequisitelesson', 'lesson'));
+            $mform->addElement('static', 'warningobsolete',
+                get_string('warning', 'lesson'),
+                get_string('prerequisiteisobsolete', 'lesson'));
+            $options = array(0 => get_string('none'));
+            if ($lessons = get_all_instances_in_course('lesson', $COURSE)) {
+                foreach ($lessons as $lesson) {
+                    if ($lesson->id != $this->_instance) {
+                        $options[$lesson->id] = format_string($lesson->name, true);
+                    }
 
-        $options = array(0=>get_string('none'));
-        if ($lessons = get_all_instances_in_course('lesson', $COURSE)) {
-            foreach($lessons as $lesson) {
-                if ($lesson->id != $this->_instance){
-                    $options[$lesson->id] = format_string($lesson->name, true);
                 }
-
             }
+            $mform->addElement('select', 'dependency', get_string('dependencyon', 'lesson'), $options);
+            $mform->addHelpButton('dependency', 'dependencyon', 'lesson');
+            $mform->setDefault('dependency', 0);
+
+            $mform->addElement('text', 'timespent', get_string('timespentminutes', 'lesson'));
+            $mform->setDefault('timespent', 0);
+            $mform->setType('timespent', PARAM_INT);
+            $mform->disabledIf('timespent', 'dependency', 'eq', 0);
+
+            $mform->addElement('checkbox', 'completed', get_string('completed', 'lesson'));
+            $mform->setDefault('completed', 0);
+            $mform->disabledIf('completed', 'dependency', 'eq', 0);
+
+            $mform->addElement('text', 'gradebetterthan', get_string('gradebetterthan', 'lesson'));
+            $mform->setDefault('gradebetterthan', 0);
+            $mform->setType('gradebetterthan', PARAM_INT);
+            $mform->disabledIf('gradebetterthan', 'dependency', 'eq', 0);
+        } else {
+            $mform->addElement('hidden', 'dependency', 0);
+            $mform->setType('dependency', PARAM_INT);
+            $mform->addElement('hidden', 'timespent', 0);
+            $mform->setType('timespent', PARAM_INT);
+            $mform->addElement('hidden', 'completed', 0);
+            $mform->setType('completed', PARAM_INT);
+            $mform->addElement('hidden', 'gradebetterthan', 0);
+            $mform->setType('gradebetterthan', PARAM_INT);
+            $mform->setConstants(array('dependency' => 0, 'timespent' => 0,
+                    'completed' => 0, 'gradebetterthan' => 0));
         }
-        $mform->addElement('select', 'dependency', get_string('dependencyon', 'lesson'), $options);
-        $mform->addHelpButton('dependency', 'dependencyon', 'lesson');
-        $mform->setDefault('dependency', 0);
-
-        $mform->addElement('text', 'timespent', get_string('timespentminutes', 'lesson'));
-        $mform->setDefault('timespent', 0);
-        $mform->setType('timespent', PARAM_INT);
-        $mform->disabledIf('timespent', 'dependency', 'eq', 0);
-
-        $mform->addElement('checkbox', 'completed', get_string('completed', 'lesson'));
-        $mform->setDefault('completed', 0);
-        $mform->disabledIf('completed', 'dependency', 'eq', 0);
-
-        $mform->addElement('text', 'gradebetterthan', get_string('gradebetterthan', 'lesson'));
-        $mform->setDefault('gradebetterthan', 0);
-        $mform->setType('gradebetterthan', PARAM_INT);
-        $mform->disabledIf('gradebetterthan', 'dependency', 'eq', 0);
 
         // Flow control.
         $mform->addElement('header', 'flowcontrol', get_string('flowcontrol', 'lesson'));
@@ -306,22 +309,26 @@ class mod_lesson_mod_form extends moodleform_mod {
     /**
      * Enforce defaults here
      *
-     * @param array $default_values Form defaults
+     * @param array $defaultvalues Form defaults
      * @return void
      **/
-    function data_preprocessing(&$default_values) {
-        if (isset($default_values['conditions'])) {
-            $conditions = unserialize($default_values['conditions']);
-            $default_values['timespent'] = $conditions->timespent;
-            $default_values['completed'] = $conditions->completed;
-            $default_values['gradebetterthan'] = $conditions->gradebetterthan;
+    public function data_preprocessing(&$defaultvalues) {
+        if (isset($defaultvalues['conditions'])) {
+            $conditions = unserialize($defaultvalues['conditions']);
+            $defaultvalues['timespent'] = $conditions->timespent;
+            $defaultvalues['completed'] = $conditions->completed;
+            $defaultvalues['gradebetterthan'] = $conditions->gradebetterthan;
         }
+
+        // Set up the completion checkbox which is not part of standard data.
+        $defaultvalues['completiontimespentenabled'] =
+            !empty($defaultvalues['completiontimespent']) ? 1 : 0;
 
         if ($this->current->instance) {
             // Editing existing instance - copy existing files into draft area.
             $draftitemid = file_get_submitted_draft_itemid('mediafile');
             file_prepare_draft_area($draftitemid, $this->context->id, 'mod_lesson', 'mediafile', 0, array('subdirs'=>0, 'maxbytes' => $this->course->maxbytes, 'maxfiles' => 1));
-            $default_values['mediafile'] = $draftitemid;
+            $defaultvalues['mediafile'] = $draftitemid;
         }
     }
 
@@ -334,9 +341,6 @@ class mod_lesson_mod_form extends moodleform_mod {
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if (empty($data['maxtime']) and !empty($data['timed'])) {
-            $errors['timedgrp'] = get_string('err_numeric', 'form');
-        }
         if (!empty($data['usepassword']) && empty($data['password'])) {
             $errors['password'] = get_string('emptypassword', 'lesson');
         }
@@ -354,7 +358,16 @@ class mod_lesson_mod_form extends moodleform_mod {
 
         $mform->addElement('checkbox', 'completionendreached', get_string('completionendreached', 'lesson'),
                 get_string('completionendreached_desc', 'lesson'));
-        return array('completionendreached');
+
+        $group = array();
+        $group[] =& $mform->createElement('checkbox', 'completiontimespentenabled', '',
+                get_string('completiontimespent', 'lesson'));
+        $group[] =& $mform->createElement('duration', 'completiontimespent', array('optional' => true));
+        $mform->addGroup($group, 'completiontimespentgroup', get_string('completiontimespentgroup', 'lesson'), array(' '), false);
+        $mform->disabledIf('completiontimespent[number]', 'completiontimespentenabled', 'notchecked');
+        $mform->disabledIf('completiontimespent[timeunit]', 'completiontimespentenabled', 'notchecked');
+
+        return array('completionendreached', 'completiontimespentgroup');
     }
 
     /**
@@ -364,7 +377,22 @@ class mod_lesson_mod_form extends moodleform_mod {
      * @return bool True if one or more rules is enabled, false if none are.
      */
     public function completion_rule_enabled($data) {
-        return !empty($data['completionendreached']);
+        return !empty($data['completionendreached']) || $data['completiontimespent'] > 0;
+    }
+
+    public function get_data() {
+        $data = parent::get_data();
+        if (!$data) {
+            return false;
+        }
+        // Turn off completion setting if the checkbox is not ticked.
+        if (!empty($data->completionunlocked)) {
+            $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->completiontimespentenabled) || !$autocompletion) {
+                $data->completiontimespent = 0;
+            }
+        }
+        return $data;
     }
 }
 

@@ -706,7 +706,7 @@ class comment {
             $newcmt->fullname = fullname($USER);
             $url = new moodle_url('/user/view.php', array('id' => $USER->id, 'course' => $this->courseid));
             $newcmt->profileurl = $url->out();
-            $newcmt->content = format_text($newcmt->content, $format, array('overflowdiv'=>true));
+            $newcmt->content = format_text($newcmt->content, $newcmt->format, array('overflowdiv'=>true));
             $newcmt->avatar = $OUTPUT->user_picture($USER, array('size'=>16));
 
             $commentlist = array($newcmt);

@@ -213,6 +213,15 @@ $definitions = array(
         'ttl' => 3600,
     ),
 
+    // Used to cache activity completion status.
+    'completion' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'ttl' => 3600,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 2, // Should be current course and site course.
+    ),
+
     // A simple cache that stores whether a user can expand a course in the navigation.
     // The key is the course ID and the value will either be 1 or 0 (cast to bool).
     // The cache isn't always up to date, it should only ever be used to save a costly call to

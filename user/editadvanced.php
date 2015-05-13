@@ -35,6 +35,7 @@ $PAGE->https_required();
 
 $id     = optional_param('id', $USER->id, PARAM_INT);    // User id; -1 if creating new user.
 $course = optional_param('course', SITEID, PARAM_INT);   // Course id (defaults to Site).
+$returnto = optional_param('returnto', null, PARAM_ALPHA);  // Code determining where to return to after save.
 
 $PAGE->set_url('/user/editadvanced.php', array('course' => $course, 'id' => $id));
 
@@ -70,6 +71,7 @@ if ($id == -1) {
     $user->auth = 'manual';
     $user->confirmed = 1;
     $user->deleted = 0;
+    $user->timezone = '99';
     require_capability('moodle/user:create', $systemcontext);
     admin_externalpage_setup('addnewuser', '', array('id' => -1));
 } else {
@@ -77,6 +79,7 @@ if ($id == -1) {
     require_capability('moodle/user:update', $systemcontext);
     $user = $DB->get_record('user', array('id' => $id), '*', MUST_EXIST);
     $PAGE->set_context(context_user::instance($user->id));
+    $PAGE->navbar->includesettingsbase = true;
     if ($user->id != $USER->id) {
         $PAGE->navigation->extend_for_user($user);
     } else {
@@ -151,11 +154,10 @@ $filemanageroptions = array('maxbytes'       => $CFG->maxbytes,
 file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'user', 'newicon', 0, $filemanageroptions);
 $user->imagefile = $draftitemid;
 // Create form.
-$userform = new user_editadvanced_form(null, array(
+$userform = new user_editadvanced_form(new moodle_url($PAGE->url, array('returnto' => $returnto)), array(
     'editoroptions' => $editoroptions,
     'filemanageroptions' => $filemanageroptions,
-    'userid' => $user->id));
-$userform->set_data($user);
+    'user' => $user));
 
 if ($usernew = $userform->get_data()) {
     $usercreated = false;
@@ -292,7 +294,16 @@ if ($usernew = $userform->get_data()) {
             // Somebody double clicked when editing admin user during install.
             redirect("$CFG->wwwroot/$CFG->admin/");
         } else {
-            redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
+            if ($returnto === 'profile') {
+                if ($course->id != SITEID) {
+                    $returnurl = new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $course->id));
+                } else {
+                    $returnurl = new moodle_url('/user/profile.php', array('id' => $user->id));
+                }
+            } else {
+                $returnurl = new moodle_url('/user/preferences.php', array('userid' => $user->id));
+            }
+            redirect($returnurl);
         }
     } else {
         \core\session\manager::gc(); // Remove stale sessions.
@@ -310,9 +321,11 @@ if ($user->id == -1 or ($user->id != $USER->id)) {
     if ($user->id == -1) {
         echo $OUTPUT->header();
     } else {
-        $PAGE->set_heading($SITE->fullname);
-        echo $OUTPUT->header();
+        $streditmyprofile = get_string('editmyprofile');
         $userfullname = fullname($user, true);
+        $PAGE->set_heading($userfullname);
+        $PAGE->set_title("$course->shortname: $streditmyprofile - $userfullname");
+        echo $OUTPUT->header();
         echo $OUTPUT->heading($userfullname);
     }
 } else if (!empty($USER->newadminuser)) {
@@ -334,10 +347,10 @@ if ($user->id == -1 or ($user->id != $USER->id)) {
     $userfullname     = fullname($user, true);
 
     $PAGE->set_title("$course->shortname: $streditmyprofile");
-    $PAGE->set_heading($course->fullname);
+    $PAGE->set_heading($userfullname);
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($userfullname);
+    echo $OUTPUT->heading($streditmyprofile);
 }
 
 // Finally display THE form.

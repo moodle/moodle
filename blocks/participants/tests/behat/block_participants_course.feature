@@ -10,11 +10,12 @@ Feature: People Block used in a course
       | Course 1 | C101      | 0        |
     And the following "users" exist:
       | username    | firstname | lastname | email            |
-      | student1    | Sam       | Student  | student1@asd.com |
+      | student1    | Sam       | Student  | student1@example.com |
     And the following "course enrolments" exist:
       | user        | course | role           |
       | student1    | C101   | student        |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add the "People" block

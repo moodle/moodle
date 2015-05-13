@@ -31,14 +31,12 @@
  *                                   --typeroot=/var/www/moodle/htdocs/blocks
  *                                   --name=loancalc
  *                                   --md5=...
- *                                   --dataroot=/var/www/moodle/data
  *
  *  $ sudo -u apache php mdeploy.php --upgrade \
  *                                   --package=https://moodle.org/plugins/download.php/...zip \
  *                                   --typeroot=/var/www/moodle/htdocs/blocks
  *                                   --name=loancalc
  *                                   --md5=...
- *                                   --dataroot=/var/www/moodle/data
  *
  * When called via HTTP, additional parameters returnurl, passfile and password must be
  * provided. Optional proxy configuration can be passed using parameters proxy, proxytype
@@ -60,6 +58,13 @@ if (defined('MOODLE_INTERNAL')) {
     die('This is a standalone utility that should not be included by any other Moodle code.');
 }
 
+// This stops immediately at the beginning of lib/setup.php.
+define('ABORT_AFTER_CONFIG', true);
+if (PHP_SAPI === 'cli') {
+    // Called from the CLI - we need to set CLI_SCRIPT to ensure that appropriate CLI checks are made in setup.php.
+    define('CLI_SCRIPT', true);
+}
+require(__DIR__ . '/config.php');
 
 // Exceptions //////////////////////////////////////////////////////////////////
 
@@ -72,6 +77,7 @@ class backup_folder_exception extends Exception {}
 class zip_exception extends Exception {}
 class filesystem_exception extends Exception {}
 class checksum_exception extends Exception {}
+class invalid_setting_exception extends Exception {}
 
 
 // Various support classes /////////////////////////////////////////////////////
@@ -201,7 +207,6 @@ class input_manager extends singleton_pattern {
             array('', 'proxytype', input_manager::TYPE_RAW, 'Proxy type (HTTP or SOCKS5)'),
             array('', 'proxyuserpwd', input_manager::TYPE_RAW, 'Proxy username and password (e.g. \'username:password\')'),
             array('', 'returnurl', input_manager::TYPE_URL, 'Return URL (HTTP access only)'),
-            array('d', 'dataroot', input_manager::TYPE_PATH, 'Full path to the dataroot (moodledata) directory'),
             array('h', 'help', input_manager::TYPE_FLAG, 'Prints usage information'),
             array('i', 'install', input_manager::TYPE_FLAG, 'Installation mode'),
             array('m', 'md5', input_manager::TYPE_MD5, 'Expected MD5 hash of the ZIP package to deploy'),
@@ -729,6 +734,12 @@ class worker extends singleton_pattern {
     /** @var string the full path to the log file */
     private $logfile = null;
 
+    /** @var array the whitelisted config options which can be queried. */
+    private $validconfigoptions = array(
+        'dirroot'       => true,
+        'dataroot'      => true,
+    );
+
     /**
      * Main - the one that actually does something
      */
@@ -771,8 +782,13 @@ class worker extends singleton_pattern {
             }
             $this->log('MD5 checksum ok');
 
-            // Backup the current version of the plugin
+            // Check that the specified typeroot is within the current site's dirroot.
             $plugintyperoot = $this->input->get_option('typeroot');
+            if (strpos(realpath($plugintyperoot), realpath($this->get_env('dirroot'))) !== 0) {
+                throw new backup_folder_exception('Unable to backup the current version of the plugin (typeroot is invalid)');
+            }
+
+            // Backup the current version of the plugin
             $pluginname = $this->input->get_option('name');
             $sourcelocation = $plugintyperoot.'/'.$pluginname;
             $backuplocation = $this->backup_location($sourcelocation);
@@ -815,6 +831,10 @@ class worker extends singleton_pattern {
             $pluginname     = $this->input->get_option('name');
             $source         = $this->input->get_option('package');
             $md5remote      = $this->input->get_option('md5');
+
+            if (strpos(realpath($plugintyperoot), realpath($this->get_env('dirroot'))) !== 0) {
+                throw new backup_folder_exception('Unable to prepare the plugin location (typeroot is invalid)');
+            }
 
             // Check if the plugin location if available for us.
             $pluginlocation = $plugintyperoot.'/'.$pluginname;
@@ -909,17 +929,15 @@ class worker extends singleton_pattern {
      * @throws unauthorized_access_exception
      */
     protected function authorize() {
-
         if (PHP_SAPI === 'cli') {
             $this->log('Successfully authorized using the CLI SAPI');
             return;
         }
 
-        $dataroot = $this->input->get_option('dataroot');
         $passfile = $this->input->get_option('passfile');
         $password = $this->input->get_option('password');
 
-        $passpath = $dataroot.'/mdeploy/auth/'.$passfile;
+        $passpath = $this->get_env('dataroot') . '/mdeploy/auth/' . $passfile;
 
         if (!is_readable($passpath)) {
             throw new unauthorized_access_exception('Unable to read the passphrase file.');
@@ -959,12 +977,11 @@ class worker extends singleton_pattern {
      * @return string
      */
     protected function log_location() {
-
         if (!is_null($this->logfile)) {
             return $this->logfile;
         }
 
-        $dataroot = $this->input->get_option('dataroot', '');
+        $dataroot = $this->get_env('dataroot');
 
         if (empty($dataroot)) {
             $this->logfile = false;
@@ -988,8 +1005,7 @@ class worker extends singleton_pattern {
      * @return string
      */
     protected function target_location($source) {
-
-        $dataroot = $this->input->get_option('dataroot');
+        $dataroot = $this->get_env('dataroot');
         $pool = $dataroot.'/mdeploy/var';
 
         if (!is_dir($pool)) {
@@ -1013,8 +1029,7 @@ class worker extends singleton_pattern {
      * @return string
      */
     protected function backup_location($path) {
-
-        $dataroot = $this->input->get_option('dataroot');
+        $dataroot = $this->get_env('dataroot');
         $pool = $dataroot.'/mdeploy/archive';
 
         if (!is_dir($pool)) {
@@ -1130,11 +1145,31 @@ class worker extends singleton_pattern {
     }
 
     /**
+     * Fetch environment settings.
+     *
+     * @param string $key The key to fetch
+     * @return mixed The value of the key if found.
+     * @throws invalid_setting_exception if the option is not set, or is invalid.
+     */
+    protected function get_env($key) {
+        global $CFG;
+
+        if (array_key_exists($key, $this->validconfigoptions)) {
+            if (isset($CFG->$key)) {
+                return $CFG->$key;
+            }
+            throw new invalid_setting_exception("Requested environment setting '{$key}' is not currently set.");
+        } else {
+            throw new invalid_setting_exception("Requested environment setting '{$key}' is invalid.");
+        }
+    }
+
+    /**
      * Get the location of ca certificates.
      * @return string absolute file path or empty if default used
      */
     protected function get_cacert() {
-        $dataroot = $this->input->get_option('dataroot');
+        $dataroot = $this->get_env('dataroot');
 
         // Bundle in dataroot always wins.
         if (is_readable($dataroot.'/moodleorgca.crt')) {

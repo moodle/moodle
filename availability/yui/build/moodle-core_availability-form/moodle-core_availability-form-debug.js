@@ -731,6 +731,7 @@ M.core_availability.List.prototype.clickAdd = function() {
  */
 M.core_availability.List.prototype.getAddHandler = function(type, dialogRef) {
     return function() {
+        var newItem;
         if (type) {
             // Create an Item object to represent the child.
             newItem = new M.core_availability.Item({ type: type, creating: true }, this.root);
@@ -926,7 +927,7 @@ M.core_availability.Item = function(json, root) {
  * @return {Object} JavaScript object containing value of this item
  */
 M.core_availability.Item.prototype.getValue = function() {
-    value = { 'type' : this.pluginType };
+    var value = { 'type' : this.pluginType };
     if (this.plugin) {
         this.plugin.fillValue(value, this.pluginNode);
     }

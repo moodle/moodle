@@ -99,6 +99,18 @@ class lesson_page_type_multichoice extends lesson_page {
         $data->id = $PAGE->cm->id;
         $data->pageid = $this->properties->id;
         $mform->set_data($data);
+
+        // Trigger an event question viewed.
+        $eventparams = array(
+            'context' => context_module::instance($PAGE->cm->id),
+            'objectid' => $this->properties->id,
+            'other' => array(
+                    'pagetype' => $this->get_typestring()
+                )
+            );
+
+        $event = \mod_lesson\event\question_viewed::create($eventparams);
+        $event->trigger();
         return $mform->display();
     }
 
@@ -151,6 +163,7 @@ class lesson_page_type_multichoice extends lesson_page {
             $wronganswerid = 0;
             // store student's answers for displaying on feedback page
             $result->studentanswer = '';
+            $result->studentanswerformat = FORMAT_HTML;
             foreach ($answers as $answer) {
                 foreach ($studentanswers as $answerid) {
                     if ($answerid == $answer->id) {
@@ -353,6 +366,7 @@ class lesson_page_type_multichoice extends lesson_page {
         $answers = $this->get_used_answers();
         $formattextdefoptions = new stdClass;
         $formattextdefoptions->para = false;  //I'll use it widely in this page
+        $formattextdefoptions->context = $answerpage->context;
 
         foreach ($answers as $answer) {
             if ($this->properties->qoption) {
@@ -443,6 +457,8 @@ class lesson_add_page_form_multichoice extends lesson_add_page_form_base {
 
     public $qtype = 'multichoice';
     public $qtypestring = 'multichoice';
+    protected $answerformat = LESSON_ANSWER_HTML;
+    protected $responseformat = LESSON_ANSWER_HTML;
 
     public function custom_definition() {
 
@@ -452,7 +468,7 @@ class lesson_add_page_form_multichoice extends lesson_add_page_form_base {
 
         for ($i = 0; $i < $this->_customdata['lesson']->maxanswers; $i++) {
             $this->_form->addElement('header', 'answertitle'.$i, get_string('answer').' '.($i+1));
-            $this->add_answer($i, null, ($i<2));
+            $this->add_answer($i, null, ($i<2), $this->get_answer_format());
             $this->add_response($i);
             $this->add_jumpto($i, null, ($i == 0 ? LESSON_NEXTPAGE : LESSON_THISPAGE));
             $this->add_score($i, null, ($i===0)?1:0);
@@ -474,6 +490,9 @@ class lesson_display_answer_form_multichoice_singleanswer extends moodleform {
             $attempt = new stdClass();
             $attempt->answerid = null;
         }
+
+        // Disable shortforms.
+        $mform->setDisableShortforms();
 
         $mform->addElement('header', 'pageheader');
 
@@ -527,6 +546,9 @@ class lesson_display_answer_form_multichoice_multianswer extends moodleform {
 
         $lessonid = $this->_customdata['lessonid'];
         $contents = $this->_customdata['contents'];
+
+        // Disable shortforms.
+        $mform->setDisableShortforms();
 
         $mform->addElement('header', 'pageheader');
 

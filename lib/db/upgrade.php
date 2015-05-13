@@ -4113,5 +4113,267 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014120102.00);
     }
 
+    if ($oldversion < 2015010800.01) {
+
+        // Make sure the private files handler is not set to expire.
+        $DB->set_field('messageinbound_handlers', 'defaultexpiration', 0,
+                array('classname' => '\core\message\inbound\private_files_handler'));
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015010800.01);
+
+    }
+
+    if ($oldversion < 2015012600.00) {
+
+        // If the site is using internal and external storage, or just external
+        // storage, and the external path specified is empty we change the setting
+        // to internal only. That is how the backup code is handling this
+        // misconfiguration.
+        $storage = (int) get_config('backup', 'backup_auto_storage');
+        $folder = get_config('backup', 'backup_auto_destination');
+        if ($storage !== 0 && empty($folder)) {
+            set_config('backup_auto_storage', 0, 'backup');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015012600.00);
+    }
+
+    if ($oldversion < 2015012600.01) {
+
+        // Convert calendar_lookahead to nearest new value.
+        $value = $DB->get_field('config', 'value', array('name' => 'calendar_lookahead'));
+        if ($value > 90) {
+            set_config('calendar_lookahead', '120');
+        } else if ($value > 60 and $value < 90) {
+            set_config('calendar_lookahead', '90');
+        } else if ($value > 30 and $value < 60) {
+            set_config('calendar_lookahead', '60');
+        } else if ($value > 21 and $value < 30) {
+            set_config('calendar_lookahead', '30');
+        } else if ($value > 14 and $value < 21) {
+            set_config('calendar_lookahead', '21');
+        } else if ($value > 7 and $value < 14) {
+            set_config('calendar_lookahead', '14');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015012600.01);
+    }
+
+    if ($oldversion < 2015021100.00) {
+
+        // Define field timemodified to be added to registration_hubs.
+        $table = new xmldb_table('registration_hubs');
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'secret');
+
+        // Conditionally launch add field timemodified.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015021100.00);
+    }
+
+    if ($oldversion < 2015022401.00) {
+
+        // Define index useridfromto (not unique) to be added to message.
+        $table = new xmldb_table('message');
+        $index = new xmldb_index('useridfromto', XMLDB_INDEX_NOTUNIQUE, array('useridfrom', 'useridto'));
+
+        // Conditionally launch add index useridfromto.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index useridfromto (not unique) to be added to message_read.
+        $table = new xmldb_table('message_read');
+        $index = new xmldb_index('useridfromto', XMLDB_INDEX_NOTUNIQUE, array('useridfrom', 'useridto'));
+
+        // Conditionally launch add index useridfromto.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015022401.00);
+    }
+
+    if ($oldversion < 2015022500.00) {
+        $table = new xmldb_table('user_devices');
+        $index = new xmldb_index('uuid-userid', XMLDB_INDEX_NOTUNIQUE, array('uuid', 'userid'));
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+        upgrade_main_savepoint(true, 2015022500.00);
+    }
+
+    if ($oldversion < 2015030400.00) {
+        // We have long since switched to storing timemodified per hub rather than a single 'registered' timestamp.
+        unset_config('registered');
+        upgrade_main_savepoint(true, 2015030400.00);
+    }
+
+    if ($oldversion < 2015031100.00) {
+        // Unset old config variable.
+        unset_config('enabletgzbackups');
+
+        upgrade_main_savepoint(true, 2015031100.00);
+    }
+
+    if ($oldversion < 2015031400.00) {
+
+        // Define index useridfrom (not unique) to be dropped form message.
+        $table = new xmldb_table('message');
+        $index = new xmldb_index('useridfrom', XMLDB_INDEX_NOTUNIQUE, array('useridfrom'));
+
+        // Conditionally launch drop index useridfrom.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Define index useridfrom (not unique) to be dropped form message_read.
+        $table = new xmldb_table('message_read');
+        $index = new xmldb_index('useridfrom', XMLDB_INDEX_NOTUNIQUE, array('useridfrom'));
+
+        // Conditionally launch drop index useridfrom.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015031400.00);
+    }
+
+    if ($oldversion < 2015031900.01) {
+        unset_config('crontime', 'registration');
+        upgrade_main_savepoint(true, 2015031900.01);
+    }
+
+    if ($oldversion < 2015032000.00) {
+        $table = new xmldb_table('badge_criteria');
+
+        $field = new xmldb_field('description', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        // Conditionally add description field to the badge_criteria table.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('descriptionformat', XMLDB_TYPE_INTEGER, 2, null, XMLDB_NOTNULL, null, 0);
+        // Conditionally add description format field to the badge_criteria table.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2015032000.00);
+    }
+
+    if ($oldversion < 2015040200.01) {
+        // Force uninstall of deleted tool.
+        if (!file_exists("$CFG->dirroot/$CFG->admin/tool/timezoneimport")) {
+            // Remove capabilities.
+            capabilities_cleanup('tool_timezoneimport');
+            // Remove all other associated config.
+            unset_all_config_for_plugin('tool_timezoneimport');
+        }
+        upgrade_main_savepoint(true, 2015040200.01);
+    }
+
+    if ($oldversion < 2015040200.02) {
+        // Define table timezone to be dropped.
+        $table = new xmldb_table('timezone');
+        // Conditionally launch drop table for timezone.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        upgrade_main_savepoint(true, 2015040200.02);
+    }
+
+    if ($oldversion < 2015040200.03) {
+        if (isset($CFG->timezone) and $CFG->timezone == 99) {
+            // Migrate to real server timezone.
+            unset_config('timezone');
+        }
+        upgrade_main_savepoint(true, 2015040200.03);
+    }
+
+    if ($oldversion < 2015040700.01) {
+        $DB->delete_records('config_plugins', array('name' => 'requiremodintro'));
+        upgrade_main_savepoint(true, 2015040700.01);
+    }
+
+    if ($oldversion < 2015040900.01) {
+        // Add "My grades" to the user menu.
+        $oldconfig = get_config('core', 'customusermenuitems');
+        if (strpos("mygrades,grades|/grade/report/mygrades.php|grades", $oldconfig) === false) {
+            $newconfig = "mygrades,grades|/grade/report/mygrades.php|grades\n" . $CFG->customusermenuitems;
+            set_config('customusermenuitems', $newconfig);
+        }
+
+        upgrade_main_savepoint(true, 2015040900.01);
+    }
+
+    if ($oldversion < 2015040900.02) {
+        // Update the default user menu (add preferences, remove my files and my badges).
+        $oldconfig = get_config('core', 'customusermenuitems');
+
+        // Add "My preferences" at the end.
+        if (strpos($oldconfig, "mypreferences,moodle|/user/preference.php|preferences") === false) {
+            $newconfig = $oldconfig . "\nmypreferences,moodle|/user/preferences.php|preferences";
+        } else {
+            $newconfig = $oldconfig;
+        }
+        // Remove my files.
+        $newconfig = str_replace("myfiles,moodle|/user/files.php|download", "", $newconfig);
+        // Remove my badges.
+        $newconfig = str_replace("mybadges,badges|/badges/mybadges.php|award", "", $newconfig);
+        // Remove holes.
+        $newconfig = preg_replace('/\n+/', "\n", $newconfig);
+        $newconfig = preg_replace('/(\r\n)+/', "\n", $newconfig);
+        set_config('customusermenuitems', $newconfig);
+
+        upgrade_main_savepoint(true, 2015040900.02);
+    }
+
+    if ($oldversion < 2015050400.00) {
+        $config = get_config('core', 'customusermenuitems');
+
+        // Change "My preferences" in the user menu to "Preferences".
+        $config = str_replace("mypreferences,moodle|/user/preferences.php|preferences",
+            "preferences,moodle|/user/preferences.php|preferences", $config);
+
+        // Change "My grades" in the user menu to "Grades".
+        $config = str_replace("mygrades,grades|/grade/report/mygrades.php|grades",
+            "grades,grades|/grade/report/mygrades.php|grades", $config);
+
+        set_config('customusermenuitems', $config);
+
+        upgrade_main_savepoint(true, 2015050400.00);
+    }
+
+    if ($oldversion < 2015050401.00) {
+        // Make sure we have messages in the user menu because it's no longer in the nav tree.
+        $oldconfig = get_config('core', 'customusermenuitems');
+        $messagesconfig = "messages,message|/message/index.php|message";
+        $preferencesconfig = "preferences,moodle|/user/preferences.php|preferences";
+
+        // See if it exists.
+        if (strpos($oldconfig, $messagesconfig) === false) {
+            // See if preferences exists.
+            if (strpos($oldconfig, "preferences,moodle|/user/preferences.php|preferences") !== false) {
+                // Insert it before preferences.
+                $newconfig = str_replace($preferencesconfig, $messagesconfig . "\n" . $preferencesconfig, $oldconfig);
+            } else {
+                // Custom config - we can only insert it at the end.
+                $newconfig = $oldconfig . "\n" . $messagesconfig;
+            }
+            set_config('customusermenuitems', $newconfig);
+        }
+
+        upgrade_main_savepoint(true, 2015050401.00);
+    }
+
     return true;
 }

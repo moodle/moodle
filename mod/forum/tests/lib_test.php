@@ -1173,4 +1173,225 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->setExpectedException('coding_exception');
         forum_get_discussion_neighbours($cm2, $disc11);
     }
+
+    public function test_count_discussion_replies_basic() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+
+        // Count the discussion replies in the forum.
+        $result = forum_count_discussion_replies($forum->id);
+        $this->assertCount(10, $result);
+    }
+
+    public function test_count_discussion_replies_limited() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Adding limits shouldn't make a difference.
+        $result = forum_count_discussion_replies($forum->id, "", 20);
+        $this->assertCount(10, $result);
+    }
+
+    public function test_count_discussion_replies_paginated() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Adding paging shouldn't make any difference.
+        $result = forum_count_discussion_replies($forum->id, "", -1, 0, 100);
+        $this->assertCount(10, $result);
+    }
+
+    public function test_count_discussion_replies_paginated_sorted() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Specifying the forumsort should also give a good result. This follows a different path.
+        $result = forum_count_discussion_replies($forum->id, "d.id asc", -1, 0, 100);
+        $this->assertCount(10, $result);
+        foreach ($result as $row) {
+            // Grab the first discussionid.
+            $discussionid = array_shift($discussionids);
+            $this->assertEquals($discussionid, $row->discussion);
+        }
+    }
+
+    public function test_count_discussion_replies_limited_sorted() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Adding limits, and a forumsort shouldn't make a difference.
+        $result = forum_count_discussion_replies($forum->id, "d.id asc", 20);
+        $this->assertCount(10, $result);
+        foreach ($result as $row) {
+            // Grab the first discussionid.
+            $discussionid = array_shift($discussionids);
+            $this->assertEquals($discussionid, $row->discussion);
+        }
+    }
+
+    public function test_count_discussion_replies_paginated_sorted_small() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Grabbing a smaller subset and they should be ordered as expected.
+        $result = forum_count_discussion_replies($forum->id, "d.id asc", -1, 0, 5);
+        $this->assertCount(5, $result);
+        foreach ($result as $row) {
+            // Grab the first discussionid.
+            $discussionid = array_shift($discussionids);
+            $this->assertEquals($discussionid, $row->discussion);
+        }
+    }
+
+    public function test_count_discussion_replies_paginated_sorted_small_reverse() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Grabbing a smaller subset and they should be ordered as expected.
+        $result = forum_count_discussion_replies($forum->id, "d.id desc", -1, 0, 5);
+        $this->assertCount(5, $result);
+        foreach ($result as $row) {
+            // Grab the last discussionid.
+            $discussionid = array_pop($discussionids);
+            $this->assertEquals($discussionid, $row->discussion);
+        }
+    }
+
+    public function test_count_discussion_replies_limited_sorted_small_reverse() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        // Adding limits, and a forumsort shouldn't make a difference.
+        $result = forum_count_discussion_replies($forum->id, "d.id desc", 5);
+        $this->assertCount(5, $result);
+        foreach ($result as $row) {
+            // Grab the last discussionid.
+            $discussionid = array_pop($discussionids);
+            $this->assertEquals($discussionid, $row->discussion);
+        }
+    }
+
+    public function test_forum_view() {
+        global $CFG;
+
+        $CFG->enablecompletion = 1;
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id),
+                                                            array('completion' => 2, 'completionview' => 1));
+        $context = context_module::instance($forum->cmid);
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $this->setAdminUser();
+        forum_view($forum, $course, $cm, $context);
+
+        $events = $sink->get_events();
+        // 2 additional events thanks to completion.
+        $this->assertCount(3, $events);
+        $event = array_pop($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_forum\event\course_module_viewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
+        $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+        // Check completion status.
+        $completion = new completion_info($course);
+        $completiondata = $completion->get_data($cm);
+        $this->assertEquals(1, $completiondata->completionstate);
+
+    }
+
+    /**
+     * Test forum_discussion_view.
+     */
+    public function test_forum_discussion_view() {
+        global $CFG, $USER;
+
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $discussion = $this->create_single_discussion_with_replies($forum, $USER, 2);
+
+        $context = context_module::instance($forum->cmid);
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $this->setAdminUser();
+        forum_discussion_view($context, $forum, $discussion);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_pop($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_forum\event\discussion_viewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'view discussion', "discuss.php?d={$discussion->id}",
+            $discussion->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+
+        $this->assertNotEmpty($event->get_name());
+
+    }
+
+    /**
+     * Create a new course, forum, and user with a number of discussions and replies.
+     *
+     * @param int $discussioncount The number of discussions to create
+     * @param int $replycount The number of replies to create in each discussion
+     * @return array Containing the created forum object, and the ids of the created discussions.
+     */
+    protected function create_multiple_discussions_with_replies($discussioncount, $replycount) {
+        $this->resetAfterTest();
+
+        // Setup the content.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $record = new stdClass();
+        $record->course = $course->id;
+        $forum = $this->getDataGenerator()->create_module('forum', $record);
+
+        // Create 10 discussions with replies.
+        $discussionids = array();
+        for ($i = 0; $i < $discussioncount; $i++) {
+            $discussion = $this->create_single_discussion_with_replies($forum, $user, $replycount);
+            $discussionids[] = $discussion->id;
+        }
+        return array($forum, $discussionids);
+    }
+
+    /**
+     * Create a discussion with a number of replies.
+     *
+     * @param object $forum The forum which has been created
+     * @param object $user The user making the discussion and replies
+     * @param int $replycount The number of replies
+     * @return object $discussion
+     */
+    protected function create_single_discussion_with_replies($forum, $user, $replycount) {
+        global $DB;
+
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_forum');
+
+        $record = new stdClass();
+        $record->course = $forum->course;
+        $record->forum = $forum->id;
+        $record->userid = $user->id;
+        $discussion = $generator->create_discussion($record);
+
+        // Retrieve the first post.
+        $replyto = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
+
+        // Create the replies.
+        $post = new stdClass();
+        $post->userid = $user->id;
+        $post->discussion = $discussion->id;
+        $post->parent = $replyto->id;
+
+        for ($i = 0; $i < $replycount; $i++) {
+            $generator->create_post($post);
+        }
+
+        return $discussion;
+    }
+
 }

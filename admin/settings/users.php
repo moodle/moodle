@@ -157,6 +157,7 @@ if ($hassiteconfig
                        array('description' => new lang_string('description'),
                              'city' => new lang_string('city'),
                              'country' => new lang_string('country'),
+                             'timezone' => new lang_string('timezone'),
                              'webpage' => new lang_string('webpage'),
                              'icqnumber' => new lang_string('icqnumber'),
                              'skypeid' => new lang_string('skypeid'),

@@ -361,3 +361,58 @@ function imscp_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $modulepagetype = array('mod-imscp-*' => get_string('page-mod-imscp-x', 'imscp'));
     return $modulepagetype;
 }
+
+/**
+ * Export imscp resource contents
+ *
+ * @param  stdClass $cm     Course module object
+ * @param  string $baseurl  Base URL for file downloads
+ * @return array of file content
+ */
+function imscp_export_contents($cm, $baseurl) {
+    global $DB;
+
+    $contents = array();
+    $context = context_module::instance($cm->id);
+
+    $imscp = $DB->get_record('imscp', array('id' => $cm->instance), '*', MUST_EXIST);
+
+    // We export the IMSCP structure as json encoded string.
+    $structure = array();
+    $structure['type']         = 'content';
+    $structure['filename']     = 'structure';
+    $structure['filepath']     = '/';
+    $structure['filesize']     = 0;
+    $structure['fileurl']      = null;
+    $structure['timecreated']  = $imscp->timemodified;
+    $structure['timemodified'] = $imscp->timemodified;
+    $structure['content']      = json_encode(unserialize($imscp->structure));
+    $structure['sortorder']    = 0;
+    $structure['userid']       = null;
+    $structure['author']       = null;
+    $structure['license']      = null;
+    $contents[] = $structure;
+
+    // Area files.
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'mod_imscp', 'content', $imscp->revision, 'id ASC', false);
+    foreach ($files as $fileinfo) {
+        $file = array();
+        $file['type']         = 'file';
+        $file['filename']     = $fileinfo->get_filename();
+        $file['filepath']     = $fileinfo->get_filepath();
+        $file['filesize']     = $fileinfo->get_filesize();
+        $file['fileurl']      = moodle_url::make_webservice_pluginfile_url(
+                                    $context->id, 'mod_imscp', 'content', $imscp->revision,
+                                    $fileinfo->get_filepath(), $fileinfo->get_filename())->out(false);
+        $file['timecreated']  = $fileinfo->get_timecreated();
+        $file['timemodified'] = $fileinfo->get_timemodified();
+        $file['sortorder']    = $fileinfo->get_sortorder();
+        $file['userid']       = $fileinfo->get_userid();
+        $file['author']       = $fileinfo->get_author();
+        $file['license']      = $fileinfo->get_license();
+        $contents[] = $file;
+    }
+
+    return $contents;
+}

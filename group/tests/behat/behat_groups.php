@@ -40,7 +40,7 @@ use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 class behat_groups extends behat_base {
 
     /**
-     * Add the specified user to the group. You should be in the groups page when running this step. The user should be specified like "Firstname Lastname (user@email.com)".
+     * Add the specified user to the group. You should be in the groups page when running this step. The user should be specified like "Firstname Lastname (user@example.com)".
      *
      * @Given /^I add "(?P<user_fullname_string>(?:[^"]|\\")*)" user to "(?P<group_name_string>(?:[^"]|\\")*)" group members$/
      * @throws ElementNotFoundException Thrown by behat_base::find

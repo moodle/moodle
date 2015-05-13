@@ -285,4 +285,92 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
             $this->assertEquals($dbgroup->courseid, $groupcourseid);
         }
     }
+
+    /**
+     * Test get_groups
+     */
+    public function test_get_course_user_groups() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $student1 = self::getDataGenerator()->create_user();
+        $student2 = self::getDataGenerator()->create_user();
+        $teacher = self::getDataGenerator()->create_user();
+
+        $course = self::getDataGenerator()->create_course();
+        $emptycourse = self::getDataGenerator()->create_course();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id, $studentrole->id);
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id, $studentrole->id);
+
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+        $this->getDataGenerator()->enrol_user($teacher->id, $emptycourse->id, $teacherrole->id);
+
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Group Test 1';
+        $group1data['description'] = 'Group Test 1 description';
+        $group2data = array();
+        $group2data['courseid'] = $course->id;
+        $group2data['name'] = 'Group Test 2';
+        $group2data['description'] = 'Group Test 2 description';
+        $group1 = self::getDataGenerator()->create_group($group1data);
+        $group2 = self::getDataGenerator()->create_group($group2data);
+
+        groups_add_member($group1->id, $student1->id);
+        groups_add_member($group1->id, $student2->id);
+        groups_add_member($group2->id, $student1->id);
+
+        $this->setUser($student1);
+
+        $groups = core_group_external::get_course_user_groups($course->id, $student1->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that I see my groups.
+        $this->assertCount(2, $groups['groups']);
+
+        $this->setUser($student2);
+        $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that I see my groups.
+        $this->assertCount(1, $groups['groups']);
+
+        $this->assertEquals($group1data['name'], $groups['groups'][0]['name']);
+        $this->assertEquals($group1data['description'], $groups['groups'][0]['description']);
+
+        $this->setUser($teacher);
+        $groups = core_group_external::get_course_user_groups($course->id, $student1->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that a teacher can see student groups.
+        $this->assertCount(2, $groups['groups']);
+
+        $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        // Check that a teacher can see student groups.
+        $this->assertCount(1, $groups['groups']);
+
+        // Check permissions.
+        $this->setUser($student1);
+        try {
+            $groups = core_group_external::get_course_user_groups($course->id, $student2->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('accessdenied', $e->errorcode);
+        }
+
+        try {
+            $groups = core_group_external::get_course_user_groups($emptycourse->id, $student2->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        $this->setUser($teacher);
+        // Check warnings.
+        $groups = core_group_external::get_course_user_groups($emptycourse->id, $student1->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_course_user_groups_returns(), $groups);
+        $this->assertCount(1, $groups['warnings']);
+
+    }
+
 }

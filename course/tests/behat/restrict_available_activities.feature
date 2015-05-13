@@ -7,7 +7,7 @@ Feature: Restrict activities availability
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category | format |
       | Course 1 | C1 | 0 | topics |
@@ -34,7 +34,7 @@ Feature: Restrict activities availability
     Given I log in as "admin"
     And I set the following system permissions of "Teacher" role:
       | mod/chat:addinstance | Prohibit |
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Permissions"

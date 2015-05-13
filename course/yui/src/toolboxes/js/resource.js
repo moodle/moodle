@@ -139,7 +139,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             case 'groupsvisible':
             case 'groupsnone':
                 // The user is changing the group mode.
-                callback = 'change_groupmode';
                 this.change_groupmode(ev, node, activity, action);
                 break;
             case 'move':
@@ -569,7 +568,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
 
             // Force the editing instruction to match the mod-indent position.
             var padside = 'left';
-            if (right_to_left()) {
+            if (window.right_to_left()) {
                 padside = 'right';
             }
 

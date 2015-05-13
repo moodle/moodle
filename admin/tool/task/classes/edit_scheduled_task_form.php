@@ -38,10 +38,15 @@ class tool_task_edit_scheduled_task_form extends moodleform {
         /** @var \core\task\scheduled_task $task */
         $task = $this->_customdata;
 
+        $plugininfo = core_plugin_manager::instance()->get_plugin_info($task->get_component());
+        $plugindisabled = $plugininfo && $plugininfo->is_enabled() === false && !$task->get_run_if_component_disabled();
+
         $lastrun = $task->get_last_run_time() ? userdate($task->get_last_run_time()) : get_string('never');
         $nextrun = $task->get_next_run_time();
-        if ($task->get_disabled()) {
-            $nextrun = get_string('disabled', 'tool_task');
+        if ($plugindisabled) {
+            $nextrun = get_string('plugindisabled', 'tool_task');
+        } else if ($task->get_disabled()) {
+            $nextrun = get_string('taskdisabled', 'tool_task');
         } else if ($nextrun > time()) {
             $nextrun = userdate($nextrun);
         } else {
@@ -53,27 +58,22 @@ class tool_task_edit_scheduled_task_form extends moodleform {
         $mform->addElement('text', 'minute', get_string('taskscheduleminute', 'tool_task'));
         $mform->setType('minute', PARAM_RAW);
         $mform->addHelpButton('minute', 'taskscheduleminute', 'tool_task');
-        $mform->addRule('minute', get_string('required'), 'required');
 
         $mform->addElement('text', 'hour', get_string('taskschedulehour', 'tool_task'));
         $mform->setType('hour', PARAM_RAW);
         $mform->addHelpButton('hour', 'taskschedulehour', 'tool_task');
-        $mform->addRule('hour', get_string('required'), 'required');
 
         $mform->addElement('text', 'day', get_string('taskscheduleday', 'tool_task'));
         $mform->setType('day', PARAM_RAW);
         $mform->addHelpButton('day', 'taskscheduleday', 'tool_task');
-        $mform->addRule('day', get_string('required'), 'required');
 
         $mform->addElement('text', 'month', get_string('taskschedulemonth', 'tool_task'));
         $mform->setType('month', PARAM_RAW);
         $mform->addHelpButton('month', 'taskschedulemonth', 'tool_task');
-        $mform->addRule('month', get_string('required'), 'required');
 
         $mform->addElement('text', 'dayofweek', get_string('taskscheduledayofweek', 'tool_task'));
         $mform->setType('dayofweek', PARAM_RAW);
         $mform->addHelpButton('dayofweek', 'taskscheduledayofweek', 'tool_task');
-        $mform->addRule('dayofweek', get_string('required'), 'required');
 
         $mform->addElement('advcheckbox', 'disabled', get_string('disabled', 'tool_task'));
         $mform->addHelpButton('disabled', 'disabled', 'tool_task');

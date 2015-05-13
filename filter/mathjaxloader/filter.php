@@ -143,7 +143,7 @@ class filter_mathjaxloader extends moodle_text_filter {
             $text = str_replace('[tex]', '\\(', $text);
             $text = str_replace('[/tex]', '\\)', $text);
             // E.g. "$$ blah $$".
-            $text = preg_replace('|\$\$[\S\s]\$\$|u', '\\(\1\\)', $text);
+            $text = preg_replace('|\$\$([\S\s]*?)\$\$|u', '\\(\1\\)', $text);
             // E.g. "\[ blah \]".
             $text = str_replace('\\[', '\\(', $text);
             $text = str_replace('\\]', '\\)', $text);

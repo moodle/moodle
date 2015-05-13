@@ -43,6 +43,7 @@ $string['eventnotesviewed'] = 'Notes viewed';
 $string['groupaddnewnote'] = 'Add a common note';
 $string['invalidid'] = 'Invalid note ID specified';
 $string['invaliduserid'] = 'Invalid user id: {$a}';
+$string['myprofileownnotes'] = 'My notes';
 $string['nocontent'] = 'Note content can not be empty';
 $string['nonotes'] = 'There are no notes of this type yet';
 $string['nopermissiontodelete'] = 'You may not delete this note';

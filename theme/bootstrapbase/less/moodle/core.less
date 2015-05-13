@@ -16,6 +16,7 @@
     display:none;
 }
 
+/** Start Legacy styles. Deprecated since Moodle 2.9. See MDL-48160 for further information. **/
 .content-only #region-main.span9, // Two column layout with no block or all blocks docked.
 .empty-region-side-post #region-bs-main-and-pre.span9, // LTR with no post area.
 .empty-region-side-pre #region-bs-main-and-post.span9, // RTL with no pre area.
@@ -28,25 +29,70 @@
 
 .empty-region-side-pre #region-bs-main-and-pre.span9 #region-main, // LTR with no pre area.
 .jsenabled.docked-region-side-pre #region-bs-main-and-pre.span9 #region-main { // LTR with all pre blocks docked.
-    float:none;
-    width:100%;
-}
-
-.empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
-.jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
-    #region-main.span8 {
-        /** Increase the span size by 1 **/
-        .fluid-span(9);
-    }
-    #block-region-side-pre.span4 {
-        /** Decrease the span size by 1 **/
-        .fluid-span(3);
-    }
+    float: none;
+    width: 100%;
 }
 
 .empty-region-side-pre #region-bs-main-and-post.span9 #region-main.span8, // RTL with no pre area.
 .jsenabled.docked-region-side-pre #region-bs-main-and-post.span9 #region-main.span8 { // RTL with all pre blocks docked.
     float: right;
+}
+/** End Legacy styles **/
+
+
+/* Default Three Columns - All
+------------------------------*/
+
+.content-only {
+    #region-main-box,
+    #region-main {
+        width: 100%;
+    }
+}
+.empty-region-side-pre {
+    &.used-region-side-post {
+        #region-main {
+            width: 100%;
+        }
+    }
+}
+.empty-region-side-post {
+    &.used-region-side-pre {
+        #region-main-box {
+            width: 100%;
+        }
+    }
+}
+.jsenabled {
+    &.docked-region-side-pre {
+        &.empty-region-side-pre {
+            &.used-region-side-post {
+                #region-main {
+                    width: 100%;
+                }
+            }
+        }
+    }
+    &.docked-region-side-post {
+        &.empty-region-side-post {
+            &.used-region-side-pre {
+                #region-main-box {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+.empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
+.jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
+    #region-main.span8 {
+    /** Increase the span size by 1 **/
+        .fluid-span(9);
+    }
+    #block-region-side-pre.span4 {
+    /** Decrease the span size by 1 **/
+        .fluid-span(3);
+    }
 }
 
 /** Page layout CSS ends **/
@@ -1857,6 +1903,12 @@ a.criteria-action {
     padding: 0px 3px;
     float: right;
 }
+div.criteria-description {
+    padding: 10px 15px;
+    margin: 5px 0px;
+    background: none repeat scroll 0 0 #f9f9f9;
+    border: 1px solid #EEE;
+}
 ul.badges {
     margin: 0;
     list-style: none;
@@ -2035,6 +2087,75 @@ img#persona_signin {
 }
 .breadcrumb-nav .breadcrumb {
     margin: 0;
+}
+
+/** Header-bar styles **/
+.page-context-header {
+    // We need to be explicit about the height of the header.
+    @pageHeaderHeight: 140px;
+
+    // Do not remove these rules.
+    overflow: hidden;
+
+    .page-header-image,
+    .page-header-headings {
+        display: block;
+        position: relative;
+    }
+    .page-header-image {
+        margin-bottom: 1em;
+        z-index: 1;
+
+    }
+    .page-header-headings {
+        margin-top: 30px;
+        margin-bottom: 10px;
+
+        h1 {
+            display: block;
+        }
+    }
+
+    .page-header-headings,
+    .header-button-group {
+        position: relative;
+        line-height: 24px;
+        vertical-align: middle;
+    }
+
+    .header-button-group {
+        display: block;
+
+        a {
+            position: relative;
+
+            // Don't touch it unless you know exactly what you are doing.
+            top: -0.4em;
+        }
+    }
+}
+
+.dir-ltr .page-context-header {
+    .page-header-image {
+        float: left;
+        margin-right: 1em;
+    }
+
+    .header-button-group{
+        float: right;
+    }
+}
+
+.dir-rtl .page-context-header {
+    .page-header-image {
+        float: right;
+        margin-left: 1em;
+    }
+
+    .header-button-group{
+        float: left;
+        right: -15px;
+    }
 }
 
 /** Action menu component styles **/
@@ -2255,7 +2376,7 @@ body.lockscroll {
 .dir-rtl {
     // Bootstrap sets right margin to 0. Fail.
     // They set left margin to 25px so we will copy that.
-    ul, ol {
+    ul {
         margin-left: 0;
         margin-right: 25px;
     }

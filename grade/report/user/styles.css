@@ -19,6 +19,12 @@
     min-width: 4.5em;
     vertical-align: top;
 }
+.dir-rtl.path-grade-report-user .user-grade td {
+    direction: ltr;
+}
+.dir-rtl.path-grade-report-user table.user-grade {
+    border-collapse: separate;
+}
 .path-grade-report-user .user-grade .b1l {
     padding: 0;
     width:24px;

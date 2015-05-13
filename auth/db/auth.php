@@ -168,7 +168,15 @@ class auth_plugin_db extends auth_plugin_base {
      */
     function db_attributes() {
         $moodleattributes = array();
-        foreach ($this->userfields as $field) {
+        // If we have custom fields then merge them with user fields.
+        $customfields = $this->get_custom_user_profile_fields();
+        if (!empty($customfields) && !empty($this->userfields)) {
+            $userfields = array_merge($this->userfields, $customfields);
+        } else {
+            $userfields = $this->userfields;
+        }
+
+        foreach ($userfields as $field) {
             if (!empty($this->config->{"field_map_$field"})) {
                 $moodleattributes[$field] = $this->config->{"field_map_$field"};
             }
@@ -210,7 +218,7 @@ class auth_plugin_db extends auth_plugin_base {
                     $fields_obj = $rs->FetchObj();
                     $fields_obj = (object)array_change_key_case((array)$fields_obj , CASE_LOWER);
                     foreach ($selectfields as $localname=>$externalname) {
-                        $result[$localname] = core_text::convert($fields_obj->{$localname}, $this->config->extencoding, 'utf-8');
+                        $result[$localname] = core_text::convert($fields_obj->{strtolower($localname)}, $this->config->extencoding, 'utf-8');
                      }
                  }
                  $rs->Close();
@@ -603,6 +611,10 @@ class auth_plugin_db extends auth_plugin_base {
                 continue;
             }
             $nuvalue = $newuser->$key;
+            // Support for textarea fields.
+            if (isset($nuvalue['text'])) {
+                $nuvalue = $nuvalue['text'];
+            }
             if ($nuvalue != $value) {
                 $update[] = $this->config->{"field_map_$key"}."='".$this->ext_addslashes(core_text::convert($nuvalue, 'utf-8', $this->config->extencoding))."'";
             }

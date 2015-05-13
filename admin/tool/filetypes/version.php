@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2014112700;
-$plugin->requires = 2014112700;
+$plugin->version = 2015051100;
+$plugin->requires = 2015050500;
 $plugin->component = 'tool_filetypes';

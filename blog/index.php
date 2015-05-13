@@ -57,9 +57,27 @@ if (!empty($tag)) {
     }
 }
 
+// Set the userid to the entry author if we have the entry ID.
+if ($entryid and !isset($userid)) {
+    $entry = new blog_entry($entryid);
+    $userid = $entry->userid;
+}
+
+if (isset($userid) && !isset($courseid)) {
+    $context = context_user::instance($userid);
+} else if (isset($courseid) && $courseid != SITEID) {
+    $context = context_course::instance($courseid);
+} else {
+    $context = context_system::instance();
+}
+$PAGE->set_context($context);
+
 $sitecontext = context_system::instance();
-// Blogs are always in system context.
-$PAGE->set_context($sitecontext);
+
+if (isset($userid) && $USER->id == $userid) {
+    $blognode = $PAGE->navigation->find('siteblog', null);
+    $blognode->make_inactive();
+}
 
 // Check basic permissions.
 if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
@@ -226,7 +244,30 @@ if ($CFG->enablerssfeeds) {
     }
 }
 
-echo $OUTPUT->header();
+$usernode = $PAGE->navigation->find('user'.$userid, null);
+if ($usernode && $courseid != SITEID) {
+    $courseblogsnode = $PAGE->navigation->find('courseblogs', null);
+    if ($courseblogsnode) {
+        $courseblogsnode->remove();
+    }
+    $blogurl = new moodle_url($PAGE->url);
+    $blognode = $usernode->add(get_string('blogscourse', 'blog'), $blogurl);
+    $blognode->make_active();
+}
+
+if ($courseid != SITEID) {
+    $PAGE->set_heading($course->fullname);
+    echo $OUTPUT->header();
+    if (!empty($user)) {
+        $headerinfo = array('heading' => fullname($user), 'user' => $user);
+        echo $OUTPUT->context_header($headerinfo, 2);
+    }
+} else if (isset($userid)) {
+    $PAGE->set_heading(fullname($user));
+    echo $OUTPUT->header();
+} else if ($courseid == SITEID) {
+    echo $OUTPUT->header();
+}
 
 echo $OUTPUT->heading($blogheaders['heading'], 2);
 

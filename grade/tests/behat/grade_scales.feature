@@ -21,12 +21,12 @@ Feature: View gradebook when scales are used
       | Course 1 | C1        |
     And the following "users" exist:
       | username | firstname | lastname | email            | idnumber |
-      | teacher1 | Teacher   | 1        | teacher1@asd.com | t1       |
-      | student1 | Student   | 1        | student1@asd.com | s1       |
-      | student2 | Student   | 2        | student2@asd.com | s2       |
-      | student3 | Student   | 3        | student3@asd.com | s3       |
-      | student4 | Student   | 4        | student4@asd.com | s4       |
-      | student5 | Student   | 5        | student5@asd.com | s5       |
+      | teacher1 | Teacher   | 1        | teacher1@example.com | t1       |
+      | student1 | Student   | 1        | student1@example.com | s1       |
+      | student2 | Student   | 2        | student2@example.com | s2       |
+      | student3 | Student   | 3        | student3@example.com | s3       |
+      | student4 | Student   | 4        | student4@example.com | s4       |
+      | student5 | Student   | 5        | student5@example.com | s5       |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
@@ -62,7 +62,7 @@ Feature: View gradebook when scales are used
     And I set the field "Grade" to "F"
     And I press "Save changes"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
@@ -100,8 +100,8 @@ Feature: View gradebook when scales are used
       | Course total        | 5.00      |
     And I log out
     And I log in as "student2"
+    And I follow "Grades" in the user menu
     And I follow "Course 1"
-    And I follow "Grades"
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage | Contribution to course total |
       | Test assignment one | B     | F–A   | 75.00 %    | 80.00 %                      |
@@ -148,8 +148,8 @@ Feature: View gradebook when scales are used
       | Course total<aggregation>.   |           |
     And I log out
     And I log in as "student2"
+    And I follow "Grades" in the user menu
     And I follow "Course 1"
-    And I follow "Grades"
     And the following should exist in the "user-grade" table:
       | Grade item                   | Grade          | Range | Percentage    | Contribution to course total |
       | Test assignment one          | B              | F–A   | 75.00 %       | <contrib2>                   |

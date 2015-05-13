@@ -24,7 +24,9 @@ Y.extend(AUTOLINKER, Y.Base, {
 
             //display a progress indicator
             var title = '',
-                content = Y.Node.create('<div id="glossaryfilteroverlayprogress"><img src="'+M.cfg.loadingicon+'" class="spinner" /></div>'),
+                content = Y.Node.create('<div id="glossaryfilteroverlayprogress">' +
+                                        '<img src="' + M.cfg.loadingicon + '" class="spinner" />' +
+                                        '</div>'),
                 o = new Y.Overlay({
                     headerContent :  title,
                     bodyContent : content
@@ -59,7 +61,8 @@ Y.extend(AUTOLINKER, Y.Base, {
     display_callback : function(content) {
         var data,
             key,
-            alertpanel;
+            alertpanel,
+            definition;
         try {
             data = Y.JSON.parse(content);
             if (data.success){

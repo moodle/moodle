@@ -440,6 +440,160 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
 
     }
 
+    public function test_add_to_group() {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot.'/group/lib.php');
+
+        $this->resetAfterTest(true);
+
+        $metalplugin = enrol_get_plugin('meta');
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+        $manualenrol1 = $DB->get_record('enrol', array('courseid' => $course1->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+        $manualenrol2 = $DB->get_record('enrol', array('courseid' => $course2->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+
+        $student = $DB->get_record('role', array('shortname' => 'student'));
+        $teacher = $DB->get_record('role', array('shortname' => 'teacher'));
+
+        $id = groups_create_group((object)array('name' => 'Group 1 in course 3', 'courseid' => $course3->id));
+        $group31 = $DB->get_record('groups', array('id' => $id), '*', MUST_EXIST);
+        $id = groups_create_group((object)array('name' => 'Group 2 in course 4', 'courseid' => $course3->id));
+        $group32 = $DB->get_record('groups', array('id' => $id), '*', MUST_EXIST);
+
+        $this->enable_plugin();
+
+        $e1 = $metalplugin->add_instance($course3, array('customint1' => $course1->id, 'customint2' => $group31->id));
+        $e2 = $metalplugin->add_instance($course3, array('customint1' => $course2->id, 'customint2' => $group32->id));
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, $student->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course1->id, $teacher->id);
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id, $student->id);
+
+        // Now make sure users are in the correct groups.
+        $this->assertTrue(groups_is_member($group31->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $group31->id, 'userid' => $user1->id,
+            'component' => 'enrol_meta', 'itemid' => $e1)));
+        $this->assertTrue(groups_is_member($group32->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $group32->id, 'userid' => $user1->id,
+            'component' => 'enrol_meta', 'itemid' => $e2)));
+
+        $this->assertTrue(groups_is_member($group31->id, $user4->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $group31->id, 'userid' => $user4->id,
+            'component' => 'enrol_meta', 'itemid' => $e1)));
+
+        // Make sure everything is the same after sync.
+        enrol_meta_sync(null, false);
+        $this->assertTrue(groups_is_member($group31->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $group31->id, 'userid' => $user1->id,
+            'component' => 'enrol_meta', 'itemid' => $e1)));
+        $this->assertTrue(groups_is_member($group32->id, $user1->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $group32->id, 'userid' => $user1->id,
+            'component' => 'enrol_meta', 'itemid' => $e2)));
+
+        $this->assertTrue(groups_is_member($group31->id, $user4->id));
+        $this->assertTrue($DB->record_exists('groups_members', array('groupid' => $group31->id, 'userid' => $user4->id,
+            'component' => 'enrol_meta', 'itemid' => $e1)));
+
+        set_config('unenrolaction', ENROL_EXT_REMOVED_UNENROL, 'enrol_meta');
+
+        // When user 1 is unenrolled from course1, he is removed from group31 but still present in group32.
+        enrol_get_plugin('manual')->unenrol_user($manualenrol1, $user1->id);
+        $this->assertFalse(groups_is_member($group31->id, $user1->id));
+        $this->assertTrue(groups_is_member($group32->id, $user1->id));
+        $this->assertTrue(is_enrolled(context_course::instance($course3->id), $user1, '', true)); // He still has active enrolment.
+        // And the same after sync.
+        enrol_meta_sync(null, false);
+        $this->assertFalse(groups_is_member($group31->id, $user1->id));
+        $this->assertTrue(groups_is_member($group32->id, $user1->id));
+        $this->assertTrue(is_enrolled(context_course::instance($course3->id), $user1, '', true));
+
+        // Unenroll user1 from course2 and make sure he is completely unenrolled from course3.
+        enrol_get_plugin('manual')->unenrol_user($manualenrol2, $user1->id);
+        $this->assertFalse(groups_is_member($group32->id, $user1->id));
+        $this->assertFalse(is_enrolled(context_course::instance($course3->id), $user1));
+
+        set_config('unenrolaction', ENROL_EXT_REMOVED_SUSPENDNOROLES, 'enrol_meta');
+
+        // When user is unenrolled in this case, he is still a member of a group (but enrolment is suspended).
+        enrol_get_plugin('manual')->unenrol_user($manualenrol1, $user4->id);
+        $this->assertTrue(groups_is_member($group31->id, $user4->id));
+        $this->assertTrue(is_enrolled(context_course::instance($course3->id), $user4));
+        $this->assertFalse(is_enrolled(context_course::instance($course3->id), $user4, '', true));
+        enrol_meta_sync(null, false);
+        $this->assertTrue(groups_is_member($group31->id, $user4->id));
+        $this->assertTrue(is_enrolled(context_course::instance($course3->id), $user4));
+        $this->assertFalse(is_enrolled(context_course::instance($course3->id), $user4, '', true));
+    }
+
+    /**
+     * Enrol users from another course into a course where one of the members is already enrolled
+     * and is a member of the same group.
+     */
+    public function test_add_to_group_with_member() {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot.'/group/lib.php');
+
+        $this->resetAfterTest(true);
+
+        $metalplugin = enrol_get_plugin('meta');
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $manualenrol1 = $DB->get_record('enrol', array('courseid' => $course1->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+        $manualenrol2 = $DB->get_record('enrol', array('courseid' => $course2->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+
+        $student = $DB->get_record('role', array('shortname' => 'student'));
+
+        $groupid = groups_create_group((object)array('name' => 'Grp', 'courseid' => $course2->id));
+
+        $this->enable_plugin();
+        set_config('unenrolaction', ENROL_EXT_REMOVED_UNENROL, 'enrol_meta');
+
+        // Manually enrol user1 to course2 and add him to group.
+        // Manually enrol user2 to course2 but do not add him to the group.
+        enrol_get_plugin('manual')->enrol_user($manualenrol2, $user1->id, $student->id);
+        groups_add_member($groupid, $user1->id);
+        enrol_get_plugin('manual')->enrol_user($manualenrol2, $user2->id, $student->id);
+        $this->assertTrue(groups_is_member($groupid, $user1->id));
+        $this->assertFalse(groups_is_member($groupid, $user2->id));
+
+        // Add instance of meta enrolment in course2 linking to course1 and enrol both users in course1.
+        $metalplugin->add_instance($course2, array('customint1' => $course1->id, 'customint2' => $groupid));
+
+        enrol_get_plugin('manual')->enrol_user($manualenrol1, $user1->id, $student->id);
+        enrol_get_plugin('manual')->enrol_user($manualenrol1, $user2->id, $student->id);
+
+        // Both users now should be members of the group.
+        $this->assertTrue(groups_is_member($groupid, $user1->id));
+        $this->assertTrue(groups_is_member($groupid, $user2->id));
+
+        // Ununerol both users from course1.
+        enrol_get_plugin('manual')->unenrol_user($manualenrol1, $user1->id);
+        enrol_get_plugin('manual')->unenrol_user($manualenrol1, $user2->id);
+
+        // User1 should still be member of the group because he was added there manually. User2 should no longer be there.
+        $this->assertTrue(groups_is_member($groupid, $user1->id));
+        $this->assertFalse(groups_is_member($groupid, $user2->id));
+
+        // Assert that everything is the same after sync.
+        enrol_meta_sync();
+
+        $this->assertTrue(groups_is_member($groupid, $user1->id));
+        $this->assertFalse(groups_is_member($groupid, $user2->id));
+
+    }
+
     /**
      * Test user_enrolment_created event.
      */
@@ -551,5 +705,42 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         $this->assertEquals($url, $event->get_url());
         $this->assertEventLegacyData($expectedlegacyeventdata, $event);
         $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test that a new group with the name of the course is created.
+     */
+    public function test_enrol_meta_create_new_group() {
+        global $DB;
+        $this->resetAfterTest();
+        // Create two courses.
+        $course = $this->getDataGenerator()->create_course(array('fullname' => 'Mathematics'));
+        $course2 = $this->getDataGenerator()->create_course(array('fullname' => 'Physics'));
+        $metacourse = $this->getDataGenerator()->create_course(array('fullname' => 'All sciences'));
+        // Run the function.
+        $groupid = enrol_meta_create_new_group($metacourse->id, $course->id);
+        // Check the results.
+        $group = $DB->get_record('groups', array('id' => $groupid));
+        // The group name should match the course name.
+        $this->assertEquals('Mathematics course', $group->name);
+        // Group course id should match the course id.
+        $this->assertEquals($metacourse->id, $group->courseid);
+
+        // Create a group that will have the same name as the course.
+        $groupdata = new stdClass();
+        $groupdata->courseid = $metacourse->id;
+        $groupdata->name = 'Physics course';
+        groups_create_group($groupdata);
+        // Create a group for the course 2 in metacourse.
+        $groupid = enrol_meta_create_new_group($metacourse->id, $course2->id);
+        $groupinfo = $DB->get_record('groups', array('id' => $groupid));
+        // Check that the group name has been changed.
+        $this->assertEquals('Physics course (2)', $groupinfo->name);
+
+        // Create a group for the course 2 in metacourse.
+        $groupid = enrol_meta_create_new_group($metacourse->id, $course2->id);
+        $groupinfo = $DB->get_record('groups', array('id' => $groupid));
+        // Check that the group name has been changed.
+        $this->assertEquals('Physics course (3)', $groupinfo->name);
     }
 }

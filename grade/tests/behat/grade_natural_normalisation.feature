@@ -10,8 +10,8 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email | idnumber |
-      | teacher1 | Teacher | 1 | teacher1@asd.com | t1 |
-      | student1 | Student | 1 | student1@asd.com | s1 |
+      | teacher1 | Teacher | 1 | teacher1@example.com | t1 |
+      | student1 | Student | 1 | student1@example.com | s1 |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -32,7 +32,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
       | assign | C1 | a7 | Test assignment seven | Submit nothing! | Sub category 1 | 15 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I set the field "Grade report" to "Categories and items"
 
   @javascript

@@ -1764,6 +1764,288 @@ class core_accesslib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that enrolled users SQL does not return any values for users in
+     * other courses.
+     */
+    public function test_get_enrolled_sql_different_course() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $student = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $user = $this->getDataGenerator()->create_user();
+
+        // This user should not appear anywhere, we're not interested in that context.
+        $course2 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id, $student->id);
+
+        $enrolled   = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, false);
+        $active     = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, true);
+        $suspended  = get_suspended_userids($context);
+
+        $this->assertFalse(isset($enrolled[$user->id]));
+        $this->assertFalse(isset($active[$user->id]));
+        $this->assertFalse(isset($suspended[$user->id]));
+        $this->assertCount(0, $enrolled);
+        $this->assertCount(0, $active);
+        $this->assertCount(0, $suspended);
+    }
+
+    /**
+     * Test that enrolled users SQL does not return any values for role
+     * assignments without an enrolment.
+     */
+    public function test_get_enrolled_sql_role_only() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $student = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $user = $this->getDataGenerator()->create_user();
+
+        // Role assignment is not the same as course enrollment.
+        role_assign($student->id, $user->id, $context->id);
+
+        $enrolled   = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, false);
+        $active     = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, true);
+        $suspended  = get_suspended_userids($context);
+
+        $this->assertFalse(isset($enrolled[$user->id]));
+        $this->assertFalse(isset($active[$user->id]));
+        $this->assertFalse(isset($suspended[$user->id]));
+        $this->assertCount(0, $enrolled);
+        $this->assertCount(0, $active);
+        $this->assertCount(0, $suspended);
+    }
+
+    /**
+     * Test that multiple enrolments for the same user are counted correctly.
+     */
+    public function test_get_enrolled_sql_multiple_enrolments() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $student = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $user = $this->getDataGenerator()->create_user();
+
+        // Add a suspended enrol.
+        $selfinstance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'self'));
+        $selfplugin = enrol_get_plugin('self');
+        $selfplugin->update_status($selfinstance, ENROL_INSTANCE_ENABLED);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $student->id, 'self', 0, 0, ENROL_USER_SUSPENDED);
+
+        // Should be enrolled, but not active - user is suspended.
+        $enrolled   = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, false);
+        $active     = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, true);
+        $suspended  = get_suspended_userids($context);
+
+        $this->assertTrue(isset($enrolled[$user->id]));
+        $this->assertFalse(isset($active[$user->id]));
+        $this->assertTrue(isset($suspended[$user->id]));
+        $this->assertCount(1, $enrolled);
+        $this->assertCount(0, $active);
+        $this->assertCount(1, $suspended);
+
+        // Add an active enrol for the user. Any active enrol makes them enrolled.
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $student->id);
+
+        // User should be active now.
+        $enrolled   = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, false);
+        $active     = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, true);
+        $suspended  = get_suspended_userids($context);
+
+        $this->assertTrue(isset($enrolled[$user->id]));
+        $this->assertTrue(isset($active[$user->id]));
+        $this->assertFalse(isset($suspended[$user->id]));
+        $this->assertCount(1, $enrolled);
+        $this->assertCount(1, $active);
+        $this->assertCount(0, $suspended);
+
+    }
+
+    public function get_enrolled_sql_provider() {
+        return array(
+            array(
+                // Two users who are enrolled.
+                'users' => array(
+                    array(
+                        'enrolled'  => true,
+                        'active'    => true,
+                    ),
+                    array(
+                        'enrolled'  => true,
+                        'active'    => true,
+                    ),
+                ),
+                'counts' => array(
+                    'enrolled'      => 2,
+                    'active'        => 2,
+                    'suspended'     => 0,
+                ),
+            ),
+            array(
+                // A user who is suspended.
+                'users' => array(
+                    array(
+                        'status'    => ENROL_USER_SUSPENDED,
+                        'enrolled'  => true,
+                        'suspended' => true,
+                    ),
+                ),
+                'counts' => array(
+                    'enrolled'      => 1,
+                    'active'        => 0,
+                    'suspended'     => 1,
+                ),
+            ),
+            array(
+                // One of each.
+                'users' => array(
+                    array(
+                        'enrolled'  => true,
+                        'active'    => true,
+                    ),
+                    array(
+                        'status'    => ENROL_USER_SUSPENDED,
+                        'enrolled'  => true,
+                        'suspended' => true,
+                    ),
+                ),
+                'counts' => array(
+                    'enrolled'      => 2,
+                    'active'        => 1,
+                    'suspended'     => 1,
+                ),
+            ),
+            array(
+                // One user who is not yet enrolled.
+                'users' => array(
+                    array(
+                        'timestart' => DAYSECS,
+                        'enrolled'  => true,
+                        'active'    => false,
+                        'suspended' => true,
+                    ),
+                ),
+                'counts' => array(
+                    'enrolled'      => 1,
+                    'active'        => 0,
+                    'suspended'     => 1,
+                ),
+            ),
+            array(
+                // One user who is no longer enrolled
+                'users' => array(
+                    array(
+                        'timeend'   => -DAYSECS,
+                        'enrolled'  => true,
+                        'active'    => false,
+                        'suspended' => true,
+                    ),
+                ),
+                'counts' => array(
+                    'enrolled'      => 1,
+                    'active'        => 0,
+                    'suspended'     => 1,
+                ),
+            ),
+            array(
+                // One user who is not yet enrolled, and one who is no longer enrolled.
+                'users' => array(
+                    array(
+                        'timeend'   => -DAYSECS,
+                        'enrolled'  => true,
+                        'active'    => false,
+                        'suspended' => true,
+                    ),
+                    array(
+                        'timestart' => DAYSECS,
+                        'enrolled'  => true,
+                        'active'    => false,
+                        'suspended' => true,
+                    ),
+                ),
+                'counts' => array(
+                    'enrolled'      => 2,
+                    'active'        => 0,
+                    'suspended'     => 2,
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider get_enrolled_sql_provider
+     */
+    public function test_get_enrolled_sql_course($users, $counts) {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $student = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $createdusers = array();
+
+        foreach ($users as &$userdata) {
+            $user = $this->getDataGenerator()->create_user();
+            $userdata['id'] = $user->id;
+
+            $timestart  = 0;
+            $timeend    = 0;
+            $status     = null;
+            if (isset($userdata['timestart'])) {
+                $timestart = time() + $userdata['timestart'];
+            }
+            if (isset($userdata['timeend'])) {
+                $timeend = time() + $userdata['timeend'];
+            }
+            if (isset($userdata['status'])) {
+                $status = $userdata['status'];
+            }
+
+            // Enrol the user in the course.
+            $this->getDataGenerator()->enrol_user($user->id, $course->id, $student->id, 'manual', $timestart, $timeend, $status);
+        }
+
+        // After all users have been enroled, check expectations.
+        $enrolled   = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, false);
+        $active     = get_enrolled_users($context, '', 0, 'u.id', null, 0, 0, true);
+        $suspended  = get_suspended_userids($context);
+
+        foreach ($users as $userdata) {
+            if (isset($userdata['enrolled']) && $userdata['enrolled']) {
+                $this->assertTrue(isset($enrolled[$userdata['id']]));
+            } else {
+                $this->assertFalse(isset($enrolled[$userdata['id']]));
+            }
+
+            if (isset($userdata['active']) && $userdata['active']) {
+                $this->assertTrue(isset($active[$userdata['id']]));
+            } else {
+                $this->assertFalse(isset($active[$userdata['id']]));
+            }
+
+            if (isset($userdata['suspended']) && $userdata['suspended']) {
+                $this->assertTrue(isset($suspended[$userdata['id']]));
+            } else {
+                $this->assertFalse(isset($suspended[$userdata['id']]));
+            }
+        }
+
+        $this->assertCount($counts['enrolled'],     $enrolled);
+        $this->assertCount($counts['active'],       $active);
+        $this->assertCount($counts['suspended'],    $suspended);
+    }
+
+    /**
      * A small functional test of permission evaluations.
      */
     public function test_permission_evaluation() {
@@ -2844,6 +3126,44 @@ class core_accesslib_testcase extends advanced_testcase {
         // while the override at course level should remain.
         $this->assertFalse(has_capability('mod/forum:addinstance', $coursecontext, $user));
         $this->assertFalse(has_capability('mod/forum:viewdiscussion', $coursecontext, $user));
+    }
+
+    /**
+     * Tests count_role_users function.
+     */
+    public function test_count_role_users() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $generator = self::getDataGenerator();
+        // Create a course in a category, and some users.
+        $category = $generator->create_category();
+        $course = $generator->create_course(array('category' => $category->id));
+        $user1 = $generator->create_user();
+        $user2 = $generator->create_user();
+        $user3 = $generator->create_user();
+        $user4 = $generator->create_user();
+        $user5 = $generator->create_user();
+        $roleid1 = $DB->get_field('role', 'id', array('shortname' => 'manager'), MUST_EXIST);
+        $roleid2 = $DB->get_field('role', 'id', array('shortname' => 'coursecreator'), MUST_EXIST);
+        // Enrol two users as managers onto the course, and 1 onto the category.
+        $generator->enrol_user($user1->id, $course->id, $roleid1);
+        $generator->enrol_user($user2->id, $course->id, $roleid1);
+        $generator->role_assign($roleid1, $user3->id, context_coursecat::instance($category->id));
+        // Enrol 1 user as a coursecreator onto the course, and another onto the category.
+        // This is to ensure we do not count users with roles that are not specified.
+        $generator->enrol_user($user4->id, $course->id, $roleid2);
+        $generator->role_assign($roleid2, $user5->id, context_coursecat::instance($category->id));
+        // Check that the correct users are found on the course.
+        $this->assertEquals(2, count_role_users($roleid1, context_course::instance($course->id), false));
+        $this->assertEquals(3, count_role_users($roleid1, context_course::instance($course->id), true));
+        // Check for the category.
+        $this->assertEquals(1, count_role_users($roleid1, context_coursecat::instance($category->id), false));
+        $this->assertEquals(1, count_role_users($roleid1, context_coursecat::instance($category->id), true));
+        // Have a user with the same role at both the category and course level.
+        $generator->role_assign($roleid1, $user1->id, context_coursecat::instance($category->id));
+        // The course level checks should remain the same.
+        $this->assertEquals(2, count_role_users($roleid1, context_course::instance($course->id), false));
+        $this->assertEquals(3, count_role_users($roleid1, context_course::instance($course->id), true));
     }
 }
 

@@ -10,8 +10,8 @@ Feature: View the grading status of an assignment
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -31,6 +31,9 @@ Feature: View the grading status of an assignment
     And I log out
     # Add a submission.
     And I log in as "student1"
+    And I click on "Dashboard" "link" in the "Navigation" "block"
+    And I click on ".collapsibleregioncaption" "css_element"
+    And I should see "Not marked"
     And I follow "Course 1"
     When I follow "Test assignment name"
     Then I should not see "Feedback"
@@ -39,9 +42,9 @@ Feature: View the grading status of an assignment
     And I set the following fields to these values:
       | Online text | I'm the student's first submission |
     And I press "Save changes"
-    And I click on "My home" "link" in the "Navigation" "block"
-    And I click on ".collapsibleregioncaption" "css_element"
-    And I should see "Not marked"
+    And I click on "Dashboard" "link" in the "Navigation" "block"
+    And ".collapsibleregioncaption" "css_element" should not exist
+    And I should not see "Not marked"
     And I log out
     # Mark the submission.
     And I log in as "teacher1"
@@ -63,9 +66,9 @@ Feature: View the grading status of an assignment
     And I follow "Test assignment name"
     And I should see "In review" in the "Grading status" "table_row"
     And I should not see "Great job! Lol, not really."
-    And I click on "My home" "link" in the "Navigation" "block"
-    And I click on ".collapsibleregioncaption" "css_element"
-    And I should see "In review"
+    And I click on "Dashboard" "link" in the "Navigation" "block"
+    And ".collapsibleregioncaption" "css_element" should not exist
+    And I should not see "In review"
     And I log out
     # Mark the submission again but set the marking workflow to 'Released'.
     And I log in as "teacher1"
@@ -85,9 +88,9 @@ Feature: View the grading status of an assignment
     And I follow "Test assignment name"
     And I should see "Released" in the "Grading status" "table_row"
     And I should see "Great job! Lol, not really."
-    And I click on "My home" "link" in the "Navigation" "block"
-    And I click on ".collapsibleregioncaption" "css_element"
-    And I should see "Released"
+    And I click on "Dashboard" "link" in the "Navigation" "block"
+    And ".collapsibleregioncaption" "css_element" should not exist
+    And I should not see "Released"
     And I log out
     # Now, change the status from 'Released' to 'In marking' (this will remove the grade from the gradebook).
     And I log in as "teacher1"
@@ -118,7 +121,7 @@ Feature: View the grading status of an assignment
     And I log out
     # Add a submission.
     And I log in as "student1"
-    And I click on "My home" "link" in the "Navigation" "block"
+    And I click on "Dashboard" "link" in the "Navigation" "block"
     When I click on ".collapsibleregioncaption" "css_element"
     Then I should see "Not graded"
     And I follow "Course 1"
@@ -149,7 +152,7 @@ Feature: View the grading status of an assignment
     And I follow "Test assignment name"
     And I should see "Graded" in the "Grading status" "table_row"
     And I should see "Great job! Lol, not really."
-    And I click on "My home" "link" in the "Navigation" "block"
-    And I click on ".collapsibleregioncaption" "css_element"
-    And I should see "Graded"
+    And I click on "Dashboard" "link" in the "Navigation" "block"
+    And ".collapsibleregioncaption" "css_element" should not exist
+    And I should not see "Graded"
     And I log out

@@ -46,7 +46,11 @@ class repository_s3 extends repository {
         parent::__construct($repositoryid, $context, $options);
         $this->access_key = get_config('s3', 'access_key');
         $this->secret_key = get_config('s3', 'secret_key');
-        $this->s = new S3($this->access_key, $this->secret_key);
+        $this->endpoint = get_config('s3', 'endpoint');
+        if ($this->endpoint === false) { // If no endpoint has been set, use the default.
+            $this->endpoint = 's3.amazonaws.com';
+        }
+        $this->s = new S3($this->access_key, $this->secret_key, false, $this->endpoint);
         $this->s->setExceptions(true);
     }
 
@@ -101,7 +105,13 @@ class repository_s3 extends repository {
             try {
                 $buckets = $this->s->listBuckets();
             } catch (S3Exception $e) {
-                throw new moodle_exception('errorwhilecommunicatingwith', 'repository', '', $this->get_name());
+                throw new moodle_exception(
+                    'errorwhilecommunicatingwith',
+                    'repository',
+                    '',
+                    $this->get_name(),
+                    $e->getMessage()
+                );
             }
             foreach ($buckets as $bucket) {
                 $folder = array(
@@ -120,7 +130,13 @@ class repository_s3 extends repository {
             try {
                 $contents = $this->s->getBucket($bucket, $uri, null, null, '/', true);
             } catch (S3Exception $e) {
-                throw new moodle_exception('errorwhilecommunicatingwith', 'repository', '', $this->get_name());
+                throw new moodle_exception(
+                    'errorwhilecommunicatingwith',
+                    'repository',
+                    '',
+                    $this->get_name(),
+                    $e->getMessage()
+                );
             }
             foreach ($contents as $object) {
 
@@ -195,7 +211,13 @@ class repository_s3 extends repository {
         try {
             $this->s->getObject($bucket, $uri, $path);
         } catch (S3Exception $e) {
-            throw new moodle_exception('errorwhilecommunicatingwith', 'repository', '', $this->get_name());
+            throw new moodle_exception(
+                'errorwhilecommunicatingwith',
+                'repository',
+                '',
+                $this->get_name(),
+                $e->getMessage()
+            );
         }
         return array('path' => $path);
     }
@@ -229,16 +251,31 @@ class repository_s3 extends repository {
     }
 
     public static function get_type_option_names() {
-        return array('access_key', 'secret_key', 'pluginname');
+        return array('access_key', 'secret_key', 'endpoint', 'pluginname');
     }
 
     public static function type_config_form($mform, $classname = 'repository') {
         parent::type_config_form($mform);
         $strrequired = get_string('required');
+        $endpointselect = array( // List of possible Amazon S3 Endpoints.
+            "s3.amazonaws.com" => "s3.amazonaws.com",
+            "s3-external-1.amazonaws.com" => "s3-external-1.amazonaws.com",
+            "s3-us-west-2.amazonaws.com" => "s3-us-west-2.amazonaws.com",
+            "s3-us-west-1.amazonaws.com" => "s3-us-west-1.amazonaws.com",
+            "s3-eu-west-1.amazonaws.com" => "s3-eu-west-1.amazonaws.com",
+            "s3.eu-central-1.amazonaws.com" => "s3.eu-central-1.amazonaws.com",
+            "s3-eu-central-1.amazonaws.com" => "s3-eu-central-1.amazonaws.com",
+            "s3-ap-southeast-1.amazonaws.com" => "s3-ap-southeast-1.amazonaws.com",
+            "s3-ap-southeast-2.amazonaws.com" => "s3-ap-southeast-2.amazonaws.com",
+            "s3-ap-northeast-1.amazonaws.com" => "s3-ap-northeast-1.amazonaws.com",
+            "s3-sa-east-1.amazonaws.com" => "s3-sa-east-1.amazonaws.com"
+        );
         $mform->addElement('text', 'access_key', get_string('access_key', 'repository_s3'));
         $mform->setType('access_key', PARAM_RAW_TRIMMED);
         $mform->addElement('text', 'secret_key', get_string('secret_key', 'repository_s3'));
         $mform->setType('secret_key', PARAM_RAW_TRIMMED);
+        $mform->addElement('select', 'endpoint', get_string('endpoint', 'repository_s3'), $endpointselect);
+        $mform->setDefault('endpoint', 's3.amazonaws.com'); // Default to US Endpoint.
         $mform->addRule('access_key', $strrequired, 'required', null, 'client');
         $mform->addRule('secret_key', $strrequired, 'required', null, 'client');
     }

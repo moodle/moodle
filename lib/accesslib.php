@@ -2256,9 +2256,10 @@ function can_access_course(stdClass $course, $user = null, $withcapability = '',
  * @param string $withcapability
  * @param int $groupid 0 means ignore groups, any other value limits the result by group id
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
  * @return array list($sql, $params)
  */
-function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, $onlyactive = false) {
+function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, $onlyactive = false, $onlysuspended = false) {
     global $DB, $CFG;
 
     // use unique prefix just in case somebody makes some SQL magic with the result
@@ -2270,6 +2271,13 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
     $coursecontext = $context->get_course_context();
 
     $isfrontpage = ($coursecontext->instanceid == SITEID);
+
+    if ($onlyactive && $onlysuspended) {
+        throw new coding_exception("Both onlyactive and onlysuspended are set, this is probably not what you want!");
+    }
+    if ($isfrontpage && $onlysuspended) {
+        throw new coding_exception("onlysuspended is not supported on frontpage; please add your own early-exit!");
+    }
 
     $joins  = array();
     $wheres = array();
@@ -2387,13 +2395,28 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
     if ($isfrontpage) {
         // all users are "enrolled" on the frontpage
     } else {
-        $joins[] = "JOIN {user_enrolments} {$prefix}ue ON {$prefix}ue.userid = {$prefix}u.id";
-        $joins[] = "JOIN {enrol} {$prefix}e ON ({$prefix}e.id = {$prefix}ue.enrolid AND {$prefix}e.courseid = :{$prefix}courseid)";
+        $where1 = "{$prefix}ue.status = :{$prefix}active AND {$prefix}e.status = :{$prefix}enabled";
+        $where2 = "{$prefix}ue.timestart < :{$prefix}now1 AND ({$prefix}ue.timeend = 0 OR {$prefix}ue.timeend > :{$prefix}now2)";
+        $ejoin = "JOIN {enrol} {$prefix}e ON ({$prefix}e.id = {$prefix}ue.enrolid AND {$prefix}e.courseid = :{$prefix}courseid)";
         $params[$prefix.'courseid'] = $coursecontext->instanceid;
 
-        if ($onlyactive) {
-            $wheres[] = "{$prefix}ue.status = :{$prefix}active AND {$prefix}e.status = :{$prefix}enabled";
-            $wheres[] = "{$prefix}ue.timestart < :{$prefix}now1 AND ({$prefix}ue.timeend = 0 OR {$prefix}ue.timeend > :{$prefix}now2)";
+        if (!$onlysuspended) {
+            $joins[] = "JOIN {user_enrolments} {$prefix}ue ON {$prefix}ue.userid = {$prefix}u.id";
+            $joins[] = $ejoin;
+            if ($onlyactive) {
+                $wheres[] = "$where1 AND $where2";
+            }
+        } else {
+            // Suspended only where there is enrolment but ALL are suspended.
+            // Consider multiple enrols where one is not suspended or plain role_assign.
+            $enrolselect = "SELECT DISTINCT {$prefix}ue.userid FROM {user_enrolments} {$prefix}ue $ejoin WHERE $where1 AND $where2";
+            $joins[] = "JOIN {user_enrolments} {$prefix}ue1 ON {$prefix}ue1.userid = {$prefix}u.id";
+            $joins[] = "JOIN {enrol} {$prefix}e1 ON ({$prefix}e1.id = {$prefix}ue1.enrolid AND {$prefix}e1.courseid = :{$prefix}_e1_courseid)";
+            $params["{$prefix}_e1_courseid"] = $coursecontext->instanceid;
+            $wheres[] = "{$prefix}u.id NOT IN ($enrolselect)";
+        }
+
+        if ($onlyactive || $onlysuspended) {
             $now = round(time(), -2); // rounding helps caching in DB
             $params = array_merge($params, array($prefix.'enabled'=>ENROL_INSTANCE_ENABLED,
                                                  $prefix.'active'=>ENROL_USER_ACTIVE,
@@ -2927,7 +2950,7 @@ function get_capability_info($capabilityname) {
 
     if (empty($ACCESSLIB_PRIVATE->capabilities)) {
         $ACCESSLIB_PRIVATE->capabilities = array();
-        $caps = $DB->get_records('capabilities', array(), 'id, name, captype, riskbitmask');
+        $caps = $DB->get_records('capabilities', array(), '', 'id, name, captype, riskbitmask');
         foreach ($caps as $cap) {
             $capname = $cap->name;
             unset($cap->id);
@@ -4209,7 +4232,7 @@ function count_role_users($roleid, context $context, $parent = false) {
 
     array_unshift($params, $context->id);
 
-    $sql = "SELECT COUNT(u.id)
+    $sql = "SELECT COUNT(DISTINCT u.id)
               FROM {role_assignments} r
               JOIN {user} u ON u.id = r.userid
              WHERE (r.contextid = ? $parentcontexts)
@@ -6447,14 +6470,17 @@ class context_user extends context {
     protected static function create_level_instances() {
         global $DB;
 
-        $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_USER.", u.id
+        $sql = "SELECT ".CONTEXT_USER.", u.id
                   FROM {user} u
                  WHERE u.deleted = 0
                        AND NOT EXISTS (SELECT 'x'
                                          FROM {context} cx
                                         WHERE u.id = cx.instanceid AND cx.contextlevel=".CONTEXT_USER.")";
-        $DB->execute($sql);
+        $contextdata = $DB->get_recordset_sql($sql);
+        foreach ($contextdata as $context) {
+            context::insert_context_record(CONTEXT_USER, $context->id, null);
+        }
+        $contextdata->close();
     }
 
     /**
@@ -6655,13 +6681,16 @@ class context_coursecat extends context {
     protected static function create_level_instances() {
         global $DB;
 
-        $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_COURSECAT.", cc.id
+        $sql = "SELECT ".CONTEXT_COURSECAT.", cc.id
                   FROM {course_categories} cc
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE cc.id = cx.instanceid AND cx.contextlevel=".CONTEXT_COURSECAT.")";
-        $DB->execute($sql);
+        $contextdata = $DB->get_recordset_sql($sql);
+        foreach ($contextdata as $context) {
+            context::insert_context_record(CONTEXT_COURSECAT, $context->id, null);
+        }
+        $contextdata->close();
     }
 
     /**
@@ -6878,13 +6907,16 @@ class context_course extends context {
     protected static function create_level_instances() {
         global $DB;
 
-        $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_COURSE.", c.id
+        $sql = "SELECT ".CONTEXT_COURSE.", c.id
                   FROM {course} c
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE c.id = cx.instanceid AND cx.contextlevel=".CONTEXT_COURSE.")";
-        $DB->execute($sql);
+        $contextdata = $DB->get_recordset_sql($sql);
+        foreach ($contextdata as $context) {
+            context::insert_context_record(CONTEXT_COURSE, $context->id, null);
+        }
+        $contextdata->close();
     }
 
     /**
@@ -7132,13 +7164,16 @@ class context_module extends context {
     protected static function create_level_instances() {
         global $DB;
 
-        $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_MODULE.", cm.id
+        $sql = "SELECT ".CONTEXT_MODULE.", cm.id
                   FROM {course_modules} cm
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE cm.id = cx.instanceid AND cx.contextlevel=".CONTEXT_MODULE.")";
-        $DB->execute($sql);
+        $contextdata = $DB->get_recordset_sql($sql);
+        foreach ($contextdata as $context) {
+            context::insert_context_record(CONTEXT_MODULE, $context->id, null);
+        }
+        $contextdata->close();
     }
 
     /**
@@ -7349,13 +7384,16 @@ class context_block extends context {
     protected static function create_level_instances() {
         global $DB;
 
-        $sql = "INSERT INTO {context} (contextlevel, instanceid)
-                SELECT ".CONTEXT_BLOCK.", bi.id
+        $sql = "SELECT ".CONTEXT_BLOCK.", bi.id
                   FROM {block_instances} bi
                  WHERE NOT EXISTS (SELECT 'x'
                                      FROM {context} cx
                                     WHERE bi.id = cx.instanceid AND cx.contextlevel=".CONTEXT_BLOCK.")";
-        $DB->execute($sql);
+        $contextdata = $DB->get_recordset_sql($sql);
+        foreach ($contextdata as $context) {
+            context::insert_context_record(CONTEXT_BLOCK, $context->id, null);
+        }
+        $contextdata->close();
     }
 
     /**
@@ -7491,7 +7529,6 @@ function extract_suspended_users($context, &$users, $ignoreusers=array()) {
 function get_suspended_userids(context $context, $usecache = false) {
     global $DB;
 
-    // Check the cache first for performance reasons if enabled.
     if ($usecache) {
         $cache = cache::make('core', 'suspended_userids');
         $susers = $cache->get($context->id);
@@ -7500,21 +7537,14 @@ function get_suspended_userids(context $context, $usecache = false) {
         }
     }
 
-    // Get all enrolled users.
-    list($sql, $params) = get_enrolled_sql($context);
-    $users = $DB->get_records_sql($sql, $params);
-
-    // Get active enrolled users.
-    list($sql, $params) = get_enrolled_sql($context, null, null, true);
-    $activeusers = $DB->get_records_sql($sql, $params);
-
+    $coursecontext = $context->get_course_context();
     $susers = array();
-    if (sizeof($activeusers) != sizeof($users)) {
-        foreach ($users as $userid => $user) {
-            if (!array_key_exists($userid, $activeusers)) {
-                $susers[$userid] = $userid;
-            }
-        }
+
+    // Front page users are always enrolled, so suspended list is empty.
+    if ($coursecontext->instanceid != SITEID) {
+        list($sql, $params) = get_enrolled_sql($context, null, null, false, true);
+        $susers = $DB->get_fieldset_sql($sql, $params);
+        $susers = array_combine($susers, $susers);
     }
 
     // Cache results for the remainder of this request.
@@ -7522,6 +7552,5 @@ function get_suspended_userids(context $context, $usecache = false) {
         $cache->set($context->id, $susers);
     }
 
-    // Return.
     return $susers;
 }

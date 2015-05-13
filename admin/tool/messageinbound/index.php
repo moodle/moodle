@@ -58,8 +58,11 @@ if (empty($classname)) {
     if ($mform->is_cancelled()) {
         redirect($PAGE->url);
     } else if ($data = $mform->get_data()) {
+
         // Update the record from the form.
-        $record->defaultexpiration = (int) $data->defaultexpiration;
+        if ($handler->can_change_defaultexpiration()) {
+            $record->defaultexpiration = (int) $data->defaultexpiration;
+        }
 
         if ($handler->can_change_validateaddress()) {
             $record->validateaddress = !empty($data->validateaddress);

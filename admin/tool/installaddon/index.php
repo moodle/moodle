@@ -52,14 +52,30 @@ if ($form->is_cancelled()) {
     $jobid = md5(rand().uniqid('', true));
     $sourcedir = make_temp_directory('tool_installaddon/'.$jobid.'/source');
     $zipfilename = $installer->save_installfromzip_file($form, $sourcedir);
+    if (empty($data->plugintype)) {
+        $versiondir = make_temp_directory('tool_installaddon/'.$jobid.'/version');
+        $detected = $installer->detect_plugin_component($sourcedir.'/'.$zipfilename, $versiondir);
+        if (empty($detected)) {
+            $form->require_explicit_plugintype();
+        } else {
+            list($detectedtype, $detectedname) = core_component::normalize_component($detected);
+            if ($detectedtype and $detectedname and $detectedtype !== 'core') {
+                $data->plugintype = $detectedtype;
+            } else {
+                $form->require_explicit_plugintype();
+            }
+        }
+    }
     // Redirect to the validation page.
-    $nexturl = new moodle_url('/admin/tool/installaddon/validate.php', array(
-        'sesskey' => sesskey(),
-        'jobid' => $jobid,
-        'zip' => $zipfilename,
-        'type' => $data->plugintype,
-        'rootdir' => $data->rootdir));
-    redirect($nexturl);
+    if (!empty($data->plugintype)) {
+        $nexturl = new moodle_url('/admin/tool/installaddon/validate.php', array(
+            'sesskey' => sesskey(),
+            'jobid' => $jobid,
+            'zip' => $zipfilename,
+            'type' => $data->plugintype,
+            'rootdir' => $data->rootdir));
+        redirect($nexturl);
+    }
 }
 
 // Output starts here.

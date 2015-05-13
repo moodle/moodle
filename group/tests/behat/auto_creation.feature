@@ -10,17 +10,17 @@ Feature: Automatic creation of groups
       | Course 1 | C1 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student0 | Student | 0 | student0@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
-      | student3 | Student | 3 | student3@asd.com |
-      | student4 | Student | 4 | student4@asd.com |
-      | student5 | Student | 5 | student5@asd.com |
-      | student6 | Student | 6 | student6@asd.com |
-      | student7 | Student | 7 | student7@asd.com |
-      | student8 | Student | 8 | student8@asd.com |
-      | student9 | Student | 9 | student9@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student0 | Student | 0 | student0@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
+      | student3 | Student | 3 | student3@example.com |
+      | student4 | Student | 4 | student4@example.com |
+      | student5 | Student | 5 | student5@example.com |
+      | student6 | Student | 6 | student6@example.com |
+      | student7 | Student | 7 | student7@example.com |
+      | student8 | Student | 8 | student8@example.com |
+      | student9 | Student | 9 | student9@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |

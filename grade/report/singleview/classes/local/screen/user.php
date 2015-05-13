@@ -53,6 +53,14 @@ class user extends tablelike implements selectable_items {
     private $requirespaging = true;
 
     /**
+     * Get the label for the select box that chooses items for this page.
+     * @return string
+     */
+    public function select_label() {
+        return get_string('selectgrade', 'gradereport_singleview');
+    }
+
+    /**
      * Get the description for the screen.
      *
      * @return string
@@ -84,15 +92,6 @@ class user extends tablelike implements selectable_items {
     }
 
     /**
-     * Should we show the group selector on this screen?
-     *
-     * @return bool
-     */
-    public function display_group_selector() {
-        return false;
-    }
-
-    /**
      * Init the screen
      *
      * @param bool $selfitemisempty Have we selected an item yet?
@@ -103,9 +102,12 @@ class user extends tablelike implements selectable_items {
         if (!$selfitemisempty) {
             $validusers = $this->load_users();
             if (!isset($validusers[$this->itemid])) {
-                print_error('invaliduserid');
+                // If the passed user id is not valid, show the first user from the list instead.
+                $this->item = reset($validusers);
+                $this->itemid = $this->item->id;
+            } else {
+                $this->item = $validusers[$this->itemid];
             }
-            $this->item = $validusers[$this->itemid];
         }
 
         $params = array('courseid' => $this->courseid);
@@ -282,7 +284,7 @@ class user extends tablelike implements selectable_items {
      * @return string
      */
     public function heading() {
-        return fullname($this->item);
+        return get_string('gradeuser', 'gradereport_singleview', fullname($this->item));
     }
 
     /**
@@ -350,6 +352,10 @@ class user extends tablelike implements selectable_items {
                     continue;
                 }
 
+                $oldfinalgradefield = "oldfinalgrade_{$gradeitem->id}_{$this->itemid}";
+                if (!empty($data->$oldfinalgradefield)) {
+                    continue;
+                }
                 $grade = grade_grade::fetch(array(
                     'itemid' => $this->itemid,
                     'userid' => $userid
@@ -367,8 +373,12 @@ class user extends tablelike implements selectable_items {
             }
 
             foreach ($data as $varname => $value) {
-                if (preg_match('/override_(\d+)_(\d+)/', $varname, $matches)) {
-                    $data->$matches[0] = '1';
+                if (preg_match('/^oldoverride_(\d+)_(\d+)/', $varname, $matches)) {
+                    // If we've selected override or overriding all grades.
+                    if (!empty($data->$matches[0]) || $filter == 'all') {
+                        $override = "override_{$matches[1]}_{$matches[2]}";
+                        $data->$override = '1';
+                    }
                 }
                 if (!preg_match('/^finalgrade_(\d+)_(\d+)/', $varname, $matches)) {
                     continue;

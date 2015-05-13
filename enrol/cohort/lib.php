@@ -25,6 +25,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * COHORT_CREATEGROUP constant for automatically creating a group for a cohort.
+ */
+define('COHORT_CREATE_GROUP', -1);
+
+/**
  * Cohort enrolment plugin implementation.
  * @author Petr Skoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -322,4 +327,35 @@ class enrol_cohort_plugin extends enrol_plugin {
  */
 function enrol_cohort_allow_group_member_remove($itemid, $groupid, $userid) {
     return false;
+}
+
+/**
+ * Create a new group with the cohorts name.
+ *
+ * @param int $courseid
+ * @param int $cohortid
+ * @return int $groupid Group ID for this cohort.
+ */
+function enrol_cohort_create_new_group($courseid, $cohortid) {
+    global $DB;
+
+    $groupname = $DB->get_field('cohort', 'name', array('id' => $cohortid), MUST_EXIST);
+    $a = new stdClass();
+    $a->name = $groupname;
+    $a->increment = '';
+    $groupname = trim(get_string('defaultgroupnametext', 'enrol_cohort', $a));
+    $inc = 1;
+    // Check to see if the cohort group name already exists. Add an incremented number if it does.
+    while ($DB->record_exists('groups', array('name' => $groupname, 'courseid' => $courseid))) {
+        $a->increment = '(' . (++$inc) . ')';
+        $newshortname = trim(get_string('defaultgroupnametext', 'enrol_cohort', $a));
+        $groupname = $newshortname;
+    }
+    // Create a new group for the cohort.
+    $groupdata = new stdClass();
+    $groupdata->courseid = $courseid;
+    $groupdata->name = $groupname;
+    $groupid = groups_create_group($groupdata);
+
+    return $groupid;
 }

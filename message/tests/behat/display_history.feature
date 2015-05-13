@@ -1,4 +1,4 @@
-@core @core_message
+@core @core_message @javascript
 Feature: Message history displays correctly
   In order to read messages between two users
   As a user
@@ -7,8 +7,8 @@ Feature: Message history displays correctly
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | user1 | User | One | one@asd.com |
-      | user2 | User | Two | two@asd.com |
+      | user1 | User | One | one@example.com |
+      | user2 | User | Two | two@example.com |
     And I log in as "user1"
     And I send "Message 1 from user1 to user2" message to "User Two" user
     And I send "Message 2 from user1 to user2" message to "User Two" user
@@ -22,7 +22,7 @@ Feature: Message history displays correctly
     And I send "Message 10 from user1 to user2" message to "User Two" user
 
   Scenario: View sent messages
-    When I navigate to "Messages" node in "My profile"
+    When I follow "Messages" in the user menu
     And I set the field "Search people and messages" to "User Two"
     And I press "Search people and messages"
     And I click on "Message history" "link" in the "User Two" "table_row"
@@ -37,7 +37,7 @@ Feature: Message history displays correctly
   Scenario: View received messages
     When I log out
     And I log in as "user2"
-    And I navigate to "Messages" node in "My profile"
+    And I follow "Messages" in the user menu
     And I follow "User One (10)"
     # Should show all of the user's unread messages.
     Then I should see "Message 1 from user1 to user2"

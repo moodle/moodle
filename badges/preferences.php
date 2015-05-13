@@ -30,7 +30,7 @@ require_once('preferences_form.php');
 $url = new moodle_url('/badges/preferences.php');
 
 require_login();
-$PAGE->set_context(context_system::instance());
+$PAGE->set_context(context_user::instance($USER->id));
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
 
@@ -47,7 +47,7 @@ if (!$mform->is_cancelled() && $data = $mform->get_data()) {
 }
 
 if ($mform->is_cancelled()) {
-    redirect($CFG->wwwroot . '/badges/mybadges.php');
+    redirect($CFG->wwwroot . '/user/preferences.php');
 }
 
 $strpreferences = get_string('preferences');
@@ -55,7 +55,7 @@ $strbadges      = get_string('badges');
 
 $title = "$strbadges: $strpreferences";
 $PAGE->set_title($title);
-$PAGE->set_heading($title);
+$PAGE->set_heading(fullname($USER));
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading("$strbadges: $strpreferences", 2);

@@ -16,16 +16,15 @@ Feature: availability_completion
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access  | 1 |
-      | Enable completion tracking | 1 |
-    And I log out
+    And the following config values are set as admin:
+      | enableavailability  | 1 |
+      | enablecompletion | 1 |
 
   @javascript
   Scenario: Test condition
     # Basic setup.
     Given I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
 
@@ -52,6 +51,7 @@ Feature: availability_completion
     # Log back in as student.
     When I log out
     And I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
 
     # Page 2 should not appear yet.

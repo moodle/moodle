@@ -40,6 +40,28 @@ interface renderable {
 }
 
 /**
+ * Interface marking other classes having the ability to export their data for use by templates.
+ *
+ * @copyright 2015 Damyon Wiese
+ * @package core
+ * @category output
+ * @since 2.9
+ */
+interface templatable {
+
+    /**
+     * Function to export the renderer data in a format that is suitable for a
+     * mustache template. This means:
+     * 1. No complex types - only stdClass, array, int, string, float, bool
+     * 2. Any additional info that is required for the template is pre-calculated (e.g. capability checks).
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return stdClass|array
+     */
+    public function export_for_template(renderer_base $output);
+}
+
+/**
  * Data structure representing a file picker.
  *
  * @copyright 2010 Dongsheng Cai
@@ -481,7 +503,7 @@ class help_icon implements renderable {
  * @package core
  * @category output
  */
-class pix_icon implements renderable {
+class pix_icon implements renderable, templatable {
 
     /**
      * @var string The icon name
@@ -522,6 +544,24 @@ class pix_icon implements renderable {
             // and some browsers might overwrite it with an empty title.
             unset($this->attributes['title']);
         }
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return array
+     */
+    public function export_for_template(renderer_base $output) {
+        $attributes = $this->attributes;
+        $attributes['src'] = $output->pix_url($this->pix, $this->component);
+        $templatecontext = array();
+        foreach ($attributes as $name => $value) {
+            $templatecontext[] = array('name' => $name, 'value' => $value);
+        }
+        $data = array('attributes' => $templatecontext);
+
+        return $data;
     }
 }
 
@@ -601,6 +641,16 @@ class single_button implements renderable {
      * @var array List of attached actions
      */
     var $actions = array();
+
+    /**
+     * @var array $params URL Params
+     */
+    var $params;
+
+    /**
+     * @var string Action id
+     */
+    var $actionid;
 
     /**
      * Constructor
@@ -1513,6 +1563,19 @@ class html_writer {
 
         $countcols = 0;
 
+        // Output a caption if present.
+        if (!empty($table->caption)) {
+            $captionattributes = array();
+            if ($table->captionhide) {
+                $captionattributes['class'] = 'accesshide';
+            }
+            $output .= html_writer::tag(
+                'caption',
+                $table->caption,
+                $captionattributes
+            );
+        }
+
         if (!empty($table->head)) {
             $countcols = count($table->head);
 
@@ -2094,6 +2157,23 @@ class html_table {
      * @var string Description of the contents for screen readers.
      */
     public $summary;
+
+    /**
+     * @var string Caption for the table, typically a title.
+     *
+     * Example of usage:
+     * $t->caption = "TV Guide";
+     */
+    public $caption;
+
+    /**
+     * @var bool Whether to hide the table's caption from sighted users.
+     *
+     * Example of usage:
+     * $t->caption = "TV Guide";
+     * $t->captionhide = true;
+     */
+    public $captionhide = false;
 
     /**
      * Constructor
@@ -3014,6 +3094,86 @@ class tabobject implements renderable {
 }
 
 /**
+ * Renderable for the main page header.
+ *
+ * @package core
+ * @category output
+ * @since 2.9
+ * @copyright 2015 Adrian Greeve <adrian@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class context_header implements renderable {
+
+    /**
+     * @var string $heading Main heading.
+     */
+    public $heading;
+    /**
+     * @var int $headinglevel Main heading 'h' tag level.
+     */
+    public $headinglevel;
+    /**
+     * @var string|null $imagedata HTML code for the picture in the page header.
+     */
+    public $imagedata;
+    /**
+     * @var array $additionalbuttons Additional buttons for the header e.g. Messaging button for the user header.
+     *      array elements - title => alternate text for the image, or if no image is available the button text.
+     *                       url => Link for the button to head to. Should be a moodle_url.
+     *                       image => location to the image, or name of the image in /pix/t/{image name}.
+     *                       linkattributes => additional attributes for the <a href> element.
+     *                       page => page object. Don't include if the image is an external image.
+     */
+    public $additionalbuttons;
+
+    /**
+     * Constructor.
+     *
+     * @param string $heading Main heading data.
+     * @param int $headinglevel Main heading 'h' tag level.
+     * @param string|null $imagedata HTML code for the picture in the page header.
+     * @param string $additionalbuttons Buttons for the header e.g. Messaging button for the user header.
+     */
+    public function __construct($heading = null, $headinglevel = 1, $imagedata = null, $additionalbuttons = null) {
+
+        $this->heading = $heading;
+        $this->headinglevel = $headinglevel;
+        $this->imagedata = $imagedata;
+        $this->additionalbuttons = $additionalbuttons;
+        // If we have buttons then format them.
+        if (isset($this->additionalbuttons)) {
+            $this->format_button_images();
+        }
+    }
+
+    /**
+     * Adds an array element for a formatted image.
+     */
+    protected function format_button_images() {
+
+        foreach ($this->additionalbuttons as $buttontype => $button) {
+            $page = $button['page'];
+            // If no image is provided then just use the title.
+            if (!isset($button['image'])) {
+                $this->additionalbuttons[$buttontype]['formattedimage'] = $button['title'];
+            } else {
+                // Check to see if this is an internal Moodle icon.
+                $internalimage = $page->theme->resolve_image_location('t/' . $button['image'], 'moodle');
+                if ($internalimage) {
+                    $this->additionalbuttons[$buttontype]['formattedimage'] = 't/' . $button['image'];
+                } else {
+                    // Treat as an external image.
+                    $this->additionalbuttons[$buttontype]['formattedimage'] = $button['image'];
+                }
+            }
+            // Add the bootstrap 'btn' class for formatting.
+            $this->additionalbuttons[$buttontype]['linkattributes'] = array_merge($button['linkattributes'],
+                    array('class' => 'btn'));
+        }
+    }
+}
+
+/**
  * Stores tabs list
  *
  * Example how to print a single line tabs:
@@ -3532,5 +3692,64 @@ class action_menu_link_secondary extends action_menu_link {
      */
     public function __construct(moodle_url $url, pix_icon $icon = null, $text, array $attributes = array()) {
         parent::__construct($url, $icon, $text, false, $attributes);
+    }
+}
+
+/**
+ * Represents a set of preferences groups.
+ *
+ * @package core
+ * @category output
+ * @copyright 2015 Frédéric Massart - FMCorz.net
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class preferences_groups implements renderable {
+
+    /**
+     * Array of preferences_group.
+     * @var array
+     */
+    public $groups;
+
+    /**
+     * Constructor.
+     * @param array $groups of preferences_group
+     */
+    public function __construct($groups) {
+        $this->groups = $groups;
+    }
+
+}
+
+/**
+ * Represents a group of preferences page link.
+ *
+ * @package core
+ * @category output
+ * @copyright 2015 Frédéric Massart - FMCorz.net
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class preferences_group implements renderable {
+
+    /**
+     * Title of the group.
+     * @var string
+     */
+    public $title;
+
+    /**
+     * Array of navigation_node.
+     * @var array
+     */
+    public $nodes;
+
+    /**
+     * Constructor.
+     * @param string $title The title.
+     * @param array $nodes of navigation_node.
+     */
+    public function __construct($title, $nodes) {
+        $this->title = $title;
+        $this->nodes = $nodes;
     }
 }

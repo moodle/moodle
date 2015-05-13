@@ -28,7 +28,9 @@ class block_settings_renderer extends plugin_renderer_base {
         $count = 0;
         foreach ($navigation->children as &$child) {
             $child->preceedwithhr = ($count!==0);
-            $count++;
+            if ($child->display) {
+                $count++;
+            }
         }
         $content = $this->navigation_node($navigation, array('class'=>'block_tree list'));
         if (isset($navigation->id) && !is_numeric($navigation->id) && !empty($content)) {

@@ -37,42 +37,35 @@ $lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*'
 
 require_login($course, false, $cm);
 
+$currentgroup = groups_get_activity_group($cm, true);
+
 $context = context_module::instance($cm->id);
-require_capability('mod/lesson:manage', $context);
+require_capability('mod/lesson:viewreports', $context);
 
-$ufields = user_picture::fields('u'); // These fields are enough
-$params = array("lessonid" => $lesson->id);
-list($sort, $sortparams) = users_order_by_sql('u');
-$params = array_merge($params, $sortparams);
-// TODO: Improve this. Fetching all students always is crazy!
-if (!empty($cm->groupingid)) {
-    $params["groupingid"] = $cm->groupingid;
+// Only load students if there attempts for this lesson.
+if ($attempts = $DB->record_exists('lesson_attempts', array('lessonid' => $lesson->id))) {
+    list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
+    list($sort, $sortparams) = users_order_by_sql('u');
+
+    $params['lessonid'] = $lesson->id;
+    $ufields = user_picture::fields('u');
     $sql = "SELECT DISTINCT $ufields
-                FROM {lesson_attempts} a
-                    INNER JOIN {user} u ON u.id = a.userid
-                    INNER JOIN {groups_members} gm ON gm.userid = u.id
-                    INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid
-                WHERE a.lessonid = :lessonid AND
-                      gg.groupingid = :groupingid
-                ORDER BY $sort";
-} else {
-    $sql = "SELECT DISTINCT $ufields
-            FROM {user} u,
-                 {lesson_attempts} a
-            WHERE a.lessonid = :lessonid and
-                  u.id = a.userid
+            FROM {user} u
+            JOIN {lesson_attempts} a ON u.id = a.userid
+            JOIN ($esql) ue ON ue.id = a.userid
+            WHERE a.lessonid = :lessonid
             ORDER BY $sort";
-}
 
-$students = $DB->get_recordset_sql($sql, $params);
-if (!$students->valid()) {
+    $students = $DB->get_recordset_sql($sql, $params);
+    if (!$students->valid()) {
+        $nothingtodisplay = true;
+    }
+} else {
     $nothingtodisplay = true;
 }
 
 $url = new moodle_url('/mod/lesson/report.php', array('id'=>$id));
-if ($action !== 'reportoverview') {
-    $url->param('action', $action);
-}
+$url->param('action', $action);
 if ($pageid !== null) {
     $url->param('pageid', $pageid);
 }
@@ -99,7 +92,13 @@ if (! $times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id)
 
 if ($nothingtodisplay) {
     echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('nolessonattempts', 'lesson'));
-    echo $OUTPUT->notification(get_string('nolessonattempts', 'lesson'));
+    if (!empty($currentgroup)) {
+        $groupname = groups_get_group_name($currentgroup);
+        echo $OUTPUT->notification(get_string('nolessonattemptsgroup', 'lesson', $groupname));
+    } else {
+        echo $OUTPUT->notification(get_string('nolessonattempts', 'lesson'));
+    }
+    groups_print_activity_menu($cm, $url);
     echo $OUTPUT->footer();
     exit();
 }
@@ -165,6 +164,7 @@ if ($action === 'delete') {
     this action is for default view and overview view
     **************************************************************************/
     echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('overview', 'lesson'));
+    groups_print_activity_menu($cm, $url);
 
     $course_context = context_course::instance($course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
@@ -254,7 +254,7 @@ if ($action === 'delete') {
             $bestgradefound = false;
             // $tries holds all the tries/retries a student has done
             $tries = $studentdata[$student->id];
-            $studentname = "{$student->lastname},&nbsp;$student->firstname";
+            $studentname = fullname($student, true);
             foreach ($tries as $try) {
             // start to build up the checkbox and link
                 if (has_capability('mod/lesson:edit', $context)) {
@@ -263,7 +263,8 @@ if ($action === 'delete') {
                     $temp = '';
                 }
 
-                $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;userid=".$try['userid'].'&amp;try='.$try['try'].'">';
+                $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;userid=".$try['userid']
+                        .'&amp;try='.$try['try'].'" class="lesson-attempt-link">';
                 if ($try["grade"] !== null) { // if null then not done yet
                     // this is what the link does when the user has completed the try
                     $timetotake = $try["timeend"] - $try["timestart"];
@@ -393,6 +394,7 @@ if ($action === 'delete') {
 
 **************************************************************************/
     echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('detailedstats', 'lesson'));
+    groups_print_activity_menu($cm, $url);
 
     $course_context = context_course::instance($course->id);
     if (has_capability('gradereport/grader:view', $course_context) && has_capability('moodle/grade:viewall', $course_context)) {
@@ -407,6 +409,11 @@ if ($action === 'delete') {
 
     $userid = optional_param('userid', null, PARAM_INT); // if empty, then will display the general detailed view
     $try    = optional_param('try', null, PARAM_INT);
+
+    if (!empty($userid)) {
+        // Apply overrides.
+        $lesson->update_effective_access($userid);
+    }
 
     $lessonpages = $lesson->load_all_pages();
     foreach ($lessonpages as $lessonpage) {
@@ -468,6 +475,7 @@ if ($action === 'delete') {
         $options = new stdClass;
         $options->noclean = true;
         $options->overflowdiv = true;
+        $options->context = $context;
         $answerpage->contents = format_text($page->contents, $page->contentsformat, $options);
 
         $answerpage->qtype = $qtypes[$page->qtype].$page->option_description_string();

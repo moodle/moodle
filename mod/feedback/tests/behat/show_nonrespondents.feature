@@ -33,9 +33,9 @@ Feature: Show users who have not responded to the feedback survey
     And the following "grouping groups" exist:
       | grouping | group  |
       | GXI1     | GI1    |
+    And the following config values are set as admin:
+      | enableavailability | 1 |
     And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
     And I navigate to "Manage activities" node in "Site administration > Plugins > Activity modules"
     And I click on "Show" "link" in the "Feedback" "table_row"
     And I log out

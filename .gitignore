@@ -26,9 +26,8 @@ CVS
 /.buildpath
 /.cache
 phpunit.xml
-# Composer support - only composer.json is to be in git, the rest is installed in each checkout.
+# Composer support. Do not ignore composer.json, or composer.lock. These should be shipped by us.
 composer.phar
-composer.lock
 /vendor/
 /behat.yml
 */yui/build/*/*-coverage.js
@@ -36,3 +35,4 @@ composer.lock
 # lib/yuilib/version/module/module-coverage.js
 /lib/yuilib/*/*/*-coverage.js
 atlassian-ide-plugin.xml
+/node_modules/

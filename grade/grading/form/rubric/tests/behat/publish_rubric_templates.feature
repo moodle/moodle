@@ -7,8 +7,8 @@ Feature: Publish rubrics as templates
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | manager1 | Manager | 1 | manager1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | manager1 | Manager | 1 | manager1@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -23,6 +23,7 @@ Feature: Publish rubrics as templates
       | user | role | contextlevel | reference |
       | manager1 | manager | System | |
     And I log in as "manager1"
+    And I am on site homepage
     And I follow "Course 1"
     And I go to "Test assignment 1 name" advanced grading definition page
     And I set the following fields to these values:

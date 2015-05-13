@@ -49,13 +49,19 @@ class data_field_textarea extends data_field_base {
         return $options;
     }
 
-    function display_add_field($recordid=0) {
+    function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $PAGE;
 
         $text   = '';
         $format = 0;
-
-        $str = '<div title="'.$this->field->description.'">';
+        $str = '<div title="' . s($this->field->description) . '">';
+        $str .= '<label for="field_' . $this->field->id . '">';
+        $str .= html_writer::span($this->field->name, "accesshide");
+        if ($this->field->required) {
+            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+        }
+        $str .= '</label>';
 
         editors_head_setup();
         $options = $this->get_options();
@@ -63,7 +69,25 @@ class data_field_textarea extends data_field_base {
         $itemid = $this->field->id;
         $field = 'field_'.$itemid;
 
-        if ($recordid && $content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))){
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id . '_content1';
+            if (isset($formdata->$fieldname)) {
+                $format = $formdata->$fieldname;
+            } else {
+                $format = file_get_unused_draft_itemid();
+            }
+            $fieldname = 'field_' . $this->field->id . '_itemid';
+            if (isset($formdata->$fieldname)) {
+                $draftitemid = $formdata->$fieldname;
+            } else {
+                $draftitemid = file_get_unused_draft_itemid();
+            }
+            $fieldname = 'field_' . $this->field->id;
+            if (isset($formdata->$fieldname)) {
+                $text = $formdata->$fieldname;
+            }
+        } else if ($recordid &&
+                   $content = $DB->get_record('data_content', array('fieldid' => $this->field->id, 'recordid' => $recordid))) {
             $format = $content->content1;
             $text = clean_text($content->content, $format);
             $text = file_prepare_draft_area($draftitemid, $this->context->id, 'mod_data', 'content', $content->id, $options, $text);
@@ -129,8 +153,8 @@ class data_field_textarea extends data_field_base {
             $str .= '<option value="'.s($key).'" '.$selected.'>'.$desc.'</option>';
         }
         $str .= '</select>';
-        $str .= '</div>';
 
+        $str .= '</div>';
         $str .= '</div>';
         return $str;
     }
@@ -230,5 +254,20 @@ class data_field_textarea extends data_field_base {
     function file_ok($relativepath) {
         return true;
     }
-}
 
+    /**
+     * Only look at the first item (second is format)
+     *
+     * @param string $value
+     * @param string $name
+     * @return bool
+     */
+    function notemptyfield($value, $name) {
+        $names = explode('_', $name);
+        // Clean first.
+        if (count($names) == 2) {
+            return !empty($value);
+        }
+        return false;
+    }
+}

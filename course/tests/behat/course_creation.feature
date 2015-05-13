@@ -8,8 +8,8 @@ Feature: Managers can create courses
   Scenario: Courses are created with the default forum and blocks
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And I log in as "admin"
     And I create a course with:
       | Course full name | Course 1 |

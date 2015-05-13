@@ -72,8 +72,13 @@ if ($options['list']) {
             . $task->get_day_of_week();
         $nextrun = $task->get_next_run_time();
 
-        if ($task->get_disabled()) {
-            $nextrun = get_string('disabled', 'tool_task');
+        $plugininfo = core_plugin_manager::instance()->get_plugin_info($task->get_component());
+        $plugindisabled = $plugininfo && $plugininfo->is_enabled() === false && !$task->get_run_if_component_disabled();
+
+        if ($plugindisabled) {
+            $nextrun = get_string('plugindisabled', 'tool_task');
+        } else if ($task->get_disabled()) {
+            $nextrun = get_string('taskdisabled', 'tool_task');
         } else if ($nextrun > time()) {
             $nextrun = userdate($nextrun);
         } else {
@@ -104,25 +109,29 @@ if ($execute = $options['execute']) {
 
     $predbqueries = $DB->perf_get_queries();
     $pretime = microtime(true);
+
+    mtrace("Scheduled task: " . $task->get_name());
+    // NOTE: it would be tricky to move this code to \core\task\manager class,
+    //       because we want to do detailed error reporting.
+    $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
+    if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
+        mtrace('Cannot obtain cron lock');
+        exit(129);
+    }
+    if (!$lock = $cronlockfactory->get_lock('\\' . get_class($task), 10)) {
+        $cronlock->release();
+        mtrace('Cannot obtain task lock');
+        exit(130);
+    }
+
+    $task->set_lock($lock);
+    if (!$task->is_blocking()) {
+        $cronlock->release();
+    } else {
+        $task->set_cron_lock($cronlock);
+    }
+
     try {
-        mtrace("Scheduled task: " . $task->get_name());
-        // NOTE: it would be tricky to move this code to \core\task\manager class,
-        //       because we want to do detailed error reporting.
-        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
-        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10)) {
-            mtrace('Cannot obtain cron lock');
-            exit(129);
-        }
-        if (!$lock = $cronlockfactory->get_lock('\\' . get_class($task), 10)) {
-            mtrace('Cannot obtain task lock');
-            exit(130);
-        }
-        $task->set_lock($lock);
-        if (!$task->is_blocking()) {
-            $cronlock->release();
-        } else {
-            $task->set_cron_lock($cronlock);
-        }
         get_mailer('buffer');
         $task->execute();
         if (isset($predbqueries)) {

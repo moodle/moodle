@@ -27,8 +27,10 @@
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given,
-    Behat\Mink\Exception\ExpectationException as ExpectationException;
+use Behat\Behat\Context\Step\Given as Given;
+use Behat\Mink\Exception\ExpectationException as ExpectationException;
+use Behat\Mink\Exception\DriverException as DriverException;
+use Behat\Behat\Context\Step\When as When;
 
 /**
  * Steps definitions to navigate through the navigation tree nodes.
@@ -133,6 +135,33 @@ class behat_navigation extends behat_base {
             throw new ExpectationException('The "' . $nodetext . '" node is expandable', $this->getSession());
         }
         return true;
+    }
+
+    /**
+     * Click on an entry in the user menu.
+     * @Given /^I follow "(?P<nodetext_string>(?:[^"]|\\")*)" in the user menu$/
+     *
+     * @throws ExpectationException
+     * @param string $nodetext
+     * @return bool|void
+     */
+    public function i_follow_in_the_user_menu($nodetext) {
+
+        // The user menu is broken without javascript.
+        if (!$this->running_javascript()) {
+            throw new DriverException('I follow in the user menu step is not available with Javascript disabled');
+        }
+
+        $steps = array();
+
+        $xpath = "//div[@class='usermenu']//a[contains(concat(' ', @class, ' '), ' toggle-display ')]";
+        $csspath = ".usermenu [data-rel='menu-content']";
+
+        $steps[] = new When('I click on "'.$xpath.'" "xpath_element"');
+        $steps[] = new When('I click on "'.$nodetext.'" "link" in the "'.$csspath.'" "css_element"');
+
+        return $steps;
+
     }
 
     /**

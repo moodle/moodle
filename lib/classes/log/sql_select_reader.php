@@ -26,6 +26,16 @@ namespace core\log;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Sql select reader.
+ *
+ * @deprecated since Moodle 2.9 MDL-48595 - please do not use this interface any more.
+ * @see        sql_reader
+ * @todo       MDL-49291 This will be deleted in Moodle 3.1.
+ * @package    core
+ * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 interface sql_select_reader extends reader {
     /**
      * Fetch records using given criteria.

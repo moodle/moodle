@@ -7,7 +7,7 @@ Feature: View my courses in navigation block
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "categories" exist:
       | name  | category | idnumber |
       | cat1  | 0        | cat1     |
@@ -29,15 +29,13 @@ Feature: View my courses in navigation block
       | student1 | c1     | student |
       | student1 | c31    | student |
       | student1 | c331   | student |
-    And I log in as "admin"
 
   @javascript
   Scenario: The plain list of enrolled courses is shown
-    Given I set the following administration settings values:
-      | Show my course categories | 0 |
-    And I log out
+    Given the following config values are set as admin:
+      | navshowmycoursecategories | 0 |
     And I log in as "student1"
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should not see "cat1" in the "Navigation" "block"
     And I should not see "cat2" in the "Navigation" "block"
     And I should see "c1" in the "Navigation" "block"
@@ -49,11 +47,10 @@ Feature: View my courses in navigation block
 
   @javascript
   Scenario: The nested list of enrolled courses is shown
-    Given I set the following administration settings values:
-      | Show my course categories | 1 |
-    And I log out
+    Given the following config values are set as admin:
+      | navshowmycoursecategories | 1 |
     And I log in as "student1"
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "cat1" in the "Navigation" "block"
     And I should see "cat3" in the "Navigation" "block"
     And I should not see "cat2" in the "Navigation" "block"
@@ -69,10 +66,9 @@ Feature: View my courses in navigation block
 
   @javascript
   Scenario: I can expand categories and courses as guest
-    Given I set the following administration settings values:
-      | Show my course categories | 1 |
-      | Show all courses          | 1 |
-    And I log out
+    Given the following config values are set as admin:
+      | navshowmycoursecategories | 1 |
+      | navshowallcourses         | 1 |
     And I expand "Courses" node
     And I should see "cat1" in the "Navigation" "block"
     And I should see "cat2" in the "Navigation" "block"

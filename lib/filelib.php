@@ -1667,8 +1667,11 @@ function get_mimetype_description($obj, $capitalise=false) {
     $customdescription = mimeinfo('customdescription', $filename);
     if ($customdescription) {
         // Call format_string on the custom description so that multilang
-        // filter can be used (if enabled).
-        $result = format_string($customdescription);
+        // filter can be used (if enabled on system context). We use system
+        // context because it is possible that the page context might not have
+        // been defined yet.
+        $result = format_string($customdescription, true,
+                array('context' => context_system::instance()));
     } else if (get_string_manager()->string_exists($safemimetype, 'mimetypes')) {
         $result = get_string($safemimetype, 'mimetypes', (object)$a);
     } else if (get_string_manager()->string_exists($safemimetypestr, 'mimetypes')) {

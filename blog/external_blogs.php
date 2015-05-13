@@ -29,7 +29,7 @@ require_once('lib.php');
 
 require_login();
 $context = context_system::instance();
-$PAGE->set_context($context);
+$PAGE->set_context(context_user::instance($USER->id));
 $PAGE->set_url(new moodle_url('/blog/external_blogs.php'));
 require_capability('moodle/blog:manageexternal', $context);
 
@@ -61,7 +61,7 @@ if ($delete && confirm_sesskey()) {
 
 $blogs = $DB->get_records('blog_external', array('userid' => $USER->id));
 
-$PAGE->set_heading("$SITE->shortname: $strblogs: $strexternalblogs", $SITE->fullname);
+$PAGE->set_heading(fullname($USER));
 $PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
 $PAGE->set_pagelayout('standard');
 

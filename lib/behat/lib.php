@@ -42,6 +42,11 @@ define('BEHAT_EXITCODE_COMPOSER', 255);
 define('BEHAT_EXITCODE_INSTALLED', 256);
 
 /**
+ * The behat test site fullname and shortname.
+ */
+define('BEHAT_PARALLEL_SITE_NAME', "behatrun");
+
+/**
  * Exits with an error code
  *
  * @param  mixed $errorcode
@@ -224,6 +229,7 @@ function behat_check_config_vars() {
         behat_error(BEHAT_EXITCODE_CONFIG,
             'Define $CFG->behat_dataroot in config.php');
     }
+    clearstatcache();
     if (!file_exists($CFG->behat_dataroot)) {
         $permissions = isset($CFG->directorypermissions) ? $CFG->directorypermissions : 02777;
         umask(0);
@@ -273,6 +279,57 @@ function behat_is_test_site() {
 }
 
 /**
+ * Fix variables for parallel behat testing.
+ * - behat_wwwroot = behat_wwwroot{behatrunprocess}
+ * - behat_dataroot = behat_dataroot{behatrunprocess}
+ * - behat_prefix = behat_prefix.{behatrunprocess}_ (For oracle it will be firstletter of prefix and behatrunprocess)
+ **/
+function behat_update_vars_for_process() {
+    global $CFG;
+
+    $allowedconfigoverride = array('dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'behat_prefix',
+        'behat_wwwroot', 'behat_dataroot');
+    $behatrunprocess = behat_get_run_process();
+    $CFG->behatrunprocess = $behatrunprocess;
+
+    if ($behatrunprocess) {
+        if (empty($CFG->behat_parallel_run[$behatrunprocess - 1]['behat_wwwroot'])) {
+            // Set www root for run process.
+            if (isset($CFG->behat_wwwroot) &&
+                !preg_match("#/" . BEHAT_PARALLEL_SITE_NAME . $behatrunprocess . "\$#", $CFG->behat_wwwroot)) {
+                $CFG->behat_wwwroot .= "/" . BEHAT_PARALLEL_SITE_NAME . $behatrunprocess;
+            }
+        }
+
+        if (empty($CFG->behat_parallel_run[$behatrunprocess - 1]['behat_dataroot'])) {
+            // Set behat_dataroot.
+            if (!preg_match("#" . $behatrunprocess . "\$#", $CFG->behat_dataroot)) {
+                $CFG->behat_dataroot .= $behatrunprocess;
+            }
+        }
+
+        // Set behat_prefix for db, just suffix run process number, to avoid max length exceed.
+        // For oracle only 2 letter prefix is possible.
+        // NOTE: This will not work for parallel process > 9.
+        if ($CFG->dbtype === 'oci') {
+            $CFG->behat_prefix = substr($CFG->behat_prefix, 0, 1);
+            $CFG->behat_prefix .= "{$behatrunprocess}";
+        } else {
+            $CFG->behat_prefix .= "{$behatrunprocess}_";
+        }
+
+        if (!empty($CFG->behat_parallel_run[$behatrunprocess - 1])) {
+            // Override allowed config vars.
+            foreach ($allowedconfigoverride as $config) {
+                if (isset($CFG->behat_parallel_run[$behatrunprocess - 1][$config])) {
+                    $CFG->$config = $CFG->behat_parallel_run[$behatrunprocess - 1][$config];
+                }
+            }
+        }
+    }
+}
+
+/**
  * Checks if the URL requested by the user matches the provided argument
  *
  * @param string $url
@@ -305,4 +362,100 @@ function behat_is_requested_url($url) {
     }
 
     return false;
+}
+
+/**
+ * Get behat run process from either $_SERVER or command config.
+ *
+ * @return bool|int false if single run, else run process number.
+ */
+function behat_get_run_process() {
+    global $argv, $CFG;
+    $behatrunprocess = false;
+
+    // Get behat run process, if set.
+    if (defined('BEHAT_CURRENT_RUN') && BEHAT_CURRENT_RUN) {
+        $behatrunprocess = BEHAT_CURRENT_RUN;
+    } else if (!empty($_SERVER['REMOTE_ADDR'])) {
+        // Try get it from config if present.
+        if (!empty($CFG->behat_parallel_run)) {
+            foreach ($CFG->behat_parallel_run as $run => $behatconfig) {
+                if (isset($behatconfig['behat_wwwroot']) && behat_is_requested_url($behatconfig['behat_wwwroot'])) {
+                    $behatrunprocess = $run + 1; // We start process from 1.
+                    break;
+                }
+            }
+        }
+        // Check if parallel site prefix is used.
+        if (empty($behatrunprocess) && preg_match('#/' . BEHAT_PARALLEL_SITE_NAME . '(.+?)/#', $_SERVER['REQUEST_URI'])) {
+            $dirrootrealpath = str_replace("\\", "/", realpath($CFG->dirroot));
+            $serverrealpath = str_replace("\\", "/", realpath($_SERVER['SCRIPT_FILENAME']));
+            $afterpath = str_replace($dirrootrealpath.'/', '', $serverrealpath);
+            if (!$behatrunprocess = preg_filter("#.*/" . BEHAT_PARALLEL_SITE_NAME . "(.+?)/$afterpath#", '$1',
+                $_SERVER['SCRIPT_FILENAME'])) {
+                throw new Exception("Unable to determine behat process [afterpath=" . $afterpath .
+                    ", scriptfilename=" . $_SERVER['SCRIPT_FILENAME'] . "]!");
+            }
+        }
+    } else if (defined('BEHAT_TEST') || defined('BEHAT_UTIL')) {
+        if ($match = preg_filter('#--run=(.+)#', '$1', $argv)) {
+            $behatrunprocess = reset($match);
+        } else if ($k = array_search('--config', $argv)) {
+            $behatconfig = str_replace("\\", "/", $argv[$k + 1]);
+            // Try get it from config if present.
+            if (!empty($CFG->behat_parallel_run)) {
+                foreach ($CFG->behat_parallel_run as $run => $parallelconfig) {
+                    if (!empty($parallelconfig['behat_dataroot']) &&
+                        $parallelconfig['behat_dataroot'] . '/behat/behat.yml' == $behatconfig) {
+
+                        $behatrunprocess = $run + 1; // We start process from 1.
+                        break;
+                    }
+                }
+            }
+            // Check if default behat datroot increment was done.
+            if (empty($behatrunprocess)) {
+                $behatdataroot = str_replace("\\", "/", $CFG->behat_dataroot);
+                $behatrunprocess = preg_filter("#^{$behatdataroot}" . "(.+?)[/|\\\]behat[/|\\\]behat\.yml#", '$1',
+                    $behatconfig);
+            }
+        }
+    }
+
+    return $behatrunprocess;
+}
+
+/**
+ * Execute commands in parallel.
+ *
+ * @param array $cmds list of commands to be executed.
+ * @param string $cwd absolute path of working directory.
+ * @return array list of processes.
+ */
+function cli_execute_parallel($cmds, $cwd = null) {
+    require_once(__DIR__ . "/../../vendor/autoload.php");
+
+    $processes = array();
+
+    // Create child process.
+    foreach ($cmds as $name => $cmd) {
+        $process = new Symfony\Component\Process\Process($cmd);
+
+        $process->setWorkingDirectory($cwd);
+        $process->setTimeout(null);
+        $processes[$name] = $process;
+        $processes[$name]->start();
+
+        // If error creating process then exit.
+        if ($processes[$name]->getStatus() !== 'started') {
+            echo "Error starting process: $name";
+            foreach ($processes[$name] as $process) {
+                if ($process) {
+                    $process->signal(SIGKILL);
+                }
+            }
+            exit(1);
+        }
+    }
+    return $processes;
 }
