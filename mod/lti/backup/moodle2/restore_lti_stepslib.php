@@ -114,14 +114,16 @@ class restore_lti_activity_structure_step extends restore_activity_structure_ste
         if ($this->task->is_samesite() && $ltitype->course != SITEID
                 && $ltitype->state == LTI_TOOL_STATE_CONFIGURED) {
             // If restoring into the same course, use existing data, else re-create.
-            $course = $this->get_courseid();
-            if ($ltitype->course != $course) {
-                $data->course = $course;
+            $courseid = $this->get_courseid();
+            if ($ltitype->course != $courseid) {
+                // Override course field of restore data with current courseid.
+                $data->course = $courseid;
                 $ltitype = new stdClass();
                 $ltitype->id = $DB->insert_record('lti_types', $data);
             }
         } else if (!$this->task->is_samesite() || !isset($ltitype->id)) {
             // Either we are restoring into a new site, or didn't find a database match.
+            // Override course field of restore data with current courseid.
             $data->course = $this->get_courseid();
             $ltitype = new stdClass();
             $ltitype->id = $DB->insert_record('lti_types', $data);
