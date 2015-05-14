@@ -17,8 +17,8 @@
  * Wrapper for the YUI M.core.notification class. Allows us to
  * use the YUI version in AMD code until it is replaced.
  *
- * @module     core/dialogue
- * @package    core
+ * @module     tool_lp/dialogue
+ * @package    tool_lp
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,8 +28,8 @@ define(['core/yui'], function(Y) {
     /**
      * Constructor
      *
-     * @param {string} title Title for the window.
-     * @param {string} content The content for the window.
+     * @param {String} title Title for the window.
+     * @param {String} content The content for the window.
      * @param {function} afterShow Callback executed after the window is opened.
      */
     var dialogue = function(title, content, afterShow) {
@@ -72,5 +72,5 @@ define(['core/yui'], function(Y) {
         return this.yuiDialogue.bodyNode.getDOMNode();
     };
 
-    return /** @alias module:core/dialogue */ dialogue;
+    return /** @alias module:tool_lp/dialogue */ dialogue;
 });

@@ -16,39 +16,55 @@
 /**
  * Handle selection changes and actions on the competency tree.
  *
- * @module     tool_lp/competencyselect
+ * @module     tool_lp/competencyactions
  * @package    tool_lp
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str', 'core/ajax', 'core/dragdrop-reorder', 'core/tree', 'core/dialogue', 'core/menu'],
-       function($, url, templates, notification, str, ajax, dragdrop, ariatree, dialogue, menu) {
+define(['jquery',
+        'core/url',
+        'core/templates',
+        'core/notification',
+        'core/str',
+        'core/ajax',
+        'tool_lp/dragdrop-reorder',
+        'tool_lp/tree',
+        'tool_lp/dialogue',
+        'tool_lp/menubar'],
+       function($, url, templates, notification, str, ajax, dragdrop, Ariatree, Dialogue, menubar) {
 
     // Private variables and functions.
+    /** @var {Object} treeModel - This is an object representing the nodes in the tree. */
     var treeModel = null;
-
+    /** @var {Node} moveSource - The start of a drag operation */
     var moveSource = null;
+    /** @var {Node} moveTarget - The end of a drag operation */
     var moveTarget = null;
 
-    var addHandler = function(e) {
-        e.preventDefault();
+    /**
+     * Respond to choosing the "Add" menu item for the selected node in the tree.
+     * @method addHandler
+     */
+    var addHandler = function() {
         var parent = $('[data-region="competencyactions"]').data('competency');
 
         var params = {
             competencyframeworkid : treeModel.getCompetencyFrameworkId()
         };
 
-        if (parent == null) {
-            // We are adding at the root node.
-        } else {
+        if (parent !== null) {
             // We are adding at a sub node.
-            params['parentid'] = parent.id;
+            params.parentid = parent.id;
         }
         var queryparams = $.param(params);
         var actionurl = url.relativeUrl('/admin/tool/lp/editcompetency.php?' + queryparams);
         window.location = actionurl;
     };
 
+    /**
+     * A source and destination has been chosen - so time to complete a move.
+     * @method doMove
+     */
     var doMove = function() {
         if (typeof (moveTarget) === "undefined") {
             // This is a top level node.
@@ -70,16 +86,27 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
         requests[1].done(reloadPage).fail(notification.exception);
     };
 
+    /**
+     * A move competency popup was opened - initialise the aria tree in it.
+     * @method initMovePopup
+     * @param {dialogue} The tool_lp/dialogue that was created.
+     */
     var initMovePopup = function(popup) {
-        var movetree = new ariatree('[data-enhance=movetree]', function(target) {
+        new Ariatree('[data-enhance=movetree]', function(target) {
             moveTarget = $(target).data('id');
         });
 
         var body = $(popup.getContent());
-        body.on('click', '[data-action="move"]', function(e) { popup.close(); doMove() });
-        body.on('click', '[data-action="cancel"]', function(e) { popup.close(); });
+        body.on('click', '[data-action="move"]', function() { popup.close(); doMove(); });
+        body.on('click', '[data-action="cancel"]', function() { popup.close(); });
     };
 
+    /**
+     * Turn a flat list of competencies into a tree structure (recursive).
+     * @method addCompetencyChildren
+     * @param {Object} parent The current parent node in the tree
+     * @param {Object[]} competencies The flat list of competencies
+     */
     var addCompetencyChildren = function(parent, competencies) {
         var i;
 
@@ -94,8 +121,11 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
         }
     };
 
-    var moveHandler = function(e) {
-        e.preventDefault();
+    /**
+     * A node was chosen and "Move" was selected from the menu. Open a popup to select the target.
+     * @method moveHandler
+     */
+    var moveHandler = function() {
         var competency = $('[data-region="competencyactions"]').data('competency');
 
         // Remember what we are moving.
@@ -124,7 +154,7 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
             var i, competenciestree = [];
             for (i = 0; i < competencies.length; i++) {
                 var onecompetency = competencies[i];
-                if (onecompetency.parentid == 0) {
+                if (onecompetency.parentid === "0") {
                     onecompetency.children = [];
                     onecompetency.haschildren = 0;
                     competenciestree[competenciestree.length] = onecompetency;
@@ -132,7 +162,7 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
                 }
             }
 
-            var strings = str.get_strings([
+            str.get_strings([
                 { key: 'movecompetency', component: 'tool_lp', param: competency.shortname },
                 { key: 'move', component: 'tool_lp' },
                 { key: 'cancel', component: 'tool_lp' }
@@ -145,7 +175,7 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
 
                 templates.render('tool_lp/competencies_move_tree', context)
                    .done(function(tree) {
-                       var popup = new dialogue(
+                       new Dialogue(
                            strings[0], // Move competency x.
                            tree, // The move tree.
                            initMovePopup
@@ -159,8 +189,11 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
 
     };
 
-    var editHandler = function(e) {
-        e.preventDefault();
+    /**
+     * Edit the selected competency.
+     * @method editHandler
+     */
+    var editHandler = function() {
         var competency = $('[data-region="competencyactions"]').data('competency');
 
         var params = {
@@ -174,6 +207,10 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
         window.location = actionurl;
     };
 
+    /**
+     * Re-render the page with the latest data.
+     * @method reloadPage
+     */
     var reloadPage = function(context) {
         templates.render('tool_lp/manage_competencies_page', context)
             .done(function(newhtml, newjs) {
@@ -183,6 +220,10 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
            .fail(notification.exception);
     };
 
+    /**
+     * Perform a search and render the page with the new search results.
+     * @method updateSearchHandler
+     */
     var updateSearchHandler = function(e) {
         e.preventDefault();
 
@@ -196,6 +237,10 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
         requests[0].done(reloadPage).fail(notification.exception);
     };
 
+    /**
+     * Move a competency "up". This only affects the sort order within the same branch of the tree.
+     * @method moveUpHandler
+     */
     var moveUpHandler = function() {
         // We are chaining ajax requests here.
         var competency = $('[data-region="competencyactions"]').data('competency');
@@ -210,6 +255,10 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
         requests[1].done(reloadPage).fail(notification.exception);
     };
 
+    /**
+     * Move a competency "down". This only affects the sort order within the same branch of the tree.
+     * @method moveDownHandler
+     */
     var moveDownHandler = function() {
         // We are chaining ajax requests here.
         var competency = $('[data-region="competencyactions"]').data('competency');
@@ -224,10 +273,12 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
         requests[1].done(reloadPage).fail(notification.exception);
     };
 
-    var seeCoursesHandler = function(e) {
-        e.preventDefault();
+    /**
+     * Open a dialogue to show all the courses using the selected competency.
+     * @method seeCoursesHandler
+     */
+    var seeCoursesHandler = function() {
         var competency = $('[data-region="competencyactions"]').data('competency');
-        var localthis = this;
 
         var requests = ajax.call([{
             methodname: 'tool_lp_list_courses_using_competency',
@@ -241,7 +292,7 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
             };
             templates.render('tool_lp/linked_courses_summary', context).done(function(html) {
                 str.get_string('linkedcourses', 'tool_lp').done(function (linkedcourses) {
-                    var popup = new dialogue(
+                    new Dialogue(
                         linkedcourses, // Title.
                         html, // The linked courses.
                         initMovePopup
@@ -249,8 +300,12 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
                 }).fail(notification.exception);
             }).fail(notification.exception);
         }).fail(notification.exception);
-    }
+    };
 
+    /**
+     * Delete a competency.
+     * @method doDelete
+     */
     var doDelete = function() {
         // We are chaining ajax requests here.
         var competency = $('[data-region="competencyactions"]').data('competency');
@@ -265,14 +320,17 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
         requests[1].done(reloadPage).fail(notification.exception);
     };
 
-    var deleteHandler = function(e) {
-        e.preventDefault();
+    /**
+     * Show a confirm dialogue before deleting a competency.
+     * @method deleteHandler
+     */
+    var deleteHandler = function() {
         var competency = $('[data-region="competencyactions"]').data('competency');
 
         templates.render('tool_lp/competency_summary', competency)
            .done(function(html) {
 
-               var strings = str.get_strings([
+               str.get_strings([
                    { key: 'confirm', component: 'tool_lp' },
                    { key: 'deletecompetency', component: 'tool_lp', param: html },
                    { key: 'delete', component: 'tool_lp' },
@@ -290,25 +348,45 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
 
     };
 
+    /**
+     * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
+     * @method dragStart
+     */
     var dragStart = function(e) {
         e.originalEvent.dataTransfer.setData('text', $(e.target).data('id'));
     };
 
+    /**
+     * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
+     * @method allowDrop
+     */
     var allowDrop = function(e) {
         e.originalEvent.dataTransfer.dropEffect = 'move';
         e.preventDefault();
     };
 
+    /**
+     * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
+     * @method dragEnter
+     */
     var dragEnter = function(e) {
         e.preventDefault();
         $(this).addClass('currentdragtarget');
-    }
+    };
 
+    /**
+     * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
+     * @method dragLeave
+     */
     var dragLeave = function(e) {
         e.preventDefault();
         $(this).removeClass('currentdragtarget');
-    }
+    };
 
+    /**
+     * HTML5 implementation of drag/drop (there is an accesible alternative in the menus).
+     * @method dropOver
+     */
     var dropOver = function(e) {
         e.preventDefault();
         moveSource = e.originalEvent.dataTransfer.getData('text');
@@ -319,20 +397,27 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
     };
 
     return {
+        /**
+         * Initialise this page (attach event handlers etc).
+         *
+         * @method init
+         * @param {Object} model The tree model provides some useful functions for loading and searching competencies.
+         */
         init: function(model) {
             treeModel = model;
-            str.get_string('edit', 'core').done(function (edit) {
-                menu.menu(edit, '.competencyactionsmenu');
 
-                $('[data-region="competencyactions"]').on('click', '[data-action="add"]', addHandler);
-                $('[data-region="competencyactions"]').on('click', '[data-action="edit"]', editHandler);
-                $('[data-region="competencyactions"]').on('click', '[data-action="delete"]', deleteHandler);
-                $('[data-region="competencyactions"]').on('click', '[data-action="move"]', moveHandler);
-                $('[data-region="competencyactions"]').on('click', '[data-action="moveup"]', moveUpHandler);
-                $('[data-region="competencyactions"]').on('click', '[data-action="movedown"]', moveDownHandler);
-                $('[data-region="competencyactions"]').on('click', '[data-action="linkedcourses"]', seeCoursesHandler);
+            $('[data-region="competencyactions"]').on('click', addHandler);
 
-            }).fail(notification.exception);
+            menubar.enhance('.competencyactionsmenu', {
+                '[data-action="edit"]': editHandler,
+                '[data-action="delete"]': deleteHandler,
+                '[data-action="move"]': moveHandler,
+                '[data-action="moveup"]': moveUpHandler,
+                '[data-action="movedown"]': moveDownHandler,
+                '[data-action="linkedcourses"]': seeCoursesHandler
+            });
+            $('[data-region="competencyactionsmenu"]').hide();
+
             $('[data-region="filtercompetencies"]').on('submit', updateSearchHandler);
             // Simple html5 drag drop because we already added an accessible alternative.
             $('[data-region="managecompetencies"] li').on('dragstart', dragStart);
@@ -341,9 +426,14 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
             $('[data-region="managecompetencies"] li').on('dragleave', dragLeave);
             $('[data-region="managecompetencies"] li').on('drop', dropOver);
         },
-        // Public variables and functions.
+
+        /**
+         * Handler when a node in the aria tree is selected.
+         * @method selectionChanged
+         */
         selectionChanged: function(node) {
             var id = $(node).data('id');
+            menubar.closeAll();
             if (typeof id === "undefined") {
                 // Assume this is the root of the tree.
                 // Here we are only getting the text from the top of the tree, to do it we clone the tree,
@@ -355,6 +445,7 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
             } else {
                 var competency = treeModel.getCompetency(id);
 
+                $('[data-region="competencyactionsmenu"]').show();
                 templates.render('tool_lp/competency_summary', competency)
                    .done(function(html) {
                         $('[data-region="competencyinfo"]').html(html);
@@ -362,7 +453,6 @@ define(['jquery', 'core/url', 'core/templates', 'core/notification', 'core/str',
 
                 $('[data-region="competencyactions"]').data('competency', competency);
                 $('[data-region="competencyactions"] [data-action="add"]').removeAttr("disabled");
-                $('[data-region="competencyactionsmenu"]').css('display', 'inline-block');
 
             }
         }

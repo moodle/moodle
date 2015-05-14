@@ -14,11 +14,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Wrapper for the YUI M.core.dragdrop class. Allows us to
- * use the YUI version in AMD code until it is replaced.
+ * Drag and drop reorder via HTML5.
  *
- * @module     core/dragdrop-reorder
- * @package    core
+ * @module     tool_lp/dragdrop-reorder
+ * @package    tool_lp
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,18 +36,18 @@ define(['core/str', 'core/yui'], function(str, Y) {
         this.callback(dragNode.getDOMNode(), dropNode.getDOMNode());
     };
 
-    return /** @alias module:core/dragdrop-reorder */ {
+    return /** @alias module:tool_lp/dragdrop-reorder */ {
         // Public variables and functions.
         /**
-         * Create an instance of M.core.dragdrop
+         * Create an instance of M.tool_lp.dragdrop
          *
-         * @param {string} group Unique string to identify this interaction.
-         * @param {string} dragHandleText Alt text for the drag handle.
-         * @param {string} sameNodeText Used in keyboard drag drop for the list of items target.
-         * @param {string} parentNodeText Used in keyboard drag drop for the parent target.
-         * @param {string} sameNodeClass class used to find the each of the list of items.
-         * @param {string} parentNodeClass class used to find the container for the list of items.
-         * @param {string} dragHandleInsertClass class used to find the location to insert the drag handles.
+         * @param {String} group Unique string to identify this interaction.
+         * @param {String} dragHandleText Alt text for the drag handle.
+         * @param {String} sameNodeText Used in keyboard drag drop for the list of items target.
+         * @param {String} parentNodeText Used in keyboard drag drop for the parent target.
+         * @param {String} sameNodeClass class used to find the each of the list of items.
+         * @param {String} parentNodeClass class used to find the container for the list of items.
+         * @param {String} dragHandleInsertClass class used to find the location to insert the drag handles.
          * @param {function} callback Drop hit handler.
          */
         dragdrop: function(group,
@@ -66,12 +65,12 @@ define(['core/str', 'core/yui'], function(str, Y) {
                 { key: 'movecontent', component: 'moodle' },
                 { key: 'tocontent', component: 'moodle' },
             ]).done( function () {
-                Y.use('moodle-core-dragdrop-reorder', function () {
+                Y.use('moodle-tool_lp-dragdrop-reorder', function () {
 
                     var context = {
                         callback: callback
                     };
-                    M.core.dragdrop_reorder({
+                    M.tool_lp.dragdrop_reorder({
                         group: group,
                         dragHandleText: dragHandleText,
                         sameNodeText: sameNodeText,

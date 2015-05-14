@@ -30,8 +30,9 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
     /**
      * Callback to replace the dom element with the rendered template.
      *
-     * @param {string} newhtml The new html to insert.
-     * @param {string} newjs The new js to run.
+     * @method updatePage
+     * @param {String} newhtml The new html to insert.
+     * @param {String} newjs The new js to run.
      */
     var updatePage = function(newhtml, newjs) {
         $('[data-region="managetemplates"]').replaceWith(newhtml);
@@ -41,6 +42,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
     /**
      * Callback to render the page template again and update the page.
      *
+     * @method reloadList
      * @param {Object} context The context for the template.
      */
     var reloadList = function(context) {
@@ -51,6 +53,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
     /**
      * Delete a template and reload the page.
+     * @method doDelete
      */
     var doDelete = function() {
 
@@ -67,6 +70,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
     /**
      * Handler for "Delete learning plan template" actions.
+     * @method confirmDelete
      * @param {Event} e
      */
     var confirmDelete = function(e) {
@@ -81,7 +85,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
         }]);
 
         requests[0].done(function(template) {
-            var strings = str.get_strings([
+            str.get_strings([
                 { key: 'confirm', component: 'tool_lp' },
                 { key: 'deletetemplate', component: 'tool_lp', param: template.shortname },
                 { key: 'delete', component: 'tool_lp' },
@@ -100,19 +104,14 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
     };
 
 
-    return {
+    return /** @alias module:tool_lp/templatedelete */ {
         // Public variables and functions.
         /**
-         * Initialise this plugin. Just attaches some event handlers to the delete entries in the menu.
+         * Expose the event handler for the delete.
+         * @method deleteHandler
+         * @param {Event} e
          */
-        init: function() {
-            // Init this module.
-            $('[data-region="managetemplates"]').on(
-                "click",
-                '[data-action="deletetemplate"]',
-                confirmDelete
-            );
-        }
+        deleteHandler: confirmDelete
 
     };
 });

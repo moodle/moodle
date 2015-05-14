@@ -1,5 +1,5 @@
 {
-    "moodle-core-dragdrop-reorder": {
+    "moodle-tool_lp-dragdrop-reorder": {
         "requires": [
             "moodle-core-dragdrop"
         ]

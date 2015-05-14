@@ -16,22 +16,23 @@
 /**
  * Move competency frameworks via ajax.
  *
- * @module     tool_lp/frameworkdelete
+ * @module     tool_lp/frameworkmove
  * @package    tool_lp
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/dragdrop-reorder',
+define(['jquery',
         'core/str',
         'core/notification',
-        'jquery',
-        'core/ajax'],
-       function(dragdrop, str, notification, $, ajax) {
+        'core/ajax',
+        'tool_lp/dragdrop-reorder'],
+       function($, str, notification, ajax, dragdrop) {
     // Private variables and functions.
 
     /**
      * Handle a drop on a node.
      *
+     * @method handleDrop
      * @param {DOMNode} drag
      * @param {DOMNode} drop
      */
@@ -47,10 +48,11 @@ define(['core/dragdrop-reorder',
 
     };
 
-    return {
+    return /** @alias module:tool_lp/frameworkmove */ {
         // Public variables and functions.
         /**
          * Initialise this plugin. It loads some strings, then adds the drag/drop functions.
+         * @method init
          */
         init: function() {
             // Init this module.

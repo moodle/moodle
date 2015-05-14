@@ -1,25 +1,14 @@
-.path-admin-tool-learningplan [data-region="managecompetencies"] ul li,
-.path-admin-tool-learningplan [data-region="plans"] ul li,
-.path-admin-tool-learningplan [data-region="competencymovetree"] ul li,
-.path-admin-tool-learningplan [data-region="competencylinktree"] ul li {
+.path-admin-tool-lp [data-region="managecompetencies"] ul li,
+.path-admin-tool-lp [data-region="plans"] ul li,
+.path-admin-tool-lp [data-region="competencymovetree"] ul li,
+.path-admin-tool-lp [data-region="competencylinktree"] ul li {
     list-style-type: none;
 }
 
-.path-admin-tool-learningplan [data-region="managecompetencies"] ul li img,
-.path-admin-tool-learningplan [data-region="plans"] ul li img {
-    margin-left: -20px;
-    margin-right: 4px;
-}
-.dir-rtl.path-admin-tool-learningplan [data-region="plans"] ul li img,
-.dir-rtl.path-admin-tool-learningplan [data-region="managecompetencies"] ul li img {
-    margin-right: -20px;
-    margin-left: 4px;
-}
-
-.path-admin-tool-learningplan [data-region="managecompetencies"] ul[data-enhance="tree"],
-.path-admin-tool-learningplan [data-region="plans"] ul[data-enhance="tree"],
-.path-admin-tool-learningplan [data-region="competencylinktree"] ul[data-enhance="linktree"],
-.path-admin-tool-learningplan [data-region="competencymovetree"] ul[data-enhance="movetree"] {
+.path-admin-tool-lp [data-region="managecompetencies"] ul[data-enhance="tree"],
+.path-admin-tool-lp [data-region="plans"] ul[data-enhance="tree"],
+.path-admin-tool-lp [data-region="competencylinktree"] ul[data-enhance="linktree"],
+.path-admin-tool-lp [data-region="competencymovetree"] ul[data-enhance="movetree"] {
     border: 1px solid #ccc;
     box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
     transition: border linear .2s,box-shadow linear .2s;
@@ -29,37 +18,84 @@
     margin-left: 10px;
     margin-right: 10px;
 }
-.path-admin-tool-learningplan [data-region="managecompetencies"] ul,
-.path-admin-tool-learningplan [data-region="plans"] ul,
-.path-admin-tool-learningplan [data-region="competencylinktree"] ul,
-.path-admin-tool-learningplan [data-region="competencymovetree"] ul {
+.path-admin-tool-lp [data-region="managecompetencies"] ul,
+.path-admin-tool-lp [data-region="plans"] ul,
+.path-admin-tool-lp [data-region="competencylinktree"] ul,
+.path-admin-tool-lp [data-region="competencymovetree"] ul {
     cursor: pointer;
 }
-.path-admin-tool-learningplan [data-region="competencylinktree"] ul [aria-selected="true"],
-.path-admin-tool-learningplan [data-region="competencymovetree"] ul [aria-selected="true"],
-.path-admin-tool-learningplan [data-region="plans"] ul [aria-selected="true"],
-.path-admin-tool-learningplan [data-region="managecompetencies"] ul [aria-selected="true"] {
+.path-admin-tool-lp [data-region="competencylinktree"] ul [aria-selected="true"],
+.path-admin-tool-lp [data-region="competencymovetree"] ul [aria-selected="true"],
+.path-admin-tool-lp [data-region="plans"] ul [aria-selected="true"],
+.path-admin-tool-lp [data-region="managecompetencies"] ul [aria-selected="true"] {
     background-color: #dfdfdf;
 }
-.path-admin-tool-learningplan [data-region="filtercompetencies"] input {
+.path-admin-tool-lp [data-region="filtercompetencies"] input {
     margin-left: 10px;
 }
 
-.path-admin-tool-learningplan [data-region="link-buttons"],
-.path-admin-tool-learningplan [data-region="move-buttons"] {
+.path-admin-tool-lp [data-region="link-buttons"],
+.path-admin-tool-lp [data-region="move-buttons"] {
     text-align: center;
 }
 
-.dir-rtl.path-admin-tool-learningplan [data-region="filtercompetencies"] input {
+.dir-rtl.path-admin-tool-lp [data-region="filtercompetencies"] input {
     margin-right: 10px;
 }
 
-.path-admin-tool-learningplan [data-region="competencyactionsmenu"] {
+.path-admin-tool-lp .currentdragtarget {
+    border: 1px dashed;
+}
+
+.path-admin-tool-lp .competencyactionsmenu {
+    display: inline-block;
+    vertical-align: text-top;
+}
+
+/** Styles required for menubar js */
+
+.tool-lp-menu li {
+    float: left;
+    display: inline; position: relative;
+    list-style-type: none;
+}
+
+.tool-lp-sub-menu {
+    position: absolute;
+    list-style: none;
+    margin: 0;
+    top: -10px;
+}
+
+.tool-lp-sub-menu li {
+    float: none;
+}
+.tool-lp-menu .tool-lp-sub-menu[aria-hidden=false] {
+    display: block;
+}
+
+.tool-lp-menu ul[aria-hidden=true] {
     display: none;
 }
-.path-admin-tool-learningplan [data-region="competencyactionsmenu"] .moodle-actionmenu[data-enhanced].show .menu {
-    white-space: nowrap;
+
+.tool-lp-menu .caret {
+    margin: 8px;
 }
-.path-admin-tool-learningplan .currentdragtarget {
-    border: 1px dashed;
+
+.tool-lp-menu.tool-lp-menu-open-left .tool-lp-sub-menu {
+    margin-left: -120px;
+}
+
+.dir-rtl .tool-lp-menu.tool-lp-menu-open-left .tool-lp-sub-menu {
+    margin-left: 0px;
+    margin-right: -120px;
+}
+
+/** This highlighting is copied from bootstrap - but can be overridden by a theme */
+.tool-lp-menu .tool-lp-sub-menu .menu-focus a {
+    color: #fff ;
+    text-decoration: none;
+    background-color: #00699e;
+    background-image: linear-gradient(to bottom,#0070a8,#005f8f);
+    background-repeat: repeat-x;
 }

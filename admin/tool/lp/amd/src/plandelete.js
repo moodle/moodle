@@ -84,7 +84,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
         }]);
 
         requests[0].done(function(plan) {
-            var strings = str.get_strings([
+            str.get_strings([
                 { key: 'confirm', component: 'tool_lp' },
                 { key: 'deleteplan', component: 'tool_lp', param: plan.name },
                 { key: 'delete', component: 'tool_lp' },

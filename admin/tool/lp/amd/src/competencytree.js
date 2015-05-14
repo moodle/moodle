@@ -23,10 +23,17 @@
  */
  define(['core/ajax', 'core/notification', 'jquery'], function(ajax, notification, $) {
      // Private variables and functions.
+      /** @var {Object[]} competencies - Cached list of competencies */
      var competencies = [];
 
+     /** @var {Number} competencyFrameworkId - The current framework id */
      var competencyFrameworkId = 0;
 
+     /**
+      * Load the list of competencies via ajax. Competencies are filtered by the searchtext.
+      * @param {String} searchtext The text to filter on.
+      * @return {promise}
+      */
      var loadCompetencies = function(searchtext) {
          var deferred = $.Deferred();
          searchtext = '';
@@ -52,25 +59,52 @@
      };
 
 
-     return {
+     return /** @alias module:tool_lp/competencytree */ {
         // Public variables and functions.
+        /**
+         * Initialise the tree.
+         *
+         * @param {Number} id The competency id.
+         */
         init: function(id) {
             competencyFrameworkId = id;
             loadCompetencies('').fail(notification.exception);
         },
 
+        /**
+         * Get the competency framework id this model was initiliased with.
+         *
+         * @return {Number}
+         */
         getCompetencyFrameworkId: function() {
             return competencyFrameworkId;
         },
-        // Public variables and functions.
+
+        /**
+         * Get a competency by id
+         *
+         * @param {Number} id The competency id
+         * @return {Object}
+         */
         getCompetency: function(id) {
             return competencies[id];
         },
 
+        /**
+         * Get all competencies for this framework.
+         *
+         * @return {Object[]}
+         */
         listCompetencies: function() {
             return competencies;
         },
 
+        /**
+         * Reload the list of competencies, filtered by the search text.
+         *
+         * @param {String} searchtext The text to filter by.
+         * @return {Object[]} The filtered competency list.
+         */
         applySearch: function(searchtext) {
             return loadCompetencies(searchtext);
         }

@@ -1,7 +1,7 @@
 {
-    "name": "moodle-core-dragdrop-reorder",
+    "name": "moodle-tool_lp-dragdrop-reorder",
     "builds": {
-        "moodle-core-dragdrop-reorder": {
+        "moodle-tool_lp-dragdrop-reorder": {
             "jsfiles": [
                 "dragdropreorder.js"
             ]

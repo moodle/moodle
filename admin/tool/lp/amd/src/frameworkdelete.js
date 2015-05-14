@@ -30,8 +30,8 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
     /**
      * Callback to replace the dom element with the rendered template.
      *
-     * @param {string} newhtml The new html to insert.
-     * @param {string} newjs The new js to run.
+     * @param {String} newhtml The new html to insert.
+     * @param {String} newjs The new js to run.
      */
     var updatePage = function(newhtml, newjs) {
         $('[data-region="managecompetencies"]').replaceWith(newhtml);
@@ -81,7 +81,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
         }]);
 
         requests[0].done(function(framework) {
-            var strings = str.get_strings([
+            str.get_strings([
                 { key: 'confirm', component: 'tool_lp' },
                 { key: 'deletecompetencyframework', component: 'tool_lp', param: framework.shortname },
                 { key: 'delete', component: 'tool_lp' },
@@ -100,19 +100,14 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
     };
 
 
-    return {
+    return /** @alias module:tool_lp/frameworkdelete */ {
         // Public variables and functions.
-        /**
-         * Initialise this plugin. Just attaches some event handlers to the delete entries in the menu.
-         */
-        init: function() {
-            // Init this module.
-            $('[data-region="managecompetencies"]').on(
-                "click",
-                '[data-action="deletecompetencyframework"]',
-                confirmDelete
-            );
-        }
 
+        /**
+         * Expose the event handler for delete.
+         * @method deleteHandler
+         * @param {Event} e
+         */
+        deleteHandler: confirmDelete
     };
 });

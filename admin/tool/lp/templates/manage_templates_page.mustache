@@ -48,20 +48,23 @@
             <td><span class="drag-handlecontainer"></span><span><a href="{{pluginbaseurl}}/templatecompetencies.php?templateid={{id}}">{{shortname}} {{idnumber}}</a></span> {{^visible}}{{#str}}hiddenhint, tool_lp{{/str}}{{/visible}}</td>
             <td>
             {{#canmanage}}
-            <div style="display: inline-block;">
-            <ul class="templateactions hide">
+            <ul class="templateactions">
                 <li>
-                    <a href="{{pluginbaseurl}}/edittemplate.php?id={{id}}">
-                        {{#pix}}t/edit{{/pix}}{{#str}}editthistemplate, tool_lp{{/str}}
-                    </a>
-                </li>
-                <li>
-                    <a data-action="deletetemplate" data-templateid="{{id}}" href="#">
-                        {{#pix}}t/delete{{/pix}}{{#str}}deletethistemplate, tool_lp{{/str}}
-                    </a>
+                    <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="{{pluginbaseurl}}/edittemplate.php?id={{id}}">
+                                {{#pix}}t/edit{{/pix}} {{#str}}editthistemplate, tool_lp{{/str}}
+                            </a>
+                        </li>
+                        <li>
+                            <a data-action="deletetemplate" data-templateid="{{id}}" href="#">
+                                {{#pix}}t/delete{{/pix}} {{#str}}deletethistemplate, tool_lp{{/str}}
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
-            </div>
             {{/canmanage}}
             </td>
         </tr>
@@ -83,14 +86,15 @@
 {{#js}}
 // Initialise the JS.
 require(['tool_lp/templatedelete',
-         'core/menu',
+         'tool_lp/menubar',
          'tool_lp/templatemove'],
-        function(deleteMod, menu, moveMod) {
+        function(deleteMod, menubar, moveMod) {
 
-    deleteMod.init();
     moveMod.init();
 
-    menu.menu('{{#str}}edit{{/str}}', '.templateactions');
+    menubar.enhance('.templateactions', {
+        '[data-action="deletetemplate"]': deleteMod.deleteHandler
+    });
 });
 
 {{/js}}

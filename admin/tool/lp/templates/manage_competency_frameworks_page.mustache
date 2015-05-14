@@ -50,20 +50,23 @@
             <td>{{competencies_count}}</td>
             <td>
             {{#canmanage}}
-            <div style="display: inline-block;">
-            <ul class="competencyframeworkactions hide">
+            <ul title="{{#str}}edit{{/str}}" class="competencyframeworkactions">
                 <li>
-                    <a href="{{pluginbaseurl}}/editcompetencyframework.php?id={{id}}">
-                        {{#pix}}t/edit{{/pix}}{{#str}}editthiscompetencyframework, tool_lp{{/str}}
-                    </a>
-                </li>
-                <li>
-                    <a data-action="deletecompetencyframework" data-frameworkid="{{id}}" href="#">
-                        {{#pix}}t/delete{{/pix}}{{#str}}deletethiscompetencyframework, tool_lp{{/str}}
-                    </a>
+                    <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="{{pluginbaseurl}}/editcompetencyframework.php?id={{id}}">
+                                {{#pix}}t/edit{{/pix}} {{#str}}editthiscompetencyframework, tool_lp{{/str}}
+                            </a>
+                        </li>
+                        <li>
+                            <a data-action="deletecompetencyframework" data-frameworkid="{{id}}" href="#">
+                                {{#pix}}t/delete{{/pix}} {{#str}}deletethiscompetencyframework, tool_lp{{/str}}
+                            </a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
-            </div>
             {{/canmanage}}
             </td>
         </tr>
@@ -85,14 +88,15 @@
 {{#js}}
 // Initialise the JS.
 require(['tool_lp/frameworkdelete',
-         'core/menu',
+         'tool_lp/menubar',
          'tool_lp/frameworkmove'],
-        function(deleteMod, menu, moveMod) {
+        function(deleteMod, menubar, moveMod) {
 
-    deleteMod.init();
     moveMod.init();
 
-    menu.menu('{{#str}}edit{{/str}}', '.competencyframeworkactions');
+    menubar.enhance('.competencyframeworkactions', {
+        "[data-action='deletecompetencyframework']": deleteMod.deleteHandler
+    });
 });
 
 {{/js}}
