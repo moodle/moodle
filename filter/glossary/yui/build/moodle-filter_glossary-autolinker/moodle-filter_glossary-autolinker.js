@@ -72,11 +72,9 @@ Y.extend(AUTOLINKER, Y.Base, {
 
                 for (key in data.entries) {
                     definition = data.entries[key].definition + data.entries[key].attachments;
-                    alertpanel = new M.core.alert({title:data.entries[key].concept,
+                    alertpanel = new M.core.alert({title:data.entries[key].concept, draggable: true,
                         message:definition, modal:false, yesLabel: M.util.get_string('ok', 'moodle')});
-                    alertpanel.show();
                     Y.fire(M.core.event.FILTER_CONTENT_UPDATED, {nodes: (new Y.NodeList(alertpanel.get('boundingBox')))});
-
                     Y.Node.one('#id_yuialertconfirm-' + alertpanel.get('COUNT')).focus();
                 }
 
