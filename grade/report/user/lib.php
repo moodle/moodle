@@ -859,7 +859,7 @@ class grade_report_user extends grade_report {
      * Builds the grade item averages.
      */
     function calculate_averages() {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
 
         if ($this->showaverage) {
             // This settings are actually grader report settings (not user report)
@@ -882,7 +882,11 @@ class grade_report_user extends grade_report {
             list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
             // Limit to users with an active enrolment.
-            list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
+            $coursecontext = $this->context->get_course_context(true);
+            $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+            $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+            $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $coursecontext);
+            list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context, '', 0, $showonlyactiveenrol);
 
             $params = array_merge($this->groupwheresql_params, $gradebookrolesparams, $enrolledparams, $relatedctxparams);
             $params['courseid'] = $this->courseid;
