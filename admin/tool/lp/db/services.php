@@ -220,6 +220,14 @@ $functions = array(
         'type'        => 'write',
         'capabilities'=> 'tool/lp:coursecompetencymanage',
     ),
+    'tool_lp_add_competency_to_template' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'add_competency_to_template',
+        'classpath'   => '',
+        'description' => 'Add the competency to a template',
+        'type'        => 'write',
+        'capabilities'=> 'tool/lp:templatecompetencymanage',
+    ),
     'tool_lp_remove_competency_from_course' => array(
         'classname'   => 'tool_lp\external',
         'methodname'  => 'remove_competency_from_course',
@@ -227,6 +235,14 @@ $functions = array(
         'description' => 'Remove a competency from a course',
         'type'        => 'write',
         'capabilities'=> 'tool/lp:coursecompetencymanage',
+    ),
+    'tool_lp_remove_competency_from_template' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'remove_competency_from_template',
+        'classpath'   => '',
+        'description' => 'Remove a competency from a template',
+        'type'        => 'write',
+        'capabilities'=> 'tool/lp:templatecompetencymanage',
     ),
     'tool_lp_data_for_course_competencies_page' => array(
         'classname'   => 'tool_lp\external',
@@ -236,6 +252,14 @@ $functions = array(
         'type'        => 'read',
         'capabilities'=> 'tool/lp:coursecompetencyread',
     ),
+    'tool_lp_data_for_template_competencies_page' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'data_for_template_competencies_page',
+        'classpath'   => '',
+        'description' => 'Load the data for the template competencies page template.',
+        'type'        => 'read',
+        'capabilities'=> 'tool/lp:templatecompetencyread',
+    ),
     'tool_lp_reorder_course_competency' => array(
         'classname'   => 'tool_lp\external',
         'methodname'  => 'reorder_course_competency',
@@ -243,6 +267,14 @@ $functions = array(
         'description' => 'Move a course competency to a new relative sort order.',
         'type'        => 'write',
         'capabilities'=> 'tool/lp:coursecompetencymanage',
+    ),
+    'tool_lp_reorder_template_competency' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'reorder_template_competency',
+        'classpath'   => '',
+        'description' => 'Move a template competency to a new relative sort order.',
+        'type'        => 'write',
+        'capabilities'=> 'tool/lp:templatecompetencymanage',
     ),
     'tool_lp_create_template' => array(
         'classname'   => 'tool_lp\external',

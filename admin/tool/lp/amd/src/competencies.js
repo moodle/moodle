@@ -14,9 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Handle add/remove course competency links.
+ * Handle add/remove competency links.
  *
- * @module     tool_lp/coursecompetencies
+ * @module     tool_lp/competencies
  * @package    tool_lp
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,10 +27,12 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/dial
     /**
      * Constructor
      *
-     * @param {int} courseid
+     * @param {int} itemid
+     * @param {string} itemtype
      */
-    var coursecompetencies = function(courseid) {
-        this.courseid = courseid;
+    var competencies = function(itemid, itemtype) {
+        this.itemid = itemid;
+        this.itemtype = itemtype;
         this.selectedCompetency = 0;
         var localthis = this;
         var loadframeworks = ajax.call([
@@ -53,15 +55,15 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/dial
         }).fail(notification.exception);
     };
 
-    coursecompetencies.prototype.registerDragDrop = function() {
+    competencies.prototype.registerDragDrop = function() {
         var localthis = this;
         // Init this module.
-        str.get_string('movecoursecompetency', 'tool_lp').done(
+        str.get_string('movecompetency', 'tool_lp').done(
             function(movestring) {
-                dragdrop.dragdrop('movecoursecompetency',
+                dragdrop.dragdrop('movecompetency',
                                   movestring,
-                                  { identifier: 'movecoursecompetency', component: 'tool_lp'},
-                                  { identifier: 'movecoursecompetencyafter', component: 'tool_lp'},
+                                  { identifier: 'movecompetency', component: 'tool_lp'},
+                                  { identifier: 'movecompetencyafter', component: 'tool_lp'},
                                   'drag-samenode',
                                   'drag-parentnode',
                                   'drag-handlecontainer',
@@ -73,20 +75,29 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/dial
 
     };
 
-    coursecompetencies.prototype.handleDrop = function(drag, drop) {
+    competencies.prototype.handleDrop = function(drag, drop) {
         var fromid = $(drag).data('id');
         var toid = $(drop).data('id');
         var localthis = this;
 
-        var requests = ajax.call([
-            { methodname: 'tool_lp_reorder_course_competency',
-                args: { courseid: localthis.courseid, competencyidfrom: fromid, competencyidto: toid } }
+        if (localthis.itemtype == 'course') {
+            var requests = ajax.call([
+                { methodname: 'tool_lp_reorder_course_competency',
+                    args: { courseid: localthis.itemid, competencyidfrom: fromid, competencyidto: toid } }
+                ]);
+        } else if (localthis.itemtype == 'template') {
+            var requests = ajax.call([
+                { methodname: 'tool_lp_reorder_template_competency',
+                    args: { templateid: localthis.itemid, competencyidfrom: fromid, competencyidto: toid } }
             ]);
-        requests[0].fail(notification.exception);
+        } else {
+            return null;
+        }
 
+        requests[0].fail(notification.exception);
     };
 
-    coursecompetencies.prototype.applyFilter = function(e) {
+    competencies.prototype.applyFilter = function(e) {
         e.preventDefault();
         var localthis = this;
         var searchInput = $('[data-region="filtercompetencies"] input');
@@ -115,7 +126,7 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/dial
         }).fail(notification.exception);
     };
 
-    coursecompetencies.prototype.initLinkCourseCompetencies = function() {
+    competencies.prototype.initLinkCourseCompetencies = function() {
         var localthis = this;
 
         var competencytree = new ariatree('[data-enhance=linktree]', function(target) {
@@ -143,25 +154,41 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/dial
             }
 
             $(e.target).attr('disabled', 'disabled');
+
             // Add the link and reload the page template.
-            var requests = ajax.call([
-                { methodname: 'tool_lp_add_competency_to_course',
-                  args: { courseid: localthis.courseid, competencyid: localthis.selectedCompetency } },
-                { methodname: 'tool_lp_data_for_course_competencies_page',
-                  args: { courseid: localthis.courseid } }
-            ]);
+            if (localthis.itemtype == 'course') {
+                var requests = ajax.call([
+                    { methodname: 'tool_lp_add_competency_to_course',
+                      args: { courseid: localthis.itemid, competencyid: localthis.selectedCompetency } },
+                    { methodname: 'tool_lp_data_for_course_competencies_page',
+                      args: { courseid: localthis.itemid } }
+                ]);
+                var pagerender = 'tool_lp/course_competencies_page';
+                var pageregion = 'coursecompetenciespage';
+            } else if (localthis.itemtype == 'template') {
+                var requests = ajax.call([
+                    { methodname: 'tool_lp_add_competency_to_template',
+                        args: { templateid: localthis.itemid, competencyid: localthis.selectedCompetency } },
+                    { methodname: 'tool_lp_data_for_template_competencies_page',
+                        args: { templateid: localthis.itemid } }
+                ]);
+                var pagerender = 'tool_lp/template_competencies_page';
+                var pageregion = 'templatecompetenciespage';
+            } else {
+                return null;
+            }
 
             requests[1].done(function(context) {
-                templates.render('tool_lp/course_competencies_page', context).done(function(html, js) {
+                templates.render(pagerender, context).done(function(html, js) {
                     localthis.popup.close();
-                    $('[data-region="coursecompetenciespage"]').replaceWith(html);
+                    $('[data-region="' + pageregion + '"]').replaceWith(html);
                     templates.runTemplateJS(js);
                 }).fail(notification.exception);
             }).fail(notification.exception);
         });
     };
 
-    coursecompetencies.prototype.registerEvents = function() {
+    competencies.prototype.registerEvents = function() {
         var localthis = this;
         $('[data-region="actions"] button').click(function(e) {
             return localthis.openCompetencySelector.call(localthis, e);
@@ -172,23 +199,36 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/dial
             var deleteid = $(e.target).closest('[data-id]').data('id');
 
             // Delete the link and reload the page template.
-            var requests = ajax.call([
-                { methodname: 'tool_lp_remove_competency_from_course',
-                  args: { courseid: localthis.courseid, competencyid: deleteid } },
-                { methodname: 'tool_lp_data_for_course_competencies_page',
-                  args: { courseid: localthis.courseid } }
-            ]);
+            if (localthis.itemtype == 'course') {
+                var requests = ajax.call([
+                    { methodname: 'tool_lp_remove_competency_from_course',
+                      args: { courseid: localthis.itemid, competencyid: deleteid } },
+                    { methodname: 'tool_lp_data_for_course_competencies_page',
+                      args: { courseid: localthis.itemid } }
+                ]);
+                var pagerender = 'tool_lp/course_competencies_page';
+                var pageregion = 'coursecompetenciespage';
+            } else if (localthis.itemtype == 'template') {
+                var requests = ajax.call([
+                    { methodname: 'tool_lp_remove_competency_from_template',
+                        args: { templateid: localthis.itemid, competencyid: deleteid } },
+                    { methodname: 'tool_lp_data_for_template_competencies_page',
+                        args: { templateid: localthis.itemid } }
+                ]);
+                var pagerender = 'tool_lp/template_competencies_page';
+                var pageregion = 'templatecompetenciespage';
+            }
 
             requests[1].done(function(context) {
-                templates.render('tool_lp/course_competencies_page', context).done(function(html, js) {
-                    $('[data-region="coursecompetenciespage"]').replaceWith(html);
+                templates.render(pagerender, context).done(function(html, js) {
+                    $('[data-region="' + pageregion + '"]').replaceWith(html);
                     templates.runTemplateJS(js);
                 }).fail(notification.exception);
             }).fail(notification.exception);
         });
     };
 
-    coursecompetencies.prototype.addCompetencyChildren = function(parent, competencies) {
+    competencies.prototype.addCompetencyChildren = function(parent, competencies) {
         var i;
 
         for (i = 0; i < competencies.length; i++) {
@@ -202,7 +242,7 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/dial
         }
     };
 
-    coursecompetencies.prototype.searchCompetencies = function() {
+    competencies.prototype.searchCompetencies = function() {
         var localthis = this;
         var deferred = $.Deferred();
         var searchInput = $('[data-region="filtercompetencies"] input');
@@ -238,7 +278,7 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/dial
         return deferred.promise();
     };
 
-    coursecompetencies.prototype.openCompetencySelector = function(e) {
+    competencies.prototype.openCompetencySelector = function(e) {
         e.preventDefault();
         var localthis = this;
 
@@ -247,7 +287,7 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/dial
             framework.selected = true;
             var context = { framework: framework, frameworks: localthis.frameworks, competencies: competencies, search: '' };
             templates.render('tool_lp/link_course_competencies', context).done(function(html) {
-                str.get_string('linkcoursecompetencies', 'tool_lp').done(function(title) {;
+                str.get_string('linkcompetencies', 'tool_lp').done(function(title) {;
                     localthis.popup = new dialogue(
                         title,
                         html, // The link UI.
@@ -258,5 +298,5 @@ define(['jquery', 'core/notification', 'core/ajax', 'core/templates', 'core/dial
         }).fail(notification.exception);
     };
 
-    return /** @alias module:core/tree */ coursecompetencies;
+    return /** @alias module:core/tree */ competencies;
 });

@@ -77,6 +77,18 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
+     * @param template_competencies_page $page
+     *
+     * @return string html for the page
+     */
+    public function render_template_competencies_page($page) {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('tool_lp/template_competencies_page', $data);
+    }
+
+    /**
+     * Defer to template.
+     *
      * @param manage_templates_page $page
      *
      * @return string html for the page

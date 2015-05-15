@@ -44,16 +44,19 @@ class template_competencies_page implements renderable, templatable {
      * @param int $templateid The learning plan template id for this page.
      */
     public function __construct($templateid) {
-        $this->courseid = $templateid;
+        $context = context_system::instance();
+
+        $this->templateid = $templateid;
         $this->competencies = api::list_competencies_in_template($templateid);
-        $this->canmanagecompetencyframeworks = has_capability('tool/lp:competencymanage', context_system::instance());
-        $this->canmanagetemplates = has_capability('tool/lp:templatesmanage', $context);
+        $this->canmanagecompetencyframeworks = has_capability('tool/lp:competencymanage', $context);
+        $this->canmanagetemplatecompetencies = has_capability('tool/lp:templatecompetencymanage', $context);
         $this->manageurl = new moodle_url('/admin/tool/lp/competencyframeworks.php');
     }
 
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
+     * @param \renderer_base $output
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
@@ -65,7 +68,7 @@ class template_competencies_page implements renderable, templatable {
             array_push($data->competencies, $record);
         }
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;
-        $data->canmanagecoursecompetencies = $this->canmanagecoursecompetencies;
+        $data->canmanagetemplatecompetencies = $this->canmanagetemplatecompetencies;
         $data->manageurl = $this->manageurl->out(true);
 
         return $data;

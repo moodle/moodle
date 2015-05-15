@@ -50,7 +50,7 @@
 </div>
 </div>
 {{#js}}
-require(['tool_lp/coursecompetencies'], function(mod) {
-    (new mod({{courseid}}));
+require(['tool_lp/competencies'], function(mod) {
+    (new mod({{courseid}}, 'course'));
 });
 {{/js}}

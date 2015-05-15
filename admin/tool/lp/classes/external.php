@@ -1967,6 +1967,71 @@ class external extends external_api {
     }
 
     /**
+     * Returns description of reorder_template_competency() parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function reorder_template_competency_parameters() {
+        $templateid = new external_value(
+            PARAM_INT,
+            'The template id',
+            VALUE_REQUIRED
+        );
+        $competencyidfrom = new external_value(
+            PARAM_INT,
+            'The competency id we are moving',
+            VALUE_REQUIRED
+        );
+        $competencyidto = new external_value(
+            PARAM_INT,
+            'The competency id we are moving to',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'templateid' => $templateid,
+            'competencyidfrom' => $competencyidfrom,
+            'competencyidto' => $competencyidto,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Expose to AJAX
+     * @return boolean
+     */
+    public static function reorder_template_competency_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Change the order of template competencies.
+     *
+     * @param int $templateid The template id
+     * @param int $competencyidfrom The competency to move.
+     * @param int $competencyidto The competency to move to.
+     * @return bool
+     */
+    public static function reorder_template_competency($templateid, $competencyidfrom, $competencyidto) {
+        $params = self::validate_parameters(self::reorder_template_competency_parameters(),
+            array(
+                'templateid' => $templateid,
+                'competencyidfrom' => $competencyidfrom,
+                'competencyidto' => $competencyidto,
+            ));
+
+        return api::reorder_template_competency($params['templateid'], $params['competencyidfrom'], $params['competencyidto']);
+    }
+
+    /**
+     * Returns description of reorder_template_competency() result value.
+     *
+     * @return external_description
+     */
+    public static function reorder_template_competency_returns() {
+        return new external_value(PARAM_BOOL, 'True if successful.');
+    }
+
+    /**
      * Returns the external structure of a full template record.
      *
      * @return external_single_structure

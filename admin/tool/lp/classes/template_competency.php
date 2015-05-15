@@ -40,6 +40,9 @@ class template_competency extends persistent {
     /** @var int $competencyid The competency id */
     private $competencyid = 0;
 
+    /** @var int $sortorder A number used to influence sorting */
+    private $sortorder = 0;
+
     /**
      * Method that provides the table name matching this class.
      *
@@ -65,6 +68,24 @@ class template_competency extends persistent {
      */
     public function set_competencyid($competencyid) {
         $this->competencyid = $competencyid;
+    }
+
+    /**
+     * Get the sort order index.
+     *
+     * @return string The sort order index
+     */
+    public function get_sortorder() {
+        return $this->sortorder;
+    }
+
+    /**
+     * Set the sort order index.
+     *
+     * @param string $sortorder The sort order index
+     */
+    public function set_sortorder($sortorder) {
+        $this->sortorder = $sortorder;
     }
 
     /**
@@ -101,6 +122,9 @@ class template_competency extends persistent {
         if (isset($record->competencyid)) {
             $this->set_competencyid($record->competencyid);
         }
+        if (isset($record->sortorder)) {
+            $this->set_sortorder($record->sortorder);
+        }
         if (isset($record->timecreated)) {
             $this->set_timecreated($record->timecreated);
         }
@@ -123,6 +147,7 @@ class template_competency extends persistent {
         $record->id = $this->get_id();
         $record->templateid = $this->get_templateid();
         $record->competencyid = $this->get_competencyid();
+        $record->sortorder = $this->get_sortorder();
         $record->timecreated = $this->get_timecreated();
         $record->timemodified = $this->get_timemodified();
         $record->usermodified = $this->get_usermodified();
@@ -234,7 +259,7 @@ class template_competency extends persistent {
                 FROM {' . $competency->get_table_name() . '} comp
                 JOIN {' . self::get_table_name() . '} tplcomp
                 ON tplcomp.competencyid = comp.id
-                WHERE tplcomp.templateid = ? ';
+                WHERE tplcomp.templateid = ? ORDER BY tplcomp.sortorder ASC';
         $params = array($templateid);
 
         if ($onlyvisible) {
@@ -250,5 +275,15 @@ class template_competency extends persistent {
         }
 
         return $instances;
+    }
+
+    /**
+     * Add a default for the sortorder field to the default create logic.
+     *
+     * @return persistent
+     */
+    public function create() {
+        $this->sortorder = $this->count_records(array('templateid' => $this->get_templateid()));
+        return parent::create();
     }
 }

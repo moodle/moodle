@@ -962,9 +962,9 @@ class api {
      */
     public static function add_competency_to_template($templateid, $competencyid) {
         // First we do a permissions check.
-        $context = context_course::instance($courseid);
+        $context = context_system::instance();
 
-        require_capability('tool/lp:templatemanage', $context);
+        require_capability('tool/lp:templatecompetencymanage', $context);
 
         $record = new stdClass();
         $record->templateid = $templateid;
@@ -973,7 +973,7 @@ class api {
         $competency = new competency();
         $competency->set_id($competencyid);
         if (!$competency->read()) {
-             throw new coding_exception('The competency does not exist');
+            throw new coding_exception('The competency does not exist');
         }
 
         $templatecompetency = new template_competency();
@@ -998,7 +998,7 @@ class api {
         // First we do a permissions check.
         $context = context_system::instance();
 
-        require_capability('tool/lp:templatemanage', $context);
+        require_capability('tool/lp:templatecompetencymanage', $context);
 
         $record = new stdClass();
         $record->templateid = $templateid;
@@ -1008,12 +1008,6 @@ class api {
         $competency->set_id($competencyid);
         if (!$competency->read()) {
              throw new coding_exception('The competency does not exist');
-        }
-
-        $template = new template();
-        $template->set_id($template);
-        if (!$template->read()) {
-             throw new coding_exception('The learning plan template does not exist');
         }
 
         $templatecompetency = new template_competency();
@@ -1187,5 +1181,57 @@ class api {
         }
 
         return $plan->delete();
+    }
+
+    /**
+     * Move the template competency up or down in the display list.
+     *
+     * Requires tool/lp:templatecompetencymanage capability at the system context.
+     *
+     * @param int $templateid The template id
+     * @param int $competencyidfrom The id of the competency we are moving.
+     * @param int $competencyidto The id of the competency we are moving to.
+     * @return boolean
+     */
+    public static function reorder_template_competency($templateid, $competencyidfrom, $competencyidto) {
+        // First we do a permissions check.
+        $context = context_system::instance();
+
+        require_capability('tool/lp:templatecompetencymanage', $context);
+
+        $down = true;
+        $templatecompetency = new template_competency();
+        $matches = $templatecompetency->get_records(array('templateid' => $templateid, 'competencyid' => $competencyidfrom));
+        if (count($matches) == 0) {
+            throw new coding_exception('The link does not exist');
+        }
+
+        $competencyfrom = array_pop($matches);
+        $matches = $templatecompetency->get_records(array('templateid' => $templateid, 'competencyid' => $competencyidto));
+        if (count($matches) == 0) {
+            throw new coding_exception('The link does not exist');
+        }
+
+        $competencyto = array_pop($matches);
+
+        $all = $templatecompetency->get_records(array('templateid' => $templateid), 'sortorder', 'ASC', 0, 0);
+
+        if ($competencyfrom->get_sortorder() > $competencyto->get_sortorder()) {
+            // We are moving up, so put it before the "to" item.
+            $down = false;
+        }
+
+        foreach ($all as $id => $templatecompetency) {
+            $sort = $templatecompetency->get_sortorder();
+            if ($down && $sort > $competencyfrom->get_sortorder() && $sort <= $competencyto->get_sortorder()) {
+                $templatecompetency->set_sortorder($templatecompetency->get_sortorder() - 1);
+                $templatecompetency->update();
+            } else if (!$down && $sort >= $competencyto->get_sortorder() && $sort < $competencyfrom->get_sortorder()) {
+                $templatecompetency->set_sortorder($templatecompetency->get_sortorder() + 1);
+                $templatecompetency->update();
+            }
+        }
+        $competencyfrom->set_sortorder($competencyto->get_sortorder());
+        return $competencyfrom->update();
     }
 }
