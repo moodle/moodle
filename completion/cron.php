@@ -33,15 +33,16 @@ require_once($CFG->libdir.'/completionlib.php');
  * First update all criteria completions, then aggregate all criteria completions
  * and update overall course completions
  */
-function completion_cron() {
-
-    completion_cron_mark_started();
-
+function regular_cron() {
+// Two Functions which check criteria and learner completions regularly for accurate data
     completion_cron_criteria();
 
     completion_cron_completions();
 }
-
+function daily_cron() {
+// One function which takes a long time 60+ minutes to enrol users onto completion started
+    completion_cron_mark_started();
+}
 /**
  * Mark users as started if the config option is set
  *
