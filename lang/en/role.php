@@ -422,6 +422,3 @@ $string['whydoesusernothavecap'] = 'Why does {$a->fullname} not have capability 
 $string['xroleassignments'] = '{$a}\'s role assignments';
 $string['xuserswiththerole'] = 'Users with the role "{$a->role}"';
 
-// Deprecated since Moodle 2.8.
-
-$string['hidden'] = 'Hidden';
