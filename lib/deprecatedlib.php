@@ -747,12 +747,16 @@ function mygroupid($courseid) {
  *
  * Could be false, SEPARATEGROUPS or VISIBLEGROUPS    (<-- Martin)
  *
+ * @deprecated since Moodle 2.0 MDL-14617 - please do not use this function any more.
+ * @todo MDL-50273 This will be deleted in Moodle 3.2.
+ *
  * @param object $course Course Object
  * @param object $cm Course Manager Object
  * @return mixed $course->groupmode
  */
 function groupmode($course, $cm=null) {
 
+    debugging('groupmode() is deprecated, please use groups_get_* instead', DEBUG_DEVELOPER);
     if (isset($cm->groupmode) && empty($course->groupmodeforce)) {
         return $cm->groupmode;
     }
@@ -765,6 +769,9 @@ function groupmode($course, $cm=null) {
  * Sets currentgroup[$courseid] in the session variable appropriately.
  * Does not do any permission checking.
  *
+ * @deprecated Since year 2006 - please do not use this function any more.
+ * @todo MDL-50273 This will be deleted in Moodle 3.2.
+ *
  * @global object
  * @global object
  * @param int $courseid The course being examined - relates to id field in
@@ -774,11 +781,16 @@ function groupmode($course, $cm=null) {
  */
 function set_current_group($courseid, $groupid) {
     global $SESSION;
+
+    debugging('set_current_group() is deprecated, please use $SESSION->currentgroup[$courseid] instead', DEBUG_DEVELOPER);
     return $SESSION->currentgroup[$courseid] = $groupid;
 }
 
 /**
  * Gets the current group - either from the session variable or from the database.
+ *
+ * @deprecated Since year 2006 - please do not use this function any more.
+ * @todo MDL-50273 This will be deleted in Moodle 3.2.
  *
  * @global object
  * @param int $courseid The course being examined - relates to id field in
@@ -790,6 +802,7 @@ function set_current_group($courseid, $groupid) {
 function get_current_group($courseid, $full = false) {
     global $SESSION;
 
+    debugging('get_current_group() is deprecated, please use groups_get_* instead', DEBUG_DEVELOPER);
     if (isset($SESSION->currentgroup[$courseid])) {
         if ($full) {
             return groups_get_group($SESSION->currentgroup[$courseid]);
