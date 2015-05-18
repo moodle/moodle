@@ -27,7 +27,7 @@ require_once($CFG->libdir . '/navigationlib.php');
 
 require_login(null, false);
 if (isguestuser()) {
-    throw new require_login_exception();
+    throw new require_login_exception('Guests are not allowed here.');
 }
 
 $userid = optional_param('userid', $USER->id, PARAM_INT);
