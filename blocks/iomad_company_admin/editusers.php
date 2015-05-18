@@ -491,6 +491,9 @@ echo $OUTPUT->heading("$usercount ".get_string('users'));
 $alphabet = explode(',', get_string('alphabet', 'block_iomad_company_admin'));
 $strall = get_string('all');
 
+// Fix sort for paging.
+$params['sort'] = $sort;
+
 $baseurl = new moodle_url('editusers.php', $params);
 echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
 
