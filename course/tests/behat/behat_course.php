@@ -180,7 +180,7 @@ class behat_course extends behat_base {
             // Clicks the selected activity if it exists.
             $activityxpath = "//div[@id='chooseform']/descendant::label" .
                 "/descendant::span[contains(concat(' ', normalize-space(@class), ' '), ' typename ')]" .
-                "[contains(., $activityliteral)]" .
+                "[normalize-space(.)=$activityliteral]" .
                 "/parent::label/child::input";
             $activitynode = $this->find('xpath', $activityxpath);
             $activitynode->doubleClick();
@@ -190,7 +190,7 @@ class behat_course extends behat_base {
 
             // Selecting the option from the select box which contains the option.
             $selectxpath = $sectionxpath . "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' section_add_menus ')]" .
-                "/descendant::select[contains(., $activityliteral)]";
+                "/descendant::select[option[normalize-space(.)=$activityliteral]]";
             $selectnode = $this->find('xpath', $selectxpath);
             $selectnode->selectOption($activity);
 
