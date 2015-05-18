@@ -24,6 +24,7 @@
 namespace tool_lp;
 
 require_once("$CFG->libdir/externallib.php");
+require_once("$CFG->libdir/grade/grade_scale.php");
 
 use external_api;
 use external_function_parameters;
@@ -32,6 +33,7 @@ use external_format_value;
 use external_single_structure;
 use external_multiple_structure;
 use invalid_parameter_exception;
+use grade_scale;
 
 /**
  * This is the external API for this tool.
@@ -3451,4 +3453,70 @@ class external extends external_api {
         ));
     }
 
+    /**
+     * Returns the description of the get_scale_values() parameters.
+     *
+     * @return external_function_parameters.
+     */
+    public static function get_scale_values_parameters() {
+        $scaleid = new external_value(
+            PARAM_INT,
+            'The scale id',
+            VALUE_REQUIRED
+        );
+        $params = array('scaleid' => $scaleid);
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Expose to AJAX
+     *
+     * @return boolean
+     */
+    public static function get_scale_values_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Get the values associated with a scale.
+     *
+     * @param int $scaleid Scale ID
+     * @return array Values for a scale.
+     */
+    public static function get_scale_values($scaleid) {
+        global $DB;
+        $params = self::validate_parameters(self::get_scale_values_parameters(),
+            array(
+                'scaleid' => $scaleid,
+            )
+        );
+        // The following section is not learning plan specific and so has not been moved to the api.
+        // Retrieve the scale value from the database.
+        $scale = grade_scale::fetch(array('id' => $scaleid));
+        // Reverse the array so that high levels are at the top.
+        $scalevalues = array_reverse($scale->load_items());
+        foreach ($scalevalues as $key => $value) {
+            // Add a key (make the first value 1).
+            $scalevalues[$key] = array(
+                    'id' => $key + 1,
+                    'name' => $value
+                );
+        }
+        return $scalevalues;
+    }
+
+    /**
+     * Returns description of get_scale_values() result value.
+     *
+     * @return external_description
+     */
+    public static function get_scale_values_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(array(
+                'id' => new external_value(PARAM_INT, 'Scale value ID'),
+                'name' => new external_value(PARAM_RAW, 'Scale value name')
+                )
+            )
+        );
+    }
 }

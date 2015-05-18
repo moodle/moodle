@@ -886,4 +886,42 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->user);
         external::reorder_template_competency($template->id, $competency1->id, $competency2->id);
     }
+
+    /**
+     * Test that we can return scale values for a scale with the scale ID.
+     */
+    public function test_get_scale_values() {
+        global $DB;
+        // Create a scale.
+        $record = new stdClass();
+        $record->courseid = 0;
+        $record->userid = $this->creator->id;
+        $record->name = 'Test scale';
+        $record->scale = 'Poor, Not good, Okay, Fine, Excellent';
+        $record->description = '<p>Test scale description.</p>';
+        $record->descriptionformat = 1;
+        $record->timemodified = time();
+        $scaleid = $DB->insert_record('scale', $record);
+        // Expected return value.
+        $expected = array(array(
+                'id' => 1,
+                'name' => 'Excellent'
+            ), array(
+                'id' => 2,
+                'name' => 'Fine'
+            ), array(
+                'id' => 3,
+                'name' => 'Okay'
+            ), array(
+                'id' => 4,
+                'name' => 'Not good'
+            ), array(
+                'id' => 5,
+                'name' => 'Poor'
+            )
+        );
+        // Call the webservice.
+        $result = external::get_scale_values($scaleid);
+        $this->assertEquals($expected, $result);
+    }
 }

@@ -44,6 +44,8 @@ class competency_framework extends moodleform {
      * Define the form - called by parent constructor
      */
     public function definition() {
+        global $PAGE;
+
         $mform = $this->_form;
         $id = $this->_customdata;
 
@@ -61,6 +63,18 @@ class competency_framework extends moodleform {
         $mform->addElement('text', 'idnumber',
                            get_string('idnumber', 'tool_lp'));
         $mform->setType('idnumber', PARAM_TEXT);
+
+        $scales = get_scales_menu();
+        $mform->addElement('select', 'scaleid', get_string('scale', 'tool_lp'), $scales);
+        $mform->setType('scaleid', PARAM_INT);
+        $mform->addHelpButton('scaleid', 'scale', 'tool_lp');
+
+        $mform->addElement('button', 'scaleconfigbutton', get_string('configurescale', 'tool_lp'));
+        // Add js.
+        $PAGE->requires->js_call_amd('tool_lp/scaleconfig', 'init');
+        $mform->addElement('hidden', 'scaleconfiguration', '', array('id' => 'tool_lp_scaleconfiguration'));
+        $mform->setType('scaleconfiguration', PARAM_RAW);
+
         $mform->addElement('selectyesno', 'visible',
                            get_string('visible', 'tool_lp'));
         $mform->setDefault('visible', true);

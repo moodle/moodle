@@ -51,6 +51,12 @@ class competency_framework extends persistent {
     /** @var bool $visible Used to show/hide this framework */
     private $visible = true;
 
+    /** @var int $scaleid The scale ID for this framework */
+    private $scaleid = 0;
+
+    /** @var string $scaleconfiguration scale information relevant to this framework*/
+    private $scaleconfiguration = '';
+
     /**
      * Method that provides the table name matching this class.
      *
@@ -168,6 +174,42 @@ class competency_framework extends persistent {
     }
 
     /**
+     * Get the scale ID.
+     *
+     * @return int The scale ID
+     */
+    public function get_scaleid() {
+        return $this->scaleid;
+    }
+
+    /**
+     * Set the scale ID.
+     *
+     * @param int $scale The scale ID
+     */
+    public function set_scaleid($scaleid) {
+        $this->scaleid = $scaleid;
+    }
+
+    /**
+     * Get the scale configuration.
+     *
+     * @return string The scale configuration
+     */
+    public function get_scaleconfiguration() {
+        return $this->scaleconfiguration;
+    }
+
+    /**
+     * Set the scale configuration.
+     *
+     * @param string $scaleconfiguration The scale configuration (JSON string)
+     */
+    public function set_scaleconfiguration($scaleconfiguration) {
+        $this->scaleconfiguration = $scaleconfiguration;
+    }
+
+    /**
      * Populate this class with data from a DB record.
      *
      * @param stdClass $record A DB record.
@@ -191,6 +233,12 @@ class competency_framework extends persistent {
         }
         if (isset($record->sortorder)) {
             $this->set_sortorder($record->sortorder);
+        }
+        if (isset($record->scaleid)) {
+            $this->set_scaleid($record->scaleid);
+        }
+        if (isset($record->scaleconfiguration)) {
+            $this->set_scaleconfiguration($record->scaleconfiguration);
         }
         if (isset($record->visible)) {
             $this->set_visible($record->visible);
@@ -221,6 +269,8 @@ class competency_framework extends persistent {
         $record->descriptionformat = $this->get_descriptionformat();
         $record->descriptionformatted = format_text($this->get_description(), $this->get_descriptionformat());
         $record->sortorder = $this->get_sortorder();
+        $record->scaleid = $this->get_scaleid();
+        $record->scaleconfiguration = $this->get_scaleconfiguration();
         $record->visible = $this->get_visible();
         $record->timecreated = $this->get_timecreated();
         $record->timemodified = $this->get_timemodified();
