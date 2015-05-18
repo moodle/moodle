@@ -27,6 +27,7 @@ namespace tool_lp\output;
 defined('MOODLE_INTERNAL') || die;
 
 use plugin_renderer_base;
+use renderable;
 
 /**
  * Renderer class for learning plans
@@ -85,4 +86,8 @@ class renderer extends plugin_renderer_base {
         return parent::render_from_template('tool_lp/manage_templates_page', $data);
     }
 
+    public function render_plans_page(renderable $page) {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('tool_lp/plans_page', $data);
+    }
 }

@@ -226,7 +226,7 @@ abstract class persistent {
     /**
      * Load a list of records.
      *
-     * @return array of persistent instances.
+     * @return \tool_lp\plan[]
      */
     public function get_records($filters = array(), $sort = '', $order = 'ASC', $skip = 0, $limit = 0) {
         global $DB;
@@ -244,6 +244,34 @@ abstract class persistent {
             array_push($instances, $newrecord);
         }
         return $instances;
+    }
+
+    /**
+     * Load a list of records based on a select query.
+     *
+     * @param string $select
+     * @param array $params
+     * @param string $sort
+     * @param string $fields
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return \tool_lp\plan[]
+     */
+    public function get_records_select($select, $params = null, $sort = '', $fields = '*', $limitfrom = 0, $limitnum = 0) {
+        global $DB;
+
+        if (!$records = $DB->get_records_select($this->get_table_name(), $select, $params, $sort, $fields, $limitfrom, $limitnum)) {
+            return false;
+        }
+
+        // We return class instances.
+        $instances = array();
+        foreach ($records as $record) {
+            array_push($instances, new static(0, $record));
+        }
+
+        return $instances;
+
     }
 
     /**

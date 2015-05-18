@@ -308,6 +308,53 @@ $functions = array(
         'type'        => 'write',
         'capabilities'=> 'tool/lp:templatemanage',
     ),
-
+    'tool_lp_create_plan' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'create_plan',
+        'classpath'   => '',
+        'description' => 'Creates a learning plan.',
+        'type'        => 'write',
+        'capabilities'=> 'tool/lp:planmanage',
+    ),
+    'tool_lp_update_plan' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'update_plan',
+        'classpath'   => '',
+        'description' => 'Updates a learning plan.',
+        'type'        => 'write',
+        'capabilities'=> 'tool/lp:planmanage',
+    ),
+    'tool_lp_read_plan' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'read_plan',
+        'classpath'   => '',
+        'description' => 'Load a learning plan.',
+        'type'        => 'read',
+        'capabilities'=> 'tool/lp:planviewown',
+    ),
+    'tool_lp_read_plan' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'read_plan',
+        'classpath'   => '',
+        'description' => 'Load a learning plan.',
+        'type'        => 'read',
+        'capabilities'=> 'tool/lp:planviewown',
+    ),
+    'tool_lp_delete_plan' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'delete_plan',
+        'classpath'   => '',
+        'description' => 'Delete a learning plan.',
+        'type'        => 'write',
+        'capabilities'=> 'tool/lp:planmanage',
+    ),
+    'tool_lp_data_for_plans_page' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'data_for_plans_page',
+        'classpath'   => '',
+        'description' => 'Load the data for the plans page template',
+        'type'        => 'read',
+        'capabilities'=> 'tool/lp:planviewown',
+    )
 );
 

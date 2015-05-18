@@ -2111,7 +2111,7 @@ class external extends external_api {
      * @param bool $visible Is this template visible.
      * @return stdClass Record of new template.
      */
-    public static function create_template($shortname, $idnumber, $description, $descriptionformat, $visible) {
+    public static function create_template($shortname, $idnumber, $duedate, $description, $descriptionformat, $visible) {
         $params = self::validate_parameters(self::create_template_parameters(),
                                             array(
                                                 'shortname' => $shortname,
@@ -2953,4 +2953,437 @@ class external extends external_api {
         ));
 
     }
+
+    /**
+     * A learning plan structure.
+     *
+     * @return external_single_structure
+     */
+    protected static function get_plan_external_structure() {
+        $id = new external_value(
+            PARAM_INT,
+            'Database record id'
+        );
+        $name = new external_value(
+            PARAM_TEXT,
+            'Name for the learning plan'
+        );
+        $description = new external_value(
+            PARAM_RAW,
+            'Description for the template'
+        );
+        $descriptionformat = new external_format_value(
+            'Description format for the template'
+        );
+        $userid = new external_value(
+            PARAM_INT,
+            'Learning plan user id'
+        );
+        $templateid = new external_value(
+            PARAM_INT,
+            'Learning plan templateid'
+        );
+        $status = new external_value(
+            PARAM_INT,
+            'Learning plan status identifier.'
+        );
+        $duedate = new external_value(
+            PARAM_INT,
+            'The default due date for instances of this plan.'
+        );
+        $timecreated = new external_value(
+            PARAM_INT,
+            'Timestamp this record was created'
+        );
+        $timemodified = new external_value(
+            PARAM_INT,
+            'Timestamp this record was modified'
+        );
+        $usermodified = new external_value(
+            PARAM_INT,
+            'User who modified this record last'
+        );
+
+        // Extra params.
+        $statusname = new external_value(
+            PARAM_TEXT,
+            'Learning plan status name'
+        );
+        $usercanupdate = new external_value(
+            PARAM_BOOL,
+            'Whether the current user can update this plan or not'
+        );
+
+        $returns = array(
+            'id' => $id,
+            'name' => $name,
+            'description' => $description,
+            'descriptionformat' => $descriptionformat,
+            'userid' => $userid,
+            'templateid' => $templateid,
+            'status' => $status,
+            'duedate' => $duedate,
+            'timecreated' => $timecreated,
+            'timemodified' => $timemodified,
+            'usermodified' => $usermodified,
+            'statusname' => $statusname,
+            'usercanupdate' => $usercanupdate
+        );
+
+        return new external_single_structure($returns);
+    }
+
+    /**
+     * Returns description of create_plan() parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function create_plan_parameters() {
+        $name = new external_value(
+            PARAM_TEXT,
+            'Name for the learning plan template.',
+            VALUE_REQUIRED
+        );
+        $description = new external_value(
+            PARAM_RAW,
+            'Optional description for the learning plan description',
+            VALUE_DEFAULT,
+            ''
+        );
+        $descriptionformat = new external_format_value(
+            'Optional description format for the learning plan description',
+            VALUE_DEFAULT,
+            FORMAT_HTML
+        );
+        $userid = new external_value(
+            PARAM_INT,
+            'The learning plan user id',
+            VALUE_REQUIRED
+        );
+        $templateid = new external_value(
+            PARAM_INT,
+            'Optional template id',
+            VALUE_DEFAULT,
+            0 
+        );
+        $status = new external_value(
+            PARAM_INT,
+            'Optional template id',
+            VALUE_DEFAULT,
+            plan::STATUS_DRAFT
+        );
+        $duedate = new external_value(
+            PARAM_INT,
+            'The default due date for this plan',
+            VALUE_DEFAULT,
+            0
+        );
+
+        $params = array(
+            'name' => $name,
+            'description' => $description,
+            'descriptionformat' => $descriptionformat,
+            'userid' => $userid,
+            'templateid' => $templateid,
+            'status' => $status,
+            'duedate' => $duedate
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Expose to AJAX
+     * @return boolean
+     */
+    public static function create_plan_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Create a new learning plan.
+     */
+    public static function create_plan($name, $description, $descriptionformat, $userid, $templateid, $status, $duedate) {
+        $params = self::validate_parameters(self::create_plan_parameters(),
+                                            array(
+                                                'name' => $name,
+                                                'description' => $description,
+                                                'descriptionformat' => $descriptionformat,
+                                                'userid' => $userid,
+                                                'templateid' => $templateid,
+                                                'status' => $status,
+                                                'duedate' => $duedate
+                                            ));
+        $params = (object) $params;
+
+        $result = api::create_plan($params);
+        return external_api::clean_returnvalue(self::create_plan_returns(), $result->to_record());
+    }
+
+    /**
+     * Returns description of create_plan() result value.
+     *
+     * @return external_description
+     */
+    public static function create_plan_returns() {
+        return self::get_plan_external_structure();
+    }
+
+    /**
+     * Returns description of update_plan() parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function update_plan_parameters() {
+        $id = new external_value(
+            PARAM_INT,
+            'Learning plan id',
+            VALUE_REQUIRED
+        );
+        $name = new external_value(
+            PARAM_TEXT,
+            'Name for the learning plan template.',
+            VALUE_REQUIRED
+        );
+        $description = new external_value(
+            PARAM_RAW,
+            'Optional description for the learning plan description',
+            VALUE_DEFAULT,
+            ''
+        );
+        $descriptionformat = new external_format_value(
+            'Optional description format for the learning plan description',
+            VALUE_DEFAULT,
+            FORMAT_HTML
+        );
+        $userid = new external_value(
+            PARAM_INT,
+            'The learning plan user id',
+            VALUE_REQUIRED
+        );
+        $templateid = new external_value(
+            PARAM_INT,
+            'Optional template id',
+            VALUE_DEFAULT,
+            0
+        );
+        $status = new external_value(
+            PARAM_INT,
+            'Optional template id',
+            VALUE_DEFAULT,
+            plan::STATUS_DRAFT
+        );
+        $duedate = new external_value(
+            PARAM_INT,
+            'The default due date for this plan',
+            VALUE_DEFAULT,
+            0
+        );
+
+        $params = array(
+            'id' => $id,
+            'name' => $name,
+            'description' => $description,
+            'descriptionformat' => $descriptionformat,
+            'userid' => $userid,
+            'templateid' => $templateid,
+            'status' => $status,
+            'duedate' => $duedate
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Expose to AJAX
+     * @return boolean
+     */
+    public static function update_plan_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Updates a new learning plan.
+     */
+    public static function update_plan($id, $name, $description, $descriptionformat, $userid, $templateid, $status, $duedate) {
+        $params = self::validate_parameters(self::update_plan_parameters(),
+                                            array(
+                                                'id' => $id,
+                                                'name' => $name,
+                                                'description' => $description,
+                                                'descriptionformat' => $descriptionformat,
+                                                'userid' => $userid,
+                                                'templateid' => $templateid,
+                                                'status' => $status,
+                                                'duedate' => $duedate
+                                            ));
+        $params = (object) $params;
+
+        $result = api::update_plan($params);
+        return external_api::clean_returnvalue(self::update_plan_returns(), $result->to_record());
+    }
+
+    /**
+     * Returns description of update_plan() result value.
+     *
+     * @return external_description
+     */
+    public static function update_plan_returns() {
+        return self::get_plan_external_structure();
+    }
+
+    /**
+     * Returns description of read_plan() parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function read_plan_parameters() {
+        $id = new external_value(
+            PARAM_INT,
+            'Data base record id for the plan',
+            VALUE_REQUIRED
+        );
+        return new external_function_parameters(array('id' => $id));
+    }
+
+    /**
+     * Expose to AJAX
+     * @return boolean
+     */
+    public static function read_plan_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Read a plan by id.
+     *
+     * @param int $id The id of the plan.
+     * @return stdClass
+     */
+    public static function read_plan($id) {
+        $params = self::validate_parameters(self::read_plan_parameters(),
+                                            array(
+                                                'id' => $id,
+                                            ));
+
+        $result = api::read_plan($params['id']);
+        return external_api::clean_returnvalue(self::read_plan_returns(), $result->to_record());
+    }
+
+    /**
+     * Returns description of read_plan() result value.
+     *
+     * @return external_description
+     */
+    public static function read_plan_returns() {
+        return self::get_plan_external_structure();
+    }
+
+    /**
+     * Returns description of delete_plan() parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function delete_plan_parameters() {
+        $id = new external_value(
+            PARAM_INT,
+            'Data base record id for the learning plan',
+            VALUE_REQUIRED
+        );
+
+        $params = array(
+            'id' => $id,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Expose to AJAX
+     * @return boolean
+     */
+    public static function delete_plan_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Delete a plan.
+     *
+     * @param int $id The plan id
+     * @return boolean
+     */
+    public static function delete_plan($id) {
+        $params = self::validate_parameters(self::delete_plan_parameters(),
+                                            array(
+                                                'id' => $id,
+                                            ));
+        return external_api::clean_returnvalue(self::delete_plan_returns(), api::delete_plan($params['id']));
+    }
+
+    /**
+     * Returns description of delete_plan() result value.
+     *
+     * @return external_description
+     */
+    public static function delete_plan_returns() {
+        return new external_value(PARAM_BOOL, 'True if the delete was successful');
+    }
+
+    /**
+     * Returns description of data_for_plans_page() parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function data_for_plans_page_parameters() {
+        $userid = new external_value(
+            PARAM_INT,
+            'The user id',
+            VALUE_REQUIRED
+        );
+        $params = array('userid' => $userid);
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Expose to AJAX
+     * @return boolean
+     */
+    public static function data_for_plans_page_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Loads the data required to render the plans_page template.
+     *
+     * @return boolean
+     */
+    public static function data_for_plans_page($userid) {
+        global $PAGE;
+
+        $params = self::validate_parameters(self::data_for_plans_page_parameters(),
+                                            array(
+                                                'userid' => $userid,
+                                            ));
+
+        $renderable = new \tool_lp\output\plans_page($params['userid']);
+        $renderer = $PAGE->get_renderer('tool_lp');
+
+        return external_api::clean_returnvalue(self::data_for_plans_page_returns(), $renderable->export_for_template($renderer));
+    }
+
+    /**
+     * Returns description of data_for_plans_page() result value.
+     *
+     * @return external_description
+     */
+    public static function data_for_plans_page_returns() {
+        return new external_single_structure(array (
+            'userid' => new external_value(PARAM_INT, 'The learning plan user id'),
+            'plans' => new external_multiple_structure(
+                self::get_plan_external_structure()
+            ),
+            'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
+            'navigation' => new external_multiple_structure(
+                new external_value(PARAM_RAW, 'HTML for a navigation item that should be on this page')
+            )
+        ));
+    }
+
 }

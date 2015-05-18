@@ -58,20 +58,42 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' =>  'moodle/site:config'
     ),
-    'tool/lp:learningplanread' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' =>  'moodle/block:view'
-    ),
-    'tool/lp:learningplanmanage' => array(
+    'tool/lp:plancreatedraft' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
         ),
         'clonepermissionsfrom' =>  'moodle/site:config'
+    ),
+    'tool/lp:planmanage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' =>  'moodle/site:config'
+    ),
+    'tool/lp:planmanageown' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' =>  'moodle/site:config'
+    ),
+    'tool/lp:planviewall' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' =>  'moodle/site:config'
+    ),
+    'tool/lp:planviewown' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' =>  'moodle/block:view'
+
     ),
     'tool/lp:coursecompetencyread' => array(
         'captype' => 'read',
@@ -90,5 +112,4 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' =>  'moodle/site:backup'
     )
-
 );

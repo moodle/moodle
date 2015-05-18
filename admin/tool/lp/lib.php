@@ -45,3 +45,31 @@ function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) 
         $navigation->add_node($settingsnode);
     }
 }
+
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ *
+ * @return bool
+ */
+function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    global $USER;
+
+    $context = context_user::instance($USER->id);
+    if (!$iscurrentuser && !has_capability('tool/lp:planviewall', $context)) {
+        return false;
+    }
+
+    if (!has_capability('tool/lp:planviewown', $context)) {
+        return false;
+    }
+
+    $url = new moodle_url('/admin/tool/lp/plans.php');
+    $node = new core_user\output\myprofile\node('miscellaneous', 'learningplans',
+                                                get_string('learningplans', 'tool_lp'), null, $url);
+    $tree->add_node($node);
+}

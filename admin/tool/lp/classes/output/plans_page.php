@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class containing data for managelearningplans page
+ * Class containing data for a user learning plans list page.
  *
  * @package    tool_lp
- * @copyright  2015 Damyon Wiese
+ * @copyright  2015 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_lp\output;
@@ -26,59 +26,69 @@ namespace tool_lp\output;
 use renderable;
 use templatable;
 use renderer_base;
-use single_button;
 use stdClass;
+use single_button;
 use moodle_url;
-use context_system;
 use tool_lp\api;
+use tool_lp\plan;
+use context_user;
 
 /**
- * Class containing data for managecompetencyframeworks page
+ * Class containing data for a user learning plans list page.
  *
- * @copyright  2015 Damyon Wiese
+ * @copyright  2015 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manage_templates_page implements renderable, templatable {
+class plans_page implements renderable, templatable {
 
     /** @var array $navigation List of links to display on the page. Each link contains a url and a title. */
     var $navigation = array();
 
-    /** @var array $templates List of learning plan templates. */
-    var $templates = array();
+    var $plans = array();
 
-    /** @var bool $canmanage Result of permissions checks. */
-    var $canmanage = false;
+    var $context = null;
+
+    var $userid = null;
 
     /**
      * Construct this renderable.
+     *
+     * @param int $userid
      */
-    public function __construct() {
-        $addpage = new single_button(
-           new moodle_url('/admin/tool/lp/edittemplate.php'),
-           get_string('addnewtemplate', 'tool_lp')
+    public function __construct($userid) {
+        $this->userid = $userid;
+        $this->plans = api::list_user_plans($userid);
+
+        $this->context = context_user::instance($userid);
+
+        $addplan = new single_button(
+           new moodle_url('/admin/tool/lp/editplan.php', array('userid' => $userid)),
+           get_string('addnewplan', 'tool_lp')
         );
-        $this->navigation[] = $addpage;
-
-        $this->templates = api::list_templates(array(), 'sortorder', 'ASC', 0, 0);
-
-        $context = context_system::instance();
-        $this->canmanage = has_capability('tool/lp:planmanage', $context);
+        $this->navigation[] = $addplan;
     }
 
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
+     * @param renderer_base $output
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
+        global $USER;
+
         $data = new stdClass();
-        $data->canmanage = $this->canmanage;
-        $data->templates = array();
-        foreach ($this->templates as $template) {
-            $record = $template->to_record();
-            $data->templates[] = $record;
-        }
+        $data->userid = $this->userid;
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
+
+        // Attach standard objects as mustache can not parse \tool_lp\plan objects.
+        if ($this->plans) {
+            $data->plans = array();
+            foreach ($this->plans as $plan) {
+                $data->plans[] = $plan->to_record();
+            }
+        }
+
         $data->navigation = array();
         foreach ($this->navigation as $button) {
             $data->navigation[] = $output->render($button);

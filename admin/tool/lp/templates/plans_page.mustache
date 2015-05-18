@@ -1,0 +1,101 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    User learning plans page.
+
+    Classes required for JS:
+    * planactions
+
+    Data attributes required for JS:
+    * data-region = plans
+    * data-planid = plans.id
+    * data-userid = userid
+    * data-action = deleteplan
+
+    Context variables required for this template:
+    * userid - The plan user id
+    * pluginbaseurl - tool_lp base url
+    * plans - The list of learning plans
+    * navigation - array of strings containing buttons for navigation
+}}
+
+<div data-region="plans" data-userid="{{userid}}">
+<table class="generaltable fullwidth">
+    <caption>{{#str}}listplanscaption, tool_lp{{/str}}</caption>
+    <thead>
+        <tr>
+            <th scope="col">{{#str}}planname, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#plans}}
+        <tr>
+            <td>
+                <span><a href="{{pluginbaseurl}}/plan.php?id={{id}}">{{name}}</a></span>
+            </td>
+            <td>{{statusname}}</td>
+            <td>
+                {{#usercanupdate}}
+                <div style="display: inline-block;">
+                <ul class="planactions hide">
+                    <li>
+                        <a href="{{pluginbaseurl}}/editplan.php?id={{id}}">
+                            {{#pix}}t/edit{{/pix}}{{#str}}editthisplan, tool_lp{{/str}}
+                        </a>
+                    </li>
+                    <li>
+                        <a data-action="deleteplan" data-planid="{{id}}" href="#">
+                            {{#pix}}t/delete{{/pix}}{{#str}}deletethisplan, tool_lp{{/str}}
+                        </a>
+                    </li>
+                </ul>
+                {{/usercanupdate}}
+            </div>
+            </td>
+        </tr>
+        {{/plans}}
+    </tbody>
+</table>
+
+{{^plans}}
+<p class="alert-info">
+    {{#str}}nouserplans, tool_lp{{/str}}
+</p>
+{{/plans}}
+
+<div class="btn-group pull-right">
+{{#navigation}}
+{{{.}}}
+{{/navigation}}
+</div>
+
+{{#js}}
+// Initialise the JS.
+require(['tool_lp/plandelete',
+         'core/menu'],
+        function(deleteMod, menu) {
+
+    deleteMod.init();
+
+    menu.menu('{{#str}}edit{{/str}}', '.planactions');
+});
+
+{{/js}}
+
+</div>
