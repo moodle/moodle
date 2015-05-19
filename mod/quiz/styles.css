@@ -783,6 +783,15 @@ table.quizreviewsummary td.cell {
     font-weight: normal;
     font-size: 0.8em;
 }
+#categoryquestions td.modifiername,
+#categoryquestions td.creatorname {
+    line-height: 1em;
+}
+#categoryquestions td.modifiername span.date,
+#categoryquestions td.creatorname span.date {
+    font-weight: normal;
+    font-size: 0.8em;
+}
 table#categoryquestions {
     width: 100%;
     overflow: hidden;
