@@ -21,6 +21,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use tool_lp\external;
+use tool_lp\plan;
 
 /**
  * External learning plans webservice API tests.
@@ -37,6 +38,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     /** @var stdClass $learningplanuser User with enough permissions to view */
     protected $user = null;
 
+    /** @var int Creator role id */
+    protected $creatorrole = null;
+
+    /** @var int User role id */
+    protected $userrole = null;
+
     /**
      * Setup function - we will create a course and add an assign instance to it.
      */
@@ -50,14 +57,17 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $syscontext = context_system::instance();
 
-        $creatorrole = create_role('Creator role', 'creatorrole', 'learning plan creator role description');
-        $userrole = create_role('User role', 'userrole', 'learning plan user role description');
+        $this->creatorrole = create_role('Creator role', 'creatorrole', 'learning plan creator role description');
+        $this->userrole = create_role('User role', 'userrole', 'learning plan user role description');
 
-        assign_capability('tool/lp:competencymanage', CAP_ALLOW, $creatorrole, $syscontext->id);
-        assign_capability('tool/lp:competencyview', CAP_ALLOW, $userrole, $syscontext->id);
+        assign_capability('tool/lp:competencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:competencyview', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('tool/lp:planmanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:planviewall', CAP_ALLOW, $this->creatorrole, $syscontext->id);
 
-        role_assign($creatorrole, $creator->id, $syscontext->id);
-        role_assign($userrole, $user->id, $syscontext->id);
+        role_assign($this->creatorrole, $creator->id, $syscontext->id);
+        role_assign($this->userrole, $user->id, $syscontext->id);
 
         $this->creator = $creator;
         $this->user = $user;
@@ -575,4 +585,169 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(true, $result->visible);
     }
 
+    /**
+     * Test plans creation and updates.
+     */
+    public function test_create_and_update_plans() {
+        $syscontext = context_system::instance();
+
+        $this->setUser($this->creator);
+        $plan0 = external::create_plan('Complete plan', 'A description', FORMAT_HTML, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
+
+        $this->setUser($this->user);
+
+        try {
+            $plan1 = external::create_plan('Draft plan (they can not with the default capabilities)', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_DRAFT, 0);
+            $this->fail('Exception expected due to not permissions to create draft plans');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        assign_capability('tool/lp:plancreatedraft', CAP_ALLOW, $this->userrole, $syscontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->setUser($this->user);
+
+        $plan2 = external::create_plan('Draft plan', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_DRAFT, 0);
+
+        try {
+            $plan3 = external::create_plan('Active plan (they can not)', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+            $this->fail('Exception expected due to not permissions to create active plans');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+        try {
+            $plan3 = external::update_plan($plan2['id'], 'Updated active plan', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+            $this->fail('Exception expected due to not permissions to update plans to complete status');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $plan3 = external::create_plan('Active plan', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+        $plan4 = external::create_plan('Complete plan', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        try {
+            $plan4 = external::create_plan('Plan for another user', 'A description', FORMAT_HTML, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
+            $this->fail('Exception expected due to not permissions to manage other users plans');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        try {
+            $plan0 = external::update_plan($plan0['id'], 'Can not update other users plans', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        unassign_capability('tool/lp:planmanageown', $this->userrole, $syscontext->id);
+        unassign_capability('tool/lp:plancreatedraft', $this->userrole, $syscontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        try {
+            $plan1 = external::update_plan($plan2['id'], 'Can not be updated even if they created it', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+            $this->fail('Exception expected due to not permissions to create draft plan');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+    }
+
+    /**
+     * Test that we can read plans.
+     */
+    public function test_read_plans() {
+        $this->setUser($this->creator);
+
+        $syscontext = context_system::instance();
+
+        $plan1 = external::create_plan('Plan draft by creator', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_DRAFT, 0);
+        $plan2 = external::create_plan('Plan active by creator', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+        $plan3 = external::create_plan('Plan complete by creator', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+
+        $this->assertEquals((Array)$plan1, external::read_plan($plan1['id']));
+        $this->assertEquals((Array)$plan2, external::read_plan($plan2['id']));
+        $this->assertEquals((Array)$plan3, external::read_plan($plan3['id']));
+
+        $this->setUser($this->user);
+
+        // The normal user can not edit these plans.
+        $plan1['usercanupdate'] = false;
+        $plan2['usercanupdate'] = false;
+        $plan3['usercanupdate'] = false;
+
+        // You need planmanage, planmanageown or plancreatedraft to see draft plans.
+        try {
+            external::read_plan($plan1['id']);
+            $this->fail('Exception expected due to not permissions to read draft plan');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+        $this->assertEquals((Array)$plan2, external::read_plan($plan2['id']));
+        $this->assertEquals((Array)$plan3, external::read_plan($plan3['id']));
+
+        assign_capability('tool/lp:plancreatedraft', CAP_ALLOW, $this->userrole, $syscontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->assertEquals((Array)$plan1, external::read_plan($plan1['id']));
+
+        assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id);
+        unassign_capability('tool/lp:plancreatedraft', $this->userrole, $syscontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        try {
+            $plan = external::read_plan($plan2['id']);
+            $this->fail('Exception expected due to not permissions to view own plans');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+    }
+
+    public function test_delete_plans() {
+        $this->setUser($this->creator);
+
+        $syscontext = context_system::instance();
+
+        $plan1 = external::create_plan('1', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan2 = external::create_plan('2', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan3 = external::create_plan('3', 'A description', FORMAT_HTML, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
+
+        $this->assertTrue(external::delete_plan($plan1['id']));
+
+        unassign_capability('tool/lp:planmanage', $this->creatorrole, $syscontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        try {
+            external::delete_plan($plan2['id']);
+            $this->fail('Exception expected due to not permissions to manage plans');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        $this->setUser($this->user);
+
+        // Can not delete plans created by other users.
+        try {
+            external::delete_plan($plan2['id']);
+            $this->fail('Exception expected due to not permissions to manage plans');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->assertTrue(external::delete_plan($plan2['id']));
+
+        // Can not delete plans created for other users.
+        try {
+            external::delete_plan($plan3['id']);
+            $this->fail('Exception expected due to not permissions to manage plans');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        $plan4 = external::create_plan('4', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        $this->assertTrue(external::delete_plan($plan4['id']));
+    }
 }
