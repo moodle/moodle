@@ -468,7 +468,7 @@ if (!$csv) {
                 // Display icon
                 $icon = $OUTPUT->pix_url('icon', $criterion->module);
                 $iconlink = $CFG->wwwroot.'/mod/'.$criterion->module.'/view.php?id='.$criterion->moduleinstance;
-                $icontitle = $modinfo->cms[$criterion->moduleinstance]->name;
+                $icontitle = $modinfo->cms[$criterion->moduleinstance]->get_formatted_name();
                 $iconalt = get_string('modulename', $criterion->module);
                 break;
 
@@ -532,8 +532,9 @@ if (!$csv) {
 
             // Load activity
             $mod = $criterion->get_mod_instance();
-            $row[] = $mod->name;
-            $row[] = $mod->name . ' - ' . get_string('completiondate', 'report_completion');
+            $row[] = $formattedname = format_string($mod->name, true,
+                    array('context' => context_module::instance($criterion->moduleinstance)));
+            $row[] = $formattedname . ' - ' . get_string('completiondate', 'report_completion');
         }
         else {
             // Handle all other criteria
@@ -616,7 +617,7 @@ foreach ($progress as $user) {
             $a->state     = $describe;
             $a->date      = $date;
             $a->user      = fullname($user);
-            $a->activity  = strip_tags($activity->name);
+            $a->activity  = $activity->get_formatted_name();
             $fulldescribe = get_string('progress-title', 'completion', $a);
 
             if ($csv) {
@@ -626,7 +627,7 @@ foreach ($progress as $user) {
                 print '<td class="completion-progresscell">';
 
                 print '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).
-                      '" alt="'.$describe.'" class="icon" title="'.$fulldescribe.'" />';
+                      '" alt="'.s($describe).'" class="icon" title="'.s($fulldescribe).'" />';
 
                 print '</td>';
             }
@@ -672,11 +673,12 @@ foreach ($progress as $user) {
                     )
                 );
 
-                print '<a href="'.$toggleurl->out().'" title="'.get_string('clicktomarkusercomplete', 'report_completion').'">' .
+                print '<a href="'.$toggleurl->out().'" title="'.s(get_string('clicktomarkusercomplete', 'report_completion')).'">' .
                     '<img src="'.$OUTPUT->pix_url('i/completion-manual-'.($is_complete ? 'y' : 'n')).
-                    '" alt="'.$describe.'" class="icon" /></a></td>';
+                    '" alt="'.s($describe).'" class="icon" /></a></td>';
             } else {
-                print '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).'" alt="'.$describe.'" class="icon" title="'.$fulldescribe.'" /></td>';
+                print '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).'" alt="'.s($describe).
+                        '" class="icon" title="'.s($fulldescribe).'" /></td>';
             }
 
             print '</td>';
@@ -717,7 +719,7 @@ foreach ($progress as $user) {
 
         // Display course completion status icon
         print '<img src="'.$OUTPUT->pix_url('i/completion-auto-'.$completiontype).
-               '" alt="'.$describe.'" class="icon" title="'.$fulldescribe.'" />';
+               '" alt="'.s($describe).'" class="icon" title="'.s($fulldescribe).'" />';
 
         print '</td>';
     }
