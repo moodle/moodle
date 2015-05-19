@@ -301,7 +301,7 @@ class core_completion_external extends external_api {
 
         $completions = $info->get_completions($user->id);
         if (empty($completions)) {
-            throw new moodle_exception('err_nocriteria', 'completion');
+            throw new moodle_exception('nocriteriaset', 'completion');
         }
 
         // Load course completion.

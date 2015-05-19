@@ -91,7 +91,7 @@ $modinfo = get_fast_modinfo($course);
 $completion = new completion_info($course);
 
 if (!$completion->has_criteria()) {
-    print_error('err_nocriteria', 'completion', $CFG->wwwroot.'/course/report.php?id='.$course->id);
+    print_error('nocriteriaset', 'completion', $CFG->wwwroot.'/course/report.php?id='.$course->id);
 }
 
 // Get criteria and put in correct order
