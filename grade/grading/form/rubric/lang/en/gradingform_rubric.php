@@ -31,6 +31,7 @@ $string['confirmdeletecriterion'] = 'Are you sure you want to delete this criter
 $string['confirmdeletelevel'] = 'Are you sure you want to delete this level?';
 $string['criterionaddlevel'] = 'Add level';
 $string['criteriondelete'] = 'Delete criterion';
+$string['criterionduplicate'] = 'Duplicate criterion';
 $string['criterionempty'] = 'Click to edit criterion';
 $string['criterionmovedown'] = 'Move down';
 $string['criterionmoveup'] = 'Move up';
