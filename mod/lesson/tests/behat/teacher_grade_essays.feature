@@ -71,7 +71,7 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
     And I should see "Student 1"
     And I should see "Student 2"
     And I should see "Essay question"
-    And I follow "Essay question"
+    And I click on "Essay question" "link" in the "Student 1" "table_row"
     And I should see "Student 1's response"
     And I should see "Once upon a time there was a little green frog."
     And I set the following fields to these values:
