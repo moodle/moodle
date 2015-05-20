@@ -24,9 +24,11 @@
 namespace core\task;
 
 /**
- * Simple task to run the completion cron.
+ * Simple task to run the regular completion cron.
+ * @copyright  2013 onwards Martin Dougiamas  http://dougiamas.com.
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class completion_cron_task extends scheduled_task {
+class completion_cron_regular_task extends scheduled_task {
 
     /**
      * Get a descriptive name for this task (shown to admins).
@@ -34,7 +36,7 @@ class completion_cron_task extends scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('taskcompletioncron', 'admin');
+        return get_string('taskcompletioncronregular', 'admin');
     }
 
     /**
@@ -45,9 +47,9 @@ class completion_cron_task extends scheduled_task {
         global $CFG;
 
         if ($CFG->enablecompletion) {
-            // Completion cron.
+            // Regular Completion cron.
             require_once($CFG->dirroot.'/completion/cron.php');
-            completion_cron();
+            completion_regular_cron();
         }
     }
 

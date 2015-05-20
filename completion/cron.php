@@ -28,20 +28,38 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/completionlib.php');
 
 /**
+ * Legacy - here for plugin use only, not used in scheduled tasks. 
  * Update user's course completion statuses
  *
  * First update all criteria completions, then aggregate all criteria completions
- * and update overall course completions
+ * and update overall course completions.
  */
 function completion_cron() {
-
     completion_cron_mark_started();
 
     completion_cron_criteria();
 
     completion_cron_completions();
 }
-
+/**
+ * Update user's course completion statuses
+ *
+ * First update all criteria completions, then aggregate all criteria completions
+ * and update overall course completions
+ */
+function completion_regular_cron() {
+    // Two Functions which check criteria and learner completions regularly for accurate data.
+    completion_cron_criteria();
+    completion_cron_completions();
+}
+/**
+ * Marks users as started if the config option is set.
+ *
+ * One function which takes a long time 60+ minutes to enrol users onto completion started.
+ */
+function completion_daily_cron() {
+    completion_cron_mark_started();
+}
 /**
  * Mark users as started if the config option is set
  *
