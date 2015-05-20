@@ -454,3 +454,31 @@ function folder_cm_info_view(cm_info $cm) {
         $cm->set_content($renderer->display_folder($folder));
     }
 }
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $folder     folder object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.0
+ */
+function folder_view($folder, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $folder->id
+    );
+
+    $event = \mod_folder\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('folder', $folder);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
