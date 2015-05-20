@@ -15,16 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Folder module version information
+ * folder external functions and service definitions.
  *
- * @package   mod_folder
- * @copyright 2009 Petr Skoda  {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_folder
+ * @category   external
+ * @copyright  2015 Juan Leyva <juan@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.0
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2015051101;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015050500;    // Requires this Moodle version
-$plugin->component = 'mod_folder';     // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+$functions = array(
+
+    'mod_folder_view_folder' => array(
+        'classname'     => 'mod_folder_external',
+        'methodname'    => 'view_folder',
+        'description'   => 'Simulate the view.php web interface folder: trigger events, completion, etc...',
+        'type'          => 'write',
+        'capabilities'  => 'mod/folder:view'
+    ),
+
+);
