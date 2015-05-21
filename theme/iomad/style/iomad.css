@@ -93,3 +93,8 @@ body {
     float: right;
     width: 100px;
 }
+
+/* This hides Authentication Method from edit user form which is redundant when using IOMAD and potentially causes issues */
+#fitem_id_auth{
+    display: none;
+}
