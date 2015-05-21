@@ -60,10 +60,11 @@ Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
                                     .on('load', this.constrain_image_size, this, 'dragimage');
             this.doc.bg_img().after('load', this.poll_for_image_load, this,
                                                     true, 0, this.after_all_images_loaded);
-            this.doc.drag_item_homes() .after('load', this.poll_for_image_load, this,
+            this.doc.drag_item_homes().after('load', this.poll_for_image_load, this,
                                                     true, 0, this.after_all_images_loaded);
         } else {
             this.setup_form_events();
+            M.util.js_complete(this.pendingid);
         }
         this.update_visibility_of_file_pickers();
     },
@@ -232,6 +233,7 @@ Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
             var draginstanceno = drag.getData('draginstanceno');
             this.reposition_drag_for_form(draginstanceno);
         }, this);
+        M.util.js_complete(this.pendingid);
     },
 
     reposition_drag_for_form : function (draginstanceno) {
