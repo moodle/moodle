@@ -623,9 +623,6 @@ function optional_param($parname, $default, $type) {
     if (func_num_args() != 3 or empty($parname) or empty($type)) {
         throw new coding_exception('optional_param requires $parname, $default + $type to be specified (parameter: '.$parname.')');
     }
-    if (!isset($default)) {
-        $default = null;
-    }
 
     // POST has precedence.
     if (isset($_POST[$parname])) {
