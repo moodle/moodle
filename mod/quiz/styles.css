@@ -920,6 +920,9 @@ table#categoryquestions {
     opacity: 0.5;
     padding-top: 50px;
 }
+.mod_quiz_qbank_dialogue #advancedsearch label {
+    font-size: 100%;
+}
 
 .modulespecificbuttonscontainer {
     padding-left: 0.3em;

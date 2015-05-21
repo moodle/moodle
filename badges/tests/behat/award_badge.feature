@@ -196,7 +196,7 @@ Feature: Award badges
     And I follow "Course completion"
     And I set the field "id_overall_aggregation" to "2"
     And I click on "Condition: Activity completion" "link"
-    And I set the field "Assign - Test assignment name" to "1"
+    And I set the field "Assignment - Test assignment name" to "1"
     And I press "Save changes"
     And I follow "Course 1"
     And I navigate to "Add a new badge" node in "Course administration > Badges"

@@ -31,7 +31,7 @@ require_once(__DIR__ . '/lib.php');
 // Only real logged in users.
 require_login(null, false, null, true, true);
 if (isguestuser()) {
-    throw new require_login_exception();
+    throw new require_login_exception('Guests are not allowed here.');
 }
 
 // Messaging needs to be enabled.

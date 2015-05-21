@@ -187,9 +187,14 @@ $allusernames = get_all_user_name_fields(false, null, null, null, true);
 $usernameheader = null;
 // Get the alternative full name format for users with the viewfullnames capability.
 $fullusernames = $CFG->alternativefullnameformat;
-// If fullusernames is empty or accidentally set to language then fall back on the $allusernames set up.
+// If fullusernames is empty or accidentally set to language then fall back to default of just first and last name.
 if ($fullusernames == 'language' || empty($fullusernames)) {
-    $usernameheader = $allusernames;
+    // Set $a variables to return 'firstname' and 'lastname'.
+    $a = new stdClass();
+    $a->firstname = 'firstname';
+    $a->lastname = 'lastname';
+    // Getting the fullname display will ensure that the order in the language file is maintained.
+    $usernameheader = explode(' ', get_string('fullnamedisplay', null, $a));
 } else {
     // If everything is as expected then put them in the order specified by the alternative full name format setting.
     $usernameheader = order_in_string($allusernames, $fullusernames);
