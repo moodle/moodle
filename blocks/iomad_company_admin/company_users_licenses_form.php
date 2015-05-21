@@ -96,7 +96,6 @@ class company_users_course_form extends moodleform {
 
     public function definition_after_data() {
         global $DB;
-
         $mform =& $this->_form;
 
         if (!empty($this->userid)) {
@@ -110,27 +109,37 @@ class company_users_course_form extends moodleform {
         if (!$this->userid) {
             die('No user selected.');
         }
-
+		
         $company = new company($this->selectedcompany);
         if (!empty($this->licenseid)) {
+
             $license = $DB->get_record('companylicense', array('id' => $this->licenseid));
             $licensestring = get_string('licensedetails', 'block_iomad_company_admin', $license);
+			$licensestring2 = get_string('licensedetails2', 'block_iomad_company_admin', $license);
+			$licensestring3 = get_string('licensedetails3', 'block_iomad_company_admin', $license);
         } else {
             $licensestring = '';
+			$licensestring2 = '';
+			$licensestring3 = '';
         }
-        $mform->addElement('header', 'header', get_string('user_courses_for', 'block_iomad_company_admin', fullname($this->user)). ' ' . $licensestring);
+	
+		if (!empty($this->licenseid)) {
+		$mform->addElement('html', '<br /><p align="center"><b>' . get_string('licenseleft1', 'block_iomad_company_admin') . ((intval($licensestring3, 0)) - (intval($licensestring2, 0))) . get_string('licenseleft2', 'block_iomad_company_admin') . '</b>'); 
 
+        $mform->addElement('html', '<h4>' . get_string('user_courses_for', 'block_iomad_company_admin', fullname($this->user)) . '</h4>'); 
+											
         $mform->addElement('html', '<table summary=""
                                     class="companycourseuserstable addremovetable generaltable generalbox boxaligncenter"
-                                    cellspacing="0">
+                                    cellspacing="0"
+									border="0">
             <tr>
-              <td id="existingcell">');
+              <td id="existingcell" style="text-align:center;">'); //maybe put this in the block CSS?
 
         $mform->addElement('html', $this->currentcourses->display(true));
 
         $mform->addElement('html', '
               </td>
-              <td id="buttonscell">
+              <td id="buttonscell" valign="middle">
                   <div id="addcontrols">
                       <input name="add" id="add" type="submit" value="&nbsp;' .
                       get_string('enrol', 'block_iomad_company_admin') .
@@ -144,7 +153,7 @@ class company_users_course_form extends moodleform {
                       '&nbsp;" title="Unenrol" />
                   </div>
               </td>
-              <td id="potentialcell">');
+              <td id="potentialcell" style="text-align:center;">'); //maybe put this in the block CSS?
 
         $mform->addElement('html', $this->potentialcourses->display(true));
 
@@ -152,6 +161,10 @@ class company_users_course_form extends moodleform {
               </td>
             </tr>
           </table>');
+		  
+		} else {
+		$mform->addElement('html', '<br /><p align="center"><b>' . get_string('selectlicenseblurb', 'block_iomad_company_admin') . '</b></p>'); 
+		}
     }
 
     public function process() {
@@ -173,8 +186,7 @@ class company_users_course_form extends moodleform {
                             $DB->insert_record('companylicense_users',
                                                array('userid' => $this->userid,
                                                      'licenseid' => $licenserecord['id'],
-                                                     'licensecourseid' => $addcourse->id,
-                                                     'issuedate' => time()));
+                                                     'licensecourseid' => $addcourse->id));
     
                             // Create an email event.
                             $license = new stdclass();
@@ -217,7 +229,6 @@ class company_users_course_form extends moodleform {
         }
     }
 }
-
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
@@ -268,19 +279,30 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
         $coursesform->process();
         // Display the license selctor.
         $licenses = $DB->get_records_sql_menu("SELECT id, name FROM {companylicense}
-                                          WHERE companyid = :companyid
-                                          AND used < allocation",
-                                          array('companyid' => $companyid));
+                                               WHERE companyid = :companyid
+                                               AND used < allocation",
+        array('companyid' => $companyid));
+		
         if (count($licenses) == 0) {
-            echo '<b>' . get_string('nolicenses', 'block_iomad_company_admin') . '</b>';
-        } else {
-            $selecturl = new moodle_url('/blocks/iomad_company_admin/company_users_licenses_form.php', $urlparams);
-            $licenseselect = new single_select($selecturl, 'licenseid', $licenses, $licenseid);
-            $licenseselect->label = get_string('select_license', 'block_iomad_company_admin');
-            $licenseselect->formid = 'chooselicense';
-            echo html_writer::tag('div', $OUTPUT->render($licenseselect), array('id' => 'iomad_license_selector'));
+        
+			echo '<h3>' . get_string('editlicensestitle', 'block_iomad_company_admin') . '</h3>';
+			echo '<p>' . get_string('licensehelp', 'block_iomad_company_admin') . '</p>';
+			echo '<b>' . get_string('nolicenses', 'block_iomad_company_admin') . '</b>';
+			
+		} else {
+		
+			echo '<h3>' . get_string('editlicensestitle', 'block_iomad_company_admin') . '</h3>';
+			echo '<p>' . get_string('licensehelp', 'block_iomad_company_admin') . '</p>';
+			echo '<div id="licenseSelector">';
+				$selecturl = new moodle_url('/blocks/iomad_company_admin/company_users_licenses_form.php', $urlparams);
+				$licenseselect = new single_select($selecturl, 'licenseid', $licenses, $licenseid);
+				$licenseselect->label = get_string('select_license', 'block_iomad_company_admin');
+				$licenseselect->formid = 'chooselicense';
+				echo html_writer::tag('div', $OUTPUT->render($licenseselect), array('id' => 'iomad_license_selector'));
+			echo '</div>';
 
-            echo $coursesform->display();
+			echo $coursesform->display();
+
         }
     }
 
