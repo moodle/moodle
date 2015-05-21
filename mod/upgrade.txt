@@ -2,7 +2,12 @@ This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
 === 2.9 ===
+
 * Added Grade to pass field to mod_form for activities that support grading.
+* The method moodleform_mod::add_intro_editor() used in mod_form.php form
+  definitions has been deprecated. Replace it with the new
+  moodleform_mod::standard_intro_elements() method that takes the new site
+  configuration requiremodintro into account (MDL-49101).
 
 === 2.8 ===
 
