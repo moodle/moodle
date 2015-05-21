@@ -493,6 +493,7 @@ $strall = get_string('all');
 
 // Fix sort for paging.
 $params['sort'] = $sort;
+$params['dir'] = $dir;
 
 $baseurl = new moodle_url('editusers.php', $params);
 echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
