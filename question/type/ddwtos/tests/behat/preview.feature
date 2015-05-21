@@ -34,6 +34,7 @@ Feature: Preview a drag-drop into text question
     And I press "Submit and finish"
     Then the state of "The" question is shown as "Partially correct"
     And I should see "Mark 0.67 out of 1.00"
+    And I switch to the main window
 
   @javascript
   Scenario: Preview a question using the keyboard & submit incomplete.
@@ -45,6 +46,7 @@ Feature: Preview a drag-drop into text question
     And I press "Save"
     Then the state of "The" question is shown as "Incomplete answer"
     And I should see "Please put an answer in each box."
+    And I switch to the main window
 
   @javascript
   Scenario: Preview a question using the keyboard.
@@ -56,3 +58,4 @@ Feature: Preview a drag-drop into text question
     And I press "Submit and finish"
     Then the state of "The" question is shown as "Incorrect"
     And I should see "Mark 0.00 out of 1.00"
+    And I switch to the main window
