@@ -36,6 +36,7 @@ Feature: Preview a drag-drop onto image question
     And I press "Submit and finish"
     Then the state of "Please place the markers on the map of Milton Keynes" question is shown as "Correct"
     And I should see "Mark 1.00 out of 1.00"
+    And I switch to the main window
 
   @javascript
   Scenario: Preview a question using the keyboard.
@@ -46,3 +47,4 @@ Feature: Preview a drag-drop onto image question
     And I press "Submit and finish"
     Then the state of "Please place the markers on the map of Milton Keynes" question is shown as "Partially correct"
     And I should see "Mark 0.25 out of 1.00"
+    And I switch to the main window
