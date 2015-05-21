@@ -204,7 +204,10 @@ class user_edit_form extends company_moodleform {
                     unset($licenses[0]);
                     list($mylicenseid, $mylicensecourse) = each($licenses);
                     $mylicensedetails = $DB->get_record('companylicense', array('id' => $mylicenseid));
-                    $mform->addElement('html', '<div id="licensedetails"><b>' . get_string('licensedetails', 'block_iomad_company_admin', $mylicensedetails) . '</b></div>');
+					$licensestring = get_string('licensedetails', 'block_iomad_company_admin', $mylicensedetails);
+					$licensestring2 = get_string('licensedetails2', 'block_iomad_company_admin', $mylicensedetails);
+					$licensestring3 = get_string('licensedetails3', 'block_iomad_company_admin', $mylicensedetails);
+                    $mform->addElement('html', '<div id="licensedetails"><b>You have ' . ((intval($licensestring3, 0)) - (intval($licensestring2, 0))) . ' courses left to allocate on this license</b></div>');
                     $mform->addElement('hidden', 'licenseid', $mylicenseid);
                     $mform->setType('licenseid', PARAM_INT);
                 } else {
@@ -218,7 +221,10 @@ class user_edit_form extends company_moodleform {
                         $mform->addElement('html', '<div id="licensedetails"></div>');
                     } else {
                         $mylicensedetails = $DB->get_record('companylicense', array('id' => $this->licenseid));
-                        $mform->addElement('html', '<div id="licensedetails"><b>' . get_string('licensedetails', 'block_iomad_company_admin', $mylicensedetails) . '</b></div>');
+						$licensestring = get_string('licensedetails', 'block_iomad_company_admin', $mylicensedetails);
+						$licensestring2 = get_string('licensedetails2', 'block_iomad_company_admin', $mylicensedetails);
+						$licensestring3 = get_string('licensedetails3', 'block_iomad_company_admin', $mylicensedetails);
+                        $mform->addElement('html', '<div id="	"><b>You have ' . ((intval($licensestring3, 0)) - (intval($licensestring2, 0))) . ' courses left to allocate on this license </b></div>');
                     }
                 }
 
@@ -238,14 +244,14 @@ class user_edit_form extends company_moodleform {
             }
         }
 
-        if (iomad::has_capability('block/iomad_company_admin:company_course_users', $systemcontext)) {
+/*         if (iomad::has_capability('block/iomad_company_admin:company_course_users', $systemcontext)) {
             $mform->addElement('header', 'courses', get_string('courses', 'block_iomad_company_admin'));
             $mform->addElement('html', "<div class='fitem'><div class='fitemtitle'>" .
                                         get_string('selectenrolmentcourse', 'block_iomad_company_admin') .
                                         "</div><div class='felement'>");
             $mform->addElement('html', $this->currentcourses->display(true));
             $mform->addElement('html', "</div></div>");
-        }
+        } */
 
         // add action buttons
         $buttonarray = array();
@@ -468,9 +474,7 @@ if ($companyform->is_cancelled() || $mform->is_cancelled()) {
             if ($allow) {
                 $count++;
                 $DB->insert_record('companylicense_users',
-                                    array('userid' => $userdata->id,
-                                          'licenseid' => $licenseid,
-                                          'issuedate' => time(),
+                                    array('userid' => $userdata->id, 'licenseid' => $licenseid,
                                           'licensecourseid' => $licensecourse));
             }
             // Create an email event.
