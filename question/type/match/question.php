@@ -71,6 +71,25 @@ class qtype_match_question extends question_graded_automatically_with_countback 
     public function apply_attempt_state(question_attempt_step $step) {
         $this->stemorder = explode(',', $step->get_qt_var('_stemorder'));
         $this->set_choiceorder(explode(',', $step->get_qt_var('_choiceorder')));
+
+        // Add any missing subquestions. Sometimes people edit questions after they
+        // have been attempted which breaks things.
+        foreach ($this->stemorder as $stemid) {
+            if (!isset($this->stems[$stemid])) {
+                $this->stems[$stemid] = html_writer::span(
+                        get_string('deletedsubquestion', 'qtype_match'), 'notifyproblem');
+                $this->stemformat[$stemid] = FORMAT_HTML;
+                $this->right[$stemid] = 0;
+            }
+        }
+
+        // Add any missing choices. Sometimes people edit questions after they
+        // have been attempted which breaks things.
+        foreach ($this->choiceorder as $choiceid) {
+            if (!isset($this->choices[$choiceid])) {
+                $this->choices[$choiceid] = get_string('deletedchoice', 'qtype_match');
+            }
+        }
     }
 
     /**
@@ -80,8 +99,8 @@ class qtype_match_question extends question_graded_automatically_with_countback 
      */
     protected function set_choiceorder($choiceorder) {
         $this->choiceorder = array();
-        foreach ($choiceorder as $key => $value) {
-            $this->choiceorder[$key + 1] = $value;
+        foreach ($choiceorder as $key => $choiceid) {
+            $this->choiceorder[$key + 1] = $choiceid;
         }
     }
 
