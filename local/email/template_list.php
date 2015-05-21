@@ -99,7 +99,7 @@ if ($delete and confirm_sesskey()) {
 $blockpage->display_header();
 
 $company = new company($companyid);
-echo get_string('email_templates_for', $block, $company->get_name() );
+echo '<h3>' . get_string('email_templates_for', $block, $company->get_name()) . '</h3>';
 
 // Check we can actually do anything on this page.
 iomad::require_capability('local/email:list', $context);
@@ -127,13 +127,13 @@ function create_default_template_row($templatename, $strdefault, $stradd, $strse
     $deletebutton = "";
 
     if ($stradd) {
-        $editbutton = "<a href='" . new moodle_url('template_edit_form.php',
+        $editbutton = "<a class='btn' href='" . new moodle_url('template_edit_form.php',
                        array("templatename" => $templatename)) . "'>$stradd</a>";
     } else {
         $editbutton = "";
     }
     if ($strsend && allow_sending_to_template($templatename) ) {
-        $sendbutton = "<a href='" . new moodle_url('template_send_form.php',
+        $sendbutton = "<a class='btn' href='" . new moodle_url('template_send_form.php',
                        array("templatename" => $templatename)) . "'>$strsend</a>";
     } else {
         $sendbutton = "";
@@ -141,8 +141,8 @@ function create_default_template_row($templatename, $strdefault, $stradd, $strse
 
     return array ($templatename,
                   $strdefault,
-                  $editbutton,
-                  $deletebutton,
+                  $editbutton . '&nbsp;' .
+                  $deletebutton . '&nbsp;' .
                   $sendbutton);
 }
 
@@ -168,13 +168,14 @@ if ($templates = $DB->get_recordset('email_template', array('companyid' => $comp
     } else {
         $strsend = null;
     }
-    $stroverride = get_string('override', $block);
+    $stroverride = 'custom'; //Need to make a Lang String
     $strdefault = get_string('default', $block);
 
     $table = new html_table();
-    $table->head = array ("Name", "",  "", "", "");
-    $table->align = array ("left", "left", "center", "center", "center");
-    $table->width = "95%";
+	$table->id = 'ReportTable';
+    $table->head = array ("Email template name", "Template type",  "Controls");
+    $table->align = array ("left", "center", "center");
+    //$table->width = "95%";
 
     $i = 0;
 
@@ -186,21 +187,21 @@ if ($templates = $DB->get_recordset('email_template', array('companyid' => $comp
         }
 
         if ($strdelete) {
-            $deletebutton = "<a href=\"template_list.php?delete=$template->id&amp;sesskey=".
+            $deletebutton = "<a class='btn' href=\"template_list.php?delete=$template->id&amp;sesskey=".
                              sesskey()."\">$strdelete</a>";
         } else {
             $deletebutton = "";
         }
 
         if ($stredit) {
-            $editbutton = "<a href='" . new moodle_url('template_edit_form.php',
+            $editbutton = "<a class='btn' href='" . new moodle_url('template_edit_form.php',
                           array("templateid" => $template->id)) . "'>$stredit</a>";
         } else {
             $editbutton = "";
         }
 
         if ($strsend && allow_sending_to_template($templatename)) {
-            $sendbutton = "<a href='" . new moodle_url('template_send_form.php',
+            $sendbutton = "<a class='btn' href='" . new moodle_url('template_send_form.php',
                           array("templateid" => $template->id)) . "'>$strsend</a>";
         } else {
             $sendbutton = "";
@@ -208,8 +209,8 @@ if ($templates = $DB->get_recordset('email_template', array('companyid' => $comp
 
         $table->data[] = array ("$template->name",
                             $stroverride,
-                            $editbutton,
-                            $deletebutton,
+                            $editbutton . '&nbsp;' .
+                            $deletebutton . '&nbsp;' .
                             $sendbutton
                             );
 
