@@ -480,7 +480,7 @@ class question_finder implements cache_data_source {
     }
 
     /**
-     * Get the ids of all the questions in a list of categoryies.
+     * Get the ids of all the questions in a list of categories.
      * @param array $categoryids either a categoryid, or a comma-separated list
      *      category ids, or an array of them.
      * @param string $extraconditions extra conditions to AND with the rest of
@@ -503,6 +503,43 @@ class question_finder implements cache_data_source {
                  AND parent = 0
                  AND hidden = 0
                  {$extraconditions}", $qcparams + $extraparams, '', 'id,id AS id2');
+    }
+
+    /**
+     * Get the ids of all the questions in a list of categories, with the number
+     * of times they have already been used in a given set of usages.
+     *
+     * The result array is returned in order of increasing (count previous uses).
+     *
+     * @param array $categoryids an array question_category ids.
+     * @param qubaid_condition $qubaids which question_usages to count previous uses from.
+     * @param string $extraconditions extra conditions to AND with the rest of
+     *      the where clause. Must use named parameters.
+     * @param array $extraparams any parameters used by $extraconditions.
+     * @return array questionid => count of number of previous uses.
+     */
+    public function get_questions_from_categories_with_usage_counts($categoryids,
+            qubaid_condition $qubaids, $extraconditions = '', $extraparams = array()) {
+        global $DB;
+
+        list($qcsql, $qcparams) = $DB->get_in_or_equal($categoryids, SQL_PARAMS_NAMED, 'qc');
+
+        if ($extraconditions) {
+            $extraconditions = ' AND (' . $extraconditions . ')';
+        }
+
+        return $DB->get_records_sql_menu("
+                    SELECT q.id, (SELECT COUNT(1)
+                                    FROM " . $qubaids->from_question_attempts('qa') . "
+                                   WHERE qa.questionid = q.id AND " . $qubaids->where() . "
+                                 ) AS previous_attempts
+
+                      FROM {question} q
+
+                     WHERE q.category $qcsql $extraconditions
+
+                  ORDER BY previous_attempts
+                ", $qubaids->from_where_params() + $qcparams + $extraparams);
     }
 
     /* See cache_data_source::load_for_cache. */

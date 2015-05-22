@@ -26,20 +26,33 @@ class data_field_checkbox extends data_field_base {
 
     var $type = 'checkbox';
 
-    function display_add_field($recordid=0) {
-        global $CFG, $DB;
+    function display_add_field($recordid = 0, $formdata = null) {
+        global $CFG, $DB, $OUTPUT;
 
         $content = array();
 
-        if ($recordid) {
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id;
+            $content = $formdata->$fieldname;
+        } else if ($recordid) {
             $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
             $content = explode('##', $content);
         } else {
             $content = array();
         }
 
-        $str = '<div title="'.s($this->field->description).'">';
-        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
+        $str = '<div title="' . s($this->field->description) . '">';
+        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name;
+        if ($this->field->required) {
+            $str .= '$nbsp;' . get_string('requiredelement', 'form');
+            $str .= '</span></legend>';
+            $str .= '<div>';
+            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= '</div>';
+        } else {
+            $str .= '</span></legend>';
+        }
 
         $i = 0;
         foreach (explode("\n", $this->field->param1) as $checkbox) {
@@ -211,5 +224,22 @@ class data_field_checkbox extends data_field_base {
         return implode('##', $vals);
     }
 
-}
+    /**
+     * Check whether any boxes in the checkbox where checked.
+     *
+     * @param mixed $value The submitted values
+     * @param mixed $name
+     * @return bool
+     */
+    function notemptyfield($value, $name) {
+        $found = false;
+        foreach ($value as $checkboxitem) {
+            if (!empty($checkboxitem)) {
+                $found = true;
+                break;
+            }
+        }
+        return $found;
+    }
 
+}

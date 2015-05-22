@@ -226,6 +226,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         }
 
         $coursecontext = context_course::instance($course->id);
+        $isstealth = isset($course->numsections) && ($section->section > $course->numsections);
 
         if ($onsectionpage) {
             $baseurl = course_get_url($course, $section->section);
@@ -237,7 +238,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $controls = array();
 
         $url = clone($baseurl);
-        if (has_capability('moodle/course:sectionvisibility', $coursecontext)) {
+        if (!$isstealth && has_capability('moodle/course:sectionvisibility', $coursecontext)) {
             if ($section->visible) { // Show the hide/show eye.
                 $strhidefromothers = get_string('hidefromothers', 'format_'.$course->format);
                 $url->param('hide', $section->section);
@@ -255,7 +256,21 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             }
         }
 
-        if (!$onsectionpage && has_capability('moodle/course:movesections', $coursecontext)) {
+        if (course_can_delete_section($course, $section)) {
+            if (get_string_manager()->string_exists('deletesection', 'format_'.$course->format)) {
+                $strdelete = get_string('deletesection', 'format_'.$course->format);
+            } else {
+                $strdelete = get_string('deletesection');
+            }
+            $url = new moodle_url('/course/editsection.php', array('id' => $section->id,
+                'sr' => $onsectionpage ? $section->section : 0, 'delete' => 1));
+            $controls[] = html_writer::link($url,
+                html_writer::empty_tag('img', array('src' => $this->output->pix_url('t/delete'),
+                    'class' => 'icon delete', 'alt' => $strdelete)),
+                array('title' => $strdelete));
+        }
+
+        if (!$isstealth && !$onsectionpage && has_capability('moodle/course:movesections', $coursecontext)) {
             $url = clone($baseurl);
             if ($section->section > 1) { // Add a arrow to move section up.
                 $url->param('section', $section->section);
@@ -530,7 +545,10 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o = '';
         $o.= html_writer::start_tag('li', array('id' => 'section-'.$sectionno, 'class' => 'section main clearfix orphaned hidden'));
         $o.= html_writer::tag('div', '', array('class' => 'left side'));
-        $o.= html_writer::tag('div', '', array('class' => 'right side'));
+        $course = course_get_format($this->page->course)->get_course();
+        $section = course_get_format($this->page->course)->get_section($sectionno);
+        $rightcontent = $this->section_right_content($section, $course, false);
+        $o.= html_writer::tag('div', $rightcontent, array('class' => 'right side'));
         $o.= html_writer::start_tag('div', array('class' => 'content'));
         $o.= $this->output->heading(get_string('orphanedactivitiesinsectionno', '', $sectionno), 3, 'sectionname');
         return $o;

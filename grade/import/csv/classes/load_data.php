@@ -180,7 +180,7 @@ class gradeimport_csv_load_data {
      * @param array $header The column headers from the CSV file.
      * @param int $key Current row identifier.
      * @param string $value The value for this row (final grade).
-     * @return array new grades that are ready for commiting to the gradebook.
+     * @return stdClass new grade that is ready for commiting to the gradebook.
      */
     protected function import_new_grade_item($header, $key, $value) {
         global $DB, $USER;
@@ -199,14 +199,16 @@ class gradeimport_csv_load_data {
         $newgrade = new stdClass();
         $newgrade->newgradeitem = $this->newgradeitems[$key];
 
-        // If the user has a grade for this grade item.
-        if (trim($value) != '-') {
-            // Instead of omitting the grade we could insert one with finalgrade set to 0.
-            // We do not have access to grade item min grade.
+        $trimmed = trim($value);
+        if ($trimmed === '' or $trimmed == '-') {
+            // Blank or dash grade means null, ie "no grade".
+            $newgrade->finalgrade = null;
+        } else {
+            // We have an actual grade.
             $newgrade->finalgrade = $value;
-            $newgrades[] = $newgrade;
         }
-        return $newgrades;
+        $this->newgrades[] = $newgrade;
+        return $newgrade;
     }
 
     /**
@@ -385,7 +387,7 @@ class gradeimport_csv_load_data {
                 }
             break;
             case 'new':
-                $this->newgrades = $this->import_new_grade_item($header, $key, $value);
+                $this->import_new_grade_item($header, $key, $value);
             break;
             case 'feedback':
                 if ($feedbackgradeid) {

@@ -112,7 +112,7 @@ class core_userliblib_testcase extends advanced_testcase {
             'lastnamephonetic' => '最後のお名前のテスト一号',
             'firstnamephonetic' => 'お名前のテスト一号',
             'alternatename' => 'Alternate Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'description' => 'This is a description for user 1',
             'city' => 'Perth',
             'country' => 'au'
@@ -347,4 +347,34 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('user_password_history', array('userid' => $user1->id)));
         $this->assertEquals(0, $DB->count_records('user_password_history', array('userid' => $user2->id)));
     }
+
+    /**
+     * Test user_list_view function
+     */
+    public function test_user_list_view() {
+
+        $this->resetAfterTest();
+
+        // Course without sections.
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $this->setAdminUser();
+
+        // Redirect events to the sink, so we can recover them later.
+        $sink = $this->redirectEvents();
+
+        user_list_view($course, $context);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Check the event details are correct.
+        $this->assertInstanceOf('\core\event\user_list_viewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEquals($course->shortname, $event->other['courseshortname']);
+        $this->assertEquals($course->fullname, $event->other['coursefullname']);
+
+    }
+
 }

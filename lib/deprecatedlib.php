@@ -31,6 +31,100 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Convert region timezone to php supported timezone
+ *
+ * @deprecated since Moodle 2.9
+ * @param string $tz value from ical file
+ * @return string $tz php supported timezone
+ */
+function calendar_normalize_tz($tz) {
+    debugging('calendar_normalize_tz() is deprecated, use core_date::normalise_timezone() instead', DEBUG_DEVELOPER);
+    return core_date::normalise_timezone($tz);
+}
+
+/**
+ * Returns a float which represents the user's timezone difference from GMT in hours
+ * Checks various settings and picks the most dominant of those which have a value
+ * @deprecated since Moodle 2.9
+ * @param float|int|string $tz timezone user timezone
+ * @return float
+ */
+function get_user_timezone_offset($tz = 99) {
+    debugging('get_user_timezone_offset() is deprecated, use PHP DateTimeZone instead', DEBUG_DEVELOPER);
+    $tz = core_date::get_user_timezone($tz);
+    $date = new DateTime('now', new DateTimeZone($tz));
+    return ($date->getOffset() - dst_offset_on(time(), $tz)) / (3600.0);
+}
+
+/**
+ * Returns an int which represents the systems's timezone difference from GMT in seconds
+ * @deprecated since Moodle 2.9
+ * @param float|int|string $tz timezone for which offset is required.
+ *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
+ * @return int|bool if found, false is timezone 99 or error
+ */
+function get_timezone_offset($tz) {
+    debugging('get_timezone_offset() is deprecated, use PHP DateTimeZone instead', DEBUG_DEVELOPER);
+    $date = new DateTime('now', new DateTimeZone(core_date::normalise_timezone($tz)));
+    return $date->getOffset() - dst_offset_on(time(), $tz);
+}
+
+/**
+ * Returns a list of timezones in the current language.
+ * @deprecated since Moodle 2.9
+ * @return array
+ */
+function get_list_of_timezones() {
+    debugging('get_list_of_timezones() is deprecated, use core_date::get_list_of_timezones() instead', DEBUG_DEVELOPER);
+    return core_date::get_list_of_timezones();
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ * @deprecated since Moodle 2.9
+ * @param array $timezones
+ */
+function update_timezone_records($timezones) {
+    debugging('update_timezone_records() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ * @deprecated since Moodle 2.9
+ * @param int $fromyear
+ * @param int $toyear
+ * @param mixed $strtimezone
+ * @return bool
+ */
+function calculate_user_dst_table($fromyear = null, $toyear = null, $strtimezone = null) {
+    debugging('calculate_user_dst_table() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
+    return false;
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ * @deprecated since Moodle 2.9
+ * @param int|string $year
+ * @param mixed $timezone
+ * @return null
+ */
+function dst_changes_for_year($year, $timezone) {
+    debugging('dst_changes_for_year() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
+    return null;
+}
+
+/**
+ * Previous internal API, it was not supposed to be used anywhere.
+ * @deprecated since Moodle 2.9
+ * @param string $timezonename
+ * @return array
+ */
+function get_timezone_record($timezonename) {
+    debugging('get_timezone_record() is not available any more, use standard PHP date/time code', DEBUG_DEVELOPER);
+    return array();
+}
+
+/**
  * Add an entry to the legacy log table.
  *
  * @deprecated since 2.7 use new events instead
@@ -4099,4 +4193,161 @@ function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset 
         );
     }
     return array('more' => !(bool)$limit, 'offset' => $offset, 'cohorts' => $cohorts);
+}
+
+/**
+ * Is $USER one of the supplied users?
+ *
+ * $user2 will be null if viewing a user's recent conversations
+ *
+ * @deprecated since Moodle 2.9 MDL-49371 - please do not use this function any more.
+ * @todo MDL-49290 This will be deleted in Moodle 3.1.
+ * @param stdClass the first user
+ * @param stdClass the second user or null
+ * @return bool True if the current user is one of either $user1 or $user2
+ */
+function message_current_user_is_involved($user1, $user2) {
+    global $USER;
+
+    debugging('message_current_user_is_involved() is deprecated, please do not use this function.', DEBUG_DEVELOPER);
+
+    if (empty($user1->id) || (!empty($user2) && empty($user2->id))) {
+        throw new coding_exception('Invalid user object detected. Missing id.');
+    }
+
+    if ($user1->id != $USER->id && (empty($user2) || $user2->id != $USER->id)) {
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Print badges on user profile page.
+ *
+ * @deprecated since Moodle 2.9 MDL-45898 - please do not use this function any more.
+ * @param int $userid User ID.
+ * @param int $courseid Course if we need to filter badges (optional).
+ */
+function profile_display_badges($userid, $courseid = 0) {
+    global $CFG, $PAGE, $USER, $SITE;
+    require_once($CFG->dirroot . '/badges/renderer.php');
+
+    debugging('profile_display_badges() is deprecated.', DEBUG_DEVELOPER);
+
+    // Determine context.
+    if (isloggedin()) {
+        $context = context_user::instance($USER->id);
+    } else {
+        $context = context_system::instance();
+    }
+
+    if ($USER->id == $userid || has_capability('moodle/badges:viewotherbadges', $context)) {
+        $records = badges_get_user_badges($userid, $courseid, null, null, null, true);
+        $renderer = new core_badges_renderer($PAGE, '');
+
+        // Print local badges.
+        if ($records) {
+            $left = get_string('localbadgesp', 'badges', format_string($SITE->fullname));
+            $right = $renderer->print_badges_list($records, $userid, true);
+            echo html_writer::tag('dt', $left);
+            echo html_writer::tag('dd', $right);
+        }
+
+        // Print external badges.
+        if ($courseid == 0 && !empty($CFG->badges_allowexternalbackpack)) {
+            $backpack = get_backpack_settings($userid);
+            if (isset($backpack->totalbadges) && $backpack->totalbadges !== 0) {
+                $left = get_string('externalbadgesp', 'badges');
+                $right = $renderer->print_badges_list($backpack->badges, $userid, true, true);
+                echo html_writer::tag('dt', $left);
+                echo html_writer::tag('dd', $right);
+            }
+        }
+    }
+}
+
+/**
+ * Adds user preferences elements to user edit form.
+ *
+ * @deprecated since Moodle 2.9 MDL-45774 - Please do not use this function any more.
+ * @todo MDL-49784 Remove this function in Moodle 3.1
+ * @param stdClass $user
+ * @param moodleform $mform
+ * @param array|null $editoroptions
+ * @param array|null $filemanageroptions
+ */
+function useredit_shared_definition_preferences($user, &$mform, $editoroptions = null, $filemanageroptions = null) {
+    global $CFG;
+
+    debugging('useredit_shared_definition_preferences() is deprecated.', DEBUG_DEVELOPER, backtrace);
+
+    $choices = array();
+    $choices['0'] = get_string('emaildisplayno');
+    $choices['1'] = get_string('emaildisplayyes');
+    $choices['2'] = get_string('emaildisplaycourse');
+    $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
+    $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
+
+    $choices = array();
+    $choices['0'] = get_string('textformat');
+    $choices['1'] = get_string('htmlformat');
+    $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
+    $mform->setDefault('mailformat', $CFG->defaultpreference_mailformat);
+
+    if (!empty($CFG->allowusermailcharset)) {
+        $choices = array();
+        $charsets = get_list_of_charsets();
+        if (!empty($CFG->sitemailcharset)) {
+            $choices['0'] = get_string('site').' ('.$CFG->sitemailcharset.')';
+        } else {
+            $choices['0'] = get_string('site').' (UTF-8)';
+        }
+        $choices = array_merge($choices, $charsets);
+        $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);
+    }
+
+    $choices = array();
+    $choices['0'] = get_string('emaildigestoff');
+    $choices['1'] = get_string('emaildigestcomplete');
+    $choices['2'] = get_string('emaildigestsubjects');
+    $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
+    $mform->setDefault('maildigest', $CFG->defaultpreference_maildigest);
+    $mform->addHelpButton('maildigest', 'emaildigest');
+
+    $choices = array();
+    $choices['1'] = get_string('autosubscribeyes');
+    $choices['0'] = get_string('autosubscribeno');
+    $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
+    $mform->setDefault('autosubscribe', $CFG->defaultpreference_autosubscribe);
+
+    if (!empty($CFG->forum_trackreadposts)) {
+        $choices = array();
+        $choices['0'] = get_string('trackforumsno');
+        $choices['1'] = get_string('trackforumsyes');
+        $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
+        $mform->setDefault('trackforums', $CFG->defaultpreference_trackforums);
+    }
+
+    $editors = editors_get_enabled();
+    if (count($editors) > 1) {
+        $choices = array('' => get_string('defaulteditor'));
+        $firsteditor = '';
+        foreach (array_keys($editors) as $editor) {
+            if (!$firsteditor) {
+                $firsteditor = $editor;
+            }
+            $choices[$editor] = get_string('pluginname', 'editor_' . $editor);
+        }
+        $mform->addElement('select', 'preference_htmleditor', get_string('textediting'), $choices);
+        $mform->setDefault('preference_htmleditor', '');
+    } else {
+        // Empty string means use the first chosen text editor.
+        $mform->addElement('hidden', 'preference_htmleditor');
+        $mform->setDefault('preference_htmleditor', '');
+        $mform->setType('preference_htmleditor', PARAM_PLUGIN);
+    }
+
+    $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
+    $mform->setDefault('lang', $CFG->lang);
+
 }

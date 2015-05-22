@@ -29,6 +29,7 @@ require_once("$CFG->dirroot/group/lib.php");
 
 $courseid = required_param('courseid', PARAM_INT);
 $instanceid = optional_param('id', 0, PARAM_INT);
+$message = optional_param('message', null, PARAM_TEXT);
 
 $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
@@ -88,9 +89,28 @@ if ($mform->is_cancelled()) {
         $instance->roleid       = $data->roleid;
         $instance->customint2   = $data->customint2;
         $instance->timemodified = time();
+        // Create a new group for the cohort if requested.
+        if ($data->customint2 == COHORT_CREATE_GROUP) {
+            require_capability('moodle/course:managegroups', $context);
+            $groupid = enrol_cohort_create_new_group($course->id, $data->customint1);
+            $instance->customint2 = $groupid;
+        }
         $DB->update_record('enrol', $instance);
     }  else {
-        $enrol->add_instance($course, array('name'=>$data->name, 'status'=>$data->status, 'customint1'=>$data->customint1, 'roleid'=>$data->roleid, 'customint2'=>$data->customint2));
+        // Create a new group for the cohort if requested.
+        if ($data->customint2 == COHORT_CREATE_GROUP) {
+            require_capability('moodle/course:managegroups', $context);
+            $groupid = enrol_cohort_create_new_group($course->id, $data->customint1);
+            $enrol->add_instance($course, array('name' => $data->name, 'status' => $data->status,
+                'customint1' => $data->customint1, 'roleid' => $data->roleid, 'customint2' => $groupid));
+        } else {
+            $enrol->add_instance($course, array('name' => $data->name, 'status' => $data->status,
+                'customint1' => $data->customint1, 'roleid' => $data->roleid, 'customint2' => $data->customint2));
+        }
+        if (!empty($data->submitbuttonnext)) {
+            $returnurl = new moodle_url($PAGE->url);
+            $returnurl->param('message', 'added');
+        }
     }
     $trace = new null_progress_trace();
     enrol_cohort_sync($trace, $course->id);
@@ -102,5 +122,8 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_title(get_string('pluginname', 'enrol_cohort'));
 
 echo $OUTPUT->header();
+if ($message === 'added') {
+    echo $OUTPUT->notification(get_string('instanceadded', 'enrol'), 'notifysuccess');
+}
 $mform->display();
 echo $OUTPUT->footer();

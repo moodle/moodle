@@ -163,6 +163,15 @@ class phpunit_util extends testing_util {
                 $warnings[] = 'Warning: unexpected change of $COURSE';
             }
 
+            if ($CFG->ostype === 'WINDOWS') {
+                if (setlocale(LC_TIME, 0) !== 'English_Australia.1252') {
+                    $warnings[] = 'Warning: unexpected change of locale';
+                }
+            } else {
+                if (setlocale(LC_TIME, 0) !== 'en_AU.UTF-8') {
+                    $warnings[] = 'Warning: unexpected change of locale';
+                }
+            }
         }
 
         if (ini_get('max_execution_time') != 0) {
@@ -241,6 +250,16 @@ class phpunit_util extends testing_util {
 
         // fix PHP settings
         error_reporting($CFG->debug);
+
+        // Reset the date/time class.
+        core_date::phpunit_reset();
+
+        // Make sure the time locale is consistent - that is Australian English.
+        if ($CFG->ostype === 'WINDOWS') {
+            setlocale(LC_TIME, 'English_Australia.1252');
+        } else {
+            setlocale(LC_TIME, 'en_AU.UTF-8');
+        }
 
         // verify db writes just in case something goes wrong in reset
         if (self::$lastdbwrites != $DB->perf_get_writes()) {
@@ -422,10 +441,6 @@ class phpunit_util extends testing_util {
         // We need to keep the installed dataroot filedir files.
         // So each time we reset the dataroot before running a test, the default files are still installed.
         self::save_original_data_files();
-
-        // install timezone info
-        $timezones = get_records_csv($CFG->libdir.'/timezone.txt', 'timezone');
-        update_timezone_records($timezones);
 
         // Store version hash in the database and in a file.
         self::store_versions_hash();

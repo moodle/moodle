@@ -51,6 +51,11 @@ class core_scheduled_task_testcase extends advanced_testcase {
     }
 
     public function test_get_next_scheduled_time() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $this->setTimezone('Europe/London');
+
         // Test job run at 1 am.
         $testclass = new \core\task\scheduled_test_task();
 
@@ -60,11 +65,13 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Next valid time should be 1am of the next day.
         $nexttime = $testclass->get_next_scheduled_time();
 
-        $oneam = mktime(1, 0, 0);
+        $oneamdate = new DateTime('now', new DateTimeZone('Europe/London'));
+        $oneamdate->setTime(1, 0, 0);
         // Make it 1 am tomorrow if the time is after 1am.
-        if ($oneam < time()) {
-            $oneam += 86400;
+        if ($oneamdate->getTimestamp() < time()) {
+            $oneamdate->add(new DateInterval('P1D'));
         }
+        $oneam = $oneamdate->getTimestamp();
 
         $this->assertEquals($oneam, $nexttime, 'Next scheduled time is 1am.');
 
@@ -118,22 +125,9 @@ class core_scheduled_task_testcase extends advanced_testcase {
         global $CFG, $USER;
 
         // The timezones used in this test are chosen because they do not use DST - that would break the test.
+        $this->resetAfterTest();
 
-        $currenttimezonephp = date_default_timezone_get();
-        $currenttimezonecfg = null;
-        if (!empty($CFG->timezone)) {
-            $currenttimezonecfg = $CFG->timezone;
-        }
-        $userstimezone = null;
-        if (!empty($USER->timezone)) {
-            $userstimezone = $USER->timezone;
-        }
-
-        // We are testing a difference between $CFG->timezone and the php.ini timezone.
-        // GMT+8.
-        date_default_timezone_set('Australia/Perth');
-        // GMT-04:30.
-        $CFG->timezone = 'America/Caracas';
+        $this->setTimezone('America/Caracas');
 
         $testclass = new \core\task\scheduled_test_task();
 
@@ -152,9 +146,6 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // I used http://www.timeanddate.com/worldclock/fixedtime.html?msg=Moodle+Test&iso=20140314T01&p1=58
         // to verify this time.
         $this->assertContains('11:15 AM', core_text::strtoupper($userdate));
-
-        $CFG->timezone = $currenttimezonecfg;
-        date_default_timezone_set($currenttimezonephp);
     }
 
     public function test_reset_scheduled_tasks_for_component() {
@@ -177,6 +168,25 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // We reset this field, because we do not want to compare it.
         $firsttaskrecord->nextruntime = '0';
 
+        // Delete a task to simulate the fact that its new.
+        $secondtask = next($defaulttasks);
+        $DB->delete_records('task_scheduled', array('classname' => '\\' . trim(get_class($secondtask), '\\')));
+        $this->assertFalse(\core\task\manager::get_scheduled_task(get_class($secondtask)));
+
+        // Edit a task to simulate a change in its definition (as if it was not customised).
+        $thirdtask = next($defaulttasks);
+        $thirdtask->set_minute('1');
+        $thirdtask->set_hour('2');
+        $thirdtask->set_month('3');
+        $thirdtask->set_day_of_week('4');
+        $thirdtask->set_day('5');
+        $thirdtaskbefore = \core\task\manager::get_scheduled_task(get_class($thirdtask));
+        $thirdtaskbefore->set_next_run_time(null);      // Ignore this value when comparing.
+        \core\task\manager::configure_scheduled_task($thirdtask);
+        $thirdtask = \core\task\manager::get_scheduled_task(get_class($thirdtask));
+        $thirdtask->set_next_run_time(null);            // Ignore this value when comparing.
+        $this->assertNotEquals($thirdtaskbefore, $thirdtask);
+
         // Now call reset on all the tasks.
         \core\task\manager::reset_scheduled_tasks_for_component('moodle');
 
@@ -191,6 +201,17 @@ class core_scheduled_task_testcase extends advanced_testcase {
 
         // Assert a customised task was not altered by reset.
         $this->assertEquals($firsttaskrecord, $newfirsttaskrecord);
+
+        // Assert that the second task was added back.
+        $secondtaskafter = \core\task\manager::get_scheduled_task(get_class($secondtask));
+        $secondtaskafter->set_next_run_time(null);   // Do not compare the nextruntime.
+        $secondtask->set_next_run_time(null);
+        $this->assertEquals($secondtask, $secondtaskafter);
+
+        // Assert that the third task edits were overridden.
+        $thirdtaskafter = \core\task\manager::get_scheduled_task(get_class($thirdtask));
+        $thirdtaskafter->set_next_run_time(null);
+        $this->assertEquals($thirdtaskbefore, $thirdtaskafter);
 
         // Assert we have the same number of tasks.
         $this->assertEquals($initcount, $finalcount);
@@ -299,6 +320,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // Set a random value.
         $testclass->set_minute('R');
         $testclass->set_hour('R');
+        $testclass->set_day_of_week('R');
 
         // Verify the minute has changed within allowed bounds.
         $minute = $testclass->get_minute();
@@ -311,6 +333,12 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $this->assertInternalType('int', $hour);
         $this->assertGreaterThanOrEqual(0, $hour);
         $this->assertLessThanOrEqual(23, $hour);
+
+        // Verify the dayofweek has changed within allowed bounds.
+        $dayofweek = $testclass->get_day_of_week();
+        $this->assertInternalType('int', $dayofweek);
+        $this->assertGreaterThanOrEqual(0, $dayofweek);
+        $this->assertLessThanOrEqual(6, $dayofweek);
     }
 
     /**
@@ -358,8 +386,10 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $iter = new \RecursiveIteratorIterator($dir, \RecursiveIteratorIterator::CHILD_FIRST);
 
         for ($iter->rewind(); $iter->valid(); $iter->next()) {
-            $node = $iter->getRealPath();
-            touch($node, time() - (8 * 24 * 3600));
+            if ($iter->isDir() && !$iter->isDot()) {
+                $node = $iter->getRealPath();
+                touch($node, time() - (8 * 24 * 3600));
+            }
         }
 
         // Run the scheduled task again to remove all of the files and directories.

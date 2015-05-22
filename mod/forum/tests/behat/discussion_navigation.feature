@@ -7,8 +7,8 @@ Feature: A user can navigate to previous and next discussions
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -17,6 +17,7 @@ Feature: A user can navigate to previous and next discussions
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I navigate to "Groups" node in "Users"
     And I press "Create group"
@@ -29,7 +30,7 @@ Feature: A user can navigate to previous and next discussions
     And I press "Save changes"
     And I add "Student 1" user to "Group 1" group members
     And I add "Student 2" user to "Group 2" group members
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
 

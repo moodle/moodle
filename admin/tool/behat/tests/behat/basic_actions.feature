@@ -7,7 +7,7 @@ Feature: Page contents assertions
   @javascript
   Scenario: Basic contents assertions
     Given I log in as "admin"
-    And I am on homepage
+    And I am on site homepage
     And I expand "Users" node
     And I follow "Groups"
     And I press "Create group"
@@ -22,8 +22,8 @@ Feature: Page contents assertions
     Then I should see "I'm the description"
     And "Grouping" "select" in the "region-main" "region" should be visible
     And "Group" "select" should be visible
-    And "Messaging" "link" in the "Administration" "block" should not be visible
-    And "Change password" "link" should not be visible
+    And "Activity report" "link" in the "Administration" "block" should not be visible
+    And "Event monitoring rules" "link" should not be visible
     And I should see "Filter groups by"
     And I should not see "Filter groupssss by"
     And I should see "Group members" in the "#region-main table th.c1" "css_element"
@@ -38,6 +38,7 @@ Feature: Page contents assertions
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     When I dock "Administration" block
     Then I should not see "Question bank" in the ".block-region" "css_element"

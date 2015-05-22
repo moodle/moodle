@@ -189,3 +189,16 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
     max-height: 150px;
     overflow-y: auto;
 }
+
+// Extends bootstrapbase/less/bootstrap/type.less
+// to enable ol lists to use a larger number set.
+
+ol {
+    margin: 0 0 @baseLineHeight / 2 2.5em;
+}
+
+.dir-rtl {
+    ol {
+        margin: 0 2.5em @baseLineHeight / 2 0;
+    }
+}

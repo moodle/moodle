@@ -51,7 +51,7 @@ function report_loglive_extend_navigation_course($navigation, $course, $context)
  * @return bool returns true if the store is supported by the report, false otherwise.
  */
 function report_loglive_supports_logstore($instance) {
-    if ($instance instanceof \core\log\sql_select_reader) {
+    if ($instance instanceof \core\log\sql_reader) {
         return true;
     }
     return false;

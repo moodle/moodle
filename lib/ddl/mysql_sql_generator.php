@@ -118,10 +118,25 @@ class mysql_sql_generator extends sql_generator {
      * Note: the returned value is a bit higher to compensate for
      *       errors and changes of column data types.
      *
+     * @deprecated since Moodle 2.9 MDL-49723 - please do not use this function any more.
      * @param xmldb_field[]|database_column_info[] $columns
      * @return int approximate row size in bytes
      */
     public function guess_antolope_row_size(array $columns) {
+        debugging('guess_antolope_row_size() is deprecated, please use guess_antelope_row_size() instead.', DEBUG_DEVELOPER);
+        return $this->guess_antelope_row_size($columns);
+    }
+
+    /**
+     * Calculate proximate row size when using InnoDB tables in Antelope row format.
+     *
+     * Note: the returned value is a bit higher to compensate for errors and changes of column data types.
+     *
+     * @param xmldb_field[]|database_column_info[] $columns
+     * @return int approximate row size in bytes
+     */
+    public function guess_antelope_row_size(array $columns) {
+
         if (empty($columns)) {
             return 0;
         }
@@ -199,7 +214,7 @@ class mysql_sql_generator extends sql_generator {
 
         // Do we need to use compressed format for rows?
         $rowformat = "";
-        $size = $this->guess_antolope_row_size($xmldb_table->getFields());
+        $size = $this->guess_antelope_row_size($xmldb_table->getFields());
         if ($size > self::ANTELOPE_MAX_ROW_SIZE) {
             if ($this->mdb->is_compressed_row_format_supported()) {
                 $rowformat = "\n ROW_FORMAT=Compressed";
@@ -289,8 +304,8 @@ class mysql_sql_generator extends sql_generator {
         if ($this->table_exists($xmldb_table)) {
             $tablename = $xmldb_table->getName();
 
-            $size = $this->guess_antolope_row_size($this->mdb->get_columns($tablename));
-            $size += $this->guess_antolope_row_size(array($xmldb_field));
+            $size = $this->guess_antelope_row_size($this->mdb->get_columns($tablename));
+            $size += $this->guess_antelope_row_size(array($xmldb_field));
 
             if ($size > self::ANTELOPE_MAX_ROW_SIZE) {
                 if ($this->mdb->is_compressed_row_format_supported()) {

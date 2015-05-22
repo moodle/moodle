@@ -1,6 +1,16 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 2.9 ===
+
+* External function core_enrol_external::get_users_courses now returns additional optional fields:
+   - summary: Course summary.
+   - summaryformat: Course summary format.
+   - format: Course format.
+   - showgrades: True if grades are shown, otherwise false.
+   - lang: Forced course language.
+   - enablecompletion: Control or not via completion and activity settings.
+
 === 2.8 ===
 
 * enrol_plugin::instance_deleteable() is deprecated and has been replaced by enrol_plugin::can_delete_instance()

@@ -34,6 +34,12 @@ defined('MOODLE_INTERNAL') || die();
 class restore_assign_activity_structure_step extends restore_activity_structure_step {
 
     /**
+     * Store whether submission details should be included. Details may not be included if the
+     * this is a team submission, but groups/grouping information was not included in the backup.
+     */
+    protected $includesubmission = true;
+
+    /**
      * Define the structure of the restore workflow.
      *
      * @return restore_path_element $structure
@@ -80,6 +86,14 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $data->timemodified = $this->apply_date_offset($data->timemodified);
         $data->allowsubmissionsfromdate = $this->apply_date_offset($data->allowsubmissionsfromdate);
         $data->duedate = $this->apply_date_offset($data->duedate);
+
+        // If this is a team submission, but there is no group info we need to flag that the submission
+        // information should not be included. It should not be restored.
+        $groupinfo = $this->task->get_setting_value('groups');
+        if ($data->teamsubmission && !$groupinfo) {
+            $this->includesubmission = false;
+        }
+
         if (!empty($data->teamsubmissiongroupingid)) {
             $data->teamsubmissiongroupingid = $this->get_mappingid('grouping',
                                                                    $data->teamsubmissiongroupingid);
@@ -95,6 +109,9 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         }
         if (!isset($data->markingallocation)) {
             $data->markingallocation = 0;
+        }
+        if (!isset($data->preventsubmissionnotingroup)) {
+            $data->preventsubmissionnotingroup = 0;
         }
 
         if (!empty($data->preventlatesubmissions)) {
@@ -119,6 +136,10 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
      */
     protected function process_assign_submission($data) {
         global $DB;
+
+        if (!$this->includesubmission) {
+            return;
+        }
 
         $data = (object)$data;
         $oldid = $data->id;

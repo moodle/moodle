@@ -355,16 +355,7 @@ class file_storage {
             return false;
         }
 
-        // getimagesizefromstring() is available from PHP 5.4 but we need to support
-        // lower versions, so...
-        $tmproot = make_temp_directory('thumbnails');
-        $tmpfilepath = $tmproot.'/'.$file->get_contenthash().'_'.$mode;
-        file_put_contents($tmpfilepath, $data);
-        $imageinfo = getimagesize($tmpfilepath);
-        unlink($tmpfilepath);
-
         $context = context_system::instance();
-
         $record = array(
             'contextid' => $context->id,
             'component' => 'core',
@@ -374,6 +365,7 @@ class file_storage {
             'filename'  => $file->get_contenthash(),
         );
 
+        $imageinfo = getimagesizefromstring($data);
         if ($imageinfo) {
             $record['mimetype'] = $imageinfo['mime'];
         }
@@ -392,24 +384,18 @@ class file_storage {
         global $CFG;
         require_once($CFG->libdir.'/gdlib.php');
 
-        $tmproot = make_temp_directory('thumbnails');
-        $tmpfilepath = $tmproot.'/'.$file->get_contenthash();
-        $file->copy_content_to($tmpfilepath);
-
         if ($mode === 'tinyicon') {
-            $data = generate_image_thumbnail($tmpfilepath, 24, 24);
+            $data = $file->generate_image_thumbnail(24, 24);
 
         } else if ($mode === 'thumb') {
-            $data = generate_image_thumbnail($tmpfilepath, 90, 90);
+            $data = $file->generate_image_thumbnail(90, 90);
 
         } else if ($mode === 'bigthumb') {
-            $data = generate_image_thumbnail($tmpfilepath, 250, 250);
+            $data = $file->generate_image_thumbnail(250, 250);
 
         } else {
             throw new file_exception('storedfileproblem', 'Invalid preview mode requested');
         }
-
-        unlink($tmpfilepath);
 
         return $data;
     }
@@ -522,7 +508,7 @@ class file_storage {
      * @param int $repositoryid
      * @param string $sort A fragment of SQL to use for sorting
      */
-    public function get_external_files($repositoryid, $sort = 'sortorder, itemid, filepath, filename') {
+    public function get_external_files($repositoryid, $sort = '') {
         global $DB;
         $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                   FROM {files} f
@@ -1960,6 +1946,63 @@ class file_storage {
             );
         }
         return $params;
+    }
+
+    /**
+     * Search through the server files.
+     *
+     * The query parameter will be used in conjuction with the SQL directive
+     * LIKE, so include '%' in it if you need to. This search will always ignore
+     * user files and directories. Note that the search is case insensitive.
+     *
+     * This query can quickly become inefficient so use it sparignly.
+     *
+     * @param  string  $query The string used with SQL LIKE.
+     * @param  integer $from  The offset to start the search at.
+     * @param  integer $limit The maximum number of results.
+     * @param  boolean $count When true this methods returns the number of results availabe,
+     *                        disregarding the parameters $from and $limit.
+     * @return int|array      Integer when count, otherwise array of stored_file objects.
+     */
+    public function search_server_files($query, $from = 0, $limit = 20, $count = false) {
+        global $DB;
+        $params = array(
+            'contextlevel' => CONTEXT_USER,
+            'directory' => '.',
+            'query' => $query
+        );
+
+        if ($count) {
+            $select = 'COUNT(1)';
+        } else {
+            $select = self::instance_sql_fields('f', 'r');
+        }
+        $like = $DB->sql_like('f.filename', ':query', false);
+
+        $sql = "SELECT $select
+                  FROM {files} f
+             LEFT JOIN {files_reference} r
+                    ON f.referencefileid = r.id
+                  JOIN {context} c
+                    ON f.contextid = c.id
+                 WHERE c.contextlevel <> :contextlevel
+                   AND f.filename <> :directory
+                   AND " . $like . "";
+
+        if ($count) {
+            return $DB->count_records_sql($sql, $params);
+        }
+
+        $sql .= " ORDER BY f.filename";
+
+        $result = array();
+        $filerecords = $DB->get_recordset_sql($sql, $params, $from, $limit);
+        foreach ($filerecords as $filerecord) {
+            $result[$filerecord->pathnamehash] = $this->get_file_instance($filerecord);
+        }
+        $filerecords->close();
+
+        return $result;
     }
 
     /**

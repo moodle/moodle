@@ -10,11 +10,11 @@ Feature: View structural changes in recent activity block
       | Course 1 | C1 | 0 |
     And the following "users" exist:
       | username    | firstname | lastname | email            |
-      | teacher1    | Terry1    | Teacher1 | teacher1@asd.com |
-      | assistant1  | Terry2    | Teacher2 | teacher2@asd.com |
-      | student1    | Sam1      | Student1 | student1@asd.com |
-      | student2    | Sam2      | Student2 | student2@asd.com |
-      | student3    | Sam3      | Student3 | student3@asd.com |
+      | teacher1    | Terry1    | Teacher1 | teacher1@example.com |
+      | assistant1  | Terry2    | Teacher2 | teacher2@example.com |
+      | student1    | Sam1      | Student1 | student1@example.com |
+      | student2    | Sam2      | Student2 | student2@example.com |
+      | student3    | Sam3      | Student3 | student3@example.com |
     And the following "course enrolments" exist:
       | user        | course | role           |
       | teacher1    | C1     | editingteacher |
@@ -46,10 +46,8 @@ Feature: View structural changes in recent activity block
       | GG3      | G2    |
 
   Scenario: Check that Added module information is displayed respecting view capability
-    Given I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
-    And I log out
+    Given the following config values are set as admin:
+      | enableavailability | 1 |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on

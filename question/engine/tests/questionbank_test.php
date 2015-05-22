@@ -83,4 +83,31 @@ class question_bank_test extends advanced_testcase {
         $this->assertSame('-83.33333%', end($fractions));
         $this->assertSame('-0.8333333', key($fractions));
     }
+
+    public function test_get_questions_from_categories_with_usage_counts() {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $generator->create_question_category();
+        $questiondata1 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
+        $questiondata2 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
+        $questiondata3 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
+
+        $quba = question_engine::make_questions_usage_by_activity('test', context_system::instance());
+        $quba->set_preferred_behaviour('deferredfeedback');
+        $question1 = question_bank::load_question($questiondata1->id);
+        $question3 = question_bank::load_question($questiondata3->id);
+        $quba->add_question($question1);
+        $quba->add_question($question1);
+        $quba->add_question($question3);
+        $quba->start_all_questions();
+        question_engine::save_questions_usage_by_activity($quba);
+
+        $this->assertEquals(array(
+                $questiondata2->id => 0,
+                $questiondata3->id => 1,
+                $questiondata1->id => 2,
+        ), question_bank::get_finder()->get_questions_from_categories_with_usage_counts(
+                array($cat->id), new qubaid_list(array($quba->get_id()))));
+    }
 }

@@ -175,3 +175,4 @@ function cli_error($text, $errorcode=1) {
     fwrite(STDERR, "\n");
     die($errorcode);
 }
+

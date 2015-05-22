@@ -25,6 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014111000;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2014110400;        // Requires this Moodle version.
+$plugin->version   = 2015051100;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2015050500;        // Requires this Moodle version.
 $plugin->component = 'repository_googledocs'; // Full name of the plugin (used for diagnostics).

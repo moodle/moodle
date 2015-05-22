@@ -79,6 +79,15 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Opens Moodle site homepage.
+     *
+     * @Given /^I am on site homepage$/
+     */
+    public function i_am_on_site_homepage() {
+        $this->getSession()->visit($this->locate_path('/?redirect=0'));
+    }
+
+    /**
      * Reloads the current page.
      *
      * @Given /^I reload the page$/
@@ -448,10 +457,11 @@ class behat_general extends behat_base {
 
         try {
             $this->should_be_visible($element, $selectortype);
-            throw new ExpectationException('"' . $element . '" "' . $selectortype . '" is visible', $this->getSession());
         } catch (ExpectationException $e) {
             // All as expected.
+            return;
         }
+        throw new ExpectationException('"' . $element . '" "' . $selectortype . '" is visible', $this->getSession());
     }
 
     /**
@@ -501,13 +511,14 @@ class behat_general extends behat_base {
 
         try {
             $this->in_the_should_be_visible($element, $selectortype, $nodeelement, $nodeselectortype);
-            throw new ExpectationException(
-                '"' . $element . '" "' . $selectortype . '" in the "' . $nodeelement . '" "' . $nodeselectortype . '" is visible',
-                $this->getSession()
-            );
         } catch (ExpectationException $e) {
             // All as expected.
+            return;
         }
+        throw new ExpectationException(
+            '"' . $element . '" "' . $selectortype . '" in the "' . $nodeelement . '" "' . $nodeselectortype . '" is visible',
+            $this->getSession()
+        );
     }
 
     /**
@@ -898,12 +909,13 @@ class behat_general extends behat_base {
                 $exception,
                 false
             );
-
-            throw new ExpectationException('The "' . $element . '" "' . $selectortype . '" exists in the current page', $this->getSession());
         } catch (ElementNotFoundException $e) {
             // It passes.
             return;
         }
+
+        throw new ExpectationException('The "' . $element . '" "' . $selectortype .
+                '" exists in the current page', $this->getSession());
     }
 
     /**
@@ -968,12 +980,12 @@ class behat_general extends behat_base {
             // but we would need to duplicate the whole find_all() logic to do it, the benefit of
             // changing to 1 second sleep is not significant.
             $this->find($selector, $locator, false, $containernode, self::REDUCED_TIMEOUT);
-            throw new ExpectationException('The "' . $element . '" "' . $selectortype . '" exists in the "' .
-                $containerelement . '" "' . $containerselectortype . '"', $this->getSession());
         } catch (ElementNotFoundException $e) {
             // It passes.
             return;
         }
+        throw new ExpectationException('The "' . $element . '" "' . $selectortype . '" exists in the "' .
+                $containerelement . '" "' . $containerselectortype . '"', $this->getSession());
     }
 
     /**
@@ -982,7 +994,7 @@ class behat_general extends behat_base {
      * Example: I change window size to "small" or I change window size to "1024x768"
      *
      * @throws ExpectationException
-     * @Then /^I change window size to "([^"](small|medium|large|\d+x\d+))"$/
+     * @Then /^I change window size to "(small|medium|large|\d+x\d+)"$/
      * @param string $windowsize size of the window (small|medium|large|wxh).
      */
     public function i_change_window_size_to($windowsize) {
@@ -1081,7 +1093,7 @@ class behat_general extends behat_base {
 
         // Check if value exists in specific row/column.
         // Get row xpath.
-        $rowxpath = $tablexpath."/tbody/tr[th[normalize-space(.)=" . $rowliteral . "] | td[normalize-space(.)=" . $rowliteral . "]]";
+        $rowxpath = $tablexpath."/tbody/tr[th[normalize-space(.)=" . $rowliteral . "] or td[normalize-space(.)=" . $rowliteral . "]]";
 
         $columnvaluexpath = $rowxpath . $columnpositionxpath . "[contains(normalize-space(.)," . $valueliteral . ")]";
 
@@ -1106,15 +1118,15 @@ class behat_general extends behat_base {
     public function row_column_of_table_should_not_contain($row, $column, $table, $value) {
         try {
             $this->row_column_of_table_should_contain($row, $column, $table, $value);
-            // Throw exception if found.
-            throw new ExpectationException(
-                '"' . $column . '" with value "' . $value . '" is present in "' . $row . '"  row for table "' . $table . '"',
-                $this->getSession()
-            );
         } catch (ElementNotFoundException $e) {
             // Table row/column doesn't contain this value. Nothing to do.
             return;
         }
+        // Throw exception if found.
+        throw new ExpectationException(
+            '"' . $column . '" with value "' . $value . '" is present in "' . $row . '"  row for table "' . $table . '"',
+            $this->getSession()
+        );
     }
 
     /**
@@ -1167,13 +1179,13 @@ class behat_general extends behat_base {
                 try {
                     $this->row_column_of_table_should_contain($row, $column, $table, $value);
                     // Throw exception if found.
-                    throw new ExpectationException('"' . $column . '" with value "' . $value . '" is present in "' .
-                        $row . '"  row for table "' . $table . '"', $this->getSession()
-                    );
                 } catch (ElementNotFoundException $e) {
                     // Table row/column doesn't contain this value. Nothing to do.
                     continue;
                 }
+                throw new ExpectationException('"' . $column . '" with value "' . $value . '" is present in "' .
+                    $row . '"  row for table "' . $table . '"', $this->getSession()
+                );
             }
         }
     }
@@ -1220,7 +1232,20 @@ class behat_general extends behat_base {
      * @param number $expectedsize the expected file size in bytes.
      */
     public function following_should_download_bytes($link, $expectedsize) {
-        $result = $this->download_file_from_link($link);
+        $exception = new ExpectationException('Error while downloading data from ' . $link, $this->getSession());
+
+        // It will stop spinning once file is downloaded or time out.
+        $result = $this->spin(
+            function($context, $args) {
+                $link = $args['link'];
+                return $this->download_file_from_link($link);
+            },
+            array('link' => $link),
+            self::EXTENDED_TIMEOUT,
+            $exception
+        );
+
+        // Check download size.
         $actualsize = (int)strlen($result);
         if ($actualsize !== (int)$expectedsize) {
             throw new ExpectationException('Downloaded data was ' . $actualsize .
@@ -1249,7 +1274,21 @@ class behat_general extends behat_base {
             list($minexpectedsize, $maxexpectedsize) = array($maxexpectedsize, $minexpectedsize);
         }
 
-        $result = $this->download_file_from_link($link);
+        $exception = new ExpectationException('Error while downloading data from ' . $link, $this->getSession());
+
+        // It will stop spinning once file is downloaded or time out.
+        $result = $this->spin(
+            function($context, $args) {
+                $link = $args['link'];
+
+                return $this->download_file_from_link($link);
+            },
+            array('link' => $link),
+            self::EXTENDED_TIMEOUT,
+            $exception
+        );
+
+        // Check download size.
         $actualsize = (int)strlen($result);
         if ($actualsize < $minexpectedsize || $actualsize > $maxexpectedsize) {
             throw new ExpectationException('Downloaded data was ' . $actualsize .

@@ -76,13 +76,10 @@ class user_filter_checkbox extends user_filter_type {
      * @param moodleform $mform a MoodleQuickForm object in which element will be added
      */
     public function setupForm(&$mform) {
-        $objs = array();
-
-        $objs[] = $mform->createElement('checkbox', $this->_name, null, '');
-        $grp = $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
+        $mform->addElement('checkbox', $this->_name, $this->_label, '');
 
         if ($this->_advanced) {
-            $mform->setAdvanced($this->_name.'_grp');
+            $mform->setAdvanced($this->_name);
         }
         // Check if disable if options are set. if yes then set rules.
         if (!empty($this->disableelements) && is_array($this->disableelements)) {

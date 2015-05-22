@@ -135,6 +135,11 @@ if ($roleid) {
     }
 }
 
+if (!empty($user) && ($user->id != $USER->id)) {
+    $PAGE->navigation->extend_for_user($user);
+    $PAGE->navbar->includesettingsbase = true;
+}
+
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
 

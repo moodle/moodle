@@ -349,7 +349,7 @@ class repository_filesystem extends repository {
         static $issyncing = false;
         if ($issyncing) {
             // Avoid infinite recursion when calling $file->get_filesize() and get_contenthash().
-            return;
+            return false;
         }
         $filepath = $this->get_rootpath() . ltrim($file->get_reference(), '/');
         if ($this->is_in_repository($file->get_reference()) && file_exists($filepath) && is_readable($filepath)) {
@@ -366,7 +366,12 @@ class repository_filesystem extends repository {
                 }
             } else {
                 // Update only file size so file will NOT be copied into moodle filepool.
-                $contenthash = null;
+                $emptyfile = $contenthash = sha1('');
+                $currentcontenthash = $file->get_contenthash();
+                if ($currentcontenthash !== $emptyfile && $currentcontenthash === sha1_file($filepath)) {
+                    // File content was synchronised and has not changed since then, leave it.
+                    $contenthash = null;
+                }
                 $filesize = filesize($filepath);
             }
             $issyncing = false;
@@ -481,7 +486,6 @@ class repository_filesystem extends repository {
             return null;
         }
         $filename = sha1($filecontents);
-        unset($filecontents);
 
         // Try to get generated thumbnail for this file.
         $fs = get_file_storage();
@@ -494,7 +498,7 @@ class repository_filesystem extends repository {
             } else {
                 $size = 24;
             }
-            if (!$data = @generate_image_thumbnail($origfile, $size, $size)) {
+            if (!$data = generate_image_thumbnail_from_string($filecontents, $size, $size)) {
                 // Generation failed.
                 return null;
             }
@@ -575,7 +579,7 @@ class repository_filesystem extends repository {
             $fullrelativefilepath = realpath($this->get_rootpath().$basepath.$relativepath);
 
             // Sanity check to make sure this path is inside this repository and the file exists.
-            if (strpos($fullrelativefilepath, $this->get_rootpath()) === 0 && file_exists($fullrelativefilepath)) {
+            if (strpos($fullrelativefilepath, realpath($this->get_rootpath())) === 0 && file_exists($fullrelativefilepath)) {
                 send_file($fullrelativefilepath, basename($relativepath), null, 0);
             }
         }

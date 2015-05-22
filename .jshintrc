@@ -34,7 +34,8 @@
     "passfail":     false,
     "plusplus":     false,
     "predef": [
-        "M"
+        "M",
+        "define"
     ],
     "proto":        false,
     "regexdash":    false,

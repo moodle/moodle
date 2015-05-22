@@ -98,6 +98,11 @@ form {
 }
 .mform .fcheckbox input {
     margin-left: 0;
+}
+.mform .fcheckbox > span,
+.mform .fradio > span,
+.mform .fgroup > span {
+    display: inline-block;
     margin-top: 5px;
 }
 .mform .fitem fieldset.fgroup label,
@@ -414,6 +419,12 @@ fieldset.coursesearchbox label {
             .fstatic:empty {
                 display: none;
             }
+            .fcheckbox > span,
+            .fradio > span,
+            .fgroup > span {
+                margin-top: 4px;
+            }
+
         }
         .femptylabel {
             .fitemtitle {

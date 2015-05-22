@@ -232,32 +232,57 @@ function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
         $cdisplay['allowupdate'] = true;
     }
 
+    if ($choice->showpreview && $choice->timeopen > time()) {
+        $cdisplay['previewonly'] = true;
+    }
+
     return $cdisplay;
 }
 
 /**
- * @global object
- * @param int $formanswer
- * @param object $choice
- * @param int $userid
- * @param object $course Course object
- * @param object $cm
+ * Process user submitted answers for a choice,
+ * and either updating them or saving new answers.
+ *
+ * @param int $formanswer users submitted answers.
+ * @param object $choice the selected choice.
+ * @param int $userid user identifier.
+ * @param object $course current course.
+ * @param object $cm course context.
+ * @return void
  */
 function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm) {
     global $DB, $CFG;
     require_once($CFG->libdir.'/completionlib.php');
 
+    $continueurl = new moodle_url('/mod/choice/view.php', array('id' => $cm->id));
+
     if (empty($formanswer)) {
-        print_error('atleastoneoption', 'choice');
+        print_error('atleastoneoption', 'choice', $continueurl);
     }
 
     if (is_array($formanswer)) {
         if (!$choice->allowmultiple) {
-            print_error('multiplenotallowederror', 'choice');
+            print_error('multiplenotallowederror', 'choice', $continueurl);
         }
         $formanswers = $formanswer;
     } else {
         $formanswers = array($formanswer);
+    }
+
+    // Start lock to prevent synchronous access to the same data
+    // before it's updated, if using limits.
+    if ($choice->limitanswers) {
+        $timeout = 10;
+        $locktype = 'mod_choice_choice_user_submit_response';
+        // Limiting access to this choice.
+        $resouce = 'choiceid:' . $choice->id;
+        $lockfactory = \core\lock\lock_config::get_lock_factory($locktype);
+
+        // Opening the lock.
+        $choicelock = $lockfactory->get_lock($resouce, $timeout);
+        if (!$choicelock) {
+            print_error('cannotsubmit', 'choice', $continueurl);
+        }
     }
 
     $current = $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid));
@@ -305,7 +330,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
             }
         }
         foreach ($countanswers as $opt => $count) {
-            if ($count > $choice->maxanswers[$opt]) {
+            if ($count >= $choice->maxanswers[$opt]) {
                 $choicesexceeded = true;
                 break;
             }
@@ -316,7 +341,7 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
     if (!($choice->limitanswers && $choicesexceeded)) {
         $answersnapshots = array();
         if ($current) {
-
+            // Update an existing answer.
             $existingchoices = array();
             foreach ($current as $c) {
                 if (in_array($c->optionid, $formanswers)) {
@@ -341,25 +366,10 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
                 }
             }
 
-            $eventdata = array();
-            $eventdata['context'] = $context;
-            $eventdata['objectid'] = $choice->id;
-            $eventdata['userid'] = $userid;
-            $eventdata['courseid'] = $course->id;
-            $eventdata['other'] = array();
-            $eventdata['other']['choiceid'] = $choice->id;
-            $eventdata['other']['optionid'] = $formanswer;
-
-            $event = \mod_choice\event\answer_updated::create($eventdata);
-            $event->add_record_snapshot('course', $course);
-            $event->add_record_snapshot('course_modules', $cm);
-            $event->add_record_snapshot('choice', $choice);
-            foreach ($answersnapshots as $record) {
-                $event->add_record_snapshot('choice_answers', $record);
-            }
-            $event->trigger();
+            // Initialised as true, meaning we updated the answer.
+            $answerupdated = true;
         } else {
-
+            // Add new answer.
             foreach ($formanswers as $answer) {
                 $newanswer = new stdClass();
                 $newanswer->choiceid = $choice->id;
@@ -376,30 +386,49 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
                 $completion->update_state($cm, COMPLETION_COMPLETE);
             }
 
-            $eventdata = array();
-            $eventdata['context'] = $context;
-            $eventdata['objectid'] = $choice->id;
-            $eventdata['userid'] = $userid;
-            $eventdata['courseid'] = $course->id;
-            $eventdata['other'] = array();
-            $eventdata['other']['choiceid'] = $choice->id;
-            $eventdata['other']['optionid'] = $formanswers;
-
-            $event = \mod_choice\event\answer_submitted::create($eventdata);
-            $event->add_record_snapshot('course', $course);
-            $event->add_record_snapshot('course_modules', $cm);
-            $event->add_record_snapshot('choice', $choice);
-            foreach ($answersnapshots as $record) {
-                $event->add_record_snapshot('choice_answers', $record);
-            }
-            $event->trigger();
+            // Initalised as false, meaning we submitted a new answer.
+            $answerupdated = false;
         }
     } else {
         // Check to see if current choice already selected - if not display error.
         $currentids = array_keys($current);
+
         if (array_diff($currentids, $formanswers) || array_diff($formanswers, $currentids) ) {
-            print_error('choicefull', 'choice');
+            // Release lock before error.
+            $choicelock->release();
+            print_error('choicefull', 'choice', $continueurl);
         }
+    }
+
+    // Release lock.
+    if (isset($choicelock)) {
+        $choicelock->release();
+    }
+
+    // Now record completed event.
+    if (isset($answerupdated)) {
+        $eventdata = array();
+        $eventdata['context'] = $context;
+        $eventdata['objectid'] = $choice->id;
+        $eventdata['userid'] = $userid;
+        $eventdata['courseid'] = $course->id;
+        $eventdata['other'] = array();
+        $eventdata['other']['choiceid'] = $choice->id;
+
+        if ($answerupdated) {
+            $eventdata['other']['optionid'] = $formanswer;
+            $event = \mod_choice\event\answer_updated::create($eventdata);
+        } else {
+            $eventdata['other']['optionid'] = $formanswers;
+            $event = \mod_choice\event\answer_submitted::create($eventdata);
+        }
+        $event->add_record_snapshot('course', $course);
+        $event->add_record_snapshot('course_modules', $cm);
+        $event->add_record_snapshot('choice', $choice);
+        foreach ($answersnapshots as $record) {
+            $event->add_record_snapshot('choice_answers', $record);
+        }
+        $event->trigger();
     }
 }
 
@@ -668,9 +697,10 @@ function choice_reset_userdata($data) {
  * @param object $choice
  * @param object $cm
  * @param int $groupmode
+ * @param bool $onlyactive Whether to get response data for active users only.
  * @return array
  */
-function choice_get_response_data($choice, $cm, $groupmode) {
+function choice_get_response_data($choice, $cm, $groupmode, $onlyactive) {
     global $CFG, $USER, $DB;
 
     $context = context_module::instance($cm->id);
@@ -687,7 +717,8 @@ function choice_get_response_data($choice, $cm, $groupmode) {
 
 /// First get all the users who have access here
 /// To start with we assume they are all "unanswered" then move them later
-    $allresponses[0] = get_enrolled_users($context, 'mod/choice:choose', $currentgroup, user_picture::fields('u', array('idnumber')));
+    $allresponses[0] = get_enrolled_users($context, 'mod/choice:choose', $currentgroup,
+            user_picture::fields('u', array('idnumber')), null, 0, 0, $onlyactive);
 
 /// Get all the recorded responses for this choice
     $rawresponses = $DB->get_records('choice_answers', array('choiceid' => $choice->id));
@@ -761,10 +792,14 @@ function choice_extend_settings_navigation(settings_navigation $settings, naviga
         if ($groupmode) {
             groups_get_activity_group($PAGE->cm, true);
         }
-        // We only actually need the choice id here
-        $choice = new stdClass;
-        $choice->id = $PAGE->cm->instance;
-        $allresponses = choice_get_response_data($choice, $PAGE->cm, $groupmode);   // Big function, approx 6 SQL calls per user
+
+        $choice = choice_get_choice($PAGE->cm->instance);
+
+        // Check if we want to include responses from inactive users.
+        $onlyactive = $choice->includeinactive ? false : true;
+
+        // Big function, approx 6 SQL calls per user.
+        $allresponses = choice_get_response_data($choice, $PAGE->cm, $groupmode, $onlyactive);
 
         $responsecount =0;
         foreach($allresponses as $optionid => $userlist) {
@@ -812,4 +847,77 @@ function choice_get_completion_state($course, $cm, $userid, $type) {
 function choice_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-choice-*'=>get_string('page-mod-choice-x', 'choice'));
     return $module_pagetype;
+}
+
+/**
+ * Prints choice summaries on MyMoodle Page
+ *
+ * Prints choice name, due date and attempt information on
+ * choice activities that have a deadline that has not already passed
+ * and it is available for completing.
+ * @uses CONTEXT_MODULE
+ * @param array $courses An array of course objects to get choice instances from.
+ * @param array $htmlarray Store overview output array( course ID => 'choice' => HTML output )
+ */
+function choice_print_overview($courses, &$htmlarray) {
+    global $USER, $DB, $OUTPUT;
+
+    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
+        return;
+    }
+    if (!$choices = get_all_instances_in_courses('choice', $courses)) {
+        return;
+    }
+
+    $now = time();
+    foreach ($choices as $choice) {
+        if ($choice->timeclose != 0                                      // If this choice is scheduled.
+            and $choice->timeclose >= $now                               // And the deadline has not passed.
+            and ($choice->timeopen == 0 or $choice->timeopen <= $now)) { // And the choice is available.
+
+            // Visibility.
+            $class = (!$choice->visible) ? 'dimmed' : '';
+
+            // Link to activity.
+            $url = new moodle_url('/mod/choice/view.php', array('id' => $choice->coursemodule));
+            $url = html_writer::link($url, format_string($choice->name), array('class' => $class));
+            $str = $OUTPUT->box(get_string('choiceactivityname', 'choice', $url), 'name');
+
+             // Deadline.
+            $str .= $OUTPUT->box(get_string('choicecloseson', 'choice', userdate($choice->timeclose)), 'info');
+
+            // Display relevant info based on permissions.
+            if (has_capability('mod/choice:readresponses', context_module::instance($choice->coursemodule))) {
+                $attempts = $DB->count_records('choice_answers', array('choiceid' => $choice->id));
+                $str .= $OUTPUT->box(get_string('viewallresponses', 'choice', $attempts), 'info');
+
+            } else if (has_capability('mod/choice:choose', context_module::instance($choice->coursemodule))) {
+                // See if the user has submitted anything.
+                $answers = $DB->count_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
+                if ($answers > 0) {
+                    // User has already selected an answer, nothing to show.
+                    $str = '';
+                } else {
+                    // User has not made a selection yet.
+                    $str .= $OUTPUT->box(get_string('notanswered', 'choice'), 'info');
+                }
+            } else {
+                // Does not have permission to do anything on this choice activity.
+                $str = '';
+            }
+
+            // Make sure we have something to display.
+            if (!empty($str)) {
+                // Generate the containing div.
+                $str = $OUTPUT->box($str, 'choice overview');
+
+                if (empty($htmlarray[$choice->course]['choice'])) {
+                    $htmlarray[$choice->course]['choice'] = $str;
+                } else {
+                    $htmlarray[$choice->course]['choice'] .= $str;
+                }
+            }
+        }
+    }
+    return;
 }

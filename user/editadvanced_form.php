@@ -45,19 +45,14 @@ class user_editadvanced_form extends moodleform {
         $mform = $this->_form;
         $editoroptions = null;
         $filemanageroptions = null;
-        $userid = $USER->id;
 
-        if (is_array($this->_customdata)) {
-            if (array_key_exists('editoroptions', $this->_customdata)) {
-                $editoroptions = $this->_customdata['editoroptions'];
-            }
-            if (array_key_exists('filemanageroptions', $this->_customdata)) {
-                $filemanageroptions = $this->_customdata['filemanageroptions'];
-            }
-            if (array_key_exists('userid', $this->_customdata)) {
-                $userid = $this->_customdata['userid'];
-            }
+        if (!is_array($this->_customdata)) {
+            throw new coding_exception('invalid custom data for user_edit_form');
         }
+        $editoroptions = $this->_customdata['editoroptions'];
+        $filemanageroptions = $this->_customdata['filemanageroptions'];
+        $user = $this->_customdata['user'];
+        $userid = $user->id;
 
         // Accessibility: "Required" is bad legend text.
         $strgeneral  = get_string('general');
@@ -85,7 +80,7 @@ class user_editadvanced_form extends moodleform {
             $authinst = get_auth_plugin($auth);
             $passwordurl = $authinst->change_password_url();
             if (!($authinst->can_change_password() && empty($passwordurl))) {
-                if (!$userid and $authinst->is_internal()) {
+                if ($userid < 1 and $authinst->is_internal()) {
                     // This is unlikely but we can not create account without password
                     // when plugin uses passwords, we need to set it initially at least.
                 } else {
@@ -122,7 +117,7 @@ class user_editadvanced_form extends moodleform {
         $mform->disabledIf('preference_auth_forcepasswordchange', 'createpassword', 'checked');
 
         // Shared fields.
-        useredit_shared_definition($mform, $editoroptions, $filemanageroptions);
+        useredit_shared_definition($mform, $editoroptions, $filemanageroptions, $user);
 
         // Next the customisable profile fields.
         profile_definition($mform, $userid);
@@ -134,6 +129,8 @@ class user_editadvanced_form extends moodleform {
         }
 
         $this->add_action_buttons(false, $btnstring);
+
+        $this->set_data($user);
     }
 
     /**
@@ -147,16 +144,6 @@ class user_editadvanced_form extends moodleform {
             $user = $DB->get_record('user', array('id' => $userid));
         } else {
             $user = false;
-        }
-
-        // If language does not exist, use site default lang.
-        if ($langsel = $mform->getElementValue('lang')) {
-            $lang = reset($langsel);
-            // Check lang exists.
-            if (!get_string_manager()->translation_exists($lang, false)) {
-                $langel =& $mform->getElement('lang');
-                $langel->setValue($CFG->lang);
-            }
         }
 
         // User can not change own auth method.

@@ -39,6 +39,6 @@ $string['clitypevaluedefault'] = 'tipe valor, tapez Entrée per utilizar la valo
 $string['cliunknowoption'] = 'Options non reconnues :
  {$a}.
 Utilisez l\'option --help.';
-$string['cliyesnoprompt'] = 'Tapez y (pour oui) o n (pour non)';
+$string['cliyesnoprompt'] = 'Picatz y (per òc) o n (per non)';
 $string['environmentrequireinstall'] = 'doit être installé e activé';
 $string['environmentrequireversion'] = 'la version {$a->needed} es requise ; vous utilisez actualament la version {$a->current}';

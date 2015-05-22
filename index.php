@@ -71,16 +71,24 @@ if (get_home_page() != HOMEPAGE_SITE) {
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_MY) && $redirect === 1) {
         redirect($CFG->wwwroot .'/my/');
     } else if (!empty($CFG->defaulthomepage) && ($CFG->defaulthomepage == HOMEPAGE_USER)) {
-        $PAGE->settingsnav->get('usercurrentsettings')->add(
-            get_string('makethismyhome'),
-            new moodle_url('/', array('setdefaulthome' => true)),
-            navigation_node::TYPE_SETTING);
+        $frontpagenode = $PAGE->settingsnav->find('frontpage', null);
+        if ($frontpagenode) {
+            $frontpagenode->add(
+                get_string('makethismyhome'),
+                new moodle_url('/', array('setdefaulthome' => true)),
+                navigation_node::TYPE_SETTING);
+        } else {
+            $frontpagenode = $PAGE->settingsnav->add(get_string('frontpagesettings'), null, navigation_node::TYPE_SETTING, null);
+            $frontpagenode->force_open();
+            $frontpagenode->add(get_string('makethismyhome'),
+                new moodle_url('/', array('setdefaulthome' => true)),
+                navigation_node::TYPE_SETTING);
+        }
     }
 }
 
-$eventparams = array('context' => context_course::instance(SITEID));
-$event = \core\event\course_viewed::create($eventparams);
-$event->trigger();
+// Trigger event.
+course_view(context_course::instance(SITEID));
 
 // If the hub plugin is installed then we let it take over the homepage here.
 if (file_exists($CFG->dirroot.'/local/hub/lib.php') and get_config('local_hub', 'hubenabled')) {

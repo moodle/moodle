@@ -43,9 +43,21 @@ class behat_mod_quiz extends behat_question_base {
     /**
      * Put the specified questions on the specified pages of a given quiz.
      *
-     * Give the question name in the first column, and that page number in the
-     * second column. You may optionally give the desired maximum mark for each
-     * question in a third column.
+     * The first row should be column names:
+     * | question | page | maxmark | requireprevious |
+     * The first two of those are required. The others are optional.
+     *
+     * question        needs to uniquely match a question name.
+     * page            is a page number. Must start at 1, and on each following
+     *                 row should be the same as the previous, or one more.
+     * maxmark         What the question is marked out of. Defaults to question.defaultmark.
+     * requireprevious The question can only be attempted after the previous one was completed.
+     *
+     * Then there should be a number of rows of data, one for each question you want to add.
+     *
+     * For backwards-compatibility reasons, specifying the column names is optional
+     * (but strongly encouraged). If not specified, the columns are asseumed to be
+     * | question | page | maxmark |.
      *
      * @param string $quizname the name of the quiz to add questions to.
      * @param TableNode $data information about the questions to add.
@@ -57,35 +69,166 @@ class behat_mod_quiz extends behat_question_base {
 
         $quiz = $DB->get_record('quiz', array('name' => $quizname), '*', MUST_EXIST);
 
-        // The action depends on the field type.
-        foreach ($data->getRows() as $questiondata) {
-            if (count($questiondata) < 2 || count($questiondata) > 3) {
+        // Deal with backwards-compatibility, optional first row.
+        $firstrow = $data->getRow(0);
+        if (!in_array('question', $firstrow) && !in_array('page', $firstrow)) {
+            if (count($firstrow) == 2) {
+                $headings = array('question', 'page');
+            } else if (count($firstrow) == 3) {
+                $headings = array('question', 'page', 'maxmark');
+            } else {
                 throw new ExpectationException('When adding questions to a quiz, you should give 2 or three 3 things: ' .
-                        ' the question name, the page number, and optionally a the maxiumum mark. ' .
-                        count($questiondata) . ' values passed.', $this->getSession());
+                        ' the question name, the page number, and optionally the maxiumum mark. ' .
+                        count($firstrow) . ' values passed.', $this->getSession());
+            }
+            $rows = $data->getRows();
+            array_unshift($rows, $headings);
+            $data->setRows($rows);
+        }
+
+        // Add the questions.
+        $lastpage = 0;
+        foreach ($data->getHash() as $questiondata) {
+            if (!array_key_exists('question', $questiondata)) {
+                throw new ExpectationException('When adding questions to a quiz, ' .
+                        'the question name column is required.', $this->getSession());
+            }
+            if (!array_key_exists('page', $questiondata)) {
+                throw new ExpectationException('When adding questions to a quiz, ' .
+                        'the page number column is required.', $this->getSession());
             }
 
-            list($questionname, $rawpage) = $questiondata;
-            if (!isset($questiondata[2]) || $questiondata[2] === '') {
+            // Question id.
+            $questionid = $DB->get_field('question', 'id',
+                    array('name' => $questiondata['question']), MUST_EXIST);
+
+            // Page number.
+            $page = clean_param($questiondata['page'], PARAM_INT);
+            if ($page <= 0 || (string) $page !== $questiondata['page']) {
+                throw new ExpectationException('The page number for question "' .
+                         $questiondata['question'] . '" must be a positive integer.',
+                        $this->getSession());
+            }
+            if ($page < $lastpage || $page > $lastpage + 1) {
+                throw new ExpectationException('When adding questions to a quiz, ' .
+                        'the page number for each question must either be the same, ' .
+                        'or one more, then the page number for the previous question.',
+                        $this->getSession());
+            }
+            $lastpage = $page;
+
+            // Max mark.
+            if (!array_key_exists('maxmark', $questiondata) || $questiondata['maxmark'] === '') {
                 $maxmark = null;
             } else {
-                $maxmark = clean_param($questiondata[2], PARAM_FLOAT);
-                if (!is_numeric($questiondata[2]) || $maxmark < 0) {
-                    throw new ExpectationException('When adding questions to a quiz, the max mark must be a positive number.',
+                $maxmark = clean_param($questiondata['maxmark'], PARAM_FLOAT);
+                if (!is_numeric($questiondata['maxmark']) || $maxmark < 0) {
+                    throw new ExpectationException('The max mark for question "' .
+                            $questiondata['question'] . '" must be a positive number.',
                             $this->getSession());
                 }
             }
 
-            $page = clean_param($rawpage, PARAM_INT);
-            if ($page <= 0 || (string) $page !== $rawpage) {
-                throw new ExpectationException('When adding questions to a quiz, the page number must be a positive integer.',
+            // Add the question.
+            quiz_add_quiz_question($questionid, $quiz, $page, $maxmark);
+
+            // Require previous.
+            if (array_key_exists('requireprevious', $questiondata)) {
+                if ($questiondata['requireprevious'] === '1') {
+                    $slot = $DB->get_field('quiz_slots', 'MAX(slot)', array('quizid' => $quiz->id));
+                    $DB->set_field('quiz_slots', 'requireprevious', 1,
+                            array('quizid' => $quiz->id, 'slot' => $slot));
+                } else if ($questiondata['requireprevious'] !== '' && $questiondata['requireprevious'] !== '0') {
+                    throw new ExpectationException('Require previous for question "' .
+                            $questiondata['question'] . '" should be 0, 1 or blank.',
+                            $this->getSession());
+                }
+            }
+        }
+
+        quiz_update_sumgrades($quiz);
+    }
+
+    /**
+     * Put the specified section headings to start at specified pages of a given quiz.
+     *
+     * The first row should be column names:
+     * | heading | firstslot | shufflequestions |
+     *
+     * heading   is the section heading text
+     * firstslot is the slot number where the section starts
+     * shuffle   whether this section is shuffled (0 or 1)
+     *
+     * Then there should be a number of rows of data, one for each section you want to add.
+     *
+     * @param string $quizname the name of the quiz to add sections to.
+     * @param TableNode $data information about the sections to add.
+     *
+     * @Given /^quiz "([^"]*)" contains the following sections:$/
+     */
+    public function quiz_contains_the_following_sections($quizname, TableNode $data) {
+        global $DB;
+
+        $quiz = $DB->get_record('quiz', array('name' => $quizname), '*', MUST_EXIST);
+
+        // Add the sections.
+        $previousfirstslot = 0;
+        foreach ($data->getHash() as $rownumber => $sectiondata) {
+            if (!array_key_exists('heading', $sectiondata)) {
+                throw new ExpectationException('When adding sections to a quiz, ' .
+                        'the heading name column is required.', $this->getSession());
+            }
+            if (!array_key_exists('firstslot', $sectiondata)) {
+                throw new ExpectationException('When adding sections to a quiz, ' .
+                        'the firstslot name column is required.', $this->getSession());
+            }
+            if (!array_key_exists('shuffle', $sectiondata)) {
+                throw new ExpectationException('When adding sections to a quiz, ' .
+                        'the shuffle name column is required.', $this->getSession());
+            }
+
+            if ($rownumber == 0) {
+                $section = $DB->get_record('quiz_sections', array('quizid' => $quiz->id), '*', MUST_EXIST);
+            } else {
+                $section = new stdClass();
+                $section->quizid = $quiz->id;
+            }
+
+            // Heading.
+            $section->heading = $sectiondata['heading'];
+
+            // First slot.
+            $section->firstslot = clean_param($sectiondata['firstslot'], PARAM_INT);
+            if ($section->firstslot <= $previousfirstslot ||
+                    (string) $section->firstslot !== $sectiondata['firstslot']) {
+                throw new ExpectationException('The firstslot number for section "' .
+                        $sectiondata['heading'] . '" must an integer greater than the previous section firstslot.',
+                        $this->getSession());
+            }
+            if ($rownumber == 0 && $section->firstslot != 1) {
+                throw new ExpectationException('The first section must have firstslot set to 1.',
                         $this->getSession());
             }
 
-            $questionid = $DB->get_field('question', 'id', array('name' => $questionname), MUST_EXIST);
-            quiz_add_quiz_question($questionid, $quiz, $page, $maxmark);
+            // Shuffle.
+            $section->shufflequestions = clean_param($sectiondata['shuffle'], PARAM_INT);
+            if ((string) $section->shufflequestions !== $sectiondata['shuffle']) {
+                throw new ExpectationException('The shuffle value for section "' .
+                        $sectiondata['heading'] . '" must be 0 or 1.',
+                        $this->getSession());
+            }
+
+            if ($rownumber == 0) {
+                $DB->update_record('quiz_sections', $section);
+            } else {
+                $DB->insert_record('quiz_sections', $section);
+            }
         }
-        quiz_update_sumgrades($quiz);
+
+        if ($section->firstslot > $DB->count_records('quiz_slots', array('quizid' => $quiz->id))) {
+            throw new ExpectationException('The section firstslot must be less than the total number of slots in the quiz.',
+                    $this->getSession());
+        }
     }
 
     /**
@@ -296,6 +439,55 @@ class behat_mod_quiz extends behat_question_base {
     }
 
     /**
+     * Set Shuffle for shuffling questions within sections
+     *
+     * @param string $heading the heading of the section to change shuffle for.
+     *
+     * @Given /^I click on shuffle for section "([^"]*)" on the quiz edit page$/
+     */
+    public function i_click_on_shuffle_for_section($heading) {
+        $xpath = $this->get_xpath_for_shuffle_checkbox($heading);
+        $checkbox = $this->find('xpath', $xpath);
+        $this->ensure_node_is_visible($checkbox);
+        $checkbox->click();
+    }
+
+    /**
+     * Check the shuffle checkbox for a particular section.
+     *
+     * @param string $heading the heading of the section to check shuffle for
+     * @param int $value whether the shuffle checkbox should be on or off.
+     *
+     * @Given /^shuffle for section "([^"]*)" should be "(On|Off)" on the quiz edit page$/
+     */
+    public function shuffle_for_section_should_be($heading, $value) {
+        $xpath = $this->get_xpath_for_shuffle_checkbox($heading);
+        $checkbox = $this->find('xpath', $xpath);
+        $this->ensure_node_is_visible($checkbox);
+        if ($value == 'On' && !$checkbox->isChecked()) {
+            $msg = "Shuffle for section '$heading' is not checked, but you are expecting it to be checked ($value). " .
+                    "Check the line with: \nshuffle for section \"$heading\" should be \"$value\" on the quiz edit page" .
+                    "\nin your behat script";
+            throw new ExpectationException($msg, $this->getSession());
+        } else if ($value == 'Off' && $checkbox->isChecked()) {
+            $msg = "Shuffle for section '$heading' is checked, but you are expecting it not to be ($value). " .
+                    "Check the line with: \nshuffle for section \"$heading\" should be \"$value\" on the quiz edit page" .
+                    "\nin your behat script";
+            throw new ExpectationException($msg, $this->getSession());
+        }
+    }
+
+    /**
+     * Return the xpath for shuffle checkbox in section heading
+     * @param strung $heading
+     * @return string
+     */
+    protected function get_xpath_for_shuffle_checkbox($heading) {
+         return "//div[contains(@class, 'section-heading') and contains(., '" . $this->escape($heading) .
+                "')]//input[@type = 'checkbox']";
+    }
+
+    /**
      * Move a question on the Edit quiz page by first clicking on the Move icon,
      * then clicking one of the "After ..." links.
      * @When /^I move "(?P<question_name>(?:[^"]|\\")*)" to "(?P<target>(?:[^"]|\\")*)" in the quiz by clicking the move icon$/
@@ -346,5 +538,42 @@ class behat_mod_quiz extends behat_question_base {
             new Given('I click on "' . $slotxpath . $deletexpath . '" "xpath_element"'),
             new Given('I click on "Yes" "button" in the "Confirm" "dialogue"'),
         );
+    }
+
+    /**
+     * Set the section heading for a given section on the Edit quiz page
+     *
+     * @When /^I change quiz section heading "(?P<section_name_string>(?:[^"]|\\")*)" to "(?P<new_section_heading_string>(?:[^"]|\\")*)"$/
+     * @param string $sectionname the heading to change.
+     * @param string $sectionheading the new heading to set.
+     */
+    public function i_set_the_section_heading_for($sectionname, $sectionheading) {
+        return array(
+                new Given('I follow "' . $this->escape("Edit heading '{$sectionname}'") . '"'),
+                new Given('I should see "' . $this->escape(get_string('edittitleinstructions')) . '"'),
+                new Given('I set the field "section" to "' . $this->escape($sectionheading) . chr(10) . '"'),
+        );
+    }
+
+    /**
+     * Check that a given question comes after a given section heading in the
+     * quiz navigation block.
+     *
+     * @Then /^I should see question "(?P<questionnumber>\d+)" in section "(?P<section_heading_string>(?:[^"]|\\")*)" in the quiz navigation$/
+     * @param int $questionnumber the number of the question to check.
+     * @param string $sectionheading which section heading it should appear after.
+     */
+    public function i_should_see_question_in_section_in_the_quiz_navigation($questionnumber, $sectionheading) {
+
+        // Using xpath literal to avoid quotes problems.
+        $questionnumberliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral('Question ' . $questionnumber);
+        $headingliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($sectionheading);
+
+        // Split in two checkings to give more feedback in case of exception.
+        $exception = new ExpectationException('Question "' . $questionnumber . '" is not in section "' .
+                $sectionheading . '" in the quiz navigation.', $this->getSession());
+        $xpath = "//div[@id = 'mod_quiz_navblock']//*[contains(concat(' ', normalize-space(@class), ' '), ' qnbutton ') and " .
+                "contains(., {$questionnumberliteral}) and contains(preceding-sibling::h3[1], {$headingliteral})]";
+        $this->find('xpath', $xpath);
     }
 }

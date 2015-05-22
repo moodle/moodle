@@ -94,6 +94,13 @@ if ($displaytype == RESOURCELIB_DISPLAY_OPEN || $displaytype == RESOURCELIB_DISP
     }
 }
 
+// Don't redirect teachers, otherwise they can not access course or module settings.
+if ($redirect && !course_get_format($course)->has_view_page() &&
+        (has_capability('moodle/course:manageactivities', $context) ||
+        has_capability('moodle/course:update', context_course::instance($course->id)))) {
+    $redirect = false;
+}
+
 if ($redirect) {
     // coming from course page or url index page
     // this redirect trick solves caching problems when tracking views ;-)

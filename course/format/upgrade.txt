@@ -2,6 +2,11 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 2.9 ===
+* Course formats may support deleting sections, see MDL-10405 for more details.
+  format_section_renderer_base::section_edit_controls() is now also called for
+  stealth sections and it also returns "delete" control.
+
 === 2.8 ===
 * The activity chooser now uses M.course.format.get_sectionwrapperclass()
   to determine the section selector, rather than a hard-coded `li.section`.

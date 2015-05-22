@@ -69,6 +69,7 @@ class enrol_self_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(3, $enrolmentmethods);
 
         $instanceinfo1 = enrol_self_external::get_instance_info($instanceid1);
+        $instanceinfo1 = external_api::clean_returnvalue(enrol_self_external::get_instance_info_returns(), $instanceinfo1);
 
         $this->assertEquals($instanceid1, $instanceinfo1['id']);
         $this->assertEquals($course->id, $instanceinfo1['courseid']);
@@ -78,6 +79,7 @@ class enrol_self_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse(isset($instanceinfo1['enrolpassword']));
 
         $instanceinfo2 = enrol_self_external::get_instance_info($instanceid2);
+        $instanceinfo2 = external_api::clean_returnvalue(enrol_self_external::get_instance_info_returns(), $instanceinfo2);
         $this->assertEquals($instanceid2, $instanceinfo2['id']);
         $this->assertEquals($course->id, $instanceinfo2['courseid']);
         $this->assertEquals('self', $instanceinfo2['type']);
@@ -86,6 +88,7 @@ class enrol_self_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse(isset($instanceinfo2['enrolpassword']));
 
         $instanceinfo3 = enrol_self_external::get_instance_info($instanceid3);
+        $instanceinfo3 = external_api::clean_returnvalue(enrol_self_external::get_instance_info_returns(), $instanceinfo3);
         $this->assertEquals($instanceid3, $instanceinfo3['id']);
         $this->assertEquals($course->id, $instanceinfo3['courseid']);
         $this->assertEquals('self', $instanceinfo3['type']);

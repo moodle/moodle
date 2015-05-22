@@ -253,6 +253,48 @@ class question_engine_data_mapper {
     }
 
     /**
+     * Store new metadata for an existing {@link question_attempt} in the database.
+     *
+     * Private method, only for use by other parts of the question engine.
+     *
+     * @param question_attempt $qa the question attempt to store meta data for.
+     * @param array $names the names of the metadata variables to store.
+     * @return array of question_attempt_step_data rows, that still need to be inserted.
+     */
+    public function insert_question_attempt_metadata(question_attempt $qa, array $names) {
+        $firststep = $qa->get_step(0);
+
+        $rows = array();
+        foreach ($names as $name) {
+            $data = new stdClass();
+            $data->attemptstepid = $firststep->get_id();
+            $data->name = ':_' . $name;
+            $data->value = $firststep->get_metadata_var($name);
+            $rows[] = $data;
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Updates existing metadata for an existing {@link question_attempt} in the database.
+     *
+     * Private method, only for use by other parts of the question engine.
+     *
+     * @param question_attempt $qa the question attempt to store meta data for.
+     * @param array $names the names of the metadata variables to store.
+     * @return array of question_attempt_step_data rows, that still need to be inserted.
+     */
+    public function update_question_attempt_metadata(question_attempt $qa, array $names) {
+        global $DB;
+        list($condition, $params) = $DB->get_in_or_equal($names);
+        $params[] = $qa->get_step(0)->get_id();
+        $DB->delete_records_select('question_attempt_step_data',
+                'name ' . $condition . ' AND attemptstepid = ?', $params);
+        return $this->insert_question_attempt_metadata($qa, $names);
+    }
+
+    /**
      * Load a {@link question_attempt_step} from the database.
      *
      * Private method, only for use by other parts of the question engine.
@@ -867,6 +909,7 @@ ORDER BY
     public function update_question_attempt(question_attempt $qa) {
         $record = new stdClass();
         $record->id = $qa->get_database_id();
+        $record->slot = $qa->get_slot();
         $record->variant = $qa->get_variant();
         $record->maxmark = $qa->get_max_mark();
         $record->minfraction = $qa->get_min_fraction();
@@ -1198,6 +1241,32 @@ ORDER BY
                 'questionid ' . $test . ' AND questionusageid ' .
                 $qubaids->usage_id_in(), $params + $qubaids->usage_id_in_params());
     }
+
+    /**
+     * Get the number of times each variant has been used for each question in a list
+     * in a set of usages.
+     * @param array $questionids of question ids.
+     * @param qubaid_condition $qubaids ids of the usages to consider.
+     * @return array questionid => variant number => num uses.
+     */
+    public function load_used_variants(array $questionids, qubaid_condition $qubaids) {
+        list($test, $params) = $this->db->get_in_or_equal($questionids, SQL_PARAMS_NAMED, 'qid');
+        $recordset = $this->db->get_recordset_sql("
+                SELECT qa.questionid, qa.variant, COUNT(1) AS usescount
+                  FROM " . $qubaids->from_question_attempts('qa') . "
+                 WHERE qa.questionid $test
+                   AND " . $qubaids->where() . "
+              GROUP BY qa.questionid, qa.variant
+              ORDER BY COUNT(1) ASC
+                ", $params + $qubaids->from_where_params());
+
+        $usedvariants = array_combine($questionids, array_fill(0, count($questionids), array()));
+        foreach ($recordset as $row) {
+            $usedvariants[$row->questionid][$row->variant] = $row->usescount;
+        }
+        $recordset->close();
+        return $usedvariants;
+    }
 }
 
 
@@ -1220,15 +1289,15 @@ class question_engine_unit_of_work implements question_usage_observer {
 
     /**
      * @var array list of slot => {@link question_attempt}s that
-     * were already in the usage, and which have been modified.
-     */
-    protected $attemptsmodified = array();
-
-    /**
-     * @var array list of slot => {@link question_attempt}s that
      * have been added to the usage.
      */
     protected $attemptsadded = array();
+
+    /**
+     * @var array list of slot => {@link question_attempt}s that
+     * were already in the usage, and which have been modified.
+     */
+    protected $attemptsmodified = array();
 
     /**
      * @var array of array(question_attempt_step, question_attempt id, seq number)
@@ -1249,6 +1318,16 @@ class question_engine_unit_of_work implements question_usage_observer {
     protected $stepsdeleted = array();
 
     /**
+     * @var array int slot => string name => question_attempt.
+     */
+    protected $metadataadded = array();
+
+    /**
+     * @var array int slot => string name => question_attempt.
+     */
+    protected $metadatamodified = array();
+
+    /**
      * Constructor.
      * @param question_usage_by_activity $quba the usage to track.
      */
@@ -1260,6 +1339,10 @@ class question_engine_unit_of_work implements question_usage_observer {
         $this->modified = true;
     }
 
+    public function notify_attempt_added(question_attempt $qa) {
+        $this->attemptsadded[$qa->get_slot()] = $qa;
+    }
+
     public function notify_attempt_modified(question_attempt $qa) {
         $slot = $qa->get_slot();
         if (!array_key_exists($slot, $this->attemptsadded)) {
@@ -1267,8 +1350,28 @@ class question_engine_unit_of_work implements question_usage_observer {
         }
     }
 
-    public function notify_attempt_added(question_attempt $qa) {
-        $this->attemptsadded[$qa->get_slot()] = $qa;
+    public function notify_attempt_moved(question_attempt $qa, $oldslot) {
+        $newslot = $qa->get_slot();
+
+        if (array_key_exists($oldslot, $this->attemptsadded)) {
+            unset($this->attemptsadded[$oldslot]);
+            $this->attemptsadded[$newslot] = $qa;
+            return;
+        }
+
+        if (array_key_exists($oldslot, $this->attemptsmodified)) {
+            unset($this->attemptsmodified[$oldslot]);
+        }
+        $this->attemptsmodified[$newslot] = $qa;
+
+        if (array_key_exists($oldslot, $this->metadataadded)) {
+            $this->metadataadded[$newslot] = $this->metadataadded[$oldslot];
+            unset($this->metadataadded[$oldslot]);
+        }
+        if (array_key_exists($oldslot, $this->metadatamodified)) {
+            $this->metadatamodified[$newslot] = $this->metadatamodified[$oldslot];
+            unset($this->metadatamodified[$oldslot]);
+        }
     }
 
     public function notify_step_added(question_attempt_step $step, question_attempt $qa, $seq) {
@@ -1345,6 +1448,42 @@ class question_engine_unit_of_work implements question_usage_observer {
         $this->stepsdeleted[$stepid] = $step;
     }
 
+    public function notify_metadata_added(question_attempt $qa, $name) {
+        if (array_key_exists($qa->get_slot(), $this->attemptsadded)) {
+            return;
+        }
+
+        if ($this->is_step_added($qa->get_step(0)) !== false) {
+            return;
+        }
+
+        if (isset($this->metadataadded[$qa->get_slot()][$name])) {
+            return;
+        }
+
+        $this->metadataadded[$qa->get_slot()][$name] = $qa;
+    }
+
+    public function notify_metadata_modified(question_attempt $qa, $name) {
+        if (array_key_exists($qa->get_slot(), $this->attemptsadded)) {
+            return;
+        }
+
+        if ($this->is_step_added($qa->get_step(0)) !== false) {
+            return;
+        }
+
+        if (isset($this->metadataadded[$qa->get_slot()][$name])) {
+            return;
+        }
+
+        if (isset($this->metadatamodified[$qa->get_slot()][$name])) {
+            return;
+        }
+
+        $this->metadatamodified[$qa->get_slot()][$name] = $qa;
+    }
+
     /**
      * @param question_attempt_step $step a step
      * @return int|false if the step is in the list of steps to be added, return
@@ -1411,23 +1550,40 @@ class question_engine_unit_of_work implements question_usage_observer {
                     $step, $questionattemptid, $seq, $this->quba->get_owning_context());
         }
 
+        foreach ($this->attemptsmodified as $qa) {
+            $dm->update_question_attempt($qa);
+        }
+
         foreach ($this->attemptsadded as $qa) {
             $stepdata[] = $dm->insert_question_attempt(
                     $qa, $this->quba->get_owning_context());
         }
 
-        foreach ($this->attemptsmodified as $qa) {
-            $dm->update_question_attempt($qa);
+        foreach ($this->metadataadded as $info) {
+            $qa = reset($info);
+            $stepdata[] = $dm->insert_question_attempt_metadata($qa, array_keys($info));
+        }
+
+        foreach ($this->metadatamodified as $info) {
+            $qa = reset($info);
+            $stepdata[] = $dm->update_question_attempt_metadata($qa, array_keys($info));
         }
 
         if ($this->modified) {
             $dm->update_questions_usage_by_activity($this->quba);
         }
 
-        if (!$stepdata) {
-            return;
+        if ($stepdata) {
+            $dm->insert_all_step_data(call_user_func_array('array_merge', $stepdata));
         }
-        $dm->insert_all_step_data(call_user_func_array('array_merge', $stepdata));
+
+        $this->stepsdeleted = array();
+        $this->stepsmodified = array();
+        $this->stepsadded = array();
+        $this->attemptsdeleted = array();
+        $this->attemptsadded = array();
+        $this->attemptsmodified = array();
+        $this->modified = false;
     }
 }
 
@@ -1572,9 +1728,9 @@ class question_file_loader implements question_response_files {
     protected $name;
 
     /**
-    * @var string the value to stored in the question_attempt_step_data to
+     * @var string the value to stored in the question_attempt_step_data to
      * represent these files.
-    */
+     */
     protected $value;
 
     /** @var int the context id that the files belong to. */

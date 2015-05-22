@@ -22,9 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  * @copyright  (C) 1999 onwards Martin Dougiamas  http://dougiamas.com
  *
- * On this page the administrator selects which hub he wants to register,
- * except for MOOCH. Admins can register with MOOCH with the top admin menu "Registration" link.
- * On this page the administrator can also unregister from any hubs, including MOOCH.
+ * On this page the administrator selects which hub he wants to register (except for moodle.net)
+ * Admins can register with moodle.net via the site admin menu "Registration" link.
+ * On this page the administrator can also unregister from any hubs including moodle.net.
  */
 
 require('../../config.php');

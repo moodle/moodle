@@ -616,5 +616,30 @@ function xmldb_assign_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014122600, 'assign');
     }
 
+    if ($oldversion < 2015022300) {
+
+        // Define field preventsubmissionnotingroup to be added to assign.
+        $table = new xmldb_table('assign');
+        $field = new xmldb_field('preventsubmissionnotingroup',
+            XMLDB_TYPE_INTEGER,
+            '2',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'sendstudentnotifications');
+
+        // Conditionally launch add field preventsubmissionnotingroup.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2015022300, 'assign');
+    }
+
+    // Moodle v2.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

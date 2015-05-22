@@ -45,7 +45,7 @@ if ($return) {
     // this redirect prevents security warning because https can not POST to http pages
     if (empty($SESSION->wantsurl)
             or stripos(str_replace('https://', 'http://', $SESSION->wantsurl), str_replace('https://', 'http://', $CFG->wwwroot.'/login/change_password.php')) === 0) {
-        $returnto = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$id";
+        $returnto = "$CFG->wwwroot/user/preferences.php?userid=$USER->id&course=$id";
     } else {
         $returnto = $SESSION->wantsurl;
     }
@@ -109,7 +109,7 @@ $navlinks = array();
 $navlinks[] = array('name' => $strparticipants, 'link' => "$CFG->wwwroot/user/index.php?id=$course->id", 'type' => 'misc');
 
 if ($mform->is_cancelled()) {
-    redirect($CFG->wwwroot.'/user/view.php?id='.$USER->id.'&amp;course='.$course->id);
+    redirect($CFG->wwwroot.'/user/preferences.php?userid='.$USER->id.'&amp;course='.$course->id);
 } else if ($data = $mform->get_data()) {
 
     if (!$userauth->user_update_password($USER, $data->newpassword1)) {
@@ -134,7 +134,7 @@ if ($mform->is_cancelled()) {
     $fullname = fullname($USER, true);
 
     $PAGE->set_title($strpasswordchanged);
-    $PAGE->set_heading($COURSE->fullname);
+    $PAGE->set_heading(fullname($USER));
     echo $OUTPUT->header();
 
     notice($strpasswordchanged, new moodle_url($PAGE->url, array('return'=>1)));
@@ -151,7 +151,7 @@ $strchangepassword = get_string('changepassword');
 $fullname = fullname($USER, true);
 
 $PAGE->set_title($strchangepassword);
-$PAGE->set_heading($COURSE->fullname);
+$PAGE->set_heading($fullname);
 echo $OUTPUT->header();
 
 if (get_user_preferences('auth_forcepasswordchange')) {

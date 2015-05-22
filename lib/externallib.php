@@ -56,8 +56,10 @@ function external_function_info($function, $strictness=MUST_EXIST) {
         }
     }
 
+    $function->ajax_method = $function->methodname.'_is_allowed_from_ajax';
     $function->parameters_method = $function->methodname.'_parameters';
     $function->returns_method    = $function->methodname.'_returns';
+    $function->deprecated_method = $function->methodname.'_is_deprecated';
 
     // make sure the implementaion class is ok
     if (!method_exists($function->classname, $function->methodname)) {
@@ -68,6 +70,17 @@ function external_function_info($function, $strictness=MUST_EXIST) {
     }
     if (!method_exists($function->classname, $function->returns_method)) {
         throw new coding_exception('Missing returned values description');
+    }
+    if (method_exists($function->classname, $function->deprecated_method)) {
+        if (call_user_func(array($function->classname, $function->deprecated_method)) === true) {
+            $function->deprecated = true;
+        }
+    }
+    $function->allowed_from_ajax = false;
+    if (method_exists($function->classname, $function->ajax_method)) {
+        if (call_user_func(array($function->classname, $function->ajax_method)) === true) {
+            $function->allowed_from_ajax = true;
+        }
     }
 
     // fetch the parameters description
@@ -712,7 +725,7 @@ function external_validate_format($format) {
  * All web service servers must set this singleton when parsing the $_GET and $_POST.
  *
  * @param string $text The content that may contain ULRs in need of rewriting.
- * @param int $textformat The text format, by default FORMAT_HTML.
+ * @param int $textformat The text format.
  * @param int $contextid This parameter and the next two identify the file area to use.
  * @param string $component
  * @param string $filearea helps identify the file area.
@@ -732,9 +745,8 @@ function external_format_text($text, $textformat, $contextid, $component, $filea
     }
 
     if (!$settings->get_raw()) {
-        $textformat = FORMAT_HTML; // Force format to HTML when not raw.
-        $text = format_text($text, $textformat,
-                array('noclean' => true, 'para' => false, 'filter' => $settings->get_filter()));
+        $text = format_text($text, $textformat, array('para' => false, 'filter' => $settings->get_filter()));
+        $textformat = FORMAT_HTML; // Once converted to html (from markdown, plain... lets inform consumer this is already HTML).
     }
 
     return array($text, $textformat);

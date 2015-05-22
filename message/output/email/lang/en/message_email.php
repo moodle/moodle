@@ -25,7 +25,7 @@
 $string['allowattachments'] = 'Allow attachments';
 $string['allowusermailcharset'] = 'Allow user to select character set';
 $string['configallowattachments'] = 'If enabled, emails sent from the site can have attachments, such as badges.';
-$string['configallowusermailcharset'] = 'If enabled, users can choose an email charset in their profile settings.';
+$string['configallowusermailcharset'] = 'If enabled, users can choose an email charset in their messaging preferences.';
 $string['configmailnewline'] = 'Newline characters used in mail messages. CRLF is required according to RFC 822bis, some mail servers do automatic conversion from LF to CRLF, other mail servers do incorrect conversion from CRLF to CRCRLF, yet others reject mails with bare LF (qmail for example). Try changing this setting if you are having problems with undelivered emails or double newlines.';
 $string['confignoreplyaddress'] = 'Emails are sometimes sent out on behalf of a user (eg forum posts). The email address you specify here will be used as the "From" address in those cases when the recipients should not be able to reply directly to the user (eg when a user chooses to keep their address private).';
 $string['configemailonlyfromnoreplyaddress'] = 'If enabled, all email will be sent using the no-reply address as the "from" address. This can be used to stop anti-spoofing controls in external mail systems blocking emails.';

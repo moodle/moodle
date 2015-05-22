@@ -10,43 +10,43 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing{
 
 	private $charset;
 
-	function __construct(){
+	public function __construct(){
 		parent::__construct();
 	}
 
 	/**
 	 * @param Less_Tree_Ruleset $root
 	 */
-	function run( $root ){
+	public function run( $root ){
 		return $this->visitObj($root);
 	}
 
-	function visitRule( $ruleNode ){
+	public function visitRule( $ruleNode ){
 		if( $ruleNode->variable ){
 			return array();
 		}
 		return $ruleNode;
 	}
 
-	function visitMixinDefinition($mixinNode){
+	public function visitMixinDefinition($mixinNode){
 		// mixin definitions do not get eval'd - this means they keep state
 		// so we have to clear that state here so it isn't used if toCSS is called twice
 		$mixinNode->frames = array();
 		return array();
 	}
 
-	function visitExtend(){
+	public function visitExtend(){
 		return array();
 	}
 
-	function visitComment( $commentNode ){
+	public function visitComment( $commentNode ){
 		if( $commentNode->isSilent() ){
 			return array();
 		}
 		return $commentNode;
 	}
 
-	function visitMedia( $mediaNode, &$visitDeeper ){
+	public function visitMedia( $mediaNode, &$visitDeeper ){
 		$mediaNode->accept($this);
 		$visitDeeper = false;
 
@@ -56,7 +56,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing{
 		return $mediaNode;
 	}
 
-	function visitDirective( $directiveNode ){
+	public function visitDirective( $directiveNode ){
 		if( isset($directiveNode->currentFileInfo['reference']) && (!property_exists($directiveNode,'isReferenced') || !$directiveNode->isReferenced) ){
 			return array();
 		}
@@ -80,7 +80,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing{
 		return $directiveNode;
 	}
 
-	function checkPropertiesInRoot( $rulesetNode ){
+	public function checkPropertiesInRoot( $rulesetNode ){
 
 		if( !$rulesetNode->firstRoot ){
 			return;
@@ -95,7 +95,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing{
 	}
 
 
-	function visitRuleset( $rulesetNode, &$visitDeeper ){
+	public function visitRuleset( $rulesetNode, &$visitDeeper ){
 
 		$visitDeeper = false;
 
@@ -192,7 +192,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing{
 		return $paths;
 	}
 
-	function _removeDuplicateRules( &$rules ){
+	protected function _removeDuplicateRules( &$rules ){
 		// remove duplicates
 		$ruleCache = array();
 		for( $i = count($rules)-1; $i >= 0 ; $i-- ){
@@ -219,7 +219,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing{
 		}
 	}
 
-	function _mergeRules( &$rules ){
+	protected function _mergeRules( &$rules ){
 		$groups = array();
 
 		//obj($rules);
@@ -271,7 +271,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing{
 
 	}
 
-	static function toExpression($values){
+	public static function toExpression($values){
 		$mapped = array();
 		foreach($values as $p){
 			$mapped[] = $p->value;
@@ -279,7 +279,7 @@ class Less_Visitor_toCSS extends Less_VisitorReplacing{
 		return new Less_Tree_Expression( $mapped );
 	}
 
-	static function toValue($values){
+	public static function toValue($values){
 		//return new Less_Tree_Value($values); ??
 
 		$mapped = array();

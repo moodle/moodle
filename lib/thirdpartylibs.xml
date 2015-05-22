@@ -32,7 +32,7 @@
     <location>lessphp</location>
     <name>less.php</name>
     <license>Apache</license>
-    <version>1.7.0.1</version>
+    <version>1.7.0.3</version>
     <licenseversion>2.0</licenseversion>
   </library>
   <library>
@@ -53,7 +53,7 @@
     <location>google</location>
     <name>Google APIs Client Library</name>
     <license>Apache</license>
-    <version>1.0.5-beta</version>
+    <version>1.1.2</version>
     <licenseversion>2.0</licenseversion>
   </library>
   <library>
@@ -88,7 +88,7 @@
     <location>password_compat</location>
     <name>Compatible password hashing</name>
     <license>MIT</license>
-    <version></version>
+    <version>1.0.4</version>
     <licenseversion></licenseversion>
   </library>
   <library>
@@ -127,13 +127,6 @@
     <licenseversion>2.0</licenseversion>
   </library>
   <library>
-    <location>pear/HTTP/WebDAV</location>
-    <name>Pear_HTTP_WebDAV</name>
-    <license>BSD</license>
-    <version>1.0.0</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>pear/PEAR.php</location>
     <name>Pear.php</name>
     <license>PHP</license>
@@ -158,7 +151,7 @@
     <location>tcpdf</location>
     <name>TCPDF</name>
     <license>LGPL</license>
-    <version>6.0.093</version>
+    <version>6.2.6</version>
     <licenseversion>3</licenseversion>
   </library>
   <library>
@@ -186,7 +179,7 @@
     <location>jquery</location>
     <name>jQuery</name>
     <license>MIT</license>
-    <version>1.11.1</version>
+    <version>1.11.2</version>
     <licenseversion></licenseversion>
   </library>
   <library>
@@ -200,7 +193,7 @@
     <location>jquery</location>
     <name>jQuery UI</name>
     <license>MIT</license>
-    <version>1.11.1</version>
+    <version>1.11.4</version>
     <licenseversion></licenseversion>
   </library>
   <library>
@@ -221,7 +214,7 @@
     <location>markdown</location>
     <name>Markdown original+extra</name>
     <license>BSD</license>
-    <version>1.4.1</version>
+    <version>1.5.0</version>
     <licenseversion></licenseversion>
   </library>
   <library>
@@ -251,5 +244,30 @@
     <license>LGPL/BSD</license>
     <version>5.2.1</version>
     <licenseversion>2.1</licenseversion>
+  </library>
+  <library>
+    <location>requirejs</location>
+    <name>RequireJS</name>
+    <license>MIT</license>
+    <version>2.1.15</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>amd/src/loglevel.js</location>
+    <name>loglevel.js</name>
+    <license>MIT</license>
+    <version>1.2.0</version>
+  </library>
+  <library>
+    <location>mustache</location>
+    <name>Mustache</name>
+    <license>MIT</license>
+    <version>2.7.0</version>
+  </library>
+  <library>
+    <location>amd/src/mustache.js</location>
+    <name>Mustache.js</name>
+    <license>MIT</license>
+    <version>1.0.0</version>
   </library>
 </libraries>

@@ -224,7 +224,12 @@ class mod_lesson_renderer extends plugin_renderer_base {
         while ($pageid != 0) {
             $page = $lesson->load_page($pageid);
             $data = array();
-            $data[] = "<a href=\"$CFG->wwwroot/mod/lesson/edit.php?id=".$this->page->cm->id."&amp;mode=single&amp;pageid=".$page->id."\">".format_string($page->title,true).'</a>';
+            $url = new moodle_url('/mod/lesson/edit.php', array(
+                'id'     => $this->page->cm->id,
+                'mode'   => 'single',
+                'pageid' => $page->id
+            ));
+            $data[] = html_writer::link($url, format_string($page->title, true), array('id' => 'lesson-' . $page->id));
             $data[] = $qtypes[$page->qtype];
             $data[] = implode("<br />\n", $page->jumps);
             if ($canedit) {
@@ -274,6 +279,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $pagetable->cellspacing = 0;
             $pagetable->cellpadding = '5px';
             $pagetable->data = array();
+            $pagetable->id = 'lesson-' . $pageid;
 
             $pageheading = new html_table_cell();
 
@@ -396,17 +402,27 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $actions = array();
 
         if ($printmove) {
-            $printmovehtml = new moodle_url('/mod/lesson/lesson.php', array('id'=>$this->page->cm->id, 'action'=>'move', 'pageid'=>$page->id, 'sesskey'=>sesskey()));
-            $actions[] = html_writer::link($printmovehtml, '<img src="'.$this->output->pix_url('t/move').'" class="iconsmall" alt="'.get_string('move').'" />');
+            $url = new moodle_url('/mod/lesson/lesson.php',
+                    array('id' => $this->page->cm->id, 'action' => 'move', 'pageid' => $page->id, 'sesskey' => sesskey()));
+            $label = get_string('movepagenamed', 'lesson', format_string($page->title));
+            $img = html_writer::img($this->output->pix_url('t/move'), $label, array('class' => 'iconsmall'));
+            $actions[] = html_writer::link($url, $img, array('title' => $label));
         }
-        $url = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id, 'edit'=>1));
-        $actions[] = html_writer::link($url, '<img src="'.$this->output->pix_url('t/edit').'" class="iconsmall" alt="'.get_string('update').'" />');
+        $url = new moodle_url('/mod/lesson/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $page->id, 'edit' => 1));
+        $label = get_string('updatepagenamed', 'lesson', format_string($page->title));
+        $img = html_writer::img($this->output->pix_url('t/edit'), $label, array('class' => 'iconsmall'));
+        $actions[] = html_writer::link($url, $img, array('title' => $label));
 
-        $url = new moodle_url('/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id));
-        $actions[] = html_writer::link($url, '<img src="'.$this->output->pix_url('t/preview').'" class="iconsmall" alt="'.get_string('preview').'" />');
+        $url = new moodle_url('/mod/lesson/view.php', array('id' => $this->page->cm->id, 'pageid' => $page->id));
+        $label = get_string('previewpagenamed', 'lesson', format_string($page->title));
+        $img = html_writer::img($this->output->pix_url('t/preview'), $label, array('class' => 'iconsmall'));
+        $actions[] = html_writer::link($url, $img, array('title' => $label));
 
-        $url = new moodle_url('/mod/lesson/lesson.php', array('id'=>$this->page->cm->id, 'action'=>'confirmdelete', 'pageid'=>$page->id, 'sesskey'=>sesskey()));
-        $actions[] = html_writer::link($url, '<img src="'.$this->output->pix_url('t/delete').'" class="iconsmall" alt="'.get_string('delete').'" />');
+        $url = new moodle_url('/mod/lesson/lesson.php',
+                array('id' => $this->page->cm->id, 'action' => 'confirmdelete', 'pageid' => $page->id, 'sesskey' => sesskey()));
+        $label = get_string('deletepagenamed', 'lesson', format_string($page->title));
+        $img = html_writer::img($this->output->pix_url('t/delete'), $label, array('class' => 'iconsmall'));
+        $actions[] = html_writer::link($url, $img, array('title' => $label));
 
         if ($printaddpage) {
             $options = array();

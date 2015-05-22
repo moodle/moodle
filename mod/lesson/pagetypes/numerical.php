@@ -57,6 +57,18 @@ class lesson_page_type_numerical extends lesson_page {
             $data->answer = s($attempt->useranswer);
         }
         $mform->set_data($data);
+
+        // Trigger an event question viewed.
+        $eventparams = array(
+            'context' => context_module::instance($PAGE->cm->id),
+            'objectid' => $this->properties->id,
+            'other' => array(
+                    'pagetype' => $this->get_typestring()
+                )
+            );
+
+        $event = \mod_lesson\event\question_viewed::create($eventparams);
+        $event->trigger();
         return $mform->display();
     }
     public function check_answer() {
@@ -245,6 +257,8 @@ class lesson_add_page_form_numerical extends lesson_add_page_form_base {
 
     public $qtype = 'numerical';
     public $qtypestring = 'numerical';
+    protected $answerformat = '';
+    protected $responseformat = LESSON_ANSWER_HTML;
 
     public function custom_definition() {
         for ($i = 0; $i < $this->_customdata['lesson']->maxanswers; $i++) {
@@ -263,6 +277,9 @@ class lesson_display_answer_form_numerical extends moodleform {
         global $USER, $OUTPUT;
         $mform = $this->_form;
         $contents = $this->_customdata['contents'];
+
+        // Disable shortforms.
+        $mform->setDisableShortforms();
 
         $mform->addElement('header', 'pageheader');
 

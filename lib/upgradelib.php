@@ -371,6 +371,10 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 2.9.
+        '/lib/timezone.txt',
+        // Removed in 2.8.
+        '/course/delete_category_form.php',
         // Removed in 2.7.
         '/admin/tool/qeupgradehelper/version.php',
         // Removed in 2.6.
@@ -2202,4 +2206,78 @@ function upgrade_fix_missing_root_folders_draft() {
     }
     $rs->close();
     $transaction->allow_commit();
+}
+
+/**
+ * This function verifies that the database is not using an unsupported storage engine.
+ *
+ * @param environment_results $result object to update, if relevant
+ * @return environment_results|null updated results object, or null if the storage engine is supported
+ */
+function check_database_storage_engine(environment_results $result) {
+    global $DB;
+
+    // Check if MySQL is the DB family (this will also be the same for MariaDB).
+    if ($DB->get_dbfamily() == 'mysql') {
+        // Get the database engine we will either be using to install the tables, or what we are currently using.
+        $engine = $DB->get_dbengine();
+        // Check if MyISAM is the storage engine that will be used, if so, do not proceed and display an error.
+        if ($engine == 'MyISAM') {
+            $result->setInfo('unsupported_db_storage_engine');
+            $result->setStatus(false);
+            return $result;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Method used to check the usage of slasharguments config and display a warning message.
+ *
+ * @param environment_results $result object to update, if relevant.
+ * @return environment_results|null updated results or null if slasharguments is disabled.
+ */
+function check_slasharguments(environment_results $result){
+    global $CFG;
+
+    if (empty($CFG->slasharguments)) {
+        $result->setInfo('slasharguments');
+        $result->setStatus(false);
+        return $result;
+    }
+
+    return null;
+}
+
+/**
+ * This function verifies if the database has tables using innoDB Antelope row format.
+ *
+ * @param environment_results $result
+ * @return environment_results|null updated results object, or null if no Antelope table has been found.
+ */
+function check_database_tables_row_format(environment_results $result) {
+    global $DB;
+
+    if ($DB->get_dbfamily() == 'mysql') {
+        $generator = $DB->get_manager()->generator;
+
+        foreach ($DB->get_tables(false) as $table) {
+            $columns = $DB->get_columns($table, false);
+            $size = $generator->guess_antelope_row_size($columns);
+            $format = $DB->get_row_format($table);
+
+            if ($size <= $generator::ANTELOPE_MAX_ROW_SIZE) {
+                continue;
+            }
+
+            if ($format === 'Compact' or $format === 'Redundant') {
+                $result->setInfo('unsupported_db_table_row_format');
+                $result->setStatus(false);
+                return $result;
+            }
+        }
+    }
+
+    return null;
 }

@@ -1,18 +1,52 @@
-This files describes API changes for the core question system.
+This files describes API changes for the core question engine.
+
+
+=== 2.9 ===
+
+1) Some new methods on the question_usage class (and corresponding methods on
+   question_attempt, question_attempt_step, question_usage_observer, ... requried
+   to implement them, but almost certainly you should only be calling the
+   question_usage methods from your code.
+
+   * question_usage::add_question_in_place_of_other($slot, $question, $maxmark = null)
+
+     This creates a new questoin_attempt in place of an existing one, moving the
+     existing question_attempt to the end of the usage, in a new slot number.
+     The new slot number is returned. The goal is to replace the old attempt, but
+     not lose the old data.
+
+   * question_usage::set_question_max_mark($slot, $maxmark)
+
+     Sets the max mark for one question in this usage. Previously, you could
+     only change this using the bulk operation question_usage::set_max_mark_in_attempts;
+
+   * question_usage::set_question_attempt_metadata($slot, $name, $value);
+     question_usage::get_question_attempt_metadata($slot, $name);
+
+     You can now record metadata, that is, values stored by name, against
+     question_attempts. The question engine ignores this data (other than storing
+     and loading it) but you may find it useful in your code.
+
+   To see examples of where these are used, look at the chagnes from MDL-40992.
+
+2) New fields in question_display_options, ->extrainfocontent and ->extrahistorycontent.
+   These default to blank, but can be used to inject extra content into those parts
+   of the question display. If you have overridden the methods in
+   core_question_renderer that use these fields, you may need to update your renderer.
 
 
 === 2.6 ===
 
 1) The method question_behaviour::is_manual_grade_in_range and move and become
-question_engine::is_manual_grade_in_range.
+   question_engine::is_manual_grade_in_range.
 
 2) The arguments to core_question_renderer::mark_summary changed from
-($qa, $options) to ($qa, $behaviouroutput, $options). If you have overridden
-that method you will need to update your code.
+   ($qa, $options) to ($qa, $behaviouroutput, $options). If you have overridden
+   that method you will need to update your code.
 
 3) Heading level for number(), add_part_heading() and respond_history()
-has been lowered by one level. These changes are part of improving the page
-accessibility and making heading to have proper nesting. (MDL-41615)
+   has been lowered by one level. These changes are part of improving the page
+   accessibility and making heading to have proper nesting. (MDL-41615)
 
 === Earlier changes ===
 

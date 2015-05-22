@@ -20,14 +20,14 @@ class Less_Tree_Url extends Less_Tree{
 		$this->isEvald = $isEvald;
 	}
 
-	function accept( $visitor ){
+    public function accept( $visitor ){
 		$this->value = $visitor->visitObj($this->value);
 	}
 
     /**
      * @see Less_Tree::genCSS
      */
-	function genCSS( $output ){
+    public function genCSS( $output ){
 		$output->add( 'url(' );
 		$this->value->genCSS( $output );
 		$output->add( ')' );

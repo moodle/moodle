@@ -674,6 +674,11 @@ function user_convert_text_to_menu_items($text, $page) {
             $bits[1] = null;
             $child->itemtype = "invalid";
         } else {
+            // Nasty hack to replace the grades with the direct url.
+            if (strpos($bits[1], '/grade/report/mygrades.php') !== false) {
+                $bits[1] = user_mygrades_url();
+            }
+
             // Make sure the url is a moodle url.
             $bits[1] = new moodle_url(trim($bits[1]));
         }
@@ -801,7 +806,7 @@ function user_get_user_navigation_info($user, $page) {
         }
     }
 
-    // Links: My Home.
+    // Links: Dashboard.
     $myhome = new stdClass();
     $myhome->itemtype = 'link';
     $myhome->url = new moodle_url('/my/');
@@ -813,7 +818,7 @@ function user_get_user_navigation_info($user, $page) {
     $myprofile = new stdClass();
     $myprofile->itemtype = 'link';
     $myprofile->url = new moodle_url('/user/profile.php', array('id' => $user->id));
-    $myprofile->title = get_string('myprofile');
+    $myprofile->title = get_string('profile');
     $myprofile->pix = "i/user";
     $returnobject->navitems[] = $myprofile;
 
@@ -976,4 +981,77 @@ function user_is_previously_used_password($userid, $password) {
     }
 
     return $reused;
+}
+
+/**
+ * Remove a user device from the Moodle database (for PUSH notifications usually).
+ *
+ * @param string $uuid The device UUID.
+ * @param string $appid The app id. If empty all the devices matching the UUID for the user will be removed.
+ * @return bool true if removed, false if the device didn't exists in the database
+ * @since Moodle 2.9
+ */
+function user_remove_user_device($uuid, $appid = "") {
+    global $DB, $USER;
+
+    $conditions = array('uuid' => $uuid, 'userid' => $USER->id);
+    if (!empty($appid)) {
+        $conditions['appid'] = $appid;
+    }
+
+    if (!$DB->count_records('user_devices', $conditions)) {
+        return false;
+    }
+
+    $DB->delete_records('user_devices', $conditions);
+
+    return true;
+}
+
+/**
+ * Trigger user_list_viewed event.
+ *
+ * @param stdClass  $course course  object
+ * @param stdClass  $context course context object
+ * @since Moodle 2.9
+ */
+function user_list_view($course, $context) {
+
+    $event = \core\event\user_list_viewed::create(array(
+        'objectid' => $course->id,
+        'courseid' => $course->id,
+        'context' => $context,
+        'other' => array(
+            'courseshortname' => $course->shortname,
+            'coursefullname' => $course->fullname
+        )
+    ));
+    $event->trigger();
+}
+
+/**
+ * Returns the url to use for the "Grades" link in the user navigation.
+ *
+ * @param int $userid The user's ID.
+ * @param int $courseid The course ID if available.
+ * @return mixed A URL to be directed to for "Grades".
+ */
+function user_mygrades_url($userid = null, $courseid = SITEID) {
+    global $CFG, $USER;
+    $url = null;
+    if (isset($CFG->grade_mygrades_report) && $CFG->grade_mygrades_report != 'external') {
+        if (isset($userid) && $USER->id != $userid) {
+            // Send to the gradebook report.
+            $url = new moodle_url('/grade/report/' . $CFG->grade_mygrades_report . '/index.php',
+                    array('id' => $courseid, 'userid' => $userid));
+        } else {
+            $url = new moodle_url('/grade/report/' . $CFG->grade_mygrades_report . '/index.php');
+        }
+    } else if (isset($CFG->grade_mygrades_report) && $CFG->grade_mygrades_report == 'external'
+            && !empty($CFG->gradereport_mygradeurl)) {
+        $url = $CFG->gradereport_mygradeurl;
+    } else {
+        $url = $CFG->wwwroot;
+    }
+    return $url;
 }

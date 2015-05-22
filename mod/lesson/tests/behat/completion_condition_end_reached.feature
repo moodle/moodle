@@ -8,8 +8,8 @@ Feature: Set end of lesson reached as a completion condition for a lesson
   Scenario: Set end reached as a condition
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | student1 | Student | 1 | student1@example.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -17,10 +17,8 @@ Feature: Set end of lesson reached as a completion condition for a lesson
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable completion tracking | 1 |
-    And I log out
+    And the following config values are set as admin:
+      | enablecompletion | 1 |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
@@ -60,6 +58,9 @@ Feature: Set end of lesson reached as a completion condition for a lesson
     And I hover "//li[contains(concat(' ', normalize-space(@class), ' '), ' modtype_lesson ')]/descendant::img[@alt='Not completed: Test lesson']" "xpath_element"
     And I follow "Course 1"
     And I follow "Test lesson"
+    And I should see "You have seen more than one page of this lesson already."
+    And I should see "Do you want to start at the last page you saw?"
+    And I follow "No"
     And I press "Next page"
     And I press "Next page"
     And I follow "Course 1"

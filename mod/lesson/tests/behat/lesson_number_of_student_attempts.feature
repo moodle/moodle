@@ -1,15 +1,15 @@
 @mod @mod_lesson
-Feature: In My home, teacher can see the number of student attempts to lessons
+Feature: In Dashboard, teacher can see the number of student attempts to lessons
   In order to know the number of student attempts to a lesson
   As a teacher
-  I need to see it in My home
+  I need to see it in Dashboard
 
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -141,7 +141,7 @@ Feature: In My home, teacher can see the number of student attempts to lessons
     And I should see "Your score is 2 (out of 3)."
     And I log out
     And I log in as "teacher1"
-    When I click on "My home" "link" in the "Navigation" "block"
+    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
     And I click on ".collapsibleregioncaption" "css_element"
     And I should see "3 attempts"

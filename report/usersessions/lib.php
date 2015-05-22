@@ -50,3 +50,34 @@ function report_usersessions_extend_navigation_user($navigation, $user, $course)
             new moodle_url('/report/usersessions/user.php'), $navigation::TYPE_SETTING);
     }
 }
+
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ *
+ * @return bool
+ */
+function report_usersessions_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    global $USER;
+
+    if (isguestuser() or !isloggedin()) {
+        return;
+    }
+
+    if (\core\session\manager::is_loggedinas() or $USER->id != $user->id) {
+        // No peeking at somebody else's sessions!
+        return;
+    }
+
+    $context = context_user::instance($USER->id);
+    if (has_capability('report/usersessions:manageownsessions', $context)) {
+        $node = new core_user\output\myprofile\node('reports', 'usersessions',
+                get_string('navigationlink', 'report_usersessions'), null, new moodle_url('/report/usersessions/user.php'));
+        $tree->add_node($node);
+    }
+    return true;
+}

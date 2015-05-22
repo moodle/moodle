@@ -22,7 +22,7 @@ class Less_Tree_Operation extends Less_Tree{
 		$this->isSpaced = $isSpaced;
 	}
 
-	function accept($visitor) {
+    public function accept($visitor) {
 		$this->operands = $visitor->visitArray($this->operands);
 	}
 
@@ -55,7 +55,7 @@ class Less_Tree_Operation extends Less_Tree{
     /**
      * @see Less_Tree::genCSS
      */
-	function genCSS( $output ){
+    public function genCSS( $output ){
 		$this->operands[0]->genCSS( $output );
 		if( $this->isSpaced ){
 			$output->add( " " );

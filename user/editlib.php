@@ -34,6 +34,96 @@ function cancel_email_update($userid) {
 }
 
 /**
+ * Performs the common access checks and page setup for all
+ * user preference pages.
+ *
+ * @param int $userid The user id to edit taken from the page params.
+ * @param int $courseid The optional course id if we came from a course context.
+ * @return array containing the user and course records.
+ */
+function useredit_setup_preference_page($userid, $courseid) {
+    global $PAGE, $SESSION, $DB, $CFG, $OUTPUT, $USER;
+
+    // Guest can not edit.
+    if (isguestuser()) {
+        print_error('guestnoeditprofile');
+    }
+
+    if (!$course = $DB->get_record('course', array('id' => $courseid))) {
+        print_error('invalidcourseid');
+    }
+
+    if ($course->id != SITEID) {
+        require_login($course);
+    } else if (!isloggedin()) {
+        if (empty($SESSION->wantsurl)) {
+            $SESSION->wantsurl = $CFG->httpswwwroot.'/user/preferences.php';
+        }
+        redirect(get_login_url());
+    } else {
+        $PAGE->set_context(context_system::instance());
+    }
+
+    // The user profile we are editing.
+    if (!$user = $DB->get_record('user', array('id' => $userid))) {
+        print_error('invaliduserid');
+    }
+
+    // Guest can not be edited.
+    if (isguestuser($user)) {
+        print_error('guestnoeditprofile');
+    }
+
+    // Remote users cannot be edited.
+    if (is_mnet_remote_user($user)) {
+        if (user_not_fully_set_up($user)) {
+            $hostwwwroot = $DB->get_field('mnet_host', 'wwwroot', array('id' => $user->mnethostid));
+            print_error('usernotfullysetup', 'mnet', '', $hostwwwroot);
+        }
+        redirect($CFG->wwwroot . "/user/view.php?course={$course->id}");
+    }
+
+    $systemcontext   = context_system::instance();
+    $personalcontext = context_user::instance($user->id);
+
+    // Check access control.
+    if ($user->id == $USER->id) {
+        // Editing own profile - require_login() MUST NOT be used here, it would result in infinite loop!
+        if (!has_capability('moodle/user:editownprofile', $systemcontext)) {
+            print_error('cannotedityourprofile');
+        }
+
+    } else {
+        // Teachers, parents, etc.
+        require_capability('moodle/user:editprofile', $personalcontext);
+
+        // No editing of primary admin!
+        if (is_siteadmin($user) and !is_siteadmin($USER)) {  // Only admins may edit other admins.
+            print_error('useradmineditadmin');
+        }
+    }
+
+    if ($user->deleted) {
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('userdeleted'));
+        echo $OUTPUT->footer();
+        die;
+    }
+
+    $PAGE->set_pagelayout('admin');
+    $PAGE->set_context($personalcontext);
+    if ($USER->id != $user->id) {
+        $PAGE->navigation->extend_for_user($user);
+    } else {
+        if ($node = $PAGE->navigation->find('myprofile', navigation_node::TYPE_ROOTNODE)) {
+            $node->force_open();
+        }
+    }
+
+    return array($user, $course);
+}
+
+/**
  * Loads the given users preferences into the given user object.
  *
  * @param stdClass $user The user object, modified by reference.
@@ -181,14 +271,16 @@ function useredit_update_interests($user, $interests) {
  * Powerful function that is used by edit and editadvanced to add common form elements/rules/etc.
  *
  * @param moodleform $mform
- * @param array|null $editoroptions
- * @param array|null $filemanageroptions
+ * @param array $editoroptions
+ * @param array $filemanageroptions
+ * @param stdClass $user
  */
-function useredit_shared_definition(&$mform, $editoroptions = null, $filemanageroptions = null) {
+function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions, $user) {
     global $CFG, $USER, $DB;
 
-    $user = $DB->get_record('user', array('id' => $USER->id));
-    useredit_load_preferences($user, false);
+    if ($user->id > 0) {
+        useredit_load_preferences($user, false);
+    }
 
     $strrequired = get_string('required');
 
@@ -207,7 +299,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     }
 
     // Do not show email field if change confirmation is pending.
-    if (!empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
+    if ($user->id > 0 and !empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
         $notice = get_string('emailchangepending', 'auth', $user);
         $notice .= '<br /><a href="edit.php?cancelemailchange=1&amp;id='.$user->id.'">'
                 . get_string('emailchangecancel', 'auth') . '</a>';
@@ -217,6 +309,13 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
         $mform->addRule('email', $strrequired, 'required', null, 'client');
         $mform->setType('email', PARAM_RAW_TRIMMED);
     }
+
+    $choices = array();
+    $choices['0'] = get_string('emaildisplayno');
+    $choices['1'] = get_string('emaildisplayyes');
+    $choices['2'] = get_string('emaildisplaycourse');
+    $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
+    $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
 
     $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="21"');
     $mform->setType('city', PARAM_TEXT);
@@ -231,13 +330,14 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
         $mform->setDefault('country', $CFG->country);
     }
 
-    $choices = get_list_of_timezones();
-    $choices['99'] = get_string('serverlocaltime');
-    if ($CFG->forcetimezone != 99) {
+    if (isset($CFG->forcetimezone) and $CFG->forcetimezone != 99) {
+        $choices = core_date::get_list_of_timezones($CFG->forcetimezone);
         $mform->addElement('static', 'forcedtimezone', get_string('timezone'), $choices[$CFG->forcetimezone]);
+        $mform->addElement('hidden', 'timezone');
+        $mform->setType('timezone', PARAM_TIMEZONE);
     } else {
+        $choices = core_date::get_list_of_timezones($user->timezone, true);
         $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
-        $mform->setDefault('timezone', '99');
     }
 
     // Multi-Calendar Support - see MDL-18375.
@@ -263,9 +363,6 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->addElement('editor', 'description_editor', get_string('userdescription'), null, $editoroptions);
     $mform->setType('description_editor', PARAM_CLEANHTML);
     $mform->addHelpButton('description_editor', 'userdescription');
-
-    $mform->addElement('header', 'moodle_userpreferences', get_string('preferences'));
-    useredit_shared_definition_preferences($user, $mform, $editoroptions, $filemanageroptions);
 
     if (empty($USER->newadminuser)) {
         $mform->addElement('header', 'moodle_picture', get_string('pictureofuser'));
@@ -341,88 +438,6 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
 
     $mform->addElement('text', 'address', get_string('address'), 'maxlength="255" size="25"');
     $mform->setType('address', PARAM_TEXT);
-}
-
-/**
- * Adds user preferences elements to user edit form.
- *
- * @param stdClass $user
- * @param moodleform $mform
- * @param array|null $editoroptions
- * @param array|null $filemanageroptions
- */
-function useredit_shared_definition_preferences($user, &$mform, $editoroptions = null, $filemanageroptions = null) {
-    global $CFG;
-
-    $choices = array();
-    $choices['0'] = get_string('emaildisplayno');
-    $choices['1'] = get_string('emaildisplayyes');
-    $choices['2'] = get_string('emaildisplaycourse');
-    $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
-    $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
-
-    $choices = array();
-    $choices['0'] = get_string('textformat');
-    $choices['1'] = get_string('htmlformat');
-    $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
-    $mform->setDefault('mailformat', $CFG->defaultpreference_mailformat);
-
-    if (!empty($CFG->allowusermailcharset)) {
-        $choices = array();
-        $charsets = get_list_of_charsets();
-        if (!empty($CFG->sitemailcharset)) {
-            $choices['0'] = get_string('site').' ('.$CFG->sitemailcharset.')';
-        } else {
-            $choices['0'] = get_string('site').' (UTF-8)';
-        }
-        $choices = array_merge($choices, $charsets);
-        $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);
-    }
-
-    $choices = array();
-    $choices['0'] = get_string('emaildigestoff');
-    $choices['1'] = get_string('emaildigestcomplete');
-    $choices['2'] = get_string('emaildigestsubjects');
-    $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
-    $mform->setDefault('maildigest', $CFG->defaultpreference_maildigest);
-    $mform->addHelpButton('maildigest', 'emaildigest');
-
-    $choices = array();
-    $choices['1'] = get_string('autosubscribeyes');
-    $choices['0'] = get_string('autosubscribeno');
-    $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
-    $mform->setDefault('autosubscribe', $CFG->defaultpreference_autosubscribe);
-
-    if (!empty($CFG->forum_trackreadposts)) {
-        $choices = array();
-        $choices['0'] = get_string('trackforumsno');
-        $choices['1'] = get_string('trackforumsyes');
-        $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
-        $mform->setDefault('trackforums', $CFG->defaultpreference_trackforums);
-    }
-
-    $editors = editors_get_enabled();
-    if (count($editors) > 1) {
-        $choices = array('' => get_string('defaulteditor'));
-        $firsteditor = '';
-        foreach (array_keys($editors) as $editor) {
-            if (!$firsteditor) {
-                $firsteditor = $editor;
-            }
-            $choices[$editor] = get_string('pluginname', 'editor_' . $editor);
-        }
-        $mform->addElement('select', 'preference_htmleditor', get_string('textediting'), $choices);
-        $mform->setDefault('preference_htmleditor', '');
-    } else {
-        // Empty string means use the first chosen text editor.
-        $mform->addElement('hidden', 'preference_htmleditor');
-        $mform->setDefault('preference_htmleditor', '');
-        $mform->setType('preference_htmleditor', PARAM_PLUGIN);
-    }
-
-    $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
-    $mform->setDefault('lang', $CFG->lang);
-
 }
 
 /**

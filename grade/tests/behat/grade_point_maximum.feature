@@ -19,7 +19,7 @@ Feature: We can change the grading type and maximum grade point values
       | Grade point maximum | 900 |
       | Grade point default | 800 |
     And I press "Save changes"
-    And I follow "Home"
+    And I am on site homepage
     And I follow "Course 1"
 
   @javascript
@@ -99,7 +99,7 @@ Feature: We can change the grading type and maximum grade point values
     And I set the following fields to these values:
       | Grade point maximum | 100 |
     And I press "Save changes"
-    And I follow "Home"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Test Assignment 1"
     And I follow "Edit settings"

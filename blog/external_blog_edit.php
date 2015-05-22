@@ -44,7 +44,7 @@ if ($id !== null) {
     $url->param('id', $id);
 }
 $PAGE->set_url($url);
-$PAGE->set_context($context);
+$PAGE->set_context(context_user::instance($USER->id));
 $PAGE->set_pagelayout('admin');
 
 $returnurl = new moodle_url('/blog/external_blogs.php');
@@ -125,7 +125,7 @@ if ($externalblogform->is_cancelled()) {
     redirect($returnurl);
 }
 
-$PAGE->set_heading("$SITE->shortname: $strblogs: $strexternalblogs", $SITE->fullname);
+$PAGE->set_heading(fullname($USER));
 $PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
 
 echo $OUTPUT->header();

@@ -343,10 +343,13 @@ class block_base {
      * Default behavior: save all variables as $CFG properties
      * You don't need to override this if you 're satisfied with the above
      *
+     * @deprecated since Moodle 2.9 MDL-49385 - Please use Admin Settings functionality to save block configuration.
+     * @todo MDL-49553 This will be deleted in Moodle 3.1
      * @param array $data
      * @return boolean
      */
     function config_save($data) {
+        debugging('config_save($data) is deprecated, use Admin Settings functionality to save block configuration.', DEBUG_DEVELOPER);
         foreach ($data as $name => $value) {
             set_config($name, $value);
         }
@@ -499,6 +502,15 @@ class block_base {
     }
 
     /**
+     * Copy any block-specific data when copying to a new block instance.
+     * @param int $fromid the id number of the block instance to copy from
+     * @return boolean
+     */
+    public function instance_copy($fromid) {
+        return true;
+    }
+
+    /**
      * Delete everything related to this instance if you have been using persistent storage other than the configdata field.
      * @return boolean
      */
@@ -547,9 +559,21 @@ class block_base {
             && $page->context->contextlevel == CONTEXT_USER // Page belongs to a user
             && $page->context->instanceid == $USER->id // Page belongs to this user
             && $page->pagetype == 'my-index') { // Ensure we are on the My Moodle page
-            $capability = 'block/' . $this->name() . ':myaddinstance';
-            return $this->has_add_block_capability($page, $capability)
-                    && has_capability('moodle/my:manageblocks', $page->context);
+
+            // If the block cannot be displayed on /my it is ok if the myaddinstance capability is not defined.
+            $formats = $this->applicable_formats();
+            // Is 'my' explicitly forbidden?
+            // If 'all' has not been allowed, has 'my' been explicitly allowed?
+            if ((isset($formats['my']) && $formats['my'] == false)
+                || (empty($formats['all']) && empty($formats['my']))) {
+
+                // Block cannot be added to /my regardless of capabilities.
+                return false;
+            } else {
+                $capability = 'block/' . $this->name() . ':myaddinstance';
+                return $this->has_add_block_capability($page, $capability)
+                       && has_capability('moodle/my:manageblocks', $page->context);
+            }
         }
 
         $capability = 'block/' . $this->name() . ':addinstance';

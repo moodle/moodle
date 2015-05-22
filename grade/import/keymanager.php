@@ -39,6 +39,12 @@ $context = context_course::instance($id);
 
 require_capability('moodle/grade:import', $context);
 
+// Check if the user has at least one grade publishing capability.
+$plugins = grade_helper::get_plugins_import($course->id);
+if (!isset($plugins['keymanager'])) {
+    print_error('nopermissions');
+}
+
 print_grade_page_head($course->id, 'import', 'keymanager', get_string('keymanager', 'grades'));
 
 $stredit   = get_string('edit');

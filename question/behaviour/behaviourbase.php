@@ -85,6 +85,16 @@ abstract class question_behaviour {
     }
 
     /**
+     * Whether the current attempt at this question could be completed just by the
+     * student interacting with the question, before $qa->finish() is called.
+     *
+     * @return boolean whether the attempt can finish naturally.
+     */
+    public function can_finish_during_attempt() {
+        return false;
+    }
+
+    /**
      * Cause the question to be renderered. This gets the appropriate behaviour
      * renderer using {@link get_renderer()}, and adjusts the display
      * options using {@link adjust_display_options()} and then calls

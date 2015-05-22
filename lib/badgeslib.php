@@ -398,6 +398,15 @@ class badge {
         $result = $DB->insert_record('badge_issued', $issued, true);
 
         if ($result) {
+            // Trigger badge awarded event.
+            $eventdata = array (
+                'context' => $this->get_context(),
+                'objectid' => $this->id,
+                'relateduserid' => $userid,
+                'other' => array('dateexpire' => $issued->dateexpire, 'badgeissuedid' => $result)
+            );
+            \core\event\badge_awarded::create($eventdata)->trigger();
+
             // Lock the badge, so that its criteria could not be changed any more.
             if ($this->status == BADGE_STATUS_ACTIVE) {
                 $this->set_status(BADGE_STATUS_ACTIVE_LOCKED);
@@ -957,7 +966,7 @@ function badges_process_badge_image(badge $badge, $iconfile) {
     require_once($CFG->libdir. '/gdlib.php');
 
     if (!empty($CFG->gdversion)) {
-        process_new_icon($badge->get_context(), 'badges', 'badgeimage', $badge->id, $iconfile);
+        process_new_icon($badge->get_context(), 'badges', 'badgeimage', $badge->id, $iconfile, true);
         @unlink($iconfile);
 
         // Clean up file draft area after badge image has been saved.
@@ -1126,49 +1135,8 @@ function badges_download($userid) {
     if ($zipper->archive_to_pathname($filelist, $tempzip)) {
         send_temp_file($tempzip, 'badges.zip');
     } else {
-        debugging("Problems with archiving the files.");
-    }
-}
-
-/**
- * Print badges on user profile page.
- *
- * @param int $userid User ID.
- * @param int $courseid Course if we need to filter badges (optional).
- */
-function profile_display_badges($userid, $courseid = 0) {
-    global $CFG, $PAGE, $USER, $SITE;
-    require_once($CFG->dirroot . '/badges/renderer.php');
-
-    // Determine context.
-    if (isloggedin()) {
-        $context = context_user::instance($USER->id);
-    } else {
-        $context = context_system::instance();
-    }
-
-    if ($USER->id == $userid || has_capability('moodle/badges:viewotherbadges', $context)) {
-        $records = badges_get_user_badges($userid, $courseid, null, null, null, true);
-        $renderer = new core_badges_renderer($PAGE, '');
-
-        // Print local badges.
-        if ($records) {
-            $left = get_string('localbadgesp', 'badges', format_string($SITE->fullname));
-            $right = $renderer->print_badges_list($records, $userid, true);
-            echo html_writer::tag('dt', $left);
-            echo html_writer::tag('dd', $right);
-        }
-
-        // Print external badges.
-        if ($courseid == 0 && !empty($CFG->badges_allowexternalbackpack)) {
-            $backpack = get_backpack_settings($userid);
-            if (isset($backpack->totalbadges) && $backpack->totalbadges !== 0) {
-                $left = get_string('externalbadgesp', 'badges');
-                $right = $renderer->print_badges_list($backpack->badges, $userid, true, true);
-                echo html_writer::tag('dt', $left);
-                echo html_writer::tag('dd', $right);
-            }
-        }
+        debugging("Problems with archiving the files.", DEBUG_DEVELOPER);
+        die;
     }
 }
 

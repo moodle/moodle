@@ -26,6 +26,7 @@
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->libdir . '/badgeslib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 $id = required_param('hash', PARAM_ALPHANUM);
 $bake = optional_param('bake', 0, PARAM_BOOL);
@@ -37,12 +38,10 @@ $badge = new issued_badge($id);
 
 if ($bake && ($badge->recipient->id == $USER->id)) {
     $name = str_replace(' ', '_', $badge->badgeclass['name']) . '.png';
-    ob_start();
-    $file = badges_bake($id, $badge->badgeid);
-    header('Content-Type: image/png');
-    header('Content-Disposition: attachment; filename="'. $name .'"');
-    readfile($file);
-    ob_flush();
+    $filehash = badges_bake($id, $badge->badgeid, $USER->id, true);
+    $fs = get_file_storage();
+    $file = $fs->get_file_by_hash($filehash);
+    send_stored_file($file, 0, 0, true, array('filename' => $name));
 }
 
 $PAGE->set_url('/badges/badge.php', array('hash' => $id));

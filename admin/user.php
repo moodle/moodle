@@ -190,9 +190,14 @@
     // We don't need to check the fullnamedisplay setting here as the fullname function call further down has
     // the override parameter set to true.
     $fullnamesetting = $CFG->alternativefullnameformat;
-    // If we are using language or it is empty, then retrieve all of the user's names.
+    // If we are using language or it is empty, then retrieve the default user names of just 'firstname' and 'lastname'.
     if ($fullnamesetting == 'language' || empty($fullnamesetting)) {
-        $fullnamesetting = implode(' ', $allusernamefields);
+        // Set $a variables to return 'firstname' and 'lastname'.
+        $a = new stdClass();
+        $a->firstname = 'firstname';
+        $a->lastname = 'lastname';
+        // Getting the fullname display will ensure that the order in the language file is maintained.
+        $fullnamesetting = get_string('fullnamedisplay', null, $a);
     }
 
     // Order in string will ensure that the name columns are in the correct order.

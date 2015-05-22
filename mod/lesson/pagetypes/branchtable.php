@@ -145,6 +145,15 @@ class lesson_page_type_branchtable extends lesson_page {
             $output .= $renderer->slideshow_end();
         }
 
+        // Trigger an event: content page viewed.
+        $eventparams = array(
+            'context' => context_module::instance($PAGE->cm->id),
+            'objectid' => $this->properties->id
+            );
+
+        $event = \mod_lesson\event\content_page_viewed::create($eventparams);
+        $event->trigger();
+
         return $output;
     }
 
@@ -164,15 +173,6 @@ class lesson_page_type_branchtable extends lesson_page {
         } else {
             $retries = 0;
         }
-        $branch = new stdClass;
-        $branch->lessonid = $this->lesson->id;
-        $branch->userid = $USER->id;
-        $branch->pageid = $this->properties->id;
-        $branch->retry = $retries;
-        $branch->flag = $branchflag;
-        $branch->timeseen = time();
-
-        $DB->insert_record("lesson_branch", $branch);
 
         //  this is called when jumping to random from a branch table
         $context = context_module::instance($PAGE->cm->id);
@@ -198,8 +198,19 @@ class lesson_page_type_branchtable extends lesson_page {
         } elseif ($newpageid == LESSON_RANDOMBRANCH) {
             $newpageid = lesson_unseen_branch_jump($this->lesson, $USER->id);
         }
-        // no need to record anything in lesson_attempts
-        redirect(new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id,'pageid'=>$newpageid)));
+
+        // Record this page in lesson_branch.
+        $branch = new stdClass;
+        $branch->lessonid = $this->lesson->id;
+        $branch->userid = $USER->id;
+        $branch->pageid = $this->properties->id;
+        $branch->retry = $retries;
+        $branch->flag = $branchflag;
+        $branch->timeseen = time();
+        $branch->nextpageid = $newpageid;
+        $DB->insert_record("lesson_branch", $branch);
+
+        redirect(new moodle_url('/mod/lesson/view.php', array('id' => $PAGE->cm->id, 'pageid' => $newpageid)));
     }
 
     public function display_answers(html_table $table) {

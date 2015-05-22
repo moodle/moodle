@@ -28,29 +28,6 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
     protected $language = null;
 
     /*
-     * This renders a notification message.
-     * Uses bootstrap compatible html.
-     */
-    public function notification($message, $classes = 'notifyproblem') {
-        $message = clean_text($message);
-        $type = '';
-
-        if (($classes == 'notifyproblem') || ($classes == 'notifytiny')) {
-            $type = 'alert alert-error';
-        }
-        if ($classes == 'notifysuccess') {
-            $type = 'alert alert-success';
-        }
-        if ($classes == 'notifymessage') {
-            $type = 'alert alert-info';
-        }
-        if ($classes == 'redirectmessage') {
-            $type = 'alert alert-block alert-info';
-        }
-        return "<div class=\"$type\">$message</div>";
-    }
-
-    /*
      * This renders the navbar.
      * Uses bootstrap compatible html.
      */
@@ -59,6 +36,7 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         if (empty($items)) {
             return '';
         }
+
         $breadcrumbs = array();
         foreach ($items as $item) {
             $item->hideicon = true;
@@ -247,34 +225,4 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class theme_bootstrapbase_core_renderer_maintenance extends core_renderer_maintenance {
-    /**
-     * Renders notifications for maintenance scripts.
-     *
-     * We need to override this method in the same way we do for the core_renderer maintenance method
-     * found above.
-     * Please note this isn't required of every function, only functions used during maintenance.
-     * In this case notification is used to print errors and we want pretty errors.
-     *
-     * @param string $message
-     * @param string $classes
-     * @return string
-     */
-    public function notification($message, $classes = 'notifyproblem') {
-        $message = clean_text($message);
-        $type = '';
-
-        if (($classes == 'notifyproblem') || ($classes == 'notifytiny')) {
-            $type = 'alert alert-error';
-        }
-        if ($classes == 'notifysuccess') {
-            $type = 'alert alert-success';
-        }
-        if ($classes == 'notifymessage') {
-            $type = 'alert alert-info';
-        }
-        if ($classes == 'redirectmessage') {
-            $type = 'alert alert-block alert-info';
-        }
-        return "<div class=\"$type\">$message</div>";
-    }
 }

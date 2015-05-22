@@ -10,9 +10,9 @@ Feature: Verify that all form fields values can be get and set
       | Course 1 | C1 | 0 |
     And the following "users" exist:
       | username | email | firstname | lastname |
-      | student1 | s1@asd.com | Student | 1 |
-      | student2 | s2@asd.com | Student | 2 |
-      | student3 | s3@asd.com | Student | 3 |
+      | student1 | s1@example.com | Student | 1 |
+      | student2 | s2@example.com | Student | 2 |
+      | student3 | s3@example.com | Student | 3 |
     And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
@@ -39,7 +39,7 @@ Feature: Verify that all form fields values can be get and set
     # Select (multi-select) - We will check "I set the field...".
     And I set the field "otagsadd" to "OT1, OT2, OT3, OT4, OT5"
     And I press "Add official tags"
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I follow "Test this one"

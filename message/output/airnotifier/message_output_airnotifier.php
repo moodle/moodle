@@ -81,6 +81,11 @@ class message_output_airnotifier extends message_output {
         $extra->date            = (!empty($eventdata->timecreated)) ? $eventdata->timecreated : time();
         $extra->notification    = (!empty($eventdata->notification)) ? 1 : 0;
 
+        // Site name.
+        $site = get_site();
+        $extra->sitefullname = format_string($site->fullname);
+        $extra->siteshortname = format_string($site->shortname);
+
         // We are sending to message to all devices.
         $airnotifiermanager = new message_airnotifier_manager();
         $devicetokens = $airnotifiermanager->get_user_devices($CFG->airnotifiermobileappname, $eventdata->userto->id);

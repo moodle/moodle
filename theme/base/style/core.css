@@ -155,6 +155,17 @@ h6 img.iconhelp {
     padding: 4px;
 }
 
+/** Table caption support */
+table caption {
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 42px;
+    text-align: left;
+}
+.dir-rtl table caption {
+    text-align: right;
+}
+
 /** The 1-pixel padding is there to avoid phantom scroll bars on OS X (FF, Safari and Chrome)**/
 .no-overflow {overflow:auto;padding-bottom:1px;}
 .pagelayout-report .no-overflow {overflow:visible;}

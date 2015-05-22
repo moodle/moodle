@@ -91,8 +91,8 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233720, 1, '-submit',     1),
         array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233720, 1, '-_triesleft', 1),
         array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 3, 2, 'todo',             null, 1256233740, 1, '-tryagain',   1),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 5, 3, 'gradedright',      null, 1256233790, 1, 'answer',     'frog'),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 5, 3, 'gradedright', 1.0000000, 1256233790, 1, '-submit',     1),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 5, 3, 'gradedright', 0.6666667, 1256233790, 1, 'answer',     'frog'),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 5, 3, 'gradedright', 0.6666667, 1256233790, 1, '-submit',     1),
         );
     }
 
@@ -103,6 +103,8 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         $this->assertEquals(0, count($this->observer->get_steps_added()));
         $this->assertEquals(0, count($this->observer->get_steps_modified()));
         $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
     }
 
     public function test_update_usage() {
@@ -120,6 +122,9 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         $this->assertEquals(1, count($newattempts));
         $this->assertTrue($this->quba->get_question_attempt($slot) === reset($newattempts));
         $this->assertSame($slot, key($newattempts));
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
     }
 
     public function test_add_and_start_question() {
@@ -136,6 +141,9 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         $this->assertTrue($this->quba->get_question_attempt($slot) === reset($newattempts));
         $this->assertSame($slot, key($newattempts));
         $this->assertEquals(0, count($this->observer->get_steps_added()));
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
     }
 
     public function test_process_action() {
@@ -157,6 +165,9 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
 
         list($newstep, $qaid, $seq) = reset($newsteps);
         $this->assertSame($this->quba->get_question_attempt($this->slot)->get_last_step(), $newstep);
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
     }
 
     public function test_regrade_same_steps() {
@@ -184,6 +195,9 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
             $this->assertSame(array($step, $updatedattempt->get_database_id(), $seq),
                     $updatedsteps[$seq]);
         }
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
     }
 
     public function test_regrade_losing_steps() {
@@ -220,6 +234,9 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         $seconddeletedstep = end($deletedsteps);
         $this->assertEquals(array('answer' => 'frog', '-submit' => 1),
                 $seconddeletedstep->get_all_data());
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
     }
 
     public function test_tricky_regrade() {
@@ -258,5 +275,237 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         }
 
         $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
+    }
+
+    public function test_move_question() {
+
+        $q = test_question_maker::make_question('truefalse');
+        $newslot = $this->quba->add_question_in_place_of_other($this->slot, $q);
+        $this->quba->start_question($this->slot);
+
+        $addedattempts = $this->observer->get_attempts_added();
+        $this->assertEquals(1, count($addedattempts));
+        $addedattempt = reset($addedattempts);
+        $this->assertSame($this->quba->get_question_attempt($this->slot), $addedattempt);
+
+        $updatedattempts = $this->observer->get_attempts_modified();
+        $this->assertEquals(1, count($updatedattempts));
+        $updatedattempt = reset($updatedattempts);
+        $this->assertSame($this->quba->get_question_attempt($newslot), $updatedattempt);
+
+        $this->assertEquals(0, count($this->observer->get_steps_added()));
+        $this->assertEquals(0, count($this->observer->get_steps_modified()));
+        $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
+    }
+
+    public function test_move_question_then_modify() {
+
+        $q = test_question_maker::make_question('truefalse');
+        $newslot = $this->quba->add_question_in_place_of_other($this->slot, $q);
+        $this->quba->start_question($this->slot);
+        $this->quba->process_action($this->slot, array('answer' => 'frog', '-submit' => 1));
+        $this->quba->manual_grade($newslot, 'Test', 0.5, FORMAT_HTML);
+
+        $addedattempts = $this->observer->get_attempts_added();
+        $this->assertEquals(1, count($addedattempts));
+        $addedattempt = reset($addedattempts);
+        $this->assertSame($this->quba->get_question_attempt($this->slot), $addedattempt);
+
+        $updatedattempts = $this->observer->get_attempts_modified();
+        $this->assertEquals(1, count($updatedattempts));
+        $updatedattempt = reset($updatedattempts);
+        $this->assertSame($this->quba->get_question_attempt($newslot), $updatedattempt);
+
+        $newsteps = $this->observer->get_steps_added();
+        $this->assertEquals(1, count($newsteps));
+        list($newstep, $qaid, $seq) = reset($newsteps);
+        $this->assertSame($this->quba->get_question_attempt($newslot)->get_last_step(), $newstep);
+
+        $this->assertEquals(0, count($this->observer->get_steps_modified()));
+        $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
+    }
+
+    public function test_move_question_then_move_again() {
+        $originalqa = $this->quba->get_question_attempt($this->slot);
+
+        $q1 = test_question_maker::make_question('truefalse');
+        $newslot = $this->quba->add_question_in_place_of_other($this->slot, $q1);
+        $this->quba->start_question($this->slot);
+
+        $q2 = test_question_maker::make_question('truefalse');
+        $newslot2 = $this->quba->add_question_in_place_of_other($newslot, $q2);
+        $this->quba->start_question($newslot);
+
+        $addedattempts = $this->observer->get_attempts_added();
+        $this->assertEquals(2, count($addedattempts));
+
+        $updatedattempts = $this->observer->get_attempts_modified();
+        $this->assertEquals(1, count($updatedattempts));
+        $updatedattempt = reset($updatedattempts);
+        $this->assertSame($originalqa, $updatedattempt);
+
+        $this->assertEquals(0, count($this->observer->get_steps_added()));
+        $this->assertEquals(0, count($this->observer->get_steps_modified()));
+        $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
+    }
+
+    public function test_set_max_mark() {
+        $this->quba->set_max_mark($this->slot, 6.0);
+        $this->assertEquals(4.0, $this->quba->get_total_mark(), '', 0.0000005);
+
+        $this->assertEquals(0, count($this->observer->get_attempts_added()));
+
+        $updatedattempts = $this->observer->get_attempts_modified();
+        $this->assertEquals(1, count($updatedattempts));
+        $updatedattempt = reset($updatedattempts);
+        $this->assertSame($this->quba->get_question_attempt($this->slot), $updatedattempt);
+
+        $this->assertEquals(0, count($this->observer->get_steps_added()));
+        $this->assertEquals(0, count($this->observer->get_steps_modified()));
+        $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
+    }
+
+    public function test_set_question_attempt_metadata() {
+        $this->quba->set_question_attempt_metadata($this->slot, 'metathingy', 'a value');
+        $this->assertEquals('a value', $this->quba->get_question_attempt_metadata($this->slot, 'metathingy'));
+
+        $this->assertEquals(0, count($this->observer->get_attempts_added()));
+        $this->assertEquals(0, count($this->observer->get_attempts_modified()));
+
+        $this->assertEquals(0, count($this->observer->get_steps_added()));
+        $this->assertEquals(0, count($this->observer->get_steps_modified()));
+        $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+
+        $this->assertEquals(array($this->slot => array('metathingy' => $this->quba->get_question_attempt($this->slot))),
+                $this->observer->get_metadata_added());
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
+    }
+
+    public function test_set_question_attempt_metadata_then_change() {
+        $this->quba->set_question_attempt_metadata($this->slot, 'metathingy', 'a value');
+        $this->quba->set_question_attempt_metadata($this->slot, 'metathingy', 'different value');
+        $this->assertEquals('different value', $this->quba->get_question_attempt_metadata($this->slot, 'metathingy'));
+
+        $this->assertEquals(0, count($this->observer->get_attempts_added()));
+        $this->assertEquals(0, count($this->observer->get_attempts_modified()));
+
+        $this->assertEquals(0, count($this->observer->get_steps_added()));
+        $this->assertEquals(0, count($this->observer->get_steps_modified()));
+        $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+
+        $this->assertEquals(array($this->slot => array('metathingy' => $this->quba->get_question_attempt($this->slot))),
+                $this->observer->get_metadata_added());
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
+    }
+
+    public function test_set_metadata_previously_set_but_dont_actually_change() {
+        $this->quba->set_question_attempt_metadata($this->slot, 'metathingy', 'a value');
+        $this->observer = new testable_question_engine_unit_of_work($this->quba);
+        $this->quba->set_observer($this->observer);
+        $this->quba->set_question_attempt_metadata($this->slot, 'metathingy', 'a value');
+        $this->assertEquals('a value', $this->quba->get_question_attempt_metadata($this->slot, 'metathingy'));
+
+        $this->assertEquals(0, count($this->observer->get_attempts_added()));
+        $this->assertEquals(0, count($this->observer->get_attempts_modified()));
+
+        $this->assertEquals(0, count($this->observer->get_steps_added()));
+        $this->assertEquals(0, count($this->observer->get_steps_modified()));
+        $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
+    }
+
+    public function test_set_metadata_previously_set() {
+        $this->quba->set_question_attempt_metadata($this->slot, 'metathingy', 'a value');
+        $this->observer = new testable_question_engine_unit_of_work($this->quba);
+        $this->quba->set_observer($this->observer);
+        $this->quba->set_question_attempt_metadata($this->slot, 'metathingy', 'different value');
+        $this->assertEquals('different value', $this->quba->get_question_attempt_metadata($this->slot, 'metathingy'));
+
+        $this->assertEquals(0, count($this->observer->get_attempts_added()));
+        $this->assertEquals(0, count($this->observer->get_attempts_modified()));
+
+        $this->assertEquals(0, count($this->observer->get_steps_added()));
+        $this->assertEquals(0, count($this->observer->get_steps_modified()));
+        $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(array($this->slot => array('metathingy' => $this->quba->get_question_attempt($this->slot))),
+                $this->observer->get_metadata_modified());
+    }
+
+    public function test_set_metadata_in_new_question() {
+        $newslot = $this->quba->add_question(test_question_maker::make_question('truefalse'));
+        $this->quba->start_question($newslot);
+        $this->quba->set_question_attempt_metadata($newslot, 'metathingy', 'a value');
+        $this->assertEquals('a value', $this->quba->get_question_attempt_metadata($newslot, 'metathingy'));
+
+        $this->assertEquals(array($newslot => $this->quba->get_question_attempt($newslot)),
+                $this->observer->get_attempts_added());
+        $this->assertEquals(0, count($this->observer->get_attempts_modified()));
+
+        $this->assertEquals(0, count($this->observer->get_steps_added()));
+        $this->assertEquals(0, count($this->observer->get_steps_modified()));
+        $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+
+        $this->assertEquals(0, count($this->observer->get_metadata_added()));
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
+    }
+
+    public function test_set_metadata_then_move() {
+        $this->quba->set_question_attempt_metadata($this->slot, 'metathingy', 'a value');
+        $q = test_question_maker::make_question('truefalse');
+        $newslot = $this->quba->add_question_in_place_of_other($this->slot, $q);
+        $this->quba->start_question($this->slot);
+        $this->assertEquals('a value', $this->quba->get_question_attempt_metadata($newslot, 'metathingy'));
+
+        $this->assertEquals(array($this->slot => $this->quba->get_question_attempt($this->slot)),
+                $this->observer->get_attempts_added());
+        $this->assertEquals(array($newslot => $this->quba->get_question_attempt($newslot)),
+                $this->observer->get_attempts_modified());
+
+        $this->assertEquals(0, count($this->observer->get_steps_added()));
+        $this->assertEquals(0, count($this->observer->get_steps_modified()));
+        $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+
+        $this->assertEquals(array($newslot => array('metathingy' => $this->quba->get_question_attempt($newslot))),
+                $this->observer->get_metadata_added());
+        $this->assertEquals(0, count($this->observer->get_metadata_modified()));
+    }
+
+    public function test_move_then_set_metadata() {
+        $q = test_question_maker::make_question('truefalse');
+        $newslot = $this->quba->add_question_in_place_of_other($this->slot, $q);
+        $this->quba->start_question($this->slot);
+        $this->quba->set_question_attempt_metadata($newslot, 'metathingy', 'a value');
+        $this->assertEquals('a value', $this->quba->get_question_attempt_metadata($newslot, 'metathingy'));
+
+        $this->assertEquals(array($this->slot => $this->quba->get_question_attempt($this->slot)),
+                $this->observer->get_attempts_added());
+        $this->assertEquals(array($newslot => $this->quba->get_question_attempt($newslot)),
+                $this->observer->get_attempts_modified());
+
+        $this->assertEquals(0, count($this->observer->get_steps_added()));
+        $this->assertEquals(0, count($this->observer->get_steps_modified()));
+        $this->assertEquals(0, count($this->observer->get_steps_deleted()));
+
+        $this->assertEquals(array($newslot => array('metathingy' => $this->quba->get_question_attempt($newslot))),
+                $this->observer->get_metadata_added());
     }
 }

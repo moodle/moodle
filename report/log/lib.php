@@ -48,7 +48,7 @@ function report_log_extend_navigation_course($navigation, $course, $context) {
  * @return bool returns true if the store is supported by the report, false otherwise.
  */
 function report_log_supports_logstore($instance) {
-    if ($instance instanceof \core\log\sql_select_reader) {
+    if ($instance instanceof \core\log\sql_reader) {
         return true;
     }
     return false;
@@ -147,4 +147,38 @@ function report_log_page_type_list($pagetype, $parentcontext, $currentcontext) {
         'report-log-user'  => get_string('page-report-log-user',  'report_log')
     );
     return $array;
+}
+
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ *
+ * @return bool
+ */
+function report_log_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    if (empty($course)) {
+        // We want to display these reports under the site context.
+        $course = get_fast_modinfo(SITEID)->get_course();
+    }
+    list($all, $today) = report_log_can_access_user_report($user, $course);
+    if ($today) {
+        // Today's log.
+        $url = new moodle_url('/report/log/user.php',
+            array('id' => $user->id, 'course' => $course->id, 'mode' => 'today'));
+        $node = new core_user\output\myprofile\node('reports', 'todayslogs', get_string('todaylogs'), null, $url);
+        $tree->add_node($node);
+    }
+
+    if ($all) {
+        // All logs.
+        $url = new moodle_url('/report/log/user.php',
+            array('id' => $user->id, 'course' => $course->id, 'mode' => 'all'));
+        $node = new core_user\output\myprofile\node('reports', 'alllogs', get_string('alllogs'), null, $url);
+        $tree->add_node($node);
+    }
+    return true;
 }

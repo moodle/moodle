@@ -43,9 +43,9 @@ class cronlib_testcase extends basic_testcase {
         $time = 0;
 
         // Relative time stamps. Did you know data providers get executed during phpunit init?
-        $lastweekstime = strtotime('-1 week') - time();
-        $beforelastweekstime = $lastweekstime - 60;
-        $afterlastweekstime = $lastweekstime + 60;
+        $lastweekstime = -($CFG->tempdatafoldercleanup * 3600); // This must match file_temp_cleanup_task.
+        $beforelastweekstime = $lastweekstime - 3600 - 1; // At least 1h and 1s diff (make it DST immune).
+        $afterlastweekstime = $lastweekstime + 3600 + 1; // At least 1h and 1s diff (make it DST immune).
 
         $nodes = array();
         // Really old directory to remove.

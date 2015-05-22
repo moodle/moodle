@@ -79,9 +79,9 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->review_summary_table($summarydata, 0);
 
         if (!is_null($seq)) {
-            $output .= $attemptobj->render_question_at_step($slot, $seq, true);
+            $output .= $attemptobj->render_question_at_step($slot, $seq, true, $this);
         } else {
-            $output .= $attemptobj->render_question($slot, true);
+            $output .= $attemptobj->render_question($slot, true, $this);
         }
 
         $output .= $this->close_window_button();
@@ -182,7 +182,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                               mod_quiz_display_options $displayoptions) {
         $output = '';
         foreach ($slots as $slot) {
-            $output .= $attemptobj->render_question($slot, $reviewing,
+            $output .= $attemptobj->render_question($slot, $reviewing, $this,
                     $attemptobj->review_url($slot, $page, $showall));
         }
         return $output;
@@ -313,7 +313,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $panel->render_before_button_bits($this);
 
         $bcc = $panel->get_button_container_class();
-        $output .= html_writer::start_tag('div', array('class' => "qn_buttons $bcc"));
+        $output .= html_writer::start_tag('div', array('class' => "qn_buttons clearfix $bcc"));
         foreach ($panel->get_question_buttons() as $button) {
             $output .= $this->render($button);
         }
@@ -329,9 +329,10 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Returns the quizzes navigation button
+     * Display a quiz navigation button.
      *
      * @param quiz_nav_question_button $button
+     * @return string HTML fragment.
      */
     protected function render_quiz_nav_question_button(quiz_nav_question_button $button) {
         $classes = array('qnbutton', $button->stateclass, $button->navmethod);
@@ -374,6 +375,16 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Display a quiz navigation heading.
+     *
+     * @param quiz_nav_section_heading $heading the heading.
+     * @return string HTML fragment.
+     */
+    protected function render_quiz_nav_section_heading(quiz_nav_section_heading $heading) {
+        return $this->heading($heading->heading, 3, 'mod_quiz-section-heading');
+    }
+
+    /**
      * outputs the link the other attempts.
      *
      * @param mod_quiz_links_to_other_attempts $links
@@ -382,10 +393,12 @@ class mod_quiz_renderer extends plugin_renderer_base {
             mod_quiz_links_to_other_attempts $links) {
         $attemptlinks = array();
         foreach ($links->links as $attempt => $url) {
-            if ($url) {
-                $attemptlinks[] = html_writer::link($url, $attempt);
-            } else {
+            if (!$url) {
                 $attemptlinks[] = html_writer::tag('strong', $attempt);
+            } else if ($url instanceof renderable) {
+                $attemptlinks[] = $this->render($url);
+            } else {
+                $attemptlinks[] = html_writer::link($url, $attempt);
             }
         }
         return implode(', ', $attemptlinks);
@@ -459,8 +472,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         // Print all the questions.
         foreach ($slots as $slot) {
-            $output .= $attemptobj->render_question($slot, false,
-                    $attemptobj->attempt_url($slot, $page));
+            $output .= $attemptobj->render_question($slot, false, $this,
+                    $attemptobj->attempt_url($slot, $page), $this);
         }
 
         $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));
@@ -486,7 +499,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         // if you navigate before the form has finished loading, it does not wipe all
         // the student's answers.
         $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'slots',
-                'value' => implode(',', $slots)));
+                'value' => implode(',', $attemptobj->get_active_slots($page))));
 
         // Finish the form.
         $output .= html_writer::end_tag('div');
@@ -495,6 +508,22 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->connection_warning();
 
         return $output;
+    }
+
+    /**
+     * Render a button which allows students to redo a question in the attempt.
+     *
+     * @param int $slot the number of the slot to generate the button for.
+     * @param bool $disabled if true, output the button disabled.
+     * @return string HTML fragment.
+     */
+    public function redo_question_button($slot, $disabled) {
+        $attributes = array('type' => 'submit',  'name' => 'redoslot' . $slot,
+                'value' => get_string('redoquestion', 'quiz'), 'class' => 'mod_quiz-redo_question_button');
+        if ($disabled) {
+            $attributes['disabled'] = 'disabled';
+        }
+        return html_writer::div(html_writer::empty_tag('input', $attributes));
     }
 
     /**
@@ -589,14 +618,27 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $table->align[] = 'left';
             $table->size[] = '';
         }
+        $tablewidth = count($table->align);
         $table->data = array();
 
         // Get the summary info for each question.
         $slots = $attemptobj->get_slots();
         foreach ($slots as $slot) {
+            // Add a section headings if we need one here.
+            $heading = $attemptobj->get_heading_before_slot($slot);
+            if ($heading) {
+                $cell = new html_table_cell(format_string($heading));
+                $cell->header = true;
+                $cell->colspan = $tablewidth;
+                $table->data[] = array($cell);
+            }
+
+            // Don't display information items.
             if (!$attemptobj->is_real_question($slot)) {
                 continue;
             }
+
+            // Real question, show it.
             $flag = '';
             if ($attemptobj->is_question_flagged($slot)) {
                 $flag = html_writer::empty_tag('img', array('src' => $this->pix_url('i/flagged'),
@@ -808,8 +850,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= $this->view_information($quiz, $cm, $context, $messages);
         $guestno = html_writer::tag('p', get_string('guestsno', 'quiz'));
         $liketologin = html_writer::tag('p', get_string('liketologin'));
-        $output .= $this->confirm($guestno."\n\n".$liketologin."\n", get_login_url(),
-                get_referer(false));
+        $referer = clean_param(get_referer(false), PARAM_LOCALURL);
+        $output .= $this->confirm($guestno."\n\n".$liketologin."\n", get_login_url(), $referer);
         return $output;
     }
 
@@ -1184,6 +1226,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
 class mod_quiz_links_to_other_attempts implements renderable {
     /**
      * @var array string attempt number => url, or null for the current attempt.
+     * url may be either a moodle_url, or a renderable.
      */
     public $links = array();
 }

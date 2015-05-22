@@ -134,7 +134,7 @@ if ($uselegacyreader) {
     $views = $DB->get_records_sql($sql, $params);
 }
 
-// Get record from sql_internal_reader and merge with records obtained from legacy log (if needed).
+// Get record from sql_internal_table_reader and merge with records obtained from legacy log (if needed).
 if ($useinternalreader) {
     // Check if we need to show the last access.
     $sqllasttime = '';

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20141202" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20150306" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -539,8 +539,8 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="useridfrom" UNIQUE="false" FIELDS="useridfrom"/>
         <INDEX NAME="useridto" UNIQUE="false" FIELDS="useridto"/>
+        <INDEX NAME="useridfromto" UNIQUE="false" FIELDS="useridfrom, useridto"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="message_read" COMMENT="Stores all messages that have been read">
@@ -563,8 +563,8 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="useridfrom" UNIQUE="false" FIELDS="useridfrom"/>
         <INDEX NAME="useridto" UNIQUE="false" FIELDS="useridto"/>
+        <INDEX NAME="useridfromto" UNIQUE="false" FIELDS="useridfrom, useridto"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="message_contacts" COMMENT="Maintains lists of relationships between users">
@@ -634,29 +634,6 @@
         <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
         <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
       </INDEXES>
-    </TABLE>
-    <TABLE NAME="timezone" COMMENT="Rules for calculating local wall clock time for users">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="year" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="tzrule" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="gmtoff" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="dstoff" TYPE="int" LENGTH="11" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="dst_month" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="dst_startday" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="dst_weekday" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="dst_skipweeks" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="dst_time" TYPE="char" LENGTH="6" NOTNULL="true" DEFAULT="00:00" SEQUENCE="false"/>
-        <FIELD NAME="std_month" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="std_startday" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="std_weekday" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="std_skipweeks" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="std_time" TYPE="char" LENGTH="6" NOTNULL="true" DEFAULT="00:00" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
     </TABLE>
     <TABLE NAME="user" COMMENT="One record for each person">
       <FIELDS>
@@ -2663,6 +2640,7 @@
         <FIELD NAME="huburl" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="confirmed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="secret" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="the unique site identifier for this hub"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -2862,6 +2840,8 @@
         <FIELD NAME="badgeid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="criteriatype" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The criteria type we are aggregating"/>
         <FIELD NAME="method" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="1 = all, 2 = any"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -2981,6 +2961,9 @@
         <KEY NAME="pushid-userid" TYPE="unique" FIELDS="pushid, userid"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="uuid-userid" UNIQUE="false" FIELDS="uuid, userid" COMMENT="Index on uuid and userid"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="user_password_resets" COMMENT="table tracking password reset confirmation tokens">
       <FIELDS>

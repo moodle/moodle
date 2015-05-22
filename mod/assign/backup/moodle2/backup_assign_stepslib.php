@@ -67,7 +67,8 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
                                                   'attemptreopenmethod',
                                                   'maxattempts',
                                                   'markingworkflow',
-                                                  'markingallocation'));
+                                                  'markingallocation',
+                                                  'preventsubmissionnotingroup'));
 
         $userflags = new backup_nested_element('userflags');
 

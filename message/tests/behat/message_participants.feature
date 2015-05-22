@@ -8,10 +8,10 @@ Feature: An user can message course participants
   Scenario: An user can message multiple course participants including him/her self
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
-      | student3 | Student | 3 | student3@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
+      | student3 | Student | 3 | student3@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -29,8 +29,7 @@ Feature: An user can message course participants
       | messagebody | Here it is, the message content |
     And I press "Preview"
     And I press "Send message"
-    And I follow "Home"
-    And I navigate to "Messages" node in "My profile"
+    And I follow "Messages" in the user menu
     And I set the field "Message navigation:" to "Recent conversations"
     Then I should see "Here it is, the message content"
     And I should see "Student 1"

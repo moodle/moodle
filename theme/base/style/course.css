@@ -142,6 +142,9 @@
     display: block;
 }
 .section .activity .moodle-actionmenu[data-enhanced] .menu {margin-left: -2.8em;}
+.section .activity .moodle-actionmenu:not([data-enhanced]) .menubar > li .toggle-display {
+    display: none;
+}
 .section img.iconsmall {
     vertical-align: text-bottom;
     width: 16px;

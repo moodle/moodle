@@ -94,6 +94,29 @@ class tool_filetypes_form extends moodleform {
         parent::set_data($data);
     }
 
+    public function get_data() {
+        $data = parent::get_data();
+
+        // Update the data to handle the descriptiontype dropdown. (The type
+        // is not explicitly stored, we just set or unset relevant fields.)
+        if ($data) {
+            switch ($data->descriptiontype) {
+                case 'lang' :
+                    unset($data->description);
+                    break;
+                case 'custom' :
+                    unset($data->corestring);
+                    break;
+                default:
+                    unset($data->description);
+                    unset($data->corestring);
+                    break;
+            }
+            unset($data->descriptiontype);
+        }
+        return $data;
+    }
+
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
@@ -108,6 +131,20 @@ class tool_filetypes_form extends moodleform {
         if (!empty($data['defaulticon']) && !\tool_filetypes\utils::is_defaulticon_allowed(
                 $data['mimetype'], $oldextension)) {
             $errors['defaulticon'] = get_string('error_defaulticon', 'tool_filetypes', $extension);
+        }
+
+        // If you choose 'lang' or 'custom' descriptiontype, you must fill something in the field.
+        switch ($data['descriptiontype']) {
+            case 'lang' :
+                if (!trim($data['corestring'])) {
+                    $errors['corestring'] = get_string('required');
+                }
+                break;
+            case 'custom' :
+                if (!trim($data['description'])) {
+                    $errors['description'] = get_string('required');
+                }
+                break;
         }
 
         return $errors;

@@ -7,7 +7,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -20,7 +20,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
     And I follow "Site policies"
     And I set the field "Maximum time to edit posts" to "1 minutes"
     And I press "Save changes"
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:

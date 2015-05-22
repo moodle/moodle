@@ -7,8 +7,8 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | student1 | Student | 1 | student1@example.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -16,11 +16,10 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following config values are set as admin:
+     | enablecompletion | 1 |
     And I log in as "admin"
-    And I set the following administration settings values:
-     | Enable completion tracking | 1 |
-    And I expand "Grades" node
-    And I follow "Grade item settings"
+    And I navigate to "Grade item settings" node in "Site administration > Grades"
     And I set the field "Advanced grade item options" to "hiddenuntil"
     And I press "Save changes"
     And I log out
@@ -48,7 +47,7 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
       | Feedback for the response 'True'.  | So you think it is true                 |
       | Feedback for the response 'False'. | So you think it is false                |
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I navigate to "Categories and items" node in "Grade administration > Setup"
     And I follow "Edit  quiz Test quiz name"
     Then I should see "Edit grade item"

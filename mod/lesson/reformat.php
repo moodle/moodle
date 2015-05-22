@@ -25,6 +25,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+debugging('This file functions are deprecated, please do not use this functions any more.', DEBUG_DEVELOPER);
+
+/**
+ * Removes double CRs.
+ *
+ * @deprecated Since Moodle 2.9 MDL-48901 - please do not use this function any more.
+ * @todo MDL-48985 This will be deleted in Moodle 3.1
+ * @param string $filename
+ * @return void
+ */
 function removedoublecr($filename) {
 // This function will adjust a file in roughly Aiken style by replacing extra newlines with <br/> tags
 // so that instructors can have newlines wherever they like as long as the overall format is in Aiken
@@ -82,7 +92,14 @@ function removedoublecr($filename) {
     }
 }
 
-// jjg7:8/9/2004
+/**
+ * This function converts from Brusca style to Aiken.
+ *
+ * @deprecated Since Moodle 2.9 MDL-48901 - please do not use this function any more.
+ * @todo MDL-48985 This will be deleted in Moodle 3.1
+ * @param string $filename
+ * @return bool Success.
+ */
 function importmodifiedaikenstyle($filename) {
 // This function converts from Brusca style to Aiken
     $lines = file($filename);
@@ -202,4 +219,3 @@ function importmodifiedaikenstyle($filename) {
         return false;
     }
 }
-

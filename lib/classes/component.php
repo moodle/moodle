@@ -348,6 +348,7 @@ $cache = '.var_export($cache, true).';
             'cache'       => $CFG->dirroot.'/cache',
             'calendar'    => $CFG->dirroot.'/calendar',
             'cohort'      => $CFG->dirroot.'/cohort',
+            'comment'     => $CFG->dirroot.'/comment',
             'completion'  => $CFG->dirroot.'/completion',
             'countries'   => null,
             'course'      => $CFG->dirroot.'/course',
@@ -706,12 +707,12 @@ $cache = '.var_export($cache, true).';
      */
     protected static function load_psr_classes($basedir, $subdir = null) {
         if ($subdir) {
-            $fulldir = implode(DIRECTORY_SEPARATOR, array($basedir, $subdir));
-            $classnameprefix = preg_replace('/\//', '_', $subdir);
+            $fulldir = realpath($basedir . DIRECTORY_SEPARATOR . $subdir);
+            $classnameprefix = preg_replace('#' . preg_quote(DIRECTORY_SEPARATOR) . '#', '_', $subdir);
         } else {
             $fulldir = $basedir;
         }
-        if (!is_dir($fulldir)) {
+        if (!$fulldir || !is_dir($fulldir)) {
             return;
         }
 
@@ -1101,7 +1102,7 @@ $cache = '.var_export($cache, true).';
                 $plugin = new stdClass();
                 $plugin->version = null;
                 $module = $plugin;
-                @include($fullplug.'/version.php');
+                include($fullplug.'/version.php');
                 $versions[$type.'_'.$plug] = $plugin->version;
             }
         }

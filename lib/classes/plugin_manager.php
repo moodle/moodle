@@ -291,7 +291,7 @@ class core_plugin_manager {
                 $plugin = new stdClass();
                 $plugin->version = null;
                 $module = $plugin;
-                @include($fullplug.'/version.php');
+                include($fullplug.'/version.php');
                 $this->presentplugins[$type][$plug] = $plugin;
             }
         }
@@ -913,7 +913,7 @@ class core_plugin_manager {
             'qformat' => array('blackboard', 'learnwise'),
             'enrol' => array('authorize'),
             'tinymce' => array('dragmath'),
-            'tool' => array('bloglevelupgrade', 'qeupgradehelper'),
+            'tool' => array('bloglevelupgrade', 'qeupgradehelper', 'timezoneimport'),
             'theme' => array('mymobile', 'afterburner', 'anomaly', 'arialist', 'binarius', 'boxxie', 'brick', 'formal_white',
                 'formfactor', 'fusion', 'leatherbound', 'magazine', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high',
                 'splash', 'standard', 'standardold'),
@@ -967,8 +967,8 @@ class core_plugin_manager {
             ),
 
             'block' => array(
-                'activity_modules', 'admin_bookmarks', 'badges', 'blog_menu',
-                'blog_recent', 'blog_tags', 'calendar_month',
+                'activity_modules', 'activity_results', 'admin_bookmarks', 'badges',
+                'blog_menu', 'blog_recent', 'blog_tags', 'calendar_month',
                 'calendar_upcoming', 'comments', 'community',
                 'completionstatus', 'course_list', 'course_overview',
                 'course_summary', 'feedback', 'glossary_random', 'html',
@@ -1143,7 +1143,7 @@ class core_plugin_manager {
                 'assignmentupgrade', 'availabilityconditions', 'behat', 'capability', 'customlang',
                 'dbtransfer', 'filetypes', 'generator', 'health', 'innodb', 'installaddon',
                 'langimport', 'log', 'messageinbound', 'multilangupgrade', 'monitor', 'phpunit', 'profiling',
-                'replace', 'spamcleaner', 'task', 'timezoneimport',
+                'replace', 'spamcleaner', 'task', 'templatelibrary',
                 'unittest', 'uploadcourse', 'uploaduser', 'unsuproles', 'xmldb'
             ),
 

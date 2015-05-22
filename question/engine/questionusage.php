@@ -173,6 +173,42 @@ class question_usage_by_activity {
     }
 
     /**
+     * Add another question to this usage, in the place of an existing slot.
+     * The question_attempt that was in that slot is moved to the end at a new
+     * slot number, which is returned.
+     *
+     * The added question is not started until you call {@link start_question()}
+     * on it.
+     *
+     * @param int $slot the slot-number of the question to replace.
+     * @param question_definition $question the question to add.
+     * @param number $maxmark the maximum this question will be marked out of in
+     *      this attempt (optional). If not given, the max mark from the $qa we
+     *      are replacing is used.
+     * @return int the new slot number of the question that was displaced.
+     */
+    public function add_question_in_place_of_other($slot, question_definition $question, $maxmark = null) {
+        $newslot = $this->next_slot_number();
+
+        $oldqa = $this->get_question_attempt($slot);
+        $oldqa->set_slot($newslot);
+        $this->questionattempts[$newslot] = $oldqa;
+
+        if ($maxmark === null) {
+            $maxmark = $oldqa->get_max_mark();
+        }
+
+        $qa = new question_attempt($question, $this->get_id(), $this->observer, $maxmark);
+        $qa->set_slot($slot);
+        $this->questionattempts[$slot] = $qa;
+
+        $this->observer->notify_attempt_moved($oldqa, $slot);
+        $this->observer->notify_attempt_added($qa);
+
+        return $newslot;
+    }
+
+    /**
      * The slot number that will be allotted to the next question added.
      */
     public function next_slot_number() {
@@ -272,6 +308,17 @@ class question_usage_by_activity {
     }
 
     /**
+     * Whether this attempt at a given question could be completed just by the
+     * student interacting with the question, before {@link finish_question()} is called.
+     *
+     * @param int $slot the number used to identify this question within this usage.
+     * @return boolean whether the attempt at the given question can finish naturally.
+     */
+    public function can_question_finish_during_attempt($slot) {
+        return $this->get_question_attempt($slot)->can_finish_during_attempt();
+    }
+
+    /**
      * Get the time of the most recent action performed on a question.
      * @param int $slot the number used to identify this question within this usage.
      * @return int timestamp.
@@ -364,6 +411,27 @@ class question_usage_by_activity {
      */
     public function get_right_answer_summary($slot) {
         return $this->get_question_attempt($slot)->get_right_answer_summary();
+    }
+
+    /**
+     * Return one of the bits of metadata for a particular question attempt in
+     * this usage.
+     * @param int $slot the slot number of the question of inereest.
+     * @param string $name the name of the metadata variable to return.
+     * @return string the value of that metadata variable.
+     */
+    public function get_question_attempt_metadata($slot, $name) {
+        return $this->get_question_attempt($slot)->get_metadata($name);
+    }
+
+    /**
+     * Set some metadata for a particular question attempt in this usage.
+     * @param int $slot the slot number of the question of inerest.
+     * @param string $name the name of the metadata variable to return.
+     * @param string $value the value to set that metadata variable to.
+     */
+    public function set_question_attempt_metadata($slot, $name, $value) {
+        $this->get_question_attempt($slot)->set_metadata($name, $value);
     }
 
     /**
@@ -475,14 +543,15 @@ class question_usage_by_activity {
      * @param int $variant which variant of the question to use. Must be between
      *      1 and ->get_num_variants($slot) inclusive. If not give, a variant is
      *      chosen at random.
+     * @param int $timestamp optional, the timstamp to record for this action. Defaults to now.
      */
-    public function start_question($slot, $variant = null) {
+    public function start_question($slot, $variant = null, $timenow = null) {
         if (is_null($variant)) {
             $variant = rand(1, $this->get_num_variants($slot));
         }
 
         $qa = $this->get_question_attempt($slot);
-        $qa->start($this->preferredbehaviour, $variant);
+        $qa->start($this->preferredbehaviour, $variant, array(), $timenow);
         $this->observer->notify_attempt_modified($qa);
     }
 
@@ -822,6 +891,15 @@ class question_usage_by_activity {
     }
 
     /**
+     * Change the max mark for this question_attempt.
+     * @param int $slot the slot number of the question of inerest.
+     * @param float $maxmark the new max mark.
+     */
+    public function set_max_mark($slot, $maxmark) {
+        $this->get_question_attempt($slot)->set_max_mark($maxmark);
+    }
+
+    /**
      * Create a question_usage_by_activity from records loaded from the database.
      *
      * For internal use only.
@@ -956,16 +1034,23 @@ interface question_usage_observer {
     public function notify_modified();
 
     /**
+     * Called when a new question attempt is added to this usage.
+     * @param question_attempt $qa the newly added question attempt.
+     */
+    public function notify_attempt_added(question_attempt $qa);
+
+    /**
      * Called when the fields of a question attempt in this usage are modified.
      * @param question_attempt $qa the newly added question attempt.
      */
     public function notify_attempt_modified(question_attempt $qa);
 
     /**
-     * Called when a new question attempt is added to this usage.
-     * @param question_attempt $qa the newly added question attempt.
+     * Called when a question_attempt has been moved to a new slot.
+     * @param question_attempt $qa The question attempt that was moved.
+     * @param int $oldslot The previous slot number of that attempt.
      */
-    public function notify_attempt_added(question_attempt $qa);
+    public function notify_attempt_moved(question_attempt $qa, $oldslot);
 
     /**
      * Called when a new step is added to a question attempt in this usage.
@@ -990,6 +1075,19 @@ interface question_usage_observer {
      */
     public function notify_step_deleted(question_attempt_step $step, question_attempt $qa);
 
+    /**
+     * Called when a new metadata variable is set on a question attempt in this usage.
+     * @param question_attempt $qa the question attempt the metadata is being added to.
+     * @param int $name the name of the metadata variable added.
+     */
+    public function notify_metadata_added(question_attempt $qa, $name);
+
+    /**
+     * Called when a metadata variable on a question attempt in this usage is updated.
+     * @param question_attempt $qa the question attempt where the metadata is being modified.
+     * @param int $name the name of the metadata variable modified.
+     */
+    public function notify_metadata_modified(question_attempt $qa, $name);
 }
 
 
@@ -1003,14 +1101,20 @@ interface question_usage_observer {
 class question_usage_null_observer implements question_usage_observer {
     public function notify_modified() {
     }
+    public function notify_attempt_added(question_attempt $qa) {
+    }
     public function notify_attempt_modified(question_attempt $qa) {
     }
-    public function notify_attempt_added(question_attempt $qa) {
+    public function notify_attempt_moved(question_attempt $qa, $oldslot) {
     }
     public function notify_step_added(question_attempt_step $step, question_attempt $qa, $seq) {
     }
     public function notify_step_modified(question_attempt_step $step, question_attempt $qa, $seq) {
     }
     public function notify_step_deleted(question_attempt_step $step, question_attempt $qa) {
+    }
+    public function notify_metadata_added(question_attempt $qa, $name) {
+    }
+    public function notify_metadata_modified(question_attempt $qa, $name) {
     }
 }

@@ -454,7 +454,11 @@ class qformat_xml extends qformat_default {
 
         // Header parts particular to multianswer.
         $qo->qtype = 'multianswer';
-        $qo->course = $this->course;
+
+        // Only set the course if the data is available.
+        if (isset($this->course)) {
+            $qo->course = $this->course;
+        }
 
         $qo->name = $this->clean_question_name($this->import_text($question['#']['name'][0]['#']['text']));
         $qo->questiontextformat = $questiontext['format'];

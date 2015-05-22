@@ -42,6 +42,7 @@ $perpage = optional_param('perpage', 100, PARAM_INT);
 
 $courseparams = array('id' => $courseid);
 $PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $courseparams));
+$PAGE->set_pagelayout('incourse');
 
 if (!$course = $DB->get_record('course', $courseparams)) {
     print_error('nocourseid');
@@ -114,7 +115,11 @@ if ($data = data_submitted()) {
 }
 
 $PAGE->set_pagelayout('report');
-print_grade_page_head($course->id, 'report', 'singleview', $reportname);
+if ($itemtype == 'user') {
+    print_grade_page_head($course->id, 'report', 'singleview', $reportname, false, false, true, null, null, $report->screen->item);
+} else {
+    print_grade_page_head($course->id, 'report', 'singleview', $reportname);
+}
 
 $graderrightnav = $graderleftnav = null;
 
@@ -138,13 +143,13 @@ if (!empty($options)) {
         $navparams['itemid'] = $reloptionssorting[$i - 1];
         $link = new moodle_url('/grade/report/singleview/index.php', $navparams);
         $navprev = html_writer::link($link, $OUTPUT->larrow() . ' ' . $reloptions[$reloptionssorting[$i - 1]]);
-        $graderleftnav = html_writer::tag('small', $navprev, array('class' => 'itemnav previtem'));
+        $graderleftnav = html_writer::tag('div', $navprev, array('class' => 'itemnav previtem'));
     }
     if ($i < count($reloptionssorting) - 1) {
         $navparams['itemid'] = $reloptionssorting[$i + 1];
         $link = new moodle_url('/grade/report/singleview/index.php', $navparams);
         $navnext = html_writer::link($link, $reloptions[$reloptionssorting[$i + 1]] . ' ' . $OUTPUT->rarrow());
-        $graderrightnav = html_writer::tag('small', $navnext, array('class' => 'itemnav nextitem'));
+        $graderrightnav = html_writer::tag('div', $navnext, array('class' => 'itemnav nextitem'));
     }
 }
 

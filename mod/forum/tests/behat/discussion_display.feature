@@ -7,7 +7,7 @@ Feature: Students can choose from 4 discussion display options and their choice 
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -15,6 +15,7 @@ Feature: Students can choose from 4 discussion display options and their choice 
       | user | course | role |
       | student1 | C1 | student |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1" and I fill the form with:

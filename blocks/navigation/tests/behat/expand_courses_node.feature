@@ -7,8 +7,8 @@ Feature: Expand the courses nodes within the navigation block
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@local.host |
-      | student1 | Student | 1 | student1@local.host |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "categories" exist:
       | name   | category | idnumber | visible |
       | cat1   | 0        | cat1     | 1       |
@@ -34,15 +34,16 @@ Feature: Expand the courses nodes within the navigation block
       | student1 | c1     | student |
       | student1 | c2     | student |
       | student1 | c4     | student |
+    And the following config values are set as admin:
+      | navshowallcourses | 1 |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 2"
     And I turn editing mode on
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
       | Allow guest access | Yes |
     And I press "Save and display"
-    And I set the following administration settings values:
-      | Show all courses | 1 |
     And I log out
 
   @javascript
@@ -74,7 +75,8 @@ Feature: Expand the courses nodes within the navigation block
   @javascript
   Scenario: As the admin user I expand the courses and category nodes to see courses.
     When I log in as "admin"
-    And I should see "Home" in the "Navigation" "block"
+    And I am on site homepage
+    And I should see "Site home" in the "Navigation" "block"
     And I should see "Courses" in the "Navigation" "block"
     And I expand "Courses" node
     And I should see "cat1" in the "Navigation" "block"
@@ -107,7 +109,8 @@ Feature: Expand the courses nodes within the navigation block
   @javascript
   Scenario: As teacher1 I expand the courses and category nodes to see courses.
     When I log in as "teacher1"
-    And I should see "Home" in the "Navigation" "block"
+    And I am on site homepage
+    And I should see "Site home" in the "Navigation" "block"
     And I should see "Courses" in the "Navigation" "block"
     And I expand "Courses" node
     And I should see "cat1" in the "Navigation" "block"
@@ -136,7 +139,8 @@ Feature: Expand the courses nodes within the navigation block
   @javascript
   Scenario: As student1 I expand the courses and category nodes to see courses.
     When I log in as "student1"
-    And I should see "Home" in the "Navigation" "block"
+    And I am on site homepage
+    And I should see "Site home" in the "Navigation" "block"
     And I should see "Courses" in the "Navigation" "block"
     And I expand "Courses" node
     And I should see "cat1" in the "Navigation" "block"
@@ -164,6 +168,7 @@ Feature: Expand the courses nodes within the navigation block
   @javascript
   Scenario: As guest I expand the courses and category nodes to see courses.
     When I log in as "guest"
+    And I am on site homepage
     And I should see "Home" in the "Navigation" "block"
     And I should see "Courses" in the "Navigation" "block"
     And I expand "Courses" node

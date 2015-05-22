@@ -10,6 +10,7 @@
 .message .heading {
     font-size: 1em;
     font-weight: bold;
+    clear: both;
 }
 .message .author {
     font-weight: bold;
@@ -43,23 +44,70 @@ table.message .searchresults td {
     padding: 5px;
 }
 .message .contactselector {
-    width: 24%;
+    @media screen and (min-width: 1000px) {
+        width: 24%;
+    }
     float: left;
 }
-.message .contactselector .contact {
-    text-align: left;
-}
-.message .contactselector .messageselecteduser {
-    font-weight: bold;
-}
+
 .message .contactselector .paging {
     z-index: 1;
     position: relative;
 }
+
+.message .message-contacts {
+    list-style-type: none;
+    margin: 0;
+
+    li {
+        clear: both;
+        position: relative;
+        min-height: 23px;
+
+        .pix {
+            left: 0;
+            position: absolute;
+        }
+        .contact {
+            margin: 0 24% 0 25px;
+            text-align: left;
+        }
+        .contact.nolinks {
+            margin-right: 5px;
+        }
+        .link {
+            float: right;
+            max-width: 30%;
+        }
+    }
+}
+
+.dir-rtl .message .message-contacts li {
+    .pix {
+        right: 0;
+        left: auto;
+    }
+    .contact {
+        margin: 0 25px 0 24%;
+    }
+    .contact.nolinks {
+        margin-right: 25px;
+        margin-left: 5px;
+    }
+    .link {
+        float: left;
+    }
+}
+
 .message .messagearea  {
-    padding-left: 1%;
-    border-left: 1px solid @tableBorder;
-    width: 74%;
+    @media screen and (min-width: 1000px) {
+        width: 74%;
+        border-left: 1px solid @tableBorder;
+        padding-left: 1%;
+    }
+    @media screen and (max-width: 1000px) {
+        width: 100%;
+    }
     float: right;
     min-height: 200px;
 }
@@ -228,4 +276,64 @@ table.message .searchresults td {
 /* Widen the plain text editor on the bulk message screen */
 #page-user-action_redir #edit-messagebody {
     width:auto;
+}
+
+/** Messenger send message dialog */
+.core_message-messenger-sendmessage-hidden {
+    display:none;
+}
+.core_message-messenger-sendmessage {
+    .message-actions {
+        position: relative;
+    }
+    .message-area {
+        height: 240px;
+        max-height: 100%;
+        position: relative;
+        margin-bottom: 10px;
+    }
+    .message-input {
+        width: 100%;
+        height: 100%;
+        .box-sizing(border-box);
+    }
+    .message-send {
+        margin: 0;
+        float: right;
+    }
+    .message-notice-area {
+        display: table;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .message-notice {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        > div {
+            background: #eee;
+            padding: 5px;
+            font-size: 12px;
+        }
+    }
+    .message-footer {
+        margin-top: 3px;
+        line-height: 20px;
+    }
+    .message-history {
+        position: absolute;
+        bottom: 0;
+    }
+}
+.dir-rtl {
+    .core_message-messenger-sendmessage {
+        .message-send {
+            float: left;
+        }
+    }
 }

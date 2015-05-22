@@ -3231,17 +3231,22 @@ class admin_setting_configtime extends admin_setting {
             $defaultinfo = NULL;
         }
 
-        $return = '<div class="form-time defaultsnext">'.
-            '<select id="'.$this->get_id().'h" name="'.$this->get_full_name().'[h]">';
+        $return  = '<div class="form-time defaultsnext">';
+        $return .= '<label class="accesshide" for="' . $this->get_id() . 'h">' . get_string('hours') . '</label>';
+        $return .= '<select id="' . $this->get_id() . 'h" name="' . $this->get_full_name() . '[h]">';
         for ($i = 0; $i < 24; $i++) {
-            $return .= '<option value="'.$i.'"'.($i == $data['h'] ? ' selected="selected"' : '').'>'.$i.'</option>';
+            $return .= '<option value="' . $i . '"' . ($i == $data['h'] ? ' selected="selected"' : '') . '>' . $i . '</option>';
         }
-        $return .= '</select>:<select id="'.$this->get_id().'m" name="'.$this->get_full_name().'[m]">';
+        $return .= '</select>:';
+        $return .= '<label class="accesshide" for="' . $this->get_id() . 'm">' . get_string('minutes') . '</label>';
+        $return .= '<select id="' . $this->get_id() . 'm" name="' . $this->get_full_name() . '[m]">';
         for ($i = 0; $i < 60; $i += 5) {
-            $return .= '<option value="'.$i.'"'.($i == $data['m'] ? ' selected="selected"' : '').'>'.$i.'</option>';
+            $return .= '<option value="' . $i . '"' . ($i == $data['m'] ? ' selected="selected"' : '') . '>' . $i . '</option>';
         }
-        $return .= '</select></div>';
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', $defaultinfo, $query);
+        $return .= '</select>';
+        $return .= '</div>';
+        return format_admin_setting($this, $this->visiblename, $return, $this->description,
+            $this->get_id() . 'h', '', $defaultinfo, $query);
     }
 
 }
@@ -5195,6 +5200,52 @@ class admin_setting_grade_profilereport extends admin_setting_configselect {
     }
 }
 
+/**
+ * Provides a selection of grade reports to be used for "grades".
+ *
+ * @copyright 2015 Adrian Greeve <adrian@moodle.com>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_my_grades_report extends admin_setting_configselect {
+
+    /**
+     * Calls parent::__construct with specific arguments.
+     */
+    public function __construct() {
+        parent::__construct('grade_mygrades_report', new lang_string('mygrades', 'grades'),
+                new lang_string('mygrades_desc', 'grades'), 'overview', null);
+    }
+
+    /**
+     * Loads an array of choices for the configselect control.
+     *
+     * @return bool always returns true.
+     */
+    public function load_choices() {
+        global $CFG; // Remove this line and behold the horror of behat test failures!
+        $this->choices = array();
+        foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
+            if (file_exists($plugindir . '/lib.php')) {
+                require_once($plugindir . '/lib.php');
+                // Check to see if the class exists. Check the correct plugin convention first.
+                if (class_exists('gradereport_' . $plugin)) {
+                    $classname = 'gradereport_' . $plugin;
+                } else if (class_exists('grade_report_' . $plugin)) {
+                    // We are using the old plugin naming convention.
+                    $classname = 'grade_report_' . $plugin;
+                } else {
+                    continue;
+                }
+                if ($classname::supports_mygrades()) {
+                    $this->choices[$plugin] = get_string('pluginname', 'gradereport_' . $plugin);
+                }
+            }
+        }
+        // Add an option to specify an external url.
+        $this->choices['external'] = get_string('externalurl', 'grades');
+        return true;
+    }
+}
 
 /**
  * Special class for register auth selection
@@ -7842,11 +7893,11 @@ class admin_setting_webservicesoverview extends admin_setting {
                 get_string('enablemobilewebservice', 'admin'),
                 get_string('configenablemobilewebservice',
                         'admin', ''), 0); //we don't want to display it but to know the ws mobile status
-        $manageserviceurl = new moodle_url("/admin/settings.php?section=externalservices");
+        $manageserviceurl = new moodle_url("/admin/settings.php?section=mobile");
         $wsmobileparam = new stdClass();
         $wsmobileparam->enablemobileservice = get_string('enablemobilewebservice', 'admin');
         $wsmobileparam->manageservicelink = html_writer::link($manageserviceurl,
-                get_string('externalservices', 'webservice'));
+                get_string('mobile', 'admin'));
         $mobilestatus = $enablemobile->get_setting()?get_string('mobilewsenabled', 'webservice'):get_string('mobilewsdisabled', 'webservice');
         $wsmobileparam->wsmobilestatus = html_writer::tag('strong', $mobilestatus);
         $return .= $OUTPUT->heading(get_string('enablemobilewebservice', 'admin'), 3, 'main');
@@ -8990,5 +9041,85 @@ class admin_setting_php_extension_enabled extends admin_setting {
             $o .= format_admin_setting($this, $this->visiblename, $warning);
         }
         return $o;
+    }
+}
+
+/**
+ * Server timezone setting.
+ *
+ * @copyright 2015 Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author    Petr Skoda <petr.skoda@totaralms.com>
+ */
+class admin_setting_servertimezone extends admin_setting_configselect {
+    /**
+     * Constructor.
+     */
+    public function __construct() {
+        $default = core_date::get_default_php_timezone();
+        if ($default === 'UTC') {
+            // Nobody really wants UTC, so instead default selection to the country that is confused by the UTC the most.
+            $default = 'Europe/London';
+        }
+
+        parent::__construct('timezone',
+            new lang_string('timezone', 'core_admin'),
+            new lang_string('configtimezone', 'core_admin'), $default, null);
+    }
+
+    /**
+     * Lazy load timezone options.
+     * @return bool true if loaded, false if error
+     */
+    public function load_choices() {
+        global $CFG;
+        if (is_array($this->choices)) {
+            return true;
+        }
+
+        $current = isset($CFG->timezone) ? $CFG->timezone : null;
+        $this->choices = core_date::get_list_of_timezones($current, false);
+        if ($current == 99) {
+            // Do not show 99 unless it is current value, we want to get rid of it over time.
+            $this->choices['99'] = new lang_string('timezonephpdefault', 'core_admin',
+                core_date::get_default_php_timezone());
+        }
+
+        return true;
+    }
+}
+
+/**
+ * Forced user timezone setting.
+ *
+ * @copyright 2015 Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author    Petr Skoda <petr.skoda@totaralms.com>
+ */
+class admin_setting_forcetimezone extends admin_setting_configselect {
+    /**
+     * Constructor.
+     */
+    public function __construct() {
+        parent::__construct('forcetimezone',
+            new lang_string('forcetimezone', 'core_admin'),
+            new lang_string('helpforcetimezone', 'core_admin'), '99', null);
+    }
+
+    /**
+     * Lazy load timezone options.
+     * @return bool true if loaded, false if error
+     */
+    public function load_choices() {
+        global $CFG;
+        if (is_array($this->choices)) {
+            return true;
+        }
+
+        $current = isset($CFG->forcetimezone) ? $CFG->forcetimezone : null;
+        $this->choices = core_date::get_list_of_timezones($current, true);
+        $this->choices['99'] = new lang_string('timezonenotforced', 'core_admin');
+
+        return true;
     }
 }

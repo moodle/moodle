@@ -237,4 +237,98 @@ abstract class handler {
         return false;
     }
 
+    /**
+     * Remove quoted message string from the text (NOT HTML) message.
+     *
+     * @param \stdClass $messagedata The Inbound Message record
+     *
+     * @return array message and message format to use.
+     */
+    protected static function remove_quoted_text($messagedata) {
+        $linecount = self::get_linecount_to_remove($messagedata);
+        if (!empty($messagedata->plain)) {
+            $text = $messagedata->plain;
+        } else {
+            $text = html_to_text($messagedata->html);
+        }
+        $messageformat = FORMAT_PLAIN;
+
+        $splitted = preg_split("/\n|\r/", $text);
+        if (empty($splitted)) {
+            return array($text, $messageformat);
+        }
+
+        // Remove extra line. "Xyz wrote on...".
+        $count = 0;
+        $i = 0;
+        $flag = false;
+        foreach ($splitted as $i => $element) {
+            if (stripos($element, ">") === 0) {
+                // Quoted text found.
+                $flag = true;
+                // Remove 2 non empty line before this.
+                for ($j = $i - 1; ($j >= 0); $j--) {
+                    $element = $splitted[$j];
+                    if (!empty($element)) {
+                        unset($splitted[$j]);
+                        $count++;
+                    }
+                    if ($count == $linecount) {
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        if ($flag) {
+            // Quoted text was found.
+            $k = $i - $linecount; // Where to start the chopping process.
+
+            // Remove quoted text.
+            $splitted = array_slice($splitted, 0, $k);
+
+            // Strip out empty lines towards the end, since a lot of clients add a huge chunk of empty lines.
+            $reverse = array_reverse($splitted);
+            foreach ($reverse as $i => $line) {
+                if (empty($line)) {
+                    unset($reverse[$i]);
+                } else {
+                    // Non empty line found.
+                    break;
+                }
+            }
+
+            $replaced = implode(PHP_EOL, array_reverse($reverse));
+            $message = trim($replaced);
+        } else {
+            // No quoted text, fallback to original text.
+            if (!empty($messagedata->html)) {
+                $message = $messagedata->html;
+                $messageformat = FORMAT_HTML;
+            } else {
+                $message = $messagedata->plain;
+            }
+        }
+        return array($message, $messageformat);
+    }
+
+    /**
+     * Try to guess how many lines to remove from the email to delete "xyz wrote on" text. Hard coded numbers for various email
+     * clients.
+     * Gmail uses two
+     * Evolution uses one
+     * Thunderbird uses one
+     *
+     * @param \stdClass $messagedata The Inbound Message record
+     *
+     * @return int number of lines to chop off before the start of quoted text.
+     */
+    protected static function get_linecount_to_remove($messagedata) {
+        $linecount = 1;
+        if (!empty($messagedata->html) && stripos($messagedata->html, 'gmail_quote') !== false) {
+            // Gmail uses two lines.
+            $linecount = 2;
+        }
+        return $linecount;
+    }
 }

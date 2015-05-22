@@ -683,7 +683,7 @@ class restore_update_availability extends restore_execution_step {
             if (!is_null($section->availability)) {
                 $info = new \core_availability\info_section($section);
                 $info->update_after_restore($this->get_restoreid(),
-                        $this->get_courseid(), $this->get_logger(), $dateoffset);
+                        $this->get_courseid(), $this->get_logger(), $dateoffset, $this->task);
             }
         }
         $rs->close();
@@ -703,7 +703,7 @@ class restore_update_availability extends restore_execution_step {
             if (!is_null($cm->availability)) {
                 $info = new \core_availability\info_module($cm);
                 $info->update_after_restore($this->get_restoreid(),
-                        $this->get_courseid(), $this->get_logger(), $dateoffset);
+                        $this->get_courseid(), $this->get_logger(), $dateoffset, $this->task);
             }
         }
         $rs->close();
@@ -937,10 +937,13 @@ class restore_groups_structure_step extends restore_structure_step {
 
         $paths = array(); // Add paths here
 
-        $paths[] = new restore_path_element('group', '/groups/group');
-        $paths[] = new restore_path_element('grouping', '/groups/groupings/grouping');
-        $paths[] = new restore_path_element('grouping_group', '/groups/groupings/grouping/grouping_groups/grouping_group');
-
+        // Do not include group/groupings information if not requested.
+        $groupinfo = $this->get_setting_value('groups');
+        if ($groupinfo) {
+            $paths[] = new restore_path_element('group', '/groups/group');
+            $paths[] = new restore_path_element('grouping', '/groups/groupings/grouping');
+            $paths[] = new restore_path_element('grouping_group', '/groups/groupings/grouping/grouping_groups/grouping_group');
+        }
         return $paths;
     }
 
@@ -1069,7 +1072,7 @@ class restore_groups_members_structure_step extends restore_structure_step {
 
         $paths = array(); // Add paths here
 
-        if ($this->get_setting_value('users')) {
+        if ($this->get_setting_value('groups') && $this->get_setting_value('users')) {
             $paths[] = new restore_path_element('group', '/groups/group');
             $paths[] = new restore_path_element('member', '/groups/group/group_members/group_member');
         }
@@ -1480,13 +1483,31 @@ class restore_section_structure_step extends restore_structure_step {
 
     public function process_course_format_options($data) {
         global $DB;
-        $data = (object)$data;
-        $oldid = $data->id;
-        unset($data->id);
-        $data->sectionid = $this->task->get_sectionid();
-        $data->courseid = $this->get_courseid();
-        $newid = $DB->insert_record('course_format_options', $data);
-        $this->set_mapping('course_format_options', $oldid, $newid);
+        static $courseformats = array();
+        $courseid = $this->get_courseid();
+        if (!array_key_exists($courseid, $courseformats)) {
+            // It is safe to have a static cache of course formats because format can not be changed after this point.
+            $courseformats[$courseid] = $DB->get_field('course', 'format', array('id' => $courseid));
+        }
+        $data = (array)$data;
+        if ($courseformats[$courseid] === $data['format']) {
+            // Import section format options only if both courses (the one that was backed up
+            // and the one we are restoring into) have same formats.
+            $params = array(
+                'courseid' => $this->get_courseid(),
+                'sectionid' => $this->task->get_sectionid(),
+                'format' => $data['format'],
+                'name' => $data['name']
+            );
+            if ($record = $DB->get_record('course_format_options', $params, 'id, value')) {
+                // Do not overwrite existing information.
+                $newid = $record->id;
+            } else {
+                $params['value'] = $data['value'];
+                $newid = $DB->insert_record('course_format_options', $params);
+            }
+            $this->set_mapping('course_format_options', $data['id'], $newid);
+        }
     }
 
     protected function after_execute() {
@@ -2266,9 +2287,11 @@ class restore_badges_structure_step extends restore_structure_step {
         $data = (object)$data;
 
         $params = array(
-                'badgeid'      => $this->get_new_parentid('badge'),
-                'criteriatype' => $data->criteriatype,
-                'method'       => $data->method
+                'badgeid'           => $this->get_new_parentid('badge'),
+                'criteriatype'      => $data->criteriatype,
+                'method'            => $data->method,
+                'description'       => isset($data->description) ? $data->description : '',
+                'descriptionformat' => isset($data->descriptionformat) ? $data->descriptionformat : 0,
         );
         $newid = $DB->insert_record('badge_criteria', $params);
         $this->set_mapping('criterion', $data->id, $newid);
@@ -2450,11 +2473,12 @@ class restore_course_completion_structure_step extends restore_structure_step {
      *   2. The backup includes course completion information
      *   3. All modules are restorable
      *   4. All modules are marked for restore.
+     *   5. No completion criteria already exist for the course.
      *
      * @return bool True is safe to execute, false otherwise
      */
     protected function execute_condition() {
-        global $CFG;
+        global $CFG, $DB;
 
         // First check course completion is enabled on this site
         if (empty($CFG->enablecompletion)) {
@@ -2480,8 +2504,13 @@ class restore_course_completion_structure_step extends restore_structure_step {
             return false;
         }
 
-        // Finally check all modules within the backup are being restored.
+        // Check all modules within the backup are being restored.
         if ($this->task->is_excluding_activities()) {
+            return false;
+        }
+
+        // Check that no completion criteria is already set for the course.
+        if ($DB->record_exists('course_completion_criteria', array('course' => $this->get_courseid()))) {
             return false;
         }
 
@@ -3022,11 +3051,6 @@ class restore_activity_grades_structure_step extends restore_structure_step {
         $oldparentid = $data->categoryid;
         $courseid = $this->get_courseid();
 
-        // make sure top course category exists, all grade items will be associated
-        // to it. Later, if restoring the whole gradebook, categories will be introduced
-        $coursecat = grade_category::fetch_course_category($courseid);
-        $coursecatid = $coursecat->id; // Get the categoryid to be used
-
         $idnumber = null;
         if (!empty($data->idnumber)) {
             // Don't get any idnumber from course module. Keep them as they are in grade_item->idnumber
@@ -3051,8 +3075,18 @@ class restore_activity_grades_structure_step extends restore_structure_step {
             }
         }
 
+        if (!empty($data->categoryid)) {
+            // If the grade category id of the grade item being restored belongs to this course
+            // then it is a fair assumption that this is the correct grade category for the activity
+            // and we should leave it in place, if not then unset it.
+            // TODO MDL-34790 Gradebook does not import if target course has gradebook categories.
+            $conditions = array('id' => $data->categoryid, 'courseid' => $courseid);
+            if (!$this->task->is_samesite() || !$DB->record_exists('grade_categories', $conditions)) {
+                unset($data->categoryid);
+            }
+        }
+
         unset($data->id);
-        $data->categoryid   = $coursecatid;
         $data->courseid     = $this->get_courseid();
         $data->iteminstance = $this->task->get_activityid();
         $data->idnumber     = $idnumber;
@@ -3881,6 +3915,11 @@ class restore_create_categories_and_questions extends restore_structure_step {
 
         $data = (object)$data;
         $newquestion = $this->get_new_parentid('question');
+        $questioncreated = (bool) $this->get_mappingid('question_created', $this->get_old_parentid('question'));
+        if (!$questioncreated) {
+            // This question already exists in the question bank. Nothing for us to do.
+            return;
+        }
 
         if (!empty($CFG->usetags)) { // if enabled in server
             // TODO: This is highly inefficient. Each time we add one tag

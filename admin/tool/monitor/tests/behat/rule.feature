@@ -10,14 +10,14 @@ Feature: tool_monitor_rule
       | Course 1 | C1        |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
     And I navigate to "Event monitoring rules" node in "Site administration > Reports"
     And I click on "Enable" "link"
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     And I press "Add a new rule"
@@ -45,7 +45,7 @@ Feature: tool_monitor_rule
 
   Scenario: Add a rule on course level
     Given I log in as "teacher1"
-    And I am on homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I navigate to "Event monitoring rules" node in "Course administration > Reports"
     When I press "Add a new rule"

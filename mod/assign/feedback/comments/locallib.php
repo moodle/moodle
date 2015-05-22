@@ -96,7 +96,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
         }
         // Note that this handles the difference between empty and not in the quickgrading
         // form at all (hidden column).
-        $newvalue = optional_param('quickgrade_comments_' . $userid, false, PARAM_TEXT);
+        $newvalue = optional_param('quickgrade_comments_' . $userid, false, PARAM_RAW);
         return ($newvalue !== false) && ($newvalue != $commenttext);
     }
 
@@ -176,17 +176,16 @@ class assign_feedback_comments extends assign_feedback_plugin {
     public function save_quickgrading_changes($userid, $grade) {
         global $DB;
         $feedbackcomment = $this->get_feedback_comments($grade->id);
-        $feedbackpresent = optional_param('quickgrade_comments_' . $userid, false, PARAM_TEXT) !== false;
-        if (!$feedbackpresent) {
-            // Nothing to save (e.g. hidden column).
+        $quickgradecomments = optional_param('quickgrade_comments_' . $userid, null, PARAM_RAW);
+        if (!$quickgradecomments) {
             return true;
         }
         if ($feedbackcomment) {
-            $feedbackcomment->commenttext = optional_param('quickgrade_comments_' . $userid, '', PARAM_TEXT);
+            $feedbackcomment->commenttext = $quickgradecomments;
             return $DB->update_record('assignfeedback_comments', $feedbackcomment);
         } else {
             $feedbackcomment = new stdClass();
-            $feedbackcomment->commenttext = optional_param('quickgrade_comments_' . $userid, '', PARAM_TEXT);
+            $feedbackcomment->commenttext = $quickgradecomments;
             $feedbackcomment->commentformat = FORMAT_HTML;
             $feedbackcomment->grade = $grade->id;
             $feedbackcomment->assignment = $this->assignment->get_instance()->id;
@@ -485,7 +484,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * @return external_description|null
      */
     public function get_external_parameters() {
-        $editorparams = array('text' => new external_value(PARAM_TEXT, 'The text for this feedback.'),
+        $editorparams = array('text' => new external_value(PARAM_RAW, 'The text for this feedback.'),
                               'format' => new external_value(PARAM_INT, 'The format for this feedback'));
         $editorstructure = new external_single_structure($editorparams);
         return array('assignfeedbackcomments_editor' => $editorstructure);

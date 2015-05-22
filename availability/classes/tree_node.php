@@ -83,12 +83,33 @@ abstract class tree_node {
     public abstract function save();
 
     /**
+     * Checks whether this node should be included after restore or not. The
+     * node may be removed depending on restore settings, which you can get from
+     * the $task object.
+     *
+     * By default nodes are still included after restore.
+     *
+     * @param string $restoreid Restore ID
+     * @param int $courseid ID of target course
+     * @param \base_logger $logger Logger for any warnings
+     * @param string $name Name of this item (for use in warning messages)
+     * @param \base_task $task Current restore task
+     * @return bool True if there was any change
+     */
+    public function include_after_restore($restoreid, $courseid, \base_logger $logger, $name,
+            \base_task $task) {
+        return true;
+    }
+
+    /**
      * Updates this node after restore, returning true if anything changed.
      * The default behaviour is simply to return false. If there is a problem
      * with the update, $logger can be used to output a warning.
      *
      * Note: If you need information about the date offset, call
-     * \core_availability\info::get_restore_date_offset($restoreid).
+     * \core_availability\info::get_restore_date_offset($restoreid). For
+     * information on the restoring task and its settings, call
+     * \core_availability\info::get_restore_task($restoreid).
      *
      * @param string $restoreid Restore ID
      * @param int $courseid ID of target course

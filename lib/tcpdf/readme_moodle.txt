@@ -1,9 +1,14 @@
-Description of TCPDF library import 6.0.093
+Description of TCPDF library import 6.2.6
 ===========================================
 * delete examples/, tools/ and tcpdf_import.php
 * remove tcpdf_import.php from composer.json
 * remove all fonts that were not already present
 * visit http://127.0.0.1/lib/tests/other/pdflibtestpage.php and view the pdf
+
+2015/03/23
+----------
+Upgrade to tcpdf_php5 TCPDF 6.2.6 (MDL-49522)
+by Adrian Greeve <adrian@moodle.com>
 
 2011/10/29
 ----------

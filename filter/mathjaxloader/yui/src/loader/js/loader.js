@@ -111,14 +111,20 @@ M.filter_mathjaxloader = M.filter_mathjaxloader || {
     contentUpdated: function(event) {
         var self = this;
         Y.use('mathjax', function() {
+            if (typeof window.MathJax === "undefined") {
+                return;
+            }
+            var processdelay = window.MathJax.Hub.processSectionDelay;
+            // Set the process section delay to 0 when updating the formula.
+            window.MathJax.Hub.processSectionDelay = 0;
             self._setLocale();
             event.nodes.each(function (node) {
                 node.all('.filter_mathjaxloader_equation').each(function(node) {
-                    if (typeof window.MathJax !== "undefined") {
-                        window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, node.getDOMNode()]);
-                    }
+                    window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, node.getDOMNode()]);
                 });
             });
+            // Set the delay back to normal after processing.
+            window.MathJax.Hub.processSectionDelay = processdelay;
         });
     }
 };

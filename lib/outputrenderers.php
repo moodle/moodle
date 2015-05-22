@@ -67,6 +67,54 @@ class renderer_base {
     protected $target;
 
     /**
+     * @var Mustache_Engine $mustache The mustache template compiler
+     */
+    private $mustache;
+
+    /**
+     * Return an instance of the mustache class.
+     *
+     * @since 2.9
+     * @return Mustache_Engine
+     */
+    protected function get_mustache() {
+        global $CFG;
+
+        if ($this->mustache === null) {
+            require_once($CFG->dirroot . '/lib/mustache/src/Mustache/Autoloader.php');
+            Mustache_Autoloader::register();
+
+            $themename = $this->page->theme->name;
+            $themerev = theme_get_revision();
+
+            $cachedir = make_localcache_directory("mustache/$themerev/$themename");
+
+            $loader = new \core\output\mustache_filesystem_loader();
+            $stringhelper = new \core\output\mustache_string_helper();
+            $jshelper = new \core\output\mustache_javascript_helper($this->page->requires);
+            $pixhelper = new \core\output\mustache_pix_helper($this);
+
+            // We only expose the variables that are exposed to JS templates.
+            $safeconfig = $this->page->requires->get_config_for_javascript($this->page, $this);
+
+            $helpers = array('config' => $safeconfig,
+                             'str' => array($stringhelper, 'str'),
+                             'js' => array($jshelper, 'help'),
+                             'pix' => array($pixhelper, 'pix'));
+
+            $this->mustache = new Mustache_Engine(array(
+                'cache' => $cachedir,
+                'escape' => 's',
+                'loader' => $loader,
+                'helpers' => $helpers));
+
+        }
+
+        return $this->mustache;
+    }
+
+
+    /**
      * Constructor
      *
      * The constructor takes two arguments. The first is the page that the renderer
@@ -82,6 +130,39 @@ class renderer_base {
         $this->page = $page;
         $this->target = $target;
     }
+
+    /**
+     * Renders a template by name with the given context.
+     *
+     * The provided data needs to be array/stdClass made up of only simple types.
+     * Simple types are array,stdClass,bool,int,float,string
+     *
+     * @since 2.9
+     * @param array|stdClass $context Context containing data for the template.
+     * @return string|boolean
+     */
+    public function render_from_template($templatename, $context) {
+        static $templatecache = array();
+        $mustache = $this->get_mustache();
+
+        // Provide 1 random value that will not change within a template
+        // but will be different from template to template. This is useful for
+        // e.g. aria attributes that only work with id attributes and must be
+        // unique in a page.
+        $mustache->addHelper('uniqid', new \core\output\mustache_uniqid_helper());
+        if (isset($templatecache[$templatename])) {
+            $template = $templatecache[$templatename];
+        } else {
+            try {
+                $template = $mustache->loadTemplate($templatename);
+                $templatecache[$templatename] = $template;
+            } catch (Mustache_Exception_UnknownTemplateException $e) {
+                throw new moodle_exception('Unknown template: ' . $templatename);
+            }
+        }
+        return trim($template->render($context));
+    }
+
 
     /**
      * Returns rendered widget.
@@ -819,7 +900,7 @@ class core_renderer extends renderer_base {
         $output .= $this->notification($message, 'redirectmessage');
         $output .= '<div class="continuebutton">(<a href="'. $encodedurl .'">'. get_string('continue') .'</a>)</div>';
         if ($debugdisableredirect) {
-            $output .= '<p><strong>Error output, so disabling automatic redirect.</strong></p>';
+            $output .= '<p><strong>'.get_string('erroroutput', 'error').'</strong></p>';
         }
         $output .= $this->footer();
         return $output;
@@ -2014,9 +2095,8 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_pix_icon(pix_icon $icon) {
-        $attributes = $icon->attributes;
-        $attributes['src'] = $this->pix_url($icon->pix, $icon->component);
-        return html_writer::empty_tag('img', $attributes);
+        $data = $icon->export_for_template($this);
+        return $this->render_from_template('core/pix_icon', $data);
     }
 
     /**
@@ -2688,7 +2768,108 @@ EOD;
      * @return string the HTML to output.
      */
     public function notification($message, $classes = 'notifyproblem') {
-        return html_writer::tag('div', clean_text($message), array('class' => renderer_base::prepare_classes($classes)));
+
+        $classmappings = array(
+            'notifyproblem' => \core\output\notification::NOTIFY_PROBLEM,
+            'notifytiny' => \core\output\notification::NOTIFY_PROBLEM,
+            'notifysuccess' => \core\output\notification::NOTIFY_SUCCESS,
+            'notifymessage' => \core\output\notification::NOTIFY_MESSAGE,
+            'redirectmessage' => \core\output\notification::NOTIFY_REDIRECT
+        );
+
+        // Identify what type of notification this is.
+        $type = \core\output\notification::NOTIFY_PROBLEM;
+        $classarray = explode(' ', self::prepare_classes($classes));
+        if (count($classarray) > 0) {
+            foreach ($classarray as $class) {
+                if (isset($classmappings[$class])) {
+                    $type = $classmappings[$class];
+                    break;
+                }
+            }
+        }
+
+        $n = new \core\output\notification($message, $type);
+        return $this->render($n);
+
+    }
+
+    /**
+     * Output a notification at a particular level - in this case, NOTIFY_PROBLEM.
+     *
+     * @param string $message the message to print out
+     * @return string HTML fragment.
+     */
+    public function notify_problem($message) {
+        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_PROBLEM);
+        return $this->render($n);
+    }
+
+    /**
+     * Output a notification at a particular level - in this case, NOTIFY_SUCCESS.
+     *
+     * @param string $message the message to print out
+     * @return string HTML fragment.
+     */
+    public function notify_success($message) {
+        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_SUCCESS);
+        return $this->render($n);
+    }
+
+    /**
+     * Output a notification at a particular level - in this case, NOTIFY_MESSAGE.
+     *
+     * @param string $message the message to print out
+     * @return string HTML fragment.
+     */
+    public function notify_message($message) {
+        $n = new notification($message, notification::NOTIFY_MESSAGE);
+        return $this->render($n);
+    }
+
+    /**
+     * Output a notification at a particular level - in this case, NOTIFY_REDIRECT.
+     *
+     * @param string $message the message to print out
+     * @return string HTML fragment.
+     */
+    public function notify_redirect($message) {
+        $n = new \core\output\notification($message, \core\output\notification::NOTIFY_REDIRECT);
+        return $this->render($n);
+    }
+
+    /**
+     * Render a notification (that is, a status message about something that has
+     * just happened).
+     *
+     * @param \core\output\notification $notification the notification to print out
+     * @return string the HTML to output.
+     */
+    protected function render_notification(\core\output\notification $notification) {
+
+        $data = $notification->export_for_template($this);
+
+        $templatename = '';
+        switch($data->type) {
+            case \core\output\notification::NOTIFY_MESSAGE:
+                $templatename = 'core/notification_message';
+                break;
+            case \core\output\notification::NOTIFY_SUCCESS:
+                $templatename = 'core/notification_success';
+                break;
+            case \core\output\notification::NOTIFY_PROBLEM:
+                $templatename = 'core/notification_problem';
+                break;
+            case \core\output\notification::NOTIFY_REDIRECT:
+                $templatename = 'core/notification_redirect';
+                break;
+            default:
+                $templatename = 'core/notification_message';
+                break;
+        }
+
+        return self::render_from_template($templatename, $data);
+
     }
 
     /**
@@ -3399,7 +3580,7 @@ EOD;
         $linkurl = new moodle_url('/theme/switchdevice.php', array('url' => $this->page->url, 'device' => $devicetype, 'sesskey' => sesskey()));
 
         $content  = html_writer::start_tag('div', array('id' => 'theme_switch_link'));
-        $content .= html_writer::link($linkurl, $linktext);
+        $content .= html_writer::link($linkurl, $linktext, array('rel' => 'nofollow'));
         $content .= html_writer::end_tag('div');
 
         return $content;
@@ -3566,16 +3747,23 @@ EOD;
     public function body_css_classes(array $additionalclasses = array()) {
         // Add a class for each block region on the page.
         // We use the block manager here because the theme object makes get_string calls.
+        $usedregions = array();
         foreach ($this->page->blocks->get_regions() as $region) {
             $additionalclasses[] = 'has-region-'.$region;
             if ($this->page->blocks->region_has_content($region, $this)) {
                 $additionalclasses[] = 'used-region-'.$region;
+                $usedregions[] = $region;
             } else {
                 $additionalclasses[] = 'empty-region-'.$region;
             }
             if ($this->page->blocks->region_completely_docked($region, $this)) {
                 $additionalclasses[] = 'docked-region-'.$region;
             }
+        }
+        if (count($usedregions) === 1) {
+            // Add the -only class for the only used region.
+            $region = array_shift($usedregions);
+            $additionalclasses[] = $region . '-only';
         }
         foreach ($this->page->layout_options as $option => $value) {
             if ($value) {
@@ -3677,6 +3865,193 @@ EOD;
      */
     public function favicon() {
         return $this->pix_url('favicon', 'theme');
+    }
+
+    /**
+     * Renders preferences groups.
+     *
+     * @param  preferences_groups $renderable The renderable
+     * @return string The output.
+     */
+    public function render_preferences_groups(preferences_groups $renderable) {
+        $html = '';
+        $html .= html_writer::start_div('row-fluid');
+        $html .= html_writer::start_tag('div', array('class' => 'span12 preferences-groups'));
+        $i = 0;
+        $open = false;
+        foreach ($renderable->groups as $group) {
+            if ($i == 0 || $i % 3 == 0) {
+                if ($open) {
+                    $html .= html_writer::end_tag('div');
+                }
+                $html .= html_writer::start_tag('div', array('class' => 'row-fluid'));
+                $open = true;
+            }
+            $html .= $this->render($group);
+            $i++;
+        }
+
+        $html .= html_writer::end_tag('div');
+
+        $html .= html_writer::end_tag('ul');
+        $html .= html_writer::end_tag('div');
+        $html .= html_writer::end_div();
+        return $html;
+    }
+
+    /**
+     * Renders preferences group.
+     *
+     * @param  preferences_group $renderable The renderable
+     * @return string The output.
+     */
+    public function render_preferences_group(preferences_group $renderable) {
+        $html = '';
+        $html .= html_writer::start_tag('div', array('class' => 'span4 preferences-group'));
+        $html .= $this->heading($renderable->title, 3);
+        $html .= html_writer::start_tag('ul');
+        foreach ($renderable->nodes as $node) {
+            if ($node->has_children()) {
+                debugging('Preferences nodes do not support children', DEBUG_DEVELOPER);
+            }
+            $html .= html_writer::tag('li', $this->render($node));
+        }
+        $html .= html_writer::end_tag('ul');
+        $html .= html_writer::end_tag('div');
+        return $html;
+    }
+
+    /**
+     * Returns the header bar.
+     *
+     * @since Moodle 2.9
+     * @param array $headerinfo An array of header information, dependant on what type of header is being displayed. The following
+     *                          array example is user specific.
+     *                          heading => Override the page heading.
+     *                          user => User object.
+     *                          usercontext => user context.
+     * @param int $headinglevel What level the 'h' tag will be.
+     * @return string HTML for the header bar.
+     */
+    public function context_header($headerinfo = null, $headinglevel = 1) {
+        global $DB, $USER;
+        $context = $this->page->context;
+        // Make sure to use the heading if it has been set.
+        if (isset($headerinfo['heading'])) {
+            $heading = $headerinfo['heading'];
+        } else {
+            $heading = null;
+        }
+        $imagedata = null;
+        $subheader = null;
+        $userbuttons = null;
+        // The user context currently has images and buttons. Other contexts may follow.
+        if (isset($headerinfo['user']) || $context->contextlevel == CONTEXT_USER) {
+            if (isset($headerinfo['user'])) {
+                $user = $headerinfo['user'];
+            } else {
+                // Look up the user information if it is not supplied.
+                $user = $DB->get_record('user', array('id' => $context->instanceid));
+            }
+            // If the user context is set, then use that for capability checks.
+            if (isset($headerinfo['usercontext'])) {
+                $context = $headerinfo['usercontext'];
+            }
+            // Use the user's full name if the heading isn't set.
+            if (!isset($heading)) {
+                $heading = fullname($user);
+            }
+
+            $imagedata = $this->user_picture($user, array('size' => 100));
+            // Check to see if we should be displaying a message button.
+            if ($USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
+                $userbuttons = array(
+                    'messages' => array(
+                        'buttontype' => 'message',
+                        'title' => get_string('message', 'message'),
+                        'url' => new moodle_url('/message/index.php', array('id' => $user->id)),
+                        'image' => 'message',
+                        'linkattributes' => message_messenger_sendmessage_link_params($user),
+                        'page' => $this->page
+                    )
+                );
+            }
+        }
+
+        $contextheader = new context_header($heading, $headinglevel, $imagedata, $userbuttons);
+        return $this->render_context_header($contextheader);
+    }
+
+     /**
+      * Renders the header bar.
+      *
+      * @param context_header $contextheader Header bar object.
+      * @return string HTML for the header bar.
+      */
+    protected function render_context_header(context_header $contextheader) {
+
+        // All the html stuff goes here.
+        $html = html_writer::start_div('page-context-header');
+
+        // Image data.
+        if (isset($contextheader->imagedata)) {
+            // Header specific image.
+            $html .= html_writer::div($contextheader->imagedata, 'page-header-image');
+        }
+
+        // Headings.
+        if (!isset($contextheader->heading)) {
+            $headings = $this->heading($this->page->heading, $contextheader->headinglevel);
+        } else {
+            $headings = $this->heading($contextheader->heading, $contextheader->headinglevel);
+        }
+
+        $html .= html_writer::tag('div', $headings, array('class' => 'page-header-headings'));
+
+        // Buttons.
+        if (isset($contextheader->additionalbuttons)) {
+            $html .= html_writer::start_div('btn-group header-button-group');
+            foreach ($contextheader->additionalbuttons as $button) {
+                if (!isset($button->page)) {
+                    // Include js for messaging.
+                    if ($button['buttontype'] === 'message') {
+                        message_messenger_requirejs();
+                    }
+                    $image = $this->pix_icon($button['formattedimage'], $button['title'], 'moodle', array(
+                        'class' => 'iconsmall',
+                        'role' => 'presentation'
+                    ));
+                    $image .= html_writer::span($button['title'], 'header-button-title');
+                } else {
+                    $image = html_writer::empty_tag('img', array(
+                        'src' => $button['formattedimage'],
+                        'role' => 'presentation'
+                    ));
+                }
+                $html .= html_writer::link($button['url'], html_writer::tag('span', $image), $button['linkattributes']);
+            }
+            $html .= html_writer::end_div();
+        }
+        $html .= html_writer::end_div();
+
+        return $html;
+    }
+
+    /**
+     * Wrapper for header elements.
+     *
+     * @return string HTML to display the main header.
+     */
+    public function full_header() {
+        $html = html_writer::start_tag('header', array('id' => 'page-header', 'class' => 'clearfix'));
+        $html .= $this->context_header();
+        $html .= html_writer::start_div('clearfix', array('id' => 'page-navbar'));
+        $html .= html_writer::tag('nav', $this->navbar(), array('class' => 'breadcrumb-nav'));
+        $html .= html_writer::div($this->page_heading_button(), 'breadcrumb-button');
+        $html .= html_writer::end_div();
+        $html .= html_writer::tag('div', $this->course_header(), array('id' => 'course-header'));
+        $html .= html_writer::end_tag('header');
+        return $html;
     }
 }
 

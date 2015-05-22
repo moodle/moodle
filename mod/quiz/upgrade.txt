@@ -1,5 +1,33 @@
 This files describes API changes in the quiz code.
 
+=== 2.9 ===
+
+* There have been changes in classes/output/edit_renderer.php for MDL-40990.
+  + Some methods use to take $structure & $question as the first two arguments.
+    They now take $structure & $slot number. If you need $question, you can get
+    it using $question = $structure->get_question_in_slot($slot);
+  + Some methods used to take $quiz & $question. They now take $structure & $slot
+    number. You can get $question as above. $quiz is $structure->get_quiz().
+  + initialise_editing_javascript has had some redundant arguments removed.
+  Hopefully, with these changes, we will have less need to make other changes in future.
+
+* Due to MDL-40992, you should be aware that extra slots can get added to an attempt.
+  You may get slot numbers beyone the end of the original quiz layout, and you
+  may want to call $attemptobj->get_original_slot to find where the question
+  originally came from.
+
+* You now need to pass an instance of the mod_quiz_renderer if you call
+  $attemptobj->render_question or $attemptobj->render_question_at_step.
+
+* The array values in mod_quiz_links_to_other_attempts may now be either a moodle_url,
+  or renderable (or null). Previously they could only be a moodle_url or null.
+
+* The contents of the navigation block is now not just quiz_nav_question_button-s.
+  It can also contain quiz_nav_section_heading-s. If you have overridden
+  mod_quiz_renderer::navigation_panel, then you may need to account for this.
+  This change also has implications for the Edit quiz page.
+
+
 === 2.8 ===
 
 * Classes that were defined in various lib files have been moved to the classes

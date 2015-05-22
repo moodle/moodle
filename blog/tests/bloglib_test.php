@@ -129,7 +129,7 @@ class core_bloglib_testcase extends advanced_testcase {
     public function test_blog_get_headers_case_1() {
         global $CFG, $PAGE, $OUTPUT;
         $blogheaders = blog_get_headers();
-        $this->assertEquals($blogheaders['heading'], get_string('siteblog', 'blog', 'phpunit'));
+        $this->assertEquals($blogheaders['heading'], get_string('siteblogheading', 'blog'));
     }
 
     public function test_blog_get_headers_case_6() {

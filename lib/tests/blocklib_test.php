@@ -286,6 +286,26 @@ class core_blocklib_testcase extends advanced_testcase {
         $this->assertContainsBlocksOfType(array($blockname, $blockname), $blocks);
     }
 
+    public function test_adding_blocks() {
+        $this->purge_blocks();
+
+        // Set up fixture.
+        $regionname = 'a-region';
+        $blockname = $this->get_a_known_block_type();
+        $context = context_system::instance();
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+
+        $blockmanager->add_blocks(array($regionname => array($blockname, $blockname)), null, null, false, 3);
+        $blockmanager->load_blocks();
+
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+
+        $this->assertEquals('3', $blocks[0]->instance->weight);
+        $this->assertEquals('4', $blocks[1]->instance->weight);
+    }
+
     public function test_block_not_included_in_different_context() {
         $this->purge_blocks();
 

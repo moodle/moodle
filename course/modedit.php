@@ -189,6 +189,10 @@ if (!empty($add)) {
                                              'iteminstance'=>$data->instance, 'courseid'=>$course->id))) {
         // add existing outcomes
         foreach ($items as $item) {
+            if (!empty($item->gradepass)) {
+                $decimalpoints = $item->get_decimals();
+                $data->gradepass = format_float($item->gradepass, $decimalpoints);
+            }
             if (!empty($item->outcomeid)) {
                 $data->{'outcome_'.$item->outcomeid} = 1;
             }

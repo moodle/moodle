@@ -6,8 +6,8 @@ Feature: Edit quiz page - pagination
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | teacher1 | T1        | Teacher1 | teacher1@moodle.com |
+      | username | firstname | lastname | email                |
+      | teacher1 | T1        | Teacher1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |

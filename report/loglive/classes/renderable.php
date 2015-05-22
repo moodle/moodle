@@ -124,18 +124,18 @@ class report_loglive_renderable implements renderable {
     }
 
     /**
-     * Get a list of enabled sql_select_reader objects/name
+     * Get a list of enabled sql_reader objects/name
      *
      * @param bool $nameonly if true only reader names will be returned.
      *
-     * @return array core\log\sql_select_reader object or name.
+     * @return array core\log\sql_reader object or name.
      */
     public function get_readers($nameonly = false) {
         if (!isset($this->logmanager)) {
             $this->logmanager = get_log_manager();
         }
 
-        $readers = $this->logmanager->get_readers('core\log\sql_select_reader');
+        $readers = $this->logmanager->get_readers('core\log\sql_reader');
         if ($nameonly) {
             foreach ($readers as $pluginname => $reader) {
                 $readers[$pluginname] = $reader->get_name();

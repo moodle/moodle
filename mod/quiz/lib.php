@@ -88,6 +88,10 @@ function quiz_add_instance($quiz) {
     // Try to store it in the database.
     $quiz->id = $DB->insert_record('quiz', $quiz);
 
+    // Create the first section for this quiz.
+    $DB->insert_record('quiz_sections', array('quizid' => $quiz->id,
+            'firstslot' => 1, 'heading' => '', 'shufflequestions' => 0));
+
     // Do the processing required after an add or an update.
     quiz_after_add_or_update($quiz);
 
@@ -143,7 +147,7 @@ function quiz_update_instance($quiz, $mform) {
     quiz_delete_previews($quiz);
 
     // Repaginate, if asked to.
-    if (!$quiz->shufflequestions && !empty($quiz->repaginatenow)) {
+    if (!empty($quiz->repaginatenow)) {
         quiz_repaginate_questions($quiz->id, $quiz->questionsperpage);
     }
 
@@ -175,6 +179,7 @@ function quiz_delete_instance($id) {
 
     // We need to do this before we try and delete randoms, otherwise they would still be 'in use'.
     $DB->delete_records('quiz_slots', array('quizid' => $quiz->id));
+    $DB->delete_records('quiz_sections', array('quizid' => $quiz->id));
 
     foreach ($questionids as $questionid) {
         question_delete_question($questionid);
@@ -1322,6 +1327,10 @@ function quiz_reset_course_form_definition($mform) {
     $mform->addElement('header', 'quizheader', get_string('modulenameplural', 'quiz'));
     $mform->addElement('advcheckbox', 'reset_quiz_attempts',
             get_string('removeallquizattempts', 'quiz'));
+    $mform->addElement('advcheckbox', 'reset_quiz_user_overrides',
+            get_string('removealluseroverrides', 'quiz'));
+    $mform->addElement('advcheckbox', 'reset_quiz_group_overrides',
+            get_string('removeallgroupoverrides', 'quiz'));
 }
 
 /**
@@ -1329,7 +1338,9 @@ function quiz_reset_course_form_definition($mform) {
  * @return array the defaults.
  */
 function quiz_reset_course_form_defaults($course) {
-    return array('reset_quiz_attempts' => 1);
+    return array('reset_quiz_attempts' => 1,
+                 'reset_quiz_group_overrides' => 1,
+                 'reset_quiz_user_overrides' => 1);
 }
 
 /**
@@ -1393,6 +1404,25 @@ function quiz_reset_userdata($data) {
         $status[] = array(
             'component' => $componentstr,
             'item' => get_string('gradesdeleted', 'quiz'),
+            'error' => false);
+    }
+
+    // Remove user overrides.
+    if (!empty($data->reset_quiz_user_overrides)) {
+        $DB->delete_records_select('quiz_overrides',
+                'quiz IN (SELECT id FROM {quiz} WHERE course = ?) AND userid IS NOT NULL', array($data->courseid));
+        $status[] = array(
+            'component' => $componentstr,
+            'item' => get_string('useroverridesdeleted', 'quiz'),
+            'error' => false);
+    }
+    // Remove group overrides.
+    if (!empty($data->reset_quiz_group_overrides)) {
+        $DB->delete_records_select('quiz_overrides',
+                'quiz IN (SELECT id FROM {quiz} WHERE course = ?) AND groupid IS NOT NULL', array($data->courseid));
+        $status[] = array(
+            'component' => $componentstr,
+            'item' => get_string('groupoverridesdeleted', 'quiz'),
             'error' => false);
     }
 
@@ -1841,7 +1871,7 @@ function quiz_get_completion_state($course, $cm, $userid, $type) {
     if ($quiz->completionpass) {
         require_once($CFG->libdir . '/gradelib.php');
         $item = grade_item::fetch(array('courseid' => $course->id, 'itemtype' => 'mod',
-                'itemmodule' => 'quiz', 'iteminstance' => $cm->instance));
+                'itemmodule' => 'quiz', 'iteminstance' => $cm->instance, 'outcomeid' => null));
         if ($item) {
             $grades = grade_grade::fetch_users_grades($item, array($userid), false);
             if (!empty($grades[$userid])) {

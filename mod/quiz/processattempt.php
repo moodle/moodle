@@ -144,6 +144,14 @@ if (!$finishattempt) {
                     $attemptobj->attempt_url(null, $thispage), $e->getMessage(), $debuginfo);
         }
 
+        if (!$becomingoverdue) {
+            foreach ($attemptobj->get_slots() as $slot) {
+                if (optional_param('redoslot' . $slot, false, PARAM_BOOL)) {
+                    $attemptobj->process_redo_question($slot, $timenow);
+                }
+            }
+        }
+
     } else {
         // The student is too late.
         $attemptobj->process_going_overdue($timenow, true);

@@ -70,7 +70,7 @@
     echo $OUTPUT->heading($survey->name);
 
     if (survey_already_done($survey->id, $USER->id)) {
-        notice(get_string("alreadysubmitted", "survey"), $_SERVER["HTTP_REFERER"]);
+        notice(get_string("alreadysubmitted", "survey"), clean_param($_SERVER["HTTP_REFERER"], PARAM_LOCALURL));
         exit;
     }
 

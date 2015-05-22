@@ -22,7 +22,7 @@ This files describes API changes for code that uses the question API.
 
 === 2.8 ===
 
-1) This is jsut a warning that some methods of the question_engine_data_mapper
+1) This is just a warning that some methods of the question_engine_data_mapper
    class have changed. All these methods are ones that you should not have been
    calling directly from your code, so this should not cause any problems.
    The changed methods are:

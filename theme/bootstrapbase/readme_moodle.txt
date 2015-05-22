@@ -1,4 +1,4 @@
-Discription of Twitter bootstrap import into Moodle
+Description of Twitter bootstrap import into Moodle
 
 Twitter bootstrap
 -----------------
@@ -11,6 +11,7 @@ To update to the latest release of twitter bootstrap:
 * remove all files from less/bootstrap,
 * download the new less files and store them in less/bootstrap
 * Apply change in MDL-42195 (We don't want responsive images by default).
+* Apply change in MDL-48328 (We need to reset the width of the container directly, in ./less/bootstrap/navbar.less, using the calculated value found in ./less/bootstrap/mixin.less).
 * regenerate files using recess: recess --compile --compress moodle.less > ../style/moodle.css **
 * regenerate files using recess: recess --compile --compress editor.less > ../style/editor.css **
 * update ./thirdpartylibs.xml
@@ -30,20 +31,3 @@ https://github.com/aFarkas/html5shiv/blob/master/src/html5shiv.js
 To update to the latest release of html5shiv:
 * download and replace: javascript/html5shiv.js
 * update ./thirdpartylibs.xml
-
-bootstrapcollapse.js, bootstrapdropdown.js, bootstrapengine.js
---------------------------------------------------------------
-This theme uses YUI ports of the Twitter bootstrap jQuery based libs.
-
-Upgrade procedure:
-* git clone https://github.com/jshirley/yui-gallery.git
-* from that repository copy:
-** build/gallery-bootstrap-collapse/gallery-bootstrap-collapse-debug.js to js/gallery-bootstrapcollapse.js
-** build/gallery-bootstrap-dropdown/gallery-bootstrap-dropdown-debug.js to js/gallery-bootstrapdropdown.js
-** build/gallery-bootstrap-engine/gallery-bootstrap-engine-debug.js to js/gallery-bootstrapengine.js
-* apply patches from MDL-43152 to address linting issues
-* run shifter on this directory as required
-* update ../../../thirdpartylibs.xml
-
-The YUI port of the Twitter bootstrap libs are now longer maintained. If you need all of the Bootstrap JavaScript
-functionality consider switching to the original jQuery version of these file
