@@ -1023,10 +1023,15 @@ function blog_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * @return bool
  */
 function core_blog_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    global $CFG;
     if (!blog_is_enabled_for_user() || isguestuser($user)) {
         // The guest user cannot post, so it is not possible to view any posts.
         // Also blogs might be disabled.
         // May as well just bail aggressively here.
+        return true;
+    }
+    if ($CFG->bloglevel == BLOG_USER_LEVEL && !$iscurrentuser) {
+        // Blogs are only viewable by the owner.
         return true;
     }
     $url = new moodle_url("/blog/index.php", array('userid' => $user->id));
