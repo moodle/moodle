@@ -51,7 +51,7 @@ function mycourses_get_my_completion($datefrom = 0) {
                                           AND cc.timecompleted IS NULL
                                           AND cc.timestarted != 0",
                                           array('userid' => $USER->id));
-    $mynotstarted = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.course as courseid, c.fullname as coursefullname, c.summary as coursesummary
+    $mynotstartedenrolled = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.course as courseid, c.fullname as coursefullname, c.summary as coursesummary
                                           FROM {course_completions} cc
                                           JOIN {course} c ON (c.id = cc.course)
                                           JOIN {user_enrolments} ue ON (ue.userid = cc.userid)
@@ -60,6 +60,14 @@ function mycourses_get_my_completion($datefrom = 0) {
                                           AND c.visible = 1
                                           AND cc.timecompleted IS NULL
                                           AND cc.timestarted = 0",
+                                          array('userid' => $USER->id));
+
+    $mynotstartedlicense = $DB->get_records_sql("SELECT clu.id, clu.userid, clu.licensecourseid as courseid, c.fullname as coursefullname, c.summary as coursesummary
+                                          FROM {companylicense_users} clu
+                                          JOIN {course} c ON (c.id = clu.licensecourseid)
+                                          WHERE clu.userid = :userid
+                                          AND c.visible = 1
+                                          AND clu.isusing = 0",
                                           array('userid' => $USER->id));
 
     // Deal with completed course scores and links for certificates.
@@ -97,7 +105,8 @@ function mycourses_get_my_completion($datefrom = 0) {
 
     $mycompletions->mycompleted = $mycompleted;
     $mycompletions->myinprogress = $myinprogress;
-    $mycompletions->mynotstarted = $mynotstarted;
+    $mycompletions->mynotstartedenrolled = $mynotstartedenrolled;
+    $mycompletions->mynotstartedlicense = $mynotstartedlicense;
 
     return $mycompletions;
 

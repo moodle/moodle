@@ -39,3 +39,5 @@ $string['mycourses:myaddinstance'] = 'Add a mycourses block to my moodle';
 $string['nocerttodownload'] = 'No certificate available';
 $string['notstartedheader'] = 'Courses not started';
 $string['pluginname'] = 'My Courses';
+$string['showsummarylabel'] = 'Show course summary';
+$string['showsummarydesc'] = 'Show the course summary in the listing';

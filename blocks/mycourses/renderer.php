@@ -44,8 +44,21 @@ class block_mycourses_renderer extends plugin_renderer_base {
 
         // Not started courses listings.
         $returntext .= '<div class="mycourseslisting">';
-        if (!empty($mycompletion->mynotstarted)) {
-            foreach ($mycompletion->mynotstarted as $notstarted) {
+        if (!empty($mycompletion->mynotstartedenrolled)) {
+            foreach ($mycompletion->mynotstartedenrolled as $notstarted) {
+                // Display the course info.
+                $coursecontext = context_course::instance($notstarted->courseid);
+                $summaryinfo = file_rewrite_pluginfile_urls($notstarted->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
+                $returntext .= '<div class="mycourselisting"><div class="mycourseheading">';
+                $returntext .= '<h2 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $notstarted->courseid)) . '">' . $notstarted->coursefullname . '</a></h2></div>';
+                if ($CFG->mycourses_showsummary) {
+                    $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
+                }
+                $returntext .= '</div>';
+            }
+        }
+        if (!empty($mycompletion->mynotstartedlicense)) {
+            foreach ($mycompletion->mynotstartedlicense as $notstarted) {
                 // Display the course info.
                 $coursecontext = context_course::instance($notstarted->courseid);
                 $summaryinfo = file_rewrite_pluginfile_urls($notstarted->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
