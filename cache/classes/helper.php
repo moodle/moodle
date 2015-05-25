@@ -318,6 +318,8 @@ class cache_helper {
                 $definitionkey = $definition->get_component().'/'.$definition->get_area();
                 if (isset($inuse[$definitionkey])) {
                     $inuse[$definitionkey]->purge();
+                } else {
+                    cache::make($definition->get_component(), $definition->get_area())->purge();
                 }
 
                 // We should only log events for application and session caches.
