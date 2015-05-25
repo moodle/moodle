@@ -53,6 +53,10 @@ $observers = array(
     array(
         'eventname'   => '\core\event\user_updated',
         'callback'    => 'core_badges_observer::profile_criteria_review',
+    ),
+    array(
+        'eventname'   => '\core\event\user_created',
+        'callback'    => 'core_badges_observer::profile_criteria_review2',
     )
 
 );

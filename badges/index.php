@@ -166,10 +166,6 @@ $records = badges_get_badges($type, $courseid, $sortby, $sorthow, $page, BADGE_P
 if ($totalcount) {
     echo $output->heading(get_string('badgestoearn', 'badges', $totalcount), 4);
 
-    if ($course && $course->startdate > time()) {
-        echo $OUTPUT->box(get_string('error:notifycoursedate', 'badges'), 'generalbox notifyproblem');
-    }
-
     if ($err !== '') {
         echo $OUTPUT->notification($err, 'notifyproblem');
     }

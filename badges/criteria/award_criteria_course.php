@@ -181,10 +181,6 @@ class award_criteria_course extends award_criteria {
     public function review($userid, $filtered = false) {
         $course = $this->course;
 
-        if ($this->course->startdate > time()) {
-            return false;
-        }
-
         $info = new completion_info($course);
 
         foreach ($this->params as $param) {
