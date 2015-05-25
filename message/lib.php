@@ -179,6 +179,7 @@ function message_print_participants($context, $courseid, $contactselecturl=null,
     $participants = $DB->get_records_sql($sql, $params, $page * MESSAGE_CONTACTS_PER_PAGE, MESSAGE_CONTACTS_PER_PAGE);
 
     $pagingbar = new paging_bar($countparticipants, $page, MESSAGE_CONTACTS_PER_PAGE, $PAGE->url, 'page');
+    $pagingbar->maxdisplay = 4;
     echo $OUTPUT->render($pagingbar);
 
     echo html_writer::start_tag('div', array('id' => 'message_participants', 'class' => 'boxaligncenter'));
