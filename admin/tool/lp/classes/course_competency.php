@@ -24,7 +24,6 @@
 namespace tool_lp;
 
 use stdClass;
-use context_system;
 
 /**
  * Class for loading/storing course_competencies from the DB.
@@ -110,7 +109,7 @@ class course_competency extends persistent {
      * Populate this class with data from a DB record.
      *
      * @param stdClass $record A DB record.
-     * @return framework
+     * @return course_competency
      */
     public function from_record($record) {
         if (isset($record->id)) {
@@ -166,10 +165,10 @@ class course_competency extends persistent {
         global $DB;
 
         $results = $DB->get_records_sql('SELECT course.id as id, course.visible as visible
-                                         FROM {' . self::get_table_name() . '} coursecomp
-                                         JOIN {course} course
-                                         ON coursecomp.courseid = course.id
-                                         WHERE coursecomp.competencyid = ? ', array($competencyid));
+                                           FROM {' . $this->get_table_name() . '} coursecomp
+                                           JOIN {course} course
+                                             ON coursecomp.courseid = course.id
+                                          WHERE coursecomp.competencyid = ? ', array($competencyid));
 
         return $results;
     }
@@ -184,10 +183,10 @@ class course_competency extends persistent {
         global $DB;
 
         $results = $DB->get_records_sql('SELECT course.id, course.visible, course.shortname, course.idnumber, course.fullname
-                                         FROM {course} course
-                                         JOIN {' . self::get_table_name() . '} coursecomp
-                                         ON coursecomp.courseid = course.id
-                                         WHERE coursecomp.competencyid = ? ', array($competencyid));
+                                           FROM {course} course
+                                           JOIN {' . $this->get_table_name() . '} coursecomp
+                                             ON coursecomp.courseid = course.id
+                                          WHERE coursecomp.competencyid = ? ', array($competencyid));
 
         return $results;
     }
@@ -202,12 +201,12 @@ class course_competency extends persistent {
     public function count_competencies($courseid, $onlyvisible) {
         global $DB;
 
-
+        $competency = new competency();
         $sql = 'SELECT COUNT(comp.id)
-                FROM {' . self::get_table_name() . '} coursecomp
-                JOIN {' . competency::get_table_name() . '} comp
-                ON coursecomp.competencyid = comp.id
-                WHERE coursecomp.courseid = ? ';
+                  FROM {' . $this->get_table_name() . '} coursecomp
+                  JOIN {' . $competency->get_table_name() . '} comp
+                    ON coursecomp.competencyid = comp.id
+                 WHERE coursecomp.courseid = ? ';
         $params = array($courseid);
 
         if ($onlyvisible) {
@@ -231,12 +230,12 @@ class course_competency extends persistent {
         global $DB;
 
         $competency = new competency();
-
         $sql = 'SELECT comp.*
-                FROM {' . $competency->get_table_name() . '} comp
-                JOIN {' . self::get_table_name() . '} coursecomp
-                ON coursecomp.competencyid = comp.id
-                WHERE coursecomp.courseid = ? ORDER BY coursecomp.sortorder ASC';
+                  FROM {' . $competency->get_table_name() . '} comp
+                  JOIN {' . $this->get_table_name() . '} coursecomp
+                    ON coursecomp.competencyid = comp.id
+                 WHERE coursecomp.courseid = ?
+              ORDER BY coursecomp.sortorder ASC';
         $params = array($courseid);
 
         if ($onlyvisible) {

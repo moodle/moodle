@@ -348,9 +348,9 @@ class competency extends persistent {
 
             // We need to fix all the paths of the children.
             $like = $DB->sql_like('path', '?');
-            $likesearch = $DB->sql_like_escape($before->path . $before->id . '/') . '%';
+            $likesearch = $DB->sql_like_escape($before->path . $before->get_id() . '/') . '%';
             $sql = 'UPDATE {tool_lp_competency} SET path = REPLACE(path, ?, ?) WHERE ' . $like;
-            $DB->execute($sql, array($before->path . $this->id . '/', $this->path . $this->id . '/', $likesearch));
+            $DB->execute($sql, array($before->path . $this->get_id() . '/', $this->path . $this->get_id() . '/', $likesearch));
         }
         // Do the default update.
         return parent::update();

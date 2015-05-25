@@ -235,7 +235,7 @@ class api {
         // First we do a permissions check.
         $context = context_system::instance();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -255,7 +255,7 @@ class api {
         // First we do a permissions check.
         $context = context_system::instance();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -275,11 +275,11 @@ class api {
      * @param int $limit Max of records to return (pagination)
      * @return array of competencies
      */
-    public static function list_competencies($filters, $sort, $order, $skip, $limit) {
+    public static function list_competencies($filters, $sort = '', $order = 'ASC', $skip = 0, $limit = 0) {
         // First we do a permissions check.
         $context = context_system::instance();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -299,7 +299,7 @@ class api {
         // First we do a permissions check.
         $context = context_system::instance();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -372,7 +372,7 @@ class api {
         // First we do a permissions check.
         $context = context_system::instance();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -432,7 +432,7 @@ class api {
         // First we do a permissions check.
         $context = context_system::instance();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -452,7 +452,7 @@ class api {
         // First we do a permissions check.
         $context = context_system::instance();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -537,7 +537,7 @@ class api {
 
         $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
         }
 
         if (has_capability('tool/lp:coursecompetencymanage', $context)) {
@@ -562,7 +562,7 @@ class api {
 
         $capabilities = array('tool/lp:coursecompetencyread', 'tool/lp:coursecompetencymanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:coursecompetencyread', 'nopermissions', '');
         }
 
         if (has_capability('tool/lp:coursecompetencymanage', $context)) {
@@ -585,9 +585,8 @@ class api {
         // First we do a permissions check.
         $context = context_course::instance($courseid);
 
-        if (!has_capability('tool/lp:coursecompetencymanage', $context)) {
-             throw new required_capability_exception($context, 'tool/lp:coursecompetencymanage', 'nopermission', '');
-        }
+        require_capability('tool/lp:coursecompetencymanage', $context);
+
         $record = new stdClass();
         $record->courseid = $courseid;
         $record->competencyid = $competencyid;
@@ -620,9 +619,8 @@ class api {
         // First we do a permissions check.
         $context = context_course::instance($courseid);
 
-        if (!has_capability('tool/lp:coursecompetencymanage', $context)) {
-             throw new required_capability_exception($context, 'tool/lp:coursecompetencymanage', 'nopermission', '');
-        }
+        require_capability('tool/lp:coursecompetencymanage', $context);
+
         $record = new stdClass();
         $record->courseid = $courseid;
         $record->competencyid = $competencyid;
@@ -656,9 +654,7 @@ class api {
         // First we do a permissions check.
         $context = context_course::instance($courseid);
 
-        if (!has_capability('tool/lp:coursecompetencymanage', $context)) {
-             throw new required_capability_exception($context, 'tool/lp:coursecompetencymanage', 'nopermission', '');
-        }
+        require_capability('tool/lp:coursecompetencymanage', $context);
 
         $down = true;
         $coursecompetency = new course_competency();
@@ -762,7 +758,7 @@ class api {
         $context = context_system::instance();
         $caps = array('tool/lp:templateread', 'tool/lp:templatemanage');
         if (!has_any_capability($caps, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -823,7 +819,7 @@ class api {
         $context = context_system::instance();
         $caps = array('tool/lp:templateread', 'tool/lp:templatemanage');
         if (!has_any_capability($caps, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -844,7 +840,7 @@ class api {
         $context = context_system::instance();
         $caps = array('tool/lp:templateread', 'tool/lp:templatemanage');
         if (!has_any_capability($caps, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -865,7 +861,7 @@ class api {
 
         $capabilities = array('tool/lp:templateread', 'tool/lp:templatemanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
         }
 
         if (has_capability('tool/lp:templatemanage', $context)) {
@@ -874,7 +870,7 @@ class api {
 
         // OK - all set.
         $templatecompetency = new template_competency();
-        return $templatecompetency->count_competencies($templateid, $onlyvisible);
+        return $templatecompetency->count_templates($competencyid, $onlyvisible);
     }
 
     /**
@@ -890,7 +886,7 @@ class api {
 
         $capabilities = array('tool/lp:templateread', 'tool/lp:templatemanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
         }
 
         if (has_capability('tool/lp:templatemanage', $context)) {
@@ -916,7 +912,7 @@ class api {
 
         $capabilities = array('tool/lp:templateread', 'tool/lp:templatemanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
         }
 
         if (has_capability('tool/lp:templatemanage', $context)) {
@@ -941,7 +937,7 @@ class api {
 
         $capabilities = array('tool/lp:templateread', 'tool/lp:templatemanage');
         if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermission', '');
+             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
         }
 
         if (has_capability('tool/lp:templatemanage', $context)) {
@@ -1112,15 +1108,15 @@ class api {
 
         // We don't allow users without planmanage and without
         // planmanageown to edit plans that other users modified.
-        if (!$manageplans && !$manageownplans && $USER->id != $current->get_usermodified()) {
+        if (!$manageplans && !$manageownplan && $USER->id != $current->get_usermodified()) {
             throw new moodle_exception('erroreditingmodifiedplan', 'tool_lp');
-        } else if (!$manageplans && $USER->id != $current->userid) {
+        } else if (!$manageplans && $USER->id != $current->get_userid()) {
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
         }
 
         // If the user can only create drafts we don't allow them to set other status.
         if ($record->status !== plan::STATUS_DRAFT && !$manageplans && !$manageownplan) {
-            required_capability_exception($context, 'tool/lp:planmanageown', 'nopermissions', '');
+            throw new required_capability_exception($context, 'tool/lp:planmanageown', 'nopermissions', '');
         }
 
         $plan = new plan($record->id, $record);
@@ -1168,7 +1164,6 @@ class api {
         $context = context_user::instance($plan->get_userid());
 
         $manageplans = has_capability('tool/lp:planmanage', $context);
-        $createdraft = has_capability('tool/lp:plancreatedraft', $context);
         $manageownplan = has_capability('tool/lp:planmanageown', $context);
 
         if ($USER->id == $plan->get_userid() && $USER->id != $plan->get_usermodified() &&

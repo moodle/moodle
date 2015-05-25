@@ -24,7 +24,6 @@
 namespace tool_lp;
 
 use stdClass;
-use context_system;
 
 /**
  * Class for loading/storing template_competencies from the DB.
@@ -110,7 +109,7 @@ class template_competency extends persistent {
      * Populate this class with data from a DB record.
      *
      * @param stdClass $record A DB record.
-     * @return framework
+     * @return template_competency
      */
     public function from_record($record) {
         if (isset($record->id)) {
@@ -165,12 +164,13 @@ class template_competency extends persistent {
     public function count_templates($competencyid, $onlyvisible) {
         global $DB;
 
+        $template = new template();
         $sql = 'SELECT COUNT(template.id)
-                FROM {' . self::get_table_name() . '} tplcomp
-                JOIN {' . template::get_table_name() . '} tpl
-                ON tplcomp.templateid = tpl.id
-                WHERE tplcomp.competencyid = ? ';
-        $params = array($templateid);
+                  FROM {' . $this->get_table_name() . '} tplcomp
+                  JOIN {' . $template->get_table_name() . '} tpl
+                    ON tplcomp.templateid = tpl.id
+                 WHERE tplcomp.competencyid = ? ';
+        $params = array($competencyid);
 
         if ($onlyvisible) {
             $sql .= ' AND tpl.visible = ?';
@@ -193,12 +193,11 @@ class template_competency extends persistent {
         global $DB;
 
         $template = new template();
-
         $sql = 'SELECT tpl.*
-                FROM {' . $template->get_table_name() . '} tpl
-                JOIN {' . self::get_table_name() . '} tplcomp
-                ON tplcomp.templateid = tpl.id
-                WHERE tplcomp.competencyid = ? ';
+                  FROM {' . $template->get_table_name() . '} tpl
+                  JOIN {' . $this->get_table_name() . '} tplcomp
+                    ON tplcomp.templateid = tpl.id
+                 WHERE tplcomp.competencyid = ? ';
         $params = array($competencyid);
 
         if ($onlyvisible) {
@@ -226,11 +225,12 @@ class template_competency extends persistent {
     public function count_competencies($templateid, $onlyvisible) {
         global $DB;
 
+        $competency = new competency();
         $sql = 'SELECT COUNT(comp.id)
-                FROM {' . self::get_table_name() . '} tplcomp
-                JOIN {' . competency::get_table_name() . '} comp
-                ON tplcomp.competencyid = comp.id
-                WHERE tplcomp.templateid = ? ';
+                  FROM {' . $this->get_table_name() . '} tplcomp
+                  JOIN {' . $competency->get_table_name() . '} comp
+                    ON tplcomp.competencyid = comp.id
+                 WHERE tplcomp.templateid = ? ';
         $params = array($templateid);
 
         if ($onlyvisible) {
@@ -254,12 +254,12 @@ class template_competency extends persistent {
         global $DB;
 
         $competency = new competency();
-
         $sql = 'SELECT comp.*
-                FROM {' . $competency->get_table_name() . '} comp
-                JOIN {' . self::get_table_name() . '} tplcomp
-                ON tplcomp.competencyid = comp.id
-                WHERE tplcomp.templateid = ? ORDER BY tplcomp.sortorder ASC';
+                  FROM {' . $competency->get_table_name() . '} comp
+                  JOIN {' . $this->get_table_name() . '} tplcomp
+                    ON tplcomp.competencyid = comp.id
+                 WHERE tplcomp.templateid = ?
+              ORDER BY tplcomp.sortorder ASC';
         $params = array($templateid);
 
         if ($onlyvisible) {
