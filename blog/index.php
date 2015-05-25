@@ -76,7 +76,9 @@ $sitecontext = context_system::instance();
 
 if (isset($userid) && $USER->id == $userid) {
     $blognode = $PAGE->navigation->find('siteblog', null);
-    $blognode->make_inactive();
+    if ($blognode) {
+        $blognode->make_inactive();
+    }
 }
 
 // Check basic permissions.
