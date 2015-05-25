@@ -721,10 +721,7 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     public function col_picture(stdClass $row) {
-        if ($row->picture) {
-            return $this->output->user_picture($row);
-        }
-        return '';
+        return $this->output->user_picture($row);
     }
 
     /**
