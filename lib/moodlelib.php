@@ -408,7 +408,7 @@ define('FEATURE_COMPLETION_HAS_RULES', 'completion_has_rules');
 
 /** True if module has no 'view' page (like label) */
 define('FEATURE_NO_VIEW_LINK', 'viewlink');
-/** True if module supports outcomes */
+/** True (which is default) if the module wants support for setting the ID number for grade calculation purposes. */
 define('FEATURE_IDNUMBER', 'idnumber');
 /** True if module supports groups */
 define('FEATURE_GROUPS', 'groups');
