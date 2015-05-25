@@ -65,6 +65,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:planmanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:planviewall', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:templatemanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:templatecompetencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
 
         role_assign($this->creatorrole, $creator->id, $syscontext->id);
         role_assign($this->userrole, $user->id, $syscontext->id);
@@ -749,5 +751,139 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $plan4 = external::create_plan('4', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
         $this->assertTrue(external::delete_plan($plan4['id']));
+    }
+
+    public function test_add_competency_to_template() {
+        $this->setUser($this->creator);
+
+        $syscontext = context_system::instance();
+
+        // Create a template.
+        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true);
+        $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
+
+        // Create a competency.
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
+        $competency = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
+        $competency = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency);
+
+        // Add the competency.
+        external::add_competency_to_template($template->id, $competency->id);
+
+        // Check that it was added.
+        $this->assertEquals(1, external::count_competencies_in_template($template->id));
+
+        // Unassign capability.
+        unassign_capability('tool/lp:templatecompetencymanage', $this->creatorrole, $syscontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Check we can not add the competency now.
+        try {
+            external::add_competency_to_template($template->id, $competency->id);
+            $this->fail('Exception expected due to not permissions to manage template competencies');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+    }
+
+    public function test_remove_competency_from_template() {
+        $this->setUser($this->creator);
+
+        $syscontext = context_system::instance();
+
+        // Create a template.
+        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true);
+        $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
+
+        // Create a competency.
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
+        $competency = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
+        $competency = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency);
+
+        // Add the competency.
+        external::add_competency_to_template($template->id, $competency->id);
+
+        // Check that it was added.
+        $this->assertEquals(1, external::count_competencies_in_template($template->id));
+
+        // Check that we can remove the competency.
+        external::remove_competency_from_template($template->id, $competency->id);
+
+        // Check that it was removed.
+        $this->assertEquals(0, external::count_competencies_in_template($template->id));
+
+        // Unassign capability.
+        unassign_capability('tool/lp:templatecompetencymanage', $this->creatorrole, $syscontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Check we can not remove the competency now.
+        try {
+            external::add_competency_to_template($template->id, $competency->id);
+            $this->fail('Exception expected due to not permissions to manage template competencies');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+    }
+
+    /**
+     * Test we can re-order competency frameworks.
+     */
+    public function test_reorder_template_competencies() {
+        $this->setUser($this->creator);
+
+        $syscontext = context_system::instance();
+
+        // Create a template.
+        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true);
+        $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
+
+        // Create a competency framework.
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
+
+        // Create multiple competencies.
+        $competency1 = external::create_competency('shortname1', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
+        $competency1 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency1);
+        $competency2 = external::create_competency('shortname2', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
+        $competency2 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency2);
+        $competency3 = external::create_competency('shortname3', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
+        $competency3 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency3);
+
+        // Add the competencies.
+        external::add_competency_to_template($template->id, $competency1->id);
+        external::add_competency_to_template($template->id, $competency2->id);
+        external::add_competency_to_template($template->id, $competency3->id);
+
+        // This is a move up.
+        external::reorder_template_competency($template->id, $competency3->id, $competency2->id);
+        $result = external::list_competencies_in_template($template->id);
+        $result = external_api::clean_returnvalue(external::list_competencies_in_template_returns(), $result);
+
+        $r1 = (object) $result[0];
+        $r2 = (object) $result[1];
+        $r3 = (object) $result[2];
+
+        $this->assertEquals($competency1->id, $r1->id);
+        $this->assertEquals($competency3->id, $r2->id);
+        $this->assertEquals($competency2->id, $r3->id);
+
+        // This is a move down.
+        external::reorder_template_competency($template->id, $competency1->id, $competency3->id);
+        $result = external::list_competencies_in_template($template->id);
+        $result = external_api::clean_returnvalue(external::list_competencies_in_template_returns(), $result);
+
+        $r1 = (object) $result[0];
+        $r2 = (object) $result[1];
+        $r3 = (object) $result[2];
+
+        $this->assertEquals($competency3->id, $r1->id);
+        $this->assertEquals($competency1->id, $r2->id);
+        $this->assertEquals($competency2->id, $r3->id);
+
+        $this->setExpectedException('required_capability_exception');
+        $this->setUser($this->user);
+        external::reorder_template_competency($template->id, $competency1->id, $competency2->id);
     }
 }
