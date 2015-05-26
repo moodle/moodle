@@ -72,7 +72,7 @@ class role_capabilities_updated extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        if ($this->contextlevel === CONTEXT_SYSTEM) {
+        if ($this->contextlevel == CONTEXT_SYSTEM) {
             return new \moodle_url('/admin/roles/define.php', array('action' => 'view', 'roleid' => $this->objectid));
         } else {
             return new \moodle_url('/admin/roles/override.php', array('contextid' => $this->contextid,
