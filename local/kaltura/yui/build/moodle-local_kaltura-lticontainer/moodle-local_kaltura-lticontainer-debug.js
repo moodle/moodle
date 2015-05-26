@@ -90,12 +90,34 @@ Y.extend(LTICONTAINER, Y.Base, {
      ltiframe: null,
 
     /**
+     * The width of the entry
+     * @property width
+     * @type {int}
+     * @default null
+     */
+    width: null,
+
+    /**
+     * The height of the entry
+     * @property height
+     * @type {int}
+     * @default null
+     */
+    height: null,
+
+    /**
      * Init function for the checkboxselection module
      * @property params
      * @type {Object}
      */
     init : function(params) {
         var bodynode = Y.one('body[class~='+params.bodyclass+']');
+
+        if(params.height && params.width)
+        {
+            this.height = params.height;
+            this.width = params.width;
+        }
 
         this.lastheight = params.lastheight;
         this.padding = params.padding;
@@ -135,6 +157,13 @@ Y.extend(LTICONTAINER, Y.Base, {
                     this.ltiframe.setStyle('width', newsize+'px');
                 }
             }
+        }
+
+        // if we have the entry's dimensions - use them to adjust the iframe size.
+        if(this.height && this.width)
+        {
+            this.ltiframe.setStyle('width', this.width+'px');
+            this.ltiframe.setStyle('height', this.height+'px');
         }
     }
 },
