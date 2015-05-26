@@ -387,6 +387,7 @@ function local_kaltura_request_lti_launch($ltirequest, $withblocks = true, $edit
 
     // Add custom parameters
     $requestparams['custom_publishdata'] = local_kaltura_get_kaf_publishing_data();
+    $requestparams['custom_publishdata_encoded'] = '1';
 
     // Specific settings for video presentation requests.
     if (isset($ltirequest['custom_disable_add_new'])) {
@@ -508,7 +509,7 @@ function local_kaltura_get_kaf_publishing_data() {
     // Return an array with no pre-defined keys to structure the JSON the way Kaltura needs it to be.
     $json->courses = array_values($json->courses);
 
-    return json_encode($json);
+    return base64_encode(json_encode($json));
 }
 
 /**
