@@ -368,14 +368,12 @@ function lti_build_request($instance, $typeconfig, $course, $typeid = null, $isl
     }
     $placementsecret = $instance->servicesalt;
 
-    if ( isset($placementsecret) ) {
-        $sourcedid = json_encode(lti_build_sourcedid($instance->id, $USER->id, $placementsecret, $typeid));
-        $requestparams['lis_result_sourcedid'] = $sourcedid;
-    }
-
     if ( isset($placementsecret) && ($islti2 ||
          $typeconfig['acceptgrades'] == LTI_SETTING_ALWAYS ||
          ($typeconfig['acceptgrades'] == LTI_SETTING_DELEGATE && $instance->instructorchoiceacceptgrades == LTI_SETTING_ALWAYS))) {
+
+        $sourcedid = json_encode(lti_build_sourcedid($instance->id, $USER->id, $placementsecret, $typeid));
+        $requestparams['lis_result_sourcedid'] = $sourcedid;
 
         // Add outcome service URL.
         $serviceurl = new \moodle_url('/mod/lti/service.php');
