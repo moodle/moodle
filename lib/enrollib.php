@@ -1538,17 +1538,11 @@ abstract class enrol_plugin {
     }
 
     /**
-     * Is it possible to delete enrol instance via standard UI?
-     *
      * @deprecated since Moodle 2.8 MDL-35864 - please use can_delete_instance() instead.
-     * @todo MDL-46479 This will be deleted in Moodle 3.0.
-     * @see class_name::can_delete_instance()
-     * @param object $instance
-     * @return bool
      */
     public function instance_deleteable($instance) {
-        debugging('Function enrol_plugin::instance_deleteable() is deprecated', DEBUG_DEVELOPER);
-        return $this->can_delete_instance($instance);
+        throw new coding_exception('Function enrol_plugin::instance_deleteable() is deprecated, use
+                enrol_plugin::can_delete_instance() instead');
     }
 
     /**
