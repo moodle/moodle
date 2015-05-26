@@ -258,6 +258,20 @@ class grade_item extends grade_object {
     public $dependson_cache = null;
 
     /**
+     * Constructor. Optionally (and by default) attempts to fetch corresponding row from the database
+     *
+     * @param array $params An array with required parameters for this grade object.
+     * @param bool $fetch Whether to fetch corresponding row from the database or not,
+     *        optional fields might not be defined if false used
+     */
+    public function __construct($params = null, $fetch = true) {
+        global $CFG;
+        // Set grademax from $CFG->gradepointdefault .
+        self::set_properties($this, array('grademax' => $CFG->gradepointdefault));
+        parent::__construct($params, $fetch);
+    }
+
+    /**
      * In addition to update() as defined in grade_object, handle the grade_outcome and grade_scale objects.
      * Force regrading if necessary, rounds the float numbers using php function,
      * the reason is we need to compare the db value with computed number to skip regrading if possible.
