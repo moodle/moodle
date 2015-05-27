@@ -61,6 +61,45 @@ class random_question_loader_testcase extends advanced_testcase {
         $this->assertNull($loader->get_next_question_id($cat->id, 0));
     }
 
+    public function test_hidden_questions_not_returned() {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $generator->create_question_category();
+        $question1 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
+        $DB->set_field('question', 'hidden', 1, array('id' => $question1->id));
+        $loader = new \core_question\bank\random_question_loader(new qubaid_list(array()));
+
+        $this->assertNull($loader->get_next_question_id($cat->id, 0));
+    }
+
+    public function test_cloze_subquestions_not_returned() {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $generator->create_question_category();
+        $question1 = $generator->create_question('multianswer', null, array('category' => $cat->id));
+        $loader = new \core_question\bank\random_question_loader(new qubaid_list(array()));
+
+        $this->assertEquals($question1->id, $loader->get_next_question_id($cat->id, 0));
+        $this->assertNull($loader->get_next_question_id($cat->id, 0));
+    }
+
+    public function test_random_questions_not_returned() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $generator->create_question_category();
+        $course = $this->getDataGenerator()->create_course();
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course));
+        quiz_add_random_questions($quiz, 1, $cat->id, 1, false);
+        $loader = new \core_question\bank\random_question_loader(new qubaid_list(array()));
+
+        $this->assertNull($loader->get_next_question_id($cat->id, 0));
+    }
+
     public function test_one_question_category_returns_that_q_then_null() {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
