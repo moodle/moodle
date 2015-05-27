@@ -2401,7 +2401,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      * @return bool
      */
     public function can_restore_courses_into() {
-        return has_capability('moodle/course:create', $this->get_context());
+        return has_capability('moodle/restore:restorecourse', $this->get_context());
     }
 
     /**
