@@ -415,7 +415,7 @@ Y.extend(LTISUBMISSIONREVIEW, Y.Base, {
         var source, height, width;
         // Test if the target is an anchor tag or img tag.
         if (e.target.test('a')) {
-            source = e.target.getAttribute('href');alert(e.target);
+            source = e.target.getAttribute('href');
             height = e.target.ancestor('div[name=media_submission]').get('childNodes').filter('input[name=height]').get('value');
             width = e.target.ancestor('div[name=media_submission]').get('childNodes').filter('input[name=width]').get('value');
         } else {

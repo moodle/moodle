@@ -65,6 +65,8 @@ Y.extend(LTISERVICE, Y.Base, {
             Y.one(window.parent.document.getElementById('video_preview_frame')).setAttribute('src', decodeURIComponent(params.iframeurl));
         } else if (window.parent.document.getElementById('contentframe')) {
             Y.one(window.parent.document.getElementById('contentframe')).setAttribute('src', decodeURIComponent(params.iframeurl));
+            Y.one(window.parent.document.getElementById('contentframe')).setStyle('width', params.width + 'px');
+            Y.one(window.parent.document.getElementById('contentframe')).setStyle('height', params.height + 'px');
         }
 
         // This element must exist.
