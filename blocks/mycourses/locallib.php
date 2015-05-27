@@ -73,7 +73,7 @@ function mycourses_get_my_completion($datefrom = 0) {
     // Deal with completed course scores and links for certificates.
     foreach ($mycompleted as $id => $completed) {
         $gradeinfo = $DB->get_record_sql("SELECT * FROM {grade_grades}
-                                          WHERE userd = :userid
+                                          WHERE userid = :userid
                                           AND itemid = (
                                             SELECT id FROM {grade_items}
                                             WHERE courseid = :courseid
