@@ -1030,8 +1030,7 @@ function core_blog_myprofile_navigation(core_user\output\myprofile\tree $tree, $
         // May as well just bail aggressively here.
         return true;
     }
-    if ($CFG->bloglevel == BLOG_USER_LEVEL && !$iscurrentuser) {
-        // Blogs are only viewable by the owner.
+    if (!blog_user_can_view_user_entry($user->id)) {
         return true;
     }
     $url = new moodle_url("/blog/index.php", array('userid' => $user->id));
