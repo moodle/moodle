@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.1 ===
+
+* The function notify() now throws a debugging message - see MDL-50269.
+
 === 3.0 ===
 
 * Minify updated to 2.2.1
