@@ -79,7 +79,7 @@ if ($mode == DELETION_OF_SELECTED_LANG and (!empty($uninstalllang) or !empty($co
 
     if (in_array('en', $uninstalllang)) {
         // TODO.
-        $controller->errors[] = 'English language pack can not be uninstalled';
+        $controller->errors[] = get_string('noenglishuninstall', 'tool_langimport');
 
     } else if (empty($confirmtounistall) and confirm_sesskey()) { // User chose langs to be deleted, show confirmation.
         echo $OUTPUT->header();
@@ -170,7 +170,10 @@ echo html_writer::empty_tag('br');
 echo html_writer::select($installedlangs, 'uninstalllang[]', '', false, array('size' => 15, 'multiple' => 'multiple'));
 echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
 echo html_writer::empty_tag('br');
-echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('uninstall', 'tool_langimport')));
+echo html_writer::empty_tag('input', array('id' => 'languninstallbutton',
+                                         'type' => 'submit',
+                                         'value' => get_string('uninstall', 'tool_langimport'))
+                            );
 echo html_writer::end_tag('fieldset');
 echo html_writer::end_tag('form');
 if ($remote) {
@@ -207,5 +210,13 @@ if (!empty($options)) {
 echo html_writer::end_tag('tr');
 echo html_writer::end_tag('table');
 echo $OUTPUT->box_end();
+
+$uninstallurl = new moodle_url('/admin/tool/langimport/index.php');
+$PAGE->requires->strings_for_js(array('uninstallconfirm', 'uninstall', 'selectlangs', 'noenglishuninstall'),
+                                'tool_langimport');
+$PAGE->requires->yui_module('moodle-core-languninstallconfirm',
+                            'Y.M.core.languninstallconfirm.init',
+                             array(array('uninstallUrl' => $uninstallurl->out()))
+                            );
 echo $OUTPUT->footer();
 die();
