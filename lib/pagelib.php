@@ -1828,6 +1828,11 @@ class moodle_page {
      * @throws coding_exception
      */
     protected function ensure_theme_not_set() {
+        // This is explicitly allowed for webservices though which may process many course contexts in a single request.
+        if (WS_SERVER) {
+            return;
+        }
+
         if (!is_null($this->_theme)) {
             throw new coding_exception('The theme has already been set up for this page ready for output. ' .
                     'Therefore, you can no longer change the theme, or anything that might affect what ' .

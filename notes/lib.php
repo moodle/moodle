@@ -379,6 +379,13 @@ function note_view($context, $userid) {
  * @return bool
  */
 function core_notes_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    global $CFG;
+
+    if (empty($CFG->enablenotes)) {
+        // Notes are disabled, nothing to do.
+        return false;
+    }
+
     $url = new moodle_url("/notes/index.php", array('user' => $user->id));
     $title = get_string('notes', 'core_notes');
     if (empty($course)) {
