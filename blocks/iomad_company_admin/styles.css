@@ -13,7 +13,7 @@ div.iomadlink_container {
 
 ul.iomadtab {
     height: 36px;
-	margin-top: 5px;
+    margin-top: 5px;
     padding-left: 10px;
     margin-right: 20px;
     clear: both;
@@ -35,12 +35,12 @@ ul.iomadtab li.iomadselected {
 }
 
 ul.iomadtab a:hover {
-	color:#333 !important;
+    color:#333 !important;
     text-decoration: underline;
 }
 
 div.iomadlink a:hover {
-	color:#fad163 !important;
+    color:#fad163 !important;
     text-decoration: none;
 }
 
@@ -53,17 +53,17 @@ div.iomadlink {
 }
 
 div.block_iomad_company_admin  a:hover {
-	color:#fad163;
+    color:#fad163;
 }
 
 #ReportTable  td {
-	vertical-align: middle !important;
+    vertical-align: middle !important;
 }
 
 #licenseSelector {
 margin:auto;
 color:#000000;
-text-align: center; 
+text-align: center;
 background-color:#fad163;
 padding-top: 10px;
 padding-bottom: 15px;

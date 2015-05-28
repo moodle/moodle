@@ -344,4 +344,3 @@ $string['editlicensestitle'] = 'Edit Course Allocations';
 $string['selectlicenseblurb'] = 'Please select a license from above';
 $string['nolicenses'] = '<p> Your license has either expired or you have allocated all your available places. Please contact your account manager to discuss. </p>';
 $string['licensehelp'] = 'On this screen you are able to change the course allocations for your learners. To edit course allocations for your student, select your desired license from the license drop down menu below. Any courses that your learner is currently allocated will display in the left hand side box, select courses from the right hand box and click enrol to allocate the course(s). You can select multiple courses in the right hand box by holding CTRL as you select the courses.';
- 
