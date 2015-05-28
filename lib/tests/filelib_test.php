@@ -824,4 +824,80 @@ EOF;
         // Test it does nothing to the 'plain' data.
         $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexpected));
     }
+
+    /**
+     * Test curl agent settings.
+     */
+    public function test_curl_useragent() {
+        $curl = new curl_extended();
+        $options = $curl->get_options();
+        $this->assertNotEmpty($options);
+
+        $curl->call_apply_opt($options);
+        $this->assertTrue(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+        $this->assertFalse(in_array('User-Agent: Test/1.0', $curl->header));
+
+        $options['CURLOPT_USERAGENT'] = 'Test/1.0';
+        $curl->call_apply_opt($options);
+        $this->assertTrue(in_array('User-Agent: Test/1.0', $curl->header));
+        $this->assertFalse(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+
+        $curl->set_option('CURLOPT_USERAGENT', 'AnotherUserAgent/1.0');
+        $curl->call_apply_opt();
+        $this->assertTrue(in_array('User-Agent: AnotherUserAgent/1.0', $curl->header));
+        $this->assertFalse(in_array('User-Agent: Test/1.0', $curl->header));
+
+        $curl->set_option('CURLOPT_USERAGENT', 'AnotherUserAgent/1.1');
+        $options = $curl->get_options();
+        $curl->call_apply_opt($options);
+        $this->assertTrue(in_array('User-Agent: AnotherUserAgent/1.1', $curl->header));
+        $this->assertFalse(in_array('User-Agent: AnotherUserAgent/1.0', $curl->header));
+
+        $curl->unset_option('CURLOPT_USERAGENT');
+        $curl->call_apply_opt();
+        $this->assertTrue(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+    }
+}
+
+/**
+ * Test-specific class to allow easier testing of curl functions.
+ * 
+ * @copyright 2015 Dave Cooper 
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class curl_extended extends curl {
+    /**
+     * Accessor for options array.
+     */
+    public function get_options() {
+        return $this->options;
+    }
+
+    /**
+     * Setter for options array.
+     * @param string $option
+     * @param string $value
+     */
+    public function set_option($option, $value) {
+        $this->options[$option] = $value;
+    }
+
+    /**
+     * Unsets an option on the curl object
+     * @param string $option
+     */
+    public function unset_option($option) {
+        unset($this->options[$option]);
+    }
+
+    /**
+     * Wrapper to access the curl::apply_opt() function
+     *
+     * @param array $options
+     * @return resource The curl handle
+     */
+    public function call_apply_opt($options = null) {
+        $ch = curl_init();
+        return $this->apply_opt($ch, $options);
+    }
 }
