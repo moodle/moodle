@@ -168,14 +168,15 @@ if ($templates = $DB->get_recordset('email_template', array('companyid' => $comp
     } else {
         $strsend = null;
     }
-    $stroverride = 'custom'; //Need to make a Lang String
+    $stroverride = get_string('custom', $block);
     $strdefault = get_string('default', $block);
 
     $table = new html_table();
-	$table->id = 'ReportTable';
-    $table->head = array ("Email template name", "Template type",  "Controls");
+    $table->id = 'ReportTable';
+    $table->head = array (get_string('emailtemplatename', $block),
+                          get_string('templatetype', $block),
+                          get_string('controls', $block));
     $table->align = array ("left", "center", "center");
-    //$table->width = "95%";
 
     $i = 0;
 

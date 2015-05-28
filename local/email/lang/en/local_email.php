@@ -18,13 +18,16 @@ $string['add_template_button'] = 'Override';
 $string['addnewtemplate'] = 'Override a default template';
 $string['blocktitle'] = 'Email Templates';
 $string['body'] = 'Body';
+$string['controls'] = 'Controls';
 $string['crontask'] = 'Iomad email processing';
+$string['custom'] = 'custom';
 $string['default'] = 'default';
 $string['delete_template'] = 'Delete template';
 $string['delete_template_button'] = 'Revert to default';
 $string['delete_template_checkfull'] = 'Are you absolutely sure you want to revert {$a} to the default template?';
 $string['edit_template'] = 'Edit email template';
 $string['editatemplate'] = 'Edit an override template';
+$string['emailtemplatename'] = 'Email template name';
 $string['email_data'] = 'Data for substitutions';
 $string['email_templates_for'] = 'Email templates for \'{$a}\'';
 $string['email_template'] = 'Email template \'{$a->name}\' for \'{$a->companyname}\'';
@@ -43,6 +46,7 @@ $string['send_button'] = 'Send';
 $string['send_emails'] = 'Send e-mails';
 $string['subject'] = 'Subject';
 $string['template_list_title'] = 'Email Templates';
+$string['templatetype'] = 'Template type';
 
 /* Email templates */
 $string['approval_subject'] = 'New course approval';
