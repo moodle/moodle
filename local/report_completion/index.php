@@ -577,17 +577,17 @@ if (empty($charttype)) {
 
                 // Get the completion date information.
                 if (!empty($user->timestarted)) {
-                    $starttime = date('d M Y', $user->timestarted);
+                    $starttime = date('Y-m-d', $user->timestarted);
                 } else {
                     $starttime = "";
                 }
                 if (!empty($user->timeenrolled)) {
-                    $enrolledtime = date('d M Y', $user->timeenrolled);
+                    $enrolledtime = date('Y-m-d', $user->timeenrolled);
                 } else {
                     $enrolledtime = "";
                 }
                 if (!empty($user->timecompleted)) {
-                    $completetime = date('d M Y', $user->timecompleted);
+                    $completetime = date('Y-m-d', $user->timecompleted);
                 } else {
                     $completetime = "";
                 }

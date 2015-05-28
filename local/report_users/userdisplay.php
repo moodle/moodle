@@ -146,17 +146,17 @@ foreach ($usercourses as $usercourse) {
         }
         // Set the strings.
         if (!empty($completionsummary->timestarted)) {
-            $starttime = date('d M Y', $completionsummary->timestarted);
+            $starttime = date('Y-m-d', $completionsummary->timestarted);
         } else {
             $starttime = "";
         }
         if (!empty($completionsummary->timeenrolled)) {
-            $enrolledtime = date('d M Y', $completionsummary->timeenrolled);
+            $enrolledtime = date('Y-m-d', $completionsummary->timeenrolled);
         } else {
             $enrolledtime = "";
         }
         if (!empty($completionsummary->timecompleted)) {
-            $completetime = date('d M Y', $completionsummary->timecompleted);
+            $completetime = date('Y-m-d', $completionsummary->timecompleted);
         } else {
             $completetime = "";
         }
