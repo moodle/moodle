@@ -339,7 +339,7 @@ if (empty($charttype)) {
                         $license = $DB->get_record('companylicense', array('id' => $user->licenseid));
                         $licensedata = new stdclass();
                         $licensedata->length = $license->validlength;
-                        $licensedata->valid = date('Y-m-d'', $license->expirydate);
+                        $licensedata->valid = date('Y-m-d', $license->expirydate);
                         EmailTemplate::send('license_reminder', array('course' => $user->courseid,
                                                                       'user' => $userdata,
                                                                       'license' => $licensedata));
