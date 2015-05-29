@@ -1713,6 +1713,21 @@ class core_cache_testcase extends advanced_testcase {
             'staticacceleration' => true,
             'staticaccelerationsize' => 4,
         ));
+        $instance->phpunit_add_definition('phpunit/simpledataarea1', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'simpledataarea1',
+            'staticacceleration' => true,
+            'simpledata' => false
+        ));
+        $instance->phpunit_add_definition('phpunit/simpledataarea2', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'simpledataarea2',
+            'staticacceleration' => true,
+            'simpledata' => true
+        ));
+
         $cache = cache::make('phpunit', 'accelerated');
         $this->assertInstanceOf('cache_phpunit_application', $cache);
 
@@ -1839,5 +1854,25 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertTrue($cache->set('a', 'A'));
         $this->assertEquals('A', $cache->phpunit_static_acceleration_get('a'));
         $this->assertEquals('A', $cache->get('a'));
+
+        // Setting simpledata to false objects are cloned when retrieving data.
+        $cache = cache::make('phpunit', 'simpledataarea1');
+        $notreallysimple = new stdClass();
+        $notreallysimple->name = 'a';
+        $cache->set('a', $notreallysimple);
+        $returnedinstance1 = $cache->get('a');
+        $returnedinstance2 = $cache->get('a');
+        $returnedinstance1->name = 'b';
+        $this->assertEquals('a', $returnedinstance2->name);
+
+        // Setting simpledata to true we assume that data does not contain references.
+        $cache = cache::make('phpunit', 'simpledataarea2');
+        $notreallysimple = new stdClass();
+        $notreallysimple->name = 'a';
+        $cache->set('a', $notreallysimple);
+        $returnedinstance1 = $cache->get('a');
+        $returnedinstance2 = $cache->get('a');
+        $returnedinstance1->name = 'b';
+        $this->assertEquals('b', $returnedinstance2->name);
     }
 }
