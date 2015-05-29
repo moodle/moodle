@@ -112,7 +112,7 @@ class block_course_overview extends block_base {
      * @return array
      */
     public function applicable_formats() {
-        return array('my-index' => true);
+        return array('my' => true);
     }
 
     /**
