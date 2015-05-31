@@ -508,6 +508,70 @@ class badge {
     }
 
     /**
+     * Reviews all badge criteria for a particular user and checks if badge can be instantly awarded.
+     *
+     * @return int Whether awarded
+     */
+    public function review_all_criteria_user($uid) {
+        global $DB, $CFG;
+        $awards = 0;
+
+        // For site level badges, get whether the user can earn this badge and hasn't received it yet.
+        if ($this->type == BADGE_TYPE_SITE) {
+            $sql = 'SELECT DISTINCT u.id, bi.badgeid
+                        FROM {user} u
+                        LEFT JOIN {badge_issued} bi
+                            ON u.id = bi.userid AND bi.badgeid = :badgeid
+                        WHERE bi.badgeid IS NULL AND u.id = :uid AND u.deleted = 0';
+            $toearn = $DB->get_fieldset_sql($sql, array('badgeid' => $this->id, 'uid' => $uid));
+            $toearn = !empty($toearn);
+        } else {
+            // For course level badges, get whether the user can earn this badge in the course.
+            // Must be an enrolled user with capability moodle/badges:earnbadge.
+            $earned = $DB->get_fieldset_select('badge_issued', '\'userid\' AS id', '\'badgeid\' = :badgeid AND \'userid\' = :uid', array('badgeid' => $this->id, 'uid' => $uid));
+            $context = $this->get_context();
+            $is_enrolled = is_enrolled($context, $uid, 'moodle/badges:earnbadge', TRUE);
+            $toearn = (empty($earned) && $is_enrolled);
+        }
+
+        if (!$toearn) {
+            return 0;
+        }
+
+        $toreview = false;
+        foreach ($this->criteria as $crit) {
+            if ($crit->criteriatype != BADGE_CRITERIA_TYPE_OVERALL) {
+                if ($crit->review($uid)) {
+                    $crit->mark_complete($uid);
+                    if ($this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->method == BADGE_CRITERIA_AGGREGATION_ANY) {
+                        $this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->mark_complete($uid);
+                        $this->issue($uid);
+                        $awards++;
+                        break;
+                    } else {
+                        $toreview = true;
+                        continue;
+                    }
+                } else {
+                    if ($this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->method == BADGE_CRITERIA_AGGREGATION_ANY) {
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        // Review overall if it is required.
+        if ($toreview && $this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->review($uid)) {
+            $this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->mark_complete($uid);
+            $this->issue($uid);
+            $awards++;
+        }
+
+        return $awards;
+    }
+
+    /**
      * Gets an array of completed criteria from 'badge_criteria_met' table.
      *
      * @param int $userid Completions for a user
@@ -1217,6 +1281,48 @@ function badges_handle_course_deletion($courseid) {
         $DB->update_record('badge', $toupdate);
     }
 }
+
+/**
+ * Reviews criteria and awards badges for a user.
+ *
+ * First find all badges that can be earned, then review each badge.
+ */
+function badges_review_user($userid) {
+    global $DB, $CFG;
+    $total = 0;
+
+    $courseparams = array();
+    if (empty($CFG->badges_allowcoursebadges)) {
+        $coursesql = '';
+    } else {
+        $coursesql = ' OR EXISTS (SELECT id FROM {course} WHERE visible = :visible) ';
+        $courseparams = array('visible' => true);
+    }
+
+    $sql = 'SELECT id
+                FROM {badge}
+                WHERE (status = :active OR status = :activelocked)
+                    AND (type = :site ' . $coursesql . ')';
+    $badgeparams = array(
+                    'active' => BADGE_STATUS_ACTIVE,
+                    'activelocked' => BADGE_STATUS_ACTIVE_LOCKED,
+                    'site' => BADGE_TYPE_SITE
+                    );
+    $params = array_merge($badgeparams, $courseparams);
+    $badges = $DB->get_fieldset_sql($sql, $params);
+
+    foreach ($badges as $bid) {
+        $badge = new badge($bid);
+
+        if ($badge->has_criteria()) {
+            $issued = $badge->review_all_criteria_user($userid);
+
+            $total += $issued;
+        }
+    }
+}
+
+
 
 /**
  * Loads JS files required for backpack support.
