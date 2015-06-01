@@ -41,9 +41,9 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_heading('messageinbound_mailboxconfiguration',
             new lang_string('mailboxconfiguration', 'tool_messageinbound'),
             new lang_string('messageinboundmailboxconfiguration_desc', 'tool_messageinbound'), ''));
-    $settings->add(new admin_setting_configtext('messageinbound_mailbox',
+    $settings->add(new admin_setting_configtext_with_maxlength('messageinbound_mailbox',
             new lang_string('mailbox', 'tool_messageinbound'),
-            null, '', PARAM_RAW));
+            null, '', PARAM_RAW, null, 15));
     $settings->add(new admin_setting_configtext('messageinbound_domain',
             new lang_string('domain', 'tool_messageinbound'),
             null, '', PARAM_RAW));
