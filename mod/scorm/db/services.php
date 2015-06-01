@@ -76,4 +76,13 @@ $functions = array(
         'type' => 'read',
         'capabilities' => ''
     ),
+
+    'mod_scorm_get_scorms_by_courses' => array(
+        'classname'     => 'mod_scorm_external',
+        'methodname'    => 'get_scorms_by_courses',
+        'description'   => 'Returns a list of scorm instances in a provided set of courses, if
+                            no courses are provided then all the scorm instances the user has access to will be returned.',
+        'type'          => 'read',
+        'capabilities'  => ''
+    )
 );

@@ -519,4 +519,210 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('invaliduser', $e->errorcode);
         }
     }
+
+    /*
+     * Test get scorms by courses
+     */
+    public function test_mod_scorm_get_scorms_by_courses() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create users.
+        $student = self::getDataGenerator()->create_user();
+        $teacher = self::getDataGenerator()->create_user();
+
+        // Set to the student user.
+        self::setUser($student);
+
+        // Create courses to add the modules.
+        $course1 = self::getDataGenerator()->create_course();
+        $course2 = self::getDataGenerator()->create_course();
+
+        // First scorm.
+        $record = new stdClass();
+        $record->introformat = FORMAT_HTML;
+        $record->course = $course1->id;
+        $scorm1 = self::getDataGenerator()->create_module('scorm', $record);
+
+        // Second scorm.
+        $record = new stdClass();
+        $record->introformat = FORMAT_HTML;
+        $record->course = $course2->id;
+        $scorm2 = self::getDataGenerator()->create_module('scorm', $record);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+
+        // Users enrolments.
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($teacher->id, $course1->id, $teacherrole->id, 'manual');
+
+        // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
+        $enrol = enrol_get_plugin('manual');
+        $enrolinstances = enrol_get_instances($course2->id, true);
+        foreach ($enrolinstances as $courseenrolinstance) {
+            if ($courseenrolinstance->enrol == "manual") {
+                $instance2 = $courseenrolinstance;
+                break;
+            }
+        }
+        $enrol->enrol_user($instance2, $student->id, $studentrole->id);
+
+        $returndescription = mod_scorm_external::get_scorms_by_courses_returns();
+
+        // Test open/close dates.
+
+        $timenow = time();
+        $scorm1->timeopen = $timenow - DAYSECS;
+        $scorm1->timeclose = $timenow - HOURSECS;
+        $DB->update_record('scorm', $scorm1);
+
+        $result = mod_scorm_external::get_scorms_by_courses(array($course1->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertCount(1, $result['warnings']);
+        // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat'.
+        $this->assertCount(6, $result['scorms'][0]);
+        $this->assertEquals('expired', $result['warnings'][0]['warningcode']);
+
+        $scorm1->timeopen = $timenow + DAYSECS;
+        $scorm1->timeclose = $scorm1->timeopen + DAYSECS;
+        $DB->update_record('scorm', $scorm1);
+
+        $result = mod_scorm_external::get_scorms_by_courses(array($course1->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertCount(1, $result['warnings']);
+        // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat'.
+        $this->assertCount(6, $result['scorms'][0]);
+        $this->assertEquals('notopenyet', $result['warnings'][0]['warningcode']);
+
+        // Reset times.
+        $scorm1->timeopen = 0;
+        $scorm1->timeclose = 0;
+        $DB->update_record('scorm', $scorm1);
+
+        // Create what we expect to be returned when querying the two courses.
+        // First for the student user.
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'version', 'maxgrade',
+                                'grademethod', 'whatgrade', 'maxattempt', 'forcecompleted', 'forcenewattempt', 'lastattemptlock',
+                                'displayattemptstatus', 'displaycoursestructure', 'sha1hash', 'md5hash', 'revision', 'launch',
+                                'skipview', 'hidebrowse', 'hidetoc', 'nav', 'navpositionleft', 'navpositiontop', 'auto',
+                                'popup', 'width', 'height', 'timeopen', 'timeclose', 'displayactivityname', 'packagesize',
+                                'packageurl', 'scormtype', 'reference');
+
+        // Add expected coursemodule and data.
+        $scorm1->coursemodule = $scorm1->cmid;
+        $scorm1->section = 0;
+        $scorm1->visible = true;
+        $scorm1->groupmode = 0;
+        $scorm1->groupingid = 0;
+
+        $scorm2->coursemodule = $scorm2->cmid;
+        $scorm2->section = 0;
+        $scorm2->visible = true;
+        $scorm2->groupmode = 0;
+        $scorm2->groupingid = 0;
+
+        // SCORM size. The same package is used in both SCORMs.
+        $scormcontext1 = context_module::instance($scorm1->cmid);
+        $scormcontext2 = context_module::instance($scorm2->cmid);
+        $fs = get_file_storage();
+        $packagefile = $fs->get_file($scormcontext1->id, 'mod_scorm', 'package', 0, '/', $scorm1->reference);
+        $packagesize = $packagefile->get_filesize();
+
+        $packageurl1 = moodle_url::make_webservice_pluginfile_url(
+                            $scormcontext1->id, 'mod_scorm', 'package', 0, '/', $scorm1->reference)->out(false);
+        $packageurl2 = moodle_url::make_webservice_pluginfile_url(
+                            $scormcontext2->id, 'mod_scorm', 'package', 0, '/', $scorm2->reference)->out(false);
+
+        $scorm1->packagesize = $packagesize;
+        $scorm1->packageurl = $packageurl1;
+        $scorm2->packagesize = $packagesize;
+        $scorm2->packageurl = $packageurl2;
+
+        $expected1 = array();
+        $expected2 = array();
+        foreach ($expectedfields as $field) {
+
+            // Since we return the fields used as boolean as PARAM_BOOL instead PARAM_INT we need to force casting here.
+            // From the returned fields definition we obtain the type expected for the field.
+            $fieldtype = $returndescription->keys['scorms']->content->keys[$field]->type;
+            if ($fieldtype == PARAM_BOOL) {
+                $expected1[$field] = (bool) $scorm1->{$field};
+                $expected2[$field] = (bool) $scorm2->{$field};
+            } else {
+                $expected1[$field] = $scorm1->{$field};
+                $expected2[$field] = $scorm2->{$field};
+            }
+        }
+
+        $expectedscorms = array();
+        $expectedscorms[] = $expected2;
+        $expectedscorms[] = $expected1;
+
+        // Call the external function passing course ids.
+        $result = mod_scorm_external::get_scorms_by_courses(array($course2->id, $course1->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedscorms, $result['scorms']);
+
+        // Call the external function without passing course id.
+        $result = mod_scorm_external::get_scorms_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedscorms, $result['scorms']);
+
+        // Unenrol user from second course and alter expected scorms.
+        $enrol->unenrol_user($instance2, $student->id);
+        array_shift($expectedscorms);
+
+        // Call the external function without passing course id.
+        $result = mod_scorm_external::get_scorms_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedscorms, $result['scorms']);
+
+        // Call for the second course we unenrolled the user from, expected warning.
+        $result = mod_scorm_external::get_scorms_by_courses(array($course2->id));
+        $this->assertCount(1, $result['warnings']);
+        $this->assertEquals('1', $result['warnings'][0]['warningcode']);
+        $this->assertEquals($course2->id, $result['warnings'][0]['itemid']);
+
+        // Now, try as a teacher for getting all the additional fields.
+        self::setUser($teacher);
+
+        $additionalfields = array('updatefreq', 'timemodified', 'options',
+                                    'completionstatusrequired', 'completionscorerequired', 'autocommit',
+                                    'section', 'visible', 'groupmode', 'groupingid');
+
+        foreach ($additionalfields as $field) {
+            $fieldtype = $returndescription->keys['scorms']->content->keys[$field]->type;
+
+            if ($fieldtype == PARAM_BOOL) {
+                $expectedscorms[0][$field] = (bool) $scorm1->{$field};
+            } else {
+                $expectedscorms[0][$field] = $scorm1->{$field};
+            }
+        }
+
+        $result = mod_scorm_external::get_scorms_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedscorms, $result['scorms']);
+
+        // Even with the SCORM closed in time teacher should retrieve the info.
+        $scorm1->timeopen = $timenow - DAYSECS;
+        $scorm1->timeclose = $timenow - HOURSECS;
+        $DB->update_record('scorm', $scorm1);
+
+        $expectedscorms[0]['timeopen'] = $scorm1->timeopen;
+        $expectedscorms[0]['timeclose'] = $scorm1->timeclose;
+
+        $result = mod_scorm_external::get_scorms_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedscorms, $result['scorms']);
+
+        // Admin also should get all the information.
+        self::setAdminUser();
+
+        $result = mod_scorm_external::get_scorms_by_courses(array($course1->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedscorms, $result['scorms']);
+    }
 }

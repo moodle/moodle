@@ -593,4 +593,196 @@ class mod_scorm_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_scorms_by_courses.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_scorms_by_courses_parameters() {
+        return new external_function_parameters (
+            array(
+                'courseids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'course id'), 'Array of course ids', VALUE_DEFAULT, array()
+                ),
+            )
+        );
+    }
+
+    /**
+     * Returns a list of scorms in a provided list of courses,
+     * if no list is provided all scorms that the user can view will be returned.
+     *
+     * @param array $courseids the course ids
+     * @return array the scorm details
+     * @since Moodle 3.0
+     */
+    public static function get_scorms_by_courses($courseids = array()) {
+        global $CFG;
+
+        $returnedscorms = array();
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_scorms_by_courses_parameters(), array('courseids' => $courseids));
+
+        if (empty($params['courseids'])) {
+            $params['courseids'] = array_keys(enrol_get_my_courses());
+        }
+
+        // Ensure there are courseids to loop through.
+        if (!empty($params['courseids'])) {
+
+            list($courses, $warnings) = external_util::validate_courses($params['courseids']);
+
+            // Get the scorms in this course, this function checks users visibility permissions.
+            // We can avoid then additional validate_context calls.
+            $scorms = get_all_instances_in_courses("scorm", $courses);
+
+            $fs = get_file_storage();
+            foreach ($scorms as $scorm) {
+
+                $context = context_module::instance($scorm->coursemodule);
+
+                // Entry to return.
+                $module = array();
+
+                // First, we return information that any user can see in (or can deduce from) the web interface.
+                $module['id'] = $scorm->id;
+                $module['coursemodule'] = $scorm->coursemodule;
+                $module['course'] = $scorm->course;
+                $module['name']  = format_string($scorm->name, true, array('context' => $context));
+                list($module['intro'], $module['introformat']) =
+                    external_format_text($scorm->intro, $scorm->introformat, $context->id, 'mod_scorm', 'intro', $scorm->id);
+
+                // Check if the SCORM open and return warnings if so.
+                list($open, $openwarnings) = scorm_get_availability_status($scorm, true, $context);
+
+                if (!$open) {
+                    foreach ($openwarnings as $warningkey => $warningdata) {
+                        $warnings[] = array(
+                            'item' => 'scorm',
+                            'itemid' => $scorm->id,
+                            'warningcode' => $warningkey,
+                            'message' => get_string($warningkey, 'scorm', $warningdata)
+                        );
+                    }
+                } else {
+                    $module['packagesize'] = 0;
+                    // SCORM size.
+                    if ($scorm->scormtype === SCORM_TYPE_LOCAL or $scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
+                        if ($packagefile = $fs->get_file($context->id, 'mod_scorm', 'package', 0, '/', $scorm->reference)) {
+                            $module['packagesize'] = $packagefile->get_filesize();
+                            // Download URL.
+                            $module['packageurl'] = moodle_url::make_webservice_pluginfile_url(
+                                                    $context->id, 'mod_scorm', 'package', 0, '/', $scorm->reference)->out(false);
+                        }
+                    }
+
+                    $viewablefields = array('version', 'maxgrade', 'grademethod', 'whatgrade', 'maxattempt', 'forcecompleted',
+                                            'forcenewattempt', 'lastattemptlock', 'displayattemptstatus', 'displaycoursestructure',
+                                            'sha1hash', 'md5hash', 'revision', 'launch', 'skipview', 'hidebrowse', 'hidetoc', 'nav',
+                                            'navpositionleft', 'navpositiontop', 'auto', 'popup', 'width', 'height', 'timeopen',
+                                            'timeclose', 'displayactivityname', 'scormtype', 'reference');
+
+                    // Check additional permissions for returning optional private settings.
+                    if (has_capability('moodle/course:manageactivities', $context)) {
+
+                        $additionalfields = array('updatefreq', 'options', 'completionstatusrequired', 'completionscorerequired',
+                                                    'autocommit', 'timemodified', 'section', 'visible', 'groupmode', 'groupingid');
+                        $viewablefields = array_merge($viewablefields, $additionalfields);
+
+                    }
+
+                    foreach ($viewablefields as $field) {
+                        $module[$field] = $scorm->{$field};
+                    }
+                }
+
+                $returnedscorms[] = $module;
+            }
+        }
+
+        $result = array();
+        $result['scorms'] = $returnedscorms;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_scorms_by_courses return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.0
+     */
+    public static function get_scorms_by_courses_returns() {
+
+        return new external_single_structure(
+            array(
+                'scorms' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'SCORM id'),
+                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
+                            'course' => new external_value(PARAM_INT, 'Course id'),
+                            'name' => new external_value(PARAM_TEXT, 'SCORM name'),
+                            'intro' => new external_value(PARAM_RAW, 'The SCORM intro'),
+                            'introformat' => new external_format_value('intro'),
+                            'packagesize' => new external_value(PARAM_INT, 'SCORM zip package size', VALUE_OPTIONAL),
+                            'packageurl' => new external_value(PARAM_URL, 'SCORM zip package URL', VALUE_OPTIONAL),
+                            'version' => new external_value(PARAM_NOTAGS, 'SCORM version (SCORM_12, SCORM_13, SCORM_AICC)',
+                                                            VALUE_OPTIONAL),
+                            'maxgrade' => new external_value(PARAM_INT, 'Max grade', VALUE_OPTIONAL),
+                            'grademethod' => new external_value(PARAM_INT, 'Grade method', VALUE_OPTIONAL),
+                            'whatgrade' => new external_value(PARAM_INT, 'What grade', VALUE_OPTIONAL),
+                            'maxattempt' => new external_value(PARAM_INT, 'Maximum number of attemtps', VALUE_OPTIONAL),
+                            'forcecompleted' => new external_value(PARAM_BOOL, 'Status current attempt is forced to "completed"',
+                                                                    VALUE_OPTIONAL),
+                            'forcenewattempt' => new external_value(PARAM_BOOL, 'Hides the "Start new attempt" checkbox',
+                                                                    VALUE_OPTIONAL),
+                            'lastattemptlock' => new external_value(PARAM_BOOL, 'Prevents to launch new attempts once finished',
+                                                                    VALUE_OPTIONAL),
+                            'displayattemptstatus' => new external_value(PARAM_BOOL, 'Display attempts status', VALUE_OPTIONAL),
+                            'displaycoursestructure' => new external_value(PARAM_BOOL, 'Display contents structure',
+                                                                            VALUE_OPTIONAL),
+                            'sha1hash' => new external_value(PARAM_NOTAGS, 'Package content or ext path hash', VALUE_OPTIONAL),
+                            'md5hash' => new external_value(PARAM_NOTAGS, 'MD5 Hash of package file', VALUE_OPTIONAL),
+                            'revision' => new external_value(PARAM_INT, 'Revison number', VALUE_OPTIONAL),
+                            'launch' => new external_value(PARAM_INT, 'First content to launch', VALUE_OPTIONAL),
+                            'skipview' => new external_value(PARAM_BOOL, 'Skip or not content structure page', VALUE_OPTIONAL),
+                            'hidebrowse' => new external_value(PARAM_BOOL, 'Disable preview mode?', VALUE_OPTIONAL),
+                            'hidetoc' => new external_value(PARAM_BOOL, 'Display or not course structure in player',
+                                                            VALUE_OPTIONAL),
+                            'nav' => new external_value(PARAM_INT, 'Show navigation buttons', VALUE_OPTIONAL),
+                            'navpositionleft' => new external_value(PARAM_INT, 'Navigation position left', VALUE_OPTIONAL),
+                            'navpositiontop' => new external_value(PARAM_INT, 'Navigation position top', VALUE_OPTIONAL),
+                            'auto' => new external_value(PARAM_BOOL, 'Auto continue?', VALUE_OPTIONAL),
+                            'popup' => new external_value(PARAM_INT, 'Display in current or new window', VALUE_OPTIONAL),
+                            'width' => new external_value(PARAM_INT, 'Frame width', VALUE_OPTIONAL),
+                            'height' => new external_value(PARAM_INT, 'Frame height', VALUE_OPTIONAL),
+                            'timeopen' => new external_value(PARAM_INT, 'Available from', VALUE_OPTIONAL),
+                            'timeclose' => new external_value(PARAM_INT, 'Available to', VALUE_OPTIONAL),
+                            'displayactivityname' => new external_value(PARAM_BOOL, 'Display the activity name above the player?',
+                                                                        VALUE_OPTIONAL),
+                            'scormtype' => new external_value(PARAM_ALPHA, 'SCORM type', VALUE_OPTIONAL),
+                            'reference' => new external_value(PARAM_NOTAGS, 'Reference to the package', VALUE_OPTIONAL),
+                            'updatefreq' => new external_value(PARAM_INT, 'Auto-update frequency for remote packages',
+                                                                VALUE_OPTIONAL),
+                            'options' => new external_value(PARAM_RAW, 'Additional options', VALUE_OPTIONAL),
+                            'completionstatusrequired' => new external_value(PARAM_INT, 'Status passed/completed required?',
+                                                                                VALUE_OPTIONAL),
+                            'completionscorerequired' => new external_value(PARAM_INT, 'Minimum score required', VALUE_OPTIONAL),
+                            'autocommit' => new external_value(PARAM_BOOL, 'Save track data automatically?', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
+                            'section' => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),
+                            'visible' => new external_value(PARAM_BOOL, 'Visible', VALUE_OPTIONAL),
+                            'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
+                            'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
+                        ), 'SCORM'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
