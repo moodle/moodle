@@ -68,22 +68,32 @@ $string['pathsrodataroot'] = 'datarootディレクトリに書き込み権があ
 $string['pathsroparentdataroot'] = '親ディレクトリ ({$a->parent}) に書き込み権がありません。データディレクトリ ({$a->dataroot}) はインストーラーで作成できません。';
 $string['pathssubadmindir'] = 'まれに、コントロールパネルまたはその他の管理ツールにアクセスするためのURLとして/adminディレクトリを使用しているウェブホストがあります。残念ですが、これはMoodle管理ページの標準的なロケーションと衝突します。あなたはインストール時にadminディレクトリをリネームすることができます。ここに新しいディレクトリ名を入力してください。例: <br /> <br /><b>moodleadmin</b><br /> <br />
 これによりMoodleでのadminへのリンクを変更します。';
-$string['pathssubdataroot'] = 'あなたには、Moodleがファイルをアップロードすることのできる場所が必要です。このディレクトリは、ウェブサーバユーザ (通常「nobody」または「apache」) から読み込みおよび「書き込み」できる必要があります。しかし、ウェブからは直接アクセスできないようにしてください。データディレクトリがない場合、インストーラーは作成を試みます。';
-$string['pathssubdirroot'] = 'Moodleコードを含むディレクトリに関するフルパスです。';
-$string['pathssubwwwroot'] = 'Moodleにアクセスすることのできるフルウェブアドレスです。複数アドレスを使用して、Moodleにアクセスすることはできません。あなたのサイトに複数のパブリックアドレスがある場合、このアドレスを除く、すべてのアドレスにパーマネントリダイレクトを設定してください。あなたのサイトにイントラネットおよびインターネットからアクセスできる場合、ここにはパブリックアドレスを入力してください。また、イントラネットユーザもパブリックアドレスを利用できるよう、DNSを設定してください。アドレスが正しくない場合、あなたのブラウザのURLを変更して、異なる値でインストールを再開してください。';
-$string['pathsunsecuredataroot'] = 'dirrootロケーションが安全ではありません。';
+$string['pathssubdataroot'] = '<p>ユーザによってアップロードされたファイルコンテンツすべてをMoodleが保存するディレクトリです。</p>
+<p>このディレクトリはウェブサーバユーザ (通常「nobody」または「apache」) から読み込みおよび書き込みできる必要があります。</p>
+<p>ウェブからは直接アクセスできないようにしてください。</p>
+<p>現在ディレクトリが存在しない場合、インストレーションプロセスは作成を試みます。</p';
+$string['pathssubdirroot'] = '<p>Moodleコードを含むディレクトリに関するフルパスです。</p>';
+$string['pathssubwwwroot'] = '<p>Moodleにアクセスすることのできるフルウェブアドレスです。例えば、ユーザがブラウザのアドレスバーに入力してMoodleにアクセスするためのアドレスです。</p>
+
+<p>複数アドレスを使用してMoodleにアクセスすることはできません。あなたのサイトに複数アドレスからアクセスできる場合、最も簡単なアドレスを選択して、すべてのアドレスにパーマネントリダイレクトを設定してください。</p>
+
+<p>あなたのサイトにインターネットおよび内部ネットワーク (イントラネットと呼ばれます) からアクセスできる場合、ここではパブリックアドレスを使用してください。</p>
+
+<p>現在のアドレスが正しくない場合、あなたのブラウザのURLを変更して、異なる値でインストレーションを再開してください。</p>';
+$string['pathsunsecuredataroot'] = 'dataroot ロケーションが安全ではありません。';
 $string['pathswrongadmindir'] = 'adminディレクトリがありません。';
 $string['phpextension'] = '{$a} PHP拡張モジュール';
 $string['phpversion'] = 'PHPバージョン';
-$string['phpversionhelp'] = '<p>Moodleには、少なくとも 4.3.0 または 5.1.0 のPHPバージョンが必要です (5.0.x には既知の多数の問題があります)。</p>
+$string['phpversionhelp'] = '<p>Moodleには少なくとも4.3.0または5.1.0のPHPバージョンが必要です (5.0.x には既知の多数の問題があります)。</p>
 <p>現在、バージョン {$a} が動作しています。</p>
 <p>PHPをアップグレードするか、新しいバージョンがインストールされているホストに移動してください!<br />
-(5.0.x の場合、バージョン 4.4.x にダウングレードすることもできます。)</p>';
+(5.0.x の場合、anataha
+バージョン 4.4.x にダウングレードすることもできます。)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'インストールが正常に完了して、あなたのコンピュータで <strong>{$a->packname} {$a->packversion}</strong> パッケージが起動されたため、このページが表示されています。おめでとうございます!';
 $string['welcomep30'] = 'このリリース <strong>{$a->installername}</strong> には<strong>Moodle</strong>で環境を作成するアプリケーションが含まれています。すなわち:';
 $string['welcomep40'] = 'パッケージには <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong> も含まれています。';
-$string['welcomep50'] = 'このパッケージ内のすべてのアプリケーションの使用は個々のライセンスによって規定されています。全体の <strong>{$a->installername}</strong> パッケージは <a href="http://www.opensource.org/docs/definition_plain.html">オープンソース</a> であり、<a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>ライセンスの下で配布されています。';
-$string['welcomep60'] = '次からのページは、あなたのコンピュータに<strong>Moodle</strong>を簡単に設定およびセットアップする手順にしたがって進みます。あなたはデフォルトの設定を使用することも、必要に応じて任意で設定を変更することもできます。';
+$string['welcomep50'] = 'このパッケージ内のすべてのアプリケーションの使用は個々のライセンスによって規定されています。全体の<strong>{$a->installername}</strong>パッケージは<a href="http://www.opensource.org/docs/definition_plain.html">オープンソース</a>であり、<a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>ライセンスの下で配布されています。';
+$string['welcomep60'] = '次からのページはあなたのコンピュータに<strong>Moodle</strong>を簡単に設定およびセットアップする手順にしたがって進みます。あなたはデフォルトの設定を使用することも、必要に応じて任意で設定を変更することもできます。';
 $string['welcomep70'] = '<strong>Moodle</strong>のセットアップを続けるには「次へ」ボタンをクリックしてください。';
 $string['wwwroot'] = 'ウェブアドレス';
