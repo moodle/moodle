@@ -4308,7 +4308,7 @@ function xmldb_main_upgrade($oldversion) {
         // Add "My grades" to the user menu.
         $oldconfig = get_config('core', 'customusermenuitems');
         if (strpos("mygrades,grades|/grade/report/mygrades.php|grades", $oldconfig) === false) {
-            $newconfig = "mygrades,grades|/grade/report/mygrades.php|grades\n" . $CFG->customusermenuitems;
+            $newconfig = "mygrades,grades|/grade/report/mygrades.php|grades\n" . $oldconfig;
             set_config('customusermenuitems', $newconfig);
         }
 
