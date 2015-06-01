@@ -179,6 +179,7 @@ $string['enableajax_help'] = 'Adds a layer of AJAX functionality to the grader r
 $string['enableoutcomes'] = 'Enable outcomes';
 $string['enableoutcomes_help'] = 'Support for Outcomes (also known as Competencies, Goals, Standards or Criteria) means that we can grade things using one or more scales that are tied to outcome statements. Enabling outcomes makes such special grading possible throughout the site.';
 $string['encoding'] = 'Encoding';
+$string['encoding_help'] = 'Select the character encoding used for the data. (The standard encoding is UTF-8.) If the wrong encoding is selected by mistake, it will be noticeable when previewing the data for import.';
 $string['errorcalculationnoequal'] = 'Formula must start with equal sign (=1+2)';
 $string['errorcalculationunknown'] = 'Invalid formula';
 $string['errorcalculationbroken'] = 'Probably circular reference or broken calculation formula';
@@ -371,6 +372,14 @@ $string['idnumbers'] = 'ID numbers';
 $string['ignore'] = 'Ignore';
 $string['import'] = 'Import';
 $string['importcsv'] = 'Import CSV';
+$string['importcsv_help'] = 'Grades can be imported via a CSV file with format as follows:
+
+* Each line of the file contains one record
+* Each record is a series of data separated by commas or an alternative separator
+* The first record contains a list of fieldnames defining the format of the rest of the file
+* A fieldname containing user identity data is required - either username or ID number or email address
+
+A file of the correct format can be obtained by first exporting some grades. The file can then be edited and saved as a CSV file.';
 $string['importcustom'] = 'Import as custom outcomes (only this course)';
 $string['importerror'] = 'An error occurred, this script wasn\'t called with the right parameters.';
 $string['importfailed'] = 'Import failed. No data was imported.';
@@ -430,8 +439,11 @@ $string['lowest'] = 'Lowest';
 $string['lowgradeletter'] = 'Low';
 $string['manualitem'] = 'Manual item';
 $string['mapfrom'] = 'Map from';
+$string['mapfrom_help'] = 'Select the column in the spreadsheet containing data for identifying the user, such as username, user ID or email address.';
 $string['mappings'] = 'Grade item mappings';
+$string['mappings_help'] = 'For each column of grades in the spreadsheet, select the corresponding grade item to import the grades into.';
 $string['mapto'] = 'Map to';
+$string['mapto_help'] = 'Select the same identifying data as selected for \'Map from\'.';
 $string['max'] = 'Highest';
 $string['maxgrade'] = 'Max grade';
 $string['meanall'] = 'All grades';
@@ -592,6 +604,7 @@ $string['resetweightsshort'] = 'Reset weights';
 $string['resetweights'] = 'Reset weights of {$a->itemname}';
 $string['respectingcurrentdata'] = 'leaving current configuration unmodified';
 $string['rowpreviewnum'] = 'Preview rows';
+$string['rowpreviewnum_help'] = 'Data for import may be previewed before confirming the import. This setting determines how many rows are displayed in the preview.';
 $string['savechanges'] = 'Save changes';
 $string['savepreferences'] = 'Save preferences';
 $string['scaleconfirmdelete'] = 'Are you sure you wish to delete the scale "{$a}"?';
@@ -602,6 +615,7 @@ $string['selectalloroneuser'] = 'Select all or one user';
 $string['selectauser'] = 'Select a user';
 $string['selectdestination'] = 'Select destination of {$a}';
 $string['separator'] = 'Separator';
+$string['separator_help'] = 'Select the separator used in the CSV file. (Normally this is a comma.)';
 $string['sepcolon'] = 'Colon';
 $string['sepcomma'] = 'Comma';
 $string['sepsemicolon'] = 'Semicolon';
@@ -737,6 +751,7 @@ $string['userpreferences'] = 'User preferences';
 $string['userenrolmentsuspended'] = 'User enrolment suspended';
 $string['useweighted'] = 'Use weighted';
 $string['verbosescales'] = 'Verbose scales';
+$string['verbosescales_help'] = 'A verbose scale uses words rather than numbers. Set to \'Yes\' if both numerical and verbose scales are to be imported. Set to \'No\' if only numerical scales are to be imported.';
 $string['viewbygroup'] = 'Group';
 $string['viewgrades'] = 'View grades';
 $string['weight'] = 'weight';
