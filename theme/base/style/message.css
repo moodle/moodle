@@ -27,6 +27,7 @@ table.message_search_results td {border-color:#DDDDDD;}
 table.message .searchresults td {padding:5px;}
 
 .message .contactselector {width:24%;float:left;}
+.dir-rtl .message .contactselector {float:right;}
 .message .contactselector .contact {text-align:left;}
 .message .contactselector .messageselecteduser {font-weight:bold;}
 .message .contactselector .paging {z-index:1;position:relative;}
