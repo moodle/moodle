@@ -2182,6 +2182,59 @@ class admin_setting_configtext extends admin_setting {
     }
 }
 
+/**
+ * Text input with a maximum length constraint.
+ *
+ * @copyright 2015 onwards Ankit Agarwal
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_configtext_with_maxlength extends admin_setting_configtext {
+
+    /** @var int maximum number of chars allowed. */
+    protected $maxlength;
+
+    /**
+     * Config text constructor
+     *
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config,
+     *                     or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $visiblename localised
+     * @param string $description long localised info
+     * @param string $defaultsetting
+     * @param mixed $paramtype int means PARAM_XXX type, string is a allowed format in regex
+     * @param int $size default field size
+     * @param mixed $maxlength int maxlength allowed, 0 for infinite.
+     */
+    public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW,
+                                $size=null, $maxlength = 0) {
+        $this->maxlength = $maxlength;
+        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $size);
+    }
+
+    /**
+     * Validate data before storage
+     *
+     * @param string $data data
+     * @return mixed true if ok string if error found
+     */
+    public function validate($data) {
+        $parentvalidation = parent::validate($data);
+        if ($parentvalidation === true) {
+            if ($this->maxlength > 0) {
+                // Max length check.
+                $length = core_text::strlen($data);
+                if ($length > $this->maxlength) {
+                    return get_string('maximumchars', 'moodle',  $this->maxlength);
+                }
+                return true;
+            } else {
+                return true; // No max length check needed.
+            }
+        } else {
+            return $parentvalidation;
+        }
+    }
+}
 
 /**
  * General text area without html editor.
