@@ -298,7 +298,12 @@ abstract class question_behaviour {
         } else {
             $stepswithsubmit = $this->qa->get_steps_with_submitted_response_iterator();
             if ($whichtries == question_attempt::FIRST_TRY) {
-                return $this->question->classify_response($stepswithsubmit[1]->get_qt_data());
+                $firsttry = $stepswithsubmit[1];
+                if ($firsttry) {
+                    return $this->question->classify_response($firsttry->get_qt_data());
+                } else {
+                    return $this->question->classify_response(array());
+                }
             } else {
                 $classifiedresponses = array();
                 foreach ($stepswithsubmit as $submittedresponseno => $step) {
