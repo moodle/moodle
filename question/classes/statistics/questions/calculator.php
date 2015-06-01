@@ -68,12 +68,12 @@ class calculator {
      *
      * @param object[] questions to analyze, keyed by slot, also analyses sub questions for random questions.
      *                              we expect some extra fields - slot, maxmark and number on the full question data objects.
-     * @param \core\progress\base|null $progress the element to send progress messages to, default is {@link \core\progress\null}.
+     * @param \core\progress\base|null $progress the element to send progress messages to, default is {@link \core\progress\none}.
      */
     public function __construct($questions, $progress = null) {
 
         if ($progress === null) {
-            $progress = new \core\progress\null();
+            $progress = new \core\progress\none();
         }
         $this->progress = $progress;
         $this->stats = new $this->statscollectionclassname();

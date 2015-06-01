@@ -36,4 +36,5 @@ defined('MOODLE_INTERNAL') || die();
 // The old class name is the key, the new class name is the value.
 // The array must be called $renamedclasses.
 $renamedclasses = array(
+    'core\progress\null' => 'core\progress\none',
 );
