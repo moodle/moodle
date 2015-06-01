@@ -454,8 +454,16 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         print_error('cannotsplit', 'forum');
     }
 
-    if (!empty($name) && confirm_sesskey()) {    // User has confirmed the prune
+    $PAGE->set_cm($cm);
+    $PAGE->set_context($modcontext);
 
+    $prunemform = new mod_forum_prune_form(null, array('prune' => $prune, 'confirm' => $prune));
+
+
+    if ($prunemform->is_cancelled()) {
+        redirect(forum_go_back_to("discuss.php?d=$post->discussion"));
+    } else if ($fromform = $prunemform->get_data()) {
+        // User submits the data.
         $newdiscussion = new stdClass();
         $newdiscussion->course       = $discussion->course;
         $newdiscussion->forum        = $discussion->forum;
@@ -479,7 +487,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
 
         forum_change_discussionid($post->id, $newid);
 
-        // update last post in each discussion
+        // Update last post in each discussion.
         forum_discussion_update_last_post($discussion->id);
         forum_discussion_update_last_post($newid);
 
@@ -519,12 +527,9 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
 
         redirect(forum_go_back_to("discuss.php?d=$newid"));
 
-    } else { // User just asked to prune something
-
+    } else {
+        // Display the prune form.
         $course = $DB->get_record('course', array('id' => $forum->course));
-
-        $PAGE->set_cm($cm);
-        $PAGE->set_context($modcontext);
         $PAGE->navbar->add(format_string($post->subject, true), new moodle_url('/mod/forum/discuss.php', array('d'=>$discussion->id)));
         $PAGE->navbar->add(get_string("prune", "forum"));
         $PAGE->set_title(format_string($discussion->name).": ".format_string($post->subject));
@@ -532,13 +537,12 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         echo $OUTPUT->header();
         echo $OUTPUT->heading(format_string($forum->name), 2);
         echo $OUTPUT->heading(get_string('pruneheading', 'forum'), 3);
-        echo '<center>';
 
-        include('prune.html');
+        $prunemform->display();
 
         forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false);
-        echo '</center>';
     }
+
     echo $OUTPUT->footer();
     die;
 } else {
