@@ -299,10 +299,19 @@ abstract class moodleform_mod extends moodleform {
             $errors['assessed'] = get_string('scaleselectionrequired', 'rating');
         }
 
+        // Check that the grade pass is a valid number.
+        $gradepassvalid = false;
+        if (isset($data['gradepass'])) {
+            if (unformat_float($data['gradepass'], true) === false) {
+                $errors['gradepass'] = get_string('err_numeric', 'form');
+            } else {
+                $gradepassvalid = true;
+            }
+        }
+
         // Grade to pass: ensure that the grade to pass is valid for points and scales.
         // If we are working with a scale, convert into a positive number for validation.
-
-        if (isset($data['gradepass']) && (!empty($data['grade']) || !empty($data['scale']))) {
+        if ($gradepassvalid && isset($data['gradepass']) && (!empty($data['grade']) || !empty($data['scale']))) {
             $scale = !empty($data['grade']) ? $data['grade'] : $data['scale'];
             if ($scale < 0) {
                 $scalevalues = $DB->get_record('scale', array('id' => -$scale));
@@ -672,8 +681,7 @@ abstract class moodleform_mod extends moodleform {
             $mform->addElement('text', 'gradepass', get_string('gradepass', 'grades'));
             $mform->addHelpButton('gradepass', 'gradepass', 'grades');
             $mform->setDefault('gradepass', '');
-            $mform->setType('gradepass', PARAM_FLOAT);
-            $mform->addRule('gradepass', null, 'numeric', null, 'client');
+            $mform->setType('gradepass', PARAM_RAW);
             if (!$this->_features->rating) {
                 $mform->disabledIf('gradepass', 'grade[modgrade_type]', 'eq', 'none');
             }
