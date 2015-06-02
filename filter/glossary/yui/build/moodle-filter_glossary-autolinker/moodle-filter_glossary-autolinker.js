@@ -144,6 +144,8 @@ M.filter_glossary.init_filter_autolinking = function(config) {
         "event-delegate",
         "overlay",
         "moodle-core-event",
-        "moodle-core-notification-alert"
+        "moodle-core-notification-alert",
+        "moodle-core-notification-exception",
+        "moodle-core-notification-ajaxexception"
     ]
 });
