@@ -120,6 +120,7 @@ $string['cliupgradefinished'] = 'Command line upgrade completed successfully.';
 $string['cliupgradenoneed'] = 'No upgrade needed for the installed version {$a}. Thanks for coming anyway!';
 $string['cliyesnoprompt'] = 'type y (means yes) or n (means no)';
 $string['commentsperpage'] = 'Comments displayed per page';
+$string['commonactivitysettings'] = 'Common activity settings';
 $string['commonfiltersettings'] = 'Common filter settings';
 $string['commonsettings'] = 'Common settings';
 $string['componentinstalled'] = 'Component installed';
