@@ -230,8 +230,9 @@ abstract class backup_general_helper extends backup_helper {
                 case 'activity':
                     $info->activities[$setting['activity']]->settings[$setting['name']] = $setting['value'];
                     break;
-                default: // Shouldn't happen
-                    throw new backup_helper_exception('wrong_setting_level_moodle_backup_xml_file', $setting['level']);
+                default: // Shouldn't happen but tolerated for portability of customized backups.
+                    debugging("Unknown backup setting level: {$setting['level']}", DEBUG_DEVELOPER);
+                    break;
             }
         }
 
