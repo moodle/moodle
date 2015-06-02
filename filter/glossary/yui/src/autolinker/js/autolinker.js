@@ -17,6 +17,7 @@ AUTOLINKER = function() {
 };
 Y.extend(AUTOLINKER, Y.Base, {
     overlay : null,
+    alertpanels: {},
     initializer : function() {
         var self = this;
         Y.delegate('click', function(e){
@@ -59,7 +60,11 @@ Y.extend(AUTOLINKER, Y.Base, {
     display_callback : function(content) {
         var data,
             key,
-            alertpanel;
+            alertpanel,
+            alertpanelid,
+            definition,
+            position;
+        var self = this;
         try {
             data = Y.JSON.parse(content);
             if (data.success){
@@ -71,6 +76,20 @@ Y.extend(AUTOLINKER, Y.Base, {
                         message:definition, modal:false, yesLabel: M.util.get_string('ok', 'moodle')});
                     Y.fire(M.core.event.FILTER_CONTENT_UPDATED, {nodes: (new Y.NodeList(alertpanel.get('boundingBox')))});
                     Y.Node.one('#id_yuialertconfirm-' + alertpanel.get('COUNT')).focus();
+
+                    // Register alertpanel for stacking.
+                    alertpanelid = '#moodle-dialogue-' + alertpanel.get('COUNT');
+                    alertpanel.on('complete', function(){
+                        delete self.alertpanels[alertpanelid];
+                    });
+
+                    // We already have some windows opened, so set the right position...
+                    if (!Y.Object.isEmpty(this.alertpanels)){
+                        position = this._getLatestWindowPosition();
+                        Y.Node.one(alertpanelid).setXY([position[0] + 10, position[1] + 10]);
+                    }
+
+                    this.alertpanels[alertpanelid] = Y.Node.one(alertpanelid).getXY();
                 }
 
                 return true;
@@ -81,6 +100,15 @@ Y.extend(AUTOLINKER, Y.Base, {
             new M.core.exception(e);
         }
         return false;
+    },
+    _getLatestWindowPosition : function() {
+        var lastPosition = [0, 0];
+        Y.Object.each(this.alertpanels, function(position) {
+            if (position[0] > lastPosition[0]){
+                lastPosition = position;
+            }
+        });
+        return lastPosition;
     }
 }, {
     NAME : AUTOLINKERNAME,
