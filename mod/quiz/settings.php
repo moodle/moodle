@@ -203,6 +203,10 @@ if ($ADMIN->fulltree) {
             get_string('showinsecurepopup', 'quiz'), get_string('configpopup', 'quiz'),
             array('value' => '-', 'adv' => true), null));
 
+    $quizsettings->add(new admin_setting_configtext('quiz/initialnumfeedbacks',
+            get_string('initialnumfeedbacks', 'quiz'), get_string('initialnumfeedbacks_desc', 'quiz'),
+            2, PARAM_INT, 5));
+
     // Allow user to specify if setting outcomes is an advanced setting.
     if (!empty($CFG->enableoutcomes)) {
         $quizsettings->add(new admin_setting_configcheckbox('quiz/outcomes_adv',
