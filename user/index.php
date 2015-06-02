@@ -491,8 +491,8 @@ $userlist = $DB->get_recordset_sql("$select $from $where $sort", $params, $table
 // If there are multiple Roles in the course, then show a drop down menu for switching.
 if (count($rolenames) > 1) {
     echo '<div class="rolesform">';
-    echo '<label for="rolesform_jump">'.get_string('currentrole', 'role').'&nbsp;</label>';
-    echo $OUTPUT->single_select($rolenamesurl, 'roleid', $rolenames, $roleid, null, 'rolesform');
+    echo $OUTPUT->single_select($rolenamesurl, 'roleid', $rolenames, $roleid, null,
+        'rolesform', array('label' => get_string('currentrole', 'role')));
     echo '</div>';
 
 } else if (count($rolenames) == 1) {
