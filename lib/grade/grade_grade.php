@@ -338,6 +338,46 @@ class grade_grade extends grade_object {
     }
 
     /**
+     * Returns the minimum and maximum number of points this grade is graded with respect to.
+     *
+     * @return array A list containing the minimum and maximum number of points
+     */
+    public function get_grade_min_max() {
+        $this->load_grade_item();
+
+        $usequirky = get_config('core', 'use_28_bug_grades_'.$this->grade_item->courseid);
+
+        // Only aggregate items use seperate min grades.
+        if ($usequirky || $this->grade_item->is_aggregate_item()) {
+            return array($this->rawgrademin, $this->rawgrademax);
+        } else {
+            return array($this->grade_item->grademin, $this->grade_item->grademax);
+        }
+    }
+
+    /**
+     * Returns the minimum number of points this grade is graded with.
+     *
+     * @return float The minimum number of points
+     */
+    public function get_grade_min() {
+        list($min, $max) = $this->get_grade_min_max();
+
+        return $min;
+    }
+
+    /**
+     * Returns the maximum number of points this grade is graded with respect to.
+     *
+     * @return float The maximum number of points
+     */
+    public function get_grade_max() {
+        list($min, $max) = $this->get_grade_min_max();
+
+        return $max;
+    }
+
+    /**
      * Returns timestamp when last graded, null if no grade present
      *
      * @return int
