@@ -467,6 +467,12 @@ class grade_category extends grade_object {
             $items = $DB->get_records_sql($sql, $params);
         }
 
+        if ($items) {
+            foreach ($items as $id => $item) {
+                $items[$id] = new grade_item($item);
+            }
+        }
+
         $grade_inst = new grade_grade();
         $fields = 'g.'.implode(',g.', $grade_inst->required_fields);
 
@@ -498,8 +504,11 @@ class grade_category extends grade_object {
             $grademinoverrides = array();
 
             foreach ($rs as $used) {
-
-                if ($used->userid != $prevuser) {
+                $grade = new grade_grade($used);
+                if (isset($items[$used->itemid])) {
+                    $grade->grade_item =& $items[$used->itemid];
+                }
+                if ($grade->userid != $prevuser) {
                     $this->aggregate_grades($prevuser,
                                             $items,
                                             $grade_values,
@@ -507,23 +516,25 @@ class grade_category extends grade_object {
                                             $excluded,
                                             $grademinoverrides,
                                             $grademaxoverrides);
-                    $prevuser = $used->userid;
+                    $prevuser = $grade->userid;
                     $grade_values = array();
                     $excluded     = array();
                     $oldgrade     = null;
                     $grademaxoverrides = array();
                     $grademinoverrides = array();
                 }
-                $grade_values[$used->itemid] = $used->finalgrade;
-                $grademaxoverrides[$used->itemid] = $used->rawgrademax;
-                $grademinoverrides[$used->itemid] = $used->rawgrademin;
+                $grade_values[$grade->itemid] = $grade->finalgrade;
 
-                if ($used->excluded) {
-                    $excluded[] = $used->itemid;
+                list($min, $max) = $grade->get_grade_min_max();
+                $grademaxoverrides[$grade->itemid] = $max;
+                $grademinoverrides[$grade->itemid] = $min;
+
+                if ($grade->excluded) {
+                    $excluded[] = $grade->itemid;
                 }
 
-                if ($this->grade_item->id == $used->itemid) {
-                    $oldgrade = $used;
+                if ($this->grade_item->id == $grade->itemid) {
+                    $oldgrade = $grade;
                 }
             }
             $this->aggregate_grades($prevuser,

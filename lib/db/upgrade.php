@@ -4073,5 +4073,26 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014111005.03);
     }
 
+    if ($oldversion < 2014111006.05) {
+        // We only need to do this for sites that have upgraded to 2.8.0 already.
+        if ($oldversion >= 2014111000.00) {
+
+            $sql = "SELECT DISTINCT(gi.courseid)
+                      FROM {grade_items} gi
+                      JOIN {grade_grades} gg
+                        ON gg.itemid = gi.id
+                     WHERE (gi.itemtype <> 'course' AND gi.itemtype <> 'category')
+                       AND (gg.rawgrademax != gi.grademax OR gg.rawgrademin != gi.grademin)";
+
+            $rs = $DB->get_recordset_sql($sql);
+            foreach ($rs as $record) {
+                set_config('show_min_max_grades_changed_'.$record->courseid, 1);
+                $DB->set_field('grade_items', 'needsupdate', 1, array('courseid' => $record->courseid));
+            }
+        }
+
+        upgrade_main_savepoint(true, 2014111006.05);
+    }
+
     return true;
 }

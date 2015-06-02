@@ -430,8 +430,9 @@ abstract class grade_report {
         $grademin = $course_item->grademin;
         $grademax = $course_item->grademax;
         if ($coursegradegrade) {
-            $grademin = $coursegradegrade->rawgrademin;
-            $grademax = $coursegradegrade->rawgrademax;
+            list($min, $max) = $coursegradegrade->get_grade_min_max();
+            $grademin = $min;
+            $grademax = $max;
         } else {
             $coursegradegrade = new grade_grade(array('userid'=>$this->user->id, 'itemid'=>$course_item->id), false);
         }
