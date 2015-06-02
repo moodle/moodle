@@ -1127,6 +1127,7 @@ $services = array(
             'core_user_view_user_profile',
             'gradereport_user_view_grade_report',
             'core_rating_get_item_ratings',
+            'mod_url_view_url',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
