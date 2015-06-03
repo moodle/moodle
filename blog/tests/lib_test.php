@@ -26,11 +26,12 @@
 global $CFG;
 require_once($CFG->dirroot . '/blog/locallib.php');
 require_once($CFG->dirroot . '/blog/lib.php');
+require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
 
 /**
  * Test functions that rely on the DB tables
  */
-class core_bloglib_testcase extends advanced_testcase {
+class core_blog_lib_testcase extends advanced_testcase {
 
     private $courseid;
     private $cmid;
@@ -475,6 +476,40 @@ class core_bloglib_testcase extends advanced_testcase {
         $url = new moodle_url('/blog/index.php', array('entryid' => $this->postid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Tests for core_blog_myprofile_navigation() api.
+     */
+    public function test_core_blog_myprofile_navigation() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setGuestUser();
+
+        // No blogs for guest users.
+        $tree = new phpunit_fixture_myprofile_tree();
+        $course = null;
+        $iscurrentuser = false;
+        core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
+        $nodes = $tree->get_nodes();
+        $this->assertArrayNotHasKey('blogs', $nodes);
+
+        // Disable blogs.
+        $this->setAdminUser();
+        set_config('enableblogs', false);
+        $tree = new phpunit_fixture_myprofile_tree();
+        core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
+        $nodes = $tree->get_nodes();
+        $this->assertArrayNotHasKey('blogs', $nodes);
+
+        // Enable badges.
+        set_config('enableblogs', true);
+        $tree = new phpunit_fixture_myprofile_tree();
+        $iscurrentuser = true;
+        core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
+        $nodes = $tree->get_nodes();
+        $this->assertArrayHasKey('blogs', $nodes);
     }
 }
 

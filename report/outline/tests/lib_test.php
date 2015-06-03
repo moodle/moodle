@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
+
 /**
  * Class report_outline_lib_testcase
  *
@@ -52,5 +55,41 @@ class report_outline_lib_testcase extends advanced_testcase {
         foreach ($expectedstores as $expectedstore) {
             $this->assertContains($expectedstore, $stores);
         }
+    }
+
+    /**
+     * Tests for report_outline_myprofile_navigation() api.
+     */
+    public function test_report_outline_myprofile_navigation() {
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $tree = new phpunit_fixture_myprofile_tree();
+        $user = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $iscurrentuser = false;
+
+        report_outline_myprofile_navigation($tree, $user, $iscurrentuser, $course);
+        $nodes = $tree->get_nodes();
+        $this->assertArrayHasKey('outline', $nodes);
+        $this->assertArrayHasKey('complete', $nodes);
+
+        $tree = new phpunit_fixture_myprofile_tree();
+        $iscurrentuser = true;
+        report_outline_myprofile_navigation($tree, $user, $iscurrentuser, $course);
+        $nodes = $tree->get_nodes();
+        $this->assertArrayHasKey('outline', $nodes);
+        $this->assertArrayHasKey('complete', $nodes);
+
+        // Try to see as a user without permission.
+        $this->setUser($user2);
+        $tree = new phpunit_fixture_myprofile_tree();
+        $iscurrentuser = true;
+        report_outline_myprofile_navigation($tree, $user, $iscurrentuser, $course);
+        $nodes = $tree->get_nodes();
+        $this->assertArrayNotHasKey('outline', $nodes);
+        $this->assertArrayNotHasKey('complete', $nodes);
     }
 }
