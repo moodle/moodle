@@ -17,8 +17,8 @@
 /**
  * Tests for report library functions.
  *
- * @package    report_log
- * @copyright  2014 onwards Ankit agarwal <ankit.agrr@gmail.com>
+ * @package    report_usersessions
+ * @copyright  2015 onwards Ankit agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 
@@ -26,42 +26,21 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
+require_once($CFG->dirroot. '/report/usersessions/lib.php');
 
 /**
- * Class report_log_events_testcase.
+ * Class report_stats_lib_testcase
  *
- * @package    report_log
+ * @package    report_usersessions
  * @copyright  2014 onwards Ankit agarwal <ankit.agrr@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class report_log_lib_testcase extends advanced_testcase {
+class report_usersessions_lib_testcase extends advanced_testcase {
 
     /**
-     * Test report_log_supports_logstore.
+     * Tests for report_userssesions_myprofile_navigation() api.
      */
-    public function test_report_log_supports_logstore() {
-        $logmanager = get_log_manager();
-        $allstores = \core_component::get_plugin_list_with_class('logstore', 'log\store');
-
-        $supportedstores = array(
-            'logstore_database' => '\logstore_database\log\store',
-            'logstore_legacy' => '\logstore_legacy\log\store',
-            'logstore_standard' => '\logstore_standard\log\store'
-        );
-
-        // Make sure all supported stores are installed.
-        $expectedstores = array_keys(array_intersect($allstores, $supportedstores));
-        $stores = $logmanager->get_supported_logstores('report_log');
-        $stores = array_keys($stores);
-        foreach ($expectedstores as $expectedstore) {
-            $this->assertContains($expectedstore, $stores);
-        }
-    }
-
-    /**
-     * Tests for report_log_myprofile_navigation() api.
-     */
-    public function test_report_log_myprofile_navigation() {
+    public function test_report_usersessions_myprofile_navigation() {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -72,19 +51,32 @@ class report_log_lib_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $iscurrentuser = false;
 
-        // As user with permissions.
-        report_log_myprofile_navigation($tree, $user, $iscurrentuser, $course);
+        // Not even admins allowed to pick at other user's sessions.
+        report_usersessions_myprofile_navigation($tree, $user, $iscurrentuser, $course);
         $nodes = $tree->get_nodes();
-        $this->assertArrayHasKey('alllogs', $nodes);
-        $this->assertArrayHasKey('todayslogs', $nodes);
+        $this->assertArrayNotHasKey('usersessions', $nodes);
+
+        // Try as guest user.
+        $this->setGuestUser();
+        report_usersessions_myprofile_navigation($tree, $user, $iscurrentuser, $course);
+        $nodes = $tree->get_nodes();
+        $this->assertArrayNotHasKey('usersessions', $nodes);
+
+        // As current user.
+        $this->setUser($user);
+        $tree = new phpunit_fixture_myprofile_tree();
+        $iscurrentuser = true;
+        report_usersessions_myprofile_navigation($tree, $user, $iscurrentuser, $course);
+        $nodes = $tree->get_nodes();
+        $this->assertArrayHasKey('usersessions', $nodes);
 
         // Try to see as a user without permission.
         $this->setUser($user2);
         $tree = new phpunit_fixture_myprofile_tree();
         $iscurrentuser = true;
-        report_log_myprofile_navigation($tree, $user, $iscurrentuser, $course);
+        report_usersessions_myprofile_navigation($tree, $user, $iscurrentuser, $course);
         $nodes = $tree->get_nodes();
-        $this->assertArrayNotHasKey('alllogs', $nodes);
-        $this->assertArrayNotHasKey('todayslogs', $nodes);
+        $this->assertArrayNotHasKey('usersessions', $nodes);
+
     }
 }

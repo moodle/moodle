@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 require_once($CFG->dirroot . '/rating/lib.php');
+require_once($CFG->dirroot . '/user/tests/fixtures/myprofile_fixtures.php');
 
 class mod_forum_lib_testcase extends advanced_testcase {
 
@@ -1498,4 +1499,43 @@ class mod_forum_lib_testcase extends advanced_testcase {
 
     }
 
+    /**
+     * Tests for mod_forum_myprofile_navigation() api.
+     */
+    public function test_mod_forum_myprofile_navigation() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setGuestUser();
+
+        $tree = new phpunit_fixture_myprofile_tree();
+        $user = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $iscurrentuser = false;
+
+        // Nothing for guest users.
+        mod_forum_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
+        $nodes = $tree->get_nodes();
+        $this->assertArrayNotHasKey('forumposts', $nodes);
+        $this->assertArrayNotHasKey('forumdiscussions', $nodes);
+
+        // Current user.
+        $this->setUser($user);
+        $tree = new phpunit_fixture_myprofile_tree();
+        $iscurrentuser = true;
+        mod_forum_myprofile_navigation($tree, $user, $iscurrentuser, $course);
+        $nodes = $tree->get_nodes();
+        $this->assertArrayHasKey('forumposts', $nodes);
+        $this->assertArrayHasKey('forumdiscussions', $nodes);
+
+        // Different user's profile.
+        $this->setUser($user2);
+        $tree = new phpunit_fixture_myprofile_tree();
+        $iscurrentuser = true;
+        mod_forum_myprofile_navigation($tree, $user, $iscurrentuser, $course);
+        $nodes = $tree->get_nodes();
+        $this->assertArrayHasKey('forumposts', $nodes);
+        $this->assertArrayHasKey('forumdiscussions', $nodes);
+    }
 }
