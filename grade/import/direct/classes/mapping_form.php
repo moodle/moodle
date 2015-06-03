@@ -62,8 +62,8 @@ class gradeimport_direct_mapping_form extends moodleform {
         $mform->addElement('select', 'mapto', get_string('mapto', 'grades'), $maptooptions);
         $mform->addHelpButton('mapto', 'mapto', 'grades');
 
-        $mform->addElement('header', 'general', get_string('mappings', 'grades'));
-        $mform->addHelpButton('general', 'mappings', 'grades');
+        $mform->addElement('header', 'general_map', get_string('mappings', 'grades'));
+        $mform->addHelpButton('general_map', 'mappings', 'grades');
 
         // Add a feedback option.
         $feedbacks = array();
