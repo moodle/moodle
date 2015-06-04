@@ -465,9 +465,6 @@ class grade_category extends grade_object {
                       FROM {grade_items}
                      WHERE id $usql";
             $items = $DB->get_records_sql($sql, $params);
-        }
-
-        if ($items) {
             foreach ($items as $id => $item) {
                 $items[$id] = new grade_item($item);
             }
@@ -505,8 +502,9 @@ class grade_category extends grade_object {
 
             foreach ($rs as $used) {
                 $grade = new grade_grade($used);
-                if (isset($items[$used->itemid])) {
-                    $grade->grade_item =& $items[$used->itemid];
+                if (isset($items[$grade->itemid])) {
+                    // Prevent grade item to be fetched from DB.
+                    $grade->grade_item =& $items[$grade->itemid];
                 }
                 if ($grade->userid != $prevuser) {
                     $this->aggregate_grades($prevuser,
@@ -524,10 +522,8 @@ class grade_category extends grade_object {
                     $grademinoverrides = array();
                 }
                 $grade_values[$grade->itemid] = $grade->finalgrade;
-
-                list($min, $max) = $grade->get_grade_min_max();
-                $grademaxoverrides[$grade->itemid] = $max;
-                $grademinoverrides[$grade->itemid] = $min;
+                $grademaxoverrides[$grade->itemid] = $grade->get_grade_max();
+                $grademinoverrides[$grade->itemid] = $grade->get_grade_min();
 
                 if ($grade->excluded) {
                     $excluded[] = $grade->itemid;
