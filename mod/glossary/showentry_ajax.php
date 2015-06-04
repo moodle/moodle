@@ -61,6 +61,9 @@ if ($entries) {
             }
         }
 
+        // Make sure entry is not autolinking itself.
+        $GLOSSARY_EXCLUDEENTRY = $entry->id;
+
         $context = context_module::instance($entry->cmid);
         $definition = file_rewrite_pluginfile_urls($entry->definition, 'pluginfile.php', $context->id, 'mod_glossary', 'entry', $entry->id);
 
