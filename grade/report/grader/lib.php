@@ -1079,9 +1079,8 @@ class grade_report_grader extends grade_report {
                     } else {
                         // The max and min for an aggregation may be different to the grade_item.
                         if (!is_null($gradeval)) {
-                            list($min, $max) = $grade->get_grade_min_max();
-                            $item->grademax = $max;
-                            $item->grademin = $min;
+                            $item->grademax = $grade->get_grade_max();
+                            $item->grademin = $grade->get_grade_min();
                         }
 
                         $itemcell->text .= "<span class='gradevalue{$hidden}{$gradepass}'>" .

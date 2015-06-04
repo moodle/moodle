@@ -65,6 +65,22 @@ class course_settings_form extends moodleform {
         $mform->addElement('select', 'aggregationposition', get_string('aggregationposition', 'grades'), $options);
         $mform->addHelpButton('aggregationposition', 'aggregationposition', 'grades');
 
+        if ($CFG->grade_minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_ITEM) {
+            $default = get_string('gradeitemminmax', 'grades');
+        } else if ($CFG->grade_minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_GRADE) {
+            $default = get_string('gradegrademinmax', 'grades');
+        } else {
+            throw new coding_exception('Invalid $CFG->grade_minmaxtouse value.');
+        }
+
+        $options = array(
+            -1 => get_string('defaultprev', 'grades', $default),
+            GRADE_MIN_MAX_FROM_GRADE_ITEM => get_string('gradeitemminmax', 'grades'),
+            GRADE_MIN_MAX_FROM_GRADE_GRADE => get_string('gradegrademinmax', 'grades')
+        );
+        $mform->addElement('select', 'minmaxtouse', get_string('minmaxtouse', 'grades'), $options);
+        $mform->addHelpButton('minmaxtouse', 'minmaxtouse', 'grades');
+
         // Grade item settings
         $mform->addElement('header', 'grade_item_settings', get_string('gradeitemsettings', 'grades'));
         $mform->setExpanded('grade_item_settings');

@@ -183,9 +183,8 @@ class grade_report_overview extends grade_report {
                     // We must use the specific max/min because it can be different for
                     // each grade_grade when items are excluded from sum of grades.
                     if (!is_null($finalgrade)) {
-                        list($min, $max) = $course_grade->get_grade_min_max();
-                        $course_item->grademin = $min;
-                        $course_item->grademax = $max;
+                        $course_item->grademin = $course_grade->get_grade_min();
+                        $course_item->grademax = $course_grade->get_grade_max();
                     }
                 }
 

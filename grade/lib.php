@@ -472,18 +472,19 @@ function hide_natural_aggregation_upgrade_notice($courseid) {
  *
  * @param int $courseid The current course id.
  */
-function hide_min_max_grade_upgrade_notice($courseid) {
+function grade_hide_min_max_grade_upgrade_notice($courseid) {
     unset_config('show_min_max_grades_changed_' . $courseid);
 }
 
 /**
- * Cause the course to enter a "bug" mode where the buggy computations from 2.8.0 are used.
+ * Use the grade min and max from the grade_grade.
+ *
+ * This is reserved for core use after an upgrade.
  *
  * @param int $courseid The current course id.
  */
-function revert_min_max_grade_upgrade($courseid) {
-    unset_config('show_min_max_grades_changed_' . $courseid);
-    set_config('use_28_bug_grades_' . $courseid, 1);
+function grade_upgrade_use_min_max_from_grade_grade($courseid) {
+    grade_set_setting($courseid, 'minmaxtouse', GRADE_MIN_MAX_FROM_GRADE_GRADE);
 
     grade_force_full_regrading($courseid);
     // Do this now, because it probably happened to late in the page load to be happen automatically.
@@ -491,13 +492,14 @@ function revert_min_max_grade_upgrade($courseid) {
 }
 
 /**
- * Cause fixed grade behaviour to be used.
+ * Use the grade min and max from the grade_item.
+ *
+ * This is reserved for core use after an upgrade.
  *
  * @param int $courseid The current course id.
  */
-function fix_min_max_grade_upgrade($courseid) {
-    set_config('show_min_max_grades_changed_' . $courseid, 1);
-    unset_config('use_28_bug_grades_' . $courseid);
+function grade_upgrade_use_min_max_from_grade_item($courseid) {
+    grade_set_setting($courseid, 'minmaxtouse', GRADE_MIN_MAX_FROM_GRADE_ITEM);
 
     grade_force_full_regrading($courseid);
     // Do this now, because it probably happened to late in the page load to be happen automatically.
@@ -524,25 +526,26 @@ function hide_aggregatesubcats_upgrade_notice($courseid) {
  * @return nothing or string if $return true
  */
 function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage, $return=false) {
-    global $OUTPUT;
+    global $CFG, $OUTPUT;
     $html = '';
+
+    // Do not do anything if they cannot manage the grades of this course.
+    if (!has_capability('moodle/grade:manage', $context)) {
+        return $html;
+    }
 
     $hidesubcatswarning = optional_param('seenaggregatesubcatsupgradedgrades', false, PARAM_BOOL) && confirm_sesskey();
     $showsubcatswarning = get_config('core', 'show_aggregatesubcats_upgrade_' . $courseid);
     $hidenaturalwarning = optional_param('seensumofgradesupgradedgrades', false, PARAM_BOOL) && confirm_sesskey();
     $shownaturalwarning = get_config('core', 'show_sumofgrades_upgrade_' . $courseid);
-    $revertminmax = optional_param('revertminmaxupgradedgrades', false, PARAM_BOOL) && confirm_sesskey();
+
     $hideminmaxwarning = optional_param('seenminmaxupgradedgrades', false, PARAM_BOOL) && confirm_sesskey();
     $showminmaxwarning = get_config('core', 'show_min_max_grades_changed_' . $courseid);
-    $fixminmaxgrades = optional_param('fixminmaxgrades', false, PARAM_BOOL) && confirm_sesskey();
-    $showminmaxrevertwarning = get_config('core', 'use_28_bug_grades_' . $courseid);
 
-    // Do not do anything if they are not a teacher.
-    if ($hidesubcatswarning || $showsubcatswarning || $hidenaturalwarning || $shownaturalwarning) {
-        if (!has_capability('moodle/grade:manage', $context)) {
-            return '';
-        }
-    }
+    $useminmaxfromgradeitem = optional_param('useminmaxfromgradeitem', false, PARAM_BOOL) && confirm_sesskey();
+    $useminmaxfromgradegrade = optional_param('useminmaxfromgradegrade', false, PARAM_BOOL) && confirm_sesskey();
+
+    $minmaxtouse = grade_get_setting($courseid, 'minmaxtouse', $CFG->grade_minmaxtouse);
 
     // Hide the warning if the user told it to go away.
     if ($hidenaturalwarning) {
@@ -553,19 +556,23 @@ function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage
         hide_aggregatesubcats_upgrade_notice($courseid);
     }
 
-    // Hide the warning if the user told it to go away.
+    // Hide the min/max warning if the user told it to go away.
     if ($hideminmaxwarning) {
-        hide_min_max_grade_upgrade_notice($courseid);
+        grade_hide_min_max_grade_upgrade_notice($courseid);
+        $showminmaxwarning = false;
     }
 
-    // Revert the 2.8 min/max fix changes.
-    if ($revertminmax) {
-        revert_min_max_grade_upgrade($courseid);
-    }
+    if ($useminmaxfromgradegrade) {
+        // Revert to the new behaviour, we now use the grade_grade for min/max.
+        grade_upgrade_use_min_max_from_grade_grade($courseid);
+        grade_hide_min_max_grade_upgrade_notice($courseid);
+        $showminmaxwarning = false;
 
-    // Apply the 2.8 min/max fixes.
-    if ($fixminmaxgrades) {
-        fix_min_max_grade_upgrade($courseid);
+    } else if ($useminmaxfromgradeitem) {
+        // Apply the new logic, we now use the grade_item for min/max.
+        grade_upgrade_use_min_max_from_grade_item($courseid);
+        grade_hide_min_max_grade_upgrade_notice($courseid);
+        $showminmaxwarning = false;
     }
 
 
@@ -593,39 +600,49 @@ function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage
         $html .= $goawaybutton;
     }
 
-    // Show the message that there were min/max issues that have been resolved.
-    if (!$hideminmaxwarning && !$revertminmax && ($fixminmaxgrades || $showminmaxwarning)) {
-        $message = get_string('minmaxupgradedgrades', 'grades');
-
-        $revertmessage = get_string('upgradedminmaxrevertmessage', 'grades');
-        $urlparams = array( 'id' => $courseid,
-                            'revertminmaxupgradedgrades' => true,
-                            'sesskey' => sesskey());
-        $reverturl = new moodle_url($thispage, $urlparams);
-        $revertbutton = $OUTPUT->single_button($reverturl, $revertmessage, 'get');
-
+    if ($showminmaxwarning) {
         $hidemessage = get_string('upgradedgradeshidemessage', 'grades');
         $urlparams = array( 'id' => $courseid,
                             'seenminmaxupgradedgrades' => true,
                             'sesskey' => sesskey());
+
         $goawayurl = new moodle_url($thispage, $urlparams);
-        $goawaybutton = $OUTPUT->single_button($goawayurl, $hidemessage, 'get');
-        $html .= $OUTPUT->notification($message, 'notifysuccess');
-        $html .= $revertbutton.$goawaybutton;
+        $hideminmaxbutton = $OUTPUT->single_button($goawayurl, $hidemessage, 'get');
+        $moreinfo = html_writer::link(get_docs_url(get_string('minmaxtouse_link', 'grades')), get_string('moreinfo'),
+            array('target' => '_blank'));
+
+        if ($minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_ITEM) {
+            // Show the message that there were min/max issues that have been resolved.
+            $message = get_string('minmaxupgradedgrades', 'grades') . ' ' . $moreinfo;
+
+            $revertmessage = get_string('upgradedminmaxrevertmessage', 'grades');
+            $urlparams = array('id' => $courseid,
+                               'useminmaxfromgradegrade' => true,
+                               'sesskey' => sesskey());
+            $reverturl = new moodle_url($thispage, $urlparams);
+            $revertbutton = $OUTPUT->single_button($reverturl, $revertmessage, 'get');
+
+            $html .= $OUTPUT->notification($message, 'notifywarning');
+            $html .= $revertbutton . $hideminmaxbutton;
+
+        } else if ($minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_GRADE) {
+            // Show the warning that there are min/max issues that have not be resolved.
+            $message = get_string('minmaxupgradewarning', 'grades') . ' ' . $moreinfo;
+
+            $fixmessage = get_string('minmaxupgradefixbutton', 'grades');
+            $urlparams = array('id' => $courseid,
+                               'useminmaxfromgradeitem' => true,
+                               'sesskey' => sesskey());
+            $fixurl = new moodle_url($thispage, $urlparams);
+            $fixbutton = $OUTPUT->single_button($fixurl, $fixmessage, 'get');
+
+            $html .= $OUTPUT->notification($message, 'notifywarning');
+            $html .= $fixbutton . $hideminmaxbutton;
+        }
     }
 
-    // Show the warning that there are min/max isseus that have not be resolved.
-    if ($revertminmax || (!$fixminmaxgrades && $showminmaxrevertwarning)) {
-        $message = get_string('minmaxupgradewarning', 'grades');
-
-        $fixmessage = get_string('minmaxupgradefixbutton', 'grades');
-        $urlparams = array( 'id' => $courseid,
-                            'fixminmaxgrades' => true,
-                            'sesskey' => sesskey());
-        $fixurl = new moodle_url($thispage, $urlparams);
-        $fixbutton = $OUTPUT->single_button($fixurl, $fixmessage, 'get');
-        $html .= $OUTPUT->notification($message, 'notifywarning');
-        $html .= $fixbutton;
+    if (!empty($html)) {
+        $html = html_writer::tag('div', $html, array('class' => 'core_grades_notices'));
     }
 
     if ($return) {

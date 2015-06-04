@@ -4058,6 +4058,11 @@ function xmldb_main_upgrade($oldversion) {
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014111000.00) {
+        // Coming from 2.7 or older, we need to flag the step minmaxgrade to be ignored.
+        set_config('upgrade_minmaxgradestepignored', 1);
+    }
+
     if ($oldversion < 2014111002.01) {
 
         // Make sure the private files handler is not set to expire.
@@ -4074,21 +4079,13 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2014111006.05) {
-        // We only need to do this for sites that have upgraded to 2.8.0 already.
-        if ($oldversion >= 2014111000.00) {
 
-            $sql = "SELECT DISTINCT(gi.courseid)
-                      FROM {grade_items} gi
-                      JOIN {grade_grades} gg
-                        ON gg.itemid = gi.id
-                     WHERE (gi.itemtype <> 'course' AND gi.itemtype <> 'category')
-                       AND (gg.rawgrademax != gi.grademax OR gg.rawgrademin != gi.grademin)";
+        // Sites that were upgrading from 2.7 and older will ignore this step.
+        if (empty($CFG->upgrade_minmaxgradestepignored)) {
+            upgrade_minmaxgrade();
 
-            $rs = $DB->get_recordset_sql($sql);
-            foreach ($rs as $record) {
-                set_config('show_min_max_grades_changed_'.$record->courseid, 1);
-                $DB->set_field('grade_items', 'needsupdate', 1, array('courseid' => $record->courseid));
-            }
+            // Flags this upgrade step as already run to prevent it from running multiple times.
+            set_config('upgrade_minmaxgradestepignored', 1);
         }
 
         upgrade_main_savepoint(true, 2014111006.05);

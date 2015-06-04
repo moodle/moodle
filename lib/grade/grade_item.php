@@ -999,6 +999,7 @@ class grade_item extends grade_object {
     /**
      * Returns true if the grade item is an aggreggated type grade.
      *
+     * @since  Moodle 2.8.7, 2.9.1
      * @return bool
      */
     public function is_aggregate_item() {

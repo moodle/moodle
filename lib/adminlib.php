@@ -4851,6 +4851,51 @@ class admin_setting_special_gradelimiting extends admin_setting_configcheckbox {
 
 }
 
+/**
+ * Special setting for $CFG->grade_minmaxtouse.
+ *
+ * @package    core
+ * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_special_grademinmaxtouse extends admin_setting_configselect {
+
+    /**
+     * Constructor.
+     */
+    public function __construct() {
+        parent::__construct('grade_minmaxtouse', new lang_string('minmaxtouse', 'grades'),
+            new lang_string('minmaxtouse_desc', 'grades'), GRADE_MIN_MAX_FROM_GRADE_ITEM,
+            array(
+                GRADE_MIN_MAX_FROM_GRADE_ITEM => get_string('gradeitemminmax', 'grades'),
+                GRADE_MIN_MAX_FROM_GRADE_GRADE => get_string('gradegrademinmax', 'grades')
+            )
+        );
+    }
+
+    /**
+     * Saves the new setting.
+     *
+     * @param mixed $data
+     * @return string empty string or error message
+     */
+    function write_setting($data) {
+        global $CFG;
+
+        $previous = $this->get_setting();
+        $result = parent::write_setting($data);
+
+        // If saved and the value has changed.
+        if (empty($result) && $previous != $data) {
+            require_once($CFG->libdir . '/gradelib.php');
+            grade_force_site_regrading();
+        }
+
+        return $result;
+    }
+
+}
+
 
 /**
  * Primary grade export plugin - has state tracking.
