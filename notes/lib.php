@@ -386,6 +386,11 @@ function core_notes_myprofile_navigation(core_user\output\myprofile\tree $tree, 
         return false;
     }
 
+    if (isguestuser($user)) {
+        // No notes for guest users.
+        return false;
+    }
+
     $url = new moodle_url("/notes/index.php", array('user' => $user->id));
     $title = get_string('notes', 'core_notes');
     if (empty($course)) {
