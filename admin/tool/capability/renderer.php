@@ -75,6 +75,7 @@ class tool_capability_renderer extends plugin_renderer_base {
      * @return string
      */
     public function capability_comparison_table(array $capabilities, $contextid, array $roles) {
+        static $capabilitycontexts = array();
 
         $strpermissions = $this->get_permission_strings();
         $permissionclasses = $this->get_permission_classes();
@@ -93,7 +94,11 @@ class tool_capability_renderer extends plugin_renderer_base {
         $table->data = array();
 
         foreach ($capabilities as $capability) {
-            $contexts = tool_capability_calculate_role_data($capability, $roles);
+            if (empty($capabilitycontexts[$capability])) {
+                $capabilitycontexts[$capability] = tool_capability_calculate_role_data($capability, $roles);
+            }
+            $contexts = $capabilitycontexts[$capability];
+
             $captitle = new html_table_cell(get_capability_string($capability) . html_writer::span($capability));
             $captitle->header = true;
 
