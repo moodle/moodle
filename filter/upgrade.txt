@@ -3,6 +3,10 @@ information provided here is intended especially for developers.
 
 === 3.0 ===
 
+
+* New admin setting class admin_setting_filter_types which can be used if you
+  want to make the disablefilters value in your code configurable.
+
 * Methods filter_manager::text_filtering_hash and moodle_text_filter::hash have been
   deprecated. There were use by the old Moodle filtered text caching system
   that was removed several releases ago.
