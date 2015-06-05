@@ -62,11 +62,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         assign_capability('tool/lp:competencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:competencyview', CAP_ALLOW, $this->userrole, $syscontext->id);
-        assign_capability('tool/lp:planmanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:planmanageall', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:planviewall', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:templatemanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:templatecompetencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:templatemanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
 
         role_assign($this->creatorrole, $creator->id, $syscontext->id);
         role_assign($this->userrole, $user->id, $syscontext->id);
@@ -716,7 +716,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $this->assertTrue(external::delete_plan($plan1['id']));
 
-        unassign_capability('tool/lp:planmanage', $this->creatorrole, $syscontext->id);
+        unassign_capability('tool/lp:planmanageall', $this->creatorrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         try {
@@ -775,7 +775,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, external::count_competencies_in_template($template->id));
 
         // Unassign capability.
-        unassign_capability('tool/lp:templatecompetencymanage', $this->creatorrole, $syscontext->id);
+        unassign_capability('tool/lp:templatemanage', $this->creatorrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         // Check we can not add the competency now.
@@ -815,7 +815,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, external::count_competencies_in_template($template->id));
 
         // Unassign capability.
-        unassign_capability('tool/lp:templatecompetencymanage', $this->creatorrole, $syscontext->id);
+        unassign_capability('tool/lp:templatemanage', $this->creatorrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         // Check we can not remove the competency now.

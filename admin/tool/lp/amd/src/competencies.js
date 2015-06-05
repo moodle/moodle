@@ -153,9 +153,9 @@ define(['jquery',
                 competencies: competencies,
                 search: searchText
             };
-            templates.render('tool_lp/link_course_competencies', context).done(function(html) {
+            templates.render('tool_lp/link_competencies', context).done(function(html) {
                 $('[data-region="competencylinktree"]').replaceWith(html);
-                localthis.initLinkCourseCompetencies();
+                localthis.initLinkCompetencies();
             }).fail(notification.exception);
         }).fail(notification.exception);
     };
@@ -163,9 +163,9 @@ define(['jquery',
     /**
      * The link course competencies popup was just opened and we need to initialise it.
      *
-     * @method initLinkCourseCompetencies
+     * @method initLinkCompetencies
      */
-    competencies.prototype.initLinkCourseCompetencies = function() {
+    competencies.prototype.initLinkCompetencies = function() {
         var localthis = this;
 
         new Ariatree('[data-enhance=linktree]', function(target) {
@@ -356,13 +356,13 @@ define(['jquery',
             var framework = localthis.frameworks[0];
             framework.selected = true;
             var context = { framework: framework, frameworks: localthis.frameworks, competencies: competencies, search: '' };
-            templates.render('tool_lp/link_course_competencies', context).done(function(html) {
+            templates.render('tool_lp/link_competencies', context).done(function(html) {
                 str.get_string('linkcompetencies', 'tool_lp').done(function(title) {
                     localthis.popup = new Dialogue(
                         title,
                         html, // The link UI.
                         function() {
-                            localthis.initLinkCourseCompetencies.call(localthis);
+                            localthis.initLinkCompetencies.call(localthis);
                         }
                     );
                 }).fail(notification.exception);
@@ -370,5 +370,5 @@ define(['jquery',
         }).fail(notification.exception);
     };
 
-    return /** @alias module:tool_lp/coursecompetencies */ competencies;
+    return competencies;
 });

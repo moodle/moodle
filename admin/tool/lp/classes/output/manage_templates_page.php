@@ -62,7 +62,7 @@ class manage_templates_page implements renderable, templatable {
         $this->templates = api::list_templates(array(), 'sortorder', 'ASC', 0, 0);
 
         $context = context_system::instance();
-        $this->canmanage = has_capability('tool/lp:planmanage', $context);
+        $this->canmanage = has_capability('tool/lp:planmanageall', $context);
     }
 
     /**

@@ -38,7 +38,7 @@ $temp = new admin_externalpage(
     'toollplearningplans',
     get_string('learningplans', 'tool_lp'),
     new moodle_url('/admin/tool/lp/learningplans.php'),
-    'tool/lp:planmanage'
+    'tool/lp:planmanageall'
 );
 $ADMIN->add('root', $temp, 'toollpcompetencies');
 

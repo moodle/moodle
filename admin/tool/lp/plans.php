@@ -28,7 +28,7 @@ $userid = optional_param('userid', false, PARAM_INT);
 
 require_login(null, false);
 if (isguestuser()) {
-    throw new require_login_exception();
+    throw new require_login_exception('Guests are not allowed here.');
 }
 
 $iscurrentuser = $userid == $USER->id;
@@ -46,8 +46,9 @@ if (!$user || !core_user::is_real_user($userid)) {
 if (!has_capability('tool/lp:planviewall', $context)) {
     if ($iscurrentuser) {
         require_capability('tool/lp:planviewown', $context);
+    } else {
+        throw new required_capability_exception($context, 'tool/lp:planviewall', 'nopermissions', '');
     }
-    throw new required_capability_exception($context, 'tool/lp:planviewall', 'nopermissions', '');
 }
 
 $url = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $userid));

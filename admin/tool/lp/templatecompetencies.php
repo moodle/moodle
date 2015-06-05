@@ -25,16 +25,16 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$id = required_param('templateid', PARAM_INT);
+$templateid = required_param('templateid', PARAM_INT);
 
-$template = $DB->get_record('tool_lp_plan_template', array('id' => $id), '*', MUST_EXIST);
+$template = \tool_lp\api::read_template($templateid);
 
 admin_externalpage_setup('toollplearningplans');
 
 // Set up the page.
-$url = new moodle_url('/admin/tool/lp/templatecompetencies.php', array('templateid' => $id));
+$url = new moodle_url('/admin/tool/lp/templatecompetencies.php', array('templateid' => $template->get_id()));
 $title = get_string('templatecompetencies', 'tool_lp');
-$templatename = format_text($template->shortname);
+$templatename = format_text($template->get_shortname());
 $PAGE->set_url($url);
 $PAGE->set_title($title);
 $PAGE->set_heading($templatename);
@@ -44,6 +44,6 @@ $PAGE->navbar->add($templatename, $url);
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($title);
-$page = new \tool_lp\output\template_competencies_page($template->id);
+$page = new \tool_lp\output\template_competencies_page($template->get_id());
 echo $output->render($page);
 echo $output->footer();

@@ -58,21 +58,6 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' =>  'moodle/site:config'
     ),
-    'tool/lp:templatecompetencyread' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' =>  'moodle/block:view'
-    ),
-    'tool/lp:templatecompetencymanage' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-        ),
-        'clonepermissionsfrom' =>  'moodle/site:config'
-    ),
     'tool/lp:plancreatedraft' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -80,7 +65,7 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' =>  'moodle/site:config'
     ),
-    'tool/lp:planmanage' => array(
+    'tool/lp:planmanageall' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(

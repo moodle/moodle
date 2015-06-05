@@ -60,7 +60,7 @@ class template extends persistent {
      * @return string
      */
     public function get_table_name() {
-        return 'tool_lp_plan_template';
+        return 'tool_lp_template';
     }
 
     /**

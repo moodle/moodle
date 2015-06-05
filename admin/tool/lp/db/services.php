@@ -226,7 +226,7 @@ $functions = array(
         'classpath'   => '',
         'description' => 'Add the competency to a template',
         'type'        => 'write',
-        'capabilities'=> 'tool/lp:templatecompetencymanage',
+        'capabilities'=> 'tool/lp:templatemanage',
     ),
     'tool_lp_remove_competency_from_course' => array(
         'classname'   => 'tool_lp\external',
@@ -242,7 +242,7 @@ $functions = array(
         'classpath'   => '',
         'description' => 'Remove a competency from a template',
         'type'        => 'write',
-        'capabilities'=> 'tool/lp:templatecompetencymanage',
+        'capabilities'=> 'tool/lp:templatemanage',
     ),
     'tool_lp_data_for_course_competencies_page' => array(
         'classname'   => 'tool_lp\external',
@@ -258,7 +258,7 @@ $functions = array(
         'classpath'   => '',
         'description' => 'Load the data for the template competencies page template.',
         'type'        => 'read',
-        'capabilities'=> 'tool/lp:templatecompetencyread',
+        'capabilities'=> 'tool/lp:templateread',
     ),
     'tool_lp_reorder_course_competency' => array(
         'classname'   => 'tool_lp\external',
@@ -274,7 +274,7 @@ $functions = array(
         'classpath'   => '',
         'description' => 'Move a template competency to a new relative sort order.',
         'type'        => 'write',
-        'capabilities'=> 'tool/lp:templatecompetencymanage',
+        'capabilities'=> 'tool/lp:templatemanage',
     ),
     'tool_lp_create_template' => array(
         'classname'   => 'tool_lp\external',
@@ -346,7 +346,7 @@ $functions = array(
         'classpath'   => '',
         'description' => 'Creates a learning plan.',
         'type'        => 'write',
-        'capabilities'=> 'tool/lp:planmanage',
+        'capabilities'=> 'tool/lp:planmanageall',
     ),
     'tool_lp_update_plan' => array(
         'classname'   => 'tool_lp\external',
@@ -354,15 +354,7 @@ $functions = array(
         'classpath'   => '',
         'description' => 'Updates a learning plan.',
         'type'        => 'write',
-        'capabilities'=> 'tool/lp:planmanage',
-    ),
-    'tool_lp_read_plan' => array(
-        'classname'   => 'tool_lp\external',
-        'methodname'  => 'read_plan',
-        'classpath'   => '',
-        'description' => 'Load a learning plan.',
-        'type'        => 'read',
-        'capabilities'=> 'tool/lp:planviewown',
+        'capabilities'=> 'tool/lp:planmanageall',
     ),
     'tool_lp_read_plan' => array(
         'classname'   => 'tool_lp\external',
@@ -378,7 +370,7 @@ $functions = array(
         'classpath'   => '',
         'description' => 'Delete a learning plan.',
         'type'        => 'write',
-        'capabilities'=> 'tool/lp:planmanage',
+        'capabilities'=> 'tool/lp:planmanageall',
     ),
     'tool_lp_data_for_plans_page' => array(
         'classname'   => 'tool_lp\external',
