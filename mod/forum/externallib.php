@@ -625,6 +625,7 @@ class mod_forum_external extends external_api {
         require_once($CFG->dirroot . "/mod/forum/lib.php");
 
         $warnings = array();
+        $discussions = array();
 
         $params = self::validate_parameters(self::get_forum_discussions_paginated_parameters(),
             array(
@@ -668,9 +669,9 @@ class mod_forum_external extends external_api {
         require_capability('mod/forum:viewdiscussion', $modcontext, null, true, 'noviewdiscussionspermission', 'forum');
 
         $sort = 'd.' . $sortby . ' ' . $sortdirection;
-        $discussions = forum_get_discussions($cm, $sort, true, -1, -1, true, $page, $perpage);
+        $alldiscussions = forum_get_discussions($cm, $sort, true, -1, -1, true, $page, $perpage);
 
-        if ($discussions) {
+        if ($alldiscussions) {
             $canviewfullname = has_capability('moodle/site:viewfullnames', $modcontext);
 
             // Get the unreads array, this takes a forum id and returns data for all discussions.
@@ -683,9 +684,13 @@ class mod_forum_external extends external_api {
             // The forum function returns the replies for all the discussions in a given forum.
             $replies = forum_count_discussion_replies($forumid, $sort, -1, $page, $perpage);
 
-            foreach ($discussions as $did => $discussion) {
+            foreach ($alldiscussions as $discussion) {
+
                 // This function checks for qanda forums.
-                if (!forum_user_can_see_discussion($forum, $discussion, $modcontext)) {
+                // Note that the forum_get_discussions returns as id the post id, not the discussion id so we need to do this.
+                $discussionrec = clone $discussion;
+                $discussionrec->id = $discussion->discussion;
+                if (!forum_user_can_see_discussion($forum, $discussionrec, $modcontext)) {
                     $warning = array();
                     // Function forum_get_discussions returns forum_posts ids not forum_discussions ones.
                     $warning['item'] = 'post';
@@ -762,7 +767,7 @@ class mod_forum_external extends external_api {
                     }
                 }
 
-                $discussions[$did] = (array) $discussion;
+                $discussions[] = $discussion;
             }
         }
 
