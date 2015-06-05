@@ -539,26 +539,28 @@ span.editinstructions {
 }
 
 .coursebox > .info > .coursename a {
-    display:block;
+    display: block;
     background-image:url([[pix:moodle|i/course]]);
     background-repeat: no-repeat;
-    padding-left:21px;
-    background-position: left 0.5em;
+    padding-left: 21px;
+    background-position: left 0.2em;
 }
 .dir-rtl .coursebox > .info > .coursename a {
     padding-left: 0;
     padding-right: 21px;
-    background-position: right;
+    background-position: right 0.2em;
 }
-.coursebox.remotehost > .info > .categoryname a {
-    background-image:url([[pix:moodle|i/mnethost]]);
+.coursebox > .info > .coursename,
+.coursebox .content .teachers,
+.coursebox .content .courseimage,
+.coursebox .content .coursefile {
+    float: left;
+    clear: left;
 }
 .coursebox .content .teachers,
 .coursebox .content .courseimage,
 .coursebox .content .coursefile {
-    float:left;
-    width:40%;
-    clear:left;
+    width: 40%;
 }
 .dir-rtl .coursebox > .info > .coursename,
 .dir-rtl .coursebox .teachers,
@@ -569,6 +571,7 @@ span.editinstructions {
 }
 .coursebox > .info > h3.coursename {
     margin: 5px;
+    line-height: 1;
 }
 .coursebox > .info > .coursename {
     margin: 5px;
@@ -619,6 +622,10 @@ span.editinstructions {
 .coursebox.remotecoursebox .remotecourseinfo {
     margin:3px 5px;
     padding:0;
+}
+
+.coursebox.remotehost > .info > .categoryname a {
+    background-image:url([[pix:moodle|i/mnethost]]);
 }
 
 .dir-rtl .coursebox > .info > .categoryname a {
