@@ -114,6 +114,10 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
                     if (!$importfeedback) {
                         $grade->feedback = false; // ignore it
                     }
+                    if ($grade->importonlyfeedback) {
+                        // False means do not change. See grade_itme::update_final_grade().
+                        $grade->finalgrade = false;
+                    }
                     if (!$gradeitem->update_final_grade($grade->userid, $grade->finalgrade, 'import', $grade->feedback)) {
                         $errordata = new stdClass();
                         $errordata->itemname = $gradeitem->itemname;
