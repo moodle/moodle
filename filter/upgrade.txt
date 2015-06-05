@@ -3,6 +3,8 @@ information provided here is intended especially for developers.
 
 === 3.0 ===
 
+* New argument $skipfilters to filter_manager::filter_text to allow applying
+  the filters with a given one omitted.
 
 * New admin setting class admin_setting_filter_types which can be used if you
   want to make the disablefilters value in your code configurable.

@@ -54,13 +54,13 @@ define('TEXTFILTER_EXCL_SEPARATOR', '-%-');
 class filter_manager {
     /**
      * @var moodle_text_filter[][] This list of active filters, by context, for filtering content.
-     * An array contextid => array of filter objects.
+     * An array contextid => ordered array of filter name => filter objects.
      */
     protected $textfilters = array();
 
     /**
      * @var moodle_text_filter[][] This list of active filters, by context, for filtering strings.
-     * An array contextid => array of filter objects.
+     * An array contextid => ordered array of filter name => filter objects.
      */
     protected $stringfilters = array();
 
@@ -127,9 +127,9 @@ class filter_manager {
             if (is_null($filter)) {
                 continue;
             }
-            $this->textfilters[$context->id][] = $filter;
+            $this->textfilters[$context->id][$filtername] = $filter;
             if (in_array($filtername, $this->stringfilternames)) {
-                $this->stringfilters[$context->id][] = $filter;
+                $this->stringfilters[$context->id][$filtername] = $filter;
             }
         }
     }
@@ -162,12 +162,17 @@ class filter_manager {
     /**
      * Apply a list of filters to some content.
      * @param string $text
-     * @param moodle_text_filter[] $filterchain
+     * @param moodle_text_filter[] $filterchain array filter name => filter object.
      * @param array $options options passed to the filters.
+     * @param array $skipfilters of filter names. Any filters that should not be applied to this text.
      * @return string $text
      */
-    protected function apply_filter_chain($text, $filterchain, array $options = array()) {
-        foreach ($filterchain as $filter) {
+    protected function apply_filter_chain($text, $filterchain, array $options = array(),
+            array $skipfilters = null) {
+        foreach ($filterchain as $filtername => $filter) {
+            if ($skipfilters !== null && in_array($filtername, $skipfilters)) {
+                continue;
+            }
             $text = $filter->filter($text, $options);
         }
         return $text;
@@ -205,10 +210,12 @@ class filter_manager {
      * @param string $text The text to filter
      * @param context $context the context.
      * @param array $options options passed to the filters
+     * @param array $skipfilters of filter names. Any filters that should not be applied to this text.
      * @return string resulting text
      */
-    public function filter_text($text, $context, array $options = array()) {
-        $text = $this->apply_filter_chain($text, $this->get_text_filters($context), $options);
+    public function filter_text($text, $context, array $options = array(),
+            array $skipfilters = null) {
+        $text = $this->apply_filter_chain($text, $this->get_text_filters($context), $options, $skipfilters);
         // <nolink> tags removed for XHTML compatibility
         $text = str_replace(array('<nolink>', '</nolink>'), '', $text);
         return $text;
@@ -275,7 +282,8 @@ class filter_manager {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class null_filter_manager {
-    public function filter_text($text, $context, $options) {
+    public function filter_text($text, $context, array $options = array(),
+            array $skipfilters = null) {
         return $text;
     }
 
@@ -320,9 +328,10 @@ class performance_measuring_filter_manager extends filter_manager {
         return parent::make_filter_object($filtername, $context, $localconfig);
     }
 
-    public function filter_text($text, $context, array $options = array()) {
+    public function filter_text($text, $context, array $options = array(),
+            array $skipfilters = null) {
         $this->textsfiltered++;
-        return parent::filter_text($text, $context, $options);
+        return parent::filter_text($text, $context, $options, $skipfilters);
     }
 
     public function filter_string($string, $context) {
