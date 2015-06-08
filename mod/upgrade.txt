@@ -1,6 +1,11 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 2.9.2 ===
+
+* Modules using rating component must implement a callback mod_x_rating_can_see_item_ratings(). Refer
+  to mod_forum_rating_can_see_item_ratings() for example.
+
 === 2.9 ===
 
 * Added Grade to pass field to mod_form for activities that support grading.
