@@ -892,8 +892,6 @@ $string['timelimit'] = 'Time limit';
 $string['timelimit_help'] = 'If enabled, the time limit is stated on the initial quiz page and a countdown timer is displayed in the quiz navigation block.';
 $string['timelimit_link'] = 'mod/quiz/timing';
 $string['timelimitexeeded'] = 'Sorry! Quiz time limit exceeded!';
-$string['timelimitmin'] = 'Time limit (minutes)';
-$string['timelimitsec'] = 'Time limit (seconds)';
 $string['timestr'] = '%H:%M:%S on %d/%m/%y';
 $string['timesup'] = 'Time is up!';
 $string['timetaken'] = 'Time taken';
@@ -937,13 +935,7 @@ $string['xhtml'] = 'XHTML';
 $string['youneedtoenrol'] = 'You need to enrol in this course before you can attempt this quiz';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is {$a}.';
 
-// Deprecated since Moodle 2.8.
+// Deprecated since Moodle 2.9.
 
-$string['categories'] = 'Categories';
-$string['category'] = 'Category';
-$string['export'] = 'Export';
-$string['import'] = 'Import';
-$string['invalidnumericanswer'] = 'One of the answers you entered was not a valid number.';
-$string['invalidnumerictolerance'] = 'One of the tolerances you entered was not a valid number.';
-$string['multiplier'] = 'Multiplier';
-$string['unusedcategorydeleted'] = 'This category has been deleted because, after deleting the course, its questions weren\'t used any more.';
+$string['timelimitmin'] = 'Time limit (minutes)';
+$string['timelimitsec'] = 'Time limit (seconds)';

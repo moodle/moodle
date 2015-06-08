@@ -443,6 +443,3 @@ $string['withselected'] = 'With selected';
 $string['xoutofmax'] = '{$a->mark} out of {$a->max}';
 $string['yougotnright'] = 'You have correctly selected {$a->num}.';
 
-// Deprecated since Moodle 2.8.
-
-$string['hidden'] = 'Hidden';

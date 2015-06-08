@@ -774,9 +774,3 @@ $string['writinggradebookinfo'] = 'Writing gradebook settings';
 $string['xml'] = 'XML';
 $string['yes'] = 'Yes';
 $string['yourgrade'] = 'Your grade';
-
-// Deprecated since Moodle 2.8
-
-$string['categoriesedit'] = 'Edit setup';
-$string['fullview'] = 'Full view';
-$string['simpleview'] = 'Simple view';
