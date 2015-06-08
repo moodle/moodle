@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e57a3c4f1934098d77de54215b059ba1",
+    "hash": "a8ea9182a53569160119098b9cb80407",
     "packages": [],
     "packages-dev": [
         {
@@ -1009,7 +1009,7 @@
         },
         {
             "name": "moodlehq/behat-extension",
-            "version": "v1.29.5",
+            "version": "v1.30.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/moodlehq/moodle-behat-extension.git",
