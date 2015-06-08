@@ -1,6 +1,11 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 2.7.10 ===
+
+* Modules using rating component must implement a callback mod_x_rating_can_see_item_ratings(). Refer
+  to mod_forum_rating_can_see_item_ratings() for example.
+
 === 2.7 ===
 
 * modgrade form element has been redesigned and allows setting the maximum grade point higher than 100.

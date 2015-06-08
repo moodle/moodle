@@ -35,9 +35,9 @@ require_once($CFG->dirroot . '/mod/data/lib.php');
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class data_lib_testcase extends advanced_testcase {
+class mod_data_lib_testcase extends advanced_testcase {
 
-    function test_data_delete_record() {
+    public function test_data_delete_record() {
         global $DB;
 
         $this->resetAfterTest();
@@ -230,5 +230,104 @@ class data_lib_testcase extends advanced_testcase {
         $url = new moodle_url('/mod/data/view.php', array('id' => $module->cmid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Tests for mod_data_rating_can_see_item_ratings().
+     *
+     * @throws coding_exception
+     * @throws rating_exception
+     */
+    public function test_mod_data_rating_can_see_item_ratings() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $course = new stdClass();
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = true;
+        $course = $this->getDataGenerator()->create_course($course);
+        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id));
+        $cm = get_coursemodule_from_instance('data', $data->id);
+        $context = context_module::instance($cm->id);
+
+        // Create users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        // Groups and stuff.
+        $role = $DB->get_record('role', array('shortname' => 'teacher'), '*', MUST_EXIST);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $role->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $role->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id, $role->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id, $role->id);
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        groups_add_member($group1, $user1);
+        groups_add_member($group1, $user2);
+        groups_add_member($group2, $user3);
+        groups_add_member($group2, $user4);
+
+        // Add data.
+        $field = data_get_field_new('text', $data);
+
+        $fielddetail = new stdClass();
+        $fielddetail->name = 'Name';
+        $fielddetail->description = 'Some name';
+
+        $field->define_field($fielddetail);
+        $field->insert_field();
+        $recordid = data_add_record($data, $group1->id);
+
+        $datacontent = array();
+        $datacontent['fieldid'] = $field->field->id;
+        $datacontent['recordid'] = $recordid;
+        $datacontent['content'] = 'Asterix';
+        $DB->insert_record('data_content', $datacontent);
+
+        // Now try to access it as various users.
+        unassign_capability('moodle/site:accessallgroups', $role->id);
+        $params = array('contextid' => 2,
+                        'component' => 'mod_data',
+                        'ratingarea' => 'entry',
+                        'itemid' => $recordid,
+                        'scaleid' => 2);
+        $this->setUser($user1);
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->setUser($user2);
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->setUser($user3);
+        $this->assertFalse(mod_data_rating_can_see_item_ratings($params));
+        $this->setUser($user4);
+        $this->assertFalse(mod_data_rating_can_see_item_ratings($params));
+
+        // Now try with accessallgroups cap and make sure everything is visible.
+        assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $role->id, $context->id);
+        $this->setUser($user1);
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->setUser($user2);
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->setUser($user3);
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->setUser($user4);
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+
+        // Change group mode and verify visibility.
+        $course->groupmode = VISIBLEGROUPS;
+        $DB->update_record('course', $course);
+        unassign_capability('moodle/site:accessallgroups', $role->id);
+        $this->setUser($user1);
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->setUser($user2);
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->setUser($user3);
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->setUser($user4);
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+
     }
 }

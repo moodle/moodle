@@ -3772,6 +3772,48 @@ function forum_rating_validate($params) {
     return true;
 }
 
+/**
+ * Can the current user see ratings for a given itemid?
+ *
+ * @param array $params submitted data
+ *            contextid => int contextid [required]
+ *            component => The component for this module - should always be mod_forum [required]
+ *            ratingarea => object the context in which the rated items exists [required]
+ *            itemid => int the ID of the object being rated [required]
+ *            scaleid => int scale id [optional]
+ * @return bool
+ * @throws coding_exception
+ * @throws rating_exception
+ */
+function mod_forum_rating_can_see_item_ratings($params) {
+    global $DB, $USER;
+
+    // Check the component is mod_forum.
+    if (!isset($params['component']) || $params['component'] != 'mod_forum') {
+        throw new rating_exception('invalidcomponent');
+    }
+
+    // Check the ratingarea is post (the only rating area in forum).
+    if (!isset($params['ratingarea']) || $params['ratingarea'] != 'post') {
+        throw new rating_exception('invalidratingarea');
+    }
+
+    if (!isset($params['itemid'])) {
+        throw new rating_exception('invaliditemid');
+    }
+
+    $post = $DB->get_record('forum_posts', array('id' => $params['itemid']), '*', MUST_EXIST);
+    $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion), '*', MUST_EXIST);
+    $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
+    $course = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id , false, MUST_EXIST);
+
+    // Perform some final capability checks.
+    if (!forum_user_can_see_post($forum, $discussion, $post, $USER, $cm)) {
+        return false;
+    }
+    return true;
+}
 
 /**
  * This function prints the overview of a discussion in the forum listing.
