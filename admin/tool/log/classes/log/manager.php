@@ -106,7 +106,40 @@ class manager implements \core\log\manager {
             if (empty($interface) || ($reader instanceof $interface)) {
                 $return[$plugin] = $reader;
             }
+            // TODO MDL-49291 These conditions should be removed as part of the 2nd stage deprecation.
+            if ($reader instanceof \core\log\sql_internal_reader) {
+                debugging('\core\log\sql_internal_reader has been deprecated in favour of \core\log\sql_internal_table_reader.' .
+                    ' Update ' . get_class($reader) . ' to use the new interface.', DEBUG_DEVELOPER);
+            } else if ($reader instanceof \core\log\sql_select_reader) {
+                debugging('\core\log\sql_select_reader has been deprecated in favour of \core\log\sql_reader. Update ' .
+                    get_class($reader) . ' to use the new interface.', DEBUG_DEVELOPER);
+            }
         }
+
+        // TODO MDL-49291 This section below (until the final return) should be removed as part of the 2nd stage deprecation.
+        $isselectreader = (ltrim($interface, '\\') === 'core\log\sql_select_reader');
+        $isinternalreader = (ltrim($interface, '\\') === 'core\log\sql_internal_reader');
+        if ($isselectreader || $isinternalreader) {
+
+            if ($isselectreader) {
+                $alternative = '\core\log\sql_reader';
+            } else {
+                $alternative = '\core\log\sql_internal_table_reader';
+            }
+
+            if (count($return) === 0) {
+                // If there are no classes implementing the provided interface and the provided interface is one of
+                // the deprecated ones, we return the non-deprecated alternatives. It should be safe as the new interface
+                // is adding a new method but not changing the existing ones.
+                debugging($interface . ' has been deprecated in favour of ' . $alternative . '. Returning ' . $alternative .
+                    ' instances instead. Please call get_readers() using the new interface.', DEBUG_DEVELOPER);
+                $return = $this->get_readers($alternative);
+            } else {
+                debugging($interface . ' has been deprecated in favour of ' . $alternative .
+                    '. Please call get_readers() using the new interface.', DEBUG_DEVELOPER);
+            }
+        }
+
         return $return;
     }
 
