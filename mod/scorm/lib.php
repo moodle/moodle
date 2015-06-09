@@ -1463,5 +1463,4 @@ function scorm_view($scorm, $course, $cm, $context) {
     $event->add_record_snapshot('course', $course);
     $event->add_record_snapshot('scorm', $scorm);
     $event->trigger();
-
 }

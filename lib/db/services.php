@@ -1140,6 +1140,7 @@ $services = array(
             'core_user_get_users_by_field',
             'core_user_add_user_private_files',
             'mod_assign_view_grading_table',
+            'mod_scorm_view_scorm',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
