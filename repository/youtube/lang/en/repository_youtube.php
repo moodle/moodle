@@ -23,6 +23,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['apierror'] = '{$a}';
+$string['apikey'] = 'API key';
+$string['information'] = '<div>Get a <a href="https://developers.google.com/youtube/v3/getting-started">Google API Key</a> for your Moodle site.</div>';
 $string['pluginname'] = 'Youtube videos';
 $string['search'] = 'Search videos';
 $string['youtube:view'] = 'Use youtube in file picker';
