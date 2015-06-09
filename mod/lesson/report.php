@@ -42,28 +42,6 @@ $currentgroup = groups_get_activity_group($cm, true);
 $context = context_module::instance($cm->id);
 require_capability('mod/lesson:viewreports', $context);
 
-// Only load students if there attempts for this lesson.
-if ($attempts = $DB->record_exists('lesson_attempts', array('lessonid' => $lesson->id))) {
-    list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
-    list($sort, $sortparams) = users_order_by_sql('u');
-
-    $params['lessonid'] = $lesson->id;
-    $ufields = user_picture::fields('u');
-    $sql = "SELECT DISTINCT $ufields
-            FROM {user} u
-            JOIN {lesson_attempts} a ON u.id = a.userid
-            JOIN ($esql) ue ON ue.id = a.userid
-            WHERE a.lessonid = :lessonid
-            ORDER BY $sort";
-
-    $students = $DB->get_recordset_sql($sql, $params);
-    if (!$students->valid()) {
-        $nothingtodisplay = true;
-    }
-} else {
-    $nothingtodisplay = true;
-}
-
 $url = new moodle_url('/mod/lesson/report.php', array('id'=>$id));
 $url->param('action', $action);
 if ($pageid !== null) {
@@ -76,32 +54,6 @@ if ($action == 'reportoverview') {
 }
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
-
-$attempts = $DB->get_recordset('lesson_attempts', array('lessonid' => $lesson->id), 'timeseen');
-if (!$attempts->valid()) {
-    $nothingtodisplay = true;
-}
-
-if (! $grades = $DB->get_records('lesson_grades', array('lessonid' => $lesson->id), 'completed')) {
-    $grades = array();
-}
-
-if (! $times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id), 'starttime')) {
-    $times = array();
-}
-
-if ($nothingtodisplay) {
-    echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('nolessonattempts', 'lesson'));
-    if (!empty($currentgroup)) {
-        $groupname = groups_get_group_name($currentgroup);
-        echo $OUTPUT->notification(get_string('nolessonattemptsgroup', 'lesson', $groupname));
-    } else {
-        echo $OUTPUT->notification(get_string('nolessonattempts', 'lesson'));
-    }
-    groups_print_activity_menu($cm, $url);
-    echo $OUTPUT->footer();
-    exit();
-}
 
 if ($action === 'delete') {
     /// Process any form data before fetching attempts, grades and times
@@ -163,6 +115,54 @@ if ($action === 'delete') {
     /**************************************************************************
     this action is for default view and overview view
     **************************************************************************/
+
+    // Only load students if there attempts for this lesson.
+    if ($attempts = $DB->record_exists('lesson_attempts', array('lessonid' => $lesson->id))) {
+        list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
+        list($sort, $sortparams) = users_order_by_sql('u');
+
+        $params['lessonid'] = $lesson->id;
+        $ufields = user_picture::fields('u');
+        $sql = "SELECT DISTINCT $ufields
+            FROM {user} u
+            JOIN {lesson_attempts} a ON u.id = a.userid
+            JOIN ($esql) ue ON ue.id = a.userid
+            WHERE a.lessonid = :lessonid
+            ORDER BY $sort";
+
+        $students = $DB->get_recordset_sql($sql, $params);
+        if (!$students->valid()) {
+            $student->close();
+            $nothingtodisplay = true;
+        }
+    } else {
+        $nothingtodisplay = true;
+    }
+
+    if ($nothingtodisplay) {
+        echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('nolessonattempts', 'lesson'));
+        if (!empty($currentgroup)) {
+            $groupname = groups_get_group_name($currentgroup);
+            echo $OUTPUT->notification(get_string('nolessonattemptsgroup', 'lesson', $groupname));
+        } else {
+            echo $OUTPUT->notification(get_string('nolessonattempts', 'lesson'));
+        }
+        groups_print_activity_menu($cm, $url);
+        echo $OUTPUT->footer();
+        exit();
+    }
+
+    // We have attempts and students, let's prepare all the information.
+    $attempts = $DB->get_recordset('lesson_attempts', array('lessonid' => $lesson->id), 'timeseen');
+
+    if (! $grades = $DB->get_records('lesson_grades', array('lessonid' => $lesson->id), 'completed')) {
+        $grades = array();
+    }
+
+    if (! $times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id), 'starttime')) {
+        $times = array();
+    }
+
     echo $lessonoutput->header($lesson, $cm, $action, false, null, get_string('overview', 'lesson'));
     groups_print_activity_menu($cm, $url);
 
