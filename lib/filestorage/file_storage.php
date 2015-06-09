@@ -1556,7 +1556,16 @@ class file_storage {
         $img = imagecreatefromstring($file->get_content());
         if ($height != $newheight or $width != $newwidth) {
             $newimg = imagecreatetruecolor($newwidth, $newheight);
-            if (!imagecopyresized($newimg, $img, 0, 0, 0, 0, $newwidth, $newheight, $width, $height)) {
+
+            // Maintain transparency.
+            if ($filerecord['mimetype'] == 'image/png' || $filerecord['mimetype'] == 'image/gif') {
+                $colour = imagecolorallocatealpha($newimg, 0, 0, 0, 127);
+                imagecolortransparent($newimg, $colour);
+                imagealphablending($newimg, false);
+                imagesavealpha($newimg, true);
+            }
+
+            if (!imagecopyresampled($newimg, $img, 0, 0, 0, 0, $newwidth, $newheight, $width, $height)) {
                 // weird
                 throw new file_exception('storedfileproblem', 'Can not resize image');
             }
