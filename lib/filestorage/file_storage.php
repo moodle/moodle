@@ -1563,6 +1563,7 @@ class file_storage {
                 imagecolortransparent($newimg, $colour);
                 imagealphablending($newimg, false);
                 imagesavealpha($newimg, true);
+                imagefill($newimg, 0, 0, $colour);
             }
 
             if (!imagecopyresampled($newimg, $img, 0, 0, 0, 0, $newwidth, $newheight, $width, $height)) {
@@ -1576,6 +1577,8 @@ class file_storage {
         ob_start();
         switch ($filerecord['mimetype']) {
             case 'image/gif':
+                imagealphablending($img, true);
+                imagesavealpha($img, true);
                 imagegif($img);
                 break;
 
@@ -1589,6 +1592,13 @@ class file_storage {
 
             case 'image/png':
                 $quality = (int)$quality;
+
+                // Woah nelly! Because PNG quality is in the range 0 - 9 compared to JPEG quality,
+                // the latter of which can go to 100, we need to make sure that quality here is
+                // in a safe range or PHP WILL CRASH AND DIE. You have been warned.
+                $quality = $quality > 9 ? (int)(max(1.0, (float)$quality / 100.0) * 9.0) : $quality;
+                imagealphablending($img, true);
+                imagesavealpha($img, true);
                 imagepng($img, NULL, $quality, NULL);
                 break;
 
