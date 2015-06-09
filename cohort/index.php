@@ -122,6 +122,8 @@ $editcolumnisempty = true;
 foreach($cohorts['cohorts'] as $cohort) {
     $line = array();
     $cohortcontext = context::instance_by_id($cohort->contextid);
+    $cohort->description = file_rewrite_pluginfile_urls($cohort->description, 'pluginfile.php', $cohortcontext->id,
+            'cohort', 'description', $cohort->id);
     if ($showall) {
         if ($cohortcontext->contextlevel == CONTEXT_COURSECAT) {
             $line[] = html_writer::link(new moodle_url('/cohort/index.php' ,
