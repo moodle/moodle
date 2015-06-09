@@ -32,6 +32,7 @@ var DDWTOS_DD = function() {
  */
 Y.extend(DDWTOS_DD, Y.Base, {
     selectors : null,
+    touchscrolldisable: null,
     initializer : function() {
         var pendingid = 'qtype_ddwtos-' + Math.random().toString(36).slice(2); // Random string.
         M.util.js_pending(pendingid);
@@ -208,7 +209,43 @@ Y.extend(DDWTOS_DD, Y.Base, {
             groups: [this.get_group(drag)],
             dragMode: 'point'
         }).plug(Y.Plugin.DDConstrained, {constrain2node: this.selectors.top_node()});
+
+        // Prevent scrolling whilst dragging on Adroid devices.
+        this.prevent_touchmove_from_scrolling(drag);
     },
+
+    /**
+     * prevent_touchmove_from_scrolling allows users of touch screen devices to
+     * use drag and drop and normal scrolling at the same time. I.e. when
+     * touching and dragging a draggable item, the screen does not scroll, but
+     * you can scroll by touching other area of the screen apart from the
+     * draggable items.
+     */
+    prevent_touchmove_from_scrolling : function(drag) {
+        var touchstart = (Y.UA.ie) ? 'MSPointerStart' : 'touchstart';
+        var touchend = (Y.UA.ie) ? 'MSPointerEnd' : 'touchend';
+        var touchmove = (Y.UA.ie) ? 'MSPointerMove' : 'touchmove';
+
+        // Disable scrolling when touching the draggable items.
+        drag.on(touchstart, function() {
+            if (this.touchscrolldisable) {
+                return; // Already disabled.
+            }
+            this.touchscrolldisable = Y.one('body').on(touchmove, function(e) {
+                e = e || window.event;
+                e.preventDefault();
+            });
+        }, this);
+
+        // Allow scrolling after releasing the draggable items.
+        drag.on(touchend, function() {
+            if (this.touchscrolldisable) {
+                this.touchscrolldisable.detach();
+                this.touchscrolldisable = null;
+            }
+        }, this);
+    },
+
     make_drop_zones : function () {
         Y.all(this.selectors.drops()).each(this.make_drop_zone, this);
     },
