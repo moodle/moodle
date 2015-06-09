@@ -437,28 +437,48 @@ function lesson_print_overview($courses, &$htmlarray) {
     }
     // Get the last page viewed by the current user for every lesson in this course.
     list($insql, $inparams) = $DB->get_in_or_equal($listoflessons, SQL_PARAMS_NAMED);
-    $dbparams = array_merge($inparams, array('userid1' => $USER->id, 'userid2' => $USER->id));
+    $dbparams = array_merge($inparams, array('userid' => $USER->id));
 
-    $lastattempts = $DB->get_records_sql("SELECT l.id, l.timeseen,l.lessonid, l.userid,
-                                                 l.retry, l.pageid, l.nextpageid, p.qtype FROM (
-                                          SELECT lessonid, userid, pageid, timeseen, retry, id, answerid AS nextpageid
-                                            FROM {lesson_attempts}
-                                           WHERE userid = :userid1
-                                           UNION
-                                          SELECT lessonid, userid, pageid, timeseen, retry, id, nextpageid
-                                            FROM {lesson_branch}
-                                           WHERE userid = :userid2) l
-                                            JOIN {lesson_pages} p
-                                              ON l.pageid = p.id
-                                           WHERE l.lessonid $insql
-                                        ORDER BY l.lessonid asc, l.timeseen desc", $dbparams);
+    // Get the lesson attempts for the user that have the maximum 'timeseen' value.
+    $select = "SELECT l.id, l.timeseen, l.lessonid, l.userid, l.retry, l.pageid, l.answerid as nextpageid, p.qtype ";
+    $from = "FROM {lesson_attempts} l
+             JOIN (
+                   SELECT idselect.lessonid, idselect.userid, MAX(idselect.id) AS id
+                     FROM {lesson_attempts} idselect
+                     JOIN (
+                           SELECT lessonid, userid, MAX(timeseen) AS timeseen
+                             FROM {lesson_attempts}
+                            WHERE userid = :userid
+                              AND lessonid $insql
+                         GROUP BY userid, lessonid
+                           ) timeselect
+                       ON timeselect.timeseen = idselect.timeseen
+                      AND timeselect.userid = idselect.userid
+                      AND timeselect.lessonid = idselect.lessonid
+                 GROUP BY idselect.userid, idselect.lessonid
+                   ) aid
+               ON l.id = aid.id
+             JOIN {lesson_pages} p
+               ON l.pageid = p.id ";
+    $lastattempts = $DB->get_records_sql($select . $from, $dbparams);
+
+    // Now, get the lesson branches for the user that have the maximum 'timeseen' value.
+    $select = "SELECT l.id, l.timeseen, l.lessonid, l.userid, l.retry, l.pageid, l.nextpageid, p.qtype ";
+    $from = str_replace('{lesson_attempts}', '{lesson_branch}', $from);
+    $lastbranches = $DB->get_records_sql($select . $from, $dbparams);
 
     $lastviewed = array();
     foreach ($lastattempts as $lastattempt) {
-        if (!isset($lastviewed[$lastattempt->lessonid])) {
-            $lastviewed[$lastattempt->lessonid] = $lastattempt;
-        } else if ($lastviewed[$lastattempt->lessonid]->timeseen < $lastattempt->timeseen) {
-                $lastviewed[$lastattempt->lessonid] = $lastattempt;
+        $lastviewed[$lastattempt->lessonid] = $lastattempt;
+    }
+
+    // Go through the branch times and record the 'timeseen' value if it doesn't exist
+    // for the lesson, or replace it if it exceeds the current recorded time.
+    foreach ($lastbranches as $lastbranch) {
+        if (!isset($lastviewed[$lastbranch->lessonid])) {
+            $lastviewed[$lastbranch->lessonid] = $lastbranch;
+        } else if ($lastviewed[$lastbranch->lessonid]->timeseen < $lastbranch->timeseen) {
+            $lastviewed[$lastbranch->lessonid] = $lastbranch;
         }
     }
 
