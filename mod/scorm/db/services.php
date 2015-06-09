@@ -41,4 +41,12 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => ''
     ),
+
+    'mod_scorm_get_scorm_scoes' => array(
+        'classname' => 'mod_scorm_external',
+        'methodname' => 'get_scorm_scoes',
+        'description' => 'Returns a list containing all the scoes data related to the given scorm id',
+        'type' => 'read',
+        'capabilities' => ''
+    ),
 );

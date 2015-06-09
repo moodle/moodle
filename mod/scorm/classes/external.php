@@ -182,4 +182,87 @@ class mod_scorm_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_scorms_by_courses.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_scorm_scoes_parameters() {
+        return new external_function_parameters(
+            array(
+                'scormid' => new external_value(PARAM_INT, 'scorm instance id'),
+                'organization' => new external_value(PARAM_RAW, 'organization id', VALUE_DEFAULT, '')
+            )
+        );
+    }
+
+    /**
+     * Returns a list containing all the scoes data related to the given scorm id
+     *
+     * @param int $scormid the scorm id
+     * @param string $organization the organization id
+     * @return array warnings and the scoes data
+     * @since Moodle 3.0
+     */
+    public static function get_scorm_scoes($scormid, $organization = '') {
+        global $DB;
+
+        $params = self::validate_parameters(self::get_scorm_scoes_parameters(),
+                                            array('scormid' => $scormid, 'organization' => $organization));
+
+        $scoes = array();
+        $warnings = array();
+
+        $scorm = $DB->get_record('scorm', array('id' => $params['scormid']), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('scorm', $scorm->id);
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Check settings / permissions to view the SCORM.
+        scorm_require_available($scorm, true, $context);
+
+        if (!$scoes = scorm_get_scoes($scorm->id, $params['organization'])) {
+            // Function scorm_get_scoes return false, not an empty array.
+            $scoes = array();
+        }
+
+        $result = array();
+        $result['scoes'] = $scoes;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_scorm_scoes return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.0
+     */
+    public static function get_scorm_scoes_returns() {
+
+        return new external_single_structure(
+            array(
+                'scoes' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'sco id'),
+                            'scorm' => new external_value(PARAM_INT, 'scorm id'),
+                            'manifest' => new external_value(PARAM_NOTAGS, 'manifest id'),
+                            'organization' => new external_value(PARAM_NOTAGS, 'organization id'),
+                            'parent' => new external_value(PARAM_NOTAGS, 'parent'),
+                            'identifier' => new external_value(PARAM_NOTAGS, 'identifier'),
+                            'launch' => new external_value(PARAM_NOTAGS, 'launch file'),
+                            'scormtype' => new external_value(PARAM_ALPHA, 'scorm type (asset, sco)'),
+                            'title' => new external_value(PARAM_NOTAGS, 'sco title'),
+                            'sortorder' => new external_value(PARAM_INT, 'sort order'),
+                        ), 'SCORM SCO data'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }

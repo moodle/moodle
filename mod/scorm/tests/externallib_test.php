@@ -201,4 +201,88 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $this->setExpectedException('moodle_exception');
         mod_scorm_external::get_scorm_attempt_count($this->scorm->id, -1);
     }
+
+    /**
+     * Test get scorm scoes
+     */
+    public function test_mod_scorm_get_scorm_scoes() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create users.
+        $student = self::getDataGenerator()->create_user();
+        $teacher = self::getDataGenerator()->create_user();
+
+        // Set to the student user.
+        self::setUser($student);
+
+        // Create courses to add the modules.
+        $course = self::getDataGenerator()->create_course();
+
+        // First scorm, dates restriction.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->timeopen = time() + DAYSECS;
+        $record->timeclose = $record->timeopen + DAYSECS;
+        $scorm = self::getDataGenerator()->create_module('scorm', $record);
+
+        // Users enrolments.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id, 'manual');
+
+        // Retrieve my scoes, warning!.
+        try {
+             mod_scorm_external::get_scorm_scoes($scorm->id);
+            $this->fail('Exception expected due to invalid dates.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('notopenyet', $e->errorcode);
+        }
+
+        $scorm->timeopen = time() - DAYSECS;
+        $scorm->timeclose = time() - HOURSECS;
+        $DB->update_record('scorm', $scorm);
+
+        try {
+             mod_scorm_external::get_scorm_scoes($scorm->id);
+            $this->fail('Exception expected due to invalid dates.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('expired', $e->errorcode);
+        }
+
+        // Retrieve my scoes, user with permission.
+        self::setUser($teacher);
+        $result = mod_scorm_external::get_scorm_scoes($scorm->id);
+        $result = external_api::clean_returnvalue(mod_scorm_external::get_scorm_scoes_returns(), $result);
+        $this->assertCount(2, $result['scoes']);
+        $this->assertCount(0, $result['warnings']);
+
+        $scoes = scorm_get_scoes($scorm->id);
+        $sco = array_shift($scoes);
+        $this->assertEquals((array) $sco, $result['scoes'][0]);
+
+        $sco = array_shift($scoes);
+        // Remove specific sco data.
+        unset($sco->isvisible);
+        unset($sco->parameters);
+        $this->assertEquals((array) $sco, $result['scoes'][1]);
+
+        // Use organization.
+        $organization = 'golf_sample_default_org';
+        $result = mod_scorm_external::get_scorm_scoes($scorm->id, $organization);
+        $result = external_api::clean_returnvalue(mod_scorm_external::get_scorm_scoes_returns(), $result);
+        $this->assertCount(1, $result['scoes']);
+        $this->assertEquals($organization, $result['scoes'][0]['organization']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Test invalid instance id.
+        try {
+             mod_scorm_external::get_scorm_scoes(0);
+            $this->fail('Exception expected due to invalid instance id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invalidrecord', $e->errorcode);
+        }
+    }
 }
