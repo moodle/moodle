@@ -43,7 +43,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_forum_upgrade($oldversion) {
-    global $CFG, $DB;
+    global $DB;
 
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
@@ -116,6 +116,30 @@ function xmldb_forum_upgrade($oldversion) {
 
         // Forum savepoint reached.
         upgrade_mod_savepoint(true, 2019031200, 'forum');
+    }
+
+    if ($oldversion < 2019040400) {
+
+        $table = new xmldb_table('forum');
+
+        // Define field duedate to be added to forum.
+        $field = new xmldb_field('duedate', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'introformat');
+
+        // Conditionally launch add field duedate.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field cutoffdate to be added to forum.
+        $field = new xmldb_field('cutoffdate', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'duedate');
+
+        // Conditionally launch add field cutoffdate.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2019040400, 'forum');
     }
 
     return true;
