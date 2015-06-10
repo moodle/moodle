@@ -265,4 +265,128 @@ class mod_scorm_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_scorm_user_data.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_scorm_user_data_parameters() {
+        return new external_function_parameters(
+            array(
+                'scormid' => new external_value(PARAM_INT, 'scorm instance id'),
+                'attempt' => new external_value(PARAM_INT, 'attempt number')
+            )
+        );
+    }
+
+    /**
+     * Retrieves user tracking and SCO data and default SCORM values
+     *
+     * @param int $scormid the scorm id
+     * @param int $attempt the attempt number
+     * @return array warnings and the scoes data
+     * @throws  moodle_exception
+     * @since Moodle 3.0
+     */
+    public static function get_scorm_user_data($scormid, $attempt) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(self::get_scorm_user_data_parameters(),
+                                            array('scormid' => $scormid, 'attempt' => $attempt));
+
+        $data = array();
+        $warnings = array();
+
+        $scorm = $DB->get_record('scorm', array('id' => $params['scormid']), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('scorm', $scorm->id);
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        scorm_require_available($scorm, true, $context);
+
+        $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));
+        if (!file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php')) {
+            $scorm->version = 'scorm_12';
+        }
+        require_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php');
+
+        if ($scoes = scorm_get_scoes($scorm->id)) {
+            $def = new stdClass();
+            $user = new stdClass();
+
+            foreach ($scoes as $sco) {
+                $def->{$sco->id} = new stdClass();
+                $user->{$sco->id} = new stdClass();
+                // We force mode normal, this can be override by the client at any time.
+                $def->{$sco->id} = get_scorm_default($user->{$sco->id}, $scorm, $sco->id, $params['attempt'], 'normal');
+
+                $userdata = array();
+                $defaultdata = array();
+
+                foreach ((array) $user->{$sco->id} as $key => $val) {
+                    $userdata[] = array(
+                        'element' => $key,
+                        'value' => $val
+                    );
+                }
+                foreach ($def->{$sco->id} as $key => $val) {
+                    $defaultdata[] = array(
+                        'element' => $key,
+                        'value' => $val
+                    );
+                }
+
+                $data[] = array(
+                    'scoid' => $sco->id,
+                    'userdata' => $userdata,
+                    'defaultdata' => $defaultdata,
+                );
+            }
+        }
+
+        $result = array();
+        $result['data'] = $data;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_scorm_user_data return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.0
+     */
+    public static function get_scorm_user_data_returns() {
+
+        return new external_single_structure(
+            array(
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'scoid' => new external_value(PARAM_INT, 'sco id'),
+                            'userdata' => new external_multiple_structure(
+                                            new external_single_structure(
+                                                array(
+                                                    'element' => new external_value(PARAM_RAW, 'element name'),
+                                                    'value' => new external_value(PARAM_RAW, 'element value')
+                                                )
+                                            )
+                                          ),
+                            'defaultdata' => new external_multiple_structure(
+                                                new external_single_structure(
+                                                    array(
+                                                        'element' => new external_value(PARAM_RAW, 'element name'),
+                                                        'value' => new external_value(PARAM_RAW, 'element value')
+                                                    )
+                                                )
+                                             ),
+                        ), 'SCO data'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

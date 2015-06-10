@@ -285,4 +285,66 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('invalidrecord', $e->errorcode);
         }
     }
+
+    /*
+     * Test get scorm user data
+     */
+    public function test_mod_scorm_get_scorm_user_data() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create users.
+        $student1 = self::getDataGenerator()->create_user();
+        $teacher = self::getDataGenerator()->create_user();
+
+        // Set to the student user.
+        self::setUser($student1);
+
+        // Create courses to add the modules.
+        $course = self::getDataGenerator()->create_course();
+
+        // First scorm.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $scorm = self::getDataGenerator()->create_module('scorm', $record);
+
+        // Users enrolments.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id, 'manual');
+
+        // Create attempts.
+        $scoes = scorm_get_scoes($scorm->id);
+        $sco = array_shift($scoes);
+        scorm_insert_track($student1->id, $scorm->id, $sco->id, 1, 'cmi.core.lesson_status', 'completed');
+        scorm_insert_track($student1->id, $scorm->id, $sco->id, 1, 'cmi.core.score.raw', '80');
+        scorm_insert_track($student1->id, $scorm->id, $sco->id, 2, 'cmi.core.lesson_status', 'completed');
+
+        $result = mod_scorm_external::get_scorm_user_data($scorm->id, 1);
+        $result = external_api::clean_returnvalue(mod_scorm_external::get_scorm_user_data_returns(), $result);
+        $this->assertCount(2, $result['data']);
+        // Find our tracking data.
+        $found = 0;
+        foreach ($result['data'] as $scodata) {
+            foreach ($scodata['userdata'] as $userdata) {
+                if ($userdata['element'] == 'cmi.core.lesson_status' and $userdata['value'] == 'completed') {
+                    $found++;
+                }
+                if ($userdata['element'] == 'cmi.core.score.raw' and $userdata['value'] == '80') {
+                    $found++;
+                }
+            }
+        }
+        $this->assertEquals(2, $found);
+
+        // Test invalid instance id.
+        try {
+             mod_scorm_external::get_scorm_user_data(0, 1);
+            $this->fail('Exception expected due to invalid instance id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invalidrecord', $e->errorcode);
+        }
+    }
 }

@@ -49,4 +49,12 @@ $functions = array(
         'type' => 'read',
         'capabilities' => ''
     ),
+
+    'mod_scorm_get_scorm_user_data' => array(
+        'classname' => 'mod_scorm_external',
+        'methodname' => 'get_scorm_user_data',
+        'description' => 'Retrieves user tracking and SCO data and default SCORM values',
+        'type' => 'read',
+        'capabilities' => ''
+    ),
 );
