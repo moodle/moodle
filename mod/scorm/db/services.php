@@ -57,4 +57,15 @@ $functions = array(
         'type' => 'read',
         'capabilities' => ''
     ),
+
+    'mod_scorm_insert_scorm_tracks' => array(
+        'classname' => 'mod_scorm_external',
+        'methodname' => 'insert_scorm_tracks',
+        'description' => 'Saves a scorm tracking record.
+                          It will overwrite any existing tracking data for this attempt.
+                          Validation should be performed before running the function to ensure the user will not lose any existing
+                          attempt data.',
+        'type' => 'write',
+        'capabilities' => 'mod/scorm:savetrack'
+    ),
 );

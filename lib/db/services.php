@@ -1209,6 +1209,7 @@ $services = array(
             'mod_scorm_view_scorm',
             'mod_scorm_get_scorm_scoes',
             'mod_scorm_get_scorm_user_data',
+            'mod_scorm_insert_scorm_tracks',
             'mod_scorm_get_scorm_attempt_count',
             'mod_page_view_page',
             'mod_resource_view_resource',

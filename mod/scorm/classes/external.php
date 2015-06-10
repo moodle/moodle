@@ -389,4 +389,105 @@ class mod_scorm_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for insert_scorm_tracks.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function insert_scorm_tracks_parameters() {
+        return new external_function_parameters(
+            array(
+                'scoid' => new external_value(PARAM_INT, 'SCO id'),
+                'attempt' => new external_value(PARAM_INT, 'attempt number'),
+                'tracks' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'element' => new external_value(PARAM_RAW, 'element name'),
+                            'value' => new external_value(PARAM_RAW, 'element value')
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * Saves a SCORM tracking record.
+     * It will overwrite any existing tracking data for this attempt.
+     * Validation should be performed before running the function to ensure the user will not lose any existing attempt data.
+     *
+     * @param int $scoid the SCO id
+     * @param string $attempt the attempt number
+     * @param array $tracks the track records to be stored
+     * @return array warnings and the scoes data
+     * @throws moodle_exception
+     * @since Moodle 3.0
+     */
+    public static function insert_scorm_tracks($scoid, $attempt, $tracks) {
+        global $USER, $DB;
+
+        $params = self::validate_parameters(self::insert_scorm_tracks_parameters(),
+                                            array('scoid' => $scoid, 'attempt' => $attempt, 'tracks' => $tracks));
+
+        $trackids = array();
+        $warnings = array();
+
+        $sco = scorm_get_sco($params['scoid'], SCO_ONLY);
+        if (!$sco) {
+            throw new moodle_exception('cannotfindsco', 'scorm');
+        }
+
+        $scorm = $DB->get_record('scorm', array('id' => $sco->scorm), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('scorm', $scorm->id);
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Check settings / permissions to view the SCORM.
+        require_capability('mod/scorm:savetrack', $context);
+
+        // Check settings / permissions to view the SCORM.
+        scorm_require_available($scorm);
+
+        foreach ($params['tracks'] as $track) {
+            $element = $track['element'];
+            $value = $track['value'];
+            $trackid = scorm_insert_track($USER->id, $scorm->id, $sco->id, $params['attempt'], $element, $value,
+                                            $scorm->forcecompleted);
+
+            if ($trackid) {
+                $trackids[] = $trackid;
+            } else {
+                $warnings[] = array(
+                    'item' => 'scorm',
+                    'itemid' => $scorm->id,
+                    'warningcode' => 1,
+                    'message' => 'Element: ' . $element . ' was not saved'
+                );
+            }
+        }
+
+        $result = array();
+        $result['trackids'] = $trackids;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the insert_scorm_tracks return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.0
+     */
+    public static function insert_scorm_tracks_returns() {
+
+        return new external_single_structure(
+            array(
+                'trackids' => new external_multiple_structure(new external_value(PARAM_INT, 'track id')),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
