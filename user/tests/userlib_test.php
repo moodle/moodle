@@ -398,4 +398,94 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->assertEquals(intval($matches[2]), $testsize);
     }
 
+    /**
+     * Test user_can_view_profile
+     */
+    public function test_user_can_view_profile() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        // Create five users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+        $user5 = $this->getDataGenerator()->create_user();
+        $user6 = $this->getDataGenerator()->create_user(array('deleted' => 1));
+        $user7 = $this->getDataGenerator()->create_user();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        // Add the course creator role to the course contact and assign a user to that role.
+        $CFG->coursecontact = '2';
+        $coursecreatorrole = $DB->get_record('role', array('shortname' => 'coursecreator'));
+        $this->getDataGenerator()->role_assign($coursecreatorrole->id, $user7->id);
+
+         // Create two courses.
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course2->id);
+        // Prepare another course with separate groups and groupmodeforce set to true.
+        $record = new stdClass();
+        $record->groupmode = 1;
+        $record->groupmodeforce = 1;
+        $course3 = $this->getDataGenerator()->create_course($record);
+        // Enrol users 1 and 2 in first course.
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        // Enrol users 2 and 3 in second course.
+        $this->getDataGenerator()->enrol_user($user2->id, $course2->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course2->id);
+        // Enrol users 1, 4, and 5 into course 3.
+        $this->getDataGenerator()->enrol_user($user1->id, $course3->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course3->id);
+        $this->getDataGenerator()->enrol_user($user5->id, $course3->id);
+
+        // Remove capability moodle/user:viewdetails in course 2.
+        assign_capability('moodle/user:viewdetails', CAP_PROHIBIT, $studentrole->id, $coursecontext);
+        $coursecontext->mark_dirty();
+        // Set current user to user 1.
+        $this->setUser($user1);
+        // User 1 can see User 1's profile.
+        $this->assertTrue(user_can_view_profile($user1));
+
+        $tempcfg = $CFG->forceloginforprofiles;
+        $CFG->forceloginforprofiles = 0;
+        // Not forced to log in to view profiles, should be able to see all profiles besides user 6.
+        $users = array($user1, $user2, $user3, $user4, $user5, $user7);
+        foreach ($users as $user) {
+            $this->assertTrue(user_can_view_profile($user));
+        }
+        // Restore setting.
+        $CFG->forceloginforprofiles = $tempcfg;
+
+        // User 1 can not see user 6 as they have been deleted.
+        $this->assertFalse(user_can_view_profile($user6));
+        // User 1 can see User 7 as they are a course contact.
+        $this->assertTrue(user_can_view_profile($user7));
+        // User 1 is in a course with user 2 and has the right capability - return true.
+        $this->assertTrue(user_can_view_profile($user2));
+        // User 1 is not in a course with user 3 - return false.
+        $this->assertFalse(user_can_view_profile($user3));
+
+        // Set current user to user 2.
+        $this->setUser($user2);
+        // User 2 is in a course with user 3 but does not have the right capability - return false.
+        $this->assertFalse(user_can_view_profile($user3));
+
+        // Set user 1 in one group and users 4 and 5 in another group.
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course3->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course3->id));
+        groups_add_member($group1->id, $user1->id);
+        groups_add_member($group2->id, $user4->id);
+        groups_add_member($group2->id, $user5->id);
+        $this->setUser($user1);
+        // Check that user 1 can not see user 4.
+        $this->assertFalse(user_can_view_profile($user4));
+        // Check that user 5 can see user 4.
+        $this->setUser($user5);
+        $this->assertTrue(user_can_view_profile($user4));
+
+        $CFG->coursecontact = null;
+    }
 }
