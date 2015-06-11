@@ -52,6 +52,7 @@ echo $OUTPUT->doctype() ?>
             <div class="nav-collapse collapse">
                 <ul class="nav pull-right">
                     <li><?php echo $OUTPUT->page_heading_menu(); ?></li>
+                    <li class="navbar-text"><?php echo $OUTPUT->login_info(false) ?></li>
                 </ul>
             </div>
         </div>
