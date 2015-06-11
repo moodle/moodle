@@ -2430,31 +2430,17 @@ class grade_category extends grade_object {
 
         parent::set_properties($instance, $params);
 
-        //if they've changed aggregation type we made need to do some fiddling to provide appropriate defaults
-        if (!empty($params->aggregation)) {
+        if (!empty($params) && isset($params->aggregation)) {
+            // If aggregation has changed, find the appropriate aggregation coefficients.
+            $defaultcoefficients = self::get_default_aggregation_coefficient_values($params->aggregation);
 
-            //weight and extra credit share a column :( Would like a default of 1 for weight and 0 for extra credit
-            //Flip from the default of 0 to 1 (or vice versa) if ALL items in the category are still set to the old default.
-            if (self::aggregation_uses_aggregationcoef($params->aggregation)) {
-                $sql = $defaultaggregationcoef = null;
+            $updateparams = array(
+                'categoryid' => $instance->id,
+                'aggregationcoef' => $defaultcoefficients['aggregationcoefficient'],
+                'aggregationcoef2' => $defaultcoefficients['aggregationcoefficient2']
+            );
 
-                if (!self::aggregation_uses_extracredit($params->aggregation)) {
-                    //if all items in this category have aggregation coefficient of 0 we can change it to 1 ie evenly weighted
-                    $sql = "select count(id) from {grade_items} where categoryid=:categoryid and aggregationcoef!=0";
-                    $defaultaggregationcoef = 1;
-                } else {
-                    //if all items in this category have aggregation coefficient of 1 we can change it to 0 ie no extra credit
-                    $sql = "select count(id) from {grade_items} where categoryid=:categoryid and aggregationcoef!=1";
-                    $defaultaggregationcoef = 0;
-                }
-
-                $params = array('categoryid'=>$instance->id);
-                $count = $DB->count_records_sql($sql, $params);
-                if ($count===0) { //category is either empty or all items are set to a default value so we can switch defaults
-                    $params['aggregationcoef'] = $defaultaggregationcoef;
-                    $DB->execute("update {grade_items} set aggregationcoef=:aggregationcoef where categoryid=:categoryid",$params);
-                }
-            }
+            $DB->execute("update {grade_items} set aggregationcoef=:aggregationcoef, aggregationcoef2=:aggregationcoef2 where categoryid=:categoryid", $updateparams);
         }
     }
 
@@ -2561,5 +2547,39 @@ class grade_category extends grade_object {
         $params = array(1, 'course', 'category');
         $sql = "UPDATE {grade_items} SET needsupdate=? WHERE itemtype=? or itemtype=?";
         $DB->execute($sql, $params);
+    }
+
+    /**
+     * Determine the default aggregation coefficients for a given aggregation method.
+     *
+     * @param int $aggregationmethod The aggregation method to be inspected
+     * @return array $defaultcoefficients The default values to use
+     */
+    public static function get_default_aggregation_coefficient_values($aggregationmethod) {
+        $defaultcoefficients = array();
+
+        switch ($aggregationmethod) {
+            case GRADE_AGGREGATE_WEIGHTED_MEAN:
+                $defaultcoefficients['aggregationcoefficient'] = 1;
+                $defaultcoefficients['aggregationcoefficient2'] = 0;
+                break;
+            case GRADE_AGGREGATE_SUM:
+                $defaultcoefficients['aggregationcoefficient'] = 0;
+                $defaultcoefficients['aggregationcoefficient2'] = 1;
+                break;
+            case GRADE_AGGREGATE_WEIGHTED_MEAN2:
+            case GRADE_AGGREGATE_EXTRACREDIT_MEAN:
+            case GRADE_AGGREGATE_MEAN:
+            case GRADE_AGGREGATE_MEDIAN:
+            case GRADE_AGGREGATE_MIN:
+            case GRADE_AGGREGATE_MAX:
+            case GRADE_AGGREGATE_MODE:
+            default:
+                $defaultcoefficients['aggregationcoefficient'] = 0;
+                $defaultcoefficients['aggregationcoefficient2'] = 0;
+                break;
+        }
+
+        return $defaultcoefficients;
     }
 }
