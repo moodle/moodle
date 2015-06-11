@@ -180,11 +180,11 @@ class grade_report_overview extends grade_report {
                         $course_item->grademin = $adjustedgrade['grademin'];
                     }
                 } else {
-                    // We must use the rawgrademin / rawgrademax because it can be different for
+                    // We must use the specific max/min because it can be different for
                     // each grade_grade when items are excluded from sum of grades.
                     if (!is_null($finalgrade)) {
-                        $course_item->grademin = $course_grade->rawgrademin;
-                        $course_item->grademax = $course_grade->rawgrademax;
+                        $course_item->grademin = $course_grade->get_grade_min();
+                        $course_item->grademax = $course_grade->get_grade_max();
                     }
                 }
 

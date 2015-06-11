@@ -2279,3 +2279,53 @@ function check_database_tables_row_format(environment_results $result) {
 
     return null;
 }
+
+/**
+ * Upgrade the minmaxgrade setting.
+ *
+ * This step should only be run for sites running 2.8 or later. Sites using 2.7 will be fine
+ * using the new default system setting $CFG->grade_minmaxtouse.
+ *
+ * @return void
+ */
+function upgrade_minmaxgrade() {
+    global $CFG, $DB;
+
+    // 2 is a copy of GRADE_MIN_MAX_FROM_GRADE_GRADE.
+    $settingvalue = 2;
+
+    // Set the course setting when:
+    // - The system setting does not exist yet.
+    // - The system seeting is not set to what we'd set the course setting.
+    $setcoursesetting = !isset($CFG->grade_minmaxtouse) || $CFG->grade_minmaxtouse != $settingvalue;
+
+    // Identify the courses that have inconsistencies grade_item vs grade_grade.
+    $sql = "SELECT DISTINCT(gi.courseid)
+              FROM {grade_items} gi
+              JOIN {grade_grades} gg
+                ON gg.itemid = gi.id
+             WHERE (gi.itemtype != ? AND gi.itemtype != ?)
+               AND (gg.rawgrademax != gi.grademax OR gg.rawgrademin != gi.grademin)";
+
+    $rs = $DB->get_recordset_sql($sql, array('course', 'category'));
+    foreach ($rs as $record) {
+        // Flag the course to show a notice in the gradebook.
+        set_config('show_min_max_grades_changed_' . $record->courseid, 1);
+
+        // Set the appropriate course setting so that grades displayed are not changed.
+        $configname = 'minmaxtouse';
+        if ($setcoursesetting &&
+                !$DB->record_exists('grade_settings', array('courseid' => $record->courseid, 'name' => $configname))) {
+            // Do not set the setting when the course already defines it.
+            $data = new stdClass();
+            $data->courseid = $record->courseid;
+            $data->name     = $configname;
+            $data->value    = $settingvalue;
+            $DB->insert_record('grade_settings', $data);
+        }
+
+        // Mark the grades to be regraded.
+        $DB->set_field('grade_items', 'needsupdate', 1, array('courseid' => $record->courseid));
+    }
+    $rs->close();
+}

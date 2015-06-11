@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.8.7 ===
+
+* New methods grade_grade::get_grade_max() and get_grade_min() must be used rather than directly the public properties rawgrademax and rawgrademin.
+* New method grade_item::is_aggregate_item() indicates when a grade_item is an aggreggated type grade.
+
 === 2.8.4 ===
 
 * The authorization procedure in the mdeploy.php script has been improved. The script

@@ -75,6 +75,8 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         $temp->add(new admin_setting_special_gradepointmax());
 
         $temp->add(new admin_setting_special_gradepointdefault());
+
+        $temp->add(new admin_setting_special_grademinmaxtouse());
     }
     $ADMIN->add('grades', $temp);
 
