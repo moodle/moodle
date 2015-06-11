@@ -4058,6 +4058,10 @@ function xmldb_main_upgrade($oldversion) {
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014111000.00) {
+        // Coming from 2.7 or older, we need to flag the step minmaxgrade to be ignored.
+        set_config('upgrade_minmaxgradestepignored', 1);
+    }
 
     if ($oldversion < 2014120100.00) {
 
@@ -4377,6 +4381,20 @@ function xmldb_main_upgrade($oldversion) {
 
     // Moodle v2.9.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2015060400.01) {
+
+        // Sites that were upgrading from 2.7 and older will ignore this step.
+        if (empty($CFG->upgrade_minmaxgradestepignored)) {
+
+            upgrade_minmaxgrade();
+
+            // Flags this upgrade step as already run to prevent it from running multiple times.
+            set_config('upgrade_minmaxgradestepignored', 1);
+        }
+
+        upgrade_main_savepoint(true, 2015060400.01);
+    }
 
     return true;
 }

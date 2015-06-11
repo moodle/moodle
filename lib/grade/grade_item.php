@@ -997,6 +997,16 @@ class grade_item extends grade_object {
     }
 
     /**
+     * Returns true if the grade item is an aggreggated type grade.
+     *
+     * @since  Moodle 2.8.7, 2.9.1
+     * @return bool
+     */
+    public function is_aggregate_item() {
+        return ($this->is_category_item() || $this->is_course_item());
+    }
+
+    /**
      * Returns the grade item associated with the course
      *
      * @param int $courseid

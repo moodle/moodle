@@ -466,8 +466,8 @@ class grade_report_user extends grade_report {
             } else {
                 // The max and min for an aggregation may be different to the grade_item.
                 if (!is_null($gradeval)) {
-                    $grade_grade->grade_item->grademax = $grade_grade->rawgrademax;
-                    $grade_grade->grade_item->grademin = $grade_grade->rawgrademin;
+                    $grade_grade->grade_item->grademax = $grade_grade->get_grade_max();
+                    $grade_grade->grade_item->grademin = $grade_grade->get_grade_min();
                 }
             }
 
