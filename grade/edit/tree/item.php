@@ -112,11 +112,9 @@ if ($mform->is_cancelled()) {
 } else if ($data = $mform->get_data(false)) {
     // If unset, give the aggregationcoef a default based on parent aggregation method
     if (!isset($data->aggregationcoef) || $data->aggregationcoef == '') {
-        if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-            $data->aggregationcoef = 1;
-        } else {
-            $data->aggregationcoef = 0;
-        }
+        $defaults = grade_category::get_default_aggregation_coefficient_values($parent_category->aggregation);
+        $data->aggregationcoef = $defaults['aggregationcoefficient'];
+        $data->aggregationcoef2 = $defaults['aggregationcoefficient2'];
     }
 
     if (!isset($data->gradepass) || $data->gradepass == '') {
