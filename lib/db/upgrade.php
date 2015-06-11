@@ -4382,7 +4382,7 @@ function xmldb_main_upgrade($oldversion) {
     // Moodle v2.9.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2015051100.04) {
+    if ($oldversion < 2015051100.05) {
 
         // Sites that were upgrading from 2.7 and older will ignore this step.
         if (empty($CFG->upgrade_minmaxgradestepignored)) {
@@ -4392,7 +4392,7 @@ function xmldb_main_upgrade($oldversion) {
             set_config('upgrade_minmaxgradestepignored', 1);
         }
 
-        upgrade_main_savepoint(true, 2015051100.04);
+        upgrade_main_savepoint(true, 2015051100.05);
     }
 
     return true;
