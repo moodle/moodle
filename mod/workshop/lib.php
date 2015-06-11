@@ -1180,11 +1180,9 @@ function workshop_grade_item_category_update($workshop) {
             if (!empty($workshop->add)) {
                 $gradecategory = $gradeitem->get_parent_category();
                 if (grade_category::aggregation_uses_aggregationcoef($gradecategory->aggregation)) {
-                    if ($gradecategory->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-                        $gradeitem->aggregationcoef = 1;
-                    } else {
-                        $gradeitem->aggregationcoef = 0;
-                    }
+                    $defaults = grade_category::get_default_aggregation_coefficient_values($gradecategory->aggregation);
+                    $gradeitem->aggregationcoef = $defaults['aggregationcoefficient'];
+                    $gradeitem->aggregationcoef2 = $defaults['aggregationcoefficient2'];
                     $gradeitem->update();
                 }
             }

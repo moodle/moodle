@@ -227,11 +227,9 @@ function edit_module_post_actions($moduleinfo, $course) {
             $gradecategory = $grade_item->get_parent_category();
             if (!empty($moduleinfo->add)) {
                 if (grade_category::aggregation_uses_aggregationcoef($gradecategory->aggregation)) {
-                    if ($gradecategory->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-                        $grade_item->aggregationcoef = 1;
-                    } else {
-                        $grade_item->aggregationcoef = 0;
-                    }
+                    $defaults = grade_category::get_default_aggregation_coefficient_values($gradecategory->aggregation);
+                    $grade_item->aggregationcoef = $defaults['aggregationcoefficient'];
+                    $grade_item->aggregationcoef2 = $default['aggregationcoefficient2'];
                     $grade_item->update();
                 }
             }
@@ -296,11 +294,9 @@ function edit_module_post_actions($moduleinfo, $course) {
                 $gradecategory = $outcome_item->get_parent_category();
                 if ($outcomeexists == false) {
                     if (grade_category::aggregation_uses_aggregationcoef($gradecategory->aggregation)) {
-                        if ($gradecategory->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-                            $outcome_item->aggregationcoef = 1;
-                        } else {
-                            $outcome_item->aggregationcoef = 0;
-                        }
+                        $defaults = grade_category::get_default_aggregation_coefficient_values($gradecategory->aggregation);
+                        $outcome_item->aggregationcoef = $defaults['aggregationcoefficient'];
+                        $outcome_item->aggregationcoef2 = $defaults['aggregationcoefficient2'];
                         $outcome_item->update();
                     }
                 }
