@@ -4061,6 +4061,9 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2014111000.00) {
         // Coming from 2.7 or older, we need to flag the step minmaxgrade to be ignored.
         set_config('upgrade_minmaxgradestepignored', 1);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014111000.00);
     }
 
     if ($oldversion < 2014111002.01) {
