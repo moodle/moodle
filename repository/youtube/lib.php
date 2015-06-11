@@ -23,8 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once($CFG->dirroot . '/repository/lib.php');
-require_once($CFG->libdir . '/google/lib.php');
-require_once($CFG->libdir . '/google/Google/Service/YouTube.php');
 
 /**
  * repository_youtube class
@@ -67,14 +65,31 @@ class repository_youtube extends repository {
         parent::__construct($repositoryid, $context, $options);
 
         $this->apikey = $this->get_option('apikey');
-        $this->client = get_google_client();
-        $this->client->setDeveloperKey($this->apikey);
-        $this->client->setScopes(array(Google_Service_YouTube::YOUTUBE_READONLY));
-        $this->service = new Google_Service_YouTube($this->client);
 
         // Without an API key, don't show this repo to users as its useless without it.
         if (empty($this->apikey)) {
             $this->disabled = true;
+        }
+    }
+
+    /**
+     * Init all the youtube client service stuff.
+     *
+     * Instead of instantiating the service in the constructor, we delay
+     * it until really neeed because it's really memory hungry (2MB). That
+     * way the editor or any other artifact requiring repository instantiation
+     * can do it in a cheap way. Sort of lazy loading the plugin.
+     */
+    private function init_youtube_service() {
+        global $CFG;
+
+        if (!isset($this->service)) {
+            require_once($CFG->libdir . '/google/lib.php');
+            require_once($CFG->libdir . '/google/Google/Service/YouTube.php');
+            $this->client = get_google_client();
+            $this->client->setDeveloperKey($this->apikey);
+            $this->client->setScopes(array(Google_Service_YouTube::YOUTUBE_READONLY));
+            $this->service = new Google_Service_YouTube($this->client);
         }
     }
 
@@ -177,6 +192,7 @@ class repository_youtube extends repository {
         $list = array();
         $error = null;
         try {
+            $this->init_youtube_service(); // About to use the service, ensure it's loaded.
             $response = $this->service->search->listSearch('id,snippet', array(
                 'q' => $keyword,
                 'maxResults' => $max,
