@@ -112,7 +112,7 @@ if ($currentuser) {
         // Need to have full access to a course to see the rest of own info.
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('notenrolled', '', $fullname));
-        $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+        $referer = get_local_referer(false);
         if (!empty($referer)) {
             echo $OUTPUT->continue_button($referer);
         }
@@ -144,7 +144,7 @@ if ($currentuser) {
             $PAGE->navbar->add($struser);
             echo $OUTPUT->heading(get_string('notenrolledprofile'));
         }
-        $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+        $referer = get_local_referer(false);
         if (!empty($referer)) {
             echo $OUTPUT->continue_button($referer);
         }

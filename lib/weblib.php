@@ -238,6 +238,28 @@ function is_https() {
 }
 
 /**
+ * Returns the cleaned local URL of the HTTP_REFERER less the URL query string parameters if required.
+ *
+ * If you need to get an external referer, you can do so by using clean_param($_SERVER['HTTP_REFERER'], PARAM_URL)
+ * and optionally stripquerystring().
+ *
+ * @param bool $stripquery if true, also removes the query part of the url.
+ * @return string The resulting referer or empty string.
+ */
+function get_local_referer($stripquery = true) {
+    if (isset($_SERVER['HTTP_REFERER'])) {
+        $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+        if ($stripquery) {
+            return strip_querystring($referer);
+        } else {
+            return $referer;
+        }
+    } else {
+        return '';
+    }
+}
+
+/**
  * Class for creating and manipulating urls.
  *
  * It can be used in moodle pages where config.php has been included without any further includes.
