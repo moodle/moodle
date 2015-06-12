@@ -433,4 +433,87 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $expectedkeys = array_keys($trackids);
         $this->assertEquals(asort($expectedkeys), asort($result['trackids']));
     }
+
+    /**
+     * Test get scorm sco tracks
+     */
+    public function test_mod_scorm_get_scorm_sco_tracks() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create users.
+        $student = self::getDataGenerator()->create_user();
+        $otherstudent = self::getDataGenerator()->create_user();
+        $teacher = self::getDataGenerator()->create_user();
+
+        // Set to the student user.
+        self::setUser($student);
+
+        // Create courses to add the modules.
+        $course = self::getDataGenerator()->create_course();
+
+        // First scorm.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $scorm = self::getDataGenerator()->create_module('scorm', $record);
+
+        // Users enrolments.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id, 'manual');
+
+        // Create attempts.
+        $scoes = scorm_get_scoes($scorm->id);
+        $sco = array_shift($scoes);
+        scorm_insert_track($student->id, $scorm->id, $sco->id, 1, 'cmi.core.lesson_status', 'completed');
+        scorm_insert_track($student->id, $scorm->id, $sco->id, 1, 'cmi.core.score.raw', '80');
+        scorm_insert_track($student->id, $scorm->id, $sco->id, 2, 'cmi.core.lesson_status', 'completed');
+
+        $result = mod_scorm_external::get_scorm_sco_tracks($sco->id, $student->id, 1);
+        $result = external_api::clean_returnvalue(mod_scorm_external::get_scorm_sco_tracks_returns(), $result);
+        // 7 default elements + 2 custom ones.
+        $this->assertCount(9, $result['data']);
+        // Find our tracking data.
+        $found = 0;
+        foreach ($result['data'] as $userdata) {
+            if ($userdata['element'] == 'cmi.core.lesson_status' and $userdata['value'] == 'completed') {
+                $found++;
+            }
+            if ($userdata['element'] == 'cmi.core.score.raw' and $userdata['value'] == '80') {
+                $found++;
+            }
+        }
+        $this->assertEquals(2, $found);
+
+        // Capabilities check.
+        try {
+             mod_scorm_external::get_scorm_sco_tracks($sco->id, $otherstudent->id);
+            $this->fail('Exception expected due to invalid instance id.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        self::setUser($teacher);
+        $result = mod_scorm_external::get_scorm_sco_tracks($sco->id, $student->id);
+        $result = external_api::clean_returnvalue(mod_scorm_external::get_scorm_sco_tracks_returns(), $result);
+        // 7 default elements + 1 custom one.
+        $this->assertCount(8, $result['data']);
+
+        // Test invalid instance id.
+        try {
+             mod_scorm_external::get_scorm_sco_tracks(0, 1);
+            $this->fail('Exception expected due to invalid instance id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('cannotfindsco', $e->errorcode);
+        }
+        // Invalid user.
+        try {
+             mod_scorm_external::get_scorm_sco_tracks($sco->id, 0);
+            $this->fail('Exception expected due to invalid instance id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invaliduser', $e->errorcode);
+        }
+    }
 }

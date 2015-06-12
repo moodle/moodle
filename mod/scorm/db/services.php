@@ -68,4 +68,12 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'mod/scorm:savetrack'
     ),
+
+    'mod_scorm_get_scorm_sco_tracks' => array(
+        'classname' => 'mod_scorm_external',
+        'methodname' => 'get_scorm_sco_tracks',
+        'description' => 'Retrieves SCO tracking data for the given user id and attempt number',
+        'type' => 'read',
+        'capabilities' => ''
+    ),
 );
