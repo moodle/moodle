@@ -174,7 +174,6 @@ Y.extend(DDIMAGEORTEXT_DD, Y.Base, {
 
                 drag.setData('group', group);
                 drag.setData('choice', choice);
-
             },
             draggable_for_form : function (drag) {
                 var dd = new Y.DD.Drag({
@@ -250,6 +249,7 @@ var DDIMAGEORTEXT_QUESTION = function() {
  * This is the code for question rendering.
  */
 Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
+    touchscrolldisable: null,
     pendingid: '',
     initializer : function() {
         this.pendingid = 'qtype_ddimageortext-' + Math.random().toString(36).slice(2); // Random string.
@@ -261,6 +261,38 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
         this.doc.drag_item_homes().after('load', this.poll_for_image_load, this,
                                                 false, 0, this.create_all_drag_and_drops);
         Y.later(500, this, this.reposition_drags_for_question, [this.pendingid], true);
+    },
+
+    /**
+     * prevent_touchmove_from_scrolling allows users of touch screen devices to
+     * use drag and drop and normal scrolling at the same time. I.e. when
+     * touching and dragging a draggable item, the screen does not scroll, but
+     * you can scroll by touching other area of the screen apart from the
+     * draggable items.
+     */
+    prevent_touchmove_from_scrolling : function(drag) {
+        var touchstart = (Y.UA.ie) ? 'MSPointerStart' : 'touchstart';
+        var touchend = (Y.UA.ie) ? 'MSPointerEnd' : 'touchend';
+        var touchmove = (Y.UA.ie) ? 'MSPointerMove' : 'touchmove';
+
+        // Disable scrolling when touching the draggable items.
+        drag.on(touchstart, function() {
+            if (this.touchscrolldisable) {
+                return; // Already disabled.
+            }
+            this.touchscrolldisable = Y.one('body').on(touchmove, function(e) {
+                e = e || window.event;
+                e.preventDefault();
+            });
+        }, this);
+
+        // Allow scrolling after releasing the draggable items.
+        drag.on(touchend, function() {
+            if (this.touchscrolldisable) {
+                this.touchscrolldisable.detach();
+                this.touchscrolldisable = null;
+            }
+        }, this);
     },
     create_all_drag_and_drops : function () {
         this.init_drops();
@@ -275,6 +307,9 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
             i++;
             if (!this.get('readonly')) {
                 this.doc.draggable_for_question(dragnode, group, choice);
+
+                // Prevent scrolling whilst dragging on Adroid devices.
+                this.prevent_touchmove_from_scrolling(dragnode);
             }
             if (dragnode.hasClass('infinite')) {
                 var dragstocreate = groupsize - 1;
@@ -283,6 +318,9 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
                     i++;
                     if (!this.get('readonly')) {
                         this.doc.draggable_for_question(dragnode, group, choice);
+
+                        // Prevent scrolling whilst dragging on Adroid devices.
+                        this.prevent_touchmove_from_scrolling(dragnode);
                     }
                     dragstocreate--;
                 }
