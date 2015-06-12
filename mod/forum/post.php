@@ -53,7 +53,7 @@ $sitecontext = context_system::instance();
 
 if (!isloggedin() or isguestuser()) {
 
-    if (!isloggedin() and !get_referer()) {
+    if (!isloggedin() and !get_local_referer()) {
         // No referer+not logged in - probably coming in via email  See MDL-9052
         require_login();
     }
@@ -87,7 +87,7 @@ if (!isloggedin() or isguestuser()) {
     $PAGE->set_context($modcontext);
     $PAGE->set_title($course->shortname);
     $PAGE->set_heading($course->fullname);
-    $referer = clean_param(get_referer(false), PARAM_LOCALURL);
+    $referer = get_local_referer(false);
 
     echo $OUTPUT->header();
     echo $OUTPUT->confirm(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'), get_login_url(), $referer);
@@ -117,7 +117,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
             if (!is_enrolled($coursecontext)) {
                 if (enrol_selfenrol_available($course->id)) {
                     $SESSION->wantsurl = qualified_me();
-                    $SESSION->enrolcancel = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+                    $SESSION->enrolcancel = get_local_referer(false);
                     redirect(new moodle_url('/enrol/index.php', array('id' => $course->id,
                         'returnurl' => '/mod/forum/view.php?f=' . $forum->id)),
                         get_string('youneedtoenrol'));
@@ -131,11 +131,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         print_error("activityiscurrentlyhidden");
     }
 
-    if (isset($_SERVER["HTTP_REFERER"])) {
-        $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
-    } else {
-        $SESSION->fromurl = '';
-    }
+    $SESSION->fromurl = get_local_referer(false);
 
     // Load up the $post variable.
 
@@ -188,7 +184,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         if (!isguestuser()) {
             if (!is_enrolled($coursecontext)) {  // User is a guest here!
                 $SESSION->wantsurl = qualified_me();
-                $SESSION->enrolcancel = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+                $SESSION->enrolcancel = get_local_referer(false);
                 redirect(new moodle_url('/enrol/index.php', array('id' => $course->id,
                     'returnurl' => '/mod/forum/view.php?f=' . $forum->id)),
                     get_string('youneedtoenrol'));

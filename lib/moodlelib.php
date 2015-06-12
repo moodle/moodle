@@ -2549,8 +2549,10 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             if ($setwantsurltome) {
                 $SESSION->wantsurl = qualified_me();
             }
-            if (!empty($_SERVER['HTTP_REFERER'])) {
-                $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
+
+            $referer = get_local_referer(false);
+            if (!empty($referer)) {
+                $SESSION->fromurl = $referer;
             }
 
             // Give auth plugins an opportunity to authenticate or redirect to an external login page
