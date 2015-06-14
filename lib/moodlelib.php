@@ -1033,11 +1033,15 @@ function clean_param($param, $type) {
                 // Simulate the HTTPS version of the site.
                 $httpswwwroot = str_replace('http://', 'https://', $CFG->wwwroot);
 
-                if (preg_match(':^/:', $param)) {
+                if ($param === $CFG->wwwroot) {
+                    // Exact match;
+                } else if (!empty($CFG->loginhttps) && $param === $httpswwwroot) {
+                    // Exact match;
+                } else if (preg_match(':^/:', $param)) {
                     // Root-relative, ok!
-                } else if (preg_match('/^' . preg_quote($CFG->wwwroot, '/') . '/i', $param)) {
+                } else if (preg_match('/^' . preg_quote($CFG->wwwroot . '/', '/') . '/i', $param)) {
                     // Absolute, and matches our wwwroot.
-                } else if (!empty($CFG->loginhttps) && preg_match('/^' . preg_quote($httpswwwroot, '/') . '/i', $param)) {
+                } else if (!empty($CFG->loginhttps) && preg_match('/^' . preg_quote($httpswwwroot . '/', '/') . '/i', $param)) {
                     // Absolute, and matches our httpswwwroot.
                 } else {
                     // Relative - let's make sure there are no tricks.
