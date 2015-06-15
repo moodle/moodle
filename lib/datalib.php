@@ -1769,7 +1769,10 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
         $params['courseid'] = $courseid;
     }
     $params['userid'] = $userid;
-    $$coursestart = (int)$coursestart; // note: unfortunately pg complains if you use name parameter or column alias in GROUP BY
+    // We have to sanitize this param ourselves here instead of relying on DB.
+    // Postgres complains if you use name parameter or column alias in GROUP BY.
+    // See MDL-27696 and 51c3e85 for details.
+    $coursestart = (int)$coursestart;
 
     return $DB->get_records_sql("SELECT FLOOR((time - $coursestart)/". DAYSECS .") AS day, COUNT(*) AS num
                                    FROM {log}
