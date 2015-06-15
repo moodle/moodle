@@ -99,3 +99,9 @@
     background-image: linear-gradient(to bottom,#0070a8,#005f8f);
     background-repeat: repeat-x;
 }
+
+/** check box and radio button on configure scale dialogue */
+input[type="radio"].tool_lp_scale_default,
+input[type="checkbox"].tool_lp_scale_proficient {
+    margin-top: 0px;
+}
