@@ -217,6 +217,55 @@ class mod_chat_external_testcase extends externallib_advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
+    }
 
+    /**
+     * Test get_chats_by_courses
+     */
+    public function test_get_chats_by_courses() {
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $course1 = self::getDataGenerator()->create_course();
+        $chatoptions1 = array(
+                              'course' => $course1->id,
+                              'name' => 'First Chat'
+                             );
+        $chat1 = self::getDataGenerator()->create_module('chat', $chatoptions1);
+        $course2 = self::getDataGenerator()->create_course();
+        $chatoptions2 = array(
+                              'course' => $course2->id,
+                              'name' => 'Second Chat'
+                             );
+        $chat2 = self::getDataGenerator()->create_module('chat', $chatoptions2);
+        $student1 = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        // Enroll Student1 in Course1.
+        self::getDataGenerator()->enrol_user($student1->id,  $course1->id, $studentrole->id);
+        $this->setUser($student1);
+        $chats = mod_chat_external::get_chats_by_courses(array());
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $chats = external_api::clean_returnvalue(mod_chat_external::get_chats_by_courses_returns(), $chats);
+        $this->assertCount(1, $chats['chats']);
+        $this->assertEquals('First Chat', $chats['chats'][0]['name']);
+        // As Student you cannot see some chat properties like 'showunanswered'.
+        $this->assertFalse(isset($chats['chats'][0]['section']));
+        // Student1 is not enrolled in this Course.
+        // The webservice will give a warning!
+        $chats = mod_chat_external::get_chats_by_courses(array($course2->id));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $chats = external_api::clean_returnvalue(mod_chat_external::get_chats_by_courses_returns(), $chats);
+        $this->assertCount(0, $chats['chats']);
+        $this->assertEquals(1, $chats['warnings'][0]['warningcode']);
+        // Now as admin.
+        $this->setAdminUser();
+        // As Admin we can see this chat.
+        $chats = mod_chat_external::get_chats_by_courses(array($course2->id));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $chats = external_api::clean_returnvalue(mod_chat_external::get_chats_by_courses_returns(), $chats);
+        $this->assertCount(1, $chats['chats']);
+        $this->assertEquals('Second Chat', $chats['chats'][0]['name']);
+        // As an Admin you can see some chat properties like 'section'.
+        $this->assertEquals(0, $chats['chats'][0]['section']);
     }
 }
