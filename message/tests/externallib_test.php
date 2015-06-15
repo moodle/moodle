@@ -290,6 +290,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $user_online->lastaccess = time();
         $user_online = self::getDataGenerator()->create_user($user_online);
         $user_blocked = self::getDataGenerator()->create_user();
+        $noreplyuser = core_user::get_user(core_user::NOREPLY_USER);
 
         // Login as user1.
         $this->setUser($user1);
@@ -300,6 +301,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->send_message($user_stranger, $user1, 'Hello there!');
         $this->send_message($user_stranger, $user1, 'How you goin?');
         $this->send_message($user_stranger, $user1, 'Cya!');
+        $this->send_message($noreplyuser, $user1, 'I am not a real user');
 
         // User_blocked sends a message to user1.
         $this->send_message($user_blocked, $user1, 'Here, have some spam.');
@@ -310,18 +312,18 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $contacts = external_api::clean_returnvalue(core_message_external::get_contacts_returns(), $contacts);
         $this->assertCount(3, $contacts['offline']);
         $this->assertCount(1, $contacts['online']);
-        $this->assertCount(2, $contacts['strangers']);
+        $this->assertCount(3, $contacts['strangers']);
         core_message_external::block_contacts(array($user_blocked->id));
         $contacts = core_message_external::get_contacts();
         $contacts = external_api::clean_returnvalue(core_message_external::get_contacts_returns(), $contacts);
         $this->assertCount(3, $contacts['offline']);
         $this->assertCount(1, $contacts['online']);
-        $this->assertCount(1, $contacts['strangers']);
+        $this->assertCount(2, $contacts['strangers']);
 
         // Checking some of the fields returned.
         $stranger = array_pop($contacts['strangers']);
-        $this->assertEquals($user_stranger->id, $stranger['id']);
-        $this->assertEquals(3, $stranger['unread']);
+        $this->assertEquals(core_user::NOREPLY_USER, $stranger['id']);
+        $this->assertEquals(1, $stranger['unread']);
     }
 
     /**
