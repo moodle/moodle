@@ -136,8 +136,24 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $auth = get_auth_plugin('ldap');
 
         ob_start();
+        $sink = $this->redirectEvents();
         $auth->sync_users(true);
+        $events = $sink->get_events();
+        $sink->close();
         ob_end_clean();
+
+        // Check events, 5 users created with 2 users having roles.
+        $this->assertCount(7, $events);
+        foreach ($events as $index => $event) {
+            $usercreatedindex = array(0, 2, 4, 5, 6);
+            $roleassignedindex = array (1, 3);
+            if (in_array($index, $usercreatedindex)) {
+                $this->assertInstanceOf('\core\event\user_created', $event);
+            }
+            if (in_array($index, $roleassignedindex)) {
+                $this->assertInstanceOf('\core\event\role_assigned', $event);
+            }
+        }
 
         $this->assertEquals(5, $DB->count_records('user', array('auth'=>'ldap')));
         $this->assertEquals(2, $DB->count_records('role_assignments'));
@@ -150,8 +166,14 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $this->delete_ldap_user($connection, $topdn, 1);
 
         ob_start();
+        $sink = $this->redirectEvents();
         $auth->sync_users(true);
+        $events = $sink->get_events();
+        $sink->close();
         ob_end_clean();
+
+        // Check events, no new event.
+        $this->assertCount(0, $events);
 
         $this->assertEquals(5, $DB->count_records('user', array('auth'=>'ldap')));
         $this->assertEquals(0, $DB->count_records('user', array('suspended'=>1)));
@@ -166,8 +188,16 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $auth = get_auth_plugin('ldap');
 
         ob_start();
+        $sink = $this->redirectEvents();
         $auth->sync_users(true);
+        $events = $sink->get_events();
+        $sink->close();
         ob_end_clean();
+
+        // Check events, 1 user got updated.
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\core\event\user_updated', $event);
 
         $this->assertEquals(5, $DB->count_records('user', array('auth'=>'ldap')));
         $this->assertEquals(0, $DB->count_records('user', array('auth'=>'nologin', 'username'=>'username1')));
@@ -179,8 +209,16 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $this->create_ldap_user($connection, $topdn, 1);
 
         ob_start();
+        $sink = $this->redirectEvents();
         $auth->sync_users(true);
+        $events = $sink->get_events();
+        $sink->close();
         ob_end_clean();
+
+        // Check events, 1 user got updated.
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\core\event\user_updated', $event);
 
         $this->assertEquals(5, $DB->count_records('user', array('auth'=>'ldap')));
         $this->assertEquals(0, $DB->count_records('user', array('suspended'=>1)));
@@ -191,8 +229,16 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $DB->set_field('user', 'auth', 'nologin', array('username'=>'username1'));
 
         ob_start();
+        $sink = $this->redirectEvents();
         $auth->sync_users(true);
+        $events = $sink->get_events();
+        $sink->close();
         ob_end_clean();
+
+        // Check events, 1 user got updated.
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\core\event\user_updated', $event);
 
         $this->assertEquals(5, $DB->count_records('user', array('auth'=>'ldap')));
         $this->assertEquals(0, $DB->count_records('user', array('suspended'=>1)));
@@ -208,8 +254,18 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $this->delete_ldap_user($connection, $topdn, 1);
 
         ob_start();
+        $sink = $this->redirectEvents();
         $auth->sync_users(true);
+        $events = $sink->get_events();
+        $sink->close();
         ob_end_clean();
+
+        // Check events, 2 events role_unassigned and user_deleted.
+        $this->assertCount(2, $events);
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\user_deleted', $event);
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\role_unassigned', $event);
 
         $this->assertEquals(5, $DB->count_records('user', array('auth'=>'ldap')));
         $this->assertEquals(0, $DB->count_records('user', array('username'=>'username1')));
@@ -221,8 +277,18 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $this->create_ldap_user($connection, $topdn, 1);
 
         ob_start();
+        $sink = $this->redirectEvents();
         $auth->sync_users(true);
+        $events = $sink->get_events();
+        $sink->close();
         ob_end_clean();
+
+        // Check events, 2 events role_assigned and user_created.
+        $this->assertCount(2, $events);
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\role_assigned', $event);
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\user_created', $event);
 
         $this->assertEquals(6, $DB->count_records('user', array('auth'=>'ldap')));
         $this->assertEquals(1, $DB->count_records('user', array('username'=>'username1')));
