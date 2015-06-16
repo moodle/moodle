@@ -50,6 +50,13 @@ if (!empty($id)) {
     print_error('missingparameter');
 }
 
+// PARAM_RAW is used for $currentorg, validate it against records stored in the table.
+if (!empty($currentorg)) {
+    if (!$DB->record_exists('scorm_scoes', array('scorm' => $scorm->id, 'identifier' => $currentorg))) {
+        $currentorg = '';
+    }
+}
+
 $PAGE->set_url('/mod/scorm/prereqs.php', array('scoid' => $scoid, 'attempt' => $attempt, 'id' => $cm->id));
 
 require_login($course, false, $cm);
