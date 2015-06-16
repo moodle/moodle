@@ -5,6 +5,8 @@ information provided here is intended especially for developers.
 
 * New methods grade_grade::get_grade_max() and get_grade_min() must be used rather than directly the public properties rawgrademax and rawgrademin.
 * New method grade_item::is_aggregate_item() indicates when a grade_item is an aggreggated type grade.
+* \webservice_xmlrpc_client now respects proxy server settings. If your XMLRPC server is available on your local network and not via your proxy server, you may need to add it to the list of proxy
+  server exceptions in $CFG->proxybypass. See MDL-39353 for details.
 
 === 2.8.4 ===
 
