@@ -74,9 +74,8 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
      */
     var confirmDelete = function(e) {
         e.preventDefault();
-
-        var id = $(this).attr('data-planid');
-        planid = id;
+        
+        planid = $(this).attr('data-planid');
 
         var requests = ajax.call([{
             methodname: 'tool_lp_read_plan',
@@ -85,10 +84,10 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
         requests[0].done(function(plan) {
             str.get_strings([
-                { key: 'confirm', component: 'tool_lp' },
+                { key: 'confirm', component: 'moodle' },
                 { key: 'deleteplan', component: 'tool_lp', param: plan.name },
-                { key: 'delete', component: 'tool_lp' },
-                { key: 'cancel', component: 'tool_lp' }
+                { key: 'delete', component: 'moodle' },
+                { key: 'cancel', component: 'moodle' }
             ]).done(function (strings) {
                 notification.confirm(
                     strings[0], // Confirm.

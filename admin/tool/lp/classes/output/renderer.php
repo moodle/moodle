@@ -45,7 +45,7 @@ class renderer extends plugin_renderer_base {
      *
      * @return string html for the page
      */
-    public function render_manage_competency_frameworks_page($page) {
+    public function render_manage_competency_frameworks_page(manage_competency_frameworks_page $page) {
         $data = $page->export_for_template($this);
         return parent::render_from_template('tool_lp/manage_competency_frameworks_page', $data);
     }
@@ -57,7 +57,7 @@ class renderer extends plugin_renderer_base {
      *
      * @return string html for the page
      */
-    public function render_manage_competencies_page($page) {
+    public function render_manage_competencies_page(manage_competencies_page $page) {
         $data = $page->export_for_template($this);
         return parent::render_from_template('tool_lp/manage_competencies_page', $data);
     }
@@ -69,7 +69,7 @@ class renderer extends plugin_renderer_base {
      *
      * @return string html for the page
      */
-    public function render_course_competencies_page($page) {
+    public function render_course_competencies_page(course_competencies_page $page) {
         $data = $page->export_for_template($this);
         return parent::render_from_template('tool_lp/course_competencies_page', $data);
     }
@@ -81,7 +81,7 @@ class renderer extends plugin_renderer_base {
      *
      * @return string html for the page
      */
-    public function render_template_competencies_page($page) {
+    public function render_template_competencies_page(template_competencies_page $page) {
         $data = $page->export_for_template($this);
         return parent::render_from_template('tool_lp/template_competencies_page', $data);
     }
@@ -93,12 +93,18 @@ class renderer extends plugin_renderer_base {
      *
      * @return string html for the page
      */
-    public function render_manage_templates_page($page) {
+    public function render_manage_templates_page(manage_templates_page $page) {
         $data = $page->export_for_template($this);
         return parent::render_from_template('tool_lp/manage_templates_page', $data);
     }
 
-    public function render_plans_page(renderable $page) {
+    /**
+     * Defer to template.
+     * @param plans_page $page
+     *
+     * @return bool|string
+     */
+    public function render_plans_page(plans_page $page) {
         $data = $page->export_for_template($this);
         return parent::render_from_template('tool_lp/plans_page', $data);
     }

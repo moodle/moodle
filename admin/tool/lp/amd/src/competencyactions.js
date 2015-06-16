@@ -57,8 +57,7 @@ define(['jquery',
             params.parentid = parent.id;
         }
         var queryparams = $.param(params);
-        var actionurl = url.relativeUrl('/admin/tool/lp/editcompetency.php?' + queryparams);
-        window.location = actionurl;
+        window.location = url.relativeUrl('/admin/tool/lp/editcompetency.php?' + queryparams);
     };
 
     /**
@@ -89,7 +88,7 @@ define(['jquery',
     /**
      * A move competency popup was opened - initialise the aria tree in it.
      * @method initMovePopup
-     * @param {dialogue} The tool_lp/dialogue that was created.
+     * @param {dialogue} popup The tool_lp/dialogue that was created.
      */
     var initMovePopup = function(popup) {
         new Ariatree('[data-enhance=movetree]', function(target) {
@@ -165,7 +164,7 @@ define(['jquery',
             str.get_strings([
                 { key: 'movecompetency', component: 'tool_lp', param: competency.shortname },
                 { key: 'move', component: 'tool_lp' },
-                { key: 'cancel', component: 'tool_lp' }
+                { key: 'cancel', component: 'moodle' }
             ]).done(function (strings) {
 
                 var context = {
@@ -203,8 +202,7 @@ define(['jquery',
         };
 
         var queryparams = $.param(params);
-        var actionurl = url.relativeUrl('/admin/tool/lp/editcompetency.php?' + queryparams);
-        window.location = actionurl;
+        window.location = url.relativeUrl('/admin/tool/lp/editcompetency.php?' + queryparams);
     };
 
     /**
@@ -331,10 +329,10 @@ define(['jquery',
            .done(function(html) {
 
                str.get_strings([
-                   { key: 'confirm', component: 'tool_lp' },
+                   { key: 'confirm', component: 'moodle' },
                    { key: 'deletecompetency', component: 'tool_lp', param: html },
-                   { key: 'delete', component: 'tool_lp' },
-                   { key: 'cancel', component: 'tool_lp' }
+                   { key: 'delete', component: 'moodle' },
+                   { key: 'cancel', component: 'moodle' }
                ]).done(function (strings) {
                     notification.confirm(
                        strings[0], // Confirm.

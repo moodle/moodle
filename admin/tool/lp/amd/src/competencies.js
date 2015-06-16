@@ -90,8 +90,8 @@ define(['jquery',
      * Handle a drop from a drag/drop operation.
      *
      * @method handleDrop
-     * @param {Node} drag The dragged node.
-     * @param {Node} drop The dropped on node.
+     * @param {DOMNode} drag The dragged node.
+     * @param {DOMNode} drop The dropped on node.
      */
     competencies.prototype.handleDrop = function(drag, drop) {
         var fromid = $(drag).data('id');

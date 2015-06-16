@@ -41,23 +41,25 @@ use tool_lp\api;
 class manage_competencies_page implements renderable, templatable {
 
     /** @var \tool_lp\competency_framework $framework This competency framework. */
-    var $framework = null;
+    protected $framework = null;
 
-    /** @var array $competencies List of competencies. */
-    var $competencies = array();
+    /** @var \tool_lp\competency[] $competencies List of competencies. */
+    protected $competencies = array();
 
     /** @var string $search Text to search for. */
-    var $search = '';
+    protected $search = '';
 
     /** @var bool $canmanage Result of permissions checks. */
-    var $canmanage = false;
+    protected $canmanage = false;
 
     /** @var moodle_url $pluginurlbase Base url to use constructing links. */
-    var $pluginbaseurl = null;
+    protected $pluginbaseurl = null;
 
     /**
      * Construct this renderable.
-     * @param \tool_lp\competency_framework $framework
+     *
+     * @param \tool_lp\competency_framework $framework Competency framework.
+     * @param string $search Search string.
      */
     public function __construct($framework, $search) {
         $this->framework = $framework;
@@ -96,6 +98,7 @@ class manage_competencies_page implements renderable, templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
+     * @param renderer_base $output Renderer base.
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {

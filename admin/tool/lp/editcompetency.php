@@ -38,7 +38,7 @@ if (empty($id)) {
     $pagetitle = get_string('editcompetency', 'tool_lp');
 }
 // Set up the page.
-$params = array('id'=>$id, 'competencyframeworkid'=>$competencyframeworkid, 'parentid'=>$parentid);
+$params = array('id' => $id, 'competencyframeworkid' => $competencyframeworkid, 'parentid' => $parentid);
 $url = new moodle_url("/admin/tool/lp/editcompetency.php", $params);
 $PAGE->set_url($url);
 $PAGE->set_title($title);
@@ -54,7 +54,7 @@ if ($parentid) {
 $form = new \tool_lp\form\competency(null, array('id' => $id, 'competencyframework' => $competencyframework, 'parent' => $parent));
 
 if ($form->is_cancelled()) {
-    redirect(new moodle_url('/admin/tool/lp/competencies.php', array('competencyframeworkid'=>$competencyframeworkid)));
+    redirect(new moodle_url('/admin/tool/lp/competencies.php', array('competencyframeworkid' => $competencyframeworkid)));
 }
 
 echo $output->header();
@@ -71,16 +71,17 @@ if ($data) {
         require_sesskey();
         \tool_lp\api::create_competency($data);
         echo $output->notification(get_string('competencycreated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button(new moodle_url('/admin/tool/lp/competencies.php', array('competencyframeworkid'=>$competencyframeworkid)));
+        echo $output->continue_button(new moodle_url('/admin/tool/lp/competencies.php',
+                array('competencyframeworkid' => $competencyframeworkid)));
     } else {
         require_sesskey();
         \tool_lp\api::update_competency($data);
         echo $output->notification(get_string('competencyupdated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button(new moodle_url('/admin/tool/lp/competencies.php', array('competencyframeworkid'=>$competencyframeworkid)));
+        echo $output->continue_button(new moodle_url('/admin/tool/lp/competencies.php',
+                array('competencyframeworkid' => $competencyframeworkid)));
     }
 } else {
     $form->display();
 }
-
 
 echo $output->footer();

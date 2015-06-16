@@ -145,7 +145,7 @@ class competency extends persistent {
     /**
      * Get the sort order index.
      *
-     * @return string The sort order index
+     * @return int The sort order index
      */
     public function get_sortorder() {
         return $this->sortorder;
@@ -190,7 +190,7 @@ class competency extends persistent {
     /**
      * Set the parent id
      *
-     * @param int $parentid The parent id number (can be null)
+     * @param int $id The parent id number (can be null)
      */
     public function set_parentid($id) {
         $this->parentid = $id;
@@ -236,7 +236,7 @@ class competency extends persistent {
      * Populate this class with data from a DB record.
      *
      * @param stdClass $record A DB record.
-     * @return framework
+     * @return \tool_lp\competency
      */
     public function from_record($record) {
         if (isset($record->id)) {
@@ -320,7 +320,8 @@ class competency extends persistent {
         } else {
             $this->path = '/0/';
         }
-        $this->sortorder = $this->count_records(array('parentid' => $this->parentid, 'competencyframeworkid' => $this->competencyframeworkid));
+        $this->sortorder = $this->count_records(array('parentid' => $this->parentid,
+                                                      'competencyframeworkid' => $this->competencyframeworkid));
         return parent::create();
     }
 
@@ -360,11 +361,13 @@ class competency extends persistent {
      * This does a specialised search that finds all nodes in the tree with matching text on any text like field,
      * and returns this node and all its parents in a displayable sort order.
      *
-     * @param string $searchText The text to search for.
+     *
+     * @param string $searchtext The text to search for.
      * @param int $competencyframeworkid The competency framework to limit the search.
+     *
      * @return persistent
      */
-    public function search($searchText, $competencyframeworkid) {
+    public function search($searchtext, $competencyframeworkid) {
         global $DB;
 
         $like1 = $DB->sql_like('shortname', ':like1', false);
@@ -372,9 +375,9 @@ class competency extends persistent {
         $like3 = $DB->sql_like('description', ':like3', false);
 
         $params = array(
-            'like1' => '%' . $DB->sql_like_escape($searchText) . '%',
-            'like2' => '%' . $DB->sql_like_escape($searchText) . '%',
-            'like3' => '%' . $DB->sql_like_escape($searchText) . '%',
+            'like1' => '%' . $DB->sql_like_escape($searchtext) . '%',
+            'like2' => '%' . $DB->sql_like_escape($searchtext) . '%',
+            'like3' => '%' . $DB->sql_like_escape($searchtext) . '%',
             'frameworkid' => $competencyframeworkid
         );
 
@@ -401,7 +404,8 @@ class competency extends persistent {
         if (count($parents)) {
             list($parentsql, $parentparams) = $DB->get_in_or_equal($parents, SQL_PARAMS_NAMED);
 
-            $parentrecords = $DB->get_records_select($this->get_table_name(), 'id ' . $parentsql, $parentparams, 'path, sortorder ASC', '*');
+            $parentrecords = $DB->get_records_select($this->get_table_name(), 'id ' . $parentsql,
+                    $parentparams, 'path, sortorder ASC', '*');
 
             foreach ($parentrecords as $id => $record) {
                 $records[$id] = $record;

@@ -56,7 +56,7 @@ abstract class persistent {
     /**
      * Create an instance of this class.
      * @param int $id If set, this is the id of an existing record, used to load the data.
-     * @param stdClass $record If set, the data for this class will be taken from the record.
+     * @param \stdClass $record If set, the data for this class will be taken from the record.
      */
     public function __construct($id = 0, $record = null) {
         if ($id > 0) {
@@ -143,7 +143,7 @@ abstract class persistent {
     /**
      * Populate this class with data from a DB record.
      *
-     * @param stdClass $record A DB record.
+     * @param \stdClass $record A DB record.
      * @return persistent
      */
     abstract public function from_record($record);
@@ -151,20 +151,20 @@ abstract class persistent {
     /**
      * Create a DB record from this class.
      *
-     * @return stdClass
+     * @return \stdClass
      */
     abstract public function to_record();
 
     /**
      * Reload the data for this class from the DB.
      *
-     * @return framework
+     * @return persistent
      */
     public function read() {
         global $DB;
 
         if ($this->id <= 0) {
-            throw new coding_exception('id is required to load');
+            throw new \coding_exception('id is required to load');
         }
         $record = $DB->get_record($this->get_table_name(), array('id' => $this->id), '*', MUST_EXIST);
         return $this->from_record($record);
@@ -188,8 +188,6 @@ abstract class persistent {
         return $this;
     }
 
-
-
     /**
      * Update the existing record in the DB.
      *
@@ -199,7 +197,7 @@ abstract class persistent {
         global $DB, $USER;
 
         if ($this->id <= 0) {
-            throw new coding_exception('id is required to update');
+            throw new \coding_exception('id is required to update');
         }
         $record = $this->to_record();
         unset($record->timecreated);
@@ -218,7 +216,7 @@ abstract class persistent {
         global $DB;
 
         if ($this->id <= 0) {
-            throw new coding_exception('id is required to delete');
+            throw new \coding_exception('id is required to delete');
         }
         return $DB->delete_records($this->get_table_name(), array('id' => $this->id));
     }
@@ -226,7 +224,13 @@ abstract class persistent {
     /**
      * Load a list of records.
      *
-     * @return \tool_lp\plan[]
+     * @param array $filters Filters to apply.
+     * @param string $sort Field to sort by.
+     * @param string $order Sort order.
+     * @param int $skip Limitstart.
+     * @param int $limit Number of rows to return.
+     *
+     * @return persistent[]
      */
     public function get_records($filters = array(), $sort = '', $order = 'ASC', $skip = 0, $limit = 0) {
         global $DB;
@@ -277,6 +281,7 @@ abstract class persistent {
     /**
      * Count a list of records.
      *
+     * @param array $filters Filters to apply.
      * @return int
      */
     public function count_records($filters = array()) {

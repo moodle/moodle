@@ -205,7 +205,9 @@ class api {
      *
      * Requires tool/lp:competencymanage capability at the system context.
      *
-     * @param stdClass $record The new details for the competency. Note - must contain an id that points to the competency to update.
+     * @param stdClass $record The new details for the competency.
+     *                         Note - must contain an id that points to the competency to update.
+     *
      * @return boolean
      */
     public static function update_competency($record) {
@@ -404,10 +406,10 @@ class api {
 
         foreach ($all as $id => $framework) {
             $sort = $framework->get_sortorder();
-            if ($down && $sort >  $frameworkfrom->get_sortorder() && $sort <= $frameworkto->get_sortorder()) {
+            if ($down && $sort > $frameworkfrom->get_sortorder() && $sort <= $frameworkto->get_sortorder()) {
                 $framework->set_sortorder($framework->get_sortorder() - 1);
                 $framework->update();
-            } else if (!$down && $sort >=  $frameworkto->get_sortorder() && $sort < $frameworkfrom->get_sortorder()) {
+            } else if (!$down && $sort >= $frameworkto->get_sortorder() && $sort < $frameworkfrom->get_sortorder()) {
                 $framework->set_sortorder($framework->get_sortorder() + 1);
                 $framework->update();
             }
@@ -501,7 +503,6 @@ class api {
         // OK - all set.
         $coursecompetency = new course_competency();
         $courses = $coursecompetency->list_courses($competencyid);
-        $count = 0;
         $result = array();
         // Now check permissions on each course.
         foreach ($courses as $id => $course) {
@@ -790,10 +791,10 @@ class api {
 
         foreach ($all as $id => $template) {
             $sort = $template->get_sortorder();
-            if ($down && $sort >  $templatefrom->get_sortorder() && $sort <= $templateto->get_sortorder()) {
+            if ($down && $sort > $templatefrom->get_sortorder() && $sort <= $templateto->get_sortorder()) {
                 $template->set_sortorder($template->get_sortorder() - 1);
                 $template->update();
-            } else if (!$down && $sort >=  $templateto->get_sortorder() && $sort < $templatefrom->get_sortorder()) {
+            } else if (!$down && $sort >= $templateto->get_sortorder() && $sort < $templatefrom->get_sortorder()) {
                 $template->set_sortorder($template->get_sortorder() + 1);
                 $template->update();
             }
@@ -1161,7 +1162,7 @@ class api {
         // We don't allow users without planmanage and without
         // planmanageown to edit plans that other users modified.
         if (!$manageplans && !$manageownplan && $USER->id != $current->get_usermodified()) {
-            throw new moodle_exception('erroreditingmodifiedplan', 'tool_lp');
+            throw new \moodle_exception('erroreditingmodifiedplan', 'tool_lp');
         } else if (!$manageplans && $USER->id != $current->get_userid()) {
             throw new required_capability_exception($context, 'tool/lp:planmanageall', 'nopermissions', '');
         }

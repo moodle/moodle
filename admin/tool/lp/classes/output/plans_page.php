@@ -42,13 +42,16 @@ use context_user;
 class plans_page implements renderable, templatable {
 
     /** @var array $navigation List of links to display on the page. Each link contains a url and a title. */
-    var $navigation = array();
+    protected $navigation = array();
 
-    var $plans = array();
+    /** @var array|\tool_lp\plan[] $plans List of plans. */
+    protected $plans = array();
 
-    var $context = null;
+    /** @var context_user|null $context context.  */
+    protected $context = null;
 
-    var $userid = null;
+    /** @var int|null $userid Userid. */
+    protected $userid = null;
 
     /**
      * Construct this renderable.
@@ -75,8 +78,6 @@ class plans_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        global $USER;
-
         $data = new stdClass();
         $data->userid = $this->userid;
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);

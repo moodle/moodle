@@ -236,7 +236,7 @@ class external extends external_api {
      * @param string $description The description
      * @param int $descriptionformat The description format
      * @param bool $visible Is this framework visible.
-     * @return stdClass The new record
+     * @return \stdClass The new record
      */
     public static function create_competency_framework($shortname, $idnumber, $description, $descriptionformat, $visible) {
         $params = self::validate_parameters(self::create_competency_framework_parameters(),
@@ -293,7 +293,7 @@ class external extends external_api {
      * Read a competency framework by id.
      *
      * @param int $id The id of the framework.
-     * @return stdClass
+     * @return \stdClass
      */
     public static function read_competency_framework($id) {
         $params = self::validate_parameters(self::read_competency_framework_parameters(),
@@ -480,7 +480,15 @@ class external extends external_api {
     /**
      * List the existing competency frameworks
      *
-     * @return boolean
+     * @param string $filters
+     * @param int $sort
+     * @param string $order
+     * @param string $skip
+     * @param int $limit
+     *
+     * @return array
+     * @throws \required_capability_exception
+     * @throws invalid_parameter_exception
      */
     public static function list_competency_frameworks($filters, $sort, $order, $skip, $limit) {
         $params = self::validate_parameters(self::list_competency_frameworks_parameters(),
@@ -557,6 +565,7 @@ class external extends external_api {
     /**
      * Count the existing competency frameworks
      *
+     * @param string $filters Filters to use.
      * @return boolean
      */
     public static function count_competency_frameworks($filters) {
@@ -613,7 +622,7 @@ class external extends external_api {
     public static function data_for_competency_frameworks_manage_page() {
         global $PAGE;
 
-        $renderable = new \tool_lp\output\manage_competency_frameworks_page();
+        $renderable = new output\manage_competency_frameworks_page();
         $renderer = $PAGE->get_renderer('tool_lp');
 
         $data = $renderable->export_for_template($renderer);
@@ -919,7 +928,7 @@ class external extends external_api {
      * Read a competency by id.
      *
      * @param int $id The id of the competency
-     * @return stdClass
+     * @return \stdClass
      */
     public static function read_competency($id) {
         $params = self::validate_parameters(self::read_competency_parameters(),
@@ -1104,9 +1113,17 @@ class external extends external_api {
     }
 
     /**
-     * List the existing competency frameworks
+     * List the existing competency.
      *
-     * @return boolean
+     * @param string $filters
+     * @param int $sort
+     * @param string $order
+     * @param string $skip
+     * @param int $limit
+     *
+     * @return array
+     * @throws \required_capability_exception
+     * @throws invalid_parameter_exception
      */
     public static function list_competencies($filters, $sort, $order, $skip, $limit) {
         $params = self::validate_parameters(self::list_competencies_parameters(),
@@ -1123,7 +1140,8 @@ class external extends external_api {
         }
 
         $safefilters = array();
-        $validcolumns = array('id', 'shortname', 'description', 'sortorder', 'idnumber', 'visible', 'parentid', 'competencyframeworkid');
+        $validcolumns = array('id', 'shortname', 'description', 'sortorder',
+                              'idnumber', 'visible', 'parentid', 'competencyframeworkid');
         foreach ($params['filters'] as $filter) {
             if (!in_array($filter->column, $validcolumns)) {
                 throw new invalid_parameter_exception('Filter column was invalid');
@@ -1190,6 +1208,14 @@ class external extends external_api {
      *
      * @return boolean
      */
+    /**
+     * List the existing competency frameworks
+     *
+     * @param string $searchtext Text to search.
+     * @param int $competencyframeworkid Framework id.
+     *
+     * @return array
+     */
     public static function search_competencies($searchtext, $competencyframeworkid) {
         $params = self::validate_parameters(self::search_competencies_parameters(),
                                             array(
@@ -1215,7 +1241,6 @@ class external extends external_api {
         return new external_multiple_structure(self::get_competency_external_structure());
     }
 
-
     /**
      * Returns description of count_competencies() parameters.
      *
@@ -1234,8 +1259,9 @@ class external extends external_api {
     }
 
     /**
-     * Count the existing competency frameworks
+     * Count the existing competency frameworks.
      *
+     * @param string $filters Filters to use.
      * @return boolean
      */
     public static function count_competencies($filters) {
@@ -1245,7 +1271,8 @@ class external extends external_api {
                                             ));
 
         $safefilters = array();
-        $validcolumns = array('id', 'shortname', 'description', 'sortorder', 'idnumber', 'visible', 'parentid', 'competencyframeworkid');
+        $validcolumns = array('id', 'shortname', 'description', 'sortorder', 'idnumber',
+                              'visible', 'parentid', 'competencyframeworkid');
         foreach ($params['filters'] as $filter) {
             if (!in_array($filter->column, $validcolumns)) {
                 throw new invalid_parameter_exception('Filter column was invalid');
@@ -1300,6 +1327,9 @@ class external extends external_api {
     /**
      * Loads the data required to render the competencies_manage_page template.
      *
+     * @param int $competencyframeworkid Framework id.
+     * @param string $search Text to search.
+     *
      * @return boolean
      */
     public static function data_for_competencies_manage_page($competencyframeworkid, $search) {
@@ -1310,9 +1340,9 @@ class external extends external_api {
                                                 'search' => $search
                                             ));
 
-        $framework = new \tool_lp\competency_framework($params['competencyframeworkid']);
+        $framework = new competency_framework($params['competencyframeworkid']);
 
-        $renderable = new \tool_lp\output\manage_competencies_page($framework, $params['search']);
+        $renderable = new output\manage_competencies_page($framework, $params['search']);
         $renderer = $PAGE->get_renderer('tool_lp');
 
         $data = $renderable->export_for_template($renderer);
@@ -1370,10 +1400,12 @@ class external extends external_api {
     /**
      * Move the competency to a new parent.
      *
-     * @return boolean
+     * @param int $competencyid Competency id.
+     * @param int $parentid Parent id.
+     *
+     * @return bool
      */
     public static function set_parent_competency($competencyid, $parentid) {
-        global $PAGE;
         $params = self::validate_parameters(self::set_parent_competency_parameters(),
                                             array(
                                                 'competencyid' => $competencyid,
@@ -1420,10 +1452,10 @@ class external extends external_api {
     /**
      * Change the sort order of a competency.
      *
+     * @param int $competencyid Competency id.
      * @return boolean
      */
     public static function move_up_competency($competencyid) {
-        global $PAGE;
         $params = self::validate_parameters(self::move_up_competency_parameters(),
                                             array(
                                                 'id' => $competencyid,
@@ -1469,10 +1501,10 @@ class external extends external_api {
     /**
      * Change the sort order of a competency.
      *
+     * @param int $competencyid Competency id.
      * @return boolean
      */
     public static function move_down_competency($competencyid) {
-        global $PAGE;
         $params = self::validate_parameters(self::move_down_competency_parameters(),
                                             array(
                                                 'id' => $competencyid,
@@ -1518,10 +1550,10 @@ class external extends external_api {
     /**
      * Count the courses (visible to this user) that use this competency.
      *
+     * @param int $competencyid Competency id.
      * @return int
      */
     public static function count_courses_using_competency($competencyid) {
-        global $PAGE;
         $params = self::validate_parameters(self::count_courses_using_competency_parameters(),
                                             array(
                                                 'id' => $competencyid,
@@ -1567,10 +1599,10 @@ class external extends external_api {
     /**
      * Count the courses (visible to this user) that use this competency.
      *
+     * @param int $competencyid Competency id.
      * @return array
      */
     public static function list_courses_using_competency($competencyid) {
-        global $PAGE;
         $params = self::validate_parameters(self::list_courses_using_competency_parameters(),
                                             array(
                                                 'id' => $competencyid,
@@ -1654,11 +1686,10 @@ class external extends external_api {
     /**
      * Count the competencies (visible to this user) in this course.
      *
-     * @param int $couseid The course id to check.
+     * @param int $courseid The course id to check.
      * @return int
      */
     public static function count_competencies_in_course($courseid) {
-        global $PAGE;
         $params = self::validate_parameters(self::count_competencies_in_course_parameters(),
                                             array(
                                                 'id' => $courseid,
@@ -1704,10 +1735,10 @@ class external extends external_api {
     /**
      * List the competencies (visible to this user) in this course.
      *
+     * @param int $courseid The course id to check.
      * @return array
      */
     public static function list_competencies_in_course($courseid) {
-        global $PAGE;
         $params = self::validate_parameters(self::list_competencies_in_course_parameters(),
                                             array(
                                                 'id' => $courseid,
@@ -1765,10 +1796,11 @@ class external extends external_api {
     /**
      * Count the competencies (visible to this user) in this course.
      *
+     * @param int $courseid The course id to check.
+     * @param int $competencyid Competency id.
      * @return int
      */
     public static function add_competency_to_course($courseid, $competencyid) {
-        global $PAGE;
         $params = self::validate_parameters(self::add_competency_to_course_parameters(),
                                             array(
                                                 'courseid' => $courseid,
@@ -1821,6 +1853,8 @@ class external extends external_api {
     /**
      * Count the competencies (visible to this user) in this course.
      *
+     * @param int $courseid The course id to check.
+     * @param int $competencyid Competency id.
      * @return int
      */
     public static function remove_competency_from_course($courseid, $competencyid) {
@@ -1868,6 +1902,7 @@ class external extends external_api {
     /**
      * Loads the data required to render the course_competencies_page template.
      *
+     * @param int $courseid The course id to check.
      * @return boolean
      */
     public static function data_for_course_competencies_page($courseid) {
@@ -1877,7 +1912,7 @@ class external extends external_api {
                                                 'courseid' => $courseid,
                                             ));
 
-        $renderable = new \tool_lp\output\course_competencies_page($params['courseid']);
+        $renderable = new output\course_competencies_page($params['courseid']);
         $renderer = $PAGE->get_renderer('tool_lp');
 
         $data = $renderable->export_for_template($renderer);
@@ -2176,7 +2211,7 @@ class external extends external_api {
      * @param string $description The description of the template.
      * @param int $descriptionformat The format of the description
      * @param bool $visible Is this template visible.
-     * @return stdClass Record of new template.
+     * @return \stdClass Record of new template.
      */
     public static function create_template($shortname, $idnumber, $duedate, $description, $descriptionformat, $visible) {
         $params = self::validate_parameters(self::create_template_parameters(),
@@ -2234,7 +2269,7 @@ class external extends external_api {
      * Read a learning plan template by id.
      *
      * @param int $id The id of the template.
-     * @return stdClass
+     * @return \stdClass
      */
     public static function read_template($id) {
         $params = self::validate_parameters(self::read_template_parameters(),
@@ -2430,7 +2465,13 @@ class external extends external_api {
     /**
      * List the existing learning plan templates
      *
-     * @return boolean
+     * @param array $filters Filters to apply.
+     * @param string $sort Field to sort by.
+     * @param string $order Sort order.
+     * @param int $skip Limitstart.
+     * @param int $limit Number of rows to return.
+     *
+     * @return array
      */
     public static function list_templates($filters, $sort, $order, $skip, $limit) {
         $params = self::validate_parameters(self::list_templates_parameters(),
@@ -2507,6 +2548,7 @@ class external extends external_api {
     /**
      * Count the existing learning plan templates
      *
+     * @param array $filters Filters to allow.
      * @return boolean
      */
     public static function count_templates($filters) {
@@ -2619,7 +2661,7 @@ class external extends external_api {
     public static function data_for_templates_manage_page() {
         global $PAGE;
 
-        $renderable = new \tool_lp\output\manage_templates_page();
+        $renderable = new output\manage_templates_page();
         $renderer = $PAGE->get_renderer('tool_lp');
 
         $data = $renderable->export_for_template($renderer);
@@ -2674,10 +2716,10 @@ class external extends external_api {
     /**
      * Count the learning plan templates (visible to this user) that use this competency.
      *
+     * @param int $competencyid Competency id.
      * @return int
      */
     public static function count_templates_using_competency($competencyid) {
-        global $PAGE;
         $params = self::validate_parameters(self::count_templates_using_competency_parameters(),
                                             array(
                                                 'id' => $competencyid,
@@ -2723,6 +2765,7 @@ class external extends external_api {
     /**
      * List the learning plan templates (visible to this user) that use this competency.
      *
+     * @param int $competencyid Competency id.
      * @return array
      */
     public static function list_templates_using_competency($competencyid) {
@@ -2822,6 +2865,7 @@ class external extends external_api {
     /**
      * List the competencies (visible to this user) in this learning plan template.
      *
+     * @param int $templateid Template id.
      * @return array
      */
     public static function list_competencies_in_template($templateid) {
@@ -2883,6 +2927,8 @@ class external extends external_api {
     /**
      * Count the competencies (visible to this user) in this template.
      *
+     * @param int $templateid Template id.
+     * @param int $competencyid Competency id.
      * @return int
      */
     public static function add_competency_to_template($templateid, $competencyid) {
@@ -2939,6 +2985,8 @@ class external extends external_api {
     /**
      * Count the competencies (visible to this user) in this learning plan template.
      *
+     * @param int $templateid Template id.
+     * @param int $competencyid Competency id.
      * @return int
      */
     public static function remove_competency_from_template($templateid, $competencyid) {
@@ -2986,6 +3034,7 @@ class external extends external_api {
     /**
      * Loads the data required to render the template_competencies_page template.
      *
+     * @param int $templateid Template id.
      * @return boolean
      */
     public static function data_for_template_competencies_page($templateid) {
@@ -2995,7 +3044,7 @@ class external extends external_api {
                                                 'templateid' => $templateid,
                                             ));
 
-        $renderable = new \tool_lp\output\template_competencies_page($params['templateid']);
+        $renderable = new output\template_competencies_page($params['templateid']);
         $renderer = $PAGE->get_renderer('tool_lp');
 
         $data = $renderable->export_for_template($renderer);
@@ -3168,6 +3217,16 @@ class external extends external_api {
 
     /**
      * Create a new learning plan.
+     *
+     * @param string $name Name.
+     * @param string $description Plan description.
+     * @param string $descriptionformat Plan description format.
+     * @param int $userid User id.
+     * @param int $templateid Related template id.
+     * @param int $status status.
+     * @param int $duedate due date.
+     *
+     * @return mixed
      */
     public static function create_plan($name, $description, $descriptionformat, $userid, $templateid, $status, $duedate) {
         $params = self::validate_parameters(self::create_plan_parameters(),
@@ -3269,6 +3328,17 @@ class external extends external_api {
 
     /**
      * Updates a new learning plan.
+     *
+     * @param int $id Plan id.
+     * @param string $name Name.
+     * @param string $description Plan description.
+     * @param string $descriptionformat Plan description format.
+     * @param int $userid User id.
+     * @param int $templateid Related template id.
+     * @param int $status status.
+     * @param int $duedate due date.
+     *
+     * @return mixed
      */
     public static function update_plan($id, $name, $description, $descriptionformat, $userid, $templateid, $status, $duedate) {
         $params = self::validate_parameters(self::update_plan_parameters(),
@@ -3323,7 +3393,7 @@ class external extends external_api {
      * Read a plan by id.
      *
      * @param int $id The id of the plan.
-     * @return stdClass
+     * @return \stdClass
      */
     public static function read_plan($id) {
         $params = self::validate_parameters(self::read_plan_parameters(),
@@ -3419,6 +3489,7 @@ class external extends external_api {
     /**
      * Loads the data required to render the plans_page template.
      *
+     * @param int $userid User id.
      * @return boolean
      */
     public static function data_for_plans_page($userid) {
@@ -3508,7 +3579,7 @@ class external extends external_api {
     /**
      * Returns description of get_scale_values() result value.
      *
-     * @return external_description
+     * @return external_multiple_structure
      */
     public static function get_scale_values_returns() {
         return new external_multiple_structure(

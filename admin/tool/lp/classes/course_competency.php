@@ -159,7 +159,7 @@ class course_competency extends persistent {
      * for the full records use list_courses.
      *
      * @param int $competencyid The competency id
-     * @return int
+     * @return array()
      */
     public function list_courses_min($competencyid) {
         global $DB;
@@ -224,7 +224,7 @@ class course_competency extends persistent {
      *
      * @param int $courseid The course id
      * @param bool $onlyvisible If true, only count visible competencies in this course.
-     * @return array[competency]
+     * @return competency[]
      */
     public function list_competencies($courseid, $onlyvisible) {
         global $DB;

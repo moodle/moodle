@@ -41,13 +41,13 @@ use tool_lp\api;
 class manage_templates_page implements renderable, templatable {
 
     /** @var array $navigation List of links to display on the page. Each link contains a url and a title. */
-    var $navigation = array();
+    protected $navigation = array();
 
     /** @var array $templates List of learning plan templates. */
-    var $templates = array();
+    protected $templates = array();
 
     /** @var bool $canmanage Result of permissions checks. */
-    var $canmanage = false;
+    protected $canmanage = false;
 
     /**
      * Construct this renderable.
@@ -68,6 +68,7 @@ class manage_templates_page implements renderable, templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
+     * @param renderer_base $output Renderer base.
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {

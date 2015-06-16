@@ -34,8 +34,13 @@ use context_user;
  */
 class plan extends persistent {
 
+    /** Draft status */
     const STATUS_DRAFT = 0;
+
+    /** Active status */
     const STATUS_ACTIVE = 1;
+
+    /** Complete status */
     const STATUS_COMPLETE = 2;
 
     /** @var string $name Name */
@@ -68,46 +73,106 @@ class plan extends persistent {
         return 'tool_lp_plan';
     }
 
+    /**
+     * Getter method.
+     *
+     * @return string
+     */
     public function get_name() {
         return $this->name;
     }
 
+    /**
+     * Setter method.
+     *
+     * @param string $value value of the field.
+     * @return string
+     */
     public function set_name($value) {
         $this->name = $value;
     }
 
+    /**
+     * Getter method.
+     *
+     * @return string
+     */
     public function get_description() {
         return $this->description;
     }
 
+    /**
+     * Setter method.
+     *
+     * @param string $value value of the field.
+     * @return string
+     */
     public function set_description($value) {
         $this->description = $value;
     }
 
+    /**
+     * Getter method.
+     *
+     * @return string
+     */
     public function get_descriptionformat() {
         return $this->descriptionformat;
     }
 
+    /**
+     * Setter method.
+     *
+     * @param int $value value of the field.
+     * @return string
+     */
     public function set_descriptionformat($value) {
         $this->descriptionformat = $value;
     }
 
+    /**
+     * Getter method.
+     *
+     * @return string
+     */
     public function get_userid() {
         return $this->userid;
     }
 
+    /**
+     * Setter method.
+     *
+     * @param int $value value of the field.
+     * @return string
+     */
     public function set_userid($value) {
         $this->userid = $value;
     }
 
+    /**
+     * Getter method.
+     *
+     * @return string
+     */
     public function get_templateid() {
         return $this->templateid;
     }
 
+    /**
+     * Setter method.
+     *
+     * @param int $value value of the field.
+     * @return string
+     */
     public function set_templateid($value) {
         $this->templateid = $value;
     }
 
+    /**
+     * Getter method.
+     *
+     * @return string
+     */
     public function get_status() {
         if ($this->status === null) {
             return null;
@@ -116,25 +181,40 @@ class plan extends persistent {
         return (int)$this->status;
     }
 
+    /**
+     * Setter method.
+     *
+     * @param string $value value of the field.
+     * @return string
+     */
     public function set_status($value) {
         $this->status = $value;
     }
 
+    /**
+     * Getter method.
+     *
+     * @return string
+     */
     public function get_duedate() {
         return $this->duedate;
     }
 
+    /**
+     * Setter method.
+     *
+     * @param string $value value of the field.
+     * @return string
+     */
     public function set_duedate($value) {
         $this->duedate = $value;
     }
 
     // Extra methods.
-
-
     /**
      * Human readable status name.
      *
-     * @return void
+     * @return string
      */
     public function get_statusname() {
 
@@ -151,7 +231,7 @@ class plan extends persistent {
                 $strname = 'complete';
                 break;
             default:
-                throw moodle_exception('errorplanstatus', 'tool_lp', '', $status);
+                throw new \moodle_exception('errorplanstatus', 'tool_lp', '', $status);
                 break;
         }
 
@@ -161,7 +241,7 @@ class plan extends persistent {
     /**
      * Whether the current user can update the learning plan.
      *
-     * @return void
+     * @return bool
      */
     public function get_usercanupdate() {
         global $USER;
@@ -182,7 +262,7 @@ class plan extends persistent {
 
         // The user that created the template can also edit it if he was the last one that modified it. But
         // can't do it if it is already completed.
-        if ($USER->id == $userid && $this->get_usermodified() == $USER->id && $this->get_status() != plan::STATUS_COMPLETE) {
+        if ($USER->id == $userid && $this->get_usermodified() == $USER->id && $this->get_status() != self::STATUS_COMPLETE) {
             return true;
         }
 
@@ -195,7 +275,7 @@ class plan extends persistent {
      * If it is used to insert/update into DB the extra fields like statusname will be
      * ignored, they are useful though when passing the object to templates.
      *
-     * @return void
+     * @return \stdClass
      */
     public function to_record() {
 
@@ -219,6 +299,12 @@ class plan extends persistent {
         return $record;
     }
 
+    /**
+     * Get plan object from record.
+     *
+     * @param stdClass $record
+     * @return plan
+     */
     public function from_record($record) {
         if (isset($record->id)) {
             $this->set_id($record->id);

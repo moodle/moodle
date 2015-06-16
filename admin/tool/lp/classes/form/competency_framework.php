@@ -58,7 +58,7 @@ class competency_framework extends moodleform {
         $mform->setType('shortname', PARAM_TEXT);
         $mform->addRule('shortname', null, 'required', null, 'client');
         $mform->addElement('editor', 'description',
-                           get_string('description', 'tool_lp'), array('rows'=>4));
+                           get_string('description', 'tool_lp'), array('rows' => 4));
         $mform->setType('description', PARAM_TEXT);
         $mform->addElement('text', 'idnumber',
                            get_string('idnumber', 'tool_lp'));
@@ -87,7 +87,7 @@ class competency_framework extends moodleform {
                 $framework = api::read_framework($id);
                 $record = $framework->to_record();
                 // Massage for editor API.
-                $record->description = array('text'=>$record->description, 'format'=>$record->descriptionformat);
+                $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
                 $this->set_data($record);
             }
         }

@@ -82,10 +82,10 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
         requests[0].done(function(framework) {
             str.get_strings([
-                { key: 'confirm', component: 'tool_lp' },
+                { key: 'confirm', component: 'moodle' },
                 { key: 'deletecompetencyframework', component: 'tool_lp', param: framework.shortname },
-                { key: 'delete', component: 'tool_lp' },
-                { key: 'cancel', component: 'tool_lp' }
+                { key: 'delete', component: 'moodle' },
+                { key: 'cancel', component: 'moodle' }
             ]).done(function (strings) {
                 notification.confirm(
                     strings[0], // Confirm.

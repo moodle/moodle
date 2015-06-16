@@ -35,7 +35,7 @@ if (empty($id)) {
     $pagetitle = get_string('editcompetencyframework', 'tool_lp');
 }
 // Set up the page.
-$url = new moodle_url("/admin/tool/lp/editcompetencyframework.php", array('id'=>$id));
+$url = new moodle_url("/admin/tool/lp/editcompetencyframework.php", array('id' => $id));
 $PAGE->set_url($url);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);

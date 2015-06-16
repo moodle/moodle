@@ -185,7 +185,7 @@ class competency_framework extends persistent {
     /**
      * Set the scale ID.
      *
-     * @param int $scale The scale ID
+     * @param int $scaleid The scale ID
      */
     public function set_scaleid($scaleid) {
         $this->scaleid = $scaleid;
@@ -213,7 +213,7 @@ class competency_framework extends persistent {
      * Populate this class with data from a DB record.
      *
      * @param stdClass $record A DB record.
-     * @return framework
+     * @return \tool_lp\competency_framework
      */
     public function from_record($record) {
         if (isset($record->id)) {
@@ -288,6 +288,5 @@ class competency_framework extends persistent {
         $this->sortorder = $this->count_records();
         return parent::create();
     }
-
 
 }

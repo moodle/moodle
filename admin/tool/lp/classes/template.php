@@ -171,7 +171,6 @@ class template extends persistent {
         $this->duedate = $duedate;
     }
 
-
     /**
      * Get the visible flag.
      *
@@ -269,6 +268,5 @@ class template extends persistent {
         $this->sortorder = $this->count_records();
         return parent::create();
     }
-
 
 }

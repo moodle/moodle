@@ -13,6 +13,13 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * External learning plans webservice API tests.
+ *
+ * @package tool_lp
+ * @copyright 2015 Damyon Wiese
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -196,7 +203,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
         $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
 
-        $result = external::update_competency_framework($result->id, 'shortname2', 'idnumber2', 'description2', FORMAT_PLAIN, false);
+        $result = external::update_competency_framework($result->id, 'shortname2',
+                'idnumber2', 'description2', FORMAT_PLAIN, false);
         $result = external_api::clean_returnvalue(external::update_competency_framework_returns(), $result);
 
         $this->assertTrue($result);
@@ -212,7 +220,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
 
         $this->setUser($this->user);
-        $result = external::update_competency_framework($result->id, 'shortname2', 'idnumber2', 'description2', FORMAT_PLAIN, false);
+        $result = external::update_competency_framework($result->id, 'shortname2',
+                'idnumber2', 'description2', FORMAT_PLAIN, false);
     }
 
     /**
@@ -373,7 +382,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $this->setExpectedException('invalid_parameter_exception');
-        $competency = external::create_competency('shortname<a href="">', 'id;"number', 'de<>\\..scription', FORMAT_HTML, true, $framework->id, 0);
+        $competency = external::create_competency('shortname<a href="">', 'id;"number',
+                'de<>\\..scription', FORMAT_HTML, true, $framework->id, 0);
     }
 
     /**
@@ -594,12 +604,14 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $syscontext = context_system::instance();
 
         $this->setUser($this->creator);
-        $plan0 = external::create_plan('Complete plan', 'A description', FORMAT_HTML, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan0 = external::create_plan('Complete plan', 'A description',
+                FORMAT_HTML, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
 
         $this->setUser($this->user);
 
         try {
-            $plan1 = external::create_plan('Draft plan (they can not with the default capabilities)', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_DRAFT, 0);
+            $plan1 = external::create_plan('Draft plan (they can not with the default capabilities)',
+                    'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_DRAFT, 0);
             $this->fail('Exception expected due to not permissions to create draft plans');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -613,13 +625,15 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $plan2 = external::create_plan('Draft plan', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_DRAFT, 0);
 
         try {
-            $plan3 = external::create_plan('Active plan (they can not)', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+            $plan3 = external::create_plan('Active plan (they can not)', 'A description',
+                    FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
             $this->fail('Exception expected due to not permissions to create active plans');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
         try {
-            $plan3 = external::update_plan($plan2['id'], 'Updated active plan', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+            $plan3 = external::update_plan($plan2['id'], 'Updated active plan', 'A description',
+                    FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
             $this->fail('Exception expected due to not permissions to update plans to complete status');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -631,14 +645,16 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $plan3 = external::create_plan('Active plan', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
         $plan4 = external::create_plan('Complete plan', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
         try {
-            $plan4 = external::create_plan('Plan for another user', 'A description', FORMAT_HTML, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
+            $plan4 = external::create_plan('Plan for another user', 'A description',
+                    FORMAT_HTML, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
             $this->fail('Exception expected due to not permissions to manage other users plans');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
         try {
-            $plan0 = external::update_plan($plan0['id'], 'Can not update other users plans', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+            $plan0 = external::update_plan($plan0['id'], 'Can not update other users plans',
+                    'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
@@ -648,7 +664,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         try {
-            $plan1 = external::update_plan($plan2['id'], 'Can not be updated even if they created it', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+            $plan1 = external::update_plan($plan2['id'], 'Can not be updated even if they created it',
+                    'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
             $this->fail('Exception expected due to not permissions to create draft plan');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -663,9 +680,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $syscontext = context_system::instance();
 
-        $plan1 = external::create_plan('Plan draft by creator', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_DRAFT, 0);
-        $plan2 = external::create_plan('Plan active by creator', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
-        $plan3 = external::create_plan('Plan complete by creator', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan1 = external::create_plan('Plan draft by creator', 'A description',
+                FORMAT_HTML, $this->user->id, 0, plan::STATUS_DRAFT, 0);
+        $plan2 = external::create_plan('Plan active by creator', 'A description',
+                FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+        $plan3 = external::create_plan('Plan complete by creator', 'A description',
+                FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
 
         $this->assertEquals((Array)$plan1, external::read_plan($plan1['id']));
         $this->assertEquals((Array)$plan2, external::read_plan($plan2['id']));

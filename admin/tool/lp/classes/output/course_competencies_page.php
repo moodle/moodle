@@ -40,12 +40,24 @@ use tool_lp\api;
  */
 class course_competencies_page implements renderable, templatable {
 
-    /** @var stdClass $course Course record for this page. */
-    var $course = null;
+    /** @var int $courseid Course id for this page. */
+    protected $courseid = null;
+
+    /** @var \tool_lp\competency[] $competencies List of competencies. */
+    protected $competencies = array();
+
+    /** @var bool $canmanagecompetencyframeworks Can the current user manage competency frameworks. */
+    protected $canmanagecompetencyframeworks = false;
+
+    /** @var bool $canmanagecoursecompetencies Can the current user manage course competency frameworks.. */
+    protected $canmanagecoursecompetencies = false;
+
+    /** @var string $manageurl manage url. */
+    protected $manageurl = null;
 
     /**
      * Construct this renderable.
-     * @param stdClass $course The course record for this page.
+     * @param int $courseid The course record for this page.
      */
     public function __construct($courseid) {
         $context = context_course::instance($courseid);
@@ -59,6 +71,7 @@ class course_competencies_page implements renderable, templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
+     * @param renderer_base $output Renderer base.
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {

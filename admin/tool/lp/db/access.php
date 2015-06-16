@@ -28,79 +28,20 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
+    'tool/lp:competencymanage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
     'tool/lp:competencyread' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'user' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' =>  'moodle/block:view'
-    ),
-    'tool/lp:competencymanage' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-        ),
-        'clonepermissionsfrom' =>  'moodle/site:config'
-    ),
-    'tool/lp:templateread' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' =>  'moodle/block:view'
-    ),
-    'tool/lp:templatemanage' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-        ),
-        'clonepermissionsfrom' =>  'moodle/site:config'
-    ),
-    'tool/lp:plancreatedraft' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-        ),
-        'clonepermissionsfrom' =>  'moodle/site:config'
-    ),
-    'tool/lp:planmanageall' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-        ),
-        'clonepermissionsfrom' =>  'moodle/site:config'
-    ),
-    'tool/lp:planmanageown' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_USER,
-        'archetypes' => array(
-        ),
-        'clonepermissionsfrom' =>  'moodle/site:config'
-    ),
-    'tool/lp:planviewall' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
-        'archetypes' => array(
-        ),
-        'clonepermissionsfrom' =>  'moodle/site:config'
-    ),
-    'tool/lp:planviewown' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_USER,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' =>  'moodle/block:view'
-    ),
-    'tool/lp:coursecompetencyread' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' =>  'moodle/block:view'
+        'clonepermissionsfrom' => 'moodle/block:view'
     ),
     'tool/lp:coursecompetencymanage' => array(
         'captype' => 'write',
@@ -109,6 +50,65 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         ),
-        'clonepermissionsfrom' =>  'moodle/site:backup'
-    )
+        'clonepermissionsfrom' => 'moodle/site:backup'
+    ),
+    'tool/lp:coursecompetencyread' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/block:view'
+    ),
+    'tool/lp:plancreatedraft' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'tool/lp:planmanageall' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'tool/lp:planmanageown' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'tool/lp:planviewall' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'tool/lp:planviewown' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/block:view'
+    ),
+    'tool/lp:templatemanage' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+        ),
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+    'tool/lp:templateread' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/block:view'
+    ),
 );

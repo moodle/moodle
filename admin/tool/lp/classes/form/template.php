@@ -56,7 +56,7 @@ class template extends moodleform {
         $mform->setType('shortname', PARAM_TEXT);
         $mform->addRule('shortname', null, 'required', null, 'client');
         $mform->addElement('editor', 'description',
-                           get_string('description', 'tool_lp'), array('rows'=>4));
+                           get_string('description', 'tool_lp'), array('rows' => 4));
         $mform->setType('description', PARAM_TEXT);
         $mform->addElement('text', 'idnumber',
                            get_string('idnumber', 'tool_lp'));
@@ -66,7 +66,7 @@ class template extends moodleform {
         $mform->addElement('date_time_selector',
                            'duedate',
                            get_string('duedate', 'tool_lp'),
-                           array('optional'=>true));
+                           array('optional' => true));
         $mform->addHelpButton('duedate', 'duedate', 'tool_lp');
 
         $mform->setDefault('visible', true);
@@ -79,7 +79,7 @@ class template extends moodleform {
                 $template = api::read_template($id);
                 $record = $template->to_record();
                 // Massage for editor API.
-                $record->description = array('text'=>$record->description, 'format'=>$record->descriptionformat);
+                $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
                 $this->set_data($record);
             }
         }
