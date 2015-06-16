@@ -2976,18 +2976,19 @@ function get_capability_info($capabilityname) {
 /**
  * Returns all capabilitiy records, preferably from MUC and not database.
  *
- * @return array All capability records
+ * @return array All capability records indexed by capability name
  */
 function get_all_capabilities() {
     global $DB;
     $cache = cache::make('core', 'capabilities');
     if (!$allcaps = $cache->get('core_capabilities')) {
-        $allcaps = $DB->get_records('capabilities', null, '', 'name as uniquename, *');
-        foreach ($allcaps as $k => $v) {
-            unset($v->uniquename);
-            $v->riskbitmask = (int) $v->riskbitmask;
-            $allcaps[$k] = (array) $v;
+        $rs = $DB->get_recordset('capabilities');
+        $allcaps = array();
+        foreach ($rs as $capability) {
+            $capability->riskbitmask = (int) $capability->riskbitmask;
+            $allcaps[$capability->name] = (array) $capability;
         }
+        $rs->close();
         $cache->set('core_capabilities', $allcaps);
     }
     return $allcaps;
