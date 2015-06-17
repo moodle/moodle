@@ -72,27 +72,7 @@ class filter_urltolink extends moodle_text_filter {
      * @return string|object|null
      */
     protected function get_global_config($name=null) {
-        $this->load_global_config();
-        if (is_null($name)) {
-            return self::$globalconfig;
-
-        } elseif (array_key_exists($name, self::$globalconfig)) {
-            return self::$globalconfig->{$name};
-
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Makes sure that the global config is loaded in $this->globalconfig
-     *
-     * @return void
-     */
-    protected function load_global_config() {
-        if (is_null(self::$globalconfig)) {
-            self::$globalconfig = get_config('filter_urltolink');
-        }
+        return get_config('filter_urltolink', $name);
     }
 
     /**

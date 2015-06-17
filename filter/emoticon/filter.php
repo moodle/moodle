@@ -33,14 +33,6 @@ defined('MOODLE_INTERNAL') || die();
 class filter_emoticon extends moodle_text_filter {
 
     /**
-     * @var array global configuration for this filter
-     *
-     * This might be eventually moved into parent class if we found it
-     * useful for other filters, too.
-     */
-    protected static $globalconfig;
-
-    /**
      * Apply the filter to the text
      *
      * @see filter_manager::apply_filter_chain()
@@ -77,27 +69,7 @@ class filter_emoticon extends moodle_text_filter {
      * @return string|object|null
      */
     protected function get_global_config($name=null) {
-        $this->load_global_config();
-        if (is_null($name)) {
-            return self::$globalconfig;
-
-        } elseif (array_key_exists($name, self::$globalconfig)) {
-            return self::$globalconfig->{$name};
-
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Makes sure that the global config is loaded in $this->globalconfig
-     *
-     * @return void
-     */
-    protected function load_global_config() {
-        if (is_null(self::$globalconfig)) {
-            self::$globalconfig = get_config(get_class($this));
-        }
+        return get_config(get_class($this), $name);
     }
 
     /**
