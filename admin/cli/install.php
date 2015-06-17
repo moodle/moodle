@@ -286,6 +286,8 @@ if ($options['help']) {
 }
 
 //Print header
+cli_logo();
+echo PHP_EOL;
 echo get_string('cliinstallheader', 'install', $CFG->target_release)."\n";
 
 //Fist select language
