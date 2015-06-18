@@ -25,11 +25,10 @@ define(['jquery',
         'core/notification',
         'core/ajax',
         'core/templates',
-        'tool_lp/dialogue',
         'core/str',
-        'tool_lp/tree',
+        'tool_lp/competencyselector',
         'tool_lp/dragdrop-reorder'],
-       function($, notification, ajax, templates, Dialogue, str, Ariatree, dragdrop) {
+       function($, notification, ajax, templates, str, competencyselector, dragdrop) {
 
     /**
      * Constructor
@@ -41,20 +40,35 @@ define(['jquery',
         this.itemid = itemid;
         this.itemtype = itemtype;
         this.pageContextId = pagectxid;
-        this.selectedCompetency = 0;
-        var localthis = this;
-        var loadframeworks = ajax.call([
-            { methodname: 'tool_lp_list_competency_frameworks', args: {
-                sort: 'shortname',
-                context: {
-                    contextid: this.pageContextId,
-                },
-                includes: 'parents'
-            }}
-        ]);
 
-        loadframeworks[0].done(function(frameworks) {
-            localthis.frameworks = frameworks;
+        var localthis = this;
+        var requests = null;
+        var pagerender = null;
+        var pageregion = null;
+
+        if (itemtype === "course") {
+            requests = [
+                { methodname: 'tool_lp_add_competency_to_course',
+                  args: { courseid: this.itemid } },
+                { methodname: 'tool_lp_data_for_course_competencies_page',
+                  args: { courseid: this.itemid } }
+            ];
+            pagerender = 'tool_lp/course_competencies_page';
+            pageregion = 'coursecompetenciespage';
+
+        } else if (itemtype === "template") {
+            requests = [
+                { methodname: 'tool_lp_add_competency_to_template',
+                    args: { templateid: this.itemid } },
+                { methodname: 'tool_lp_data_for_template_competencies_page',
+                    args: { templateid: this.itemid } }
+            ];
+            pagerender = 'tool_lp/template_competencies_page';
+            pageregion = 'templatecompetenciespage';
+        }
+
+        var promise = competencyselector.init();
+        promise.done(function(frameworks) {
             if (frameworks.length === 0) {
                 templates.render('tool_lp/no_frameworks_warning', {})
                     .done(function(html) {
@@ -66,6 +80,9 @@ define(['jquery',
             $('[data-region="actions"] button').show();
             localthis.registerEvents();
             localthis.registerDragDrop();
+
+            // And we finally attach the callbacks to execute once the user selected a competency to add.
+            competencyselector.setAddCompetencyRequests(requests, pagerender, pageregion);
         }).fail(notification.exception);
     };
 
@@ -128,117 +145,6 @@ define(['jquery',
     };
 
     /**
-     * Get the search text from the input field and reload the tree based on the search.
-     *
-     * @method applyFilter
-     * @param {Event} e The event that triggered the button.
-     */
-    competencies.prototype.applyFilter = function(e) {
-        e.preventDefault();
-        var localthis = this;
-        var searchInput = $('[data-region="filtercompetencies"] input');
-        var searchText = searchInput.val();
-        var framework = $('[data-action="chooseframework"]');
-        var frameworkid = framework.val();
-
-        this.searchCompetencies().done(function (competencies) {
-            var i = 0;
-
-            var framework = localthis.frameworks[0];
-            for (i = 0; i < localthis.frameworks.length; i++) {
-                if (localthis.frameworks[i].id == frameworkid) {
-                    framework = localthis.frameworks[i];
-                    framework.selected = true;
-                } else {
-                    localthis.frameworks[i].selected = false;
-                }
-            }
-            framework.selected = true;
-            var context = {
-                framework: framework,
-                frameworks: localthis.frameworks,
-                competencies: competencies,
-                search: searchText
-            };
-            templates.render('tool_lp/link_competencies', context).done(function(html) {
-                $('[data-region="competencylinktree"]').replaceWith(html);
-                localthis.initLinkCompetencies();
-            }).fail(notification.exception);
-        }).fail(notification.exception);
-    };
-
-    /**
-     * The link course competencies popup was just opened and we need to initialise it.
-     *
-     * @method initLinkCompetencies
-     */
-    competencies.prototype.initLinkCompetencies = function() {
-        var localthis = this;
-
-        new Ariatree('[data-enhance=linktree]', function(target) {
-            localthis.selectedCompetency = target.data('id');
-        });
-
-        $('[data-action="chooseframework"]').change(function(e) {
-            return localthis.applyFilter.call(localthis, e);
-        });
-
-        $('[data-region="filtercompetencies"] button').click(function(e) {
-            $(e.target).attr('disabled', 'disabled');
-            return localthis.applyFilter.call(localthis, e);
-        });
-
-        $('[data-region="competencylinktree"] [data-action="cancel"]').click(function(e) {
-            $(e.target).attr('disabled', 'disabled');
-            e.preventDefault();
-            localthis.popup.close();
-        });
-        $('[data-region="competencylinktree"] [data-action="add"]').click(function(e) {
-            var requests = [],
-                pagerender = '',
-                pageregion = '';
-
-            e.preventDefault();
-            if (!localthis.selectedCompetency) {
-                return;
-            }
-
-            $(e.target).attr('disabled', 'disabled');
-
-            // Add the link and reload the page template.
-            if (localthis.itemtype == 'course') {
-                requests = ajax.call([
-                    { methodname: 'tool_lp_add_competency_to_course',
-                      args: { courseid: localthis.itemid, competencyid: localthis.selectedCompetency } },
-                    { methodname: 'tool_lp_data_for_course_competencies_page',
-                      args: { courseid: localthis.itemid } }
-                ]);
-                pagerender = 'tool_lp/course_competencies_page';
-                pageregion = 'coursecompetenciespage';
-            } else if (localthis.itemtype == 'template') {
-                requests = ajax.call([
-                    { methodname: 'tool_lp_add_competency_to_template',
-                        args: { templateid: localthis.itemid, competencyid: localthis.selectedCompetency } },
-                    { methodname: 'tool_lp_data_for_template_competencies_page',
-                        args: { templateid: localthis.itemid, pagecontext: { contextid: localthis.pageContextId } } }
-                ]);
-                pagerender = 'tool_lp/template_competencies_page';
-                pageregion = 'templatecompetenciespage';
-            } else {
-                return null;
-            }
-
-            requests[1].done(function(context) {
-                templates.render(pagerender, context).done(function(html, js) {
-                    localthis.popup.close();
-                    $('[data-region="' + pageregion + '"]').replaceWith(html);
-                    templates.runTemplateJS(js);
-                }).fail(notification.exception);
-            }).fail(notification.exception);
-        });
-    };
-
-    /**
      * Register the javascript event handlers for this page.
      *
      * @method registerEvents
@@ -246,7 +152,7 @@ define(['jquery',
     competencies.prototype.registerEvents = function() {
         var localthis = this;
         $('[data-region="actions"] button').click(function(e) {
-            return localthis.openCompetencySelector.call(localthis, e);
+            return competencyselector.openCompetencySelector();
         });
         $('[data-action="delete-competency-link"]').click(function(e) {
             var requests = [],
@@ -287,95 +193,5 @@ define(['jquery',
         });
     };
 
-    /**
-     * Turn the flat list of competencies into a tree.
-     *
-     * @method addCompetencyChildren
-     * @param {Object} parent The current parent node
-     * @param {Object[]} competencies The flat list of all nodes.
-     */
-    competencies.prototype.addCompetencyChildren = function(parent, competencies) {
-        var i;
-
-        for (i = 0; i < competencies.length; i++) {
-            if (competencies[i].parentid == parent.id) {
-                parent.haschildren = true;
-                competencies[i].children = [];
-                competencies[i].haschildren = false;
-                parent.children[parent.children.length] = competencies[i];
-                this.addCompetencyChildren(competencies[i], competencies);
-            }
-        }
-    };
-
-    /**
-     * Get the search text from the input, and reload the tree.
-     *
-     * @method searchCompetencies
-     * @return {promise} When resolved it will contain the tree of competencies.
-     */
-    competencies.prototype.searchCompetencies = function() {
-        var localthis = this;
-        var deferred = $.Deferred();
-        var searchInput = $('[data-region="filtercompetencies"] input');
-        var searchText = '';
-        if (searchInput.length) {
-            searchText = searchInput.val();
-        }
-        var framework = $('[data-action="chooseframework"]');
-        var frameworkid = localthis.frameworks[0].id;
-        if (framework.length) {
-            frameworkid = framework.val();
-        }
-
-        var loadcompetencies = ajax.call([
-            { methodname: 'tool_lp_search_competencies', args: { searchtext: searchText, competencyframeworkid: frameworkid } }
-        ]);
-
-        loadcompetencies[0].done(function (competencies) {
-            // Expand the list of competencies into a tree.
-            var i, competenciestree = [];
-            for (i = 0; i < competencies.length; i++) {
-                var onecompetency = competencies[i];
-                if (onecompetency.parentid === "0") {
-                    onecompetency.children = [];
-                    onecompetency.haschildren = 0;
-                    competenciestree[competenciestree.length] = onecompetency;
-                    localthis.addCompetencyChildren(onecompetency, competencies);
-                }
-            }
-            deferred.resolve(competenciestree);
-        }).fail(function (ex) { deferred.reject(ex); });
-
-        return deferred.promise();
-    };
-
-    /**
-     * Open a popup to choose competencies.
-     *
-     * @method openCompetencySelector
-     */
-    competencies.prototype.openCompetencySelector = function(e) {
-        e.preventDefault();
-        var localthis = this;
-
-        this.searchCompetencies().done(function (competencies) {
-            var framework = localthis.frameworks[0];
-            framework.selected = true;
-            var context = { framework: framework, frameworks: localthis.frameworks, competencies: competencies, search: '' };
-            templates.render('tool_lp/link_competencies', context).done(function(html) {
-                str.get_string('linkcompetencies', 'tool_lp').done(function(title) {
-                    localthis.popup = new Dialogue(
-                        title,
-                        html, // The link UI.
-                        function() {
-                            localthis.initLinkCompetencies.call(localthis);
-                        }
-                    );
-                }).fail(notification.exception);
-            }).fail(notification.exception);
-        }).fail(notification.exception);
-    };
-
-    return competencies;
+    return /** @alias module:tool_lp/competencies */ competencies;
 });

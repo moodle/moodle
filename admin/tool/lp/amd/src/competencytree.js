@@ -41,7 +41,8 @@
              methodname: 'tool_lp_search_competencies',
              args: {
                  searchtext: searchtext,
-                 competencyframeworkid: competencyFrameworkId
+                 competencyframeworkid: competencyFrameworkId,
+                 includerelated: true
              }
          }]);
          promises[0].done(function(result) {
@@ -88,6 +89,15 @@
          */
         getCompetency: function(id) {
             return competencies[id];
+        },
+
+        /**
+         * Reload all the page competencies framework competencies.
+         * @method reloadCompetencies
+         * @return {Promise}
+         */
+        reloadCompetencies: function() {
+            return loadCompetencies('').fail(notification.exception);
         },
 
         /**
