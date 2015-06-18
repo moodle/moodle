@@ -784,9 +784,10 @@ class external extends external_api {
     /**
      * Returns the external structure of a full competency record.
      *
+     * @param bool $includerelated Useful to avoid recursive structures.
      * @return \external_single_structure
      */
-    protected static function get_competency_external_structure() {
+    protected static function get_competency_external_structure($includerelated = false) {
         $id = new external_value(
             PARAM_INT,
             'Database record id'
@@ -863,6 +864,15 @@ class external extends external_api {
             'competencyframeworkid' => $competencyframeworkid,
             'path' => $path,
         );
+
+        if ($includerelated) {
+            $returns['relatedcompetencies'] = new external_multiple_structure(
+                self::get_competency_external_structure(false),
+                'Related competencies',
+                VALUE_OPTIONAL
+            );
+        }
+
         return new external_single_structure($returns);
     }
 
@@ -1271,10 +1281,17 @@ class external extends external_api {
             'Competency framework id',
             VALUE_REQUIRED
         );
+        $includerelated = new external_value(
+            PARAM_BOOL,
+            'Include or not related competencies',
+            VALUE_OPTIONAL,
+            false
+        );
 
         $params = array(
             'searchtext' => $searchtext,
-            'competencyframeworkid' => $frameworkid
+            'competencyframeworkid' => $frameworkid,
+            'includerelated' => $includerelated
         );
         return new external_function_parameters($params);
     }
@@ -1290,32 +1307,35 @@ class external extends external_api {
     /**
      * List the existing competency frameworks
      *
-     * @return boolean
-     */
-    /**
-     * List the existing competency frameworks
-     *
      * @param string $searchtext Text to search.
      * @param int $competencyframeworkid Framework id.
      *
      * @return array
      */
-    public static function search_competencies($searchtext, $competencyframeworkid) {
+    public static function search_competencies($searchtext, $competencyframeworkid, $includerelated = false) {
         $params = self::validate_parameters(self::search_competencies_parameters(),
                                             array(
                                                 'searchtext' => $searchtext,
-                                                'competencyframeworkid' => $competencyframeworkid
+                                                'competencyframeworkid' => $competencyframeworkid,
+                                                'includerelated' => $includerelated
                                             ));
 
-        $results = api::search_competencies($searchtext, $competencyframeworkid);
+        $results = api::search_competencies($params['searchtext'], $params['competencyframeworkid'], $params['includerelated']);
         $options = array('context' => context_system::instance());
         $records = array();
         foreach ($results as $result) {
             $record = $result->to_record();
             $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
+            if ($includerelated && !empty($result->relatedcompetencies)) {
+                $record->relatedcompetencies = array();
+                foreach ($result->relatedcompetencies as $relatedcompetency) {
+                    $record->relatedcompetencies[] = $relatedcompetency->to_record();
+                }
+            }
             array_push($records, $record);
         }
-        return $records;
+
+        return external_api::clean_returnvalue(self::search_competencies_returns(), $records);
     }
 
     /**
@@ -1324,7 +1344,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function search_competencies_returns() {
-        return new external_multiple_structure(self::get_competency_external_structure());
+        return new external_multiple_structure(self::get_competency_external_structure(true));
     }
 
     /**
@@ -3694,5 +3714,176 @@ class external extends external_api {
                 )
             )
         );
+    }
+
+    /**
+     * Returns the description of the add_related_competency_parameters() parameters.
+     *
+     * @return external_function_parameters.
+     */
+    public static function add_related_competency_parameters() {
+        $competencyid = new external_value(
+            PARAM_INT,
+            'The competency id',
+            VALUE_REQUIRED
+        );
+        $relatedcompetencyid = new external_value(
+            PARAM_INT,
+            'The related competency id',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'competencyid' => $competencyid,
+            'relatedcompetencyid' => $relatedcompetencyid
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Expose to AJAX
+     *
+     * @return boolean
+     */
+    public static function add_related_competency_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Adds a related competency. 
+     *
+     * @param int $competencyid
+     * @param int $relatedcompetencyid
+     * @return bool
+     */
+    public static function add_related_competency($competencyid, $relatedcompetencyid) {
+        $params = self::validate_parameters(self::add_related_competency_parameters(),
+                                            array(
+                                                'competencyid' => $competencyid,
+                                                'relatedcompetencyid' => $relatedcompetencyid
+                                            ));
+
+        return api::add_related_competency($params['competencyid'], $params['relatedcompetencyid']);
+    }
+
+    /**
+     * Returns description of add_related_competency_returns() result value.
+     *
+     * @return external_description
+     */
+    public static function add_related_competency_returns() {
+        return new external_value(PARAM_BOOL, 'True if successful.');
+    }
+
+    /**
+     * Returns the description of the remove_related_competency_parameters() parameters.
+     *
+     * @return external_function_parameters.
+     */
+    public static function remove_related_competency_parameters() {
+        $competencyid = new external_value(
+            PARAM_INT,
+            'The competency id',
+            VALUE_REQUIRED
+        );
+        $relatedcompetencyid = new external_value(
+            PARAM_INT,
+            'The related competency id',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'competencyid' => $competencyid,
+            'relatedcompetencyid' => $relatedcompetencyid
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Expose to AJAX
+     *
+     * @return boolean
+     */
+    public static function remove_related_competency_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Removes a related competency.
+     *
+     * @param int $competencyid
+     * @param int $relatedcompetencyid
+     * @return bool
+     */
+    public static function remove_related_competency($competencyid, $relatedcompetencyid) {
+        $params = self::validate_parameters(self::remove_related_competency_parameters(),
+                                            array(
+                                                'competencyid' => $competencyid,
+                                                'relatedcompetencyid' => $relatedcompetencyid
+                                            ));
+
+        return api::remove_related_competency($params['competencyid'], $params['relatedcompetencyid']);
+    }
+
+    /**
+     * Returns description of remove_related_competency_returns() result value.
+     *
+     * @return external_description
+     */
+    public static function remove_related_competency_returns() {
+        return new external_value(PARAM_BOOL, 'True if successful.');
+    }
+
+    /**
+     * Returns the description of the data_for_related_competencies_section_parameters() parameters.
+     *
+     * @return external_function_parameters.
+     */
+    public static function data_for_related_competencies_section_parameters() {
+        $competencyid = new external_value(
+            PARAM_INT,
+            'The competency id',
+            VALUE_REQUIRED
+        );
+        return new external_function_parameters(array('competencyid' => $competencyid));
+    }
+
+    /**
+     * Expose to AJAX
+     *
+     * @return boolean
+     */
+    public static function data_for_related_competencies_section_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Data to render in the related competencies section.
+     *
+     * @param int $competencyid
+     * @return array Related competencies and whether to show delete action button or not.
+     */
+    public static function data_for_related_competencies_section($competencyid) {
+        global $PAGE;
+
+        $params = self::validate_parameters(self::data_for_related_competencies_section_parameters(),
+                                            array(
+                                                'competencyid' => $competencyid,
+                                            ));
+
+        $renderable = new \tool_lp\output\related_competencies($params['competencyid']);
+        $renderer = $PAGE->get_renderer('tool_lp');
+
+        return external_api::clean_returnvalue(self::data_for_related_competencies_section_returns(), $renderable->export_for_template($renderer));
+    }
+
+    /**
+     * Returns description of data_for_related_competencies_section_returns() result value.
+     *
+     * @return external_description
+     */
+    public static function data_for_related_competencies_section_returns() {
+        return new external_single_structure(array(
+            'relatedcompetencies' => new external_multiple_structure(self::get_competency_external_structure(true)),
+            'showdeleterelatedaction' => new external_value(PARAM_BOOL, 'Whether to show the delete relation link or not')
+        ));
     }
 }

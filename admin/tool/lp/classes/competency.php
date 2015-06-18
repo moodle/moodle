@@ -277,7 +277,7 @@ class competency extends persistent {
         // Convert to instances of this class.
         foreach ($records as $record) {
             $newrecord = new static(0, $record);
-            array_push($instances, $newrecord);
+            $instances[$newrecord->get_id()] = $newrecord;
         }
         return $instances;
     }

@@ -100,12 +100,24 @@ class renderer extends plugin_renderer_base {
 
     /**
      * Defer to template.
-     * @param plans_page $page
      *
+     * @param plans_page $page
      * @return bool|string
      */
     public function render_plans_page(plans_page $page) {
         $data = $page->export_for_template($this);
         return parent::render_from_template('tool_lp/plans_page', $data);
     }
+
+    /**
+     * Defer to template.
+     *
+     * @param renderable $page
+     * @return string
+     */
+    public function render_related_competencies_section(renderable $page) {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('tool_lp/related_competencies', $data);
+    }
+
 }

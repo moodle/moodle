@@ -231,9 +231,10 @@ class api {
      * Requires tool/lp:competencyread capability at the system context.
      *
      * @param int $id The id of the competency to read.
+     * @param bool $includerelated Include related tags or not.
      * @return stdClass
      */
-    public static function read_competency($id) {
+    public static function read_competency($id, $includerelated = false) {
         $competency = new competency($id);
 
         // First we do a permissions check.
@@ -243,6 +244,13 @@ class api {
         }
 
         // OK - all set.
+        if ($includerelated) {
+            $relatedcompetency = new related_competency();
+            if ($related = $relatedcompetency->list_relations($id)) {
+                $competency->relatedcompetencies = $related;
+            }
+        }
+
         return $competency;
     }
 
@@ -253,9 +261,10 @@ class api {
      *
      * @param string $textsearch A string to search for.
      * @param int $competencyframeworkid The id of the framework to limit the search.
+     * @param bool $includerelated Include related tags or not.
      * @return array of competencies
      */
-    public static function search_competencies($textsearch, $competencyframeworkid) {
+    public static function search_competencies($textsearch, $competencyframeworkid, $includerelated = false) {
         $framework = new competency_framework($competencyframeworkid);
 
         // First we do a permissions check.
@@ -265,7 +274,18 @@ class api {
         }
 
         // OK - all set.
-        return competency::search($textsearch, $competencyframeworkid);
+        $competencies = competency::search($textsearch, $competencyframeworkid);
+
+        if ($includerelated && $competencies) {
+            // Getting all competencies ids to send a single DB query.
+            $relatedcompetency = new related_competency();
+            $relations = $relatedcompetency->list_relations_many(array_keys($competencies));
+            foreach ($relations as $competencyid => $relatedcompetencies) {
+                $competencies[$competencyid]->relatedcompetencies = $relatedcompetencies;
+            }
+        }
+
+        return $competencies;
     }
 
     /**
@@ -1252,5 +1272,77 @@ class api {
         }
 
         return $plan->delete();
+    }
+
+    /**
+     * List all the related competencies.
+     *
+     * @param int $competencyid The id of the competency to check.
+     * @return competency[]
+     */
+    public static function list_related_competencies($competencyid) {
+
+        require_capability('tool/lp:competencymanage', context_system::instance());
+
+        // OK - all set.
+        $competency = new related_competency();
+        return $competency->list_relations($competencyid);
+    }
+
+    /**
+     * Add a related competency.
+     *
+     * @param int $competencyid The id of the competency
+     * @param int $relatedcompetencyid The id of the related competency.
+     * @return bool
+     */
+    public static function add_related_competency($competencyid, $relatedcompetencyid) {
+
+        require_capability('tool/lp:competencymanage', context_system::instance());
+
+        $record = new stdClass();
+        $record->competencyid = $competencyid;
+        $record->relatedcompetencyid = $relatedcompetencyid;
+
+        // Using set_id as the constructor queries the DB.
+        $competency = new competency();
+        $competency->set_id($competencyid);
+        if (!$competency->read()) {
+            throw new moodle_exception('errornocompetency', 'tool_lp', $competencyid);
+        }
+        $relatedcompetency = new competency();
+        $relatedcompetency->set_id($relatedcompetencyid);
+        if (!$relatedcompetency->read()) {
+            throw new moodle_exception('errornocompetency', 'tool_lp', $relatedcompetencyid);
+        }
+
+        $relatedcompetency = new related_competency();
+        $exists = $relatedcompetency->load_relation($competencyid, $relatedcompetencyid);
+        if (!$exists) {
+            return $relatedcompetency->create();
+        }
+        return false;
+    }
+
+    /**
+     * Remove a related competency.
+     *
+     * @param int $competencyid The id of the competency.
+     * @param int $relatedcompetencyid The id of the related competency.
+     * @return bool
+     */
+    public static function remove_related_competency($competencyid, $relatedcompetencyid) {
+
+        require_capability('tool/lp:competencymanage', context_system::instance());
+
+        $record = new stdClass();
+        $record->competencyid = $competencyid;
+        $record->relatedcompetencyid = $relatedcompetencyid;
+
+        $relatedcompetency = new related_competency();
+        if (!$relatedcompetency->load_relation($competencyid, $relatedcompetencyid)) {
+            return false;
+        }
+        return $relatedcompetency->delete();
     }
 }

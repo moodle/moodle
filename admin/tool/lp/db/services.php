@@ -371,6 +371,31 @@ $functions = array(
         'description'  => 'Fetch the values for a specific scale',
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencymanage',
-    )
+    ),
+    'tool_lp_add_related_competency' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'add_related_competency',
+        'classpath'   => '',
+        'description' => 'Adds a related competency',
+        'type'        => 'write',
+        'capabilities'=> 'tool/lp:competencymanage',
+    ),
+    'tool_lp_remove_related_competency' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'remove_related_competency',
+        'classpath'   => '',
+        'description' => 'Remove a related competency',
+        'type'        => 'write',
+        'capabilities'=> 'tool/lp:competencymanage',
+    ),
+    'tool_lp_data_for_related_competencies_section' => array(
+        'classname'   => 'tool_lp\external',
+        'methodname'  => 'data_for_related_competencies_section',
+        'classpath'   => '',
+        'description' => 'Load the data for the related competencies template.',
+        'type'        => 'read',
+        'capabilities'=> 'tool/lp:competencyread',
+    ),
+
 );
 
