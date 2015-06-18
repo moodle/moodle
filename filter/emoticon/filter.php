@@ -48,7 +48,7 @@ class filter_emoticon extends moodle_text_filter {
             // be stripped. therefore, we do nothing
             return $text;
         }
-        if (in_array($options['originalformat'], explode(',', $this->get_global_config('formats')))) {
+        if (in_array($options['originalformat'], explode(',', get_config('filter_emoticon', 'formats')))) {
             $this->replace_emoticons($text);
         }
         return $text;
@@ -57,20 +57,6 @@ class filter_emoticon extends moodle_text_filter {
     ////////////////////////////////////////////////////////////////////////////
     // internal implementation starts here
     ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Returns the global filter setting
-     *
-     * If the $name is provided, returns single value. Otherwise returns all
-     * global settings in object. Returns null if the named setting is not
-     * found.
-     *
-     * @param mixed $name optional config variable name, defaults to null for all
-     * @return string|object|null
-     */
-    protected function get_global_config($name=null) {
-        return get_config(get_class($this), $name);
-    }
 
     /**
      * Replace emoticons found in the text with their images

@@ -49,6 +49,14 @@ class core_weblib_format_text_testcase extends advanced_testcase {
     }
 
     public function test_format_text_format_plain() {
+        // Note FORMAT_PLAIN does not filter ever, no matter we ask for filtering.
+        $this->resetAfterTest();
+        filter_set_global_state('emoticon', TEXTFILTER_ON);
+        $this->assertEquals(':-)',
+                format_text(':-)', FORMAT_PLAIN));
+    }
+
+    public function test_format_text_format_plain_no_filters() {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals(':-)',

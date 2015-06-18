@@ -233,7 +233,8 @@ class filter_manager {
     }
 
     /**
-     * @deprecated Since Moodle 3.0. This was used by the old text filtering system, but no more.
+     * @deprecated Since Moodle 3.0 MDL-50491. This was used by the old text filtering system, but no more.
+     * @todo MDL-50632 This will be deleted in Moodle 3.2.
      * @param context $context the context.
      * @return string the hash.
      */
@@ -385,7 +386,8 @@ abstract class moodle_text_filter {
     }
 
     /**
-     * @deprecated Since Moodle 3.0. This was used by the old text filtering system, but no more.
+     * @deprecated Since Moodle 3.0 MDL-50491. This was used by the old text filtering system, but no more.
+     * @todo MDL-50632 This will be deleted in Moodle 3.2.
      * @return string The class name of the current class
      */
     public function hash() {
