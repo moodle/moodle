@@ -66,6 +66,12 @@ function xmldb_enrol_manual_upgrade($oldversion) {
     // Moodle v2.9.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2015091500) {
+        // We keep today as default enrolment start time on upgrades.
+        set_config('enrolstart', 3, 'enrol_manual');
+        upgrade_plugin_savepoint(true, 2015091500, 'enrol', 'manual');
+    }
+
     return true;
 }
 

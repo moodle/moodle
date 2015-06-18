@@ -608,7 +608,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                 value : 0
             },
             defaultStartDate : {
-                value : 3,
+                value : 4,
                 validator : Y.Lang.isNumber
             },
             defaultDuration : {

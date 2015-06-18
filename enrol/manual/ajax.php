@@ -128,9 +128,19 @@ switch ($action) {
             $roleid = null;
         }
 
+        if (empty($startdate)) {
+            if (!$startdate = get_config('enrol_manual', 'enrolstart')) {
+                // Default to now if there is no system setting.
+                $startdate = 4;
+            }
+        }
+
         switch($startdate) {
             case 2:
                 $timestart = $course->startdate;
+                break;
+            case 4:
+                $timestart = time();
                 break;
             case 3:
             default:
