@@ -67,6 +67,10 @@
     list-style: circle;
 }
 
+.path-mod-book .book_toc_bullets li li:before {
+    display: none;
+}
+
 /* toc style INDENTED*/
 .path-mod-book .book_toc_indented {
   font-size: 0.8em;
