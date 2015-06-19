@@ -205,32 +205,32 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
             M.util.show_confirm_dialog(e, dialog_options);
         }
     } else if (chunks.length == 4 && action == 'duplicate') {
-        // DUPLICATE CRITERION
-        var levelsdef = [], levelsscores = [0], levidx = 1;
+        // Duplicate criterion.
+        var levelsdef = [], levelsscores = [0], levidx = null;
         var parentel = Y.one('#'+name+'-criteria');
         if (parentel.one('>tbody')) { parentel = parentel.one('>tbody'); }
 
         var source = Y.one('#'+name+'-criteria-'+chunks[2]);
         if (source.all('.level')) {
             var lastcriterion = source.all('.level');
-            for (levidx=0;levidx<lastcriterion.size();levidx++) {
+            for (levidx = 0; levidx < lastcriterion.size(); levidx++) {
                 levelsdef[levidx] = lastcriterion.item(levidx).one('.definition .textvalue').get('innerHTML');
             }
-            for (levidx=0;levidx<lastcriterion.size();levidx++) {
+            for (levidx = 0; levidx < lastcriterion.size(); levidx++) {
                 levelsscores[levidx] = lastcriterion.item(levidx).one('.score input[type=text]').get('value');
             }
         }
 
-        for (levidx;levidx<3;levidx++) { levelsscores[levidx] = parseFloat(levelsscores[levidx-1]) + 1; }
+        for (levidx; levidx < 3; levidx++) { levelsscores[levidx] = parseFloat(levelsscores[levidx-1]) + 1; }
         var levelsstr = '';
-        for (levidx=0;levidx<levelsscores.length;levidx++) {
-            levelsstr += M.gradingform_rubriceditor.templates[name]['level']
+        for (levidx = 0; levidx < levelsscores.length; levidx++) {
+            levelsstr += M.gradingform_rubriceditor.templates[name].level
                             .replace(/\{LEVEL-id\}/g, 'NEWID'+(newlevid+levidx))
                             .replace(/\{LEVEL-score\}/g, levelsscores[levidx])
                             .replace(/\{LEVEL-definition\}/g, Y.Escape.html(levelsdef[levidx]));
         }
         var description = source.one('.description .textvalue');
-        var newcriterion = M.gradingform_rubriceditor.templates[name]['criterion']
+        var newcriterion = M.gradingform_rubriceditor.templates[name].criterion
                                 .replace(/\{LEVELS\}/, levelsstr)
                                 .replace(/\{CRITERION-description\}/, Y.Escape.html(description.get('innerHTML')));
         parentel.append(newcriterion.replace(/\{CRITERION-id\}/g, 'NEWID'+newid).replace(/\{.+?\}/g, ''));
