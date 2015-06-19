@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['archive'] = 'Older course history';
 $string['archivecutofflabel'] = 'Number of days for archive';
 $string['archivecutoffdesc'] = 'This sets the number of days after which a course is moved to the archive listing.';
 $string['archivetitle'] = 'Archive courses';
