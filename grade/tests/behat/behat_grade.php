@@ -107,7 +107,9 @@ class behat_grade extends behat_base {
         $steps[] = new Given('I click on "' . $this->escape($linkxpath) . '" "xpath_element"');
 
         // After adding id numbers we should wait until the page is reloaded.
-        $steps[] = new Given('I wait until the page is ready');
+        if ($this->running_javascript()) {
+            $steps[] = new Given('I wait until the page is ready');
+        }
 
         // Mapping names to idnumbers.
         $datahash = $data->getRowsHash();
@@ -116,8 +118,8 @@ class behat_grade extends behat_base {
             // Grrr, we can't equal in categoryitem and courseitem because there is a line jump...
             $inputxpath ="//input[@class='idnumber'][" .
                 "parent::li[@class='item'][text()='" . $gradeitem . "']" .
-                " | " .
-                "parent::li[@class='categoryitem' | @class='courseitem']/parent::ul/parent::li[starts-with(text(),'" . $gradeitem . "')]" .
+                " or " .
+                "parent::li[@class='categoryitem' or @class='courseitem']/parent::ul/parent::li[starts-with(text(),'" . $gradeitem . "')]" .
             "]";
             $steps[] = new Given('I set the field with xpath "' . $inputxpath . '" to "' . $idnumber . '"');
         }
@@ -125,7 +127,9 @@ class behat_grade extends behat_base {
         $steps[] = new Given('I press "' . get_string('addidnumbers', 'grades') . '"');
 
         // After adding id numbers we should wait until the page is reloaded.
-        $steps[] = new Given('I wait until the page is ready');
+        if ($this->running_javascript()) {
+            $steps[] = new Given('I wait until the page is ready');
+        }
 
         $steps[] = new Given('I set the field "' . get_string('calculation', 'grades') . '" to "' . $calculation . '"');
         $steps[] = new Given('I press "' . $savechanges . '"');
