@@ -530,3 +530,38 @@ function upgrade_mimetypes($filetypes) {
         );
     }
 }
+
+/**
+ * Marks all courses with changes in extra credit weight calculation
+ *
+ * Used during upgrade and in course restore process
+ *
+ * This upgrade script is needed because we changed the algorithm for calculating the automatic weights of extra
+ * credit items and want to prevent changes in the existing student grades.
+ *
+ * @param int $onlycourseid
+ */
+function upgrade_extra_credit_weightoverride($onlycourseid = 0) {
+    global $DB;
+
+    // Find all courses that have categories in Natural aggregation method where there is at least one extra credit
+    // item and at least one item with overridden weight.
+    $courses = $DB->get_fieldset_sql(
+        "SELECT DISTINCT gc.courseid
+          FROM {grade_categories} gc
+          INNER JOIN {grade_items} gi ON gc.id = gi.categoryid AND gi.weightoverride = :weightoverriden
+          INNER JOIN {grade_items} gie ON gc.id = gie.categoryid AND gie.aggregationcoef = :extracredit
+          WHERE gc.aggregation = :naturalaggmethod" . ($onlycourseid ? " AND gc.courseid = :onlycourseid" : ''),
+        array('naturalaggmethod' => 13,
+            'weightoverriden' => 1,
+            'extracredit' => 1,
+            'onlycourseid' => $onlycourseid,
+        )
+    );
+    foreach ($courses as $courseid) {
+        $gradebookfreeze = get_config('core', 'gradebook_calculations_freeze_' . $courseid);
+        if (!$gradebookfreeze) {
+            set_config('gradebook_calculations_freeze_' . $courseid, 20150619);
+        }
+    }
+}
