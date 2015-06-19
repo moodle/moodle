@@ -565,3 +565,99 @@ function upgrade_extra_credit_weightoverride($onlycourseid = 0) {
         }
     }
 }
+
+/**
+ * Marks all courses that require calculated grade items be updated.
+ *
+ * Used during upgrade and in course restore process.
+ *
+ * This upgrade script is needed because the calculated grade items were stuck with a maximum of 100 and could be changed.
+ * This flags the courses that are affected and the grade book is frozen to retain grade integrity.
+ *
+ * @param int $courseid Specify a course ID to run this script on just one course.
+ */
+function upgrade_calculated_grade_items($courseid = null) {
+    global $DB, $CFG;
+
+    $affectedcourses = array();
+    $possiblecourseids = array();
+    $params = array();
+    $singlecoursesql = '';
+    if (isset($courseid)) {
+        $singlecoursesql = "AND ns.id = :courseid";
+        $params['courseid'] = $courseid;
+    }
+    $siteminmaxtouse = $CFG->grade_minmaxtouse;
+    $courseidsql = "SELECT ns.id
+                      FROM (
+                        SELECT c.id, coalesce(gs.value, :siteminmax) AS gradevalue
+                          FROM {course} c
+                          LEFT JOIN {grade_settings} gs
+                            ON c.id = gs.courseid
+                           AND ((gs.name = 'minmaxtouse' AND gs.value = '2'))
+                        ) ns
+                    WHERE ns.gradevalue = '2' $singlecoursesql";
+    $params['siteminmax'] = $siteminmaxtouse;
+    $courses = $DB->get_records_sql($courseidsql, $params);
+    foreach ($courses as $course) {
+        $possiblecourseids[$course->id] = $course->id;
+    }
+
+    if (!empty($possiblecourseids)) {
+        list($sql, $params) = $DB->get_in_or_equal($possiblecourseids);
+        // A calculated grade item grade min != 0 and grade max != 100 and the course setting is set to
+        // "Initial min and max grades".
+        $coursesql = "SELECT DISTINCT courseid
+                        FROM {grade_items}
+                       WHERE calculation IS NOT NULL
+                         AND itemtype = 'manual'
+                         AND (grademax <> 100 OR grademin <> 0)
+                         AND courseid $sql";
+        $affectedcourses = $DB->get_records_sql($coursesql, $params);
+    }
+
+    // Check for second type of affected courses.
+    // If we already have the courseid parameter set in the affectedcourses then there is no need to run through this section.
+    if (!isset($courseid) || !in_array($courseid, $affectedcourses)) {
+        $singlecoursesql = '';
+        $params = array();
+        if (isset($courseid)) {
+            $singlecoursesql = "AND courseid = :courseid";
+            $params['courseid'] = $courseid;
+        }
+        $nestedsql = "SELECT id
+                        FROM {grade_items}
+                       WHERE itemtype = 'category'
+                         AND calculation IS NOT NULL $singlecoursesql";
+        $calculatedgradecategories = $DB->get_records_sql($nestedsql, $params);
+        $categoryids = array();
+        foreach ($calculatedgradecategories as $key => $gradecategory) {
+            $categoryids[$key] = $gradecategory->id;
+        }
+
+        if (!empty($categoryids)) {
+            list($sql, $params) = $DB->get_in_or_equal($categoryids);
+            // A category with a calculation where the raw grade min and the raw grade max don't match the grade min and grade max
+            // for the category.
+            $coursesql = "SELECT DISTINCT gi.courseid
+                            FROM {grade_grades} gg, {grade_items} gi
+                           WHERE gi.id = gg.itemid
+                             AND (gg.rawgrademax <> gi.grademax OR gg.rawgrademin <> gi.grademin)
+                             AND gi.id $sql";
+            $additionalcourses = $DB->get_records_sql($coursesql, $params);
+            foreach ($additionalcourses as $key => $additionalcourse) {
+                if (!array_key_exists($key, $affectedcourses)) {
+                    $affectedcourses[$key] = $additionalcourse;
+                }
+            }
+        }
+    }
+
+    foreach ($affectedcourses as $courseid) {
+        // Check to see if the gradebook freeze is already in affect.
+        $gradebookfreeze = get_config('core', 'gradebook_calculations_freeze_' . $courseid->courseid);
+        if (!$gradebookfreeze) {
+            set_config('gradebook_calculations_freeze_' . $courseid->courseid, 20150627);
+        }
+    }
+}
