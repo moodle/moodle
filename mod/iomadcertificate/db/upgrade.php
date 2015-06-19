@@ -500,5 +500,15 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
         upgrade_mod_savepoint(true, 2014110701, 'iomadcertificate');
     }
 
+    if ($oldversion < 2015061800) {
+        $systemcontext = context_system::instance();
+        if ($authenticateduserrole = $DB->get_record('role', array('shortname' => 'authenticateduser'))) {
+            assign_capability( 'mod/iomadcertificate:view', CAP_ALLOW, $authenticateduserrole->id, $systemcontext->id );
+        }
+
+        // Certificate savepoint reached
+        upgrade_mod_savepoint(true, 2015061800, 'iomadcertificate');
+    }
+
     return true;
 }

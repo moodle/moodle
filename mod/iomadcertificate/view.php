@@ -53,7 +53,9 @@ if (!$iomadcertificate = $DB->get_record('iomadcertificate', array('id'=> $cm->i
 
 // IOMAD - If has ability to view completion reports should be able to see the certificates
 if (!has_capability('local/report_completion:view',context_system::instance())) {
-    require_login($course->id, true, $cm);
+    if ($USER->id != $userid) {
+        require_login($course->id, true, $cm);
+    }
 }
 
 $context = context_module::instance($cm->id);
