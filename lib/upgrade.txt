@@ -6,6 +6,15 @@ information provided here is intended especially for developers.
 * \core\progress\null is renamed to \core\progress\none for improved PHP7 compatibility as null is a reserved word (see MDL-50453).
 * \webservice_xmlrpc_client now respects proxy server settings. If your XMLRPC server is available on your local network and not via your proxy server, you may need to add it to the list of proxy
   server exceptions in $CFG->proxybypass. See MDL-39353 for details.
+* Group and groupings idnumbers can now be passed to and/or are returned from the following web services functions:
+  ** core_group_external::create_groups
+  ** core_group_external::get_groups
+  ** core_group_external::get_course_groups
+  ** core_group_external::create_groupings
+  ** core_group_external::update_groupings
+  ** core_group_external::get_groupings
+  ** core_group_external::get_course_groupings
+  ** core_group_external::get_course_user_groups
 
 === 2.9.1 ===
 

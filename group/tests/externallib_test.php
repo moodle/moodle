@@ -50,6 +50,7 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $group1['description'] = 'Group Test 1 description';
         $group1['descriptionformat'] = FORMAT_MOODLE;
         $group1['enrolmentkey'] = 'Test group enrol secret phrase';
+        $group1['idnumber'] = 'TEST1';
         $group2 = array();
         $group2['courseid'] = $course->id;
         $group2['name'] = 'Group Test 2';
@@ -58,6 +59,11 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $group3['courseid'] = $course->id;
         $group3['name'] = 'Group Test 3';
         $group3['description'] = 'Group Test 3 description';
+        $group3['idnumber'] = 'TEST1';
+        $group4 = array();
+        $group4['courseid'] = $course->id;
+        $group4['name'] = 'Group Test 4';
+        $group4['description'] = 'Group Test 4 description';
 
         // Set the required capabilities by the external function
         $context = context_course::instance($course->id);
@@ -80,6 +86,7 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
                     $groupcourseid = $group1['courseid'];
                     $this->assertEquals($dbgroup->descriptionformat, $group1['descriptionformat']);
                     $this->assertEquals($dbgroup->enrolmentkey, $group1['enrolmentkey']);
+                    $this->assertEquals($dbgroup->idnumber, $group1['idnumber']);
                     break;
                 case $group2['name']:
                     $groupdescription = $group2['description'];
@@ -93,10 +100,19 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
             $this->assertEquals($dbgroup->courseid, $groupcourseid);
         }
 
+        try {
+            $froups = core_group_external::create_groups(array($group3));
+            $this->fail('Exception expected due to already existing idnumber.');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('invalid_parameter_exception', $e);
+            $this->assertEquals('Invalid parameter value detected (Group with the same idnumber already exists)',
+                $e->getMessage());
+        }
+
         // Call without required capability
         $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
         $this->setExpectedException('required_capability_exception');
-        $froups = core_group_external::create_groups(array($group3));
+        $froups = core_group_external::create_groups(array($group4));
     }
 
     /**
@@ -114,6 +130,7 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $group1data['description'] = 'Group Test 1 description';
         $group1data['descriptionformat'] = FORMAT_MOODLE;
         $group1data['enrolmentkey'] = 'Test group enrol secret phrase';
+        $group1data['idnumber'] = 'TEST1';
         $group2data = array();
         $group2data['courseid'] = $course->id;
         $group2data['name'] = 'Group Test 2';
@@ -142,6 +159,7 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
                     $groupcourseid = $group1->courseid;
                     $this->assertEquals($dbgroup->descriptionformat, $group1->descriptionformat);
                     $this->assertEquals($dbgroup->enrolmentkey, $group1->enrolmentkey);
+                    $this->assertEquals($dbgroup->idnumber, $group1->idnumber);
                     break;
                 case $group2->name:
                     $groupdescription = $group2->description;
@@ -207,6 +225,67 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $this->unassignUserCapability('moodle/course:managegroups', $context->id, $roleid);
         $this->setExpectedException('required_capability_exception');
         $froups = core_group_external::delete_groups(array($group3->id));
+    }
+
+    /**
+     * Test create and update groupings.
+     * @return void
+     */
+    public function test_create_update_groupings() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+
+        $grouping1data = array();
+        $grouping1data['courseid'] = $course->id;
+        $grouping1data['name'] = 'Grouping 1 Test';
+        $grouping1data['description'] = 'Grouping 1 Test description';
+        $grouping1data['descriptionformat'] = FORMAT_MOODLE;
+        $grouping1data['idnumber'] = 'TEST';
+
+        $grouping1 = self::getDataGenerator()->create_grouping($grouping1data);
+
+        $grouping1data['name'] = 'Another group';
+
+        try {
+            $groupings = core_group_external::create_groupings(array($grouping1data));
+            $this->fail('Exception expected due to already existing idnumber.');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('invalid_parameter_exception', $e);
+            $this->assertEquals('Invalid parameter value detected (Grouping with the same idnumber already exists)',
+                $e->getMessage());
+        }
+
+        // No exception should be triggered.
+        $grouping1data['id'] = $grouping1->id;
+        $grouping1data['idnumber'] = 'CHANGED';
+        unset($grouping1data['courseid']);
+        core_group_external::update_groupings(array($grouping1data));
+
+        $grouping2data = array();
+        $grouping2data['courseid'] = $course->id;
+        $grouping2data['name'] = 'Grouping 2 Test';
+        $grouping2data['description'] = 'Grouping 2 Test description';
+        $grouping2data['descriptionformat'] = FORMAT_MOODLE;
+        $grouping2data['idnumber'] = 'TEST';
+
+        $grouping2 = self::getDataGenerator()->create_grouping($grouping2data);
+
+        $grouping2data['id'] = $grouping2->id;
+        $grouping2data['idnumber'] = 'CHANGED';
+        unset($grouping2data['courseid']);
+        try {
+            $groupings = core_group_external::update_groupings(array($grouping2data));
+            $this->fail('Exception expected due to already existing idnumber.');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('invalid_parameter_exception', $e);
+            $this->assertEquals('Invalid parameter value detected (A different grouping with the same idnumber already exists)',
+                $e->getMessage());
+        }
     }
 
     /**
@@ -313,6 +392,7 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $group1data['courseid'] = $course->id;
         $group1data['name'] = 'Group Test 1';
         $group1data['description'] = 'Group Test 1 description';
+        $group1data['idnumber'] = 'TEST1';
         $group2data = array();
         $group2data['courseid'] = $course->id;
         $group2data['name'] = 'Group Test 2';
@@ -339,6 +419,7 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertEquals($group1data['name'], $groups['groups'][0]['name']);
         $this->assertEquals($group1data['description'], $groups['groups'][0]['description']);
+        $this->assertEquals($group1data['idnumber'], $groups['groups'][0]['idnumber']);
 
         $this->setUser($teacher);
         $groups = core_group_external::get_course_user_groups($course->id, $student1->id);
@@ -372,5 +453,4 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $groups['warnings']);
 
     }
-
 }
