@@ -88,6 +88,9 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
     if (!isset($user->trackforums)) {
         $user->trackforums = $CFG->defaultpreference_trackforums;
     }
+    if (!isset($user->lang)) {
+        $user->lang = $CFG->lang;
+    }
 
     $user->timecreated = time();
     $user->timemodified = $user->timecreated;
