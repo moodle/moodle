@@ -4841,10 +4841,12 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
 
     // Cleanup the rest of plugins.
     $cleanuplugintypes = array('report', 'coursereport', 'format');
+    $callbacks = get_plugins_with_function('delete_course', 'lib.php');
     foreach ($cleanuplugintypes as $type) {
-        $plugins = get_plugin_list_with_function($type, 'delete_course', 'lib.php');
-        foreach ($plugins as $plugin => $pluginfunction) {
-            $pluginfunction($course->id, $showfeedback);
+        if (!empty($callbacks[$type])) {
+            foreach ($callbacks[$type] as $pluginfunction) {
+                $pluginfunction($course->id, $showfeedback);
+            }
         }
         if ($showfeedback) {
             echo $OUTPUT->notification($strdeleted.get_string('type_'.$type.'_plural', 'plugin'), 'notifysuccess');

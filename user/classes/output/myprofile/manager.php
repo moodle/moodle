@@ -69,13 +69,13 @@ class manager {
         }
 
         // Plugins.
-        $types = \core_component::get_plugin_types();
-        foreach ($types as $type => $dir) {
-            $pluginlist = get_plugin_list_with_function($type, "myprofile_navigation", "lib.php");
-            foreach ($pluginlist as $function) {
+        $pluginswithfunction = get_plugins_with_function('myprofile_navigation', 'lib.php');
+        foreach ($pluginswithfunction as $plugins) {
+            foreach ($plugins as $function) {
                 $function($tree, $user, $iscurrentuser, $course);
             }
         }
+
         $tree->sort_categories();
         return $tree;
     }
