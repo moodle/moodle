@@ -986,6 +986,13 @@ class backup_gradebook_structure_step extends backup_structure_step {
         $gradebook->add_child($grade_settings);
         $grade_settings->add_child($grade_setting);
 
+        // Add attribute with gradebook calculation freeze date if needed.
+        $gradebookcalculationfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->get_courseid());
+        if ($gradebookcalculationfreeze) {
+            $gradebook->add_attributes(array('calculations_freeze'));
+            $gradebook->get_attribute('calculations_freeze')->set_value($gradebookcalculationfreeze);
+        }
+
         // Define sources
 
         //Include manual, category and the course grade item

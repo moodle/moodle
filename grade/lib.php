@@ -516,6 +516,15 @@ function hide_aggregatesubcats_upgrade_notice($courseid) {
 }
 
 /**
+ * Hide warning about changed grades due to bug fixes
+ *
+ * @param int $courseid The current course id.
+ */
+function hide_gradebook_calculations_freeze_notice($courseid) {
+    unset_config('gradebook_calculations_freeze_' . $courseid);
+}
+
+/**
  * Print warning about changed grades during upgrade to 2.8.
  *
  * @param int $courseid The current course id.
@@ -546,6 +555,9 @@ function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage
     $useminmaxfromgradegrade = optional_param('useminmaxfromgradegrade', false, PARAM_BOOL) && confirm_sesskey();
 
     $minmaxtouse = grade_get_setting($courseid, 'minmaxtouse', $CFG->grade_minmaxtouse);
+
+    $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $courseid);
+    $acceptgradebookchanges = optional_param('acceptgradebookchanges', false, PARAM_BOOL) && confirm_sesskey();
 
     // Hide the warning if the user told it to go away.
     if ($hidenaturalwarning) {
@@ -638,6 +650,39 @@ function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage
 
             $html .= $OUTPUT->notification($message, 'notifywarning');
             $html .= $fixbutton . $hideminmaxbutton;
+        }
+    }
+
+    if ($gradebookcalculationsfreeze) {
+        if ($acceptgradebookchanges) {
+            // Accept potential changes in grades caused by extra credit bug MDL-49257.
+            hide_gradebook_calculations_freeze_notice($courseid);
+            $courseitem = grade_item::fetch_course_item($courseid);
+            $courseitem->force_regrading();
+            grade_regrade_final_grades($courseid);
+
+            $html .= $OUTPUT->notification(get_string('gradebookcalculationsuptodate', 'grades'), 'notifysuccess');
+        } else {
+            // Show the warning that there may be extra credit weights problems.
+            $a = new stdClass();
+            $a->gradebookversion = $gradebookcalculationsfreeze;
+            if (preg_match('/(\d{8,})/', $CFG->release, $matches)) {
+                $a->currentversion = $matches[1];
+            } else {
+                $a->currentversion = $CFG->release;
+            }
+            $a->url = get_docs_url('Gradebook_calculations_changes');
+            $message = get_string('gradebookcalculationswarning', 'grades', $a);
+
+            $fixmessage = get_string('gradebookcalculationsfixbutton', 'grades');
+            $urlparams = array('id' => $courseid,
+                'acceptgradebookchanges' => true,
+                'sesskey' => sesskey());
+            $fixurl = new moodle_url($thispage, $urlparams);
+            $fixbutton = $OUTPUT->single_button($fixurl, $fixmessage, 'get');
+
+            $html .= $OUTPUT->notification($message, 'notifywarning');
+            $html .= $fixbutton;
         }
     }
 

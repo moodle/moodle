@@ -138,6 +138,18 @@ class restore_gradebook_structure_step extends restore_structure_step {
     }
 
     protected function process_gradebook($data) {
+        // For non-merge restore types:
+        // Unset 'gradebook_calculations_freeze_' in the course and replace with the one from the backup.
+        $target = $this->get_task()->get_target();
+        if ($target == backup::TARGET_CURRENT_DELETING || $target == backup::TARGET_EXISTING_DELETING) {
+            set_config('gradebook_calculations_freeze_' . $this->get_courseid(), null);
+        }
+        if (!empty($data['calculations_freeze']) && $this->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
+            if ($target == backup::TARGET_NEW_COURSE || $target == backup::TARGET_CURRENT_DELETING ||
+                    $target == backup::TARGET_EXISTING_DELETING) {
+                set_config('gradebook_calculations_freeze_' . $this->get_courseid(), $data['calculations_freeze']);
+            }
+        }
     }
 
     protected function process_grade_item($data) {
@@ -447,8 +459,23 @@ class restore_gradebook_structure_step extends restore_structure_step {
         }
         $rs->close();
 
+        // Freeze gradebook calculations if needed.
+        $this->gradebook_calculation_freeze();
+
         // Restore marks items as needing update. Update everything now.
         grade_regrade_final_grades($this->get_courseid());
+    }
+
+    /**
+     * Freeze gradebook calculation if needed.
+     *
+     * This is similar to various upgrade scripts that check if the freeze is needed.
+     */
+    protected function gradebook_calculation_freeze() {
+        global $CFG;
+        $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->get_courseid());
+        preg_match('/(\d{8})/', $this->get_task()->get_info()->moodle_release, $matches);
+        $backupbuild = (int)$matches[1];
     }
 }
 
