@@ -4094,5 +4094,25 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014111006.05);
     }
 
+    if ($oldversion < 2014111006.08) {
+        // MDL-49257. Changed the algorithm of calculating automatic weights of extra credit items.
+
+        // Before the change, in case when grade category (in "Natural" agg. method) had items with
+        // overridden weights, the automatic weight of extra credit items was illogical.
+        // In order to prevent grades changes after the upgrade we need to freeze gradebook calculation
+        // for the affected courses.
+
+        // This script in included in each major version upgrade process so make sure we don't run it twice.
+        if (empty($CFG->upgrade_extracreditweightsstepignored)) {
+            upgrade_extra_credit_weightoverride();
+
+            // To skip running the same script on the upgrade to the next major release.
+            set_config('upgrade_extracreditweightsstepignored', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014111006.08);
+    }
+
     return true;
 }

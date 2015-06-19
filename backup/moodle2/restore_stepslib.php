@@ -476,6 +476,12 @@ class restore_gradebook_structure_step extends restore_structure_step {
         $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->get_courseid());
         preg_match('/(\d{8})/', $this->get_task()->get_info()->moodle_release, $matches);
         $backupbuild = (int)$matches[1];
+
+        // Extra credits need adjustments only for backups made between 2.8 release (20141110) and the fix release (20150619).
+        if (!$gradebookcalculationsfreeze && $backupbuild >= 20141110 && $backupbuild < 20150619) {
+            require_once($CFG->libdir . '/db/upgradelib.php');
+            upgrade_extra_credit_weightoverride($this->get_courseid());
+        }
     }
 }
 

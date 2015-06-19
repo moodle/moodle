@@ -131,6 +131,7 @@ function xmldb_main_install() {
         'filterall'             => 0, // setting page, so have to be initialised here.
         'texteditors'           => 'atto,tinymce,textarea',
         'upgrade_minmaxgradestepignored' => 1, // New installs should not run this upgrade step.
+        'upgrade_extracreditweightsstepignored' => 1, // New installs should not run this upgrade step.
     );
     foreach($defaults as $key => $value) {
         set_config($key, $value);
