@@ -111,12 +111,6 @@ class user extends tablelike implements selectable_items {
         $params = array('courseid' => $this->courseid);
 
         $seq = new grade_seq($this->courseid, true);
-        foreach ($seq->items as $key => $item) {
-            if (isset($item->itemmodule)) {
-                list($courseid, $cmid) = get_course_and_cm_from_instance($item->iteminstance, $item->itemmodule);
-                $seq->items[$key]->cmid = $cmid->id;
-            }
-        }
 
         $this->items = array();
         foreach ($seq->items as $itemid => $item) {
@@ -177,11 +171,6 @@ class user extends tablelike implements selectable_items {
              $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked');
         }
 
-        $realmodid = '';
-        if (isset($item->cmid)) {
-            $realmodid = $item->cmid;
-        }
-
         $iconstring = get_string('filtergrades', 'gradereport_singleview', $item->get_name());
 
         // Create a fake gradetreeitem so we can call get_element_header().
@@ -197,12 +186,6 @@ class user extends tablelike implements selectable_items {
 
         $itemlabel = $this->structure->get_element_header($gradetreeitem, true, false, false, false, true);
         $grade->label = $item->get_name();
-
-        $itemlabel = $item->get_name();
-        if (!empty($realmodid)) {
-            $url = new moodle_url('/mod/' . $item->itemmodule . '/view.php', array('id' => $realmodid));
-            $itemlabel = html_writer::link($url, $item->get_name());
-        }
 
         $line = array(
             $OUTPUT->action_icon($this->format_link('grade', $item->id), new pix_icon('t/editstring', $iconstring)),
