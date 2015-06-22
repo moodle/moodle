@@ -2301,10 +2301,10 @@ function upgrade_minmaxgrade() {
 
     // Identify the courses that have inconsistencies grade_item vs grade_grade.
     $sql = "SELECT DISTINCT(gi.courseid)
-              FROM {grade_items} gi
-              JOIN {grade_grades} gg
+              FROM {grade_grades} gg
+              JOIN {grade_items} gi
                 ON gg.itemid = gi.id
-             WHERE (gi.itemtype != ? AND gi.itemtype != ?)
+             WHERE gi.itemtype NOT IN (?, ?)
                AND (gg.rawgrademax != gi.grademax OR gg.rawgrademin != gi.grademin)";
 
     $rs = $DB->get_recordset_sql($sql, array('course', 'category'));
