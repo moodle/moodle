@@ -216,6 +216,20 @@ class message {
     }
 
     /**
+     * Magic method to check if property is set.
+     *
+     * @param string $prop name of property to check.
+     * @return bool
+     * @throws \coding_exception
+     */
+    public function __isset($prop) {
+        if (in_array($prop, $this->properties)) {
+            return isset($this->$prop);
+        }
+        throw new \coding_exception("Invalid property $prop specified");
+    }
+
+    /**
      * This method lets you define content that would be added to the message only for specific message processors.
      *
      * Example of $content:-
