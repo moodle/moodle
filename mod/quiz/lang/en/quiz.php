@@ -774,7 +774,7 @@ $string['reviewoptions'] = 'Students may review';
 $string['reviewoptionsheading'] = 'Review options';
 $string['reviewoptionsheading_help'] = 'These options control what information students can see when they review a quiz attempt or look at the quiz reports.
 
-**During the attempt** settings are are only relevant for some behaviours, like \'interactive with multiple tries\', which may display feedback during the attempt.
+**During the attempt** settings are only relevant for some behaviours, like \'interactive with multiple tries\', which may display feedback during the attempt.
 
 **Immediately after the attempt** settings apply for the first two minutes after \'Submit all and finish\' is clicked.
 

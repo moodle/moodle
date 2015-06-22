@@ -25,7 +25,7 @@
 
 $string['apierror'] = '{$a}';
 $string['apikey'] = 'API key';
-$string['information'] = '<div>Get a <a href="https://developers.google.com/youtube/v3/getting-started">Google API Key</a> for your Moodle site.</div>';
+$string['information'] = 'Get a <a href="https://developers.google.com/youtube/v3/getting-started">Google API key</a> for your Moodle site.';
 $string['pluginname'] = 'Youtube videos';
 $string['search'] = 'Search videos';
 $string['youtube:view'] = 'Use youtube in file picker';
