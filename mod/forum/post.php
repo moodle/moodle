@@ -874,6 +874,7 @@ if ($mform_post->is_cancelled()) {
 
         // If we are posting a copy to all groups the user has access to.
         if (isset($fromform->posttomygroups)) {
+            require_capability('mod/forum:canposttomygroups', $modcontext);
             $allowedgroups = groups_get_activity_allowed_groups($cm);
             $groupstopostto = array_keys($allowedgroups);
         } else {
