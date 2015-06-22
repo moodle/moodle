@@ -55,7 +55,7 @@ abstract class grade_report {
 
     /**
      * The grade_tree object.
-     * @var object $gtree
+     * @var grade_tree $gtree
      */
     public $gtree;
 
