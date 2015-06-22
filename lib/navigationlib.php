@@ -2604,7 +2604,7 @@ class global_navigation extends navigation_node {
         $coursenode->add('frontpageloaded', null, self::TYPE_CUSTOM, null, 'frontpageloaded')->display = false;
 
         //Participants
-        if (has_capability('moodle/course:viewparticipants',  context_system::instance())) {
+        if (has_capability('moodle/site:viewparticipants',  context_system::instance())) {
             $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CUSTOM, get_string('participants'), 'participants');
         }
 
