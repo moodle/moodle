@@ -237,7 +237,24 @@ abstract class grade_export {
         if (is_array($this->displaytype) && !is_null($gradedisplayconst)) {
             $displaytype = $gradedisplayconst;
         }
-        return grade_format_gradevalue($grade->finalgrade, $this->grade_items[$grade->itemid], false, $displaytype, $this->decimalpoints);
+
+        $gradeitem = $this->grade_items[$grade->itemid];
+
+        // We are going to store the min and max so that we can "reset" the grade_item for later.
+        $grademax = $gradeitem->grademax;
+        $grademin = $gradeitem->grademin;
+
+        // Updating grade_item with this grade_grades min and max.
+        $gradeitem->grademax = $grade->get_grade_max();
+        $gradeitem->grademin = $grade->get_grade_min();
+
+        $formattedgrade = grade_format_gradevalue($grade->finalgrade, $gradeitem, false, $displaytype, $this->decimalpoints);
+
+        // Resetting the grade item in case it is reused.
+        $gradeitem->grademax = $grademax;
+        $gradeitem->grademin = $grademin;
+
+        return $formattedgrade;
     }
 
     /**
