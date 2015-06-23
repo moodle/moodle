@@ -482,4 +482,67 @@ class core_upgradelib_testcase extends advanced_testcase {
         // Restore value.
         $CFG->grade_minmaxtouse = $initialminmax;
     }
+
+    public function test_upgrade_extra_credit_weightoverride() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest(true);
+
+        $c = array();
+        $a = array();
+        $gi = array();
+        for ($i=0; $i<5; $i++) {
+            $c[$i] = $this->getDataGenerator()->create_course();
+            $a[$i] = array();
+            $gi[$i] = array();
+            for ($j=0;$j<3;$j++) {
+                $a[$i][$j] = $this->getDataGenerator()->create_module('assign', array('course' => $c[$i], 'grade' => 100));
+                $giparams = array('itemtype' => 'mod', 'itemmodule' => 'assign', 'iteminstance' => $a[$i][$j]->id,
+                    'courseid' => $c[$i]->id, 'itemnumber' => 0);
+                $gi[$i][$j] = grade_item::fetch($giparams);
+            }
+        }
+
+        // Case 1: Course $c[0] has aggregation method different from natural.
+        $coursecategory = grade_category::fetch_course_category($c[0]->id);
+        $coursecategory->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN;
+        $coursecategory->update();
+        $gi[0][1]->aggregationcoef = 1;
+        $gi[0][1]->update();
+        $gi[0][2]->weightoverride = 1;
+        $gi[0][2]->update();
+
+        // Case 2: Course $c[1] has neither extra credits nor overrides
+
+        // Case 3: Course $c[2] has extra credits but no overrides
+        $gi[2][1]->aggregationcoef = 1;
+        $gi[2][1]->update();
+
+        // Case 4: Course $c[3] has no extra credits and has overrides
+        $gi[3][2]->weightoverride = 1;
+        $gi[3][2]->update();
+
+        // Case 5: Course $c[4] has both extra credits and overrides
+        $gi[4][1]->aggregationcoef = 1;
+        $gi[4][1]->update();
+        $gi[4][2]->weightoverride = 1;
+        $gi[4][2]->update();
+
+        // Run the upgrade script and make sure only course $c[4] was marked as needed to be fixed.
+        upgrade_extra_credit_weightoverride();
+
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $c[0]->id}));
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $c[1]->id}));
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $c[2]->id}));
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $c[3]->id}));
+        $this->assertEquals(20150619, $CFG->{'gradebook_calculations_freeze_' . $c[4]->id});
+
+        set_config('gradebook_calculations_freeze_' . $c[4]->id, null);
+
+        // Run the upgrade script for a single course only.
+        upgrade_extra_credit_weightoverride($c[0]->id);
+        $this->assertTrue(empty($CFG->{'gradebook_calculations_freeze_' . $c[0]->id}));
+        upgrade_extra_credit_weightoverride($c[4]->id);
+        $this->assertEquals(20150619, $CFG->{'gradebook_calculations_freeze_' . $c[4]->id});
+    }
 }
