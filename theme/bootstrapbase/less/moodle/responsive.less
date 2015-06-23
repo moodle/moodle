@@ -438,7 +438,7 @@
             color: @grayDark;
         }
     }
-    .nav-collapse.active {
+    .nav-collapse.in {
         height: auto;
         .usermenu .moodle-actionmenu[data-enhanced] {
             .toggle-display {
@@ -472,7 +472,7 @@
     }
 
     .navbar {
-        .nav-collapse.active {
+        .nav-collapse.in {
             border-top: 1px solid @navbarBorder;
             &.pull-left,
             &.pull-right {
@@ -494,7 +494,8 @@
                 }
             }
 
-            .nav, .nav .dropdown-menu {
+            .nav,
+            .nav .dropdown-menu {
                 .dropdown-submenu {
                     .dropdown-toggle {
                         &:after {
@@ -542,7 +543,7 @@
             }
         }
         &.navbar-inverse {
-            .nav-collapse.active {
+            .nav-collapse.in {
                 border-top-color: @navbarInverseBorder;
                 .nav,
                 .nav .dropdown-menu {
@@ -573,7 +574,7 @@
 
     .dir-rtl {
         .navbar {
-            .nav-collapse.active {
+            .nav-collapse.in {
                 > .nav {
                     margin: 0;
                     > li > a {
