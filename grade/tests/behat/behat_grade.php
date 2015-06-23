@@ -158,4 +158,18 @@ class behat_grade extends behat_base {
         $steps[] = new Given('I click on "' . $this->escape($linktext) . '" "link"');
         return $steps;
     }
+
+    /**
+     * Step allowing to test before-the-fix behaviour of the gradebook
+     *
+     * @Given /^gradebook calculations for the course "(?P<coursename_string>(?:[^"]|\\")*)" are frozen at version "(?P<version_string>(?:[^"]|\\")*)"$/
+     * @param string $coursename
+     * @param string $version
+     * @return Given
+     */
+    public function gradebook_calculations_for_the_course_are_frozen_at_version($coursename, $version) {
+        global $DB;
+        $courseid = $DB->get_field('course', 'id', array('shortname' => $coursename), MUST_EXIST);
+        set_config('gradebook_calculations_freeze_' . $courseid, $version);
+    }
 }
