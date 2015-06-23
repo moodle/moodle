@@ -2683,7 +2683,7 @@ class curl {
     public $emulateredirects = null;
 
     /** @var array cURL options */
-    protected $options;
+    private $options;
 
     /** @var string Proxy host */
     private $proxy_host = '';
@@ -2976,7 +2976,7 @@ class curl {
      * @param array $options
      * @return resource The curl handle
      */
-    protected function apply_opt($curl, $options) {
+    private function apply_opt($curl, $options) {
         // Clean up
         $this->cleanopt();
         // set cookie
