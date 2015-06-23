@@ -829,7 +829,7 @@ EOF;
      * Test curl agent settings.
      */
     public function test_curl_useragent() {
-        $curl = new curl_extended();
+        $curl = new testable_curl();
         $options = $curl->get_options();
         $this->assertNotEmpty($options);
 
@@ -856,30 +856,65 @@ EOF;
         $curl->unset_option('CURLOPT_USERAGENT');
         $curl->call_apply_opt();
         $this->assertTrue(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+
+        // Finally, test it via exttests, to ensure the agent is sent properly.
+        // Matching.
+        $testurl = $this->getExternalTestFileUrl('/test_agent.php');
+        $extcurl = new curl();
+        $contents = $extcurl->get($testurl, array(), array('CURLOPT_USERAGENT' => 'AnotherUserAgent/1.2'));
+        $response = $extcurl->getResponse();
+        $this->assertSame('200 OK', reset($response));
+        $this->assertSame(0, $extcurl->get_errno());
+        $this->assertSame('OK', $contents);
+        // Not matching.
+        $contents = $extcurl->get($testurl, array(), array('CURLOPT_USERAGENT' => 'NonMatchingUserAgent/1.2'));
+        $response = $extcurl->getResponse();
+        $this->assertSame('200 OK', reset($response));
+        $this->assertSame(0, $extcurl->get_errno());
+        $this->assertSame('', $contents);
     }
 }
 
 /**
  * Test-specific class to allow easier testing of curl functions.
- * 
- * @copyright 2015 Dave Cooper 
+ *
+ * @copyright 2015 Dave Cooper
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class curl_extended extends curl {
+class testable_curl extends curl {
     /**
-     * Accessor for options array.
+     * Accessor for private options array using reflection.
+     *
+     * @return array
      */
     public function get_options() {
-        return $this->options;
+        // Access to private property.
+        $rp = new ReflectionProperty('curl', 'options');
+        $rp->setAccessible(true);
+        return $rp->getValue($this);
     }
 
     /**
-     * Setter for options array.
+     * Setter for private options array using reflection.
+     *
+     * @param array $options
+     */
+    public function set_options($options) {
+        // Access to private property.
+        $rp = new ReflectionProperty('curl', 'options');
+        $rp->setAccessible(true);
+        $rp->setValue($this, $options);
+    }
+
+    /**
+     * Setter for individual option.
      * @param string $option
      * @param string $value
      */
     public function set_option($option, $value) {
-        $this->options[$option] = $value;
+        $options = $this->get_options();
+        $options[$option] = $value;
+        $this->set_options($options);
     }
 
     /**
@@ -887,17 +922,22 @@ class curl_extended extends curl {
      * @param string $option
      */
     public function unset_option($option) {
-        unset($this->options[$option]);
+        $options = $this->get_options();
+        unset($options[$option]);
+        $this->set_options($options);
     }
 
     /**
-     * Wrapper to access the curl::apply_opt() function
+     * Wrapper to access the private curl::apply_opt() method using reflection.
      *
      * @param array $options
      * @return resource The curl handle
      */
     public function call_apply_opt($options = null) {
+        // Access to private method.
+        $rm = new ReflectionMethod('curl', 'apply_opt');
+        $rm->setAccessible(true);
         $ch = curl_init();
-        return $this->apply_opt($ch, $options);
+        return $rm->invoke($this, $ch, $options);
     }
 }
