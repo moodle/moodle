@@ -71,7 +71,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         $criteriontemplate = html_writer::start_tag('tr', array('class' => 'criterion'. $criterion['class'], 'id' => '{NAME}-criteria-{CRITERION-id}'));
         if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
             $criteriontemplate .= html_writer::start_tag('td', array('class' => 'controls'));
-            foreach (array('moveup', 'delete', 'movedown') as $key) {
+            foreach (array('moveup', 'delete', 'movedown', 'duplicate') as $key) {
                 $value = get_string('criterion'.$key, 'gradingform_rubric');
                 $button = html_writer::empty_tag('input', array('type' => 'submit', 'name' => '{NAME}[criteria][{CRITERION-id}]['.$key.']',
                     'id' => '{NAME}-criteria-{CRITERION-id}-'.$key, 'value' => $value, 'title' => $value, 'tabindex' => -1));
