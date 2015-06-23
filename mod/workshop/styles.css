@@ -589,4 +589,13 @@
     text-align: center;
 }
 
+.path-mod-workshop .lastmodified {
+    line-height: 1.0em;
+}
+
+.path-mod-workshop .nothingfound {
+    font-size: 150%;
+    color: #FF4500;
+}
+
 .path-mod-workshop .workshop-risk-dataloss { vertical-align: text-bottom; }
