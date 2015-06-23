@@ -28,7 +28,7 @@
 /**
  * Composer error exit status.
  *
- * @var integer
+ * @var int
  */
 define('TESTING_EXITCODE_COMPOSER', 255);
 
@@ -188,10 +188,10 @@ function testing_update_composer_dependencies() {
     // Download or update composer.phar. Unfortunately we can't use the curl
     // class in filelib.php as we're running within one of the test platforms.
     if (!file_exists($composerpath)) {
-        $file = @fopen($composerpath, 'w+');
+        $file = @fopen($composerpath, 'w');
         if ($file === false) {
             $errordetails = error_get_last();
-            $error = sprintf("Unable to open composer.phar\nPHP error: %s",
+            $error = sprintf("Unable to create composer.phar\nPHP error: %s",
                              $errordetails['message']);
             testing_error(TESTING_EXITCODE_COMPOSER, $error);
         }
@@ -203,6 +203,7 @@ function testing_update_composer_dependencies() {
 
         $curlerrno = curl_errno($curl);
         $curlerror = curl_error($curl);
+        $curlinfo = curl_getinfo($curl);
 
         curl_close($curl);
         fclose($file);
@@ -210,6 +211,14 @@ function testing_update_composer_dependencies() {
         if (!$result) {
             $error = sprintf("Unable to download composer.phar\ncURL error (%d): %s",
                              $curlerrno, $curlerror);
+            testing_error(TESTING_EXITCODE_COMPOSER, $error);
+        } else if ($curlinfo['http_code'] === 404) {
+            if (file_exists($composerpath)) {
+                // Deleting the resource as it would contain HTML.
+                unlink($composerpath);
+            }
+            $error = sprintf("Unable to download composer.phar\n" .
+                                "404 http status code fetching $composerurl");
             testing_error(TESTING_EXITCODE_COMPOSER, $error);
         }
     } else {

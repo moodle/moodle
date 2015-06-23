@@ -46,7 +46,7 @@ $output = null;
 exec("php util.php --diag", $output, $code);
 
 // Ensure we have composer installed, before we install or re-install test site.
-if ($code == BEHAT_EXITCODE_COMPOSER || $code == BEHAT_EXITCODE_INSTALL || $code == BEHAT_EXITCODE_REINSTALL) {
+if ($code == TESTING_EXITCODE_COMPOSER || $code == BEHAT_EXITCODE_INSTALL || $code == BEHAT_EXITCODE_REINSTALL) {
     testing_update_composer_dependencies();
     chdir(__DIR__);
     exec("php util.php --diag", $output, $code);
