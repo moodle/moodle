@@ -534,6 +534,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      * @param object $user new user object
      * @param boolean $notify print notice with link and terminate
+     * @return boolean success
      */
     function user_signup($user, $notify=true) {
         global $CFG, $DB, $PAGE, $OUTPUT;
@@ -889,7 +890,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
                 foreach ($users as $user) {
                     echo "\t"; print_string('auth_dbupdatinguser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id));
-                    if (!$this->update_user_record($user->username, $updatekeys)) {
+                    if (!$this->update_user_record($user->username, $updatekeys, true)) {
                         echo ' - '.get_string('skipped');
                     }
                     echo "\n";
@@ -987,8 +988,11 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      * @param string $username username
      * @param boolean $updatekeys true to update the local record with the external LDAP values.
+     * @param bool $triggerevent set false if user_updated event should not be triggered.
+     *             This will not affect user_password_updated event triggering.
+     * @return stdClass|bool updated user record or false if there is no new info to update.
      */
-    function update_user_record($username, $updatekeys = false) {
+    protected function update_user_record($username, $updatekeys = false, $triggerevent = false) {
         global $CFG, $DB;
 
         // Just in case check text case
@@ -1030,7 +1034,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                         }
                     }
                 }
-                user_update_user($newuser, false, false);
+                user_update_user($newuser, false, $triggerevent);
             }
         } else {
             return false;
