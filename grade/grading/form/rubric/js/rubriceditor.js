@@ -227,12 +227,12 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
             levelsstr += M.gradingform_rubriceditor.templates[name].level
                             .replace(/\{LEVEL-id\}/g, 'NEWID'+(newlevid+levidx))
                             .replace(/\{LEVEL-score\}/g, levelsscores[levidx])
-                            .replace(/\{LEVEL-definition\}/g, Y.Escape.html(levelsdef[levidx]));
+                            .replace(/\{LEVEL-definition\}/g, levelsdef[levidx]);
         }
         var description = source.one('.description .textvalue');
         var newcriterion = M.gradingform_rubriceditor.templates[name].criterion
                                 .replace(/\{LEVELS\}/, levelsstr)
-                                .replace(/\{CRITERION-description\}/, Y.Escape.html(description.get('innerHTML')));
+                                .replace(/\{CRITERION-description\}/, description.get('innerHTML'));
         parentel.append(newcriterion.replace(/\{CRITERION-id\}/g, 'NEWID'+newid).replace(/\{.+?\}/g, ''));
         M.gradingform_rubriceditor.assignclasses('#rubric-'+name+' #'+name+'-criteria-NEWID'+newid+'-levels .level');
         M.gradingform_rubriceditor.addhandlers();
