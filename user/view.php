@@ -207,8 +207,8 @@ if ($user->deleted) {
 // Trigger a user profile viewed event.
 profile_view($user, $coursecontext, $course);
 
-echo '<div class="description">';
 if ($user->description && !isset($hiddenfields['description'])) {
+    echo '<div class="description">';
     if (!empty($CFG->profilesforenrolledusersonly) && !$DB->record_exists('role_assignments', array('userid' => $id))) {
         echo get_string('profilenotshown', 'moodle');
     } else {
@@ -221,6 +221,7 @@ if ($user->description && !isset($hiddenfields['description'])) {
         $options = array('overflowdiv' => true);
         echo format_text($user->description, $user->descriptionformat, $options);
     }
+    echo '</div>'; // Description class.
 }
 
 // Render custom blocks.
