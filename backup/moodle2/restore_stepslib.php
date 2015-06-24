@@ -335,13 +335,23 @@ class restore_gradebook_structure_step extends restore_structure_step {
 
         $data->courseid = $this->get_courseid();
 
+        $target = $this->get_task()->get_target();
+        if ($data->name == 'minmaxtouse' &&
+                ($target == backup::TARGET_CURRENT_ADDING || $target == backup::TARGET_EXISTING_ADDING)) {
+            // We never restore minmaxtouse during merge.
+            return;
+        }
+
         if (!$DB->record_exists('grade_settings', array('courseid' => $data->courseid, 'name' => $data->name))) {
             $newitemid = $DB->insert_record('grade_settings', $data);
         } else {
             $newitemid = $data->id;
         }
 
-        $this->set_mapping('grade_setting', $oldid, $newitemid);
+        if (!empty($oldid)) {
+            // In rare cases (minmaxtouse), it is possible that there wasn't any ID associated with the setting.
+            $this->set_mapping('grade_setting', $oldid, $newitemid);
+        }
     }
 
     /**
@@ -512,8 +522,10 @@ class restore_gradebook_structure_step extends restore_structure_step {
         $version29start = 2015051100.00;
         $version29last = 2015060400.02;
 
-        if ($minmaxtouse === false) {
+        if ($minmaxtouse === false &&
+                ($target != backup::TARGET_CURRENT_ADDING && $target != backup::TARGET_EXISTING_ADDING)) {
             // The setting was not found because this setting did not exist at the time the backup was made.
+            // And we are not restoring as merge, in which case we leave the course as it was.
             $version = $this->get_task()->get_info()->moodle_version;
 
             if ($version < $version28start) {
