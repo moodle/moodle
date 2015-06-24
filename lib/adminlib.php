@@ -6494,6 +6494,179 @@ class admin_setting_manageeditors extends admin_setting {
     }
 }
 
+/**
+ * Special class for antiviruses administration.
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class admin_setting_manageantiviruses extends admin_setting {
+    /**
+     * Calls parent::__construct with specific arguments
+     */
+    public function __construct() {
+        $this->nosave = true;
+        parent::__construct('antivirusesui', get_string('antivirussettings', 'antivirus'), '', '');
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_setting() {
+        return true;
+    }
+
+    /**
+     * Always returns true, does nothing
+     *
+     * @return true
+     */
+    public function get_defaultsetting() {
+        return true;
+    }
+
+    /**
+     * Always returns '', does not write anything
+     *
+     * @return string Always returns ''
+     */
+    public function write_setting($data) {
+    // do not write any setting
+        return '';
+    }
+
+    /**
+     * Checks if $query is one of the available editors
+     *
+     * @param string $query The string to search for
+     * @return bool Returns true if found, false if not
+     */
+    public function is_related($query) {
+        if (parent::is_related($query)) {
+            return true;
+        }
+
+        $antiviruses_available = antiviruses_get_available();
+        foreach ($antiviruses_available as $antivirus=>$antivirusstr) {
+            if (strpos($antivirus, $query) !== false) {
+                return true;
+            }
+            if (strpos(core_text::strtolower($antivirusstr), $query) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Builds the XHTML to display the control
+     *
+     * @param string $data Unused
+     * @param string $query
+     * @return string
+     */
+    public function output_html($data, $query='') {
+        global $CFG, $OUTPUT;
+
+        // display strings
+        $txt = get_strings(array('administration', 'settings', 'edit', 'name', 'enable', 'disable',
+            'up', 'down', 'none'));
+        $struninstall = get_string('uninstallplugin', 'core_admin');
+
+        $txt->updown = "$txt->up/$txt->down";
+
+        $antiviruses_available = antiviruses_get_available();
+        $active_antiviruses = explode(',', $CFG->antiviruses);
+
+        $active_antiviruses = array_reverse($active_antiviruses);
+        foreach ($active_antiviruses as $key=>$antivirus) {
+            if (empty($antiviruses_available[$antivirus])) {
+                unset($active_antiviruses[$key]);
+            } else {
+                $name = $antiviruses_available[$antivirus];
+                unset($antiviruses_available[$antivirus]);
+                $antiviruses_available[$antivirus] = $name;
+            }
+        }
+        $antiviruses_available = array_reverse($antiviruses_available, true);
+        $return = $OUTPUT->heading(get_string('actantivirushdr', 'antivirus'), 3, 'main', true);
+        $return .= $OUTPUT->box_start('generalbox antivirusesui');
+
+        $table = new html_table();
+        $table->head  = array($txt->name, $txt->enable, $txt->updown, $txt->settings, $struninstall);
+        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
+        $table->id = 'antivirusmanagement';
+        $table->attributes['class'] = 'admintable generaltable';
+        $table->data  = array();
+
+        // iterate through auth plugins and add to the display table
+        $updowncount = 1;
+        $antiviruscount = count($active_antiviruses);
+        $url = "antiviruses.php?sesskey=" . sesskey();
+        foreach ($antiviruses_available as $antivirus => $name) {
+        // hide/show link
+            $class = '';
+            if (in_array($antivirus, $active_antiviruses)) {
+                $hideshow = "<a href=\"$url&amp;action=disable&amp;antivirus=$antivirus\">";
+                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/hide') . "\" class=\"iconsmall\" alt=\"disable\" /></a>";
+                $enabled = true;
+                $displayname = $name;
+            }
+            else {
+                $hideshow = "<a href=\"$url&amp;action=enable&amp;antivirus=$antivirus\">";
+                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/show') . "\" class=\"iconsmall\" alt=\"enable\" /></a>";
+                $enabled = false;
+                $displayname = $name;
+                $class = 'dimmed_text';
+            }
+
+            // up/down link (only if auth is enabled)
+            $updown = '';
+            if ($enabled) {
+                if ($updowncount > 1) {
+                    $updown .= "<a href=\"$url&amp;action=up&amp;antivirus=$antivirus\">";
+                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"up\" class=\"iconsmall\" /></a>&nbsp;";
+                }
+                else {
+                    $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />&nbsp;";
+                }
+                if ($updowncount < $antiviruscount) {
+                    $updown .= "<a href=\"$url&amp;action=down&amp;antivirus=$antivirus\">";
+                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"down\" class=\"iconsmall\" /></a>";
+                }
+                else {
+                    $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />";
+                }
+                ++ $updowncount;
+            }
+
+            // settings link
+            if (file_exists($CFG->dirroot.'/lib/antivirus/'.$antivirus.'/settings.php')) {
+                $eurl = new moodle_url('/admin/settings.php', array('section'=>'antivirussettings'.$antivirus));
+                $settings = "<a href='$eurl'>{$txt->settings}</a>";
+            } else {
+                $settings = '';
+            }
+
+            $uninstall = '';
+            if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('antivirus_'.$antivirus, 'manage')) {
+                $uninstall = html_writer::link($uninstallurl, $struninstall);
+            }
+
+            // Add a row to the table.
+            $row = new html_table_row(array($displayname, $hideshow, $updown, $settings, $uninstall));
+            if ($class) {
+                $row->attributes['class'] = $class;
+            }
+            $table->data[] = $row;
+        }
+        $return .= html_writer::table($table);
+        $return .= get_string('configantivirusplugins', 'antivirus').'<br />'.get_string('tablenosave', 'admin');
+        $return .= $OUTPUT->box_end();
+        return highlight($query, $return);
+    }
+}
 
 /**
  * Special class for license administration.
