@@ -27,12 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('antivirus_clamav/runclamonupload',
-            new lang_string('runclamavonupload', 'admin'), new lang_string('configrunclamavonupload', 'admin'), 0));
+            new lang_string('runclamavonupload', 'antivirus_clamav'), new lang_string('configrunclamavonupload', 'antivirus_clamav'), 0));
     $settings->add(new admin_setting_configexecutable('antivirus_clamav/pathtoclam',
-            new lang_string('pathtoclam', 'admin'), new lang_string('configpathtoclam', 'admin'), ''));
+            new lang_string('pathtoclam', 'antivirus_clamav'), new lang_string('configpathtoclam', 'antivirus_clamav'), ''));
     $settings->add(new admin_setting_configdirectory('antivirus_clamav/quarantinedir',
-            new lang_string('quarantinedir', 'admin'), new lang_string('configquarantinedir', 'admin'), ''));
-    $options = array('donothing' => new lang_string('configclamdonothing', 'admin'),'actlikevirus' => new lang_string('configclamactlikevirus', 'admin'));
+            new lang_string('quarantinedir', 'antivirus_clamav'), new lang_string('configquarantinedir', 'antivirus_clamav'), ''));
+    $options = array('donothing' => new lang_string('configclamdonothing', 'antivirus_clamav'), 'actlikevirus' => new lang_string('configclamactlikevirus', 'antivirus_clamav'));
     $settings->add(new admin_setting_configselect('antivirus_clamav/clamfailureonupload',
-            new lang_string('clamfailureonupload', 'admin'), new lang_string('configclamfailureonupload', 'admin'), 'donothing', $options));
+            new lang_string('clamfailureonupload', 'antivirus_clamav'), new lang_string('configclamfailureonupload', 'antivirus_clamav'), 'donothing', $options));
 }
