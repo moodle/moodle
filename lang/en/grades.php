@@ -236,8 +236,8 @@ $string['gradealreadyupdated'] = '{$a} grades have not been imported because the
 $string['gradeanalysis'] = 'Grade analysis';
 $string['gradebook'] = 'Gradebook';
 $string['gradebookcalculationsuptodate'] = 'The calculations in the gradebook are up to date. You may need to reload this page to see changes.';
-$string['gradebookcalculationsfixbutton'] = 'Accept the changes and recalculate grades';
-$string['gradebookcalculationswarning'] = 'Note: Some errors have been detected in gradebook calculations that affect this course. The errors have been fixed but the fix was not yet applied to this course since it may lead to the changes in existing grades. You can review the changes on <a href="{$a->url}">this documentation page</a>. Look for the changes between versions {$a->gradebookversion} and {$a->currentversion}';
+$string['gradebookcalculationsfixbutton'] = 'Accept grade changes and fix calculation errors';
+$string['gradebookcalculationswarning'] = 'Note: Some errors have been detected in calculating the grades displayed in the gradebook. It is recommended that the errors are fixed by clicking the button below, though this will result in some grades being changed. For details, see the changes between versions {$a->gradebookversion} and {$a->currentversion} in <a href="{$a->url}">Gradebook calculation changes</a>.';
 $string['gradebookhiddenerror'] = 'The gradebook is currently set to hide everything from students.';
 $string['gradebookhistories'] = 'Grade histories';
 $string['gradeboundary'] = 'Letter grade boundary';
