@@ -144,7 +144,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
         if ($target == backup::TARGET_CURRENT_DELETING || $target == backup::TARGET_EXISTING_DELETING) {
             set_config('gradebook_calculations_freeze_' . $this->get_courseid(), null);
         }
-        if (!empty($data['calculations_freeze']) && $this->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
+        if (!empty($data['calculations_freeze'])) {
             if ($target == backup::TARGET_NEW_COURSE || $target == backup::TARGET_CURRENT_DELETING ||
                     $target == backup::TARGET_EXISTING_DELETING) {
                 set_config('gradebook_calculations_freeze_' . $this->get_courseid(), $data['calculations_freeze']);
