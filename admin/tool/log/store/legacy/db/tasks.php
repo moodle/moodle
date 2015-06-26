@@ -28,7 +28,7 @@ $tasks = array(
     array(
         'classname' => '\logstore_legacy\task\cleanup_task',
         'blocking' => 0,
-        'minute' => '*',
+        'minute' => 'R',
         'hour' => '5',
         'day' => '*',
         'dayofweek' => '*',
