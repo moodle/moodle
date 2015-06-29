@@ -105,8 +105,8 @@ Feature: Calculated grade items can be used in the gradebook
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–50  | 75.00 %    | -                            |
-      | Course total                        | -                 | 37.50  | 0–50  | 75.00 %    | -                            |
+      | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–40  | 93.75 %    | -                            |
+      | Course total                        | -                 | 37.50  | 0–40  | 93.75 %    | -                            |
     And I select "Student 2" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
@@ -153,9 +153,9 @@ Feature: Calculated grade items can be used in the gradebook
     And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
-      | grade item 1 | 66.67 %           | 75.00  | 0–100 | 75.00 %    | 50.00 %                      |
-      | calc item    | 33.33 %           | 37.50  | 0–50  | 75.00 %    | 25.00 %                      |
-      | Course total | -                 | 112.50 | 0–150 | 75.00 %    | -                            |
+      | grade item 1 | 71.43 %           | 75.00  | 0–100 | 75.00 %    | 53.57 %                      |
+      | calc item    | 28.57 %           | 37.50  | 0–40  | 93.75 %    | 26.79 %                      |
+      | Course total | -                 | 112.50 | 0–140 | 80.36 %    | -                            |
     And I select "Student 2" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
       | Grade item   | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
