@@ -2013,17 +2013,30 @@ class grade_item extends grade_object {
                 // normalize
                 $grade->finalgrade = $this->bounded_grade($result);
             }
-
         }
 
-        // update in db if changed
-        if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
-            $grade->timemodified = time();
-            $success = $grade->update('compute');
+        // Only run through this code if the gradebook isn't frozen.
+        if ($gradebookcalculationsfreeze && (int)$gradebookcalculationsfreeze <= 20150627) {
+            // Update in db if changed.
+            if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
+                $grade->timemodified = time();
+                $success = $grade->update('compute');
 
-            // If successful trigger a user_graded event.
-            if ($success) {
-                \core\event\user_graded::create_from_grade($grade)->trigger();
+                // If successful trigger a user_graded event.
+                if ($success) {
+                    \core\event\user_graded::create_from_grade($grade)->trigger();
+                }
+            }
+        } else {
+            // Update in db if changed.
+            if (grade_floats_different($grade->finalgrade, $oldfinalgrade) || $rawminandmaxchanged) {
+                $grade->timemodified = time();
+                $success = $grade->update('compute');
+
+                // If successful trigger a user_graded event.
+                if ($success) {
+                    \core\event\user_graded::create_from_grade($grade)->trigger();
+                }
             }
         }
 
