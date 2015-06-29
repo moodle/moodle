@@ -583,6 +583,9 @@ class core_moodlelib_testcase extends advanced_testcase {
 
     public function test_clean_param_localurl() {
         global $CFG;
+
+        $this->resetAfterTest();
+
         // External, invalid.
         $this->assertSame('', clean_param('funny:thing', PARAM_LOCALURL));
         $this->assertSame('', clean_param('http://google.com/', PARAM_LOCALURL));
@@ -600,7 +603,6 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         // Local absolute HTTPS.
         $httpsroot = str_replace('http:', 'https:', $CFG->wwwroot);
-        $initialloginhttps = $CFG->loginhttps;
         $CFG->loginhttps = false;
         $this->assertSame('', clean_param($httpsroot, PARAM_LOCALURL));
         $this->assertSame('', clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
@@ -608,7 +610,13 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame($httpsroot, clean_param($httpsroot, PARAM_LOCALURL));
         $this->assertSame($httpsroot . '/with/something?else=true',
             clean_param($httpsroot . '/with/something?else=true', PARAM_LOCALURL));
-        $CFG->loginhttps = $initialloginhttps;
+
+        // Test open redirects are not possible.
+        $CFG->loginhttps = false;
+        $CFG->wwwroot = 'http://www.example.com';
+        $this->assertSame('', clean_param('http://www.example.com.evil.net/hack.php', PARAM_LOCALURL));
+        $CFG->loginhttps = true;
+        $this->assertSame('', clean_param('https://www.example.com.evil.net/hack.php', PARAM_LOCALURL));
     }
 
     public function test_clean_param_file() {
