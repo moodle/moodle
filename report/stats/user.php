@@ -53,7 +53,7 @@ if ($USER->id != $user->id and has_capability('moodle/user:viewuseractivitiesrep
 
 if (!report_stats_can_access_user_report($user, $course, true)) {
     // this should never happen
-    error('Can not access user statistics report');
+    print_error('nocapability', 'report_stats');
 }
 
 $stractivityreport = get_string('activityreport');

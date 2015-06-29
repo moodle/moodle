@@ -355,7 +355,7 @@ function password_compat_not_supported() {
  * @deprecated since 2.6
  */
 function session_get_instance() {
-    throw new coding_exception('session_get_instance() is deprecated, use \core\session\manager instead');
+    throw new coding_exception('session_get_instance() is removed, use \core\session\manager instead');
 }
 
 /**
@@ -364,7 +364,7 @@ function session_get_instance() {
  * @deprecated since 2.6
  */
 function session_is_legacy() {
-    throw new coding_exception('session_is_legacy() is deprecated, do not use any more');
+    throw new coding_exception('session_is_legacy() is removed, do not use any more');
 }
 
 /**
@@ -373,7 +373,7 @@ function session_is_legacy() {
  * @deprecated since 2.6
  */
 function session_kill_all() {
-    throw new coding_exception('session_kill_all() is deprecated, use \core\session\manager::kill_all_sessions() instead');
+    throw new coding_exception('session_kill_all() is removed, use \core\session\manager::kill_all_sessions() instead');
 }
 
 /**
@@ -382,7 +382,7 @@ function session_kill_all() {
  * @deprecated since 2.6
  */
 function session_touch($sid) {
-    throw new coding_exception('session_touch() is deprecated, use \core\session\manager::touch_session() instead');
+    throw new coding_exception('session_touch() is removed, use \core\session\manager::touch_session() instead');
 }
 
 /**
@@ -391,7 +391,7 @@ function session_touch($sid) {
  * @deprecated since 2.6
  */
 function session_kill($sid) {
-    throw new coding_exception('session_kill() is deprecated, use \core\session\manager::kill_session() instead');
+    throw new coding_exception('session_kill() is removed, use \core\session\manager::kill_session() instead');
 }
 
 /**
@@ -400,7 +400,7 @@ function session_kill($sid) {
  * @deprecated since 2.6
  */
 function session_kill_user($userid) {
-    throw new coding_exception('session_kill_user() is deprecated, use \core\session\manager::kill_user_sessions() instead');
+    throw new coding_exception('session_kill_user() is removed, use \core\session\manager::kill_user_sessions() instead');
 }
 
 /**
@@ -411,7 +411,7 @@ function session_kill_user($userid) {
  * @deprecated since 2.6
  */
 function session_set_user($user) {
-    throw new coding_exception('session_set_user() is deprecated, use \core\session\manager::set_user() instead');
+    throw new coding_exception('session_set_user() is removed, use \core\session\manager::set_user() instead');
 }
 
 /**
@@ -419,7 +419,7 @@ function session_set_user($user) {
  * @deprecated since 2.6
  */
 function session_is_loggedinas() {
-    throw new coding_exception('session_is_loggedinas() is deprecated, use \core\session\manager::is_loggedinas() instead');
+    throw new coding_exception('session_is_loggedinas() is removed, use \core\session\manager::is_loggedinas() instead');
 }
 
 /**
@@ -427,7 +427,7 @@ function session_is_loggedinas() {
  * @deprecated since 2.6
  */
 function session_get_realuser() {
-    throw new coding_exception('session_get_realuser() is deprecated, use \core\session\manager::get_realuser() instead');
+    throw new coding_exception('session_get_realuser() is removed, use \core\session\manager::get_realuser() instead');
 }
 
 /**
@@ -435,7 +435,7 @@ function session_get_realuser() {
  * @deprecated since 2.6
  */
 function session_loginas($userid, $context) {
-    throw new coding_exception('session_loginas() is deprecated, use \core\session\manager::loginas() instead');
+    throw new coding_exception('session_loginas() is removed, use \core\session\manager::loginas() instead');
 }
 
 /**
@@ -444,7 +444,7 @@ function session_loginas($userid, $context) {
  * @deprecated since 2.6
  */
 function js_minify($files) {
-    throw new coding_exception('js_minify() is deprecated, use core_minify::js_files() or core_minify::js() instead.');
+    throw new coding_exception('js_minify() is removed, use core_minify::js_files() or core_minify::js() instead.');
 }
 
 /**
@@ -453,10 +453,8 @@ function js_minify($files) {
  * @deprecated since 2.6
  */
 function css_minify_css($files) {
-    throw new coding_exception('css_minify_css() is deprecated, use core_minify::css_files() or core_minify::css() instead.');
+    throw new coding_exception('css_minify_css() is removed, use core_minify::css_files() or core_minify::css() instead.');
 }
-
-
 
 // === Deprecated before 2.6.0 ===
 
@@ -464,7 +462,7 @@ function css_minify_css($files) {
  * Hack to find out the GD version by parsing phpinfo output
  */
 function check_gd_version() {
-    throw new coding_exception('check_gd_version() is deprecated, GD extension is always available now');
+    throw new coding_exception('check_gd_version() is removed, GD extension is always available now');
 }
 
 /**
@@ -473,7 +471,7 @@ function check_gd_version() {
  * @deprecated
  */
 function update_login_count() {
-    throw new coding_exception('update_login_count() is deprecated, all calls need to be removed');
+    throw new coding_exception('update_login_count() is removed, all calls need to be removed');
 }
 
 /**
@@ -481,7 +479,7 @@ function update_login_count() {
  * @deprecated
  */
 function reset_login_count() {
-    throw new coding_exception('reset_login_count() is deprecated, all calls need to be removed');
+    throw new coding_exception('reset_login_count() is removed, all calls need to be removed');
 }
 
 /**
@@ -489,7 +487,7 @@ function reset_login_count() {
  */
 function update_log_display_entry($module, $action, $mtable, $field) {
 
-    throw new coding_exception('The update_log_display_entry() is deprecated, please use db/log.php description file instead.');
+    throw new coding_exception('The update_log_display_entry() is removed, please use db/log.php description file instead.');
 }
 
 /**
@@ -584,7 +582,7 @@ function is_course_participant($userid, $courseid) {
  * @deprecated
  */
 function get_recent_enrolments($courseid, $timestart) {
-    throw new coding_exception('get_recent_enrolments() is deprecated as it returned inaccurate results.');
+    throw new coding_exception('get_recent_enrolments() is removed as it returned inaccurate results.');
 }
 
 /**
@@ -768,6 +766,7 @@ function groupmode($course, $cm=null) {
  * Does not do any permission checking.
  *
  * @global object
+ * @global object
  * @param int $courseid The course being examined - relates to id field in
  * 'course' table.
  * @param int $groupid The group being examined.
@@ -821,7 +820,7 @@ function get_current_group($courseid, $full = false) {
  * @deprecated Since Moodle 2.8
  */
 function groups_filter_users_by_course_module_visible($cm, $users) {
-    throw new coding_exception('groups_filter_users_by_course_module_visible() is deprecated. ' .
+    throw new coding_exception('groups_filter_users_by_course_module_visible() is removed. ' .
             'Replace with a call to \core_availability\info_module::filter_user_list(), ' .
             'which does basically the same thing but includes other restrictions such ' .
             'as profile restrictions.');
@@ -831,16 +830,15 @@ function groups_filter_users_by_course_module_visible($cm, $users) {
  * @deprecated Since Moodle 2.8
  */
 function groups_course_module_visible($cm, $userid=null) {
-    throw new coding_exception('groups_course_module_visible() is deprecated and always returns ' .
-            'true; use $cm->uservisible to decide whether the current user can ' .
-            'access an activity.', DEBUG_DEVELOPER);
+    throw new coding_exception('groups_course_module_visible() is removed, use $cm->uservisible to decide whether the current
+        user can ' . 'access an activity.', DEBUG_DEVELOPER);
 }
 
 /**
  * @deprecated since 2.0
  */
 function error($message, $link='') {
-    throw new coding_exception('notlocalisederrormessage', 'error', $link, $message, 'error() is a deprecated function, please call
+    throw new coding_exception('notlocalisederrormessage', 'error', $link, $message, 'error() is a removed, please call
             print_error() instead of error()');
 }
 
@@ -856,7 +854,7 @@ function current_theme() {
  * @deprecated
  */
 function formerr($error) {
-    throw new coding_exception('formerr() has been deprecated. Please change your code to use $OUTPUT->error_text($string).');
+    throw new coding_exception('formerr() is removed. Please change your code to use $OUTPUT->error_text($string).');
 }
 
 /**
@@ -1067,7 +1065,7 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
 function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='',
                            $nothingvalue='0', $return=false, $disabled=false, $tabindex=0,
                            $id='', $listbox=false, $multiple=false, $class='') {
-    throw new coding_exception('choose_from_menu() has been deprecated. Please change your code to use html_writer::select().');
+    throw new coding_exception('choose_from_menu() is removed. Please change your code to use html_writer::select().');
 
 }
 
@@ -1148,7 +1146,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
  * @deprecated please calendar_event->update() instead.
  */
 function update_event($event) {
-    throw new coding_exception('update_event() is deprecated, please use calendar_event->update() instead.');
+    throw new coding_exception('update_event() is removed, please use calendar_event->update() instead.');
 }
 
 /**
@@ -1219,7 +1217,7 @@ function get_generic_section_name($format, stdClass $section) {
  */
 function get_all_sections($courseid) {
 
-    throw new coding_exception('get_all_sections() is deprecated. See phpdocs for this function');
+    throw new coding_exception('get_all_sections() is removed. See phpdocs for this function');
 }
 
 /**
@@ -1230,7 +1228,7 @@ function get_all_sections($courseid) {
  * @deprecated since 2.4
  */
 function add_mod_to_section($mod, $beforemod = null) {
-    throw new coding_exception('Function add_mod_to_section() is deprecated, please use course_add_cm_to_section()');
+    throw new coding_exception('Function add_mod_to_section() is removed, please use course_add_cm_to_section()');
 }
 
 /**
@@ -1252,7 +1250,7 @@ function add_mod_to_section($mod, $beforemod = null) {
  * @deprecated since 2.4
  */
 function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modnamesused) {
-    throw new coding_exception('Function get_all_mods() is deprecated. Use get_fast_modinfo() and get_module_types_names() instead. See phpdocs for details');
+    throw new coding_exception('Function get_all_mods() is removed. Use get_fast_modinfo() and get_module_types_names() instead. See phpdocs for details');
 }
 
 /**
@@ -1268,8 +1266,7 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
  * @deprecated since 2.4
  */
 function get_course_section($section, $courseid) {
-    global $DB;
-    throw new coding_exception('Function get_course_section() is deprecated. Please use course_create_sections_if_missing() and get_fast_modinfo() instead.');
+    throw new coding_exception('Function get_course_section() is removed. Please use course_create_sections_if_missing() and get_fast_modinfo() instead.');
 }
 
 /**
@@ -1277,7 +1274,7 @@ function get_course_section($section, $courseid) {
  * @see format_weeks::get_section_dates()
  */
 function format_weeks_get_section_dates($section, $course) {
-    throw new coding_exception('Function format_weeks_get_section_dates() is deprecated. It is not recommended to'.
+    throw new coding_exception('Function format_weeks_get_section_dates() is removed. It is not recommended to'.
             ' use it outside of format_weeks plugin');
 }
 
@@ -1293,7 +1290,7 @@ function format_weeks_get_section_dates($section, $course) {
  * @see cm_info::get_formatted_name()
  */
 function get_print_section_cm_text(cm_info $cm, $course) {
-    throw new coding_exception('Function get_print_section_cm_text() is deprecated. Please use '.
+    throw new coding_exception('Function get_print_section_cm_text() is removed. Please use '.
             'cm_info::get_formatted_content() and cm_info::get_formatted_name()');
 }
 
@@ -1308,7 +1305,7 @@ function get_print_section_cm_text(cm_info $cm, $course) {
  * @see core_course_renderer::course_section_add_cm_control()
  */
 function print_section_add_menus($course, $section, $modnames = null, $vertical=false, $return=false, $sectionreturn=null) {
-    throw new coding_exception('Function print_section_add_menus() is deprecated. Please use course renderer '.
+    throw new coding_exception('Function print_section_add_menus() is removed. Please use course renderer '.
             'function course_section_add_cm_control()');
 }
 
@@ -1323,7 +1320,7 @@ function print_section_add_menus($course, $section, $modnames = null, $vertical=
  * @see core_course_renderer->course_section_cm_edit_actions()
  */
 function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $moveselect = true, $indent=-1, $section=null) {
-    throw new coding_exception('Function make_editing_buttons() is deprecated, please see PHPdocs in '.
+    throw new coding_exception('Function make_editing_buttons() is removed, please see PHPdocs in '.
             'lib/deprecatedlib.php on how to replace it');
 }
 
@@ -1337,7 +1334,7 @@ function make_editing_buttons(stdClass $mod, $absolute_ignored = true, $movesele
  * @see core_course_renderer::course_section_cm_list()
  */
 function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%", $hidecompletion=false, $sectionreturn=null) {
-    throw new coding_exception('Function print_section() is deprecated. Please use course renderer function '.
+    throw new coding_exception('Function print_section() is removed. Please use course renderer function '.
             'course_section_cm_list() instead.');
 }
 
@@ -1345,14 +1342,14 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
  * @deprecated since 2.5
  */
 function print_overview($courses, array $remote_courses=array()) {
-    throw new coding_exception('Function print_overview() is deprecated. Use block course_overview to display this information');
+    throw new coding_exception('Function print_overview() is removed. Use block course_overview to display this information');
 }
 
 /**
  * @deprecated since 2.5
  */
 function print_recent_activity($course) {
-    throw new coding_exception('Function print_recent_activity() is deprecated. It is not recommended to'.
+    throw new coding_exception('Function print_recent_activity() is removed. It is not recommended to'.
             ' use it outside of block_recent_activity');
 }
 
@@ -1360,14 +1357,14 @@ function print_recent_activity($course) {
  * @deprecated since 2.5
  */
 function delete_course_module($id) {
-    throw new coding_exception('Function delete_course_module() is deprecated. Please use course_delete_module() instead.');
+    throw new coding_exception('Function delete_course_module() is removed. Please use course_delete_module() instead.');
 }
 
 /**
  * @deprecated since 2.5
  */
 function update_category_button($categoryid = 0) {
-    throw new coding_exception('Function update_category_button() is deprecated. Pages to view '.
+    throw new coding_exception('Function update_category_button() is removed. Pages to view '.
             'and edit courses are now separate and no longer depend on editing mode.');
 }
 
@@ -1381,7 +1378,7 @@ function update_category_button($categoryid = 0) {
  */
 function make_categories_list(&$list, &$parents, $requiredcapability = '',
         $excludeid = 0, $category = NULL, $path = "") {
-    throw new coding_exception('Global function make_categories_list() is deprecated. Please use '.
+    throw new coding_exception('Global function make_categories_list() is removed. Please use '.
             'coursecat::make_categories_list() and coursecat::get_parents()');
 }
 
@@ -1389,14 +1386,14 @@ function make_categories_list(&$list, &$parents, $requiredcapability = '',
  * @deprecated since 2.5
  */
 function category_delete_move($category, $newparentid, $showfeedback=true) {
-    throw new coding_exception('Function category_delete_move() is deprecated. Please use coursecat::delete_move() instead.');
+    throw new coding_exception('Function category_delete_move() is removed. Please use coursecat::delete_move() instead.');
 }
 
 /**
  * @deprecated since 2.5
  */
 function category_delete_full($category, $showfeedback=true) {
-    throw new coding_exception('Function category_delete_full() is deprecated. Please use coursecat::delete_full() instead.');
+    throw new coding_exception('Function category_delete_full() is removed. Please use coursecat::delete_full() instead.');
 }
 
 /**
@@ -1414,7 +1411,7 @@ function category_delete_full($category, $showfeedback=true) {
  * @deprecated since 2.5
  */
 function move_category($category, $newparentcat) {
-    throw new coding_exception('Function move_category() is deprecated. Please use coursecat::change_parent() instead.');
+    throw new coding_exception('Function move_category() is removed. Please use coursecat::change_parent() instead.');
 }
 
 /**
@@ -1425,7 +1422,7 @@ function move_category($category, $newparentcat) {
  * @deprecated since 2.5
  */
 function course_category_hide($category) {
-    throw new coding_exception('Function course_category_hide() is deprecated. Please use coursecat::hide() instead.');
+    throw new coding_exception('Function course_category_hide() is removed. Please use coursecat::hide() instead.');
 }
 
 /**
@@ -1436,7 +1433,7 @@ function course_category_hide($category) {
  * @deprecated since 2.5
  */
 function course_category_show($category) {
-    throw new coding_exception('Function course_category_show() is deprecated. Please use coursecat::show() instead.');
+    throw new coding_exception('Function course_category_show() is removed. Please use coursecat::show() instead.');
 }
 
 /**
@@ -1452,7 +1449,7 @@ function course_category_show($category) {
  * @deprecated since 2.5
  */
 function get_course_category($catid=0) {
-    throw new coding_exception('Function get_course_category() is deprecated. Please use coursecat::get(), see phpdocs for more details');
+    throw new coding_exception('Function get_course_category() is removed. Please use coursecat::get(), see phpdocs for more details');
 }
 
 /**
@@ -1462,7 +1459,7 @@ function get_course_category($catid=0) {
  * @deprecated since 2.5
  */
 function create_course_category($category) {
-    throw new coding_exception('Function create_course_category() is deprecated. Please use coursecat::create(), see phpdocs for more details');
+    throw new coding_exception('Function create_course_category() is removed. Please use coursecat::create(), see phpdocs for more details');
 }
 
 /**
@@ -1479,7 +1476,7 @@ function create_course_category($category) {
  * @deprecated since 2.5
  */
 function get_all_subcategories($catid) {
-    throw new coding_exception('Function get_all_subcategories() is deprecated. Please use appropriate methods() of coursecat
+    throw new coding_exception('Function get_all_subcategories() is removed. Please use appropriate methods() of coursecat
             class. See phpdocs for more details');
 }
 
@@ -1504,7 +1501,7 @@ function get_all_subcategories($catid) {
  * @deprecated since 2.5
  */
 function get_child_categories($parentid) {
-    throw new coding_exception('Function get_child_categories() is deprecated. Use coursecat::get_children() or see phpdocs for
+    throw new coding_exception('Function get_child_categories() is removed. Use coursecat::get_children() or see phpdocs for
             more details.');
 }
 
@@ -1537,7 +1534,7 @@ function get_child_categories($parentid) {
  * {@link coursecat::get_default()}
  */
 function get_categories($parent='none', $sort=NULL, $shallow=true) {
-    throw new coding_exception('Function get_categories() is deprecated. Please use coursecat::get_children() or see phpdocs for other alternatives');
+    throw new coding_exception('Function get_categories() is removed. Please use coursecat::get_children() or see phpdocs for other alternatives');
 }
 
 /**
@@ -1548,7 +1545,7 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
 * @deprecated since 2.5
 */
 function print_course_search($value="", $return=false, $format="plain") {
-    throw new coding_exception('Function print_course_search() is deprecated, please use course renderer');
+    throw new coding_exception('Function print_course_search() is removed, please use course renderer');
 }
 
 /**
@@ -1559,7 +1556,7 @@ function print_course_search($value="", $return=false, $format="plain") {
  * @deprecated since 2.5
  */
 function print_my_moodle() {
-    throw new coding_exception('Function print_my_moodle() is deprecated, please use course renderer function frontpage_my_courses()');
+    throw new coding_exception('Function print_my_moodle() is removed, please use course renderer function frontpage_my_courses()');
 }
 
 /**
@@ -1570,7 +1567,7 @@ function print_my_moodle() {
  * @deprecated since 2.5
  */
 function print_remote_course($course, $width="100%") {
-    throw new coding_exception('Function print_remote_course() is deprecated, please use course renderer');
+    throw new coding_exception('Function print_remote_course() is removed, please use course renderer');
 }
 
 /**
@@ -1581,7 +1578,7 @@ function print_remote_course($course, $width="100%") {
  * @deprecated since 2.5
  */
 function print_remote_host($host, $width="100%") {
-    throw new coding_exception('Function print_remote_host() is deprecated, please use course renderer');
+    throw new coding_exception('Function print_remote_host() is removed, please use course renderer');
 }
 
 /**
@@ -1590,15 +1587,14 @@ function print_remote_host($host, $width="100%") {
  * See http://docs.moodle.org/dev/Courses_lists_upgrade_to_2.5
  */
 function print_whole_category_list($category=NULL, $displaylist=NULL, $parentslist=NULL, $depth=-1, $showcourses = true, $categorycourses=NULL) {
-    global $PAGE;
-    throw new coding_exception('Function print_whole_category_list() is deprecated, please use course renderer');
+    throw new coding_exception('Function print_whole_category_list() is removed, please use course renderer');
 }
 
 /**
  * @deprecated since 2.5
  */
 function print_category_info($category, $depth = 0, $showcourses = false, array $courses = null) {
-    throw new coding_exception('Function print_category_info() is deprecated, please use course renderer');
+    throw new coding_exception('Function print_category_info() is removed, please use course renderer');
 }
 
 /**
@@ -1618,7 +1614,7 @@ function print_category_info($category, $depth = 0, $showcourses = false, array 
  * See http://docs.moodle.org/dev/Courses_lists_upgrade_to_2.5
  */
 function get_course_category_tree($id = 0, $depth = 0) {
-    throw new coding_exception('Function get_course_category_tree() is deprecated, please use course renderer or coursecat class,
+    throw new coding_exception('Function get_course_category_tree() is removed, please use course renderer or coursecat class,
             see function phpdocs for more info');
 }
 
@@ -1638,7 +1634,7 @@ function get_course_category_tree($id = 0, $depth = 0) {
  * echo $renderer->course_category($category); // this will also print subcategories
  */
 function print_courses($category) {
-    throw new coding_exception('Function print_courses() is deprecated, please use course renderer');
+    throw new coding_exception('Function print_courses() is removed, please use course renderer');
 }
 
 /**
@@ -1650,7 +1646,7 @@ function print_courses($category) {
  * echo $renderer->course_info_box($course); // will print one course wrapped in div.generalbox
  */
 function print_course($course, $highlightterms = '') {
-    throw new coding_exception('Function print_course() is deprecated, please use course renderer');
+    throw new coding_exception('Function print_course() is removed, please use course renderer');
 }
 
 /**
@@ -1668,21 +1664,21 @@ function print_course($course, $highlightterms = '') {
  * coursecat::get($id)->get_courses()
  */
 function get_category_courses_array($categoryid = 0) {
-    throw new coding_exception('Function get_category_courses_array() is deprecated, please use methods of coursecat class');
+    throw new coding_exception('Function get_category_courses_array() is removed, please use methods of coursecat class');
 }
 
 /**
  * @deprecated since 2.5
  */
 function get_category_courses_array_recursively(array &$flattened, $category) {
-    throw new coding_exception('Function get_category_courses_array_recursively() is deprecated, please use methods of coursecat class', DEBUG_DEVELOPER);
+    throw new coding_exception('Function get_category_courses_array_recursively() is removed, please use methods of coursecat class', DEBUG_DEVELOPER);
 }
 
 /**
  * @deprecated since Moodle 2.5 MDL-27814 - please do not use this function any more.
  */
 function blog_get_context_url($context=null) {
-    throw new coding_exception('Function  blog_get_context_url() is deprecated, getting params from context is not reliable for blogs.');
+    throw new coding_exception('Function  blog_get_context_url() is removed, getting params from context is not reliable for blogs.');
 }
 
 /**
@@ -1698,28 +1694,28 @@ function blog_get_context_url($context=null) {
  * see {@link coursecat::get_courses()}
  */
 function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=array()) {
-    throw new coding_exception('Function get_courses_wmanagers() is deprecated, please use coursecat::get_courses()');
+    throw new coding_exception('Function get_courses_wmanagers() is removed, please use coursecat::get_courses()');
 }
 
 /**
  * @deprecated since 2.5
  */
 function convert_tree_to_html($tree, $row=0) {
-    throw new coding_exception('Function convert_tree_to_html() is deprecated since Moodle 2.5. Consider using class tabtree and core_renderer::render_tabtree()');
+    throw new coding_exception('Function convert_tree_to_html() is removed. Consider using class tabtree and core_renderer::render_tabtree()');
 }
 
 /**
  * @deprecated since 2.5
  */
 function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
-    throw new coding_exception('Function convert_tabrows_to_tree() is deprecated since Moodle 2.5. Consider using class tabtree');
+    throw new coding_exception('Function convert_tabrows_to_tree() is removed. Consider using class tabtree');
 }
 
 /**
  * @deprecated since 2.5 - do not use, the textrotate.js will work it out automatically
  */
 function can_use_rotated_text() {
-    debugging('can_use_rotated_text() is deprecated since Moodle 2.5. JS feature detection is used automatically.');
+    debugging('can_use_rotated_text() is removed. JS feature detection is used automatically.');
 }
 
 /**
@@ -1748,7 +1744,7 @@ function get_system_context($cache = true) {
  * @deprecated since 2.2, use $context->get_parent_context_ids() instead
  */
 function get_parent_contexts(context $context, $includeself = false) {
-    throw new coding_exception('get_parent_contexts() is deprecated, please use $context->get_parent_context_ids() instead.');
+    throw new coding_exception('get_parent_contexts() is removed, please use $context->get_parent_context_ids() instead.');
 }
 
 /**
@@ -1756,7 +1752,7 @@ function get_parent_contexts(context $context, $includeself = false) {
  * @see context::get_parent_context()
  */
 function get_parent_contextid(context $context) {
-    throw new coding_exception('get_parent_contextid() is deprecated, please use $context->get_parent_context() instead.');
+    throw new coding_exception('get_parent_contextid() is removed, please use $context->get_parent_context() instead.');
 }
 
 /**
@@ -1764,7 +1760,7 @@ function get_parent_contextid(context $context) {
  * @deprecated since 2.2
  */
 function get_child_contexts(context $context) {
-    throw new coding_exception('get_child_contexts() is deprecated, please use $context->get_child_contexts() instead.');
+    throw new coding_exception('get_child_contexts() is removed, please use $context->get_child_contexts() instead.');
 }
 
 /**
@@ -1772,7 +1768,7 @@ function get_child_contexts(context $context) {
  * @deprecated since 2.2
  */
 function create_contexts($contextlevel = null, $buildpaths = true) {
-    throw new coding_exception('create_contexts() is deprecated, please use context_helper::create_instances() instead.');
+    throw new coding_exception('create_contexts() is removed, please use context_helper::create_instances() instead.');
 }
 
 /**
@@ -1780,7 +1776,7 @@ function create_contexts($contextlevel = null, $buildpaths = true) {
  * @deprecated since 2.2
  */
 function cleanup_contexts() {
-    throw new coding_exception('cleanup_contexts() is deprecated, please use context_helper::cleanup_instances() instead.');
+    throw new coding_exception('cleanup_contexts() is removed, please use context_helper::cleanup_instances() instead.');
 }
 
 /**
@@ -1789,14 +1785,14 @@ function cleanup_contexts() {
  * @deprecated since 2.2
  */
 function build_context_path($force = false) {
-    throw new coding_exception('build_context_path() is deprecated, please use context_helper::build_all_paths() instead.');
+    throw new coding_exception('build_context_path() is removed, please use context_helper::build_all_paths() instead.');
 }
 
 /**
  * @deprecated since 2.2
  */
 function rebuild_contexts(array $fixcontexts) {
-    throw new coding_exception('rebuild_contexts() is deprecated, please use $context->reset_paths(true) instead.');
+    throw new coding_exception('rebuild_contexts() is removed, please use $context->reset_paths(true) instead.');
 }
 
 /**
@@ -1804,7 +1800,7 @@ function rebuild_contexts(array $fixcontexts) {
  * @see context_helper::preload_course()
  */
 function preload_course_contexts($courseid) {
-    throw new coding_exception('preload_course_contexts() is deprecated, please use context_helper::preload_course() instead.');
+    throw new coding_exception('preload_course_contexts() is removed, please use context_helper::preload_course() instead.');
 }
 
 /**
@@ -1812,7 +1808,7 @@ function preload_course_contexts($courseid) {
  * @see context::update_moved()
  */
 function context_moved(context $context, context $newparent) {
-    throw new coding_exception('context_moved() is deprecated, please use context::update_moved() instead.');
+    throw new coding_exception('context_moved() is removed, please use context::update_moved() instead.');
 }
 
 /**
@@ -1820,7 +1816,7 @@ function context_moved(context $context, context $newparent) {
  * @deprecated since 2.2
  */
 function fetch_context_capabilities(context $context) {
-    throw new coding_exception('fetch_context_capabilities() is deprecated, please use $context->get_capabilities() instead.');
+    throw new coding_exception('fetch_context_capabilities() is removed, please use $context->get_capabilities() instead.');
 }
 
 /**
@@ -1828,7 +1824,7 @@ function fetch_context_capabilities(context $context) {
  * @see context_helper::preload_from_record()
  */
 function context_instance_preload(stdClass $rec) {
-    throw new coding_exception('context_instance_preload() is deprecated, please use context_helper::preload_from_record() instead.');
+    throw new coding_exception('context_instance_preload() is removed, please use context_helper::preload_from_record() instead.');
 }
 
 /**
@@ -1838,7 +1834,7 @@ function context_instance_preload(stdClass $rec) {
  * @see context_helper::get_level_name()
  */
 function get_contextlevel_name($contextlevel) {
-    throw new coding_exception('get_contextlevel_name() is deprecated, please use context_helper::get_level_name() instead.');
+    throw new coding_exception('get_contextlevel_name() is removed, please use context_helper::get_level_name() instead.');
 }
 
 /**
@@ -1846,7 +1842,7 @@ function get_contextlevel_name($contextlevel) {
  * @see context::get_context_name()
  */
 function print_context_name(context $context, $withprefix = true, $short = false) {
-    throw new coding_exception('print_context_name() is deprecated, please use $context->get_context_name() instead.');
+    throw new coding_exception('print_context_name() is removed, please use $context->get_context_name() instead.');
 }
 
 /**
@@ -1854,7 +1850,7 @@ function print_context_name(context $context, $withprefix = true, $short = false
  * @see context::mark_dirty()
  */
 function mark_context_dirty($path) {
-    throw new coding_exception('mark_context_dirty() is deprecated, please use $context->mark_dirty() instead.');
+    throw new coding_exception('mark_context_dirty() is removed, please use $context->mark_dirty() instead.');
 }
 
 /**
@@ -1863,9 +1859,9 @@ function mark_context_dirty($path) {
  */
 function delete_context($contextlevel, $instanceid, $deleterecord = true) {
     if ($deleterecord) {
-        throw new coding_exception('delete_context() is deprecated, please use context_helper::delete_instance() instead.');
+        throw new coding_exception('delete_context() is removed, please use context_helper::delete_instance() instead.');
     } else {
-        throw new coding_exception('delete_context() is deprecated, please use $context->delete_content() instead.');
+        throw new coding_exception('delete_context() is removed, please use $context->delete_content() instead.');
     }
 }
 
@@ -1874,7 +1870,7 @@ function delete_context($contextlevel, $instanceid, $deleterecord = true) {
  * @see context::get_url()
  */
 function get_context_url(context $context) {
-    throw new coding_exception('get_context_url() is deprecated, please use $context->get_url() instead.');
+    throw new coding_exception('get_context_url() is removed, please use $context->get_url() instead.');
 }
 
 /**
@@ -1882,7 +1878,7 @@ function get_context_url(context $context) {
  * @see context::get_course_context()
  */
 function get_course_context(context $context) {
-    throw new coding_exception('get_course_context() is deprecated, please use $context->get_course_context(true) instead.');
+    throw new coding_exception('get_course_context() is removed, please use $context->get_course_context(true) instead.');
 }
 
 /**
@@ -1891,14 +1887,14 @@ function get_course_context(context $context) {
  */
 function get_user_courses_bycap($userid, $cap, $accessdata_ignored, $doanything_ignored, $sort = 'c.sortorder ASC', $fields = null, $limit_ignored = 0) {
 
-    throw new coding_exception('get_user_courses_bycap() is deprecated, please use enrol_get_users_courses() instead.');
+    throw new coding_exception('get_user_courses_bycap() is removed, please use enrol_get_users_courses() instead.');
 }
 
 /**
  * @deprecated since Moodle 2.2
  */
 function get_role_context_caps($roleid, context $context) {
-    throw new coding_exception('get_role_context_caps() is deprecated, it is really slow. Don\'t use it.');
+    throw new coding_exception('get_role_context_caps() is removed, it is really slow. Don\'t use it.');
 }
 
 /**
@@ -1906,7 +1902,7 @@ function get_role_context_caps($roleid, context $context) {
  * @deprecated since 2.2
  */
 function get_courseid_from_context(context $context) {
-    throw new coding_exception('get_courseid_from_context() is deprecated, please use $context->get_course_context(false) instead.');
+    throw new coding_exception('get_courseid_from_context() is removed, please use $context->get_course_context(false) instead.');
 }
 
 /**
@@ -1926,7 +1922,7 @@ function get_courseid_from_context(context $context) {
  * @deprecated since 2.2
  */
 function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
-    throw new coding_exception('context_instance_preload_sql() is deprecated, please use context_helper::get_preload_record_columns_sql() instead.');
+    throw new coding_exception('context_instance_preload_sql() is removed, please use context_helper::get_preload_record_columns_sql() instead.');
 }
 
 /**
@@ -1934,7 +1930,7 @@ function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
  * @see context::get_parent_context_ids()
  */
 function get_related_contexts_string(context $context) {
-    throw new coding_exception('get_related_contexts_string() is deprecated, please use $context->get_parent_context_ids(true) instead.');
+    throw new coding_exception('get_related_contexts_string() is removed, please use $context->get_parent_context_ids(true) instead.');
 }
 
 /**
@@ -1942,70 +1938,70 @@ function get_related_contexts_string(context $context) {
  * @see core_component::get_plugin_list_with_file()
  */
 function get_plugin_list_with_file($plugintype, $file, $include = false) {
-    throw new coding_exception('get_plugin_list_with_file() is deprecated, please use core_component::get_plugin_list_with_file() instead.');
+    throw new coding_exception('get_plugin_list_with_file() is removed, please use core_component::get_plugin_list_with_file() instead.');
 }
 
 /**
  * @deprecated since 2.6
  */
 function check_browser_operating_system($brand) {
-    throw new coding_exception('check_browser_operating_system has been deprecated, please update your code to use core_useragent instead.');
+    throw new coding_exception('check_browser_operating_system is removed, please update your code to use core_useragent instead.');
 }
 
 /**
  * @deprecated since 2.6
  */
 function check_browser_version($brand, $version = null) {
-    throw new coding_exception('check_browser_version has been deprecated, please update your code to use core_useragent instead.');
+    throw new coding_exception('check_browser_version is removed, please update your code to use core_useragent instead.');
 }
 
 /**
  * @deprecated since 2.6
  */
 function get_device_type() {
-    throw new coding_exception('get_device_type has been deprecated, please update your code to use core_useragent instead.');
+    throw new coding_exception('get_device_type is removed, please update your code to use core_useragent instead.');
 }
 
 /**
  * @deprecated since 2.6
  */
 function get_device_type_list($incusertypes = true) {
-    throw new coding_exception('get_device_type_list has been deprecated, please update your code to use core_useragent instead.');
+    throw new coding_exception('get_device_type_list is removed, please update your code to use core_useragent instead.');
 }
 
 /**
  * @deprecated since 2.6
  */
 function get_selected_theme_for_device_type($devicetype = null) {
-    throw new coding_exception('get_selected_theme_for_device_type has been deprecated, please update your code to use core_useragent instead.');
+    throw new coding_exception('get_selected_theme_for_device_type is removed, please update your code to use core_useragent instead.');
 }
 
 /**
  * @deprecated since 2.6
  */
 function get_device_cfg_var_name($devicetype = null) {
-    throw new coding_exception('get_device_cfg_var_name has been deprecated, please update your code to use core_useragent instead.');
+    throw new coding_exception('get_device_cfg_var_name is removed, please update your code to use core_useragent instead.');
 }
 
 /**
  * @deprecated since 2.6
  */
 function set_user_device_type($newdevice) {
-    throw new coding_exception('set_user_device_type has been deprecated, please update your code to use core_useragent instead.');
+    throw new coding_exception('set_user_device_type is removed, please update your code to use core_useragent instead.');
 }
 
 /**
  * @deprecated since 2.6
  */
 function get_user_device_type() {
-    throw new coding_exception('get_user_device_type has been deprecated, please update your code to use core_useragent instead.');
+    throw new coding_exception('get_user_device_type is removed, please update your code to use core_useragent instead.');
 }
 
 /**
  * @deprecated since 2.6
  */
 function get_browser_version_classes() {
-    throw new coding_exception('get_browser_version_classes has been deprecated, please update your code to use core_useragent instead.');
+    throw new coding_exception('get_browser_version_classes is removed, please update your code to use core_useragent instead.');
 }
 
 /**
@@ -2013,21 +2009,21 @@ function get_browser_version_classes() {
  * @see core_user::get_support_user()
  */
 function generate_email_supportuser() {
-    throw new coding_exception('generate_email_supportuser is deprecated, please use core_user::get_support_user');
+    throw new coding_exception('generate_email_supportuser is removed, please use core_user::get_support_user');
 }
 
 /**
  * @deprecated since Moodle 2.6
  */
 function badges_get_issued_badge_info($hash) {
-    throw new coding_exception('Function badges_get_issued_badge_info() is deprecated. Please use core_badges_assertion class and methods to generate badge assertion.');
+    throw new coding_exception('Function badges_get_issued_badge_info() is removed. Please use core_badges_assertion class and methods to generate badge assertion.');
 }
 
 /**
  * @deprecated since 2.6
  */
 function can_use_html_editor() {
-    throw new coding_exception('can_use_html_editor has been deprecated please update your code to assume it returns true.');
+    throw new coding_exception('can_use_html_editor is removed, please update your code to assume it returns true.');
 }
 
 
@@ -2057,7 +2053,7 @@ function coursemodule_visible_for_user($cm, $userid=0) {
  * @deprecated since Moodle 2.8 MDL-36014, MDL-35618 this functionality is removed
  */
 function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
-    throw new coding_exception('Function enrol_cohort_get_cohorts() is deprecated, use enrol_cohort_search_cohorts() or '.
+    throw new coding_exception('Function enrol_cohort_get_cohorts() is removed, use enrol_cohort_search_cohorts() or '.
         'cohort_get_available_cohorts() instead');
 }
 
@@ -2068,7 +2064,7 @@ function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
  * @deprecated since Moodle 2.8 MDL-36014 please use cohort_can_view_cohort()
  */
 function enrol_cohort_can_view_cohort($cohortid) {
-    throw new coding_exception('Function enrol_cohort_can_view_cohort() is deprecated, use cohort_can_view_cohort() instead');
+    throw new coding_exception('Function enrol_cohort_can_view_cohort() is removed, use cohort_can_view_cohort() instead');
 }
 
 /**
@@ -2077,7 +2073,7 @@ function enrol_cohort_can_view_cohort($cohortid) {
  * @deprecated since Moodle 2.8 MDL-36014 use cohort_get_available_cohorts() instead
  */
 function cohort_get_visible_list($course, $onlyenrolled=true) {
-    throw new coding_exception('Function cohort_get_visible_list() is deprecated. Please use function cohort_get_available_cohorts() ".
+    throw new coding_exception('Function cohort_get_visible_list() is removed. Please use function cohort_get_available_cohorts() ".
         "that correctly checks capabilities.');
 }
 
@@ -2085,14 +2081,14 @@ function cohort_get_visible_list($course, $onlyenrolled=true) {
  * @deprecated since Moodle 2.8 MDL-35618 this functionality is removed
  */
 function enrol_cohort_enrol_all_users(course_enrolment_manager $manager, $cohortid, $roleid) {
-    throw new coding_exception('enrol_cohort_enrol_all_users() is deprecated. This functionality is moved to enrol_manual.');
+    throw new coding_exception('enrol_cohort_enrol_all_users() is removed. This functionality is moved to enrol_manual.');
 }
 
 /**
  * @deprecated since Moodle 2.8 MDL-35618 this functionality is removed
  */
 function enrol_cohort_search_cohorts(course_enrolment_manager $manager, $offset = 0, $limit = 25, $search = '') {
-    throw new coding_exception('enrol_cohort_search_cohorts() is deprecated. This functionality is moved to enrol_manual.');
+    throw new coding_exception('enrol_cohort_search_cohorts() is removed. This functionality is moved to enrol_manual.');
 }
 
 /* === Apis deprecated in since Moodle 2.9 === */
@@ -2349,4 +2345,4 @@ function get_timezone_record($timezonename) {
     return array();
 }
 
-/* === Apis deprecated in since Moodle 3.0 === */
+/* === Apis deprecated since Moodle 3.0 === */

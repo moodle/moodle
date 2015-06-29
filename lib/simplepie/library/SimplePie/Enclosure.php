@@ -68,7 +68,7 @@ class SimplePie_Enclosure
 
 	/**
 	 * @var array
-	 * @see get_categories()
+	 * @see coursecat::get_children()
 	 */
 	var $categories;
 

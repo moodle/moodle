@@ -463,6 +463,7 @@ $string['minmaxupgradefixbutton'] = 'Resolve inconsistencies';
 $string['minmaxupgradewarning'] = 'Note: An inconsistency has been detected with some grades due to a change in the minimum and maximum grades used when calculating the grade displayed in the gradebook. It is recommended that the inconsistency is resolved by clicking the button below, though this will result in some grades being changed.';
 $string['minimum_show'] = 'Show minimum grade';
 $string['minimum_show_help'] = 'Minimum grade is used in calculating grades and weights. If not shown, minimum grade will default to zero and cannot be edited.';
+$string['missingitemtypeoreid'] = 'Array key (itemtype or eid) missing from 2nd param of grade_edit_tree_column_select::get_item_cell($item, $params)';
 $string['missingscale'] = 'Scale must be selected';
 $string['mode'] = 'Mode';
 $string['modgradeerrorbadpoint'] = 'Invalid Grade Value. This must be an integer between 0 and {$a}';

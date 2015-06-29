@@ -2174,8 +2174,8 @@ class calendar_event {
      * Pass in a object containing the event properties and this function will
      * insert it into the database and deal with any associated files
      *
-     * @see add_event()
-     * @see update_event()
+     * @see self::create()
+     * @see self::update()
      *
      * @param stdClass $data object of event
      * @param bool $checkcapability if moodle should check calendar managing capability or not
@@ -2391,7 +2391,7 @@ class calendar_event {
      * This function deletes an event, any associated events if $deleterepeated=true,
      * and cleans up any files associated with the events.
      *
-     * @see delete_event()
+     * @see self::delete()
      *
      * @param bool $deleterepeated  delete event repeatedly
      * @return bool succession of deleting event
