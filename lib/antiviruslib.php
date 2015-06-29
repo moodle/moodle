@@ -52,14 +52,15 @@ function antiviruses_get_enabled() {
  * Scan file using all enabled antiviruses, throws exception in case of infected file.
  *
  * @param string $file Full path to the file.
+ * @param string $filename Name of the file (could be different from physical file if temp file is used).
  * @param bool $deleteinfected whether infected file needs to be deleted.
- * @throws moodle_exception If file is infected.
+ * @throws antivirus_exception If file is infected.
  * @return void
  */
-function antiviruses_scan_file($file, $deleteinfected) {
+function antiviruses_scan_file($file, $filename, $deleteinfected) {
     $antiviruses = antiviruses_get_enabled();
     foreach ($antiviruses as $antivirus) {
-        $antivirus->scan_file($file, $deleteinfected);
+        $antivirus->scan_file($file, $filename, $deleteinfected);
     }
 }
 
@@ -133,8 +134,57 @@ abstract class antivirus {
      * @param string $file Full path to the file.
      * @param string $filename Name of the file (could be different from physical file if temp file is used).
      * @param bool $deleteinfected whether infected file needs to be deleted.
-     * @throws moodle_exception If file is infected.
+     * @throws antivirus_exception If file is infected.
      * @return void
      */
     public abstract function scan_file($file, $filename, $deleteinfected);
+
+    /**
+     * Email admins about antivirus scan outcomes.
+     *
+     * @param string $notice The body of the email to be sent.
+     * @return void
+     */
+    public function message_admins($notice) {
+
+        $site = get_site();
+
+        $subject = get_string('emailsubject', 'antivirus', format_string($site->fullname));
+        $admins = get_admins();
+        foreach ($admins as $admin) {
+            $eventdata = new stdClass();
+            $eventdata->component         = 'moodle';
+            $eventdata->name              = 'errors';
+            $eventdata->userfrom          = get_admin();
+            $eventdata->userto            = $admin;
+            $eventdata->subject           = $subject;
+            $eventdata->fullmessage       = $notice;
+            $eventdata->fullmessageformat = FORMAT_PLAIN;
+            $eventdata->fullmessagehtml   = '';
+            $eventdata->smallmessage      = '';
+            message_send($eventdata);
+        }
+    }
+}
+
+/**
+ * An antivirus exception class.
+ *
+ * @package    core
+ * @subpackage antivirus
+ * @copyright  2015 Ruslan Kabalin, Lancaster University.
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class antivirus_exception extends moodle_exception {
+    /**
+     * Constructs a new exception
+     *
+     * @param string $errorcode
+     * @param string $link
+     * @param mixed $a
+     * @param mixed $debuginfo
+     */
+    public function __construct($errorcode, $link = '', $a=NULL, $debuginfo=null) {
+        parent::__construct($errorcode, 'antivirus', $link, $a, $debuginfo);
+    }
 }

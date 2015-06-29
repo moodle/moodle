@@ -141,7 +141,7 @@ class repository_upload extends repository {
             }
         }
 
-        self::antivir_scan_file($_FILES[$elname]['tmp_name'], $_FILES[$elname]['name'], true);
+        antiviruses_scan_file($_FILES[$elname]['tmp_name'], $_FILES[$elname]['name'], true);
 
         // {@link repository::build_source_field()}
         $sourcefield = $this->get_file_source_info($_FILES[$elname]['name']);

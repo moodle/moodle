@@ -26,3 +26,5 @@ $string['actantivirushdr'] = 'Available antiviruses';
 $string['antiviruses'] = 'Antiviruses';
 $string['antivirussettings'] = 'Manage antiviruses';
 $string['configantivirusplugins'] = 'Please choose the antivirus plugins you wish to use and arrange them in order of being applied.';
+$string['emailsubject'] = '{$a} :: Antivirus notification';
+$string['virusfounduser'] = 'The file you have uploaded, {$a->filename}, has been scanned by a virus checker and found to be infected! Your file upload was NOT successful.';

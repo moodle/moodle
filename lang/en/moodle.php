@@ -240,14 +240,10 @@ $string['city'] = 'City/town';
 $string['clambroken'] = 'Your administrator has enabled virus checking for file uploads but has misconfigured something.<br />Your file upload was NOT successful. Your administrator has been emailed to notify them so they can fix it.<br />Maybe try uploading this file later.';
 $string['clamdeletedfile'] = 'The file has been deleted';
 $string['clamdeletedfilefailed'] = 'The file could not be deleted';
-$string['clamemailsubject'] = '{$a} :: Clam AV notification';
-$string['clamfailed'] = 'Clam AV has failed to run.  The return error message was {$a}. Here is the output from Clam:';
-$string['clamlost'] = 'Moodle is configured to run clam on file upload, but the path supplied to Clam AV, {$a},  is invalid.';
 $string['clamlostandactinglikevirus'] = 'In addition, Moodle is configured so that if clam fails to run, files are treated like viruses.  This essentially means that no student can upload a file successfully until you fix this.';
 $string['clammovedfile'] = 'The file has been moved to your specified quarantine directory, the new location is {$a}';
 $string['clammovedfilebasic'] = 'The file has been moved to a quarantine directory.';
 $string['clamquarantinedirfailed'] = 'Could not move the file into your specified quarantine directory, {$a}. You need to fix this as files are being deleted if they\'re found to be infected.';
-$string['clamunknownerror'] = 'There was an unknown error with clam.';
 $string['cleaningtempdata'] = 'Cleaning temp data';
 $string['clear'] = 'Clear';
 $string['clickhelpiconformoreinfo'] = '... continues ... Click on the help icon to read the full article';
@@ -1988,7 +1984,6 @@ Here is a summary of what has happened to the file:
 
 {$a->action}';
 $string['virusfoundsubject'] = '{$a}: Virus found!';
-$string['virusfounduser'] = 'The file you have uploaded, {$a->filename}, has been scanned by a virus checker and found to be infected! Your file upload was NOT successful.';
 $string['virusplaceholder'] = 'This file that has been uploaded was found to contain a virus and has been moved or deleted and the user notified.';
 $string['visible'] = 'Visible';
 $string['visible_help'] = 'This setting determines whether the course appears in the list of courses. Apart from teachers and administrators, users are not allowed to enter the course.';
