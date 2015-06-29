@@ -70,7 +70,7 @@ class wikimedia {
                 $this->_param['titles'] .= ('|'.urldecode($title));
             }
         } else {
-            $this->_param['titles'] = urldecode($title);
+            $this->_param['titles'] = urldecode($titles);
         }
         $this->_param['prop']   = 'imageinfo';
         $this->_param['iiprop'] = 'url';
