@@ -4,7 +4,6 @@ Feature: We can choose what min or max grade to use when aggregating grades.
   As an teacher
   I can update modify a course setting
 
-  @javascript
   Scenario: Changing the min or max grade to use updates the grades accordingly
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |
