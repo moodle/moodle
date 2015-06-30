@@ -522,6 +522,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
         $version29start = 2015051100.00;
         $version29last = 2015060400.02;
 
+        $target = $this->get_task()->get_target();
         if ($minmaxtouse === false &&
                 ($target != backup::TARGET_CURRENT_ADDING && $target != backup::TARGET_EXISTING_ADDING)) {
             // The setting was not found because this setting did not exist at the time the backup was made.
