@@ -237,13 +237,6 @@ $string['idnumbercoursecategory_help'] = 'The ID number of a course category  is
 $string['categoryupdated'] = 'The category \'{$a}\' was updated';
 $string['changesmadereallygoaway'] = 'You have made changes. Are you sure you want to navigate away and lose your changes?';
 $string['city'] = 'City/town';
-$string['clambroken'] = 'Your administrator has enabled virus checking for file uploads but has misconfigured something.<br />Your file upload was NOT successful. Your administrator has been emailed to notify them so they can fix it.<br />Maybe try uploading this file later.';
-$string['clamdeletedfile'] = 'The file has been deleted';
-$string['clamdeletedfilefailed'] = 'The file could not be deleted';
-$string['clamlostandactinglikevirus'] = 'In addition, Moodle is configured so that if clam fails to run, files are treated like viruses.  This essentially means that no student can upload a file successfully until you fix this.';
-$string['clammovedfile'] = 'The file has been moved to your specified quarantine directory, the new location is {$a}';
-$string['clammovedfilebasic'] = 'The file has been moved to a quarantine directory.';
-$string['clamquarantinedirfailed'] = 'Could not move the file into your specified quarantine directory, {$a}. You need to fix this as files are being deleted if they\'re found to be infected.';
 $string['cleaningtempdata'] = 'Cleaning temp data';
 $string['clear'] = 'Clear';
 $string['clickhelpiconformoreinfo'] = '... continues ... Click on the help icon to read the full article';
@@ -1967,24 +1960,6 @@ $string['viewfileinpopup'] = 'View file in a popup window';
 $string['viewprofile'] = 'View profile';
 $string['views'] = 'Views';
 $string['viewsolution'] = 'view solution';
-$string['virusfound'] = 'Attention administrator! Clam AV has found a virus in a file uploaded by {$a->user} for the course {$a->course}. Here is the output of clamscan:';
-$string['virusfoundlater'] = 'A file you uploaded on {$a->date} with the filename {$a->filename} for the course {$a->course} has since been found to contain a virus.  Here is a summary of what has happened to your file:
-
-{$a->action}
-
-If this was submitted work, you may want to resubmit it so that your tutor can see it.';
-$string['virusfoundlateradmin'] = 'Attention administrator! A file that was uploaded on {$a->date} with the filename {$a->filename} for the course {$a->course} by the user {$a->user} has since been found to contain a virus.  Here is a summary of what has happened to the file:
-
-{$a->action}
-
-The user has also been notified.';
-$string['virusfoundlateradminnolog'] = 'Attention administrator! A file that was uploaded with the filename {$a->filename} has since been found to contain a virus. Moodle was unable to resolve this file back to the user that originally uploaded it.
-
-Here is a summary of what has happened to the file:
-
-{$a->action}';
-$string['virusfoundsubject'] = '{$a}: Virus found!';
-$string['virusplaceholder'] = 'This file that has been uploaded was found to contain a virus and has been moved or deleted and the user notified.';
 $string['visible'] = 'Visible';
 $string['visible_help'] = 'This setting determines whether the course appears in the list of courses. Apart from teachers and administrators, users are not allowed to enter the course.';
 $string['visibletostudents'] = 'Visible to {$a}';

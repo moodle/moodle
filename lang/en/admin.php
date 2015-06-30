@@ -57,7 +57,6 @@ $string['allowuserswitchrolestheycantassign'] = 'Allow users without the assign 
 $string['allowuserthemes'] = 'Allow user themes';
 $string['alternativefullnameformat'] = 'Alternative full name format';
 $string['alternativefullnameformat_desc'] = 'This defines how names are shown to users with the viewfullnames capability (by default users with the role of manager, teacher or non-editing teacher). Placeholders that can be used are as for the "Full name format" setting.';
-$string['antivirus'] = 'Anti-Virus';
 $string['appearance'] = 'Appearance';
 $string['aspellpath'] = 'Path to aspell';
 $string['authentication'] = 'Authentication';

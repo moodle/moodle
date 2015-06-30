@@ -1185,11 +1185,13 @@ abstract class repository implements cacheable_object {
      * permissions of the file are not modified here!
      *
      * @static
+     * @depricated since Moodle 3.0
      * @param string $thefile
      * @param string $filename name of the file
      * @param bool $deleteinfected
      */
     public static function antivir_scan_file($thefile, $filename, $deleteinfected) {
+        debugging('Please upgrade your code to use antiviruses_scan_file instead', DEBUG_DEVELOPER);
         antiviruses_scan_file($thefile, $filename, $deleteinfected);
     }
 

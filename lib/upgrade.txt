@@ -54,6 +54,12 @@ information provided here is intended especially for developers.
   are assigned to fields and buttons through a self-contained JS function.
 * Added $CFG->urlrewriteclass option to config.php allowing clean / semantic urls to
   be implemented in a plugin, eg local_cleanurls.
+* $CFG->pathtoclam global setting has been moved to clamav antivirus plugin
+  setting of the same name.
+* clam_message_admins() and get_clam_error_code() have been deprecated, its
+  functionality is now a part of antivirus_clamav class methods.
+* \repository::antivir_scan_file() has been deprecated, antiviruses_scan_file() that
+  applies antivirus plugins is replacing its functionality.
 
 === 3.0 ===
 
