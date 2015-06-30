@@ -336,6 +336,8 @@ function user_get_user_details($user, $course = null, array $userfields = array(
             $formfield = new $newfield($field->id, $user->id);
             if ($formfield->is_visible() and !$formfield->is_empty()) {
 
+                // TODO: Part of MDL-50728, this conditional coding must be moved to
+                // proper profile fields API so they are self-contained.
                 // We only use display_data in fields that require text formatting.
                 if ($field->datatype == 'text' or $field->datatype == 'textarea') {
                     $fieldvalue = $formfield->display_data();
