@@ -174,41 +174,40 @@ abstract class backup_cron_automated_helper {
                     $backupcourse->nextstarttime = $nextstarttime;
                     $DB->update_record('backup_courses', $backupcourse);
                     mtrace('Skipping ' . $course->fullname . ' (Not scheduled for backup until ' . $showtime . ')');
-                } else if ($skipped) { // Must have been skipped for a reason.
-                    $backupcourse->laststatus = self::BACKUP_STATUS_SKIPPED;
-                    $backupcourse->nextstarttime = $nextstarttime;
-                    $DB->update_record('backup_courses', $backupcourse);
-                    mtrace('Skipping ' . $course->fullname . ' (' . $skippedmessage . ')');
-                    mtrace('Backup of \'' . $course->fullname . '\' is scheduled on ' . $showtime);
                 } else {
-                    // Backup every non-skipped courses.
-                    mtrace('Backing up '.$course->fullname.'...');
-
-                    // We have to send an email because we have included at least one backup.
-                    $emailpending = true;
-
-                    // Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error).
-                    if ($backupcourse->laststatus != self::BACKUP_STATUS_UNFINISHED) {
-                        // Set laststarttime.
-                        $starttime = time();
-
-                        $backupcourse->laststarttime = time();
-                        $backupcourse->laststatus = self::BACKUP_STATUS_UNFINISHED;
-                        $DB->update_record('backup_courses', $backupcourse);
-
-                        $backupcourse->laststatus = backup_cron_automated_helper::launch_automated_backup($course, $backupcourse->laststarttime, $admin->id);
-                        $backupcourse->lastendtime = time();
+                    if ($skipped) { // Must have been skipped for a reason.
+                        $backupcourse->laststatus = self::BACKUP_STATUS_SKIPPED;
                         $backupcourse->nextstarttime = $nextstarttime;
-
                         $DB->update_record('backup_courses', $backupcourse);
+                        mtrace('Skipping ' . $course->fullname . ' (' . $skippedmessage . ')');
+                        mtrace('Backup of \'' . $course->fullname . '\' is scheduled on ' . $showtime);
+                    } else {
+                        // Backup every non-skipped courses.
+                        mtrace('Backing up '.$course->fullname.'...');
 
-                        if ($backupcourse->laststatus === self::BACKUP_STATUS_OK) {
-                            // Clean up any excess course backups now that we have
-                            // taken a successful backup.
-                            $removedcount = backup_cron_automated_helper::remove_excess_backups($course);
+                        // We have to send an email because we have included at least one backup.
+                        $emailpending = true;
+
+                        // Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error).
+                        if ($backupcourse->laststatus != self::BACKUP_STATUS_UNFINISHED) {
+                            // Set laststarttime.
+                            $starttime = time();
+
+                            $backupcourse->laststarttime = time();
+                            $backupcourse->laststatus = self::BACKUP_STATUS_UNFINISHED;
+                            $DB->update_record('backup_courses', $backupcourse);
+
+                            $backupcourse->laststatus = self::launch_automated_backup($course, $backupcourse->laststarttime,
+                                                                                      $admin->id);
+                            $backupcourse->lastendtime = time();
+                            $backupcourse->nextstarttime = $nextstarttime;
+
+                            $DB->update_record('backup_courses', $backupcourse);
                         }
                     }
 
+                    // Remove excess backups.
+                    $removedcount = self::remove_excess_backups($course, $now);
                     mtrace("complete - next execution: $showtime");
                 }
             }
@@ -542,16 +541,18 @@ abstract class backup_cron_automated_helper {
      * The number of backups keep comes from $config->backup_auto_keep.
      *
      * @param stdClass $course object
+     * @param int $now execution time
      * @return bool
      */
-    public static function remove_excess_backups($course) {
+    public static function remove_excess_backups($course, $now) {
         $config = get_config('backup');
         $keep =     (int)$config->backup_auto_keep;
         $storage =  $config->backup_auto_storage;
         $dir =      $config->backup_auto_destination;
+        $histdays = (int)$config->backup_auto_keep_days;
 
-        if ($keep == 0) {
-            // Means keep all backup files.
+        if ($keep == 0 && $histdays == 0) {
+            // Means keep all backup files and never remove backup after x days.
             return true;
         }
 
@@ -571,17 +572,11 @@ abstract class backup_cron_automated_helper {
             foreach ($fs->get_area_files($context->id, $component, $filearea, $itemid) as $file) {
                 $files[$file->get_timemodified()] = $file;
             }
-            if (count($files) <= $keep) {
-                // There are less matching files than the desired number to keep there is nothing to clean up.
+
+            $backupremoved = self::remove_old_backups($files, true, $now, $course->idnumber);
+            if (!$backupremoved) {
                 return 0;
             }
-            // Sort by keys descending (newer to older filemodified).
-            krsort($files);
-            $remove = array_splice($files, $keep);
-            foreach ($remove as $file) {
-                $file->delete();
-            }
-            //mtrace('Removed '.count($remove).' old backup file(s) from the automated filearea');
         }
 
         // Clean up excess backups in the specified external directory.
@@ -615,17 +610,11 @@ abstract class backup_cron_automated_helper {
                     $files[$file] = $bcinfo->backup_date;
                 }
             }
-            if (count($files) <= $keep) {
-                // There are less matching files than the desired number to keep there is nothing to clean up.
+
+            $backupremoved = self::remove_old_backups($files, false, $now, $course->idnumber);
+            if (!$backupremoved) {
                 return 0;
             }
-            // Sort by values descending (newer to older filemodified).
-            arsort($files);
-            $remove = array_splice($files, $keep);
-            foreach (array_keys($remove) as $file) {
-                unlink($dir . '/' . $file);
-            }
-            //mtrace('Removed '.count($remove).' old backup file(s) from external directory');
         }
 
         return true;
@@ -651,5 +640,79 @@ abstract class backup_cron_automated_helper {
             }
         }
         return false;
+    }
+
+    /**
+     * Removes excess and old backups from the external system or the local file system.
+     *
+     * The number of backups to keep comes from $config->backup_auto_keep and
+     * $config->backup_auto_keep_copies.
+     *
+     * @param array $files existing backups
+     * @param bool $timeinkey endicate if the backup's time is in the key of the array
+     * @param int $now starting time of the process
+     * @param string $courseidnumber courseidnumer currently processed
+     * @return bool
+     */
+    protected static function remove_old_backups($files, $timeinkey, $now, $courseidnumber) {
+        $config = get_config('backup');
+        $dir = $config->backup_auto_destination;
+        $keep = (int)$config->backup_auto_keep;
+        $histkeep = (int)$config->backup_auto_keep_copies;
+        $histdays = (int)$config->backup_auto_keep_days;
+
+        if ($timeinkey) {
+            // Sort by keys descending (newer to older filemodified).
+            krsort($files);
+        } else {
+            // Sort by values descending (newer to older filemodified).
+            arsort($files);
+        }
+
+        $tokeep = $keep;
+        $oldbackup = false;
+        if ($histdays != 0) {
+            $keepcounter = 0;
+            foreach ($files as $key => $value) {
+                if ($timeinkey) {
+                    $timemodified = $key;
+                } else {
+                    $timemodified = $value;
+                }
+                if ($timemodified < ($now - ($histdays * DAYSECS)) || $keepcounter >= $keep) {
+                    $oldbackup = true;
+                    break;
+                }
+                $keepcounter++;
+            }
+
+            if ($keepcounter < $histkeep) {
+                $tokeep = $histkeep;
+            } else {
+                $tokeep = $keepcounter;
+            }
+        }
+
+        if (count($files) <= $tokeep) {
+            // There are less matching files than the desired number to keep there is nothing to clean up.
+            return false;
+        }
+
+        $remove = array_splice($files, $tokeep);
+        if ($timeinkey) {
+            foreach ($remove as $file) {
+                $file->delete();
+            }
+        } else {
+            foreach (array_keys($remove) as $file) {
+                unlink($dir . '/' . $file);
+            }
+        }
+
+        if ($oldbackup) {
+            mtrace('Course '. $courseidnumber. ' removed '.count($remove).' old backup file(s) from the automated filearea');
+        }
+
+        return true;
     }
 }

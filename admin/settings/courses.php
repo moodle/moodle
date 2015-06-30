@@ -262,6 +262,45 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     )));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_skip_modif_prev', new lang_string('skipmodifprev', 'backup'), new lang_string('skipmodifprevhelp', 'backup'), 0));
 
+    // Automated backup removal section.
+    $temp->add(new admin_setting_heading('automatedbackupremovalsettings',
+            new lang_string('automatedbackupremovalsettings', 'backup'), ''));
+
+    $temp->add(new admin_setting_configselect('backup/backup_auto_keep_days', new lang_string('automatedbackupkeepdays', 'backup'),
+            new lang_string('automatedbackupkeepdayshelp', 'backup'), 0, array(
+        0 => new lang_string('never'),
+        1000 => new lang_string('numdays', '', 1000),
+        365  => new lang_string('numdays', '', 365),
+        180  => new lang_string('numdays', '', 180),
+        150  => new lang_string('numdays', '', 150),
+        120  => new lang_string('numdays', '', 120),
+        90   => new lang_string('numdays', '', 90),
+        60   => new lang_string('numdays', '', 60),
+        35   => new lang_string('numdays', '', 35),
+        10   => new lang_string('numdays', '', 10),
+        5    => new lang_string('numdays', '', 5),
+        2    => new lang_string('numdays', '', 2)
+    )));
+
+    $temp->add(new admin_setting_configselect('backup/backup_auto_keep_copies',
+            new lang_string('automatedbackupkeepcopies', 'backup'), new lang_string('automatedbackupkeepcopieshelp', 'backup'),
+            0, array(
+        0 => new lang_string('none'),
+        1 => '1',
+        2 => '2',
+        5 => '5',
+        10 => '10',
+        20 => '20',
+        30 => '30',
+        40 => '40',
+        50 => '50',
+        100 => '100',
+        200 => '200',
+        300 => '300',
+        400 => '400',
+        500 => '500'
+    )));
+
     // Automated defaults section.
     $temp->add(new admin_setting_heading('automatedsettings', new lang_string('automatedsettings','backup'), ''));
     $temp->add(new admin_setting_configcheckbox('backup/backup_auto_users', new lang_string('generalusers', 'backup'), new lang_string('configgeneralusers', 'backup'), 1));
