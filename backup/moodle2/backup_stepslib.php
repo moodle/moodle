@@ -926,6 +926,7 @@ class backup_gradebook_structure_step extends backup_structure_step {
     }
 
     protected function define_structure() {
+        global $CFG, $DB;
 
         // are we including user info?
         $userinfo = $this->get_setting_value('users');
@@ -1017,7 +1018,18 @@ class backup_gradebook_structure_step extends backup_structure_step {
 
         $letter->set_source_table('grade_letters', array('contextid' => backup::VAR_CONTEXTID));
 
-        $grade_setting->set_source_table('grade_settings', array('courseid' => backup::VAR_COURSEID));
+        // Set the grade settings source, forcing the inclusion of minmaxtouse if not present.
+        $settings = array();
+        $rs = $DB->get_recordset('grade_settings', array('courseid' => $this->get_courseid()));
+        foreach ($rs as $record) {
+            $settings[$record->name] = $record;
+        }
+        $rs->close();
+        if (!isset($settings['minmaxtouse'])) {
+            $settings['minmaxtouse'] = (object) array('name' => 'minmaxtouse', 'value' => $CFG->grade_minmaxtouse);
+        }
+        $grade_setting->set_source_array($settings);
+
 
         // Annotations (both as final as far as they are going to be exported in next steps)
         $grade_item->annotate_ids('scalefinal', 'scaleid'); // Straight as scalefinal because it's > 0
