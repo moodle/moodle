@@ -453,9 +453,13 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $cell2 = new html_table_cell(format_string($group->name, false, $status->context));
             } else if ($status->preventsubmissionnotingroup) {
                 if (count($status->usergroups) == 0) {
-                    $cell2 = new html_table_cell(get_string('noteam', 'assign'));
+                    $cell2 = new html_table_cell(
+                        html_writer::span(get_string('noteam', 'assign'), 'alert alert-error')
+                    );
                 } else if (count($status->usergroups) > 1) {
-                    $cell2 = new html_table_cell(get_string('multipleteams', 'assign'));
+                    $cell2 = new html_table_cell(
+                        html_writer::span(get_string('multipleteams', 'assign'), 'alert alert-error')
+                    );
                 }
             } else {
                 $cell2 = new html_table_cell(get_string('defaultteam', 'assign'));
