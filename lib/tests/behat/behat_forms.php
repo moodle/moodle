@@ -381,8 +381,13 @@ class behat_forms extends behat_base {
 
         if (!$this->running_javascript()) {
             // Press button in the specified select container.
-            $containerxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' singleselect ') and " .
-                ".//label[contains(normalize-space(string(.)), '" . $singleselect . "')]]";
+            $containerxpath = "//div[" .
+                "(contains(concat(' ', normalize-space(@class), ' '), ' singleselect ') " .
+                    "or contains(concat(' ', normalize-space(@class), ' '), ' urlselect ')".
+                ") and (
+                .//label[contains(normalize-space(string(.)), '" . $singleselect . "')] " .
+                    "or .//select[(./@name='" . $singleselect . "' or ./@id='". $singleselect . "')]" .
+                ")]";
 
             $actions[] = new Given('I click on "' . get_string('go') . '" "button" in the "' . $containerxpath .
                 '" "xpath_element"');
