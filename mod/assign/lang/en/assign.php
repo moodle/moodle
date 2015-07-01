@@ -278,6 +278,7 @@ When reviewing assignments, teachers can leave feedback comments and upload file
 $string['modulename_link'] = 'mod/assignment/view';
 $string['modulenameplural'] = 'Assignments';
 $string['moreusers'] = '{$a} more...';
+$string['multipleteams'] = 'You\'re a member of multiple groups, please contact your teacher.';
 $string['mysubmission'] = 'My submission: ';
 $string['newsubmissions'] = 'Assignments submitted';
 $string['noattempt'] = 'No attempt';
@@ -434,7 +435,7 @@ $string['teamsubmissiongroupingid_help'] = 'This is the grouping that the assign
 $string['textinstructions'] = 'Assignment instructions';
 $string['timemodified'] = 'Last modified';
 $string['timeremaining'] = 'Time remaining';
-$string['ungroupedusers'] = 'The setting \'Require group to make submission\' is turned on and some users are not allocated to groups, this will prevent them from submitting assignments.';
+$string['ungroupedusers'] = 'The setting \'Require group to make submission\' is turned on and some users are not allocated to groups or are allocated to multiple groups, this will prevent them from submitting assignments.';
 $string['unlocksubmissionforstudent'] = 'Allow submissions for student: (id={$a->id}, fullname={$a->fullname}).';
 $string['unlocksubmissions'] = 'Unlock submissions';
 $string['unlimitedattempts'] = 'Unlimited';
