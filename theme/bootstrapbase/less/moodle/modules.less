@@ -327,8 +327,17 @@ div#dock {
         overflow: hidden;
         width: 0;
         height: 40px;
-        border-left: 1px solid #e5e5e5;
-        border-right: 1px solid #fff;
+        border-left: 1px solid @navbarBackground;
+        border-right: 1px solid @navbarBackgroundHighlight;
+    }
+}
+
+.navbar-inverse {
+    .nav {
+        .divider {
+            border-left-color: @navbarInverseBackground;
+            border-right-color: lighten(@navbarInverseBackground, 25%);
+        }
     }
 }
 
@@ -336,8 +345,8 @@ div#dock {
     .divider {
         width: auto;
         height: 1px;
-        border-left: 0px none;
-        border-right: 0px none;
+        border-left: 0 none;
+        border-right: 0 none;
     }
 }
 
