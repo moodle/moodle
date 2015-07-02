@@ -495,6 +495,11 @@ class restore_gradebook_structure_step extends restore_structure_step {
             require_once($CFG->libdir . '/db/upgradelib.php');
             upgrade_extra_credit_weightoverride($this->get_courseid());
         }
+        // Calculated grade items need recalculating for backups made between 2.8 release (20141110) and the fix release (20150627).
+        if (!$gradebookcalculationsfreeze && $backupbuild >= 20141110 && $backupbuild < 20150627) {
+            require_once($CFG->libdir . '/db/upgradelib.php');
+            upgrade_calculated_grade_items($this->get_courseid());
+        }
     }
 
     /**

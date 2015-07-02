@@ -1951,8 +1951,25 @@ class grade_item extends grade_object {
         // can not use own final grade during calculation
         unset($params['gi'.$this->id]);
 
+        // Check to see if the gradebook is frozen. This allows grades to not be altered at all until a user verifies that they
+        // wish to update the grades.
+        $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->courseid);
+
+        $rawminandmaxchanged = false;
         // insert final grade - will be needed later anyway
         if ($oldgrade) {
+            // Only run through this code if the gradebook isn't frozen.
+            if ($gradebookcalculationsfreeze && (int)$gradebookcalculationsfreeze <= 20150627) {
+                // Do nothing.
+            } else {
+                // The grade_grade for a calculated item should have the raw grade maximum and minimum set to the
+                // grade_item grade maximum and minimum respectively.
+                if ($oldgrade->rawgrademax != $this->grademax || $oldgrade->rawgrademin != $this->grademin) {
+                    $rawminandmaxchanged = true;
+                    $oldgrade->rawgrademax = $this->grademax;
+                    $oldgrade->rawgrademin = $this->grademin;
+                }
+            }
             $oldfinalgrade = $oldgrade->finalgrade;
             $grade = new grade_grade($oldgrade, false); // fetching from db is not needed
             $grade->grade_item =& $this;
@@ -1960,6 +1977,16 @@ class grade_item extends grade_object {
         } else {
             $grade = new grade_grade(array('itemid'=>$this->id, 'userid'=>$userid), false);
             $grade->grade_item =& $this;
+            $rawminandmaxchanged = false;
+            if ($gradebookcalculationsfreeze && (int)$gradebookcalculationsfreeze <= 20150627) {
+                // Do nothing.
+            } else {
+                // The grade_grade for a calculated item should have the raw grade maximum and minimum set to the
+                // grade_item grade maximum and minimum respectively.
+                $rawminandmaxchanged = true;
+                $grade->rawgrademax = $this->grademax;
+                $grade->rawgrademin = $this->grademin;
+            }
             $grade->insert('system');
             $oldfinalgrade = null;
         }
@@ -1986,17 +2013,30 @@ class grade_item extends grade_object {
                 // normalize
                 $grade->finalgrade = $this->bounded_grade($result);
             }
-
         }
 
-        // update in db if changed
-        if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
-            $grade->timemodified = time();
-            $success = $grade->update('compute');
+        // Only run through this code if the gradebook isn't frozen.
+        if ($gradebookcalculationsfreeze && (int)$gradebookcalculationsfreeze <= 20150627) {
+            // Update in db if changed.
+            if (grade_floats_different($grade->finalgrade, $oldfinalgrade)) {
+                $grade->timemodified = time();
+                $success = $grade->update('compute');
 
-            // If successful trigger a user_graded event.
-            if ($success) {
-                \core\event\user_graded::create_from_grade($grade)->trigger();
+                // If successful trigger a user_graded event.
+                if ($success) {
+                    \core\event\user_graded::create_from_grade($grade)->trigger();
+                }
+            }
+        } else {
+            // Update in db if changed.
+            if (grade_floats_different($grade->finalgrade, $oldfinalgrade) || $rawminandmaxchanged) {
+                $grade->timemodified = time();
+                $success = $grade->update('compute');
+
+                // If successful trigger a user_graded event.
+                if ($success) {
+                    \core\event\user_graded::create_from_grade($grade)->trigger();
+                }
             }
         }
 

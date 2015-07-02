@@ -1375,6 +1375,19 @@ class grade_category extends grade_object {
         $this->load_grade_item();
         $depends_on = $this->grade_item->depends_on();
 
+        // Check to see if the gradebook is frozen. This allows grades to not be altered at all until a user verifies that they
+        // wish to update the grades.
+        $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->courseid);
+        // Only run if the gradebook isn't frozen.
+        if ($gradebookcalculationsfreeze && (int)$gradebookcalculationsfreeze <= 20150627) {
+            // Do nothing.
+        } else{
+            // Don't automatically update the max for calculated items.
+            if ($this->grade_item->is_calculated()) {
+                return;
+            }
+        }
+
         $items = false;
         if (!empty($depends_on)) {
             list($usql, $params) = $DB->get_in_or_equal($depends_on);

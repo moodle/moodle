@@ -4114,5 +4114,23 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014111006.08);
     }
 
+    if ($oldversion < 2014111006.10) {
+        // MDL-48239. Changed calculated grade items so that the maximum and minimum grade can be set.
+
+        // If the changes are accepted and a regrade is done on the gradebook then some grades may change significantly.
+        // This is here to freeze the gradebook in affected courses.
+
+        // This script is included in each major version upgrade process so make sure we don't run it twice.
+        if (empty($CFG->upgrade_calculatedgradeitemsignored)) {
+            upgrade_calculated_grade_items();
+
+            // To skip running the same script on the upgrade to the next major release.
+            set_config('upgrade_calculatedgradeitemsignored', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014111006.10);
+    }
+
     return true;
 }
