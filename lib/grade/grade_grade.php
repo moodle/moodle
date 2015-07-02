@@ -350,11 +350,25 @@ class grade_grade extends grade_object {
         // When the following setting is turned on we use the grade_grade raw min and max values.
         $minmaxtouse = grade_get_setting($this->grade_item->courseid, 'minmaxtouse', $CFG->grade_minmaxtouse);
 
-        // Only aggregate items use separate min grades.
-        if ($minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_GRADE || $this->grade_item->is_aggregate_item()) {
-            return array($this->rawgrademin, $this->rawgrademax);
+        // Check to see if the gradebook is frozen. This allows grades to not be altered at all until a user verifies that they
+        // wish to update the grades.
+        $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->grade_item->courseid);
+        // Gradebook is frozen, run through old code.
+        if ($gradebookcalculationsfreeze && (int)$gradebookcalculationsfreeze <= 20150627) {
+            // Only aggregate items use separate min grades.
+            if ($minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_GRADE || $this->grade_item->is_aggregate_item()) {
+                return array($this->rawgrademin, $this->rawgrademax);
+            } else {
+                return array($this->grade_item->grademin, $this->grade_item->grademax);
+            }
         } else {
-            return array($this->grade_item->grademin, $this->grade_item->grademax);
+            // Only aggregate items use separate min grades, unless they are calculated grade items.
+            if (($this->grade_item->is_aggregate_item() && !$this->grade_item->is_calculated())
+                    || $minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_GRADE) {
+                return array($this->rawgrademin, $this->rawgrademax);
+            } else {
+                return array($this->grade_item->grademin, $this->grade_item->grademax);
+            }
         }
     }
 
