@@ -634,7 +634,7 @@ function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage
             $reverturl = new moodle_url($thispage, $urlparams);
             $revertbutton = $OUTPUT->single_button($reverturl, $revertmessage, 'get');
 
-            $html .= $OUTPUT->notification($message, 'notifywarning');
+            $html .= $OUTPUT->notification($message);
             $html .= $revertbutton . $hideminmaxbutton;
 
         } else if ($minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_GRADE) {
@@ -648,7 +648,7 @@ function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage
             $fixurl = new moodle_url($thispage, $urlparams);
             $fixbutton = $OUTPUT->single_button($fixurl, $fixmessage, 'get');
 
-            $html .= $OUTPUT->notification($message, 'notifywarning');
+            $html .= $OUTPUT->notification($message);
             $html .= $fixbutton . $hideminmaxbutton;
         }
     }
@@ -681,7 +681,7 @@ function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage
             $fixurl = new moodle_url($thispage, $urlparams);
             $fixbutton = $OUTPUT->single_button($fixurl, $fixmessage, 'get');
 
-            $html .= $OUTPUT->notification($message, 'notifywarning');
+            $html .= $OUTPUT->notification($message);
             $html .= $fixbutton;
         }
     }
