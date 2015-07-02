@@ -671,7 +671,7 @@ function print_natural_aggregation_upgrade_notice($courseid, $context, $thispage
             } else {
                 $a->currentversion = $CFG->release;
             }
-            $a->url = get_docs_url('Gradebook_calculations_changes');
+            $a->url = get_docs_url('Gradebook_calculation_changes');
             $message = get_string('gradebookcalculationswarning', 'grades', $a);
 
             $fixmessage = get_string('gradebookcalculationsfixbutton', 'grades');
