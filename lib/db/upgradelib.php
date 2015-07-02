@@ -590,13 +590,13 @@ function upgrade_calculated_grade_items($courseid = null) {
     $siteminmaxtouse = $CFG->grade_minmaxtouse;
     $courseidsql = "SELECT ns.id
                       FROM (
-                        SELECT c.id, coalesce(gs.value, :siteminmax) AS gradevalue
+                        SELECT c.id, coalesce(" . $DB->sql_compare_text('gs.value') . ", :siteminmax) AS gradevalue
                           FROM {course} c
                           LEFT JOIN {grade_settings} gs
                             ON c.id = gs.courseid
-                           AND ((gs.name = 'minmaxtouse' AND gs.value = '2'))
+                           AND ((gs.name = 'minmaxtouse' AND " . $DB->sql_compare_text('gs.value') . " = '2'))
                         ) ns
-                    WHERE ns.gradevalue = '2' $singlecoursesql";
+                    WHERE " . $DB->sql_compare_text('ns.gradevalue') . " = '2' $singlecoursesql";
     $params['siteminmax'] = $siteminmaxtouse;
     $courses = $DB->get_records_sql($courseidsql, $params);
     foreach ($courses as $course) {
