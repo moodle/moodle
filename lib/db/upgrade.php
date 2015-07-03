@@ -4128,6 +4128,8 @@ function xmldb_main_upgrade($oldversion) {
 
             // To skip running the same script on the upgrade to the next major release.
             set_config('upgrade_calculatedgradeitemsignored', 1);
+            // This config value is never used again.
+            unset_config('upgrade_calculatedgradeitemsonlyregrade');
         }
 
         // Main savepoint reached.
