@@ -549,7 +549,7 @@ class core_upgradelib_testcase extends advanced_testcase {
     /**
      * Test the upgrade function for flagging courses with calculated grade item problems.
      */
-    public function test_upgrade_calculated_grade_items() {
+    public function test_upgrade_calculated_grade_items_freeze() {
         global $DB, $CFG;
         $this->resetAfterTest();
 
@@ -675,5 +675,70 @@ class core_upgradelib_testcase extends advanced_testcase {
         // The setting should be set again after the upgrade.
         $this->assertEquals(20150627, $CFG->{'gradebook_calculations_freeze_' . $course1->id});
         $this->assertEquals(20150627, $CFG->{'gradebook_calculations_freeze_' . $course2->id});
+    }
+
+    function test_upgrade_calculated_grade_items_regrade() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Enrol the user in the course.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $maninstance1 = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+        $manual = enrol_get_plugin('manual');
+        $manual->enrol_user($maninstance1, $user->id, $studentrole->id);
+
+        set_config('upgrade_calculatedgradeitemsonlyregrade', 1);
+
+        // Creating a category for a grade item.
+        $gradecategory = new grade_category();
+        $gradecategory->fullname = 'calculated grade category';
+        $gradecategory->courseid = $course->id;
+        $gradecategory->insert();
+        $gradecategoryid = $gradecategory->id;
+
+        // This is a manual grade item.
+        $gradeitem = new grade_item();
+        $gradeitem->itemname = 'grade item one';
+        $gradeitem->itemtype = 'manual';
+        $gradeitem->categoryid = $gradecategoryid;
+        $gradeitem->courseid = $course->id;
+        $gradeitem->idnumber = 'gi1';
+        $gradeitem->insert();
+
+        // Changing the category into a calculated grade category.
+        $gradecategoryitem = grade_item::fetch(array('iteminstance' => $gradecategory->id));
+        $gradecategoryitem->calculation = '=##gi' . $gradeitem->id . '##/2';
+        $gradecategoryitem->grademax = 50;
+        $gradecategoryitem->grademin = 15;
+        $gradecategoryitem->update();
+
+        // Setting a grade for the student.
+        $grade = $gradeitem->get_grade($user->id, true);
+        $grade->finalgrade = 50;
+        $grade->update();
+
+        grade_regrade_final_grades($course->id);
+        $grade = grade_grade::fetch(array('itemid' => $gradecategoryitem->id, 'userid' => $user->id));
+        $grade->rawgrademax = 100;
+        $grade->rawgrademin = 0;
+        $grade->update();
+        $this->assertNotEquals($gradecategoryitem->grademax, $grade->rawgrademax);
+        $this->assertNotEquals($gradecategoryitem->grademin, $grade->rawgrademin);
+
+        // This is the function that we are testing. If we comment out this line, then the test fails because the grade items
+        // are not flagged for regrading.
+        upgrade_calculated_grade_items();
+        grade_regrade_final_grades($course->id);
+
+        $grade = grade_grade::fetch(array('itemid' => $gradecategoryitem->id, 'userid' => $user->id));
+
+        $this->assertEquals($gradecategoryitem->grademax, $grade->rawgrademax);
+        $this->assertEquals($gradecategoryitem->grademin, $grade->rawgrademin);
     }
 }

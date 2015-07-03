@@ -4061,6 +4061,8 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2014111000.00) {
         // Coming from 2.7 or older, we need to flag the step minmaxgrade to be ignored.
         set_config('upgrade_minmaxgradestepignored', 1);
+        // Coming from 2.7 or older, we need to flag the step for changing calculated grades to be regraded.
+        set_config('upgrade_calculatedgradeitemsonlyregrade', 1);
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2014111000.00);
@@ -4126,6 +4128,8 @@ function xmldb_main_upgrade($oldversion) {
 
             // To skip running the same script on the upgrade to the next major release.
             set_config('upgrade_calculatedgradeitemsignored', 1);
+            // This config value is never used again.
+            unset_config('upgrade_calculatedgradeitemsonlyregrade');
         }
 
         // Main savepoint reached.
