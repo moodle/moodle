@@ -587,7 +587,10 @@ function upgrade_calculated_grade_items($courseid = null) {
         $singlecoursesql = "AND ns.id = :courseid";
         $params['courseid'] = $courseid;
     }
-    $siteminmaxtouse = $CFG->grade_minmaxtouse;
+    $siteminmaxtouse = 1;
+    if (isset($CFG->grade_minmaxtouse)) {
+        $siteminmaxtouse = $CFG->grade_minmaxtouse;
+    }
     $courseidsql = "SELECT ns.id
                       FROM (
                         SELECT c.id, coalesce(" . $DB->sql_compare_text('gs.value') . ", :siteminmax) AS gradevalue
@@ -653,11 +656,15 @@ function upgrade_calculated_grade_items($courseid = null) {
         }
     }
 
-    foreach ($affectedcourses as $courseid) {
-        // Check to see if the gradebook freeze is already in affect.
-        $gradebookfreeze = get_config('core', 'gradebook_calculations_freeze_' . $courseid->courseid);
-        if (!$gradebookfreeze) {
-            set_config('gradebook_calculations_freeze_' . $courseid->courseid, 20150627);
+    foreach ($affectedcourses as $affectedcourseid) {
+        if (isset($CFG->upgrade_calculatedgradeitemsonlyregrade) && !($courseid)) {
+            $DB->set_field('grade_items', 'needsupdate', 1, array('courseid' => $affectedcourseid->courseid));
+        } else {
+            // Check to see if the gradebook freeze is already in affect.
+            $gradebookfreeze = get_config('core', 'gradebook_calculations_freeze_' . $affectedcourseid->courseid);
+            if (!$gradebookfreeze) {
+                set_config('gradebook_calculations_freeze_' . $affectedcourseid->courseid, 20150627);
+            }
         }
     }
 }
