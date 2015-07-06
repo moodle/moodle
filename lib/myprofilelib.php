@@ -316,8 +316,6 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                 $tree->add_node($node);
             }
         }
-
-        echo html_writer::end_tag('dl');
     }
 
     if ($user->icq && !isset($hiddenfields['icqnumber'])) {
