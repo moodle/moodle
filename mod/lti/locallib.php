@@ -43,6 +43,8 @@
  * @author     Jordi Piguillem
  * @author     Nikolas Galanis
  * @author     Chris Scribner
+ * @copyright  2015 Vital Source Technologies http://vitalsource.com
+ * @author     Stephen Vickers
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -278,7 +280,7 @@ function lti_register($toolproxy) {
     $requestparams['tc_profile_url'] = $profileservice->parse_value('$ToolConsumerProfile.url');
 
     // Add the return URL.
-    $returnurlparams = array('id' => $toolproxy->id, 'sesskey'=>sesskey());
+    $returnurlparams = array('id' => $toolproxy->id, 'sesskey' => sesskey());
     $url = new \moodle_url('/mod/lti/registrationreturn.php', $returnurlparams);
     $returnurl = $url->out(false);
 
@@ -509,11 +511,13 @@ function lti_build_custom_parameters($toolproxy, $tool, $instance, $params, $cus
     }
     if (!isset($typeconfig['allowinstructorcustom']) || $typeconfig['allowinstructorcustom'] != LTI_SETTING_NEVER) {
         if ($instructorcustomstr) {
-            $custom = array_merge(lti_split_custom_parameters($toolproxy, $tool, $params, $instructorcustomstr, $islti2), $custom);
+            $custom = array_merge(lti_split_custom_parameters($toolproxy, $tool, $params,
+                $instructorcustomstr, $islti2), $custom);
         }
     }
     if ($islti2) {
-        $custom = array_merge(lti_split_custom_parameters($toolproxy, $tool, $params, $tool->parameter, true), $custom);
+        $custom = array_merge(lti_split_custom_parameters($toolproxy, $tool, $params,
+            $tool->parameter, true), $custom);
         $settings = lti_get_tool_settings($tool->toolproxyid);
         $custom = array_merge($custom, lti_get_custom_parameters($toolproxy, $tool, $params, $settings));
         $settings = lti_get_tool_settings($tool->toolproxyid, $instance->course);
@@ -726,6 +730,39 @@ EOD;
 }
 
 /**
+ * Extracts the enabled capabilities into an array, including those implicitly declared in a parameter
+ *
+ * @param object    $tool           Tool instance object
+ *
+ * @return Array of enabled capabilities
+ */
+function lti_get_enabled_capabilities($tool) {
+    if (!empty($tool->enabledcapability)) {
+        $enabledcapabilities = explode("\n", $tool->enabledcapability);
+    } else {
+        $enabledcapabilities = array();
+    }
+    $paramstr = str_replace("\r\n", "\n", $tool->parameter);
+    $paramstr = str_replace("\n\r", "\n", $paramstr);
+    $paramstr = str_replace("\r", "\n", $paramstr);
+    $params = explode("\n", $paramstr);
+    foreach ($params as $param) {
+        $pos = strpos($param, '=');
+        if (($pos === false) || ($pos < 1)) {
+            continue;
+        }
+        $value = trim(core_text::substr($param, $pos + 1, strlen($param)));
+        if (substr($value, 0, 1) == '$') {
+            $value = substr($value, 1);
+            if (!in_array($value, $enabledcapabilities)) {
+                $enabledcapabilities[] = $value;
+            }
+        }
+    }
+    return $enabledcapabilities;
+}
+
+/**
  * Splits the custom parameters field to the various parameters
  *
  * @param object    $toolproxy      Tool proxy instance object
@@ -743,7 +780,7 @@ function lti_split_custom_parameters($toolproxy, $tool, $params, $customstr, $is
     $lines = explode("\n", $customstr);  // Or should this split on "/[\n;]/"?
     $retval = array();
     foreach ($lines as $line) {
-        $pos = strpos($line, "=");
+        $pos = strpos($line, '=');
         if ( $pos === false || $pos < 1 ) {
             continue;
         }
@@ -801,7 +838,7 @@ function lti_parse_custom_parameter($toolproxy, $tool, $params, $value, $islti2)
             $value = substr($value, 1);
         } else if (substr($value, 0, 1) == '$') {
             $value1 = substr($value, 1);
-            $enabledcapabilities = explode("\n", $tool->enabledcapability);
+            $enabledcapabilities = lti_get_enabled_capabilities($tool);
             if (!$islti2 || in_array($value1, $enabledcapabilities)) {
                 $capabilities = lti_get_capabilities();
                 if (array_key_exists($value1, $capabilities)) {
