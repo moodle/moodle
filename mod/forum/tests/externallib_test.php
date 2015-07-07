@@ -342,11 +342,11 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         // See MDL-41746 for more information.
         $this->assertDebuggingCalled();
 
-        // Remove the users post from the qanda forum and ensure they can not return the discussion.
+        // Remove the users post from the qanda forum and ensure they can still see the discussion.
         $DB->delete_records('forum_posts', array('id' => $discussion2reply1->id));
         $discussions = mod_forum_external::get_forum_discussions(array($forum2->id));
         $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
-        $this->assertEquals(0, count($discussions));
+        $this->assertEquals(1, count($discussions));
 
         // Call without required view discussion capability.
         $this->unassignUserCapability('mod/forum:viewdiscussion', null, null, $course1->id);
@@ -651,5 +651,49 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertEquals('requireloginerror', $e->errorcode);
         }
+    }
+
+    /**
+     * Test get forum discussions paginated (qanda forums)
+     */
+    public function test_mod_forum_get_forum_discussions_paginated_qanda() {
+
+        $this->resetAfterTest(true);
+
+        // Create courses to add the modules.
+        $course = self::getDataGenerator()->create_course();
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // First forum with tracking off.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->type = 'qanda';
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+
+        // Add discussions to the forums.
+        $discussionrecord = new stdClass();
+        $discussionrecord->course = $course->id;
+        $discussionrecord->userid = $user2->id;
+        $discussionrecord->forum = $forum->id;
+        $discussion = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($discussionrecord);
+
+        self::setAdminUser();
+        $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+
+        $this->assertCount(1, $discussions['discussions']);
+        $this->assertCount(0, $discussions['warnings']);
+
+        self::setUser($user1);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+
+        $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+
+        $this->assertCount(1, $discussions['discussions']);
+        $this->assertCount(0, $discussions['warnings']);
+
     }
 }
