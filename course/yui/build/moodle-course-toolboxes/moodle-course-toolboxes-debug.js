@@ -870,6 +870,11 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         Y.later(100, this, function() {
             activity.one(SELECTOR.EDITTITLE).focus();
         });
+
+        // Hack for Behat compatibility.
+        if (!Y.one('input[name=title]')) {
+            Y.one('body').append('<input type="text" name="title" style="display: none">');
+        }
     },
 
     /**
