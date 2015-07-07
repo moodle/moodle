@@ -280,8 +280,13 @@ class course_enrolment_manager {
 
         // Group condition.
         if ($this->groupfilter) {
-            $sql .= " AND gm.groupid = :groupid";
-            $params['groupid'] = $this->groupfilter;
+            if ($this->groupfilter < 0) {
+                // Show users who are not in any group.
+                $sql .= " AND gm.groupid IS NULL";
+            } else {
+                $sql .= " AND gm.groupid = :groupid";
+                $params['groupid'] = $this->groupfilter;
+            }
         }
 
         // Status condition.
