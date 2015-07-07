@@ -871,7 +871,9 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             activity.one(SELECTOR.EDITTITLE).focus();
         });
 
-        // Hack for Behat compatibility.
+        // TODO MDL-50768 This hack is to keep Behat happy until they release a version of
+        // MinkSelenium2Driver that fixes
+        // https://github.com/Behat/MinkSelenium2Driver/issues/80.
         if (!Y.one('input[name=title]')) {
             Y.one('body').append('<input type="text" name="title" style="display: none">');
         }
