@@ -664,6 +664,11 @@ class view {
             $showquestiontext = false, $addcontexts = array()) {
         global $CFG, $DB, $OUTPUT;
 
+        // This function can be moderately slow with large question counts and may time out.
+        // We probably do not want to raise it to unlimited, so randomly picking 5 minutes.
+        // Note: We do not call this in the loop because quiz ob_ captures this function (see raise() PHP doc).
+        \core_php_time_limit::raise(300);
+
         $category = $this->get_current_category($categoryandcontext);
 
         $strselectall = get_string('selectall');
