@@ -204,6 +204,17 @@ class qtype_calculatedmulti extends qtype_calculated {
         $question->datasetloader = new qtype_calculated_dataset_loader($questiondata->id);
     }
 
+    /**
+     * Public override method, created so that make_answer will be available
+     * for use by classes which extend qtype_multichoice_base.
+     *
+     * @param stdClass $answer  Moodle DB question_answers object.
+     * @return question_answer
+     */
+    public function make_answer($answer) {
+        return parent::make_answer($answer);
+    }
+
     public function comment_header($question) {
         $strheader = '';
         $delimiter = '';
