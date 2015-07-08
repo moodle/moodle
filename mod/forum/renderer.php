@@ -48,15 +48,15 @@ class mod_forum_renderer extends plugin_renderer_base {
             if ($prev) {
                 $url = new moodle_url('/mod/forum/discuss.php', array('d' => $prev->id));
                 $html .= html_writer::start_tag('li', array('class' => 'prev-discussion'));
-                $html .= html_writer::link($url, $prev->name,
-                    array('aria-label' => get_string('prevdiscussiona', 'mod_forum', $prev->name)));
+                $html .= html_writer::link($url, format_string($prev->name),
+                    array('aria-label' => get_string('prevdiscussiona', 'mod_forum', format_string($prev->name))));
                 $html .= html_writer::end_tag('li');
             }
             if ($next) {
                 $url = new moodle_url('/mod/forum/discuss.php', array('d' => $next->id));
                 $html .= html_writer::start_tag('li', array('class' => 'next-discussion'));
-                $html .= html_writer::link($url, $next->name,
-                    array('aria-label' => get_string('nextdiscussiona', 'mod_forum', $next->name)));
+                $html .= html_writer::link($url, format_string($next->name),
+                    array('aria-label' => get_string('nextdiscussiona', 'mod_forum', format_string($next->name))));
                 $html .= html_writer::end_tag('li');
             }
             $html .= html_writer::end_tag('ul');
