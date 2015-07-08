@@ -710,8 +710,13 @@ class view {
         echo $OUTPUT->render($pagingbar);
         if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
             if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
-                $url = new \moodle_url('edit.php', array_merge($pageurl->params(), array('qperpage' => 1000)));
-                $showall = '<a href="'.$url.'">'.get_string('showall', 'moodle', $totalnumber).'</a>';
+                $url = new \moodle_url('edit.php', array_merge($pageurl->params(),
+                        array('qperpage' => MAXIMUM_QUESTIONS_PER_PAGE)));
+                if ($totalnumber > MAXIMUM_QUESTIONS_PER_PAGE) {
+                    $showall = '<a href="'.$url.'">'.get_string('showperpage', 'moodle', MAXIMUM_QUESTIONS_PER_PAGE).'</a>';
+                } else {
+                    $showall = '<a href="'.$url.'">'.get_string('showall', 'moodle', $totalnumber).'</a>';
+                }
             } else {
                 $url = new \moodle_url('edit.php', array_merge($pageurl->params(),
                                               array('qperpage' => DEFAULT_QUESTIONS_PER_PAGE)));
