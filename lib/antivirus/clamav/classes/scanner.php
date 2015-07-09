@@ -26,6 +26,9 @@ namespace antivirus_clamav;
 
 defined('MOODLE_INTERNAL') || die();
 
+/** Default socket timeout */
+define('ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT', 10);
+
 /**
  * Class implemeting ClamAV antivirus.
  * @copyright  2015 Ruslan Kabalin, Lancaster University.
@@ -38,8 +41,14 @@ class scanner extends \core\antivirus\scanner {
      * @return bool True if all necessary config settings been entered
      */
     public function is_configured() {
-        return (bool)$this->get_config('pathtoclam');
+        if ($this->get_config('runningmethod') === 'commandline') {
+            return (bool)$this->get_config('pathtoclam');
+        } else if ($this->get_config('runningmethod') === 'unixsocket') {
+            return (bool)$this->get_config('pathtounixsocket');
+        }
+        return false;
     }
+
     /**
      * Scan file, throws exception in case of infected file.
      *
@@ -59,7 +68,8 @@ class scanner extends \core\antivirus\scanner {
         }
 
         // Execute the scan using preferable method.
-        list($return, $notice) = $this->scan_file_execute_commandline($file);
+        $method = 'scan_file_execute_' . $this->get_config('runningmethod');
+        list($return, $notice) = $this->$method($file);
 
         if ($return == 0) {
             // Perfect, no problem found, file is clean.
@@ -152,5 +162,50 @@ class scanner extends \core\antivirus\scanner {
         }
 
         return array($return, $notice);
+    }
+
+    /**
+     * Scan file using unix socket.
+     *
+     * @param string $file Full path to the file.
+     * @return array ($return, $notice) Execution return code and notification text.
+     */
+    public function scan_file_execute_unixsocket($file) {
+        $socket = stream_socket_client('unix://' . $this->get_config('pathtounixsocket'), $errno, $errstr, ANTIVIRUS_CLAMAV_SOCKET_TIMEOUT);
+        if (!$socket) {
+            // Can't open socket for some reason, notify admins.
+            $notice = get_string('errorcantopensocket', 'antivirus_clamav', "$errstr ($errno)");
+            return array(-1, $notice);
+        } else {
+            // Execute scanning. We are running SCAN command and passing file as an argument,
+            // it is the fastest option, but clamav user need to be able to access it, so
+            // we give group read permissions first and assume 'clamav' user is in web server
+            // group (in Debian the default webserver group is 'www-data').
+            // Using 'n' as command prefix is forcing clamav to only treat \n as newline delimeter,
+            // this is to avoid unexpected newline characters on different systems.
+            $perms = fileperms($file);
+            chmod($file, 0640);
+            fwrite($socket, "nSCAN ".$file."\n");
+            $output = stream_get_line($socket, 4096);
+            fclose($socket);
+            // After scanning we revert permissions to initial ones.
+            chmod($file, $perms);
+            // Parse the output.
+            $splitoutput = explode(': ', $output);
+            $message = trim($splitoutput[1]);
+            if ($message === 'OK') {
+                return array(0, '');
+            } else {
+                $parts = explode(' ', $message);
+                $status = array_pop($parts);
+                if ($status === 'FOUND') {
+                    return array(1, '');
+                } else {
+                    $notice = get_string('clamfailed', 'antivirus_clamav', $this->get_clam_error_code(2));
+                    $notice .= "\n\n" . $output;
+                    return array(2, $notice);
+                }
+            }
+        }
     }
 }
