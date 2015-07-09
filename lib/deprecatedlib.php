@@ -1299,7 +1299,7 @@ function get_print_section_cm_text(cm_info $cm, $course) {
  * $courserenderer = $PAGE->get_renderer('core', 'course');
  * $output = $courserenderer->course_section_add_cm_control($course, $section, $sectionreturn,
  *    array('inblock' => $vertical));
- * echo $output; // if $return argument in print_section_add_menus() set to false
+ * echo $output;
  *
  * @deprecated since 2.5
  * @see core_course_renderer::course_section_add_cm_control()

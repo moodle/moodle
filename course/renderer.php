@@ -1431,7 +1431,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
         $totalcount = $coursecat->get_children_count();
         if (!$totalcount) {
-            // Note that we call get_child_categories_count() AFTER get_child_categories() to avoid extra DB requests.
+            // Note that we call coursecat::get_children_count() AFTER coursecat::get_children() to avoid extra DB requests.
             // Categories count is cached during children categories retrieval.
             return '';
         }
