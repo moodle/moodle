@@ -289,8 +289,9 @@ class qformat_default {
     public function importprocess($category) {
         global $USER, $CFG, $DB, $OUTPUT;
 
-        // reset the timer in case file upload was slow
+        // Raise time and memory, as importing can be quite intensive.
         core_php_time_limit::raise();
+        raise_memory_limit(MEMORY_EXTRA);
 
         // STAGE 1: Parse the file
         echo $OUTPUT->notification(get_string('parsingquestions', 'question'), 'notifysuccess');
