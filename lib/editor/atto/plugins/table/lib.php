@@ -47,7 +47,12 @@ function atto_table_strings_for_js() {
                                           'moverowdown',
                                           'moverowup',
                                           'deleterow',
-                                          'deletecolumn'),
+                                          'deletecolumn',
+                                          'captionposition'),
                                     'atto_table');
+
+    $PAGE->requires->strings_for_js(array('top',
+                                          'bottom'),
+                                    'editor');
 }
 

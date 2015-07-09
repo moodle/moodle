@@ -26,6 +26,7 @@ $string['addcolumnafter'] = 'Insert column after';
 $string['addrowafter'] = 'Insert row after';
 $string['both'] = 'Both';
 $string['caption'] = 'Caption';
+$string['captionposition'] = 'Caption position';
 $string['columns'] = 'Columns';
 $string['createtable'] = 'Create table';
 $string['deletecolumn'] = 'Delete column';
