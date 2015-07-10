@@ -15,16 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Book plugin version info
+ * Book external functions and service definitions.
  *
  * @package    mod_book
- * @copyright  2004-2012 Petr Skoda {@link http://skodak.org}
+ * @category   external
+ * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.0
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->component = 'mod_book'; // Full name of the plugin (used for diagnostics)
-$plugin->version   = 2015051101; // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015050500; // Requires this Moodle version
-$plugin->cron      = 0;          // Period for cron to check this module (secs)
+$functions = array(
+
+    'mod_book_view_book' => array(
+        'classname'     => 'mod_book_external',
+        'methodname'    => 'view_book',
+        'description'   => 'Simulate the view.php web interface book: trigger events, completion, etc...',
+        'type'          => 'write',
+        'capabilities'  => 'mod/book:read'
+    ),
+
+);
