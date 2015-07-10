@@ -2323,7 +2323,7 @@ class assign {
      * @param int $userid Teh id of the user who's groups we are checking
      * @return array The group objects
      */
-    protected function get_all_groups($userid) {
+    public function get_all_groups($userid) {
         if (isset($this->usergroups[$userid])) {
             return $this->usergroups[$userid];
         }
