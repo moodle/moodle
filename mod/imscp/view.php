@@ -23,6 +23,7 @@
  */
 
 require('../../config.php');
+require_once($CFG->dirroot . '/mod/imscp/lib.php');
 require_once("$CFG->dirroot/mod/imscp/locallib.php");
 require_once($CFG->libdir . '/completionlib.php');
 
@@ -44,17 +45,8 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/imscp:view', $context);
 
-$params = array(
-    'context' => $context,
-    'objectid' => $imscp->id
-);
-$event = \mod_imscp\event\course_module_viewed::create($params);
-$event->add_record_snapshot('imscp', $imscp);
-$event->trigger();
-
-// Update 'viewed' state if required by completion system.
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+// Completion and trigger events.
+imscp_view($imscp, $course, $cm, $context);
 
 $PAGE->set_url('/mod/imscp/view.php', array('id' => $cm->id));
 $PAGE->requires->js('/mod/imscp/dummyapi.js', true);
