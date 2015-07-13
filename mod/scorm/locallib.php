@@ -1099,7 +1099,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $elementname, $c
             $return .= '    '.$subelement." = new Object();\n";
         }
 
-        $return .= '    '.$element.' = \''.$value."';\n";
+        $return .= '    '.$element.' = '.json_encode($value).";\n";
     }
     if ($countsub > 0) {
         $return .= '    '.$elementname.$scormseperator.$current.'.'.$currentsubelement.'._count = '.$countsub.";\n";
