@@ -812,6 +812,13 @@ EOF;
             }
             $documentationhtml .= $br . $br;
 
+            // Login required info.
+            $documentationhtml .= html_writer::start_tag('span', array('style' => 'color:#EA33A6'));
+            $documentationhtml .= get_string('loginrequired', 'webservice') . $br;
+            $documentationhtml .= html_writer::end_tag('span');
+            $documentationhtml .= $description->loginrequired ? get_string('yes') : get_string('no');
+            $documentationhtml .= $br . $br;
+
             // Ajax info.
             $documentationhtml .= html_writer::start_tag('span', array('style' => 'color:#EA33A6'));
             $documentationhtml .= get_string('callablefromajax', 'webservice') . $br;
