@@ -10,3 +10,4 @@ myfilesmanage,core
 mypreferences,core_grades
 myprofile,core
 viewallmyentries,core_blog
+cannotdeletepost,core_notes
