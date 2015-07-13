@@ -48,9 +48,7 @@ if (!has_capability('moodle/notes:manage', $context)) {
 if (data_submitted() && confirm_sesskey()) {
     // If data was submitted and is valid, then delete note.
     $returnurl = $CFG->wwwroot . '/notes/index.php?course=' . $course->id . '&amp;user=' . $note->userid;
-    if (!note_delete($note)) {
-        print_error('cannotdeletepost', 'notes', $returnurl);
-    }
+    note_delete($note);
     redirect($returnurl);
 
 } else {
