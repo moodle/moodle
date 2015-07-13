@@ -79,6 +79,9 @@ a.dimmed_text:visited,
 a.autolink.glossary:hover {cursor: help;}
 /* Block which is hidden if javascript enabled, prevents flickering, visible when JS from footer used! */
 .collapsibleregioncaption {white-space: nowrap;}
+.pagelayout-mydashboard.jsenabled .collapsibleregioncaption {
+    cursor: pointer;
+}
 .collapsibleregioncaption img {vertical-align: middle;}
 .jsenabled .hiddenifjs {display: none;}
 .visibleifjs {display: none;}
