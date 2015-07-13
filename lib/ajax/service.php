@@ -33,6 +33,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/externallib.php');
 
 require_login(null, true, null, true, true);
+require_sesskey();
 
 $rawjson = file_get_contents('php://input');
 
