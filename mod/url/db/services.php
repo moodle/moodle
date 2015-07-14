@@ -31,7 +31,7 @@ $functions = array(
     'mod_url_view_url' => array(
         'classname'     => 'mod_url_external',
         'methodname'    => 'view_url',
-        'description'   => 'Simulate the view.php web interface url: trigger events, completion, etc...',
+        'description'   => 'Trigger the course module viewed event and update the module completion status.',
         'type'          => 'write',
         'capabilities'  => 'mod/url:view'
     ),

@@ -848,7 +848,7 @@ class mod_forum_external extends external_api {
     }
 
     /**
-     * Simulate the forum/view.php web interface page: trigger events, completion, etc...
+     * Trigger the course module viewed event and update the module completion status.
      *
      * @param int $forumid the forum instance id
      * @return array of warnings and status result
@@ -913,7 +913,7 @@ class mod_forum_external extends external_api {
     }
 
     /**
-     * Simulate the forum/discuss.php web interface page: trigger events
+     * Trigger the discussion viewed event.
      *
      * @param int $discussionid the discussion id
      * @return array of warnings and status result

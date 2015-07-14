@@ -150,7 +150,7 @@ $functions = array(
                 'classname'     => 'mod_assign_external',
                 'methodname'    => 'view_grading_table',
                 'classpath'     => 'mod/assign/externallib.php',
-                'description'   => 'Simulate the web interface grading table view',
+                'description'   => 'Trigger the grading_table_viewed event.',
                 'type'          => 'write',
                 'capabilities'  => 'mod/assign:view, mod/assign:viewgrades'
         ),

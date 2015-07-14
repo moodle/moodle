@@ -1258,7 +1258,7 @@ class core_user_external extends external_api {
     }
 
     /**
-     * Simulate the /user/index.php web interface page triggering events
+     * Trigger the user_list_viewed event.
      *
      * @param int $courseid id of course
      * @return array of warnings and status result
@@ -1334,7 +1334,7 @@ class core_user_external extends external_api {
     }
 
     /**
-     * Simulate the /user/index.php and /user/profile.php web interface page triggering events
+     * Trigger the user profile viewed event.
      *
      * @param int $userid id of user
      * @param int $courseid id of course

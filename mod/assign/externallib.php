@@ -2066,7 +2066,7 @@ class mod_assign_external extends external_api {
     }
 
     /**
-     * Simulate the web interface grading table view.
+     * Trigger the grading_table_viewed event.
      *
      * @param int $assignid the assign instance id
      * @return array of warnings and status result
