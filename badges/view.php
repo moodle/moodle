@@ -48,7 +48,7 @@ if (!in_array($sortby, array('name', 'dateissued'))) {
 }
 
 if ($sorthow != 'ASC' && $sorthow != 'DESC') {
-    $sorthow = 'ACS';
+    $sorthow = 'ASC';
 }
 
 if ($page < 0) {
