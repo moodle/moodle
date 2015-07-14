@@ -54,7 +54,7 @@ class mod_url_external extends external_api {
     }
 
     /**
-     * Simulate the url/view.php web interface page: trigger events, completion, etc...
+     * Trigger the course module viewed event and update the module completion status.
      *
      * @param int $urlid the url instance id
      * @return array of warnings and status result

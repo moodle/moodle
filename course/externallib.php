@@ -2063,7 +2063,7 @@ class core_course_external extends external_api {
     }
 
     /**
-     * Simulate the view.php web interface page, logging events, completion, etc...
+     * Trigger the course viewed event.
      *
      * @param int $courseid id of course
      * @param int $sectionnumber sectionnumber (0, 1, 2...)
