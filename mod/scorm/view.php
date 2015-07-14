@@ -173,7 +173,7 @@ if (!empty($scorm->timeclose) && $timenow > $scorm->timeclose) {
     $scormopen = false;
 }
 if ($scormopen && empty($launch)) {
-    scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
+    scorm_print_launch($USER, $scorm, 'view.php?id='.$cm->id, $cm);
 }
 if (!empty($forcejs)) {
     echo $OUTPUT->box(get_string("forcejavascriptmessage", "scorm"), "generalbox boxaligncenter forcejavascriptmessage");
