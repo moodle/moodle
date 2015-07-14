@@ -484,12 +484,12 @@
                 // Add padding to first-level links.
                 > li > a {
                     padding-left: 20px;
-                    border-radius: 0px;
+                    border-radius: 0;
                 }
                 .dropdown-menu {
-                    margin: 0px 0px 0px 15px;
+                    margin: 0 0 0 15px;
                     li > a {
-                        border-radius: 0px;
+                        border-radius: 0;
                     }
                 }
             }
@@ -520,7 +520,7 @@
                         }
                         &.open {
                             > a {
-                                background: @navbarBackground;
+                                background-color: @navbarBackground;
                             }
                             > .dropdown-menu,
                             .open > .dropdown-menu {
@@ -532,40 +532,49 @@
                 .divider {
                     width: auto;
                     display: block;
-                    height: 0px;
+                    height: 0;
                     margin: 4px 1px;
-                    border-left: 0px none;
-                    border-right: 0px none;
+                    border-left: 0 none;
+                    border-right: 0 none;
                     border-top: 1px solid @navbarBorder;
                     border-bottom: 1px solid @navbarBackgroundHighlight;
                 }
             }
         }
-        &.navbar-inverse {
-            .nav-collapse.active {
-                border-top-color: @navbarInverseBorder;
-                .nav,
-                .nav .dropdown-menu {
-                    .dropdown-submenu {
-                        .dropdown-toggle {
-                            &:after {
-                                border-top-color: @navbarInverseBorder;
-                            }
+    }
+
+    .navbar-inverse {
+        .nav-collapse.active {
+            border-top-color: @navbarInverseBorder;
+            .nav,
+            .nav .dropdown-menu {
+                .dropdown-submenu {
+                    .dropdown-toggle {
+                        &:after {
+                            border-top-color: @navbarInverseBorder;
                         }
+                    }
+                    &.open {
+                        > a {
+                            background-color: @navbarInverseBackground;
+                        }
+                    }
+
+                    &:hover {
                         &.open {
                             > a {
                                 background-color: @navbarInverseBackground;
                             }
                         }
-
-                        &:hover {
-                            &.open {
-                                > a {
-                                    background: @navbarInverseBackground;
-                                }
-                            }
-                        }
                     }
+                }
+                .divider {
+                    width: auto;
+                    display: block;
+                    height: 0;
+                    margin: 4px 1px;
+                    border-top: 1px solid @navbarInverseBackground;
+                    border-bottom: 1px solid lighten(@navbarInverseBackground, 25%);
                 }
             }
         }
@@ -577,11 +586,11 @@
                 > .nav {
                     margin: 0;
                     > li > a {
-                        padding-left: 0px;
+                        padding-left: 0;
                         padding-right: 20px;
                     }
                     .dropdown-menu {
-                        margin: 0px 15px 0px 0px;
+                        margin: 0 15px 0 0;
                     }
                 }
                 .dropdown-menu {
@@ -596,7 +605,7 @@
                     .dropdown-submenu {
                         .dropdown-toggle {
                             &:after {
-                                margin-left: 0px;
+                                margin-left: 0;
                                 margin-right: 4px;
                             }
                         }
@@ -605,7 +614,6 @@
             }
         }
     }
-
 }
 
 @media (max-width: 767px) {
