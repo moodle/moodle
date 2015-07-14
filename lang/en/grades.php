@@ -385,6 +385,7 @@ $string['importcsv_help'] = 'Grades can be imported via a CSV file with format a
 * A fieldname containing user identity data is required - either username or ID number or email address
 
 A file of the correct format can be obtained by first exporting some grades. The file can then be edited and saved as a CSV file.';
+$string['importcsv_link'] = 'grade/import/csv/index';
 $string['importcustom'] = 'Import as custom outcomes (only this course)';
 $string['importerror'] = 'An error occurred, this script wasn\'t called with the right parameters.';
 $string['importfailed'] = 'Import failed. No data was imported.';
