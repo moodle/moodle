@@ -727,6 +727,9 @@ function user_convert_text_to_menu_items($text, $page) {
  *
  * @param stdclass $user user object.
  * @param moodle_page $page page object.
+ * @param array $options associative array.
+ *     options are:
+ *     - avatarsize=35 (size of avatar image)
  * @return stdClass $returnobj navigation information object, where:
  *
  *      $returnobj->navitems    array    array of links where each link is a
@@ -769,7 +772,7 @@ function user_convert_text_to_menu_items($text, $page) {
  *          mnetidprovidername    string name of the MNet provider
  *          mnetidproviderwwwroot string URL of the MNet provider
  */
-function user_get_user_navigation_info($user, $page) {
+function user_get_user_navigation_info($user, $page, $options = null) {
     global $OUTPUT, $DB, $SESSION, $CFG;
 
     $returnobject = new stdClass();
@@ -787,12 +790,13 @@ function user_get_user_navigation_info($user, $page) {
     $returnobject->metadata['userprofileurl'] = new moodle_url('/user/profile.php', array(
         'id' => $user->id
     ));
+
+    $avataroptions = array('link' => false, 'visibletoscreenreaders' => false);
+    if (!empty($options['avatarsize'])) {
+        $avataroptions['size'] = $options['avatarsize'];
+    }
     $returnobject->metadata['useravatar'] = $OUTPUT->user_picture (
-        $user,
-        array(
-            'link' => false,
-            'visibletoscreenreaders' => false
-        )
+        $user, $avataroptions
     );
     // Build a list of items for a regular user.
 

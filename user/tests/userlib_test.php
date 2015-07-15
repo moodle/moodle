@@ -377,4 +377,25 @@ class core_userliblib_testcase extends advanced_testcase {
 
     }
 
+    /**
+     * Test setting the user menu avatar size.
+     */
+    public function test_user_menu_custom_avatar_size() {
+        global $PAGE;
+        $this->resetAfterTest(true);
+
+        $testsize = 100;
+
+        $user = $this->getDataGenerator()->create_user();
+        $opts = user_get_user_navigation_info($user, $PAGE, array('avatarsize' => $testsize));
+        $avatarhtml = $opts->metadata['useravatar'];
+
+        $matches = [];
+        preg_match('/(?:.*width=")(\d*)(?:" height=")(\d*)(?:".*\/>)/', $avatarhtml, $matches);
+        $this->assertCount(3, $matches);
+
+        $this->assertEquals(intval($matches[1]), $testsize);
+        $this->assertEquals(intval($matches[2]), $testsize);
+    }
+
 }
