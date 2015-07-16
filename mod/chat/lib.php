@@ -1304,3 +1304,22 @@ function chat_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $modulepagetype = array('mod-chat-*' => get_string('page-mod-chat-x', 'chat'));
     return $modulepagetype;
 }
+
+/**
+ * Return a list of the latest messages in the given chat session.
+ *
+ * @param  stdClass $chatuser     chat user session data
+ * @param  int      $chatlasttime last time messages were retrieved
+ * @return array    list of messages
+ * @since  Moodle 3.0
+ */
+function chat_get_latest_messages($chatuser, $chatlasttime) {
+    global $DB;
+
+    $params = array('groupid' => $chatuser->groupid, 'chatid' => $chatuser->chatid, 'lasttime' => $chatlasttime);
+
+    $groupselect = $chatuser->groupid ? " AND (groupid=" . $chatuser->groupid . " OR groupid=0) " : "";
+
+    return $DB->get_records_select('chat_messages_current', 'chatid = :chatid AND timestamp > :lasttime ' . $groupselect,
+                                    $params, 'timestamp ASC');
+}

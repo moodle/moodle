@@ -1147,6 +1147,7 @@ $services = array(
             'mod_chat_login_user',
             'mod_chat_get_chat_users',
             'mod_chat_send_chat_message',
+            'mod_chat_get_chat_latest_messages',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,

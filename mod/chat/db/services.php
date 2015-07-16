@@ -52,4 +52,12 @@ $functions = array(
         'capabilities'  => 'mod/chat:chat'
     ),
 
+    'mod_chat_get_chat_latest_messages' => array(
+        'classname'     => 'mod_chat_external',
+        'methodname'    => 'get_chat_latest_messages',
+        'description'   => 'Get the latest messages from the given chat session.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/chat:chat'
+    ),
+
 );

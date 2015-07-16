@@ -312,4 +312,121 @@ class mod_chat_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_chat_latest_messages_parameters() {
+        return new external_function_parameters(
+            array(
+                'chatsid' => new external_value(PARAM_ALPHANUM, 'chat session id (obtained via mod_chat_login_user)'),
+                'chatlasttime' => new external_value(PARAM_INT, 'last time messages were retrieved (epoch time)', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Get the latest messages from the given chat session.
+     *
+     * @param int $chatsid the chat session id
+     * @param int $chatlasttime last time messages were retrieved (epoch time)
+     * @return array of warnings and the new message id (0 if the message was empty)
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function get_chat_latest_messages($chatsid, $chatlasttime = 0) {
+        global $DB, $CFG;
+
+        $params = self::validate_parameters(self::get_chat_latest_messages_parameters(),
+                                            array(
+                                                'chatsid' => $chatsid,
+                                                'chatlasttime' => $chatlasttime
+                                            ));
+        $warnings = array();
+
+        // Request and permission validation.
+        if (!$chatuser = $DB->get_record('chat_users', array('sid' => $params['chatsid']))) {
+            throw new moodle_exception('notlogged', 'chat');
+        }
+        $chat = $DB->get_record('chat', array('id' => $chatuser->chatid), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($chat, 'chat');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        require_capability('mod/chat:chat', $context);
+
+        $chatlasttime = $params['chatlasttime'];
+        if ((time() - $chatlasttime) > $CFG->chat_old_ping) {
+            chat_delete_old_users();
+        }
+
+        // Set default chat last time (to not retrieve all the conversations).
+        if ($chatlasttime == 0) {
+            $chatlasttime = time() - $CFG->chat_old_ping;
+        }
+
+        if ($latestmessage = chat_get_latest_message($chatuser->chatid, $chatuser->groupid)) {
+            $chatnewlasttime = $latestmessage->timestamp;
+        } else {
+            $chatnewlasttime = 0;
+        }
+
+        $messages = chat_get_latest_messages($chatuser, $chatlasttime);
+        $returnedmessages = array();
+
+        foreach ($messages as $message) {
+
+            // FORMAT_MOODLE is mandatory in the chat plugin.
+            list($messageformatted, $format) = external_format_text($message->message, FORMAT_MOODLE, $context->id, 'mod_chat',
+                                                                    '', 0);
+
+            $returnedmessages[] = array(
+                'id' => $message->id,
+                'userid' => $message->userid,
+                'system' => (bool) $message->system,
+                'message' => $messageformatted,
+                'timestamp' => $message->timestamp,
+            );
+        }
+
+        // Update our status since we are active in the chat.
+        $DB->set_field('chat_users', 'lastping', time(), array('id' => $chatuser->id));
+
+        $result = array();
+        $result['messages'] = $returnedmessages;
+        $result['chatnewlasttime'] = $chatnewlasttime;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_chat_latest_messages_returns() {
+        return new external_single_structure(
+            array(
+                'messages' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'message id'),
+                            'userid' => new external_value(PARAM_INT, 'user id'),
+                            'system' => new external_value(PARAM_BOOL, 'true if is a system message (like user joined)'),
+                            'message' => new external_value(PARAM_RAW, 'message text'),
+                            'timestamp' => new external_value(PARAM_INT, 'timestamp for the message'),
+                        )
+                    ),
+                    'list of users'
+                ),
+                'chatnewlasttime' => new external_value(PARAM_INT, 'new last time'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
