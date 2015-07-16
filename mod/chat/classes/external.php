@@ -225,4 +225,91 @@ class mod_chat_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function send_chat_message_parameters() {
+        return new external_function_parameters(
+            array(
+                'chatsid' => new external_value(PARAM_ALPHANUM, 'chat session id (obtained via mod_chat_login_user)'),
+                'messagetext' => new external_value(PARAM_RAW, 'the message text'),
+                'beepid' => new external_value(PARAM_RAW, 'the beep id', VALUE_DEFAULT, ''),
+
+            )
+        );
+    }
+
+    /**
+     * Send a message on the given chat session.
+     *
+     * @param int $chatsid the chat session id
+     * @param string $messagetext the message text
+     * @param string $beepid the beep message id
+     * @return array of warnings and the new message id (0 if the message was empty)
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function send_chat_message($chatsid, $messagetext, $beepid = '') {
+        global $DB;
+
+        $params = self::validate_parameters(self::send_chat_message_parameters(),
+                                            array(
+                                                'chatsid' => $chatsid,
+                                                'messagetext' => $messagetext,
+                                                'beepid' => $beepid
+                                            ));
+        $warnings = array();
+
+        // Request and permission validation.
+        if (!$chatuser = $DB->get_record('chat_users', array('sid' => $params['chatsid']))) {
+            throw new moodle_exception('notlogged', 'chat');
+        }
+        $chat = $DB->get_record('chat', array('id' => $chatuser->chatid), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($chat, 'chat');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        require_capability('mod/chat:chat', $context);
+
+        $chatmessage = clean_text($params['messagetext'], FORMAT_MOODLE);
+
+        if (!empty($params['beepid'])) {
+            $chatmessage = 'beep ' . $params['beepid'];
+        }
+
+        if (!empty($chatmessage)) {
+            // Send the message.
+            $messageid = chat_send_chatmessage($chatuser, $chatmessage, 0, $cm);
+            // Update ping time.
+            $chatuser->lastmessageping = time() - 2;
+            $DB->update_record('chat_users', $chatuser);
+        } else {
+            $messageid = 0;
+        }
+
+        $result = array();
+        $result['messageid'] = $messageid;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function send_chat_message_returns() {
+        return new external_single_structure(
+            array(
+                'messageid' => new external_value(PARAM_INT, 'message sent id'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }

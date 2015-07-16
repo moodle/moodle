@@ -44,4 +44,12 @@ $functions = array(
         'capabilities'  => 'mod/chat:chat'
     ),
 
+    'mod_chat_send_chat_message' => array(
+        'classname'     => 'mod_chat_external',
+        'methodname'    => 'send_chat_message',
+        'description'   => 'Send a message on the given chat session.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/chat:chat'
+    ),
+
 );

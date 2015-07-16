@@ -1146,6 +1146,7 @@ $services = array(
             'mod_folder_view_folder',
             'mod_chat_login_user',
             'mod_chat_get_chat_users',
+            'mod_chat_send_chat_message',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
