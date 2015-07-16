@@ -230,7 +230,7 @@ case workshop::PHASE_SUBMISSION:
         $data = $workshop->prepare_grading_report_data($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
         if ($data) {
             $countparticipants = $workshop->count_participants();
-            $countsubmissions = $workshop->count_submissions('all', $groupid);
+            $countsubmissions = $workshop->count_submissions(array_keys($data->grades), $groupid);
             $a = new stdClass();
             $a->submitted = $countsubmissions;
             $a->notsubmitted = $data->totalcount - $countsubmissions;
