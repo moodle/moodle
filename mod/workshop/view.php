@@ -239,11 +239,11 @@ case workshop::PHASE_SUBMISSION:
 
             echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
 
-            // prepare paging bar
+            // Prepare the paging bar.
             $baseurl = new moodle_url($PAGE->url, array('sortby' => $sortby, 'sorthow' => $sorthow));
             $pagingbar = new paging_bar($data->totalcount, $page, $perpage, $baseurl, 'page');
 
-            // submissions report display options
+            // Populate the display options for the submissions report.
             $reportopts                     = new stdclass();
             $reportopts->showauthornames     = has_capability('mod/workshop:viewauthornames', $workshop->context);
             $reportopts->showreviewernames   = has_capability('mod/workshop:viewreviewernames', $workshop->context);
