@@ -36,4 +36,12 @@ $functions = array(
         'capabilities'  => 'mod/chat:chat'
     ),
 
+    'mod_chat_get_chat_users' => array(
+        'classname'     => 'mod_chat_external',
+        'methodname'    => 'get_chat_users',
+        'description'   => 'Get the list of users in the given chat session.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/chat:chat'
+    ),
+
 );

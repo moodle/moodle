@@ -130,4 +130,99 @@ class mod_chat_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_chat_users_parameters() {
+        return new external_function_parameters(
+            array(
+                'chatsid' => new external_value(PARAM_ALPHANUM, 'chat session id (obtained via mod_chat_login_user)')
+            )
+        );
+    }
+
+    /**
+     * Get the list of users in the given chat session.
+     *
+     * @param int $chatsid the chat session id
+     * @return array of warnings and the user lists
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function get_chat_users($chatsid) {
+        global $DB;
+
+        $params = self::validate_parameters(self::get_chat_users_parameters(),
+                                            array(
+                                                'chatsid' => $chatsid
+                                            ));
+        $warnings = array();
+
+        // Request and permission validation.
+        if (!$chatuser = $DB->get_record('chat_users', array('sid' => $params['chatsid']))) {
+            throw new moodle_exception('notlogged', 'chat');
+        }
+        $chat = $DB->get_record('chat', array('id' => $chatuser->chatid), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($chat, 'chat');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        require_capability('mod/chat:chat', $context);
+
+        // First, delete old users from the chats.
+        chat_delete_old_users();
+
+        $users = chat_get_users($chatuser->chatid, $chatuser->groupid, $cm->groupingid);
+        $returnedusers = array();
+
+        foreach ($users as $user) {
+            $usercontext = context_user::instance($user->id, IGNORE_MISSING);
+            $profileimageurl = '';
+
+            if ($usercontext) {
+                $profileimageurl = moodle_url::make_webservice_pluginfile_url(
+                                    $usercontext->id, 'user', 'icon', null, '/', 'f1')->out(false);
+            }
+
+            $returnedusers[] = array(
+                'id' => $user->id,
+                'fullname' => fullname($user),
+                'profileimageurl' => $profileimageurl
+            );
+        }
+
+        $result = array();
+        $result['users'] = $returnedusers;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_chat_users_returns() {
+        return new external_single_structure(
+            array(
+                'users' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'user id'),
+                            'fullname' => new external_value(PARAM_NOTAGS, 'user full name'),
+                            'profileimageurl' => new external_value(PARAM_URL, 'user picture URL'),
+                        )
+                    ),
+                    'list of users'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
