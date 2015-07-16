@@ -15,16 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Chat external functions and service definitions.
  *
- * @package   mod_chat
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_chat
+ * @category   external
+ * @copyright  2015 Juan Leyva <juan@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.0
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2015051101; // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2015050500; // Requires this Moodle version.
-$plugin->component = 'mod_chat'; // Full name of the plugin (used for diagnostics).
-$plugin->cron      = 300;
+$functions = array(
+
+    'mod_chat_login_user' => array(
+        'classname'     => 'mod_chat_external',
+        'methodname'    => 'login_user',
+        'description'   => 'Log a user into a chat room in the given chat.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/chat:chat'
+    ),
+
+);
