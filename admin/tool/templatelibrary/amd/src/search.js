@@ -53,7 +53,7 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
               args: { component: componentStr, search: searchStr },
               done: reloadListTemplate,
               fail: notification.exception }
-        ]);
+        ], true, false);
     };
 
     var throttle = null;

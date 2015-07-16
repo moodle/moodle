@@ -64,14 +64,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function list_templates_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Loads the list of templates.
      * @param string $component Limit the search to a component.
      * @param string $search The search string.
@@ -106,16 +98,6 @@ class external extends external_api {
                 array('component' => new external_value(PARAM_COMPONENT, 'component containing the template'),
                       'template' => new external_value(PARAM_ALPHANUMEXT, 'name of the template'))
             );
-    }
-
-    /**
-     * Can this function be called directly from ajax?
-     *
-     * @return boolean
-     * @since Moodle 2.9
-     */
-    public static function load_canonical_template_is_allowed_from_ajax() {
-        return true;
     }
 
     /**

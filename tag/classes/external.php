@@ -60,15 +60,6 @@ class core_tag_external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     *
-     * @return boolean
-     */
-    public static function update_tags_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Update tags
      *
      * @param array $tags
@@ -192,15 +183,6 @@ class core_tag_external extends external_api {
                 )
             )
         );
-    }
-
-    /**
-     * Expose to AJAX
-     *
-     * @return boolean
-     */
-    public static function get_tags_is_allowed_from_ajax() {
-        return true;
     }
 
     /**

@@ -115,6 +115,9 @@ function external_function_info($function, $strictness=MUST_EXIST) {
         if (isset($functions[$function->name]['type'])) {
             $function->type = $functions[$function->name]['type'];
         }
+        if (isset($functions[$function->name]['ajax'])) {
+            $function->allowed_from_ajax = $functions[$function->name]['ajax'];
+        }
         if (isset($functions[$function->name]['loginrequired'])) {
             $function->loginrequired = $functions[$function->name]['loginrequired'];
         } else {

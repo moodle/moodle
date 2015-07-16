@@ -133,7 +133,7 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
                     component: component,
                     template: name
             }
-        }]);
+        }], true, false);
 
         // When returns a new promise that is resolved when all the passed in promises are resolved.
         // The arguments to the done become the values of each resolved promise.

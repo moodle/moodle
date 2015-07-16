@@ -32,8 +32,6 @@ define('AJAX_SCRIPT', true);
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/externallib.php');
 
-require_sesskey();
-
 $rawjson = file_get_contents('php://input');
 
 $requests = json_decode($rawjson, true);
@@ -54,6 +52,7 @@ foreach ($requests as $request) {
         $externalfunctioninfo = external_function_info($methodname);
 
         if (!$externalfunctioninfo->allowed_from_ajax) {
+            error_log('This external function is not available to ajax. Failed to call "' . $methodname . '"');
             throw new moodle_exception('servicenotavailable', 'webservice');
         }
 
@@ -62,6 +61,8 @@ foreach ($requests as $request) {
             if (!isloggedin()) {
                 error_log('This external function is not available to public users. Failed to call "' . $methodname . '"');
                 throw new moodle_exception('servicenotavailable', 'webservice');
+            } else {
+                require_sesskey();
             }
         }
 
