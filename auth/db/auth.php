@@ -133,6 +133,15 @@ class auth_plugin_db extends auth_plugin_base {
             } else if ($this->config->passtype === 'saltedcrypt') {
                 require_once($CFG->libdir.'/password_compat/lib/password.php');
                 return password_verify($extpassword, $fromdb);
+            } else if ($this->config->passtype === 'pbkdf2') {
+            	$pieces = explode("$", $fromdb);
+            	$iterations = $pieces[1];
+            	$salt = $pieces[2];
+            	$old_hash = $pieces[3];
+            	$hash = hash_pbkdf2("SHA256", $extpassword, $salt, $iterations, 0, true);
+				$hash = base64_encode($hash);
+            	return $hash==$old_hash;
+            }
             } else {
                 return false;
             }
