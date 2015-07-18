@@ -11,3 +11,10 @@ mypreferences,core_grades
 myprofile,core
 viewallmyentries,core_blog
 cannotdeletepost,core_notes
+addedotag,core_tag
+newname,core_tag
+tagtype_default,core_tag
+tagtype_official,core_tag
+thistaghasnodesc,core_tag
+updated,core_tag
+withselectedtags,core_tag

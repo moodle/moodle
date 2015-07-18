@@ -757,11 +757,19 @@ ul#tag-cloud-list li {margin:0;display:inline;list-style-type:none;}
 #tag-search-results {padding:0;margin: 15px 20% 0 20%;float:left;width:60%;display:block;}
 #tag-search-results li {width:30%;float:left;padding-left:1%;text-align:left;line-height:20px;padding-right:1%;list-style:none;}
 span.flagged-tag,
-span.flagged-tag a {color:#FF0000;}
-table#tag-management-list {text-align:left;width:100%;}
-table#tag-management-list td,
-table#tag-management-list th {vertical-align: middle;text-align: left;padding: 4px;}
-.tag-management-form {text-align:center;}
+tr.flagged-tag,
+span.flagged-tag a,
+tr.flagged-tag a {color:#FF0000;}
+.tag-management-table td,
+.tag-management-table th {vertical-align: middle;padding: 4px;}
+.tag-management-table tr td.tageditingon .displaytagname,
+.tag-management-table td .edittagname {display: none;}
+.tag-management-table tr td.tageditingon .edittagname {display: inherit; position: relative;}
+.tag-management-table tr td.tageditingon .edittagname .editinstructions {margin-right: -300px; margin-left: 0;}
+.tag-management-table tr td .tagnameedit img {opacity: 0.2;}
+.tag-management-table tr:hover td .tagnameedit img,
+.tag-management-table tr td .tagnameedit:focus img {opacity: 1;}
+.tag-management-table tr:hover td.tageditingon .tagnameedit img {opacity: 0.2;}
 #relatedtags-autocomplete-container {margin-left:auto;margin-right:auto;min-height:4.6em;width:100%;}
 #relatedtags-autocomplete {position:relative;display:block;width:60%;margin-left:auto;margin-right:auto;}
 #relatedtags-autocomplete .yui-ac-content {position:absolute;width:420px;left:20%;border:1px solid #404040;background:#fff;overflow:hidden;z-index:9050;}

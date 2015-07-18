@@ -1064,6 +1064,15 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => 'moodle/rating:view'
     ),
+
+    // Tag functions.
+   'core_tag_update_tags' => array(
+        'classname'   => 'core_tag_external',
+        'methodname'  => 'update_tags',
+        'description' => 'Updates tags',
+        'type'        => 'write',
+    ),
+
 );
 
 $services = array(
