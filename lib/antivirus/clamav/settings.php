@@ -26,8 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-    $settings->add(new admin_setting_configcheckbox('antivirus_clamav/runclamonupload',
-            new lang_string('runclamavonupload', 'antivirus_clamav'), new lang_string('configrunclamavonupload', 'antivirus_clamav'), 0));
     $settings->add(new admin_setting_configexecutable('antivirus_clamav/pathtoclam',
             new lang_string('pathtoclam', 'antivirus_clamav'), new lang_string('configpathtoclam', 'antivirus_clamav'), ''));
     $settings->add(new admin_setting_configdirectory('antivirus_clamav/quarantinedir',
