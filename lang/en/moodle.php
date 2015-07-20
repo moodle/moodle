@@ -1530,6 +1530,7 @@ $string['resetnotimplemented'] = 'Reset not implemented';
 $string['resetrecordexpired'] = 'The password reset link you used is more than {$a} minutes old and has expired. Please initiate a new password reset.';
 $string['resetstartdate'] = 'Reset start date';
 $string['resetstatus'] = 'Status';
+$string['resettable'] = 'Reset table preferences';
 $string['resettask'] = 'Task';
 $string['resettodefaults'] = 'Reset to defaults';
 $string['resortsubcategoriesby'] = 'Sort subcategories by {$a} ascending';

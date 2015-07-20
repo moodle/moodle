@@ -34,6 +34,7 @@ define('TABLE_VAR_SHOW',   3);
 define('TABLE_VAR_IFIRST', 4);
 define('TABLE_VAR_ILAST',  5);
 define('TABLE_VAR_PAGE',   6);
+define('TABLE_VAR_RESET',  7);
 /**#@-*/
 
 /**#@+
@@ -138,6 +139,7 @@ class flexible_table {
             TABLE_VAR_IFIRST => 'tifirst',
             TABLE_VAR_ILAST  => 'tilast',
             TABLE_VAR_PAGE   => 'page',
+            TABLE_VAR_RESET  => 'treset'
         );
     }
 
@@ -506,6 +508,17 @@ class flexible_table {
         $ifirst = optional_param($this->request[TABLE_VAR_IFIRST], null, PARAM_RAW);
         if (!is_null($ifirst) && ($ifirst === '' || strpos(get_string('alphabet', 'langconfig'), $ifirst) !== false)) {
             $this->prefs['i_first'] = $ifirst;
+        }
+
+        // Allow user to reset table preferences.
+        if (optional_param($this->request[TABLE_VAR_RESET], 0, PARAM_BOOL) === 1) {
+            $this->prefs = array(
+                'collapse' => array(),
+                'sortby'   => array(),
+                'i_first'  => '',
+                'i_last'   => '',
+                'textsort' => $this->column_textsort,
+            );
         }
 
         // Save user preferences if they have changed.
@@ -971,6 +984,10 @@ class flexible_table {
      */
     function print_nothing_to_display() {
         global $OUTPUT;
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
         $this->print_initials_bar();
 
         echo $OUTPUT->heading(get_string('nothingtodisplay'));
@@ -1325,6 +1342,10 @@ class flexible_table {
      */
     function start_html() {
         global $OUTPUT;
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
         // Do we need to print initial bars?
         $this->print_initials_bar();
 
@@ -1362,6 +1383,21 @@ class flexible_table {
             $string .= $property . ':' . $value . ';';
         }
         return $string;
+    }
+
+    /**
+     * Generate the HTML for the table preferences reset button.
+     *
+     * @return string HTML fragment.
+     */
+    private function render_reset_button() {
+        $url = $this->baseurl->out(false, array($this->request[TABLE_VAR_RESET] => 1));
+
+        $html  = html_writer::start_div('mdl-right');
+        $html .= html_writer::link($url, get_string('resettable'));
+        $html .= html_writer::end_div();
+
+        return $html;
     }
 }
 
