@@ -116,14 +116,6 @@ if ( $show ) {
     $hook = $show;
     $show = '';
 }
-/// Processing standard security processes
-if ($course->id != SITEID) {
-    require_login($course);
-}
-if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $context)) {
-    echo $OUTPUT->header();
-    notice(get_string("activityiscurrentlyhidden"));
-}
 
 /// stablishing flag variables
 if ( $sortorder = strtolower($sortorder) ) {
