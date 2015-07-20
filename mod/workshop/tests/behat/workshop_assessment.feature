@@ -64,10 +64,12 @@ Feature: Workshop submission and assessment
     And I follow "TestWorkshop"
     And I should see "to allocate: 3"
     And I should see "There is at least one author who has not yet submitted their work"
-    And I should see "All submissions (3)"
-    And I should see "Submission1"
-    And I should see "Submission2"
-    And I should see "Submission3"
+    Then I should see "Workshop submissions report"
+    And I should see "Submitted (3) / not submitted (1)"
+    And I should see "Submission1" in the "Sam1 Student1" "table_row"
+    And I should see "Submission2" in the "Sam2 Student2" "table_row"
+    And I should see "Submission3" in the "Sam3 Student3" "table_row"
+    And I should see "No submission found for this user" in the "Sam4 Student4" "table_row"
     And I allocate submissions in workshop "TestWorkshop" as:"
       | Participant   | Reviewer      |
       | Sam1 Student1 | Sam2 Student2 |

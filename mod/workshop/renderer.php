@@ -420,21 +420,29 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $sortbyname = $sortbyfirstname . ' / ' . $sortbylastname;
         }
 
+        $sortbysubmisstiontitle = $this->helper_sortable_heading(get_string('submission', 'workshop'), 'submissiontitle',
+                $options->sortby, $options->sorthow);
+        $sortbysubmisstionlastmodified = $this->helper_sortable_heading(get_string('submissionlastmodified', 'workshop'),
+                'submissionmodified', $options->sortby, $options->sorthow);
+        $sortbysubmisstion = $sortbysubmisstiontitle . ' / ' . $sortbysubmisstionlastmodified;
+
         $table->head = array();
         $table->head[] = $sortbyname;
-        $table->head[] = $this->helper_sortable_heading(get_string('submission', 'workshop'), 'submissiontitle',
-                $options->sortby, $options->sorthow);
-        $table->head[] = $this->helper_sortable_heading(get_string('receivedgrades', 'workshop'));
-        if ($options->showsubmissiongrade) {
-            $table->head[] = $this->helper_sortable_heading(get_string('submissiongradeof', 'workshop', $data->maxgrade),
-                    'submissiongrade', $options->sortby, $options->sorthow);
-        }
-        $table->head[] = $this->helper_sortable_heading(get_string('givengrades', 'workshop'));
-        if ($options->showgradinggrade) {
-            $table->head[] = $this->helper_sortable_heading(get_string('gradinggradeof', 'workshop', $data->maxgradinggrade),
-                    'gradinggrade', $options->sortby, $options->sorthow);
-        }
+        $table->head[] = $sortbysubmisstion;
 
+        // If we are in submission phase ignore the following headers (columns).
+        if ($options->workshopphase != workshop::PHASE_SUBMISSION) {
+            $table->head[] = $this->helper_sortable_heading(get_string('receivedgrades', 'workshop'));
+            if ($options->showsubmissiongrade) {
+                $table->head[] = $this->helper_sortable_heading(get_string('submissiongradeof', 'workshop', $data->maxgrade),
+                        'submissiongrade', $options->sortby, $options->sorthow);
+            }
+            $table->head[] = $this->helper_sortable_heading(get_string('givengrades', 'workshop'));
+            if ($options->showgradinggrade) {
+                $table->head[] = $this->helper_sortable_heading(get_string('gradinggradeof', 'workshop', $data->maxgradinggrade),
+                        'gradinggrade', $options->sortby, $options->sorthow);
+            }
+        }
         $table->rowclasses  = array();
         $table->colclasses  = array();
         $table->data        = array();
@@ -484,6 +492,13 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     $cell->attributes['class'] = 'submission';
                     $row->cells[] = $cell;
                 }
+
+                // If we are in submission phase ignore the following columns.
+                if ($options->workshopphase == workshop::PHASE_SUBMISSION) {
+                    $table->data[] = $row;
+                    continue;
+                }
+
                 // column #3 - received grades
                 if ($tr % $spanreceived == 0) {
                     $idx = intval($tr / $spanreceived);
@@ -997,6 +1012,9 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $url = new moodle_url('/mod/workshop/submission.php',
                                   array('cmid' => $this->page->context->instanceid, 'id' => $participant->submissionid));
             $out = html_writer::link($url, format_string($participant->submissiontitle), array('class'=>'title'));
+
+            $lastmodified = get_string('userdatemodified', 'workshop', userdate($participant->submissionmodified));
+            $out .= html_writer::tag('div', $lastmodified, array('class' => 'lastmodified'));
         }
 
         return $out;
