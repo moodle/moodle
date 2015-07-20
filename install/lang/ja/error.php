@@ -35,7 +35,7 @@ $string['cannotcreatedboninstall'] = '<p>データベースを作成できませ
 <p>サイト管理者はデータベース設定を確認してください。</p>';
 $string['cannotcreatelangdir'] = 'langディレクトリを作成できません。';
 $string['cannotcreatetempdir'] = 'tempディレクトリを作成できません。';
-$string['cannotdownloadcomponents'] = 'コンポーネットをダウンロードできません。';
+$string['cannotdownloadcomponents'] = 'コンポーネントをダウンロードできません。';
 $string['cannotdownloadzipfile'] = 'ZIPファイルをダウンロードできません。';
 $string['cannotfindcomponent'] = 'コンポーネントを見つけることができません。';
 $string['cannotsavemd5file'] = 'mp5ファイルを保存できません。';
