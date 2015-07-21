@@ -840,7 +840,15 @@ function scorm_get_all_attempts($scormid, $userid) {
     return $attemptids;
 }
 
-function scorm_view_display ($user, $scorm, $action, $cm) {
+/**
+ * Displays the entry form and toc if required.
+ *
+ * @param  stdClass $user   user object
+ * @param  stdClass $scorm  scorm object
+ * @param  string   $action base URL for the organizations select box
+ * @param  stdClass $cm     course module object
+ */
+function scorm_print_launch ($user, $scorm, $action, $cm) {
     global $CFG, $DB, $PAGE, $OUTPUT, $COURSE;
 
     if ($scorm->updatefreq == SCORM_UPDATE_EVERYTIME) {

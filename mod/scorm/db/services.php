@@ -15,16 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * scorm version information.
+ * SCORM external functions and service definitions.
  *
  * @package    mod_scorm
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @category   external
+ * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.0
  */
 
-defined('MOODLE_INTERNAL') || die();
+$functions = array(
 
-$plugin->version   = 2015051102;    // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2015050500;    // Requires this Moodle version.
-$plugin->component = 'mod_scorm';   // Full name of the plugin (used for diagnostics).
-$plugin->cron      = 300;
+    'mod_scorm_view_scorm' => array(
+        'classname'     => 'mod_scorm_external',
+        'methodname'    => 'view_scorm',
+        'description'   => 'Trigger the course module viewed event.',
+        'type'          => 'write',
+        'capabilities'  => ''
+    ),
+);

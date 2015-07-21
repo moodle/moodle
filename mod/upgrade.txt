@@ -1,6 +1,10 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 3.0 ===
+
+* Function scorm_view_display was renamed to scorm_print_launch to avoid confussion with new function scorm_view.
+
 === 2.9 ===
 
 * Added Grade to pass field to mod_form for activities that support grading.
