@@ -594,7 +594,7 @@ class block_manager {
         $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
         $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = bi.id AND ctx.contextlevel = :contextlevel)";
 
-        $systemcontext = \context_system::instance();
+        $systemcontext = context_system::instance();
         $params = array(
             'contextlevel' => CONTEXT_BLOCK,
             'subpage1' => $this->page->subpage,
