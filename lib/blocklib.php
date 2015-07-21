@@ -578,7 +578,7 @@ class block_manager {
         }
 
         $context = $this->page->context;
-        $contexttest = 'bi.parentcontextid = :contextid2';
+        $contexttest = 'bi.parentcontextid IN (:contextid2, :contextid3)';
         $parentcontextparams = array();
         $parentcontextids = $context->get_parent_context_ids();
         if ($parentcontextids) {
@@ -594,12 +594,14 @@ class block_manager {
         $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
         $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = bi.id AND ctx.contextlevel = :contextlevel)";
 
+        $systemcontext = \context_system::instance();
         $params = array(
             'contextlevel' => CONTEXT_BLOCK,
             'subpage1' => $this->page->subpage,
             'subpage2' => $this->page->subpage,
             'contextid1' => $context->id,
             'contextid2' => $context->id,
+            'contextid3' => $systemcontext->id,
             'pagetype' => $this->page->pagetype,
         );
         if ($this->page->subpage === '') {
