@@ -103,7 +103,7 @@ if (!isguestuser()) {   // Skip default home page for guests
 }
 
 // Toggle the editing state and switches
-if (!$CFG->forcedefaultmymoodle && $PAGE->user_allowed_editing()) {
+if (empty($CFG->forcedefaultmymoodle) && $PAGE->user_allowed_editing()) {
     if ($reset !== null) {
         if (!is_null($userid)) {
             require_sesskey();
