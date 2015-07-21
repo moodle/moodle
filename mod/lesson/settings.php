@@ -48,10 +48,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('lesson_mediaclose', get_string('mediaclose', 'lesson'),
             get_string('configmediaclose', 'lesson'), false, PARAM_TEXT));
 
-    /** Misc lesson settings */
-    $settings->add(new admin_setting_configtext('lesson_maxhighscores', get_string('maxhighscores', 'lesson'),
-            get_string('configmaxhighscores','lesson'), 10, PARAM_INT));
-
     /** Default lesson settings */
     $numbers = array();
     for ($i=20; $i>1; $i--) {

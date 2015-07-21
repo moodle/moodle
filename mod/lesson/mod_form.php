@@ -77,11 +77,6 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setType('mediaclose', PARAM_BOOL);
         $mform->setDefault('mediaclose', $CFG->lesson_mediaclose);
 
-        /** Legacy maximum highscores element to maintain backwards compatibility */
-        $mform->addElement('hidden', 'maxhighscores');
-        $mform->setType('maxhighscores', PARAM_INT);
-        $mform->setDefault('maxhighscores', $CFG->lesson_maxhighscores);
-
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);

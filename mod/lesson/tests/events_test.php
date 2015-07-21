@@ -241,6 +241,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
             'noob', $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingCalled();
     }
 
     /**
@@ -270,6 +271,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
             $this->lesson->properties()->name, $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
+        $this->assertDebuggingCalled();
     }
 
     /**
