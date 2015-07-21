@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -38,7 +37,7 @@ function antiviruses_get_enabled() {
         return $active;
     }
 
-    foreach(explode(',', $CFG->antiviruses) as $e) {
+    foreach (explode(',', $CFG->antiviruses) as $e) {
         if ($antivirus = antiviruses_get_antivirus($e)) {
             if ($antivirus->is_configured()) {
                 $active[$e] = $antivirus;
@@ -184,7 +183,7 @@ class antivirus_exception extends moodle_exception {
      * @param mixed $a
      * @param mixed $debuginfo
      */
-    public function __construct($errorcode, $link = '', $a=NULL, $debuginfo=null) {
+    public function __construct($errorcode, $link = '', $a = null, $debuginfo = null) {
         parent::__construct($errorcode, 'antivirus', $link, $a, $debuginfo);
     }
 }

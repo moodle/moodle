@@ -17,8 +17,7 @@
 /**
  * ClamAV antivirus plugin upgrade script.
  *
- * @package    core
- * @subpackage antivirus_clamav
+ * @package    antivirus_clamav
  * @copyright  2015 Ruslan Kabalin, Lancaster University.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

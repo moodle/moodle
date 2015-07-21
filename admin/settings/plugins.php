@@ -138,13 +138,13 @@ if ($hassiteconfig) {
         $plugin->load_settings($ADMIN, 'editorsettings', $hassiteconfig);
     }
 
-/// Antivirus plugins
+    // Antivirus plugins.
     $ADMIN->add('modules', new admin_category('antivirussettings', new lang_string('antiviruses', 'antivirus')));
     $temp = new admin_settingpage('manageantiviruses', new lang_string('antivirussettings', 'antivirus'));
     $temp->add(new admin_setting_manageantiviruses());
     $ADMIN->add('antivirussettings', $temp);
     foreach (core_plugin_manager::instance()->get_plugins_of_type('antivirus') as $plugin) {
-        /** @var \core\plugininfo\antivirus $plugin */
+        /* @var \core\plugininfo\antivirus $plugin */
         $plugin->load_settings($ADMIN, 'antivirussettings', $hassiteconfig);
     }
 

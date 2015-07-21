@@ -17,8 +17,7 @@
 /**
  * ClamAV antivirus integration.
  *
- * @package    core
- * @subpackage antivirus_clamav
+ * @package    antivirus_clamav
  * @copyright  2015 Ruslan Kabalin, Lancaster University.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -89,9 +88,9 @@ class antivirus_clamav extends antivirus {
             if ($deleteinfected) {
                 unlink($file);
             }
-            throw new antivirus_exception('virusfounduser', '', array('filename'=>$filename));
+            throw new antivirus_exception('virusfounduser', '', array('filename' => $filename));
         } else {
-            //Unknown problem,
+            // Unknown problem.
             $notice = get_string('clamfailed', 'antivirus_clamav', $this->get_clam_error_code($return));
             $notice .= "\n\n". implode("\n", $output);
             $this->message_admins($notice);
@@ -99,7 +98,7 @@ class antivirus_clamav extends antivirus {
                 if ($deleteinfected) {
                     unlink($file);
                 }
-                throw new antivirus_exception('virusfounduser', '', array('filename'=>$filename));
+                throw new antivirus_exception('virusfounduser', '', array('filename' => $filename));
             } else {
                 return;
             }
@@ -112,12 +111,12 @@ class antivirus_clamav extends antivirus {
      * @param int $returncode The numeric error code in question.
      * @return string The definition of the error code
      */
-    function get_clam_error_code($returncode) {
+    private function get_clam_error_code($returncode) {
         $returncodes = array();
         $returncodes[0] = 'No virus found.';
         $returncodes[1] = 'Virus(es) found.';
-        $returncodes[2] = ' An error occured'; // specific to clamdscan
-        // all after here are specific to clamscan
+        $returncodes[2] = ' An error occured'; // Specific to clamdscan.
+        // All after here are specific to clamscan.
         $returncodes[40] = 'Unknown option passed.';
         $returncodes[50] = 'Database initialization error.';
         $returncodes[52] = 'Not supported file type.';

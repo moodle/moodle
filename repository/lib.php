@@ -1185,7 +1185,7 @@ abstract class repository implements cacheable_object {
      * permissions of the file are not modified here!
      *
      * @static
-     * @depricated since Moodle 3.0
+     * @deprecated since Moodle 3.0
      * @param string $thefile
      * @param string $filename name of the file
      * @param bool $deleteinfected
@@ -1319,7 +1319,8 @@ abstract class repository implements cacheable_object {
         global $DB, $CFG, $USER, $OUTPUT;
 
         // scan for viruses if possible, throws exception if problem found
-        antiviruses_scan_file($thefile, $record->filename, empty($CFG->repository_no_delete)); //TODO: MDL-28637 this repository_no_delete is a bloody hack!
+        // TODO: MDL-28637 this repository_no_delete is a bloody hack!
+        antiviruses_scan_file($thefile, $record->filename, empty($CFG->repository_no_delete));
 
         $fs = get_file_storage();
         // If file name being used.

@@ -30,6 +30,10 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class for Antiviruses
+ *
+ * @package    core_antivirus
+ * @copyright  2015 Ruslan Kabalin, Lancaster University.
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class antivirus extends base {
     /**
@@ -51,10 +55,25 @@ class antivirus extends base {
         return $enabled;
     }
 
+    /**
+     * Return the node name to use in admin settings menu for this plugin.
+     *
+     * @return string node name
+     */
     public function get_settings_section_name() {
         return 'antivirussettings' . $this->name;
     }
 
+    /**
+     * Loads plugin settings to the settings tree
+     *
+     * This function usually includes settings.php file in plugins folder.
+     * Alternatively it can create a link to some settings page (instance of admin_externalpage)
+     *
+     * @param \part_of_admin_tree $adminroot
+     * @param string $parentnodename
+     * @param bool $hassiteconfig whether the current user has moodle/site:config capability
+     */
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
         $ADMIN = $adminroot; // May be used in settings.php.
@@ -95,7 +114,7 @@ class antivirus extends base {
      * @return moodle_url
      */
     public static function get_manage_url() {
-        return new moodle_url('/admin/settings.php', array('section'=>'manageantiviruses'));
+        return new moodle_url('/admin/settings.php', array('section' => 'manageantiviruses'));
     }
 
     /**

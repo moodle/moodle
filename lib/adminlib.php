@@ -6497,6 +6497,7 @@ class admin_setting_manageeditors extends admin_setting {
 /**
  * Special class for antiviruses administration.
  *
+ * @copyright  2015 Ruslan Kabalin, Lancaster University.
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_setting_manageantiviruses extends admin_setting {
@@ -6529,10 +6530,11 @@ class admin_setting_manageantiviruses extends admin_setting {
     /**
      * Always returns '', does not write anything
      *
+     * @param string $data Unused
      * @return string Always returns ''
      */
     public function write_setting($data) {
-    // do not write any setting
+        // Do not write any setting.
         return '';
     }
 
@@ -6547,8 +6549,8 @@ class admin_setting_manageantiviruses extends admin_setting {
             return true;
         }
 
-        $antiviruses_available = antiviruses_get_available();
-        foreach ($antiviruses_available as $antivirus=>$antivirusstr) {
+        $antivirusesavailable = antiviruses_get_available();
+        foreach ($antivirusesavailable as $antivirus => $antivirusstr) {
             if (strpos($antivirus, $query) !== false) {
                 return true;
             }
@@ -6569,27 +6571,27 @@ class admin_setting_manageantiviruses extends admin_setting {
     public function output_html($data, $query='') {
         global $CFG, $OUTPUT;
 
-        // display strings
+        // Display strings.
         $txt = get_strings(array('administration', 'settings', 'edit', 'name', 'enable', 'disable',
             'up', 'down', 'none'));
         $struninstall = get_string('uninstallplugin', 'core_admin');
 
         $txt->updown = "$txt->up/$txt->down";
 
-        $antiviruses_available = antiviruses_get_available();
-        $active_antiviruses = explode(',', $CFG->antiviruses);
+        $antivirusesavailable = antiviruses_get_available();
+        $activeantiviruses = explode(',', $CFG->antiviruses);
 
-        $active_antiviruses = array_reverse($active_antiviruses);
-        foreach ($active_antiviruses as $key=>$antivirus) {
-            if (empty($antiviruses_available[$antivirus])) {
-                unset($active_antiviruses[$key]);
+        $activeantiviruses = array_reverse($activeantiviruses);
+        foreach ($activeantiviruses as $key => $antivirus) {
+            if (empty($antivirusesavailable[$antivirus])) {
+                unset($activeantiviruses[$key]);
             } else {
-                $name = $antiviruses_available[$antivirus];
-                unset($antiviruses_available[$antivirus]);
-                $antiviruses_available[$antivirus] = $name;
+                $name = $antivirusesavailable[$antivirus];
+                unset($antivirusesavailable[$antivirus]);
+                $antivirusesavailable[$antivirus] = $name;
             }
         }
-        $antiviruses_available = array_reverse($antiviruses_available, true);
+        $antivirusesavailable = array_reverse($antivirusesavailable, true);
         $return = $OUTPUT->heading(get_string('actantivirushdr', 'antivirus'), 3, 'main', true);
         $return .= $OUTPUT->box_start('generalbox antivirusesui');
 
@@ -6600,20 +6602,19 @@ class admin_setting_manageantiviruses extends admin_setting {
         $table->attributes['class'] = 'admintable generaltable';
         $table->data  = array();
 
-        // iterate through auth plugins and add to the display table
+        // Iterate through auth plugins and add to the display table.
         $updowncount = 1;
-        $antiviruscount = count($active_antiviruses);
+        $antiviruscount = count($activeantiviruses);
         $url = "antiviruses.php?sesskey=" . sesskey();
-        foreach ($antiviruses_available as $antivirus => $name) {
-        // hide/show link
+        foreach ($antivirusesavailable as $antivirus => $name) {
+            // Hide/show link.
             $class = '';
-            if (in_array($antivirus, $active_antiviruses)) {
+            if (in_array($antivirus, $activeantiviruses)) {
                 $hideshow = "<a href=\"$url&amp;action=disable&amp;antivirus=$antivirus\">";
                 $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/hide') . "\" class=\"iconsmall\" alt=\"disable\" /></a>";
                 $enabled = true;
                 $displayname = $name;
-            }
-            else {
+            } else {
                 $hideshow = "<a href=\"$url&amp;action=enable&amp;antivirus=$antivirus\">";
                 $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/show') . "\" class=\"iconsmall\" alt=\"enable\" /></a>";
                 $enabled = false;
@@ -6621,29 +6622,27 @@ class admin_setting_manageantiviruses extends admin_setting {
                 $class = 'dimmed_text';
             }
 
-            // up/down link (only if auth is enabled)
+            // Up/down link (only if auth is enabled).
             $updown = '';
             if ($enabled) {
                 if ($updowncount > 1) {
                     $updown .= "<a href=\"$url&amp;action=up&amp;antivirus=$antivirus\">";
                     $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"up\" class=\"iconsmall\" /></a>&nbsp;";
-                }
-                else {
+                } else {
                     $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />&nbsp;";
                 }
                 if ($updowncount < $antiviruscount) {
                     $updown .= "<a href=\"$url&amp;action=down&amp;antivirus=$antivirus\">";
                     $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"down\" class=\"iconsmall\" /></a>";
-                }
-                else {
+                } else {
                     $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />";
                 }
                 ++ $updowncount;
             }
 
-            // settings link
+            // Settings link.
             if (file_exists($CFG->dirroot.'/lib/antivirus/'.$antivirus.'/settings.php')) {
-                $eurl = new moodle_url('/admin/settings.php', array('section'=>'antivirussettings'.$antivirus));
+                $eurl = new moodle_url('/admin/settings.php', array('section' => 'antivirussettings'.$antivirus));
                 $settings = "<a href='$eurl'>{$txt->settings}</a>";
             } else {
                 $settings = '';

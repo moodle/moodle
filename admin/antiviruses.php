@@ -30,7 +30,7 @@ $action  = required_param('action', PARAM_ALPHANUMEXT);
 $antivirus  = required_param('antivirus', PARAM_PLUGIN);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-$PAGE->set_url('/admin/antiviruses.php', array('action'=>$action, 'antivirus'=>$antivirus));
+$PAGE->set_url('/admin/antiviruses.php', array('action' => $action, 'antivirus' => $antivirus));
 $PAGE->set_context(context_system::instance());
 
 require_login();
@@ -39,15 +39,15 @@ require_capability('moodle/site:config', context_system::instance());
 $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageantiviruses";
 
 // Get currently installed and enabled antivirus plugins.
-$available_antiviruses = antiviruses_get_available();
-if (!empty($antivirus) and empty($available_antiviruses[$antivirus])) {
+$availableantiviruses = antiviruses_get_available();
+if (!empty($antivirus) and empty($availableantiviruses[$antivirus])) {
     redirect ($returnurl);
 }
 
-$active_antiviruses = explode(',', $CFG->antiviruses);
-foreach ($active_antiviruses as $key=>$active) {
-    if (empty($available_antiviruses[$active])) {
-        unset($active_antiviruses[$key]);
+$activeantiviruses = explode(',', $CFG->antiviruses);
+foreach ($activeantiviruses as $key => $active) {
+    if (empty($availableantiviruses[$active])) {
+        unset($activeantiviruses[$key]);
     }
 }
 
@@ -58,40 +58,40 @@ if (!confirm_sesskey()) {
 switch ($action) {
     case 'disable':
         // Remove from enabled list.
-        $key = array_search($antivirus, $active_antiviruses);
-        unset($active_antiviruses[$key]);
+        $key = array_search($antivirus, $activeantiviruses);
+        unset($activeantiviruses[$key]);
         break;
 
     case 'enable':
         // Add to enabled list.
-        if (!in_array($antivirus, $active_antiviruses)) {
-            $active_antiviruses[] = $antivirus;
-            $active_antiviruses = array_unique($active_antiviruses);
+        if (!in_array($antivirus, $activeantiviruses)) {
+            $activeantiviruses[] = $antivirus;
+            $activeantiviruses = array_unique($activeantiviruses);
         }
         break;
 
     case 'down':
-        $key = array_search($antivirus, $active_antiviruses);
+        $key = array_search($antivirus, $activeantiviruses);
         // Check auth plugin is valid.
         if ($key !== false) {
-            // move down the list
-            if ($key < (count($active_antiviruses) - 1)) {
-                $fsave = $active_antiviruses[$key];
-                $active_antiviruses[$key] = $active_antiviruses[$key + 1];
-                $active_antiviruses[$key + 1] = $fsave;
+            // Move down the list.
+            if ($key < (count($activeantiviruses) - 1)) {
+                $fsave = $activeantiviruses[$key];
+                $activeantiviruses[$key] = $activeantiviruses[$key + 1];
+                $activeantiviruses[$key + 1] = $fsave;
             }
         }
         break;
 
     case 'up':
-        $key = array_search($antivirus, $active_antiviruses);
+        $key = array_search($antivirus, $activeantiviruses);
         // Check auth is valid.
         if ($key !== false) {
-            // move up the list
+            // Move up the list.
             if ($key >= 1) {
-                $fsave = $active_antiviruses[$key];
-                $active_antiviruses[$key] = $active_antiviruses[$key - 1];
-                $active_antiviruses[$key - 1] = $fsave;
+                $fsave = $activeantiviruses[$key];
+                $activeantiviruses[$key] = $activeantiviruses[$key - 1];
+                $activeantiviruses[$key - 1] = $fsave;
             }
         }
         break;
@@ -100,7 +100,7 @@ switch ($action) {
         break;
 }
 
-set_config('antiviruses', implode(',', $active_antiviruses));
+set_config('antiviruses', implode(',', $activeantiviruses));
 core_plugin_manager::reset_caches();
 
 redirect ($returnurl);
