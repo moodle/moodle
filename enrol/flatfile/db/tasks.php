@@ -15,16 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Flat file enrolment plugin version specification.
+ * Definition of flatfile enrolment scheduled tasks.
  *
  * @package    enrol_flatfile
- * @copyright  2010 Eugene Venter
- * @author     Eugene Venter
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015051101;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015050500;        // Requires this Moodle version
-$plugin->component = 'enrol_flatfile';  // Full name of the plugin (used for diagnostics)
+$tasks = array(
+    array(
+        'classname' => '\enrol_flatfile\task\flatfile_sync_task',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    )
+);
