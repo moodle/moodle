@@ -1318,7 +1318,7 @@ M.core_filepicker.init = function(Y, options) {
                 modal        : true,
                 visible      : false,
                 width        : width+'px',
-                responsiveWidth : 873,
+                responsiveWidth : 768,
                 height       : '558px',
                 zIndex       : this.options.zIndex
             });
