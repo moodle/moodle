@@ -15,15 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Settings for the RSS client block.
  *
- * @package    block_tag_youtube
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   block_tag_youtube
+ * @copyright 2015 David Monllao
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2014111001;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014110400;        // Requires this Moodle version
-$plugin->component = 'block_tag_youtube'; // Full name of the plugin (used for diagnostics)
+if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configtext('block_tag_youtube/apikey', get_string('apikey', 'block_tag_youtube'),
+                       get_string('apikeyinfo', 'block_tag_youtube'), '', PARAM_RAW_TRIMMED, 40));
+}
