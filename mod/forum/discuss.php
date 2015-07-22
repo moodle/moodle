@@ -326,7 +326,7 @@ if ($forum->type != 'single'
             echo '<div class="movediscussionoption">';
             $select = new url_select($forummenu, '',
                     array(''=>get_string("movethisdiscussionto", "forum")),
-                    'forummenu', get_string('move'));
+                    'forummenu');
             echo $OUTPUT->render($select);
             echo "</div>";
         }
