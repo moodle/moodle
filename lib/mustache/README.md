@@ -3,9 +3,9 @@ Mustache.php
 
 A [Mustache](http://mustache.github.com/) implementation in PHP.
 
-[![Package version](http://img.shields.io/packagist/v/mustache/mustache.svg)](https://packagist.org/packages/mustache/mustache)
-[![Build status](http://img.shields.io/travis/bobthecow/mustache.php/dev.svg)](http://travis-ci.org/bobthecow/mustache.php)
-[![Monthly downloads](http://img.shields.io/packagist/dm/mustache/mustache.svg)](https://packagist.org/packages/mustache/mustache)
+[![Package version](http://img.shields.io/packagist/v/mustache/mustache.svg?style=flat-square)](https://packagist.org/packages/mustache/mustache)
+[![Build status](http://img.shields.io/travis/bobthecow/mustache.php/dev.svg?style=flat-square)](http://travis-ci.org/bobthecow/mustache.php)
+[![Monthly downloads](http://img.shields.io/packagist/dm/mustache/mustache.svg?style=flat-square)](https://packagist.org/packages/mustache/mustache)
 
 
 Usage
@@ -24,9 +24,9 @@ And a more in-depth example -- this is the canonical Mustache template:
 
 ```html+jinja
 Hello {{name}}
-You have just won ${{value}}!
+You have just won {{value}} dollars!
 {{#in_ca}}
-Well, ${{taxed_value}}, after taxes.
+Well, {{taxed_value}} dollars, after taxes.
 {{/in_ca}}
 ```
 
