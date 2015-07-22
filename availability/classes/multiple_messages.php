@@ -22,7 +22,7 @@
  * using bulleted lists.
  *
  * The tree structure of this object matches that of the availability
- * restrictions. 
+ * restrictions.
  *
  * @package core_availability
  * @copyright 2015 Andrew Nicols <andrew@nicols.co.uk>
