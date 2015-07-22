@@ -536,7 +536,7 @@ table.quizreviewsummary td.cell {
 #page-mod-quiz-edit .totalpoints {
     display: block;
     float: right;
-    margin: -2.5em 0 0;
+    margin: -2.85em 0 0;
     padding: .2em;
 }
 #page-mod-quiz-edit.dir-rtl .maxgrade,
@@ -1047,5 +1047,18 @@ table#categoryquestions {
     #page-mod-quiz-attempt .que,
     #page-mod-quiz-review .que {
         page-break-inside: avoid;
+    }
+}
+
+/* Ajustments for mobile devices */
+@media only screen and (max-width:500px) {
+    #page-mod-quiz-edit .rpcontainerclass {
+        margin-top: 3em;
+    }
+    #page-mod-quiz-edit .maxgrade {
+        margin-top: 0.1em;
+    }
+    #page-mod-quiz-edit .statusbar {
+        padding: 0;
     }
 }
