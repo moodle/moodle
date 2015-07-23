@@ -145,6 +145,30 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         assign_print_recent_activity($this->course, false, time() - 3600);
     }
 
+    /** Make sure blind marking shows participant \d+ not fullname when assign_print_recent_activity is triggered. */
+    public function test_print_recent_activity_fullname_blind_marking() {
+        // Submitting an assignment generates a notification in blind marking.
+        $this->preventResetByRollback();
+        $sink = $this->redirectMessages();
+
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance(array('blindmarking' => 1));
+
+        $data = new stdClass();
+        $data->userid = $this->students[0]->id;
+        $notices = array();
+        $this->setUser($this->students[0]);
+        $assign->submit_for_grading($data, $notices);
+
+        $this->setUser($this->editingteachers[0]);
+        $uniqueid = $assign->get_uniqueid_for_user($data->userid);
+        $expectedstr = preg_quote(get_string('participant', 'mod_assign'), '/') . '.*' . $uniqueid;
+        $this->expectOutputRegex("/{$expectedstr}/");
+        assign_print_recent_activity($this->course, false, time() - 3600);
+
+        $sink->close();
+    }
+
     public function test_assign_get_recent_mod_activity() {
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
