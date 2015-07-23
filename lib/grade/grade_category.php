@@ -2057,9 +2057,11 @@ class grade_category extends grade_object {
         unset($items); // not needed
         unset($cats); // not needed
 
-        $children_array = grade_category::_get_children_recursion($category);
-
-        ksort($children_array);
+        $children_array = array();
+        if (is_object($category)) {
+            $children_array = grade_category::_get_children_recursion($category);
+            ksort($children_array);
+        }
 
         return $children_array;
 
@@ -2428,19 +2430,36 @@ class grade_category extends grade_object {
     public static function set_properties(&$instance, $params) {
         global $DB;
 
+        $fromaggregation = $instance->aggregation;
+
         parent::set_properties($instance, $params);
 
-        if (!empty($params) && isset($params->aggregation)) {
-            // If aggregation has changed, find the appropriate aggregation coefficients.
-            $defaultcoefficients = self::get_default_aggregation_coefficient_values($params->aggregation);
+        // The aggregation method is changing and this category has already been saved.
+        if (isset($params->aggregation) && !empty($instance->id)) {
+            $achildwasdupdated = false;
 
-            $updateparams = array(
-                'categoryid' => $instance->id,
-                'aggregationcoef' => $defaultcoefficients['aggregationcoefficient'],
-                'aggregationcoef2' => $defaultcoefficients['aggregationcoefficient2']
-            );
+            // Get all its children.
+            $children = $instance->get_children();
+            foreach ($children as $child) {
+                $item = $child['object'];
+                if ($child['type'] == 'category') {
+                    $item = $item->load_grade_item();
+                }
 
-            $DB->execute("update {grade_items} set aggregationcoef=:aggregationcoef, aggregationcoef2=:aggregationcoef2 where categoryid=:categoryid", $updateparams);
+                // Set the new aggregation fields.
+                if ($item->set_aggregation_fields_for_aggregation($fromaggregation, $params->aggregation)) {
+                    $item->update();
+                    $achildwasdupdated = true;
+                }
+            }
+
+            // If this is the course category, it is possible that its grade item was set as needsupdate
+            // by one of its children. If we keep a reference to that stale object we might cause the
+            // needsupdate flag to be lost. It's safer to just reload the grade_item from the database.
+            if ($achildwasdupdated && !empty($instance->grade_item) && $instance->is_course_category()) {
+                $instance->grade_item = null;
+                $instance->load_grade_item();
+            }
         }
     }
 
@@ -2550,33 +2569,24 @@ class grade_category extends grade_object {
     }
 
     /**
-     * Determine the default aggregation coefficients for a given aggregation method.
+     * Determine the default aggregation values for a given aggregation method.
      *
-     * @param int $aggregationmethod The aggregation method to be inspected
-     * @return array $defaultcoefficients The default values to use
+     * @param int $aggregationmethod The aggregation method constant value.
+     * @return array Containing the keys 'aggregationcoef', 'aggregationcoef2' and 'weightoverride'.
      */
     public static function get_default_aggregation_coefficient_values($aggregationmethod) {
-        $defaultcoefficients = array();
+        $defaultcoefficients = array(
+            'aggregationcoef' => 0,
+            'aggregationcoef2' => 0,
+            'weightoverride' => 0
+        );
 
         switch ($aggregationmethod) {
             case GRADE_AGGREGATE_WEIGHTED_MEAN:
-                $defaultcoefficients['aggregationcoefficient'] = 1;
-                $defaultcoefficients['aggregationcoefficient2'] = 0;
+                $defaultcoefficients['aggregationcoef'] = 1;
                 break;
             case GRADE_AGGREGATE_SUM:
-                $defaultcoefficients['aggregationcoefficient'] = 0;
-                $defaultcoefficients['aggregationcoefficient2'] = 1;
-                break;
-            case GRADE_AGGREGATE_WEIGHTED_MEAN2:
-            case GRADE_AGGREGATE_EXTRACREDIT_MEAN:
-            case GRADE_AGGREGATE_MEAN:
-            case GRADE_AGGREGATE_MEDIAN:
-            case GRADE_AGGREGATE_MIN:
-            case GRADE_AGGREGATE_MAX:
-            case GRADE_AGGREGATE_MODE:
-            default:
-                $defaultcoefficients['aggregationcoefficient'] = 0;
-                $defaultcoefficients['aggregationcoefficient2'] = 0;
+                $defaultcoefficients['aggregationcoef2'] = 1;
                 break;
         }
 

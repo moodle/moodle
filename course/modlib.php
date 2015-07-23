@@ -224,15 +224,6 @@ function edit_module_post_actions($moduleinfo, $course) {
                 // Use updated grade_item.
                 $grade_item = $items[$itemid];
             }
-            $gradecategory = $grade_item->get_parent_category();
-            if (!empty($moduleinfo->add)) {
-                if (grade_category::aggregation_uses_aggregationcoef($gradecategory->aggregation)) {
-                    $defaults = grade_category::get_default_aggregation_coefficient_values($gradecategory->aggregation);
-                    $grade_item->aggregationcoef = $defaults['aggregationcoefficient'];
-                    $grade_item->aggregationcoef2 = $default['aggregationcoefficient2'];
-                    $grade_item->update();
-                }
-            }
         }
     }
 
@@ -290,15 +281,6 @@ function edit_module_post_actions($moduleinfo, $course) {
 
                 } else if (isset($moduleinfo->gradecat)) {
                     $outcome_item->set_parent($moduleinfo->gradecat);
-                }
-                $gradecategory = $outcome_item->get_parent_category();
-                if ($outcomeexists == false) {
-                    if (grade_category::aggregation_uses_aggregationcoef($gradecategory->aggregation)) {
-                        $defaults = grade_category::get_default_aggregation_coefficient_values($gradecategory->aggregation);
-                        $outcome_item->aggregationcoef = $defaults['aggregationcoefficient'];
-                        $outcome_item->aggregationcoef2 = $defaults['aggregationcoefficient2'];
-                        $outcome_item->update();
-                    }
                 }
             }
         }

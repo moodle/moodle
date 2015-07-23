@@ -1177,15 +1177,6 @@ function workshop_grade_item_category_update($workshop) {
                     $gradeitem->set_parent($workshop->gradinggradecategory);
                 }
             }
-            if (!empty($workshop->add)) {
-                $gradecategory = $gradeitem->get_parent_category();
-                if (grade_category::aggregation_uses_aggregationcoef($gradecategory->aggregation)) {
-                    $defaults = grade_category::get_default_aggregation_coefficient_values($gradecategory->aggregation);
-                    $gradeitem->aggregationcoef = $defaults['aggregationcoefficient'];
-                    $gradeitem->aggregationcoef2 = $defaults['aggregationcoefficient2'];
-                    $gradeitem->update();
-                }
-            }
         }
     }
 }
