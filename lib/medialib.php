@@ -899,7 +899,7 @@ OET;
     }
 
     public function get_rank() {
-        return 50;
+        return 10;
     }
 }
 
@@ -1141,7 +1141,7 @@ OET;
     }
 
     public function get_rank() {
-        return 20;
+        return 50;
     }
 }
 
@@ -1222,7 +1222,7 @@ OET;
     }
 
     public function get_rank() {
-        return 10;
+        return 20;
     }
 }
 
