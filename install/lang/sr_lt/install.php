@@ -67,12 +67,15 @@ $string['pathshead'] = 'Potvrdi putanje';
 $string['pathsrodataroot'] = 'U direktorijum za podatke nije moguć upis';
 $string['pathsroparentdataroot'] = 'Nije moguć upis u nadređeni direktorijum ({$a->parent}).  Instalacioni program ne može da kreira direktorijum za podatke ({$a->dataroot}).';
 $string['pathssubadmindir'] = 'Vrlo mali broj veb servera koristi /admin kao specijalni URL za pristup raznim podešavanjima (kontrolni panel i sl.). Nažalost, to dovodi do konflikta sa standardnom lokacijom za administratorske stranice u Moodleu. Ovaj problem možete rešiti tako što ćete promeniti ime administratorskog direktorijuma u vašoj instalaciji, i ovde upisati to novo ime. Na primer <em>moodleadmin</em>. Ovo podešavanje će prepraviti administratorske linkove u Moodle sistemu.';
-$string['pathssubdataroot'] = 'Potreban vam je prostor gde će Moodle čuvati postavljene datoteke. Ovaj direktorijum treba da bude podešen tako da se može čitati i u njega upisivati od strane korisnika veb servera (obično \'nobody\' ili \'apache\'), ali istovremeno mora biti dostupan direktno preko veba. Ukoliko ovaj direktorijum ne postoji Moodle će pokušati da ga kreira tokom instalacije.';
+$string['pathssubdataroot'] = '<p>Direktorijum gde će Moodle čuvati datoteke i sadržaj koji su postavili korisnici. </p>
+<p>Ovaj direktorijum treba da bude podešen tako da korisnik veb servera (obično \'nobody\' ili \'apache\') može da ga čita i u njega upisuje.</p>
+<p>Direktorijum ne sme biti dostupan direktno preko veba. </p>
+<p>Ukoliko ovaj direktorijum ne postoji proces instalacije će pokušati da ga kreira.</p>';
 $string['pathssubdirroot'] = '<p>Puna putanja do direktorijuma koji sadrži kod Moodlea.</p>';
-$string['pathssubwwwroot'] = 'Puna veb adresa putem koje će se pristupati Moodleu. Nije moguće pristupati Moodleu koristeći više adresa.
-Ako vaš sajt ima više javnih adresa onda na svima morate da podesite permanentne redirekcije osim na ovoj.
-Ako je vaš sajt dostupan sa interneta ali i iz intranet okruženja ovde upotrebite javnu adresu i podesite DNS tako da i intranet korisnici mogu da koriste javnu adresu.
-Ako je adresa netačna promenite URL u svom veb čitaču da biste ponovo pokrenuli instalaciju sa drugačijom vrednošću.';
+$string['pathssubwwwroot'] = '<p>Puna adresa putem koje će se pristupati Moodleu, tj. adresa koju će korisnici uneti u adresnu traku svojih veb čitača kako bi pristupili Moodleu.</p>
+<p>Nije moguće pristupati Moodleu korišćenjem više adresa Ako se vašem sajtu može pristupiti sa više adresa, onda izaberite najlakšu, a za sve ostale adrese podesite permanentnu redirekciju.</p>
+<p>Ako se vašem sajtu može pristupiti sa interneta ali i sa unutrašnje mreže (koja se ponekad naziv intranet), onda ovde upotrebite javnu adresu.</p>
+<p>Ako je tekuća adresa netačna, molimo vas, promenite URL adresu u adresnoj traci svog veb čitača i ponovo pokrenite instalaciju.</p>';
 $string['pathsunsecuredataroot'] = 'Dataroot lokacija nije bezbedna';
 $string['pathswrongadmindir'] = 'Admin direktorijum ne postoji';
 $string['phpextension'] = '{$a} PHP ekstenѕija';
