@@ -30,6 +30,7 @@ require_once(__DIR__.'/classes/event_mock.php');
 require_once(__DIR__.'/classes/event_sink.php');
 require_once(__DIR__.'/classes/message_sink.php');
 require_once(__DIR__.'/classes/phpmailer_sink.php');
+require_once(__DIR__.'/classes/base_testcase.php');
 require_once(__DIR__.'/classes/basic_testcase.php');
 require_once(__DIR__.'/classes/database_driver_testcase.php');
 require_once(__DIR__.'/classes/arraydataset.php');
