@@ -4324,8 +4324,11 @@ function delete_user(stdClass $user) {
     // Force logout - may fail if file based sessions used, sorry.
     \core\session\manager::kill_user_sessions($user->id);
 
+    // Generate username from email address, or a fake email.
+    $delemail = !empty($user->email) ? $user->email : $user->username . '.' . $user->id . '@unknownemail.invalid';
+    $delname = clean_param($delemail . "." . time(), PARAM_USERNAME);
+
     // Workaround for bulk deletes of users with the same email address.
-    $delname = clean_param($user->email . "." . time(), PARAM_USERNAME);
     while ($DB->record_exists('user', array('username' => $delname))) { // No need to use mnethostid here.
         $delname++;
     }
