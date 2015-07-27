@@ -3930,7 +3930,7 @@ function forum_set_return() {
     global $CFG, $SESSION;
 
     if (! isset($SESSION->fromdiscussion)) {
-        $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+        $referer = get_local_referer(false);
         // If the referer is NOT a login screen then save it.
         if (! strncasecmp("$CFG->wwwroot/login", $referer, 300)) {
             $SESSION->fromdiscussion = $referer;

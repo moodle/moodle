@@ -380,11 +380,12 @@ class manager {
             if (is_web_crawler()) {
                 $user = guest_user();
             }
-            if (!empty($CFG->guestloginbutton) and !$user and !empty($_SERVER['HTTP_REFERER'])) {
+            $referer = get_local_referer(false);
+            if (!empty($CFG->guestloginbutton) and !$user and !empty($referer)) {
                 // Automatically log in users coming from search engine results.
-                if (strpos($_SERVER['HTTP_REFERER'], 'google') !== false ) {
+                if (strpos($referer, 'google') !== false ) {
                     $user = guest_user();
-                } else if (strpos($_SERVER['HTTP_REFERER'], 'altavista') !== false ) {
+                } else if (strpos($referer, 'altavista') !== false ) {
                     $user = guest_user();
                 }
             }

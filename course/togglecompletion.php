@@ -78,7 +78,7 @@ if ($courseid) {
         }
 
         // Return to previous page
-        $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+        $referer = get_local_referer(false);
         if (!empty($referer)) {
             redirect($referer);
         } else {
