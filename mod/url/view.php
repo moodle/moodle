@@ -78,7 +78,7 @@ $displaytype = url_get_final_display_type($url);
 if ($displaytype == RESOURCELIB_DISPLAY_OPEN) {
     // For 'open' links, we always redirect to the content - except if the user
     // just chose 'save and display' from the form then that would be confusing
-    if (!isset($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], 'modedit.php') === false) {
+    if (strpos(get_local_referer(false), 'modedit.php') === false) {
         $redirect = true;
     }
 }

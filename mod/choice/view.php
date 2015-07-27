@@ -170,7 +170,7 @@ if (!$choiceformshown) {
     } else if (!is_enrolled($context)) {
         // Only people enrolled can make a choice
         $SESSION->wantsurl = qualified_me();
-        $SESSION->enrolcancel = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+        $SESSION->enrolcancel = get_local_referer(false);
 
         $coursecontext = context_course::instance($course->id);
         $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
