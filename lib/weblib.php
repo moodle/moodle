@@ -159,24 +159,6 @@ function strip_querystring($url) {
 }
 
 /**
- * Returns the URL of the HTTP_REFERER, less the querystring portion if required.
- *
- * @param boolean $stripquery if true, also removes the query part of the url.
- * @return string The resulting referer or empty string.
- */
-function get_referer($stripquery=true) {
-    if (isset($_SERVER['HTTP_REFERER'])) {
-        if ($stripquery) {
-            return strip_querystring($_SERVER['HTTP_REFERER']);
-        } else {
-            return $_SERVER['HTTP_REFERER'];
-        }
-    } else {
-        return '';
-    }
-}
-
-/**
  * Returns the name of the current script, WITH the querystring portion.
  *
  * This function is necessary because PHP_SELF and REQUEST_URI and SCRIPT_NAME

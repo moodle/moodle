@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 3.0 ===
 
+* get_referer() has been deprecated, please use the get_local_referer function instead.
 * \core\progress\null is renamed to \core\progress\none for improved PHP7 compatibility as null is a reserved word (see MDL-50453).
 * \webservice_xmlrpc_client now respects proxy server settings. If your XMLRPC server is available on your local network and not via your proxy server, you may need to add it to the list of proxy
   server exceptions in $CFG->proxybypass. See MDL-39353 for details.

@@ -2359,3 +2359,23 @@ function get_timezone_record($timezonename) {
 }
 
 /* === Apis deprecated since Moodle 3.0 === */
+/**
+ * Returns the URL of the HTTP_REFERER, less the querystring portion if required.
+ *
+ * @deprecated since Moodle 3.0 MDL-49360 - please do not use this function any more.
+ * @todo Remove this function in Moodle 3.2
+ * @param boolean $stripquery if true, also removes the query part of the url.
+ * @return string The resulting referer or empty string.
+ */
+function get_referer($stripquery = true) {
+    debugging('get_referer() is deprecated. Please use get_local_referer() instead.', DEBUG_DEVELOPER);
+    if (isset($_SERVER['HTTP_REFERER'])) {
+        if ($stripquery) {
+            return strip_querystring($_SERVER['HTTP_REFERER']);
+        } else {
+            return $_SERVER['HTTP_REFERER'];
+        }
+    } else {
+        return '';
+    }
+}
