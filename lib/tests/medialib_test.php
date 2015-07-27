@@ -168,6 +168,13 @@ class core_medialib_testcase extends advanced_testcase {
         $CFG->core_media_enable_mp3 = true;
         $renderer = new core_media_renderer_test($PAGE, '');
         $this->assertSame('mp3, html5audio, link', $renderer->get_players_test());
+
+        // Test QT and HTML5 media order.
+        $CFG->core_media_enable_mp3 = false;
+        $CFG->core_media_enable_html5video = true;
+        $CFG->core_media_enable_qt = true;
+        $renderer = new core_media_renderer_test($PAGE, '');
+        $this->assertSame('html5video, html5audio, qt, link', $renderer->get_players_test());
     }
 
     /**
@@ -210,6 +217,13 @@ class core_medialib_testcase extends advanced_testcase {
     public function test_embed_url_fallbacks() {
         global $CFG, $PAGE;
 
+        // Key strings in the embed code that identify with the media formats being tested.
+        $qt = 'qtplugin.cab';
+        $html5video = '</video>';
+        $html5audio = '</audio>';
+        $link = 'mediafallbacklink';
+        $mp3 = 'mediaplugin_mp3';
+
         $url = new moodle_url('http://example.org/test.mp4');
 
         // All plugins disabled, NOLINK option.
@@ -222,59 +236,58 @@ class core_medialib_testcase extends advanced_testcase {
         // All plugins disabled but not NOLINK.
         $renderer = new core_media_renderer_test($PAGE, '');
         $t = $renderer->embed_url($url);
-        $this->assert_contents(false, false, true, $t);
+        $this->assertContains($link, $t);
 
-        // HTML5 plugin enabled.
+        // Enable media players that can play the same media formats. (ie. qt & html5video for mp4 files, etc.)
         $CFG->core_media_enable_html5video = true;
-        $renderer = new core_media_renderer_test($PAGE, '');
-        $t = $renderer->embed_url($url);
-        $this->assert_contents(false, true, true, $t);
-
-        // QT plugin enabled as well.
+        $CFG->core_media_enable_html5audio = true;
+        $CFG->core_media_enable_mp3 = true;
         $CFG->core_media_enable_qt = true;
-        $renderer = new core_media_renderer_test($PAGE, '');
-        $t = $renderer->embed_url($url);
-        $this->assert_contents(true, true, true, $t);
 
-        // Nolink turned off, plugins still enabled.
-        $t = $renderer->embed_url($url, 0, 0, '',
-                array(core_media::OPTION_NO_LINK => true));
-        $this->assert_contents(true, true, false, $t);
-    }
+        // Test media formats that can be played by 2 or more players.
+        $mediaformats = array('mp3', 'm4a', 'mp4', 'm4v');
 
-    /**
-     * Checks the contents of the resulting HTML code to ensure it used the
-     * correct embed method(s).
-     *
-     * @param bool $hasqt True if it should have QT embed code
-     * @param bool $hashtml5 True if it should have HTML5 embed code
-     * @param bool $haslink True if it should have a fallback link
-     * @param string $text HTML content
-     */
-    private function assert_contents($hasqt, $hashtml5, $haslink, $text) {
-        // I tried to avoid making it specific to the exact details of the html
-        // code, picking out only single key strings that would let it check
-        // whether final code contains the right things.
-        $qt = 'qtplugin.cab';
-        $html5 = '</video>';
-        $link = 'mediafallbacklink';
+        foreach ($mediaformats as $format) {
+            $url = new moodle_url('http://example.org/test.' . $format);
+            $renderer = new core_media_renderer_test($PAGE, '');
+            $textwithlink = $renderer->embed_url($url);
+            $textwithoutlink = $renderer->embed_url($url, 0, 0, '', array(core_media::OPTION_NO_LINK => true));
 
-        if ($hasqt) {
-            $this->assertContains($qt, $text);
-        } else {
-            $this->assertNotContains($qt, $text);
-        }
+            switch ($format) {
+                case 'mp3':
+                    $this->assertContains($mp3, $textwithlink);
+                    $this->assertContains($html5audio, $textwithlink);
+                    $this->assertContains($link, $textwithlink);
 
-        if ($hashtml5) {
-            $this->assertContains($html5, $text);
-        } else {
-            $this->assertNotContains($html5, $text);
-        }
+                    $this->assertContains($mp3, $textwithoutlink);
+                    $this->assertContains($html5audio, $textwithoutlink);
+                    $this->assertNotContains($link, $textwithoutlink);
+                    break;
 
-        if ($haslink) {
-            $this->assertContains($link, $text);
-        } else {
-            $this->assertNotContains($link, $text);
+                case 'm4a':
+                    $this->assertContains($qt, $textwithlink);
+                    $this->assertContains($html5audio, $textwithlink);
+                    $this->assertContains($link, $textwithlink);
+
+                    $this->assertContains($qt, $textwithoutlink);
+                    $this->assertContains($html5audio, $textwithoutlink);
+                    $this->assertNotContains($link, $textwithoutlink);
+                    break;
+
+                case 'mp4':
+                case 'm4v':
+                    $this->assertContains($qt, $textwithlink);
+                    $this->assertContains($html5video, $textwithlink);
+                    $this->assertContains($link, $textwithlink);
+
+                    $this->assertContains($qt, $textwithoutlink);
+                    $this->assertContains($html5video, $textwithoutlink);
+                    $this->assertNotContains($link, $textwithoutlink);
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 
