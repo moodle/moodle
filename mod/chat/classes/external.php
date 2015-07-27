@@ -429,4 +429,68 @@ class mod_chat_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function view_chat_parameters() {
+        return new external_function_parameters(
+            array(
+                'chatid' => new external_value(PARAM_INT, 'chat instance id')
+            )
+        );
+    }
+
+    /**
+     * Trigger the course module viewed event and update the module completion status.
+     *
+     * @param int $chatid the chat instance id
+     * @return array of warnings and status result
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function view_chat($chatid) {
+        global $DB, $CFG;
+
+        $params = self::validate_parameters(self::view_chat_parameters(),
+                                            array(
+                                                'chatid' => $chatid
+                                            ));
+        $warnings = array();
+
+        // Request and permission validation.
+        $chat = $DB->get_record('chat', array('id' => $params['chatid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($chat, 'chat');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        require_capability('mod/chat:chat', $context);
+
+        // Call the url/lib API.
+        chat_view($chat, $course, $cm, $context);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function view_chat_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }

@@ -60,4 +60,12 @@ $functions = array(
         'capabilities'  => 'mod/chat:chat'
     ),
 
+    'mod_chat_view_chat' => array(
+        'classname'     => 'mod_chat_external',
+        'methodname'    => 'view_chat',
+        'description'   => 'Trigger the course module viewed event and update the module completion status.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/chat:chat'
+    ),
+
 );
