@@ -272,20 +272,18 @@ if (!empty($instanceid) && !empty($roleid)) {
 
     // Get record from sql_internal_table_reader and merge with records got from legacy log (if needed).
     if (!$onlyuselegacyreader) {
-        $sql = "SELECT ra.userid, $usernamefields, u.idnumber, COUNT(l.actioncount) AS count
-                  FROM (SELECT DISTINCT userid FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
-                  JOIN {user} u ON u.id = ra.userid
+        $sql = "SELECT ra.userid, $usernamefields, u.idnumber, COUNT(DISTINCT l.timecreated) AS count
+                  FROM {user} u
+                  JOIN {role_assignments} ra ON u.id = ra.userid AND ra.contextid $relatedctxsql AND ra.roleid = :roleid
              $groupsql
-             LEFT JOIN (
-                    SELECT userid, COUNT(crud) AS actioncount
-                      FROM {" . $logtable . "}
-                     WHERE contextinstanceid = :instanceid
-                       AND timecreated > :timefrom" . $crudsql ."
-                       AND edulevel = :edulevel
-                       AND anonymous = 0
-                       AND contextlevel = :contextlevel
-                       AND (origin = 'web' OR origin = 'ws')
-                  GROUP BY userid,timecreated) l ON (l.userid = ra.userid)";
+                  LEFT JOIN {" . $logtable . "} l
+                     ON l.contextinstanceid = :instanceid
+                       AND l.timecreated > :timefrom" . $crudsql ."
+                       AND l.edulevel = :edulevel
+                       AND l.anonymous = 0
+                       AND l.contextlevel = :contextlevel
+                       AND (l.origin = 'web' OR l.origin = 'ws')
+                       AND l.userid = ra.userid";
         // We add this after the WHERE statement that may come below.
         $groupbysql = " GROUP BY ra.userid, $usernamefields, u.idnumber";
 
