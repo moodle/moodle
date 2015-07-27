@@ -165,6 +165,24 @@ class require_login_exception extends moodle_exception {
 }
 
 /**
+ * Session timeout exception.
+ *
+ * This exception is thrown from require_login()
+ *
+ * @package    core_access
+ * @copyright  2015 Andrew Nicols <andrew@nicols.co.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class require_login_session_timeout_exception extends require_login_exception {
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        moodle_exception::__construct('sessionerroruser', 'error');
+    }
+}
+
+/**
  * Web service parameter exception class
  * @deprecated since Moodle 2.2 - use moodle exception instead
  * This exception must be thrown to the web service client when a web service parameter is invalid

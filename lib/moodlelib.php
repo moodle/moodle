@@ -2842,6 +2842,11 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         $preventredirect = true;
     }
 
+    if (AJAX_SCRIPT) {
+        // We cannot redirect for AJAX scripts either.
+        $preventredirect = true;
+    }
+
     // Setup global $COURSE, themes, language and locale.
     if (!empty($courseorid)) {
         if (is_object($courseorid)) {
@@ -2881,11 +2886,15 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     }
 
     // Redirect to the login page if session has expired, only with dbsessions enabled (MDL-35029) to maintain current behaviour.
-    if ((!isloggedin() or isguestuser()) && !empty($SESSION->has_timed_out) && !$preventredirect && !empty($CFG->dbsessions)) {
-        if ($setwantsurltome) {
-            $SESSION->wantsurl = qualified_me();
+    if ((!isloggedin() or isguestuser()) && !empty($SESSION->has_timed_out) && !empty($CFG->dbsessions)) {
+        if ($preventredirect) {
+            throw new require_login_session_timeout_exception();
+        } else {
+            if ($setwantsurltome) {
+                $SESSION->wantsurl = qualified_me();
+            }
+            redirect(get_login_url());
         }
-        redirect(get_login_url());
     }
 
     // If the user is not even logged in yet then make sure they are.
