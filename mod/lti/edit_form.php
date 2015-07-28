@@ -120,6 +120,19 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->addHelpButton('lti_launchcontainer', 'default_launch_container', 'lti');
         $mform->setType('lti_launchcontainer', PARAM_INT);
 
+        $mform->addElement('hidden', 'oldicon');
+        $mform->setType('oldicon', PARAM_URL);
+
+        $mform->addElement('text', 'lti_icon', get_string('icon_url', 'lti'), array('size' => '64'));
+        $mform->setType('lti_icon', PARAM_URL);
+        $mform->setAdvanced('lti_icon');
+        $mform->addHelpButton('lti_icon', 'icon_url', 'lti');
+
+        $mform->addElement('text', 'lti_secureicon', get_string('secure_icon_url', 'lti'), array('size' => '64'));
+        $mform->setType('lti_secureicon', PARAM_URL);
+        $mform->setAdvanced('lti_secureicon');
+        $mform->addHelpButton('lti_secureicon', 'secure_icon_url', 'lti');
+
         if (!$istool) {
             // Add privacy preferences fieldset where users choose whether to send their data.
             $mform->addElement('header', 'privacy', get_string('privacy', 'lti'));

@@ -166,13 +166,13 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addHelpButton('instructorcustomparameters', 'custom', 'lti');
 
         $mform->addElement('text', 'icon', get_string('icon_url', 'lti'), array('size' => '64'));
-        $mform->setType('icon', PARAM_TEXT);
+        $mform->setType('icon', PARAM_URL);
         $mform->setAdvanced('icon');
         $mform->addHelpButton('icon', 'icon_url', 'lti');
         $mform->disabledIf('icon', 'typeid', 'neq', '0');
 
         $mform->addElement('text', 'secureicon', get_string('secure_icon_url', 'lti'), array('size' => '64'));
-        $mform->setType('secureicon', PARAM_TEXT);
+        $mform->setType('secureicon', PARAM_URL);
         $mform->setAdvanced('secureicon');
         $mform->addHelpButton('secureicon', 'secure_icon_url', 'lti');
         $mform->disabledIf('secureicon', 'typeid', 'neq', '0');
