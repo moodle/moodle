@@ -1654,7 +1654,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             // First, let's remember where we were trying to get to before we got here
             if (empty($SESSION->wantsurl)) {
                 $SESSION->wantsurl = null;
-                $referer = get_safe_referer(false);
+                $referer = get_local_referer(false);
                 if ($referer &&
                         $referer != $CFG->wwwroot &&
                         $referer != $CFG->wwwroot . '/' &&
