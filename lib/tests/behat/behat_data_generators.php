@@ -166,6 +166,10 @@ class behat_data_generators extends behat_base {
             'required' => array('qtype', 'questioncategory', 'name'),
             'switchids' => array('questioncategory' => 'category', 'user' => 'createdby')
         ),
+        'tags' => array(
+            'datagenerator' => 'tag',
+            'required' => array('name')
+        ),
     );
 
     /**
