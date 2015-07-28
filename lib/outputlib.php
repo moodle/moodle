@@ -555,8 +555,8 @@ class theme_config {
                 || false !== strpos($uagent, 'Mac')) {
                 // Looks good in Win XP/Mac/Opera 8/9, Mac/Firefox 2, Camino, Safari.
                 // Not broken in Mac/IE 5, Mac/Netscape 7 (?).
-                $this->rarrow = '&#x25B6;';
-                $this->larrow = '&#x25C0;';
+                $this->rarrow = '&#x25B6;&#xFE0E;';
+                $this->larrow = '&#x25C0;&#xFE0E;';
             }
             elseif ((false !== strpos($uagent, 'Konqueror'))
                 || (false !== strpos($uagent, 'Android')))  {
