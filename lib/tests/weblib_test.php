@@ -567,4 +567,19 @@ EXPECTED;
         $this->assertSame($expected, strip_pluginfile_content($source));
     }
 
+    public function test_purify_html_ruby() {
+
+        $this->resetAfterTest();
+
+        $ruby =
+            "<p><ruby><rb>京都</rb><rp>(</rp><rt>きょうと</rt><rp>)</rp></ruby>は" .
+            "<ruby><rb>日本</rb><rp>(</rp><rt>にほん</rt><rp>)</rp></ruby>の" .
+            "<ruby><rb>都</rb><rp>(</rp><rt>みやこ</rt><rp>)</rp></ruby>です。</p>";
+        $illegal = '<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>';
+
+        $cleaned = purify_html($ruby . $illegal);
+        $this->assertEquals($ruby, $cleaned);
+
+    }
+
 }
