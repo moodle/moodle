@@ -692,6 +692,8 @@ abstract class moodleform_mod extends moodleform {
             $mform->setType('gradepass', PARAM_RAW);
             if (!$this->_features->rating) {
                 $mform->disabledIf('gradepass', 'grade[modgrade_type]', 'eq', 'none');
+            } else {
+                $mform->disabledIf('gradepass', 'assessed', 'eq', '0');
             }
         }
     }
