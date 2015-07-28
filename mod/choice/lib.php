@@ -921,3 +921,47 @@ function choice_print_overview($courses, &$htmlarray) {
     }
     return;
 }
+
+
+/**
+ * Get my responses on a given choice.
+ *
+ * @param stdClass $choice Choice record
+ * @return array of choice answers records
+ * @since  Moodle 3.0
+ */
+function choice_get_my_response($choice) {
+    global $DB, $USER;
+    return $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
+}
+
+/**
+ * Return true if we are allowd to view the choice results.
+ *
+ * @param stdClass $choice Choice record
+ * @param rows|null $current my choice responses
+ * @param bool|null $choiceopen if the choice is open
+ * @return bool true if we can view the results, false otherwise.
+ * @since  Moodle 3.0
+ */
+function choice_can_view_results($choice, $current = null, $choiceopen = null) {
+
+    if (is_null($choiceopen)) {
+        $timenow = time();
+        if ($choice->timeclose != 0 && $timenow > $choice->timeclose) {
+            $choiceopen = false;
+        } else {
+            $choiceopen = true;
+        }
+    }
+    if (empty($current)) {
+        $current = choice_get_my_response($choice);
+    }
+
+    if ($choice->showresults == CHOICE_SHOWRESULTS_ALWAYS or
+       ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and !empty($current)) or
+       ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and !$choiceopen)) {
+        return true;
+    }
+    return false;
+}

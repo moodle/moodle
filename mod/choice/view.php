@@ -129,7 +129,7 @@ if ($choice->intro) {
 }
 
 $timenow = time();
-$current = $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
+$current = choice_get_my_response($choice);
 //if user has already made a selection, and they are not allowed to update it or if choice is not open, show their selected answer.
 if (isloggedin() && (!empty($current)) &&
     (empty($choice->allowupdate) || ($timenow > $choice->timeclose)) ) {
@@ -194,9 +194,7 @@ if (!$choiceformshown) {
 }
 
 // print the results at the bottom of the screen
-if ( $choice->showresults == CHOICE_SHOWRESULTS_ALWAYS or
-    ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and $current) or
-    ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and !$choiceopen)) {
+if (choice_can_view_results($choice, $current, $choiceopen)) {
 
     if (!empty($choice->showunanswered)) {
         $choice->option[0] = get_string('notanswered', 'choice');
