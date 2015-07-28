@@ -73,7 +73,6 @@ if ($userhasgrade && !$lesson->retake) {
 ///     Check lesson availability
 ///     Check for password
 ///     Check dependencies
-///     Check for high scores
 if (!$canmanage) {
     if (!$lesson->is_accessible()) {  // Deadline restrictions
         echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('notavailable'));
@@ -90,20 +89,13 @@ if (!$canmanage) {
             // with or without md5 for backward compatibility (MDL-11090)
             $correctpass = true;
             $USER->lessonloggedin[$lesson->id] = true;
-            if ($lesson->highscores) {
-                // Logged in - redirect so we go through all of these checks before starting the lesson.
-                redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id");
-            }
+
         } else if (isset($lesson->extrapasswords)) {
             // Group overrides may have additional passwords.
             foreach ($lesson->extrapasswords as $password) {
                 if (strcmp($password, md5(trim($userpassword))) === 0 || strcmp($password, trim($userpassword)) === 0) {
                     $correctpass = true;
                     $USER->lessonloggedin[$lesson->id] = true;
-                    if ($lesson->highscores) {
-                        // Logged in - redirect so we go through all of these checks before starting the lesson.
-                        redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id");
-                    }
                 }
             }
         }
@@ -167,9 +159,6 @@ if (!$canmanage) {
                 exit();
             }
         }
-    } else if ($lesson->highscores && !$lesson->practice && !optional_param('viewed', 0, PARAM_INT) && empty($pageid)) {
-        // Display high scores before starting lesson
-        redirect(new moodle_url('/mod/lesson/highscores.php', array("id"=>$cm->id)));
     }
 }
 
@@ -571,41 +560,6 @@ if ($pageid != LESSON_EOL) {
         }
     }
     $lessoncontent .= $OUTPUT->box_end(); //End of Lesson button to Continue.
-
-    // high scores code
-    if ($lesson->highscores && !$canmanage && !$lesson->practice) {
-        $lessoncontent .= $OUTPUT->box_start('center');
-        if ($grades = $DB->get_records("lesson_grades", array("lessonid" => $lesson->id), "completed")) {
-            $madeit = false;
-            if ($highscores = $DB->get_records("lesson_high_scores", array("lessonid" => $lesson->id))) {
-                // get all the high scores into an array
-                $topscores = array();
-                $uniquescores = array();
-                foreach ($highscores as $highscore) {
-                    $grade = $grades[$highscore->gradeid]->grade;
-                    $topscores[] = $grade;
-                    $uniquescores[$grade] = 1;
-                }
-                // sort to find the lowest score
-                sort($topscores);
-                $lowscore = $topscores[0];
-
-                if ($gradeinfo->grade >= $lowscore || count($uniquescores) <= $lesson->maxhighscores) {
-                    $madeit = true;
-                }
-            }
-            if (!$highscores or $madeit) {
-                $lessoncontent .= $lessonoutput->paragraph(get_string("youmadehighscore", "lesson", $lesson->maxhighscores), 'center');
-                $aurl = new moodle_url('/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id, 'sesskey'=>sesskey()));
-                $lessoncontent .= $OUTPUT->single_button($aurl, get_string('clicktopost', 'lesson'));
-            } else {
-                $lessoncontent .= get_string("nothighscore", "lesson", $lesson->maxhighscores)."<br />";
-            }
-        }
-        $url = new moodle_url('/mod/lesson/highscores.php', array('id'=>$PAGE->cm->id, 'link'=>'1'));
-        $lessoncontent .= html_writer::link($url, get_string('viewhighscores', 'lesson'), array('class'=>'centerpadded lessonbutton standardbutton'));
-        $lessoncontent .= $OUTPUT->box_end();
-    }
 
     if ($lesson->modattempts && !$canmanage) {
         // make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time

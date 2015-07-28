@@ -82,7 +82,7 @@ if ($action === 'delete') {
                         $DB->delete_records('lesson_timer', array('id' => $timer->id));
                     }
 
-                /// Remove the grade from the grades and high_scores tables - this is silly, it should be linked to specific attempt (skodak)
+                    // Remove the grade from the grades tables - this is silly, it should be linked to specific attempt (skodak).
                     $grades = $DB->get_records_sql("SELECT id FROM {lesson_grades}
                                                      WHERE userid = :userid AND lessonid = :lessonid
                                                   ORDER BY completed", $params, $try, 1);
@@ -90,7 +90,6 @@ if ($action === 'delete') {
                     if ($grades) {
                         $grade = reset($grades);
                         $DB->delete_records('lesson_grades', array('id' => $grade->id));
-                        $DB->delete_records('lesson_high_scores', array('gradeid' => $grade->id, 'lessonid' => $lesson->id, 'userid' => $userid));
                     }
 
                 /// Remove attempts and update the retry number

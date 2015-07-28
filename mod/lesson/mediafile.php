@@ -74,7 +74,6 @@ echo $lessonoutput->header($lesson, $cm);
 ///     Check lesson availability
 ///     Check for password
 ///     Check dependencies
-///     Check for high scores
 if (!$canmanage) {
     if (!$lesson->is_accessible()) {  // Deadline restrictions
         echo $lessonoutput->header($lesson, $cm);
@@ -91,20 +90,12 @@ if (!$canmanage) {
             // with or without md5 for backward compatibility (MDL-11090)
             $USER->lessonloggedin[$lesson->id] = true;
             $correctpass = true;
-            if ($lesson->highscores) {
-                // Logged in - redirect so we go through all of these checks before starting the lesson.
-                redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id");
-            }
         } else if (isset($lesson->extrapasswords)) {
             // Group overrides may have additional passwords.
             foreach ($lesson->extrapasswords as $password) {
                 if (strcmp($password, md5(trim($userpassword))) === 0 || strcmp($password, trim($userpassword)) === 0) {
                     $correctpass = true;
                     $USER->lessonloggedin[$lesson->id] = true;
-                    if ($lesson->highscores) {
-                        // Logged in - redirect so we go through all of these checks before starting the lesson.
-                        redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id");
-                    }
                 }
             }
         }

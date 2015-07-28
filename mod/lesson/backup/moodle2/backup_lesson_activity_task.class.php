@@ -75,11 +75,6 @@ class backup_lesson_activity_task extends backup_activity_task {
         $replacement = '$@LESSONESSAY*$1@$';
         $content = preg_replace($pattern, $replacement, $content);
 
-        // Provides the interface for viewing and adding high scores
-        $pattern = '#'.$base.'/highscores\.php\?id=([0-9]+)#';
-        $replacement = '$@LESSONHIGHSCORES*$1@$';
-        $content = preg_replace($pattern, $replacement, $content);
-
         // Provides the interface for viewing the report
         $pattern = '#'.$base.'/report\.php\?id=([0-9]+)#';
         $replacement = '$@LESSONREPORT*$1@$';
