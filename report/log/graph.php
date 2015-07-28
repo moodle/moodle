@@ -123,15 +123,16 @@ if ($type === "usercourse.png") {
 
     $rawlogs = report_log_usercourse($user->id, $courseselect, $coursestart, $logreader);
 
-    if (empty($rawlogs)) {
-        return;
-    }
-
     foreach ($rawlogs as $rawlog) {
         $logs[$rawlog->day] = $rawlog->num;
     }
 
     $graph = new graph(750, 400);
+
+    if (empty($rawlogs)) {
+        $graph->parameter['y_axis_gridlines'] = 2;
+        $graph->parameter['y_max_left'] = 1;
+    }
 
     $a = new stdClass();
     $a->coursename = format_string($course->shortname, true, array('context' => $coursecontext));
@@ -197,15 +198,16 @@ if ($type === "usercourse.png") {
 
     $rawlogs = report_log_userday($user->id, $courseselect, $daystart, $logreader);
 
-    if (empty($rawlogs)) {
-        return;
-    }
-
     foreach ($rawlogs as $rawlog) {
         $logs[$rawlog->hour] = $rawlog->num;
     }
 
     $graph = new graph(750, 400);
+
+    if (empty($rawlogs)) {
+        $graph->parameter['y_axis_gridlines'] = 2;
+        $graph->parameter['y_max_left'] = 1;
+    }
 
     $a = new stdClass();
     $a->coursename = format_string($course->shortname, true, array('context' => $coursecontext));
