@@ -43,4 +43,12 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => 'mod/choice:choose'
     ),
+
+    'mod_choice_submit_choice_response' => array(
+        'classname'     => 'mod_choice_external',
+        'methodname'    => 'submit_choice_response',
+        'description'   => 'Submit responses to a specific choice item.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/choice:choose'
+    ),
 );

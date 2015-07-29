@@ -289,4 +289,102 @@ class mod_choice_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for submit_choice_response.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function submit_choice_response_parameters() {
+        return new external_function_parameters (
+            array(
+                'choiceid' => new external_value(PARAM_INT, 'choice instance id'),
+                'responses' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'answer id'),
+                    'Array of response ids'
+                ),
+            )
+        );
+    }
+
+    /**
+     * Submit choice responses
+     *
+     * @param int $choiceid the choice instance id
+     * @param array $responses the response ids
+     * @return array ansers informatinon and warnings
+     * @since Moodle 3.0
+     */
+    public static function submit_choice_response($choiceid, $responses) {
+        global $USER;
+
+        $warnings = array();
+        $params = self::validate_parameters(self::submit_choice_response_parameters(),
+                                            array(
+                                                'choiceid' => $choiceid,
+                                                'responses' => $responses
+                                            ));
+
+        if (!$choice = choice_get_choice($params['choiceid'])) {
+            throw new moodle_exception("invalidcoursemodule", "error");
+        }
+        list($course, $cm) = get_course_and_cm_from_instance($choice, 'choice');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        require_capability('mod/choice:choose', $context);
+
+        $timenow = time();
+        if ($choice->timeclose != 0) {
+            if ($choice->timeopen > $timenow) {
+                throw new moodle_exception("notopenyet", "choice", '', userdate($choice->timeopen));
+            } else if ($timenow > $choice->timeclose) {
+                throw new moodle_exception("expired", "choice", '', userdate($choice->timeclose));
+            }
+        }
+        if (!choice_get_my_response($choice) or $choice->allowupdate) {
+            // When a single response is given, we convert the array to a simple variable
+            // in order to avoid choice_user_submit_response to check with allowmultiple even
+            // for a single response.
+            if (count($params['responses']) == 1) {
+                $params['responses'] = reset($params['responses']);
+            }
+            choice_user_submit_response($params['responses'], $choice, $USER->id, $course, $cm);
+        } else {
+            throw new moodle_exception('missingrequiredcapability', 'webservice', '', 'allowupdate');
+        }
+        $answers = choice_get_my_response($choice);
+
+        return array(
+            'answers' => $answers,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Describes the submit_choice_response return value.
+     *
+     * @return external_multiple_structure
+     * @since Moodle 3.0
+     */
+    public static function submit_choice_response_returns() {
+        return new external_single_structure(
+            array(
+                'answers' => new external_multiple_structure(
+                     new external_single_structure(
+                         array(
+                             'id'           => new external_value(PARAM_INT, 'answer id'),
+                             'choiceid'     => new external_value(PARAM_INT, 'choiceid'),
+                             'userid'       => new external_value(PARAM_INT, 'user id'),
+                             'optionid'     => new external_value(PARAM_INT, 'optionid'),
+                             'timemodified' => new external_value(PARAM_INT, 'time of last modification')
+                         ), 'Answers'
+                     )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
