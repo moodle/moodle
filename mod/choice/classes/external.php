@@ -207,7 +207,7 @@ class mod_choice_external extends external_api {
         $choiceopen = true;
         $showpreview = false;
 
-        if ($choice->timeclose !== 0) {
+        if ($choice->timeclose != 0) {
             if ($choice->timeopen > $timenow) {
                 $choiceopen = false;
                 $warnings[1] = get_string("notopenyet", "choice", userdate($choice->timeopen));
@@ -383,6 +383,70 @@ class mod_choice_external extends external_api {
                      )
                 ),
                 'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function view_choice_parameters() {
+        return new external_function_parameters(
+            array(
+                'choiceid' => new external_value(PARAM_INT, 'choice instance id')
+            )
+        );
+    }
+
+    /**
+     * Trigger the course module viewed event and update the module completion status.
+     *
+     * @param int $choiceid the choice instance id
+     * @return array of warnings and status result
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function view_choice($choiceid) {
+        global $CFG;
+
+        $params = self::validate_parameters(self::view_choice_parameters(),
+                                            array(
+                                                'choiceid' => $choiceid
+                                            ));
+        $warnings = array();
+
+        // Request and permission validation.
+        if (!$choice = choice_get_choice($params['choiceid'])) {
+            throw new moodle_exception("invalidcoursemodule", "error");
+        }
+        list($course, $cm) = get_course_and_cm_from_instance($choice, 'choice');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Trigger course_module_viewed event and completion.
+        choice_view($choice, $course, $cm, $context);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function view_choice_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
             )
         );
     }

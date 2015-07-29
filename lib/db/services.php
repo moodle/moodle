@@ -1147,6 +1147,7 @@ $services = array(
             'mod_choice_get_choice_results',
             'mod_choice_get_choice_options',
             'mod_choice_submit_choice_response',
+            'mod_choice_view_choice',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,

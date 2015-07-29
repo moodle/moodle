@@ -51,4 +51,12 @@ $functions = array(
         'type'          => 'write',
         'capabilities'  => 'mod/choice:choose'
     ),
+
+    'mod_choice_view_choice' => array(
+        'classname'     => 'mod_choice_external',
+        'methodname'    => 'view_choice',
+        'description'   => 'Trigger the course module viewed event and update the module completion status.',
+        'type'          => 'write',
+        'capabilities'  => ''
+    ),
 );

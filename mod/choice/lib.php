@@ -965,3 +965,31 @@ function choice_can_view_results($choice, $current = null, $choiceopen = null) {
     }
     return false;
 }
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $choice     choice object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.0
+ */
+function choice_view($choice, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $choice->id
+    );
+
+    $event = \mod_choice\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('choice', $choice);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}

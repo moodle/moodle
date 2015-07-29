@@ -51,10 +51,6 @@ if ($action == 'delchoice' and confirm_sesskey() and is_enrolled($context, NULL,
 $PAGE->set_title($choice->name);
 $PAGE->set_heading($course->fullname);
 
-// Mark viewed by user (if required)
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
-
 /// Submit any new data if there is any
 if (data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && confirm_sesskey()) {
     $timenow = time();
@@ -83,6 +79,9 @@ if (data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && conf
     }
 }
 
+// Completion and trigger events.
+choice_view($choice, $course, $cm, $context);
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($choice->name), 2, null);
 
@@ -98,11 +97,6 @@ if ($notify and confirm_sesskey()) {
 $eventdata = array();
 $eventdata['objectid'] = $choice->id;
 $eventdata['context'] = $context;
-
-$event = \mod_choice\event\course_module_viewed::create($eventdata);
-$event->add_record_snapshot('course_modules', $cm);
-$event->add_record_snapshot('course', $course);
-$event->trigger();
 
 /// Check to see if groups are being used in this choice
 $groupmode = groups_get_activity_groupmode($cm);
