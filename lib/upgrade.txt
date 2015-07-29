@@ -133,6 +133,7 @@ information provided here is intended especially for developers.
 * The actionmenu hideMenu() function now expects an EventFacade object to be passed to it,
   i.e. a call to M.core.actionmenu.instance.hideMenu() should be change to M.core.actionmenu.instance.hideMenu(e)
 * In the html_editors (tinyMCE, Atto), the manage files button can be hidden by changing the 'enable_filemanagement' option to false.
+* external_api::validate_context now is public, it can be called from other classes.
 
 === 2.9.1 ===
 
