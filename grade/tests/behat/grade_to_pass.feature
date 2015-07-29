@@ -185,8 +185,8 @@ Feature: We can set the grade to pass value
     And I add a "Database" to section "1" and I fill the form with:
       | Name           | Test Database 1    |
       | Description    | Test               |
-      | Grade to pass  | 90                 |
       | Aggregate type | Average of ratings |
+      | Grade to pass  | 90                 |
     And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I click on "Edit  data Test Database 1" "link"
@@ -205,8 +205,8 @@ Feature: We can set the grade to pass value
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name     | Test Forum 1    |
       | Description    | Test               |
-      | Grade to pass  | 90                 |
       | Aggregate type | Average of ratings |
+      | Grade to pass  | 90                 |
       | scale[modgrade_point] | 60 |
     Then I should see "The grade to pass can not be greater than the maximum possible grade 60"
 
@@ -216,8 +216,8 @@ Feature: We can set the grade to pass value
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name     | Test Forum 1    |
       | Description    | Test               |
-      | Grade to pass  | 90                 |
       | Aggregate type | Average of ratings |
+      | Grade to pass  | 90                 |
     And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I click on "Edit  forum Test Forum 1" "link"
@@ -236,8 +236,8 @@ Feature: We can set the grade to pass value
     And I add a "Glossary" to section "1" and I fill the form with:
       | Name           | Test Glossary 1    |
       | Description    | Test               |
-      | Grade to pass  | 90                 |
       | Aggregate type | Average of ratings |
+      | Grade to pass  | 90                 |
     And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I click on "Edit  glossary Test Glossary 1" "link"
