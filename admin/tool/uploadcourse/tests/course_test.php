@@ -245,6 +245,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'category' => '1',
             'visible' => '0',
             'startdate' => '8 June 1990',
+            'enddate' => '18 June 1990',
             'idnumber' => '123abc',
             'summary' => 'Summary',
             'format' => 'weeks',
@@ -282,6 +283,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals($data['category'], $course->category);
         $this->assertEquals($data['visible'], $course->visible);
         $this->assertEquals(mktime(0, 0, 0, 6, 8, 1990), $course->startdate);
+        $this->assertEquals(mktime(0, 0, 0, 6, 18, 1990), $course->enddate);
         $this->assertEquals($data['idnumber'], $course->idnumber);
         $this->assertEquals($data['summary'], $course->summary);
         $this->assertEquals($data['format'], $course->format);
@@ -334,6 +336,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'category' => $cat->id,
             'visible' => '1',
             'startdate' => '11 June 1984',
+            'enddate' => '31 June 1984',
             'idnumber' => 'changeidn',
             'summary' => 'Summary 2',
             'format' => 'topics',
@@ -370,6 +373,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals($data['category'], $course->category);
         $this->assertEquals($data['visible'], $course->visible);
         $this->assertEquals(mktime(0, 0, 0, 6, 11, 1984), $course->startdate);
+        $this->assertEquals(mktime(0, 0, 0, 6, 31, 1984), $course->enddate);
         $this->assertEquals($data['idnumber'], $course->idnumber);
         $this->assertEquals($data['summary'], $course->summary);
         $this->assertEquals($data['format'], $course->format);
@@ -425,6 +429,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'category' => '1',
             'visible' => '0',
             'startdate' => 644803200,
+            'enddate' => 645667200,
             'idnumber' => '123abc',
             'summary' => 'Summary',
             'format' => 'weeks',
@@ -452,6 +457,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals($defaultdata['category'], $course->category);
         $this->assertEquals($defaultdata['visible'], $course->visible);
         $this->assertEquals($defaultdata['startdate'], $course->startdate);
+        $this->assertEquals($defaultdata['enddate'], $course->enddate);
         $this->assertEquals($defaultdata['idnumber'], $course->idnumber);
         $this->assertEquals($defaultdata['summary'], $course->summary);
         $this->assertEquals($defaultdata['format'], $course->format);
@@ -478,6 +484,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'category' => $cat->id,
             'visible' => '1',
             'startdate' => 455760000,
+            'enddate' => 457488000,
             'idnumber' => 'changedid',
             'summary' => 'Summary 2',
             'format' => 'topics',
@@ -505,6 +512,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals($defaultdata['category'], $course->category);
         $this->assertEquals($defaultdata['visible'], $course->visible);
         $this->assertEquals($defaultdata['startdate'], $course->startdate);
+        $this->assertEquals($defaultdata['enddate'], $course->enddate);
         $this->assertEquals($defaultdata['idnumber'], $course->idnumber);
         $this->assertEquals($defaultdata['summary'], $course->summary);
         $this->assertEquals($defaultdata['format'], $course->format);

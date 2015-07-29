@@ -441,6 +441,7 @@ class core_course_external extends external_api {
                 external_format_text($course->summary, $course->summaryformat, $context->id, 'course', 'summary', 0);
             $courseinfo['format'] = $course->format;
             $courseinfo['startdate'] = $course->startdate;
+            $courseinfo['enddate'] = $course->enddate;
             if (array_key_exists('numsections', $courseformatoptions)) {
                 // For backward-compartibility
                 $courseinfo['numsections'] = $courseformatoptions['numsections'];
@@ -515,6 +516,8 @@ class core_course_external extends external_api {
                                     'number of recent items appearing on the course page', VALUE_OPTIONAL),
                             'startdate' => new external_value(PARAM_INT,
                                     'timestamp when the course start'),
+                            'enddate' => new external_value(PARAM_INT,
+                                    'timestamp when the course end'),
                             'numsections' => new external_value(PARAM_INT,
                                     '(deprecated, use courseformatoptions) number of weeks/topics',
                                     VALUE_OPTIONAL),
@@ -590,6 +593,8 @@ class core_course_external extends external_api {
                                     VALUE_DEFAULT, $courseconfig->newsitems),
                             'startdate' => new external_value(PARAM_INT,
                                     'timestamp when the course start', VALUE_OPTIONAL),
+                            'enddate' => new external_value(PARAM_INT,
+                                    'timestamp when the course end', VALUE_OPTIONAL),
                             'numsections' => new external_value(PARAM_INT,
                                     '(deprecated, use courseformatoptions) number of weeks/topics',
                                     VALUE_OPTIONAL),
@@ -765,6 +770,8 @@ class core_course_external extends external_api {
                                     'number of recent items appearing on the course page', VALUE_OPTIONAL),
                             'startdate' => new external_value(PARAM_INT,
                                     'timestamp when the course start', VALUE_OPTIONAL),
+                            'enddate' => new external_value(PARAM_INT,
+                                    'timestamp when the course end', VALUE_OPTIONAL),
                             'numsections' => new external_value(PARAM_INT,
                                     '(deprecated, use courseformatoptions) number of weeks/topics', VALUE_OPTIONAL),
                             'maxbytes' => new external_value(PARAM_INT,

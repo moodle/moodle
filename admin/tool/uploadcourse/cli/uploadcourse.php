@@ -156,6 +156,7 @@ if (!isset($encodings[$options['encoding']])) {
 $defaults = array();
 $defaults['category'] = $options['category'];
 $defaults['startdate'] = time() + 3600 * 24;
+$defaults['enddate'] = 0;
 $defaults['newsitems'] = $courseconfig->newsitems;
 $defaults['showgrades'] = $courseconfig->showgrades;
 $defaults['showreports'] = $courseconfig->showreports;

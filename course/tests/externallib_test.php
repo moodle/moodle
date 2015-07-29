@@ -383,7 +383,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $course2['format'] = 'weeks';
         $course2['showgrades'] = 1;
         $course2['newsitems'] = 3;
-        $course2['startdate'] = 1420092000; // 01/01/2015
+        $course2['startdate'] = 1420092000; // 01/01/2015.
+        $course2['enddate'] = 1422669600; // 01/31/2015.
         $course2['numsections'] = 4;
         $course2['maxbytes'] = 100000;
         $course2['showreports'] = 1;
@@ -432,6 +433,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($courseinfo->showgrades, $course2['showgrades']);
                 $this->assertEquals($courseinfo->newsitems, $course2['newsitems']);
                 $this->assertEquals($courseinfo->startdate, $course2['startdate']);
+                $this->assertEquals($courseinfo->enddate, $course2['enddate']);
                 $this->assertEquals($courseinfo->numsections, $course2['numsections']);
                 $this->assertEquals($courseinfo->maxbytes, $course2['maxbytes']);
                 $this->assertEquals($courseinfo->showreports, $course2['showreports']);
@@ -597,6 +599,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
             $this->assertEquals($course['showgrades'], $dbcourse->showgrades);
             $this->assertEquals($course['newsitems'], $dbcourse->newsitems);
             $this->assertEquals($course['startdate'], $dbcourse->startdate);
+            $this->assertEquals($course['enddate'], $dbcourse->enddate);
             $this->assertEquals($course['numsections'], $dbcourse->numsections);
             $this->assertEquals($course['maxbytes'], $dbcourse->maxbytes);
             $this->assertEquals($course['showreports'], $dbcourse->showreports);
@@ -1051,6 +1054,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $course2['showgrades'] = 1;
         $course2['newsitems'] = 3;
         $course2['startdate'] = 1420092000; // 01/01/2015.
+        $course2['enddate'] = 1422669600; // 01/31/2015.
         $course2['numsections'] = 4;
         $course2['maxbytes'] = 100000;
         $course2['showreports'] = 1;
@@ -1086,6 +1090,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertEquals($course2['showgrades'], $courseinfo->showgrades);
                 $this->assertEquals($course2['newsitems'], $courseinfo->newsitems);
                 $this->assertEquals($course2['startdate'], $courseinfo->startdate);
+                $this->assertEquals($course2['enddate'], $courseinfo->enddate);
                 $this->assertEquals($course2['numsections'], $courseinfo->numsections);
                 $this->assertEquals($course2['maxbytes'], $courseinfo->maxbytes);
                 $this->assertEquals($course2['showreports'], $courseinfo->showreports);

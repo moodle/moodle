@@ -172,6 +172,17 @@ class restore_course_task extends restore_task {
         $startdate->set_ui(new backup_setting_ui_dateselector($startdate, get_string('setting_course_startdate', 'backup')));
         $this->add_setting($startdate);
 
+        // Old versions may not have this data.
+        if (isset($this->get_info()->original_course_enddate)) {
+            $courseenddate = $this->get_info()->original_course_enddate;
+        } else {
+            $courseenddate = 0;
+        }
+        $enddate = new restore_course_generic_text_setting('course_enddate',
+                base_setting::IS_INTEGER, $courseenddate);
+        $enddate->set_ui(new backup_setting_ui_dateselector($enddate, get_string('setting_course_enddate', 'backup')));
+        $this->add_setting($enddate);
+
         $keep_enrols = new restore_course_generic_setting('keep_roles_and_enrolments', base_setting::IS_BOOLEAN, false);
         $keep_enrols->set_ui(new backup_setting_ui_select($keep_enrols, $keep_enrols->get_name(), array(1=>get_string('yes'), 0=>get_string('no'))));
         $keep_enrols->get_ui()->set_label(get_string('setting_keep_roles_and_enrolments', 'backup'));

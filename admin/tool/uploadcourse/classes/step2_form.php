@@ -95,6 +95,10 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->addHelpButton('defaults[startdate]', 'startdate');
         $mform->setDefault('defaults[startdate]', time() + 3600 * 24);
 
+        $mform->addElement('date_selector', 'defaults[enddate]', get_string('enddate'));
+        $mform->addHelpButton('defaults[enddate]', 'enddate');
+        $mform->setDefault('defaults[enddate]', 0);
+
         $courseformats = get_sorted_course_formats(true);
         $formcourseformats = array();
         foreach ($courseformats as $courseformat) {

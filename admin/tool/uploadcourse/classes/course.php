@@ -93,7 +93,7 @@ class tool_uploadcourse_course {
     protected $updatemode;
 
     /** @var array fields allowed as course data. */
-    static protected $validfields = array('fullname', 'shortname', 'idnumber', 'category', 'visible', 'startdate',
+    static protected $validfields = array('fullname', 'shortname', 'idnumber', 'category', 'visible', 'startdate', 'enddate',
         'summary', 'format', 'theme', 'lang', 'newsitems', 'showgrades', 'showreports', 'legacyfiles', 'maxbytes',
         'groupmode', 'groupmodeforce', 'groupmodeforce', 'enablecompletion');
 
@@ -587,6 +587,11 @@ class tool_uploadcourse_course {
             $coursedata['startdate'] = strtotime($coursedata['startdate']);
         }
 
+        // Course end date.
+        if (!empty($coursedata['enddate'])) {
+            $coursedata['enddate'] = strtotime($coursedata['enddate']);
+        }
+
         // Ultimate check mode vs. existence.
         switch ($mode) {
             case tool_uploadcourse_processor::MODE_CREATE_NEW:
@@ -896,6 +901,10 @@ class tool_uploadcourse_course {
             $course->startdate = $DB->get_field_select('course', 'startdate', 'id = :id', array('id' => $course->id));
         }
         $resetdata->reset_start_date_old = $course->startdate;
+
+        if (empty($course->enddate)) {
+            $course->enddate = $DB->get_field_select('course', 'enddate', 'id = :id', array('id' => $course->id));
+        }
 
         // Add roles.
         $roles = tool_uploadcourse_helper::get_role_ids();

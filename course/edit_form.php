@@ -125,6 +125,9 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('startdate', 'startdate');
         $mform->setDefault('startdate', time() + 3600 * 24);
 
+        $mform->addElement('date_selector', 'enddate', get_string('enddate'), array('optional' => true));
+        $mform->addHelpButton('enddate', 'enddate');
+
         $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
         $mform->addHelpButton('idnumber', 'idnumbercourse');
         $mform->setType('idnumber', PARAM_RAW);
@@ -390,6 +393,11 @@ class course_edit_form extends moodleform {
                     $errors['idnumber'] = get_string('courseidnumbertaken', 'error', $course->fullname);
                 }
             }
+        }
+
+        // Add field validation check for end date must be after start date.
+        if (($data['enddate'] > 0) && ($data['enddate'] < $data['startdate'])) {
+            $errors['enddate'] = get_string('enddatebeforstartdate', 'error');
         }
 
         $errors = array_merge($errors, enrol_course_edit_validation($data, $this->context));
