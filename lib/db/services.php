@@ -1145,6 +1145,7 @@ $services = array(
             'mod_resource_view_resource',
             'mod_folder_view_folder',
             'mod_choice_get_choice_results',
+            'mod_choice_get_choice_options',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,

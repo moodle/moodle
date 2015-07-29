@@ -167,4 +167,126 @@ class mod_choice_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for mod_choice_get_choice_options.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_choice_options_parameters() {
+        return new external_function_parameters (array('choiceid' => new external_value(PARAM_INT, 'choice instance id')));
+    }
+
+    /**
+     * Returns options for a specific choice
+     *
+     * @param int $choiceid the choice instance id
+     * @return array of options details
+     * @since Moodle 3.0
+     */
+    public static function get_choice_options($choiceid) {
+        global $USER;
+        $warnings = array();
+        $params = self::validate_parameters(self::get_choice_options_parameters(), array('choiceid' => $choiceid));
+
+        if (!$choice = choice_get_choice($params['choiceid'])) {
+            throw new moodle_exception("invalidcoursemodule", "error");
+        }
+        list($course, $cm) = get_course_and_cm_from_instance($choice, 'choice');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        require_capability('mod/choice:choose', $context);
+
+        $groupmode = groups_get_activity_groupmode($cm);
+        $onlyactive = $choice->includeinactive ? false : true;
+        $allresponses = choice_get_response_data($choice, $cm, $groupmode, $onlyactive);
+
+        $timenow = time();
+        $choiceopen = true;
+        $showpreview = false;
+
+        if ($choice->timeclose !== 0) {
+            if ($choice->timeopen > $timenow) {
+                $choiceopen = false;
+                $warnings[1] = get_string("notopenyet", "choice", userdate($choice->timeopen));
+                if ($choice->showpreview) {
+                    $warnings[2] = get_string('previewonly', 'choice', userdate($choice->timeopen));
+                    $showpreview = true;
+                }
+            }
+            if ($timenow > $choice->timeclose) {
+                $choiceopen = false;
+                $warnings[3] = get_string("expired", "choice", userdate($choice->timeclose));
+            }
+        }
+        $optionsarray = array();
+
+        if ($choiceopen or $showpreview) {
+
+            $options = choice_prepare_options($choice, $USER, $cm, $allresponses);
+
+            foreach ($options['options'] as $option) {
+                $optionarr = array();
+                $optionarr['id']            = $option->attributes->value;
+                $optionarr['text']          = format_string($option->text, true, array('context' => $context));
+                $optionarr['maxanswers']    = $option->maxanswers;
+                $optionarr['displaylayout'] = $option->displaylayout;
+                $optionarr['countanswers']  = $option->countanswers;
+                foreach (array('checked', 'disabled') as $field) {
+                    if (property_exists($option->attributes, $field) and $option->attributes->$field == 1) {
+                        $optionarr[$field] = 1;
+                    } else {
+                        $optionarr[$field] = 0;
+                    }
+                }
+                // When showpreview is active, we show options as disabled.
+                if ($showpreview or ($optionarr['checked'] == 1 and !$choice->allowupdate)) {
+                    $optionarr['disabled'] = 1;
+                }
+                $optionsarray[] = $optionarr;
+            }
+        }
+        foreach ($warnings as $key => $message) {
+            $warnings[$key] = array(
+                'item' => 'choice',
+                'itemid' => $cm->id,
+                'warningcode' => $key,
+                'message' => $message
+            );
+        }
+        return array(
+            'options' => $optionsarray,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Describes the get_choice_results return value.
+     *
+     * @return external_multiple_structure
+     * @since Moodle 3.0
+     */
+    public static function get_choice_options_returns() {
+        return new external_single_structure(
+            array(
+                'options' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'option id'),
+                            'text' => new external_value(PARAM_RAW, 'text of the choice'),
+                            'maxanswers' => new external_value(PARAM_INT, 'maximum number of answers'),
+                            'displaylayout' => new external_value(PARAM_BOOL, 'true for orizontal, otherwise vertical'),
+                            'countanswers' => new external_value(PARAM_INT, 'number of answers'),
+                            'checked' => new external_value(PARAM_BOOL, 'we already answered'),
+                            'disabled' => new external_value(PARAM_BOOL, 'option disabled'),
+                            )
+                    ), 'Options'
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }

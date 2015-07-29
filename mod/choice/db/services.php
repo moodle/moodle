@@ -36,4 +36,11 @@ $functions = array(
         'capabilities'  => ''
     ),
 
+    'mod_choice_get_choice_options' => array(
+        'classname'     => 'mod_choice_external',
+        'methodname'    => 'get_choice_options',
+        'description'   => 'Retrieve options for a specific choice.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/choice:choose'
+    ),
 );
