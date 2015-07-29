@@ -1875,4 +1875,124 @@ class core_cache_testcase extends advanced_testcase {
         $returnedinstance1->name = 'b';
         $this->assertEquals('b', $returnedinstance2->name);
     }
+
+    public function test_performance_debug() {
+        global $CFG;
+        $initialperfdebug = $CFG->perfdebug;
+        $CFG->perfdebug = 15;
+
+        $instance = cache_config_testing::instance();
+        $applicationid = 'phpunit/applicationperf';
+        $instance->phpunit_add_definition($applicationid, array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'applicationperf'
+        ));
+        $sessionid = 'phpunit/sessionperf';
+        $instance->phpunit_add_definition($sessionid, array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'sessionperf'
+        ));
+        $requestid = 'phpunit/requestperf';
+        $instance->phpunit_add_definition($requestid, array(
+            'mode' => cache_store::MODE_REQUEST,
+            'component' => 'phpunit',
+            'area' => 'requestperf'
+        ));
+
+        $application = cache::make('phpunit', 'applicationperf');
+        $session = cache::make('phpunit', 'sessionperf');
+        $request = cache::make('phpunit', 'requestperf');
+
+        // Check that no stats are recorded for these definitions yet.
+        $stats = cache_helper::get_stats();
+        $this->assertArrayNotHasKey($applicationid, $stats);
+        $this->assertArrayHasKey($sessionid, $stats);       // Session cache sets a key on construct.
+        $this->assertArrayNotHasKey($requestid, $stats);
+
+        // Check that stores register misses.
+        $this->assertFalse($application->get('missMe'));
+        $this->assertFalse($application->get('missMe'));
+        $this->assertFalse($session->get('missMe'));
+        $this->assertFalse($session->get('missMe'));
+        $this->assertFalse($session->get('missMe'));
+        $this->assertFalse($request->get('missMe'));
+        $this->assertFalse($request->get('missMe'));
+        $this->assertFalse($request->get('missMe'));
+        $this->assertFalse($request->get('missMe'));
+
+        $stats = cache_helper::get_stats();
+        $this->assertEquals(2, $stats[$applicationid]['stores']['cachestore_file']['misses']);
+        $this->assertEquals(0, $stats[$applicationid]['stores']['cachestore_file']['hits']);
+        $this->assertEquals(0, $stats[$applicationid]['stores']['cachestore_file']['sets']);
+        $this->assertEquals(3, $stats[$sessionid]['stores']['cachestore_session']['misses']);
+        $this->assertEquals(0, $stats[$sessionid]['stores']['cachestore_session']['hits']);
+        $this->assertEquals(1, $stats[$sessionid]['stores']['cachestore_session']['sets']);
+        $this->assertEquals(4, $stats[$requestid]['stores']['cachestore_static']['misses']);
+        $this->assertEquals(0, $stats[$requestid]['stores']['cachestore_static']['hits']);
+        $this->assertEquals(0, $stats[$requestid]['stores']['cachestore_static']['sets']);
+
+        // Check that stores register sets.
+        $this->assertTrue($application->set('setMe1', 1));
+        $this->assertTrue($application->set('setMe2', 2));
+        $this->assertTrue($session->set('setMe1', 1));
+        $this->assertTrue($session->set('setMe2', 2));
+        $this->assertTrue($session->set('setMe3', 3));
+        $this->assertTrue($request->set('setMe1', 1));
+        $this->assertTrue($request->set('setMe2', 2));
+        $this->assertTrue($request->set('setMe3', 3));
+        $this->assertTrue($request->set('setMe4', 4));
+
+        $stats = cache_helper::get_stats();
+        $this->assertEquals(2, $stats[$applicationid]['stores']['cachestore_file']['misses']);
+        $this->assertEquals(0, $stats[$applicationid]['stores']['cachestore_file']['hits']);
+        $this->assertEquals(2, $stats[$applicationid]['stores']['cachestore_file']['sets']);
+        $this->assertEquals(3, $stats[$sessionid]['stores']['cachestore_session']['misses']);
+        $this->assertEquals(0, $stats[$sessionid]['stores']['cachestore_session']['hits']);
+        $this->assertEquals(4, $stats[$sessionid]['stores']['cachestore_session']['sets']);
+        $this->assertEquals(4, $stats[$requestid]['stores']['cachestore_static']['misses']);
+        $this->assertEquals(0, $stats[$requestid]['stores']['cachestore_static']['hits']);
+        $this->assertEquals(4, $stats[$requestid]['stores']['cachestore_static']['sets']);
+
+        // Check that stores register hits.
+        $this->assertEquals($application->get('setMe1'), 1);
+        $this->assertEquals($application->get('setMe2'), 2);
+        $this->assertEquals($session->get('setMe1'), 1);
+        $this->assertEquals($session->get('setMe2'), 2);
+        $this->assertEquals($session->get('setMe3'), 3);
+        $this->assertEquals($request->get('setMe1'), 1);
+        $this->assertEquals($request->get('setMe2'), 2);
+        $this->assertEquals($request->get('setMe3'), 3);
+        $this->assertEquals($request->get('setMe4'), 4);
+
+        $stats = cache_helper::get_stats();
+        $this->assertEquals(2, $stats[$applicationid]['stores']['cachestore_file']['misses']);
+        $this->assertEquals(2, $stats[$applicationid]['stores']['cachestore_file']['hits']);
+        $this->assertEquals(2, $stats[$applicationid]['stores']['cachestore_file']['sets']);
+        $this->assertEquals(3, $stats[$sessionid]['stores']['cachestore_session']['misses']);
+        $this->assertEquals(3, $stats[$sessionid]['stores']['cachestore_session']['hits']);
+        $this->assertEquals(4, $stats[$sessionid]['stores']['cachestore_session']['sets']);
+        $this->assertEquals(4, $stats[$requestid]['stores']['cachestore_static']['misses']);
+        $this->assertEquals(4, $stats[$requestid]['stores']['cachestore_static']['hits']);
+        $this->assertEquals(4, $stats[$requestid]['stores']['cachestore_static']['sets']);
+
+        // Check that stores register through get_many.
+        $application->get_many(array('setMe1', 'setMe2'));
+        $session->get_many(array('setMe1', 'setMe2', 'setMe3'));
+        $request->get_many(array('setMe1', 'setMe2', 'setMe3', 'setMe4'));
+
+        $stats = cache_helper::get_stats();
+        $this->assertEquals(2, $stats[$applicationid]['stores']['cachestore_file']['misses']);
+        $this->assertEquals(4, $stats[$applicationid]['stores']['cachestore_file']['hits']);
+        $this->assertEquals(2, $stats[$applicationid]['stores']['cachestore_file']['sets']);
+        $this->assertEquals(3, $stats[$sessionid]['stores']['cachestore_session']['misses']);
+        $this->assertEquals(6, $stats[$sessionid]['stores']['cachestore_session']['hits']);
+        $this->assertEquals(4, $stats[$sessionid]['stores']['cachestore_session']['sets']);
+        $this->assertEquals(4, $stats[$requestid]['stores']['cachestore_static']['misses']);
+        $this->assertEquals(8, $stats[$requestid]['stores']['cachestore_static']['hits']);
+        $this->assertEquals(4, $stats[$requestid]['stores']['cachestore_static']['sets']);
+
+        $CFG->perfdebug = $initialperfdebug;
+    }
 }
