@@ -35,6 +35,7 @@ $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $firstname       = optional_param('firstname', 0, PARAM_CLEAN);
 $lastname      = optional_param('lastname', '', PARAM_CLEAN);   // Md5 confirmation hash.
 $email  = optional_param('email', 0, PARAM_CLEAN);
+$showall = optional_param('showall', false, PARAM_BOOL);
 
 $params = array();
 
@@ -88,6 +89,13 @@ $systemcontext = context_system::instance();
 
 require_login();
 
+if (!iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext)) {
+    $showall = false;
+}
+if ($showall) {
+    $params['showall'] = $showall;
+}
+
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('edit_users_title', 'block_iomad_company_admin');
@@ -130,19 +138,28 @@ if ($departmentid == 0) {
     $departmentid = $userhierarchylevel;
 }
 
-// Get the appropriate list of departments.
-$subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-$select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
-$select->label = get_string('department', 'block_iomad_company_admin');
-$select->formid = 'choosedepartment';
-echo html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
-$fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_company_selector'));
 if (!(iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
     or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
     print_error('nopermissions', 'error', '', 'edit/delete users');
 }
+
+// If we are showing all users we can't use the departments.
+if (!$showall) {
+// Get the appropriate list of departments.
+    $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
+    $select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
+    $select->label = get_string('department', 'block_iomad_company_admin');
+    $select->formid = 'choosedepartment';
+    echo html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
+    $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_company_selector'));
+}
+
 // Set up the filter form.
-$mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
+if (iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext)) {
+    $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'useshowall' => true));
+} else {
+    $mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
+}
 $mform->set_data(array('departmentid' => $departmentid));
 $mform->set_data($params);
 
@@ -153,7 +170,7 @@ $mform->display();
 $fieldnames = array();
 $foundfields = false;
 
-if ($category = $DB->get_record_sql('select uic.id, uic.name from {user_info_category} uic, {company} c where c.id = '.$companyid.'
+if (!$showall && $category = $DB->get_record_sql('select uic.id, uic.name from {user_info_category} uic, {company} c where c.id = '.$companyid.'
                                      and c.profileid=uic.id')) {
     // Get field names from company category.
     if ($fields = $DB->get_records('user_info_field', array('categoryid' => $category->id))) {
@@ -208,6 +225,7 @@ $strunsuspendcheck = get_string('unsuspendcheck', 'block_iomad_company_admin');
 $strshowallusers = get_string('showallusers');
 $strenrolment = get_string('userenrolments', 'block_iomad_company_admin');
 $struserlicense = get_string('userlicenses', 'block_iomad_company_admin');
+$strshowall = get_string('showallcompanies', 'block_iomad_company_admin');
 
 if (empty($CFG->loginhttps)) {
     $securewwwroot = $CFG->wwwroot;
@@ -359,11 +377,18 @@ if ($confirmuser and confirm_sesskey()) {
 }
 
 // Carry on with the user listing.
-
-$columns = array("firstname", "lastname", "email", "department", "lastaccess");
+if (!$showall) {
+    $columns = array("firstname", "lastname", "email", "department", "lastaccess");
+} else {
+    $columns = array('company', "firstname", "lastname", "email", "department", "lastaccess");
+}
 
 foreach ($columns as $column) {
-    $string[$column] = get_string("$column");
+    if ($column == 'company') {
+        $string[$column] = get_string('company', 'block_iomad_company_admin');
+    } else {
+        $string[$column] = get_string("$column");
+    }
     if ($sort != $column) {
         $columnicon = "";
         if ($column == "lastaccess") {
@@ -404,7 +429,7 @@ if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemconte
 
     // Get department users.
     $departmentusers = company::get_recursive_department_users($departmentid);
-    if (count($departmentusers) > 0) {
+    if (count($departmentusers) > 0 || $showall) {
         $departmentids = "";
         foreach ($departmentusers as $departmentuser) {
             if (!empty($departmentids)) {
@@ -413,12 +438,14 @@ if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemconte
                 $departmentids .= $departmentuser->userid;
             }
         }
-    if (!empty($showsuspended)) {
-        $sqlsearch .= " AND deleted <> 1 AND id in ($departmentids) ";
-    } else {
-        $sqlsearch .= " AND deleted <> 1 AND suspended = 0 AND id in ($departmentids) ";
-    }
-    
+        if (!empty($showsuspended)) {
+            $sqlsearch .= " AND deleted <> 1 ";
+        } else {
+            $sqlsearch .= " AND deleted <> 1 AND suspended = 0 ";
+        }
+        if (!$showall) {
+            $sqlsearch .= " AND id in ($departmentids) ";
+        }
     } else {
         $sqlsearch = "1 = 0";
     }
@@ -541,9 +568,15 @@ if (!$users) {
 
     // set up the table.
     $table = new html_table();
-    $table->head = array ($fullnamedisplay, $email, $department, $lastaccess, "", "", "", "");
-    $table->align = array ("left", "left", "left", "left", "center", "center", "center", "center");
-    $table->width = "95%";
+    $table->id = 'ReportTable';
+    if (!$showall) {
+        $table->head = array ($fullnamedisplay, $email, $department, $lastaccess, "User Controls"); //Need to not be lazy and add lang str :P
+        $table->align = array ("left", "center", "center", "center", "center");
+    } else {
+        $table->head = array ($company, $fullnamedisplay, $email, $department, $lastaccess, "User Controls"); //Need to not be lazy and add lang str :P
+        $table->align = array ("left", 'center', "center", "center", "center", "center");
+    }
+
     foreach ($users as $user) {
         if ($user->username == 'guest') {
             continue; // Do not dispaly dummy new user and guest here.
@@ -610,15 +643,34 @@ if (!$users) {
                                                AND d.id = du.departmentid");
         $user->department = $userdepartment->name;
 
-        $table->data[] = array ("$fullname",
-                            "$user->email",
-                            "$user->department",
-                            $strlastaccess,
-                            $editbutton,
-                            $suspendbutton,
-                            $deletebutton,
-                            $enrolmentbutton,
-                            $licensebutton);
+        if (!$showall) {
+            $table->data[] = array ("$fullname",
+                                "$user->email",
+                                "$user->department",
+                                $strlastaccess,
+                                $editbutton .
+                                $suspendbutton .
+                                $deletebutton . '<br />' .
+                                $licensebutton .
+    							$reportbutton);
+        } else {
+            $usercompany = $DB->get_record_sql("SELECT c.name FROM {company} c
+                                                JOIN {company_users} cu ON (cu.companyid = c.id)
+                                                WHERE cu.userid = :userid",
+                                                array('userid' => $user->id));
+            $user->company = $usercompany->name;
+
+            $table->data[] = array ($user->company,
+                                    $fullname,
+                                    $user->email,
+                                    $user->department,
+                                    $strlastaccess,
+                                    $editbutton .
+                                    $suspendbutton .
+                                    $deletebutton . '<br />' .
+                                    $licensebutton .
+    							    $reportbutton);
+        }
     }
 }
 
@@ -665,15 +717,17 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
     if ($sort) {
         if ($sort == "department") {
             $sort = " ORDER by d.name $dir";
+        } else if ($sort == "company") {
+            $sort = " ORDER by c.name $dir";
         } else {
             $sort = " ORDER BY u.$sort $dir";
         }
     }
 
     // Warning: will return UNCONFIRMED USERS!
-    return $DB->get_records_sql("SELECT u.*, d.name
-                                 FROM {user} u, {department} d, {company_users} cu
-                                 WHERE $select and cu.userid = u.id and d.id = cu.departmentid
+    return $DB->get_records_sql("SELECT u.*, d.name, c.name
+                                 FROM {user} u, {department} d, {company_users} cu, {company} c
+                                 WHERE $select and cu.userid = u.id and d.id = cu.departmentid AND c.id = cu.companyid
                                  $sort", $params, $page, $recordsperpage);
 
 }

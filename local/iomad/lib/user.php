@@ -594,12 +594,14 @@ class iomad_user_filter_form extends moodleform {
         $mform->addElement('hidden', 'departmentid');
         $mform->addElement('hidden', 'eventid');
         $mform->addElement('hidden', 'courseid');
+        $mform->addElement('hidden', 'sort');
         $mform->setType('firstname', PARAM_CLEAN);
         $mform->setType('lastname', PARAM_CLEAN);
         $mform->setType('email', PARAM_EMAIL);
         $mform->setType('departmentid', PARAM_INT);
         $mform->setType('eventid', PARAM_INT);
         $mform->setType('courseid', PARAM_INT);
+        $mform->setType('sort', PARAM_ALPHA);
 
         // Get company category.
         if ($category = $DB->get_record_sql('SELECT uic.id, uic.name
