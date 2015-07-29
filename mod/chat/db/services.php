@@ -68,4 +68,12 @@ $functions = array(
         'capabilities'  => 'mod/chat:chat'
     ),
 
+    'mod_chat_get_chats_by_courses' => array(
+        'classname'     => 'mod_chat_external',
+        'methodname'    => 'get_chats_by_courses',
+        'description'   => 'Returns a list of chat instances in a provided set of courses,
+                            if no courses are provided then all the chat instances the user has access to will be returned.',
+        'type'          => 'read',
+        'capabilities'  => ''
+    )
 );

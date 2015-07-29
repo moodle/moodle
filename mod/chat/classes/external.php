@@ -493,6 +493,7 @@ class mod_chat_external extends external_api {
         );
     }
 
+
     /**
      * Describes the parameters for get_chats_by_courses.
      *
@@ -503,12 +504,12 @@ class mod_chat_external extends external_api {
         return new external_function_parameters (
             array(
                 'courseids' => new external_multiple_structure(
-                    new external_value(PARAM_INT, 'course id'),
-                    'Array of course ids', VALUE_DEFAULT, array()
+                    new external_value(PARAM_INT, 'course id'), 'Array of course ids', VALUE_DEFAULT, array()
                 ),
             )
         );
     }
+
     /**
      * Returns a list of chats in a provided list of courses,
      * if no list is provided all chats that the user can view will be returned.
@@ -519,44 +520,24 @@ class mod_chat_external extends external_api {
      */
     public static function get_chats_by_courses($courseids = array()) {
         global $CFG;
-        $params = self::validate_parameters(self::get_chats_by_courses_parameters(), array('courseids' => $courseids));
+
+        $returnedchats = array();
         $warnings = array();
-        if (!empty($params['courseids'])) {
-            $courses = array();
-            $courseids = $params['courseids'];
-        } else {
-            $courses = enrol_get_my_courses();
-            $courseids = array_keys($courses);
+
+        $params = self::validate_parameters(self::get_chats_by_courses_parameters(), array('courseids' => $courseids));
+
+        if (empty($params['courseids'])) {
+            $params['courseids'] = array_keys(enrol_get_my_courses());
         }
-        // Array to store the chats to return.
-        $arrchats = array();
+
         // Ensure there are courseids to loop through.
-        if (!empty($courseids)) {
-            // Array of the courses we are going to retrieve the chats from.
-            $arraycourses = array();
-            // Go through the courseids.
-            foreach ($courseids as $cid) {
-                // Check the user can function in this context.
-                try {
-                    $context = context_course::instance($cid);
-                    self::validate_context($context);
-                    // Check if this course was already loaded (by enrol_get_my_courses).
-                    if (!isset($courses[$cid])) {
-                        $courses[$cid] = get_course($cid);
-                    }
-                    $arraycourses[$cid] = $courses[$cid];
-                } catch (Exception $e) {
-                    $warnings[] = array(
-                        'item' => 'course',
-                        'itemid' => $cid,
-                        'warningcode' => '1',
-                        'message' => 'No access rights in course context '.$e->getMessage()
-                    );
-                }
-            }
+        if (!empty($params['courseids'])) {
+
+            list($courses, $warnings) = external_util::validate_courses($params['courseids']);
+
             // Get the chats in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
-            $chats = get_all_instances_in_courses("chat", $arraycourses);
+            $chats = get_all_instances_in_courses("chat", $courses);
             foreach ($chats as $chat) {
                 $chatcontext = context_module::instance($chat->coursemodule);
                 // Entry to return.
@@ -568,27 +549,32 @@ class mod_chat_external extends external_api {
                 $chatdetails['name']              = $chat->name;
                 // Format intro.
                 list($chatdetails['intro'], $chatdetails['introformat']) =
-                    external_format_text($chat->intro, $chat->introformat,
-                                            $chatcontext->id, 'mod_chat', 'intro', null);
-                if (has_capability('moodle/course:manageactivities', $chatcontext)) {
+                    external_format_text($chat->intro, $chat->introformat, $chatcontext->id, 'mod_chat', 'intro', null);
+
+                if (has_capability('mod/chat:chat', $chatcontext)) {
+                    $chatdetails['chatmethod']    = $CFG->chat_method;
                     $chatdetails['keepdays']      = $chat->keepdays;
                     $chatdetails['studentlogs']   = $chat->studentlogs;
                     $chatdetails['chattime']      = $chat->chattime;
                     $chatdetails['schedule']      = $chat->schedule;
+                }
+
+                if (has_capability('moodle/course:manageactivities', $chatcontext)) {
                     $chatdetails['timemodified']  = $chat->timemodified;
                     $chatdetails['section']       = $chat->section;
                     $chatdetails['visible']       = $chat->visible;
                     $chatdetails['groupmode']     = $chat->groupmode;
                     $chatdetails['groupingid']    = $chat->groupingid;
                 }
-                $arrchats[] = $chatdetails;
+                $returnedchats[] = $chatdetails;
             }
         }
         $result = array();
-        $result['chats'] = $arrchats;
+        $result['chats'] = $returnedchats;
         $result['warnings'] = $warnings;
         return $result;
     }
+
     /**
      * Describes the get_chats_by_courses return value.
      *
@@ -607,6 +593,7 @@ class mod_chat_external extends external_api {
                             'name' => new external_value(PARAM_TEXT, 'Chat name'),
                             'intro' => new external_value(PARAM_RAW, 'The Chat intro'),
                             'introformat' => new external_format_value('intro'),
+                            'chatmethod' => new external_value(PARAM_ALPHA, 'chat method (sockets, daemon)', VALUE_OPTIONAL),
                             'keepdays' => new external_value(PARAM_INT, 'keep days', VALUE_OPTIONAL),
                             'studentlogs' => new external_value(PARAM_INT, 'student logs visible to everyone', VALUE_OPTIONAL),
                             'chattime' => new external_value(PARAM_RAW, 'chat time', VALUE_OPTIONAL),
