@@ -1290,6 +1290,72 @@ class core_group_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_activity_groupmode_parameters() {
+        return new external_function_parameters(
+            array(
+                'cmid' => new external_value(PARAM_INT, 'course module id')
+            )
+        );
+    }
+
+    /**
+     * Returns effective groupmode used in a given activity.
+     *
+     * @throws moodle_exception
+     * @param int $cmid course module id.
+     * @return array containing the group mode and possible warnings.
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function get_activity_groupmode($cmid) {
+        global $USER;
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        $params = array(
+            'cmid' => $cmid
+        );
+        $params = self::validate_parameters(self::get_activity_groupmode_parameters(), $params);
+        $cmid = $params['cmid'];
+
+        $cm = get_coursemodule_from_id(null, $cmid, 0, false, MUST_EXIST);
+
+        // Security checks.
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $groupmode = groups_get_activity_groupmode($cm);
+
+        $results = array(
+            'groupmode' => $groupmode,
+            'warnings' => $warnings
+        );
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_activity_groupmode_returns() {
+        return new external_single_structure(
+            array(
+                'groupmode' => new external_value(PARAM_INT, 'group mode:
+                                                    0 for no groups, 1 for separate groups, 2 for visible groups'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
 
 /**

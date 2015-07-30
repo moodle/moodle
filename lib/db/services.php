@@ -323,6 +323,15 @@ $functions = array(
         'capabilities'  => 'moodle/course:managegroups',
     ),
 
+    'core_group_get_activity_groupmode' => array(
+        'classname'     => 'core_group_external',
+        'methodname'    => 'get_activity_groupmode',
+        'classpath'     => 'group/externallib.php',
+        'description'   => 'Returns effective groupmode used in a given activity.',
+        'type'          => 'read',
+        'capabilities'  => '',
+    ),
+
     'core_notes_get_course_notes' => array(
         'classname'     => 'core_notes_external',
         'methodname'    => 'get_course_notes',
@@ -1136,6 +1145,7 @@ $services = array(
             'core_message_get_blocked_users',
             'gradereport_user_get_grades_table',
             'core_group_get_course_user_groups',
+            'core_group_get_activity_groupmode',
             'core_user_remove_user_device',
             'core_course_get_courses',
             'core_completion_update_activity_completion_status_manually',
