@@ -21,9 +21,9 @@ require_once($CFG->dirroot . "/local/iomad/lib/user.php");
  * The new roles system does away with the concepts of rigid student and
  * teacher roles.
  */
-class block_iomad_online_users extends block_base {
+class block_iomad_onlineusers extends block_base {
     public function init() {
-        $this->title = get_string('pluginname', 'block_iomad_online_users');
+        $this->title = get_string('pluginname', 'block_iomad_onlineusers');
     }
 
     public function has_config() {
@@ -32,6 +32,10 @@ class block_iomad_online_users extends block_base {
 
     public function hide_header() {
         return true;
+    }
+
+    public function get_title() {
+        return get_string('pluginname', 'block_iomad_onlineusers');
     }
 
     public function get_content() {
@@ -50,13 +54,13 @@ class block_iomad_online_users extends block_base {
         }
 
         if (!isloggedin()) {
-            $this->content->text = get_string('pleaselogin', 'block_iomad_online_users');
+            $this->content->text = get_string('pleaselogin', 'block_iomad_onlineusers');
             return $this->content;
         }
 
         $timetoshowusers = 300; // Seconds default.
-        if (isset($CFG->block_iomad_online_users_timetosee)) {
-            $timetoshowusers = $CFG->block_iomad_online_users_timetosee * 60;
+        if (isset($CFG->block_iomad_onlineusers_timetosee)) {
+            $timetoshowusers = $CFG->block_iomad_onlineusers_timetosee * 60;
         }
         $timefrom = 100 * floor((time() - $timetoshowusers) / 100); // Round to nearest 100 seconds for better query cache.
         $now = time();
@@ -154,7 +158,7 @@ class block_iomad_online_users extends block_base {
             if (!$usercount = $DB->count_records_sql($csql, $params)) {
                 $usercount = get_string("none");
             }
-            $this->content->text = "<div class=\"info\">".get_string("periodnminutes", "block_iomad_online_users", $minutes).
+            $this->content->text = "<div class=\"info\">".get_string("periodnminutes", "block_iomad_onlineusers", $minutes).
                                    ": $usercount</div>";
             return $this->content;
         }
@@ -175,7 +179,7 @@ class block_iomad_online_users extends block_base {
         }
 
         $this->content->text = "<h3>Recent Online Company Users</h3><div class=\"info\">(".
-                                get_string("periodnminutes", "block_iomad_online_users", $minutes)."$usercount)</div>";
+                                get_string("periodnminutes", "block_iomad_onlineusers", $minutes)."$usercount)</div>";
 
         // Now, we have in users, the list of users to show.
         // Because they are online.

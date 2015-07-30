@@ -27,6 +27,6 @@ $string['iomad_online_users:addinstance'] = 'Add a new Iomad online users block'
 $string['iomad_online_users:viewlist'] = 'View list of online users';
 $string['online_users:viewlist'] = 'View list of online users';
 $string['periodnminutes'] = 'last {$a} minutes';
-$string['pluginname'] = 'Iomad - Online users';
+$string['pluginname'] = 'Iomad users online';
 $string['timetosee'] = 'Remove after inactivity (minutes)';
 $string['pleaselogin'] = 'Please login to see online users.';

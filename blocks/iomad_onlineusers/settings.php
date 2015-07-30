@@ -17,9 +17,9 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    $settings->add(new admin_setting_configtext('block_iomad_online_users_timetosee',
-                                                get_string('timetosee', 'block_iomad_online_users'),
-                                                get_string('configtimetosee', 'block_iomad_online_users'),
+    $settings->add(new admin_setting_configtext('block_iomad_onlineusers_timetosee',
+                                                get_string('timetosee', 'block_iomad_onlineusers'),
+                                                get_string('configtimetosee', 'block_iomad_onlineusers'),
                                                 5,
                                                 PARAM_INT));
 }
