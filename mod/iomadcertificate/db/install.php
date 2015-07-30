@@ -16,7 +16,7 @@
 
 // This script is run after the dashboard has been installed.
 
-function xmldb_mod_iomadcertificate_install() {
+function xmldb_iomadcertificate_install() {
     global $CFG, $DB;
 
     $systemcontext = context_system::instance();
