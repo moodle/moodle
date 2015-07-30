@@ -1,3 +1,3 @@
-.block_iomad_online_users .content .list li.listentry {clear:both;}
-.block_iomad_online_users .content .list li.listentry div.user {float:left;position:relative;}
-.block_iomad_online_users .content .list li.listentry div.message {float:right;}
+.block_iomad_onlineusers .content .list li.listentry {clear:both;}
+.block_iomad_onlineusers .content .list li.listentry div.user {float:left;position:relative;}
+.block_iomad_onlineusers .content .list li.listentry div.message {float:right;}

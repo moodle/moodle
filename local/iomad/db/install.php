@@ -129,7 +129,7 @@ function xmldb_local_iomad_install() {
         'block/iomad_company_admin:restrict_capabilities',
         'block/iomad_link:view',
 
-        'block/iomad_online_users:viewlist',
+        'block/iomad_onlineusers:viewlist',
         'block/iomad_reports:view',
         'local/report_attendance:view',
         'local/report_completion:view',
@@ -141,7 +141,7 @@ function xmldb_local_iomad_install() {
     }
     $companydepartmentmanagercaps = array('block/iomad_report:view',
         'local/iomad_dashboard:view',
-        'block/iomad_online_users:viewlist',
+        'block/iomad_onlineusers:viewlist',
         'block/iomad_link:view',
         'block/iomad_company_admin:view_licenses',
         'block/iomad_company_admin:view',
@@ -166,7 +166,7 @@ function xmldb_local_iomad_install() {
 
     $companymanagercaps = array(
         'local/iomad_dashboard:view',
-        'block/iomad_online_users:viewlist',
+        'block/iomad_onlineusers:viewlist',
         'block/iomad_link:view',
         'block/iomad_company_admin:view_licenses',
         'block/iomad_company_admin:view',
@@ -377,7 +377,7 @@ function xmldb_local_iomad_install() {
     set_config('enablecompletion', 1);
 
     // Set the default blocks in courses.
-    $defblocks = ':iomad_link,iomad_company_selector,iomad_online_users,completionstatus';
+    $defblocks = ':iomad_link,iomad_company_selector,iomad_onlineusers,completionstatus';
     set_config('defaultblocks_topics', $defblocks);
     set_config('defaultblocks_weeks', $defblocks);
 

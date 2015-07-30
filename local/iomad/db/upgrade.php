@@ -495,7 +495,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
         }
 
         $companydepartmentmanagercaps = array('block/iomad_reports:view',
-            'block/iomad_online_users:viewlist',
+            'block/iomad_onlineusers:viewlist',
             'block/iomad_link:view',
             'block/iomad_company_admin:view_licenses',
             'block/iomad_company_admin:view',
@@ -521,7 +521,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
         $companymanagercaps = array(
             'block/iomad_company_admin:assign_company_manager',
             'block/iomad_company_admin:assign_department_manager',
-            'block/iomad_online_users:viewlist',
+            'block/iomad_onlineusers:viewlist',
             'block/iomad_link:view',
             'block/iomad_company_admin:view_licenses',
             'block/iomad_company_admin:view',

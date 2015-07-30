@@ -16,13 +16,13 @@
 
 $capabilities = array(
 
-    'block/iomad_online_users:addinstance' => array(
+    'block/iomad_onlineusers:addinstance' => array(
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_BLOCK
     ),
 
-    'block/iomad_online_users:viewlist' => array(
+    'block/iomad_onlineusers:viewlist' => array(
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_BLOCK

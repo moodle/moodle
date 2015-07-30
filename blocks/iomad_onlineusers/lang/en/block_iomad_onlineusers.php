@@ -23,8 +23,8 @@
  */
 
 $string['configtimetosee'] = 'Number of minutes determining the period of inactivity after which a user is no longer considered to be online.';
-$string['iomad_online_users:addinstance'] = 'Add a new Iomad online users block';
-$string['iomad_online_users:viewlist'] = 'View list of online users';
+$string['iomad_onlineusers:addinstance'] = 'Add a new Iomad online users block';
+$string['iomad_onlineusers:viewlist'] = 'View list of online users';
 $string['online_users:viewlist'] = 'View list of online users';
 $string['periodnminutes'] = 'last {$a} minutes';
 $string['pluginname'] = 'Iomad users online';
