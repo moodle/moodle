@@ -168,10 +168,6 @@ if ($canmanage) {
 if ($result->attemptsremaining != 0 && $lesson->review && !$reviewmode) {
     $lesson->add_message(get_string('attemptsremaining', 'lesson', $result->attemptsremaining));
 }
-// Report if max attempts reached
-if ($result->maxattemptsreached != 0 && $lesson->review && !$reviewmode) {
-    $lesson->add_message('('.get_string("maximumnumberofattemptsreached", "lesson").')');
-}
 
 $PAGE->set_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $page->id));
 $PAGE->set_subpage($page->id);
@@ -187,7 +183,7 @@ if ($lesson->displayleft) {
 if ($lesson->ongoing && !$reviewmode) {
     echo $lessonoutput->ongoing_score($lesson);
 }
-if (!$result->maxattemptsreached && !$reviewmode) {
+if (!$reviewmode) {
     echo $result->feedback;
 }
 
