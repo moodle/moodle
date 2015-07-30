@@ -2008,6 +2008,19 @@ abstract class lesson_page extends lesson_base {
         } else {
             if (!has_capability('mod/lesson:manage', $context)) {
                 $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$this->lesson->id, "userid"=>$USER->id));
+
+                // Get the number of attempts that have been made on this question for this student and retake,
+                $nattempts = $DB->count_records('lesson_attempts', array('lessonid' => $this->lesson->id,
+                    'userid' => $USER->id, 'pageid' => $this->properties->id, 'retry' => $nretakes));
+
+                // Check if they have reached (or exceeded) the maximum number of attempts allowed.
+                if ($nattempts >= $this->lesson->maxattempts) {
+                    $result->maxattemptsreached = true;
+                    $result->feedback = get_string('maximumnumberofattemptsreached', 'lesson');
+                    $result->newpageid = $this->lesson->get_next_page($this->properties->nextpageid);
+                    return $result;
+                }
+
                 // record student's attempt
                 $attempt = new stdClass;
                 $attempt->lessonid = $this->lesson->id;
@@ -2032,14 +2045,14 @@ abstract class lesson_page extends lesson_base {
                 if (!$userisreviewing) {
                     if ($this->lesson->retake || (!$this->lesson->retake && $nretakes == 0)) {
                         $DB->insert_record("lesson_attempts", $attempt);
+
+                        // Increase the number of attempts made.
+                        $nattempts++;
                     }
                 }
                 // "number of attempts remaining" message if $this->lesson->maxattempts > 1
                 // displaying of message(s) is at the end of page for more ergonomic display
                 if (!$result->correctanswer && ($result->newpageid == 0)) {
-                    // wrong answer and student is stuck on this page - check how many attempts
-                    // the student has had at this page/question
-                    $nattempts = $DB->count_records("lesson_attempts", array("pageid"=>$this->properties->id, "userid"=>$USER->id, "retry" => $attempt->retry));
                     // retreive the number of attempts left counter for displaying at bottom of feedback page
                     if ($nattempts >= $this->lesson->maxattempts) {
                         if ($this->lesson->maxattempts > 1) { // don't bother with message if only one attempt
