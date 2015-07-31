@@ -107,11 +107,6 @@ class qtype_ordering_question extends question_graded_automatically {
         $this->correctresponse = array_filter(explode(',', $step->get_qt_var('_correctresponse')));
     }
 
-    public function format_questiontext($qa) {
-        $text = parent::format_questiontext($qa);
-        return stripslashes($text);
-    }
-
     public function get_expected_data() {
         $name = $this->get_response_fieldname();
         return array($name => PARAM_TEXT);
@@ -170,10 +165,6 @@ class qtype_ordering_question extends question_graded_automatically {
             $fraction = ($countcorrect / $countanswers);
         }
         return array($fraction, question_state::graded_state_for_fraction($fraction));
-    }
-
-    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
-        return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 
     ////////////////////////////////////////////////////////////////////
