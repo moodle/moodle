@@ -287,6 +287,16 @@ class behat_data_generators extends behat_base {
         if (isset($data['gradetype'])) {
             $data['gradetype'] = constant("GRADE_TYPE_" . strtoupper($data['gradetype']));
         }
+
+        if (!empty($data['category']) && !empty($data['courseid'])) {
+            $cat = grade_category::fetch(array('fullname' => $data['category'], 'courseid' => $data['courseid']));
+            if (!$cat) {
+                throw new Exception('Could not resolve category with name "' . $data['category'] . '"');
+            }
+            unset($data['category']);
+            $data['categoryid'] = $cat->id;
+        }
+
         return $data;
     }
 
