@@ -16,6 +16,8 @@ Our changes:
 * Added the following require_once() to the test files:
     global $CFG;
     require_once($CFG->dirroot . '/lib/password_compat/lib/password.php');
+* tests/PasswordHashTest.php supresses debugging from using salt in password_hash()
+  see MDL-52283
 
 Library description:
 ====================
