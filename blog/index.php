@@ -140,7 +140,7 @@ if (!empty($modid)) {
     $courseid = $mod->course;
 }
 
-if ((empty($courseid) ? true : $courseid == SITEID) && empty($userid)) {
+if ((empty($courseid) ? true : $courseid == SITEID) && !isset($userid)) {
     if ($CFG->bloglevel < BLOG_SITE_LEVEL) {
         print_error('siteblogdisable', 'blog');
     }
