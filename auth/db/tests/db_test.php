@@ -309,7 +309,7 @@ class auth_db_testcase extends advanced_testcase {
         require_once($CFG->libdir.'/password_compat/lib/password.php');
         set_config('passtype', 'saltedcrypt', 'auth/db');
         $auth->config->passtype = 'saltedcrypt';
-        $user3->pass = password_hash('heslo', PASSWORD_BCRYPT, array('salt' => 'best_salt_ever_moodle_rocks_dont_tell'));
+        $user3->pass = password_hash('heslo', PASSWORD_BCRYPT);
         $DB->update_record('auth_db_users', $user3);
         $this->assertTrue($auth->user_login('u3', 'heslo'));
 
