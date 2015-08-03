@@ -15,22 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Installation file for the Youtube repository.
+ * Tag Youtube block installation.
  *
- * @package    repository_youtube
- * @category   repository
+ * @package    block_tag_youtube
+ * @copyright  2015 Jun Pataleta
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * This was supposed to be the installer script for the Youtube repository.
+ * Sets the install values for the tag_youtube entry in the block table.
  *
- * However, since the Youtube repository is disabled in new Moodle installations from 3.0, and since we cannot
- * just delete this file, the function's contents has been replaced to just return true.
- * See https://tracker.moodle.org/browse/MDL-50572 for more details.
- *
- * @return bool Return true.
+ * @return void
  */
-function xmldb_repository_youtube_install() {
-    return true;
+function xmldb_block_tag_youtube_install() {
+    global $DB;
+
+    // Disable this block by default.
+    $DB->set_field('block', 'visible', 0, array('name' => 'tag_youtube'));
 }
+
