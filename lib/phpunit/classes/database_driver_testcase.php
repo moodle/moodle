@@ -142,7 +142,13 @@ abstract class database_driver_testcase extends base_testcase {
         try {
             parent::runBare();
 
-        } catch (Exception $e) {
+        } catch (Exception $ex) {
+            $e = $ex;
+        } catch (Throwable $ex) {
+            $e = $ex; // PHP7.
+        }
+
+        if (isset($e)) {
             if ($this->tdb->is_transaction_started()) {
                 $this->tdb->force_transaction_rollback();
             }

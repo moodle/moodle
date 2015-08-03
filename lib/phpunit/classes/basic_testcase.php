@@ -62,7 +62,14 @@ abstract class basic_testcase extends base_testcase {
 
         try {
             parent::runBare();
-        } catch (Exception $e) {
+
+        } catch (Exception $ex) {
+            $e = $ex;
+        } catch (Throwable $ex) {
+            $e = $ex; // PHP7.
+        }
+
+        if (isset($e)) {
             // cleanup after failed expectation
             phpunit_util::reset_all_data();
             throw $e;

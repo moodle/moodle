@@ -126,6 +126,8 @@ class backp_settings_testcase extends basic_testcase {
         } catch (exception $e) {
             $this->assertTrue($e instanceof base_setting_exception);
             $this->assertEquals($e->errorcode, 'incorrect_object_passed');
+        } catch (TypeError $e) {
+            // PHP7 will catch type errors for us.
         }
         restore_error_handler();
 
@@ -140,6 +142,8 @@ class backp_settings_testcase extends basic_testcase {
         } catch (exception $e) {
             $this->assertTrue($e instanceof base_setting_exception);
             $this->assertEquals($e->errorcode, 'incorrect_object_passed');
+        } catch (TypeError $e) {
+            // PHP7 will catch type errors for us.
         }
         restore_error_handler();
 
@@ -302,6 +306,8 @@ class backp_settings_testcase extends basic_testcase {
         } catch (exception $e) {
             $this->assertTrue($e instanceof backup_setting_exception);
             $this->assertEquals($e->errorcode, 'incorrect_object_passed');
+        } catch (TypeError $e) {
+            // PHP7 will catch type errors for us.
         }
         restore_error_handler();
 
