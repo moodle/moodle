@@ -128,4 +128,69 @@ END;
         $this->assertFalse(environment_verify_plugin('mod_someother', $plugin1['PLUGIN']));
         $this->assertFalse(environment_verify_plugin('mod_someother', $plugin2['PLUGIN']));
     }
+
+    /**
+     * Test the restrict_php_version() function returns true if the current
+     * PHP version is greater than the restricted version
+     */
+    public function test_restrict_php_version_greater_than_restricted_version() {
+        global $CFG;
+        require_once($CFG->libdir.'/environmentlib.php');
+
+        $result = new environment_results('php');
+        $delimiter = '.';
+        // Get the current PHP version.
+        $currentversion = explode($delimiter, normalize_version(phpversion()));
+        // Lets drop back one major version to ensure we trip the restriction.
+        $currentversion[0]--;
+        $restrictedversion = implode($delimiter, $currentversion);
+
+        // Make sure the status is true before the test to see it flip to false.
+        $result->setStatus(true);
+
+        $this->assertTrue(restrict_php_version($result, $restrictedversion),
+            'restrict_php_version returns true if the current version exceeds the restricted version');
+    }
+
+    /**
+     * Test the restrict_php_version() function returns true if the current
+     * PHP version is equal to the restricted version
+     */
+    public function test_restrict_php_version_equal_to_restricted_version() {
+        global $CFG;
+        require_once($CFG->libdir.'/environmentlib.php');
+
+        $result = new environment_results('php');
+        // Get the current PHP version.
+        $currentversion = normalize_version(phpversion());
+
+        // Make sure the status is true before the test to see it flip to false.
+        $result->setStatus(true);
+
+        $this->assertTrue(restrict_php_version($result, $currentversion),
+            'restrict_php_version returns true if the current version is equal to the restricted version');
+    }
+
+    /**
+     * Test the restrict_php_version() function returns false if the current
+     * PHP version is less than the restricted version
+     */
+    public function test_restrict_php_version_less_than_restricted_version() {
+        global $CFG;
+        require_once($CFG->libdir.'/environmentlib.php');
+
+        $result = new environment_results('php');
+        $delimiter = '.';
+        // Get the current PHP version.
+        $currentversion = explode($delimiter, normalize_version(phpversion()));
+        // Lets increase the major version to ensure don't trip the restriction.
+        $currentversion[0]++;
+        $restrictedversion = implode($delimiter, $currentversion);
+
+        // Make sure the status is true before the test to see it flip to false.
+        $result->setStatus(true);
+
+        $this->assertFalse(restrict_php_version($result, $restrictedversion),
+            'restrict_php_version returns false if the current version is less than the restricted version');
+    }
 }
