@@ -52,7 +52,8 @@ $PAGE->set_pagelayout('popup');
 $PAGE->set_heading($attemptobj->get_course()->fullname);
 $output = $PAGE->get_renderer('mod_quiz');
 
-// Check permissions.
+// Check permissions - warning there is similar code in review.php and
+// quiz_attempt::check_file_access. If you change on, change them all.
 if ($attemptobj->is_own_attempt()) {
     if (!$attemptobj->is_finished()) {
         echo $output->review_question_not_allowed(get_string('cannotreviewopen', 'quiz'));
