@@ -66,6 +66,21 @@ Feature: As a teacher I need to see an accurate list of subscribed users
     And I should not see "Student 3"
 
   @javascript
+  Scenario: A forced, hidden forum lists only teachers
+    When I add a "Forum" to section "1" and I fill the form with:
+      | Forum name        | Forced Forum 2 |
+      | Forum type        | Standard forum for general use |
+      | Description       | Test forum description |
+      | Subscription mode | Forced subscription |
+      | Visible           | Hide |
+    And I follow "Forced Forum 2"
+    And I follow "Show/edit current subscribers"
+    Then I should see "Teacher Teacher"
+    And I should not see "Student 1"
+    And I should not see "Student 2"
+    And I should not see "Student 3"
+
+  @javascript
   Scenario: An automatic forum lists all subscribers
     When I add a "Forum" to section "1" and I fill the form with:
       | Forum name        | Forced Forum 1 |
