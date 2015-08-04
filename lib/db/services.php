@@ -1142,6 +1142,7 @@ $services = array(
             'mod_assign_view_grading_table',
             'mod_scorm_view_scorm',
             'mod_page_view_page',
+            'mod_resource_view_resource',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,

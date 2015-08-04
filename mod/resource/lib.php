@@ -475,3 +475,31 @@ function resource_dndupload_handle($uploadinfo) {
 
     return resource_add_instance($data, null);
 }
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $resource   resource object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.0
+ */
+function resource_view($resource, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $resource->id
+    );
+
+    $event = \mod_resource\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('resource', $resource);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
