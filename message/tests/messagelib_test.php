@@ -98,6 +98,10 @@ class core_message_messagelib_testcase extends advanced_testcase {
         // Block other user.
         message_block_contact($user1->id);
         $this->assertCount(2, message_get_blocked_users());
+
+        // Test deleting users.
+        delete_user($user1);
+        $this->assertCount(1, message_get_blocked_users());
     }
 
     /**
@@ -154,6 +158,15 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $this->assertCount(0, $onlinecontacts);
         $this->assertCount(1, $offlinecontacts);
         $this->assertCount(2, $strangers);
+
+        // Test deleting users.
+        delete_user($user1);
+        delete_user($user3);
+
+        list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
+        $this->assertCount(0, $onlinecontacts);
+        $this->assertCount(0, $offlinecontacts);
+        $this->assertCount(1, $strangers);
     }
 
     /**
