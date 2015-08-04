@@ -1143,6 +1143,7 @@ $services = array(
             'mod_scorm_view_scorm',
             'mod_page_view_page',
             'mod_resource_view_resource',
+            'mod_folder_view_folder',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
