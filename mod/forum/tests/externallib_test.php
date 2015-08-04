@@ -510,7 +510,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
 
     }
 
-
     /**
      * Test get forum posts (qanda forum)
      */
@@ -575,9 +574,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $posts = mod_forum_external::get_forum_discussion_posts($discussion1->id, 'modified', 'DESC');
         $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
         $this->assertEquals(3, count($posts['posts']));
-
     }
-
 
     /**
      * Test get forum discussions paginated
