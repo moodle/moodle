@@ -854,9 +854,9 @@ function get_course_lastaccess_sql($accesssince='') {
         return '';
     }
     if ($accesssince == -1) { // Never.
-        return 'ul.timeaccess = 0';
+        return 'ul.timeaccess IS NULL';
     } else {
-        return 'ul.timeaccess != 0 AND ul.timeaccess < '.$accesssince;
+        return 'ul.timeaccess IS NOT NULL AND ul.timeaccess < '.$accesssince;
     }
 }
 
