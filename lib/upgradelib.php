@@ -2226,7 +2226,7 @@ function check_database_storage_engine(environment_results $result) {
 function check_slasharguments(environment_results $result){
     global $CFG;
 
-    if (empty($CFG->slasharguments)) {
+    if (!during_initial_install() && empty($CFG->slasharguments)) {
         $result->setInfo('slasharguments');
         $result->setStatus(false);
         return $result;
