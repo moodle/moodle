@@ -73,6 +73,9 @@ if (!empty($id)) {
     }
 } else {
     $type = new stdClass();
+    // Assign a default empty value for the lti_icon.
+    $type->lti_icon = '';
+    $type->lti_secureicon = '';
 }
 
 $pageurl = new moodle_url('/mod/lti/typessettings.php');
