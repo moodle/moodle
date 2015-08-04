@@ -58,6 +58,11 @@ class auth_plugin_db extends auth_plugin_base {
     function user_login($username, $password) {
         global $CFG, $DB;
 
+        if ($this->is_configured() === false) {
+            debugging(get_string('auth_notconfigured', 'auth', $this->authtype));
+            return false;
+        }
+
         $extusername = core_text::convert($username, 'utf-8', $this->config->extencoding);
         $extpassword = core_text::convert($password, 'utf-8', $this->config->extencoding);
 
@@ -138,8 +143,13 @@ class auth_plugin_db extends auth_plugin_base {
      * Connect to external database.
      *
      * @return ADOConnection
+     * @throws moodle_exception
      */
     function db_init() {
+        if ($this->is_configured() === false) {
+            throw new moodle_exception('auth_dbcantconnect', 'auth_db');
+        }
+
         // Connect to the external database (forcing new connection).
         $authdb = ADONewConnection($this->config->type);
         if (!empty($this->config->debugauthdb)) {
@@ -641,6 +651,18 @@ class auth_plugin_db extends auth_plugin_base {
             return true;
         }
         return ($this->config->passtype === 'internal');
+    }
+
+    /**
+     * Returns false if this plugin is enabled but not configured.
+     *
+     * @return bool
+     */
+    public function is_configured() {
+        if (!empty($this->config->type)) {
+            return true;
+        }
+        return false;
     }
 
     /**
