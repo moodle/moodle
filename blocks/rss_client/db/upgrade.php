@@ -16,7 +16,7 @@
 
 /**
  * Database upgrades for the RSS block.
- * 
+ *
  * @package   block_rss_client
  * @copyright 2014 Davo Smith
  * @author    Neill Magill <neill.magill@nottingham.ac.uk>

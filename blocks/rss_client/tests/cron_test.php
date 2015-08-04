@@ -57,7 +57,8 @@ class block_rss_client_cron_testcase extends advanced_testcase {
 
         $block = new block_rss_client();
         ob_start();
-        $block->cron();
+        // Silence SimplePie php notices.
+        @$block->cron();
         $cronoutput = ob_get_clean();
         $this->assertContains('skipping until ' . userdate($record->skipuntil), $cronoutput);
         $this->assertContains('0 feeds refreshed (took ', $cronoutput);
@@ -112,7 +113,8 @@ class block_rss_client_cron_testcase extends advanced_testcase {
         // Run the cron.
         $block = new block_rss_client();
         ob_start();
-        $block->cron();
+        // Silence SimplePie php notices.
+        @$block->cron();
         $cronoutput = ob_get_clean();
         $skiptime1 = $record->skiptime * 2;
         $message1 = 'http://example.com/rss Error: could not load/find the RSS feed - skipping for ' . $skiptime1 . ' seconds.';
