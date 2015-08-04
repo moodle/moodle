@@ -322,8 +322,19 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Checking some of the fields returned.
         $stranger = array_pop($contacts['strangers']);
+
         $this->assertEquals(core_user::NOREPLY_USER, $stranger['id']);
         $this->assertEquals(1, $stranger['unread']);
+
+        // Check that deleted users are not returned.
+        delete_user($user_offline1);
+        delete_user($user_stranger);
+        delete_user($user_online);
+        $contacts = core_message_external::get_contacts();
+        $contacts = external_api::clean_returnvalue(core_message_external::get_contacts_returns(), $contacts);
+        $this->assertCount(2, $contacts['offline']);
+        $this->assertCount(0, $contacts['online']);
+        $this->assertCount(1, $contacts['strangers']);
     }
 
     /**
