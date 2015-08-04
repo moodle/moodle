@@ -434,13 +434,10 @@ class flexible_table {
      *
      * Always use this function if you need to create header with sorting and help icon.
      *
-     * @param int $index of header.
-     * @param string $identifier the keyword that defines a help page.
-     * @param string $component component name.
-     * @param string|bool $linktext true means use $title as link text, string means link text value.
+     * @param renderable[] $helpicons An array of renderable objects to be used as help icons
      */
-    public function define_help_for_header($index, $identifier, $component = 'moodle', $linktext = '') {
-        $this->helpforheaders[$index] =  new help_icon($identifier, $component, $linktext);
+    public function define_help_for_headers($helpicons) {
+        $this->helpforheaders = $helpicons;
     }
 
     /**
