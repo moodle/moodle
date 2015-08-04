@@ -858,6 +858,7 @@ class core_dml_testcase extends database_driver_testcase {
         $tablename2 = $table2->getName();
         $table2->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table2->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table2->add_field('onetext', XMLDB_TYPE_TEXT, 'big', null, null, null);
         $table2->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table2);
 
@@ -904,6 +905,30 @@ class core_dml_testcase extends database_driver_testcase {
                   FROM {{$tablename1}}";
         $this->assertTrue($DB->execute($sql));
         $this->assertEquals(4, $DB->count_records($tablename2));
+
+        // Insert a TEXT with raw SQL, binding TEXT params.
+        $course = 9999;
+        $onetext = file_get_contents(__DIR__ . '/fixtures/clob.txt');
+        $sql = "INSERT INTO {{$tablename2}} (course, onetext)
+                VALUES (:course, :onetext)";
+        $DB->execute($sql, array('course' => $course, 'onetext' => $onetext));
+        $records = $DB->get_records($tablename2, array('course' => $course));
+        $this->assertCount(1, $records);
+        $record = reset($records);
+        $this->assertSame($onetext, $record->onetext);
+
+        // Update a TEXT with raw SQL, binding TEXT params.
+        $newcourse = 10000;
+        $newonetext = file_get_contents(__DIR__ . '/fixtures/clob.txt') . '- updated';
+        $sql = "UPDATE {{$tablename2}} SET course = :newcourse, onetext = :newonetext
+                WHERE course = :oldcourse";
+        $DB->execute($sql, array('oldcourse' => $course, 'newcourse' => $newcourse, 'newonetext' => $newonetext));
+        $records = $DB->get_records($tablename2, array('course' => $course));
+        $this->assertCount(0, $records);
+        $records = $DB->get_records($tablename2, array('course' => $newcourse));
+        $this->assertCount(1, $records);
+        $record = reset($records);
+        $this->assertSame($newonetext, $record->onetext);
     }
 
     public function test_get_recordset() {
@@ -3724,6 +3749,15 @@ class core_dml_testcase extends database_driver_testcase {
             $this->assertCount(1, $records);
         }
 
+        // Now test the function with really big content and params.
+        $clob = file_get_contents(__DIR__ . '/fixtures/clob.txt');
+        $DB->insert_record($tablename, array('name' => 'zzzz', 'description' => $clob));
+        $sql = "SELECT * FROM {{$tablename}}
+                 WHERE " . $DB->sql_compare_text('description') . " = " . $DB->sql_compare_text(':clob');
+        $records = $DB->get_records_sql($sql, array('clob' => $clob));
+        $this->assertCount(1, $records);
+        $record = reset($records);
+        $this->assertSame($clob, $record->description);
     }
 
     public function test_unique_index_collation_trouble() {
