@@ -8,6 +8,7 @@
                 "textarea.js",
                 "autosave.js",
                 "clean.js",
+                "commands.js",
                 "toolbar.js",
                 "toolbar-keyboardnav.js",
                 "selection.js",
