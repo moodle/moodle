@@ -234,7 +234,10 @@ if (!isset($hiddenfields['lastaccess'])) {
                                                FROM {user_lastaccess}
                                               WHERE courseid = ?
                                                     AND timeaccess != 0', array($course->id));
-        $lastaccess0exists = $DB->record_exists('user_lastaccess', array('courseid' => $course->id, 'timeaccess' => 0));
+        //Get amount of enrolled users compared with amount of users lastaccess to know if someone never entered
+        $enrolled_users = get_enrolled_sql($context);
+        $enrolled_users_ids = array_keys($DB->get_records_sql($enrolled_users[0], $enrolled_users[1]));
+        $lastaccess0exists = (count($enrolled_users_ids) > $DB->count_records_select('user_lastaccess', "courseid = ? AND userid IN(?)", array($course->id, implode(',', $enrolled_users_ids)))) ? true : false;
     } else {
         $minlastaccess = $DB->get_field_sql('SELECT min(lastaccess)
                                                FROM {user}
