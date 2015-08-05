@@ -240,12 +240,7 @@ class core_notes_external extends external_api {
                 $context = context_course::instance($note->courseid);
                 self::validate_context($context);
                 require_capability('moodle/notes:manage', $context);
-                if (!note_delete($note)) {
-                    $warnings[] = array(array('item' => 'note',
-                                              'itemid' => $noteid,
-                                              'warningcode' => 'savedfailed',
-                                              'message' => 'Note could not be modified'));
-                }
+                note_delete($note);
             } else {
                 $warnings[] = array('item'=>'note', 'itemid'=>$noteid, 'warningcode'=>'badid', 'message'=>'Note does not exist');
             }
