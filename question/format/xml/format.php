@@ -198,7 +198,7 @@ class qformat_xml extends qformat_default {
      * @return object question object
      */
     public function import_headers($question) {
-        global $CFG, $USER;
+        global $USER;
 
         // This routine initialises the question object.
         $qo = $this->defaultquestion();
@@ -255,14 +255,7 @@ class qformat_xml extends qformat_default {
         }
 
         // Read the question tags.
-        if (!empty($CFG->usetags) && array_key_exists('tags', $question['#'])
-                && !empty($question['#']['tags'][0]['#']['tag'])) {
-            require_once($CFG->dirroot.'/tag/lib.php');
-            $qo->tags = array();
-            foreach ($question['#']['tags'][0]['#']['tag'] as $tagdata) {
-                $qo->tags[] = $this->getpath($tagdata, array('#', 'text', 0, '#'), '', true);
-            }
-        }
+        $this->import_question_tags($qo, $question);
 
         return $qo;
     }
@@ -376,6 +369,26 @@ class qformat_xml extends qformat_default {
 
             if ($withoptions) {
                 $qo->hintoptions[] = $hint->options;
+            }
+        }
+    }
+
+    /**
+     * Import all the question tags
+     *
+     * @param object $qo the question data that is being constructed.
+     * @param array $questionxml The xml representing the question.
+     * @return array of objects representing the tags in the file.
+     */
+    public function import_question_tags($qo, $questionxml) {
+        global $CFG;
+
+        if (!empty($CFG->usetags) && array_key_exists('tags', $questionxml['#'])
+                && !empty($questionxml['#']['tags'][0]['#']['tag'])) {
+            require_once($CFG->dirroot.'/tag/lib.php');
+            $qo->tags = array();
+            foreach ($questionxml['#']['tags'][0]['#']['tag'] as $tagdata) {
+                $qo->tags[] = $this->getpath($tagdata, array('#', 'text', 0, '#'), '', true);
             }
         }
     }
@@ -505,6 +518,7 @@ class qformat_xml extends qformat_default {
         }
 
         $this->import_hints($qo, $question, true, false, $this->get_format($qo->questiontextformat));
+        $this->import_question_tags($qo, $question);
 
         return $qo;
     }
