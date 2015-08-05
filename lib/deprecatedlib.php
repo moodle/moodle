@@ -1151,7 +1151,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 /**
  * @deprecated please use calendar_event::create() instead.
  */
- function add_event($event) {
+function add_event($event) {
     throw new coding_exception('add_event() can not be used any more, please use calendar_event::create() instead.');
 }
 
@@ -2378,4 +2378,21 @@ function get_referer($stripquery = true) {
     } else {
         return '';
     }
+}
+/**
+ * Checks if current user is a web crawler.
+ *
+ * This list can not be made complete, this is not a security
+ * restriction, we make the list only to help these sites
+ * especially when automatic guest login is disabled.
+ *
+ * If admin needs security they should enable forcelogin
+ * and disable guest access!!
+ *
+ * @return bool
+ * @deprecated since Moodle 3.0 use \core_useragent::is_web_crawler instead.
+ */
+function is_web_crawler() {
+    debugging("is_web_crawler() has been deprecated, please use \\core_useragent\\is_web_crawler() instead.", DEBUG_DEVELOPER);
+    return core_useragent::is_crawler();
 }

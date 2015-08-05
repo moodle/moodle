@@ -377,7 +377,7 @@ class manager {
         $user = null;
 
         if (!empty($CFG->opentogoogle)) {
-            if (is_web_crawler()) {
+            if (\core_useragent::is_web_crawler()) {
                 $user = guest_user();
             }
             $referer = get_local_referer(false);
