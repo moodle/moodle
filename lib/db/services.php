@@ -1108,6 +1108,7 @@ $services = array(
             'mod_forum_get_forums_by_courses',
             'mod_forum_get_forum_discussions_paginated',
             'mod_forum_get_forum_discussion_posts',
+            'mod_forum_add_discussion_post',
             'core_files_get_files',
             'core_message_get_messages',
             'core_message_create_contacts',
