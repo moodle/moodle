@@ -30,6 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = '';
-$string['thisdirection'] = 'izq-a-der';
-$string['thislanguage'] = 'Español - México';
+$string['language'] = 'Lenga';
+$string['next'] = 'Seguent';
+$string['previous'] = 'Precedent';
+$string['reload'] = 'Actualizar';

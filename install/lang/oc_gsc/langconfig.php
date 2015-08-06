@@ -30,6 +30,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = '';
-$string['thisdirection'] = 'izq-a-der';
-$string['thislanguage'] = 'Español - México';
+$string['thislanguage'] = 'Gascon';
