@@ -600,12 +600,18 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             throw new plugin_defective_exception($component, 'Missing version.php');
         }
 
-        // TODO: Support for $module will end with Moodle 2.10 by MDL-43896. Was deprecated for Moodle 2.7 by MDL-43040.
+        $module = new stdClass();
         $plugin = new stdClass();
         $plugin->version = null;
-        $module = $plugin;
         require($fullmod .'/version.php');  // Defines $plugin with version etc.
-        $plugin = clone($module);
+
+        // Check if the legacy $module syntax is still used.
+        if (!is_object($module) or (!empty((array)$module))) {
+            throw new plugin_defective_exception($component, 'Unsupported $module syntax detected in version.php');
+        }
+
+        // Prepare the record for the {modules} table.
+        $module = clone($plugin);
         unset($module->version);
         unset($module->component);
         unset($module->dependencies);
