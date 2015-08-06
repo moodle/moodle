@@ -144,7 +144,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $additionalfields = array('maxentries', 'rssarticles', 'singletemplate', 'listtemplate',
                                 'listtemplateheader', 'listtemplatefooter', 'addtemplate', 'rsstemplate', 'rsstitletemplate',
                                 'csstemplate', 'jstemplate', 'asearchtemplate', 'approval', 'scale', 'assessed', 'assesstimestart',
-                                'assesstimefinish', 'defaultsort', 'defaultsortdir', 'editany', 'notification');
+                                'assesstimefinish', 'defaultsort', 'defaultsortdir', 'editany', 'notification', 'manageapproved');
 
         foreach ($additionalfields as $field) {
             if ($field == 'approval' or $field == 'editany') {

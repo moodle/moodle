@@ -233,6 +233,267 @@ class mod_data_lib_testcase extends advanced_testcase {
     }
 
     /**
+     * Checks that data_user_can_manage_entry will return true if the user
+     * has the mod/data:manageentries capability.
+     */
+    public function test_data_user_can_manage_entry_return_true_with_capability() {
+
+        $this->resetAfterTest();
+        $testdata = $this->create_user_test_data();
+
+        $user = $testdata['user'];
+        $course = $testdata['course'];
+        $roleid = $testdata['roleid'];
+        $context = $testdata['context'];
+        $record = $testdata['record'];
+        $data = new stdClass();
+
+        $this->setUser($user);
+
+        assign_capability('mod/data:manageentries', CAP_ALLOW, $roleid, $context);
+
+        $this->assertTrue(data_user_can_manage_entry($record, $data, $context),
+            'data_user_can_manage_entry() returns true if the user has mod/data:manageentries capability');
+    }
+
+    /**
+     * Checks that data_user_can_manage_entry will return false if the data
+     * is set to readonly.
+     */
+    public function test_data_user_can_manage_entry_return_false_readonly() {
+
+        $this->resetAfterTest();
+        $testdata = $this->create_user_test_data();
+
+        $user = $testdata['user'];
+        $course = $testdata['course'];
+        $roleid = $testdata['roleid'];
+        $context = $testdata['context'];
+        $record = $testdata['record'];
+        $data = new stdClass();
+        // Causes readonly mode to be enable.
+        $now = time();
+        $data->timeviewfrom = $now;
+        $data->timeviewto = $now;
+
+        $this->setUser($user);
+
+        // Need to make sure they don't have this capability in order to fall back to
+        // the other checks.
+        assign_capability('mod/data:manageentries', CAP_PROHIBIT, $roleid, $context);
+
+        $this->assertFalse(data_user_can_manage_entry($record, $data, $context),
+            'data_user_can_manage_entry() returns false if the data is read only');
+    }
+
+    /**
+     * Checks that data_user_can_manage_entry will return false if the record
+     * can't be found in the database.
+     */
+    public function test_data_user_can_manage_entry_return_false_no_record() {
+
+        $this->resetAfterTest();
+        $testdata = $this->create_user_test_data();
+
+        $user = $testdata['user'];
+        $course = $testdata['course'];
+        $roleid = $testdata['roleid'];
+        $context = $testdata['context'];
+        $record = $testdata['record'];
+        $data = new stdClass();
+        // Causes readonly mode to be disabled.
+        $now = time();
+        $data->timeviewfrom = $now + 100;
+        $data->timeviewto = $now - 100;
+
+        $this->setUser($user);
+
+        // Need to make sure they don't have this capability in order to fall back to
+        // the other checks.
+        assign_capability('mod/data:manageentries', CAP_PROHIBIT, $roleid, $context);
+
+        // Pass record id instead of object to force DB lookup.
+        $this->assertFalse(data_user_can_manage_entry(1, $data, $context),
+            'data_user_can_manage_entry() returns false if the record cannot be found');
+    }
+
+    /**
+     * Checks that data_user_can_manage_entry will return false if the record
+     * isn't owned by the user.
+     */
+    public function test_data_user_can_manage_entry_return_false_not_owned_record() {
+
+        $this->resetAfterTest();
+        $testdata = $this->create_user_test_data();
+
+        $user = $testdata['user'];
+        $course = $testdata['course'];
+        $roleid = $testdata['roleid'];
+        $context = $testdata['context'];
+        $record = $testdata['record'];
+        $data = new stdClass();
+        // Causes readonly mode to be disabled.
+        $now = time();
+        $data->timeviewfrom = $now + 100;
+        $data->timeviewto = $now - 100;
+        // Make sure the record isn't owned by this user.
+        $record->userid = $user->id + 1;
+
+        $this->setUser($user);
+
+        // Need to make sure they don't have this capability in order to fall back to
+        // the other checks.
+        assign_capability('mod/data:manageentries', CAP_PROHIBIT, $roleid, $context);
+
+        $this->assertFalse(data_user_can_manage_entry($record, $data, $context),
+            'data_user_can_manage_entry() returns false if the record isnt owned by the user');
+    }
+
+    /**
+     * Checks that data_user_can_manage_entry will return true if the data
+     * doesn't require approval.
+     */
+    public function test_data_user_can_manage_entry_return_true_data_no_approval() {
+
+        $this->resetAfterTest();
+        $testdata = $this->create_user_test_data();
+
+        $user = $testdata['user'];
+        $course = $testdata['course'];
+        $roleid = $testdata['roleid'];
+        $context = $testdata['context'];
+        $record = $testdata['record'];
+        $data = new stdClass();
+        // Causes readonly mode to be disabled.
+        $now = time();
+        $data->timeviewfrom = $now + 100;
+        $data->timeviewto = $now - 100;
+        // The record doesn't need approval.
+        $data->approval = false;
+        // Make sure the record is owned by this user.
+        $record->userid = $user->id;
+
+        $this->setUser($user);
+
+        // Need to make sure they don't have this capability in order to fall back to
+        // the other checks.
+        assign_capability('mod/data:manageentries', CAP_PROHIBIT, $roleid, $context);
+
+        $this->assertTrue(data_user_can_manage_entry($record, $data, $context),
+            'data_user_can_manage_entry() returns true if the record doesnt require approval');
+    }
+
+    /**
+     * Checks that data_user_can_manage_entry will return true if the record
+     * isn't yet approved.
+     */
+    public function test_data_user_can_manage_entry_return_true_record_unapproved() {
+
+        $this->resetAfterTest();
+        $testdata = $this->create_user_test_data();
+
+        $user = $testdata['user'];
+        $course = $testdata['course'];
+        $roleid = $testdata['roleid'];
+        $context = $testdata['context'];
+        $record = $testdata['record'];
+        $data = new stdClass();
+        // Causes readonly mode to be disabled.
+        $now = time();
+        $data->timeviewfrom = $now + 100;
+        $data->timeviewto = $now - 100;
+        // The record needs approval.
+        $data->approval = true;
+        // Make sure the record is owned by this user.
+        $record->userid = $user->id;
+        // The record hasn't yet been approved.
+        $record->approved = false;
+
+        $this->setUser($user);
+
+        // Need to make sure they don't have this capability in order to fall back to
+        // the other checks.
+        assign_capability('mod/data:manageentries', CAP_PROHIBIT, $roleid, $context);
+
+        $this->assertTrue(data_user_can_manage_entry($record, $data, $context),
+            'data_user_can_manage_entry() returns true if the record is not yet approved');
+    }
+
+    /**
+     * Checks that data_user_can_manage_entry will return the 'manageapproved'
+     * value if the record has already been approved.
+     */
+    public function test_data_user_can_manage_entry_return_manageapproved() {
+
+        $this->resetAfterTest();
+        $testdata = $this->create_user_test_data();
+
+        $user = $testdata['user'];
+        $course = $testdata['course'];
+        $roleid = $testdata['roleid'];
+        $context = $testdata['context'];
+        $record = $testdata['record'];
+        $data = new stdClass();
+        // Causes readonly mode to be disabled.
+        $now = time();
+        $data->timeviewfrom = $now + 100;
+        $data->timeviewto = $now - 100;
+        // The record needs approval.
+        $data->approval = true;
+        // Can the user managed approved records?
+        $data->manageapproved = false;
+        // Make sure the record is owned by this user.
+        $record->userid = $user->id;
+        // The record has been approved.
+        $record->approved = true;
+
+        $this->setUser($user);
+
+        // Need to make sure they don't have this capability in order to fall back to
+        // the other checks.
+        assign_capability('mod/data:manageentries', CAP_PROHIBIT, $roleid, $context);
+
+        $canmanageentry = data_user_can_manage_entry($record, $data, $context);
+
+        // Make sure the result of the check is what ever the manageapproved setting
+        // is set to.
+        $this->assertEquals($data->manageapproved, $canmanageentry,
+            'data_user_can_manage_entry() returns the manageapproved setting on approved records');
+    }
+
+    /**
+     * Helper method to create a set of test data for data_user_can_manage tests
+     *
+     * @return array contains user, course, roleid, module, context and record
+     */
+    private function create_user_test_data() {
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $roleid = $this->getDataGenerator()->create_role();
+        $record = new stdClass();
+        $record->name = "test name";
+        $record->intro = "test intro";
+        $record->comments = 1;
+        $record->course = $course->id;
+        $record->userid = $user->id;
+
+        $module = $this->getDataGenerator()->create_module('data', $record);
+        $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
+        $context = context_module::instance($module->cmid);
+
+        $this->getDataGenerator()->role_assign($roleid, $user->id, $context->id);
+
+        return array(
+            'user' => $user,
+            'course' => $course,
+            'roleid' => $roleid,
+            'module' => $module,
+            'context' => $context,
+            'record' => $record
+        );
+    }
+
+    /**
      * Tests for mod_data_rating_can_see_item_ratings().
      *
      * @throws coding_exception
