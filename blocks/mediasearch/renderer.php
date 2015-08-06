@@ -29,6 +29,7 @@ class block_mediasearch_renderer extends plugin_renderer_base {
         $content .= html_writer::start_tag('div');
         $content .= html_writer::tag('label', s(get_string('search'), array('for'=>'mediasearchquery', 'class'=>'accesshide')));
         $content .= html_writer::empty_tag('input', array('id'=>'mediasearchquery', 'type'=>'text', 'name'=>'search', 'value'=>s($searchvalue)));
+        $content .= $this->help_icon('searchhelp', 'block_mediasearch');
         $content .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>s(get_string('search'))));
         $content .= html_writer::end_tag('div');
         $content .= html_writer::end_tag('form');
@@ -79,7 +80,7 @@ class block_mediasearch_renderer extends plugin_renderer_base {
                                                           array('id' => $entry->id,
                                                                 'action' => 'delete',
                                                                 'sesskey' => sesskey())),
-                                                          new pix_icon('i/delete', get_string('delete')))
+                                                          new pix_icon('i/invalid', get_string('delete')))
                               );
             $table->data[] = $tablerow;
         }
@@ -132,7 +133,8 @@ class block_mediasearch_renderer extends plugin_renderer_base {
                              get_string('playfromsection', 'block_mediasearch'));
 
         foreach ($entries->entries as $entry) {
-            $fromstarturl = "<a href='" . $entry->link ."' class='button'>" . $entry->link . "</a>";
+            list($startlink, $drop) = explode('#', $sntry->link);
+            $fromstarturl = "<a href='" . $startlink ."' class='button'>" . $estartlink . "</a>";
             $fromlinkurl = "<a href='" . $entry->link ."' class='button'>" . $entry->link . "</a>";
             $tablerow = array($fromstarturl,
                               $entry->fullname,

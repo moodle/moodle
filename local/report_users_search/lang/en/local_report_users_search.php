@@ -14,13 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Newblock block caps.
- *
- * @package    block_mediasearch
- * @copyright  Daniel Neis <danielneis@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
+$string['blocktitle'] = 'User Video Search Reports';
+$string['department'] = 'Department';
+$string['pluginname'] = 'Users video search report';
+$string['report_users_search_title'] = 'User video search report';
+$string['report_users_search:view'] = 'View the users search report';
+$string['user_detail_title'] = 'User search reports';
+$string['userdetails'] = 'Report information for ';
+$string['searches'] = 'matching searches';
+$string['nosearchesfound'] = 'There have been no matching video searches';

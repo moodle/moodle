@@ -15,12 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Newblock block caps.
+ * Iomad - admin settings
  *
- * @package    block_mediasearch
- * @copyright  Daniel Neis <danielneis@gmail.com>
+ * @package    Iomad
+ * @copyright  2011 onwards E-Learn Design Limited
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
+$url = new moodle_url( '/local/report_users_search/index.php' );
+$ADMIN->add('PerficoReports', new admin_externalpage('repusersearch',
+             get_string('repusersearch', 'local_report_users_search'),
+             $url, 'local/report_users_search:view'));

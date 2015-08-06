@@ -33,7 +33,7 @@ class mediasearch {
         global $DB, $CFG;
 
         if (!empty($search)) {
-            $thissearch = "WHERE msd.title LIKE '%:search%'";
+            $thissearch = "WHERE msd.title LIKE '%".$search."%' OR msd.description LIKE '%".$search."%'";
         } else {
             $thissearch = "";
         }
@@ -44,7 +44,8 @@ class mediasearch {
                                          JOIN {course} c ON (msd.courseid = c.id)
                                          $thissearch
                                          ORDER BY $sort $dir",
-                                         array('search' => $search),
+                                         array('search1' => $search,
+                                               'search2' => $search),
                                          $page * $perpage, $perpage);
 
         $countentries = $DB->get_records_sql("SELECT id

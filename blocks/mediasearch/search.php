@@ -33,7 +33,7 @@ $perpage = optional_param('perpage', 20, PARAM_INT);
 require_login();
 
 $context = context_system::instance();
-
+$coursecontext = context_course::instance($COURSE->id);
 $searchterms = explode(' ', $search);
 
 $results = mediasearch::search_entries($searchterms, $page, $perpage);
@@ -45,12 +45,14 @@ $PAGE->set_title(get_string('search', 'block_mediasearch'));
 $PAGE->set_url($url);
 $PAGE->set_heading($SITE->fullname);
 
-
 // Set up the local renderer.
 $renderer = $PAGE->get_renderer('block_mediasearch');
 
-
 echo $renderer->header();
+
+// Log the search to the database.
+$logentry = array('userid' => $USER->id, 'timestamp' => time(), 'searchstring' => $search, 'courseid' => $COURSE->id);
+$DB->insert_record('block_mediasearch_searches', $logentry);
 
 echo $renderer->search_form(new moodle_url("$CFG->wwwroot/blocks/mediasearch/search.php"), $search);
 
