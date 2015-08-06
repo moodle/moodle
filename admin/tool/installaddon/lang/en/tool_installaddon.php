@@ -91,6 +91,7 @@ $string['validationmsg_rootdirinvalid_help'] = 'The name of the root directory i
 $string['validationmsg_targetexists'] = 'Target location already exists';
 $string['validationmsg_targetexists_help'] = 'The directory that the plugin is to be installed to must not yet exist.';
 $string['validationmsg_unknowntype'] = 'Unknown plugin type';
+$string['validationmsg_versionphpsyntax'] = 'Unsupported syntax detected in version.php file';
 $string['validationmsglevel_debug'] = 'Debug';
 $string['validationmsglevel_error'] = 'Error';
 $string['validationmsglevel_info'] = 'OK';
