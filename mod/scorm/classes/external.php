@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/scorm/lib.php');
+require_once($CFG->dirroot . '/mod/scorm/locallib.php');
 
 /**
  * SCORM module external functions
@@ -102,4 +103,83 @@ class mod_scorm_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_scorm_attempt_count.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_scorm_attempt_count_parameters() {
+        return new external_function_parameters(
+            array(
+                'scormid' => new external_value(PARAM_INT, 'SCORM instance id'),
+                'userid' => new external_value(PARAM_INT, 'User id'),
+                'ignoremissingcompletion' => new external_value(PARAM_BOOL,
+                                                'Ignores attempts that haven\'t reported a grade/completion',
+                                                VALUE_DEFAULT, false),
+            )
+        );
+    }
+
+    /**
+     * Return the number of attempts done by a user in the given SCORM.
+     *
+     * @param int $scormid the scorm id
+     * @param int $userid the user id
+     * @param bool $ignoremissingcompletion ignores attempts that haven't reported a grade/completion
+     * @return array of warnings and the attempts count
+     * @since Moodle 3.0
+     */
+    public static function get_scorm_attempt_count($scormid, $userid, $ignoremissingcompletion = false) {
+        global $USER, $DB;
+
+        $params = self::validate_parameters(self::get_scorm_attempt_count_parameters(),
+                                            array('scormid' => $scormid, 'userid' => $userid,
+                                                'ignoremissingcompletion' => $ignoremissingcompletion));
+
+        $attempts = array();
+        $warnings = array();
+
+        $scorm = $DB->get_record('scorm', array('id' => $params['scormid']), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('scorm', $scorm->id);
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Validate the user obtaining the context, it will fail if the user doesn't exists or have been deleted.
+        context_user::instance($params['userid']);
+
+        // Extra checks so only users with permissions can view other users attempts.
+        if ($USER->id != $params['userid']) {
+            require_capability('mod/scorm:viewreport', $context);
+        }
+
+        // If the SCORM is not open this function will throw exceptions.
+        scorm_require_available($scorm);
+
+        $attemptscount = scorm_get_attempt_count($params['userid'], $scorm, false, $params['ignoremissingcompletion']);
+
+        $result = array();
+        $result['attemptscount'] = $attemptscount;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_scorm_attempt_count return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.0
+     */
+    public static function get_scorm_attempt_count_returns() {
+
+        return new external_single_structure(
+            array(
+                'attemptscount' => new external_value(PARAM_INT, 'Attempts count'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
