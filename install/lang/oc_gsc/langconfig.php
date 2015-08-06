@@ -30,4 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thislanguage'] = 'Gascon';
+$string['parentlanguage'] = '';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Lengadocian';
