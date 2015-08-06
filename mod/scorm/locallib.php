@@ -1302,7 +1302,7 @@ function scorm_get_attempt_count($userid, $scorm, $returnobjects = false, $ignor
  * @return boolean - debugging true/false
  */
 function scorm_debugging($scorm) {
-    global $CFG, $USER;
+    global $USER;
     $cfgscorm = get_config('scorm');
 
     if (!$cfgscorm->allowapidebug) {
@@ -1314,9 +1314,11 @@ function scorm_debugging($scorm) {
     if (!preg_match('/^[\w\s\*\.\?\+\:\_\\\]+$/', $test)) {
         return false;
     }
-    $res = false;
-    eval('$res = preg_match(\'/^'.$test.'/\', $identifier) ? true : false;');
-    return $res;
+
+    if (preg_match('/^'.$test.'/', $identifier)) {
+        return true;
+    }
+    return false;
 }
 
 /**
