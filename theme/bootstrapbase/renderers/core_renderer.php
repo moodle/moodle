@@ -91,21 +91,14 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
     protected function render_custom_menu(custom_menu $menu) {
         global $CFG;
 
-        // TODO: eliminate this duplicated logic, it belongs in core, not
-        // here. See MDL-39565.
-        $addlangmenu = true;
         $langs = get_string_manager()->get_list_of_translations();
-        if (count($langs) < 2
-            or empty($CFG->langmenu)
-            or ($this->page->course != SITEID and !empty($this->page->course->lang))) {
-            $addlangmenu = false;
-        }
+        $haslangmenu = $this->lang_menu() != '';
 
-        if (!$menu->has_children() && $addlangmenu === false) {
+        if (!$menu->has_children() && !$haslangmenu) {
             return '';
         }
 
-        if ($addlangmenu) {
+        if ($haslangmenu) {
             $strlang =  get_string('language');
             $currentlang = current_language();
             if (isset($langs[$currentlang])) {
@@ -183,6 +176,30 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
             }
         }
         return $content;
+    }
+
+    /**
+     * This code renders the navbar button to control the display of the custom menu
+     * on smaller screens.
+     *
+     * Do not display the button if the menu is empty.
+     *
+     * @return string HTML fragment
+     */
+    protected function navbar_button() {
+        global $CFG;
+
+        if (empty($CFG->custommenuitems) && $this->lang_menu() == '') {
+            return '';
+        }
+
+        $iconbar = html_writer::tag('span', '', array('class' => 'icon-bar'));
+        $button = html_writer::tag('a', $iconbar . "\n" . $iconbar. "\n" . $iconbar, array(
+            'class'       => 'btn btn-navbar',
+            'data-toggle' => 'collapse',
+            'data-target' => '.nav-collapse'
+        ));
+        return $button;
     }
 
     /**
