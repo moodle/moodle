@@ -145,6 +145,17 @@ class tool_installaddon_validator_testcase extends basic_testcase {
         $this->assertFalse($validator->execute());
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'versionphpsyntax', '$module'));
 
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/nocomponent', array(
+            'baz/' => true,
+            'baz/version.php' => true,
+            'baz/lang/' => true,
+            'baz/lang/en/' => true,
+            'baz/lang/en/auth_baz.php' => true));
+        $validator->assert_plugin_type('auth');
+        $validator->assert_moodle_version(0);
+        $this->assertFalse($validator->execute());
+        $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'missingcomponent'));
+
         $validator = testable_tool_installaddon_validator::instance($fixtures.'/plugindir', array(
             'foobar/' => true,
             'foobar/version.php' => true,
@@ -216,7 +227,7 @@ class tool_installaddon_validator_testcase extends basic_testcase {
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::WARNING, 'multiplelangenfiles'));
         $this->assertTrue(is_null($validator->get_language_file_name()));
 
-        $validator = testable_tool_installaddon_validator::instance($fixtures.'/nolang', array(
+        $validator = testable_tool_installaddon_validator::instance($fixtures.'/wronglang', array(
             'bah/' => true,
             'bah/version.php' => true,
             'bah/lang/' => true,
