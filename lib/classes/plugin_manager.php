@@ -299,6 +299,12 @@ class core_plugin_manager {
                     $skipcache = true;
                 }
 
+                // Check if the component is properly declared.
+                if (empty($plugin->component) or ($plugin->component !== $type.'_'.$plug)) {
+                    debugging('Plugin '.$type.'_'.$plug.' does not declare valid $plugin->component in its version.php.');
+                    $skipcache = true;
+                }
+
                 $this->presentplugins[$type][$plug] = $plugin;
             }
         }

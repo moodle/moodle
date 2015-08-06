@@ -450,15 +450,16 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
         require($fullplug.'/version.php');  // defines $plugin with version etc
         unset($module);
 
-        // if plugin tells us it's full name we may check the location
-        if (isset($plugin->component)) {
-            if ($plugin->component !== $component) {
-                throw new plugin_misplaced_exception($plugin->component, null, $fullplug);
-            }
+        if (empty($plugin->version)) {
+            throw new plugin_defective_exception($component, 'Missing $plugin->version number in version.php.');
         }
 
-        if (empty($plugin->version)) {
-            throw new plugin_defective_exception($component, 'Missing version value in version.php');
+        if (empty($plugin->component)) {
+            throw new plugin_defective_exception($component, 'Missing $plugin->component declaration in version.php.');
+        }
+
+        if ($plugin->component !== $component) {
+            throw new plugin_misplaced_exception($plugin->component, null, $fullplug);
         }
 
         $plugin->name     = $plug;
@@ -617,16 +618,16 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
         unset($module->dependencies);
         unset($module->release);
 
-        // if plugin tells us it's full name we may check the location
-        if (isset($plugin->component)) {
-            if ($plugin->component !== $component) {
-                throw new plugin_misplaced_exception($plugin->component, null, $fullmod);
-            }
+        if (empty($plugin->version)) {
+            throw new plugin_defective_exception($component, 'Missing $plugin->version number in version.php.');
         }
 
-        if (empty($plugin->version)) {
-            // Version must be always set now!
-            throw new plugin_defective_exception($component, 'Missing version value in version.php');
+        if (empty($plugin->component)) {
+            throw new plugin_defective_exception($component, 'Missing $plugin->component declaration in version.php.');
+        }
+
+        if ($plugin->component !== $component) {
+            throw new plugin_misplaced_exception($plugin->component, null, $fullmod);
         }
 
         if (!empty($plugin->requires)) {
@@ -798,15 +799,16 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
         unset($block->dependencies);
         unset($block->release);
 
-        // if plugin tells us it's full name we may check the location
-        if (isset($plugin->component)) {
-            if ($plugin->component !== $component) {
-                throw new plugin_misplaced_exception($plugin->component, null, $fullblock);
-            }
+        if (empty($plugin->version)) {
+            throw new plugin_defective_exception($component, 'Missing block version number in version.php.');
         }
 
-        if (empty($plugin->version)) {
-            throw new plugin_defective_exception($component, 'Missing block version.');
+        if (empty($plugin->component)) {
+            throw new plugin_defective_exception($component, 'Missing $plugin->component declaration in version.php.');
+        }
+
+        if ($plugin->component !== $component) {
+            throw new plugin_misplaced_exception($plugin->component, null, $fullblock);
         }
 
         if (!empty($plugin->requires)) {
