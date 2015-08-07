@@ -1414,6 +1414,15 @@ class restore_process_categories_and_questions extends restore_execution_step {
  * as needed, rebuilding course cache and other friends
  */
 class restore_section_structure_step extends restore_structure_step {
+    /** @var array Cache: Array of id => course format */
+    private static $courseformats = array();
+
+    /**
+     * Resets a static cache of course formats. Required for unit testing.
+     */
+    public static function reset_caches() {
+        self::$courseformats = array();
+    }
 
     protected function define_structure() {
         global $CFG;
@@ -1586,14 +1595,13 @@ class restore_section_structure_step extends restore_structure_step {
 
     public function process_course_format_options($data) {
         global $DB;
-        static $courseformats = array();
         $courseid = $this->get_courseid();
-        if (!array_key_exists($courseid, $courseformats)) {
+        if (!array_key_exists($courseid, self::$courseformats)) {
             // It is safe to have a static cache of course formats because format can not be changed after this point.
-            $courseformats[$courseid] = $DB->get_field('course', 'format', array('id' => $courseid));
+            self::$courseformats[$courseid] = $DB->get_field('course', 'format', array('id' => $courseid));
         }
         $data = (array)$data;
-        if ($courseformats[$courseid] === $data['format']) {
+        if (self::$courseformats[$courseid] === $data['format']) {
             // Import section format options only if both courses (the one that was backed up
             // and the one we are restoring into) have same formats.
             $params = array(
