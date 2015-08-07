@@ -1905,12 +1905,6 @@ class grade_category extends grade_object {
      * @return array An array containing 'object', 'type', 'depth' and optionally 'children'
      */
     static private function _fetch_course_tree_recursion($category_array, &$sortorder) {
-        // update the sortorder in db if needed
-        //NOTE: This leads to us resetting sort orders every time the categories and items page is viewed :(
-        //if ($category_array['object']->sortorder != $sortorder) {
-            //$category_array['object']->set_sortorder($sortorder);
-        //}
-
         if (isset($category_array['object']->gradetype) && $category_array['object']->gradetype==GRADE_TYPE_NONE) {
             return null;
         }

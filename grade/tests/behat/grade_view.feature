@@ -80,7 +80,7 @@ Feature: We can enter in grades and view reports from the gradebook
     And "Course 1" row "Grade" column of "overview-grade" table should not contain "90.00"
 
   Scenario: We can add a weighting to a grade item and it is displayed properly in the user report
-    When I select "Categories and items" from the "Grade report" singleselect
+    When I select "Gradebook setup" from the "Grade report" singleselect
     And I set the following settings for grade item "Course 1":
       | Aggregation | Weighted mean of grades |
     And I set the field "Extra credit value for Test assignment name" to "0.72"

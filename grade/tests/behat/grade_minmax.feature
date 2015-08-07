@@ -27,7 +27,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
     And I am on site homepage
     And I follow "C1"
     And I navigate to "Grades" node in "Course administration"
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | MI 1 |
@@ -62,7 +62,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
     And I press "Save changes"
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the following settings for grade item "CAT1":
       | Aggregation          | Natural |
     And I log out
@@ -98,7 +98,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | MI 5         | 33.33 %           | 30.00  | 0–100 | 30.00 %    | 10.00 %                      |
       | CAT1 total   | 33.33 %           | 10.00  | 0–100 | 10.00 %    | -                            |
       | Course total | -                 | 60.00  | 0–300 | 20.00 %    | -                            |
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the following settings for grade item "MI 1":
       | Maximum grade          | 50.00 |
       | Minimum grade          | 5.00 |
@@ -126,7 +126,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | MI 5         | 50.00 %           | 30.00  | 0–100 | 30.00 %    | 15.00 %                      |
       | CAT1 total   | 25.00 %           | 10.00  | 0–50  | 20.00 %    | -                            |
       | Course total | -                 | 60.00  | 0–200 | 30.00 %    | -                            |
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the following settings for grade item "MI 5":
       | Maximum grade          | 200.00 |
     And I follow "User report"

@@ -235,7 +235,7 @@ Feature: We can use calculated grade totals
       | itemname              | course | outcome | gradetype | scale      |
       | Test outcome item one | C1     | OT1     | Scale     | Test Scale |
     And I expand "Setup" node
-    And I follow "Categories and items"
+    And I follow "Gradebook setup"
     And I set the following settings for grade item "Course 1":
       | Aggregation                     | Natural |
       | Include outcomes in aggregation | 1       |
@@ -258,7 +258,7 @@ Feature: We can use calculated grade totals
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
     And I expand "Setup" node
-    And I follow "Categories and items"
+    And I follow "Gradebook setup"
     And I set the following settings for grade item "Test outcome item one":
      | Extra credit     | 1   |
     And I log out
@@ -272,7 +272,7 @@ Feature: We can use calculated grade totals
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
     And I expand "Setup" node
-    And I follow "Categories and items"
+    And I follow "Gradebook setup"
     And I set the following settings for grade item "Course 1":
       | Aggregation                     | Natural |
       | Include outcomes in aggregation | 0       |
@@ -297,7 +297,7 @@ Feature: We can use calculated grade totals
       | Test outcome item one | C1     | OT1     | Scale     | Test Scale |
     And I navigate to "Grades" node in "Course administration"
     And I expand "Setup" node
-    And I follow "Categories and items"
+    And I follow "Gradebook setup"
     And I set the following settings for grade item "Course 1":
       | Aggregation                     | Natural |
       | Include outcomes in aggregation | 1       |
@@ -387,7 +387,7 @@ Feature: We can use calculated grade totals
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I press "Add category"
     And I set the following fields to these values:
       | Category name | Sub category 3 |
@@ -441,7 +441,7 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I turn editing mode off
     And I should see "250.00 (25.25 %)" in the ".course" "css_element"
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I press "Add category"
     And I set the following fields to these values:
       | Category name | Sub sub category 1 |
@@ -452,7 +452,7 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Natural aggregation from the setup screen
-    And I select "Categories and items" from the "Grade report" singleselect
+    And I select "Gradebook setup" from the "Grade report" singleselect
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Natural |
     And I set the following settings for grade item "Sub category 1":
@@ -514,7 +514,7 @@ Feature: We can use calculated grade totals
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
     And I turn editing mode off
-    And I select "Categories and items" from the "Grade report" singleselect
+    And I select "Gradebook setup" from the "Grade report" singleselect
     And I set the field "Override weight of Test assignment one" to "1"
     And I set the field "Weight of Test assignment one" to "0"
     And I set the field "Override weight of Test assignment six" to "1"

@@ -22,7 +22,7 @@ Feature: Extra credit contributions are normalised when going out of bounds
     And I am on site homepage
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 1 |
@@ -56,7 +56,7 @@ Feature: Extra credit contributions are normalised when going out of bounds
     And I press "Save changes"
 
   Scenario Outline: The contribution of extra credit items is normalised
-    Given I set the field "Grade report" to "Categories and items"
+    Given I set the field "Grade report" to "Gradebook setup"
     When I set the following settings for grade item "Course 1":
       | Aggregation | <aggregation> |
     And I set the following settings for grade item "Manual item 2":

@@ -336,7 +336,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
   @javascript
   Scenario: Switching grade items between categories
     # Move to same aggregation (Natural).
-    Given I navigate to "Categories and items" node in "Grade administration > Setup"
+    Given I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the field "Select Item a1" to "1"
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"
@@ -362,7 +362,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And the field "Extra credit" matches value "1"
     And I press "Cancel"
     # Move to Mean of grades (with extra credit).
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the field "Select Item a1" to "1"
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"
@@ -382,7 +382,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And the field "Extra credit" matches value "1"
     And I press "Cancel"
     # Move to Simple weight mean of grades.
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the field "Select Item a1" to "1"
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"
@@ -402,7 +402,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And the field "Extra credit" matches value "1"
     And I press "Cancel"
     # Move to Weighted mean of grades.
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the field "Select Item a1" to "1"
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"
@@ -426,7 +426,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I set the field "Item weight" to "11"
     And I press "Save changes"
     # Move to same (Weighted mean of grades).
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the field "Select Item a1" to "1"
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"
@@ -447,7 +447,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And the field "Item weight" matches value "11"
     And I press "Save changes"
     # Move back to Natural.
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the field "Select Item a1" to "1"
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"

@@ -90,7 +90,7 @@ Feature: View gradebook when scales are used
       | Test assignment one | C     | F–A   | 50.00 %    | 60.00 %                      |
       | Sub category 1 total      | 3.00  | 0–5   | 60.00 %    | -                            |
       | Course total        | 3.00  | 0–5   | 60.00 %    | -                            |
-    And I select "Categories and items" from the "Grade report" singleselect
+    And I select "Gradebook setup" from the "Grade report" singleselect
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | 5.00      |
@@ -136,7 +136,7 @@ Feature: View gradebook when scales are used
       | Test assignment one          | C              | F–A   | 50.00 %       | <contrib3>                   |
       | Sub category (<aggregation>) total<aggregation>. | 3.00           | 1–5   | 50.00 %       | -                            |
       | Course total<aggregation>.   | <coursetotal3> | 0–100 | <courseperc3> | -                            |
-    And I select "Categories and items" from the "Grade report" singleselect
+    And I select "Gradebook setup" from the "Grade report" singleselect
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | A (5)     |

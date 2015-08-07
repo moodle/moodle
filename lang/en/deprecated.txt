@@ -19,3 +19,4 @@ thistaghasnodesc,core_tag
 updated,core_tag
 withselectedtags,core_tag
 tag:create,core_role
+categoriesanditems,core_grades

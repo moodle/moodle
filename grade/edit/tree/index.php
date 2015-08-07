@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit and review page for grade categories and items
+ * The Gradebook setup page.
  *
  * @package   core_grades
  * @copyright 2008 Nicolas Connault
@@ -244,7 +244,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
     }
 }
 
-print_grade_page_head($courseid, 'settings', 'setup', get_string('categoriesanditems', 'grades'));
+print_grade_page_head($courseid, 'settings', 'setup', get_string('gradebooksetup', 'grades'));
 
 // Print Table of categories and items
 echo $OUTPUT->box_start('gradetreebox generalbox');

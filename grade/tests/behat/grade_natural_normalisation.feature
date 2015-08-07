@@ -33,7 +33,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And I log in as "teacher1"
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
-    And I set the field "Grade report" to "Categories and items"
+    And I set the field "Grade report" to "Gradebook setup"
 
   @javascript
   Scenario: Setting all weights in a category to exactly one hundred in total.

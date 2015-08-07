@@ -3821,6 +3821,13 @@ class settings_navigation extends navigation_node {
             $gradenode = $coursenode->add(get_string('grades'), $url, self::TYPE_SETTING, null, 'grades', new pix_icon('i/grades', ''));
         }
 
+        // Check if we can view the gradebook's setup page.
+        if (has_capability('moodle/grade:manage', $coursecontext)) {
+            $url = new moodle_url('/grade/edit/tree/index.php', array('id' => $course->id));
+            $coursenode->add(get_string('gradebooksetup', 'grades'), $url, self::TYPE_SETTING,
+                null, 'gradebooksetup', new pix_icon('i/settings', ''));
+        }
+
         //  Add outcome if permitted
         if (!empty($CFG->enableoutcomes) && has_capability('moodle/course:update', $coursecontext)) {
             $url = new moodle_url('/grade/edit/outcome/course.php', array('id'=>$course->id));

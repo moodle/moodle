@@ -43,7 +43,7 @@ Feature: We can understand the gradebook user report
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
     And I press "Save changes"
-    And I set the field "Grade report" to "Categories and items"
+    And I set the field "Grade report" to "Gradebook setup"
     And I press "Add category"
     And I set the field "Category name" to "Sub category"
     And I press "Save changes"
