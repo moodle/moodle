@@ -697,8 +697,6 @@ if ($mform_post->is_cancelled()) {
     // WARNING: the $fromform->message array has been overwritten, do not use it anymore!
     $fromform->messagetrust  = trusttext_trusted($modcontext);
 
-    $contextcheck = isset($fromform->groupinfo) && has_capability('mod/forum:movediscussions', $modcontext);
-
     if ($fromform->edit) {           // Updating a post
         unset($fromform->groupid);
         $fromform->id = $fromform->edit;
@@ -722,10 +720,15 @@ if ($mform_post->is_cancelled()) {
         }
 
         // If the user has access to all groups and they are changing the group, then update the post.
-        if ($contextcheck) {
+        if (isset($fromform->groupinfo) && has_capability('mod/forum:movediscussions', $modcontext)) {
             if (empty($fromform->groupinfo)) {
                 $fromform->groupinfo = -1;
             }
+
+            if (!forum_user_can_post_discussion($forum, $fromform->groupinfo, null, $cm, $modcontext)) {
+                print_error('cannotupdatepost', 'forum');
+            }
+
             $DB->set_field('forum_discussions' ,'groupid' , $fromform->groupinfo, array('firstpost' => $fromform->id));
         }
 
@@ -853,6 +856,9 @@ if ($mform_post->is_cancelled()) {
         exit;
 
     } else { // Adding a new discussion.
+        // The location to redirect to after successfully posting.
+        $redirectto = new moodle_url('view.php', array('f' => $fromform->forum));
+
         $fromform->mailnow = empty($fromform->mailnow) ? 0 : 1;
 
         $discussion = $fromform;
@@ -870,17 +876,28 @@ if ($mform_post->is_cancelled()) {
 
         // If we are posting a copy to all groups the user has access to.
         if (isset($fromform->posttomygroups)) {
+            // Post to each of my groups.
             require_capability('mod/forum:canposttomygroups', $modcontext);
+
+            // Fetch all of this user's groups.
+            // Note: all groups are returned when in visible groups mode so we must manually filter.
             $allowedgroups = groups_get_activity_allowed_groups($cm);
-            $groupstopostto = array_keys($allowedgroups);
+            foreach ($allowedgroups as $groupid => $group) {
+                if (forum_user_can_post_discussion($forum, $groupid, -1, $cm, $modcontext)) {
+                    $groupstopostto[] = $groupid;
+                }
+            }
+        } else if (isset($fromform->groupinfo)) {
+            // Use the value provided in the dropdown group selection.
+            $groupstopostto[] = $fromform->groupinfo;
+            $redirectto->param('group', $fromform->groupinfo);
+        } else if (isset($fromform->groupid) && !empty($fromform->groupid)) {
+            // Use the value provided in the hidden form element instead.
+            $groupstopostto[] = $fromform->groupid;
+            $redirectto->param('group', $fromform->groupid);
         } else {
-            if ($contextcheck) {
-                $fromform->groupid = $fromform->groupinfo;
-            }
-            if (empty($fromform->groupid)) {
-                $fromform->groupid = -1;
-            }
-            $groupstopostto = array($fromform->groupid);
+            // Use the value for all participants instead.
+            $groupstopostto[] = -1;
         }
 
         // Before we post this we must check that the user will not exceed the blocking threshold.
@@ -934,9 +951,8 @@ if ($mform_post->is_cancelled()) {
             $completion->update_state($cm, COMPLETION_COMPLETE);
         }
 
-        redirect(forum_go_back_to("view.php?f=$fromform->forum"), $message.$subscribemessage, $timemessage);
-
-        exit;
+        // Redirect back to the discussion.
+        redirect(forum_go_back_to($redirectto->out()), $message . $subscribemessage, $timemessage);
     }
 }
 
