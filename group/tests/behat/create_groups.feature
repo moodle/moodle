@@ -57,7 +57,6 @@ Feature: Organize students into groups
     And I should see "Student 3"
     And I should not see "Student 0"
 
-  @javascript
   Scenario: Create groups and groupings without the 'moodle/course:changeidnumber' capability
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |

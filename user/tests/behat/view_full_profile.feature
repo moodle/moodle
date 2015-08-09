@@ -49,7 +49,6 @@ Feature: Access to full profiles of users
     And I follow "Full profile"
     Then I should see "First access to site"
 
-  @javascript
   Scenario: Viewing full profiles with global permission
     Given I log in as "admin"
     And I set the following system permissions of "Authenticated user" role:
