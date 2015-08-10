@@ -42,7 +42,6 @@ Feature: Browse course list and return back from enrolment page
     And I press "Continue"
     Then I should see "Edit profile" in the ".breadcrumb-nav" "css_element"
 
-  @javascript
   Scenario: User can return to the choice activity from enrolment page
     Given the following "roles" exist:
       | name                   | shortname | description      | archetype      |
