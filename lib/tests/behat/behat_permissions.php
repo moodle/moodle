@@ -74,12 +74,15 @@ class behat_permissions extends behat_base {
         // We don't know the number of overrides so we have to get it to match the option contents.
         $roleoption = $this->find('xpath', '//select[@name="roleid"]/option[contains(.,"' . $this->escape($rolename) . '")]');
 
-        return array(
+        $result = array(
             new Given('I set the field "' . get_string('advancedoverride', 'role') .
-                '" to "' . $this->escape($roleoption->getText()) . '"'),
-            new Given('I fill the capabilities form with the following permissions:', $table),
-            new Given('I press "' . get_string('savechanges') . '"')
-        );
+                '" to "' . $this->escape($roleoption->getText()) . '"'));
+        if (!$this->running_javascript()) {
+            $result[] = new Given('I press "' . get_string('go') . '"');
+        }
+        $result[] = new Given('I fill the capabilities form with the following permissions:', $table);
+        $result[] = new Given('I press "' . get_string('savechanges') . '"');
+        return $result;
     }
 
     /**
@@ -132,7 +135,8 @@ class behat_permissions extends behat_base {
 
             // Here we wait for the element to appear and exception if it does not exist.
             $radio = $this->find('xpath', '//input[@name="' . $capability . '" and @value="' . $permissionvalue . '"]');
-            $radio->click();
+            $field = behat_field_manager::get_field_instance('radio', $radio, $this->getSession());
+            $field->set_value(1);
         }
     }
 
