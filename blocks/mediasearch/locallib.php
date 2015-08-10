@@ -101,14 +101,23 @@ class mediasearch {
         if ($lexer->parse($searchstring)) {
             $parsearray = $parser->get_parsed_array();        
         }
-        list($titlesearch, $titleparams) = search_generate_text_SQL($parsearray, 'p.title', 'p.description',
-                                                                   'p.keywords',
-                                                                   'c.fullname',
+        list($titlesearch, $titleparams) = search_generate_text_SQL($parsearray, 'p.title',
+                                                                   null,
+                                                                   null,
+                                                                   null,
                                                                    null,
                                                                    null,
                                                                    null,
                                                                    null);
-        list($keysearch, $keyparams) = search_generate_text_SQL($parsearray, 'p.keywords', 'c.fullname',
+        list($descriptionsearch, $descriptionparams) = search_generate_text_SQL($parsearray, 'p.description',
+                                                                   null,
+                                                                   null,
+                                                                   null,
+                                                                   null,
+                                                                   null,
+                                                                   null,
+                                                                   null);
+        list($keysearch, $keyparams) = search_generate_text_SQL($parsearray, 'p.keywords', null,
                                                                    null,
                                                                    null,
                                                                    null,
@@ -118,10 +127,10 @@ class mediasearch {
 
         $fromsql = "{block_mediasearch_data} p JOIN {course} c ON (p.courseid = c.id) ";
 
-        $selectsql = " $titlesearch OR $keysearch 
+        $selectsql = " $titlesearch OR $keysearch  OR $descriptionsearch
                       AND p.courseid IN (" . implode(',', array_keys($mycourses)).") ";
 
-        $params = array('courseid' => $COURSE->id) + $titleparams + $keyparams;
+        $params = array('courseid' => $COURSE->id) + $titleparams + $keyparams + $descriptionparams;
         $countsql = "SELECT p.id
                      FROM $fromsql
                      WHERE $selectsql

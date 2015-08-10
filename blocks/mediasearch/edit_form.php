@@ -27,7 +27,7 @@ require_once($CFG->libdir . '/formslib.php');
 class block_mediasearch_entry_edit_form extends moodleform {
 
     public function definition() {
-        global $CFG, $DB;n
+        global $CFG, $DB;
 
         // Add the form elements.
         $mform =& $this->_form;

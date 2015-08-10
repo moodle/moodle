@@ -46,7 +46,6 @@ $PAGE->set_heading($SITE->fullname);
 $renderer = $PAGE->get_renderer('block_mediasearch');
 
 if (!empty($id)) {
-echo "HERE</br>";
     if (!$entry = $DB->get_record('block_mediasearch_data', array('id' => $id))) {
         print_error('invalidrecordid');
     }
@@ -56,9 +55,6 @@ echo "HERE</br>";
 $mform = new block_mediasearch_entry_edit_form();
 if (!empty($id)) {
     $mform->set_data($entry);
-echo "entry = <pre>";
-print_r($entry);
-echo "</pre></br>";
 }
 
 if ($mform->is_cancelled()) {

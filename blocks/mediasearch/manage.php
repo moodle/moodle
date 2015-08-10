@@ -53,7 +53,7 @@ $renderer = $PAGE->get_renderer('block_mediasearch');
 if ($action == 'delete' && confirm_sesskey() && !empty($id)) {
     if ($confirm = optional_param('confirm',0,PARAM_INT)) {
         if ($delrecord = $DB->get_record('block_mediasearch_data', array('id' => $id))) {
-            $DB->delete_record('block_mediasearch_data', array('id' => $id));
+            $DB->delete_records('block_mediasearch_data', array('id' => $id));
             echo $renderer->notification(get_string('recorddeleted', 'block_mediasearch'), 'notifysuccess');
             $action = '';
         } else {

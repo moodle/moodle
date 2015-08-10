@@ -133,8 +133,8 @@ class block_mediasearch_renderer extends plugin_renderer_base {
                              get_string('playfromsection', 'block_mediasearch'));
 
         foreach ($entries->entries as $entry) {
-            list($startlink, $drop) = explode('#', $sntry->link);
-            $fromstarturl = "<a href='" . $startlink ."' class='button'>" . $estartlink . "</a>";
+            list($startlink, $drop) = explode('#', $entry->link);
+            $fromstarturl = "<a href='" . $startlink ."' class='button'>" . $startlink . "</a>";
             $fromlinkurl = "<a href='" . $entry->link ."' class='button'>" . $entry->link . "</a>";
             $tablerow = array($fromstarturl,
                               $entry->fullname,
