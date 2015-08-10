@@ -1405,4 +1405,25 @@ class behat_general extends behat_base {
             fwrite(STDOUT, "\033[2A\033[u\033[2B");
         }
     }
+
+    /**
+     * Presses a given button in the browser.
+     *
+     * @Then /^I press the "(back|forward|reload)" button in the browser$/
+     * @param string $button the button to press.
+     * @throws ExpectationException
+     */
+    public function i_press_in_the_browser($button) {
+        $session = $this->getSession();
+
+        if ($button == 'back') {
+            $session->back();
+        } else if ($button == 'forward') {
+            $session->forward();
+        } else if ($button == 'reload') {
+            $session->reload();
+        } else {
+            throw new ExpectationException('Unknown browser button.', $session);
+        }
+    }
 }
