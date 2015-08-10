@@ -37,37 +37,62 @@ class observer {
     }
 
     /**
-     * See if this certificate already exists
+     * Create a new certificate
      */
-    private static function find_stored_certificate($contextid, $certrecordid, $filename, $userid) {
+    private static function create_certificate($certificate, $user, $cm, $course, $certissue) {
+
+        // load pdf library
+        require_once("$CFG->libdir/pdflib.php");
+
+        // some name changes
+        $certuser = $user;
+        $certificate_name = CERTIFICATE;
+        $$certificate_name = $certificate;
+        $certrecord = $certissue;
+
+        // Load certificate template (magically creates $pdf variable. Grrrrrr)
+        // Assumes a whole bunch of stuff exists without being explicitly required (double grrrrr)
+        $typefield = CERTIFICATE . 'type';
+        require("$CFG->dirroot/mod/" . CERTIFICATE . "/type/{$certificate->$typefield}/certificate.php");
+        
+        // Create the certificate content. 'S' means return as string
+        return $pdf->Output('', 'S'); 
+    }
+
+    /**
+     * See if this certificate already exists & copy to local storage if it does
+     * Note: if there is more than one ceritificate in the same course, we rely on them having
+     * different names (which they should).
+     * @param int $contextid Context (id) of completed course
+     * @param string $filename Filename of original certificate issue
+     * @param int $userid userid of completing user
+     * @param int $trackid id of completion in local_iomad_track table
+     * @param string $content the pdf data
+     */
+    private static function store_certificate($contextid, $filename, $userid, $trackid, $certificate, $content) {
 
         $fs = get_file_storage();
 
         // Prepare file record object
-        $component = 'mod_' . CERTIFICATE;
+        $component = 'local_iomad_track';
         $filearea = 'issue';
         $filepath = '/';
+
         $fileinfo = array(
-            'contextid' => $contextid,   // ID of context
-            'component' => $component,   // usually = table name
-            'filearea'  => $filearea,     // usually = table name
-            'itemid'    => $certrecordid,  // usually = ID of row in table
-            'filepath'  => $filepath,     // any path beginning and ending in /
-            'filename'  => $filename,    // any filename
-            'mimetype'  => 'application/pdf',    // any filename
-            'userid'    => $userid);
-
-        if ($fs->file_exists($contextid, $component, $filearea, $certrecordid, $filepath, $filename)) {
-
-        } else {
-            return false;
-        }
+            'contextid' => $context->id,
+            'component' => $component,
+            'filearea' => $filearea;
+            'itemid' => $trackid,
+            'filepath' => $filepath,
+            'filename' => $filename,
+        );
+        $fs->create_file_from_string($fileinfo, $content);
     }
 
     /**
      * Process (any) certificates in the course
      */
-    private static function record_certificates($courseid, $userid) {
+    private static function record_certificates($courseid, $userid, $trackid) {
         global $DB;
 
         // Get course.
@@ -99,14 +124,17 @@ class observer {
 
             // Find certificate issue record or create it (in cert lib.php)
             $certissue_function = CERTIFICATE . '_get_issue';
-            $certisue = $certissue_function($course, $user, $certificate, $cm);
+            $certissue = $certissue_function($course, $user, $certificate, $cm);
 
             // Filename
+            $certname = rtrim($iomadcertificate->name, '.');
+            $filename = clean_filename("$certname.pdf");
 
-            // Find existing stored certificate or create new one
-            find_stored_certificate($context->id, $certissue->id, $filename, $userid);
+            // Create the certificate content
+            $content = self::create_certificate($certificate, $user, $cm, $course, $certissue);
 
-            // Copy to local storage
+            // Store certificate
+            self::store_certificate($context->id, $filename, $user->id, $trackid, $certificate, $content);
 
             // Record all of above in local db table
         
@@ -122,17 +150,20 @@ class observer {
 
         // Get the relevant event date (course_completed event).
         $data = $event->get_data();
+        $userid = $data['relateduserid'];
+        $courseid = $data['courseid'];
+        $timecompleted = $data['timecreated'];
 
         // Record the completion event.
         $completion = new \StdClass();
-        $completion->courseid = $data['courseid'];
-        $completion->userid = $data['relateduserid'];
-        $completion->timecompleted = $data['timecreated'];
-        $DB->insert_record('local_iomad_track', $completion);
+        $completion->courseid = $courseid;
+        $completion->userid = $userid;
+        $completion->timecompleted = $timecompleted;
+        $trackid = $DB->insert_record('local_iomad_track', $completion);
 
         // Debug
-        mtrace('Iomad completion recorded for userid ' . $data['relateduserid'] . ' in courseid ' . $data['courseid']);
+        mtrace('Iomad completion recorded for userid ' . $userid . ' in courseid ' . $courseid);
 
-        self::record_certificates($data['courseid'], $data['relateduserid']);
+        self::record_certificates($courseid, $userid, $trackid);
     }
 }
