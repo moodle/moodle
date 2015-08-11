@@ -37,14 +37,21 @@ class observer {
     }
 
     /**
-     * Create a new certificate
+     * Create a new certificate using certificate module template
+     * @param object $certificate certificate instance
+     * @param object $user completing user
+     * @param object $cm course module (in completing course)
+     * @param object $course completing course
+     * @param object $certissue certificate issue instance
+     * @return string pdf content
      */
     private static function create_certificate($certificate, $user, $cm, $course, $certissue) {
+        global $CFG;
 
         // load pdf library
         require_once("$CFG->libdir/pdflib.php");
 
-        // some name changes
+        // some name changes (as used in cert template)
         $certuser = $user;
         $certificate_name = CERTIFICATE;
         $$certificate_name = $certificate;
@@ -65,11 +72,10 @@ class observer {
      * different names (which they should).
      * @param int $contextid Context (id) of completed course
      * @param string $filename Filename of original certificate issue
-     * @param int $userid userid of completing user
      * @param int $trackid id of completion in local_iomad_track table
      * @param string $content the pdf data
      */
-    private static function store_certificate($contextid, $filename, $userid, $trackid, $certificate, $content) {
+    private static function store_certificate($contextid, $filename, $trackid, $certificate, $content) {
 
         $fs = get_file_storage();
 
@@ -79,14 +85,28 @@ class observer {
         $filepath = '/';
 
         $fileinfo = array(
-            'contextid' => $context->id,
+            'contextid' => $contextid,
             'component' => $component,
-            'filearea' => $filearea;
+            'filearea' => $filearea,
             'itemid' => $trackid,
             'filepath' => $filepath,
             'filename' => $filename,
         );
         $fs->create_file_from_string($fileinfo, $content);
+    }
+
+    /**
+     * Record certificate in db table
+     * @param int $trackid id in local_iomad_track table
+     * @param string $filename of certificate
+     */
+    private static function save_certificate($trackid, $filename) {
+        global $DB;
+
+        $trackcert = new \stdClass();
+        $trackcert->trackid = $trackid;
+        $trackcert->filename = $filename;
+        $DB->insert_record('local_iomad_track_certs', $trackcert);
     }
 
     /**
@@ -99,7 +119,7 @@ class observer {
         $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
         // Get context
-        $context = context_course::instance($courseid);
+        $context = \context_course::instance($courseid);
 
         // Get user
         $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
@@ -118,6 +138,7 @@ class observer {
             $cm = $modinfo->get_cm($cm->id);
 
             // Uservisible determines if the user would have been able to access the certificate.
+            // If they can't see it (e.g. did not meet its completion requirements) then skip
             if (!$cm->uservisible) {
                 continue;
             }
@@ -126,18 +147,21 @@ class observer {
             $certissue_function = CERTIFICATE . '_get_issue';
             $certissue = $certissue_function($course, $user, $certificate, $cm);
 
-            // Filename
-            $certname = rtrim($iomadcertificate->name, '.');
+            // Generate correct filename (same as certificate mod's view.php does)
+            $certname = rtrim($certificate->name, '.');
             $filename = clean_filename("$certname.pdf");
 
-            // Create the certificate content
+            // Create the certificate content (always create new so it's up to date)
             $content = self::create_certificate($certificate, $user, $cm, $course, $certissue);
 
             // Store certificate
-            self::store_certificate($context->id, $filename, $user->id, $trackid, $certificate, $content);
+            self::store_certificate($context->id, $filename, $trackid, $certificate, $content);
 
             // Record all of above in local db table
-        
+            self::save_certificate($trackid, $filename);
+
+            // Debugging
+            mtrace('local_iomad_track: certificate recorded for ' . $user->username . ' in course ' . $courseid . ' filename "' . $filename . '"');
         }
     }
 
