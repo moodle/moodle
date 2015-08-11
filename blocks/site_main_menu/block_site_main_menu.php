@@ -73,8 +73,9 @@ class block_site_main_menu extends block_list {
                         $attrs['title'] = $cm->modfullname;
                         $attrs['class'] = $cm->extraclasses . ' activity-action';
                         if ($cm->onclick) {
-                            $attrs['id'] = html_writer::random_id('onclick');
-                            $OUTPUT->add_action_handler(new component_action('click', $cm->onclick), $attrs['id']);
+                            // Get on-click attribute value if specified and decode the onclick - it
+                            // has already been encoded for display.
+                            $attrs['onclick'] = htmlspecialchars_decode($cm->onclick);
                         }
                         if (!$cm->visible) {
                             $attrs['class'] .= ' dimmed';
@@ -161,8 +162,9 @@ class block_site_main_menu extends block_list {
                         $attrs['title'] = $mod->modfullname;
                         $attrs['class'] = $mod->extraclasses . ' activity-action';
                         if ($mod->onclick) {
-                            $attrs['id'] = html_writer::random_id('onclick');
-                            $OUTPUT->add_action_handler(new component_action('click', $mod->onclick), $attrs['id']);
+                            // Get on-click attribute value if specified and decode the onclick - it
+                            // has already been encoded for display.
+                            $attrs['onclick'] = htmlspecialchars_decode($mod->onclick);
                         }
                         if (!$mod->visible) {
                             $attrs['class'] .= ' dimmed';
