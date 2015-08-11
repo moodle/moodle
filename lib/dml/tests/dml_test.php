@@ -3870,6 +3870,11 @@ class core_dml_testcase extends database_driver_testcase {
         $records = $DB->get_records_sql($sql, array('aui'));
         $this->assertCount(1, $records);
 
+        // Test LIKE under unusual collations.
+        $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_like('name', '?', false, false);
+        $records = $DB->get_records_sql($sql, array("%dup_r%"));
+        $this->assertCount(2, $records);
+
         $sql = "SELECT * FROM {{$tablename}} WHERE ".$DB->sql_like('name', '?', true, true, true); // NOT LIKE.
         $records = $DB->get_records_sql($sql, array("%o%"));
         $this->assertCount(3, $records);
