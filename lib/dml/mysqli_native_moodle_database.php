@@ -1523,7 +1523,12 @@ class mysqli_native_moodle_database extends moodle_database {
             if ($accentsensitive) {
                 return "LOWER($fieldname) $LIKE LOWER($param) COLLATE utf8_bin ESCAPE '$escapechar'";
             } else {
-                return "$fieldname $LIKE $param ESCAPE '$escapechar'";
+                // Set a case sensitive collation if using utf8_bin.
+                if ($this->get_dbcollation() == 'utf8_bin') {
+                    return "$fieldname $LIKE $param COLLATE utf8_unicode_ci ESCAPE '$escapechar'";
+                } else {
+                    return "$fieldname $LIKE $param ESCAPE '$escapechar'";
+                }
             }
         }
     }
