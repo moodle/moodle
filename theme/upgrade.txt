@@ -6,6 +6,9 @@ information provided here is intended especially for theme designer.
 * The renderer function core_availability_renderer::multiple_messages was changed to
   render_core_availability_multiple_messages, requiring a parameter of the new
   \core_availability\multiple_messages type.
+* Meta description is now included in standard_head_html for homepage in bootstrapbase.
+  If your theme includes a meta description directly in a layout for the frontpage,
+  you will need to remove it or override the standard_head_html instead.
 
 === 2.9 ===
 
