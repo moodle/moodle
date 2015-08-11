@@ -125,7 +125,7 @@ Feature: View gradebook when single item scales are used
     Examples:
       | aggregation                         | contrib1 | cattotal1 | coursetotal1 | catavg | overallavg |
       | Mean of grades                      | 100.00 % | 100.00    | 100.00       | 100.00 | 100.00     |
-      | Weighted mean of grades             | 0.00 %   | 100.00    | -            | 100.00 | -          |
+      | Weighted mean of grades             | 0.00 %   | 100.00    | 100.00       | 100.00 | 100.00     |
       | Simple weighted mean of grades      | 0.00 %   | -         | -            | -      | -          |
       | Mean of grades (with extra credits) | 100.00 % | 100.00    | 100.00       | 100.00 | 100.00     |
       | Median of grades                    | 100.00 % | 100.00    | 100.00       | 100.00 | 100.00     |

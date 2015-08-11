@@ -2057,9 +2057,11 @@ class grade_category extends grade_object {
         unset($items); // not needed
         unset($cats); // not needed
 
-        $children_array = grade_category::_get_children_recursion($category);
-
-        ksort($children_array);
+        $children_array = array();
+        if (is_object($category)) {
+            $children_array = grade_category::_get_children_recursion($category);
+            ksort($children_array);
+        }
 
         return $children_array;
 
@@ -2428,32 +2430,35 @@ class grade_category extends grade_object {
     public static function set_properties(&$instance, $params) {
         global $DB;
 
+        $fromaggregation = $instance->aggregation;
+
         parent::set_properties($instance, $params);
 
-        //if they've changed aggregation type we made need to do some fiddling to provide appropriate defaults
-        if (!empty($params->aggregation)) {
+        // The aggregation method is changing and this category has already been saved.
+        if (isset($params->aggregation) && !empty($instance->id)) {
+            $achildwasdupdated = false;
 
-            //weight and extra credit share a column :( Would like a default of 1 for weight and 0 for extra credit
-            //Flip from the default of 0 to 1 (or vice versa) if ALL items in the category are still set to the old default.
-            if (self::aggregation_uses_aggregationcoef($params->aggregation)) {
-                $sql = $defaultaggregationcoef = null;
-
-                if (!self::aggregation_uses_extracredit($params->aggregation)) {
-                    //if all items in this category have aggregation coefficient of 0 we can change it to 1 ie evenly weighted
-                    $sql = "select count(id) from {grade_items} where categoryid=:categoryid and aggregationcoef!=0";
-                    $defaultaggregationcoef = 1;
-                } else {
-                    //if all items in this category have aggregation coefficient of 1 we can change it to 0 ie no extra credit
-                    $sql = "select count(id) from {grade_items} where categoryid=:categoryid and aggregationcoef!=1";
-                    $defaultaggregationcoef = 0;
+            // Get all its children.
+            $children = $instance->get_children();
+            foreach ($children as $child) {
+                $item = $child['object'];
+                if ($child['type'] == 'category') {
+                    $item = $item->load_grade_item();
                 }
 
-                $params = array('categoryid'=>$instance->id);
-                $count = $DB->count_records_sql($sql, $params);
-                if ($count===0) { //category is either empty or all items are set to a default value so we can switch defaults
-                    $params['aggregationcoef'] = $defaultaggregationcoef;
-                    $DB->execute("update {grade_items} set aggregationcoef=:aggregationcoef where categoryid=:categoryid",$params);
+                // Set the new aggregation fields.
+                if ($item->set_aggregation_fields_for_aggregation($fromaggregation, $params->aggregation)) {
+                    $item->update();
+                    $achildwasdupdated = true;
                 }
+            }
+
+            // If this is the course category, it is possible that its grade item was set as needsupdate
+            // by one of its children. If we keep a reference to that stale object we might cause the
+            // needsupdate flag to be lost. It's safer to just reload the grade_item from the database.
+            if ($achildwasdupdated && !empty($instance->grade_item) && $instance->is_course_category()) {
+                $instance->grade_item = null;
+                $instance->load_grade_item();
             }
         }
     }
@@ -2561,5 +2566,30 @@ class grade_category extends grade_object {
         $params = array(1, 'course', 'category');
         $sql = "UPDATE {grade_items} SET needsupdate=? WHERE itemtype=? or itemtype=?";
         $DB->execute($sql, $params);
+    }
+
+    /**
+     * Determine the default aggregation values for a given aggregation method.
+     *
+     * @param int $aggregationmethod The aggregation method constant value.
+     * @return array Containing the keys 'aggregationcoef', 'aggregationcoef2' and 'weightoverride'.
+     */
+    public static function get_default_aggregation_coefficient_values($aggregationmethod) {
+        $defaultcoefficients = array(
+            'aggregationcoef' => 0,
+            'aggregationcoef2' => 0,
+            'weightoverride' => 0
+        );
+
+        switch ($aggregationmethod) {
+            case GRADE_AGGREGATE_WEIGHTED_MEAN:
+                $defaultcoefficients['aggregationcoef'] = 1;
+                break;
+            case GRADE_AGGREGATE_SUM:
+                $defaultcoefficients['aggregationcoef2'] = 1;
+                break;
+        }
+
+        return $defaultcoefficients;
     }
 }

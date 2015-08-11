@@ -1329,9 +1329,12 @@ class grade_item extends grade_object {
      * Sets this item's categoryid. A generic method shared by objects that have a parent id of some kind.
      *
      * @param int $parentid The ID of the new parent
+     * @param bool $updateaggregationfields Whether or not to convert the aggregation fields when switching between category.
+     *                          Set this to false when the aggregation fields have been updated in prevision of the new
+     *                          category, typically when the item is freshly created.
      * @return bool True if success
      */
-    public function set_parent($parentid) {
+    public function set_parent($parentid, $updateaggregationfields = true) {
         if ($this->is_course_item() or $this->is_category_item()) {
             print_error('cannotsetparentforcatoritem');
         }
@@ -1345,11 +1348,10 @@ class grade_item extends grade_object {
             return false;
         }
 
-        // MDL-19407 If moving from a non-SWM category to a SWM category, convert aggregationcoef to 0
         $currentparent = $this->load_parent_category();
 
-        if ($currentparent->aggregation != GRADE_AGGREGATE_WEIGHTED_MEAN2 && $parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN2) {
-            $this->aggregationcoef = 0;
+        if ($updateaggregationfields) {
+            $this->set_aggregation_fields_for_aggregation($currentparent->aggregation, $parent_category->aggregation);
         }
 
         $this->force_regrading();
@@ -1359,6 +1361,61 @@ class grade_item extends grade_object {
         $this->parent_category =& $parent_category;
 
         return $this->update();
+    }
+
+    /**
+     * Update the aggregation fields when the aggregation changed.
+     *
+     * This method should always be called when the aggregation has changed, but also when
+     * the item was moved to another category, even it if uses the same aggregation method.
+     *
+     * Some values such as the weight only make sense within a category, once moved the
+     * values should be reset to let the user adapt them accordingly.
+     *
+     * Note that this method does not save the grade item.
+     * {@link grade_item::update()} has to be called manually after using this method.
+     *
+     * @param  int $from Aggregation method constant value.
+     * @param  int $to   Aggregation method constant value.
+     * @return boolean   True when at least one field was changed, false otherwise
+     */
+    public function set_aggregation_fields_for_aggregation($from, $to) {
+        $defaults = grade_category::get_default_aggregation_coefficient_values($to);
+
+        $origaggregationcoef = $this->aggregationcoef;
+        $origaggregationcoef2 = $this->aggregationcoef2;
+        $origweighoverride = $this->weightoverride;
+
+        if ($from == GRADE_AGGREGATE_SUM && $to == GRADE_AGGREGATE_SUM && $this->weightoverride) {
+            // Do nothing. We are switching from SUM to SUM and the weight is overriden,
+            // a teacher would not expect any change in this situation.
+
+        } else if ($from == GRADE_AGGREGATE_WEIGHTED_MEAN && $to == GRADE_AGGREGATE_WEIGHTED_MEAN) {
+            // Do nothing. The weights can be kept in this case.
+
+        } else if (in_array($from, array(GRADE_AGGREGATE_SUM,  GRADE_AGGREGATE_EXTRACREDIT_MEAN, GRADE_AGGREGATE_WEIGHTED_MEAN2))
+                && in_array($to, array(GRADE_AGGREGATE_SUM,  GRADE_AGGREGATE_EXTRACREDIT_MEAN, GRADE_AGGREGATE_WEIGHTED_MEAN2))) {
+
+            // Reset all but the the extra credit field.
+            $this->aggregationcoef2 = $defaults['aggregationcoef2'];
+            $this->weightoverride = $defaults['weightoverride'];
+
+            if ($to != GRADE_AGGREGATE_EXTRACREDIT_MEAN) {
+                // Normalise extra credit, except for 'Mean with extra credit' which supports higher values than 1.
+                $this->aggregationcoef = min(1, $this->aggregationcoef);
+            }
+        } else {
+            // Reset all.
+            $this->aggregationcoef = $defaults['aggregationcoef'];
+            $this->aggregationcoef2 = $defaults['aggregationcoef2'];
+            $this->weightoverride = $defaults['weightoverride'];
+        }
+
+        $acoefdiff       = grade_floats_different($origaggregationcoef, $this->aggregationcoef);
+        $acoefdiff2      = grade_floats_different($origaggregationcoef2, $this->aggregationcoef2);
+        $weightoverride  = grade_floats_different($origweighoverride, $this->weightoverride);
+
+        return $acoefdiff || $acoefdiff2 || $weightoverride;
     }
 
     /**
