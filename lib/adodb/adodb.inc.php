@@ -3502,8 +3502,7 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 					$key = $o->name;
 					break;
 			}
-			$val = $this->fetchMode == ADODB_FETCH_ASSOC ? $o->name : $i;
-			$this->bind[$key] = $val;
+			$this->bind[$key] = $i;
 		}
 	}
 
