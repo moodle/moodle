@@ -159,7 +159,7 @@ Feature: View gradebook when scales are used
     Examples:
       | aggregation                         | coursetotal1 | coursetotal2 | coursetotal3 | coursetotal4 | coursetotal5 |overallavg | courseperc2 | courseperc3 | contrib2 | contrib3 |
       | Mean of grades                      | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
-      | Weighted mean of grades             | -            | -            | -            | -            | -            | -         | -           | -           | 0.00 %   | 0.00 %   |
+      | Weighted mean of grades             | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
       | Simple weighted mean of grades      | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
       | Mean of grades (with extra credits) | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
       | Median of grades                    | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |

@@ -110,13 +110,19 @@ if ($mform->is_cancelled()) {
     redirect($returnurl);
 
 } else if ($data = $mform->get_data(false)) {
-    // If unset, give the aggregationcoef a default based on parent aggregation method
+
+    // This is a new item, and the category chosen is different than the default category.
+    if (empty($grade_item->id) && isset($data->parentcategory) && $parent_category->id != $data->parentcategory) {
+        $parent_category = grade_category::fetch(array('id' => $data->parentcategory));
+    }
+
+    // If unset, give the aggregation values a default based on parent aggregation method.
+    $defaults = grade_category::get_default_aggregation_coefficient_values($parent_category->aggregation);
     if (!isset($data->aggregationcoef) || $data->aggregationcoef == '') {
-        if ($parent_category->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-            $data->aggregationcoef = 1;
-        } else {
-            $data->aggregationcoef = 0;
-        }
+        $data->aggregationcoef = $defaults['aggregationcoef'];
+    }
+    if (!isset($data->weightoverride)) {
+        $data->weightoverride = $defaults['weightoverride'];
     }
 
     if (!isset($data->gradepass) || $data->gradepass == '') {
@@ -145,6 +151,8 @@ if ($mform->is_cancelled()) {
     }
     if (isset($data->aggregationcoef2) && $parent_category->aggregation == GRADE_AGGREGATE_SUM) {
         $data->aggregationcoef2 = $data->aggregationcoef2 / 100.0;
+    } else {
+        $data->aggregationcoef2 = $defaults['aggregationcoef2'];
     }
 
     $grade_item = new grade_item(array('id'=>$id, 'courseid'=>$courseid));
@@ -162,7 +170,7 @@ if ($mform->is_cancelled()) {
 
         // set parent if needed
         if (isset($data->parentcategory)) {
-            $grade_item->set_parent($data->parentcategory, 'gradebook');
+            $grade_item->set_parent($data->parentcategory, false);
         }
 
     } else {
