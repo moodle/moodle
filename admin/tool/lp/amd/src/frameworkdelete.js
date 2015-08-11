@@ -24,6 +24,9 @@
 define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'], function($, templates, ajax, notification, str) {
     // Private variables and functions.
 
+    /** @var {Number} pagecontextid The id of the context */
+    var pagecontextid = 0;
+
     /** @var {Number} frameworkid The id of the framework */
     var frameworkid = 0;
 
@@ -60,7 +63,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
             args: { id: frameworkid }
         }, {
             methodname: 'tool_lp_data_for_competency_frameworks_manage_page',
-            args: []
+            args: { pagecontextid: pagecontextid }
         }]);
         requests[1].done(reloadList).fail(notification.exception);
     };
@@ -108,6 +111,15 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
          * @method deleteHandler
          * @param {Event} e
          */
-        deleteHandler: confirmDelete
+        deleteHandler: confirmDelete,
+
+        /**
+         * Initialise the module.
+         * @method init
+         * @param {Number} contextid The context id of the page.
+         */
+        init: function(contextid) {
+            pagecontextid = contextid;
+        }
     };
 });

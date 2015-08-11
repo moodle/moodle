@@ -89,7 +89,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_create_competency_frameworks_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
         $this->setUser($this->user);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
     }
 
     /**
@@ -97,7 +98,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_create_competency_frameworks_with_manage_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
 
         $this->assertGreaterThan(0, $result->timecreated);
@@ -116,7 +118,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_create_competency_frameworks_with_nasty_data() {
         $this->setUser($this->creator);
         $this->setExpectedException('invalid_parameter_exception');
-        $result = external::create_competency_framework('short<a href="">', 'id;"number', 'de<>\\..scription', FORMAT_HTML, true);
+        $result = external::create_competency_framework('short<a href="">', 'id;"number', 'de<>\\..scription', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
     }
 
     /**
@@ -124,7 +127,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_read_competency_frameworks_with_manage_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
 
         $id = $result->id;
@@ -146,7 +150,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_read_competency_frameworks_with_read_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
 
         // Switch users to someone with less permissions.
@@ -170,7 +175,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_delete_competency_frameworks_with_manage_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
 
         $id = $result->id;
@@ -186,7 +192,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_delete_competency_frameworks_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
 
         $id = $result->id;
@@ -200,7 +207,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_update_competency_frameworks_with_manage_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
 
         $result = external::update_competency_framework($result->id, 'shortname2',
@@ -216,7 +224,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_update_competency_frameworks_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
 
         $this->setUser($this->user);
@@ -229,16 +238,20 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_list_and_count_competency_frameworks_with_manage_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
-        $result = external::create_competency_framework('shortname2', 'idnumber2', 'description', FORMAT_HTML, true);
-        $result = external::create_competency_framework('shortname3', 'idnumber3', 'description', FORMAT_HTML, true);
+        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
+        $result = external::create_competency_framework('shortname2', 'idnumber2', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
+        $result = external::create_competency_framework('shortname3', 'idnumber3', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
 
         $result = external::count_competency_frameworks(array());
         $result = external_api::clean_returnvalue(external::count_competency_frameworks_returns(), $result);
 
         $this->assertEquals($result, 3);
 
-        $result = external::list_competency_frameworks(array(), 'shortname', 'ASC', 0, 10);
+        $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
+            array('contextid' => context_system::instance()->id), 'self');
         $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
 
         $this->assertEquals(count($result), 3);
@@ -259,9 +272,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_list_and_count_competency_frameworks_with_read_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
-        $result = external::create_competency_framework('shortname2', 'idnumber2', 'description', FORMAT_HTML, true);
-        $result = external::create_competency_framework('shortname3', 'idnumber3', 'description', FORMAT_HTML, true);
+        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
+        $result = external::create_competency_framework('shortname2', 'idnumber2', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
+        $result = external::create_competency_framework('shortname3', 'idnumber3', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
 
         $this->setUser($this->user);
         $result = external::count_competency_frameworks(array());
@@ -269,7 +285,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $this->assertEquals($result, 3);
 
-        $result = external::list_competency_frameworks(array(), 'shortname', 'ASC', 0, 10);
+        $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
+            array('contextid' => context_system::instance()->id), 'self');
         $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
 
         $this->assertEquals(count($result), 3);
@@ -286,66 +303,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test we can re-order competency frameworks.
-     */
-    public function test_reorder_competency_framework() {
-        $this->setUser($this->creator);
-        $f1 = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
-        $f2 = external::create_competency_framework('shortname2', 'idnumber2', 'description', FORMAT_HTML, true);
-        $f3 = external::create_competency_framework('shortname3', 'idnumber3', 'description', FORMAT_HTML, true);
-        $f4 = external::create_competency_framework('shortname4', 'idnumber4', 'description', FORMAT_HTML, true);
-        $f5 = external::create_competency_framework('shortname5', 'idnumber5', 'description', FORMAT_HTML, true);
-        $f6 = external::create_competency_framework('shortname6', 'idnumber6', 'description', FORMAT_HTML, true);
-
-        // This is a move up.
-        $result = external::reorder_competency_framework($f5->id, $f2->id);
-        $result = external::list_competency_frameworks(array(), 'sortorder', 'ASC', 0, 10);
-        $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
-
-        $r1 = (object) $result[0];
-        $r2 = (object) $result[1];
-        $r3 = (object) $result[2];
-        $r4 = (object) $result[3];
-        $r5 = (object) $result[4];
-        $r6 = (object) $result[5];
-
-        $this->assertEquals($f1->id, $r1->id);
-        $this->assertEquals($f5->id, $r2->id);
-        $this->assertEquals($f2->id, $r3->id);
-        $this->assertEquals($f3->id, $r4->id);
-        $this->assertEquals($f4->id, $r5->id);
-        $this->assertEquals($f6->id, $r6->id);
-
-        // This is a move down.
-        $result = external::reorder_competency_framework($f5->id, $f4->id);
-        $result = external::list_competency_frameworks(array(), 'sortorder', 'ASC', 0, 10);
-        $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
-
-        $r1 = (object) $result[0];
-        $r2 = (object) $result[1];
-        $r3 = (object) $result[2];
-        $r4 = (object) $result[3];
-        $r5 = (object) $result[4];
-        $r6 = (object) $result[5];
-
-        $this->assertEquals($f1->id, $r1->id);
-        $this->assertEquals($f2->id, $r2->id);
-        $this->assertEquals($f3->id, $r3->id);
-        $this->assertEquals($f4->id, $r4->id);
-        $this->assertEquals($f5->id, $r5->id);
-        $this->assertEquals($f6->id, $r6->id);
-
-        $this->setExpectedException('required_capability_exception');
-        $this->setUser($this->user);
-        $result = external::reorder_competency_framework($f5->id, $f4->id);
-    }
-
-    /**
      * Test we can't create a competency with only read permissions.
      */
     public function test_create_competency_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $this->setUser($this->user);
         $competency = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
@@ -356,7 +319,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_create_competency_with_manage_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
 
         $competency = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
@@ -379,7 +343,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_create_competency_with_nasty_data() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $this->setExpectedException('invalid_parameter_exception');
         $competency = external::create_competency('shortname<a href="">', 'id;"number',
@@ -391,7 +356,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_read_competencies_with_manage_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
         $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
@@ -417,7 +383,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_read_competencies_with_read_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
         $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
@@ -445,7 +412,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_delete_competency_with_manage_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
         $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
@@ -463,7 +431,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_delete_competency_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
         $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
@@ -479,7 +448,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_update_competency_with_manage_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
         $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
@@ -496,7 +466,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_update_competency_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
         $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
@@ -510,7 +481,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_list_and_count_competencies_with_manage_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
         $result = external::create_competency('shortname2', 'idnumber2', 'description2', FORMAT_HTML, true, $framework->id, 0);
@@ -521,7 +493,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $this->assertEquals($result, 3);
 
-        $result = external::list_competencies(array(), 'shortname', 'ASC', 0, 10);
+        array('id' => $result = external::list_competencies(array(), 'shortname', 'ASC', 0, 10, context_system::instance()->id));
         $result = external_api::clean_returnvalue(external::list_competencies_returns(), $result);
 
         $this->assertEquals(count($result), 3);
@@ -541,7 +513,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_list_and_count_competencies_with_read_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
         $result = external::create_competency('shortname2', 'idnumber2', 'description2', FORMAT_HTML, true, $framework->id, 0);
@@ -554,7 +527,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $this->assertEquals($result, 3);
 
-        $result = external::list_competencies(array(), 'shortname', 'ASC', 0, 10);
+        array('id' => $result = external::list_competencies(array(), 'shortname', 'ASC', 0, 10, context_system::instance()->id));
         $result = external_api::clean_returnvalue(external::list_competencies_returns(), $result);
 
         $this->assertEquals(count($result), 3);
@@ -574,7 +547,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_search_competencies_with_read_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
         $result = external::create_competency('shortname2', 'idnumber2', 'description2', FORMAT_HTML, true, $framework->id, 0);
@@ -783,7 +757,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
         // Create a competency.
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $competency = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
         $competency = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency);
@@ -817,7 +792,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
         // Create a competency.
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
         $competency = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
         $competency = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency);
@@ -860,7 +836,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
         // Create a competency framework.
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true,
+            array('contextid' => context_system::instance()->id));
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
 
         // Create multiple competencies.

@@ -47,7 +47,8 @@ class competency_framework extends moodleform {
         global $PAGE;
 
         $mform = $this->_form;
-        $id = $this->_customdata;
+        $id = $this->_customdata['id'];
+        $context = $this->_customdata['context'];
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -80,6 +81,9 @@ class competency_framework extends moodleform {
                            get_string('visible', 'tool_lp'));
         $mform->setDefault('visible', true);
         $mform->addHelpButton('visible', 'visible', 'tool_lp');
+
+        $mform->addElement('static', 'context', get_string('context', 'core_role'));
+        $mform->setDefault('context', $context->get_context_name());
 
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
 

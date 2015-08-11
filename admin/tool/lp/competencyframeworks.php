@@ -25,12 +25,21 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('toollpcompetencies');
+$pagecontextid = required_param('pagecontextid', PARAM_INT);
+$context = context::instance_by_id($pagecontextid);
+
+$url = new moodle_url("/admin/tool/lp/competencyframeworks.php");
+$url->param('pagecontextid', $pagecontextid);
+
+require_login();
+require_capability('tool/lp:competencymanage', $context);
 
 $title = get_string('competencies', 'tool_lp');
 $pagetitle = get_string('competencyframeworks', 'tool_lp');
+
 // Set up the page.
-$url = new moodle_url("/admin/tool/lp/competencyframeworks.php");
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('admin');
 $PAGE->set_url($url);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
@@ -38,7 +47,7 @@ $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($pagetitle);
 
-$page = new \tool_lp\output\manage_competency_frameworks_page();
+$page = new \tool_lp\output\manage_competency_frameworks_page($context);
 echo $output->render($page);
 
 echo $output->footer();

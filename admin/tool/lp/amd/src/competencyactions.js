@@ -40,6 +40,8 @@ define(['jquery',
     var moveSource = null;
     /** @var {Node} moveTarget - The end of a drag operation */
     var moveTarget = null;
+    /** @var {Number} pageContextId The page context ID. */
+    var pageContextId;
 
     /**
      * Respond to choosing the "Add" menu item for the selected node in the tree.
@@ -49,7 +51,8 @@ define(['jquery',
         var parent = $('[data-region="competencyactions"]').data('competency');
 
         var params = {
-            competencyframeworkid : treeModel.getCompetencyFrameworkId()
+            competencyframeworkid : treeModel.getCompetencyFrameworkId(),
+            pagecontextid: pageContextId
         };
 
         if (parent !== null) {
@@ -198,7 +201,8 @@ define(['jquery',
         var params = {
             competencyframeworkid : treeModel.getCompetencyFrameworkId(),
             id : competency.id,
-            parentid: competency.parentid
+            parentid: competency.parentid,
+            pagecontextid: pageContextId
         };
 
         var queryparams = $.param(params);
@@ -400,9 +404,11 @@ define(['jquery',
          *
          * @method init
          * @param {Object} model The tree model provides some useful functions for loading and searching competencies.
+         * @param {Number} pagectxid The page context ID.
          */
-        init: function(model) {
+        init: function(model, pagectxid) {
             treeModel = model;
+            pageContextId = pagectxid;
 
             $('[data-region="competencyactions"]').on('click', addHandler);
 

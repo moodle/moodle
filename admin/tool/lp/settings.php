@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 $temp = new admin_externalpage(
     'toollpcompetencies',
     get_string('competencyframeworks', 'tool_lp'),
-    new moodle_url('/admin/tool/lp/competencyframeworks.php'),
+    new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => context_system::instance()->id)),
     'tool/lp:competencymanage'
 );
 $ADMIN->add('root', $temp, 'badges');

@@ -37,13 +37,20 @@ define(['jquery',
      * @param {Number} itemid
      * @param {String} itemtype
      */
-    var competencies = function(itemid, itemtype) {
+    var competencies = function(itemid, itemtype, pagectxid) {
         this.itemid = itemid;
         this.itemtype = itemtype;
+        this.pageContextId = pagectxid;
         this.selectedCompetency = 0;
         var localthis = this;
         var loadframeworks = ajax.call([
-            { methodname: 'tool_lp_list_competency_frameworks', args: { filters: {}, sort: 'sortorder' } }
+            { methodname: 'tool_lp_list_competency_frameworks', args: {
+                sort: 'shortname',
+                context: {
+                    contextid: this.pageContextId,
+                },
+                includes: 'parents'
+            }}
         ]);
 
         loadframeworks[0].done(function(frameworks) {

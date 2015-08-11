@@ -26,6 +26,7 @@ namespace tool_lp;
 require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->libdir/grade/grade_scale.php");
 
+use context;
 use external_api;
 use external_function_parameters;
 use external_value;
@@ -88,6 +89,36 @@ class external extends external_api {
             'limit' => $limit
         );
         return new external_function_parameters($params);
+    }
+
+    /**
+     * Returns a prepared structure to use a context parameters.
+     * @return external_single_structure
+     */
+    protected static function get_context_parameters() {
+        $id = new external_value(
+            PARAM_INT,
+            'Context ID. Either use this value, or level and instanceid.',
+            VALUE_DEFAULT,
+            0
+        );
+        $level = new external_value(
+            PARAM_ALPHA,
+            'Context level. To be used with instanceid.',
+            VALUE_DEFAULT,
+            ''
+        );
+        $instanceid = new external_value(
+            PARAM_INT,
+            'Context instance ID. To be used with level',
+            VALUE_DEFAULT,
+            0
+        );
+        return new external_single_structure(array(
+            'contextid' => $id,
+            'contextlevel' => $level,
+            'instanceid' => $instanceid,
+        ));
     }
 
     /**
@@ -216,6 +247,7 @@ class external extends external_api {
             'description' => $description,
             'descriptionformat' => $descriptionformat,
             'visible' => $visible,
+            'context' => self::get_context_parameters(),
         );
         return new external_function_parameters($params);
     }
@@ -238,7 +270,8 @@ class external extends external_api {
      * @param bool $visible Is this framework visible.
      * @return \stdClass The new record
      */
-    public static function create_competency_framework($shortname, $idnumber, $description, $descriptionformat, $visible) {
+    public static function create_competency_framework($shortname, $idnumber, $description, $descriptionformat, $visible,
+            $context) {
         $params = self::validate_parameters(self::create_competency_framework_parameters(),
                                             array(
                                                 'shortname' => $shortname,
@@ -246,10 +279,17 @@ class external extends external_api {
                                                 'description' => $description,
                                                 'descriptionformat' => $descriptionformat,
                                                 'visible' => $visible,
+                                                'context' => $context,
                                             ));
 
-        $params = (object) $params;
 
+        $context = self::get_context_from_params($params['context']);
+        self::validate_context($context);
+
+        unset($params['context']);
+        $params['contextid'] = $context->id;
+
+        $params = (object) $params;
         $result = api::create_framework($params);
         return $result->to_record();
     }
@@ -466,7 +506,46 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function list_competency_frameworks_parameters() {
-        return self::list_parameters_structure();
+        $sort = new external_value(
+            PARAM_ALPHANUMEXT,
+            'Column to sort by.',
+            VALUE_DEFAULT,
+            ''
+        );
+        $order = new external_value(
+            PARAM_ALPHA,
+            'Sort direction. Should be either ASC or DESC',
+            VALUE_DEFAULT,
+            ''
+        );
+        $skip = new external_value(
+            PARAM_INT,
+            'Skip this number of records before returning results',
+            VALUE_DEFAULT,
+            0
+        );
+        $limit = new external_value(
+            PARAM_INT,
+            'Return this number of records at most.',
+            VALUE_DEFAULT,
+            0
+        );
+        $includes = new external_value(
+            PARAM_ALPHA,
+            'What other contextes to fetch the frameworks from. (children, parents, self)',
+            VALUE_DEFAULT,
+            'children'
+        );
+
+        $params = array(
+            'sort' => $sort,
+            'order' => $order,
+            'skip' => $skip,
+            'limit' => $limit,
+            'context' => self::get_context_parameters(),
+            'includes' => $includes
+        );
+        return new external_function_parameters($params);
     }
 
     /**
@@ -485,39 +564,37 @@ class external extends external_api {
      * @param string $order
      * @param string $skip
      * @param int $limit
+     * @param array $context
+     * @param bool $includes
      *
      * @return array
      * @throws \required_capability_exception
      * @throws invalid_parameter_exception
      */
-    public static function list_competency_frameworks($filters, $sort, $order, $skip, $limit) {
+    public static function list_competency_frameworks($sort, $order, $skip, $limit, $context, $includes) {
         $params = self::validate_parameters(self::list_competency_frameworks_parameters(),
                                             array(
-                                                'filters' => $filters,
                                                 'sort' => $sort,
                                                 'order' => $order,
                                                 'skip' => $skip,
-                                                'limit' => $limit
+                                                'limit' => $limit,
+                                                'context' => $context,
+                                                'includes' => $includes
                                             ));
+
+        $context = self::get_context_from_params($params['context']);
+        self::validate_context($context);
 
         if ($params['order'] !== '' && $params['order'] !== 'ASC' && $params['order'] !== 'DESC') {
             throw new invalid_parameter_exception('Invalid order param. Must be ASC, DESC or empty.');
         }
 
-        $safefilters = array();
-        $validcolumns = array('id', 'shortname', 'description', 'sortorder', 'idnumber', 'visible');
-        foreach ($params['filters'] as $filter) {
-            if (!in_array($filter->column, $validcolumns)) {
-                throw new invalid_parameter_exception('Filter column was invalid');
-            }
-            $safefilters[$filter->column] = $filter->value;
-        }
-
-        $results = api::list_frameworks($safefilters,
-                                               $params['sort'],
-                                               $params['order'],
-                                               $params['skip'],
-                                               $params['limit']);
+        $results = api::list_frameworks($params['sort'],
+                                       $params['order'],
+                                       $params['skip'],
+                                       $params['limit'],
+                                       $context,
+                                       $params['includes']);
         $records = array();
         foreach ($results as $result) {
             $record = $result->to_record();
@@ -601,8 +678,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function data_for_competency_frameworks_manage_page_parameters() {
-        // No params required.
-        $params = array();
+        $params = array('pagecontext' => self::get_context_parameters());
         return new external_function_parameters($params);
     }
 
@@ -619,10 +695,19 @@ class external extends external_api {
      *
      * @return boolean
      */
-    public static function data_for_competency_frameworks_manage_page() {
+    public static function data_for_competency_frameworks_manage_page($pagecontext) {
         global $PAGE;
 
-        $renderable = new output\manage_competency_frameworks_page();
+        $params = self::validate_parameters(
+            self::data_for_competency_frameworks_manage_page_parameters(),
+            array(
+                'pagecontext' => $pagecontext
+            )
+        );
+        $context = self::get_context_from_params($params['pagecontext']);
+        self::validate_context($context);
+
+        $renderable = new output\manage_competency_frameworks_page($context);
         $renderer = $PAGE->get_renderer('tool_lp');
 
         $data = $renderable->export_for_template($renderer);
@@ -647,62 +732,6 @@ class external extends external_api {
             )
         ));
 
-    }
-
-    /**
-     * Move a competency framework and adjust sort order of all affected.
-     *
-     * @return \external_function_parameters
-     */
-    public static function reorder_competency_framework_parameters() {
-        $from = new external_value(
-            PARAM_INT,
-            'Framework id to reorder.',
-            VALUE_REQUIRED
-        );
-        $to = new external_value(
-            PARAM_INT,
-            'Framework id to move to.',
-            VALUE_REQUIRED
-        );
-        $params = array(
-            'from' => $from,
-            'to' => $to
-        );
-        return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function reorder_competency_framework_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
-     * Move this competency_framework to a new relative sort order.
-     *
-     * @param int $from
-     * @param int $to
-     * @return boolean
-     */
-    public static function reorder_competency_framework($from, $to) {
-        $params = self::validate_parameters(self::reorder_competency_framework_parameters(),
-                                            array(
-                                                'from' => $from,
-                                                'to' => $to
-                                            ));
-        return api::reorder_framework($params['from'], $params['to']);
-    }
-
-    /**
-     * Returns description of reorder_competency_framework return value.
-     *
-     * @return \external_description
-     */
-    public static function reorder_competency_framework_returns() {
-        return new external_value(PARAM_BOOL, 'True if this framework was moved.');
     }
 
     /**
@@ -1342,7 +1371,7 @@ class external extends external_api {
 
         $framework = new competency_framework($params['competencyframeworkid']);
 
-        $renderable = new output\manage_competencies_page($framework, $params['search']);
+        $renderable = new output\manage_competencies_page($framework, $params['search'], $framework->get_context());
         $renderer = $PAGE->get_renderer('tool_lp');
 
         $data = $renderable->export_for_template($renderer);

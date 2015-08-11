@@ -107,7 +107,7 @@ require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions' ]
 
     treeModel.init({{framework.id}});
 
-    actions.init(treeModel);
+    actions.init(treeModel, {{pagecontextid}});
 
     var competencytree = new ariatree('[data-enhance=tree]', actions.selectionChanged);
 

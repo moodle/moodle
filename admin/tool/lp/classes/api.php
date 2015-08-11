@@ -24,6 +24,8 @@
 namespace tool_lp;
 
 use stdClass;
+use context;
+use context_helper;
 use context_system;
 use context_course;
 use context_user;
@@ -47,11 +49,12 @@ class api {
      * @return competency
      */
     public static function create_competency(stdClass $record) {
+        $competency = new competency(0, $record);
+
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', context_system::instance());
+        require_capability('tool/lp:competencymanage', $competency->get_framework()->get_context());
 
         // OK - all set.
-        $competency = new competency(0, $record);
         $id = $competency->create();
         return $competency;
     }
@@ -65,11 +68,12 @@ class api {
      * @return boolean
      */
     public static function delete_competency($id) {
+        $competency = new competency($id);
+
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', context_system::instance());
+        require_capability('tool/lp:competencymanage', $competency->get_framework()->get_context());
 
         // OK - all set.
-        $competency = new competency();
         $competency->set_id($id);
         return $competency->delete();
     }
@@ -83,11 +87,10 @@ class api {
      * @return boolean
      */
     public static function move_down_competency($id) {
-        // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', context_system::instance());
-
-        // Check the current one too.
         $current = new competency($id);
+
+        // First we do a permissions check.
+        require_capability('tool/lp:competencymanage', $current->get_framework()->get_context());
 
         $max = self::count_competencies(array('parentid' => $current->get_parentid(),
                                              'competencyframeworkid' => $current->get_competencyframeworkid()));
@@ -124,11 +127,10 @@ class api {
      * @return boolean
      */
     public static function move_up_competency($id) {
-        // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', context_system::instance());
-
-        // Check the current one too.
         $current = new competency($id);
+
+        // First we do a permissions check.
+        require_capability('tool/lp:competencymanage', $current->get_framework()->get_context());
 
         $sortorder = $current->get_sortorder();
         if ($sortorder == 0) {
@@ -161,13 +163,14 @@ class api {
      * @return boolean
      */
     public static function set_parent_competency($id, $newparentid) {
+        $current = new competency($id);
+
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', context_system::instance());
+        require_capability('tool/lp:competencymanage', $current->get_framework()->get_context());
 
         // This will throw an exception if the parent does not exist.
 
         // Check the current one too.
-        $current = new competency($id);
         $parentframeworkid = $current->get_competencyframeworkid();
         $parentpath = '/0/';
         if ($newparentid) {
@@ -211,17 +214,20 @@ class api {
      * @return boolean
      */
     public static function update_competency($record) {
+        $current = new competency($record->id);
+
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', context_system::instance());
+        require_capability('tool/lp:competencymanage', $current->get_framework()->get_context());
 
         // Some things should not be changed in an update - they should use a more specific method.
-        $current = new competency($record->id);
         $record->sortorder = $current->get_sortorder();
         $record->parentid = $current->get_parentid();
         $record->competencyframeworkid = $current->get_competencyframeworkid();
 
-        // OK - all set.
         $competency = new competency(0, $record);
+        require_capability('tool/lp:competencymanage', $competency->get_framework()->get_context());
+
+        // OK - all set.
         return $competency->update();
     }
 
@@ -234,14 +240,16 @@ class api {
      * @return stdClass
      */
     public static function read_competency($id) {
+        $competency = new competency($id);
+
         // First we do a permissions check.
-        $context = context_system::instance();
+        $context = $competency->get_framework()->get_context();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
              throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
 
         // OK - all set.
-        return new competency($id);
+        return $competency;
     }
 
     /**
@@ -254,8 +262,10 @@ class api {
      * @return array of competencies
      */
     public static function search_competencies($textsearch, $competencyframeworkid) {
+        $framework = new competency_framework($competencyframeworkid);
+
         // First we do a permissions check.
-        $context = context_system::instance();
+        $context = $framework->get_context();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
              throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
@@ -268,7 +278,7 @@ class api {
     /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
-     * Requires tool/lp:competencyread capability at the system context.
+     * Requires tool/lp:competencyread capability at some context.
      *
      * @param array $filters A list of filters to apply to the list.
      * @param string $sort The column to sort on
@@ -278,8 +288,14 @@ class api {
      * @return array of competencies
      */
     public static function list_competencies($filters, $sort = '', $order = 'ASC', $skip = 0, $limit = 0) {
+        if (!isset($filters['competencyframeworkid'])) {
+            $context = context_system::instance();
+        } else {
+            $framework = new competency_framework($filters['competencyframeworkid']);
+            $context = $framework->get_context();
+        }
+
         // First we do a permissions check.
-        $context = context_system::instance();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
              throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
@@ -292,14 +308,20 @@ class api {
     /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
-     * Requires tool/lp:competencyread capability at the system context.
+     * Requires tool/lp:competencyread capability at some context.
      *
      * @param array $filters A list of filters to apply to the list.
      * @return int
      */
     public static function count_competencies($filters) {
+        if (!isset($filters['competencyframeworkid'])) {
+            $context = context_system::instance();
+        } else {
+            $framework = new competency_framework($filters['competencyframeworkid']);
+            $context = $framework->get_context();
+        }
+
         // First we do a permissions check.
-        $context = context_system::instance();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
              throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
@@ -318,11 +340,8 @@ class api {
      * @return competency_framework
      */
     public static function create_framework(stdClass $record) {
-        // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', context_system::instance());
-
-        // OK - all set.
         $framework = new competency_framework(0, $record);
+        require_capability('tool/lp:competencymanage', $framework->get_context());
         $id = $framework->create();
         return $framework;
     }
@@ -336,12 +355,8 @@ class api {
      * @return boolean
      */
     public static function delete_framework($id) {
-        // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', context_system::instance());
-
-        // OK - all set.
-        $framework = new competency_framework();
-        $framework->set_id($id);
+        $framework = new competency_framework($id);
+        require_capability('tool/lp:competencymanage', $framework->get_context());
         return $framework->delete();
     }
 
@@ -354,11 +369,13 @@ class api {
      * @return boolean
      */
     public static function update_framework($record) {
-        // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', context_system::instance());
-
-        // OK - all set.
-        $framework = new competency_framework(0, $record);
+        $framework = new competency_framework($record->id);
+        // Check the permissions before update.
+        require_capability('tool/lp:competencymanage', $framework->get_context());
+        if (isset($record->contextid) && $record->contextid != $framework->get_contextid()) {
+            throw new coding_exception('Changing the context of an existing framework is forbidden.');
+        }
+        $framework->from_record($record);
         return $framework->update();
     }
 
@@ -371,51 +388,11 @@ class api {
      * @return competency_framework
      */
     public static function read_framework($id) {
-        // First we do a permissions check.
-        $context = context_system::instance();
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
+        $framework = new competency_framework($id);
+        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $framework->get_context())) {
+             throw new required_capability_exception($framework->get_context(), 'tool/lp:competencyread', 'nopermissions', '');
         }
-
-        // OK - all set.
-        return new competency_framework($id);
-    }
-
-    /**
-     * Move the competency framework up or down in the display list.
-     *
-     * Requires tool/lp:competencymanage capability at the system context.
-     *
-     * @param int $frameworkidfrom The framework we are moving.
-     * @param int $frameworkidto Where we are moving to. If moving down, it will go after this framework,
-     *                           If moving up, it will go before this framework.
-     * @return boolean
-     */
-    public static function reorder_framework($frameworkidfrom, $frameworkidto) {
-        require_capability('tool/lp:competencymanage', context_system::instance());
-        $down = true;
-        $frameworkfrom = new competency_framework($frameworkidfrom);
-        $frameworkto = new competency_framework($frameworkidto);
-
-        $all = self::list_frameworks(array(), 'sortorder', 'ASC', 0, 0);
-
-        if ($frameworkfrom->get_sortorder() > $frameworkto->get_sortorder()) {
-            // We are moving down, so put it after the "to" item.
-            $down = false;
-        }
-
-        foreach ($all as $id => $framework) {
-            $sort = $framework->get_sortorder();
-            if ($down && $sort > $frameworkfrom->get_sortorder() && $sort <= $frameworkto->get_sortorder()) {
-                $framework->set_sortorder($framework->get_sortorder() - 1);
-                $framework->update();
-            } else if (!$down && $sort >= $frameworkto->get_sortorder() && $sort < $frameworkfrom->get_sortorder()) {
-                $framework->set_sortorder($framework->get_sortorder() + 1);
-                $framework->update();
-            }
-        }
-        $frameworkfrom->set_sortorder($frameworkto->get_sortorder());
-        return $frameworkfrom->update();
+        return $framework;
     }
 
     /**
@@ -423,23 +400,62 @@ class api {
      *
      * Requires tool/lp:competencyread capability at the system context.
      *
-     * @param array $filters A list of filters to apply to the list.
      * @param string $sort The column to sort on
      * @param string $order ('ASC' or 'DESC')
      * @param int $skip Number of records to skip (pagination)
      * @param int $limit Max of records to return (pagination)
+     * @param context $context The parent context of the frameworks.
+     * @param string $includes Defines what other contexts to fetch frameworks from.
+     *                         Accepted values are:
+     *                          - children: All descendants
+     *                          - parents: All parents, grand parents, etc...
+     *                          - self: Context passed only.
      * @return array of competency_framework
      */
-    public static function list_frameworks($filters, $sort, $order, $skip, $limit) {
+    public static function list_frameworks($sort, $order, $skip, $limit, $context, $includes = 'children') {
+        global $DB;
+
+        if (!in_array($includes, array('children', 'parents', 'self'))) {
+            throw new coding_exception('Invalid parameter value for \'includes\'.');
+        }
+
+        // Get all the other relevant contexts.
+        $contexts = array($context->id => $context);
+
+        if ($includes == 'children') {
+            $params = array('coursecatlevel' => CONTEXT_COURSECAT, 'path' => $context->path . '/%');
+            $pathlike = $DB->sql_like('path', ':path');
+            $sql = "contextlevel = :coursecatlevel AND $pathlike";
+            $rs = $DB->get_recordset_select('context', $sql, $params);
+            foreach ($rs as $record) {
+                $ctxid = $record->id;
+                context_helper::preload_from_record($record);
+                $contexts[$ctxid] = context::instance_by_id($ctxid);
+            }
+            $rs->close();
+
+        } else if ($includes == 'parents') {
+            $children = $context->get_parent_contexts();
+            foreach ($children as $ctx) {
+                $contexts[$ctx->id] = $ctx;
+            }
+        }
+
         // First we do a permissions check.
-        $context = context_system::instance();
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
+        foreach ($contexts as $key => $ctx) {
+            if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $ctx)) {
+                unset($contexts[$key]);
+            }
+        }
+
+        if (empty($contexts)) {
+            throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
 
         // OK - all set.
         $framework = new competency_framework();
-        return $framework->get_records($filters, $sort, $order, $skip, $limit);
+        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contexts), SQL_PARAMS_NAMED);
+        return $framework->get_records_select("contextid $insql", $inparams, $sort, '*', $skip, $limit);
     }
 
     /**

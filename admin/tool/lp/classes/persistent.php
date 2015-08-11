@@ -264,9 +264,7 @@ abstract class persistent {
     public function get_records_select($select, $params = null, $sort = '', $fields = '*', $limitfrom = 0, $limitnum = 0) {
         global $DB;
 
-        if (!$records = $DB->get_records_select($this->get_table_name(), $select, $params, $sort, $fields, $limitfrom, $limitnum)) {
-            return false;
-        }
+        $records = $DB->get_records_select($this->get_table_name(), $select, $params, $sort, $fields, $limitfrom, $limitnum);
 
         // We return class instances.
         $instances = array();

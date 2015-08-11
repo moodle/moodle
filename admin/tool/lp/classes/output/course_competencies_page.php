@@ -43,6 +43,9 @@ class course_competencies_page implements renderable, templatable {
     /** @var int $courseid Course id for this page. */
     protected $courseid = null;
 
+    /** @var context $context The context for this page. */
+    protected $context = null;
+
     /** @var \tool_lp\competency[] $competencies List of competencies. */
     protected $competencies = array();
 
@@ -60,12 +63,24 @@ class course_competencies_page implements renderable, templatable {
      * @param int $courseid The course record for this page.
      */
     public function __construct($courseid) {
-        $context = context_course::instance($courseid);
+        $this->context = context_course::instance($courseid);
         $this->courseid = $courseid;
         $this->competencies = api::list_competencies_in_course($courseid);
-        $this->canmanagecompetencyframeworks = has_capability('tool/lp:competencymanage', context_system::instance());
-        $this->canmanagecoursecompetencies = has_capability('tool/lp:coursecompetencymanage', $context);
-        $this->manageurl = new moodle_url('/admin/tool/lp/competencyframeworks.php');
+        $this->canmanagecoursecompetencies = has_capability('tool/lp:coursecompetencymanage', $this->context);
+
+        // Check the lowest level in which the user can manage the competencies.
+        $this->manageurl = null;
+        $this->canmanagecompetencyframeworks = false;
+        $contexts = array_reverse($this->context->get_parent_contexts(true));
+        foreach ($contexts as $context) {
+            $canmanage = has_capability('tool/lp:competencymanage', $context);
+            if ($canmanage) {
+                $this->manageurl = new moodle_url('/admin/tool/lp/competencyframeworks.php',
+                    array('pagecontextid' => $context->id));
+                $this->canmanagecompetencyframeworks = true;
+                break;
+            }
+        }
     }
 
     /**
@@ -77,6 +92,7 @@ class course_competencies_page implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
         $data->courseid = $this->courseid;
+        $data->pagecontextid = $this->context->id;
         $data->competencies = array();
         foreach ($this->competencies as $competency) {
             $record = $competency->to_record();
@@ -84,7 +100,10 @@ class course_competencies_page implements renderable, templatable {
         }
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;
         $data->canmanagecoursecompetencies = $this->canmanagecoursecompetencies;
-        $data->manageurl = $this->manageurl->out(true);
+        $data->manageurl = null;
+        if ($this->canmanagecompetencyframeworks) {
+            $data->manageurl = $this->manageurl->out(true);
+        }
 
         return $data;
     }

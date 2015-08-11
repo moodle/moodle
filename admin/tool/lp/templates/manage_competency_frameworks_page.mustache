@@ -40,14 +40,16 @@
         <tr>
             <th scope="col">{{#str}}competencyframeworkname, tool_lp{{/str}}</th>
             <th scope="col">{{#str}}competencies, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}context, core_role{{/str}}</th>
             <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
         </tr>
     </thead>
     <tbody class="drag-parentnode">
         {{#competencyframeworks}}
         <tr class="drag-samenode" data-frameworkid="{{id}}">
-            <td><span class="drag-handlecontainer"></span><span><a href="{{pluginbaseurl}}/competencies.php?competencyframeworkid={{id}}">{{shortname}} {{idnumber}}</a></span> {{^visible}}{{#str}}hiddenhint, tool_lp{{/str}}{{/visible}}</td>
+            <td><span class="drag-handlecontainer"></span><span><a href="{{pluginbaseurl}}/competencies.php?competencyframeworkid={{id}}&amp;pagecontextid={{pagecontextid}}">{{shortname}} {{idnumber}}</a></span> {{^visible}}{{#str}}hiddenhint, tool_lp{{/str}}{{/visible}}</td>
             <td>{{competencies_count}}</td>
+            <td>{{context_name}}</td>
             <td>
             {{#canmanage}}
             <ul title="{{#str}}edit{{/str}}" class="competencyframeworkactions">
@@ -55,12 +57,12 @@
                     <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="{{pluginbaseurl}}/editcompetencyframework.php?id={{id}}">
+                            <a href="{{pluginbaseurl}}/editcompetencyframework.php?id={{id}}&amp;pagecontextid={{pagecontextid}}">
                                 {{#pix}}t/edit{{/pix}} {{#str}}edit{{/str}}
                             </a>
                         </li>
                         <li>
-                            <a data-action="deletecompetencyframework" data-frameworkid="{{id}}" href="#">
+                            <a data-action="deletecompetencyframework" href="#" data-frameworkid="{{id}}">
                                 {{#pix}}t/delete{{/pix}} {{#str}}delete{{/str}}
                             </a>
                         </li>
@@ -88,11 +90,10 @@
 {{#js}}
 // Initialise the JS.
 require(['tool_lp/frameworkdelete',
-         'tool_lp/menubar',
-         'tool_lp/frameworkmove'],
-        function(deleteMod, menubar, moveMod) {
+         'tool_lp/menubar'],
+        function(deleteMod, menubar) {
 
-    moveMod.init();
+    deleteMod.init({{pagecontextid}});
 
     menubar.enhance('.competencyframeworkactions', {
         "[data-action='deletecompetencyframework']": deleteMod.deleteHandler

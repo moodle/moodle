@@ -25,26 +25,45 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('toollpcompetencies');
+$id = optional_param('id', 0, PARAM_INT);
+$pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to where we can from.
+
+if (!empty($id)) {
+    // Always use the context from the framework when it exists.
+    $framework = new \tool_lp\competency_framework($id);
+    $context = $framework->get_context();
+} else {
+    $context = context::instance_by_id($pagecontextid);
+}
+
+// We check that we have the permission to edit this framework, in its own context.
+require_login();
+require_capability('tool/lp:competencymanage', $context);
+
+// We keep the original context in the URLs, so that we remain in the same context.
+$url = new moodle_url("/admin/tool/lp/editcompetencyframework.php", array('id' => $id, 'pagecontextid' => $pagecontextid));
+$frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => $pagecontextid));
+$formurl = new moodle_url("/admin/tool/lp/editcompetencyframework.php", array('pagecontextid' => $pagecontextid));
 
 $title = get_string('competencies', 'tool_lp');
-$id = optional_param('id', 0, PARAM_INT);
 if (empty($id)) {
     $pagetitle = get_string('addnewcompetencyframework', 'tool_lp');
 } else {
     $pagetitle = get_string('editcompetencyframework', 'tool_lp');
 }
+
 // Set up the page.
-$url = new moodle_url("/admin/tool/lp/editcompetencyframework.php", array('id' => $id));
+$PAGE->navigation->override_active_url($frameworksurl);
+$PAGE->set_context(context::instance_by_id($pagecontextid));
+$PAGE->set_pagelayout('admin');
 $PAGE->set_url($url);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $output = $PAGE->get_renderer('tool_lp');
-
-$form = new \tool_lp\form\competency_framework(null, $id);
+$form = new \tool_lp\form\competency_framework($formurl->out(false), array('id' => $id, 'context' => $context));
 
 if ($form->is_cancelled()) {
-    redirect(new moodle_url('/admin/tool/lp/competencyframeworks.php'));
+    redirect($frameworksurl);
 }
 
 echo $output->header();
@@ -59,14 +78,15 @@ if ($data) {
     if (empty($data->id)) {
         // Create new framework.
         require_sesskey();
+        $data->contextid = $context->id;
         \tool_lp\api::create_framework($data);
         echo $output->notification(get_string('competencyframeworkcreated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button('/admin/tool/lp/competencyframeworks.php');
+        echo $output->continue_button($frameworksurl);
     } else {
         require_sesskey();
         \tool_lp\api::update_framework($data);
         echo $output->notification(get_string('competencyframeworkupdated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button('/admin/tool/lp/competencyframeworks.php');
+        echo $output->continue_button($frameworksurl);
     }
 } else {
     $form->display();

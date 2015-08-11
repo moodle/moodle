@@ -51,6 +51,6 @@
 </div>
 {{#js}}
 require(['tool_lp/competencies'], function(mod) {
-    (new mod({{courseid}}, 'course'));
+    (new mod({{courseid}}, 'course', {{pagecontextid}}));
 });
 {{/js}}

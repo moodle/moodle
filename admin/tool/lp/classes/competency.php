@@ -219,6 +219,15 @@ class competency extends persistent {
      *
      * @return int The competency framework id.
      */
+    public function get_framework() {
+        return new competency_framework($this->get_competencyframeworkid());
+    }
+
+    /**
+     * Get the competencyframeworkid
+     *
+     * @return int The competency framework id.
+     */
     public function get_competencyframeworkid() {
         return $this->competencyframeworkid;
     }

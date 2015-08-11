@@ -55,14 +55,19 @@ class manage_competencies_page implements renderable, templatable {
     /** @var moodle_url $pluginurlbase Base url to use constructing links. */
     protected $pluginbaseurl = null;
 
+    /** @var context $pagecontext The page context. */
+    protected $pagecontext = null;
+
     /**
      * Construct this renderable.
      *
      * @param \tool_lp\competency_framework $framework Competency framework.
      * @param string $search Search string.
+     * @param context $pagecontext The page context.
      */
-    public function __construct($framework, $search) {
+    public function __construct($framework, $search, $pagecontext) {
         $this->framework = $framework;
+        $this->pagecontext = $pagecontext;
         $this->search = $search;
         $addpage = new single_button(
            new moodle_url('/admin/tool/lp/editcompetencyframework.php'),
@@ -72,8 +77,7 @@ class manage_competencies_page implements renderable, templatable {
 
         $this->competencies = api::search_competencies($search, $framework->get_id());
 
-        $context = context_system::instance();
-        $this->canmanage = has_capability('tool/lp:competencymanage', $context);
+        $this->canmanage = has_capability('tool/lp:competencymanage', $framework->get_context());
     }
 
     /**
@@ -107,6 +111,7 @@ class manage_competencies_page implements renderable, templatable {
         $data->canmanage = $this->canmanage;
         $data->competencies = array();
         $data->search = $this->search;
+        $data->pagecontextid = $this->pagecontext->id;
 
         foreach ($this->competencies as $competency) {
             if ($competency->get_parentid() == 0) {

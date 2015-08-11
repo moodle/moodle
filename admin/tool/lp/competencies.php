@@ -25,17 +25,28 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('toollpcompetencies');
-
 $id = required_param('competencyframeworkid', PARAM_INT);
+$pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
 $search = optional_param('search', '', PARAM_RAW);
 
+require_login();
+
+$pagecontext = context::instance_by_id($pagecontextid);
 $framework = \tool_lp\api::read_framework($id);
+$context = $framework->get_context();
+require_capability('tool/lp:competencymanage', $context);
 
 $title = get_string('competencies', 'tool_lp');
 $pagetitle = get_string('competenciesforframework', 'tool_lp', $framework->get_shortname());
+
 // Set up the page.
-$url = new moodle_url("/admin/tool/lp/competencies.php", array('competencyframeworkid' => $framework->get_id()));
+$url = new moodle_url("/admin/tool/lp/competencies.php", array('competencyframeworkid' => $framework->get_id(),
+    'pagecontextid' => $pagecontextid));
+$frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => $pagecontextid));
+
+$PAGE->navigation->override_active_url($frameworksurl);
+$PAGE->set_context($pagecontext);
+$PAGE->set_pagelayout('admin');
 $PAGE->set_url($url);
 $PAGE->navbar->add($framework->get_shortname(), $url);
 $PAGE->set_title($title);
@@ -44,7 +55,7 @@ $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($pagetitle);
 
-$page = new \tool_lp\output\manage_competencies_page($framework, $search);
+$page = new \tool_lp\output\manage_competencies_page($framework, $search, $pagecontext);
 echo $output->render($page);
 
 echo $output->footer();

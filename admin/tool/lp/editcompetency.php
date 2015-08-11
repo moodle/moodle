@@ -25,25 +25,27 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('toollpcompetencies');
-
 $title = get_string('competencies', 'tool_lp');
 $id = optional_param('id', 0, PARAM_INT);
 $competencyframeworkid = required_param('competencyframeworkid', PARAM_INT);
+$pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
 $parentid = optional_param('parentid', 0, PARAM_INT);
+
+require_login();
+$pagecontext = context::instance_by_id($pagecontextid);
 
 if (empty($id)) {
     $pagetitle = get_string('addnewcompetency', 'tool_lp');
 } else {
     $pagetitle = get_string('editcompetency', 'tool_lp');
 }
+
 // Set up the page.
-$params = array('id' => $id, 'competencyframeworkid' => $competencyframeworkid, 'parentid' => $parentid);
-$url = new moodle_url("/admin/tool/lp/editcompetency.php", $params);
-$PAGE->set_url($url);
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
-$output = $PAGE->get_renderer('tool_lp');
+$url = new moodle_url("/admin/tool/lp/editcompetency.php", array('id' => $id, 'competencyframeworkid' => $competencyframeworkid,
+    'parentid' => $parentid, 'pagecontextid' => $pagecontextid));
+$frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => $pagecontextid));
+$frameworkurl = new moodle_url('/admin/tool/lp/competencies.php', array('competencyframeworkid' => $competencyframeworkid,
+    'pagecontextid' => $pagecontextid));
 
 $competencyframework = \tool_lp\api::read_framework($competencyframeworkid);
 $parent = null;
@@ -51,10 +53,20 @@ if ($parentid) {
     $parent = \tool_lp\api::read_competency($parentid);
 }
 
-$form = new \tool_lp\form\competency(null, array('id' => $id, 'competencyframework' => $competencyframework, 'parent' => $parent));
+$PAGE->navigation->override_active_url($frameworksurl);
+$PAGE->set_context($pagecontext);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_url($url);
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
+$PAGE->navbar->add($competencyframework->get_shortname(), $frameworkurl);
+$output = $PAGE->get_renderer('tool_lp');
+
+$form = new \tool_lp\form\competency($url->out(false), array('id' => $id, 'competencyframework' => $competencyframework,
+    'parent' => $parent));
 
 if ($form->is_cancelled()) {
-    redirect(new moodle_url('/admin/tool/lp/competencies.php', array('competencyframeworkid' => $competencyframeworkid)));
+    redirect($frameworkurl);
 }
 
 echo $output->header();
@@ -71,14 +83,12 @@ if ($data) {
         require_sesskey();
         \tool_lp\api::create_competency($data);
         echo $output->notification(get_string('competencycreated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button(new moodle_url('/admin/tool/lp/competencies.php',
-                array('competencyframeworkid' => $competencyframeworkid)));
+        echo $output->continue_button($frameworkurl);
     } else {
         require_sesskey();
         \tool_lp\api::update_competency($data);
         echo $output->notification(get_string('competencyupdated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button(new moodle_url('/admin/tool/lp/competencies.php',
-                array('competencyframeworkid' => $competencyframeworkid)));
+        echo $output->continue_button($frameworkurl);
     }
 } else {
     $form->display();

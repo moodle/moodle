@@ -29,6 +29,7 @@ use renderer_base;
 use single_button;
 use stdClass;
 use moodle_url;
+use context;
 use context_system;
 use tool_lp\api;
 
@@ -39,6 +40,9 @@ use tool_lp\api;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manage_competency_frameworks_page implements renderable, templatable {
+
+    /** @var context The context in which everything is happening. */
+    protected $pagecontext;
 
     /** @var array $navigation List of links to display on the page. Each link contains a url and a title. */
     protected $navigation = array();
@@ -55,17 +59,17 @@ class manage_competency_frameworks_page implements renderable, templatable {
     /**
      * Construct this renderable.
      */
-    public function __construct() {
+    public function __construct(context $pagecontext) {
+        $this->pagecontext = $pagecontext;
+
         $addpage = new single_button(
-           new moodle_url('/admin/tool/lp/editcompetencyframework.php'),
-           get_string('addnewcompetencyframework', 'tool_lp')
+            new moodle_url('/admin/tool/lp/editcompetencyframework.php', array('pagecontextid' => $this->pagecontext->id)),
+            get_string('addnewcompetencyframework', 'tool_lp'),
+            'get'
         );
         $this->navigation[] = $addpage;
 
-        $this->competencyframeworks = api::list_frameworks(array(), 'sortorder', 'ASC', 0, 0);
-
-        $context = context_system::instance();
-        $this->canmanage = has_capability('tool/lp:competencymanage', $context);
+        $this->competencyframeworks = api::list_frameworks('shortname', 'ASC', 0, 0, $this->pagecontext);
     }
 
     /**
@@ -76,12 +80,14 @@ class manage_competency_frameworks_page implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
-        $data->canmanage = $this->canmanage;
         $data->competencyframeworks = array();
+        $data->pagecontextid = $this->pagecontext->id;
         foreach ($this->competencyframeworks as $framework) {
             $record = $framework->to_record();
             $filters = array('competencyframeworkid' => $framework->get_id());
+            $record->canmanage = has_capability('tool/lp:competencymanage', $framework->get_context());
             $record->competencies_count = api::count_competencies($filters);
+            $record->context_name = $framework->get_context()->get_context_name();
             $data->competencyframeworks[] = $record;
         }
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);

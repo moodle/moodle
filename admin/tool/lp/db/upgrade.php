@@ -65,5 +65,21 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015052404, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015052405) {
+
+        // Define field contextid to be added to tool_lp_competency_framework.
+        $table = new xmldb_table('tool_lp_competency_framework');
+        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null,
+            context_system::instance()->id, 'id');
+
+        // Conditionally launch add field contextid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015052405, 'tool', 'lp');
+    }
+
     return true;
 }

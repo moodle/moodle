@@ -24,6 +24,7 @@
 namespace tool_lp;
 
 use stdClass;
+use context;
 
 /**
  * Class for loading/storing competency frameworks from the DB.
@@ -56,6 +57,9 @@ class competency_framework extends persistent {
 
     /** @var string $scaleconfiguration scale information relevant to this framework*/
     private $scaleconfiguration = '';
+
+    /** @var int $contextid The context ID in which the framework is set. */
+    private $contextid = null;
 
     /**
      * Method that provides the table name matching this class.
@@ -174,6 +178,24 @@ class competency_framework extends persistent {
     }
 
     /**
+     * Get the context.
+     *
+     * @return context The context
+     */
+    public function get_context() {
+        return context::instance_by_id($this->contextid);
+    }
+
+    /**
+     * Get the contextid.
+     *
+     * @return string The contextid
+     */
+    public function get_contextid() {
+        return $this->contextid;
+    }
+
+    /**
      * Get the scale ID.
      *
      * @return int The scale ID
@@ -252,6 +274,9 @@ class competency_framework extends persistent {
         if (isset($record->usermodified)) {
             $this->set_usermodified($record->usermodified);
         }
+        if (isset($record->contextid)) {
+            $this->contextid = $record->contextid;
+        }
         return $this;
     }
 
@@ -275,6 +300,7 @@ class competency_framework extends persistent {
         $record->timecreated = $this->get_timecreated();
         $record->timemodified = $this->get_timemodified();
         $record->usermodified = $this->get_usermodified();
+        $record->contextid = $this->get_contextid();
 
         return $record;
     }
