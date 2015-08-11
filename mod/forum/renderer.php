@@ -124,7 +124,10 @@ class mod_forum_renderer extends plugin_renderer_base {
         } else {
             $cm = $modinfo->instances['forum'][$forum->id];
             $canviewemail = in_array('email', get_extra_user_fields(context_module::instance($cm->id)));
-            $output .= $this->output->heading(get_string("subscribersto","forum", "'".format_string($forum->name)."'"));
+            $strparams = new stdclass();
+            $strparams->name = format_string($forum->name);
+            $strparams->count = count($users);
+            $output .= $this->output->heading(get_string("subscriberstowithcount", "forum", $strparams));
             $table = new html_table();
             $table->cellpadding = 5;
             $table->cellspacing = 5;
