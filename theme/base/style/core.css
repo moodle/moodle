@@ -1307,6 +1307,10 @@ sup {vertical-align: super;}
 
 .course-content ul.weeks .content .summary ul,
 .course-content ul.topics .content .summary ul {list-style: disc outside none;}
+.course-content ul.weeks .content .summary ul ul,
+.course-content ul.topics .content .summary ul ul {list-style: circle outside none;}
+.course-content ul.weeks .content .summary ul ul ul,
+.course-content ul.topics .content .summary ul ul ul {list-style: square outside none;}
 
 .course-content ul.weeks .content .summary ol,
 .course-content ul.topics .content .summary ol {list-style: decimal outside none;}
