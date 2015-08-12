@@ -461,9 +461,9 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
 /**
  * Responsive styles for the filepicker
  */
-@media (max-width:873px) {
+@media (max-width:767px) {
     .file-picker .fp-repo-area {width:100%;height:auto;max-height:220px;y-scroll:auto;float:none;border:0px;}
-    .file-picker .fp-repo-items {width:100%;float:none;}
+    .file-picker .fp-repo-items {width:100%;float:none;margin-left:0;}
     .file-picker .fp-login-form .fp-login-input .label {text-align:left;}
     .dir-rtl .file-picker .fp-login-form .fp-login-input .label {text-align:right;}
     .file-picker .fp-content form td {display:block;width:100%;text-align:left;}
