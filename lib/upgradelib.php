@@ -371,6 +371,8 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 3.0.
+        '/mod/lti/grade.php',
         // Removed in 2.9.
         '/lib/timezone.txt',
         // Removed in 2.8.

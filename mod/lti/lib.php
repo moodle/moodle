@@ -489,20 +489,6 @@ function lti_grade_item_delete($basiclti) {
     return grade_update('mod/lti', $basiclti->course, 'mod', 'lti', $basiclti->id, 0, null, array('deleted' => 1));
 }
 
-function lti_extend_settings_navigation($settings, $parentnode) {
-    global $PAGE;
-
-    if (has_capability('mod/lti:manage', context_module::instance($PAGE->cm->id))) {
-        $keys = $parentnode->get_children_key_list();
-
-        $node = navigation_node::create('Submissions',
-            new moodle_url('/mod/lti/grade.php', array('id' => $PAGE->cm->id)),
-            navigation_node::TYPE_SETTING, null, 'mod_lti_submissions');
-
-        $parentnode->add_node($node, $keys[1]);
-    }
-}
-
 /**
  * Log post actions
  *
