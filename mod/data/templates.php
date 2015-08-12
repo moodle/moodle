@@ -277,6 +277,7 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
         echo '<option value="##timemodified##">'.get_string('timemodified', 'data'). ' - ##timemodified##</option>';
         echo '<option value="##user##">' .get_string('user'). ' - ##user##</option>';
         echo '<option value="##userpicture##">' . get_string('userpic') . ' - ##userpicture##</option>';
+        echo '<option value="##approvalstatus##">' .get_string('approvalstatus', 'data'). ' - ##approvalstatus##</option>';
         if ($mode != 'singletemplate') {
             // more points to single template - not useable there
             echo '<option value="##comments##">' .get_string('comments', 'data'). ' - ##comments##</option>';
