@@ -101,5 +101,6 @@ $PAGE->set_title($newaccount);
 $PAGE->set_heading($SITE->fullname);
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading($newaccount);
 $mform_signup->display();
 echo $OUTPUT->footer();
