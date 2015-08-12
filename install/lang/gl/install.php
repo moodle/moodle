@@ -77,14 +77,15 @@ $string['pathsroparentdataroot'] = 'O directorio principal ({$a->parent}) non te
 $string['pathssubadmindir'] = 'Moi poucos enderezos web empregan /admin como URL especial para
 permitirlle acceder a un panel de control ou semellante. Desafortunadamente, isto entra en conflito coa localización estándar das páxinas de administración de Moodle. Vostede pode corrixir isto
 renomeando o directorio admin na súa instalación, e poñendo aquí ese novo nome.  Por exemplo: <em>moodleadmin</em>. Iso corrixirá as ligazóns admin en Moodle.';
-$string['pathssubdataroot'] = 'Necesitase un lugar no que Moodle poida gardar os ficheiros enviados. Este directorio debe ser lexíbel E ESCRIBÍBEL polo usuario do servidor web
-(normalmente «nobody», «apache», «www-data»), mais non debería ser accesíbel directamente desde o web. Se non existe o instalador tentará crealo.';
+$string['pathssubdataroot'] = '<p>Un directorio onde Moodle almacenará todo o contido dos ficheiros enviados polos usuarios.</p>
+<p>Este directorio debe ser lexíbel E ESCRIBÍBEL polo usuario do servidor web(normalmente «www-data»,«nobody» ou «apache»)</p>
+<p>Non debería ser accesíbel directamente desde o web.</p>
+<p>Se non existira actualmente, o proceso de instalación tentará crealo.</p>';
 $string['pathssubdirroot'] = 'Ruta completa do directorio de instalación de Moodle.';
-$string['pathssubwwwroot'] = 'Enderezo web completo para acceder a Moodle.
-Non é posíbel acceder a Moodle empregando enderezos múltiplos.
-Se o seu sitio ten varios enderezos públicos debe configurar encamiñamentos permanentes en todos eles, agás neste.
-Se o seu sitio web é accesíbel tanto desde unha Intranet como desde Internet, escriba aquí o enderezo público e configure o DNS para que os usuarios da Intranet poidan empregar tamén o enderezo público.
-Se o enderezo non é correcto, cambie o URL no seu navegador para reiniciar a instalación cun valor diferente.';
+$string['pathssubwwwroot'] = '<p>O enderezo completo co que se accederá a Moodle; ou sexa, o enderezo que deberán escribir os usuarios na barra de enderezos do seu navegador para acceder a Moodle.</p>
+<p>Non é posíbel acceder a Moodle usando enderezos múltiples. Se o seu sitio fora accesíbel dende enderezos múltiples, entón escolla a máis sinxela e configure unha redirección permanente para cada un dos outros enderezos.</p>
+<p>Se o seu sitio fose accesíbel, tanto dende a Internet como dende unha rede interna (o que tamén chaman intranet) , entón use aquí o enderezo público.</p>
+<p>Si la dirección actual no fuera correcta, por favor, cambie la URL en la barra de dirección del navegador y reinicie la instalación.</p>';
 $string['pathsunsecuredataroot'] = 'A localización de dataroot non é segura';
 $string['pathswrongadmindir'] = 'Non existe o directorio Admin';
 $string['phpextension'] = 'Extensión PHP {$a}';
