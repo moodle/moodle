@@ -63,7 +63,7 @@ if ($translatorsubmitted) {
     $checkin = optional_param('savecheckin', false, PARAM_RAW);
 
     if ($checkin === false) {
-        $nexturl = $PAGE->url;
+        $nexturl = new moodle_url($PAGE->url, array('p' => $currentpage));
     } else {
         $nexturl = new moodle_url('/admin/tool/customlang/index.php', array('action'=>'checkin', 'lng' => $lng, 'sesskey'=>sesskey()));
     }
