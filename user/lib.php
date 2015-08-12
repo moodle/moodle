@@ -772,7 +772,7 @@ function user_convert_text_to_menu_items($text, $page) {
  *          mnetidprovidername    string name of the MNet provider
  *          mnetidproviderwwwroot string URL of the MNet provider
  */
-function user_get_user_navigation_info($user, $page, $options = null) {
+function user_get_user_navigation_info($user, $page, $options = array()) {
     global $OUTPUT, $DB, $SESSION, $CFG;
 
     $returnobject = new stdClass();
@@ -876,13 +876,7 @@ function user_get_user_navigation_info($user, $page, $options = null) {
         $returnobject->metadata['realuserprofileurl'] = new moodle_url('/user/profile.php', array(
             'id' => $realuser->id
         ));
-        $returnobject->metadata['realuseravatar'] = $OUTPUT->user_picture (
-            $realuser,
-            array(
-                'link' => false,
-                'visibletoscreenreaders' => false
-            )
-        );
+        $returnobject->metadata['realuseravatar'] = $OUTPUT->user_picture($realuser, $avataroptions);
 
         // Build a user-revert link.
         $userrevert = new stdClass();
