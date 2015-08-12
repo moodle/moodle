@@ -225,6 +225,11 @@ class phpunit_util extends testing_util {
             \core\update\deployer::reset_caches(true);
         }
 
+        // Clear static cache within restore.
+        if (class_exists('restore_section_structure_step')) {
+            restore_section_structure_step::reset_caches();
+        }
+
         // purge dataroot directory
         self::reset_dataroot();
 
