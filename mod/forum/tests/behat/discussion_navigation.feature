@@ -6,39 +6,36 @@ Feature: A user can navigate to previous and next discussions
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@example.com |
-      | student2 | Student | 2 | student2@example.com |
+      | username | firstname | lastname | email                 |
+      | teacher1 | Teacher   | 1        | teacher1@example.com  |
+      | student1 | Student   | 1        | student1@example.com  |
+      | student2 | Student   | 2        | student2@example.com  |
     And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | fullname | shortname  | category  |
+      | Course 1 | C1         | 0         |
     And the following "course enrolments" exist:
       | user | course | role |
+      | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
-    And I log in as "admin"
-    And I am on site homepage
-    And I follow "Course 1"
-    And I navigate to "Groups" node in "Users"
-    And I press "Create group"
-    And I set the following fields to these values:
-      | Group name | Group 1 |
-    And I press "Save changes"
-    And I press "Create group"
-    And I set the following fields to these values:
-      | Group name | Group 2 |
-    And I press "Save changes"
-    And I add "Student 1" user to "Group 1" group members
-    And I add "Student 2" user to "Group 2" group members
-    And I am on site homepage
-    And I follow "Course 1"
-    And I turn editing mode on
+    And the following "groups" exist:
+      | name | course | idnumber |
+      | Group 1 | C1 | G1 |
+      | Group 2 | C1 | G2 |
+    And the following "group members" exist:
+      | user | group |
+      | teacher1 | G1 |
+      | teacher1 | G2 |
+      | student1 | G1 |
+      | student2 | G2 |
 
-  @javascript
   Scenario: A user can navigate between discussions
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
+    Given the following "activities" exist:
+      | activity   | name                   | intro             | course | idnumber     | groupmode |
+      | forum      | Test forum name        | Test forum name   | C1     | forum        | 0         |
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Test forum name"
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 |
       | Message | Test post message |
@@ -61,6 +58,7 @@ Feature: A user can navigate to previous and next discussions
     And I set the following fields to these values:
       | Message | Answer to discussion |
     And I press "Post to forum"
+    And I wait to be redirected
     And I should not see "Discussion 2"
     And I should see "Discussion 3"
     And I follow "Discussion 3"
@@ -70,12 +68,13 @@ Feature: A user can navigate to previous and next discussions
     And I should not see "Discussion 1"
     And I should see "Discussion 3"
 
-  @javascript
   Scenario: A user can navigate between discussions with visible groups
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
-      | Group mode | Visible groups |
+    Given the following "activities" exist:
+      | activity   | name                   | intro             | course | idnumber     | groupmode |
+      | forum      | Test forum name        | Test forum name   | C1     | forum        | 2         |
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Test forum name"
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 Group 0 |
       | Message | Test post message |
@@ -102,7 +101,7 @@ Feature: A user can navigate to previous and next discussions
     When I log in as "student1"
     And I follow "Course 1"
     And I follow "Test forum name"
-    And I set the field "Visible groups" to "All participants"
+    And I select "All participants" from the "Visible groups" singleselect
     And I follow "Discussion 1 Group 0"
     Then I should see "Discussion 2 Group 0"
     And I should not see "Group 1"
@@ -118,7 +117,7 @@ Feature: A user can navigate to previous and next discussions
     And I should see "Discussion 2 Group 1"
     And I should see "Discussion 2 Group 2"
     And I follow "Test forum name"
-    And I set the field "Visible groups" to "Group 1"
+    And I select "Group 1" from the "Visible groups" singleselect
     And I follow "Discussion 1 Group 1"
     Then I should see "Discussion 2 Group 0"
     And I should see "Discussion 2 Group 1"
@@ -126,12 +125,13 @@ Feature: A user can navigate to previous and next discussions
     And I should see "Discussion 1 Group 1"
     And I should not see "Group 2"
 
-  @javascript
   Scenario: A user can navigate between discussions with separate groups
-    Given I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
-      | Group mode | Separate groups |
+    Given the following "activities" exist:
+      | activity   | name                   | intro             | course | idnumber     | groupmode |
+      | forum      | Test forum name        | Test forum name   | C1     | forum        | 1         |
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Test forum name"
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Discussion 1 Group 0 |
       | Message | Test post message |
