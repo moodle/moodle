@@ -30,5 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Српски';
+$string['parentlanguage'] = 'no';
+$string['thislanguage'] = 'Lulesamisk';

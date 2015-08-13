@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Dossièr d\'administracion';
 $string['availablelangs'] = 'Paquetatges de lenga disponibles';
-$string['chooselanguagehead'] = 'Causitz ua lenga';
+$string['chooselanguagehead'] = 'Causitz-vos ua lenga';
 $string['cliinstallheader'] = 'Programa d\'installacion de Moodle {$a} en linha de comanda';
 $string['databasehost'] = 'Servidor de banca de dadas';
 $string['databasename'] = 'Nom de la banca de dadas';
