@@ -1026,6 +1026,42 @@ class question_attempt {
         }
     }
 
+
+    public function get_validation_message() {
+
+        if (!$this->manual_mark_format_is_ok()) {
+            $errorclass = ' error';
+            return html_writer::tag('span', get_string('manualgradeinvalidformat', 'question'),
+                array('class' => 'error')) . html_writer::empty_tag('br');
+        }
+        $currentmark = $this->get_current_manual_mark();
+        $maxmark = $this->get_max_mark();
+        if ($currentmark > $maxmark * $this->get_max_fraction() || $currentmark < $maxmark * $this->get_min_fraction()) {
+            $errorclass = ' error';
+            return html_writer::tag('span', get_string('manualgradeoutofrange', 'question'),
+                array('class' => 'error')) . html_writer::empty_tag('br');
+        }
+
+        return '';
+
+    }
+
+    /**
+     * Validates that the manual mark parameter is a float.
+     * @return bool.
+     */
+    public function manual_mark_format_is_ok() {
+        $val = $this->get_submitted_var($this->get_behaviour_field_name('mark'), PARAM_RAW_TRIMMED);
+
+        // If it is empy, we get null (it is always the case on start)
+        if ($val===null) {
+            return true;
+        }
+        $mark = unformat_float($val, true);
+
+        return is_float($mark);
+    }
+
     /**
      * Handle a submitted variable representing uploaded files.
      * @param string $name the field name.

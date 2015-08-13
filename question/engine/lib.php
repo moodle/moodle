@@ -132,6 +132,23 @@ abstract class question_engine {
     }
 
     /**
+     * MDL-51090
+     * Validate that the manual grade submitted for a particular question is a
+     * float.
+     *
+     * @param string prefix as constructed in is_manual_grade_in_range.
+     * @return bool whether the submitted data is a float.
+     */
+    public static function is_manual_grade_float($prefix) {
+        $val = optional_param($prefix . '-mark', null, PARAM_RAW_TRIMMED);
+        $mark = unformat_float($val, true);
+        if (is_float($mark)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Validate that the manual grade submitted for a particular question is in range.
      * @param int $qubaid the question_usage id.
      * @param int $slot the slot number within the usage.
@@ -139,6 +156,9 @@ abstract class question_engine {
      */
     public static function is_manual_grade_in_range($qubaid, $slot) {
         $prefix = 'q' . $qubaid . ':' . $slot . '_';
+        if (!self::is_manual_grade_float($prefix)) {
+            return false;
+        }
         $mark = question_utils::optional_param_mark($prefix . '-mark');
         $maxmark = optional_param($prefix . '-maxmark', null, PARAM_FLOAT);
         $minfraction = optional_param($prefix . ':minfraction', null, PARAM_FLOAT);
