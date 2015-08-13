@@ -244,12 +244,11 @@ class behat_general extends behat_base {
      * @param int $seconds
      */
     public function i_wait_seconds($seconds) {
-
-        if (!$this->running_javascript()) {
-            throw new DriverException('Waits are disabled in scenarios without Javascript support');
+        if ($this->running_javascript()) {
+            $this->getSession()->wait($seconds * 1000, false);
+        } else {
+            sleep($seconds);
         }
-
-        $this->getSession()->wait($seconds * 1000, false);
     }
 
     /**
