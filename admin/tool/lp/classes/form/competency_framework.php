@@ -63,6 +63,7 @@ class competency_framework extends moodleform {
         $mform->addElement('text', 'idnumber',
                            get_string('idnumber', 'tool_lp'));
         $mform->setType('idnumber', PARAM_TEXT);
+        $mform->addRule('idnumber', null, 'required', null, 'client');
 
         $scales = get_scales_menu();
         $mform->addElement('select', 'scaleid', get_string('scale', 'tool_lp'), $scales);
@@ -93,4 +94,29 @@ class competency_framework extends moodleform {
         }
 
     }
+
+    /**
+     * Form validation.
+     * @param  array $data
+     * @param  array $files
+     * @return array
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        // Add field validation check for duplicate idnumber.
+        $framework = new \tool_lp\competency_framework();
+        $params = array(
+            'id' => $data['id'],
+            'idnumber' => $data['idnumber'],
+        );
+        $exists = $framework->get_records_select('idnumber = :idnumber AND id <> :id', $params, '', 'id', 0, 1);
+        if ($exists) {
+            $errors['idnumber'] = get_string('idnumbertaken', 'error');
+        }
+
+        return $errors;
+    }
+
 }
+

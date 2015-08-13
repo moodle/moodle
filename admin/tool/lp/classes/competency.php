@@ -389,9 +389,10 @@ class competency extends persistent {
         foreach ($records as $record) {
             $split = explode('/', trim($record->path, '/'));
             foreach ($split as $parent) {
-                $parents[] = intval($parent);
+                $parents[intval($parent)] = true;
             }
         }
+        $parents = array_keys($parents);
 
         // Skip ones we already fetched.
         foreach ($parents as $idx => $parent) {
