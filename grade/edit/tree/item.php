@@ -178,7 +178,7 @@ if ($mform->is_cancelled()) {
     } else {
         $grade_item->update();
 
-        if (!empty($data->rescalegrades)) {
+        if (!empty($data->rescalegrades) && $data->rescalegrades == 'yes') {
             $newmin = $grade_item->grademin;
             $newmax = $grade_item->grademax;
             $grade_item->rescale_grades_keep_percentage($oldmin, $oldmax, $newmin, $newmax, 'gradebook');

@@ -531,7 +531,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     // Get the a copy of the grade_item before it is modified incase we need to scale the grades.
     $oldgradeitem = null;
     $newgradeitem = null;
-    if (!empty($data->grade_rescalegrades)) {
+    if (!empty($data->grade_rescalegrades) && $data->grade_rescalegrades == 'yes') {
         // Fetch the grade item before it is updated.
         $oldgradeitem = grade_item::fetch(array('itemtype' => 'mod',
                                                 'itemmodule' => $moduleinfo->modulename,
@@ -546,7 +546,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     }
 
     // This needs to happen AFTER the grademin/grademax have already been updated.
-    if (!empty($data->grade_rescalegrades)) {
+    if (!empty($data->grade_rescalegrades) && $data->grade_rescalegrades == 'yes') {
         // Get the grade_item after the update call the activity to scale the grades.
         $newgradeitem = grade_item::fetch(array('itemtype' => 'mod',
                                                 'itemmodule' => $moduleinfo->modulename,

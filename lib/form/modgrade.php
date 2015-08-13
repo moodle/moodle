@@ -66,6 +66,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
      *              'isupdate' - is this a new module or are we editing an existing one?
      *              'currentgrade' - the current grademax in the database for this gradeitem
      *              'hasgrades' - whether or not the grade_item has existing grade_grades
+     *              'canrescale' - whether or not the activity supports rescaling grades
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      */
     public function __construct($elementname = null, $elementlabel = null, $options = array(), $attributes = null) {
@@ -138,9 +139,14 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
         // Check box for options for processing existing grades.
         if ($this->isupdate && $this->hasgrades && $this->canrescale) {
             $langrescalegrades = get_string('modgraderescalegrades', 'grades');
-            $rescalegradesselect = @MoodleQuickForm::createElement('selectyesno',
+            $choices = array();
+            $choices[''] = get_string('choose');
+            $choices['no'] = get_string('no');
+            $choices['yes'] = get_string('yes');
+            $rescalegradesselect = @MoodleQuickForm::createElement('select',
                                                                      'modgrade_rescalegrades',
-                                                                     $langrescalegrades);
+                                                                     $langrescalegrades,
+                                                                     $choices);
             $rescalegradesselect->_generateId();
             $rescalegradesid = $rescalegradesselect->getAttribute('id');
         }
@@ -300,13 +306,33 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                     return true;
                 };
 
+                $checkrescale = function($val) {
+                    // Nothing is affected by changes to grademax if there are no grades yet.
+                    if (!$this->isupdate || !$this->hasgrades || !$this->canrescale) {
+                        return true;
+                    }
+                    // Closure to validate a scale value. See the note above about scope if this confuses you.
+                    if (isset($val['modgrade_type']) && $val['modgrade_type'] === 'point') {
+                        // Work out if the value was actually changed in the form.
+                        if (grade_floats_different($this->currentgrade, $val['modgrade_point'])) {
+                            if (empty($val['modgrade_rescalegrades'])) {
+                                // This was an "edit", the grademax was changed and the process existing setting was not set.
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                };
+
                 $maxgradeexceeded = get_string('modgradeerrorbadpoint', 'grades', get_config('core', 'gradepointmax'));
                 $invalidscale = get_string('modgradeerrorbadscale', 'grades');
+                $mustchooserescale = get_string('mustchooserescaleyesorno', 'grades');
                 // When creating the rules the sixth arg is $force, we set it to true because otherwise the form
                 // will attempt to validate the existence of the element, we don't want this because the element
                 // is being created right now and doesn't actually exist as a registered element yet.
                 $caller->addRule($name, $maxgradeexceeded, 'callback', $checkmaxgrade, 'server', false, true);
                 $caller->addRule($name, $invalidscale, 'callback', $checkvalidscale, 'server', false, true);
+                $caller->addRule($name, $mustchooserescale, 'callback', $checkrescale, 'server', false, true);
 
                 break;
 

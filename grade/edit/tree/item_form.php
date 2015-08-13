@@ -97,7 +97,11 @@ class edit_item_form extends moodleform {
             $mform->setType('grademin', PARAM_RAW);
         }
 
-        $mform->addElement('selectyesno', 'rescalegrades', get_string('modgraderescalegrades', 'grades'));
+        $choices = array();
+        $choices[''] = get_string('choose');
+        $choices['no'] = get_string('no');
+        $choices['yes'] = get_string('yes');
+        $mform->addElement('select', 'rescalegrades', get_string('modgraderescalegrades', 'grades'), $choices);
         $mform->addHelpButton('rescalegrades', 'modgraderescalegrades', 'grades');
         $mform->disabledIf('rescalegrades', 'gradetype', 'noteq', GRADE_TYPE_VALUE);
 
@@ -392,6 +396,14 @@ class edit_item_form extends moodleform {
             if ($data['grademax'] == $data['grademin'] or $data['grademax'] < $data['grademin']) {
                 $errors['grademin'] = get_string('incorrectminmax', 'grades');
                 $errors['grademax'] = get_string('incorrectminmax', 'grades');
+            }
+        }
+        if ($grade_item) {
+            if (grade_floats_different($data['grademin'], $grade_item->grademin) ||
+                    grade_floats_different($data['grademax'], $grade_item->grademax)) {
+                if ($grade_item->has_grades() && empty($data['rescalegrades'])) {
+                    $errors['rescalegrades'] = get_string('mustchooserescaleyesorno', 'grades');
+                }
             }
         }
 
