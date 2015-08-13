@@ -297,12 +297,6 @@ $timer = null;
 if ($pageid != LESSON_EOL) {
     /// This is the code updates the lessontime for a timed test
     $startlastseen = optional_param('startlastseen', '', PARAM_ALPHA);
-    if ($startlastseen == 'no') {
-        // this deletes old records  not totally sure if this is necessary anymore
-        $retries = $DB->count_records('lesson_grades', array('lessonid'=>$lesson->id, 'userid'=>$USER->id));
-        $DB->delete_records('lesson_attempts', array('userid' => $USER->id, 'lessonid' => $lesson->id, 'retry' => $retries));
-        $DB->delete_records('lesson_branch', array('userid' => $USER->id, 'lessonid' => $lesson->id, 'retry' => $retries));
-    }
 
     $page = $lesson->load_page($pageid);
     // Check if the page is of a special type and if so take any nessecary action
