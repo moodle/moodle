@@ -463,7 +463,7 @@ class badge {
                     $wheresql = ' WHERE u.id ' . $earnedsql;
                 }
                 list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->get_context(), 'moodle/badges:earnbadge', 0, true);
-                $sql = "SELECT u.id
+                $sql = "SELECT DISTINCT u.id
                         FROM {user} u
                         {$extrajoin}
                         JOIN ({$enrolledsql}) je ON je.id = u.id " . $wheresql . $extrawhere;
