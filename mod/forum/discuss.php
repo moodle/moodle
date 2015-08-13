@@ -266,7 +266,7 @@ if (!$canreply and $forum->type !== 'news') {
 }
 
 // Output the links to neighbour discussions.
-$neighbours = forum_get_discussion_neighbours($cm, $discussion);
+$neighbours = forum_get_discussion_neighbours($cm, $discussion, $forum);
 $neighbourlinks = $renderer->neighbouring_discussion_navigation($neighbours['prev'], $neighbours['next']);
 echo $neighbourlinks;
 
