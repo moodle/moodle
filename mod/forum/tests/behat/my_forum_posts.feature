@@ -1,4 +1,4 @@
-@mod @mod_forum @javascript
+@mod @mod_forum
 Feature: A user can view their posts and discussions
   In order to ensure a user can view their posts and discussions
   As a student
