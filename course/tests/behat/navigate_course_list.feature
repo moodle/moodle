@@ -17,7 +17,6 @@ Feature: Browse course list and return back from enrolment page
       | Sample course | C1        | 0        |
       | Course 1      | COURSE1   | CAT1     |
 
-  @javascript
   Scenario: A user can return to the category page from enrolment page
     When I log in as "user2"
     And I click on "Courses" "link" in the "Navigation" "block"

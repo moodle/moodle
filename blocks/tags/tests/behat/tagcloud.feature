@@ -27,7 +27,6 @@ Feature: Block tags displaying tag cloud
     And I press "Update profile"
     And I log out
 
-  @javascript
   Scenario: Add Tags block on a front page
     When I log in as "admin"
     And I am on site homepage
@@ -41,7 +40,6 @@ Feature: Block tags displaying tag cloud
     And I click on "Dogs" "link" in the "Tags" "block"
     And I should see "Log in to the site" in the ".breadcrumb" "css_element"
 
-  @javascript
   Scenario: Add Tags block in a course
     When I log in as "teacher1"
     And I follow "Course 1"
