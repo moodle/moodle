@@ -41,7 +41,7 @@ Feature: Set time spent as a completion condition for a lesson
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
@@ -53,14 +53,14 @@ Feature: Set time spent as a completion condition for a lesson
     And I log out
     When I log in as "student1"
     And I follow "Course 1"
-    Then I hover "//li[contains(concat(' ', normalize-space(@class), ' '), ' modtype_lesson ')]/descendant::img[@alt='Not completed: Test lesson']" "xpath_element"
+    Then the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
     And I follow "Test lesson"
     And I press "Next page"
     And I press "Next page"
     And I should see "You completed this lesson in"
     And I should see ", which is less than the required time of 1 min. You might need to attempt the lesson again."
     And I follow "Course 1"
-    And I hover "//li[contains(concat(' ', normalize-space(@class), ' '), ' modtype_lesson ')]/descendant::img[@alt='Not completed: Test lesson']" "xpath_element"
+    And the "Test lesson" "lesson" activity with "auto" completion should be marked as not complete
     And I follow "Course 1"
     And I follow "Test lesson"
     And I press "Next page"
@@ -68,7 +68,7 @@ Feature: Set time spent as a completion condition for a lesson
     And I press "Next page"
     And I should not see "You might need to attempt the lesson again."
     And I follow "Course 1"
-    And I hover "//li[contains(concat(' ', normalize-space(@class), ' '), ' modtype_lesson ')]/descendant::img[@alt='Completed: Test lesson']" "xpath_element"
+    And the "Test lesson" "lesson" activity with "auto" completion should be marked as complete
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
