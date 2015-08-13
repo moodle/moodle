@@ -58,7 +58,7 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
 
     And I log in as "student1"
     And I follow "Course 1"
-    And "//img[contains(@alt, 'Not completed: Test quiz name')]" "xpath_element" should exist in the "li.modtype_quiz" "css_element"
+    And the "Test quiz name" "quiz" activity with "auto" completion should be marked as not complete
     And I follow "Test quiz name"
     And I press "Attempt quiz now"
     And I should see "Question 1"
@@ -68,7 +68,7 @@ Feature: Set a quiz to be marked complete when the student uses all attempts all
     And I should see "Answer saved"
     And I press "Submit all and finish"
     And I follow "C1"
-    And "//img[contains(@alt, 'Not completed: Test quiz name')]" "xpath_element" should exist in the "li.modtype_quiz" "css_element"
+    And the "Test quiz name" "quiz" activity with "auto" completion should be marked as not complete
     And I follow "Test quiz name"
     And I press "Re-attempt quiz"
     Then I should see "Question 1"

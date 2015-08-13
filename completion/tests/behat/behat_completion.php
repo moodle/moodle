@@ -122,4 +122,40 @@ class behat_completion extends behat_base {
             new Given('I press "'.get_string('savechanges').'"')
         );
     }
+
+    /**
+     * Checks if the activity with specified name is maked as complete.
+     *
+     * @Given /^the "(?P<activityname_string>(?:[^"]|\\")*)" "(?P<activitytype_string>(?:[^"]|\\")*)" activity with "(manual|auto)" completion should be marked as complete$/
+     * @return array
+     */
+    public function activity_marked_as_complete($activityname, $activitytype, $completiontype) {
+        if ($completiontype == "manual") {
+            $imgalttext = get_string("completion-alt-manual-y", 'core_completion', $activityname);
+        } else {
+            $imgalttext = get_string("completion-alt-auto-y", 'core_completion', $activityname);
+        }
+        $csselementforactivitytype = "li.modtype_".strtolower($activitytype);
+
+        return new Given('"//img[contains(@alt, \''.$imgalttext.'\')]" "xpath_element" ' .
+            'should exist in the "'.$csselementforactivitytype.'" "css_element"');
+    }
+
+    /**
+     * Checks if the activity with specified name is maked as complete.
+     *
+     * @Given /^the "(?P<activityname_string>(?:[^"]|\\")*)" "(?P<activitytype_string>(?:[^"]|\\")*)" activity with "(manual|auto)" completion should be marked as not complete$/
+     * @return array
+     */
+    public function activity_marked_as_not_complete($activityname, $activitytype, $completiontype) {
+        if ($completiontype == "manual") {
+            $imgalttext = get_string("completion-alt-manual-n", 'core_completion', $activityname);
+        } else {
+            $imgalttext = get_string("completion-alt-auto-n", 'core_completion', $activityname);
+        }
+        $csselementforactivitytype = "li.modtype_".strtolower($activitytype);
+
+        return new Given('"//img[contains(@alt, \''.$imgalttext.'\')]" "xpath_element" ' .
+            'should exist in the "'.$csselementforactivitytype.'" "css_element"');
+    }
 }
