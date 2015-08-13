@@ -1,4 +1,4 @@
-@core @core_message @javascript
+@core @core_message
 Feature: Users can search their message history
   In order to read old messages
   As a user
