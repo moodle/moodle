@@ -179,6 +179,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'staticacceleration' => true,
         'simplekeys' => true,
+        'ttl' => 3600,
     ),
     // Used to store data for repositories to avoid repetitive DB queries within one request.
     'repositories' => array(
