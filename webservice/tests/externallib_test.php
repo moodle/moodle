@@ -144,7 +144,9 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $siteinfo = external_api::clean_returnvalue(core_webservice_external::get_site_info_returns(), $siteinfo);
 
         $this->assertEquals(0, $siteinfo['userquota']);
-        $this->assertEquals(USER_CAN_IGNORE_FILE_SIZE_LIMITS, $siteinfo['usermaxuploadfilesize']);
+
+        // The max_size is dependant upon the post_max_size, and upload_max_filesize values in php.ini.
+        $this->assertEquals(get_max_upload_file_size(USER_CAN_IGNORE_FILE_SIZE_LIMITS), $siteinfo['usermaxuploadfilesize']);
         $this->assertEquals(true, $siteinfo['usercanmanageownfiles']);
 
     }
