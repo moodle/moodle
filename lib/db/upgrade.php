@@ -4441,5 +4441,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015062500.01);
     }
 
+    if ($oldversion < 2015081400.00) {
+
+        // Define table webdav_locks to be dropped.
+        $table = new xmldb_table('webdav_locks');
+
+        // Conditionally launch drop table for webdav_locks.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015081400.00);
+    }
+
     return true;
 }
