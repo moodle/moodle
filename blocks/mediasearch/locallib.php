@@ -37,7 +37,7 @@ class mediasearch {
         } else {
             $thissearch = "";
         }
-        $required = "msd.id, c.shortname AS coursefullname, msd.title, msd.description, msd.descriptionformat, msd.courseid, msd.keywords, msd.link";
+        $required = "msd.id, c.shortname AS coursefullname, msd.title, msd.description, msd.descriptionformat, msd.courseid, msd.keywords, msd.link, msd.iconlink";
         // Get the entries.
         $entries = $DB->get_records_sql("SELECT $required
                                          FROM {block_mediasearch_data} msd
@@ -102,7 +102,7 @@ class mediasearch {
             $parsearray = $parser->get_parsed_array();        
         }
         list($titlesearch, $titleparams) = search_generate_text_SQL($parsearray, 'p.title',
-                                                                   null,
+                                                                   'p.title',
                                                                    null,
                                                                    null,
                                                                    null,
@@ -110,14 +110,15 @@ class mediasearch {
                                                                    null,
                                                                    null);
         list($descriptionsearch, $descriptionparams) = search_generate_text_SQL($parsearray, 'p.description',
-                                                                   null,
+                                                                   'p.description',
                                                                    null,
                                                                    null,
                                                                    null,
                                                                    null,
                                                                    null,
                                                                    null);
-        list($keysearch, $keyparams) = search_generate_text_SQL($parsearray, 'p.keywords', null,
+        list($keysearch, $keyparams) = search_generate_text_SQL($parsearray, 'p.keywords',
+                                                                   'p.description',
                                                                    null,
                                                                    null,
                                                                    null,

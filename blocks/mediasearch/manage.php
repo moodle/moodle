@@ -74,7 +74,7 @@ if ($action == 'delete' && confirm_sesskey() && !empty($id)) {
             echo $renderer->confirm(get_string('confirmdeleterecord', 'block_mediasearch'),
                                     $deletebutton, 'manage.php?id='.$id);
 
-            $records[] = $deleterecord;
+            $records[] = $delrecord;
 
             echo $renderer->footer();
             exit;

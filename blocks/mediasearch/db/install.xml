@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/mediasearch/db" VERSION="20150721" COMMENT="XMLDB file for Moodle blocks/mediasearch"
+<XMLDB PATH="blocks/mediasearch/db" VERSION="20150810" COMMENT="XMLDB file for Moodle blocks/mediasearch"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -20,6 +20,7 @@
         <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="link" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="iconlink" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="URL for the icon to be used for the play from start."/>
         <FIELD NAME="keywords" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="holds the list of keywords associated with this entry"/>
       </FIELDS>
       <KEYS>

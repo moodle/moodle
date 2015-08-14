@@ -37,11 +37,14 @@ class block_mediasearch_entry_edit_form extends moodleform {
         $mform->setType('title', PARAM_NOTAGS);
         $mform->addRule('title', get_string('required'), 'required');
 
+        $mform->addElement('text', 'iconlink', get_string('icon_link', 'block_mediasearch'), array('size' => 40));
+        $mform->setType('iconlink', PARAM_NOTAGS);
+
         $mform->addElement('textarea', 'description', get_string('entry_description', 'block_mediasearch'));
         $mform->setType('description', PARAM_NOTAGS);
         $mform->addRule('description', get_string('required'), 'required');
 
-        $mform->addElement('text', 'link', get_string('entry_link', 'block_mediasearch'));
+        $mform->addElement('text', 'link', get_string('entry_link', 'block_mediasearch'), array('size' => 40));
         $mform->setType('link', PARAM_NOTAGS);
         $mform->addRule('link', get_string('required'), 'required');
 
@@ -53,6 +56,9 @@ class block_mediasearch_entry_edit_form extends moodleform {
         $mform->setType('keywords', PARAM_NOTAGS);
         $mform->addRule('keywords', get_string('required'), 'required');
         
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
+
         // Add action buttons.
         $buttonarray = array();
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton',

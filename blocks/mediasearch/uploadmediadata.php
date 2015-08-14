@@ -69,7 +69,7 @@ $today = time();
 $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
 
 // Array of all valid fields for validation.
-$stdfields = array('id', 'course', 'title', 'description', 'link', 'keywords');
+$stdfields = array('id', 'course', 'title', 'description', 'link', 'iconlink', 'keywords');
 
 if (empty($iid)) {
     $mform = new mediasearch_uploaddata_form1();
@@ -579,6 +579,7 @@ class uu_progress_tracker {
                             'title',
                             'course',
                             'description',
+                            'iconlink',
                             'link',
                             'keywords',
                             'delete');
@@ -597,6 +598,7 @@ class uu_progress_tracker {
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('title', 'block_mediasearch').'</th>';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('course').'</th>';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('description', 'block_mediasearch').'</th>';
+        echo '<th class="header c'.$ci++.'" scope="col">'.get_string('iconlink', 'block_mediasearch').'</th>';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('link', 'block_mediasearch').'</th>';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('keywords', 'block_mediasearch').'</th>';
         echo '<th class="header c'.$ci++.'" scope="col">'.get_string('delete').'</th>';

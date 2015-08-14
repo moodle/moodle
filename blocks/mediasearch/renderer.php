@@ -62,7 +62,8 @@ class block_mediasearch_renderer extends plugin_renderer_base {
         $table = new html_table();
 
         $table->head = array(get_string('course'),
-                             get_string('title', 'block_mediasearch'),
+                             get_string('title', 'block_mediasearch'),                             
+                             get_string('iconlink', 'block_mediasearch'),
                              get_string('description', 'block_mediasearch'),
                              get_string('keywords', 'block_mediasearch'),
                              get_string('action', 'block_mediasearch'));
@@ -70,6 +71,7 @@ class block_mediasearch_renderer extends plugin_renderer_base {
         foreach ($entries->entries as $entry) {
             $tablerow = array($entry->coursefullname,
                               $entry->title,
+                              $entry->iconlink,
                               $entry->description,
                               $entry->keywords,
                               $entry->link,
@@ -102,6 +104,7 @@ class block_mediasearch_renderer extends plugin_renderer_base {
         
         echo '"' . get_string('course') . '","' .
              get_string('title', 'block_mediasearch') . '","' .
+             get_string('iconlink', 'block_mediasearch') . '","' .
              get_string('description', 'block_mediasearch') . '","' .
              get_string('link', 'block_mediasearch') . '","' .
              get_string('keywords', 'block_mediasearch') . "\"\n";
@@ -110,6 +113,7 @@ class block_mediasearch_renderer extends plugin_renderer_base {
         foreach ($entries as $entry) {
             echo '"' . $entry->coursefullname . '","' .
                  $entry->title . '","' .
+                 $entry->iconlink . '","' .
                  $entry->description . '","' .
                  $entry->link . '","' .
                  $entry->keywords . "\"\n";
@@ -133,17 +137,26 @@ class block_mediasearch_renderer extends plugin_renderer_base {
                              get_string('playfromsection', 'block_mediasearch'));
 
         foreach ($entries->entries as $entry) {
-            list($startlink, $drop) = explode('#', $entry->link);
-            $fromstarturl = "<a href='" . $startlink ."' class='button'>" . $startlink . "</a>";
-            $fromlinkurl = "<a href='" . $entry->link ."' class='button'>" . $entry->link . "</a>";
+            $startlink = explode('#', $entry->link);
+            if (!empty($entry->iconlink)) {
+                $starticon = "<img src='" . $entry->iconlink . "'>";
+            } else {
+                $starticon = $this->pix_icon('t/collapsed', get_string('playfromstart', 'block_mediasearch'));
+            }
+            $fromstarturl = "<a href='" . $startlink[0] ."#t=0m0s' class='button'>" . $starticon . "</a>";
+            $fromlinkurl = "<a href='" . $entry->link ."' class='button'>" .
+                            $this->pix_icon('t/right', get_string('playfromsection', 'block_mediasearch')) . "</a>";
             $tablerow = array($fromstarturl,
                               $entry->fullname,
-                              $entry->title,
-                              $entry->description,
+                              "<a href='" . $startlink[0] . "#t=0m0s' title='" . get_string('playfromstart', 'block_mediasearch') .
+                              "'>" . $entry->title . "</a>",
+                              "<a href='" . $entry->link . " title='" . get_string('playfromsection', 'block_mediasearch') .
+                              "'>" .$entry->description . "</a>",
                               $fromlinkurl);
             $table->data[] = $tablerow;
         }
 
+        echo "<h2>" . get_string('searchinfo', 'block_mediasearch') . '</h2>';
         // Output a paging bar
         $pagingurl = new moodle_url('/blocks/mediasearch/search.php', array('search' => $search));
         echo $this->paging_bar($entries->totalcount, $page, $perpage, $pagingurl);
