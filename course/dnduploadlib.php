@@ -61,7 +61,7 @@ function dndupload_add_to_course($course, $modnames) {
             array('dndworkingtextlink', 'moodle'),
             array('dndworkingtext', 'moodle'),
             array('dndworkinglink', 'moodle'),
-            array('filetoolarge', 'moodle'),
+            array('namedfiletoolarge', 'moodle'),
             array('actionchoice', 'moodle'),
             array('servererror', 'moodle'),
             array('upload', 'moodle'),

@@ -775,7 +775,6 @@ $string['feedback'] = 'Feedback';
 $string['file'] = 'File';
 $string['fileexists'] = 'There is already a file called {$a}';
 $string['filemissing'] = '{$a} is missing';
-$string['filetoolarge'] = 'is too large to upload';
 $string['files'] = 'Files';
 $string['filesanduploads'] = 'Files and uploads';
 $string['filesfolders'] = 'Files/folders';
@@ -1226,6 +1225,7 @@ $string['myhome'] = 'Dashboard';
 $string['mymoodledashboard'] = 'My Moodle dashboard';
 $string['myprofile'] = 'My profile';
 $string['name'] = 'Name';
+$string['namedfiletoolarge'] = 'The file \'{$a->filename}\' is too large and cannot be uploaded';
 $string['nameforlink'] = 'What do you want to call this link?';
 $string['nameforpage'] = 'Name';
 $string['navigation'] = 'Navigation';
@@ -2052,3 +2052,6 @@ $string['yourself'] = 'yourself';
 $string['yourteacher'] = 'your {$a}';
 $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
+
+// Deprecated since Moodle 3.1.
+$string['filetoolarge'] = 'is too large to upload';

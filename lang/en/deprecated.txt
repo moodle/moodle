@@ -27,3 +27,4 @@ othertags,core_tag
 tagtype,core_tag
 manageofficialtags,core_tag
 settypeofficial,core_tag
+filetoolarge,core
