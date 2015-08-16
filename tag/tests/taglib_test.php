@@ -352,4 +352,73 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $correlatedtag = reset($correlatedtags);
         $this->assertEquals(array_keys((array)$relatedtag), array_keys((array)$correlatedtag));
     }
+
+    /**
+     * Test for function tag_cleanup() that is part of tag cron
+     */
+    public function test_cleanup() {
+        global $DB;
+        $user = $this->getDataGenerator()->create_user();
+
+        // Setting tags will create non-official tags 'cat', 'dog' and 'fish'.
+        tag_set('user', $user->id, array('cat', 'dog', 'fish'),
+                'core', context_user::instance($user->id)->id);
+
+        $this->assertTrue($DB->record_exists('tag', array('name' => 'cat')));
+        $this->assertTrue($DB->record_exists('tag', array('name' => 'dog')));
+        $this->assertTrue($DB->record_exists('tag', array('name' => 'fish')));
+
+        // Make tag 'dog' official.
+        $dogtag = tag_get('name', 'dog');
+        $fishtag = tag_get('name', 'fish');
+        tag_type_set($dogtag->id, 'official');
+
+        // Manually remove the instances pointing on tags 'dog' and 'fish'.
+        $DB->execute('DELETE FROM {tag_instance} WHERE tagid in (?,?)', array($dogtag->id, $fishtag->id));
+
+        // Call tag_cleanup().
+        tag_cleanup();
+
+        // Tag 'cat' is still present because it's used. Tag 'dog' is present because it's official.
+        // Tag 'fish' was removed because it is not official and it is no longer used by anybody.
+        $this->assertTrue($DB->record_exists('tag', array('name' => 'cat')));
+        $this->assertTrue($DB->record_exists('tag', array('name' => 'dog')));
+        $this->assertFalse($DB->record_exists('tag', array('name' => 'fish')));
+
+        // Delete user without using API function.
+        $DB->update_record('user', array('id' => $user->id, 'deleted' => 1));
+
+        // Call tag_cleanup().
+        tag_cleanup();
+
+        // Tag 'cat' was now deleted too.
+        $this->assertFalse($DB->record_exists('tag', array('name' => 'cat')));
+
+        // Assign tag to non-existing record. Make sure tag was created in the DB.
+        tag_set('course', 1231231, array('bird'), 'core', context_system::instance()->id);
+        $this->assertTrue($DB->record_exists('tag', array('name' => 'bird')));
+
+        // Call tag_cleanup().
+        tag_cleanup();
+
+        // Tag 'bird' was now deleted because the related record does not exist in the DB.
+        $this->assertFalse($DB->record_exists('tag', array('name' => 'bird')));
+
+        // Now we have a tag instance pointing on 'sometag' tag.
+        $user = $this->getDataGenerator()->create_user();
+        tag_set('user', $user->id, array('sometag'),
+                'core', context_user::instance($user->id)->id);
+        $sometag = tag_get('name', 'sometag');
+
+        $this->assertTrue($DB->record_exists('tag_instance', array('tagid' => $sometag->id)));
+
+        // Some hacker removes the tag without using API.
+        $DB->delete_records('tag', array('id' => $sometag->id));
+
+        // Call tag_cleanup().
+        tag_cleanup();
+
+        // The tag instances were also removed.
+        $this->assertFalse($DB->record_exists('tag_instance', array('tagid' => $sometag->id)));
+    }
 }
