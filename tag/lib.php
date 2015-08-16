@@ -546,10 +546,8 @@ function tag_get_related_tags($tagid, $type=TAG_RELATED_ALL, $limitnum=10) {
 
     if ( $type == TAG_RELATED_ALL || $type == TAG_RELATED_CORRELATED ) {
         //gets the correlated tags
-        $automatic_related_tags = tag_get_correlated($tagid, $limitnum);
-        if (is_array($automatic_related_tags)) {
-            $related_tags = array_merge($related_tags, $automatic_related_tags);
-        }
+        $automatic_related_tags = tag_get_correlated($tagid);
+        $related_tags = array_merge($related_tags, $automatic_related_tags);
     }
 
     // Remove duplicated tags (multiple instances of the same tag).
@@ -1378,13 +1376,21 @@ function tag_get_name($tagids) {
  * Returns the correlated tags of a tag, retrieved from the tag_correlation table. Make sure cron runs, otherwise the table will be
  * empty and this function won't return anything.
  *
+ * Correlated tags are calculated in cron based on existing tag instances.
+ *
+ * This function will return as many entries as there are existing tag instances,
+ * which means that there will be duplicates for each tag.
+ *
+ * If you need only one record for each correlated tag please call:
+ *      tag_get_related_tags($tag_id, TAG_RELATED_CORRELATED);
+ *
  * @package core_tag
  * @access  private
  * @param   int      $tag_id   is a single tag id
- * @param   int      $limitnum this parameter does not appear to have any function???
+ * @param   int      $notused  this argument is no longer used
  * @return  array    an array of tag objects or an empty if no correlated tags are found
  */
-function tag_get_correlated($tag_id, $limitnum=null) {
+function tag_get_correlated($tag_id, $notused = null) {
     global $DB;
 
     $tag_correlation = $DB->get_record('tag_correlation', array('tagid'=>$tag_id));
@@ -1399,12 +1405,7 @@ function tag_get_correlated($tag_id, $limitnum=null) {
         INNER JOIN {tag_instance} ti ON tg.id = ti.tagid
              WHERE tg.id IN ({$tag_correlation->correlatedtags})
           ORDER BY ti.ordering ASC";
-    $result = $DB->get_records_sql($sql);
-    if (!$result) {
-        return array();
-    }
-
-    return $result;
+    return $DB->get_records_sql($sql);
 }
 
 /**
