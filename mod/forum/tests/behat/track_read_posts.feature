@@ -20,7 +20,6 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: Tracking forum posts off
     Given I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
@@ -37,7 +36,6 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     And I follow "Test forum name"
     And I should not see "Track unread posts"
 
-  @javascript
   Scenario: Tracking forum posts optional with user tracking on
     Given I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
@@ -63,7 +61,6 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     And I follow "Course 1"
     And I should not see "1 unread post"
 
-  @javascript
   Scenario: Tracking forum posts optional with user tracking off
     Given I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
@@ -80,7 +77,6 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     And I follow "Test forum name"
     And I should not see "Track unread posts"
 
-  @javascript
   Scenario: Tracking forum posts forced with user tracking on
     Given the following config values are set as admin:
       | forum_allowforcedreadtracking | 1 |
@@ -104,7 +100,6 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     And I follow "Course 1"
     And I should not see "1 unread post"
 
-  @javascript
   Scenario: Tracking forum posts forced with user tracking off
     Given the following config values are set as admin:
       | forum_allowforcedreadtracking | 1 |
@@ -128,7 +123,6 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     And I follow "Course 1"
     And I should not see "1 unread post"
 
-  @javascript
   Scenario: Tracking forum posts forced (with force disabled) with user tracking on
     Given the following config values are set as admin:
       | forum_allowforcedreadtracking | 1 |
@@ -160,7 +154,6 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     And I follow "Course 1"
     And I should not see "1 unread post"
 
-  @javascript
   Scenario: Tracking forum posts forced (with force disabled) with user tracking off
     Given the following config values are set as admin:
       | forum_allowforcedreadtracking | 1 |
