@@ -317,7 +317,11 @@
     margin-top: 0;
 }
 .course-content ul li.section.hidden {
-    opacity: 0.5;
+    .sectionname,
+    .content > div,  /* All the divs but the activities which are in a UL. */
+    .activity .activityinstance {
+        opacity: .5;
+    }
 }
 .course-content ul.topics li.section .content,
 .course-content ul.weeks li.section .content {
