@@ -80,6 +80,7 @@ class enrol_meta_handler {
      */
     protected static function sync_with_parent_course(stdClass $instance, $userid) {
         global $DB, $CFG;
+        require_once($CFG->dirroot . '/group/lib.php');
 
         $plugin = enrol_get_plugin('meta');
 
