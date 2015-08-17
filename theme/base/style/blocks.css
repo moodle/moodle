@@ -53,6 +53,10 @@
 }
 
 /** Overide for RTL layout **/
+.dir-rtl .block .header h2 {
+    padding: .2em .2em 0 0;
+}
+
 .dir-rtl .block .header,
 .dir-rtl .block h2.header {text-align:right;}
 .dir-rtl .block .header .block_action { float: left; margin-left: 4px; margin-left: 0;}
