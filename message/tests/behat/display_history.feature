@@ -1,4 +1,4 @@
-@core @core_message @javascript
+@core @core_message
 Feature: Message history displays correctly
   In order to read messages between two users
   As a user
