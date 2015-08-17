@@ -244,4 +244,100 @@ class backup_cron_helper_testcase extends advanced_testcase {
         $next = backup_cron_automated_helper::calculate_next_automated_backup($timezone, $now);
         $this->assertEquals(date('w-20:00'), date('w-H:i', $next));
     }
+
+    /**
+     * Test {@link backup_cron_automated_helper::get_backups_to_delete}.
+     */
+    public function test_get_backups_to_delete() {
+        $this->resetAfterTest();
+        // Active only backup_auto_max_kept config to 2 days.
+        set_config('backup_auto_max_kept', '2', 'backup');
+        set_config('backup_auto_delete_days', '0', 'backup');
+        set_config('backup_auto_min_kept', '0', 'backup');
+
+        // No backups to delete.
+        $backupfiles = array(
+            '1000000000' => 'file1.mbz',
+            '1000432000' => 'file3.mbz'
+        );
+        $deletedbackups = testable_backup_cron_automated_helper::testable_get_backups_to_delete($backupfiles, 1000432000);
+        $this->assertFalse($deletedbackups);
+
+        // Older backup to delete.
+        $backupfiles['1000172800'] = 'file2.mbz';
+        $deletedbackups = testable_backup_cron_automated_helper::testable_get_backups_to_delete($backupfiles, 1000432000);
+        $this->assertEquals(1, count($deletedbackups));
+        $this->assertArrayHasKey('1000000000', $backupfiles);
+        $this->assertEquals('file1.mbz', $backupfiles['1000000000']);
+
+        // Activate backup_auto_max_kept to 5 days and backup_auto_delete_days to 10 days.
+        set_config('backup_auto_max_kept', '5', 'backup');
+        set_config('backup_auto_delete_days', '10', 'backup');
+        set_config('backup_auto_min_kept', '0', 'backup');
+
+        // No backups to delete. Timestamp is 1000000000 + 10 days.
+        $backupfiles['1000432001'] = 'file4.mbz';
+        $backupfiles['1000864000'] = 'file5.mbz';
+        $deletedbackups = testable_backup_cron_automated_helper::testable_get_backups_to_delete($backupfiles, 1000864000);
+        $this->assertFalse($deletedbackups);
+
+        // One old backup to delete. Timestamp is 1000000000 + 10 days + 1 second.
+        $deletedbackups = testable_backup_cron_automated_helper::testable_get_backups_to_delete($backupfiles, 1000864001);
+        $this->assertEquals(1, count($deletedbackups));
+        $this->assertArrayHasKey('1000000000', $backupfiles);
+        $this->assertEquals('file1.mbz', $backupfiles['1000000000']);
+
+        // Two old backups to delete. Timestamp is 1000000000 + 12 days + 1 second.
+        $deletedbackups = testable_backup_cron_automated_helper::testable_get_backups_to_delete($backupfiles, 1001036801);
+        $this->assertEquals(2, count($deletedbackups));
+        $this->assertArrayHasKey('1000000000', $backupfiles);
+        $this->assertEquals('file1.mbz', $backupfiles['1000000000']);
+        $this->assertArrayHasKey('1000172800', $backupfiles);
+        $this->assertEquals('file2.mbz', $backupfiles['1000172800']);
+
+        // Activate backup_auto_max_kept to 5 days, backup_auto_delete_days to 10 days and backup_auto_min_kept to 2.
+        set_config('backup_auto_max_kept', '5', 'backup');
+        set_config('backup_auto_delete_days', '10', 'backup');
+        set_config('backup_auto_min_kept', '2', 'backup');
+
+        // Three instead of four old backups are deleted. Timestamp is 1000000000 + 16 days.
+        $deletedbackups = testable_backup_cron_automated_helper::testable_get_backups_to_delete($backupfiles, 1001382400);
+        $this->assertEquals(3, count($deletedbackups));
+        $this->assertArrayHasKey('1000000000', $backupfiles);
+        $this->assertEquals('file1.mbz', $backupfiles['1000000000']);
+        $this->assertArrayHasKey('1000172800', $backupfiles);
+        $this->assertEquals('file2.mbz', $backupfiles['1000172800']);
+        $this->assertArrayHasKey('1000432000', $backupfiles);
+        $this->assertEquals('file3.mbz', $backupfiles['1000432000']);
+
+        // Three instead of all five backups are deleted. Timestamp is 1000000000 + 60 days.
+        $deletedbackups = testable_backup_cron_automated_helper::testable_get_backups_to_delete($backupfiles, 1005184000);
+        $this->assertEquals(3, count($deletedbackups));
+        $this->assertArrayHasKey('1000000000', $backupfiles);
+        $this->assertEquals('file1.mbz', $backupfiles['1000000000']);
+        $this->assertArrayHasKey('1000172800', $backupfiles);
+        $this->assertEquals('file2.mbz', $backupfiles['1000172800']);
+        $this->assertArrayHasKey('1000432000', $backupfiles);
+        $this->assertEquals('file3.mbz', $backupfiles['1000432000']);
+    }
+}
+
+/**
+ * Provides access to protected methods we want to explicitly test
+ *
+ * @copyright 2015 Jean-Philippe Gaudreau <jp.gaudreau@umontreal.ca>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class testable_backup_cron_automated_helper extends backup_cron_automated_helper {
+
+    /**
+     * Provides access to protected method get_backups_to_remove.
+     *
+     * @param array $backupfiles Existing backup files
+     * @param int $now Starting time of the process
+     * @return array Backup files to remove
+     */
+    public static function testable_get_backups_to_delete($backupfiles, $now) {
+        return parent::get_backups_to_delete($backupfiles, $now);
+    }
 }
