@@ -20,7 +20,10 @@
 .block.beingmoved {border-width: 2px;border-style: dashed;}
 .blockmovetarget {display: block;height: 1em;margin-bottom: 1em;border-width: 2px;border-style: dashed;}
 
-.block-region .invisible {opacity: 0.5;filter: alpha(opacity=50);}
+.block-region block.invisible .header h2 {
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
 
 .block .block-hider-show,
 .block .block-hider-hide {cursor:pointer;}
