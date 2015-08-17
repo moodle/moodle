@@ -67,7 +67,7 @@ class observer {
     }
 
     /**
-     * See if this certificate already exists & copy to local storage if it does
+     * Store the certificate in file area for local_iomad_track
      * Note: if there is more than one ceritificate in the same course, we rely on them having
      * different names (which they should).
      * @param int $contextid Context (id) of completed course
