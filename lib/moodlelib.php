@@ -5960,11 +5960,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
             // Before doing the comparison, make sure that the paths are correct (Windows uses slashes in the other direction).
             $attachpath = str_replace('\\', '/', $attachmentpath);
             // Make sure both variables are normalised before comparing.
-            $temppath = str_replace('\\', '/', $CFG->tempdir);
+            $temppath = str_replace('\\', '/', realpath($CFG->tempdir));
 
             // If the attachment is a full path to a file in the tempdir, use it as is,
             // otherwise assume it is a relative path from the dataroot (for backwards compatibility reasons).
-            if (strpos($attachpath, realpath($temppath)) !== 0) {
+            if (strpos($attachpath, $temppath) !== 0) {
                 $attachmentpath = $CFG->dataroot . '/' . $attachmentpath;
             }
 
