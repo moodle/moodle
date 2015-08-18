@@ -77,3 +77,20 @@
 #page-mod-data-edit .req {
     cursor: help;
 }
+#page-mod-data-edit .inline-req .req {
+    position: absolute;
+}
+#page-mod-data-edit .inline-req {
+    text-align: left;
+}
+#page-mod-data-edit .mod-data-input {
+    margin-left: 10px;
+}
+
+.dir-rtl#page-mod-data-edit .inline-req {
+    text-align: right;
+}
+.dir-rtl#page-mod-data-edit .mod-data-input {
+    margin-left: 0px;
+    margin-right: 10px;
+}
