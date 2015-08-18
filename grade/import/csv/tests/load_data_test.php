@@ -210,6 +210,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $testarray[$key]->feedback = $record->feedback;
         $testarray[$key]->importcode = $testobject->get_importcode();
         $testarray[$key]->importer = $USER->id;
+        $testarray[$key]->importonlyfeedback = 0;
 
         // Check that the record was inserted into the database.
         $this->assertEquals($gradeimportvalues, $testarray);
