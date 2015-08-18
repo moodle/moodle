@@ -338,16 +338,10 @@ class format_singleactivity extends format_base {
      * @return bool|null (null if the check is not possible)
      */
     public function activity_has_subtypes() {
-        global $CFG;
         if (!($modname = $this->get_activitytype())) {
             return null;
         }
-        $libfile = "$CFG->dirroot/mod/$modname/lib.php";
-        if (!file_exists($libfile)) {
-            return null;
-        }
-        include_once($libfile);
-        return function_exists($modname. '_get_types');
+        return component_callback('mod_' . $modname, 'get_types', array(), MOD_SUBTYPE_NO_CHILDREN) !== MOD_SUBTYPE_NO_CHILDREN;
     }
 
     /**
