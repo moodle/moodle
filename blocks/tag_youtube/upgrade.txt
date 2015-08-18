@@ -1,0 +1,8 @@
+This files describes API changes in the block tag_youtube code.
+
+=== 2.9.2 ===
+
+* Due to the final YouTube API v2.0 deprecation we needed to adapt the current
+  code to YouTube Data API v3. block_tag_youtube::fetch_request and
+  block_tag_youtube::render_video_list have been deprecated as they can not be
+  used any more.
