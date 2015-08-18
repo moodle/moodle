@@ -195,9 +195,11 @@ class core_completionlib_testcase extends advanced_testcase {
         $changed = clone($current);
         $changed->timemodified = time();
         $changed->completionstate = COMPLETION_INCOMPLETE;
+        $comparewith = new phpunit_constraint_object_is_equal_with_exceptions($changed);
+        $comparewith->add_exception('timemodified', 'assertGreaterThanOrEqual');
         $c->expects($this->at(2))
             ->method('internal_set_data')
-            ->with($cm, $changed);
+            ->with($cm, $comparewith);
         $c->update_state($cm, COMPLETION_INCOMPLETE);
 
         // Auto, change state.
@@ -217,9 +219,11 @@ class core_completionlib_testcase extends advanced_testcase {
         $changed = clone($current);
         $changed->timemodified = time();
         $changed->completionstate = COMPLETION_COMPLETE_PASS;
+        $comparewith = new phpunit_constraint_object_is_equal_with_exceptions($changed);
+        $comparewith->add_exception('timemodified', 'assertGreaterThanOrEqual');
         $c->expects($this->at(3))
             ->method('internal_set_data')
-            ->with($cm, $changed);
+            ->with($cm, $comparewith);
         $c->update_state($cm, COMPLETION_COMPLETE_PASS);
     }
 
