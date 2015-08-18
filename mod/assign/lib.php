@@ -1309,8 +1309,7 @@ function assign_get_completion_state($course, $cm, $userid, $type) {
 
     // If completion option is enabled, evaluate it and return true/false.
     if ($assign->get_instance()->completionsubmit) {
-        $dbparams = array('assignment'=>$assign->get_instance()->id, 'userid'=>$userid);
-        $submission = $DB->get_record('assign_submission', $dbparams, '*', IGNORE_MISSING);
+        $submission = $assign->get_user_submission($userid, false);
         return $submission && $submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED;
     } else {
         // Completion option is not enabled so just return $type.
