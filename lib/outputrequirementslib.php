@@ -1537,12 +1537,13 @@ class page_requirements_manager {
     public function get_top_of_body_code() {
         // First the skip links.
         $links = '';
-        $attributes = array('class'=>'skip');
+        $attributes = array('class' => 'skip');
         foreach ($this->skiplinks as $url => $text) {
-            $attributes['href'] = '#' . $url;
-            $links .= html_writer::tag('a', $text, $attributes);
+            $attributes['data-target'] = '#'.$url;
+            $links .= html_writer::link('#', $text, $attributes);
         }
         $output = html_writer::tag('div', $links, array('class'=>'skiplinks')) . "\n";
+        $this->js_init_call('M.util.init_skiplink');
 
         // YUI3 JS needs to be loaded early in the body. It should be cached well by the browser.
         $output .= $this->get_yui3lib_headcode();
