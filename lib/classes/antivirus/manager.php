@@ -75,7 +75,7 @@ class manager {
                 if ($deleteinfected) {
                     unlink($file);
                 }
-                throw new \core\antivirus\scanner_exception('virusfounduser', '', array('filename' => $filename));
+                throw new \core\antivirus\scanner_exception('virusfound', '', array('item' => $filename));
             }
         }
     }
