@@ -936,16 +936,16 @@ function message_format_message_text($message, $forcetexttohtml = false) {
 
     $format = $message->fullmessageformat;
 
-    if ($message->smallmessage !== '') {
+    if (strval($message->smallmessage) !== '') {
         if ($message->notification == 1) {
-            if ($message->fullmessagehtml !== '' or $message->fullmessage !== '') {
+            if (strval($message->fullmessagehtml) !== '' or strval($message->fullmessage) !== '') {
                 $format = FORMAT_PLAIN;
             }
         }
         $messagetext = $message->smallmessage;
 
     } else if ($message->fullmessageformat == FORMAT_HTML) {
-        if ($message->fullmessagehtml !== '') {
+        if (strval($message->fullmessagehtml) !== '') {
             $messagetext = $message->fullmessagehtml;
         } else {
             $messagetext = $message->fullmessage;
@@ -953,7 +953,7 @@ function message_format_message_text($message, $forcetexttohtml = false) {
         }
 
     } else {
-        if ($message->fullmessage !== '') {
+        if (strval($message->fullmessage) !== '') {
             $messagetext = $message->fullmessage;
         } else {
             $messagetext = $message->fullmessagehtml;
