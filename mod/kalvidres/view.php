@@ -57,6 +57,12 @@ $PAGE->add_body_class($pageclass);
 
 $context = $PAGE->context;
 
+$event = \mod_kalvidres\event\video_resource_viewed::create(array(
+    'objectid' => $kalvidres->id,
+    'context' => context_module::instance($cm->id)
+));
+$event->trigger();
+
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
