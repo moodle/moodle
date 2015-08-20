@@ -194,6 +194,7 @@ class question_utils_test extends advanced_testcase {
 
     public function test_clean_param_mark() {
         $this->assertNull(question_utils::clean_param_mark(null));
+        $this->assertNull(question_utils::clean_param_mark('frog'));
         $this->assertSame('', question_utils::clean_param_mark(''));
         $this->assertSame(0.0, question_utils::clean_param_mark('0'));
         $this->assertSame(1.5, question_utils::clean_param_mark('1.5'));

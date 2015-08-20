@@ -384,4 +384,98 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
         $this->displayoptions->manualcomment = question_display_options::VISIBLE;
         $this->check_output_contains('This should only appear if the displya options allow it');
     }
+
+    public function test_manual_graded_invalid_value_throws_exception() {
+        global $PAGE;
+
+        // The current text editor depends on the users profile setting - so it needs a valid user.
+        $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
+
+        // Create an essay question.
+        $essay = test_question_maker::make_an_essay_question();
+        $this->start_attempt_at_question($essay, 'deferredfeedback', 10);
+
+        // Check the right model is being used.
+        $this->assertEquals('manualgraded', $this->quba->get_question_attempt(
+                $this->slot)->get_behaviour_name());
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output($this->get_contains_question_text_expectation($essay),
+                $this->get_does_not_contain_feedback_expectation());
+
+        // Simulate some data submitted by the student.
+        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_HTML));
+
+        // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                new question_contains_tag_with_attribute('textarea', 'name',
+                $this->quba->get_question_attempt($this->slot)->get_qt_field_name('answer')),
+                $this->get_does_not_contain_feedback_expectation());
+
+        // Finish the attempt.
+        $this->quba->finish_all_questions();
+
+        // Verify.
+        $this->check_current_state(question_state::$needsgrading);
+        $this->check_current_mark(null);
+        $this->assertEquals('This is my wonderful essay!',
+                $this->quba->get_response_summary($this->slot));
+
+        // Try to process a an invalid grade.
+        $this->setExpectedException('coding_exception');
+        $this->manual_grade('Comment', 'frog', FORMAT_HTML);
+    }
+
+    public function test_manual_graded_out_of_range_throws_exception() {
+        global $PAGE;
+
+        // The current text editor depends on the users profile setting - so it needs a valid user.
+        $this->setAdminUser();
+        // Required to init a text editor.
+        $PAGE->set_url('/');
+
+        // Create an essay question.
+        $essay = test_question_maker::make_an_essay_question();
+        $this->start_attempt_at_question($essay, 'deferredfeedback', 10);
+
+        // Check the right model is being used.
+        $this->assertEquals('manualgraded', $this->quba->get_question_attempt(
+                $this->slot)->get_behaviour_name());
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_current_output($this->get_contains_question_text_expectation($essay),
+                $this->get_does_not_contain_feedback_expectation());
+
+        // Simulate some data submitted by the student.
+        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_HTML));
+
+        // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                new question_contains_tag_with_attribute('textarea', 'name',
+                $this->quba->get_question_attempt($this->slot)->get_qt_field_name('answer')),
+                $this->get_does_not_contain_feedback_expectation());
+
+        // Finish the attempt.
+        $this->quba->finish_all_questions();
+
+        // Verify.
+        $this->check_current_state(question_state::$needsgrading);
+        $this->check_current_mark(null);
+        $this->assertEquals('This is my wonderful essay!',
+                $this->quba->get_response_summary($this->slot));
+
+        // Try to process a an invalid grade.
+        $this->setExpectedException('coding_exception');
+        $this->manual_grade('Comment', '10.1', FORMAT_HTML);
+    }
 }

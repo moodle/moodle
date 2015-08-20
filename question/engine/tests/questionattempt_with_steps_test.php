@@ -165,4 +165,20 @@ class question_attempt_with_steps_test extends advanced_testcase {
         $this->setExpectedException('moodle_exception');
         $qa->get_max_fraction();
     }
+
+    public function test_validate_manual_mark() {
+        $this->qa->set_min_fraction(0);
+        $this->qa->set_max_fraction(1);
+        $this->assertSame('', $this->qa->validate_manual_mark(null));
+        $this->assertSame('', $this->qa->validate_manual_mark(''));
+        $this->assertSame('', $this->qa->validate_manual_mark('0'));
+        $this->assertSame('', $this->qa->validate_manual_mark('0.0'));
+        $this->assertSame('', $this->qa->validate_manual_mark('2,0'));
+        $this->assertSame(get_string('manualgradeinvalidformat', 'question'),
+                $this->qa->validate_manual_mark('frog'));
+        $this->assertSame(get_string('manualgradeoutofrange', 'question'),
+                $this->qa->validate_manual_mark('2.1'));
+        $this->assertSame(get_string('manualgradeoutofrange', 'question'),
+                $this->qa->validate_manual_mark('-0,01'));
+    }
 }
