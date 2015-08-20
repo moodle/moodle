@@ -34,5 +34,3 @@ Feature: Atto tables
     And I press "Update table"
     And I press "Save changes"
     Then ".blog_entry table caption" "css_element" should be visible
-
-

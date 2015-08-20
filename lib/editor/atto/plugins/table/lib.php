@@ -32,6 +32,7 @@ function atto_table_strings_for_js() {
 
     $PAGE->requires->strings_for_js(array('createtable',
                                           'updatetable',
+                                          'appearance',
                                           'headers',
                                           'caption',
                                           'columns',
@@ -48,7 +49,19 @@ function atto_table_strings_for_js() {
                                           'moverowup',
                                           'deleterow',
                                           'deletecolumn',
-                                          'captionposition'),
+                                          'captionposition',
+                                          'borders',
+                                          'bordersize',
+                                          'bordercolour',
+                                          'borderstyles',
+                                          'none',
+                                          'all',
+                                          'backgroundcolour',
+                                          'width',
+                                          'outer',
+                                          'noborder',
+                                          'transparent',
+                                          'themedefault'),
                                     'atto_table');
 
     $PAGE->requires->strings_for_js(array('top',
@@ -56,3 +69,20 @@ function atto_table_strings_for_js() {
                                     'editor');
 }
 
+/**
+ * Set params for this plugin
+ * @param string $elementid
+ * @param string $options
+ * @param string $foptions
+ */
+function atto_table_params_for_js($elementid, $options, $foptions) {
+    $params = array('allowBorders' => (bool) get_config('atto_table', 'allowborders'),
+                    'allowBorderStyles' => (bool) get_config('atto_table', 'allowborderstyles'),
+                    'borderStyles' => get_config('atto_table', 'borderstyles'),
+                    'allowBorderSize' => (bool) get_config('atto_table', 'allowbordersize'),
+                    'allowBorderColour' => (bool) get_config('atto_table', 'allowbordercolour'),
+                    'allowWidth' => (bool) get_config('atto_table', 'allowwidth'),
+                    'availableColors' => get_config('atto_table', 'availablecolors'),
+                    'allowBackgroundColour' => (bool) get_config('atto_table', 'allowbackgroundcolour'));
+    return $params;
+}
