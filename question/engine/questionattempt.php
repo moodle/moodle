@@ -49,10 +49,10 @@ class question_attempt {
     const USE_RAW_DATA = 'use raw data';
 
     /**
-     * @var string special value used by manual grading because {@link PARAM_FLOAT}
-     * converts '' to 0.
+     * @var string Should not longer be used.
+     * @deprecated since Moodle 3.0
      */
-    const PARAM_MARK = 'parammark';
+    const PARAM_MARK = PARAM_RAW_TRIMMED;
 
     /**
      * @var string special value to indicate a response variable that is uploaded
@@ -651,13 +651,12 @@ class question_attempt {
      * This is used by the manual grading code, particularly in association with
      * validation. If there is a mark submitted in the request, then use that,
      * otherwise use the latest mark for this question.
-     * @return number the current mark for this question.
-     * {@link get_fraction()} * {@link get_max_mark()}.
+     * @return number the current manual mark for this question, formatted for display.
      */
     public function get_current_manual_mark() {
-        $mark = $this->get_submitted_var($this->get_behaviour_field_name('mark'), question_attempt::PARAM_MARK);
+        $mark = $this->get_submitted_var($this->get_behaviour_field_name('mark'), PARAM_RAW_TRIMMED);
         if (is_null($mark)) {
-            return $this->get_mark();
+            return format_float($this->get_mark(), 7, true, true);
         } else {
             return $mark;
         }
@@ -1030,9 +1029,6 @@ class question_attempt {
      */
     public function get_submitted_var($name, $type, $postdata = null) {
         switch ($type) {
-            case self::PARAM_MARK:
-                // Special case to work around PARAM_FLOAT converting '' to 0.
-                return question_utils::clean_param_mark($this->get_submitted_var($name, PARAM_RAW_TRIMMED, $postdata));
 
             case self::PARAM_FILES:
                 return $this->process_response_files($name, $name, $postdata);
@@ -1054,40 +1050,27 @@ class question_attempt {
         }
     }
 
-
-    public function get_validation_message() {
-
-        if (!$this->manual_mark_format_is_ok()) {
-            $errorclass = ' error';
-            return html_writer::tag('span', get_string('manualgradeinvalidformat', 'question'),
-                array('class' => 'error')) . html_writer::empty_tag('br');
+    /**
+     * Validate the manual mark for a question.
+     * @param unknown $currentmark the user input (e.g. '1,0', '1,0' or 'invalid'.
+     * @return string any errors with the value, or '' if it is OK.
+     */
+    public function validate_manual_mark($currentmark) {
+        if ($currentmark === null || $currentmark === '') {
+            return '';
         }
-        $currentmark = $this->get_current_manual_mark();
+
+        $mark = question_utils::clean_param_mark($currentmark);
+        if ($mark === null) {
+            return get_string('manualgradeinvalidformat', 'question');
+        }
+
         $maxmark = $this->get_max_mark();
-        if ($currentmark > $maxmark * $this->get_max_fraction() || $currentmark < $maxmark * $this->get_min_fraction()) {
-            $errorclass = ' error';
-            return html_writer::tag('span', get_string('manualgradeoutofrange', 'question'),
-                array('class' => 'error')) . html_writer::empty_tag('br');
+        if ($mark > $maxmark * $this->get_max_fraction() || $mark < $maxmark * $this->get_min_fraction()) {
+            return get_string('manualgradeoutofrange', 'question');
         }
 
         return '';
-
-    }
-
-    /**
-     * Validates that the manual mark parameter is a float.
-     * @return bool.
-     */
-    public function manual_mark_format_is_ok() {
-        $val = $this->get_submitted_var($this->get_behaviour_field_name('mark'), PARAM_RAW_TRIMMED);
-
-        // If it is empy, we get null (it is always the case on start)
-        if ($val===null) {
-            return true;
-        }
-        $mark = unformat_float($val, true);
-
-        return is_float($mark);
     }
 
     /**

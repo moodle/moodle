@@ -1,7 +1,8 @@
 @mod @mod_quiz
-Feature: In order to mannually mark a question I want
+Feature: Teachers can override the grade for any question
   As a teacher
-  I must be able to set the marks I want on the Rapport question page.
+  In order to correct errors
+  I must be able to override the grades that Moodle gives.
 
   Background:
     Given the following "users" exist:
@@ -18,22 +19,21 @@ Feature: In order to mannually mark a question I want
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
-    Given the following "questions" exist:
+    And the following "questions" exist:
       | questioncategory | qtype       | name  | questiontext    | defaultmark |
       | Test questions   | essay       | TF1   | First question  | 20          |
     And the following "activities" exist:
       | activity   | name   | intro              | course | idnumber | grade |
       | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    | 20    |
     And quiz "Quiz 1" contains the following questions:
-      | question | page | requireprevious |
-      | TF1      | 1    | 0               |
+      | question | page |
+      | TF1      | 1    |
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Quiz 1"
     And I press "Attempt quiz now"
     And I follow "Finish attempt ..."
     And I press "Submit all and finish"
-    # Pop-up confirmation
     And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
     And I log out
     And I log in as "teacher1"
@@ -51,9 +51,7 @@ Feature: In order to mannually mark a question I want
     Then I should see "This grade is outside the valid range."
     And I set the field "Mark" to "aa"
     And I press "Save"
-    Then I should see "That is not a valid number."
-    And I set the field "Mark" to "10"
+    And I should see "That is not a valid number."
+    And I set the field "Mark" to "10.0"
     And I press "Save"
-    Then I should see "Changes saved"
-
-
+    And I should see "Changes saved"

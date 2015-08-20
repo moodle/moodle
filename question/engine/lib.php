@@ -132,23 +132,6 @@ abstract class question_engine {
     }
 
     /**
-     * MDL-51090
-     * Validate that the manual grade submitted for a particular question is a
-     * float.
-     *
-     * @param string prefix as constructed in is_manual_grade_in_range.
-     * @return bool whether the submitted data is a float.
-     */
-    public static function is_manual_grade_float($prefix) {
-        $val = optional_param($prefix . '-mark', null, PARAM_RAW_TRIMMED);
-        $mark = unformat_float($val, true);
-        if (is_float($mark)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Validate that the manual grade submitted for a particular question is in range.
      * @param int $qubaid the question_usage id.
      * @param int $slot the slot number within the usage.
@@ -156,14 +139,12 @@ abstract class question_engine {
      */
     public static function is_manual_grade_in_range($qubaid, $slot) {
         $prefix = 'q' . $qubaid . ':' . $slot . '_';
-        if (!self::is_manual_grade_float($prefix)) {
-            return false;
-        }
         $mark = question_utils::optional_param_mark($prefix . '-mark');
         $maxmark = optional_param($prefix . '-maxmark', null, PARAM_FLOAT);
         $minfraction = optional_param($prefix . ':minfraction', null, PARAM_FLOAT);
         $maxfraction = optional_param($prefix . ':maxfraction', null, PARAM_FLOAT);
-        return is_null($mark) || ($mark >= $minfraction * $maxmark && $mark <= $maxfraction * $maxmark);
+        return $mark === '' ||
+                ($mark !== null && $mark >= $minfraction * $maxmark && $mark <= $maxfraction * $maxmark);
     }
 
     /**
@@ -924,8 +905,9 @@ abstract class question_utils {
     /**
      * Typically, $mark will have come from optional_param($name, null, PARAM_RAW_TRIMMED).
      * This method copes with:
-     *  - keeping null or '' input unchanged.
-     *  - nubmers that were typed as either 1.00 or 1,00 form.
+     *  - keeping null or '' input unchanged - important to let teaches set a question back to requries grading.
+     *  - numbers that were typed as either 1.00 or 1,00 form.
+     *  - invalid things, which get turned into null.
      *
      * @param string|null $mark raw use input of a mark.
      * @return float|string|null cleaned mark as a float if possible. Otherwise '' or null.
@@ -935,7 +917,13 @@ abstract class question_utils {
             return $mark;
         }
 
-        return clean_param(str_replace(',', '.', $mark), PARAM_FLOAT);
+        $mark = str_replace(',', '.', $mark);
+        // This regexp should match the one in validate_param.
+        if (!preg_match('/^[\+-]?[0-9]*\.?[0-9]*(e[-+]?[0-9]+)?$/i', $mark)) {
+            return null;
+        }
+
+        return clean_param($mark, PARAM_FLOAT);
     }
 
     /**
