@@ -134,25 +134,34 @@ class qtype_match_question extends question_graded_automatically_with_countback 
     }
 
     public function classify_response(array $response) {
-        $selectedchoices = array();
+        $selectedchoicekeys = array();
         foreach ($this->stemorder as $key => $stemid) {
             if (array_key_exists($this->field($key), $response) && $response[$this->field($key)]) {
-                $selectedchoices[$stemid] = $this->choiceorder[$response[$this->field($key)]];
+                $selectedchoicekeys[$stemid] = $this->choiceorder[$response[$this->field($key)]];
             } else {
-                $selectedchoices[$stemid] = 0;
+                $selectedchoicekeys[$stemid] = 0;
             }
         }
 
         $parts = array();
         foreach ($this->stems as $stemid => $stem) {
-            if (empty($selectedchoices[$stemid])) {
+            if ($this->right[$stemid] == 0 || !isset($selectedchoicekeys[$stemid])) {
+                // Choice for a deleted subquestion, ignore. (See apply_attempt_state.)
+                continue;
+            }
+            $selectedchoicekey = $selectedchoicekeys[$stemid];
+            if (empty($selectedchoicekey)) {
                 $parts[$stemid] = question_classified_response::no_response();
                 continue;
             }
-            $choice = $this->choices[$selectedchoices[$stemid]];
+            $choice = $this->choices[$selectedchoicekey];
+            if ($choice == get_string('deletedchoice', 'qtype_match')) {
+                // Deleted choice, ignore. (See apply_attempt_state.)
+                continue;
+            }
             $parts[$stemid] = new question_classified_response(
-                    $selectedchoices[$stemid], $choice,
-                    ($selectedchoices[$stemid] == $this->right[$stemid]) / count($this->stems));
+                    $selectedchoicekey, $choice,
+                    ($selectedchoicekey == $this->right[$stemid]) / count($this->stems));
         }
         return $parts;
     }
