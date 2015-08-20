@@ -138,7 +138,7 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->disabledIf('uuallowsuspends', 'uutype', 'eq', UU_USER_ADDNEW);
         $mform->disabledIf('uuallowsuspends', 'uutype', 'eq', UU_USER_ADDINC);
 
-        if (!empty($CFG->allowuserstoshareemailaddresses)) {
+        if (!empty($CFG->allowaccountssameemail)) {
             $mform->addElement('selectyesno', 'uunoemailduplicates', get_string('uunoemailduplicates', 'tool_uploaduser'));
             $mform->setDefault('uunoemailduplicates', 1);
         } else {
