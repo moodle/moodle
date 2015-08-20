@@ -68,8 +68,6 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
         return '';
     }
 
-
-
     public function manual_comment_fields(question_attempt $qa, question_display_options $options) {
         $inputname = $qa->get_behaviour_field_name('comment');
         $id = $inputname . '_id';
@@ -126,14 +124,8 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                 'name' => $markfield,
                 'id'=> $markfield
             );
-            if (!is_null($currentmark) && $qa->manual_mark_format_is_ok() ) {
-                $attributes['value'] = $qa->format_fraction_as_mark(
-                        $currentmark / $maxmark, $options->markdp);
-            }
-            // We want that the wrong entry is shown.
-            else if (!is_null($currentmark)){
-                $attributes['value'] = $qa->get_submitted_var(
-                    $qa->get_behaviour_field_name('mark'), PARAM_RAW_TRIMMED);
+            if (!is_null($currentmark)) {
+                $attributes['value'] = $currentmark;
             }
             $a = new stdClass();
             $a->max = $qa->format_max_mark($options->markdp);
@@ -153,10 +145,12 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                 'value' => $qa->get_max_fraction(),
             ));
 
-            $error = $qa->get_validation_message();
+            $error = $qa->validate_manual_mark($currentmark);
             $errorclass = '';
-            if ($error !== ''){
-                $erroclass = 'error';
+            if ($error !== '') {
+                $erroclass = ' error';
+                $error = html_writer::tag('span', $error,
+                        array('class' => 'error')) . html_writer::empty_tag('br');
             }
 
             $mark = html_writer::tag('div', html_writer::tag('div',
@@ -171,7 +165,6 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
         return html_writer::tag('fieldset', html_writer::tag('div', $comment . $mark,
                 array('class' => 'fcontainer clearfix')), array('class' => 'hidden'));
     }
-
 
     public function manual_comment_view(question_attempt $qa, question_display_options $options) {
         $output = '';
