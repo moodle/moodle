@@ -98,8 +98,6 @@ class qtype_gapselect_walkthrough_test extends qbehaviour_walkthrough_test_base 
                         $this->get_contains_submit_button_expectation(false),
                 $this->get_contains_try_again_button_expectation(true),
                 $this->get_does_not_contain_correctness_expectation(),
-                new question_pattern_expectation('/' . preg_quote(
-                        get_string('notcomplete', 'qbehaviour_interactive'), '/') . '/'),
                 $this->get_contains_hint_expectation('This is the first hint'));
 
         // Do try again.
