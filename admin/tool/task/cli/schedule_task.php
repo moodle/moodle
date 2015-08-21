@@ -149,6 +149,14 @@ if ($execute = $options['execute']) {
         mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
         mtrace("... used " . (microtime(true) - $pretime) . " seconds");
         mtrace("Task failed: " . $e->getMessage());
+        if ($CFG->debugdeveloper) {
+            if (!empty($e->debuginfo)) {
+                mtrace("Debug info:");
+                mtrace($e->debuginfo);
+            }
+            mtrace("Backtrace:");
+            mtrace(format_backtrace($e->getTrace(), true));
+        }
         \core\task\manager::scheduled_task_failed($task);
         get_mailer('close');
         exit(1);
