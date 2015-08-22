@@ -315,14 +315,16 @@ function coursetag_get_tagged_courses($tagid) {
 function coursetag_delete_course_tags($courseid, $showfeedback=false) {
     global $DB, $OUTPUT;
 
-    if ($taginstances = $DB->get_fieldset_select('tag_instance', 'tagid', "itemtype = 'course' AND itemid = :courseid",
-        array('courseid' => $courseid))) {
+    if ($taginstances = $DB->get_recordset_select('tag_instance', "itemtype = 'course' AND itemid = :courseid",
+        array('courseid' => $courseid), '', 'tagid, tiuserid')) {
 
-        tag_delete(array_values($taginstances));
+        foreach ($taginstances as $record) {
+            tag_delete_instance('course', $courseid, $record->tagid, $record->tiuserid);
+        }
+        $taginstances->close();
     }
 
     if ($showfeedback) {
         echo $OUTPUT->notification(get_string('deletedcoursetags', 'tag'), 'notifysuccess');
     }
 }
-
