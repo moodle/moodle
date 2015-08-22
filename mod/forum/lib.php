@@ -3505,6 +3505,15 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         } else {
             $replystring = get_string('repliesmany', 'forum', $post->replies);
         }
+        if (!empty($discussion->unread) && $discussion->unread !== '-') {
+            $replystring .= ' <span class="sep">/</span> <span class="unread">';
+            if ($discussion->unread == 1) {
+                $replystring .= get_string('unreadpostsone', 'forum');
+            } else {
+                $replystring .= get_string('unreadpostsnumber', 'forum', $discussion->unread);
+            }
+            $replystring .= '</span>';
+        }
 
         $output .= html_writer::start_tag('div', array('class'=>'link'));
         $output .= html_writer::link($discussionlink, get_string('discussthistopic', 'forum'));
