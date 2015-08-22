@@ -452,7 +452,7 @@ class core_tag_events_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
         coursetag_delete_course_tags($course->id);
         $events = $sink->get_events();
-        $events = array($events[2], $events[3]);
+        $events = array($events[1], $events[3]);
 
         // Check that the tags were deleted and the events data is valid.
         $this->assertEquals(0, $DB->count_records('tag'));
