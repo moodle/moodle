@@ -29,6 +29,7 @@ $string['alltagpages'] = 'All tag pages';
 $string['confirmdeletetag'] = 'Are you sure you want to delete this tag?';
 $string['confirmdeletetags'] = 'Are you sure you want to delete selected tags?';
 $string['count'] = 'Count';
+$string['coursetags'] = 'Course tags';
 $string['delete'] = 'Delete';
 $string['deleteselected'] = 'Delete selected';
 $string['deleted'] = 'Tag(s) deleted';

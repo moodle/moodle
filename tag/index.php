@@ -95,7 +95,6 @@ echo $OUTPUT->heading($tagname, 2);
 tag_print_management_box($tag);
 tag_print_description_box($tag);
 // Check what type of results are avaialable
-require_once($CFG->dirroot.'/tag/coursetagslib.php');
 $courses = $courserenderer->tagged_courses($tag->id);
 
 if (!empty($CFG->enableblogs) && has_capability('moodle/blog:view', $systemcontext)) {

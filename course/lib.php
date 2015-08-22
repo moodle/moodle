@@ -2547,7 +2547,7 @@ function course_overviewfiles_options($course) {
  * @return object new course instance
  */
 function create_course($data, $editoroptions = NULL) {
-    global $DB;
+    global $DB, $CFG;
 
     //check the categoryid - must be given for all new courses
     $category = $DB->get_record('course_categories', array('id'=>$data->category), '*', MUST_EXIST);
@@ -2623,6 +2623,11 @@ function create_course($data, $editoroptions = NULL) {
     // set up enrolments
     enrol_course_updated(true, $course, $data);
 
+    // Update course tags.
+    if ($CFG->usetags && isset($data->tags)) {
+        tag_set('course', $course->id, $data->tags, 'core', context_course::instance($course->id)->id);
+    }
+
     // Trigger a course created event.
     $event = \core\event\course_created::create(array(
         'objectid' => $course->id,
@@ -2646,7 +2651,7 @@ function create_course($data, $editoroptions = NULL) {
  * @return void
  */
 function update_course($data, $editoroptions = NULL) {
-    global $DB;
+    global $DB, $CFG;
 
     $data->timemodified = time();
 
@@ -2732,6 +2737,11 @@ function update_course($data, $editoroptions = NULL) {
 
     // update enrol settings
     enrol_course_updated(false, $course, $data);
+
+    // Update course tags.
+    if ($CFG->usetags && isset($data->tags)) {
+        tag_set('course', $course->id, $data->tags, 'core', context_course::instance($course->id)->id);
+    }
 
     // Trigger a course updated event.
     $event = \core\event\course_updated::create(array(
