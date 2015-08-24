@@ -41,24 +41,24 @@ class login_signup_form extends moodleform {
 
         $mform->addElement('text', 'username', get_string('username'), 'maxlength="100" size="12"');
         $mform->setType('username', PARAM_NOTAGS);
-        $mform->addRule('username', get_string('missingusername'), 'required', null, 'server');
+        $mform->addRule('username', get_string('missingusername'), 'required', null, 'client');
 
         if (!empty($CFG->passwordpolicy)){
             $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
         }
         $mform->addElement('passwordunmask', 'password', get_string('password'), 'maxlength="32" size="12"');
         $mform->setType('password', PARAM_RAW);
-        $mform->addRule('password', get_string('missingpassword'), 'required', null, 'server');
+        $mform->addRule('password', get_string('missingpassword'), 'required', null, 'client');
 
         $mform->addElement('header', 'supplyinfo', get_string('supplyinfo'),'');
 
         $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="25"');
         $mform->setType('email', PARAM_RAW_TRIMMED);
-        $mform->addRule('email', get_string('missingemail'), 'required', null, 'server');
+        $mform->addRule('email', get_string('missingemail'), 'required', null, 'client');
 
         $mform->addElement('text', 'email2', get_string('emailagain'), 'maxlength="100" size="25"');
         $mform->setType('email2', PARAM_RAW_TRIMMED);
-        $mform->addRule('email2', get_string('missingemail'), 'required', null, 'server');
+        $mform->addRule('email2', get_string('missingemail'), 'required', null, 'client');
 
         $namefields = useredit_get_required_name_fields();
         foreach ($namefields as $field) {
@@ -68,7 +68,7 @@ class login_signup_form extends moodleform {
             if (!get_string_manager()->string_exists($stringid, 'moodle')) {
                 $stringid = 'required';
             }
-            $mform->addRule($field, get_string($stringid), 'required', null, 'server');
+            $mform->addRule($field, get_string($stringid), 'required', null, 'client');
         }
 
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="20"');
@@ -101,7 +101,7 @@ class login_signup_form extends moodleform {
             $mform->setExpanded('policyagreement');
             $mform->addElement('static', 'policylink', '', '<a href="'.$CFG->sitepolicy.'" onclick="this.target=\'_blank\'">'.get_String('policyagreementclick').'</a>');
             $mform->addElement('checkbox', 'policyagreed', get_string('policyaccept'));
-            $mform->addRule('policyagreed', get_string('policyagree'), 'required', null, 'server');
+            $mform->addRule('policyagreed', get_string('policyagree'), 'required', null, 'client');
         }
 
         // buttons
