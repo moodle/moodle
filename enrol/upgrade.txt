@@ -1,6 +1,12 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.0 ===
+
+* Added new events enrol_instance_created, enrol_instance_updated and
+  enrol_instance_deleted . Always trigger them when changing records in the
+  DB table 'enrol'.
+
 === 2.9 ===
 
 * External function core_enrol_external::get_users_courses now returns additional optional fields:

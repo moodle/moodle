@@ -362,4 +362,64 @@ class core_enrollib_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test enrol_instance_created, enrol_instance_updated and enrol_instance_deleted events.
+     */
+    public function test_instance_events() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $selfplugin = enrol_get_plugin('self');
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        $course = $this->getDataGenerator()->create_course();
+
+        // Creating enrol instance.
+        $sink = $this->redirectEvents();
+        $instanceid = $selfplugin->add_instance($course, array('status' => ENROL_INSTANCE_ENABLED,
+                                                                'name' => 'Test instance 1',
+                                                                'customint6' => 1,
+                                                                'roleid' => $studentrole->id));
+        $events = $sink->get_events();
+        $sink->close();
+
+        $this->assertCount(1, $events);
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\enrol_instance_created', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals('self', $event->other['enrol']);
+        $this->assertEventContextNotUsed($event);
+
+        // Updating enrol instance.
+        $instance = $DB->get_record('enrol', array('id' => $instanceid));
+        $sink = $this->redirectEvents();
+        $selfplugin->update_status($instance, ENROL_INSTANCE_DISABLED);
+
+        $events = $sink->get_events();
+        $sink->close();
+
+        $this->assertCount(1, $events);
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\enrol_instance_updated', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals('self', $event->other['enrol']);
+        $this->assertEventContextNotUsed($event);
+
+        // Deleting enrol instance.
+        $instance = $DB->get_record('enrol', array('id' => $instanceid));
+        $sink = $this->redirectEvents();
+        $selfplugin->delete_instance($instance);
+
+        $events = $sink->get_events();
+        $sink->close();
+
+        $this->assertCount(1, $events);
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\enrol_instance_deleted', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals('self', $event->other['enrol']);
+        $this->assertEventContextNotUsed($event);
+    }
 }

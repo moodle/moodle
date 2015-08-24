@@ -96,6 +96,7 @@ if ($mform->is_cancelled()) {
             $instance->customint2 = $groupid;
         }
         $DB->update_record('enrol', $instance);
+        \core\event\enrol_instance_updated::create_from_record($instance)->trigger();
     }  else {
         // Create a new group for the cohort if requested.
         if ($data->customint2 == COHORT_CREATE_GROUP) {
