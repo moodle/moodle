@@ -1646,11 +1646,11 @@ class theme_config {
         global $CFG;
         if ($this->usesvg === null) {
 
-            if (!isset($CFG->svgicons) || !is_bool($CFG->svgicons)) {
+            if (!isset($CFG->svgicons)) {
                 $this->usesvg = core_useragent::supports_svg();
             } else {
                 // Force them on/off depending upon the setting.
-                $this->usesvg = $CFG->svgicons;
+                $this->usesvg = (bool)$CFG->svgicons;
             }
         }
         return $this->usesvg;
