@@ -88,6 +88,55 @@ function assign_reset_userdata($data) {
 }
 
 /**
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every assignment event in the site is checked, else
+ * only assignment events belonging to the course specified are checked.
+ *
+ * @param int $courseid
+ * @return bool
+ */
+function assign_refresh_events($courseid = 0) {
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
+    if ($courseid) {
+        // Make sure that the course id is numeric.
+        if (!is_numeric($courseid)) {
+            return false;
+        }
+        if (!$assigns = $DB->get_records('assign', array('course' => $courseid))) {
+            return false;
+        }
+        // Get course from courseid parameter.
+        if (!$course = $DB->get_record('course', array('id' => $courseid), '*')) {
+            return false;
+        }
+    } else {
+        if (!$assigns = $DB->get_records('assign')) {
+            return false;
+        }
+    }
+    foreach ($assigns as $assign) {
+        // Use assignment's course column if courseid parameter is not given.
+        if (!$courseid) {
+            $courseid = $assign->course;
+            if (!$course = $DB->get_record('course', array('id' => $courseid), '*')) {
+                continue;
+            }
+        }
+        if (!$cm = get_coursemodule_from_instance('assign', $assign->id, $courseid, false)) {
+            continue;
+        }
+        $context = context_module::instance($cm->id);
+        $assignment = new assign($context, $cm, $course);
+        $assignment->update_calendar($cm->id);
+    }
+
+    return true;
+}
+
+/**
  * Removes all grades from gradebook
  *
  * @param int $courseid The ID of the course to reset
