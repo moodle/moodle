@@ -63,13 +63,12 @@ switch ($pagetype[0]) {
         $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
         break;
     case 'user':
-        if ($pagelayout == 'mydashboard') {
-            // If it's not the current user's profile, we need a different capability.
-            if ($PAGE->context->contextlevel == CONTEXT_USER && $PAGE->context->instanceid != $USER->id) {
-                $PAGE->set_blocks_editing_capability('moodle/user:manageblocks');
-            } else {
-                $PAGE->set_blocks_editing_capability('moodle/user:manageownblocks');
-            }
+        if ($pagetype[1] === 'profile' && $PAGE->context->contextlevel == CONTEXT_USER
+                && $PAGE->context->instanceid == $USER->id) {
+            // A user can only move blocks on their own site profile.
+            $PAGE->set_blocks_editing_capability('moodle/user:manageownblocks');
+        } else {
+            $PAGE->set_blocks_editing_capability('moodle/user:manageblocks');
         }
         break;
 }
