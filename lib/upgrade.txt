@@ -125,6 +125,7 @@ information provided here is intended especially for developers.
     cohort_get_visible_list()
     enrol_cohort_enrol_all_users()
     enrol_cohort_search_cohorts()
+* The never unused webdav_locks table was dropped.
 
 === 2.9.1 ===
 
