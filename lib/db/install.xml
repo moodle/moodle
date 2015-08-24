@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20150608" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20150824" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2171,28 +2171,6 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid-name" UNIQUE="true" FIELDS="courseid, name"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="webdav_locks" COMMENT="Resource locks for WebDAV users">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="token" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="path" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="expiry" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="recursive" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="exclusivelock" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="modified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="owner" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="token" TYPE="unique" FIELDS="token"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="path" UNIQUE="false" FIELDS="path"/>
-        <INDEX NAME="expiry" UNIQUE="false" FIELDS="expiry"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="portfolio_instance" COMMENT="base table (not including config data) for instances of portfolio plugins.">
