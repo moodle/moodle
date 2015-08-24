@@ -248,6 +248,7 @@ class EmailTemplate {
     static public function send_to_user($email) {
         global $USER;
 
+        $supportuser = new stdclass();
         // Check if the user to be sent to is valid.
         if ($user = self::get_user($email->userid)) {
             if (isset($email->senderid) && !is_siteadmin($email->senderid) && $email->senderid > 0) {
@@ -257,8 +258,11 @@ class EmailTemplate {
             }
             if (!empty($email->headers)) {
                 $supportuser->customheaders = unserialize($email->headers);
+            } else {
+                $supportuser->customheaders = '';
             }
             return email_to_user($user, $supportuser, $email->subject, $email->body);
+
         }
     }
 
@@ -270,6 +274,7 @@ class EmailTemplate {
     public function email_to_user() {
         global $USER;
 
+        $supportuser = new stdclass();
         $subject = $this->subject();
         $body = $this->body();
         if (isset($this->sender->id)) {
@@ -278,7 +283,9 @@ class EmailTemplate {
             $supportuser = self::get_user(self::get_sender($this->userid));
         }
         if (isset($email->headers)) {
-                $supportuser->customheaders = unserialize($email->headers);
+            $supportuser->customheaders = unserialize($email->headers);
+        } else {
+            $supportuser->customheaders = '';
         }
 
         return email_to_user($this->user, $supportuser, $subject, $body);
