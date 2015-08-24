@@ -537,21 +537,26 @@ function xmldb_assign_upgrade($oldversion) {
                                 FROM {assign_submission}
                             GROUP BY assignment, groupid, userid';
 
-            // Note: souterouter looks redundant below, but it forces
-            // MySQL to use an in memory table to store the results of the
-            // inner query. Without this MySQL would complain that the UPDATE
-            // is operating on the same table as the FROM (which is true).
-            $maxattemptidssql = 'SELECT souterouter.id FROM (
-                                    SELECT souter.id
-                                       FROM {assign_submission} souter
-                                       JOIN (' . $maxattemptsql . ') sinner
-                                         ON souter.assignment = sinner.assignment
-                                        AND souter.userid = sinner.userid
-                                        AND souter.groupid = sinner.groupid
-                                        AND souter.attemptnumber = sinner.maxattempt
-                                ) souterouter';
-            $select = 'id IN(' . $maxattemptidssql . ')';
-            $DB->set_field_select('assign_submission', 'latest', 1, $select);
+            $maxattemptidssql = 'SELECT souter.id
+                                   FROM {assign_submission} souter
+                                   JOIN (' . $maxattemptsql . ') sinner
+                                     ON souter.assignment = sinner.assignment
+                                    AND souter.userid = sinner.userid
+                                    AND souter.groupid = sinner.groupid
+                                    AND souter.attemptnumber = sinner.maxattempt';
+
+            // We need to avoid using "WHERE ... IN(SELECT ...)" clause with MySQL for performance reason.
+            // TODO MDL-29589 Remove this dbfamily exception when implemented.
+            if ($DB->get_dbfamily() === 'mysql') {
+                $params = array('latest' => 1);
+                $sql = 'UPDATE {assign_submission}
+                    INNER JOIN (' . $maxattemptidssql . ') souterouter ON souterouter.id = {assign_submission}.id
+                           SET latest = :latest';
+                $DB->execute($sql, $params);
+            } else {
+                $select = 'id IN(' . $maxattemptidssql . ')';
+                $DB->set_field_select('assign_submission', 'latest', 1, $select);
+            }
 
             // Look for grade records with no submission record.
             // This is when a teacher has marked a student before they submitted anything.
