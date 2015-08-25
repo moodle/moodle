@@ -3774,6 +3774,9 @@ EOD;
             $region = array_shift($usedregions);
             $additionalclasses[] = $region . '-only';
         }
+        if (!$usedregions) {
+            $additionalclasses[] = 'content-only';
+        }
         foreach ($this->page->layout_options as $option => $value) {
             if ($value) {
                 $additionalclasses[] = 'layout-option-'.$option;
