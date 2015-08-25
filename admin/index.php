@@ -513,7 +513,15 @@ if (isguestuser()) {
     redirect(get_login_url());
 }
 $context = context_system::instance();
-require_capability('moodle/site:config', $context);
+
+if (!has_capability('moodle/site:config', $context)) {
+    // Do not throw exception display an empty page with administration menu if visible for current user.
+    $PAGE->set_title($SITE->fullname);
+    $PAGE->set_heading($SITE->fullname);
+    echo $OUTPUT->header();
+    echo $OUTPUT->footer();
+    exit;
+}
 
 // check that site is properly customized
 $site = get_site();
