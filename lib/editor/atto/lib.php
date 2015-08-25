@@ -103,6 +103,11 @@ class atto_texteditor extends texteditor {
                     continue;
                 }
 
+                // Remove manage files if requested.
+                if ($plugin == 'managefiles' && isset($options['enable_filemanagement']) && !$options['enable_filemanagement']) {
+                    continue;
+                }
+
                 $jsplugin = array();
                 $jsplugin['name'] = $plugin;
                 $jsplugin['params'] = array();
