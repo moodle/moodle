@@ -788,16 +788,13 @@ class quiz_attempt {
     }
 
     /**
-     * Is this a student dealing with their own attempt/teacher previewing,
-     * or someone with 'mod/quiz:viewreports' reviewing someone elses attempt.
+     * Is this someone dealing with their own attempt or preview?
      *
-     * @return bool whether this situation should be treated as someone looking at their own
-     * attempt. The distinction normally only matters when an attempt is being reviewed.
+     * @return bool true => own attempt/preview. false => reviewing someone elses.
      */
     public function is_own_attempt() {
         global $USER;
-        return $this->attempt->userid == $USER->id &&
-                (!$this->is_preview_user() || $this->attempt->preview);
+        return $this->attempt->userid == $USER->id;
     }
 
     /**
@@ -805,7 +802,7 @@ class quiz_attempt {
      */
     public function is_own_preview() {
         global $USER;
-        return $this->attempt->userid == $USER->id &&
+        return $this->is_own_attempt() &&
                 $this->is_preview_user() && $this->attempt->preview;
     }
 
@@ -961,6 +958,11 @@ class quiz_attempt {
             if (is_null($this->reviewoptions)) {
                 $this->reviewoptions = quiz_get_review_options($this->get_quiz(),
                         $this->attempt, $this->quizobj->get_context());
+                if ($this->is_own_preview()) {
+                    // It should  always be possible for a teacher to review their
+                    // own preview irrespective of the review options settings.
+                    $this->reviewoptions->attempt = true;
+                }
             }
             return $this->reviewoptions;
 
@@ -1569,7 +1571,19 @@ class quiz_attempt {
      */
     public function check_file_access($slot, $reviewing, $contextid, $component,
             $filearea, $args, $forcedownload) {
-        return $this->quba->check_file_access($slot, $this->get_display_options($reviewing),
+        $options = $this->get_display_options($reviewing);
+
+        // Check permissions - warning there is similar code in review.php and
+        // reviewquestion.php. If you change on, change them all.
+        if ($reviewing && $this->is_own_attempt() && !$options->attempt) {
+            return false;
+        }
+
+        if ($reviewing && !$this->is_own_attempt() && !$this->is_review_allowed()) {
+            return false;
+        }
+
+        return $this->quba->check_file_access($slot, $options,
                 $component, $filearea, $args, $forcedownload);
     }
 
