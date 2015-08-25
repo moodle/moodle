@@ -1067,3 +1067,60 @@ function user_mygrades_url($userid = null, $courseid = SITEID) {
     }
     return $url;
 }
+
+/**
+ * Check if a user has the permission to viewdetails in a shared course's context.
+ *
+ * @param object $user The other user's details.
+ * @param object $course Use this course to see if we have permission to see this user's profile.
+ * @param context $usercontext The user context if available.
+ * @return bool true for ability to view this user, else false.
+ */
+function user_can_view_profile($user, $course = null, $usercontext = null) {
+    global $USER, $CFG;
+
+    if ($user->deleted) {
+        return false;
+    }
+
+    // If any of these four things, return true.
+    // Number 1.
+    if ($USER->id == $user->id) {
+        return true;
+    }
+
+    // Number 2.
+    if (empty($CFG->forceloginforprofiles)) {
+        return true;
+    }
+
+    if (empty($usercontext)) {
+        $usercontext = context_user::instance($user->id);
+    }
+    // Number 3.
+    if (has_capability('moodle/user:viewdetails', $usercontext)) {
+        return true;
+    }
+
+    // Number 4.
+    if (has_coursecontact_role($user->id)) {
+        return true;
+    }
+
+    if (isset($course)) {
+        $sharedcourses = array($course);
+    } else {
+        $sharedcourses = enrol_get_shared_courses($USER->id, $user->id, true);
+    }
+    foreach ($sharedcourses as $sharedcourse) {
+        $coursecontext = context_course::instance($sharedcourse->id);
+        if (has_capability('moodle/user:viewdetails', $coursecontext)) {
+            if (!groups_user_groups_visible($sharedcourse, $user->id)) {
+                // Not a member of the same group.
+                continue;
+            }
+            return true;
+        }
+    }
+    return false;
+}
