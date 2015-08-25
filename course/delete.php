@@ -76,11 +76,12 @@ $strdeletecoursecheck = get_string("deletecoursecheck");
 $message = "{$strdeletecoursecheck}<br /><br />{$coursefullname} ({$courseshortname})";
 
 $continueurl = new moodle_url('/course/delete.php', array('id' => $course->id, 'delete' => md5($course->timemodified)));
+$continuebutton = new single_button($continueurl, get_string('delete'), 'post');
 
 $PAGE->navbar->add($strdeletecheck);
 $PAGE->set_title("$SITE->shortname: $strdeletecheck");
 $PAGE->set_heading($SITE->fullname);
 echo $OUTPUT->header();
-echo $OUTPUT->confirm($message, $continueurl, $categoryurl);
+echo $OUTPUT->confirm($message, $continuebutton, $categoryurl);
 echo $OUTPUT->footer();
 exit;
