@@ -7,6 +7,7 @@ information provided here is intended especially for developers.
   i.e. a call to M.core.actionmenu.instance.hideMenu() can be changed to M.core.actionmenu.instance.hideMenu(e) to ensure good
   behaviour when using custom action menus.
 * Users of the text editor API to manually create a text editor should call set_text before calling use_editor. See MDL-51179.
+* In the html_editors (tinyMCE, Atto), the manage files button can be hidden by changing the 'enable_filemanagement' option to false.
 
 === 2.8.7 ===
 
