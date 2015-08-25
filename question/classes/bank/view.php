@@ -923,7 +923,8 @@ class view {
             $deleteurl = new \moodle_url($baseurl, array('deleteselected' => $questionlist, 'confirm' => md5($questionlist),
                                                  'sesskey' => sesskey()));
 
-            echo $OUTPUT->confirm(get_string('deletequestionscheck', 'question', $questionnames), $deleteurl, $baseurl);
+            $continue = new \single_button($deleteurl, get_string('delete'), 'post');
+            echo $OUTPUT->confirm(get_string('deletequestionscheck', 'question', $questionnames), $continue, $baseurl);
 
             return true;
         }
