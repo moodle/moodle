@@ -53,8 +53,14 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
     /** @var int format of $incorrectfeedback. */
     public $incorrectfeedbackformat;
 
-    /** @var array of arrays. The keys are the choice group numbers. The values
-     * are arrays of qtype_gapselect_choice objects. */
+    /**
+     * @var array of arrays. The outer keys are the choice group numbers.
+     * The inner keys for most question types number sequentialy from 1. However
+     * for ddimageortext questions it is strange (and difficult to change now).
+     * the first item in each group gets numbered 1, and the other items get numbered
+     * $choice->no. Be careful!
+     * The values are arrays of qtype_gapselect_choice objects (or a subclass).
+     */
     public $choices;
 
     /**
