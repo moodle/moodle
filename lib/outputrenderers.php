@@ -3769,13 +3769,13 @@ EOD;
                 $additionalclasses[] = 'docked-region-'.$region;
             }
         }
-        if (count($usedregions) === 1) {
+        if (!$usedregions) {
+            // No regions means there is only content, add 'content-only' class.
+            $additionalclasses[] = 'content-only';
+        } else if (count($usedregions) === 1) {
             // Add the -only class for the only used region.
             $region = array_shift($usedregions);
             $additionalclasses[] = $region . '-only';
-        }
-        if (!$usedregions) {
-            $additionalclasses[] = 'content-only';
         }
         foreach ($this->page->layout_options as $option => $value) {
             if ($value) {
