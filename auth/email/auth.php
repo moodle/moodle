@@ -240,7 +240,7 @@ class auth_plugin_email extends auth_plugin_base {
      */
     function is_captcha_enabled() {
         global $CFG;
-        return isset($CFG->recaptchapublickey) && isset($CFG->recaptchaprivatekey) && get_config("auth/{$this->authtype}", 'recaptcha');
+        return $this->config->recaptcha;
     }
 
 }
