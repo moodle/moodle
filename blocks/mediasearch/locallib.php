@@ -101,7 +101,7 @@ class mediasearch {
         if ($lexer->parse($searchstring)) {
             $parsearray = $parser->get_parsed_array();        
         }
-        list($titlesearch, $titleparams) = search_generate_text_SQL($parsearray, 'p.title',
+        list($titlesearch, $titleparams) = search_generate_SQL($parsearray, 'p.title',
                                                                    'p.title',
                                                                    null,
                                                                    null,
@@ -109,7 +109,7 @@ class mediasearch {
                                                                    null,
                                                                    null,
                                                                    null);
-        list($descriptionsearch, $descriptionparams) = search_generate_text_SQL($parsearray, 'p.description',
+        list($descriptionsearch, $descriptionparams) = search_generate_SQL($parsearray, 'p.description',
                                                                    'p.description',
                                                                    null,
                                                                    null,
@@ -117,8 +117,8 @@ class mediasearch {
                                                                    null,
                                                                    null,
                                                                    null);
-        list($keysearch, $keyparams) = search_generate_text_SQL($parsearray, 'p.keywords',
-                                                                   'p.description',
+        list($keysearch, $keyparams) = search_generate_SQL($parsearray, 'p.keywords',
+                                                                   'p.keywords',
                                                                    null,
                                                                    null,
                                                                    null,
