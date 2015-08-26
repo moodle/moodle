@@ -30,7 +30,7 @@ $string['langimportdisabled'] = 'Language import feature has been disabled. You 
 $string['langpackinstalled'] = 'Language pack \'{$a}\' was successfully installed';
 $string['langpackinstalledevent'] = 'Language pack installed';
 $string['langpackremoved'] = 'Language pack \'{$a}\' was uninstalled';
-$string['langpacknotremoved'] = 'An error has occurred, language pack \'{$a}\' is not completely uninstalled, please check file permissions';
+$string['langpacknotremoved'] = 'An error has occurred; language pack \'{$a}\' is not completely uninstalled. Please check file permissions.';
 $string['langpackremovedevent'] = 'Language pack uninstalled';
 $string['langpackupdateskipped'] = 'Update of \'{$a}\' language pack skipped';
 $string['langpackuptodate'] = 'Language pack \'{$a}\' is up-to-date';
@@ -45,6 +45,6 @@ $string['pluginname'] = 'Language packs';
 $string['purgestringcaches'] = 'Purge string caches';
 $string['remotelangnotavailable'] = 'Because Moodle cannot connect to download.moodle.org, it is not possible for language packs to be installed automatically. Please download the appropriate ZIP file(s) from <a href="https://download.moodle.org/langpack/">download.moodle.org/langpack</a>, copy them to your {$a} directory and unzip them manually.';
 $string['selectlangs'] = 'Select languages to unistall!';
-$string['uninstall'] = 'Uninstall selected language packs';
+$string['uninstall'] = 'Uninstall selected language pack(s)';
 $string['uninstallconfirm'] = 'You are about to completely uninstall these language packs: <strong>{$a}</strong>. Are you sure?';
 $string['updatelangs'] = 'Update all installed language packs';
