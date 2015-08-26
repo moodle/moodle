@@ -86,6 +86,7 @@ $string['casesensitive_help'] = 'Tick the checkbox to use regular expressions fo
 $string['classstats'] = 'Class statistics';
 $string['clicktodownload'] = 'Click on the following link to download the file.';
 $string['clicktopost'] = 'Click here to post your grade on the High Scores list.';
+$string['closebeforeopen'] = 'Could not update the lesson. You have specified a close date before the open date.';
 $string['cluster'] = 'Cluster';
 $string['clusterjump'] = 'Unseen question within a cluster';
 $string['clustertitle'] = 'Cluster';
