@@ -154,6 +154,10 @@ if ($action === 'save') {
             // A response means the draft has been restored and here is the auto-saved text.
             $response['result'] = $record->drafttext;
             echo json_encode($response);
+        } else {
+            $DB->delete_records('editor_atto_autosave', array('id' => $record->id));
+
+            // No response means no error.
         }
         die();
     }
