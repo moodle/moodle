@@ -719,6 +719,37 @@ function external_validate_format($format) {
 }
 
 /**
+ * Format the string to be returned properly as requested by the either the web service server,
+ * either by an internally call.
+ * The caller can change the format (raw) with the external_settings singleton
+ * All web service servers must set this singleton when parsing the $_GET and $_POST.
+ *
+ * @param string $str The string to be filtered. Should be plain text, expect
+ * possibly for multilang tags.
+ * @param boolean $striplinks To strip any link in the result text. Moodle 1.8 default changed from false to true! MDL-8713
+ * @param int $contextid The id of the context for the string (affects filters).
+ * @param array $options options array/object or courseid
+ * @return string text
+ * @since Moodle 3.0
+ */
+function external_format_string($str, $contextid, $striplinks = true, $options = array()) {
+
+    // Get settings (singleton).
+    $settings = external_settings::get_instance();
+    if (empty($contextid)) {
+        throw new coding_exception('contextid is required');
+    }
+
+    if (!$settings->get_raw()) {
+        $context = context::instance_by_id($contextid);
+        $options['context'] = $context;
+        $str = format_string($str, $striplinks, $options);
+    }
+
+    return $str;
+}
+
+/**
  * Format the text to be returned properly as requested by the either the web service server,
  * either by an internally call.
  * The caller can change the format (raw, filter, file, fileurl) with the external_settings singleton
@@ -745,7 +776,8 @@ function external_format_text($text, $textformat, $contextid, $component, $filea
     }
 
     if (!$settings->get_raw()) {
-        $text = format_text($text, $textformat, array('para' => false, 'filter' => $settings->get_filter()));
+        $context = context::instance_by_id($contextid);
+        $text = format_text($text, $textformat, array('para' => false, 'filter' => $settings->get_filter(), 'context' => $context));
         $textformat = FORMAT_HTML; // Once converted to html (from markdown, plain... lets inform consumer this is already HTML).
     }
 
@@ -783,6 +815,10 @@ class external_settings {
      * Constructor - protected - can not be instanciated
      */
     protected function __construct() {
+        if (!defined('AJAX_SCRIPT') && !defined('CLI_SCRIPT') && !defined('WS_SERVER')) {
+            // For normal pages, the default should match the default for format_text.
+            $this->filter = true;
+        }
     }
 
     /**
