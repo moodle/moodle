@@ -61,6 +61,13 @@ abstract class backup_cron_automated_helper {
     const AUTO_BACKUP_ENABLED = 1;
     const AUTO_BACKUP_MANUAL = 2;
 
+    /** Automated backup storage in course backup filearea */
+    const STORAGE_COURSE = 0;
+    /** Automated backup storage in specified directory */
+    const STORAGE_DIRECTORY = 1;
+    /** Automated backup storage in course backup filearea and specified directory */
+    const STORAGE_COURSE_AND_DIRECTORY = 2;
+
     /**
      * Runs the automated backups if required
      *
@@ -560,13 +567,13 @@ abstract class backup_cron_automated_helper {
 
         // Clean up excess backups in the course backup filearea.
         $deletedcoursebackups = false;
-        if ($storage == 0 || $storage == 2) {
+        if ($storage == self::STORAGE_COURSE || $storage == self::STORAGE_COURSE_AND_DIRECTORY) {
             $deletedcoursebackups = self::remove_excess_backups_from_course($course, $now);
         }
 
         // Clean up excess backups in the specified external directory.
         $deleteddirectorybackups = false;
-        if ($storage == 1 || $storage == 2) {
+        if ($storage == self::STORAGE_DIRECTORY || $storage == self::STORAGE_COURSE_AND_DIRECTORY) {
             $deleteddirectorybackups = self::remove_excess_backups_from_directory($course, $now);
         }
 
