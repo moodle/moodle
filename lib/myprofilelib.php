@@ -373,7 +373,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                     $newfield = 'profile_field_'.$field->datatype;
                     $formfield = new $newfield($field->id, $user->id);
                     if ($formfield->is_visible() and !$formfield->is_empty()) {
-                        $node = new core_user\output\myprofile\node('contact', $formfield->field->shortname,
+                        $node = new core_user\output\myprofile\node('contact', 'custom_field_' . $formfield->field->shortname,
                             format_string($formfield->field->name), null, null, $formfield->display_data());
                         $tree->add_node($node);
                     }
