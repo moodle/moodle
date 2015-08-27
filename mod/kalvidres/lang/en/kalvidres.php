@@ -34,3 +34,4 @@ $string['invalid_launch_parameters'] = 'Invalid launch parameters';
 $string['invalid_source_parameter'] = 'Invalid source parameter';
 $string['replace_video'] = 'Replace media';
 $string['kalvidres:addinstance'] = 'Add a Kaltura Video Resource';
+$string['eventvideo_resource_viewed'] = 'Video resource viewed';

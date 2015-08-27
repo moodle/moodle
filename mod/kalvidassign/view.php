@@ -48,6 +48,12 @@ $PAGE->add_body_class($pageclass);
 
 $context = context_module::instance($cm->id);
 
+$event = \mod_kalvidassign\event\assignment_details_viewed::create(array(
+            'objectid' => $kalvidassign->id,
+            'context' => context_module::instance($cm->id)
+        ));
+$event->trigger();
+
 // Update 'viewed' state if required by completion system
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
