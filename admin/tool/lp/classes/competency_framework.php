@@ -46,9 +46,6 @@ class competency_framework extends persistent {
     /** @var int $descriptionformat Format for the description */
     private $descriptionformat = 0;
 
-    /** @var int $sortorder A number used to influence sorting */
-    private $sortorder = 0;
-
     /** @var bool $visible Used to show/hide this framework */
     private $visible = true;
 
@@ -139,24 +136,6 @@ class competency_framework extends persistent {
      */
     public function set_description($description) {
         $this->description = $description;
-    }
-
-    /**
-     * Get the sort order index.
-     *
-     * @return string The sort order index
-     */
-    public function get_sortorder() {
-        return $this->sortorder;
-    }
-
-    /**
-     * Set the sort order index.
-     *
-     * @param string $sortorder The sort order index
-     */
-    public function set_sortorder($sortorder) {
-        $this->sortorder = $sortorder;
     }
 
     /**
@@ -253,9 +232,6 @@ class competency_framework extends persistent {
         if (isset($record->descriptionformat)) {
             $this->set_descriptionformat($record->descriptionformat);
         }
-        if (isset($record->sortorder)) {
-            $this->set_sortorder($record->sortorder);
-        }
         if (isset($record->scaleid)) {
             $this->set_scaleid($record->scaleid);
         }
@@ -293,7 +269,6 @@ class competency_framework extends persistent {
         $record->description = $this->get_description();
         $record->descriptionformat = $this->get_descriptionformat();
         $record->descriptionformatted = format_text($this->get_description(), $this->get_descriptionformat());
-        $record->sortorder = $this->get_sortorder();
         $record->scaleid = $this->get_scaleid();
         $record->scaleconfiguration = $this->get_scaleconfiguration();
         $record->visible = $this->get_visible();
@@ -303,16 +278,6 @@ class competency_framework extends persistent {
         $record->contextid = $this->get_contextid();
 
         return $record;
-    }
-
-    /**
-     * Add a default for the sortorder field to the default create logic.
-     *
-     * @return persistent
-     */
-    public function create() {
-        $this->sortorder = $this->count_records();
-        return parent::create();
     }
 
 }

@@ -81,5 +81,21 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015052405, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015052406) {
+
+        // Define field sortorder to be dropped from tool_lp_competency_framework.
+        $table = new xmldb_table('tool_lp_competency_framework');
+        $field = new xmldb_field('sortorder');
+
+        // Conditionally launch drop field sortorder.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015052406, 'tool', 'lp');
+    }
+
+
     return true;
 }

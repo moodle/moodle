@@ -173,10 +173,6 @@ class external extends external_api {
             PARAM_BOOL,
             'Is this framework visible?'
         );
-        $sortorder = new external_value(
-            PARAM_INT,
-            'Relative sort order of this framework'
-        );
         $timecreated = new external_value(
             PARAM_INT,
             'Timestamp this record was created'
@@ -198,7 +194,6 @@ class external extends external_api {
             'descriptionformat' => $descriptionformat,
             'descriptionformatted' => $descriptionformatted,
             'visible' => $visible,
-            'sortorder' => $sortorder,
             'timecreated' => $timecreated,
             'timemodified' => $timemodified,
             'usermodified' => $usermodified,
