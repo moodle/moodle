@@ -130,29 +130,22 @@ class block_mediasearch_renderer extends plugin_renderer_base {
 
         $table = new html_table();
 
-        $table->head = array(get_string('playfromstart', 'block_mediasearch'),
-                             get_string('course'),
+        $table->head = array(get_string('course'),
                              get_string('title', 'block_mediasearch'),
-                             get_string('description', 'block_mediasearch'),
-                             get_string('playfromsection', 'block_mediasearch'));
+                             get_string('description', 'block_mediasearch'));
 
         foreach ($entries->entries as $entry) {
             $startlink = explode('#', $entry->link);
             if (!empty($entry->iconlink)) {
                 $starticon = "<img src='" . $entry->iconlink . "'>";
             } else {
-                $starticon = $this->pix_icon('t/collapsed', get_string('playfromstart', 'block_mediasearch'));
+                $starticon = '';
             }
-            $fromstarturl = "<a href='" . $startlink[0] ."#t=0m0s' class='button'>" . $starticon . "</a>";
-            $fromlinkurl = "<a href='" . $entry->link ."' class='button'>" .
-                            $this->pix_icon('t/right', get_string('playfromsection', 'block_mediasearch')) . "</a>";
-            $tablerow = array($fromstarturl,
-                              $entry->fullname,
+            $tablerow = array($entry->fullname,
                               "<a href='" . $startlink[0] . "#t=0m0s' title='" . get_string('playfromstart', 'block_mediasearch') .
-                              "'>" . $entry->title . "</a>",
+                              "'>" . $starticon . '&nbsp' .$entry->title . "</a>",
                               "<a href='" . $entry->link . " title='" . get_string('playfromsection', 'block_mediasearch') .
-                              "'>" .$entry->description . "</a>",
-                              $fromlinkurl);
+                              "'>" . $entry->description . "</a>");
             $table->data[] = $tablerow;
         }
 
