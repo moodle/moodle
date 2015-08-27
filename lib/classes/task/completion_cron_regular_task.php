@@ -18,14 +18,14 @@
  * A scheduled task.
  *
  * @package    core
- * @copyright  2013 onwards Martin Dougiamas  http://dougiamas.com
+ * @copyright  2015 Josh Willcock
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace core\task;
 
 /**
  * Simple task to run the regular completion cron.
- * @copyright  2013 onwards Martin Dougiamas  http://dougiamas.com.
+ * @copyright  2015 Josh Willcock
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
 class completion_cron_regular_task extends scheduled_task {
@@ -49,7 +49,8 @@ class completion_cron_regular_task extends scheduled_task {
         if ($CFG->enablecompletion) {
             // Regular Completion cron.
             require_once($CFG->dirroot.'/completion/cron.php');
-            completion_regular_cron();
+            completion_cron_criteria();
+            completion_cron_completions();
         }
     }
 

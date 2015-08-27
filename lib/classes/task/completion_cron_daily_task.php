@@ -49,7 +49,7 @@ class completion_cron_daily_task extends scheduled_task {
         if ($CFG->enablecompletion) {
             // Daily Completion cron.
             require_once($CFG->dirroot.'/completion/cron.php');
-            completion_daily_cron();
+            completion_cron_mark_started();
         }
     }
 
