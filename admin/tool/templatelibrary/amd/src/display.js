@@ -99,9 +99,7 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
         }
         if (context) {
             templates.render(templateName, context).done(function(html, js) {
-                $('[data-region="displaytemplateexample"]').empty();
-                $('[data-region="displaytemplateexample"]').append(html);
-                templates.runTemplateJS(js);
+                templates.replaceNodeContents($('[data-region="displaytemplateexample"]'), html, js);
             }).fail(notification.exception);
         } else {
             str.get_string('templatehasnoexample', 'tool_templatelibrary').done(function(s) {
