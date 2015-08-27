@@ -618,15 +618,16 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function count_competency_frameworks_parameters() {
-        $filters = new external_multiple_structure(new external_single_structure(
-            array(
-                'column' => new external_value(PARAM_ALPHANUMEXT, 'Column name to filter by'),
-                'value' => new external_value(PARAM_TEXT, 'Value to filter by. Must be exact match')
-            )
-        ));
+        $includes = new external_value(
+            PARAM_ALPHA,
+            'What other contextes to fetch the frameworks from. (children, parents, self)',
+            VALUE_DEFAULT,
+            'children'
+        );
 
         $params = array(
-            'filters' => $filters,
+            'context' => self::get_context_parameters(),
+            'includes' => $includes
         );
         return new external_function_parameters($params);
     }
@@ -645,22 +646,17 @@ class external extends external_api {
      * @param string $filters Filters to use.
      * @return boolean
      */
-    public static function count_competency_frameworks($filters) {
+    public static function count_competency_frameworks($context, $includes) {
         $params = self::validate_parameters(self::count_competency_frameworks_parameters(),
                                             array(
-                                                'filters' => $filters
+                                                'context' => $context,
+                                                'includes' => $includes
                                             ));
 
-        $safefilters = array();
-        $validcolumns = array('id', 'shortname', 'description', 'sortorder', 'idnumber', 'visible');
-        foreach ($params['filters'] as $filter) {
-            if (!in_array($filter->column, $validcolumns)) {
-                throw new invalid_parameter_exception('Filter column was invalid');
-            }
-            $safefilters[$filter->column] = $filter->value;
-        }
+        $context = self::get_context_from_params($params['context']);
+        self::validate_context($context);
 
-        return api::count_frameworks($safefilters);
+        return api::count_frameworks($context, $params['includes']);
     }
 
     /**

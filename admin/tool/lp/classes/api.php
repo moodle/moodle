@@ -415,11 +415,69 @@ class api {
     public static function list_frameworks($sort, $order, $skip, $limit, $context, $includes = 'children') {
         global $DB;
 
+        // Get all the relevant contexts.
+        $contexts = self::get_framework_related_contexts($context, $includes,
+            array('tool/lp:competencyread', 'tool/lp:competencymanage'));
+
+        if (empty($contexts)) {
+            throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
+        }
+
+        // OK - all set.
+        $framework = new competency_framework();
+        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contexts), SQL_PARAMS_NAMED);
+        return $framework->get_records_select("contextid $insql", $inparams, $sort, '*', $skip, $limit);
+    }
+
+    /**
+     * Perform a search based on the provided filters and return a paginated list of records.
+     *
+     * Requires tool/lp:competencyread capability at the system context.
+     *
+     * @param context $context The parent context of the frameworks.
+     * @param string $includes Defines what other contexts to fetch frameworks from.
+     *                         Accepted values are:
+     *                          - children: All descendants
+     *                          - parents: All parents, grand parents, etc...
+     *                          - self: Context passed only.
+     * @return int
+     */
+    public static function count_frameworks($context, $includes) {
+        global $DB;
+
+        // Get all the relevant contexts.
+        $contexts = self::get_framework_related_contexts($context, $includes,
+            array('tool/lp:competencyread', 'tool/lp:competencymanage'));
+
+        if (empty($contexts)) {
+            throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
+        }
+
+        // OK - all set.
+        $framework = new competency_framework();
+        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contexts), SQL_PARAMS_NAMED);
+        return $framework->count_records_select("contextid $insql", $inparams);
+    }
+
+    /**
+     * Fetches all the contexts relevant to frameworks.
+     *
+     * @param context $context The context to start from.
+     * @param string $includes Defines what other contexts to find.
+     *                         Accepted values are:
+     *                          - children: All descendants
+     *                          - parents: All parents, grand parents, etc...
+     *                          - self: Context passed only.
+     * @param array $hasanycapability Array of capabilities passed to {@link has_any_capability()} in each context.
+     * @return context[] An array of contexts where keys are context IDs.
+     */
+    public static function get_framework_related_contexts($context, $includes, array $hasanycapability = null) {
+        global $DB;
+
         if (!in_array($includes, array('children', 'parents', 'self'))) {
             throw new coding_exception('Invalid parameter value for \'includes\'.');
         }
 
-        // Get all the other relevant contexts.
         $contexts = array($context->id => $context);
 
         if ($includes == 'children') {
@@ -441,41 +499,16 @@ class api {
             }
         }
 
-        // First we do a permissions check.
-        foreach ($contexts as $key => $ctx) {
-            if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $ctx)) {
-                unset($contexts[$key]);
+        // Filter according to the capabilities required.
+        if (!empty($hasanycapability)) {
+            foreach ($contexts as $key => $ctx) {
+                if (!has_any_capability($hasanycapability, $ctx)) {
+                    unset($contexts[$key]);
+                }
             }
         }
 
-        if (empty($contexts)) {
-            throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
-        }
-
-        // OK - all set.
-        $framework = new competency_framework();
-        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contexts), SQL_PARAMS_NAMED);
-        return $framework->get_records_select("contextid $insql", $inparams, $sort, '*', $skip, $limit);
-    }
-
-    /**
-     * Perform a search based on the provided filters and return a paginated list of records.
-     *
-     * Requires tool/lp:competencyread capability at the system context.
-     *
-     * @param array $filters A list of filters to apply to the list.
-     * @return int
-     */
-    public static function count_frameworks($filters) {
-        // First we do a permissions check.
-        $context = context_system::instance();
-        if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
-             throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
-        }
-
-        // OK - all set.
-        $framework = new competency_framework();
-        return $framework->count_records($filters);
+        return $contexts;
     }
 
     /**

@@ -444,8 +444,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             array('contextid' => context_system::instance()->id));
         $result = external::create_competency_framework('shortname3', 'idnumber3', 'description', FORMAT_HTML, true,
             array('contextid' => context_system::instance()->id));
+        $result = external::create_competency_framework('shortname4', 'idnumber4', 'description', FORMAT_HTML, true,
+            array('contextid' => context_coursecat::instance($this->category->id)->id));
 
-        $result = external::count_competency_frameworks(array());
+        $result = external::count_competency_frameworks(array('contextid' => context_system::instance()->id), 'self');
         $result = external_api::clean_returnvalue(external::count_competency_frameworks_returns(), $result);
 
         $this->assertEquals($result, 3);
@@ -478,11 +480,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             array('contextid' => context_system::instance()->id));
         $result = external::create_competency_framework('shortname3', 'idnumber3', 'description', FORMAT_HTML, true,
             array('contextid' => context_system::instance()->id));
+        $result = external::create_competency_framework('shortname4', 'idnumber4', 'description', FORMAT_HTML, true,
+            array('contextid' => context_coursecat::instance($this->category->id)->id));
 
         $this->setUser($this->user);
-        $result = external::count_competency_frameworks(array());
+        $result = external::count_competency_frameworks(array('contextid' => context_system::instance()->id), 'self');
         $result = external_api::clean_returnvalue(external::count_competency_frameworks_returns(), $result);
-
         $this->assertEquals($result, 3);
 
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
