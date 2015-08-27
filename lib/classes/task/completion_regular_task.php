@@ -28,7 +28,7 @@ namespace core\task;
  * @copyright  2015 Josh Willcock
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class completion_cron_regular_task extends scheduled_task {
+class completion_regular_task extends scheduled_task {
 
     /**
      * Get a descriptive name for this task (shown to admins).
@@ -36,7 +36,7 @@ class completion_cron_regular_task extends scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('taskcompletioncronregular', 'admin');
+        return get_string('taskcompletionregular', 'admin');
     }
 
     /**
