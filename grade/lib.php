@@ -2887,6 +2887,12 @@ abstract class grade_helper {
                 continue;
             }
 
+            // Singleview doesn't doesn't accomodate for all cap combos yet, so this is hardcoded..
+            if ($plugin === 'singleview' && !has_all_capabilities(array('moodle/grade:viewall',
+                    'moodle/grade:edit'), $context)) {
+                continue;
+            }
+
             $pluginstr = get_string('pluginname', 'gradereport_'.$plugin);
             $url = new moodle_url('/grade/report/'.$plugin.'/index.php', array('id'=>$courseid));
             $gradereports[$plugin] = new grade_plugin_info($plugin, $url, $pluginstr);

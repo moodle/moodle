@@ -590,7 +590,8 @@ class grade_report_grader extends grade_report {
 
         $showuserimage = $this->get_pref('showuserimage');
         $canseeuserreport = has_capability('gradereport/'.$CFG->grade_profilereport.':view', $this->context);
-        $canseesingleview = has_capability('gradereport/singleview:view', $this->context);
+        $canseesingleview = has_all_capabilities(array('gradereport/singleview:view', 'moodle/grade:viewall',
+            'moodle/grade:edit'), $this->context);
         $hasuserreportcell = $canseeuserreport || $canseesingleview;
 
         $strfeedback  = $this->get_lang_string("feedback");
@@ -836,7 +837,9 @@ class grade_report_grader extends grade_report {
                     }
 
                     $singleview = '';
-                    if (has_capability('gradereport/singleview:view', $this->context)) {
+                    if (has_all_capabilities(array('gradereport/singleview:view', 'moodle/grade:viewall',
+                        'moodle/grade:edit'), $this->context)) {
+
                         $url = new moodle_url('/grade/report/singleview/index.php', array(
                             'id' => $this->course->id,
                             'item' => 'grade',
