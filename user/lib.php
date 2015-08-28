@@ -310,8 +310,10 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     $userdetails = array();
     $userdetails['id'] = $user->id;
 
-    if (($isadmin or $currentuser) and in_array('username', $userfields)) {
-        $userdetails['username'] = $user->username;
+    if (in_array('username', $userfields)) {
+        if ($currentuser or has_capability('moodle/user:viewalldetails', $context)) {
+            $userdetails['username'] = $user->username;
+        }
     }
     if ($isadmin or $canviewfullnames) {
         if (in_array('firstname', $userfields)) {
@@ -463,18 +465,22 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     }
 
     // Departement/Institution/Idnumber are not displayed on any profile, however you can get them from editing profile.
-    if ($isadmin or $currentuser or in_array('idnumber', $showuseridentityfields)) {
-        if (in_array('idnumber', $userfields) && $user->idnumber) {
+    if (in_array('idnumber', $userfields) && $user->idnumber) {
+        if (in_array('idnumber', $showuseridentityfields) or $currentuser or
+                has_capability('moodle/user:viewalldetails', $context)) {
             $userdetails['idnumber'] = $user->idnumber;
         }
     }
-    if ($isadmin or $currentuser or in_array('institution', $showuseridentityfields)) {
-        if (in_array('institution', $userfields) && $user->institution) {
+    if (in_array('institution', $userfields) && $user->institution) {
+        if (in_array('institution', $showuseridentityfields) or $currentuser or
+                has_capability('moodle/user:viewalldetails', $context)) {
             $userdetails['institution'] = $user->institution;
         }
     }
-    if ($isadmin or $currentuser or in_array('department', $showuseridentityfields)) {
-        if (in_array('department', $userfields) && isset($user->department)) { // Isset because it's ok to have department 0.
+    // Isset because it's ok to have department 0.
+    if (in_array('department', $userfields) && isset($user->department)) {
+        if (in_array('department', $showuseridentityfields) or $currentuser or
+                has_capability('moodle/user:viewalldetails', $context)) {
             $userdetails['department'] = $user->department;
         }
     }
