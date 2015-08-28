@@ -46,9 +46,9 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         // Create default course.
-        $course = $this->getDataGenerator()->create_course(array('category'=>1, 'shortname'=>'ANON'));
+        $course = $this->getDataGenerator()->create_course(array('category' => 1, 'shortname' => 'ANON'));
         $this->assertNotEmpty($course);
-        $page = $this->getDataGenerator()->create_module('page', array('course'=>$course->id));
+        $page = $this->getDataGenerator()->create_module('page', array('course' => $course->id));
         $this->assertNotEmpty($page);
 
         // Create default group.
@@ -58,7 +58,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $group->id = $DB->insert_record('groups', $group);
 
         // Create default user.
-        $user = $this->getDataGenerator()->create_user(array('username'=>'testuser', 'firstname'=>'Jimmy', 'lastname'=>'Kinnon'));
+        $user = $this->getDataGenerator()->create_user(array('username' => 'testuser', 'firstname' => 'Jimmy', 'lastname' => 'Kinnon'));
 
         // Create default tag.
         $tag = new stdClass();
@@ -91,35 +91,35 @@ class core_bloglib_testcase extends advanced_testcase {
         // Try all the filters at once: Only the entry filter is active.
         $filters = array('site' => $SITE->id, 'course' => $this->courseid, 'module' => $this->cmid,
             'group' => $this->groupid, 'user' => $this->userid, 'tag' => $this->tagid, 'entry' => $this->postid);
-        $blog_listing = new blog_listing($filters);
-        $this->assertFalse(array_key_exists('site', $blog_listing->filters));
-        $this->assertFalse(array_key_exists('course', $blog_listing->filters));
-        $this->assertFalse(array_key_exists('module', $blog_listing->filters));
-        $this->assertFalse(array_key_exists('group', $blog_listing->filters));
-        $this->assertFalse(array_key_exists('user', $blog_listing->filters));
-        $this->assertFalse(array_key_exists('tag', $blog_listing->filters));
-        $this->assertTrue(array_key_exists('entry', $blog_listing->filters));
+        $bloglisting = new blog_listing($filters);
+        $this->assertFalse(array_key_exists('site', $bloglisting->filters));
+        $this->assertFalse(array_key_exists('course', $bloglisting->filters));
+        $this->assertFalse(array_key_exists('module', $bloglisting->filters));
+        $this->assertFalse(array_key_exists('group', $bloglisting->filters));
+        $this->assertFalse(array_key_exists('user', $bloglisting->filters));
+        $this->assertFalse(array_key_exists('tag', $bloglisting->filters));
+        $this->assertTrue(array_key_exists('entry', $bloglisting->filters));
 
         // Again, but without the entry filter: This time, the tag, user and module filters are active.
         $filters = array('site' => $SITE->id, 'course' => $this->courseid, 'module' => $this->cmid,
             'group' => $this->groupid, 'user' => $this->userid, 'tag' => $this->postid);
-        $blog_listing = new blog_listing($filters);
-        $this->assertFalse(array_key_exists('site', $blog_listing->filters));
-        $this->assertFalse(array_key_exists('course', $blog_listing->filters));
-        $this->assertFalse(array_key_exists('group', $blog_listing->filters));
-        $this->assertTrue(array_key_exists('module', $blog_listing->filters));
-        $this->assertTrue(array_key_exists('user', $blog_listing->filters));
-        $this->assertTrue(array_key_exists('tag', $blog_listing->filters));
+        $bloglisting = new blog_listing($filters);
+        $this->assertFalse(array_key_exists('site', $bloglisting->filters));
+        $this->assertFalse(array_key_exists('course', $bloglisting->filters));
+        $this->assertFalse(array_key_exists('group', $bloglisting->filters));
+        $this->assertTrue(array_key_exists('module', $bloglisting->filters));
+        $this->assertTrue(array_key_exists('user', $bloglisting->filters));
+        $this->assertTrue(array_key_exists('tag', $bloglisting->filters));
 
         // We should get the same result by removing the 3 inactive filters: site, course and group.
         $filters = array('module' => $this->cmid, 'user' => $this->userid, 'tag' => $this->tagid);
-        $blog_listing = new blog_listing($filters);
-        $this->assertFalse(array_key_exists('site', $blog_listing->filters));
-        $this->assertFalse(array_key_exists('course', $blog_listing->filters));
-        $this->assertFalse(array_key_exists('group', $blog_listing->filters));
-        $this->assertTrue(array_key_exists('module', $blog_listing->filters));
-        $this->assertTrue(array_key_exists('user', $blog_listing->filters));
-        $this->assertTrue(array_key_exists('tag', $blog_listing->filters));
+        $bloglisting = new blog_listing($filters);
+        $this->assertFalse(array_key_exists('site', $bloglisting->filters));
+        $this->assertFalse(array_key_exists('course', $bloglisting->filters));
+        $this->assertFalse(array_key_exists('group', $bloglisting->filters));
+        $this->assertTrue(array_key_exists('module', $bloglisting->filters));
+        $this->assertTrue(array_key_exists('user', $bloglisting->filters));
+        $this->assertTrue(array_key_exists('tag', $bloglisting->filters));
 
     }
 

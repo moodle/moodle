@@ -112,7 +112,7 @@ class blog_entry implements renderable {
 
         $this->renderable = new StdClass();
 
-        $this->renderable->user = $DB->get_record('user', array('id'=>$this->userid));
+        $this->renderable->user = $DB->get_record('user', array('id' => $this->userid));
 
         // Entry comments.
         if (!empty($CFG->usecomments) and $CFG->blogusecomments) {
@@ -163,7 +163,7 @@ class blog_entry implements renderable {
                     $associations[$key]->contextlevel = $context->contextlevel;
 
                     // Course associations.
-                    if ($context->contextlevel ==  CONTEXT_COURSE) {
+                    if ($context->contextlevel == CONTEXT_COURSE) {
                         // TODO: performance!!!!
                         $instancename = $DB->get_field('course', 'shortname', array('id' => $context->instanceid));
 
@@ -174,7 +174,7 @@ class blog_entry implements renderable {
                     }
 
                     // Mod associations.
-                    if ($context->contextlevel ==  CONTEXT_MODULE) {
+                    if ($context->contextlevel == CONTEXT_MODULE) {
 
                         // Getting the activity type and the activity instance id.
                         $sql = 'SELECT cm.instance, m.name FROM {course_modules} cm
@@ -653,7 +653,7 @@ class blog_listing {
                 $assocexists = $DB->record_exists('blog_association', array());
 
                 // Begin permission sql clause.
-                $permissionsql =  '(p.userid = ? ';
+                $permissionsql = '(p.userid = ? ';
                 $params[] = $userid;
 
                 if ($CFG->bloglevel >= BLOG_SITE_LEVEL) { // Add permission to view site-level entries.

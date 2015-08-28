@@ -94,7 +94,7 @@ if (!empty($blogs)) {
         $editurl = new moodle_url('/blog/external_blog_edit.php', array('id' => $blog->id));
         $editicon = $OUTPUT->action_icon($editurl, new pix_icon('t/edit', get_string('editexternalblog', 'blog')));
 
-        $deletelink = new moodle_url('/blog/external_blogs.php', array('delete' => $blog->id, 'sesskey'=>sesskey()));
+        $deletelink = new moodle_url('/blog/external_blogs.php', array('delete' => $blog->id, 'sesskey' => sesskey()));
         $deleteicon = $OUTPUT->action_icon($deletelink, new pix_icon('t/delete', get_string('deleteexternalblog', 'blog')));
 
         $table->data[] = new html_table_row(array($blog->name,
