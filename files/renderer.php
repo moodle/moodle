@@ -1015,7 +1015,10 @@ class core_files_renderer extends plugin_renderer_base {
                     <label class="control-label"></label>
 
                     <div class="controls"><select></select></div>
-                </div>
+                </div>';
+        // HACK to prevent browsers from automatically inserting the user's password into the wrong fields.
+        $rv .= prevent_form_autofill_password();
+        $rv .= '
                 <div class="fp-login-input control-group clearfix">
                     <label class="control-label"></label>
                     <div class="controls"><input/></div>
