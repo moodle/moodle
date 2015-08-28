@@ -534,7 +534,7 @@ class phpunit_util extends testing_util {
 
         $template = '
         <testsuites>
-            <testsuite name="@component@">
+            <testsuite name="@component@_testsuite">
                 <directory suffix="_test.php">.</directory>
             </testsuite>
         </testsuites>';
