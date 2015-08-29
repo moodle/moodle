@@ -21,6 +21,7 @@ Feature: Users can edit tags to add description or rename
       | name         | tagtype  |
       | Neverusedtag | official |
 
+  @javascript
   Scenario: User with tag editing capability can change tag description
     Given I log in as "admin"
     And I set the following system permissions of "Tag editor" role:
@@ -45,6 +46,7 @@ Feature: Users can edit tags to add description or rename
     And I should see "Related tags: Dog, Turtle, Fish"
     And I log out
 
+  @javascript
   Scenario: Manager can change tag description, related tags and rename the tag from tag view page
     When I log in as "manager1"
     And I navigate to "Participants" node in "Site pages"
@@ -61,8 +63,7 @@ Feature: Users can edit tags to add description or rename
     And "Description of tag 1" "text" should exist in the "#tag-description" "css_element"
     And I should see "Related tags: Dog, Turtle, Fish"
     And I follow "Edit this tag"
-    And I set the following fields to these values:
-      | Related tags | Turtle, Fish |
+    And I click on "× Dog" "text"
     And I press "Update"
     Then "Kitten" "text" should exist in the ".breadcrumb-nav" "css_element"
     And "Description of tag 1" "text" should exist in the "#tag-description" "css_element"
@@ -91,6 +92,7 @@ Feature: Users can edit tags to add description or rename
     And "KITTEN" "text" should exist in the ".breadcrumb-nav" "css_element"
     And I log out
 
+  @javascript
   Scenario: Manager can change tag description and rename the tag from tag manage page
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"

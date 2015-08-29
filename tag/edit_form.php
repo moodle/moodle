@@ -68,11 +68,7 @@ class tag_edit_form extends moodleform {
            $mform->addElement('checkbox', 'tagtype', get_string('officialtag', 'tag'));
         }
 
-        $mform->addElement('html', '<br/><div id="relatedtags-autocomplete-container">');
-        $mform->addElement('textarea', 'relatedtags', get_string('relatedtags','tag'), 'cols="50" rows="3"');
-        $mform->setType('relatedtags', PARAM_TAGLIST);
-        $mform->addElement('html', '<div id="relatedtags-autocomplete"></div>');
-        $mform->addElement('html', '</div>');
+        $mform->addElement('tags', 'relatedtags', get_string('relatedtags','tag'));
 
         $this->add_action_buttons(true, get_string('updatetag', 'tag'));
 

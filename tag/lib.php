@@ -1046,21 +1046,6 @@ function tag_assign($record_type, $record_id, $tagid, $ordering, $userid = 0, $c
 }
 
 /**
- * Function that returns tags that start with some text, for use by the autocomplete feature
- *
- * @package core_tag
- * @access  private
- * @param   string   $text string that the tag names will be matched against
- * @return  mixed    an array of objects, or false if no records were found or an error occured.
- */
-function tag_autocomplete($text) {
-    global $DB;
-    return $DB->get_records_sql("SELECT tg.id, tg.name, tg.rawname
-                                   FROM {tag} tg
-                                  WHERE tg.name LIKE ?", array(core_text::strtolower($text)."%"));
-}
-
-/**
  * Clean up the tag tables, making sure all tagged object still exists.
  *
  * This should normally not be necessary, but in case related tags are not deleted when the tagged record is removed, this should be

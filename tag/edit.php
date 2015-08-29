@@ -59,7 +59,7 @@ $PAGE->set_pagelayout('standard');
 $tagname = tag_display_name($tag);
 
 // set the relatedtags field of the $tag object that will be passed to the form
-$tag->relatedtags = tag_get_related_tags_csv(tag_get_related_tags($tag->id, TAG_RELATED_MANUAL), TAG_RETURN_TEXT);
+$tag->relatedtags = tag_get_tags_array('tag', $tag->id);
 
 $options = new stdClass();
 $options->smiley = false;
@@ -141,7 +141,7 @@ if ($tagform->is_cancelled()) {
         }
 
         //updated related tags
-        tag_set('tag', $tagnew->id, explode(',', trim($tagnew->relatedtags)), 'core', $systemcontext->id);
+        tag_set('tag', $tagnew->id, $tagnew->relatedtags, 'core', $systemcontext->id);
         //print_object($tagnew); die();
 
         $tagname = isset($tagnew->rawname) ? $tagnew->rawname : $tag->rawname;
@@ -163,8 +163,5 @@ if (!empty($errorstring)) {
 }
 
 $tagform->display();
-
-$PAGE->requires->js('/tag/tag.js');
-$PAGE->requires->js_function_call('init_tag_autocomplete', null, true);
 
 echo $OUTPUT->footer();
