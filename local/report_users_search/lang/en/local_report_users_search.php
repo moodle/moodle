@@ -19,6 +19,7 @@ $string['department'] = 'Department';
 $string['pluginname'] = 'Users video search report';
 $string['report_users_search_title'] = 'User video search report';
 $string['report_users_search:view'] = 'View the users search report';
+$string['repusersearch'] = 'Users search report';
 $string['user_detail_title'] = 'User search reports';
 $string['userdetails'] = 'Report information for ';
 $string['searches'] = 'matching searches';
