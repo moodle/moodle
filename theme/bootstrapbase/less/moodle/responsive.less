@@ -579,6 +579,33 @@
                     border-bottom: 1px solid lighten(@navbarInverseBackground, 25%);
                 }
             }
+            .nav {
+                > li > a {
+                    &:hover,
+                    &:focus {
+                        color: @navbarInverseLinkColorHover;
+                    }
+                }
+            }
+            .dropdown-menu a {
+                &:hover,
+                &:focus {
+                    color: @navbarInverseLinkColorHover;
+                }
+                > li > a {
+                    &:hover,
+                    &:focus {
+                        color: @navbarInverseLinkColorHover;
+                    }
+                }
+            }
+            .dropdown-submenu a {
+                &:hover,
+                &:focus,
+                &:active {
+                    color: @navbarInverseLinkColorHover;
+                }
+            }
         }
     }
 
