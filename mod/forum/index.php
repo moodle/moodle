@@ -201,7 +201,7 @@ if (!is_null($subscribe)) {
             }
         }
     }
-    $returnto = forum_go_back_to("index.php?id=$course->id");
+    $returnto = forum_go_back_to(new moodle_url('/mod/forum/index.php', array('id' => $course->id)));
     $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
     if ($subscribe) {
         redirect($returnto, get_string('nowallsubscribed', 'forum', $shortname), 1);
