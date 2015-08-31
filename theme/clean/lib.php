@@ -139,7 +139,9 @@ function theme_clean_get_html_for_settings(renderer_base $output, moodle_page $p
         $return->navbarclass .= ' navbar-inverse';
     }
 
-    if (!empty($page->theme->settings->logo)) {
+    // Only display the logo on the front page and login page, if one is defined.
+    if (!empty($page->theme->settings->logo) &&
+            ($page->pagelayout == 'frontpage' || $page->pagelayout == 'login')) {
         $return->heading = html_writer::tag('div', '', array('class' => 'logo'));
     } else {
         $return->heading = $output->page_heading();
