@@ -1,4 +1,4 @@
-@core @core_course @core_tag
+@core @core_course @core_tag @javascript
 Feature: Tagging courses
   In order to search courses
   As a teacher
@@ -27,7 +27,7 @@ Feature: Tagging courses
     And I follow "Course 1"
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
-      | Other tags (enter tags separated by commas) | Mathematics |
+      | Tags | Mathematics |
     And I press "Save and display"
     And I log out
 
@@ -36,15 +36,16 @@ Feature: Tagging courses
     And I follow "Course 1"
     And "Course tags" "link" should not exist in the "Administration" "block"
     And I click on "Edit settings" "link" in the "Administration" "block"
-    And the field "Other tags (enter tags separated by commas)" matches value "Mathematics"
+    And I expand all fieldsets
+    Then I should see "Mathematics" in the ".form-autocomplete-selection" "css_element"
     And I set the following fields to these values:
-      | Other tags (enter tags separated by commas) | Mathematics, Algebra |
+      | Tags | Algebra |
     And I press "Save and display"
     And I click on "Dashboard" "link" in the "Navigation" "block"
     And I follow "Course 2"
     And I click on "Edit settings" "link" in the "Administration" "block"
     And I set the following fields to these values:
-      | Other tags (enter tags separated by commas) | Mathematics, Geometry |
+      | Tags | Mathematics, Geometry |
     And I press "Save and display"
     And I log out
     And I log in as "user1"
@@ -71,15 +72,15 @@ Feature: Tagging courses
     And I follow "Course 1"
     And "Edit settings" "link" should not exist in the "Administration" "block"
     And I click on "Course tags" "link" in the "Administration" "block"
-    And the field "Other tags (enter tags separated by commas)" matches value "Mathematics"
+    Then I should see "Mathematics" in the ".form-autocomplete-selection" "css_element"
     And I set the following fields to these values:
-      | Other tags (enter tags separated by commas) | Mathematics, Algebra |
+      | Tags | Algebra |
     And I press "Save changes"
     And I click on "Dashboard" "link" in the "Navigation" "block"
     And I follow "Course 2"
     And I click on "Course tags" "link" in the "Administration" "block"
     And I set the following fields to these values:
-      | Other tags (enter tags separated by commas) | Mathematics, Geometry |
+      | Tags | Mathematics, Geometry |
     And I press "Save changes"
     And I log out
     And I log in as "user1"
