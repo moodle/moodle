@@ -43,8 +43,8 @@ if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
     print_error('invalidcoursemodule');
 }
 require_login($course, false, $cm);
-
-$returnto = forum_go_back_to($returnpage.'?id='.$course->id.'&f='.$forum->id);
+$returnpageurl = new moodle_url('/mod/forum/' . $returnpage, array('id' => $course->id, 'f' => $forum->id));
+$returnto = forum_go_back_to($returnpageurl);
 
 if (!forum_tp_can_track_forums($forum)) {
     redirect($returnto);
@@ -78,5 +78,3 @@ if (forum_tp_is_tracked($forum) ) {
         print_error('cannottrack', '', get_local_referer(false));
     }
 }
-
-
