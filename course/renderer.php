@@ -1671,9 +1671,10 @@ class core_course_renderer extends plugin_renderer_base {
         $site = get_site();
         $output = '';
 
-        if (can_edit_in_category($category)) {
+        if (can_edit_in_category($coursecat->id)) {
             // Add 'Manage' button if user has permissions to edit this category.
-            $managebutton = $this->single_button(new moodle_url('/course/management.php'), get_string('managecourses'), 'get');
+            $managebutton = $this->single_button(new moodle_url('/course/management.php',
+                array('categoryid' => $coursecat->id)), get_string('managecourses'), 'get');
             $this->page->set_button($managebutton);
         }
         if (!$coursecat->id) {
