@@ -206,7 +206,7 @@ if ($book->navstyle) {
 // =====================================================
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($book->name);
+echo $OUTPUT->heading(format_string($book->name));
 
 $navclasses = book_get_nav_classes();
 
