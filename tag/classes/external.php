@@ -83,7 +83,6 @@ class core_tag_external extends external_api {
         $systemcontext = context_system::instance();
         $canmanage = has_capability('moodle/tag:manage', $systemcontext);
         $canedit = has_capability('moodle/tag:edit', $systemcontext);
-        $return = array();
         $warnings = array();
 
         if (empty($CFG->usetags)) {
@@ -112,7 +111,11 @@ class core_tag_external extends external_api {
                         array('description' => 1, 'descriptionformat' => 1));
             }
             if (count($tag) <= 1) {
-                // Nothing to do.
+                $warnings[] = array(
+                    'item' => $tag['id'],
+                    'warningcode' => 'nothingtoupdate',
+                    'message' => get_string('nothingtoupdate', 'core_tag')
+                );
                 continue;
             }
             if (!$tagobject = $DB->get_record('tag', array('id' => $tag['id']))) {
@@ -155,10 +158,8 @@ class core_tag_external extends external_api {
                 )
             ));
             $event->trigger();
-            $tagoutput = new \core_tag\output\tag($tagobject);
-            $return[] = $tagoutput->export_for_template($renderer);
         }
-        return array('tags' => $return, 'warnings' => $warnings);
+        return array('warnings' => $warnings);
     }
 
     /**
@@ -169,23 +170,115 @@ class core_tag_external extends external_api {
     public static function update_tags_returns() {
         return new external_single_structure(
             array(
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Parameters for function get_tags()
+     *
+     * @return external_function_parameters
+     */
+    public static function get_tags_parameters() {
+        return new external_function_parameters(
+            array(
+                'tags' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'tag id'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Expose to AJAX
+     *
+     * @return boolean
+     */
+    public static function get_tags_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Get tags by their ids
+     *
+     * @param array $tags
+     */
+    public static function get_tags($tags) {
+        global $CFG, $PAGE, $DB;
+        require_once($CFG->dirroot.'/tag/lib.php');
+
+        // Validate and normalize parameters.
+        $tags = self::validate_parameters(self::get_tags_parameters(), array('tags' => $tags));
+
+        require_login(null, false, null, false, true);
+
+        $systemcontext = context_system::instance();
+        $canmanage = has_capability('moodle/tag:manage', $systemcontext);
+        $canedit = has_capability('moodle/tag:edit', $systemcontext);
+
+        $return = array();
+        $warnings = array();
+
+        if (empty($CFG->usetags)) {
+            throw new moodle_exception('tagsaredisabled', 'tag');
+        }
+
+        $renderer = $PAGE->get_renderer('core');
+        foreach ($tags['tags'] as $tag) {
+            $tag = (array)$tag;
+            if (!$tagobject = $DB->get_record('tag', array('id' => $tag['id']))) {
+                $warnings[] = array(
+                    'item' => $tag['id'],
+                    'warningcode' => 'tagnotfound',
+                    'message' => get_string('tagnotfound', 'error')
+                );
+                continue;
+            }
+            $tagoutput = new \core_tag\output\tag($tagobject);
+            // Do not return some information to users without permissions.
+            $rv = $tagoutput->export_for_template($renderer);
+            if (!$canmanage) {
+                if (!$canedit) {
+                    unset($rv->official);
+                }
+                unset($rv->flag);
+                unset($rv->changetypeurl);
+                unset($rv->changeflagurl);
+            }
+            $return[] = $rv;
+        }
+        return array('tags' => $return, 'warnings' => $warnings);
+    }
+
+    /**
+     * Return structure for get_tag()
+     *
+     * @return external_description
+     */
+    public static function get_tags_returns() {
+        return new external_single_structure(
+            array(
                 'tags' => new external_multiple_structure( new external_single_structure(
                     array(
                         'id' => new external_value(PARAM_INT, 'tag id'),
                         'name' => new external_value(PARAM_TAG, 'name'),
                         'rawname' => new external_value(PARAM_RAW, 'tag raw name (may contain capital letters)'),
                         'description' => new external_value(PARAM_RAW, 'tag description'),
-                        'descriptionformat' => new external_value(PARAM_INT, 'tag description format'),
-                        'flag' => new external_value(PARAM_INT, 'flag'),
-                        'official' => new external_value(PARAM_INT, 'whether this flag is official'),
+                        'descriptionformat' => new external_format_value(PARAM_INT, 'tag description format'),
+                        'flag' => new external_value(PARAM_INT, 'flag', VALUE_OPTIONAL),
+                        'official' => new external_value(PARAM_INT, 'whether this flag is official', VALUE_OPTIONAL),
                         'viewurl' => new external_value(PARAM_URL, 'URL to view'),
-                        'changetypeurl' => new external_value(PARAM_URL, 'URL to change type (official or not)'),
-                        'changeflagurl' => new external_value(PARAM_URL, 'URL to set or reset flag'),
-                    ), 'event')
+                        'changetypeurl' => new external_value(PARAM_URL, 'URL to change type (official or not)', VALUE_OPTIONAL),
+                        'changeflagurl' => new external_value(PARAM_URL, 'URL to set or reset flag', VALUE_OPTIONAL),
+                    ), 'information about one tag')
                 ),
                 'warnings' => new external_warnings()
             )
         );
     }
-
 }

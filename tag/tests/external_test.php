@@ -55,27 +55,43 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
             'flag' => 0,
             'official' => 1,
         );
+        $gettag = array(
+            'id' => $tag->id,
+        );
 
-        // User without any caps can not change anything about a tag.
+        // User without any caps can not change anything about a tag but can request [partial] tag data.
         $this->setUser($this->getDataGenerator()->create_user());
         $result = core_tag_external::update_tags(array($updatetag));
         $result = external_api::clean_returnvalue(core_tag_external::update_tags_returns(), $result);
-        $this->assertEmpty($result['warnings']);
-        $this->assertEmpty($result['tags']);
+        $this->assertEquals($tag->id, $result['warnings'][0]['item']);
+        $this->assertEquals('nothingtoupdate', $result['warnings'][0]['warningcode']);
         $this->assertEquals($originaltag['rawname'], $DB->get_field('tag', 'rawname',
-                array('id' => $tag->id)));
+            array('id' => $tag->id)));
         $this->assertEquals($originaltag['description'], $DB->get_field('tag', 'description',
-                array('id' => $tag->id)));
+            array('id' => $tag->id)));
+
+        $result = core_tag_external::get_tags(array($gettag));
+        $result = external_api::clean_returnvalue(core_tag_external::get_tags_returns(), $result);
+        $this->assertEquals($originaltag['rawname'], $result['tags'][0]['rawname']);
+        $this->assertEquals($originaltag['description'], $result['tags'][0]['description']);
+        $this->assertNotEmpty($result['tags'][0]['viewurl']);
+        $this->assertArrayNotHasKey('changetypeurl', $result['tags'][0]);
+        $this->assertArrayNotHasKey('changeflagurl', $result['tags'][0]);
+        $this->assertArrayNotHasKey('flag', $result['tags'][0]);
+        $this->assertArrayNotHasKey('official', $result['tags'][0]);
 
         // User with editing only capability can change description but not the tag name.
         $roleid = $this->assignUserCapability('moodle/tag:edit', $context->id);
         $result = core_tag_external::update_tags(array($updatetag));
         $result = external_api::clean_returnvalue(core_tag_external::update_tags_returns(), $result);
         $this->assertEmpty($result['warnings']);
+
+        $result = core_tag_external::get_tags(array($gettag));
+        $result = external_api::clean_returnvalue(core_tag_external::get_tags_returns(), $result);
         $this->assertEquals($updatetag['id'], $result['tags'][0]['id']);
         $this->assertEquals($updatetag['description'], $result['tags'][0]['description']);
         $this->assertEquals($originaltag['rawname'], $result['tags'][0]['rawname']);
-        $this->assertEquals($originaltag['flag'], $result['tags'][0]['flag']);
+        $this->assertArrayNotHasKey('flag', $result['tags'][0]); // 'Flag' is not available unless 'moodle/tag:manage' cap exists.
         $this->assertEquals(0, $result['tags'][0]['official']);
         $this->assertEquals($originaltag['rawname'], $DB->get_field('tag', 'rawname',
                 array('id' => $tag->id)));
@@ -90,6 +106,9 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
         $result = core_tag_external::update_tags(array($updatetag));
         $result = external_api::clean_returnvalue(core_tag_external::update_tags_returns(), $result);
         $this->assertEmpty($result['warnings']);
+
+        $result = core_tag_external::get_tags(array($gettag));
+        $result = external_api::clean_returnvalue(core_tag_external::get_tags_returns(), $result);
         $this->assertEquals($updatetag['id'], $result['tags'][0]['id']);
         $this->assertEquals($updatetag['rawname'], $result['tags'][0]['rawname']);
         $this->assertEquals(core_text::strtolower($updatetag['rawname']), $result['tags'][0]['name']);
@@ -100,13 +119,21 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('official', $DB->get_field('tag', 'tagtype',
                 array('id' => $tag->id)));
 
-        // Updating non-existing tag.
+        // Updating and getting non-existing tag.
         $nonexistingtag = array(
             'id' => 123,
             'description' => 'test'
         );
+        $getnonexistingtag = array(
+            'id' => 123,
+        );
         $result = core_tag_external::update_tags(array($nonexistingtag));
         $result = external_api::clean_returnvalue(core_tag_external::update_tags_returns(), $result);
+        $this->assertEquals(123, $result['warnings'][0]['item']);
+        $this->assertEquals('tagnotfound', $result['warnings'][0]['warningcode']);
+
+        $result = core_tag_external::get_tags(array($getnonexistingtag));
+        $result = external_api::clean_returnvalue(core_tag_external::get_tags_returns(), $result);
         $this->assertEmpty($result['tags']);
         $this->assertEquals(123, $result['warnings'][0]['item']);
         $this->assertEquals('tagnotfound', $result['warnings'][0]['warningcode']);
@@ -116,7 +143,6 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
         $updatetag2 = array('id' => $tag->id, 'rawname' => 'MYTAG');
         $result = core_tag_external::update_tags(array($updatetag2));
         $result = external_api::clean_returnvalue(core_tag_external::update_tags_returns(), $result);
-        $this->assertEmpty($result['tags']);
         $this->assertEquals($tag->id, $result['warnings'][0]['item']);
         $this->assertEquals('namesalreadybeeingused', $result['warnings'][0]['warningcode']);
     }

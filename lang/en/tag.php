@@ -59,6 +59,7 @@ $string['name'] = 'Tag name';
 $string['namesalreadybeeingused'] = 'Tag names already being used';
 $string['newnamefor'] = 'New name for tag {$a}';
 $string['noresultsfor'] = 'No results for "{$a}"';
+$string['nothingtoupdate'] = 'Nothing to update';
 $string['officialtag'] = 'Official';
 $string['otags'] = 'Official tags';
 $string['othertags'] = 'Other tags (enter tags separated by commas)';

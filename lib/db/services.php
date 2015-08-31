@@ -1073,6 +1073,13 @@ $functions = array(
         'type'        => 'write',
     ),
 
+    'core_tag_get_tags' => array(
+        'classname'   => 'core_tag_external',
+        'methodname'  => 'get_tags',
+        'description' => 'Gets tags by their ids',
+        'type'        => 'read',
+    ),
+
 );
 
 $services = array(
