@@ -144,6 +144,7 @@ class data_field_textarea extends data_field_base {
         foreach ($formats as $fid) {
             $formats[$fid] = $strformats[$fid];
         }
+        $editor->set_text($text);
         $editor->use_editor($field, $options, $fpoptions);
         $str .= '<input type="hidden" name="'.$field.'_itemid" value="'.$draftitemid.'" />';
         $str .= '<div class="mod-data-input">';

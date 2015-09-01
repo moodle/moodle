@@ -2319,6 +2319,7 @@ class admin_setting_confightmleditor extends admin_setting_configtext {
         }
 
         $editor = editors_get_preferred_editor(FORMAT_HTML);
+        $editor->set_text($data);
         $editor->use_editor($this->get_id(), array('noclean'=>true));
 
         return format_admin_setting($this, $this->visiblename,

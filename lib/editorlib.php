@@ -202,6 +202,28 @@ abstract class texteditor {
     public abstract function supports_repositories();
 
     /**
+     * @var string $text The text set to the editor in the form.
+     * @since 2.8.8, 2.9.2, 3.0
+     */
+    protected $text = '';
+
+    /**
+     * Set the text set for this form field. Will be called before "use_editor".
+     * @param string $text The text for the form field.
+     */
+    public function set_text($text) {
+        $this->text = $text;
+    }
+
+    /**
+     * Get the text set for this form field. Can be called from "use_editor".
+     * @return string
+     */
+    public function get_text() {
+        return $this->text;
+    }
+
+    /**
      * Add required JS needed for editor
      * @param string $elementid id of text area to be converted to editor
      * @param array $options
