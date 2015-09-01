@@ -322,21 +322,24 @@ class tool_installaddon_validator {
             $this->add_message(self::INFO, 'requiresmoodle', $this->versionphp['requires']);
         }
 
-        if (isset($info['plugin->component'])) {
-            $this->versionphp['component'] = $info['plugin->component'];
-            list($reqtype, $reqname) = core_component::normalize_component($this->versionphp['component']);
-            if ($reqtype !== $this->assertions['plugintype']) {
-                $this->add_message(self::ERROR, 'componentmismatchtype', array(
-                    'expected' => $this->assertions['plugintype'],
-                    'found' => $reqtype));
-                return false;
-            }
-            if ($reqname !== $this->rootdir) {
-                $this->add_message(self::ERROR, 'componentmismatchname', $reqname);
-                return false;
-            }
-            $this->add_message(self::INFO, 'componentmatch', $this->versionphp['component']);
+        if (!isset($info['plugin->component'])) {
+            $this->add_message(self::ERROR, 'missingcomponent');
+            return false;
         }
+
+        $this->versionphp['component'] = $info['plugin->component'];
+        list($reqtype, $reqname) = core_component::normalize_component($this->versionphp['component']);
+        if ($reqtype !== $this->assertions['plugintype']) {
+            $this->add_message(self::ERROR, 'componentmismatchtype', array(
+                'expected' => $this->assertions['plugintype'],
+                'found' => $reqtype));
+            return false;
+        }
+        if ($reqname !== $this->rootdir) {
+            $this->add_message(self::ERROR, 'componentmismatchname', $reqname);
+            return false;
+        }
+        $this->add_message(self::INFO, 'componentmatch', $this->versionphp['component']);
 
         if (isset($info['plugin->maturity'])) {
             $this->versionphp['maturity'] = $info['plugin->maturity'];
