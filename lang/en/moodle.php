@@ -1910,7 +1910,6 @@ $string['uploadserverlimit'] = 'Uploaded file exceeded the maximum size limit se
 $string['uploadthisfile'] = 'Upload this file';
 $string['url'] = 'URL';
 $string['used'] = 'Used';
-$string['userdetails'] = 'User details';
 $string['usedinnplaces'] = 'Used in {$a} places';
 $string['usemessageform'] = 'or use the form below to send a message to the selected students';
 $string['user'] = 'User';
