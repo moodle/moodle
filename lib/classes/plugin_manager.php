@@ -288,15 +288,24 @@ class core_plugin_manager {
         foreach ($plugintypes as $type => $typedir) {
             $plugs = core_component::get_plugin_list($type);
             foreach ($plugs as $plug => $fullplug) {
+                $module = new stdClass();
                 $plugin = new stdClass();
                 $plugin->version = null;
-                $module = $plugin;
                 include($fullplug.'/version.php');
+
+                // Check if the legacy $module syntax is still used.
+                if (!is_object($module) or (!empty((array)$module))) {
+                    debugging('Unsupported $module syntax detected in version.php of the '.$type.'_'.$plug.' plugin.');
+                    $skipcache = true;
+                }
+
                 $this->presentplugins[$type][$plug] = $plugin;
             }
         }
 
-        $cache->set('present', $this->presentplugins);
+        if (empty($skipcache)) {
+            $cache->set('present', $this->presentplugins);
+        }
     }
 
     /**
