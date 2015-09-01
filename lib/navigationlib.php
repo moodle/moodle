@@ -4509,18 +4509,23 @@ class settings_navigation extends navigation_node {
         $blocknode->force_open();
 
         // Assign local roles
-        $assignurl = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$this->context->id));
-        $blocknode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING);
+        if (get_assignable_roles($this->context, ROLENAME_ORIGINAL)) {
+            $assignurl = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid' => $this->context->id));
+            $blocknode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING, null,
+                'roles', new pix_icon('i/assignroles', ''));
+        }
 
         // Override roles
         if (has_capability('moodle/role:review', $this->context) or  count(get_overridable_roles($this->context))>0) {
             $url = new moodle_url('/'.$CFG->admin.'/roles/permissions.php', array('contextid'=>$this->context->id));
-            $blocknode->add(get_string('permissions', 'role'), $url, self::TYPE_SETTING);
+            $blocknode->add(get_string('permissions', 'role'), $url, self::TYPE_SETTING, null,
+                'permissions', new pix_icon('i/permissions', ''));
         }
         // Check role permissions
         if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:assign'), $this->context)) {
             $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid'=>$this->context->id));
-            $blocknode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING);
+            $blocknode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING, null,
+                'checkpermissions', new pix_icon('i/checkpermissions', ''));
         }
 
         return $blocknode;
