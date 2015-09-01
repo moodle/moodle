@@ -104,16 +104,16 @@ class phpunit_util extends testing_util {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
 
         // Stop any message redirection.
-        phpunit_util::stop_message_redirection();
+        self::stop_message_redirection();
 
         // Stop any message redirection.
-        phpunit_util::stop_event_redirection();
+        self::stop_event_redirection();
 
         // Start a new email redirection.
         // This will clear any existing phpmailer redirection.
         // We redirect all phpmailer output to this message sink which is
         // called instead of phpmailer actually sending the message.
-        phpunit_util::start_phpmailer_redirection();
+        self::start_phpmailer_redirection();
 
         // We used to call gc_collect_cycles here to ensure desctructors were called between tests.
         // This accounted for 25% of the total time running phpunit - so we removed it.
@@ -320,7 +320,7 @@ class phpunit_util extends testing_util {
         self::$globals['DB'] = $DB;
 
         // refresh data in all tables, clear caches, etc.
-        phpunit_util::reset_all_data();
+        self::reset_all_data();
     }
 
     /**
@@ -427,7 +427,7 @@ class phpunit_util extends testing_util {
         }
 
         if ($DB->get_tables()) {
-            list($errorcode, $message) = phpunit_util::testing_ready_problem();
+            list($errorcode, $message) = self::testing_ready_problem();
             if ($errorcode) {
                 phpunit_bootstrap_error(PHPUNIT_EXITCODE_REINSTALL, 'Database tables already present, Moodle PHPUnit test environment can not be initialised');
             } else {

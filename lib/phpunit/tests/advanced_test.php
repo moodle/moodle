@@ -198,13 +198,13 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         global $DB, $CFG, $COURSE, $SITE, $USER;
 
         $this->preventResetByRollback();
-        phpunit_util::reset_all_data(true);
+        self::resetAllData(true);
 
         // Database change.
         $this->assertEquals(1, $DB->get_field('user', 'confirmed', array('id'=>2)));
         $DB->set_field('user', 'confirmed', 0, array('id'=>2));
         try {
-            phpunit_util::reset_all_data(true);
+            self::resetAllData(true);
         } catch (Exception $e) {
             $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
         }
@@ -215,7 +215,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         unset($CFG->admin);
         $CFG->rolesactive = 0;
         try {
-            phpunit_util::reset_all_data(true);
+            self::resetAllData(true);
         } catch (Exception $e) {
             $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
             $this->assertContains('xx', $e->getMessage());
@@ -228,28 +228,28 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         // _GET change.
         $_GET['__somethingthatwillnotnormallybepresent__'] = 'yy';
-        phpunit_util::reset_all_data(true);
+        self::resetAllData(true);
 
         $this->assertEquals(array(), $_GET);
 
         // _POST change.
         $_POST['__somethingthatwillnotnormallybepresent2__'] = 'yy';
-        phpunit_util::reset_all_data(true);
+        self::resetAllData(true);
         $this->assertEquals(array(), $_POST);
 
         // _FILES change.
         $_FILES['__somethingthatwillnotnormallybepresent3__'] = 'yy';
-        phpunit_util::reset_all_data(true);
+        self::resetAllData(true);
         $this->assertEquals(array(), $_FILES);
 
         // _REQUEST change.
         $_REQUEST['__somethingthatwillnotnormallybepresent4__'] = 'yy';
-        phpunit_util::reset_all_data(true);
+        self::resetAllData(true);
         $this->assertEquals(array(), $_REQUEST);
 
         // Silent changes.
         $_SERVER['xx'] = 'yy';
-        phpunit_util::reset_all_data(true);
+        self::resetAllData(true);
         $this->assertFalse(isset($_SERVER['xx']));
 
         // COURSE change.
@@ -257,7 +257,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $COURSE = new stdClass();
         $COURSE->id = 7;
         try {
-            phpunit_util::reset_all_data(true);
+            self::resetAllData(true);
         } catch (Exception $e) {
             $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
             $this->assertEquals(1, $SITE->id);
@@ -268,7 +268,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         // USER change.
         $this->setUser(2);
         try {
-            phpunit_util::reset_all_data(true);
+            self::resetAllData(true);
         } catch (Exception $e) {
             $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
             $this->assertEquals(0, $USER->id);
@@ -601,7 +601,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        // If this fails \phpunit_util::reset_all_data() must be updated.
+        // If this fails self::resetAllData(); must be updated.
         $this->assertSame('en_AU.UTF-8', get_string('locale', 'langconfig'));
         $this->assertSame('English_Australia.1252', get_string('localewin', 'langconfig'));
 
@@ -614,7 +614,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         }
 
         try {
-            phpunit_util::reset_all_data(true);
+            self::resetAllData(true);
         } catch (Exception $e) {
             $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
         }
@@ -633,7 +633,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
             setlocale(LC_TIME, 'en_US.UTF-8');
         }
 
-        phpunit_util::reset_all_data(false);
+        self::resetAllData(false);
 
         if ($CFG->ostype === 'WINDOWS') {
             $this->assertSame('English_Australia.1252', setlocale(LC_TIME, 0));
