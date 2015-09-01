@@ -294,7 +294,7 @@ class core_plugin_manager {
                 include($fullplug.'/version.php');
 
                 // Check if the legacy $module syntax is still used.
-                if (!is_object($module) or (!empty((array)$module))) {
+                if (!is_object($module) or (count((array)$module) > 0)) {
                     debugging('Unsupported $module syntax detected in version.php of the '.$type.'_'.$plug.' plugin.');
                     $skipcache = true;
                 }

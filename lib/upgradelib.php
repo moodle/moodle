@@ -607,7 +607,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
         require($fullmod .'/version.php');  // Defines $plugin with version etc.
 
         // Check if the legacy $module syntax is still used.
-        if (!is_object($module) or (!empty((array)$module))) {
+        if (!is_object($module) or (count((array)$module) > 0)) {
             throw new plugin_defective_exception($component, 'Unsupported $module syntax detected in version.php');
         }
 
