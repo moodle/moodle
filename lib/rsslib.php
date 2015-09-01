@@ -81,6 +81,9 @@ function rss_get_link($contextid, $userid, $componentname, $id, $tooltiptext='')
 function rss_get_url($contextid, $userid, $componentname, $additionalargs) {
     global $CFG;
     require_once($CFG->libdir.'/filelib.php');
+    if (empty($userid)) {
+        $userid = guest_user()->id;
+    }
     $usertoken = rss_get_token($userid);
     return get_file_url($contextid.'/'.$usertoken.'/'.$componentname.'/'.$additionalargs.'/rss.xml', null, 'rssfile');
 }
