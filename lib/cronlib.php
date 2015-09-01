@@ -91,6 +91,14 @@ function cron_run() {
                 mtrace("... used " . (microtime(1) - $pretime) . " seconds");
             }
             mtrace("Scheduled task failed: " . $task->get_name() . "," . $e->getMessage());
+            if ($CFG->debugdeveloper) {
+                 if (!empty($e->debuginfo)) {
+                    mtrace("Debug info:");
+                    mtrace($e->debuginfo);
+                }
+                mtrace("Backtrace:");
+                mtrace(format_backtrace($e->getTrace(), true));
+            }
             \core\task\manager::scheduled_task_failed($task);
         }
         get_mailer('close');
@@ -127,6 +135,14 @@ function cron_run() {
                 mtrace("... used " . (microtime(1) - $pretime) . " seconds");
             }
             mtrace("Adhoc task failed: " . get_class($task) . "," . $e->getMessage());
+            if ($CFG->debugdeveloper) {
+                 if (!empty($e->debuginfo)) {
+                    mtrace("Debug info:");
+                    mtrace($e->debuginfo);
+                }
+                mtrace("Backtrace:");
+                mtrace(format_backtrace($e->getTrace(), true));
+            }
             \core\task\manager::adhoc_task_failed($task);
         }
         get_mailer('close');
