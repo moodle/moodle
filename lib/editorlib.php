@@ -203,7 +203,7 @@ abstract class texteditor {
 
     /**
      * @var string $text The text set to the editor in the form.
-     * @since 2.8.8, 2.9.2, 3.0
+     * @since 3.0
      */
     protected $text = '';
 
