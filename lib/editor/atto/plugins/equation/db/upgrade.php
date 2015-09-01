@@ -15,15 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Atto text editor integration version file.
+ * Atto equation plugin upgrade script.
  *
  * @package    atto_equation
- * @copyright  2013 Damyon Wiese  <damyon@moodle.com>
+ * @copyright  2015 Sam Chaffee <sam@moodlerooms.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015083100;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2015050500;        // Requires this Moodle version.
-$plugin->component = 'atto_equation';  // Full name of the plugin (used for diagnostics).
+/**
+ * Run all Atto equation upgrade steps between the current DB version and the current version on disk.
+ * @param int $oldversion The old version of atto equation in the DB.
+ * @return bool
+ */
+function xmldb_atto_equation_upgrade($oldversion) {
+    require_once(__DIR__ . '/upgradelib.php');
+
+    if ($oldversion < 2015083100) {
+        atto_equation_update_librarygroup4_setting();
+
+        // Atto equation savepoint reached.
+        upgrade_plugin_savepoint(true, 2015083100, 'atto', 'equation');
+    }
+
+    return true;
+}
