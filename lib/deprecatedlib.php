@@ -1205,6 +1205,7 @@ function print_textarea($unused, $rows, $cols, $width, $height, $name, $value=''
 
     editors_head_setup();
     $editor = editors_get_preferred_editor(FORMAT_HTML);
+    $editor->set_text($value);
     $editor->use_editor($id, array('legacy'=>true));
 
     $str .= "\n".'<textarea class="form-textarea" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'" spellcheck="true">'."\n";

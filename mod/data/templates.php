@@ -218,6 +218,7 @@ if ($mode == 'listtemplate'){
     echo '<div class="template_heading"><label for="edit-listtemplateheader">'.get_string('header','data').'</label></div>';
 
     $field = 'listtemplateheader';
+    $editor->set_text($data->listtemplateheader);
     $editor->use_editor($field, $options);
     echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->listtemplateheader).'</textarea></div>';
 
@@ -315,6 +316,7 @@ if ($mode == 'listtemplate'){
 }
 
 $field = 'template';
+$editor->set_text($data->{$mode});
 $editor->use_editor($field, $options);
 echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->{$mode}).'</textarea></div>';
 echo '</td>';
@@ -327,6 +329,7 @@ if ($mode == 'listtemplate'){
     echo '<div class="template_heading"><label for="edit-listtemplatefooter">'.get_string('footer','data').'</label></div>';
 
     $field = 'listtemplatefooter';
+    $editor->set_text($data->listtemplatefooter);
     $editor->use_editor($field, $options);
     echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->listtemplatefooter).'</textarea></div>';
     echo '</td>';
@@ -338,6 +341,7 @@ if ($mode == 'listtemplate'){
     echo '<div class="template_heading"><label for="edit-rsstitletemplate">'.get_string('rsstitletemplate','data').'</label></div>';
 
     $field = 'rsstitletemplate';
+    $editor->set_text($data->rsstitletemplate);
     $editor->use_editor($field, $options);
     echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->rsstitletemplate).'</textarea></div>';
     echo '</td>';

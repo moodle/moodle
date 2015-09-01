@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.9.2 ===
+* Users of the text editor API to manually create a text editor should call set_text before calling use_editor. See MDL-51179.
+
 === 2.9.1 ===
 
 * New methods grade_grade::get_grade_max() and get_grade_min() must be used rather than directly the public properties rawgrademax and rawgrademin.
