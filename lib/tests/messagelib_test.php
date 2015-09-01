@@ -52,7 +52,6 @@ class core_messagelib_testcase extends advanced_testcase {
 
         // Check message is not sent.
         $sink = $this->redirectEmails();
-        $this->assertTrue(phpunit_util::is_redirecting_phpmailer());
         message_send($message);
         $emails = $sink->get_messages();
         $this->assertEmpty($emails);
@@ -63,7 +62,6 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->assertTrue($preferences->$disableprovidersetting == 0);
 
         $sink = $this->redirectEmails();
-        $this->assertTrue(phpunit_util::is_redirecting_phpmailer());
         message_send($message);
         $emails = $sink->get_messages();
         $email = reset($emails);
@@ -850,7 +848,6 @@ class core_messagelib_testcase extends advanced_testcase {
 
         // Make sure we are redirecting emails.
         $sink = $this->redirectEmails();
-        $this->assertTrue(phpunit_util::is_redirecting_phpmailer());
         message_send($message);
 
         // Get the email that we just sent.
