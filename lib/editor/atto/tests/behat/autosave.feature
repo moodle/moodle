@@ -75,3 +75,24 @@ Feature: Atto Autosave
     And I follow "Course 1"
     And I navigate to "Edit settings" node in "Course administration"
     Then I should not see "This is my draft"
+
+  @javascript
+  Scenario: Do not restore a draft if text has been modified
+    Given I log in as "teacher1"
+    And I follow "Course 1"
+    And I navigate to "Edit settings" node in "Course administration"
+    And I set the field "Course summary" to "This is my draft"
+    # Wait for the autosave
+    And I wait "5" seconds
+    And I log out
+    And I log in as "teacher2"
+    And I follow "Course 1"
+    And I navigate to "Edit settings" node in "Course administration"
+    And I set the field "Course summary" to "Modified text"
+    And I click on "Save and display" "button"
+    And I log out
+    When I log in as "teacher1"
+    And I follow "Course 1"
+    And I navigate to "Edit settings" node in "Course administration"
+    Then I should not see "This is my draft"
+    And I should see "Modified text"
