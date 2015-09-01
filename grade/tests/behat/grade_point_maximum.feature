@@ -84,7 +84,7 @@ Feature: We can change the grading type and maximum grade point values
     And I set the field "grade[modgrade_type]" to "Point"
     And I set the field "grade[modgrade_point]" to "20000"
     And I press "Save and display"
-    Then I should see "Invalid Grade Value. This must be an integer between 0 and 900"
+    Then I should see "Invalid Grade Value. This must be an integer between 1 and 900"
     And I press "Cancel"
 
   @javascript
@@ -104,5 +104,5 @@ Feature: We can change the grading type and maximum grade point values
     And I follow "Test Assignment 1"
     And I follow "Edit settings"
     And I press "Save and display"
-    Then I should see "Invalid Grade Value. This must be an integer between 0 and 100"
+    Then I should see "Invalid Grade Value. This must be an integer between 1 and 100"
     And I press "Cancel"
