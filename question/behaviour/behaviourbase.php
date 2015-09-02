@@ -388,7 +388,7 @@ abstract class question_behaviour {
 
         // So, now we know the comment is the same, so check the mark, if present.
         $previousfraction = $this->qa->get_fraction();
-        $newmark = $pendingstep->get_behaviour_var('mark');
+        $newmark = question_utils::clean_param_mark($pendingstep->get_behaviour_var('mark'));
 
         if (is_null($previousfraction)) {
             return is_null($newmark) || $newmark === '';
@@ -487,8 +487,7 @@ abstract class question_behaviour {
                 $fraction = null;
 
             } else {
-                $fraction = $pendingstep->get_behaviour_var('mark') /
-                        $pendingstep->get_behaviour_var('maxmark');
+                $fraction = $mark / $pendingstep->get_behaviour_var('maxmark');
                 if ($fraction > $this->qa->get_max_fraction() || $fraction < $this->qa->get_min_fraction()) {
                     throw new coding_exception('Score out of range when processing ' .
                             'a manual grading action.', 'Question ' . $this->question->id .
@@ -535,7 +534,7 @@ abstract class question_behaviour {
             $a->comment = '';
         }
 
-        $mark = $step->get_behaviour_var('mark');
+        $mark = question_utils::clean_param_mark($step->get_behaviour_var('mark'));
         if (is_null($mark) || $mark === '') {
             return get_string('commented', 'question', $a->comment);
         } else {

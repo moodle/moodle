@@ -278,6 +278,54 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
                 $qa->summarise_action($qa->get_last_step()));
     }
 
+    public function test_manual_graded_ignore_repeat_sumbission_commas() {
+        // Create an essay question.
+        $essay = test_question_maker::make_an_essay_question();
+        $this->start_attempt_at_question($essay, 'deferredfeedback', 10);
+
+        // Check the right model is being used.
+        $this->assertEquals('manualgraded', $this->quba->get_question_attempt(
+                $this->slot)->get_behaviour_name());
+
+        // Check the initial state.
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+
+        // Simulate some data submitted by the student.
+        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_HTML));
+
+        // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+
+        // Finish the attempt.
+        $this->quba->finish_all_questions();
+
+        // Verify.
+        $this->check_current_state(question_state::$needsgrading);
+        $this->check_current_mark(null);
+        $this->assertEquals('This is my wonderful essay!',
+                $this->quba->get_response_summary($this->slot));
+
+        // Now grade it with a mark with a comma.
+        $numsteps = $this->get_step_count();
+        $this->manual_grade('Pretty good!', '9,00000', FORMAT_HTML);
+        $this->check_step_count($numsteps + 1);
+        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_mark(9);
+        $qa = $this->get_question_attempt();
+        $this->assertEquals('Manually graded 9 with comment: Pretty good!',
+                $qa->summarise_action($qa->get_last_step()));
+        $this->check_current_output(
+                new question_pattern_expectation('/' . preg_quote('Pretty good!', '/') . '/'));
+
+        // Process the same mark with a dot. Verify it does not add a new step.
+        $this->manual_grade('Pretty good!', '9.00000', FORMAT_HTML);
+        $this->check_step_count($numsteps + 1);
+        $this->check_current_state(question_state::$mangrpartial);
+        $this->check_current_mark(9);
+    }
+
     public function test_manual_graded_essay_can_grade_0() {
         global $PAGE;
 
