@@ -399,7 +399,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                     Y.Moodle.mod_quiz.util.slot.remove(element);
                     this.reorganise_edit_page();
                     if (M.core.actionmenu && M.core.actionmenu.instance) {
-                        M.core.actionmenu.instance.hideMenu();
+                        M.core.actionmenu.instance.hideMenu(ev);
                     }
                 }
             });
@@ -441,7 +441,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
 
         this.send_request(data, null, function(response) {
             if (M.core.actionmenu && M.core.actionmenu.instance) {
-                M.core.actionmenu.instance.hideMenu();
+                M.core.actionmenu.instance.hideMenu(ev);
             }
 
             // Try to retrieve the existing string from the server.
