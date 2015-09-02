@@ -210,7 +210,8 @@ class auth_plugin_shibboleth extends auth_plugin_base {
             }
 
             // Overwrite redirect in order to send user to Shibboleth logout page and let him return back
-            $redirect = $this->config->logout_handler.'?return='.urlencode($temp_redirect);
+            $redirecturl = new moodle_url($this->config->logout_handler, array('return' => $temp_redirect));
+            $redirect = $redirecturl->out();
         }
     }
 
