@@ -77,6 +77,17 @@ $capabilities = array(
         )
     ),
 
+    'moodle/site:deleteanymessage' => array(
+
+        'riskbitmask' => RISK_DATALOSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'moodle/site:sendmessage' => array(
 
         'riskbitmask' => RISK_SPAM,
@@ -85,6 +96,15 @@ $capabilities = array(
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'manager' => CAP_ALLOW,
+            'user' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/site:deleteownmessage' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
             'user' => CAP_ALLOW
         )
     ),

@@ -4470,5 +4470,65 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015082400.00);
     }
 
+    if ($oldversion < 2015090200.00) {
+        $table = new xmldb_table('message');
+
+        // Define the deleted fields to be added to the message tables.
+        $field1 = new xmldb_field('timeuserfromdeleted', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0',
+            'timecreated');
+        $field2 = new xmldb_field('timeusertodeleted', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0',
+            'timecreated');
+        $oldindex = new xmldb_index('useridfromto', XMLDB_INDEX_NOTUNIQUE,
+            array('useridfrom', 'useridto'));
+        $newindex = new xmldb_index('useridfromtodeleted', XMLDB_INDEX_NOTUNIQUE,
+            array('useridfrom', 'useridto', 'timeuserfromdeleted', 'timeusertodeleted'));
+
+        // Conditionally launch add field timeuserfromdeleted.
+        if (!$dbman->field_exists($table, $field1)) {
+            $dbman->add_field($table, $field1);
+        }
+
+        // Conditionally launch add field timeusertodeleted.
+        if (!$dbman->field_exists($table, $field2)) {
+            $dbman->add_field($table, $field2);
+        }
+
+        // Conditionally launch drop index useridfromto.
+        if ($dbman->index_exists($table, $oldindex)) {
+            $dbman->drop_index($table, $oldindex);
+        }
+
+        // Conditionally launch add index useridfromtodeleted.
+        if (!$dbman->index_exists($table, $newindex)) {
+            $dbman->add_index($table, $newindex);
+        }
+
+        // Now add them to the message_read table.
+        $table = new xmldb_table('message_read');
+
+        // Conditionally launch add field timeuserfromdeleted.
+        if (!$dbman->field_exists($table, $field1)) {
+            $dbman->add_field($table, $field1);
+        }
+
+        // Conditionally launch add field timeusertodeleted.
+        if (!$dbman->field_exists($table, $field2)) {
+            $dbman->add_field($table, $field2);
+        }
+
+        // Conditionally launch drop index useridfromto.
+        if ($dbman->index_exists($table, $oldindex)) {
+            $dbman->drop_index($table, $oldindex);
+        }
+
+        // Conditionally launch add index useridfromtodeleted.
+        if (!$dbman->index_exists($table, $newindex)) {
+            $dbman->add_index($table, $newindex);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015090200.00);
+    }
+
     return true;
 }

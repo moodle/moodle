@@ -236,28 +236,56 @@ table.message .searchresults td {
     clear: both;
 }
 .message .messagearea .messagehistory .left {
-    padding-bottom: 10px;
+    margin-bottom: 10px;
     width: 50%;
     float: left;
+    position: relative;
     clear: both;
 }
 .dir-rtl .message .messagearea .messagehistory .left {
-    float:right;
+    float: right;
 }
 .message .messagearea .messagehistory .right {
-    padding-bottom: 10px;
+    margin-bottom: 10px;
     width: 50%;
     float: right;
+    position: relative;
     clear: both;
 }
 .dir-rtl .message .messagearea .messagehistory .right {
-    float:left;
+    float: left;
 }
 .message .messagearea .messagehistory .notification {
     .well;
     .well-small;
     margin-bottom: 0;
     margin-top: 5px;
+}
+.dir-ltr .message .messagearea .messagehistory .message {
+    margin-right: 20px;
+}
+.dir-ltr .message .messagearea .messagehistory .right .message {
+    margin-left: 20px;
+}
+.dir-rtl .message .messagearea .messagehistory .message {
+    margin-left: 20px;
+}
+.dir-rtl .message .messagearea .messagehistory .right .message {
+    margin-right: 20px;
+}
+.message .messagearea .messagehistory .messageactive {
+  background-color: @tableBackgroundHover;
+}
+.message .messagearea .messagehistory .messagecontent .deleteicon {
+    width: 20px;
+    position: absolute;
+    top: -2px;
+}
+.dir-ltr .message .messagearea .messagehistory .messagecontent .deleteicon {
+    right: 0;
+}
+.dir-rtl .message .messagearea .messagehistory .messagecontent .deleteicon {
+    left: 0;
 }
 .message .messagearea .messagesend {
     padding-top: 20px;

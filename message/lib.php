@@ -748,11 +748,18 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
                                       recentmessages.useridfrom,
                                       recentmessages.useridto
                                  FROM {message_read} recentmessages
-                                WHERE (recentmessages.useridfrom = :userid1 OR recentmessages.useridto = :userid2)
+                                WHERE (
+                                      (recentmessages.useridfrom = :userid1 AND recentmessages.timeuserfromdeleted = 0) OR
+                                      (recentmessages.useridto = :userid2   AND recentmessages.timeusertodeleted = 0)
+                                      )
                              GROUP BY recentmessages.useridfrom, recentmessages.useridto
                               ) recent ON matchedmessage.useridto     = recent.useridto
                            AND matchedmessage.useridfrom   = recent.useridfrom
                            AND matchedmessage.timecreated  = recent.timecreated
+                           WHERE (
+                                 (matchedmessage.useridfrom = :userid6 AND matchedmessage.timeuserfromdeleted = 0) OR
+                                 (matchedmessage.useridto = :userid7   AND matchedmessage.timeusertodeleted = 0)
+                                 )
                       GROUP BY matchedmessage.useridto, matchedmessage.useridfrom
                    ) messagesubset ON messagesubset.messageid = message.id
               JOIN {user} otheruser ON (message.useridfrom = :userid4 AND message.useridto = otheruser.id)
@@ -766,6 +773,8 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
             'userid3' => $user->id,
             'userid4' => $user->id,
             'userid5' => $user->id,
+            'userid6' => $user->id,
+            'userid7' => $user->id
         );
     $read = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
 
@@ -1134,6 +1143,78 @@ function message_unblock_contact($contactid) {
  */
 function message_block_contact($contactid) {
     return message_add_contact($contactid, 1);
+}
+
+/**
+ * Checks if a user can delete a message.
+ *
+ * @param stdClass $message the message to delete
+ * @param string $userid the user id of who we want to delete the message for (this may be done by the admin
+ *  but will still seem as if it was by the user)
+ * @return bool Returns true if a user can delete the message, false otherwise.
+ */
+function message_can_delete_message($message, $userid) {
+    global $USER;
+
+    if ($message->useridfrom == $userid) {
+        $userdeleting = 'useridfrom';
+    } else if ($message->useridto == $userid) {
+        $userdeleting = 'useridto';
+    } else {
+        return false;
+    }
+
+    $systemcontext = context_system::instance();
+
+    // Let's check if the user is allowed to delete this message.
+    if (has_capability('moodle/site:deleteanymessage', $systemcontext) ||
+        ((has_capability('moodle/site:deleteownmessage', $systemcontext) &&
+            $USER->id == $message->$userdeleting))) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Deletes a message.
+ *
+ * This function does not verify any permissions.
+ *
+ * @param stdClass $message the message to delete
+ * @param string $userid the user id of who we want to delete the message for (this may be done by the admin
+ *  but will still seem as if it was by the user)
+ * @return bool
+ */
+function message_delete_message($message, $userid) {
+    global $DB;
+
+    // The column we want to alter.
+    if ($message->useridfrom == $userid) {
+        $coltimedeleted = 'timeuserfromdeleted';
+    } else if ($message->useridto == $userid) {
+        $coltimedeleted = 'timeusertodeleted';
+    } else {
+        return false;
+    }
+
+    // Don't update it if it's already been deleted.
+    if ($message->$coltimedeleted > 0) {
+        return false;
+    }
+
+    // Get the table we want to update.
+    if (isset($message->timeread)) {
+        $messagetable = 'message_read';
+    } else {
+        $messagetable = 'message';
+    }
+
+    // Mark the message as deleted.
+    $updatemessage = new stdClass();
+    $updatemessage->id = $message->id;
+    $updatemessage->$coltimedeleted = time();
+    return $DB->update_record($messagetable, $updatemessage);
 }
 
 /**
@@ -1791,6 +1872,18 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     //    b.  Messages to user
     //    c.  Messages to and from user
 
+    if ($fromme && $tome) {
+        $searchcond .= " AND ((useridto = :useridto AND timeusertodeleted = 0) OR
+            (useridfrom = :useridfrom AND timeuserfromdeleted = 0))";
+        $params['useridto'] = $userid;
+        $params['useridfrom'] = $userid;
+    } else if ($fromme) {
+        $searchcond .= " AND (useridfrom = :useridfrom AND timeuserfromdeleted = 0)";
+        $params['useridfrom'] = $userid;
+    } else if ($tome) {
+        $searchcond .= " AND (useridto = :useridto AND timeusertodeleted = 0)";
+        $params['useridto'] = $userid;
+    }
     if ($courseid == SITEID) { // Admin is searching all messages.
         $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.smallmessage, m.fullmessage, m.timecreated
                                             FROM {message_read} m
@@ -1977,16 +2070,16 @@ function message_get_history($user1, $user2, $limitnum=0, $viewingnewmessages=fa
     //prevent notifications of your own actions appearing in your own message history
     $ownnotificationwhere = ' AND NOT (useridfrom=? AND notification=1)';
 
-    if ($messages_read = $DB->get_records_select('message_read', "((useridto = ? AND useridfrom = ?) OR
-                                                    (useridto = ? AND useridfrom = ?)) $notificationswhere $ownnotificationwhere",
+    $sql = "((useridto = ? AND useridfrom = ? AND timeusertodeleted = 0) OR
+        (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = 0))";
+    if ($messages_read = $DB->get_records_select('message_read', $sql . $notificationswhere . $ownnotificationwhere,
                                                     array($user1->id, $user2->id, $user2->id, $user1->id, $user1->id),
                                                     "timecreated $sort", '*', 0, $limitnum)) {
         foreach ($messages_read as $message) {
             $messages[] = $message;
         }
     }
-    if ($messages_new =  $DB->get_records_select('message', "((useridto = ? AND useridfrom = ?) OR
-                                                    (useridto = ? AND useridfrom = ?)) $ownnotificationwhere",
+    if ($messages_new = $DB->get_records_select('message', $sql . $ownnotificationwhere,
                                                     array($user1->id, $user2->id, $user2->id, $user1->id, $user1->id),
                                                     "timecreated $sort", '*', 0, $limitnum)) {
         foreach ($messages_new as $message) {
@@ -2016,7 +2109,13 @@ function message_get_history($user1, $user2, $limitnum=0, $viewingnewmessages=fa
  * @param bool $viewingnewmessages are we currently viewing new messages?
  */
 function message_print_message_history($user1, $user2 ,$search = '', $messagelimit = 0, $messagehistorylink = false, $viewingnewmessages = false, $showactionlinks = true) {
-    global $CFG, $OUTPUT;
+    global $OUTPUT, $PAGE;
+
+    $PAGE->requires->yui_module(
+        array('moodle-core_message-toolbox'),
+        'M.core_message.toolbox.deletemsg.init',
+        array(array())
+    );
 
     echo $OUTPUT->box_start('center', 'message_user_pictures');
     echo $OUTPUT->box_start('user');
@@ -2069,7 +2168,9 @@ function message_print_message_history($user1, $user2 ,$search = '', $messagelim
         $current->year = '';
         $messagedate = get_string('strftimetime');
         $blockdate   = get_string('strftimedaydate');
+        $messagenumber = 0;
         foreach ($messages as $message) {
+            $messagenumber++;
             if ($message->notification) {
                 $notificationclass = ' notification';
             } else {
@@ -2087,7 +2188,6 @@ function message_print_message_history($user1, $user2 ,$search = '', $messagelim
                 $tablecontents .= $OUTPUT->heading(userdate($message->timecreated, $blockdate), 4, 'mdl-align');
             }
 
-            $formatted_message = $side = null;
             if ($message->useridfrom == $user1->id) {
                 $formatted_message = message_format_message($message, $messagedate, $search, 'me');
                 $side = 'left';
@@ -2095,7 +2195,28 @@ function message_print_message_history($user1, $user2 ,$search = '', $messagelim
                 $formatted_message = message_format_message($message, $messagedate, $search, 'other');
                 $side = 'right';
             }
-            $tablecontents .= html_writer::tag('div', $formatted_message, array('class' => "mdl-left $side $notificationclass"));
+
+            // Check if it is a read message or not.
+            if (isset($message->timeread)) {
+                $type = 'message_read';
+            } else {
+                $type = 'message';
+            }
+
+            if (message_can_delete_message($message, $user1->id)) {
+                $usergroup = optional_param('usergroup', MESSAGE_VIEW_UNREAD_MESSAGES, PARAM_ALPHANUMEXT);
+                $viewing = optional_param('viewing', $usergroup, PARAM_ALPHANUMEXT);
+                $deleteurl = new moodle_url('/message/index.php', array('user1' => $user1->id, 'user2' => $user2->id,
+                    'viewing' => $viewing, 'deletemessageid' => $message->id, 'deletemessagetype' => $type,
+                    'sesskey' => sesskey()));
+
+                $deleteicon = $OUTPUT->action_icon($deleteurl, new pix_icon('t/delete', get_string('delete')));
+                $deleteicon = html_writer::tag('div', $deleteicon, array('class' => 'deleteicon accesshide'));
+                $formatted_message .= $deleteicon;
+            }
+
+            $tablecontents .= html_writer::tag('div', $formatted_message, array('class' => "mdl-left messagecontent
+                $side $notificationclass", 'id' => 'message_' . $messagenumber));
         }
 
         echo html_writer::nonempty_tag('div', $tablecontents, array('class' => 'mdl-left messagehistory'));
