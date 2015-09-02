@@ -109,36 +109,6 @@ class question_attempt_testcase extends advanced_testcase {
                 'reallyunlikelyvariablename', PARAM_BOOL));
     }
 
-    public function test_get_submitted_var_param_mark_not_present() {
-        $this->assertNull($this->qa->get_submitted_var(
-                'name', question_attempt::PARAM_MARK, array()));
-    }
-
-    public function test_get_submitted_var_param_mark_blank() {
-        $this->assertSame('', $this->qa->get_submitted_var(
-                'name', question_attempt::PARAM_MARK, array('name' => '')));
-    }
-
-    public function test_get_submitted_var_param_mark_number() {
-        $this->assertSame(123.0, $this->qa->get_submitted_var(
-                'name', question_attempt::PARAM_MARK, array('name' => '123')));
-    }
-
-    public function test_get_submitted_var_param_mark_number_uk_decimal() {
-        $this->assertSame(123.45, $this->qa->get_submitted_var(
-                'name', question_attempt::PARAM_MARK, array('name' => '123.45')));
-    }
-
-    public function test_get_submitted_var_param_mark_number_eu_decimal() {
-        $this->assertSame(123.45, $this->qa->get_submitted_var(
-                'name', question_attempt::PARAM_MARK, array('name' => '123,45')));
-    }
-
-    public function test_get_submitted_var_param_mark_invalid() {
-        $this->assertSame(0.0, $this->qa->get_submitted_var(
-                'name', question_attempt::PARAM_MARK, array('name' => 'frog')));
-    }
-
     public function test_get_all_submitted_qt_vars() {
         $this->qa->set_usage_id('MDOgzdhS4W');
         $this->qa->set_slot(1);
