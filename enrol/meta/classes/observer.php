@@ -192,9 +192,6 @@ class enrol_meta_observer extends enrol_meta_handler {
         }
 
         foreach ($enrols as $enrol) {
-            $enrol->customint = 0;
-            $DB->update_record('enrol', $enrol);
-
             if ($unenrolaction == ENROL_EXT_REMOVED_SUSPEND or $unenrolaction == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
                 // This makes all enrolments suspended very quickly.
                 $plugin->update_status($enrol, ENROL_INSTANCE_DISABLED);
