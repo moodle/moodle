@@ -1,4 +1,4 @@
-@core @core_files @test
+@core @core_files @_file_upload
 Feature: Add a new custom file type
   In order to add files of a custom type
   As an admin
@@ -20,22 +20,22 @@ Feature: Add a new custom file type
     And I navigate to "File types" node in "Site administration>Server"
     And I press "Add a new file type"
     And I set the following fields to these values:
-      | Extension | mobi |
-      | MIME type | application/x-mobipocket-ebook |
+      | Extension | mdlr |
+      | MIME type | application/x-moodle-rules |
       | File icon | document                       |
       | Description type | Custom description specified in this form |
-      | Custom description | Kindle ebook |
+      | Custom description | Moodle rules |
     And I press "Save changes"
-    And I should see "mobi"
+    And I should see "application/x-moodle-rules"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
     When I add a "File" to section "1" and I fill the form with:
       | Name | Test file |
-      | Select files | files/tests/fixtures/custom_filetype.mobi |
+      | Select files | files/tests/fixtures/custom_filetype.mdlr |
       | Show type    | 1                             |
       | Display resource description | 1             |
     And I follow "Course 1"
     Then I should see "Test file"
-    And I should see "Kindle ebook" in the "span.resourcelinkdetails" "css_element"
+    And I should see "Moodle rules" in the "span.resourcelinkdetails" "css_element"
