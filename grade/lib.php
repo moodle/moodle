@@ -886,20 +886,6 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         }
     }
 
-    foreach ($plugin_info as $plugin_type => $plugins) {
-        if (!empty($plugins->id) && $active_plugin == $plugins->id) {
-            $plugin_info['strings']['active_plugin_str'] = $plugins->string;
-            break;
-        }
-        foreach ($plugins as $plugin) {
-            if (is_a($plugin, 'grade_plugin_info')) {
-                if ($active_plugin == $plugin->id) {
-                    $plugin_info['strings']['active_plugin_str'] = $plugin->string;
-                }
-            }
-        }
-    }
-
     return $plugin_info;
 }
 
