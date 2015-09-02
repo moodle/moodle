@@ -31,6 +31,13 @@
  */
 class core_useragent_testcase extends basic_testcase {
 
+    /**
+     * Restores the user agent to the default one.
+     */
+    public function tearDown() {
+        core_useragent::instance(true);
+    }
+
     public function user_agents_providers() {
         // Note: When adding new entries to this list, please ensure that any new browser versions are added to the corresponding list.
         // This ensures that regression tests are applied to all known user agents.
