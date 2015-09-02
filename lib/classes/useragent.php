@@ -71,7 +71,7 @@ class core_useragent {
         self::DEVICETYPE_DEFAULT,
         self::DEVICETYPE_LEGACY,
         self::DEVICETYPE_MOBILE,
-        self::DEVICETYPE_TABLET
+        self::DEVICETYPE_TABLET,
     );
 
     /**
@@ -201,11 +201,22 @@ class core_useragent {
 
     /**
      * Returns true if the user appears to be on a tablet.
+     *
      * @return int
      */
     protected function is_useragent_tablet() {
         $tabletregex = '/Tablet browser|android|iPad|iProd|GT-P1000|GT-I9000|SHW-M180S|SGH-T849|SCH-I800|Build\/ERE27|sholest/i';
         return (preg_match($tabletregex, $this->useragent));
+    }
+
+    /**
+     * Whether the user agent relates to a web crawler.
+     * This includes all types of web crawler.
+     * @return bool
+     */
+    protected function is_useragent_web_crawler() {
+        $regex = '/Googlebot|google\.com|Yahoo! Slurp|\[ZSEBOT\]|msnbot|bingbot|BingPreview|Yandex|AltaVista|Baiduspider|Teoma/';
+        return (preg_match($regex, $this->useragent));
     }
 
     /**
@@ -925,5 +936,16 @@ class core_useragent {
 
         // This browser does not support json.
         return false;
+    }
+
+    /**
+     * Returns true if the client appears to be some kind of web crawler.
+     * This may include other types of crawler.
+     *
+     * @return bool
+     */
+    public static function is_web_crawler() {
+        $instance = self::instance();
+        return (bool) $instance->is_useragent_web_crawler();
     }
 }

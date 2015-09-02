@@ -1693,45 +1693,6 @@ function make_localcache_directory($directory, $exceptiononerror = true) {
 }
 
 /**
- * Checks if current user is a web crawler.
- *
- * This list can not be made complete, this is not a security
- * restriction, we make the list only to help these sites
- * especially when automatic guest login is disabled.
- *
- * If admin needs security they should enable forcelogin
- * and disable guest access!!
- *
- * @return bool
- */
-function is_web_crawler() {
-    if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'google.com') !== false ) { // Google
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yahoo! Slurp') !== false ) {  // Yahoo
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], '[ZSEBOT]') !== false ) {  // Zoomspider
-            return true;
-        } else if (stripos($_SERVER['HTTP_USER_AGENT'], 'msnbot') !== false ) {  // MSN Search
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'bingbot') !== false ) {  // Bing
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Yandex') !== false ) {
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'AltaVista') !== false ) {
-            return true;
-        } else if (stripos($_SERVER['HTTP_USER_AGENT'], 'baiduspider') !== false ) {  // Baidu
-            return true;
-        } else if (strpos($_SERVER['HTTP_USER_AGENT'], 'Teoma') !== false ) {  // Ask.com
-            return true;
-        }
-    }
-    return false;
-}
-
-/**
  * This class solves the problem of how to initialise $OUTPUT.
  *
  * The problem is caused be two factors
