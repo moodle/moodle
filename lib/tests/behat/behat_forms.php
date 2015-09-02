@@ -174,7 +174,7 @@ class behat_forms extends behat_base {
      */
     public function i_press_key_in_the_field($key, $field) {
         if (!$this->running_javascript()) {
-            throw new DriverException('Key press step is not available with Javascript enabled');
+            throw new DriverException('Key press step is not available with Javascript disabled');
         }
         $fld = behat_field_manager::get_form_field_from_label($field, $this);
         $modifier = null;

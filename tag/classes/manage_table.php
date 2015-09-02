@@ -119,7 +119,7 @@ class core_tag_manage_table extends table_sql {
                 $total = $grandtotal;
             }
 
-            $this->pagesize($pagesize, $total);
+            $this->pagesize(min($pagesize, $total), $total);
             $this->totalcount = $total;
         }
 
