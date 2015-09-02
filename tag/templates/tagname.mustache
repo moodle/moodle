@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_tag/tagname
+
+    Displays the tag name in the tag management table.
+
+    For the Javascript handlers it is important that this template contains
+    an element with .tagnameedit class (to switch on editing) and also
+    an input element.
+    When element with class .tagnameedit is clicked, JS will add class
+    .tageditingon to the container td tag.
+
+    Classes required for JS:
+    * tagnameedit
+
+    Data attributes required for JS:
+    * data-id
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+        "id" : "1",
+        "name" : "moodle",
+        "rawname" : "Moodle",
+        "viewurl" : "http://moodle.com/"
+    }
+}}
+<span class="displaytagname">
+    <a href="{{viewurl}}" data-id="{{id}}">
+        {{rawname}}
+    </a>
+    <a href="#" class="tagnameedit visibleifjs" data-id="{{id}}" title="{{#str}}editname,core_tag{{/str}}">
+        {{#pix}}t/editstring,core,{{#str}}editname,core_tag{{/str}}{{/pix}}
+    </a>
+</span>
+<span class="edittagname">
+    <span class="editinstructions" id="id_editinstructions_{{id}}">{{#str}}edittitleinstructions,core{{/str}}</span>
+    <label class="accesshide" for="tagquickname{{id}}">{{#str}}newnamefor,core_tag,{{rawname}}{{/str}}</label>
+    <input id="tagquickname{{id}}" type="text" value="{{rawname}}" data-id="{{id}}" aria-describedby="id_editinstructions_{{id}}"/>
+</span>

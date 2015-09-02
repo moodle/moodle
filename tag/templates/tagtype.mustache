@@ -1,0 +1,47 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_tag/tagtype
+
+    Displays the tag type (official or not) in the tag management table
+
+    Classes required for JS:
+    * tagtype
+
+    Data attributes required for JS:
+    * data-id, data-value
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+        "id" : "1",
+        "official" : "1",
+        "changetypeurl" : "http://moodle.com/"
+    }
+}}
+{{#official}}
+<a href="{{changetypeurl}}" class="tagtype" data-id="{{id}}" data-value="1" title="{{#str}}settypedefault,core_tag{{/str}}">
+    {{#pix}}i/checked,core,{{#str}}settypedefault,core_tag{{/str}}{{/pix}}
+</a>
+{{/official}}
+{{^official}}
+<a href="{{changetypeurl}}" class="tagtype" data-id="{{id}}" data-value="0" title="{{#str}}settypeofficial,core_tag{{/str}}">
+    {{#pix}}i/unchecked,core,{{#str}}settypeofficial,core_tag{{/str}}{{/pix}}
+</a>
+{{/official}}
