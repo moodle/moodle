@@ -377,6 +377,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         }
 
         // print text area - TODO: add on-the-fly switching, size configuration, etc.
+        $editor->set_text($text);
         $editor->use_editor($id, $this->_options, $fpoptions);
 
         $rows = empty($this->_attributes['rows']) ? 15 : $this->_attributes['rows'];
