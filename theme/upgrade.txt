@@ -13,6 +13,7 @@ information provided here is intended especially for theme designer.
   hamburguer icon (responsive menu) or not depending on custom and language menus settings;
   themes extending bootstrapbase and overriding its layouts can call replace their "a.btn-navbar"
   node for a call to this function.
+* Themes Clean and More page header logo only displays on front page and login page.
 
 === 2.9 ===
 
