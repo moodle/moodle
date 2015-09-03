@@ -138,9 +138,7 @@ class company_license_users_form extends moodleform {
         if ($this->license->expirydate > time()) {
             // Add in the courses selector.
             $courseselector = $mform->addElement('select', 'courses', get_string('courses', 'block_iomad_company_admin'), $this->courseselect, array('id' => 'courseselector'));
-            if (count($this->courseselect) > 1 ) {
-                $courseselector->setMultiple(true);
-            }
+            $courseselector->setMultiple(true);
             $courseselector->setSelected($this->firstcourseid);
 
             $mform->addElement('header', 'header', get_string('license_users_for',
