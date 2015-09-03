@@ -140,8 +140,6 @@ Feature: Users can edit tags to add description or rename
     And I click on "Edit tag name" "link" in the "Cat" "table_row"
     And I set the field "New name for tag Cat" to "Kitten"
     And I press key "13" in the field "New name for tag Cat"
-    # TODO MDL-51311 : replace with "And I wait until the page is ready".
-    And I wait "2" seconds
     Then I should not see "Cat"
     And "New name for tag" "field" should not be visible
     And I wait until "Kitten" "link" exists
