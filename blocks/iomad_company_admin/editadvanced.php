@@ -116,7 +116,10 @@ if ($user->id !== -1) {
         'forcehttps' => false,
         'context'    => $usercontext
     );
-
+    $filemanageroptions = array('maxbytes'       => $CFG->maxbytes,
+                                'subdirs'        => 0,
+                                'maxfiles'       => 1,
+                                'accepted_types' => 'web_image');
     $user = file_prepare_standard_editor($user, 'description', $editoroptions, $usercontext, 'user', 'profile', 0);
 
 } else {
@@ -129,9 +132,16 @@ if ($user->id !== -1) {
         'forcehttps' => false,
         'context' => $coursecontext
     );
+    $filemanageroptions = array('maxbytes'       => $CFG->maxbytes,
+                                'subdirs'        => 0,
+                                'maxfiles'       => 1,
+                                'accepted_types' => 'web_image');
 }
 // Create form.
-$userform = new user_editadvanced_form(null, array('editoroptions' => $editoroptions, 'companyid' => $companyid, 'userid' => $id));
+$userform = new user_editadvanced_form(null, array('editoroptions' => $editoroptions,
+                                                   'companyid' => $companyid,
+                                                   'user' => $user,
+                                                   'filemanageroptions' => $filemanageroptions));
 $userform->set_data($user);
 
 if ($usernew = $userform->get_data()) {
@@ -225,11 +235,9 @@ if ($usernew = $userform->get_data()) {
         if (!message_set_default_message_preferences($usernew)) {
             print_error('cannotsavemessageprefs', 'message');
         }
-        $event = \core\event\user_created::create_from_userid($usernew->id);
-        $event->trigger();
+        \core\event\user_updated::create_from_userid($usernew->id)->trigger();
     } else {
-        $event = \core\event\user_updated::create(array('context' => $systemcontext, 'userid' => $usernew->id, 'relateduserid' => $USER->id));
-        $event->trigger();
+        \core\event\user_updated::create_from_userid($usernew->id)->trigger();
     }
 
     if ($user->id == $USER->id) {
