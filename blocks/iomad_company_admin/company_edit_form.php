@@ -132,7 +132,7 @@ class company_edit_form extends company_moodleform {
             $mform->setType('htmleditor', PARAM_INT);
         }
 
-        $choices = get_list_of_timezones();
+        $choices = core_date::get_list_of_timezones();
         $choices['99'] = get_string('serverlocaltime');
         if ($CFG->forcetimezone != 99) {
             $mform->addElement('static', 'forcedtimezone',
@@ -373,6 +373,12 @@ if ($mform->is_cancelled()) {
     $data->userid = $USER->id;
 
     if ($isadding) {
+        // Set up a profiles field category for this company.
+        $catdata = new object();
+        $catdata->sortorder = $DB->count_records('user_info_category') + 1;
+        $catdata->name = $data->shortname;
+        $data->profileid = $DB->insert_record('user_info_category', $catdata, false);
+
         $companyid = $DB->insert_record('company', $data);
 
         // Set up default department.
