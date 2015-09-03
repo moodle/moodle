@@ -1,6 +1,10 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 2.9.2 ===
+
+* Themes Clean and More page header logo only displays on front page and login page.
+
 === 2.9 ===
 
 * Themes Bootstrapbase, Clean and More have undergone some changes for RTL layouts see - MDL-48160.
