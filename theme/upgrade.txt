@@ -1,6 +1,10 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 2.8.8 ===
+
+* Themes Clean and More page header logo only displays on front page and login page.
+
 === 2.8 ===
 
 * All mod_assign CSS selectors have been qualified with ".path-mod-assign". This means any custom CSS
