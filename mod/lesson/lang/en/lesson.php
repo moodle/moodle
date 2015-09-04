@@ -258,9 +258,7 @@ $string['mediaheight'] = 'Popup window height:';
 $string['mediawidth'] = 'Popup window width:';
 $string['messageprovider:graded_essay'] = 'Essay graded notification';
 $string['minimumnumberofquestions'] = 'Minimum number of questions';
-$string['minimumnumberofquestions_help'] = 'This setting specifies the minimum number of questions that will be used to calculate a grade for the activity. If the lesson contains one or more content pages, the minimum number of questions should be set to zero.
-
-If set to say 20, it is suggested that the following text is added to the opening page of the lesson: "In this lesson you are expected to attempt at least 20 questions. You can attempt more if you wish. However, if you attempt less than 20 questions, your grade will be calculated as though you attempted 20."';
+$string['minimumnumberofquestions_help'] = 'This setting specifies the minimum number of questions that will be used to calculate a grade for the activity.';
 $string['missingname'] = 'Please enter a nickname';
 $string['modattempts'] = 'Allow student review';
 $string['modattempts_help'] = 'If enabled, students can navigate through the lesson again from the start.';
@@ -316,7 +314,7 @@ $string['numberofcorrectmatches'] = 'Number of correct matches: {$a}';
 $string['numberofpagestoshow'] = 'Number of pages to show';
 $string['numberofpagestoshow_help'] = 'This setting specifies the number of pages shown in a lesson. It is only applicable for lessons with pages shown in a random order (when "Action after correct answer" is set to "Show an unseen page" or "Show an unanswered page"). If set to zero, then all pages are shown.';
 $string['numberofpagesviewed'] = 'Number of questions answered: {$a}';
-$string['numberofpagesviewednotice'] = 'Number of questions answered: {$a->nquestions}; (You should answer at least: {$a->minquestions})';
+$string['numberofpagesviewednotice'] = 'Number of questions answered: {$a->nquestions} (You should answer at least {$a->minquestions})';
 $string['numerical'] = 'Numerical';
 $string['ongoing'] = 'Display ongoing score';
 $string['ongoing_help'] = 'If enabled, each page will display the student\'s current points earned out of the total possible thus far.';
