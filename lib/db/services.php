@@ -669,6 +669,7 @@ $functions = array(
         'description' => 'Return course details',
         'type'        => 'read',
         'capabilities'=> 'moodle/course:view,moodle/course:update,moodle/course:viewhiddencourses',
+        'ajax'        => true,
     ),
 
     'core_course_search_courses' => array(
@@ -678,6 +679,7 @@ $functions = array(
         'description'   => 'Search courses by (name, module, block, tag)',
         'type'          => 'read',
         'capabilities'  => '',
+        'ajax'          => true,
     ),
 
     'moodle_course_create_courses' => array(
