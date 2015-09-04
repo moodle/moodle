@@ -545,7 +545,7 @@ class core_notes_external extends external_api {
         if ($course->id != SITEID) {
 
             require_capability('moodle/notes:view', $context);
-            $sitenotes = self::create_note_list($course->id, $context, $params['userid'], NOTES_STATE_SITE);
+            $sitenotes = self::create_note_list(0, context_system::instance(), $params['userid'], NOTES_STATE_SITE);
             $coursenotes = self::create_note_list($course->id, $context, $params['userid'], NOTES_STATE_PUBLIC);
             $personalnotes = self::create_note_list($course->id, $context, $params['userid'], NOTES_STATE_DRAFT,
                                                         $USER->id);
