@@ -517,10 +517,10 @@ class iomad {
         if ($allcourse) {
             $sqlsort = " GROUP BY co.id, u.id";
         } else {
-            $sqlsort = " GROUP BY u.id, cc.timeenrolled, cc.timestarted, cc.timecompleted, d.name, gg.finalgrade";
+            $sqlsort = " GROUP BY u.id, cc.timeenrolled, cc.timestarted, cc.timecompleted, d.name";
         }
         if (!$nogrades) {
-            $sqlsort .= ', gg.finalgrade';
+            $sqlsort .= ', cc.finalscore';
         }
         $sqlsearch = "u.id != '-1' and u.deleted = 0";
         $sqlsearch .= " AND u.id NOT IN (".$CFG->siteadmins.")";

@@ -70,3 +70,6 @@ $string['usersummary'] = 'User summary';
 $string['cchart'] = 'Chart';
 $string['reportallusers'] = 'All department users';
 $string['allusers'] = 'Show all users';
+$string['hidehistoricusers'] = 'Remove historic results';
+$string['historicusers'] = 'Include historic results';
+$string['historiccompletedusers'] = 'Historic completed';

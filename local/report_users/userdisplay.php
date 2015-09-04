@@ -24,6 +24,9 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $userid = required_param('userid', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 $dodownload = optional_param('dodownload', 0, PARAM_INT);
+$delete = optional_param('delete', 0, PARAM_INT);
+$confirm = optional_param('confirm', 0, PARAM_INT);
+$showhistoric = optional_param('showhistoric', 0, PARAM_BOOL);
 
 // Check permissions.
 require_login($SITE);
@@ -61,7 +64,7 @@ if (empty($dodownload)) {
 
 // Get this list of courses the user is a member of.
 $enrolcourses = enrol_get_users_courses($userid, true, null, 'visible DESC, sortorder ASC');
-$completioncourses = $DB->get_records_sql("SELECT course as id FROM {course_completions} 
+$completioncourses = $DB->get_records_sql("SELECT courseid as id FROM {local_iomad_track} 
                                            WHERE userid = :userid", array('userid' => $userid));
 $usercourses = array();
 foreach ($enrolcourses as $enrolcourse) {
@@ -104,6 +107,8 @@ if (empty($dodownload)) {
         // Navigation and header.
         echo $OUTPUT->single_button(new moodle_url('userdisplay.php', array('courseid' => $courseid,
                                                                             'userid' => $userid,
+                                                                            'showhistoric' => $showhistoric,
+                                                                            'page' => $page,
                                                                             'dodownload' => '1')),
                                     get_string("downloadcsv", 'local_report_completion'));
     }
@@ -124,94 +129,137 @@ if ($hasiomadcertificate) {
 }
 
 foreach ($usercourses as $usercourse) {
-    if ($usercompletion[$usercourse->id] = userrep::get_completion($userid, $usercourse->id) ) {
+    if ($usercompletion[$usercourse->id] = userrep::get_completion($userid, $usercourse->id, $showhistoric) ) {
         $usercourseid = $usercourse->id;
 
-        // Get the completion summary.
-        $completionsummary = $DB->get_record('course_completions', array('userid' => $userid,
-                                                                         'course' => $usercourseid));
-        $coursestring = $usercompletion[$usercourse->id]->data[$usercourseid]->coursename.
-                        "</br><a href='".
-                        new moodle_url("/local/report_users/userdisplay.php",
-                                        array('userid' => $userid,
-                                              'courseid' => $usercourseid)).
-                         "'>(".get_string('usercoursedetails', 'local_report_users').
-                         ")</a> <a href='".
-                         new moodle_url("/local/report_completion/index.php",
-                                          array('courseid' => $usercourseid)).
-                         "'>(".get_string('coursedetails', 'local_report_users').
-                         ")</a>";
-        if (!empty($usercompletion[$usercourse->id]->data[$usercourseid]->completion->status)) {
-            $userstat = $usercompletion[$usercourse->id]->data[$usercourseid]->completion->status;
-            $statusstring = get_string($userstat, 'local_report_users');
-        } else {
-            $statusstring = get_string('notstarted', 'local_report_users');
-        }
+        // Check if the course is also in progress.
+        foreach ($usercompletion[$usercourse->id]->data[$usercourseid]->completion as $usercompcourse) {
 
-        // Get the score for the course.
-        if (!empty($usercompletion[$usercourseid]->data[$usercourseid]->completion->result)) {
-            $resultstring = $usercompletion[$usercourseid]->data[$usercourseid]->completion->result.
-                            "%";
-        } else {
-            $resultstring = "0%";
-        }
-        // Set the strings.
-        if (!empty($completionsummary->timestarted)) {
-            $starttime = date('Y-m-d', $completionsummary->timestarted);
-        } else {
-            $starttime = "";
-        }
-        if (!empty($completionsummary->timeenrolled)) {
-            $enrolledtime = date('Y-m-d', $completionsummary->timeenrolled);
-        } else {
-            $enrolledtime = "";
-        }
-        if (!empty($completionsummary->timecompleted)) {
-            $completetime = date('Y-m-d', $completionsummary->timecompleted);
-        } else {
-            $completetime = "";
-        }
-
-        // Deal with the iomadcertificate info.
-        if ($hasiomadcertificate) {
-            if ($iomadcertificateinfo = $DB->get_record('iomadcertificate',
-                                                    array('course' => $usercourseid))) {
-                // Check if user has completed the course - if so, show the iomadcertificate.
-                $compstat = $usercompletion[$usercourseid]->data[$usercourseid]->completion->status;
-                if ($compstat == 'completed' ) {
-                    // Get the course module.
-                    $certcminfo = $DB->get_record('course_modules',
-                                                   array('course' => $usercourseid,
-                                                         'instance' => $iomadcertificateinfo->id,
-                                                         'module' => $certmodule->id));
-                    $certstring = "<a href='".$CFG->wwwroot."/mod/iomadcertificate/view.php?id=".
-                                  $certcminfo->id."&action=get&userid=".$userid."&sesskey=".
-                                  sesskey()."'>".get_string('downloadcert', 'local_report_users').
-                                  "</a>";
-                } else {
-                    $certstring = get_string('nocerttodownload', 'local_report_users');
-                }
+            // Get the completion summary.
+            $coursestring = '<b>'.$usercompletion[$usercourse->id]->data[$usercourseid]->coursename.'</b>'.
+                            "</br><a href='".
+                            new moodle_url("/local/report_users/userdisplay.php",
+                                            array('userid' => $userid,
+                                                  'courseid' => $usercourseid,
+                                                  'showhistoric' => $showhistoric)).
+                             "'>(".get_string('usercoursedetails', 'local_report_users').
+                             ")</a> <a href='".
+                             new moodle_url("/local/report_completion/index.php",
+                                              array('courseid' => $usercourseid, 'showhistoric' => $showhistoric)).
+                             "'>(".get_string('coursedetails', 'local_report_users').
+                             ")</a>";
+            if (!empty($usercompcourse->status)) {
+                $userstat = $usercompcourse->status;
+                $statusstring = get_string($userstat, 'local_report_users');
             } else {
-                $certstring = get_string('nocerttodownload', 'local_report_users');
+                $statusstring = get_string('notstarted', 'local_report_users');
             }
-            $compusertable->data[] = array($coursestring,
-                                           $statusstring,
-                                           $enrolledtime,
-                                           $starttime,
-                                           $completetime,
-                                           $resultstring,
-                                           $certstring);
-        } else {
-            $compusertable->data[] = array($coursestring,
-                                           $statusstring,
-                                           $enrolledtime,
-                                           $starttime,
-                                           $completetime,
-                                           $resultstring);
+    
+            // Get the score for the course.
+            if (!empty($usercompcourse->result)) {
+                $resultstring = $usercompcourse->result.
+                                "%";
+            } else {
+                $resultstring = "0%";
+            }
+            // Set the strings.
+            if (!empty($usercompcourse->timestarted)) {
+                $starttime = date('Y-m-d', $usercompcourse->timestarted);
+            } else {
+                $starttime = "";
+            }
+            if (!empty($usercompcourse->timeenrolled)) {
+                $enrolledtime = date('Y-m-d', $usercompcourse->timeenrolled);
+            } else {
+                $enrolledtime = "";
+            }
+            if (!empty($usercompcourse->timecompleted)) {
+                $completetime = date('Y-m-d', $usercompcourse->timecompleted);
+            } else {
+                $completetime = "";
+            }
+    
+            // Link for user delete (TODO: this all needs refactored)
+            $dellink = new moodle_url('/local/report_users/userdisplay.php', array(
+                    'userid' => $userid,
+                    'delete' => $userid,
+                    'courseid' => $usercourseid,
+                ));
+            if (empty($usercompcourse->certsource)) {
+                $delaction = '<a class="btn btn-danger" href="'.$dellink.'">' . get_string('delete', 'local_report_users') . '</a>';
+            } else {
+                $delaction = '';
+            }
+
+            // Deal with the iomadcertificate info.
+            if ($hasiomadcertificate) {
+                if ($iomadcertificateinfo = $DB->get_record('iomadcertificate',
+                                                        array('course' => $usercourseid))) {
+                    // Check if user has completed the course - if so, show the iomadcertificate.
+                    $compstat = $usercompcourse->status;
+                    if ($compstat == 'completed' ) {
+                        if (empty($usercompcourse->certsource) ) {
+                            // Get the course module.
+                            $certcminfo = $DB->get_record('course_modules',
+                                                           array('course' => $usercourseid,
+                                                                 'instance' => $iomadcertificateinfo->id,
+                                                                 'module' => $certmodule->id));
+                            $certstring = "<a class=\"btn btn-info\" href='".$CFG->wwwroot."/mod/iomadcertificate/view.php?id=".
+                                          $certcminfo->id."&action=get&userid=".$userid."&sesskey=".
+                                          sesskey()."'>".get_string('certificate', 'local_report_users').
+                                          "</a>";
+                        } else {
+                            // Get the certificate from the download files thing.
+                            if ($traccertrec = $DB->get_record('local_iomad_track_certs', array('trackid' => $usercompcourse->certsource))) {
+                                // create the file download link.
+                                $coursecontext = context_course::instance($usercourseid);
+                                $certstring = "<a class=\"btn btn-info\" href='".
+                                               moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename) .
+                                              "'>" . get_string('certificate', 'local_report_users').
+                                              "</a>";
+                            }
+                        }
+                    } else {
+                        $certstring = get_string('nocerttodownload', 'local_report_users');
+                    }
+                } else {
+                }
+                $compusertable->data[] = array($coursestring,
+                                               $statusstring,
+                                               $enrolledtime,
+                                               $starttime,
+                                               $completetime,
+                                               $resultstring,
+                                               $certstring . '&nbsp;' . $delaction);
+            } else {
+                $compusertable->data[] = array($coursestring,
+                                               $statusstring,
+                                               $enrolledtime,
+                                               $starttime,
+                                               $completetime,
+                                               $resultstring,
+                                               $delaction);
+            }
         }
     }
 }
 if (empty($dodownload)) {
+        if (!$showhistoric) {
+        $historicuserslink = new moodle_url($baseurl, array('courseid' => $courseid,
+                                                        'userid' => $userid,
+                                                        'page' => $page,
+                                                        'showhistoric' => 1
+                                                        ));
+        echo $OUTPUT->single_button($historicuserslink, get_string("historicusers", 'local_report_completion'));
+    } else {
+        $historicuserslink = new moodle_url($baseurl, array('courseid' => $courseid,
+                                                        'userid' => $userid,
+                                                        'page' => $page,
+                                                        'showhistoric' => 0
+                                                        ));
+        echo $OUTPUT->single_button($historicuserslink, get_string("hidehistoricusers", 'local_report_completion'));
+    }
+
     echo html_writer::table($compusertable);
 }
 

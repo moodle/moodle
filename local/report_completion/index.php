@@ -38,6 +38,7 @@ $dodownload = optional_param('dodownload', 0, PARAM_INT);
 $firstname       = optional_param('firstname', 0, PARAM_CLEAN);
 $lastname      = optional_param('lastname', '', PARAM_CLEAN);
 $showsuspended = optional_param('showsuspended', 0, PARAM_INT);
+$showhistoric = optional_param('showhistoric', 0, PARAM_BOOL);
 $email  = optional_param('email', 0, PARAM_CLEAN);
 $sort         = optional_param('sort', 'name', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
@@ -52,7 +53,6 @@ $completiontype = optional_param('completiontype', 0, PARAM_INT);
 $charttype = optional_param('charttype', '', PARAM_CLEAN);
 $showchart = optional_param('showchart', false, PARAM_BOOL);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
-
 
 require_login($SITE);
 $context = context_system::instance();
@@ -93,6 +93,9 @@ if ($departmentid) {
 }
 if ($showsuspended) {
     $params['showsuspended'] = $showsuspended;
+}
+if ($showhistoric) {
+    $params['showhistoric'] = $showhistoric;
 }
 if ($charttype) {
     $params['charttype'] = $charttype;
@@ -244,6 +247,21 @@ if (empty($dodownload) && empty($showchart)) {
             'charttype' => '',
         ));
         echo $OUTPUT->single_button($alluserslink, get_string("allusers", 'local_report_completion'));
+        if (!$showhistoric) {
+            $historicuserslink = new moodle_url($url, array('departmentid' => $departmentid,
+                                                            'showchart' => 0,
+                                                            'charttype' => '',
+                                                            'showhistoric' => 1
+                                                            ));
+            echo $OUTPUT->single_button($historicuserslink, get_string("historicusers", 'local_report_completion'));
+        } else {
+            $historicuserslink = new moodle_url($url, array('departmentid' => $departmentid,
+                                                            'showchart' => 0,
+                                                            'charttype' => '',
+                                                            'showhistoric' => 0
+                                                            ));
+            echo $OUTPUT->single_button($historicuserslink, get_string("hidehistoricusers", 'local_report_completion'));
+        }
     }
 
 }
@@ -251,15 +269,29 @@ if (empty($dodownload) && empty($showchart)) {
 // Set up the course overview table.
 $coursecomptable = new html_table();
 $coursecomptable->id = 'ReportTable';
-$coursecomptable->head = array(
-    get_string('coursename', 'local_report_completion'),
-    get_string('numusers', 'local_report_completion'),
-    get_string('notstartedusers', 'local_report_completion'),
-    get_string('inprogressusers', 'local_report_completion'),
-    get_string('completedusers', 'local_report_completion'),
-    ' ',
-);
-$coursecomptable->align = array('left', 'center', 'center', 'center', 'center', 'center');
+if (!$showhistoric) {
+    $coursecomptable->head = array(
+        get_string('coursename', 'local_report_completion'),
+        get_string('numusers', 'local_report_completion'),
+        get_string('notstartedusers', 'local_report_completion'),
+        get_string('inprogressusers', 'local_report_completion'),
+        get_string('completedusers', 'local_report_completion'),
+        ' ',
+    );
+    $coursecomptable->align = array('left', 'center', 'center', 'center', 'center', 'center');
+} else {
+    $coursecomptable->head = array(
+        get_string('coursename', 'local_report_completion'),
+        get_string('numusers', 'local_report_completion'),
+        get_string('notstartedusers', 'local_report_completion'),
+        get_string('inprogressusers', 'local_report_completion'),
+        get_string('completedusers', 'local_report_completion'),
+        get_string('historiccompletedusers', 'local_report_completion'),
+        ' ',
+    );
+    $coursecomptable->align = array('left', 'center', 'center', 'center', 'center', 'center', 'center');
+}
+//$coursecomptable->width = '95%';
 $chartdata = array();
 
 if (!empty($dodownload)) {
@@ -293,25 +325,44 @@ foreach ($courseinfo as $id => $coursedata) {
         'showchart' => 0,
         'charttype' => 'course',
     ));
-    $coursecomptable->data[] = array(
-        $coursedata->coursename,
-        $coursedata->numenrolled,
-        $coursedata->numnotstarted,
-        $coursedata->numstarted - $coursedata->numcompleted,
-        $coursedata->numcompleted,
-        '<a class="btn" style="margin:2px" href="' . $courseuserslink . '">' . get_string('usersummary', 'local_report_completion') . '</a>&nbsp;' .
-        '<a class="btn" style="margin:2px" href="' . $coursechartlink . '">' . get_string('cchart', 'local_report_completion') . '</a>',
-    );
+    if (!$showhistoric) {
+        $coursecomptable->data[] = array(
+            $coursedata->coursename,
+            $coursedata->numenrolled,
+            $coursedata->numnotstarted,
+            $coursedata->numstarted - $coursedata->numcompleted,
+            $coursedata->numcompleted,
+            '<a class="btn" style="margin:2px" href="' . $courseuserslink . '">' . get_string('usersummary', 'local_report_completion') . '</a>&nbsp;',
+            '<a class="btn" style="margin:2px" href="' . $coursechartlink . '">' . get_string('cchart', 'local_report_completion') . '</a>',
+        );
+    } else {
+        $coursecomptable->data[] = array(
+            $coursedata->coursename,
+            $coursedata->numenrolled,
+            $coursedata->numnotstarted,
+            $coursedata->numstarted - $coursedata->numcompleted,
+            $coursedata->numcompleted,
+            $coursedata->historic,
+            '<a class="btn" style="margin:2px" href="' . $courseuserslink . '">' . get_string('usersummary', 'local_report_completion') . '</a>&nbsp;',
+            //'<a class="btn" style="margin:2px" href="' . $coursechartlink . '">' . get_string('cchart', 'local_report_completion') . '</a>',
+        );
+    }
     if ($charttype == 'summary') {
         $chartname[] = $coursedata->coursename;
         $chartnumusers[] = $coursedata->numenrolled;
         $chartnotstarted[] = $coursedata->numnotstarted;
         $chartinprogress[] = $coursedata->numstarted - $coursedata->numcompleted;
         $chartcompleted[] = $coursedata->numcompleted;
+        if ($showhistoric) {
+            $charthistoric = $coursedata->historic;
+        }
     } else if ($charttype == 'course' && $courseid == $coursedata->id ) {
         $seriesdata = array($coursedata->numnotstarted,
                             $coursedata->numstarted - $coursedata->numcompleted,
                             $coursedata->numcompleted);
+        if ($showhistoric) {
+            $seriesdata = $seriesdata + array($coursedata->historic);
+        }
     }
 }
 
@@ -321,14 +372,26 @@ if (!empty($charttype)) {
         $chartdata->addPoints($chartnotstarted, 's_notstarted' );
         $chartdata->addPoints($chartinprogress, 's_inprogress' );
         $chartdata->addPoints($chartcompleted, 's_completed' );
+        if ($showhistoric) {
+            $chartdata->addPoints($charthistoric, 's_completed' );
+        }
     } else if ($charttype == 'course') {
         $chartdata->addPoints($seriesdata, 'Value');
     }
-    $chartdata->addPoints(array(
-        get_string('notstartedusers', 'local_report_completion'),
-        get_string('inprogressusers', 'local_report_completion'),
-        get_string('completedusers', 'local_report_completion'),
-    ), 'Legend');
+    if (!showhistoric) {
+        $chartdata->addPoints(array(
+            get_string('notstartedusers', 'local_report_completion'),
+            get_string('inprogressusers', 'local_report_completion'),
+            get_string('completedusers', 'local_report_completion'),
+        ), 'Legend');
+    } else {
+        $chartdata->addPoints(array(
+            get_string('notstartedusers', 'local_report_completion'),
+            get_string('inprogressusers', 'local_report_completion'),
+            get_string('completedusers', 'local_report_completion'),
+            get_string('historicusers', 'local_report_completion'),
+        ), 'Legend');
+    }
     $chartdata->setAbscissa('Legend');
 }
 
@@ -350,9 +413,9 @@ if (empty($charttype)) {
                 // Only want the data for the page we are on.
                 // courseid==1 is ALL users.
                 if ($courseid == 1) {
-                    $coursedataobj = iomad::get_all_user_course_completion_data($searchinfo, $page, $perpage, $completiontype);
+                    $coursedataobj = report_completion::get_all_user_course_completion_data($searchinfo, $page, $perpage, $completiontype, $showhistoric);
                 } else {
-                    $coursedataobj = iomad::get_user_course_completion_data($searchinfo, $courseid, $page, $perpage, $completiontype);
+                    $coursedataobj = report_completion::get_user_course_completion_data($searchinfo, $courseid, $page, $perpage, $completiontype, $showhistoric);
                 }
                 $coursedata = $coursedataobj->users;
                 $totalcount = $coursedataobj->totalcount;
@@ -360,9 +423,9 @@ if (empty($charttype)) {
         } else {
             if (empty($idlist['0'])) {
                 if ($courseid == 1) {
-                    $coursedataobj = iomad::get_all_user_course_completion_data($searchinfo);
+                    $coursedataobj = report_completion::get_all_user_course_completion_data($searchinfo, 0, 0, 0, $showhistoric);
                 } else {
-                    $coursedataobj = iomad::get_user_course_completion_data($searchinfo, $courseid);
+                    $coursedataobj = report_completion::get_user_course_completion_data($searchinfo, $courseid, 0, 0, 0, $showhistoric);
                 }
                 $coursedata = $coursedataobj->users;
                 $totalcount = $coursedataobj->totalcount;
@@ -615,18 +678,42 @@ if (empty($charttype)) {
                     // Check if user has completed the course - if so, show the certificate.
                     if (!empty($user->timecompleted) ) {
                         // Get the course module.
-                        $certtabledata = "<a class=\"btn\" href='".new moodle_url('/mod/iomadcertificate/view.php',
-                                                                     array('id' => $certificatemodinstance->id,
-                                                                           'action' => 'get',
-                                                                           'userid' => $user->id,
-                                                                           'sesskey' => sesskey()))."'>".
-                                          get_string('downloadcert', 'local_report_users')."</a>";
+                        if (empty($user->certsource)) {
+                            $certtabledata = "<a class=\"btn\" href='".new moodle_url('/mod/iomadcertificate/view.php',
+                                                                         array('id' => $certificatemodinstance->id,
+                                                                               'action' => 'get',
+                                                                               'userid' => $user->id,
+                                                                               'sesskey' => sesskey()))."'>".
+                                              get_string('downloadcert', 'local_report_users')."</a>";
+                        } else {
+                            // Get the certificate from the download files thing.
+                            if ($traccertrec = $DB->get_record('local_iomad_track_certs', array('trackid' => $user->certsource))) {
+                                // create the file download link.
+                                $coursecontext = context_course::instance($courseid);
+/*                                $fs = get_file_storage();
+                                $file = $fs->get_file($coursecontext->id, 'local_iomad_track', 'issue', $usercompcourse->completion->certsource, '/', $traccertrec->filename); 
+echo "file = <pre>";
+print_r($file);
+echo "</pre></br>";
+*/                                $certtabledata = "<a class=\"btn btn-info\" href='".
+                                              /*moodle_url::make_pluginfile_url($coursecontext->id,
+                                                                               'local_iomad_track',
+                                                                               'issue',
+                                                                               $traccertrec->trackid,
+                                                                               '/',
+                                                                               $traccertrec->filename) .*/
+                                               moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename) .
+                                              "'>" . get_string('downloadcert', 'local_report_users').
+                                              "</a>";
+                            }
+                        }
                     } else {
                         $certtabledata = get_string('nocerttodownload', 'local_report_users');
                     }
                     $compusertable->data[] = array("<a href='".new moodle_url($userurl,
                                                                               array('userid' => $user->uid,
-                                                                                    'courseid' => $courseid)).
+                                                                                    'courseid' => $courseid,
+                                                                                    'showhistoric' => $showhistoric)).
                                                    "'>$user->fullname</a>",
                                                     $user->email,
                                                     $user->coursename,

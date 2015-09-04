@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/iomad_track/db" VERSION="20150811" COMMENT="XMLDB file for Moodle local/iomad_track"
+<XMLDB PATH="local/iomad_track/db" VERSION="20150824" COMMENT="XMLDB file for Moodle local/iomad_track"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -10,6 +10,9 @@
         <FIELD NAME="courseid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="id of completed course"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="ID of user completing"/>
         <FIELD NAME="timecompleted" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="Time when course was completed"/>
+        <FIELD NAME="timeenrolled" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timestarted" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="finalscore" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

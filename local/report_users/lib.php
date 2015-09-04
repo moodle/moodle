@@ -17,7 +17,7 @@
 class userrep {
     // Find completion data. $courseid=0 means all courses
     // for that company.
-    public static function get_completion( $userid, $courseid ) {
+    public static function get_completion( $userid, $courseid, $showhistoric=false ) {
         global $DB;
 
         // Going to build an array for the data.
@@ -39,6 +39,12 @@ class userrep {
         // Instantiate completion info thingy.
         $info = new completion_info( $course );
 
+        // Set up the temporary table for all the completion information to go into.
+        $tempcomptablename = 'tmp_ccomp_comp_'.time();
+
+        // Populate the temporary completion table.
+        list($compdbman, $comptable) = self::populate_temporary_completion($tempcomptablename, $userid, $courseid, $showhistoric);
+                
         // Get gradebook details.
         $gbsql = "select gg.finalgrade as result from {grade_grades} gg, {grade_items} gi
                   WHERE gi.courseid=$courseid AND gi.itemtype='course' AND gg.userid=$userid
@@ -65,51 +71,172 @@ class userrep {
         // Number of tracked activities to complete.
         $trackedcount = count( $criteria );
         $datum->trackedcount = $trackedcount;
+        $datum->completion = new stdclass();
 
         $u = new stdclass();
+        $data[$courseid] = new stdclass();
 
         // Iterate over users to get info.
-
         // Find user's completion info for this course.
-        if ($completioninfo = $DB->get_record( 'course_completions',
-                                                array('userid' => $userid,
-                                                      'course' => $courseid))) {
-            $u->timeenrolled = $completioninfo->timeenrolled;
-            if (!empty($completioninfo->timestarted)) {
-                $u->timestarted = $completioninfo->timestarted;
-                if (!empty($completioninfo->timecompleted)) {
-                    $u->timecompleted = $completioninfo->timecompleted;
-                    $u->status = 'completed';
-                    ++$completed;
+        if ($completionsinfo = $DB->get_records_sql("SELECT DISTINCT id as uniqueid, userid,courseid,timeenrolled,timestarted,timecompleted,finalscore
+                                                     FROM {".$tempcomptablename."}
+                                                     ORDER BY timeenrolled DESC")) {
+            foreach ($completionsinfo as $testcompletioninfo) {
+                $u = new stdclass();
+                // get the first occurrance of this info.
+                if ($completioninfo = $DB->get_record_sql("SELECT * FROM {".$tempcomptablename."}
+                                                           WHERE userid = :userid
+                                                           AND courseid = :courseid
+                                                           AND timeenrolled = :timeenrolled
+                                                           AND timestarted = :timestarted
+                                                           AND timecompleted = :timecompleted
+                                                           LIMIT 1",
+                                                           (array) $testcompletioninfo)) {
+                    $u->certsource = null;
+                    if (!empty($completioninfo->timeenrolled)) {
+                        $u->timeenrolled = $completioninfo->timeenrolled;
+                    } else {
+                        $u->timeenrolled = '';
+                    }
+                    if (!empty($completioninfo->timestarted)) {
+                        $u->timestarted = $completioninfo->timestarted;
+                        if (!empty($completioninfo->timecompleted)) {
+                            $u->timecompleted = $completioninfo->timecompleted;
+                            $u->status = 'completed';
+                            $u->certsource = $completioninfo->certsource;
+                            ++$completed;
+                        } else {
+                            $u->timecompleted = 0;
+                            $u->status = 'inprogress';
+                            ++$inprogress;
+                        }
+        
+                    } else {
+                        $u->timestarted = 0;
+                        $u->status = 'notstarted';
+                        ++$notstarted;
+                    }
+                    if (!empty($completioninfo->finalscore)) {
+                        $u->result = round($completioninfo->finalscore, 0);
+                    } else {
+                        $u->result = '';
+                    }
+                    $datum->completion->{$completioninfo->id} = $u;
+    
+                    $data[$courseid] = $datum;
                 } else {
+                    $u->timeenrolled = 0;
                     $u->timecompleted = 0;
-                    $u->status = 'inprogress';
-                    ++$inprogress;
+                    $u->timestarted = 0;
+                    $u->status = 'notstarted';
+                    $u->certsource = null;
+                    ++$notstarted;
+                    $datum->completion->zero = $u;
                 }
-
-            } else {
-                $u->timestarted = 0;
-                $u->status = 'notstarted';
-                ++$notstarted;
             }
-
-        } else {
-            $u->timeenrolled = 0;
-            $u->timecompleted = 0;
-            $u->timestarted = 0;
-            $u->status = 'notstarted';
-            ++$notstarted;
+            $data[$courseid] = $datum;
         }
-
-        $u->result = round($gradeinfo->result, 0);
-        $datum->completion = $u;
-        $data[ $courseid ] = $datum;
 
         // Make return object.
         $returnobj = new stdclass();
         $returnobj->data = $data;
         $returnobj->criteria = $criteria;
 
+        // Drop the temp table.
+        $compdbman->drop_table($comptable);
+
         return $returnobj;
+    }
+
+    /** 
+     * Get users into temporary table
+     */
+    private static function populate_temporary_completion($tempcomptablename, $userid, $courseid=0, $showhistoric=false) {
+        global $DB;
+
+
+        // Create a temporary table to hold the userids.
+        $dbman = $DB->get_manager();
+
+        // Define table user to be created.
+        $table = new xmldb_table($tempcomptablename);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timeenrolled', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timestarted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('timecompleted', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('finalscore', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('certsource', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_field('trackid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        $dbman->create_temp_table($table);
+
+        // Populate it.
+        $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, courseid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
+                          SELECT cc.userid, cc.course, cc.timeenrolled, cc.timestarted, cc.timecompleted, gg.finalgrade, 0
+                          FROM {course_completions} cc LEFT JOIN ({grade_grades} gg, {grade_items} gi)
+                          ON (cc.course = gi.courseid
+                          AND gg.userid = cc.userid
+                          AND gg.itemid = gi.id
+                          AND gi.itemtype = 'course')
+                          WHERE cc.userid = :userid ";
+        if (!empty($courseid)) {
+            $tempcreatesql .= " AND cc.course = ".$courseid;
+        }
+        $DB->execute($tempcreatesql, array('userid' => $userid, 'courseid' => $courseid));
+
+        // Are we also adding in historic data?
+        if ($showhistoric) {
+        // Populate it.
+            $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, courseid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
+                              SELECT it.userid, it.courseid, it.timeenrolled, it.timestarted, it.timecompleted, it.finalscore, it.id
+                              FROM {local_iomad_track} it
+                              WHERE it.userid = :userid";
+        if (!empty($courseid)) {
+            $tempcreatesql .= " AND it.courseid = :courseid";
+        }
+            $DB->execute($tempcreatesql, array('userid' => $userid, 'courseid' => $courseid));
+        }
+        return array($dbman, $table);
+    }
+
+
+
+    /**
+     * 'Delete' user from course
+     * @param int userid
+     * @param int courseid
+     */
+    public static function delete_user($userid, $courseid) {
+        global $DB, $CFG;
+
+        // Remove enrolments
+        $plugins = enrol_get_plugins(true);
+        $instances = enrol_get_instances($courseid, true);
+        foreach ($instances as $instance) {
+            $plugin = $plugins[$instance->enrol];
+            $plugin->unenrol_user($instance, $userid);
+        }
+
+        // Remove completions
+        $DB->delete_records('course_completions', array('userid' => $userid, 'course' => $courseid));
+
+        // Remove grades
+        if ($items = $DB->get_records('grade_items', array('courseid' => $courseid))) {
+            foreach ($items as $item) {
+                $DB->delete_records('grade_grades', array('userid' => $userid, 'itemid' => $item->id));
+            }
+        }
+  
+        // Fix company licenses
+        if ($licenses = $DB->get_records('companylicense_users', array('licensecourseid' => $courseid, 'userid' =>$userid))) {
+            foreach ($licenses as $license) {
+                $license->isusing = 0;
+                $DB->update_record('companylicense_users', $license);
+            }
+        }
+
     }
 }

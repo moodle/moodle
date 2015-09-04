@@ -178,11 +178,25 @@ class observer {
         $courseid = $data['courseid'];
         $timecompleted = $data['timecreated'];
 
+        // Get the full completion information.
+        $comprec = $DB->get_record('course_completions', array('userid' => $userid,
+                                                               'course' => $courseid));
+
+        // Get the final grade for the course.
+        $graderec = $DB->get_record_sql("SELECT gg.* FROM {grade_grades} gg
+                                         JOIN {grade_items} gi ON (gg.itemid = gi.id
+                                                                   AND gi.itemtype = 'course'
+                                                                   AND gi.courseid = :courseid)
+                                         WHERE gg.userid = :userid", array('courseid' => $courseid,
+                                                                           'userid' => $userid)); 
         // Record the completion event.
         $completion = new \StdClass();
         $completion->courseid = $courseid;
         $completion->userid = $userid;
+        $completion->timeenroled = $comprec->timeenrolled;
+        $completion->timestarted = $comprec->timestarted;
         $completion->timecompleted = $timecompleted;
+        $completion->finalscore = $graderec->finalgrade;
         $trackid = $DB->insert_record('local_iomad_track', $completion);
 
         // Debug
