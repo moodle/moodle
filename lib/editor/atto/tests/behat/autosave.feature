@@ -89,7 +89,7 @@ Feature: Atto Autosave
     And I follow "Course 1"
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "Course summary" to "Modified text"
-    And I click on "Save and display" "button"
+    And I click on "Save changes" "button"
     And I log out
     When I log in as "teacher1"
     And I follow "Course 1"
