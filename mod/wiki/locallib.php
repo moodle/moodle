@@ -1163,8 +1163,6 @@ function wiki_delete_pages($context, $pageids = null, $subwikiid = null) {
         return;
     }
 
-    require_once($CFG->dirroot . '/tag/lib.php');
-
     /// Delete page and all it's relevent data
     foreach ($pageids as $pageid) {
         if (is_object($pageid)) {
@@ -1178,10 +1176,7 @@ function wiki_delete_pages($context, $pageids = null, $subwikiid = null) {
         }
 
         //Delete page tags
-        $tags = tag_get_tags_array('wiki_pages', $pageid);
-        foreach ($tags as $tagid => $tagvalue) {
-            tag_delete_instance('wiki_pages', $pageid, $tagid);
-        }
+        core_tag_tag::remove_all_item_tags('mod_wiki', 'wiki_pages', $pageid);
 
         //Delete Synonym
         wiki_delete_synonym($subwikiid, $pageid);
@@ -1386,18 +1381,8 @@ function wiki_print_page_content($page, $context, $subwikiid) {
     $html = format_text($html, FORMAT_MOODLE, array('overflowdiv'=>true, 'allowid'=>true));
     echo $OUTPUT->box($html);
 
-    if (!empty($CFG->usetags)) {
-        $tags = tag_get_tags_array('wiki_pages', $page->id);
-        echo $OUTPUT->container_start('wiki-tags');
-        echo '<span class="wiki-tags-title">'.get_string('tags').': </span>';
-        $links = array();
-        foreach ($tags as $tagid=>$tag) {
-            $url = new moodle_url('/tag/index.php', array('tag'=>$tag));
-            $links[] = html_writer::link($url, $tag, array('title'=>get_string('tagtitle', 'wiki', $tag)));
-        }
-        echo join($links, ", ");
-        echo $OUTPUT->container_end();
-    }
+    echo $OUTPUT->tag_list(core_tag_tag::get_item_tags('mod_wiki', 'wiki_pages', $page->id),
+            null, 'wiki-tags');
 
     wiki_increment_pageviews($page);
 }
