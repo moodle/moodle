@@ -123,10 +123,7 @@ if (!empty($course)) {
     }
 
     // Populate course tags.
-    if (!empty($CFG->usetags)) {
-        include_once($CFG->dirroot.'/tag/lib.php');
-        $course->tags = tag_get_tags_array('course', $course->id);
-    }
+    $course->tags = core_tag_tag::get_item_tags_array('core', 'course', $course->id);
 
 } else {
     // Editor should respect category context if course context is not set.

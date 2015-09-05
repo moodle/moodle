@@ -1339,8 +1339,27 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             } else if (!empty($search['tagid'])) {
                 // Search courses that are tagged with the specified tag.
                 $where = "c.id IN (SELECT t.itemid ".
-                        "FROM {tag_instance} t WHERE t.tagid = :tagid AND t.itemtype = :itemtype)";
-                $params = array('tagid' => $search['tagid'], 'itemtype' => 'course');
+                        "FROM {tag_instance} t WHERE t.tagid = :tagid AND t.itemtype = :itemtype AND t.component = :component)";
+                $params = array('tagid' => $search['tagid'], 'itemtype' => 'course', 'component' => 'core');
+                if (!empty($search['ctx'])) {
+                    $rec = isset($search['rec']) ? $search['rec'] : true;
+                    $parentcontext = context::instance_by_id($search['ctx']);
+                    if ($parentcontext->contextlevel == CONTEXT_SYSTEM && $rec) {
+                        // Parent context is system context and recursive is set to yes.
+                        // Nothing to filter - all courses fall into this condition.
+                    } else if ($rec) {
+                        // Filter all courses in the parent context at any level.
+                        $where .= ' AND ctx.path LIKE :contextpath';
+                        $params['contextpath'] = $parentcontext->path . '%';
+                    } else if ($parentcontext->contextlevel == CONTEXT_COURSECAT) {
+                        // All courses in the given course category.
+                        $where .= ' AND c.category = :category';
+                        $params['category'] = $parentcontext->instanceid;
+                    } else {
+                        // No courses will satisfy the context criterion, do not bother searching.
+                        $where = '1=0';
+                    }
+                }
             } else {
                 debugging('No criteria is specified while searching courses', DEBUG_DEVELOPER);
                 return array();
