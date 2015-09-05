@@ -30,6 +30,7 @@
  */
 class block_tags_edit_form extends block_edit_form {
     protected function specific_definition($mform) {
+        global $CFG;
         // Fields for editing HTML block title and contents.
         $mform->addElement('header', 'configheader', get_string('blocksettings', 'block'));
 
@@ -37,11 +38,63 @@ class block_tags_edit_form extends block_edit_form {
         $mform->setType('config_title', PARAM_TEXT);
         $mform->setDefault('config_title', get_string('pluginname', 'block_tags'));
 
+        $this->add_collection_selector($mform);
+
         $numberoftags = array();
         for ($i = 1; $i <= 200; $i++) {
             $numberoftags[$i] = $i;
         }
         $mform->addElement('select', 'config_numberoftags', get_string('numberoftags', 'blog'), $numberoftags);
         $mform->setDefault('config_numberoftags', 80);
+
+        $defaults = array(
+            'official' => get_string('officialonly', 'block_tags'),
+            '' => get_string('anytype', 'block_tags'));
+        $mform->addElement('select', 'config_tagtype', get_string('defaultdisplay', 'block_tags'), $defaults);
+        $mform->setDefault('config_tagtype', '');
+
+        $defaults = array(0 => context_system::instance()->get_context_name());
+        $parentcontext = context::instance_by_id($this->block->instance->parentcontextid);
+        if ($parentcontext->contextlevel > CONTEXT_COURSE) {
+            $coursecontext = $parentcontext->get_course_context();
+            $defaults[$coursecontext->id] = $coursecontext->get_context_name();
+        }
+        if ($parentcontext->contextlevel != CONTEXT_SYSTEM) {
+            $defaults[$parentcontext->id] = $parentcontext->get_context_name();
+        }
+        $mform->addElement('select', 'config_ctx', get_string('taggeditemscontext', 'block_tags'), $defaults);
+        $mform->addHelpButton('config_ctx', 'taggeditemscontext', 'block_tags');
+        $mform->setDefault('config_ctx', 0);
+
+        $mform->addElement('advcheckbox', 'config_rec', get_string('recursivecontext', 'block_tags'));
+        $mform->addHelpButton('config_rec', 'recursivecontext', 'block_tags');
+        $mform->setDefault('config_rec', 1);
+    }
+
+    /**
+     * Add the tag collection selector
+     *
+     * @param object $mform the form being built.
+     */
+    protected function add_collection_selector($mform) {
+        $tagcolls = core_tag_collection::get_collections_menu(false, false, get_string('anycollection', 'block_tags'));
+        if (count($tagcolls) <= 1) {
+            return;
+        }
+
+        $tagcollssearchable = core_tag_collection::get_collections_menu(false, true);
+        $hasunsearchable = false;
+        foreach ($tagcolls as $id => $name) {
+            if ($id && !array_key_exists($id, $tagcollssearchable)) {
+                $hasunsearchable = true;
+                $tagcolls[$id] = $name . '*';
+            }
+        }
+
+        $mform->addElement('select', 'config_tagcoll', get_string('tagcollection', 'block_tags'), $tagcolls);
+        if ($hasunsearchable) {
+            $mform->addHelpButton('config_tagcoll', 'tagcollection', 'block_tags');
+        }
+        $mform->setDefault('config_tagcoll', 0);
     }
 }
