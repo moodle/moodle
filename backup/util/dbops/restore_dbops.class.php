@@ -1209,16 +1209,14 @@ abstract class restore_dbops {
                 }
 
                 // Process tags
-                if (!empty($CFG->usetags) && isset($user->tags)) { // if enabled in server and present in backup
+                if (core_tag_tag::is_enabled('core', 'user') && isset($user->tags)) { // If enabled in server and present in backup.
                     $tags = array();
                     foreach($user->tags['tag'] as $usertag) {
                         $usertag = (object)$usertag;
                         $tags[] = $usertag->rawname;
                     }
-                    if (empty($newuserctxid)) {
-                        $newuserctxid = null; // Tag apis expect a null contextid not 0.
-                    }
-                    tag_set('user', $newuserid, $tags, 'core', $newuserctxid);
+                    core_tag_tag::set_item_tags('core', 'user', $newuserid,
+                            context_user::instance($newuserid), $tags);
                 }
 
                 // Process preferences

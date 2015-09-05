@@ -3901,7 +3901,6 @@ function delete_user(stdClass $user) {
     require_once($CFG->libdir.'/grouplib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/message/lib.php');
-    require_once($CFG->dirroot.'/tag/lib.php');
     require_once($CFG->dirroot.'/user/lib.php');
 
     // Make sure nobody sends bogus record type as parameter.
@@ -3944,7 +3943,7 @@ function delete_user(stdClass $user) {
     // TODO: remove from cohorts using standard API here.
 
     // Remove user tags.
-    tag_set('user', $user->id, array(), 'core', $usercontext->id);
+    core_tag_tag::remove_all_item_tags('core', 'user', $user->id);
 
     // Unconditionally unenrol from all courses.
     enrol_user_delete($user);
