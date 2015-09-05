@@ -334,7 +334,7 @@ function question_delete_question($questionid) {
             $questionid, $question->contextid);
 
     // Delete all tag instances.
-    $DB->delete_records('tag_instance', array('component' => 'core_question', 'itemid' => $question->id));
+    core_tag_tag::remove_all_item_tags('core_question', 'question', $question->id);
 
     // Now recursively delete all child questions
     if ($children = $DB->get_records('question',
@@ -435,8 +435,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         }
 
         // Update the contextid for any tag instances for questions in the old context.
-        $DB->set_field('tag_instance', 'contextid', $newcontext->id, array('component' => 'core_question',
-            'contextid' => $context->id));
+        core_tag_tag::move_context('core_question', 'question', $context, $newcontext);
 
         $DB->set_field('question_categories', 'contextid', $newcontext->id, array('contextid' => $context->id));
 
@@ -544,8 +543,7 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
             "parent $questionidcondition", $params);
 
     // Update the contextid for any tag instances that may exist for these questions.
-    $DB->set_field_select('tag_instance', 'contextid', $newcontextid,
-        "component = 'core_question' AND itemid $questionidcondition", $params);
+    core_tag_tag::change_items_context('core_question', 'question', $questionids, $newcontextid);
 
     // TODO Deal with datasets.
 
@@ -577,12 +575,8 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
         question_bank::notify_question_edited($questionid);
     }
 
-    if ($questionids) {
-        // Update the contextid for any tag instances that may exist for these questions.
-        list($questionids, $params) = $DB->get_in_or_equal(array_keys($questionids));
-        $DB->set_field_select('tag_instance', 'contextid', $newcontextid,
-            "component = 'core_question' AND itemid $questionids", $params);
-    }
+    core_tag_tag::change_items_context('core_question', 'question',
+            array_keys($questionids), $newcontextid);
 
     $subcatids = $DB->get_records_menu('question_categories',
             array('parent' => $categoryid), '', 'id,1');
@@ -765,9 +759,8 @@ function _tidy_question($question, $loadtags = false) {
         unset($question->_partiallyloaded);
     }
 
-    if ($loadtags && !empty($CFG->usetags)) {
-        require_once($CFG->dirroot . '/tag/lib.php');
-        $question->tags = tag_get_tags_array('question', $question->id);
+    if ($loadtags && core_tag_tag::is_enabled('core_question', 'question')) {
+        $question->tags = core_tag_tag::get_item_tags_array('core_question', 'question', $question->id);
     }
 }
 

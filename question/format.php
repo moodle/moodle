@@ -425,9 +425,8 @@ class qformat_default {
 
             $result = question_bank::get_qtype($question->qtype)->save_question_options($question);
 
-            if (!empty($CFG->usetags) && isset($question->tags)) {
-                require_once($CFG->dirroot . '/tag/lib.php');
-                tag_set('question', $question->id, $question->tags, 'core_question', $question->context->id);
+            if (isset($question->tags)) {
+                core_tag_tag::set_item_tags('core_question', 'question', $question->context, $question->id, $question->tags);
             }
 
             if (!empty($result->error)) {
