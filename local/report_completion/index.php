@@ -754,7 +754,7 @@ echo "</pre></br>";
         }
         if (empty($dodownload)) {
             // Set up the filter form.
-            $mform = new iomad_user_filter_form(null, array('companyid' => $companyid));
+            $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'showhistoric' => true));
 
             $mform->set_data(array('departmentid' => $departmentid));
             $mform->set_data($params);

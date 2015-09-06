@@ -567,9 +567,23 @@ Thank you for your request.
  */
 class iomad_user_filter_form extends moodleform {
     protected $companyid;
+    protected $useshowall;
+    protected $showhistoric;
 
     public function definition() {
         global $CFG, $DB, $USER, $SESSION;
+
+        if (!empty($this->_customdata['useshowall'])) {
+            $useshowall = true;
+        } else {
+            $useshowall = false;
+        }
+
+        if (!empty($this->_customdata['showhistoric'])) {
+            $showhistoric = true;
+        } else {
+            $showhistoric = false;
+        }
 
         $mform =& $this->_form;
         $filtergroup = array();
@@ -612,6 +626,20 @@ class iomad_user_filter_form extends moodleform {
             $mform->addElement('hidden', 'showsuspended');
         }*/
         $mform->setType('showsuspended', PARAM_INT);
+
+        if (!$useshowall) {
+            $mform->addElement('hidden', 'showall');
+            $mform->setType('showall', PARAM_BOOL);
+        } else {
+            $mform->addElement('checkbox', 'showall', get_string('show_all_company_users', 'block_iomad_company_admin'));
+        }
+
+        if (!$showhistoric) {
+            $mform->addElement('hidden', 'showhistoric');
+            $mform->setType('showhistoric', PARAM_BOOL);
+        } else {
+            $mform->addElement('checkbox', 'showhistoric', get_string('showhistoricusers', 'block_iomad_company_admin'));
+        }
 
         $this->add_action_buttons(false, get_string('userfilter', 'local_iomad'));
     }

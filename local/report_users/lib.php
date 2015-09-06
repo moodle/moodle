@@ -131,12 +131,20 @@ class userrep {
                     $u->status = 'notstarted';
                     $u->certsource = null;
                     ++$notstarted;
-                    $datum->completion->zero = $u;
+                    $datum->completion->$courseid = $u;
                 }
             }
             $data[$courseid] = $datum;
+        } else {
+            $u->timeenrolled = 0;
+            $u->timecompleted = 0;
+            $u->timestarted = 0;
+            $u->status = 'notstarted';
+            $u->certsource = null;
+            ++$notstarted;
+            $datum->completion->$courseid = $u;
+            $data[$courseid] = $datum;
         }
-
         // Make return object.
         $returnobj = new stdclass();
         $returnobj->data = $data;
@@ -186,6 +194,15 @@ class userrep {
             $tempcreatesql .= " AND cc.course = ".$courseid;
         }
         $DB->execute($tempcreatesql, array('userid' => $userid, 'courseid' => $courseid));
+        if ($DB->count_records($tempcomptablename) == 0) {
+            $DB->insert_record($tempcomptablename, array('userid' => $userid,
+                                                         'courseid' => $courseid,
+                                                         'timeenrolled' => 0,
+                                                         'timestarted' => 0,
+                                                         'timecompleted' =>0,
+                                                         'finalscore' => 0,
+                                                         'certsource' => 0));
+        }
 
         // Are we also adding in historic data?
         if ($showhistoric) {
@@ -199,6 +216,10 @@ class userrep {
         }
             $DB->execute($tempcreatesql, array('userid' => $userid, 'courseid' => $courseid));
         }
+
+        // deal with NULLs as it breaks the code.
+        $DB->execute("UPDATE {".$tempcomptablename."} SET timecompleted = 0 WHERE timecompleted is NULL");
+
         return array($dbman, $table);
     }
 
