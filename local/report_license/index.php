@@ -633,7 +633,7 @@ if (empty($charttype)) {
                 if ($user->lastaccess == 0) {
                     $datestring = get_string('never');
                 } else {
-                    $datestring = date('Y-m-d',$user->lastaccess)."&nbsp; (".format_time(time() - $user->lastaccess).")";
+                    $datestring = date('Y-m-d',$user->lastaccess);
                 }
                 $user->fullname = $user->firstname . ' ' . $user->lastname;
                 if (empty($dodownload)) {
