@@ -285,22 +285,19 @@ Y.extend(LTIPANELMEDIAASSIGNMENT, Y.Base, {
      * @type {Object}
      */
     open_panel_callback : function(e, url, height, width) {
-        var panelheight = parseInt(height, 10) + 45;
-        var panelwidth = parseInt(width, 10) + 23 + 'px';
+        this.panelheight = parseInt(height, 10) + 45;
+        this.panelwidth = parseInt(width, 10) + 23;
 
-        width = width+'px';
-        // Apply special width for mobile devices as requested by Kaltura.
+        width += 'px';
+
         if (Y.UA.ipod !== 0 || Y.UA.ipad !== 0 || Y.UA.iphone !== 0 || Y.UA.android !== 0 || Y.UA.mobile !== null) {
-            panelwidth = '80%';
+            this.panelwidth = '80%';
             width = '100%';
         }
 
-        var iframe = "<iframe id='panelcontentframe' height='"+height+"px' width='"+width+"' src='"+url+"'></iframe>";
-        this.panelbodycontent = iframe;
-        if (Y.UA.ipod !== 0 || Y.UA.ipad !== 0 || Y.UA.iphone !== 0) {
-            // This outer div will constrain the iframe from overlapping over its content region on iOS devices.
-            this.panelbodycontent = "<div id='panelcontentframecontainer'>"+iframe+"</div>";
-        }
+        this.panelbodycontent = "<iframe id='panelcontentframe' height='"+height+"px' width='"+width+"' "+
+            "allowfullscreen='true' webkitallowfullscreen='true' mozallowfullscreen='true' src='"+url+"'></iframe>";
+
 
         // If the panel has not yet been initialized.
         if (null === this.panel) {
@@ -308,8 +305,8 @@ Y.extend(LTIPANELMEDIAASSIGNMENT, Y.Base, {
                 srcNode : Y.Node.create('<div id="dialog" />'),
                 headerContent : '',
                 bodyContent : this.panelbodycontent,
-                width : panelwidth,
-                height : panelheight+"px",
+                width : this.panelwidth+"px",
+                height : this.panelheight+"px",
                 zIndex : 6,
                 centered : true,
                 modal : true,
@@ -328,7 +325,7 @@ Y.extend(LTIPANELMEDIAASSIGNMENT, Y.Base, {
             // Listen to simulated click event send from local/kaltura/service.php
             Y.one('input[id=closeltipanel]').on('click', this.lti_hide_panel_callback, this);
 
-            // // Listen to when the panel is made visible or hidden
+            // Listen to when the panel is made visible or hidden
             this.panel.after('visibleChange', this.lti_panel_visible_change_callback, this);
         } else {
             this.panel.show();
