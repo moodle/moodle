@@ -530,6 +530,7 @@ function assign_print_overview($courses, &$htmlarray) {
  */
 function assign_print_recent_activity($course, $viewfullnames, $timestart) {
     global $CFG, $USER, $DB, $OUTPUT;
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
     // Do not use log table if possible, it may be huge.
 
