@@ -28,6 +28,9 @@ defined('MOODLE_INTERNAL') || die;
 
 /**
  * Simple task to run sync enrolments.
+ *
+ * @copyright  2014 Troy Williams
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class flatfile_sync_task extends \core\task\scheduled_task {
 

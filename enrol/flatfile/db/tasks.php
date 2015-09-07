@@ -28,7 +28,7 @@ $tasks = array(
     array(
         'classname' => '\enrol_flatfile\task\flatfile_sync_task',
         'blocking' => 0,
-        'minute' => '*',
+        'minute' => '15',
         'hour' => '*',
         'day' => '*',
         'dayofweek' => '*',
