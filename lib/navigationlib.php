@@ -3763,6 +3763,9 @@ class settings_navigation extends navigation_node {
                 $url = new moodle_url('/course/completion.php', array('id'=>$course->id));
                 $coursenode->add(get_string('coursecompletion', 'completion'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
             }
+        } else if (has_capability('moodle/course:tag', $coursecontext)) {
+            $url = new moodle_url('/course/tags.php', array('id' => $course->id));
+            $coursenode->add(get_string('coursetags', 'tag'), $url, self::TYPE_SETTING, null, 'coursetags', new pix_icon('i/settings', ''));
         }
 
         // add enrol nodes

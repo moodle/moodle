@@ -373,6 +373,7 @@ function upgrade_stale_php_files_present() {
     $someexamplesofremovedfiles = array(
         // Removed in 3.0.
         '/mod/lti/grade.php',
+        '/tag/coursetagslib.php',
         // Removed in 2.9.
         '/lib/timezone.txt',
         // Removed in 2.8.

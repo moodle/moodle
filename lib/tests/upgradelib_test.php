@@ -741,4 +741,62 @@ class core_upgradelib_testcase extends advanced_testcase {
         $this->assertEquals($gradecategoryitem->grademax, $grade->rawgrademax);
         $this->assertEquals($gradecategoryitem->grademin, $grade->rawgrademin);
     }
+
+    public function test_upgrade_course_tags() {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Running upgrade script when there are no tags.
+        upgrade_course_tags();
+        $this->assertFalse($DB->record_exists('tag_instance', array()));
+
+        // No course entries.
+        $DB->insert_record('tag_instance', array('itemid' => 123, 'tagid' => 101, 'tiuserid' => 0,
+            'itemtype' => 'post', 'component' => 'core', 'contextid' => 1));
+        $DB->insert_record('tag_instance', array('itemid' => 333, 'tagid' => 103, 'tiuserid' => 1002,
+            'itemtype' => 'post', 'component' => 'core', 'contextid' => 1));
+
+        upgrade_course_tags();
+        $records = array_values($DB->get_records('tag_instance', array(), 'id', '*'));
+        $this->assertEquals(2, count($records));
+        $this->assertEquals(123, $records[0]->itemid);
+        $this->assertEquals(333, $records[1]->itemid);
+
+        // Imagine we have tags 101, 102, 103, ... and courses 1, 2, 3, ... and users 1001, 1002, ... .
+        $keys = array('itemid', 'tagid', 'tiuserid');
+        $valuesets = array(
+            array(1, 101, 0),
+            array(1, 102, 0),
+
+            array(2, 102, 0),
+            array(2, 103, 1001),
+
+            array(3, 103, 0),
+            array(3, 103, 1001),
+
+            array(3, 104, 1006),
+            array(3, 104, 1001),
+            array(3, 104, 1002),
+        );
+
+        foreach ($valuesets as $values) {
+            $DB->insert_record('tag_instance', array_combine($keys, $values) +
+                    array('itemtype' => 'course', 'component' => 'core', 'contextid' => 1));
+        }
+
+        upgrade_course_tags();
+        // There are 8 records in 'tag_instance' table and 7 of them do not have tiuserid (except for one 'post').
+        $records = array_values($DB->get_records('tag_instance', array(), 'id', '*'));
+        $this->assertEquals(8, count($records));
+        $this->assertEquals(7, $DB->count_records('tag_instance', array('tiuserid' => 0)));
+        // Course 1 is mapped to tags 101 and 102.
+        $this->assertEquals(array(101, 102), array_values($DB->get_fieldset_select('tag_instance', 'tagid',
+                'itemtype = ? AND itemid = ? ORDER BY tagid', array('course', 1))));
+        // Course 2 is mapped to tags 102 and 103.
+        $this->assertEquals(array(102, 103), array_values($DB->get_fieldset_select('tag_instance', 'tagid',
+                'itemtype = ? AND itemid = ? ORDER BY tagid', array('course', 2))));
+        // Course 1 is mapped to tags 101 and 102.
+        $this->assertEquals(array(103, 104), array_values($DB->get_fieldset_select('tag_instance', 'tagid',
+                'itemtype = ? AND itemid = ? ORDER BY tagid', array('course', 3))));
+    }
 }

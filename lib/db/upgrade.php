@@ -4530,5 +4530,33 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015090200.00);
     }
 
+    if ($oldversion < 2015090801.00) {
+        // This upgrade script merges all tag instances pointing to the same course tag.
+        // User id is no longer used for those tag instances.
+        upgrade_course_tags();
+
+        // If configuration variable "Show course tags" is set, disable the block
+        // 'tags' because it can not be used for tagging courses any more.
+        if (!empty($CFG->block_tags_showcoursetags)) {
+            if ($record = $DB->get_record('block', array('name' => 'tags'), 'id, visible')) {
+                if ($record->visible) {
+                    $DB->update_record('block', array('id' => $record->id, 'visible' => 0));
+                }
+            }
+        }
+
+        // Define index idname (unique) to be dropped form tag (it's really weird).
+        $table = new xmldb_table('tag');
+        $index = new xmldb_index('idname', XMLDB_INDEX_UNIQUE, array('id', 'name'));
+
+        // Conditionally launch drop index idname.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015090801.00);
+    }
+
     return true;
 }

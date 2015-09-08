@@ -1,6 +1,13 @@
 This files describes API changes in tagging, information provided
 here is intended especially for developers.
 
+=== 3.0 ===
+
+* Tagging courses is now implemented without user id - through course edit form or
+  special "Course tags" form. All coursetag_* functions in /tag/coursetagslib.php
+  were deprecated without replacement and related JS code was removed. Config variable
+  $CFG->block_tags_showcoursetags was removed.
+
 === 2.7 ===
 
 * The functions tag_set, tag_set_add, tag_set_delete and tag_assign now expect the component

@@ -4736,7 +4736,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/group/lib.php');
-    require_once($CFG->dirroot.'/tag/coursetagslib.php');
+    require_once($CFG->dirroot.'/tag/lib.php');
     require_once($CFG->dirroot.'/comment/lib.php');
     require_once($CFG->dirroot.'/rating/lib.php');
     require_once($CFG->dirroot.'/notes/lib.php');
@@ -4911,7 +4911,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $rm->delete_ratings($delopt);
 
     // Delete course tags.
-    coursetag_delete_course_tags($course->id, $showfeedback);
+    tag_set('course', $course->id, array(), 'core', $coursecontext->id);
 
     // Delete calendar events.
     $DB->delete_records('event', array('courseid' => $course->id));

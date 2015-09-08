@@ -146,6 +146,7 @@ $string['course:reset'] = 'Reset course';
 $string['course:reviewotherusers'] = 'Review other users';
 $string['course:sectionvisibility'] = 'Control section visibility';
 $string['course:setcurrentsection'] = 'Set current section';
+$string['course:tag'] = 'Change course tags';
 $string['course:update'] = 'Update course settings';
 $string['course:useremail'] = 'Enable/disable email address';
 $string['course:view'] = 'View courses without participation';
@@ -373,7 +374,6 @@ $string['site:viewfullnames'] = 'Always see full names of users';
 $string['site:viewparticipants'] = 'View participants';
 $string['site:viewreports'] = 'View reports';
 $string['site:viewuseridentity'] = 'See full user identity in lists';
-$string['tag:create'] = 'Create new tags';
 $string['tag:edit'] = 'Edit existing tags';
 $string['tag:editblocks'] = 'Edit blocks in tags pages';
 $string['tag:manage'] = 'Manage all tags';
@@ -424,3 +424,6 @@ $string['whydoesusernothavecap'] = 'Why does {$a->fullname} not have capability 
 $string['xroleassignments'] = '{$a}\'s role assignments';
 $string['xuserswiththerole'] = 'Users with the role "{$a->role}"';
 
+// Deprecated in 3.0.
+
+$string['tag:create'] = 'Create new tags';
