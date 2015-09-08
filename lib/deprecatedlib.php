@@ -2398,3 +2398,24 @@ function is_web_crawler() {
     debugging("is_web_crawler() has been deprecated, please use \\core_useragent\\is_web_crawler() instead.", DEBUG_DEVELOPER);
     return core_useragent::is_crawler();
 }
+
+/**
+ * Update user's course completion statuses
+ *
+ * First update all criteria completions, then aggregate all criteria completions
+ * and update overall course completions.
+ *
+ * @deprecated since Moodle 3.0 MDL-50287 - please do not use this function any more.
+ * @todo Remove this function in Moodle 3.2 MDL-51226.
+ */
+function completion_cron() {
+    global $CFG;
+    require_once($CFG->dirroot.'/completion/cron.php');
+
+    debugging('completion_cron() is deprecated. Functionality has been moved to scheduled tasks.', DEBUG_DEVELOPER);
+    completion_cron_mark_started();
+
+    completion_cron_criteria();
+
+    completion_cron_completions();
+}
