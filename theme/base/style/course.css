@@ -66,6 +66,16 @@
     right: auto;
 }
 
+.course-content  li.section li.activity ul {
+    list-style: disc;
+}
+.course-content  li.section li.activity ul ul {
+    list-style: circle;
+}
+.course-content  li.section li.activity ul ul ul {
+    list-style: square;
+}
+
 .sitetopic .section .activity .activityinstance div,
 .course-content .section .activity .activityinstance div { display: inline;}
 .course-content .section .activity .activityinstance form { display: inline;}
