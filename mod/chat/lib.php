@@ -1304,3 +1304,50 @@ function chat_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $modulepagetype = array('mod-chat-*' => get_string('page-mod-chat-x', 'chat'));
     return $modulepagetype;
 }
+
+/**
+ * Return a list of the latest messages in the given chat session.
+ *
+ * @param  stdClass $chatuser     chat user session data
+ * @param  int      $chatlasttime last time messages were retrieved
+ * @return array    list of messages
+ * @since  Moodle 3.0
+ */
+function chat_get_latest_messages($chatuser, $chatlasttime) {
+    global $DB;
+
+    $params = array('groupid' => $chatuser->groupid, 'chatid' => $chatuser->chatid, 'lasttime' => $chatlasttime);
+
+    $groupselect = $chatuser->groupid ? " AND (groupid=" . $chatuser->groupid . " OR groupid=0) " : "";
+
+    return $DB->get_records_select('chat_messages_current', 'chatid = :chatid AND timestamp > :lasttime ' . $groupselect,
+                                    $params, 'timestamp ASC');
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $chat       chat object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.0
+ */
+function chat_view($chat, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $chat->id
+    );
+
+    $event = \mod_chat\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('chat', $chat);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
