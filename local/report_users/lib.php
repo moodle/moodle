@@ -243,6 +243,12 @@ class userrep {
 
         // Remove completions
         $DB->delete_records('course_completions', array('userid' => $userid, 'course' => $courseid));
+        if ($compitems = $DB->get_records('course_completion_criteria', array('course' => $courseid))) {
+            foreach ($compitems as $compitem) {
+                $DB->delete_records('course_completion_crit_compl', array('userid' => $userid,
+                                                                          'criteriaid' => $compitem->id));
+            }
+        }
 
         // Remove grades
         if ($items = $DB->get_records('grade_items', array('courseid' => $courseid))) {
