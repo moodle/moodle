@@ -24,6 +24,7 @@
 
 module.exports = function(grunt) {
     var path = require('path'),
+        fs = require('fs'),
         tasks = {},
         cwd = process.env.PWD || process.cwd();
 
@@ -102,22 +103,103 @@ module.exports = function(grunt) {
                 args.push('--lint-stderr');
             }
 
-            // Actually run shifter.
-            shifter = exec("node", args, {
-                cwd: cwd,
-                stdio: 'inherit',
-                env: process.env
-            });
+            var execShifter = function() {
 
-            // Tidy up after exec.
-            shifter.on('exit', function (code) {
-                if (code) {
-                    grunt.fail.fatal('Shifter failed with code: ' + code);
-                } else {
-                    grunt.log.ok('Shifter build complete.');
-                    done();
-                }
-            });
+                shifter = exec("node", args, {
+                    cwd: cwd,
+                    stdio: 'inherit',
+                    env: process.env
+                });
+
+                // Tidy up after exec.
+                shifter.on('exit', function (code) {
+                    if (code) {
+                        grunt.fail.fatal('Shifter failed with code: ' + code);
+                    } else {
+                        grunt.log.ok('Shifter build complete.');
+                        done();
+                    }
+                });
+            };
+
+            // Actually run shifter.
+            if (!options.recursive) {
+                execShifter();
+            } else {
+                // Check that there are yui modules otherwise shifter ends with exit code 1.
+                var found = false;
+                var hasYuiModules = function(directory, callback) {
+                    fs.readdir(directory, function(err, files) {
+                        if (err) {
+                            return callback(err, null);
+                        }
+
+                        // If we already found a match there is no need to continue scanning.
+                        if (found === true) {
+                            return;
+                        }
+
+                        // We need to track the number of files to know when we return a result.
+                        var pending = files.length;
+
+                        // We first check files, so if there is a match we don't need further
+                        // async calls and we just return a true.
+                        for (var i = 0; i < files.length; i++) {
+                            if (files[i] === 'yui') {
+                                return callback(null, true);
+                            }
+                        }
+
+                        // Iterate through subdirs if there were no matches.
+                        files.forEach(function (file) {
+
+                            var p = path.join(directory, file);
+                            stat = fs.statSync(p);
+                            if (!stat.isDirectory()) {
+                                pending--;
+                            } else {
+
+                                // We defer the pending-1 until we scan the whole dir and subdirs.
+                                hasYuiModules(p, function(err, result) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+
+                                    if (result === true) {
+                                        // Once we get a true we notify the caller.
+                                        found = true;
+                                        return callback(null, true);
+                                    }
+
+                                    pending--;
+                                    if (pending === 0) {
+                                        // Notify the caller that the whole dir has been scaned and there are no matches.
+                                        return callback(null, false);
+                                    }
+                                });
+                            }
+
+                            // No subdirs here, otherwise the return would be deferred until all subdirs are scanned.
+                            if (pending === 0) {
+                                return callback(null, false);
+                            }
+                        });
+                    });
+                };
+
+                hasYuiModules(cwd, function(err, result) {
+                    if (err) {
+                        grunt.fail.fatal(err.message);
+                    }
+
+                    if (result === true) {
+                        execShifter();
+                    } else {
+                        grunt.log.ok('No YUI modules to build.');
+                        done();
+                    }
+                });
+            }
     };
 
     tasks.startup = function() {
