@@ -674,8 +674,6 @@ if ($fromform = $mform_post->get_data()) {
     // WARNING: the $fromform->message array has been overwritten, do not use it anymore!
     $fromform->messagetrust  = trusttext_trusted($modcontext);
 
-    $contextcheck = isset($fromform->groupinfo) && has_capability('mod/forum:movediscussions', $modcontext);
-
     if ($fromform->edit) {           // Updating a post
         unset($fromform->groupid);
         $fromform->id = $fromform->edit;
@@ -699,10 +697,15 @@ if ($fromform = $mform_post->get_data()) {
         }
 
         // If the user has access to all groups and they are changing the group, then update the post.
-        if ($contextcheck) {
+        if (isset($fromform->groupinfo) && has_capability('mod/forum:movediscussions', $modcontext)) {
             if (empty($fromform->groupinfo)) {
                 $fromform->groupinfo = -1;
             }
+
+            if (!forum_user_can_post_discussion($forum, $fromform->groupinfo, null, $cm, $modcontext)) {
+                print_error('cannotupdatepost', 'forum');
+            }
+
             $DB->set_field('forum_discussions' ,'groupid' , $fromform->groupinfo, array('firstpost' => $fromform->id));
         }
 
@@ -831,18 +834,26 @@ if ($fromform = $mform_post->get_data()) {
         exit;
 
     } else { // Adding a new discussion.
+        // The location to redirect to after successfully posting.
+        $redirectto = new moodle_url('view.php', array('f' => $fromform->forum));
+
         // Before we add this we must check that the user will not exceed the blocking threshold.
         forum_check_blocking_threshold($thresholdwarning);
 
+        if (isset($fromform->groupinfo)) {
+            // Use the value provided in the dropdown group selection.
+            $fromform->groupid = $fromform->groupinfo;
+
+            // Ensure that we redirect back to the group selected.
+            $redirectto->param('group', $fromform->groupid);
+        } else if (!isset($fromform->groupid) || empty($fromform->groupid)) {
+            // There was not value set in the hidden form element.
+            // Use the value for all participants instead.
+            $fromform->groupid = -1;
+        }
+
         if (!forum_user_can_post_discussion($forum, $fromform->groupid, -1, $cm, $modcontext)) {
             print_error('cannotcreatediscussion', 'forum');
-        }
-        // If the user has access all groups capability let them choose the group.
-        if ($contextcheck) {
-            $fromform->groupid = $fromform->groupinfo;
-        }
-        if (empty($fromform->groupid)) {
-            $fromform->groupid = -1;
         }
 
         $fromform->mailnow = empty($fromform->mailnow) ? 0 : 1;
@@ -895,7 +906,8 @@ if ($fromform = $mform_post->get_data()) {
                 $completion->update_state($cm,COMPLETION_COMPLETE);
             }
 
-            redirect(forum_go_back_to("view.php?f=$fromform->forum"), $message.$subscribemessage, $timemessage);
+            // Redirect back to the discussion.
+            redirect(forum_go_back_to($redirectto->out()), $message . $subscribemessage, $timemessage);
 
         } else {
             print_error("couldnotadd", "forum", $errordestination);
