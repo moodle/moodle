@@ -2548,6 +2548,7 @@ function course_overviewfiles_options($course) {
  */
 function create_course($data, $editoroptions = NULL) {
     global $DB, $CFG;
+    require_once($CFG->dirroot.'/tag/lib.php');
 
     //check the categoryid - must be given for all new courses
     $category = $DB->get_record('course_categories', array('id'=>$data->category), '*', MUST_EXIST);
@@ -2652,6 +2653,7 @@ function create_course($data, $editoroptions = NULL) {
  */
 function update_course($data, $editoroptions = NULL) {
     global $DB, $CFG;
+    require_once($CFG->dirroot.'/tag/lib.php');
 
     $data->timemodified = time();
 
