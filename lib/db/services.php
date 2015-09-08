@@ -1165,6 +1165,7 @@ $services = array(
             'mod_chat_send_chat_message',
             'mod_chat_get_chat_latest_messages',
             'mod_chat_view_chat',
+            'mod_book_view_book',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
