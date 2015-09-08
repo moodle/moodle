@@ -96,7 +96,7 @@ class block_settings extends block_base {
             'instance' => $this->instance->id,
             'candock' => $this->instance_can_be_docked()
         );
-        $this->page->requires->yui_module('moodle-block_navigation-navigation', 'M.block_navigation.init_add_tree', array($arguments));
+        $this->page->requires->js_call_amd('block_settings/settingsblock', 'init', array());
     }
 
     /**

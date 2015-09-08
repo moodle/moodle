@@ -42,7 +42,11 @@ class block_navigation_renderer extends plugin_renderer_base {
      */
     public function navigation_tree(global_navigation $navigation, $expansionlimit, array $options = array()) {
         $navigation->add_class('navigation_node');
-        $content = $this->navigation_node(array($navigation), array('class'=>'block_tree list'), $expansionlimit, $options);
+        $navigationattrs = array(
+            'class' => 'block_tree list',
+            'role' => 'tree',
+            'data-ajax-loader' => 'block_navigation/nav_loader');
+        $content = $this->navigation_node(array($navigation), $navigationattrs, $expansionlimit, $options);
         if (isset($navigation->id) && !is_numeric($navigation->id) && !empty($content)) {
             $content = $this->output->box($content, 'block_tree_box', $navigation->id);
         }
@@ -66,7 +70,9 @@ class block_navigation_renderer extends plugin_renderer_base {
 
         // Turn our navigation items into list items.
         $lis = array();
+        $number = 0;
         foreach ($items as $item) {
+            $number++;
             if (!$item->display && !$item->contains_active_node()) {
                 continue;
             }
@@ -100,7 +106,8 @@ class block_navigation_renderer extends plugin_renderer_base {
                 continue;
             }
 
-            $attributes = array();
+            $nodetextid = 'label_' . $depth . '_' . $number;
+            $attributes = array('tabindex' => '-1', 'id' => $nodetextid);
             if ($title !== '') {
                 $attributes['title'] = $title;
             }
@@ -110,7 +117,6 @@ class block_navigation_renderer extends plugin_renderer_base {
             if (is_string($item->action) || empty($item->action) ||
                     (($item->type === navigation_node::TYPE_CATEGORY || $item->type === navigation_node::TYPE_MY_CATEGORY) &&
                     empty($options['linkcategories']))) {
-                $attributes['tabindex'] = '0'; //add tab support to span but still maintain character stream sequence.
                 $content = html_writer::tag('span', $content, $attributes);
             } else if ($item->action instanceof action_link) {
                 //TODO: to be replaced with something else
@@ -129,12 +135,27 @@ class block_navigation_renderer extends plugin_renderer_base {
             $divclasses = array('tree_item');
 
             $liexpandable = array();
-            if ($item->has_children() && (!$item->forceopen || $item->collapse)) {
-                $liclasses[] = 'collapsed';
-            }
+            $lirole = array('role' => 'treeitem');
             if ($isbranch) {
                 $liclasses[] = 'contains_branch';
-                $liexpandable = array('aria-expanded' => in_array('collapsed', $liclasses) ? "false" : "true");
+                if ($depth == 1) {
+                    $liexpandable = array(
+                        'data-expandable' => 'false'
+                    );
+                } else {
+                    $liexpandable = array(
+                        'aria-expanded' => ($item->has_children() &&
+                            (!$item->forceopen || $item->collapse)) ? "false" : "true");
+                }
+
+                if ($item->requiresajaxloading) {
+                    $liexpandable['data-requires-ajax'] = 'true';
+                    $liexpandable['data-loaded'] = 'false';
+                    $liexpandable['data-node-id'] = $item->id;
+                    $liexpandable['data-node-key'] = $item->key;
+                    $liexpandable['data-node-type'] = $item->type;
+                }
+
                 $divclasses[] = 'branch';
             } else {
                 $divclasses[] = 'leaf';
@@ -152,7 +173,7 @@ class block_navigation_renderer extends plugin_renderer_base {
             }
 
             // Now build attribute arrays.
-            $liattr = array('class' => join(' ', $liclasses)) + $liexpandable;
+            $liattr = array('class' => join(' ', $liclasses)) + $liexpandable + $lirole;
             $divattr = array('class'=>join(' ', $divclasses));
             if (!empty($item->id)) {
                 $divattr['id'] = $item->id;
@@ -161,11 +182,15 @@ class block_navigation_renderer extends plugin_renderer_base {
             // Create the structure.
             $content = html_writer::tag('p', $content, $divattr);
             if ($isexpandable) {
-                $content .= $this->navigation_node($item->children, array(), $expansionlimit, $options, $depth+1);
+                $content .= $this->navigation_node($item->children, array('role' => 'group'), $expansionlimit, $options, $depth+1);
             }
             if (!empty($item->preceedwithhr) && $item->preceedwithhr===true) {
                 $content = html_writer::empty_tag('hr') . $content;
             }
+            if ($depth == 1) {
+                $liattr['tabindex'] = '0';
+            }
+            $liattr['aria-labelledby'] = $nodetextid;
             $content = html_writer::tag('li', $content, $liattr);
             $lis[] = $content;
         }
