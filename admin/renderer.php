@@ -999,13 +999,14 @@ class core_admin_renderer extends plugin_renderer_base {
 
         } else {
             $out  = $this->output->container_start('somehighlighted', 'plugins-check-info');
-            $out .= $this->output->heading(get_string('somehighlighted', 'core_plugin', $sumofhighlighted));
             if (empty($options['full'])) {
-                $out .= html_writer::link(new moodle_url('/admin/index.php',
+                $out .= $this->output->heading(get_string('somehighlighted', 'core_plugin', $sumofhighlighted));
+                $out .= html_writer::link(new moodle_url($this->page->url,
                     array('confirmupgrade' => 1, 'confirmrelease' => 1, 'showallplugins' => 1, 'cache' => 0)),
                     get_string('somehighlightedinfo', 'core_plugin'));
             } else {
-                $out .= html_writer::link(new moodle_url('/admin/index.php',
+                $out .= $this->output->heading(get_string('somehighlightedall', 'core_plugin', $sumofhighlighted));
+                $out .= html_writer::link(new moodle_url($this->page->url,
                     array('confirmupgrade' => 1, 'confirmrelease' => 1, 'showallplugins' => 0, 'cache' => 0)),
                     get_string('somehighlightedonly', 'core_plugin'));
             }
