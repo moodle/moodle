@@ -1034,11 +1034,11 @@ class mod_forum_external extends external_api {
 
         $warnings = array();
 
-        if (! $parent = forum_get_post_full($params['postid'])) {
+        if (!$parent = forum_get_post_full($params['postid'])) {
             throw new moodle_exception('invalidparentpostid', 'forum');
         }
 
-        if (! $discussion = $DB->get_record("forum_discussions", array("id" => $parent->discussion))) {
+        if (!$discussion = $DB->get_record("forum_discussions", array("id" => $parent->discussion))) {
             throw new moodle_exception('notpartofdiscussion', 'forum');
         }
 
