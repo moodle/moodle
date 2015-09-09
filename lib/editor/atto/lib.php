@@ -166,6 +166,10 @@ class atto_texteditor extends texteditor {
         }
         $contentcss     = $PAGE->theme->editor_css_url()->out(false);
 
+        // Autosave disabled for guests.
+        if (isguestuser()) {
+            $autosave = false;
+        }
         // Note <> is a safe separator, because it will not appear in the output of s().
         $pagehash = sha1($PAGE->url . '<>' . s($this->get_text()));
         $params = array(
