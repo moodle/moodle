@@ -269,6 +269,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
 
     if (empty($USER->newadminuser)) {
         $mform->addElement('header', 'moodle_picture', get_string('pictureofuser'));
+        $mform->setExpanded('moodle_picture', true);
 
         if (!empty($CFG->enablegravatar)) {
             $mform->addElement('html', html_writer::tag('p', get_string('gravatarenabled')));
