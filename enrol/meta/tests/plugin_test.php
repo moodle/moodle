@@ -743,4 +743,117 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         // Check that the group name has been changed.
         $this->assertEquals('Physics course (3)', $groupinfo->name);
     }
+
+    /**
+     * Test that enrolment timestart-timeend is respected in meta course.
+     */
+    public function test_timeend() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        $timeinfuture = time() + DAYSECS;
+        $timeinpast = time() - DAYSECS;
+
+        $metalplugin = enrol_get_plugin('meta');
+        $manplugin = enrol_get_plugin('manual');
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+        $user5 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $course3 = $this->getDataGenerator()->create_course();
+        $manual1 = $DB->get_record('enrol', array('courseid' => $course1->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+
+        $student = $DB->get_record('role', array('shortname' => 'student'));
+
+        $this->enable_plugin();
+
+        // Create instance of enrol_meta in course2 when there are no enrolments present.
+        $meta2id = $metalplugin->add_instance($course2, array('customint1' => $course1->id));
+
+        $expectedenrolments = array(
+            $user1->id => array(0, 0, ENROL_USER_ACTIVE),
+            $user2->id => array($timeinpast, 0, ENROL_USER_ACTIVE),
+            $user3->id => array(0, $timeinfuture, ENROL_USER_ACTIVE),
+            $user4->id => array($timeinpast, $timeinfuture, ENROL_USER_ACTIVE),
+            $user5->id => array(0, 0, ENROL_USER_SUSPENDED),
+        );
+        foreach ($expectedenrolments as $userid => $data) {
+            $expectedenrolments[$userid] = (object)(array('userid' => $userid) +
+                    array_combine(array('timestart', 'timeend', 'status'), $data));
+        }
+
+        // Enrol users manually in course 1.
+        foreach ($expectedenrolments as $e) {
+            $manplugin->enrol_user($manual1, $e->userid, $student->id, $e->timestart, $e->timeend, $e->status);
+        }
+
+        $enrolments = $DB->get_records('user_enrolments', array('enrolid' => $manual1->id), 'userid', 'userid, timestart, timeend, status');
+        $this->assertEquals($expectedenrolments, $enrolments);
+
+        // Make sure that the same enrolments are now present in course2 under meta enrolment.
+        $enrolments = $DB->get_records('user_enrolments', array('enrolid' => $meta2id), '', 'userid, timestart, timeend, status');
+        $this->assertEquals($expectedenrolments, $enrolments);
+
+        // Create instance of enrol_meta in course3 and run sync.
+        $meta3id = $metalplugin->add_instance($course3, array('customint1' => $course1->id));
+        enrol_meta_sync($course3->id);
+
+        // Make sure that the same enrolments are now present in course3 under meta enrolment.
+        $enrolments = $DB->get_records('user_enrolments', array('enrolid' => $meta3id), '', 'userid, timestart, timeend, status');
+        $this->assertEquals($expectedenrolments, $enrolments);
+
+        // Update some of the manual enrolments.
+        $expectedenrolments[$user2->id]->timestart = $timeinpast - 60;
+        $expectedenrolments[$user3->id]->timeend = $timeinfuture + 60;
+        $expectedenrolments[$user4->id]->status = ENROL_USER_SUSPENDED;
+        $expectedenrolments[$user5->id]->status = ENROL_USER_ACTIVE;
+        foreach ($expectedenrolments as $e) {
+            $manplugin->update_user_enrol($manual1, $e->userid, $e->status, $e->timestart, $e->timeend);
+        }
+
+        // Make sure meta courses are also updated.
+        $enrolments = $DB->get_records('user_enrolments', array('enrolid' => $meta2id), '', 'userid, timestart, timeend, status');
+        $this->assertEquals($expectedenrolments, $enrolments);
+        $enrolments = $DB->get_records('user_enrolments', array('enrolid' => $meta3id), '', 'userid, timestart, timeend, status');
+        $this->assertEquals($expectedenrolments, $enrolments);
+
+        // Test meta sync. Imagine events are not working.
+        $sink = $this->redirectEvents();
+        $expectedenrolments[$user2->id]->timestart = $timeinpast;
+        $expectedenrolments[$user3->id]->timeend = $timeinfuture;
+        $expectedenrolments[$user4->id]->status = ENROL_USER_ACTIVE;
+        $expectedenrolments[$user5->id]->status = ENROL_USER_SUSPENDED;
+        foreach ($expectedenrolments as $e) {
+            $manplugin->update_user_enrol($manual1, $e->userid, $e->status, $e->timestart, $e->timeend);
+        }
+
+        // Make sure meta courses are updated only for the course that was synced.
+        enrol_meta_sync($course3->id);
+
+        $enrolments = $DB->get_records('user_enrolments', array('enrolid' => $meta2id), '', 'userid, timestart, timeend, status');
+        $this->assertNotEquals($expectedenrolments, $enrolments);
+
+        $enrolments = $DB->get_records('user_enrolments', array('enrolid' => $meta3id), '', 'userid, timestart, timeend, status');
+        $this->assertEquals($expectedenrolments, $enrolments);
+
+        $sink->close();
+
+        // Disable manual enrolment in course1 and make sure all user enrolments in course2 are suspended.
+        $manplugin->update_status($manual1, ENROL_INSTANCE_DISABLED);
+        $allsuspendedenrolemnts = array_combine(array_keys($expectedenrolments), array_fill(0, 5, ENROL_USER_SUSPENDED));
+        enrol_meta_sync($course3->id);
+        $enrolmentstatuses = $DB->get_records_menu('user_enrolments', array('enrolid' => $meta3id), '', 'userid, status');
+        $this->assertEquals($allsuspendedenrolemnts, $enrolmentstatuses);
+
+        $manplugin->update_status($manual1, ENROL_INSTANCE_ENABLED);
+        enrol_meta_sync($course3->id);
+        $enrolments = $DB->get_records('user_enrolments', array('enrolid' => $meta3id), '', 'userid, timestart, timeend, status');
+        $this->assertEquals($expectedenrolments, $enrolments);
+    }
 }
