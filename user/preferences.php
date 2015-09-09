@@ -33,11 +33,6 @@ if (isguestuser()) {
 $userid = optional_param('userid', $USER->id, PARAM_INT);
 $currentuser = $userid == $USER->id;
 
-// Only administrators can access another user's preferences.
-if (!$currentuser && !is_siteadmin($USER)) {
-    throw new moodle_exception('cannotedituserpreferences', 'error');
-}
-
 // Check that the user is a valid user.
 $user = core_user::get_user($userid);
 if (!$user || !core_user::is_real_user($userid)) {
@@ -53,10 +48,16 @@ $PAGE->set_heading(fullname($user));
 
 if (!$currentuser) {
     $PAGE->navigation->extend_for_user($user);
-    $settings = $PAGE->settingsnav->find('userviewingsettings' . $user->id, null);
-    $settings->make_active();
+    // Need to check that settings exist.
+    if ($settings = $PAGE->settingsnav->find('userviewingsettings' . $user->id, null)) {
+        $settings->make_active();
+    }
     $url = new moodle_url('/user/preferences.php', array('userid' => $userid));
     $navbar = $PAGE->navbar->add(get_string('preferences', 'moodle'), $url);
+    // Show an error if there are no preferences that this user has access to.
+    if (!$PAGE->settingsnav->can_view_user_preferences($userid)) {
+        throw new moodle_exception('cannotedituserpreferences', 'error');
+    }
 } else {
     // Shutdown the users node in the navigation menu.
     $usernode = $PAGE->navigation->find('users', null);
