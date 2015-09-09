@@ -812,9 +812,16 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
         // We receive the discussion and the post.
         $this->assertEquals(2, count($posts['posts']));
-        $this->assertEquals($post['postid'], $posts['posts'][1]['id']);
-        $this->assertEquals('some subject', $posts['posts'][1]['subject']);
-        $this->assertEquals('some text here...', $posts['posts'][1]['message']);
+
+        $tested = false;
+        foreach ($posts['posts'] as $postel) {
+            if ($post['postid'] == $postel['id']) {
+                $this->assertEquals('some subject', $postel['subject']);
+                $this->assertEquals('some text here...', $postel['message']);
+                $tested = true;
+            }
+        }
+        $this->assertTrue($tested);
 
         // Check not posting in groups the user is not member of.
         $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
