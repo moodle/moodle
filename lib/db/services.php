@@ -1172,6 +1172,7 @@ $services = array(
             'mod_choice_get_choice_options',
             'mod_choice_submit_choice_response',
             'mod_choice_view_choice',
+            'mod_imscp_view_imscp',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
