@@ -42,7 +42,7 @@ Feature: Teachers can override the grade for any question
     And I follow "Attempts: 1"
     And I follow "Review attempt"
 
-  @javascript
+  @javascript @_switch_window @_bug_phantomjs
   Scenario: Validating the marking of an essay question attempt.
     When I follow "Make comment or override mark"
     And I switch to "commentquestion" window
@@ -56,3 +56,6 @@ Feature: Teachers can override the grade for any question
     And I press "Save"
     And I should see "Changes saved"
     And I switch to the main window
+    And I should see "Complete" in the "Manually graded 10 with comment: " "table_row"
+    # This time is same as time the window is open. So wait for it to close before proceeding.
+    And I wait "2" seconds
