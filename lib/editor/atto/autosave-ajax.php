@@ -44,6 +44,14 @@ $PAGE->set_context($context);
 require_login($course, false, $cm);
 require_sesskey();
 
+if (isguestuser()) {
+    print_error('accessdenied', 'admin');
+}
+
+if (!in_array('atto', explode(',', get_config('core', 'texteditors')))) {
+    print_error('accessdenied', 'admin');
+}
+
 $action = required_param('action', PARAM_ALPHA);
 
 $response = array();
