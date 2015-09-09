@@ -81,4 +81,13 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'mod/forum:viewdiscussion'
     ),
+
+    'mod_forum_add_discussion_post' => array(
+        'classname' => 'mod_forum_external',
+        'methodname' => 'add_discussion_post',
+        'classpath' => 'mod/forum/externallib.php',
+        'description' => 'Create new posts into an existing discussion.',
+        'type' => 'write',
+        'capabilities' => 'mod/forum:replypost'
+    ),
 );

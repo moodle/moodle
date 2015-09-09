@@ -965,4 +965,159 @@ class mod_forum_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function add_discussion_post_parameters() {
+        return new external_function_parameters(
+            array(
+                'postid' => new external_value(PARAM_INT, 'the post id we are going to reply to
+                                                (can be the initial discussion post'),
+                'subject' => new external_value(PARAM_TEXT, 'new post subject'),
+                'message' => new external_value(PARAM_RAW, 'new post message (only html format allowed)'),
+                'options' => new external_multiple_structure (
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUM,
+                                        'The allowed keys (value format) are:
+                                        discussionsubscribe (bool); subscribe to the discussion?, default to true
+                            '),
+                            'value' => new external_value(PARAM_RAW, 'the value of the option,
+                                                            this param is validated in the external function.'
+                        )
+                    )
+                ), 'Options', VALUE_DEFAULT, array())
+            )
+        );
+    }
+
+    /**
+     * Create new posts into an existing discussion.
+     *
+     * @param int $postid the post id we are going to reply to
+     * @param string $subject new post subject
+     * @param string $message new post message (only html format allowed)
+     * @param array $options optional settings
+     * @return array of warnings and the new post id
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function add_discussion_post($postid, $subject, $message, $options = array()) {
+        global $DB, $CFG, $USER;
+        require_once($CFG->dirroot . "/mod/forum/lib.php");
+
+        $params = self::validate_parameters(self::add_discussion_post_parameters(),
+                                            array(
+                                                'postid' => $postid,
+                                                'subject' => $subject,
+                                                'message' => $message,
+                                                'options' => $options
+                                            ));
+        // Validate options.
+        $options = array(
+            'discussionsubscribe' => true
+        );
+        foreach ($params['options'] as $option) {
+            $name = trim($option['name']);
+            switch ($name) {
+                case 'discussionsubscribe':
+                    $value = clean_param($option['value'], PARAM_BOOL);
+                    break;
+                default:
+                    throw new moodle_exception('errorinvalidparam', 'webservice', '', $name);
+            }
+            $options[$name] = $value;
+        }
+
+        $warnings = array();
+
+        if (! $parent = forum_get_post_full($params['postid'])) {
+            throw new moodle_exception('invalidparentpostid', 'forum');
+        }
+
+        if (! $discussion = $DB->get_record("forum_discussions", array("id" => $parent->discussion))) {
+            throw new moodle_exception('notpartofdiscussion', 'forum');
+        }
+
+        // Request and permission validation.
+        $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($forum, 'forum');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        if (!forum_user_can_post($forum, $discussion, $USER, $cm, $course, $context)) {
+            throw new moodle_exception('nopostforum', 'forum');
+        }
+
+        $thresholdwarning = forum_check_throttling($forum, $cm);
+        forum_check_blocking_threshold($thresholdwarning);
+
+        // Create the post.
+        $post = new stdClass();
+        $post->discussion = $discussion->id;
+        $post->parent = $parent->id;
+        $post->subject = $params['subject'];
+        $post->message = $params['message'];
+        $post->messageformat = FORMAT_HTML;   // Force formatting for now.
+        $post->messagetrust = trusttext_trusted($context);
+        $post->itemid = 0;
+
+        if ($postid = forum_add_new_post($post, null)) {
+
+            $post->id = $postid;
+
+            // Trigger events and completion.
+            $params = array(
+                'context' => $context,
+                'objectid' => $post->id,
+                'other' => array(
+                    'discussionid' => $discussion->id,
+                    'forumid' => $forum->id,
+                    'forumtype' => $forum->type,
+                )
+            );
+            $event = \mod_forum\event\post_created::create($params);
+            $event->add_record_snapshot('forum_posts', $post);
+            $event->add_record_snapshot('forum_discussions', $discussion);
+            $event->trigger();
+
+            // Update completion state.
+            $completion = new completion_info($course);
+            if ($completion->is_enabled($cm) &&
+                    ($forum->completionreplies || $forum->completionposts)) {
+                $completion->update_state($cm, COMPLETION_COMPLETE);
+            }
+
+            $settings = new stdClass();
+            $settings->discussionsubscribe = $options['discussionsubscribe'];
+            forum_post_subscription($settings, $forum, $discussion);
+        } else {
+            throw new moodle_exception('couldnotadd', 'forum');
+        }
+
+        $result = array();
+        $result['postid'] = $postid;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function add_discussion_post_returns() {
+        return new external_single_structure(
+            array(
+                'postid' => new external_value(PARAM_INT, 'new post id'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }
