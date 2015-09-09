@@ -258,6 +258,11 @@ class company_course_users_form extends moodleform {
                 foreach ($userstoassign as $adduser) {
                     $allow = true;
 
+                    // Check the userid is valid.
+                    if (!company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
+                        print_error('invaliduserdepartment', 'block_iomad_company_management');
+                    }
+
                     if ($allow) {
                         company_user::enrol($adduser, array($this->course->id),
                                                             $this->selectedcompany);
@@ -278,6 +283,11 @@ class company_course_users_form extends moodleform {
             if (!empty($userstounassign)) {
 
                 foreach ($userstounassign as $removeuser) {
+                    // Check the userid is valid.
+                    if (!company::check_valid_user($this->selectedcompany, $removeuser  ->id, $this->departmentid)) {
+                        print_error('invaliduserdepartment', 'block_iomad_company_management');
+                    }
+
                     company_user::unenrol($removeuser, array($this->course->id),
                                                              $this->selectedcompany);
                 }
@@ -329,6 +339,11 @@ $companyid = iomad::get_my_companyid($context);
 $coursesform = new company_ccu_courses_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourse);
 $usersform = new company_course_users_form($PAGE->url, $context, $companyid, $departmentid);
 $blockpage->display_header();
+
+// Check the department is valid.
+if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+    print_error('invaliddepartment', 'block_iomad_company_admin');
+}   
 
 $ccuparamarray = array();
 if (!empty($departmentid)) {

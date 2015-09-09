@@ -192,10 +192,23 @@ $options['dodownload'] = 1;
 // Only print the header if we are not downloading.
 if (empty($dodownload) && empty($showchart) && !$sendemail) {
     echo $OUTPUT->header();
+    // Check the department is valid.
+    if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+        print_error('invaliddepartment', 'block_iomad_company_admin');
+    }   
+
     if ($emailsent) {
         echo "<h2>".get_string('licenseemailsent', 'local_report_license')."</h2>";
     }
+} else {
+    // Check the department is valid.
+    if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+        print_error('invaliddepartment', 'block_iomad_company_admin');
+        die;
+    }   
 }
+
+
 
 // Get the data.
 if (!empty($companyid)) {

@@ -78,7 +78,19 @@ if (!empty($courseid)) {
 // Only print the header if we are not downloading.
 if (empty($dodownload)) {
     echo $OUTPUT->header();
+
+    // Check the department is valid.
+    if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+        print_error('invaliddepartment', 'block_iomad_company_admin');
+    }   
+} else {
+    // Check the department is valid.
+    if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+        print_error('invaliddepartment', 'block_iomad_company_admin');
+    }   
 }
+
+
 
 // Get the courses which have the classroom module in them.
 $courses = attendancerep::courseselectlist($companyid);

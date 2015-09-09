@@ -67,6 +67,15 @@ company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);
 // Navigation and header.
 if (empty($dodownload)) {
     echo $OUTPUT->header();
+    // Check the userid is valid.
+    if (!company::check_valid_user($companyid, $userid, $departmentid)) {
+        print_error('invaliduserdepartment', 'block_iomad_company_management');
+    }
+} else {
+    // Check the userid is valid.
+    if (!company::check_valid_user($companyid, $userid, $departmentid)) {
+        print_error('invaliduserdepartment', 'block_iomad_company_management');
+    }
 }
 
 // Get the appropriate list of departments.

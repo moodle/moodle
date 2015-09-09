@@ -498,6 +498,17 @@ if ($companyform->is_cancelled() || $mform->is_cancelled()) {
     }
 }
 $blockpage->display_header();
+
+// Check the department is valid.
+if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+    print_error('invaliddepartment', 'block_iomad_company_admin');
+}   
+
+// Check the userid is valid.
+if (!company::check_valid_user($companyid, $userid, $departmentid)) {
+    print_error('invaliduserdepartment', 'block_iomad_company_management');
+}
+
 ?>
 <script type="text/javascript">
 Y.on('change', submit_form, '#licenseidselector');

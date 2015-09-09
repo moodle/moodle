@@ -73,15 +73,14 @@ if ($id == -1) {
     if (!$user = $DB->get_record('user', array('id' => $id))) {
         print_error('invaliduserid');
     }
+    if (!company::check_canedit_user($companyid, $id)) {
+        print_error('invaliduserid');
+    }
 }
 
 // Remote users cannot be edited.
 if ($user->id != -1 and is_mnet_remote_user($user)) {
     redirect($CFG->wwwroot . "/user/view.php?id=$id&course={$course->id}");
-}
-
-if ($user->id != $USER->id and is_primary_admin($user->id)) {  // Can't edit primary admin.
-    print_error('adminprimarynoedit');
 }
 
 if (isguestuser($user->id)) { // The real guest user can not be edited.

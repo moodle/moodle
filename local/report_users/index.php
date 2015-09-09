@@ -94,6 +94,11 @@ $companyid = iomad::get_my_companyid($systemcontext);
 
 $blockpage->display_header();
 
+// Check the department is valid.
+if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+    print_error('invaliddepartment', 'block_iomad_company_admin');
+}   
+
 // Get the associated department id.
 $company = new company($companyid);
 $parentlevel = company::get_company_parentnode($company->id);

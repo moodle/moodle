@@ -83,6 +83,11 @@ $PAGE->set_heading($SITE->fullname);
 $baseurl  = new moodle_url('searchusers.php', array('eventid' => $eventid));
 echo $OUTPUT->header();
 
+// Check the department is valid.
+if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+    print_error('invaliddepartment', 'block_iomad_company_admin');
+}   
+
 // Get the location information.
 $location = $DB->get_record('classroom', array('id' => $event->classroomid));
 

@@ -46,7 +46,18 @@ $baseurl = new moodle_url(basename(__FILE__));
 $returnurl = $baseurl;
 if (empty($dodownload)) {
     $blockpage->display_header();
+
+    // Check the userid is valid.
+    if (!company::check_valid_user($companyid, $userid, $departmentid)) {
+        print_error('invaliduserdepartment', 'block_iomad_company_management');
+    }
+} else {
+    // Check the userid is valid.
+    if (!company::check_valid_user($companyid, $userid, $departmentid)) {
+        print_error('invaliduserdepartment', 'block_iomad_company_management');
+    }
 }
+
 
 // Get this list of courses the user is a member of.
 $enrolcourses = enrol_get_users_courses($userid, true, null, 'visible DESC, sortorder ASC');

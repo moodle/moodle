@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -230,6 +231,16 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
     }
 
     $blockpage->display_header();
+    // Check the department is valid.
+    if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+        print_error('invaliddepartment', 'block_iomad_company_admin');
+    }   
+
+    // Check the license is valid.
+    if (!empty($licenseid) && !company::check_valid_company_license($companyid, $licenseid)) {
+        print_error('invalidlicense', 'block_iomad_company_admin');
+    }   
+
     $company = new company($companyid);
     echo "<h3>".$company->get_name()."</h3>";
     $mform->display();

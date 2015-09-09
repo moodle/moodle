@@ -317,7 +317,12 @@ if ($mform->is_cancelled()) {
 
     $blockpage->display_header();
 
-    $mform->display();
+    // Check the department is valid.
+if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+    print_error('invaliddepartment', 'block_iomad_company_admin');
+}   
+
+$mform->display();
 
     echo $OUTPUT->footer();
 }

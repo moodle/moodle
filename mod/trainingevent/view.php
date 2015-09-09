@@ -518,6 +518,12 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             $departmentid = $userhierarchylevel;
 
             echo $OUTPUT->header();
+
+            // Check the userid is valid.
+            if (!company::check_valid_user($companyid, $userid, $departmentid)) {
+                print_error('invaliduserdepartment', 'block_iomad_company_management');
+            }
+
             echo "<h2>".get_string('sendingemails', 'trainingevent')."</h2>";
             $course = $DB->get_record('course', array('id' => $event->course));
             $course->url = new moodle_url('course/view.php', array('id' => $course->id));
@@ -575,6 +581,12 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
         if (!$dodownload) {
             echo $OUTPUT->header();
+
+            // Check the userid is valid.
+            if (!company::check_valid_user($companyid, $userid, $departmentid)) {
+                print_error('invaliduserdepartment', 'block_iomad_company_management');
+            }
+
             echo $eventtable;
 
             // Output the buttons.

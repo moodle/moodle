@@ -37,6 +37,10 @@ $userid = optional_param('userid', 0, PARAM_INT);
 // Are we doing this for another user?
 if (!empty($userid)  && has_capability('mod/iomadcertificate:viewother', context_system::instance())) {
     $certuser = $DB->get_record('user', array('id' => $userid));
+    // Check the companies match for both users.
+    if (!company::check_can_manage($userid)) {
+        print_error('Invalid user');
+    }
 } else {
     $certuser = $USER;
 }

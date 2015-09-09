@@ -237,6 +237,11 @@ if ($mform->is_cancelled()) {
         $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $chosenid);
         $editform->set_data(array('deptid' => $chosenid));
         $blockpage->display_header();
+        // Check the department is valid.
+        if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+            print_error('invaliddepartment', 'block_iomad_company_admin');
+        }   
+
         $editform->display();
         echo $OUTPUT->footer();
     } else if (isset($data->delete)) {
@@ -244,7 +249,7 @@ if ($mform->is_cancelled()) {
         if (!empty($deleteids)) {
             foreach ($deleteids as $deletedept) {
                 // Check if department has already been removed.
-                if (company::check_valid_department($deletedept)) {
+                if (company::check_valid_department($companyid, $deletedept)) {
                     // If not delete it and its sub departments moving users to
                     // $departmentid or the company parent id if not set (==0).
                     company::delete_department_recursive($deletedept, $departmentid);
@@ -254,6 +259,11 @@ if ($mform->is_cancelled()) {
         $mform = new department_display_form($PAGE->url, $companyid, $departmentid);
         // Redisplay the form.
         $blockpage->display_header();
+        // Check the department is valid.
+        if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+            print_error('invaliddepartment', 'block_iomad_company_admin');
+        }   
+
         if (empty($deleteids)) {
             echo get_string('departmentnoselect', 'block_iomad_company_admin');
         }
@@ -273,11 +283,21 @@ if ($mform->is_cancelled()) {
                                       'chosenid' => $departmentid));
             $blockpage->display_header();
 
+            // Check the department is valid.
+            if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+                print_error('invaliddepartment', 'block_iomad_company_admin');
+            }   
+
             $editform->display();
 
             echo $OUTPUT->footer();
         } else {
             $blockpage->display_header();
+            // Check the department is valid.
+            if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+                print_error('invaliddepartment', 'block_iomad_company_admin');
+            }   
+
             echo get_string('departmentnoselect', 'block_iomad_company_admin');
             $mform->display();
             echo $OUTPUT->footer();
@@ -308,6 +328,11 @@ if ($mform->is_cancelled()) {
     // Redisplay the form.
     $blockpage->display_header();
 
+    // Check the department is valid.
+    if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+        print_error('invaliddepartment', 'block_iomad_company_admin');
+    }   
+
     $mform->display();
 
     echo $OUTPUT->footer();
@@ -315,6 +340,11 @@ if ($mform->is_cancelled()) {
 } else {
 
     $blockpage->display_header();
+
+    // Check the department is valid.
+    if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+        print_error('invaliddepartment', 'block_iomad_company_admin');
+    }   
 
     $mform->display();
 

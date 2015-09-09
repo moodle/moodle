@@ -487,24 +487,6 @@ class company {
     }
 
     /**
-     * Checks if the department is a valid company one.
-     *
-     * Parameters -
-     *              $departmentid = int;
-     *
-     * Returns boolean;
-     *
-     **/
-    public static function check_valid_department($departmentid) {
-        global $DB;
-        if ($DB->get_record('department', array('id' => $departmentid))) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Get the department a user is associated to.
      *
      * Parameters -
@@ -840,35 +822,35 @@ class company {
         return self::get_recursive_department_users($departmentid);
     }
 
-     /**
-      * Gets a list of the managers for that user
-      *
-      * Parameters -
-      *             $userid = int;
-      *             $managertype = int;
-      *
-      * Returns string
-      *
-      **/
-     public static function get_my_managers($userid, $managertype) {
-         global $DB, $USER;
+    /**
+     * Gets a list of the managers for that user
+     *
+     * Parameters -
+     *             $userid = int;
+     *             $managertype = int;
+     *
+     * Returns string
+     *
+     **/
+    public static function get_my_managers($userid, $managertype) {
+        global $DB, $USER;
 
-         // Get the users department.
-         $usercompanyinfo = $DB->get_record('company_users', array('userid' => $userid));
-         // Get the list of parent departments.
-         $userdepartment = self::get_departmentbyid($usercompanyinfo->departmentid);
-         $departmentlist = self::get_parentdepartments($userdepartment);
-         self::get_parents_list($departmentlist, $departments);
+        // Get the users department.
+        $usercompanyinfo = $DB->get_record('company_users', array('userid' => $userid));
+        // Get the list of parent departments.
+        $userdepartment = self::get_departmentbyid($usercompanyinfo->departmentid);
+        $departmentlist = self::get_parentdepartments($userdepartment);
+        self::get_parents_list($departmentlist, $departments);
 
-         // Get the managers in that list of departments.
-         $managers = $DB->get_records_sql("SELECT userid FROM {company_users}
-                                           WHERE managertype = :managertype
-                                           AND userid != :userid
-                                           AND departmentid IN (".implode(',', array_keys($departments)).")",
-                                           array('managertype' => $managertype, 'userid' => $USER->id));
-         //  return them.
-         return $managers;
-     }
+        // Get the managers in that list of departments.
+        $managers = $DB->get_records_sql("SELECT userid FROM {company_users}
+                                          WHERE managertype = :managertype
+                                          AND userid != :userid
+                                          AND departmentid IN (".implode(',', array_keys($departments)).")",
+                                          array('managertype' => $managertype, 'userid' => $USER->id));
+        //  return them.
+        return $managers;
+    }
 
     /**
      * Gets a list of the users that manager is responsible for
@@ -1530,5 +1512,159 @@ class company {
 
         // Set the suspend field for the company.
         $DB->set_field('company', 'suspended', $suspend, array('id' => $this->id));
+    }
+
+    /**
+     * Checks that a passed department id is valid for the companyid.
+     *
+     * Parameters - 
+     *              $companyid = int;
+     *              $departmentid = int;
+     *
+     * Returns boolean.
+     *
+     **/
+    public static function check_valid_department($companyid, $departmentid) {
+        global $DB;
+
+        if ($DB->get_record('department', array('id' => $departmentid,
+                                                         'company' => $companyid))) {
+            return true;
+        } else {
+            return false;
+        }
+        // Shouldn't get here.  Return a false in case.
+        return false;
+    }
+
+    /**
+     * Checks that a userid and department id is valid for the companyid.
+     *
+     * Parameters - 
+     *              $companyid = int;
+     *              $departmentid = int;
+     *              $userid = int;
+     *
+     * Returns boolean.
+     *
+     **/
+    public static function check_valid_user($companyid, $userid, $deparmentid=0) {
+        global $DB;
+
+        if (!empty($departmentid) && $DB->get_record('company_users', array('departmentid' => departmentid,
+                                                                            'companyid' => $companyid,
+                                                                            'userid' => $companyid))) {
+            return true;
+        } else if ($DB->get_record('company_users', array('companyid' => $companyid,
+                                                          'userid' => $companyid))) {
+            return true;
+        } else {
+            return false;
+        }
+        // Shouldn't get here.  Return a false in case.
+        return false;
+    }
+
+    /**
+     * Checks that the USER can edit a userid in a companyid.
+     *
+     * Parameters - 
+     *              $companyid = int;
+     *              $userid = int;
+     *
+     * Returns boolean.
+     *
+     **/
+    public static function check_canedit_user($companyid, $userid) {
+        global $DB, $USER;
+
+        $context = context_system::instance();
+        // Get my companyid.
+        $mycompanyid = iomad::get_my_companyid($context);
+
+        // If it doesn't match then return false.
+        if ($mycompanyid != $companyid) {
+            return false;
+        }
+
+        // Check if the user is in the company.
+        if ($userrec = $DB->get_record('company_users', array('companyid' => $companyid,
+                                                              'userid' => $userid))) {
+            
+            // If current user is a site admin then they can.
+            if (is_siteadmin($USER->id)) {
+                return true;
+            }
+    
+            // Can't edit an admin user here.
+            if (is_siteadmin($userid)) {
+                return false;
+            }
+
+            // Check the current user is a manager or not and what levels they can edit.
+            if ($manrec = $DB->get_record('company_users', array('companyid' => $companyid,
+                                                                 'userid' => $USER->id))) {
+                if (empty($manrec->managertype)) {
+                    return false;
+                } else if ($manrec->managertype == 2 && $userrec->managertype == 1) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+
+        // Return a false by default.
+        return false;
+    }
+
+    /**
+     * Checks that a licenseid is valid for the companyid.
+     *
+     * Parameters - 
+     *              $companyid = int;
+     *              $licenseid = int;
+     *
+     * Returns boolean.
+     *
+     **/
+    public static function check_valid_company_license($companyid, $licenseid) {
+        global $DB;
+
+        if ($DB->get_record('companylicense', array('companyid' => $companyid,
+                                                    'id' => $licenseid))) {
+            return true;
+        }
+
+        // Return a false by default.
+        return false;
+    }
+
+    /**
+     * Checks that a two user id's are in the same company.
+     *
+     * Parameters - 
+     *              $userid = int;
+     *
+     * Returns boolean.
+     *
+     **/
+    public static function check_can_manage($userid) {
+        global $DB, $USER;
+
+        $context = context_system::instance();
+        // Set the companyid
+        $companyid = iomad::get_my_companyid($context);
+
+        // Get the list of users.
+        $myusers = self::get_my_users($companyid);
+
+        // If the user is in the list, return true.
+        if (!empty($myusers[$userid])) {
+            return true;
+        }
+
+        // Return a false by default.
+        return false;
     }
 }

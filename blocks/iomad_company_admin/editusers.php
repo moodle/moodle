@@ -110,6 +110,11 @@ $returnurl = $baseurl;
 
 $blockpage->display_header();
 
+// Check the department is valid.
+if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+    print_error('invaliddepartment', 'block_iomad_company_admin');
+}   
+
 // Get the associated department id.
 $company = new company($companyid);
 $parentlevel = company::get_company_parentnode($company->id);
@@ -237,6 +242,10 @@ if ($confirmuser and confirm_sesskey()) {
         print_error('nousers', 'error');
     }
 
+    if (!company::check_canedit_user($companyid, $user->id)) {
+        print_error('invaliduserid');
+    }
+
     if (is_primary_admin($user->id)) {
         print_error('nopermissions', 'error', '', 'delete the primary admin user');
     }
@@ -264,6 +273,9 @@ if ($confirmuser and confirm_sesskey()) {
         print_error('nousers', 'error');
     }
 
+    if (!company::check_canedit_user($companyid, $user->id)) {
+        print_error('invaliduserid');
+    }
     if (is_primary_admin($user->id)) {
         print_error('nopermissions', 'error', '', 'delete the primary admin user');
     }
@@ -291,6 +303,10 @@ if ($confirmuser and confirm_sesskey()) {
 
     if (!$user = $DB->get_record('user', array('id' => $unsuspend))) {
         print_error('nousers', 'error');
+    }
+
+    if (!company::check_canedit_user($companyid, $user->id)) {
+        print_error('invaliduserid');
     }
 
     if (is_primary_admin($user->id)) {

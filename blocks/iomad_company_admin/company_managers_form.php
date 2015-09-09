@@ -154,7 +154,12 @@ class company_managers_form extends moodleform {
                 foreach ($userstoassign as $adduser) {
                     $allow = true;
 
-                    if ($allow) {
+                // Check the userid is valid.
+                if (!company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
+                    print_error('invaliduserdepartment', 'block_iomad_company_management');
+                }
+
+                if ($allow) {
                         if ($roletype != 0) {
                             // Adding a manager type.
                             // Add user to the company manager table.
@@ -307,6 +312,12 @@ class company_managers_form extends moodleform {
                 // Check if we are mearly removing the manager role.
                 if ($roletype != 0) {
                     foreach ($userstounassign as $removeuser) {
+
+                        // Check the userid is valid.
+                        if (!company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
+                            print_error('invaliduserdepartment', 'block_iomad_company_management');
+                        }
+
                         $userrecord = $DB->get_record('company_users', array('companyid' => $this->selectedcompany,
                                                                     'userid' => $removeuser->id));
                         // Is this a manager from another company?
@@ -336,6 +347,11 @@ class company_managers_form extends moodleform {
                     }
                 } else {
                     foreach ($userstounassign as $removeuser) {
+                        // Check the userid is valid.
+                        if (!company::check_valid_user($this->selectedcompany, $removeuser->id, $this->departmentid)) {
+                            print_error('invaliduserdepartment', 'block_iomad_company_management');
+                        }
+
                         // Assign the user to parent department as staff.
                         company::assign_user_to_department($this->companydepartment, $removeuser->id);
                     }
@@ -407,6 +423,11 @@ if ($managersform->is_cancelled()) {
     $managersform->process($departmentid, $roleid);
 
     $blockpage->display_header();
+
+    // Check the department is valid.
+    if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+        print_error('invaliddepartment', 'block_iomad_company_admin');
+    }   
 
     echo $managersform->display();
 
