@@ -346,7 +346,7 @@ class external_api {
      * @param stdClass $context
      * @since Moodle 2.0
      */
-    protected static function validate_context($context) {
+    public static function validate_context($context) {
         global $CFG;
 
         if (empty($context)) {
@@ -875,4 +875,47 @@ class external_settings {
     public function get_file() {
         return $this->file;
     }
+}
+
+/**
+ * Utility functions for the external API.
+ *
+ * @package    core_webservice
+ * @copyright  2015 Juan Leyva
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 3.0
+ */
+class external_util {
+
+    /**
+     * Validate a list of courses, returning the complete course objects for valid courses.
+     *
+     * @param  array $courseids A list of course ids
+     * @return array            An array of courses and the validation warnings
+     */
+    public static function validate_courses($courseids) {
+        // Delete duplicates.
+        $courseids = array_unique($courseids);
+        $courses = array();
+        $warnings = array();
+
+        foreach ($courseids as $cid) {
+            // Check the user can function in this context.
+            try {
+                $context = context_course::instance($cid);
+                external_api::validate_context($context);
+                $courses[$cid] = get_course($cid);
+            } catch (Exception $e) {
+                $warnings[] = array(
+                    'item' => 'course',
+                    'itemid' => $cid,
+                    'warningcode' => '1',
+                    'message' => 'No access rights in course context'
+                );
+            }
+        }
+
+        return array($courses, $warnings);
+    }
+
 }
