@@ -530,6 +530,18 @@ $CFG->admin = 'admin';
 // any icon inside the pix/f folder. You can also set the customdescription field
 // (shown above) and (for advanced use) the groups, string, and defaulticon fields.
 //
+// Upgrade key
+//
+// If the upgrade key is defined here, then the value must be provided every
+// time the site is being upgraded, regardless the administrator is logged in
+// or not. This prevents from anonymous access to the upgrade screens where the
+// real authentication and authorization mechanisms must not be relied on.
+//
+// It is strongly recommended to use a value different from your real account
+// password.
+//
+//      $CFG->upgradekey = 'put_some_password-like_value_here';
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
