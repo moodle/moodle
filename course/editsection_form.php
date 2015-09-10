@@ -25,7 +25,16 @@ class editsection_form extends moodleform {
 
         $elementgroup = array();
         $elementgroup[] = $mform->createElement('text', 'name', '', array('size' => '30', 'maxlength' => '255'));
-        $elementgroup[] = $mform->createElement('checkbox', 'usedefaultname', '', get_string('sectionusedefaultname'));
+
+        // Get default section name.
+        $defaultsectionname = $this->_customdata['defaultsectionname'];
+        if ($defaultsectionname) {
+            $defaultsectionname = ' [' . $defaultsectionname . ']';
+        }
+
+        $elementgroup[] = $mform->createElement('checkbox', 'usedefaultname', '',
+                                                get_string('sectionusedefaultname') . $defaultsectionname);
+
         $mform->addGroup($elementgroup, 'name_group', get_string('sectionname'), ' ', false);
         $mform->addGroupRule('name_group', array('name' => array(array(get_string('maximumchars', '', 255), 'maxlength', 255))));
 
@@ -103,7 +112,7 @@ class editsection_form extends moodleform {
         $data = parent::get_data();
         if ($data !== null) {
             $editoroptions = $this->_customdata['editoroptions'];
-            if (!empty($data->usedefaultname)) {
+            if (!empty($data->usedefaultname) || empty(trim($data->name))) {
                 $data->name = null;
             }
             $data = file_postupdate_standard_editor($data, 'summary', $editoroptions,

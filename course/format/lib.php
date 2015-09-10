@@ -350,7 +350,23 @@ abstract class format_base {
         } else {
             $sectionnum = $section;
         }
-        return get_string('sectionname', 'format_'.$this->format) . ' ' . $sectionnum;
+
+        if (get_string_manager()->string_exists('sectionname', 'format_' . $this->format)) {
+            return get_string('sectionname', 'format_' . $this->format) . ' ' . $sectionnum;
+        }
+
+        // Return an empty string if there's no available section name string for the given format.
+        return '';
+    }
+
+    /**
+     * Returns the default section using format_base's implementation of get_section_name.
+     *
+     * @param int|stdClass $section Section object from database or just field course_sections section
+     * @return string The default value for the section name based on the given course format.
+     */
+    public function get_default_section_name($section) {
+        return self::get_section_name($section);
     }
 
     /**

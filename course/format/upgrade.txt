@@ -7,6 +7,10 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
   renderable menu or array of links.  Plugin calls to section_edit_controls will now include the section edit control in the returned array.
 * The section name is now wrapped in a new span (.sectionname > span), process_sections method in format.js should be updated so .sectionname
   DOM node's wraps the section title in a span. You can look at how to implement the change in course/format/topics/format.js or MDL-48947.
+* New method format_base::get_default_section_name retrieves the default section name for the given course format. The base
+  implementation basically uses the implementation of format_base::get_section_name. The method can be overridden in
+  format_base subclasses that use sections (i.e. format_topics, format_weeks). In relation to the changes made for the default
+  section name, the default section name is now being shown when editing the section information.
 
 === 2.9 ===
 * Course formats may support deleting sections, see MDL-10405 for more details.
