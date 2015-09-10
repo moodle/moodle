@@ -1416,6 +1416,7 @@ class behat_general extends behat_base {
 
     /**
      * Presses a given button in the browser.
+     * NOTE: Phantomjs and goutte driver reloads page while navigating back and forward.
      *
      * @Then /^I press the "(back|forward|reload)" button in the browser$/
      * @param string $button the button to press.
