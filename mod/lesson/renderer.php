@@ -113,6 +113,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $output .=  '<form id="password" method="post" action="'.$CFG->wwwroot.'/mod/lesson/view.php" autocomplete="off">';
         $output .=  '<fieldset class="invisiblefieldset center">';
         $output .=  '<input type="hidden" name="id" value="'. $this->page->cm->id .'" />';
+        $output .=  '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         if ($failedattempt) {
             $output .=  $this->output->notification(get_string('loginfail', 'lesson'));
         }

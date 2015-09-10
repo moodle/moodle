@@ -86,14 +86,17 @@ if (!$canmanage) {
     } else if ($lesson->usepassword && empty($USER->lessonloggedin[$lesson->id])) { // Password protected lesson code
         $correctpass = false;
         if (!empty($userpassword) && (($lesson->password == md5(trim($userpassword))) || ($lesson->password == trim($userpassword)))) {
+            require_sesskey();
             // with or without md5 for backward compatibility (MDL-11090)
             $correctpass = true;
             $USER->lessonloggedin[$lesson->id] = true;
 
         } else if (isset($lesson->extrapasswords)) {
+
             // Group overrides may have additional passwords.
             foreach ($lesson->extrapasswords as $password) {
                 if (strcmp($password, md5(trim($userpassword))) === 0 || strcmp($password, trim($userpassword)) === 0) {
+                    require_sesskey();
                     $correctpass = true;
                     $USER->lessonloggedin[$lesson->id] = true;
                 }
