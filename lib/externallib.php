@@ -743,6 +743,7 @@ function external_format_string($str, $contextid, $striplinks = true, $options =
     if (!$settings->get_raw()) {
         $context = context::instance_by_id($contextid);
         $options['context'] = $context;
+        $options['filter'] = $settings->get_filter();
         $str = format_string($str, $striplinks, $options);
     }
 
