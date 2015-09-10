@@ -451,6 +451,45 @@ class core_navigationlib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that users with the correct permissions can view the preferences page.
+     */
+    public function test_can_view_user_preferences() {
+        global $PAGE, $DB, $SITE;
+        $this->resetAfterTest();
+
+        $persontoview = $this->getDataGenerator()->create_user();
+        $persondoingtheviewing = $this->getDataGenerator()->create_user();
+
+        $PAGE->set_url('/');
+        $PAGE->set_course($SITE);
+
+        // Check that a standard user can not view the preferences page.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->role_assign($studentrole->id, $persondoingtheviewing->id);
+        $this->setUser($persondoingtheviewing);
+        $settingsnav = new exposed_settings_navigation();
+        $settingsnav->initialise();
+        $settingsnav->extend_for_user($persontoview->id);
+        $this->assertFalse($settingsnav->can_view_user_preferences($persontoview->id));
+
+        // Set persondoingtheviewing as a manager.
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $this->getDataGenerator()->role_assign($managerrole->id, $persondoingtheviewing->id);
+        $settingsnav = new exposed_settings_navigation();
+        $settingsnav->initialise();
+        $settingsnav->extend_for_user($persontoview->id);
+        $this->assertTrue($settingsnav->can_view_user_preferences($persontoview->id));
+
+        // Check that the admin can view the preferences page.
+        $this->setAdminUser();
+        $settingsnav = new exposed_settings_navigation();
+        $settingsnav->initialise();
+        $settingsnav->extend_for_user($persontoview->id);
+        $preferencenode = $settingsnav->find('userviewingsettings' . $persontoview->id, null);
+        $this->assertTrue($settingsnav->can_view_user_preferences($persontoview->id));
+    }
+
+    /**
      * @depends test_setting__initialise
      * @param mixed $node
      * @return mixed
