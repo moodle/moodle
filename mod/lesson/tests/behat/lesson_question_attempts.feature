@@ -115,7 +115,7 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
     When I press "Submit"
     Then I should see "Maximum number of attempts reached - Moving to next page"
 
-  @javascript
+  @javascript @_bug_phantomjs
   Scenario: Check that we can not click back on the browser at the last quiz result page and re-attempt the last question to get full marks
     Given I log in as "student1"
     And I follow "Course 1"
