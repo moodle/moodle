@@ -1538,7 +1538,7 @@ class company {
         global $DB;
 
         if ($DB->get_record('department', array('id' => $departmentid,
-                                                         'company' => $companyid))) {
+                                                'company' => $companyid))) {
             return true;
         } else {
             return false;
@@ -1563,10 +1563,10 @@ class company {
 
         if (!empty($departmentid) && $DB->get_record('company_users', array('departmentid' => departmentid,
                                                                             'companyid' => $companyid,
-                                                                            'userid' => $companyid))) {
+                                                                            'userid' => $userid))) {
             return true;
         } else if ($DB->get_record('company_users', array('companyid' => $companyid,
-                                                          'userid' => $companyid))) {
+                                                          'userid' => $userid))) {
             return true;
         } else {
             return false;
