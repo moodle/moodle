@@ -60,7 +60,6 @@ class behat_qtype_ddimageortext extends behat_base {
      * @param int $placenumber the number of the place to drop into.
      *
      * @Given /^I drag "(?P<drag_item>[^"]*)" to place "(?P<place_number>\d+)" in the drag and drop onto image question$/
-     * 
      */
     public function i_drag_to_place_in_the_drag_and_drop_onto_image_question($dragitem, $placenumber) {
         $generalcontext = behat_context_helper::get('behat_general');
