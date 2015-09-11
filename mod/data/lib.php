@@ -1242,7 +1242,12 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
     // Then we generate strings to replace for normal tags
         foreach ($fields as $field) {
             $patterns[]='[['.$field->field->name.']]';
-            $replacement[] = highlight($search, $field->display_browse_field($record->id, $template));
+            if ($data->syntaxhighlight) {
+			    $replacement[] = highlight($search, $field->display_browse_field($record->id, $template));
+			}
+			else {
+			    $replacement[] = highlight('', $field->display_browse_field($record->id, $template));
+			}
         }
 
         $canmanageentries = has_capability('mod/data:manageentries', $context);
@@ -1448,7 +1453,7 @@ function data_rating_validate($params) {
         throw new rating_exception('nopermissiontorate');
     }
 
-    $datasql = "SELECT d.id as dataid, d.scale, d.course, r.userid as userid, d.approval, r.approved, r.timecreated, d.assesstimestart, d.assesstimefinish, r.groupid
+    $datasql = "SELECT d.id as dataid, d.scale, d.course, r.userid as userid, d.approval, r.approved, r.timecreated, d.assesstimestart, d.assesstimefinish, r.groupid, d.syntaxhighlight
                   FROM {data_records} r
                   JOIN {data} d ON r.dataid = d.id
                  WHERE r.id = :itemid";
@@ -2314,7 +2319,8 @@ abstract class data_preset_importer {
             'rssarticles',
             'approval',
             'defaultsortdir',
-            'defaultsort');
+            'defaultsort',
+            'syntaxhighlight');
 
         $result = new stdClass;
         $result->settings = new stdClass;
@@ -2879,6 +2885,7 @@ function data_export_ods($export, $dataname, $count) {
  * @param bool $userdetails whether to include the details of the record author
  * @param bool $time whether to include time created/modified
  * @param bool $approval whether to include approval status
+ * @param bool $syntaxhighlight whether to highlight found search terms
  * @return array
  */
 function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0, $context=null,
@@ -3314,7 +3321,8 @@ function data_presets_generate_xml($course, $cm, $data) {
         'maxentries',
         'rssarticles',
         'approval',
-        'defaultsortdir'
+        'defaultsortdir',
+        'syntaxhighlight'
     );
 
     $presetxmldata .= "<settings>\n";

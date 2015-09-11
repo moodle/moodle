@@ -153,7 +153,7 @@ class mod_data_external extends external_api {
                     $additionalfields = array('maxentries', 'rssarticles', 'singletemplate', 'listtemplate',
                         'listtemplateheader', 'listtemplatefooter', 'addtemplate', 'rsstemplate', 'rsstitletemplate',
                         'csstemplate', 'jstemplate', 'asearchtemplate', 'approval', 'scale', 'assessed', 'assesstimestart',
-                        'assesstimefinish', 'defaultsort', 'defaultsortdir', 'editany', 'notification');
+                        'assesstimefinish', 'defaultsort', 'defaultsortdir', 'editany', 'notification', 'syntaxhighlight');
 
                     // This is for avoid a long repetitive list.
                     foreach ($additionalfields as $field) {
@@ -219,7 +219,8 @@ class mod_data_external extends external_api {
                             'defaultsort' => new external_value(PARAM_INT, 'defaultsort field', VALUE_OPTIONAL),
                             'defaultsortdir' => new external_value(PARAM_INT, 'defaultsortdir field', VALUE_OPTIONAL),
                             'editany' => new external_value(PARAM_BOOL, 'editany field', VALUE_OPTIONAL),
-                            'notification' => new external_value(PARAM_INT, 'notification field', VALUE_OPTIONAL)
+                            'notification' => new external_value(PARAM_INT, 'notification field', VALUE_OPTIONAL),
+                            'syntaxhighlight' => new external_value(PARAM_BOOL, 'syntaxhighlight field', VALUE_OPTIONAL)
                         ), 'Database'
                     )
                 ),
