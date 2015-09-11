@@ -14,10 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once('../../config.php');
+require_once(dirname(__FILE__).'/../../config.php');
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
-require_once('lib.php');
+require_once(dirname(__FILE__).'/lib.php');
 
 // Params.
 $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -85,6 +85,27 @@ if ($certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate')
     $hasiomadcertificate = false;
 }
 
+// Check for user/course delete?
+if ($delete) {
+    $confirm = new moodle_url('/local/report_users/userdisplay.php', array(
+        'userid' => $userid,
+        'confirm' => $delete,
+        'courseid' => $courseid
+        ));
+    $cancel = new moodle_url('/local/report_users/userdisplay.php', array(
+        'userid' => $userid));
+    echo $OUTPUT->confirm(get_string('deleteconfirm', 'local_report_users'), $confirm, $cancel);
+    echo $OUTPUT->footer();
+    die;
+}
+
+// Check for confirmed delete?
+if ($confirm) {
+   userrep::delete_user($userid, $courseid);
+   redirect(new moodle_url('/local/report_users/userdisplay.php', array(
+        'userid' => $userid)));
+}
+
 if (!empty($dodownload)) {
     // Set up the Excel workbook.
     header("Content-Type: application/download\n");
@@ -127,6 +148,8 @@ if ($hasiomadcertificate) {
     $compusertable->head[] = get_string('certificate', 'local_report_users');
     $compusertable->align[] = 'center';
 }
+$compusertable->head[] = get_string('actions', 'local_report_users');
+$compusertable->align[] = 'center';
 
 foreach ($usercourses as $usercourse) {
     if ($usercompletion[$usercourse->id] = userrep::get_completion($userid, $usercourse->id, $showhistoric) ) {
