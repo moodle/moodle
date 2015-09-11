@@ -922,7 +922,7 @@ class iomad {
     public static function get_user_license_sqlsearch($params, $idlist='', $sort, $dir, $departmentid, $nogrades=false) {
         global $DB, $CFG;
 
-        if ($params['courseid'] == 1) {
+        if (!empty($params['courseid']) && $params['courseid'] == 1) {
             $sqlsort = " GROUP BY co.id, cl.name, d.name, u.id";
         } else {
             $sqlsort = " GROUP BY cl.name, d.name, u.id";
@@ -1039,20 +1039,23 @@ class iomad {
         foreach ($courses as $course) {
             $courseobj = new stdclass();
             $courseobj->id = $course->courseid;
+            $timestamp = time();
             $courseobj->numlicenses = $DB->count_records_sql("SELECT COUNT(clu.id) FROM {companylicense_users} clu
                                                    JOIN {".$temptablename."} tt ON (clu.userid = tt.userid)
                                                    JOIN {companylicense} cl ON (cl.id = clu.licenseid)
                                                    WHERE
                                                    clu.licensecourseid = :courseid
-                                                   AND cl.expirydate > unix_timestamp()", array('courseid' => $course->courseid));
+                                                   AND cl.expirydate > :timestamp", array('courseid' => $course->courseid,
+                                                                                          'timestamp' => $timestamp));
             $courseobj->numused = $DB->count_records_sql("SELECT COUNT(clu.id) FROM {companylicense_users} clu
                                                    JOIN {".$temptablename."} tt ON (clu.userid = tt.userid)
                                                    JOIN {companylicense} cl ON (cl.id = clu.licenseid)
                                                    WHERE
                                                    clu.licensecourseid = :courseid
-                                                   AND cl.expirydate > unix_timestamp()
+                                                   AND cl.expirydate > :timestamp
                                                    AND
-                                                   clu.isusing = 1", array('courseid' => $course->courseid));
+                                                   clu.isusing = 1", array('courseid' => $course->courseid,
+                                                                           'timestamp' => $timestamp));
             $courseobj->numunused = $courseobj->numlicenses - $courseobj->numused;
 
             if (!$courseobj->coursename = $DB->get_field('course', 'fullname', array('id' => $course->courseid))) {
