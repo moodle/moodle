@@ -553,7 +553,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
     if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id')) {
 
         $table = new html_table();
-        $table->attributes['class'] = 'mod-data-default-template ##approvalstatus##';
+        $table->attributes['class'] = 'mod-data-default-template';
         $table->colclasses = array('template-field', 'template-token');
         $table->data = array();
         foreach ($fields as $field) {
@@ -1242,7 +1242,12 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
     // Then we generate strings to replace for normal tags
         foreach ($fields as $field) {
             $patterns[]='[['.$field->field->name.']]';
-            $replacement[] = highlight($search, $field->display_browse_field($record->id, $template));
+            if ($data->syntaxhighlight) {
+			    $replacement[] = highlight($search, $field->display_browse_field($record->id, $template));
+			}
+			else {
+			    $replacement[] = highlight('', $field->display_browse_field($record->id, $template));
+			}
         }
 
         $canmanageentries = has_capability('mod/data:manageentries', $context);
@@ -1326,15 +1331,6 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
                     array('class' => 'disapprove'));
         } else {
             $replacement[] = '';
-        }
-
-        $patterns[] = '##approvalstatus##';
-        if (!$data->approval) {
-            $replacement[] = '';
-        } else if ($record->approved) {
-            $replacement[] = 'approved';
-        } else {
-            $replacement[] = 'notapproved';
         }
 
         $patterns[]='##comments##';
@@ -1448,7 +1444,7 @@ function data_rating_validate($params) {
         throw new rating_exception('nopermissiontorate');
     }
 
-    $datasql = "SELECT d.id as dataid, d.scale, d.course, r.userid as userid, d.approval, r.approved, r.timecreated, d.assesstimestart, d.assesstimefinish, r.groupid
+    $datasql = "SELECT d.id as dataid, d.scale, d.course, r.userid as userid, d.approval, r.approved, r.timecreated, d.assesstimestart, d.assesstimefinish, r.groupid, d.syntaxhighlight
                   FROM {data_records} r
                   JOIN {data} d ON r.dataid = d.id
                  WHERE r.id = :itemid";
@@ -1522,53 +1518,6 @@ function data_rating_validate($params) {
     }
 
     return true;
-}
-
-/**
- * Can the current user see ratings for a given itemid?
- *
- * @param array $params submitted data
- *            contextid => int contextid [required]
- *            component => The component for this module - should always be mod_data [required]
- *            ratingarea => object the context in which the rated items exists [required]
- *            itemid => int the ID of the object being rated [required]
- *            scaleid => int scale id [optional]
- * @return bool
- * @throws coding_exception
- * @throws rating_exception
- */
-function mod_data_rating_can_see_item_ratings($params) {
-    global $DB;
-
-    // Check the component is mod_data.
-    if (!isset($params['component']) || $params['component'] != 'mod_data') {
-        throw new rating_exception('invalidcomponent');
-    }
-
-    // Check the ratingarea is entry (the only rating area in data).
-    if (!isset($params['ratingarea']) || $params['ratingarea'] != 'entry') {
-        throw new rating_exception('invalidratingarea');
-    }
-
-    if (!isset($params['itemid'])) {
-        throw new rating_exception('invaliditemid');
-    }
-
-    $datasql = "SELECT d.id as dataid, d.course, r.groupid
-                  FROM {data_records} r
-                  JOIN {data} d ON r.dataid = d.id
-                 WHERE r.id = :itemid";
-    $dataparams = array('itemid' => $params['itemid']);
-    if (!$info = $DB->get_record_sql($datasql, $dataparams)) {
-        // Item doesn't exist.
-        throw new rating_exception('invaliditemid');
-    }
-
-    $course = $DB->get_record('course', array('id' => $info->course), '*', MUST_EXIST);
-    $cm = get_coursemodule_from_instance('data', $info->dataid, $course->id, false, MUST_EXIST);
-
-    // Make sure groups allow this user to see the item they're rating.
-    return groups_group_visible($info->groupid, $course, $cm);
 }
 
 
@@ -2314,7 +2263,8 @@ abstract class data_preset_importer {
             'rssarticles',
             'approval',
             'defaultsortdir',
-            'defaultsort');
+            'defaultsort',
+            'syntaxhighlight');
 
         $result = new stdClass;
         $result->settings = new stdClass;
@@ -2879,6 +2829,7 @@ function data_export_ods($export, $dataname, $count) {
  * @param bool $userdetails whether to include the details of the record author
  * @param bool $time whether to include time created/modified
  * @param bool $approval whether to include approval status
+ * @param bool $syntaxhighlight whether to highlight found search terms
  * @return array
  */
 function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0, $context=null,
@@ -3314,7 +3265,8 @@ function data_presets_generate_xml($course, $cm, $data) {
         'maxentries',
         'rssarticles',
         'approval',
-        'defaultsortdir'
+        'defaultsortdir',
+        'syntaxhighlight'
     );
 
     $presetxmldata .= "<settings>\n";

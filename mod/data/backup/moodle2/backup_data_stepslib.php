@@ -45,7 +45,7 @@ class backup_data_activity_structure_step extends backup_activity_structure_step
             'addtemplate', 'rsstemplate', 'rsstitletemplate', 'csstemplate',
             'jstemplate', 'asearchtemplate', 'approval', 'scale',
             'assessed', 'assesstimestart', 'assesstimefinish', 'defaultsort',
-            'defaultsortdir', 'editany', 'notification'));
+            'defaultsortdir', 'editany', 'notification', 'syntaxhighlight'));
 
         $fields = new backup_nested_element('fields');
 
