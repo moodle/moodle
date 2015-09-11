@@ -60,7 +60,7 @@ class block_iomad_reports extends block_base {
                 // Put together link.
                 $this->content->text .= "<a href=\"$url\">";
                 $this->content->text .= '<div class="iomadlink">';
-                if ($CFG->theme == 'bootstrap') {
+                if ($CFG->theme == 'iomadbootstrap') {
                     $this->content->text .= '<div class="iomadicon"><div class="fa fa-topic fa-bar-chart-o"> </div>';
                 } else {
                     $this->content->text .= '<div class="iomadicon">' . $icon ;

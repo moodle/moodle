@@ -152,7 +152,8 @@ class company_edit_form extends company_moodleform {
         // to change that.
         if (iomad::has_capability('block/iomad_company_admin:company_add', $context) ||
             $this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'bootstrap') {
-                $mform->addElement('header', 'appearance',
+
+            $mform->addElement('header', 'appearance',
                                     get_string('appearance', 'block_iomad_company_admin'));
 
             // If has the edit all companies capability we want to add a theme selector.
@@ -193,9 +194,9 @@ class company_edit_form extends company_moodleform {
 
             // If theme is already set to a real theme, dont show this.
             if (!isset($this->companyrecord->theme)) {
-                $this->companyrecord->theme = 'iomad';
+                $this->companyrecord->theme = 'iomadbootstrap';
             }
-            if ($this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'bootstrap') {
+            if ($this->companyrecord->theme == 'iomad' || $this->companyrecord->theme == 'iomadbootstrap') {
                 $mform->addElement('HTML', get_string('theoptionsbelow',
                                                       'block_iomad_company_admin'));
                 $mform->addElement('filemanager', 'companylogo',
@@ -211,6 +212,10 @@ class company_edit_form extends company_moodleform {
                                                                   'style' => 'background'));
                 $mform->disabledIf('id_bgcolor_header', 'usedefaulttheme', 'checked');
                 $mform->disabledIf('id_bgcolor_content', 'usedefaulttheme', 'checked');
+                $mform->addElement('textarea', 'customcss',
+                                    get_string('customcss', 'block_iomad_company_admin'),
+                                    'wrap="virtual" rows="20" cols="75"');
+                $mform->setType('customcss', PARAM_CLEAN);
             } else {
                 $mform->addElement('hidden', 'id_companylogo', $this->companyrecord->companylogo);
                 $mform->addElement('hidden', 'companylogo', $this->companyrecord->companylogo);
@@ -222,6 +227,8 @@ class company_edit_form extends company_moodleform {
                 $mform->setType('id_companylogo', PARAM_CLEAN);
                 $mform->setType('id_bgcolor_header', PARAM_CLEAN);
                 $mform->setType('id_bgcolor_content', PARAM_CLEAN);
+                $mform->addElement('hidden', 'customcss');
+                $mform->setType('customcss', PARAM_CLEAN);
             }
         } else {
                 $mform->addElement('hidden', 'theme', $this->companyrecord->theme);
@@ -232,6 +239,8 @@ class company_edit_form extends company_moodleform {
                                     $this->companyrecord->bgcolor_header);
                 $mform->addElement('hidden', 'bgcolor_content',
                                     $this->companyrecord->bgcolor_content);
+                $mform->addElement('hidden', 'customcss');
+                $mform->setType('customcss', PARAM_CLEAN);
         }
         $mform->setType('bgcolor_header', PARAM_CLEAN);
         $mform->setType('bgcolor_content', PARAM_CLEAN);
@@ -404,7 +413,8 @@ if ($mform->is_cancelled()) {
 
         $company = new company($companyid);
         $oldtheme = $company->get_theme();
-
+echo "data =<pre>";
+print_r($data);
         $themechanged = $oldtheme != $data->theme;
         $DB->update_record('company', $data);
 

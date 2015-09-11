@@ -1106,6 +1106,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015040700, 'local', 'iomad');
     }
 
+    if ($oldversion < 2015083100) {
+
+        // Define field customcss to be added to company.
+        $table = new xmldb_table('company');
+        $field = new xmldb_field('customcss', XMLDB_TYPE_TEXT, null, null, null, null, null, 'suspended');
+
+        // Conditionally launch add field customcss.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2015083100, 'local', 'iomad');
+    }
 
     return $result;
 }

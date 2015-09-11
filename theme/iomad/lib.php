@@ -144,6 +144,7 @@ function theme_iomad_get_html_for_settings(renderer_base $output, moodle_page $p
                 $companycss = preg_replace("/\[\[company:$key\]\]/", $value, $companycss);
             }
         }
+        $companycss .= iomad::get_company_customcss($companyid);
     }
 
     $return->heading = '<div id="sitelogo">' . 

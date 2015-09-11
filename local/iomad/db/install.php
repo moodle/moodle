@@ -369,7 +369,7 @@ function xmldb_local_iomad_install() {
     }
 
     // Even worse - change the theme.
-    $theme = theme_config::load('iomad');
+    $theme = theme_config::load('iomadbootstrap');
     set_config('theme', $theme->name);
     set_config('allowuserthemes', 1);
 

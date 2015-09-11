@@ -146,6 +146,23 @@ class iomad {
     }
 
     /**
+     * Get the company Custom CSS given an ID.
+     *
+     * Parameters = $companyid = int;
+     * 
+     * Returns text;
+     **/
+     public static function get_company_customcss($companyid) {
+         global $DB;
+
+         if ($companycustomcss = $DB->get_field('company', 'customcss', array('id' => $companyid))) {
+             return $companycustomcss;
+         } else {
+             return '';
+         }
+     }
+         
+    /**
      * SQL text processing to add a company course table join
      *
      * Parameters - $alias = text;
