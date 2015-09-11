@@ -72,7 +72,7 @@ function iomadbootstrap_grid($hassidepre, $hassidepost) {
  */
 function theme_iomadbootstrap_initialise_zoom(moodle_page $page) {
     user_preference_allow_ajax_update('theme_iomadbootstrap_zoom', PARAM_TEXT);
-    $page->requires->yui_module('moodle-theme_iomadbootstrap-zoom', 'M.theme_bootstrap.zoom.init', array());
+    $page->requires->yui_module('moodle-theme_bootstrap-zoom', 'M.theme_bootstrap.zoom.init', array());
 }
 
 /**
