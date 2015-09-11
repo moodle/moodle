@@ -33,7 +33,11 @@ class company_managers_form extends moodleform {
         $this->context = $context;
         $this->departmentid = $deptid;
         $this->roletype = $roleid;
-        $this->showothermanagers = $showothermanagers;
+        if (!iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
+            $this->showothermanagers = false;
+        } else {
+            $this->showothermanagers = $showothermanagers;
+        }
 
         $company = new company($this->selectedcompany);
         $parentlevel = company::get_company_parentnode($company->id);
