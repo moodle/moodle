@@ -152,6 +152,20 @@ function xmldb_data_upgrade($oldversion) {
 
     // Moodle v2.9.0 release upgrade line.
     // Put any upgrade step following this.
+	
+	if ($oldversion < 2015091000) {
+        // Define field syntaxhighlight to be added to data_fields.
+        $table = new xmldb_table('data');
+        $field = new xmldb_field('syntaxhighlight', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1', '');
 
+        // Conditionally launch add field syntaxhighlight.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2015091000, 'data');
+	
+	}
+	
     return true;
 }
