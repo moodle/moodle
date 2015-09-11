@@ -45,12 +45,6 @@ class mod_data_mod_form extends moodleform_mod {
 
         $mform->addElement('select', 'maxentries', get_string('maxentries', 'data'), $countoptions);
         $mform->addHelpButton('maxentries', 'maxentries', 'data');
-        
-        // ----------------------------------------------------------------------
-        $mform->addElement('header', 'syntaxhighlighttitle', get_string('syntaxhighlighttitle', 'data'));
-
-        $mform->addElement('selectyesno', 'syntaxhighlight', get_string('syntaxhighlight', 'data'));
-        $mform->addHelpButton('syntaxhighlight', 'syntaxhighlight', 'data');
 
         // ----------------------------------------------------------------------
         $mform->addElement('header', 'availibilityhdr', get_string('availability'));
