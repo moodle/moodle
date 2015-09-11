@@ -308,6 +308,7 @@ class graded_users_iterator {
                     $grades[$grade_item->id] =
                         new grade_grade(array('userid'=>$user->id, 'itemid'=>$grade_item->id), false);
                 }
+                $grades[$grade_item->id]->grade_item = $grade_item;
             }
         }
 
