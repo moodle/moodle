@@ -411,7 +411,7 @@ if ($formdata = $mform->is_cancelled()) {
 
         // Renaming requested?
         if (!empty($user->oldusername) ) {
-            $oldusername = textlib::strtolower($user->oldusername);
+            $oldusername = core_text::strtolower($user->oldusername);
             if (!$allowrenames) {
                 $usersskipped++;
                 $upt->track('status', $strusernotrenamedoff, 'warning');
@@ -1241,7 +1241,7 @@ function process_template($template, $user) {
  */
 function process_template_callback($block) {
     global $template_globals;
-    $textlib = textlib::get_instance();
+    $textlib = core_text::get_instance();
     $repl = $block[0];
 
     switch ($block[3]) {
@@ -1257,17 +1257,17 @@ function process_template_callback($block) {
     }
     switch ($block[1]) {
         case '+':
-            $repl = textlib::strtoupper($repl);
+            $repl = core_text::strtoupper($repl);
         break;
         case '-':
-            $repl = textlib::strtolower($repl);
+            $repl = core_text::strtolower($repl);
         break;
         case '~':
-            $repl = textlib::strtotitle($repl);
+            $repl = core_text::strtotitle($repl);
         break;
     }
     if (!empty($block[2])) {
-        $repl = textlib::substr($repl, 0 , $block[2]);
+        $repl = core_text::substr($repl, 0 , $block[2]);
     }
 
     return $repl;
