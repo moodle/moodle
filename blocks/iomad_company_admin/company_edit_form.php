@@ -206,12 +206,6 @@ class company_edit_form extends company_moodleform {
                                          'maxfiles' => 1,
                                          'accepted_types' => array('*.jpg', '*.gif', '*.png')));
 
-                $this->add_colour_picker('bgcolor_header', array('selector' => '.header,.navbar',
-                                                                 'style' => 'background'));
-                $this->add_colour_picker('bgcolor_content', array('selector' => '.block .content',
-                                                                  'style' => 'background'));
-                $mform->disabledIf('id_bgcolor_header', 'usedefaulttheme', 'checked');
-                $mform->disabledIf('id_bgcolor_content', 'usedefaulttheme', 'checked');
                 $mform->addElement('textarea', 'customcss',
                                     get_string('customcss', 'block_iomad_company_admin'),
                                     'wrap="virtual" rows="20" cols="75"');
@@ -219,14 +213,8 @@ class company_edit_form extends company_moodleform {
             } else {
                 $mform->addElement('hidden', 'id_companylogo', $this->companyrecord->companylogo);
                 $mform->addElement('hidden', 'companylogo', $this->companyrecord->companylogo);
-                $mform->addElement('hidden', 'id_bgcolor_header',
-                                    $this->companyrecord->bgcolor_header);
-                $mform->addElement('hidden', 'id_bgcolor_content',
-                                    $this->companyrecord->bgcolor_content);
                 $mform->setType('companylogo', PARAM_CLEAN);
                 $mform->setType('id_companylogo', PARAM_CLEAN);
-                $mform->setType('id_bgcolor_header', PARAM_CLEAN);
-                $mform->setType('id_bgcolor_content', PARAM_CLEAN);
                 $mform->addElement('hidden', 'customcss');
                 $mform->setType('customcss', PARAM_CLEAN);
             }
@@ -235,15 +223,9 @@ class company_edit_form extends company_moodleform {
                 $mform->setType('theme', PARAM_TEXT);
                 $mform->addElement('hidden', 'companylogo', $this->companyrecord->companylogo);
                 $mform->setType('companylogo', PARAM_CLEAN);
-                $mform->addElement('hidden', 'bgcolor_header',
-                                    $this->companyrecord->bgcolor_header);
-                $mform->addElement('hidden', 'bgcolor_content',
-                                    $this->companyrecord->bgcolor_content);
                 $mform->addElement('hidden', 'customcss');
                 $mform->setType('customcss', PARAM_CLEAN);
         }
-        $mform->setType('bgcolor_header', PARAM_CLEAN);
-        $mform->setType('bgcolor_content', PARAM_CLEAN);
 
         $submitlabel = null; // Default.
         if ($this->isadding) {
