@@ -25,10 +25,14 @@ require_login();
 // Get parameters.
 $edit = optional_param( 'edit', null, PARAM_BOOL );
 $company = optional_param('company', '', PARAM_TEXT);
+$showsuspendedcompanies = optional_param('showsuspendedcompanies', false, PARAM_BOOL);
 
 // Check we are allowed to view this page.
 $systemcontext = context_system::instance();
 iomad::require_capability( 'local/iomad_dashboard:view', $systemcontext );
+
+// Set the session to a user if they are editing a company other than their own.
+$SESSION->showsuspendedcompanies = $showsuspendedcompanies;
 
 // Set the session to a user if they are editing a company other than their own.
 if (!empty($company)) {

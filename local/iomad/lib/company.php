@@ -164,18 +164,28 @@ class company {
      * Returns array;
      *
      **/
-    public static function get_companies_select() {
+    public static function get_companies_select($showsuspended=false) {
         global $DB, $USER;
 
         // Is this an admin, or a normal user?
         if (iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
-            $companies = $DB->get_recordset('company', null, 'name', '*');
+            if ($showsuspended) {
+                $companies = $DB->get_recordset('company', array(), 'name', '*');
+            } else {
+                $companies = $DB->get_recordset('company', array('suspended' => 0), 'name', '*');
+            }
         } else {
+            if ($showsuspended) {
+                $suspendedsql = '';
+            } else {
+                $suspendedsql = "AND suspended = 0";
+            }
             $companies = $DB->get_recordset_sql("SELECT * FROM {company}
                                                  WHERE id IN (
                                                    SELECT companyid FROM {company_users}
                                                    WHERE userid = :userid )
-                                                 ORDER BY name", array('userid' => $USER->id));
+                                                   $suspendedsql
+                                                 ORDER BY name", array('userid' => $USER->id, 'suspended' => $showsuspended));
         }
         $companyselect = array();
         foreach ($companies as $company) {
