@@ -299,6 +299,43 @@ class iomad {
         return $iomadcategories;
     }
 
+    /**
+     * IOMAD:
+     * Filter courses to only show 'company' courses for the
+     * current user. All other pass through as normal
+     * @param array $courses list of courses objects
+     * @return array filtered list of courses
+     */
+    public static function iomad_filter_courses( $courses ) {
+        global $DB, $USER;
+
+        // Check if its the client admin.
+        if (self::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
+            return $courses;
+        }
+        $context = context_system::instance();
+        $mycompanyid = self::get_my_companyid($context);
+        
+        $iomadcourses = array();
+        foreach ($courses as $id => $course) {
+            // Try to find category in company list.
+            if ($DB->get_record( 'company_course', array('courseid' => $id,
+                                                         'companyid' => $mycompanyid) ) ) {
+                // Include as tied to company.
+                $iomadcoursess[ $id ] = $course;
+            } else if ($DB->get_record( 'iomad_courses', array('courseid' => $id,
+                                                              'shared' => 1) ) ) {
+                // Include as open shared.
+                $iomadcoursess[ $id ] = $course;
+            } else if (!$DB->get_records('company_course', array('courseid' => $id))) {
+                // Include as not a companycourse.
+                $iomadcoursess[ $id ] = $course;
+            }
+        }
+
+        return $iomadcourses;
+    }
+
     /** IOMAD:
      * Check if a category is attached to a company AND
      * the user belongs to a different company.
