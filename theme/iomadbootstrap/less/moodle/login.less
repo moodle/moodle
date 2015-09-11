@@ -1,0 +1,58 @@
+.loginbox {
+    border-radius: 3px;
+    .form-group;
+
+    &.onecolumn  {
+        .make-sm-column(6);
+        .make-sm-column-push(3);
+        .make-md-column(4);
+        .make-md-column-push(4);
+        .well;
+    }
+
+    &.twocolumns .loginpanel {
+        .make-sm-column(4);
+        .make-lg-column(3);
+        .well;
+    }
+
+    &.twocolumns .signuppanel {
+        .make-sm-column(7);
+        .make-sm-column-push(1);
+        .make-lg-column(8);
+        .make-lg-column-push(1);
+    }
+
+    .loginform {
+        .form-label {
+            text-align: left;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        .form-input {
+            width: 100%;
+            margin-bottom: 5px;
+            input[type="text"],
+            input[type="password"] {
+                .form-control;
+                width: 100%;
+                max-width: none;
+            }
+            input[type="submit"] {
+                margin: 10px 0 0;
+            }
+        }
+    }
+    input[type="submit"] {
+        margin: 10px 0 0;
+    }
+    .desc {
+        line-height: 30px;
+        color: @text-color;
+    }
+
+    .subcontent {
+        padding: 0;
+        margin: 0;
+    }
+}

@@ -1,0 +1,78 @@
+/* I think this could be avoided (or at least tidied up) if
+ we used HTML5 input types like url, phone, email, number etc.
+ */
+
+.dir-rtl .mform .fitem .felement input[name=email],
+.dir-rtl .mform .fitem .felement input[name=email2],
+.dir-rtl .mform .fitem .felement input[name=url],
+.dir-rtl .mform .fitem .felement input[name=idnumber],
+.dir-rtl .mform .fitem .felement input[name=phone1],
+.dir-rtl .mform .fitem .felement input[name=phone2],
+.dir-rtl#page-admin-setting-enrolsettingsflatfile .informationbox {
+    text-align: left;
+    direction: ltr;
+}
+
+.dir-rtl #admin-spelllanguagelist textarea,
+.dir-rtl#page-admin-setting-editorsettingstinymce .form-textarea textarea {
+    text-align: left;
+    direction: ltr;
+}
+
+.dir-rtl #plugins-check .pluginupdateinfo {
+    direction: ltr;
+}
+
+.dir-rtl#plugins-check .rootdir,
+.dir-rtl#plugins-check .requires-ok {
+    text-align: left;
+    direction: ltr;
+}
+
+.dir-rtl #id_s__pathtodu,
+.dir-rtl #id_s__aspellpath,
+.dir-rtl #id_s__pathtodot,
+.dir-rtl #id_s__supportemail,
+.dir-rtl #id_s__supportpage,
+.dir-rtl #id_s__sessioncookie,
+.dir-rtl #id_s__sessioncookiepath,
+.dir-rtl #id_s__sessioncookiedomain,
+.dir-rtl #id_s__proxyhost,
+.dir-rtl #id_s__proxyuser,
+.dir-rtl #id_s__proxypassword,
+.dir-rtl #id_s__proxybypass,
+.dir-rtl #id_s__jabberhost,
+.dir-rtl #id_s__jabberserver,
+.dir-rtl #id_s__jabberusername,
+.dir-rtl #id_s__jabberpassword,
+.dir-rtl #id_s__additionalhtmlhead,
+.dir-rtl #id_s__additionalhtmltopofbody,
+.dir-rtl #id_s__additionalhtmlfooter,
+.dir-rtl #id_s__docroot,
+.dir-rtl #id_s__filter_tex_latexpreamble,
+.dir-rtl #id_s__filter_tex_latexbackground,
+.dir-rtl #id_s__filter_tex_pathlatex,
+.dir-rtl #id_s__filter_tex_pathdvips,
+.dir-rtl #id_s__filter_tex_pathconvert,
+.dir-rtl #id_s__blockedip,
+.dir-rtl #id_s__pathtoclam,
+.dir-rtl #id_s__quarantinedir,
+.dir-rtl #id_s__sitepolicy,
+.dir-rtl #id_s__sitepolicyguest,
+.dir-rtl #id_s__cronremotepassword,
+.dir-rtl #id_s__allowedip,
+.dir-rtl #id_s__blockedip,
+.dir-rtl #id_s_enrol_meta_nosyncroleids,
+.dir-rtl #id_s_enrol_ldap_host_url,
+.dir-rtl #id_s_enrol_ldap_ldapencoding,
+.dir-rtl #id_s_enrol_ldap_bind_dn,
+.dir-rtl #id_s_enrol_ldap_bind_pw,
+.dir-rtl #admin-emoticons .form-text,
+.dir-rtl #admin-role_mapping input[type=text],
+.dir-rtl #id_s_enrol_paypal_paypalbusiness,
+.dir-rtl #id_s_enrol_flatfile_location,
+.dir-rtl#page-admin-setting-enrolsettingsflatfile input[type=text],
+.dir-rtl#page-admin-setting-enrolsettingsdatabase input[type=text],
+.dir-rtl#page-admin-auth-db input[type=text] {
+    direction: ltr;
+}

@@ -1,0 +1,144 @@
+.userenrolment {
+    width: 100%;
+    border-collapse: collapse;
+    .col_userdetails {
+        .subfield_picture {
+            float: left;
+            margin: 0 5px;
+        }
+    }
+    .col_lastseen {
+    }
+    .col_role {
+
+        a, span {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        a {
+            float: right;
+        }
+        .addrole {
+            text-align: center;
+        }
+    }
+    .hasAllRoles {
+        .col_role {
+            .addrole {
+                display: none;
+            }
+        }
+    }
+    .col_group {
+        .group {
+            float: left;
+            white-space: nowrap;
+            a {
+                margin-left: 3px;
+                cursor: pointer;
+            }
+        }
+        .addgroup {
+            text-align: center;
+            a {
+                img {
+                    vertical-align: bottom;
+                }
+            }
+        }
+    }
+}
+
+.enrolpanel.roleassign.visible {
+    .popover;
+    width: @popover-max-width;
+    width: @popover-max-width;
+    display: block;
+    .container {
+        content: inherit;
+        display: block;
+        padding: 0;
+        border: 0;
+    }
+    a {
+        text-decoration: underline;
+    }
+    
+    .header {
+        .popover-title;
+        .close {
+            .glyphicon;
+            color: @link-color;
+            background: inherit;
+            font-size: 20px;
+            margin-bottom: 10px;
+            margin-top: 5px;
+            opacity: 1;
+            width: auto;
+            top: 5px;
+            right: 10px;
+            height: auto;
+            position: absolute;
+
+            &:before { content: "\e014"; } 
+        }
+    }
+    .content {
+        .popover-content;
+        margin-top: 5px;
+        background-color: (lighten(@popover-bg, 10%));
+    }
+}
+
+
+#page-enrol-users {
+    .enrol_user_buttons {
+        float: right;
+        .enrolusersbutton {
+            display: inline;
+            div,
+            form {
+                display: inline;
+                margin-right: 0;
+            }
+        }
+    }
+    #filterform {
+        .well;
+        display: inline-block;
+        .fitem {
+            display: inline-block;
+            
+            margin-right: .3em;
+            white-space: nowrap;
+            label {
+                display: inline;
+                line-height: @line-height-base;
+                padding-right: .3em;
+            }
+            :before,
+            :after {
+                display: inline;
+            }
+        }
+        div,
+        fieldset {
+            display: table;
+            float: none;
+            clear: none;
+            width: auto;
+            margin: 0;
+        }
+        select,
+        .ftext input {
+            width: 7em;
+        }
+        input,
+        select {
+            margin-bottom: 0;
+        }
+    }
+    .user-enroller-panel .uep-search-results .user .details {
+       width: 237px;
+    }
+}
