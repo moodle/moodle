@@ -3809,8 +3809,10 @@ function update_user_record_by_id($id) {
         $customfields = $userauth->get_custom_user_profile_fields();
 
         foreach ($newinfo as $key => $value) {
-            $key = strtolower($key);
             $iscustom = in_array($key, $customfields);
+            if (!$iscustom) {
+                $key = strtolower($key);
+            }
             if ((!property_exists($oldinfo, $key) && !$iscustom) or $key === 'username' or $key === 'id'
                     or $key === 'auth' or $key === 'mnethostid' or $key === 'deleted') {
                 // Unknown or must not be changed.
