@@ -3992,7 +3992,7 @@ function forum_set_return() {
 
 /**
  * @global object
- * @param string $default
+ * @param string|\moodle_url $default
  * @return string
  */
 function forum_go_back_to($default) {
