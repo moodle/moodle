@@ -45,7 +45,7 @@ Feature: Sections can be edited and deleted in weeks format
     Given I should see "29 May - 4 June" in the "li#section-5" "css_element"
     When I click on "Delete week" "link" in the "li#section-5" "css_element"
     Then I should see "Are you absolutely sure you want to completely delete \"29 May - 4 June\" and all the activities it contains?"
-    And I press "Continue"
+    And I press "Delete"
     And I should not see "29 May - 4 June"
     And I navigate to "Edit settings" node in "Course administration"
     And I expand all fieldsets
@@ -54,7 +54,7 @@ Feature: Sections can be edited and deleted in weeks format
   Scenario: Deleting the middle section in weeks format
     Given I should see "29 May - 4 June" in the "li#section-5" "css_element"
     When I click on "Delete week" "link" in the "li#section-4" "css_element"
-    And I press "Continue"
+    And I press "Delete"
     Then I should not see "29 May - 4 June"
     And I should not see "Test chat name"
     And I should see "Test choice name" in the "li#section-4" "css_element"
@@ -66,7 +66,7 @@ Feature: Sections can be edited and deleted in weeks format
     When I follow "Reduce the number of sections"
     Then I should see "Orphaned activities (section 5)" in the "li#section-5" "css_element"
     And I click on "Delete week" "link" in the "li#section-5" "css_element"
-    And I press "Continue"
+    And I press "Delete"
     And I should not see "29 May - 4 June"
     And I should not see "Orphaned activities"
     And "li#section-5" "css_element" should not exist
@@ -80,7 +80,7 @@ Feature: Sections can be edited and deleted in weeks format
     And "li#section-5.orphaned" "css_element" should exist
     And "li#section-4.orphaned" "css_element" should not exist
     And I click on "Delete week" "link" in the "li#section-1" "css_element"
-    And I press "Continue"
+    And I press "Delete"
     And I should not see "Test book name"
     And I should see "Orphaned activities (section 4)" in the "li#section-4" "css_element"
     And "li#section-5" "css_element" should not exist
