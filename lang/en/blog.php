@@ -68,6 +68,7 @@ $string['courseblogdisable'] = 'Course blogs are not enabled';
 $string['courseblogs'] = 'Users can only see blogs for people who share a course';
 $string['deleteblogassociations'] = 'Delete blog associations';
 $string['deleteblogassociations_help'] = 'If ticked then blog entries will no longer be associated with this course or any course activities or resources.  The blog entries themselves will not be deleted.';
+$string['deleteentry'] = 'Delete entry';
 $string['deleteexternalblog'] = 'Unregister this external blog';
 $string['deleteotagswarn'] = 'Are you sure you want to remove these tags from all blog posts and remove it from the system?';
 $string['description'] = 'Description';
