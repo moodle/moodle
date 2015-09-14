@@ -1,4 +1,4 @@
-@ou @ou_vle @qtype @qtype_ddwtos
+@qtype @qtype_ddwtos
 Feature: Test exporting drag and drop into text questions
   As a teacher
   In order to be able to reuse my drag and drop into text questions

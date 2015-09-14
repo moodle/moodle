@@ -1,4 +1,4 @@
-@ou @ou_vle @qtype @qtype_ddwtos
+@qtype @qtype_ddwtos
 Feature: Preview a drag-drop into text question
   As a teacher
   In order to check my drag-drop into text questions will work for students

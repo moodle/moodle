@@ -1,4 +1,4 @@
-@ou @ou_vle @qtype @qtype_ddwtos
+@qtype @qtype_ddwtos
 Feature: Test duplicating a quiz containing a drag and drop into text question
   As a teacher
   In order re-use my courses containing drag and drop into text questions

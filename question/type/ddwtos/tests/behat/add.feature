@@ -1,4 +1,4 @@
-@ou @ou_vle @qtype @qtype_ddwtos
+@qtype @qtype_ddwtos
 Feature: Test creating a drag and drop into text question
   As a teacher
   In order to test my students
