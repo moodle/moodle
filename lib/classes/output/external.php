@@ -56,16 +56,6 @@ class external extends external_api {
     }
 
     /**
-     * Can this function be called directly from ajax?
-     *
-     * @return boolean
-     * @since Moodle 2.9
-     */
-    public static function load_template_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Return a mustache template, and all the strings it requires.
      *
      * @param string $component The component that holds the template.

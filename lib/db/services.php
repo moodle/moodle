@@ -975,7 +975,8 @@ $functions = array(
         'classpath'   => 'lib/external/externallib.php',
         'description' => 'Return a translated string - similar to core get_string() call',
         'type'        => 'read',
-        'loginrequired' => false
+        'loginrequired' => false,
+        'ajax'        => true,
     ),
 
     'core_get_strings' => array(
@@ -984,7 +985,8 @@ $functions = array(
         'classpath'   => 'lib/external/externallib.php',
         'description' => 'Return some translated strings - like several core get_string() calls',
         'type'        => 'read',
-        'loginrequired' => false
+        'loginrequired' => false,
+        'ajax'        => true,
     ),
 
     'core_get_component_strings' => array(
@@ -994,7 +996,8 @@ $functions = array(
         'description' => 'Return all raw strings (with {$a->xxx}) for a specific component
             - similar to core get_component_strings() call',
         'type'        => 'read',
-        'loginrequired' => false
+        'loginrequired' => false,
+        'ajax'        => true,
     ),
 
 
@@ -1033,7 +1036,8 @@ $functions = array(
         'methodname'  => 'load_template',
         'description' => 'Load a template for a renderable',
         'type'        => 'read',
-        'loginrequired' => false
+        'loginrequired' => false,
+        'ajax'        => true,
     ),
 
     // Completion related functions.
@@ -1075,6 +1079,7 @@ $functions = array(
         'methodname'  => 'update_tags',
         'description' => 'Updates tags',
         'type'        => 'write',
+        'ajax'        => true
     ),
 
     'core_tag_get_tags' => array(
@@ -1082,6 +1087,7 @@ $functions = array(
         'methodname'  => 'get_tags',
         'description' => 'Gets tags by their ids',
         'type'        => 'read',
+        'ajax'        => true
     ),
 
 );
