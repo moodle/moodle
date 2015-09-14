@@ -112,6 +112,14 @@ function external_function_info($function, $strictness=MUST_EXIST) {
         if (isset($functions[$function->name]['testclientpath'])) {
             $function->testclientpath = $functions[$function->name]['testclientpath'];
         }
+        if (isset($functions[$function->name]['type'])) {
+            $function->type = $functions[$function->name]['type'];
+        }
+        if (isset($functions[$function->name]['loginrequired'])) {
+            $function->loginrequired = $functions[$function->name]['loginrequired'];
+        } else {
+            $function->loginrequired = true;
+        }
     }
 
     return $function;

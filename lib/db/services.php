@@ -975,6 +975,7 @@ $functions = array(
         'classpath'   => 'lib/external/externallib.php',
         'description' => 'Return a translated string - similar to core get_string() call',
         'type'        => 'read',
+        'loginrequired' => false
     ),
 
     'core_get_strings' => array(
@@ -983,6 +984,7 @@ $functions = array(
         'classpath'   => 'lib/external/externallib.php',
         'description' => 'Return some translated strings - like several core get_string() calls',
         'type'        => 'read',
+        'loginrequired' => false
     ),
 
     'core_get_component_strings' => array(
@@ -992,6 +994,7 @@ $functions = array(
         'description' => 'Return all raw strings (with {$a->xxx}) for a specific component
             - similar to core get_component_strings() call',
         'type'        => 'read',
+        'loginrequired' => false
     ),
 
 
@@ -1029,7 +1032,8 @@ $functions = array(
         'classname'   => 'core\output\external',
         'methodname'  => 'load_template',
         'description' => 'Load a template for a renderable',
-        'type'        => 'read'
+        'type'        => 'read',
+        'loginrequired' => false
     ),
 
     // Completion related functions.
