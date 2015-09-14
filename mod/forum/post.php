@@ -315,22 +315,22 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $timepassed = time() - $post->created;
         if (($timepassed > $CFG->maxeditingtime) && !has_capability('mod/forum:deleteanypost', $modcontext)) {
             print_error("cannotdeletepost", "forum",
-                      forum_go_back_to("discuss.php?d=$post->discussion"));
+                        forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
         }
 
         if ($post->totalscore) {
             notice(get_string('couldnotdeleteratings', 'rating'),
-                    forum_go_back_to("discuss.php?d=$post->discussion"));
+                   forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
 
         } else if ($replycount && !has_capability('mod/forum:deleteanypost', $modcontext)) {
             print_error("couldnotdeletereplies", "forum",
-                    forum_go_back_to("discuss.php?d=$post->discussion"));
+                        forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
 
         } else {
             if (! $post->parent) {  // post is a discussion topic as well, so delete discussion
                 if ($forum->type == 'single') {
                     notice("Sorry, but you are not allowed to delete that discussion!",
-                            forum_go_back_to("discuss.php?d=$post->discussion"));
+                           forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
                 }
                 forum_delete_discussion($discussion, false, $course, $cm, $forum);
 
@@ -355,9 +355,9 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
                     // Single discussion forums are an exception. We show
                     // the forum itself since it only has one discussion
                     // thread.
-                    $discussionurl = "view.php?f=$forum->id";
+                    $discussionurl = new moodle_url("/mod/forum/view.php", array('f' => $forum->id));
                 } else {
-                    $discussionurl = "discuss.php?d=$post->discussion";
+                    $discussionurl = new moodle_url("/mod/forum/discuss.php", array('d' => $discussion->id));
                 }
 
                 $params = array(
@@ -395,7 +395,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         if ($replycount) {
             if (!has_capability('mod/forum:deleteanypost', $modcontext)) {
                 print_error("couldnotdeletereplies", "forum",
-                      forum_go_back_to("discuss.php?d=$post->discussion"));
+                      forum_go_back_to(new moodle_url('/mod/forum/discuss.php', array('d' => $post->discussion), 'p'.$post->id)));
             }
             echo $OUTPUT->header();
             echo $OUTPUT->heading(format_string($forum->name), 2);
@@ -457,7 +457,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
 
 
     if ($prunemform->is_cancelled()) {
-        redirect(forum_go_back_to("discuss.php?d=$post->discussion"));
+        redirect(forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $post->discussion))));
     } else if ($fromform = $prunemform->get_data()) {
         // User submits the data.
         $newdiscussion = new stdClass();
@@ -521,7 +521,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $event->add_record_snapshot('forum_discussions', $discussion);
         $event->trigger();
 
-        redirect(forum_go_back_to("discuss.php?d=$newid"));
+        redirect(forum_go_back_to(new moodle_url("/mod/forum/discuss.php", array('d' => $newid))));
 
     } else {
         // Display the prune form.
@@ -760,9 +760,9 @@ if ($mform_post->is_cancelled()) {
             // Single discussion forums are an exception. We show
             // the forum itself since it only has one discussion
             // thread.
-            $discussionurl = "view.php?f=$forum->id";
+            $discussionurl = new moodle_url("/mod/forum/view.php", array('f' => $forum->id));
         } else {
-            $discussionurl = "discuss.php?d=$discussion->id#p$fromform->id";
+            $discussionurl = new moodle_url("/mod/forum/discuss.php", array('d' => $discussion->id), 'p' . $fromform->id);
         }
 
         $params = array(
@@ -783,7 +783,7 @@ if ($mform_post->is_cancelled()) {
         $event->add_record_snapshot('forum_discussions', $discussion);
         $event->trigger();
 
-        redirect(forum_go_back_to("$discussionurl"), $message.$subscribemessage, $timemessage);
+        redirect(forum_go_back_to($discussionurl), $message.$subscribemessage, $timemessage);
 
         exit;
 
@@ -818,9 +818,9 @@ if ($mform_post->is_cancelled()) {
                 // Single discussion forums are an exception. We show
                 // the forum itself since it only has one discussion
                 // thread.
-                $discussionurl = "view.php?f=$forum->id";
+                $discussionurl = new moodle_url("/mod/forum/view.php", array('f' => $forum->id), 'p'.$fromform->id);
             } else {
-                $discussionurl = "discuss.php?d=$discussion->id";
+                $discussionurl = new moodle_url("/mod/forum/discuss.php", array('d' => $discussion->id), 'p'.$fromform->id);
             }
 
             $params = array(
@@ -844,7 +844,7 @@ if ($mform_post->is_cancelled()) {
                 $completion->update_state($cm,COMPLETION_COMPLETE);
             }
 
-            redirect(forum_go_back_to("$discussionurl#p$fromform->id"), $message.$subscribemessage, $timemessage);
+            redirect(forum_go_back_to($discussionurl), $message.$subscribemessage, $timemessage);
 
         } else {
             print_error("couldnotadd", "forum", $errordestination);
