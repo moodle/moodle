@@ -77,11 +77,6 @@ function external_function_info($function, $strictness=MUST_EXIST) {
         }
     }
     $function->allowed_from_ajax = false;
-    if (method_exists($function->classname, $function->ajax_method)) {
-        if (call_user_func(array($function->classname, $function->ajax_method)) === true) {
-            $function->allowed_from_ajax = true;
-        }
-    }
 
     // fetch the parameters description
     $function->parameters_desc = call_user_func(array($function->classname, $function->parameters_method));
@@ -117,6 +112,12 @@ function external_function_info($function, $strictness=MUST_EXIST) {
         }
         if (isset($functions[$function->name]['ajax'])) {
             $function->allowed_from_ajax = $functions[$function->name]['ajax'];
+        } else if (method_exists($function->classname, $function->ajax_method)) {
+            if (call_user_func(array($function->classname, $function->ajax_method)) === true) {
+                debugging('External function ' . $function->ajax_method . '() function is deprecated.' .
+                          'Set ajax=>true in db/service.php instead.', DEBUG_DEVELOPER);
+                $function->allowed_from_ajax = true;
+            }
         }
         if (isset($functions[$function->name]['loginrequired'])) {
             $function->loginrequired = $functions[$function->name]['loginrequired'];
