@@ -55,7 +55,7 @@ Feature: Test we can both create and delete a course.
     # Redirect
     And I should see "Delete TCCAC"
     And I should see "Test course: create a course (TCCAC)"
-    And I press "Continue"
+    And I press "Delete"
     # Redirect
     And I should see "Deleting TCCAC"
     And I should see "TCCAC has been completely deleted"
@@ -94,7 +94,7 @@ Feature: Test we can both create and delete a course.
     # Redirect
     And I should see "Delete TCCAC"
     And I should see "Test course: create a course (TCCAC)"
-    And I press "Continue"
+    And I press "Delete"
     # Redirect
     And I should see "Deleting TCCAC"
     And I should see "TCCAC has been completely deleted"
