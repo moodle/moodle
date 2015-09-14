@@ -2618,7 +2618,7 @@ function redirect($url, $message='', $delay=-1) {
     // Technically, HTTP/1.1 requires Location: header to contain the absolute path.
     // (In practice browsers accept relative paths - but still, might as well do it properly.)
     // This code turns relative into absolute.
-    if (!preg_match('|^[a-z]+:|', $url)) {
+    if (!preg_match('|^[a-z]+:|i', $url)) {
         // Get host name http://www.wherever.com.
         $hostpart = preg_replace('|^(.*?[^:/])/.*$|', '$1', $CFG->wwwroot);
         if (preg_match('|^/|', $url)) {
