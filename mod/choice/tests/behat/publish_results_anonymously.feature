@@ -22,7 +22,6 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: Publish anonymous results
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
@@ -41,9 +40,8 @@ Feature: A teacher can choose whether to publish choice activity results anonymo
     And I follow "Choice 1"
     Then I should not see "Student 1"
     And I should not see "Users who chose this option"
-    And I hover ".results .graph img" "css_element"
+    And ".results .graph img" "css_element" should exist
 
-  @javascript
   Scenario: Publish full results
     Given I add a "Choice" to section "1" and I fill the form with:
       | Choice name | Choice 1 |
