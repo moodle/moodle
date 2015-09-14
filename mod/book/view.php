@@ -173,7 +173,7 @@ if ($nextid) {
 // =====================================================
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($book->name);
+echo $OUTPUT->heading(format_string($book->name));
 
 // upper nav
 echo '<div class="navtop">'.$chnavigation.'</div>';
