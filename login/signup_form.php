@@ -192,7 +192,8 @@ class login_signup_form extends moodleform {
      */
     function signup_captcha_enabled() {
         global $CFG;
-        return !empty($CFG->recaptchapublickey) && !empty($CFG->recaptchaprivatekey) && get_config('auth/email', 'recaptcha');
+        $authplugin = get_auth_plugin($CFG->registerauth);
+        return !empty($CFG->recaptchapublickey) && !empty($CFG->recaptchaprivatekey) && $authplugin->is_captcha_enabled();
     }
 
 }
