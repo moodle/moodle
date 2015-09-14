@@ -1,0 +1,63 @@
+/* Template styles for base theme. */
+
+/* Styles for column templates. */
+.row-fluid {
+    width: 100%;
+}
+
+.row-fluid::before {
+    display: table;
+    content: "";
+    line-height: 0;
+}
+
+.row-fluid::after {
+    display: table;
+    content: "";
+    line-height: 0;
+    clear: both;
+}
+
+.row-fluid [class*="span"] {
+    float: left;
+    margin-left: 1%;
+    margin-right: 0;
+}
+
+.row-fluid [class*="span"]:first-child {
+    margin-left: 0;
+}
+
+.row-fluid .span4 {
+    width: 32.666666667%;
+}
+
+.row-fluid .span8 {
+    width: 66%;
+}
+
+/* RTL styles for column templates. */
+.dir-rtl .row-fluid [class*="span"] {
+    float: right;
+    margin-left: 0;
+    margin-right: 1%;
+}
+
+.dir-rtl .row-fluid [class*="span"]:first-child {
+    margin-right: 0;
+}
+
+/* Responsive styles for smaller screens. */
+@media (max-width: 767px) {
+    /* For column templates. */
+    .row-fluid [class*="span"] {
+        width: 100%;
+        float: none;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .dir-rtl .row-fluid [class*="span"] {
+        margin-right: 0;
+    }
+}
