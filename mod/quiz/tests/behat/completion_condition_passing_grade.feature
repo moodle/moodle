@@ -35,7 +35,7 @@ Feature: Set a quiz to be marked complete when the student passes
   Scenario: student1 passes on the first try
     When I log in as "student1"
     And I follow "Course 1"
-    And "//img[contains(@alt, 'Not completed: Test quiz name')]" "xpath_element" should exist in the "li.modtype_quiz" "css_element"
+    And the "Test quiz name" "quiz" activity with "auto" completion should be marked as not complete
     And I follow "Test quiz name"
     And I press "Attempt quiz now"
     And I set the field "True" to "1"

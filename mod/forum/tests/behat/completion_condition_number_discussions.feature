@@ -4,7 +4,6 @@ Feature: Set a certain number of discussions as a completion condition for a for
   As a teacher
   I need to set a minimum number of discussions to mark the forum activity as completed
 
-  @javascript
   Scenario: Set X number of discussions as a condition
     Given the following "users" exist:
       | username | firstname | lastname | email |
@@ -36,7 +35,7 @@ Feature: Set a certain number of discussions as a completion condition for a for
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    Then I hover "//li[contains(concat(' ', normalize-space(@class), ' '), ' modtype_forum ')]/descendant::img[@alt='Not completed: Test forum name']" "xpath_element"
+    Then the "Test forum name" "forum" activity with "auto" completion should be marked as not complete
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Post 1 subject |
       | Message | Body 1 content |
@@ -44,7 +43,7 @@ Feature: Set a certain number of discussions as a completion condition for a for
       | Subject | Post 2 subject |
       | Message | Body 2 content |
     And I follow "Course 1"
-    And I hover "//li[contains(concat(' ', normalize-space(@class), ' '), ' modtype_forum ')]/descendant::img[contains(@alt, 'Completed: Test forum name')]" "xpath_element"
+    Then the "Test forum name" "forum" activity with "auto" completion should be marked as complete
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
