@@ -476,4 +476,34 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // There should only be two items in the array, '.' and '..'.
         $this->assertEquals(2, count($filesarray));
     }
+
+    public function test_all_timezones() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        $realtimezones = array_intersect(get_list_of_timezones(), DateTimeZone::listIdentifiers());
+        $generatedtimezone = '8.0';
+
+        $testclass = new \core\task\scheduled_test_task();
+        $testclass->set_hour('1');
+        $testclass->set_minute('0');
+
+        $CFG->timezone = $generatedtimezone;
+
+        $this->resetDebugging();
+        $testclass->get_next_scheduled_time();
+        $this->assertEquals(count($this->getDebuggingMessages()), 1);
+
+        $this->resetDebugging();
+
+        if (count($realtimezones) > 0) {
+            $realtimezone = array_keys($realtimezones)[0];
+            $CFG->timezone = $realtimezone;
+
+            $this->resetDebugging();
+            $testclass->get_next_scheduled_time();
+            $this->assertEquals(count($this->getDebuggingMessages()), 0);
+        }
+    }
 }
