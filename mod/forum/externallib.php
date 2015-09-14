@@ -1129,10 +1129,10 @@ class mod_forum_external extends external_api {
     public static function add_discussion_parameters() {
         return new external_function_parameters(
             array(
-                'forumid' => new external_value(PARAM_INT, 'forum instance id'),
-                'subject' => new external_value(PARAM_TEXT, 'new discussion subject'),
-                'message' => new external_value(PARAM_RAW, 'new discussion message (only html format allowed)'),
-                'groupid' => new external_value(PARAM_INT, 'the user course group, default to 0', VALUE_DEFAULT, -1),
+                'forumid' => new external_value(PARAM_INT, 'Forum instance ID'),
+                'subject' => new external_value(PARAM_TEXT, 'New Discussion subject'),
+                'message' => new external_value(PARAM_RAW, 'New Discussion message (only html format allowed)'),
+                'groupid' => new external_value(PARAM_INT, 'The group, default to -1', VALUE_DEFAULT, -1),
                 'options' => new external_multiple_structure (
                     new external_single_structure(
                         array(
@@ -1140,8 +1140,8 @@ class mod_forum_external extends external_api {
                                         'The allowed keys (value format) are:
                                         discussionsubscribe (bool); subscribe to the discussion?, default to true
                             '),
-                            'value' => new external_value(PARAM_RAW, 'the value of the option,
-                                                            this param is validated in the external function.'
+                            'value' => new external_value(PARAM_RAW, 'The value of the option,
+                                                            This param is validated in the external function.'
                         )
                     )
                 ), 'Options', VALUE_DEFAULT, array())
@@ -1280,7 +1280,7 @@ class mod_forum_external extends external_api {
     public static function add_discussion_returns() {
         return new external_single_structure(
             array(
-                'discussionid' => new external_value(PARAM_INT, 'new discussion id'),
+                'discussionid' => new external_value(PARAM_INT, 'New Discussion ID'),
                 'warnings' => new external_warnings()
             )
         );
