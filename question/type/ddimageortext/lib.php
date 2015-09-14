@@ -17,7 +17,6 @@
 /**
  * Serve question type files
  *
- * @since      2.0
  * @package    qtype
  * @subpackage ddimageortext
  * @copyright  Dongsheng Cai <dongsheng@moodle.com>
