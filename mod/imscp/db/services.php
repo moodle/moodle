@@ -36,4 +36,13 @@ $functions = array(
         'capabilities'  => 'mod/imscp:view'
     ),
 
+    'mod_imscp_get_imscps_by_courses' => array(
+        'classname'     => 'mod_imscp_external',
+        'methodname'    => 'get_imscps_by_courses',
+        'description'   => 'Returns a list of IMSCP instances in a provided set of courses,
+                            if no courses are provided then all the IMSCP instances the user has access to will be returned.',
+        'type'          => 'read',
+        'capabilities'  => 'moodle/imscp:view'
+    ),
+
 );

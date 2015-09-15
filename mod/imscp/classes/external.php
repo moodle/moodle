@@ -104,4 +104,118 @@ class mod_imscp_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_imscps_by_courses.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_imscps_by_courses_parameters() {
+        return new external_function_parameters (
+            array(
+                'courseids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'course id'), 'Array of course ids', VALUE_DEFAULT, array()
+                ),
+            )
+        );
+    }
+
+    /**
+     * Returns a list of IMSCP packages in a provided list of courses,
+     * if no list is provided all IMSCP packages that the user can view will be returned.
+     *
+     * @param array $courseids the course ids
+     * @return array of IMSCP packages details and possible warnings
+     * @since Moodle 3.0
+     */
+    public static function get_imscps_by_courses($courseids = array()) {
+        global $CFG;
+
+        $returnedimscps = array();
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_imscps_by_courses_parameters(), array('courseids' => $courseids));
+
+        if (empty($params['courseids'])) {
+            $params['courseids'] = array_keys(enrol_get_my_courses());
+        }
+
+        // Ensure there are courseids to loop through.
+        if (!empty($params['courseids'])) {
+
+            list($courses, $warnings) = external_util::validate_courses($params['courseids']);
+
+            // Get the imscps in this course, this function checks users visibility permissions.
+            // We can avoid then additional validate_context calls.
+            $imscps = get_all_instances_in_courses("imscp", $courses);
+            foreach ($imscps as $imscp) {
+                $context = context_module::instance($imscp->coursemodule);
+
+                // Entry to return.
+                $imscpdetails = array();
+                // First, we return information that any user can see in the web interface.
+                $imscpdetails['id'] = $imscp->id;
+                $imscpdetails['coursemodule']      = $imscp->coursemodule;
+                $imscpdetails['course']            = $imscp->course;
+                $imscpdetails['name']              = format_string($imscp->name, true, array('context' => $context));
+
+                if (has_capability('mod/imscp:view', $context)) {
+                    // Format intro.
+                    list($imscpdetails['intro'], $imscpdetails['introformat']) =
+                        external_format_text($imscp->intro, $imscp->introformat, $context->id, 'mod_imscp', 'intro', null);
+                }
+
+                if (has_capability('moodle/course:manageactivities', $context)) {
+                    $imscpdetails['revision']      = $imscp->revision;
+                    $imscpdetails['keepold']       = $imscp->keepold;
+                    $imscpdetails['structure']     = $imscp->structure;
+                    $imscpdetails['timemodified']  = $imscp->timemodified;
+                    $imscpdetails['section']       = $imscp->section;
+                    $imscpdetails['visible']       = $imscp->visible;
+                    $imscpdetails['groupmode']     = $imscp->groupmode;
+                    $imscpdetails['groupingid']    = $imscp->groupingid;
+                }
+                $returnedimscps[] = $imscpdetails;
+            }
+        }
+        $result = array();
+        $result['imscps'] = $returnedimscps;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_imscps_by_courses return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.0
+     */
+    public static function get_imscps_by_courses_returns() {
+        return new external_single_structure(
+            array(
+                'imscps' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'IMSCP id'),
+                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
+                            'course' => new external_value(PARAM_INT, 'Course id'),
+                            'name' => new external_value(PARAM_TEXT, 'Activity name'),
+                            'intro' => new external_value(PARAM_RAW, 'The IMSCP intro', VALUE_OPTIONAL),
+                            'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
+                            'revision' => new external_value(PARAM_INT, 'Revision', VALUE_OPTIONAL),
+                            'keepold' => new external_value(PARAM_INT, 'Number of old IMSCP to keep', VALUE_OPTIONAL),
+                            'structure' => new external_value(PARAM_RAW, 'IMSCP structure', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_RAW, 'Time of last modification', VALUE_OPTIONAL),
+                            'section' => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),
+                            'visible' => new external_value(PARAM_BOOL, 'If visible', VALUE_OPTIONAL),
+                            'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
+                            'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
+                        ), 'IMS content packages'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
