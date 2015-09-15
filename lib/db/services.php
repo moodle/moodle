@@ -671,6 +671,15 @@ $functions = array(
         'capabilities'=> 'moodle/course:view,moodle/course:update,moodle/course:viewhiddencourses',
     ),
 
+    'core_course_search_courses' => array(
+        'classname'     => 'core_course_external',
+        'methodname'    => 'search_courses',
+        'classpath'     => 'course/externallib.php',
+        'description'   => 'Search courses by (name, module, block, tag)',
+        'type'          => 'read',
+        'capabilities'  => '',
+    ),
+
     'moodle_course_create_courses' => array(
         'classname'   => 'moodle_course_external',
         'methodname'  => 'create_courses',
@@ -1174,6 +1183,7 @@ $services = array(
             'core_comment_get_comments',
             'mod_forum_view_forum',
             'core_course_view_course',
+            'core_course_search_courses',
             'core_completion_get_activities_completion_status',
             'core_notes_get_course_notes',
             'core_completion_get_course_completion_status',

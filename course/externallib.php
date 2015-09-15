@@ -2122,6 +2122,200 @@ class core_course_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function search_courses_parameters() {
+        return new external_function_parameters(
+            array(
+                'criterianame'  => new external_value(PARAM_ALPHA, 'criteria name
+                                                        (search, modulelist (only admins), blocklist (only admins), tagid)'),
+                'criteriavalue' => new external_value(PARAM_RAW, 'criteria value'),
+                'page'          => new external_value(PARAM_INT, 'page number (0 based)', VALUE_DEFAULT, 0),
+                'perpage'       => new external_value(PARAM_INT, 'items per page', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Search courses following the specified criteria.
+     *
+     * @param string $criterianame  Criteria name (search, modulelist (only admins), blocklist (only admins), tagid)
+     * @param string $criteriavalue Criteria value
+     * @param int $page             Page number (for pagination)
+     * @param int $perpage          Items per page
+     * @return array of course objects and warnings
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function search_courses($criterianame, $criteriavalue, $page=0, $perpage=0) {
+        global $CFG;
+        require_once($CFG->libdir . '/coursecatlib.php');
+
+        $warnings = array();
+
+        $parameters = array(
+            'criterianame'  => $criterianame,
+            'criteriavalue' => $criteriavalue,
+            'page'          => $page,
+            'perpage'       => $perpage
+        );
+        $params = self::validate_parameters(self::search_courses_parameters(), $parameters);
+
+        $allowedcriterianames = array('search', 'modulelist', 'blocklist', 'tagid');
+        if (!in_array($params['criterianame'], $allowedcriterianames)) {
+            throw new invalid_parameter_exception('Invalid value for criterianame parameter (value: '.$params['criterianame'].'),' .
+                'allowed values are: '.implode(',', $allowedcriterianames));
+        }
+
+        if ($params['criterianame'] == 'modulelist' or $params['criterianame'] == 'blocklist') {
+            require_capability('moodle/site:config', context_system::instance());
+        }
+
+        $paramtype = array(
+            'search' => PARAM_RAW,
+            'modulelist' => PARAM_PLUGIN,
+            'blocklist' => PARAM_INT,
+            'tagid' => PARAM_INT
+        );
+        $params['criteriavalue'] = clean_param($params['criteriavalue'], $paramtype[$params['criterianame']]);
+
+        // Prepare the search API options.
+        $searchcriteria = array();
+        $searchcriteria[$params['criterianame']] = $params['criteriavalue'];
+
+        $options = array();
+        if ($params['perpage'] != 0) {
+            $offset = $params['page'] * $params['perpage'];
+            $options = array('offset' => $offset, 'limit' => $params['perpage']);
+        }
+
+        // Search the courses.
+        $courses = coursecat::search_courses($searchcriteria, $options);
+        $totalcount = coursecat::search_courses_count($searchcriteria);
+
+        $finalcourses = array();
+        $categoriescache = array();
+
+        foreach ($courses as $course) {
+
+            $coursecontext = context_course::instance($course->id);
+
+            // Category information.
+            if (!isset($categoriescache[$course->category])) {
+                $categoriescache[$course->category] = coursecat::get($course->category);
+            }
+            $category = $categoriescache[$course->category];
+
+            // Retrieve course overfiew used files.
+            $files = array();
+            foreach ($course->get_course_overviewfiles() as $file) {
+                $fileurl = moodle_url::make_webservice_pluginfile_url($file->get_contextid(), $file->get_component(),
+                                                                        $file->get_filearea(), null, $file->get_filepath(),
+                                                                        $file->get_filename())->out(false);
+                $files[] = array(
+                    'filename' => $file->get_filename(),
+                    'fileurl' => $fileurl,
+                    'filesize' => $file->get_filesize()
+                );
+            }
+
+            // Retrieve the course contacts,
+            // we need here the users fullname since if we are not enrolled can be difficult to obtain them via other Web Services.
+            $coursecontacts = array();
+            foreach ($course->get_course_contacts() as $contact) {
+                 $coursecontacts[] = array(
+                    'id' => $contact['user']->id,
+                    'fullname' => $contact['username']
+                );
+            }
+
+            // Allowed enrolment methods (maybe we can self-enrol).
+            $enroltypes = array();
+            $instances = enrol_get_instances($course->id, true);
+            foreach ($instances as $instance) {
+                $enroltypes[] = $instance->enrol;
+            }
+
+            // Format summary.
+            list($summary, $summaryformat) =
+                external_format_text($course->summary, $course->summaryformat, $coursecontext->id, 'course', 'summary', null);
+
+            $coursereturns = array();
+            $coursereturns['id']                = $course->id;
+            $coursereturns['fullname']          = $course->get_formatted_fullname();
+            $coursereturns['shortname']         = $course->get_formatted_shortname();
+            $coursereturns['categoryid']        = $course->category;
+            $coursereturns['categoryname']      = $category->name;
+            $coursereturns['summary']           = $summary;
+            $coursereturns['summaryformat']     = $summaryformat;
+            $coursereturns['overviewfiles']     = $files;
+            $coursereturns['contacts']          = $coursecontacts;
+            $coursereturns['enrollmentmethods'] = $enroltypes;
+            $finalcourses[] = $coursereturns;
+        }
+
+        return array(
+            'total' => $totalcount,
+            'courses' => $finalcourses,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function search_courses_returns() {
+
+        return new external_single_structure(
+            array(
+                'total' => new external_value(PARAM_INT, 'total course count'),
+                'courses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'course id'),
+                            'fullname' => new external_value(PARAM_TEXT, 'course full name'),
+                            'shortname' => new external_value(PARAM_TEXT, 'course short name'),
+                            'categoryid' => new external_value(PARAM_INT, 'category id'),
+                            'categoryname' => new external_value(PARAM_TEXT, 'category name'),
+                            'summary' => new external_value(PARAM_RAW, 'summary'),
+                            'summaryformat' => new external_format_value('summary'),
+                            'overviewfiles' => new external_multiple_structure(
+                                new external_single_structure(
+                                    array(
+                                        'filename' => new external_value(PARAM_FILE, 'overview file name'),
+                                        'fileurl'  => new external_value(PARAM_URL, 'overview file url'),
+                                        'filesize'  => new external_value(PARAM_INT, 'overview file size'),
+                                    )
+                                ),
+                                'additional overview files attached to this course'
+                            ),
+                            'contacts' => new external_multiple_structure(
+                                new external_single_structure(
+                                    array(
+                                        'id' => new external_value(PARAM_INT, 'contact user id'),
+                                        'fullname'  => new external_value(PARAM_NOTAGS, 'contact user fullname'),
+                                    )
+                                ),
+                                'contact users'
+                            ),
+                            'enrollmentmethods' => new external_multiple_structure(
+                                new external_value(PARAM_PLUGIN, 'enrollment method'),
+                                'enrollment methods list'
+                            ),
+                        )
+                    ), 'course'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
 
 /**
