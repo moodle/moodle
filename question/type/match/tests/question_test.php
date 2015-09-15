@@ -181,6 +181,50 @@ class qtype_match_question_test extends advanced_testcase {
                 ), $match->classify_response($response));
     }
 
+    public function test_classify_response_choice_deleted_after_attempt() {
+        $match = test_question_maker::make_a_matching_question();
+        $firststep = new question_attempt_step();
+
+        $match->start_attempt($firststep, 1);
+        $response = $match->prepare_simulated_post_data(array(
+                'Dog' => 'Amphibian', 'Frog' => 'Insect', 'Toad' => '', 'Cat' => 'Mammal'));
+
+        $match = test_question_maker::make_a_matching_question();
+        unset($match->stems[4]);
+        unset($match->stemsformat[4]);
+        unset($match->right[4]);
+        $match->apply_attempt_state($firststep);
+
+        $this->assertEquals(array(
+                1 => new question_classified_response(2, 'Amphibian', 0),
+                2 => new question_classified_response(3, 'Insect', 0),
+                3 => question_classified_response::no_response(),
+        ), $match->classify_response($response));
+    }
+
+    public function test_classify_response_choice_added_after_attempt() {
+        $match = test_question_maker::make_a_matching_question();
+        $firststep = new question_attempt_step();
+
+        $match->start_attempt($firststep, 1);
+        $response = $match->prepare_simulated_post_data(array(
+                'Dog' => 'Amphibian', 'Frog' => 'Insect', 'Toad' => '', 'Cat' => 'Mammal'));
+
+        $match = test_question_maker::make_a_matching_question();
+        $match->stems[5] = "Snake";
+        $match->stemsformat[5] = FORMAT_HTML;
+        $match->choices[5] = "Reptile";
+        $match->right[5] = 5;
+        $match->apply_attempt_state($firststep);
+
+        $this->assertEquals(array(
+                1 => new question_classified_response(2, 'Amphibian', 0),
+                2 => new question_classified_response(3, 'Insect', 0),
+                3 => question_classified_response::no_response(),
+                4 => new question_classified_response(1, 'Mammal', 0.20),
+        ), $match->classify_response($response));
+    }
+
     public function test_prepare_simulated_post_data() {
         $m = test_question_maker::make_a_matching_question();
         $m->start_attempt(new question_attempt_step(), 1);
