@@ -185,7 +185,7 @@ class grading_manager {
         } else if ($this->get_context()->contextlevel >= CONTEXT_COURSE) {
             list($context, $course, $cm) = get_context_info_array($this->get_context()->id);
 
-            if (!empty($cm->name)) {
+            if (strval($cm->name) !== '') {
                 $title = $cm->name;
             } else {
                 debugging('Gradable areas are currently supported at the course module level only', DEBUG_DEVELOPER);

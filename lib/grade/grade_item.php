@@ -1304,7 +1304,7 @@ class grade_item extends grade_object {
      * @return string name
      */
     public function get_name($fulltotal=false) {
-        if (!empty($this->itemname)) {
+        if (strval($this->itemname) !== '') {
             // MDL-10557
             return format_string($this->itemname);
 
