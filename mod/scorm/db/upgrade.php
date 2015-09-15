@@ -315,6 +315,23 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014111001, 'scorm');
     }
 
+    if ($oldversion < 2014111003) {
+        $table = new xmldb_table('scorm');
+
+        // Changing the default of field forcecompleted on table scorm to 0.
+        $field = new xmldb_field('forcecompleted', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'maxattempt');
+        // Launch change of default for field forcecompleted.
+        $dbman->change_field_default($table, $field);
+
+        // Changing the default of field displaycoursestructure on table scorm to 0.
+        $field = new xmldb_field('displaycoursestructure', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'displayattemptstatus');
+        // Launch change of default for field displaycoursestructure.
+        $dbman->change_field_default($table, $field);
+
+        // Scorm savepoint reached.
+        upgrade_mod_savepoint(true, 2014111003, 'scorm');
+    }
+    
     return true;
 }
 
