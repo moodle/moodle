@@ -505,7 +505,7 @@ if (!empty($departmentid) && !company::check_valid_department($companyid, $depar
 }   
 
 // Check the userid is valid.
-if (!company::check_valid_user($companyid, $userid, $departmentid)) {
+if (!empty($userid) && !company::check_valid_user($companyid, $userid, $departmentid)) {
     print_error('invaliduserdepartment', 'block_iomad_company_management');
 }
 
