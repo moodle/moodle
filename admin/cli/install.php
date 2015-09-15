@@ -273,7 +273,8 @@ $interactive = empty($options['non-interactive']);
 
 // set up language
 $lang = clean_param($options['lang'], PARAM_SAFEDIR);
-if (file_exists($CFG->dirroot.'/install/lang/'.$lang)) {
+$languages = get_string_manager()->get_list_of_translations();
+if (array_key_exists($lang, $languages)) {
     $CFG->lang = $lang;
 }
 
@@ -295,23 +296,34 @@ echo get_string('cliinstallheader', 'install', $CFG->target_release)."\n";
 //Fist select language
 if ($interactive) {
     cli_separator();
-    $languages = get_string_manager()->get_list_of_translations();
     // Do not put the langs into columns because it is not compatible with RTL.
-    $langlist = implode("\n", $languages);
     $default = $CFG->lang;
-    cli_heading(get_string('availablelangs', 'install'));
-    echo $langlist."\n";
+    cli_heading(get_string('chooselanguagehead', 'install'));
+    if (array_key_exists($default, $languages)) {
+        echo $default.' - '.$languages[$default]."\n";
+    }
+    if ($default !== 'en') {
+        echo 'en - English (en)'."\n";
+    }
+    echo '? - '.get_string('availablelangs', 'install')."\n";
     $prompt = get_string('clitypevaluedefault', 'admin', $CFG->lang);
     $error = '';
     do {
         echo $error;
         $input = cli_input($prompt, $default);
-        $input = clean_param($input, PARAM_SAFEDIR);
 
-        if (!file_exists($CFG->dirroot.'/install/lang/'.$input)) {
-            $error = get_string('cliincorrectvalueretry', 'admin')."\n";
+        if ($input === '?') {
+            echo implode("\n", $languages)."\n";
+            $error = "\n";
+
         } else {
-            $error = '';
+            $input = clean_param($input, PARAM_SAFEDIR);
+
+            if (!array_key_exists($input, $languages)) {
+                $error = get_string('cliincorrectvalueretry', 'admin')."\n";
+            } else {
+                $error = '';
+            }
         }
     } while ($error !== '');
     $CFG->lang = $input;
