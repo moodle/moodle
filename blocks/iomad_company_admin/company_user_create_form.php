@@ -235,15 +235,18 @@ class user_edit_form extends company_moodleform {
                     }
                 }
 
-                $licensecourses = $DB->get_records_sql_menu("SELECT c.id, c.fullname FROM {companylicense_courses} clc
+                if (!$licensecourses = $DB->get_records_sql_menu("SELECT c.id, c.fullname FROM {companylicense_courses} clc
                                                              JOIN {course} c ON (clc.courseid = c.id
                                                              AND clc.licenseid = :licenseid)",
-                                                             array('licenseid' => $mylicenseid));
+                                                             array('licenseid' => $mylicenseid))) {
+                    $licensecourses = array();
+                }
 
                 $licensecourseselect = $mform->addElement('select', 'licensecourses',
                                                           get_string('select_license_courses', 'block_iomad_company_admin'),
                                                           $licensecourses, array('id' => 'licensecourseselector'));
                 $licensecourseselect->setMultiple(true);
+                $licensecourseselect->setSelected(array());
             }
 
             if (!$onlyone) {
@@ -325,7 +328,7 @@ class user_edit_form extends company_moodleform {
         }
 
         //  Check numbers of licensed courses against license.
-        if (!empty($usernew->licenseid)) {
+        if (!empty($usernew->licenseid) && !empty($usernew->licensecourses)) {
             if ($license = $DB->get_record('companylicense', array('id' => $usernew->licenseid))) {
                 if (count($usernew->licensecourses) + $license->used > $license->allocation) {
                     $errors['licensecourses'] = get_string('triedtoallocatetoomanylicenses', 'block_iomad_company_admin');
@@ -344,7 +347,6 @@ $companyid = optional_param('companyid', company_user::companyid(), PARAM_INTEGE
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $createdok = optional_param('createdok', 0, PARAM_INTEGER);
 $createcourses = optional_param_array('currentcourses', null, PARAM_INT);
-$licensecourses = optional_param_array('licensecourses', null, PARAM_INT);
 $licenseid = optional_param('licenseid', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
@@ -463,12 +465,12 @@ if ($companyform->is_cancelled() || $mform->is_cancelled()) {
         company_user::enrol($userdata, $createcourses, $companyid);
     }
     // Assign and licenses.
-    if (!empty($licensecourses)) {
+    if (!empty($data->licensecourses)) {
         $licenserecord = (array) $DB->get_record('companylicense', array('id' => $licenseid));
         $userdata = $DB->get_record('user', array('id' => $userid));
         $count = $licenserecord['used'];
         $numberoflicenses = $licenserecord['allocation'];
-        foreach ($licensecourses as $licensecourse) {
+        foreach ($data->licensecourses as $licensecourse) {
             if ($count >= $numberoflicenses) {
                 // Set the used amount.
                 $licenserecord['used'] = $count;
