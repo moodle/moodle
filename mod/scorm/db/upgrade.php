@@ -331,7 +331,7 @@ function xmldb_scorm_upgrade($oldversion) {
         // Scorm savepoint reached.
         upgrade_mod_savepoint(true, 2014111003, 'scorm');
     }
-    
+
     return true;
 }
 
