@@ -138,6 +138,8 @@ information provided here is intended especially for developers.
 * external_api::validate_context now is public, it can be called from other classes.
 * rss_error() now supports returning of correct HTTP status of error and will return '404 Not Found'
   unless other status is specified.
+* The clilib.php provides two new functions cli_write() and cli_writeln() that should be used for outputting texts from the command
+  line interface scripts.
 
 === 2.9.1 ===
 
