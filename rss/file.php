@@ -178,7 +178,7 @@ send_file($pathname, 'rss.xml', 3600);   // Cached by browsers for 1 hour.
  * @param string $error the error type, default is rsserror
  * @param string $filename the name of the file to created
  * @param int $unused
- * @param $statuscode http 1.1 statuscode indicicating the error
+ * @param string $statuscode http 1.1 statuscode indicicating the error
  * @uses exit
  */
 function rss_error($error='rsserror', $filename='rss.xml', $unused=0, $statuscode='404 Not Found') {
