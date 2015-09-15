@@ -72,6 +72,57 @@ class core_externallib_testcase extends advanced_testcase {
         $this->assertSame('aaa', $result['text']);
     }
 
+    public function test_external_format_text() {
+        $settings = external_settings::get_instance();
+
+        $currentraw = $settings->get_raw();
+        $currentfilter = $settings->get_filter();
+
+        $settings->set_raw(true);
+        $settings->set_filter(false);
+        $context = context_system::instance();
+
+        $test = '$$ \pi $$';
+        $testformat = FORMAT_MARKDOWN;
+        $correct = array($test, $testformat);
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0), $correct);
+
+        $settings->set_raw(false);
+        $settings->set_filter(true);
+
+        $test = '$$ \pi $$';
+        $testformat = FORMAT_MARKDOWN;
+        $correct = array('<span class="nolink"><span class="filter_mathjaxloader_equation"><p>$$ \pi $$</p>
+</span></span>', FORMAT_HTML);
+        $this->assertSame(external_format_text($test, $testformat, $context->id, 'core', '', 0), $correct);
+
+        $settings->set_raw($currentraw);
+        $settings->set_filter($currentfilter);
+    }
+
+    public function test_external_format_string() {
+        $settings = external_settings::get_instance();
+
+        $currentraw = $settings->get_raw();
+        $currentfilter = $settings->get_filter();
+
+        $settings->set_raw(true);
+        $context = context_system::instance();
+
+        $test = '$$ \pi $$ <script>hi</script> <h3>there</h3>';
+        $correct = $test;
+        $this->assertSame(external_format_string($test, $context->id), $correct);
+
+        $settings->set_raw(false);
+
+        $test = '$$ \pi $$<script>hi</script> <h3>there</h3>';
+        $correct = '$$ \pi $$hi there';
+        $this->assertSame(external_format_string($test, $context->id), $correct);
+
+        $settings->set_raw($currentraw);
+        $settings->set_filter($currentfilter);
+    }
+
     /**
      * Test for clean_returnvalue().
      */
