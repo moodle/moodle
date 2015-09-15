@@ -64,6 +64,7 @@ reload,moodle
 remotedownloaderror,error
 thisdirection,langconfig
 thislanguage,langconfig
+upgradekeyset,admin
 welcomep10,install
 welcomep20,install
 welcomep30,install

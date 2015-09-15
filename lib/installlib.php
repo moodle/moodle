@@ -256,6 +256,10 @@ function install_generate_configphp($database, $cfg) {
     }
     $configphp .= '$CFG->directorypermissions = ' . $chmod . ';' . PHP_EOL . PHP_EOL;
 
+    if (isset($cfg->upgradekey) and $cfg->upgradekey !== '') {
+        $configphp .= '$CFG->upgradekey = ' . var_export($cfg->upgradekey, true) . ';' . PHP_EOL . PHP_EOL;
+    }
+
     $configphp .= 'require_once(dirname(__FILE__) . \'/lib/setup.php\');' . PHP_EOL . PHP_EOL;
     $configphp .= '// There is no php closing tag in this file,' . PHP_EOL;
     $configphp .= '// it is intentional because it prevents trailing whitespace problems!' . PHP_EOL;

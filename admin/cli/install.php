@@ -74,6 +74,7 @@ Options:
 --adminpass=PASSWORD  Password for the moodle admin account,
                       required in non-interactive mode.
 --adminemail=STRING   Email address for the moodle admin account.
+--upgradekey=STRING   The upgrade key to be set in the config.php, leave empty to not set it.
 --non-interactive     No interactive questions, installation fails if any
                       problem encountered.
 --agree-license       Indicates agreement with software license,
@@ -258,6 +259,7 @@ list($options, $unrecognized) = cli_get_params(
         'adminuser'         => 'admin',
         'adminpass'         => '',
         'adminemail'        => '',
+        'upgradekey'        => '',
         'non-interactive'   => false,
         'agree-license'     => false,
         'allow-unstable'    => false,
@@ -720,6 +722,24 @@ if ($interactive) {
 if (!empty($options['adminemail']) && !validate_email($options['adminemail'])) {
     $a = (object) array('option' => 'adminemail', 'value' => $options['adminemail']);
     cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
+}
+
+// Ask for the upgrade key.
+if ($interactive) {
+    cli_separator();
+    cli_heading(get_string('upgradekeyset', 'admin'));
+    if ($options['upgradekey'] !== '') {
+        $prompt = get_string('clitypevaluedefault', 'admin', $options['upgradekey']);
+        $options['upgradekey'] = cli_input($prompt, $options['upgradekey']);
+    } else {
+        $prompt = get_string('clitypevalue', 'admin');
+        $options['upgradekey'] = cli_input($prompt);
+    }
+}
+
+// Set the upgrade key if it was provided.
+if ($options['upgradekey'] !== '') {
+    $CFG->upgradekey = $options['upgradekey'];
 }
 
 if ($interactive) {
