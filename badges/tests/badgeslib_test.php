@@ -344,6 +344,11 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_ACTIVITY, 'badgeid' => $badge->id));
         $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY, 'module_'.$this->module->cmid => $this->module->cmid));
 
+        // Assert the badge will not be issued to the user as is.
+        $badge = new badge($this->coursebadge);
+        $badge->review_all_criteria();
+        $this->assertFalse($badge->is_issued($this->user->id));
+
         // Set completion for forum activity.
         $c = new completion_info($this->course);
         $activities = $c->get_activities();
@@ -379,6 +384,11 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
 
         $ccompletion = new completion_completion(array('course' => $this->course->id, 'userid' => $this->user->id));
 
+        // Assert the badge will not be issued to the user as is.
+        $badge = new badge($this->coursebadge);
+        $badge->review_all_criteria();
+        $this->assertFalse($badge->is_issued($this->user->id));
+
         // Mark course as complete.
         $sink = $this->redirectEmails();
         $ccompletion->mark_complete();
@@ -394,18 +404,33 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
      * Test badges observer when user_updated event is fired.
      */
     public function test_badges_observer_profile_criteria_review() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot.'/user/profile/lib.php');
+
+        // Add a custom field of textarea type.
+        $customprofileid = $DB->insert_record('user_info_field', array(
+            'shortname' => 'newfield', 'name' => 'Description of new field', 'categoryid' => 1,
+            'datatype' => 'textarea'));
+
         $this->preventResetByRollback(); // Messaging is not compatible with transactions.
         $badge = new badge($this->coursebadge);
-        $this->assertFalse($badge->is_issued($this->user->id));
 
         $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id));
         $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY));
         $criteria_overall1 = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_PROFILE, 'badgeid' => $badge->id));
-        $criteria_overall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'field_address' => 'address', 'field_aim' => 'aim'));
+        $criteria_overall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'field_address' => 'address', 'field_aim' => 'aim',
+            'field_' . $customprofileid => $customprofileid));
 
+        // Assert the badge will not be issued to the user as is.
+        $badge = new badge($this->coursebadge);
+        $badge->review_all_criteria();
+        $this->assertFalse($badge->is_issued($this->user->id));
+
+        // Set the required fields and make sure the badge got issued.
         $this->user->address = 'Test address';
         $this->user->aim = '999999999';
         $sink = $this->redirectEmails();
+        profile_save_data((object)array('id' => $this->user->id, 'profile_field_newfield' => 'X'));
         user_update_user($this->user, false);
         $this->assertCount(1, $sink->get_messages());
         $sink->close();
