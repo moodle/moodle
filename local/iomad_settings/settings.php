@@ -25,4 +25,9 @@ if ($hassiteconfig) {
                                                 get_string('establishment_code_help', 'local_iomad_settings'),
                                                 '',
                                                 PARAM_INT));
+
+    $settings->add(new admin_setting_configcheckbox('iomad_use_email_as_username',
+                                                get_string('iomad_use_email_as_username', 'local_iomad_settings'),
+                                                get_string('iomad_use_email_as_username_help', 'local_iomad_settings'),
+                                                0));
 }

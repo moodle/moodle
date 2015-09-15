@@ -109,6 +109,13 @@ class user_edit_form extends company_moodleform {
             $mform->addRule('email', $strrequired, 'required', null, 'client');
             $mform->setType('email', PARAM_EMAIL);
         }
+        $mform->addElement('advcheckbox', 'use_email_as_username', get_string('iomad_use_email_as_username', 'local_iomad_settings'));
+        if (!empty($CFG->iomad_use_email_as_username)) {
+            $mform->setDefault('use_email_as_username', 1);
+        } else {
+            $mform->setDefault('use_email_as_username', 0);
+        }
+
         /* /copied from /user/editlib.php */
 
         $mform->addElement('static', 'blankline', '', '');

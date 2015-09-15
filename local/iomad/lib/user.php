@@ -47,7 +47,7 @@ class company_user {
         $defaults = $company->get_user_defaults();
         $user = (object) array_merge( (array) $defaults, (array) $data);
 
-        $user->username = self::generate_username( $user->email );
+        $user->username = self::generate_username( $user->email, $data->use_email_as_username );
         $user->username = clean_param($user->username, PARAM_USERNAME);
         
         // Deal with the company theme.
@@ -349,25 +349,29 @@ class company_user {
 Thank you for your request.
 
      */
-    public static function generate_username( $email ) {
+    public static function generate_username( $email, $useemail=false ) {
         global $DB;
 
-        // First strip the domain name of the email address.
-        $baseusername = preg_replace( "/@.*/", "", $email );
-        $baseusername = clean_param($baseusername, PARAM_USERNAME);
-        $username = $baseusername;
+        if (empty($useemail)) {
+            // First strip the domain name of the email address.
+            $baseusername = preg_replace( "/@.*/", "", $email );
+            $baseusername = clean_param($baseusername, PARAM_USERNAME);
+            $username = $baseusername;
 
-        // If the username already exists, try adding a random number
-        // $variant to protect against infinite loop.
-        $variant = $DB->count_records('user');
-        while ($variant-- && $DB->record_exists('user', array('username' => $username))) {
-            $username = $baseusername . rand(10, 99);
-        }
+            // If the username already exists, try adding a random number
+            // $variant to protect against infinite loop.
+            $variant = $DB->count_records('user');
+            while ($variant-- && $DB->record_exists('user', array('username' => $username))) {
+                $username = $baseusername . rand(10, 99);
+            }
 
-        if ($variant == 0 ) {
-            // Trying to make a sensible random username doesn't appear to work,
-            // use the entire email address.
-            $username = clean_param($email, PARAM_USERNAME);
+            if ($variant == 0 ) {
+                // Trying to make a sensible random username doesn't appear to work,
+                // use the entire email address.
+                $username = clean_param($email, PARAM_USERNAME);
+            }
+        } else {
+            $username = $email;
         }
 
         return $username;
