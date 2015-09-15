@@ -47,6 +47,16 @@
     margin-right: 0;
 }
 
+/* Style for template columns-autoflow-1to1to1. */
+.columns-autoflow-1to1to1 {
+    -moz-column-count: 3;
+    -webkit-column-count: 3;
+    column-count: 3;
+    -moz-column-gap: 20px;
+    -webkit-column-gap: 20px;
+    column-gap: 20px;
+}
+
 /* Responsive styles for smaller screens. */
 @media (max-width: 767px) {
     /* For column templates. */
@@ -59,5 +69,15 @@
 
     .dir-rtl .row-fluid [class*="span"] {
         margin-right: 0;
+    }
+
+    /* Change to a single column for smaller screens.*/
+    .columns-autoflow-1to1to1 {
+        -moz-column-count: 1;
+        -webkit-column-count: 1;
+        column-count: 1;
+        -moz-column-gap: 0;
+        -webkit-column-gap: 0;
+        column-gap: 0;
     }
 }

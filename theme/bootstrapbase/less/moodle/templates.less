@@ -21,6 +21,18 @@
   }
 }
 
+// Style for template 3 columns auto.
+.columns-autoflow-1to1to1 {
+  .content-columns(3);
+}
+
+@media(max-width: 767px) {
+  // Change to a single column for smaller screens.
+  .columns-autoflow-1to1to1 {
+    .content-columns(1, 0);
+  }
+}
+
 @media (min-width: 768px) and (max-width: 979px) {
   // Include fluid-rtl mixin from grid namespace.
   #grid > .fluid-rtl(@fluidGridColumnWidth768, @fluidGridGutterWidth768);
