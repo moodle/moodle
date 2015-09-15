@@ -35,7 +35,7 @@ iomad::require_capability( 'local/iomad_dashboard:view', $systemcontext );
 $SESSION->showsuspendedcompanies = $showsuspendedcompanies;
 
 // Set the session to a user if they are editing a company other than their own.
-if (!empty($company)) {
+if (!empty($company) && iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext)) {
     $SESSION->currenteditingcompany = $company;
 }
 
