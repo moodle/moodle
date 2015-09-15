@@ -1169,6 +1169,7 @@ $services = array(
             'core_user_add_user_private_files',
             'mod_assign_view_grading_table',
             'mod_scorm_view_scorm',
+            'mod_scorm_get_scorm_attempt_count',
             'mod_page_view_page',
             'mod_resource_view_resource',
             'mod_folder_view_folder',

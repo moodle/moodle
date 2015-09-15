@@ -43,25 +43,41 @@ require_once($CFG->dirroot . '/mod/scorm/lib.php');
 class mod_scorm_lib_testcase extends externallib_advanced_testcase {
 
     /**
+     * Set up for every test
+     */
+    public function setUp() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Setup test data.
+        $this->course = $this->getDataGenerator()->create_course();
+        $this->scorm = $this->getDataGenerator()->create_module('scorm', array('course' => $this->course->id));
+        $this->context = context_module::instance($this->scorm->cmid);
+        $this->cm = get_coursemodule_from_instance('scorm', $this->scorm->id);
+
+        // Create users.
+        $this->student = self::getDataGenerator()->create_user();
+        $this->teacher = self::getDataGenerator()->create_user();
+
+        // Users enrolments.
+        $this->studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherrole->id, 'manual');
+    }
+
+    /**
      * Test scorm_view
      * @return void
      */
     public function test_scorm_view() {
         global $CFG;
 
-        $this->resetAfterTest();
-
-        $this->setAdminUser();
-        // Setup test data.
-        $course = $this->getDataGenerator()->create_course();
-        $scorm = $this->getDataGenerator()->create_module('scorm', array('course' => $course->id));
-        $context = context_module::instance($scorm->cmid);
-        $cm = get_coursemodule_from_instance('scorm', $scorm->id);
-
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
 
-        scorm_view($scorm, $course, $cm, $context);
+        scorm_view($this->scorm, $this->course, $this->cm, $this->context);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -69,11 +85,100 @@ class mod_scorm_lib_testcase extends externallib_advanced_testcase {
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_scorm\event\course_module_viewed', $event);
-        $this->assertEquals($context, $event->get_context());
-        $url = new \moodle_url('/mod/scorm/view.php', array('id' => $cm->id));
+        $this->assertEquals($this->context, $event->get_context());
+        $url = new \moodle_url('/mod/scorm/view.php', array('id' => $this->cm->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
+    }
+
+    /**
+     * Test scorm_get_availability_status and scorm_require_available
+     * @return void
+     */
+    public function test_scorm_check_and_require_available() {
+        global $DB;
+
+        // Set to the student user.
+        self::setUser($this->student);
+
+        // Usual case.
+        list($status, $warnings) = scorm_get_availability_status($this->scorm, false);
+        $this->assertEquals(true, $status);
+        $this->assertCount(0, $warnings);
+
+        // SCORM not open.
+        $this->scorm->timeopen = time() + DAYSECS;
+        list($status, $warnings) = scorm_get_availability_status($this->scorm, false);
+        $this->assertEquals(false, $status);
+        $this->assertCount(1, $warnings);
+
+        // SCORM closed.
+        $this->scorm->timeopen = 0;
+        $this->scorm->timeclose = time() - DAYSECS;
+        list($status, $warnings) = scorm_get_availability_status($this->scorm, false);
+        $this->assertEquals(false, $status);
+        $this->assertCount(1, $warnings);
+
+        // SCORM not open and closed.
+        $this->scorm->timeopen = time() + DAYSECS;
+        list($status, $warnings) = scorm_get_availability_status($this->scorm, false);
+        $this->assertEquals(false, $status);
+        $this->assertCount(2, $warnings);
+
+        // Now additional checkings with different parameters values.
+        list($status, $warnings) = scorm_get_availability_status($this->scorm, true, $this->context);
+        $this->assertEquals(false, $status);
+        $this->assertCount(2, $warnings);
+
+        // SCORM not open.
+        $this->scorm->timeopen = time() + DAYSECS;
+        $this->scorm->timeclose = 0;
+        list($status, $warnings) = scorm_get_availability_status($this->scorm, true, $this->context);
+        $this->assertEquals(false, $status);
+        $this->assertCount(1, $warnings);
+
+        // SCORM closed.
+        $this->scorm->timeopen = 0;
+        $this->scorm->timeclose = time() - DAYSECS;
+        list($status, $warnings) = scorm_get_availability_status($this->scorm, true, $this->context);
+        $this->assertEquals(false, $status);
+        $this->assertCount(1, $warnings);
+
+        // SCORM not open and closed.
+        $this->scorm->timeopen = time() + DAYSECS;
+        list($status, $warnings) = scorm_get_availability_status($this->scorm, true, $this->context);
+        $this->assertEquals(false, $status);
+        $this->assertCount(2, $warnings);
+
+        // As teacher now.
+        self::setUser($this->teacher);
+
+        // SCORM not open and closed.
+        $this->scorm->timeopen = time() + DAYSECS;
+        list($status, $warnings) = scorm_get_availability_status($this->scorm, false);
+        $this->assertEquals(false, $status);
+        $this->assertCount(2, $warnings);
+
+        // Now, we use the special capability.
+        // SCORM not open and closed.
+        $this->scorm->timeopen = time() + DAYSECS;
+        list($status, $warnings) = scorm_get_availability_status($this->scorm, true, $this->context);
+        $this->assertEquals(true, $status);
+        $this->assertCount(0, $warnings);
+
+        // Check exceptions does not broke anything.
+        scorm_require_available($this->scorm, true, $this->context);
+        // Now, expect exceptions.
+        $this->setExpectedException('moodle_exception', get_string("notopenyet", "scorm", userdate($this->scorm->timeopen)));
+
+        // Now as student other condition.
+        self::setUser($this->student);
+        $this->scorm->timeopen = 0;
+        $this->scorm->timeclose = time() - DAYSECS;
+
+        $this->setExpectedException('moodle_exception', get_string("expired", "scorm", userdate($this->scorm->timeclose)));
+        scorm_require_available($this->scorm, false);
     }
 
 }

@@ -33,4 +33,12 @@ $functions = array(
         'type'          => 'write',
         'capabilities'  => ''
     ),
+
+    'mod_scorm_get_scorm_attempt_count' => array(
+        'classname'     => 'mod_scorm_external',
+        'methodname'    => 'get_scorm_attempt_count',
+        'description'   => 'Return the number of attempts done by a user in the given SCORM.',
+        'type'          => 'read',
+        'capabilities'  => ''
+    ),
 );
