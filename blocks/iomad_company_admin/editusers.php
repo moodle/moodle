@@ -651,8 +651,7 @@ if (!$users) {
                                 $editbutton .
                                 $suspendbutton .
                                 $deletebutton . '<br />' .
-                                $licensebutton .
-    							$reportbutton);
+                                $licensebutton);
         } else {
             $usercompany = $DB->get_record_sql("SELECT c.name FROM {company} c
                                                 JOIN {company_users} cu ON (cu.companyid = c.id)
@@ -668,8 +667,7 @@ if (!$users) {
                                     $editbutton .
                                     $suspendbutton .
                                     $deletebutton . '<br />' .
-                                    $licensebutton .
-    							    $reportbutton);
+                                    $licensebutton);
         }
     }
 }
