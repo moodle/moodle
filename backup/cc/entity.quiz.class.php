@@ -885,7 +885,6 @@ class cc_quiz extends entities {
 
         $sheet_question_categories_question = cc2moodle::loadsheet(SHEET_COURSE_QUESTION_CATEGORIES_QUESTION_CATEGORY_QUESTION_TRUE_FALSE);
 
-        $max_score = 0;
         $trueanswer  = null;
         $falseanswer = null;
 

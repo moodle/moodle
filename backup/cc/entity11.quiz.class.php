@@ -908,7 +908,6 @@ class cc11_quiz extends entities11 {
 
         $sheet_question_categories_question = cc112moodle::loadsheet(SHEET_COURSE_QUESTION_CATEGORIES_QUESTION_CATEGORY_QUESTION_TRUE_FALSE);
 
-        $max_score = 0;
         $trueanswer  = null;
         $falseanswer = null;
 
