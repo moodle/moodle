@@ -757,6 +757,36 @@ class api {
     }
 
     /**
+     * Duplicate a learning plan template.
+     *
+     * Requires tool/lp:templatemanage capability at the template context.
+     *
+     * @param int $id the template id.
+     * @return template
+     */
+    public static function duplicate_template($id) {
+        $template = new template($id);
+
+        // First we do a permissions check.
+        require_capability('tool/lp:templatemanage', $template->get_context());
+
+        // OK - all set.
+        $templatecompetency = new template_competency();
+        $competencies = $templatecompetency->list_competencies($id, false);
+
+        // Adding the suffix copy.
+        $template->set_shortname(get_string('duplicateditemname', 'tool_lp', $template->get_shortname()));
+
+        $duplicatedtemplate = $template->create();
+
+        // Associate each competency for the duplicated template.
+        foreach ($competencies as $competency) {
+            self::add_competency_to_template($duplicatedtemplate->get_id(), $competency->get_id());
+        }
+        return $duplicatedtemplate;
+    }
+
+    /**
      * Delete a learning plan template by id.
      *
      * Requires tool/lp:templatemanage capability.

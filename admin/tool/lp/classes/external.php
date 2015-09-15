@@ -2579,6 +2579,57 @@ class external extends external_api {
     }
 
     /**
+     * Returns description of duplicate_template() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function duplicate_template_parameters() {
+        $templateid = new external_value(
+            PARAM_INT,
+            'The template id',
+            VALUE_REQUIRED
+        );
+
+        $params = array(
+            'id' => $templateid
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Expose to AJAX.
+     * @return boolean
+     */
+    public static function duplicate_template_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Duplicate a learning plan template.
+     *
+     * @param int $id the id of the learning plan template to duplicate
+     * @return boolean Record of new template.
+     */
+    public static function duplicate_template($id) {
+        $params = self::validate_parameters(self::duplicate_template_parameters(),
+                                            array(
+                                                'id' => $id,
+                                            ));
+
+        $result = api::duplicate_template($params['id']);
+        return $result->to_record();
+    }
+
+    /**
+     * Returns description of duplicate_template() result value.
+     *
+     * @return \external_description
+     */
+    public static function duplicate_template_returns() {
+        return self::get_template_external_structure();
+    }
+
+    /**
      * Returns description of list_templates() parameters.
      *
      * @return \external_function_parameters

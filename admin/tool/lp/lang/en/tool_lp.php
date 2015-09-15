@@ -52,6 +52,7 @@ $string['deletethisplan'] = 'Delete this learning plan';
 $string['description'] = 'Description';
 $string['duedate'] = 'Due date';
 $string['duedate_help'] = 'The date that a learning plan should be completed by.';
+$string['duplicateditemname'] = '{$a} (copy)';
 $string['editcompetency'] = 'Edit competency';
 $string['editcompetencyframework'] = 'Edit competency framework';
 $string['editplan'] = 'Edit learning plan';

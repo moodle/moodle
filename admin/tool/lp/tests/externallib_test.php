@@ -1315,6 +1315,50 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test we can duplicate learning plan template.
+     */
+    public function test_duplicate_learning_plan_template() {
+        $this->setUser($this->creator);
+
+        $syscontext = context_system::instance();
+
+        // Create a template.
+        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true,
+            array('contextid' => $syscontext->id));
+        $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
+
+        // Create a competency framework.
+        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
+            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
+        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
+
+        // Create multiple competencies.
+        $competency1 = external::create_competency('shortname1', 'idnumber1', 'description', FORMAT_HTML, true, $framework->id, 0);
+        $competency1 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency1);
+        $competency2 = external::create_competency('shortname2', 'idnumber2', 'description', FORMAT_HTML, true, $framework->id, 0);
+        $competency2 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency2);
+        $competency3 = external::create_competency('shortname3', 'idnumber3', 'description', FORMAT_HTML, true, $framework->id, 0);
+        $competency3 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency3);
+
+        // Add the competencies.
+        external::add_competency_to_template($template->id, $competency1->id);
+        external::add_competency_to_template($template->id, $competency2->id);
+        external::add_competency_to_template($template->id, $competency3->id);
+
+        // Duplicate the learning plan template.
+        $duplicatedtemplate = external::duplicate_template($template->id);
+
+        $result = external::list_competencies_in_template($template->id);
+        $resultduplicated = external::list_competencies_in_template($duplicatedtemplate->id);
+
+        $this->assertEquals(count($result), count($resultduplicated));
+        $this->assertContains($template->shortname, $duplicatedtemplate->shortname);
+        $this->assertEquals($duplicatedtemplate->description, $template->description);
+        $this->assertEquals($duplicatedtemplate->descriptionformat, $template->descriptionformat);
+        $this->assertEquals($duplicatedtemplate->visible, $template->visible);
+    }
+
+    /**
      * Test that we can return scale values for a scale with the scale ID.
      */
     public function test_get_scale_values() {

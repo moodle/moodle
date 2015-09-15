@@ -276,6 +276,14 @@ $functions = array(
         'type'         => 'write',
         'capabilities' => 'tool/lp:templatemanage',
     ),
+    'tool_lp_duplicate_template' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'duplicate_template',
+        'classpath'    => '',
+        'description'  => 'Duplicate learning plan template.',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:templatemanage',
+    ),
     'tool_lp_read_template' => array(
         'classname'    => 'tool_lp\external',
         'methodname'   => 'read_template',

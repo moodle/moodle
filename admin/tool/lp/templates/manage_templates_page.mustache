@@ -58,6 +58,11 @@
                             </a>
                         </li>
                         <li>
+                            <a data-action="duplicatetemplate" data-templateid="{{id}}" href="#">
+                                {{#pix}}t/copy{{/pix}} {{#str}}duplicate{{/str}}
+                            </a>
+                        </li>
+                        <li>
                             <a data-action="deletetemplate" data-templateid="{{id}}" href="#">
                                 {{#pix}}t/delete{{/pix}} {{#str}}delete{{/str}}
                             </a>
@@ -85,14 +90,15 @@
 
 {{#js}}
 // Initialise the JS.
-require(['tool_lp/templatedelete',
+require(['tool_lp/templateactions',
          'tool_lp/menubar'],
-        function(deleteMod, menubar) {
+        function(actionsMod, menubar) {
 
-    deleteMod.init({{pagecontextid}});
+    actionsMod.init({{pagecontextid}});
 
     menubar.enhance('.templateactions', {
-        '[data-action="deletetemplate"]': deleteMod.deleteHandler
+        '[data-action="deletetemplate"]': actionsMod.deleteHandler,
+        '[data-action="duplicatetemplate"]': actionsMod.duplicateHandler
     });
 });
 

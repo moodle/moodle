@@ -14,9 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Delete learning plan templates via ajax.
+ * Handle actions on learning plan templates via ajax.
  *
- * @module     tool_lp/templatedelete
+ * @module     tool_lp/templateactions
  * @package    tool_lp
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -76,6 +76,31 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
     };
 
     /**
+     * Duplicate a template and reload the page.
+     * @method doDuplicate
+     * @param {Event} e
+     */
+    var doDuplicate = function(e) {
+        e.preventDefault();
+
+        templateid = $(this).attr('data-templateid');
+
+        // We are chaining ajax requests here.
+        var requests = ajax.call([{
+            methodname: 'tool_lp_duplicate_template',
+            args: { id: templateid }
+        }, {
+            methodname: 'tool_lp_data_for_templates_manage_page',
+            args: {
+                pagecontext: {
+                    contextid: pagecontextid
+                }
+            }
+        }]);
+        requests[1].done(reloadList).fail(notification.exception);
+    };
+
+    /**
      * Handler for "Delete learning plan template" actions.
      * @method confirmDelete
      * @param {Event} e
@@ -110,8 +135,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
     };
 
-
-    return /** @alias module:tool_lp/templatedelete */ {
+    return /** @alias module:tool_lp/templateactions */ {
         // Public variables and functions.
         /**
          * Expose the event handler for the delete.
@@ -119,6 +143,13 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
          * @param {Event} e
          */
         deleteHandler: confirmDelete,
+
+        /**
+         * Expose the event handler for the duplicate.
+         * @method duplicateHandler
+         * @param {Event} e
+         */
+        duplicateHandler: doDuplicate,
 
         /**
          * Initialise the module.
