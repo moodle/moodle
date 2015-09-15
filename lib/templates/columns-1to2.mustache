@@ -1,0 +1,45 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/columns-1to2
+
+    Moodle columns-1to2 template.
+
+    The purpose of this template is to render 2 columns where the second column has twice the width of the first one.
+    On mobile the second column collapses underneath the first.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * col1content Column 1 contents.
+    * col2content Column 2 contents.
+
+    Example context (json):
+    {
+        "col1content": "<div class='alert alert-info'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In porttitor vulputate turpis, quis tempor arcu.</div>",
+        "col2content": "<div class='alert alert-success'>Vivamus ac orci in velit fringilla aliquam a a nisl. Cras luctus quam laoreet magna pulvinar aliquet.</div>"
+    }
+
+}}
+<div class="row-fluid rtl-compatible">
+    <div class="span4">{{$ column1 }}{{{ col1content }}}{{/ column1 }}</div>
+    <div class="span8">{{$ column2 }}{{{ col2content }}}{{/ column2 }}</div>
+</div>
