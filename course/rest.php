@@ -173,7 +173,7 @@ switch($requestmethod) {
                             $module->name = clean_param($title, PARAM_CLEANHTML);
                         }
 
-                        if (!empty($module->name)) {
+                        if (strval($module->name) !== '') {
                             $DB->update_record($cm->modname, $module);
                             $cm->name = $module->name;
                             \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
