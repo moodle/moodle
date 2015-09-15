@@ -103,6 +103,11 @@ class atto_texteditor extends texteditor {
                     continue;
                 }
 
+                // Remove manage files if requested.
+                if ($plugin == 'managefiles' && isset($options['enable_filemanagement']) && !$options['enable_filemanagement']) {
+                    continue;
+                }
+
                 $jsplugin = array();
                 $jsplugin['name'] = $plugin;
                 $jsplugin['params'] = array();
@@ -161,6 +166,8 @@ class atto_texteditor extends texteditor {
         }
         $contentcss     = $PAGE->theme->editor_css_url()->out(false);
 
+        // Note <> is a safe separator, because it will not appear in the output of s().
+        $pagehash = sha1($PAGE->url . '<>' . s($this->get_text()));
         $params = array(
             'elementid' => $elementid,
             'content_css' => $contentcss,
@@ -171,7 +178,7 @@ class atto_texteditor extends texteditor {
             'directionality' => $directionality,
             'filepickeroptions' => array(),
             'plugins' => $plugins,
-            'pageHash' => sha1($PAGE->url)
+            'pageHash' => $pagehash,
         );
         if ($fpoptions) {
             $params['filepickeroptions'] = $fpoptions;

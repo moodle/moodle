@@ -32,7 +32,6 @@ Feature: Teachers can edit or delete any forum post
       | Subject | Student post subject |
       | Message | Student post message |
 
-  @javascript
   Scenario: A teacher can delete another user's posts
     Given I log out
     And I log in as "teacher1"
@@ -44,7 +43,6 @@ Feature: Teachers can edit or delete any forum post
     Then I should not see "Student post subject"
     And I should not see "Student post message"
 
-  @javascript
   Scenario: A teacher can edit another user's posts
     Given I log out
     And I log in as "teacher1"
@@ -59,7 +57,6 @@ Feature: Teachers can edit or delete any forum post
     Then I should see "Edited student subject"
     And I should see "Edited by Teacher 1 - original submission"
 
-  @javascript
   Scenario: A student can't edit or delete another user's posts
     When I follow "Teacher post subject"
     Then I should not see "Edit" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' forumpost ')][contains(., 'Teacher post subject')]" "xpath_element"

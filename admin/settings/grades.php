@@ -76,6 +76,8 @@ if (has_capability('moodle/grade:manage', $systemcontext)
 
         $temp->add(new admin_setting_special_gradepointdefault());
 
+        $temp->add(new admin_setting_special_grademinmaxtouse());
+
         $temp->add(new admin_setting_my_grades_report());
 
         $temp->add(new admin_setting_configtext('gradereport_mygradeurl', new lang_string('externalurl', 'grades'),

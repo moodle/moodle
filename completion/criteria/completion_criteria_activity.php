@@ -60,7 +60,11 @@ class completion_criteria_activity extends completion_criteria {
      * @param stdClass $data details of various modules
      */
     public function config_form_display(&$mform, $data = null) {
-        $mform->addElement('checkbox', 'criteria_activity['.$data->id.']', ucfirst(self::get_mod_name($data->module)).' - '.$data->name);
+        $modnames = get_module_types_names();
+        $mform->addElement('checkbox', 'criteria_activity['.$data->id.']',
+                $modnames[self::get_mod_name($data->module)].
+                ' - '.
+                format_string($data->name));
 
         if ($this->id) {
             $mform->setDefault('criteria_activity['.$data->id.']', 1);
@@ -177,7 +181,8 @@ class completion_criteria_activity extends completion_criteria {
         $module = $DB->get_record('course_modules', array('id' => $this->moduleinstance));
         $activity = $DB->get_record($this->module, array('id' => $module->instance));
 
-        return shorten_text(urldecode($activity->name));
+        return shorten_text(format_string($activity->name, true,
+                array('context' => context_module::instance($module->id))));
     }
 
     /**

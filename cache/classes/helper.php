@@ -318,6 +318,8 @@ class cache_helper {
                 $definitionkey = $definition->get_component().'/'.$definition->get_area();
                 if (isset($inuse[$definitionkey])) {
                     $inuse[$definitionkey]->purge();
+                } else {
+                    cache::make($definition->get_component(), $definition->get_area())->purge();
                 }
 
                 // We should only log events for application and session caches.
@@ -352,7 +354,7 @@ class cache_helper {
     protected static function ensure_ready_for_stats($store, $definition, $mode = cache_store::MODE_APPLICATION) {
         // This function is performance-sensitive, so exit as quickly as possible
         // if we do not need to do anything.
-        if (isset(self::$stats[$definition][$store])) {
+        if (isset(self::$stats[$definition]['stores'][$store])) {
             return;
         }
         if (!array_key_exists($definition, self::$stats)) {
@@ -366,7 +368,7 @@ class cache_helper {
                     )
                 )
             );
-        } else if (!array_key_exists($store, self::$stats[$definition])) {
+        } else if (!array_key_exists($store, self::$stats[$definition]['stores'])) {
             self::$stats[$definition]['stores'][$store] = array(
                 'hits' => 0,
                 'misses' => 0,

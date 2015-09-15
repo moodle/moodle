@@ -216,6 +216,11 @@ class phpunit_util extends testing_util {
         filter_manager::reset_caches();
         core_filetypes::reset_caches();
 
+        // Reset static unit test options.
+        if (class_exists('\availability_date\condition', false)) {
+            \availability_date\condition::set_current_time_for_test(0);
+        }
+
         // Reset internal users.
         core_user::reset_internal_users();
 
@@ -237,6 +242,11 @@ class phpunit_util extends testing_util {
         }
         if (class_exists('\core\update\deployer')) {
             \core\update\deployer::reset_caches(true);
+        }
+
+        // Clear static cache within restore.
+        if (class_exists('restore_section_structure_step')) {
+            restore_section_structure_step::reset_caches();
         }
 
         // purge dataroot directory
@@ -524,7 +534,7 @@ class phpunit_util extends testing_util {
 
         $template = '
         <testsuites>
-            <testsuite name="@component@">
+            <testsuite name="@component@_testsuite">
                 <directory suffix="_test.php">.</directory>
             </testsuite>
         </testsuites>';

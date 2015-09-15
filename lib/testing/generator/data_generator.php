@@ -792,12 +792,19 @@ EOD;
             $record['userid'] = $USER->id;
         }
 
-        if (!isset($record['name'])) {
-            $record['name'] = 'Tag name ' . $i;
+        if (!isset($record['rawname'])) {
+            if (isset($record['name'])) {
+                $record['rawname'] = $record['name'];
+            } else {
+                $record['rawname'] = 'Tag name ' . $i;
+            }
         }
 
-        if (!isset($record['rawname'])) {
-            $record['rawname'] = 'Raw tag name ' . $i;
+        // Attribute 'name' should be a lowercase version of 'rawname', if not set.
+        if (!isset($record['name'])) {
+            $record['name'] = core_text::strtolower($record['rawname']);
+        } else {
+            $record['name'] = core_text::strtolower($record['name']);
         }
 
         if (!isset($record['tagtype'])) {

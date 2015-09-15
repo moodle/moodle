@@ -222,7 +222,7 @@ function url_display_frame($url, $cm, $course) {
         $title = strip_tags($courseshortname.': '.format_string($url->name));
         $framesize = $config->framesize;
         $modulename = s(get_string('modulename','url'));
-        $contentframetitle = format_string($url->name);
+        $contentframetitle = s(format_string($url->name));
         $dir = get_string('thisdirection', 'langconfig');
 
         $extframe = <<<EOF

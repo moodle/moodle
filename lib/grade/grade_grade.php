@@ -338,6 +338,65 @@ class grade_grade extends grade_object {
     }
 
     /**
+     * Returns the minimum and maximum number of points this grade is graded with respect to.
+     *
+     * @since  Moodle 2.8.7, 2.9.1
+     * @return array A list containing, in order, the minimum and maximum number of points.
+     */
+    protected function get_grade_min_and_max() {
+        global $CFG;
+        $this->load_grade_item();
+
+        // When the following setting is turned on we use the grade_grade raw min and max values.
+        $minmaxtouse = grade_get_setting($this->grade_item->courseid, 'minmaxtouse', $CFG->grade_minmaxtouse);
+
+        // Check to see if the gradebook is frozen. This allows grades to not be altered at all until a user verifies that they
+        // wish to update the grades.
+        $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->grade_item->courseid);
+        // Gradebook is frozen, run through old code.
+        if ($gradebookcalculationsfreeze && (int)$gradebookcalculationsfreeze <= 20150627) {
+            // Only aggregate items use separate min grades.
+            if ($minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_GRADE || $this->grade_item->is_aggregate_item()) {
+                return array($this->rawgrademin, $this->rawgrademax);
+            } else {
+                return array($this->grade_item->grademin, $this->grade_item->grademax);
+            }
+        } else {
+            // Only aggregate items use separate min grades, unless they are calculated grade items.
+            if (($this->grade_item->is_aggregate_item() && !$this->grade_item->is_calculated())
+                    || $minmaxtouse == GRADE_MIN_MAX_FROM_GRADE_GRADE) {
+                return array($this->rawgrademin, $this->rawgrademax);
+            } else {
+                return array($this->grade_item->grademin, $this->grade_item->grademax);
+            }
+        }
+    }
+
+    /**
+     * Returns the minimum number of points this grade is graded with.
+     *
+     * @since  Moodle 2.8.7, 2.9.1
+     * @return float The minimum number of points
+     */
+    public function get_grade_min() {
+        list($min, $max) = $this->get_grade_min_and_max();
+
+        return $min;
+    }
+
+    /**
+     * Returns the maximum number of points this grade is graded with respect to.
+     *
+     * @since  Moodle 2.8.7, 2.9.1
+     * @return float The maximum number of points
+     */
+    public function get_grade_max() {
+        list($min, $max) = $this->get_grade_min_and_max();
+
+        return $max;
+    }
+
+    /**
      * Returns timestamp when last graded, null if no grade present
      *
      * @return int

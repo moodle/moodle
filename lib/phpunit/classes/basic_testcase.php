@@ -34,7 +34,7 @@
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class basic_testcase extends PHPUnit_Framework_TestCase {
+abstract class basic_testcase extends base_testcase {
 
     /**
      * Constructs a test case with the given name.

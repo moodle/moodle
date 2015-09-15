@@ -204,7 +204,7 @@ abstract class question_behaviour {
 
         $vars = array('comment' => PARAM_RAW, 'commentformat' => PARAM_INT);
         if ($this->qa->get_max_mark()) {
-            $vars['mark'] = question_attempt::PARAM_MARK;
+            $vars['mark'] = PARAM_RAW_TRIMMED;
             $vars['maxmark'] = PARAM_FLOAT;
         }
         return $vars;
@@ -308,7 +308,12 @@ abstract class question_behaviour {
         } else {
             $stepswithsubmit = $this->qa->get_steps_with_submitted_response_iterator();
             if ($whichtries == question_attempt::FIRST_TRY) {
-                return $this->question->classify_response($stepswithsubmit[1]->get_qt_data());
+                $firsttry = $stepswithsubmit[1];
+                if ($firsttry) {
+                    return $this->question->classify_response($firsttry->get_qt_data());
+                } else {
+                    return $this->question->classify_response(array());
+                }
             } else {
                 $classifiedresponses = array();
                 foreach ($stepswithsubmit as $submittedresponseno => $step) {
@@ -383,7 +388,7 @@ abstract class question_behaviour {
 
         // So, now we know the comment is the same, so check the mark, if present.
         $previousfraction = $this->qa->get_fraction();
-        $newmark = $pendingstep->get_behaviour_var('mark');
+        $newmark = question_utils::clean_param_mark($pendingstep->get_behaviour_var('mark'));
 
         if (is_null($previousfraction)) {
             return is_null($newmark) || $newmark === '';
@@ -472,15 +477,24 @@ abstract class question_behaviour {
         }
 
         if ($pendingstep->has_behaviour_var('mark')) {
-            $fraction = $pendingstep->get_behaviour_var('mark') /
-                            $pendingstep->get_behaviour_var('maxmark');
-            if ($pendingstep->get_behaviour_var('mark') === '') {
+            $mark = question_utils::clean_param_mark($pendingstep->get_behaviour_var('mark'));
+            if ($mark === null) {
+                throw new coding_exception('Inalid number format ' . $pendingstep->get_behaviour_var('mark') .
+                        ' when processing a manual grading action.', 'Question ' . $this->question->id .
+                        ', slot ' . $this->qa->get_slot());
+
+            } else if ($mark === '') {
                 $fraction = null;
-            } else if ($fraction > $this->qa->get_max_fraction() || $fraction < $this->qa->get_min_fraction()) {
-                throw new coding_exception('Score out of range when processing ' .
-                        'a manual grading action.', 'Question ' . $this->question->id .
-                                ', slot ' . $this->qa->get_slot() . ', fraction ' . $fraction);
+
+            } else {
+                $fraction = $mark / $pendingstep->get_behaviour_var('maxmark');
+                if ($fraction > $this->qa->get_max_fraction() || $fraction < $this->qa->get_min_fraction()) {
+                    throw new coding_exception('Score out of range when processing ' .
+                            'a manual grading action.', 'Question ' . $this->question->id .
+                            ', slot ' . $this->qa->get_slot() . ', fraction ' . $fraction);
+                }
             }
+
             $pendingstep->set_fraction($fraction);
         }
 
@@ -520,7 +534,7 @@ abstract class question_behaviour {
             $a->comment = '';
         }
 
-        $mark = $step->get_behaviour_var('mark');
+        $mark = question_utils::clean_param_mark($step->get_behaviour_var('mark'));
         if (is_null($mark) || $mark === '') {
             return get_string('commented', 'question', $a->comment);
         } else {

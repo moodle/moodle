@@ -55,14 +55,17 @@ class gradeimport_direct_import_form extends moodleform {
 
         $encodings = core_text::get_encodings();
         $mform->addElement('select', 'encoding', get_string('encoding', 'grades'), $encodings);
+        $mform->addHelpButton('encoding', 'encoding', 'grades');
 
         if (!empty($features['verbosescales'])) {
             $options = array(1 => get_string('yes'), 0 => get_string('no'));
             $mform->addElement('select', 'verbosescales', get_string('verbosescales', 'grades'), $options);
+            $mform->addHelpButton('verbosescales', 'verbosescales', 'grades');
         }
 
         $options = array('10' => 10, '20' => 20, '100' => 100, '1000' => 1000, '100000' => 100000);
         $mform->addElement('select', 'previewrows', get_string('rowpreviewnum', 'grades'), $options);
+        $mform->addHelpButton('previewrows', 'rowpreviewnum', 'grades');
         $mform->setType('previewrows', PARAM_INT);
         $mform->addElement('hidden', 'groupid', groups_get_course_group($COURSE));
         $mform->setType('groupid', PARAM_INT);

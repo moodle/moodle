@@ -31,11 +31,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Diretório admin';
-$string['availablelangs'] = 'Lista de idiomas disponíveis';
+$string['availablelangs'] = 'Pacotes de idioma disponíveis';
 $string['chooselanguagehead'] = 'Escolha um idioma';
 $string['chooselanguagesub'] = 'Por favor, escolha o idioma para a instalação.Este idioma também será utilizado como idioma padrão do site, embora você possa mudar mais tarde.';
-$string['clialreadyconfigured'] = 'Arquivo config.php já existente. Por favor use admin/cli/install_database.php se você quer instalar este site';
-$string['clialreadyinstalled'] = 'O arquivo config.php já existe, por favor use admin/cli/upgrade.php, se você quiser atualizar este site.';
+$string['clialreadyconfigured'] = 'Arquivo config.php já existe. Por favor, use admin/cli/install_database.php para instalar o Moodle neste site.';
+$string['clialreadyinstalled'] = 'Arquivo config.php já existe. Por favor use admin/cli/install_database.php para atualizar o Moodle neste site.';
 $string['cliinstallheader'] = 'Programa de instalação por linha de comando do Moodle {$a}';
 $string['databasehost'] = 'Host da base de dados';
 $string['databasename'] = 'Nome da base de dados';
@@ -69,11 +69,15 @@ $string['pathshead'] = 'Confirme os caminhos';
 $string['pathsrodataroot'] = 'O diretório de dados raiz não pode ser acessado para escrita.';
 $string['pathsroparentdataroot'] = 'O diretório pai ({$a->parent}) não pode ser escrito. O diretório de dados ({$a->dataroot}) não pode ser criado pelo instalador.';
 $string['pathssubadmindir'] = 'Alguns poucos webhosts usam /admin como um URL especial para acesso ao painel de controle ou outras coisas. Infelizmente isto conflita com a localizaçao padrão das páginas do administrador Moodle. Você pode corrigir isso renomeando a pasta admin na sua instalação, e colocando esse novo nome aqui. Por exemplo: <em>moodleadmin</em>. Isto irá corrigir os links das páginas do administrador Moodle.';
-$string['pathssubdataroot'] = 'Você precisa de um local onde o Moodle possa salvar arquivos enviados. Este diretório deve possuir permissões de leitura e escrita pelo usuário do servidor web
-(geralmente \'nobody\' ou \'apache \'), mas não deverá ser acessível diretamente através da web. O instalador irá tentar criá-lo se ele não existir.';
-$string['pathssubdirroot'] = 'Caminho completo do diretório para instalação do Moddle.';
-$string['pathssubwwwroot'] = 'Endereço web completo onde o Moodle será acessado.
-Não é possível acessar o Moodle usando múltiplos endereços. Se seu site tem múltiplos endereços públicos você deve configurar redirecionamentos permantentes em todos eles exceto esse. Se seu site é acessado tanto da Intranet como Internet, use o endereço público aqui e configure o DNS para que os usuários da Intranet possam usar o endereço público também. Se o endereço não estiver correto, por favo mude a URL no seu navegador para reiniciar a instalação com um valor diferente.';
+$string['pathssubdataroot'] = '<p>Um diretório em que Moodle pode armazenar todo o conteúdo de arquivos enviados pelos usuários. </p>
+<p>Este diretório deve ser legível e gravável tanto pelo usuário do servidor web (geralmente "www-data \',\' nobody \', ou\' apache\'). </p>
+<p>Não deve ser diretamente acessível através da web. </p>
+<p>Se o diretório não existir atualmente, o processo de instalação irá tentar criá-la. </p>';
+$string['pathssubdirroot'] = '<p>Caminho completo do diretório para instalação do Moddle.</p>';
+$string['pathssubwwwroot'] = '<p>O endereço completo em que Moodle pode ser acessado ou seja, o endereço que os usuários vão digitar na barra de endereços do seu navegador para acessar Moodle. </p>
+<p>Não é possível acessar Moodle usando múltiplos endereços. Se o seu site é acessível através de múltiplos endereços, em seguida, escolher o mais fácil e configurar um redirecionamento permanente para cada um dos outros endereços. </p>
+<p>Se o seu site é acessível tanto a partir da Internet e, a partir de uma rede interna (às vezes chamado de Intranet), em seguida, use o endereço público aqui. </p>
+<p>Se o endereço atual não está correto, por favor, mude o URL na barra de endereços do navegador e reiniciar a instalação. </p>';
 $string['pathsunsecuredataroot'] = 'A localização da pasta de dados não é segura.';
 $string['pathswrongadmindir'] = 'Diretório Admin não existe';
 $string['phpextension'] = 'Extensão PHP {$a}';

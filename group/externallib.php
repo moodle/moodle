@@ -54,6 +54,7 @@ class core_group_external extends external_api {
                             'description' => new external_value(PARAM_RAW, 'group description text'),
                             'descriptionformat' => new external_format_value('description', VALUE_DEFAULT),
                             'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase', VALUE_OPTIONAL),
+                            'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL)
                         )
                     ), 'List of group object. A group has a courseid, a name, a description and an enrolment key.'
                 )
@@ -87,6 +88,9 @@ class core_group_external extends external_api {
             if ($DB->get_record('groups', array('courseid'=>$group->courseid, 'name'=>$group->name))) {
                 throw new invalid_parameter_exception('Group with the same name already exists in the course');
             }
+            if (!empty($group->idnumber) && $DB->count_records('groups', array('idnumber' => $group->idnumber))) {
+                throw new invalid_parameter_exception('Group with the same idnumber already exists');
+            }
 
             // now security checks
             $context = context_course::instance($group->courseid, IGNORE_MISSING);
@@ -108,6 +112,10 @@ class core_group_external extends external_api {
             if (!isset($group->enrolmentkey)) {
                 $group->enrolmentkey = '';
             }
+            if (!isset($group->idnumber)) {
+                $group->idnumber = '';
+            }
+
             $groups[] = (array)$group;
         }
 
@@ -132,6 +140,7 @@ class core_group_external extends external_api {
                     'description' => new external_value(PARAM_RAW, 'group description text'),
                     'descriptionformat' => new external_format_value('description'),
                     'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
+                    'idnumber' => new external_value(PARAM_RAW, 'id number')
                 )
             ), 'List of group object. A group has an id, a courseid, a name, a description and an enrolment key.'
         );
@@ -165,7 +174,7 @@ class core_group_external extends external_api {
         $groups = array();
         foreach ($params['groupids'] as $groupid) {
             // validate params
-            $group = groups_get_group($groupid, 'id, courseid, name, description, descriptionformat, enrolmentkey', MUST_EXIST);
+            $group = groups_get_group($groupid, 'id, courseid, name, idnumber, description, descriptionformat, enrolmentkey', MUST_EXIST);
 
             // now security checks
             $context = context_course::instance($group->courseid, IGNORE_MISSING);
@@ -205,6 +214,7 @@ class core_group_external extends external_api {
                     'description' => new external_value(PARAM_RAW, 'group description text'),
                     'descriptionformat' => new external_format_value('description'),
                     'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
+                    'idnumber' => new external_value(PARAM_RAW, 'id number')
                 )
             )
         );
@@ -247,7 +257,7 @@ class core_group_external extends external_api {
         require_capability('moodle/course:managegroups', $context);
 
         $gs = groups_get_all_groups($params['courseid'], 0, 0,
-            'g.id, g.courseid, g.name, g.description, g.descriptionformat, g.enrolmentkey');
+            'g.id, g.courseid, g.name, g.idnumber, g.description, g.descriptionformat, g.enrolmentkey');
 
         $groups = array();
         foreach ($gs as $group) {
@@ -276,6 +286,7 @@ class core_group_external extends external_api {
                     'description' => new external_value(PARAM_RAW, 'group description text'),
                     'descriptionformat' => new external_format_value('description'),
                     'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
+                    'idnumber' => new external_value(PARAM_RAW, 'id number')
                 )
             )
         );
@@ -579,7 +590,8 @@ class core_group_external extends external_api {
                             'courseid' => new external_value(PARAM_INT, 'id of course'),
                             'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                             'description' => new external_value(PARAM_RAW, 'grouping description text'),
-                            'descriptionformat' => new external_format_value('description', VALUE_DEFAULT)
+                            'descriptionformat' => new external_format_value('description', VALUE_DEFAULT),
+                            'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL)
                         )
                     ), 'List of grouping object. A grouping has a courseid, a name and a description.'
                 )
@@ -612,6 +624,9 @@ class core_group_external extends external_api {
             }
             if ($DB->count_records('groupings', array('courseid'=>$grouping->courseid, 'name'=>$grouping->name))) {
                 throw new invalid_parameter_exception('Grouping with the same name already exists in the course');
+            }
+            if (!empty($grouping->idnumber) && $DB->count_records('groupings', array('idnumber' => $grouping->idnumber))) {
+                throw new invalid_parameter_exception('Grouping with the same idnumber already exists');
             }
 
             // Now security checks            .
@@ -652,7 +667,8 @@ class core_group_external extends external_api {
                     'courseid' => new external_value(PARAM_INT, 'id of course'),
                     'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                     'description' => new external_value(PARAM_RAW, 'grouping description text'),
-                    'descriptionformat' => new external_format_value('description')
+                    'descriptionformat' => new external_format_value('description'),
+                    'idnumber' => new external_value(PARAM_RAW, 'id number')
                 )
             ), 'List of grouping object. A grouping has an id, a courseid, a name and a description.'
         );
@@ -673,7 +689,8 @@ class core_group_external extends external_api {
                             'id' => new external_value(PARAM_INT, 'id of grouping'),
                             'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                             'description' => new external_value(PARAM_RAW, 'grouping description text'),
-                            'descriptionformat' => new external_format_value('description', VALUE_DEFAULT)
+                            'descriptionformat' => new external_format_value('description', VALUE_DEFAULT),
+                            'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL)
                         )
                     ), 'List of grouping object. A grouping has a courseid, a name and a description.'
                 )
@@ -711,6 +728,11 @@ class core_group_external extends external_api {
             if ($grouping->name != $currentgrouping->name and
                     $DB->count_records('groupings', array('courseid'=>$currentgrouping->courseid, 'name'=>$grouping->name))) {
                 throw new invalid_parameter_exception('A different grouping with the same name already exists in the course');
+            }
+            // Check if the new modified grouping idnumber already exists.
+            if (!empty($grouping->idnumber) && $grouping->idnumber != $currentgrouping->idnumber &&
+                    $DB->count_records('groupings', array('idnumber' => $grouping->idnumber))) {
+                throw new invalid_parameter_exception('A different grouping with the same idnumber already exists');
             }
 
             $grouping->courseid = $currentgrouping->courseid;
@@ -817,6 +839,7 @@ class core_group_external extends external_api {
                         $context->id, 'group', 'description', $grouprecord->groupid);
                         $groups[] = array('id' => $grouprecord->groupid,
                                           'name' => $grouprecord->name,
+                                          'idnumber' => $grouprecord->idnumber,
                                           'description' => $grouprecord->description,
                                           'descriptionformat' => $grouprecord->descriptionformat,
                                           'enrolmentkey' => $grouprecord->enrolmentkey,
@@ -847,6 +870,7 @@ class core_group_external extends external_api {
                     'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                     'description' => new external_value(PARAM_RAW, 'grouping description text'),
                     'descriptionformat' => new external_format_value('description'),
+                    'idnumber' => new external_value(PARAM_RAW, 'id number'),
                     'groups' => new external_multiple_structure(
                         new external_single_structure(
                             array(
@@ -855,7 +879,8 @@ class core_group_external extends external_api {
                                 'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                                 'description' => new external_value(PARAM_RAW, 'group description text'),
                                 'descriptionformat' => new external_format_value('description'),
-                                'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase')
+                                'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
+                                'idnumber' => new external_value(PARAM_RAW, 'id number')
                             )
                         ),
                     'optional groups', VALUE_OPTIONAL)
@@ -932,7 +957,8 @@ class core_group_external extends external_api {
                     'courseid' => new external_value(PARAM_INT, 'id of course'),
                     'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                     'description' => new external_value(PARAM_RAW, 'grouping description text'),
-                    'descriptionformat' => new external_format_value('description')
+                    'descriptionformat' => new external_format_value('description'),
+                    'idnumber' => new external_value(PARAM_RAW, 'id number')
                 )
             )
         );
@@ -1222,7 +1248,7 @@ class core_group_external extends external_api {
 
         $usergroups = array();
         if (empty($warnings)) {
-            $groups = groups_get_all_groups($course->id, $user->id, 0, 'g.id, g.name, g.description, g.descriptionformat');
+            $groups = groups_get_all_groups($course->id, $user->id, 0, 'g.id, g.name, g.description, g.descriptionformat, g.idnumber');
 
             foreach ($groups as $group) {
                 list($group->description, $group->descriptionformat) =
@@ -1254,7 +1280,8 @@ class core_group_external extends external_api {
                             'id' => new external_value(PARAM_INT, 'group record id'),
                             'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                             'description' => new external_value(PARAM_RAW, 'group description text'),
-                            'descriptionformat' => new external_format_value('description')
+                            'descriptionformat' => new external_format_value('description'),
+                            'idnumber' => new external_value(PARAM_RAW, 'id number')
                         )
                     )
                 ),

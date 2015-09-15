@@ -66,11 +66,13 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->deadline = $this->apply_date_offset($data->deadline);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        // lesson->highscores can come both in data->highscores and
-        // data->showhighscores, handle both. MDL-26229
+        // The lesson->highscore code was removed in MDL-49581.
+        // Remove it if found in the backup file.
         if (isset($data->showhighscores)) {
-            $data->highscores = $data->showhighscores;
             unset($data->showhighscores);
+        }
+        if (isset($data->highscores)) {
+            unset($data->highscores);
         }
 
         // Supply items that maybe missing from previous versions.
@@ -178,15 +180,8 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
     }
 
     protected function process_lesson_highscore($data) {
-        global $DB;
-
-        $data = (object)$data;
-        $oldid = $data->id;
-        $data->lessonid = $this->get_new_parentid('lesson');
-        $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->gradeid = $this->get_mappingid('lesson_grade', $data->gradeid);
-
-        $newitemid = $DB->insert_record('lesson_high_scores', $data);
+        // Do not process any high score data.
+        // high scores were removed in Moodle 3.0 See MDL-49581.
     }
 
     protected function process_lesson_timer($data) {

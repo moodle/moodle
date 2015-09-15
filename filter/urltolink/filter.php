@@ -51,7 +51,7 @@ class filter_urltolink extends moodle_text_filter {
             // be stripped. therefore, we do nothing
             return $text;
         }
-        if (in_array($options['originalformat'], explode(',', $this->get_global_config('formats')))) {
+        if (in_array($options['originalformat'], explode(',', get_config('filter_urltolink', 'formats')))) {
             $this->convert_urls_into_links($text);
         }
         return $text;
@@ -60,40 +60,6 @@ class filter_urltolink extends moodle_text_filter {
     ////////////////////////////////////////////////////////////////////////////
     // internal implementation starts here
     ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Returns the global filter setting
-     *
-     * If the $name is provided, returns single value. Otherwise returns all
-     * global settings in object. Returns null if the named setting is not
-     * found.
-     *
-     * @param mixed $name optional config variable name, defaults to null for all
-     * @return string|object|null
-     */
-    protected function get_global_config($name=null) {
-        $this->load_global_config();
-        if (is_null($name)) {
-            return self::$globalconfig;
-
-        } elseif (array_key_exists($name, self::$globalconfig)) {
-            return self::$globalconfig->{$name};
-
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Makes sure that the global config is loaded in $this->globalconfig
-     *
-     * @return void
-     */
-    protected function load_global_config() {
-        if (is_null(self::$globalconfig)) {
-            self::$globalconfig = get_config('filter_urltolink');
-        }
-    }
 
     /**
      * Given some text this function converts any URLs it finds into HTML links
@@ -182,7 +148,7 @@ class filter_urltolink extends moodle_text_filter {
             $text = str_replace(array_keys($ignoretags),$ignoretags,$text);
         }
 
-        if ($this->get_global_config('embedimages')) {
+        if (get_config('filter_urltolink', 'embedimages')) {
             // now try to inject the images, this code was originally in the mediapluing filter
             // this may be useful only if somebody relies on the fact the links in FORMAT_MOODLE get converted
             // to URLs which in turn change to real images

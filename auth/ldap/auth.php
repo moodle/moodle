@@ -534,6 +534,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      * @param object $user new user object
      * @param boolean $notify print notice with link and terminate
+     * @return boolean success
      */
     function user_signup($user, $notify=true) {
         global $CFG, $DB, $PAGE, $OUTPUT;
@@ -889,7 +890,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
                 foreach ($users as $user) {
                     echo "\t"; print_string('auth_dbupdatinguser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id));
-                    if (!$this->update_user_record($user->username, $updatekeys)) {
+                    if (!$this->update_user_record($user->username, $updatekeys, true)) {
                         echo ' - '.get_string('skipped');
                     }
                     echo "\n";
@@ -987,8 +988,11 @@ class auth_plugin_ldap extends auth_plugin_base {
      *
      * @param string $username username
      * @param boolean $updatekeys true to update the local record with the external LDAP values.
+     * @param bool $triggerevent set false if user_updated event should not be triggered.
+     *             This will not affect user_password_updated event triggering.
+     * @return stdClass|bool updated user record or false if there is no new info to update.
      */
-    function update_user_record($username, $updatekeys = false) {
+    function update_user_record($username, $updatekeys = false, $triggerevent = false) {
         global $CFG, $DB;
 
         // Just in case check text case
@@ -1030,7 +1034,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                         }
                     }
                 }
-                user_update_user($newuser, false, false);
+                user_update_user($newuser, false, $triggerevent);
             }
         } else {
             return false;
@@ -1638,7 +1642,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         if (($_SERVER['REQUEST_METHOD'] === 'GET'         // Only on initial GET of loginpage
              || ($_SERVER['REQUEST_METHOD'] === 'POST'
-                 && (get_referer() != strip_querystring(qualified_me()))))
+                 && (get_local_referer() != strip_querystring(qualified_me()))))
                                                           // Or when POSTed from another place
                                                           // See MDL-14071
             && !empty($this->config->ntlmsso_enabled)     // SSO enabled
@@ -1649,13 +1653,15 @@ class auth_plugin_ldap extends auth_plugin_base {
 
             // First, let's remember where we were trying to get to before we got here
             if (empty($SESSION->wantsurl)) {
-                $SESSION->wantsurl = (array_key_exists('HTTP_REFERER', $_SERVER) &&
-                                      $_SERVER['HTTP_REFERER'] != $CFG->wwwroot &&
-                                      $_SERVER['HTTP_REFERER'] != $CFG->wwwroot.'/' &&
-                                      $_SERVER['HTTP_REFERER'] != $CFG->httpswwwroot.'/login/' &&
-                                      $_SERVER['HTTP_REFERER'] != $CFG->httpswwwroot.'/login/index.php' &&
-                                      clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL) != '')
-                    ? $_SERVER['HTTP_REFERER'] : NULL;
+                $SESSION->wantsurl = null;
+                $referer = get_local_referer(false);
+                if ($referer &&
+                        $referer != $CFG->wwwroot &&
+                        $referer != $CFG->wwwroot . '/' &&
+                        $referer != $CFG->httpswwwroot . '/login/' &&
+                        $referer != $CFG->httpswwwroot . '/login/index.php') {
+                    $SESSION->wantsurl = $referer;
+                }
             }
 
             // Now start the whole NTLM machinery.
@@ -1680,7 +1686,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         // we don't want to use at all. As we can't get rid of it, just point
         // $SESSION->wantsurl to $CFG->wwwroot (after all, we came from there).
         if (empty($SESSION->wantsurl)
-            && (get_referer() == $CFG->httpswwwroot.'/auth/ldap/ntlmsso_finish.php')) {
+            && (get_local_referer() == $CFG->httpswwwroot.'/auth/ldap/ntlmsso_finish.php')) {
 
             $SESSION->wantsurl = $CFG->wwwroot;
         }

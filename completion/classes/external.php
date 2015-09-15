@@ -301,7 +301,7 @@ class core_completion_external extends external_api {
 
         $completions = $info->get_completions($user->id);
         if (empty($completions)) {
-            throw new moodle_exception('err_nocriteria', 'completion');
+            throw new moodle_exception('nocriteriaset', 'completion');
         }
 
         // Load course completion.
@@ -365,7 +365,7 @@ class core_completion_external extends external_api {
                                          'type' => new external_value(PARAM_TEXT, 'Type description'),
                                          'criteria' => new external_value(PARAM_RAW, 'Criteria description'),
                                          'requirement' => new external_value(PARAM_TEXT, 'Requirement description'),
-                                         'status' => new external_value(PARAM_TEXT, 'Status description'),
+                                         'status' => new external_value(PARAM_RAW, 'Status description, can be anything'),
                                          ), 'details'),
                                  ), 'Completions'
                             ), ''

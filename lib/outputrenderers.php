@@ -106,7 +106,8 @@ class renderer_base {
                 'cache' => $cachedir,
                 'escape' => 's',
                 'loader' => $loader,
-                'helpers' => $helpers));
+                'helpers' => $helpers,
+                'pragmas' => [Mustache_Engine::PRAGMA_BLOCKS]));
 
         }
 
@@ -1826,13 +1827,21 @@ class core_renderer extends renderer_base {
      * @param string $selected selected element
      * @param array $nothing
      * @param string $formid
+     * @param array $attributes other attributes for the single select
      * @return string HTML fragment
      */
-    public function single_select($url, $name, array $options, $selected = '', $nothing = array('' => 'choosedots'), $formid = null) {
+    public function single_select($url, $name, array $options, $selected = '',
+                                $nothing = array('' => 'choosedots'), $formid = null, $attributes = array()) {
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
         }
         $select = new single_select($url, $name, $options, $selected, $nothing, $formid);
+
+        if (array_key_exists('label', $attributes)) {
+            $select->set_label($attributes['label']);
+            unset($attributes['label']);
+        }
+        $select->attributes = $attributes;
 
         return $this->render($select);
     }
@@ -2921,23 +2930,23 @@ EOD;
             $output .= get_string('page') . ':';
 
             if (!empty($pagingbar->previouslink)) {
-                $output .= '&#160;(' . $pagingbar->previouslink . ')&#160;';
+                $output .= ' (' . $pagingbar->previouslink . ') ';
             }
 
             if (!empty($pagingbar->firstlink)) {
-                $output .= '&#160;' . $pagingbar->firstlink . '&#160;...';
+                $output .= ' ' . $pagingbar->firstlink . ' ...';
             }
 
             foreach ($pagingbar->pagelinks as $link) {
-                $output .= "&#160;&#160;$link";
+                $output .= "  $link";
             }
 
             if (!empty($pagingbar->lastlink)) {
-                $output .= '&#160;...' . $pagingbar->lastlink . '&#160;';
+                $output .= ' ...' . $pagingbar->lastlink . ' ';
             }
 
             if (!empty($pagingbar->nextlink)) {
-                $output .= '&#160;&#160;(' . $pagingbar->nextlink . ')';
+                $output .= '  (' . $pagingbar->nextlink . ')';
             }
         }
 
@@ -3174,7 +3183,7 @@ EOD;
         }
 
         // Get some navigation opts.
-        $opts = user_get_user_navigation_info($user, $this->page, $this->page->course);
+        $opts = user_get_user_navigation_info($user, $this->page);
 
         $avatarclasses = "avatars";
         $avatarcontents = html_writer::span($opts->metadata['useravatar'], 'avatar current');
@@ -3760,7 +3769,10 @@ EOD;
                 $additionalclasses[] = 'docked-region-'.$region;
             }
         }
-        if (count($usedregions) === 1) {
+        if (!$usedregions) {
+            // No regions means there is only content, add 'content-only' class.
+            $additionalclasses[] = 'content-only';
+        } else if (count($usedregions) === 1) {
             // Add the -only class for the only used region.
             $region = array_shift($usedregions);
             $additionalclasses[] = $region . '-only';
@@ -3934,7 +3946,7 @@ EOD;
      * @return string HTML for the header bar.
      */
     public function context_header($headerinfo = null, $headinglevel = 1) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
         $context = $this->page->context;
         // Make sure to use the heading if it has been set.
         if (isset($headerinfo['heading'])) {
@@ -3964,7 +3976,7 @@ EOD;
 
             $imagedata = $this->user_picture($user, array('size' => 100));
             // Check to see if we should be displaying a message button.
-            if ($USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
+            if (!empty($CFG->messaging) && $USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
                 $userbuttons = array(
                     'messages' => array(
                         'buttontype' => 'message',

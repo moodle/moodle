@@ -55,7 +55,7 @@ class manager {
         }
 
         $tasks = null;
-        require_once($file);
+        include($file);
 
         if (!isset($tasks)) {
             return array();
@@ -86,12 +86,15 @@ class manager {
     public static function reset_scheduled_tasks_for_component($componentname) {
         global $DB;
         $tasks = self::load_default_scheduled_tasks_for_component($componentname);
+        $validtasks = array();
 
         foreach ($tasks as $taskid => $task) {
             $classname = get_class($task);
             if (strpos($classname, '\\') !== 0) {
                 $classname = '\\' . $classname;
             }
+
+            $validtasks[] = $classname;
 
             if ($currenttask = self::get_scheduled_task($classname)) {
                 if ($currenttask->is_customised()) {
@@ -110,6 +113,16 @@ class manager {
                 $DB->insert_record('task_scheduled', $record);
             }
         }
+
+        // Delete any task that is not defined in the component any more.
+        $sql = "component = :component";
+        $params = array('component' => $componentname);
+        if (!empty($validtasks)) {
+            list($insql, $inparams) = $DB->get_in_or_equal($validtasks, SQL_PARAMS_NAMED, 'param', false);
+            $sql .= ' AND classname ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
+        $DB->delete_records_select('task_scheduled', $sql, $params);
     }
 
     /**
@@ -448,7 +461,8 @@ class manager {
 
         $where = "(lastruntime IS NULL OR lastruntime < :timestart1)
                   AND (nextruntime IS NULL OR nextruntime < :timestart2)
-                  AND disabled = 0";
+                  AND disabled = 0
+                  ORDER BY lastruntime, id ASC";
         $params = array('timestart1' => $timestart, 'timestart2' => $timestart);
         $records = $DB->get_records_select('task_scheduled', $where, $params);
 

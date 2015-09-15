@@ -183,7 +183,7 @@ if ($ADMIN->fulltree) {
     // Password.
     $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/password',
             get_string('requirepassword', 'quiz'), get_string('configrequirepassword', 'quiz'),
-            array('value' => '', 'adv' => true), PARAM_TEXT));
+            array('value' => '', 'adv' => false), PARAM_TEXT));
 
     // IP restrictions.
     $quizsettings->add(new admin_setting_configtext_with_advanced('quiz/subnet',
@@ -202,6 +202,10 @@ if ($ADMIN->fulltree) {
     $quizsettings->add(new mod_quiz_admin_setting_browsersecurity('quiz/browsersecurity',
             get_string('showinsecurepopup', 'quiz'), get_string('configpopup', 'quiz'),
             array('value' => '-', 'adv' => true), null));
+
+    $quizsettings->add(new admin_setting_configtext('quiz/initialnumfeedbacks',
+            get_string('initialnumfeedbacks', 'quiz'), get_string('initialnumfeedbacks_desc', 'quiz'),
+            2, PARAM_INT, 5));
 
     // Allow user to specify if setting outcomes is an advanced setting.
     if (!empty($CFG->enableoutcomes)) {

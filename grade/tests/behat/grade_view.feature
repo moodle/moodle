@@ -57,9 +57,8 @@ Feature: We can enter in grades and view reports from the gradebook
     And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment name 2"
     And I press "Save changes"
 
-  @javascript
   Scenario: Grade a grade item and ensure the results display correctly in the gradebook
-    When I set the field "Grade report" to "User report"
+    When I select "User report" from the "Grade report" singleselect
     And the "Grade report" select box should contain "Grader report"
     And the "Grade report" select box should contain "Outcomes report"
     And the "Grade report" select box should contain "User report"
@@ -80,14 +79,13 @@ Feature: We can enter in grades and view reports from the gradebook
     And "Course 1" row "Grade" column of "overview-grade" table should contain "170.00"
     And "Course 1" row "Grade" column of "overview-grade" table should not contain "90.00"
 
-  @javascript
   Scenario: We can add a weighting to a grade item and it is displayed properly in the user report
-    When I set the field "Grade report" to "Categories and items"
+    When I select "Categories and items" from the "Grade report" singleselect
     And I set the following settings for grade item "Course 1":
       | Aggregation | Weighted mean of grades |
     And I set the field "Extra credit value for Test assignment name" to "0.72"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I select "User report" from the "Grade report" singleselect
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the following fields to these values:
       | Show weightings | Show |

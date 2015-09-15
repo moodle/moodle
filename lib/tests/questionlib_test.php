@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->libdir . '/questionlib.php');
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 require_once($CFG->dirroot . '/tag/lib.php');
 
 // Get the necessary files to perform backup and restore.
@@ -56,6 +57,61 @@ class core_questionlib_testcase extends advanced_testcase {
      */
     protected function tearDown() {
         gc_collect_cycles();
+    }
+
+    /**
+     * Return true and false to test functions with feedback on and off.
+     *
+     * @return array Test data
+     */
+    public function provider_feedback() {
+        return array(
+            'Feedback test' => array(true),
+            'No feedback test' => array(false)
+        );
+    }
+
+    /**
+     * Setup a course, a quiz, a question category and a question for testing.
+     *
+     * @param string $type The type of question category to create.
+     * @return array The created data objects
+     */
+    public function setup_quiz_and_questions($type = 'module') {
+        // Create course category.
+        $category = $this->getDataGenerator()->create_category();
+
+        // Create course.
+        $course = $this->getDataGenerator()->create_course(array('numsections' => 5));
+
+        $options = array(
+            'course' => $course->id,
+            'duedate' => time(),
+        );
+
+        // Generate an assignment with due date (will generate a course event).
+        $quiz = $this->getDataGenerator()->create_module('quiz', $options);
+
+        $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        if ('course' == $type) {
+            $context = context_course::instance($course->id);
+        } else if ('category' == $type) {
+            $context = context_coursecat::instance($category->id);
+        } else {
+            $context = context_module::instance($quiz->cmid);
+        }
+
+        $qcat = $qgen->create_question_category(array('contextid' => $context->id));
+
+        $questions = array(
+                $qgen->create_question('shortanswer', null, array('category' => $qcat->id)),
+                $qgen->create_question('shortanswer', null, array('category' => $qcat->id)),
+        );
+
+        quiz_add_quiz_question($questions[0]->id, $quiz);
+
+        return array($category, $course, $quiz, $qcat, $questions);
     }
 
     public function test_question_reorder_qtypes() {
@@ -204,5 +260,141 @@ class core_questionlib_testcase extends advanced_testcase {
 
         // Check that there are two questions in the restored to course's context.
         $this->assertEquals(2, $DB->count_records('question', array('category' => $restoredcategory->id)));
+    }
+
+    /**
+     * This function tests the question_category_delete_safe function.
+     */
+    public function test_question_category_delete_safe() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions();
+
+        question_category_delete_safe($qcat);
+
+        // Verify category deleted.
+        $criteria = array('id' => $qcat->id);
+        $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
+
+        // Verify questions deleted or moved.
+        $criteria = array('category' => $qcat->id);
+        $this->assertEquals(0, $DB->count_records('question', $criteria));
+
+        // Verify question not deleted.
+        $criteria = array('id' => $questions[0]->id);
+        $this->assertEquals(1, $DB->count_records('question', $criteria));
+    }
+
+    /**
+     * This function tests the question_delete_activity function.
+     *
+     * @param bool $feedback Whether to return feedback
+     * @dataProvider provider_feedback
+     */
+    public function test_question_delete_activity($feedback) {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions();
+
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+        // Test that the feedback works.
+        if ($feedback) {
+            $this->expectOutputRegex('|'.get_string('unusedcategorydeleted', 'question').'|');
+        }
+        question_delete_activity($cm, $feedback);
+
+        // Verify category deleted.
+        $criteria = array('id' => $qcat->id);
+        $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
+
+        // Verify questions deleted or moved.
+        $criteria = array('category' => $qcat->id);
+        $this->assertEquals(0, $DB->count_records('question', $criteria));
+    }
+
+    /**
+     * This function tests the question_delete_context function.
+     */
+    public function test_question_delete_context() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions();
+
+        // Get the module context id.
+        $result = question_delete_context($qcat->contextid);
+
+        // Verify category deleted.
+        $criteria = array('id' => $qcat->id);
+        $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
+
+        // Verify questions deleted or moved.
+        $criteria = array('category' => $qcat->id);
+        $this->assertEquals(0, $DB->count_records('question', $criteria));
+
+        // Test that the feedback works.
+        $expected[] = array($qcat->name, get_string('unusedcategorydeleted', 'question'));
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * This function tests the question_delete_course function.
+     *
+     * @param bool $feedback Whether to return feedback
+     * @dataProvider provider_feedback
+     */
+    public function test_question_delete_course($feedback) {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('course');
+
+        // Test that the feedback works.
+        if ($feedback) {
+            $this->expectOutputRegex('|'.get_string('unusedcategorydeleted', 'question').'|');
+        }
+        question_delete_course($course, $feedback);
+
+        // Verify category deleted.
+        $criteria = array('id' => $qcat->id);
+        $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
+
+        // Verify questions deleted or moved.
+        $criteria = array('category' => $qcat->id);
+        $this->assertEquals(0, $DB->count_records('question', $criteria));
+    }
+
+    /**
+     * This function tests the question_delete_course_category function.
+     *
+     * @param bool $feedback Whether to return feedback
+     * @dataProvider provider_feedback
+     */
+    public function test_question_delete_course_category($feedback) {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
+
+        // Test that the feedback works.
+        if ($feedback) {
+            $this->expectOutputRegex('|'.get_string('unusedcategorydeleted', 'question').'|');
+        }
+        question_delete_course_category($category, 0, $feedback);
+
+        // Verify category deleted.
+        $criteria = array('id' => $qcat->id);
+        $this->assertEquals(0, $DB->count_records('question_categories', $criteria));
+
+        // Verify questions deleted or moved.
+        $criteria = array('category' => $qcat->id);
+        $this->assertEquals(0, $DB->count_records('question', $criteria));
     }
 }

@@ -471,11 +471,10 @@ class tree extends tree_node {
      * @param result $result Result object if this is a student display, else null
      * @param bool $root True if this is the root item
      * @param bool $hidden Staff display; true if this tree has show=false (from parent)
+     * @return string|renderable Information to render
      */
     protected function get_full_information_recursive(
             $not, info $info, result $result = null, $root, $hidden = false) {
-        global $PAGE;
-
         // Get list of children - either full list, or those which are shown.
         $children = $this->children;
         $staff = true;
@@ -550,8 +549,7 @@ class tree extends tree_node {
         }
 
         // Format output for display.
-        $renderer = $PAGE->get_renderer('core', 'availability');
-        return $renderer->multiple_messages($root, $andoperator, $treehidden, $items);
+        return new \core_availability_multiple_messages($root, $andoperator, $treehidden, $items);
     }
 
     /**

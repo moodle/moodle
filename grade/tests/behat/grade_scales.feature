@@ -70,7 +70,6 @@ Feature: View gradebook when scales are used
     And I follow "Grader report"
     And I turn editing mode on
 
-  @javascript
   Scenario: Test displaying scales in gradebook in aggregation method Natural
     When I turn editing mode off
     Then the following should exist in the "user-grades" table:
@@ -85,14 +84,13 @@ Feature: View gradebook when scales are used
       | Range              | F–A      | 0.00–5.00      | 0.00–5.00    |
       | Overall average    | C        | 3.00           | 3.00         |
     And I follow "User report"
-    And I set the field "Select all or one user" to "Student 3"
-    And I click on "Select all or one user" "select"
+    And I select "Student 3" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage | Contribution to course total |
       | Test assignment one | C     | F–A   | 50.00 %    | 60.00 %                      |
       | Sub category 1 total      | 3.00  | 0–5   | 60.00 %    | -                            |
       | Course total        | 3.00  | 0–5   | 60.00 %    | -                            |
-    And I set the field "jump" to "Categories and items"
+    And I select "Categories and items" from the "Grade report" singleselect
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | 5.00      |
@@ -108,7 +106,6 @@ Feature: View gradebook when scales are used
       | Sub category 1 total      | 4.00  | 0–5   | 80.00 %    | -                            |
       | Course total        | 4.00  | 0–5   | 80.00 %    | -                            |
 
-  @javascript
   Scenario Outline: Test displaying scales in gradebook in all other aggregation methods
     When I follow "Edit   Course 1"
     And I set the field "Aggregation" to "<aggregation>"
@@ -133,14 +130,13 @@ Feature: View gradebook when scales are used
       | Range              | F–A      | 1.00–5.00      | 0.00–100.00    |
       | Overall average    | C        | 3.00           | <overallavg>   |
     And I follow "User report"
-    And I set the field "Select all or one user" to "Student 3"
-    And I click on "Select all or one user" "select"
+    And I select "Student 3" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
       | Grade item                   | Grade          | Range | Percentage    | Contribution to course total |
       | Test assignment one          | C              | F–A   | 50.00 %       | <contrib3>                   |
       | Sub category (<aggregation>) total<aggregation>. | 3.00           | 1–5   | 50.00 %       | -                            |
       | Course total<aggregation>.   | <coursetotal3> | 0–100 | <courseperc3> | -                            |
-    And I set the field "jump" to "Categories and items"
+    And I select "Categories and items" from the "Grade report" singleselect
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | A (5)     |
@@ -159,7 +155,7 @@ Feature: View gradebook when scales are used
     Examples:
       | aggregation                         | coursetotal1 | coursetotal2 | coursetotal3 | coursetotal4 | coursetotal5 |overallavg | courseperc2 | courseperc3 | contrib2 | contrib3 |
       | Mean of grades                      | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
-      | Weighted mean of grades             | -            | -            | -            | -            | -            | -         | -           | -           | 0.00 %   | 0.00 %   |
+      | Weighted mean of grades             | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
       | Simple weighted mean of grades      | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
       | Mean of grades (with extra credits) | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |
       | Median of grades                    | 100.00       | 75.00        | 50.00        | 25.00        | 0.00         | 50.00     | 75.00 %     | 50.00 %     | 75.00 %  | 50.00 %  |

@@ -262,6 +262,12 @@ if ($mform->is_cancelled()) {
         redirect(course_get_url($course, $cw->section, array('sr' => $sectionreturn)));
     }
 } else if ($fromform = $mform->get_data()) {
+    // Convert the grade pass value - we may be using a language which uses commas,
+    // rather than decimal points, in numbers. These need to be converted so that
+    // they can be added to the DB.
+    if (isset($fromform->gradepass)) {
+        $fromform->gradepass = unformat_float($fromform->gradepass);
+    }
 
     if (!empty($fromform->update)) {
         list($cm, $fromform) = update_moduleinfo($cm, $fromform, $course, $mform);

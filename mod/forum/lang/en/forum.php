@@ -462,7 +462,7 @@ $string['subscribeenrolledonly'] = 'Sorry, only enrolled users are allowed to su
 $string['subscribed'] = 'Subscribed';
 $string['subscribenone'] = 'Unsubscribe everyone from this forum';
 $string['subscribers'] = 'Subscribers';
-$string['subscribersto'] = 'Subscribers to \'{$a}\'';
+$string['subscriberstowithcount'] = 'Subscribers to "{$a->name}" ({$a->count})';
 $string['subscribestart'] = 'Send me notifications of new posts in this forum';
 $string['subscribestop'] = 'I don\'t want to be notified of new posts in this forum';
 $string['subscription'] = 'Subscription';
@@ -518,3 +518,6 @@ $string['warnformorepost'] = 'Warning! There is more than one discussion in this
 $string['yournewquestion'] = 'Your new question';
 $string['yournewtopic'] = 'Your new discussion topic';
 $string['yourreply'] = 'Your reply';
+
+// Deprecated since Moodle 3.0.
+$string['subscribersto'] = 'Subscribers to "{$a->name}"';

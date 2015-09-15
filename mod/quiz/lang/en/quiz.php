@@ -45,6 +45,7 @@ $string['addnewuseroverride'] = 'Add user override';
 $string['addpagebreak'] = 'Add page break';
 $string['addpagehere'] = 'Add page here';
 $string['addquestion'] = 'Add question';
+$string['addquestionfrombankatend'] = 'Add from the question bank at the end';
 $string['addquestionfrombanktopage'] = 'Add from the question bank to page {$a}';
 $string['addquestions'] = 'Add questions';
 $string['addquestionstoquiz'] = 'Add questions to current quiz';
@@ -52,6 +53,7 @@ $string['addrandom'] = 'Add {$a} random questions';
 $string['addrandomfromcategory'] = 'Add random questions from category:';
 $string['addrandomquestion'] = 'Add random question';
 $string['addarandomquestion_help'] = 'When a random question is added, it results in a randomly-chosen question from the category being inserted into the quiz. This means that different students are likely to get a different selection of questions, and when a quiz allows multiple attempts then each attempt is likely to contain a new selection of questions.';
+$string['addrandomquestionatend'] = 'Add a random question at the end';
 $string['addrandomquestiontopage'] = 'Add a random question to page {$a}';
 $string['addrandomquestiontoquiz'] = 'Add a random question to quiz {$a}';
 $string['addrandom1'] = '<< Add';
@@ -431,6 +433,8 @@ $string['incorrect'] = 'Incorrect';
 $string['indivresp'] = 'Responses of individuals to each item';
 $string['info'] = 'Info';
 $string['infoshort'] = 'i';
+$string['initialnumfeedbacks'] = 'Initial number of overall feedback fields';
+$string['initialnumfeedbacks_desc'] = 'When creating a new quiz, provide this many blank overall feedback boxes. Once the quiz has been created, the form shows the number of fields required for the number of feedbacks in the quiz. The setting must be at least 1.';
 $string['inprogress'] = 'In progress';
 $string['introduction'] = 'Description';
 $string['invalidattemptid'] = 'No such attempt ID exists';
@@ -772,7 +776,7 @@ $string['reviewoptions'] = 'Students may review';
 $string['reviewoptionsheading'] = 'Review options';
 $string['reviewoptionsheading_help'] = 'These options control what information students can see when they review a quiz attempt or look at the quiz reports.
 
-**During the attempt** settings are are only relevant for some behaviours, like \'interactive with multiple tries\', which may display feedback during the attempt.
+**During the attempt** settings are only relevant for some behaviours, like \'interactive with multiple tries\', which may display feedback during the attempt.
 
 **Immediately after the attempt** settings apply for the first two minutes after \'Submit all and finish\' is clicked.
 
@@ -888,8 +892,6 @@ $string['timelimit'] = 'Time limit';
 $string['timelimit_help'] = 'If enabled, the time limit is stated on the initial quiz page and a countdown timer is displayed in the quiz navigation block.';
 $string['timelimit_link'] = 'mod/quiz/timing';
 $string['timelimitexeeded'] = 'Sorry! Quiz time limit exceeded!';
-$string['timelimitmin'] = 'Time limit (minutes)';
-$string['timelimitsec'] = 'Time limit (seconds)';
 $string['timestr'] = '%H:%M:%S on %d/%m/%y';
 $string['timesup'] = 'Time is up!';
 $string['timetaken'] = 'Time taken';
@@ -933,13 +935,7 @@ $string['xhtml'] = 'XHTML';
 $string['youneedtoenrol'] = 'You need to enrol in this course before you can attempt this quiz';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is {$a}.';
 
-// Deprecated since Moodle 2.8.
+// Deprecated since Moodle 2.9.
 
-$string['categories'] = 'Categories';
-$string['category'] = 'Category';
-$string['export'] = 'Export';
-$string['import'] = 'Import';
-$string['invalidnumericanswer'] = 'One of the answers you entered was not a valid number.';
-$string['invalidnumerictolerance'] = 'One of the tolerances you entered was not a valid number.';
-$string['multiplier'] = 'Multiplier';
-$string['unusedcategorydeleted'] = 'This category has been deleted because, after deleting the course, its questions weren\'t used any more.';
+$string['timelimitmin'] = 'Time limit (minutes)';
+$string['timelimitsec'] = 'Time limit (seconds)';

@@ -317,18 +317,19 @@ foreach($activities as $activity) {
     }
 
     // Some names (labels) come URL-encoded and can be very long, so shorten them
-    $displayname = shorten_text($activity->name);
+    $displayname = format_string($activity->name, true, array('context' => $activity->context));
 
     if ($csv) {
-        print $sep.csv_quote(strip_tags($displayname)).$sep.csv_quote($datetext);
+        print $sep.csv_quote($displayname).$sep.csv_quote($datetext);
     } else {
-        $formattedactivityname = format_string($displayname, true, array('context' => $activity->context));
+        $shortenedname = shorten_text($displayname);
         print '<th scope="col" class="'.$datepassedclass.'">'.
             '<a href="'.$CFG->wwwroot.'/mod/'.$activity->modname.
-            '/view.php?id='.$activity->id.'" title="' . $formattedactivityname . '">'.
+            '/view.php?id='.$activity->id.'" title="' . s($displayname) . '">'.
             '<img src="'.$OUTPUT->pix_url('icon', $activity->modname).'" alt="'.
-            get_string('modulename',$activity->modname).'" /> <span class="completion-activityname">'.
-            $formattedactivityname.'</span></a>';
+            s(get_string('modulename', $activity->modname)).
+                '" /> <span class="completion-activityname">'.
+            $shortenedname.'</span></a>';
         if ($activity->completionexpected) {
             print '<div class="completion-expected"><span>'.$datetext.'</span></div>';
         }
@@ -392,7 +393,7 @@ foreach($progress as $user) {
         $a->state=$describe;
         $a->date=$date;
         $a->user=fullname($user);
-        $a->activity = format_string($formattedactivities[$activity->id]->displayname, true, array('context' => $activity->context));
+        $a->activity = $formattedactivities[$activity->id]->displayname;
         $fulldescribe=get_string('progress-title','completion',$a);
 
         if ($csv) {
@@ -400,7 +401,7 @@ foreach($progress as $user) {
         } else {
             print '<td class="completion-progresscell '.$formattedactivities[$activity->id]->datepassedclass.'">'.
                 '<img src="'.$OUTPUT->pix_url('i/'.$completionicon).
-                '" alt="'.$describe.'" title="'.$fulldescribe.'" /></td>';
+                '" alt="'.s($describe).'" title="'.s($fulldescribe).'" /></td>';
         }
     }
 

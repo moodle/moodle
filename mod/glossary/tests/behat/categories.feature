@@ -18,8 +18,10 @@ Feature: Glossary entries can be organised in categories
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And the following "activities" exist:
+      | activity | name       | intro                     | displayformat | course | idnumber  |
+      | glossary | MyGlossary | Test glossary description | encyclopedia  | C1     | glossary1 |
+    And the following "activities" exist:
       | activity | name       | intro                                                           | course | idnumber  |
-      | glossary | MyGlossary | Test glossary description                                       | C1     | glossary1 |
       | label    | name       | check autolinking of CategoryAutoLinks and CategoryNoLinks text | C1     | label1    |
 # Log in as admin and enable autolinking filter
     And I log in as "admin"

@@ -98,7 +98,7 @@ if ($mark == 'read') {
 //        if (forum_tp_start_tracking($forum->id, $user->id)) {
 //            redirect($returnto, get_string("nowtracking", "forum", $info), 1);
 //        } else {
-//            print_error("Could not start tracking that forum", $_SERVER["HTTP_REFERER"]);
+//            print_error("Could not start tracking that forum", get_local_referer());
 //        }
 }
 

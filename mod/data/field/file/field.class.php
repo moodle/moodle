@@ -73,7 +73,7 @@ class data_field_file extends data_field_base {
             $html .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';
             $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
-            $html .= html_writer::div($image);
+            $html .= html_writer::div($image, 'inline-req');
         } else {
             $html .= '</span></legend>';
         }
@@ -93,7 +93,9 @@ class data_field_file extends data_field_base {
         // Print out file manager.
 
         $output = $PAGE->get_renderer('core', 'files');
+        $html .= '<div class="mod-data-input">';
         $html .= $output->render($fm);
+        $html .= '</div>';
         $html .= '</fieldset>';
         $html .= '</div>';
 

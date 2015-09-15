@@ -58,7 +58,7 @@ function my_get_page($userid, $private=MY_PAGE_PRIVATE) {
 function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
     global $DB;
 
-    if ($customised = $DB->record_exists('my_pages', array('userid' => $userid, 'private' => $private))) {
+    if ($customised = $DB->get_record('my_pages', array('userid' => $userid, 'private' => $private))) {
         return $customised;  // We're done!
     }
 

@@ -392,6 +392,3 @@ $string['visible'] = 'Visible';
 $string['warnexpired'] = ' (This badge has expired!)';
 $string['year'] = 'Year(s)';
 
-// Deprecated since Moodle 2.8.
-
-$string['hidden'] = 'Hidden';

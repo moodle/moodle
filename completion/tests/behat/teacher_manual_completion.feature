@@ -41,6 +41,12 @@ Feature: Allow teachers to manually mark users as complete when configured
     And I follow "View course report"
     And I should see "Student First"
     And I follow "Click to mark user complete"
+    # Running cron just after clicking sometimes fail, so navigate back
+    # and ensure the student completion is updated before running cron.
+    And I am on site homepage
+    And I follow "Completion course"
+    And I follow "View course report"
+    And "//img[contains(@alt, 'Completed')]" "xpath_element" should exist in the "student1" "table_row"
     And I trigger cron
     And I am on site homepage
     And I log out

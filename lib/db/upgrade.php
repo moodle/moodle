@@ -4058,6 +4058,15 @@ function xmldb_main_upgrade($oldversion) {
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2014111000.00) {
+        // Coming from 2.7 or older, we need to flag the step minmaxgrade to be ignored.
+        set_config('upgrade_minmaxgradestepignored', 1);
+        // Coming from 2.7 or older, we need to flag the step for changing calculated grades to be regraded.
+        set_config('upgrade_calculatedgradeitemsonlyregrade', 1);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014111000.00);
+    }
 
     if ($oldversion < 2014120100.00) {
 
@@ -4308,7 +4317,7 @@ function xmldb_main_upgrade($oldversion) {
         // Add "My grades" to the user menu.
         $oldconfig = get_config('core', 'customusermenuitems');
         if (strpos("mygrades,grades|/grade/report/mygrades.php|grades", $oldconfig) === false) {
-            $newconfig = "mygrades,grades|/grade/report/mygrades.php|grades\n" . $CFG->customusermenuitems;
+            $newconfig = "mygrades,grades|/grade/report/mygrades.php|grades\n" . $oldconfig;
             set_config('customusermenuitems', $newconfig);
         }
 
@@ -4373,6 +4382,180 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         upgrade_main_savepoint(true, 2015050401.00);
+    }
+
+    // Moodle v2.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2015060400.02) {
+
+        // Sites that were upgrading from 2.7 and older will ignore this step.
+        if (empty($CFG->upgrade_minmaxgradestepignored)) {
+
+            upgrade_minmaxgrade();
+
+            // Flags this upgrade step as already run to prevent it from running multiple times.
+            set_config('upgrade_minmaxgradestepignored', 1);
+        }
+
+        upgrade_main_savepoint(true, 2015060400.02);
+    }
+
+    if ($oldversion < 2015061900.00) {
+        // MDL-49257. Changed the algorithm of calculating automatic weights of extra credit items.
+
+        // Before the change, in case when grade category (in "Natural" agg. method) had items with
+        // overridden weights, the automatic weight of extra credit items was illogical.
+        // In order to prevent grades changes after the upgrade we need to freeze gradebook calculation
+        // for the affected courses.
+
+        // This script in included in each major version upgrade process so make sure we don't run it twice.
+        if (empty($CFG->upgrade_extracreditweightsstepignored)) {
+            upgrade_extra_credit_weightoverride();
+
+            // To skip running the same script on the upgrade to the next major release.
+            set_config('upgrade_extracreditweightsstepignored', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015061900.00);
+    }
+
+    if ($oldversion < 2015062500.01) {
+        // MDL-48239. Changed calculated grade items so that the maximum and minimum grade can be set.
+
+        // If the changes are accepted and a regrade is done on the gradebook then some grades may change significantly.
+        // This is here to freeze the gradebook in affected courses.
+
+        // This script is included in each major version upgrade process so make sure we don't run it twice.
+        if (empty($CFG->upgrade_calculatedgradeitemsignored)) {
+            upgrade_calculated_grade_items();
+
+            // To skip running the same script on the upgrade to the next major release.
+            set_config('upgrade_calculatedgradeitemsignored', 1);
+            // This config value is never used again.
+            unset_config('upgrade_calculatedgradeitemsonlyregrade');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015062500.01);
+    }
+
+    if ($oldversion < 2015081300.01) {
+
+        // Define field importtype to be added to grade_import_values.
+        $table = new xmldb_table('grade_import_values');
+        $field = new xmldb_field('importonlyfeedback', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'importer');
+
+        // Conditionally launch add field importtype.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015081300.01);
+    }
+
+    if ($oldversion < 2015082400.00) {
+
+        // Define table webdav_locks to be dropped.
+        $table = new xmldb_table('webdav_locks');
+
+        // Conditionally launch drop table for webdav_locks.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015082400.00);
+    }
+
+    if ($oldversion < 2015090200.00) {
+        $table = new xmldb_table('message');
+
+        // Define the deleted fields to be added to the message tables.
+        $field1 = new xmldb_field('timeuserfromdeleted', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0',
+            'timecreated');
+        $field2 = new xmldb_field('timeusertodeleted', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0',
+            'timecreated');
+        $oldindex = new xmldb_index('useridfromto', XMLDB_INDEX_NOTUNIQUE,
+            array('useridfrom', 'useridto'));
+        $newindex = new xmldb_index('useridfromtodeleted', XMLDB_INDEX_NOTUNIQUE,
+            array('useridfrom', 'useridto', 'timeuserfromdeleted', 'timeusertodeleted'));
+
+        // Conditionally launch add field timeuserfromdeleted.
+        if (!$dbman->field_exists($table, $field1)) {
+            $dbman->add_field($table, $field1);
+        }
+
+        // Conditionally launch add field timeusertodeleted.
+        if (!$dbman->field_exists($table, $field2)) {
+            $dbman->add_field($table, $field2);
+        }
+
+        // Conditionally launch drop index useridfromto.
+        if ($dbman->index_exists($table, $oldindex)) {
+            $dbman->drop_index($table, $oldindex);
+        }
+
+        // Conditionally launch add index useridfromtodeleted.
+        if (!$dbman->index_exists($table, $newindex)) {
+            $dbman->add_index($table, $newindex);
+        }
+
+        // Now add them to the message_read table.
+        $table = new xmldb_table('message_read');
+
+        // Conditionally launch add field timeuserfromdeleted.
+        if (!$dbman->field_exists($table, $field1)) {
+            $dbman->add_field($table, $field1);
+        }
+
+        // Conditionally launch add field timeusertodeleted.
+        if (!$dbman->field_exists($table, $field2)) {
+            $dbman->add_field($table, $field2);
+        }
+
+        // Conditionally launch drop index useridfromto.
+        if ($dbman->index_exists($table, $oldindex)) {
+            $dbman->drop_index($table, $oldindex);
+        }
+
+        // Conditionally launch add index useridfromtodeleted.
+        if (!$dbman->index_exists($table, $newindex)) {
+            $dbman->add_index($table, $newindex);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015090200.00);
+    }
+
+    if ($oldversion < 2015090801.00) {
+        // This upgrade script merges all tag instances pointing to the same course tag.
+        // User id is no longer used for those tag instances.
+        upgrade_course_tags();
+
+        // If configuration variable "Show course tags" is set, disable the block
+        // 'tags' because it can not be used for tagging courses any more.
+        if (!empty($CFG->block_tags_showcoursetags)) {
+            if ($record = $DB->get_record('block', array('name' => 'tags'), 'id, visible')) {
+                if ($record->visible) {
+                    $DB->update_record('block', array('id' => $record->id, 'visible' => 0));
+                }
+            }
+        }
+
+        // Define index idname (unique) to be dropped form tag (it's really weird).
+        $table = new xmldb_table('tag');
+        $index = new xmldb_index('idname', XMLDB_INDEX_UNIQUE, array('id', 'name'));
+
+        // Conditionally launch drop index idname.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015090801.00);
     }
 
     return true;

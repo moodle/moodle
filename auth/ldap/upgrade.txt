@@ -1,0 +1,4 @@
+This files describes API changes in the auth_ldap code.
+=== 2.9.1 ===
+* auth_plugin_ldap::update_user_record() accepts an additional (optional) param
+  to trigger update event.

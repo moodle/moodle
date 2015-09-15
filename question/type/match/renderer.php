@@ -137,6 +137,9 @@ class qtype_match_renderer extends qtype_with_combined_feedback_renderer {
         $choices = $this->format_choices($question);
         $right = array();
         foreach ($stemorder as $key => $stemid) {
+            if (!isset($choices[$question->get_right_choice_for($stemid)])) {
+                continue;
+            }
             $right[] = $question->make_html_inline($this->format_stem_text($qa, $stemid)) . ' – ' .
                     $choices[$question->get_right_choice_for($stemid)];
         }

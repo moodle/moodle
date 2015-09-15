@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20150306" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20150824" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -534,13 +534,15 @@
         <FIELD NAME="contexturl" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="If this message is a notification of an event contexturl should contain a link to view this event. For example if its a notification of a forum post contexturl should contain a link to the forum post."/>
         <FIELD NAME="contexturlname" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Display text for the contexturl"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeuserfromdeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeusertodeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="useridto" UNIQUE="false" FIELDS="useridto"/>
-        <INDEX NAME="useridfromto" UNIQUE="false" FIELDS="useridfrom, useridto"/>
+        <INDEX NAME="useridfromtodeleted" UNIQUE="false" FIELDS="useridfrom, useridto, timeuserfromdeleted, timeusertodeleted"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="message_read" COMMENT="Stores all messages that have been read">
@@ -558,13 +560,15 @@
         <FIELD NAME="contexturlname" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Display text for the contexturl"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timeread" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeuserfromdeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeusertodeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="useridto" UNIQUE="false" FIELDS="useridto"/>
-        <INDEX NAME="useridfromto" UNIQUE="false" FIELDS="useridfrom, useridto"/>
+        <INDEX NAME="useridfromtodeleted" UNIQUE="false" FIELDS="useridfrom, useridto, timeuserfromdeleted, timeusertodeleted"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="message_contacts" COMMENT="Maintains lists of relationships between users">
@@ -1941,6 +1945,7 @@
         <FIELD NAME="feedback" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="importcode" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="similar to backup_code, a unique batch code for identifying one batch of imports"/>
         <FIELD NAME="importer" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="importonlyfeedback" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -1967,7 +1972,6 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="name" UNIQUE="true" FIELDS="name" COMMENT="tag names are unique"/>
-        <INDEX NAME="idname" UNIQUE="true" FIELDS="id, name" COMMENT="Improves performance of autocomplete in tag block"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="tag_correlation" COMMENT="The rationale for the 'tag_correlation' table is performance.   It works as a cache for a potentially heavy load query done at the 'tag_instance' table.   So, the 'tag_correlation' table stores redundant information derived from the 'tag_instance' table">
@@ -2170,28 +2174,6 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="courseid-name" UNIQUE="true" FIELDS="courseid, name"/>
-      </INDEXES>
-    </TABLE>
-    <TABLE NAME="webdav_locks" COMMENT="Resource locks for WebDAV users">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="token" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="path" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="expiry" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="recursive" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="exclusivelock" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="modified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="owner" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="token" TYPE="unique" FIELDS="token"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="path" UNIQUE="false" FIELDS="path"/>
-        <INDEX NAME="expiry" UNIQUE="false" FIELDS="expiry"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="portfolio_instance" COMMENT="base table (not including config data) for instances of portfolio plugins.">

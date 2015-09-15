@@ -477,13 +477,25 @@ FloatingHeaders.prototype = {
 
         // Generate the new fields.
         userColumn.each(function(node) {
+            var height = node.getComputedStyle(HEIGHT);
+            // Nasty hack to account for Internet Explorer
+            if(Y.UA.ie !== 0) {
+                var allHeight = node.get('offsetHeight');
+                var marginHeight = parseInt(node.getComputedStyle('marginTop'),10) +
+                    parseInt(node.getComputedStyle('marginBottom'),10);
+                var paddingHeight = parseInt(node.getComputedStyle('paddingTop'),10) +
+                    parseInt(node.getComputedStyle('paddingBottom'),10);
+                var borderHeight = parseInt(node.getComputedStyle('borderTopWidth'),10) +
+                    parseInt(node.getComputedStyle('borderBottomWidth'),10);
+                height = allHeight - marginHeight - paddingHeight - borderHeight;
+            }
             // Create and configure the new container.
             var containerNode = Y.Node.create('<div></div>');
             containerNode.set('innerHTML', node.get('innerHTML'))
                     .setAttribute('class', node.getAttribute('class'))
                     .setAttribute('data-uid', node.ancestor('tr').getData('uid'))
                     .setStyles({
-                        height: node.getComputedStyle(HEIGHT),
+                        height: height,
                         width:  node.getComputedStyle(WIDTH)
                     });
 

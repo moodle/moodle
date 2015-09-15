@@ -19,6 +19,7 @@ Feature: I need to export grades as text
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | assignsubmission_onlinetext_enabled |
       | assign | C1 | a1 | Test assignment name | Submit your online text | 1 |
+      | assign | C1 | a2 | Test assignment name 2 | Submit your online text | 1 |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
@@ -59,6 +60,8 @@ Feature: I need to export grades as text
     Then I should see "Student,1"
     And I should see "80.00 %"
     And I should see "B-"
+    And I should not see "40.00 %"
+    And I should not see ",F,"
 
   @javascript
   Scenario: Export grades as text using real, percentages and letters
@@ -72,3 +75,5 @@ Feature: I need to export grades as text
     And I should see "80.00"
     And I should see "80.00 %"
     And I should see "B-"
+    And I should not see "40.00 %"
+    And I should not see ",F,"

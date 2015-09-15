@@ -73,6 +73,9 @@ if (!empty($id)) {
     }
 } else {
     $type = new stdClass();
+    // Assign a default empty value for the lti_icon.
+    $type->lti_icon = '';
+    $type->lti_secureicon = '';
 }
 
 $pageurl = new moodle_url('/mod/lti/typessettings.php');
@@ -94,6 +97,12 @@ if ($action == 'accept') {
 } else if ($action == 'delete') {
     lti_delete_type($id);
     redirect($redirect);
+}
+
+if (lti_request_is_using_ssl() && !empty($type->lti_secureicon)) {
+    $type->oldicon = $type->lti_secureicon;
+} else {
+    $type->oldicon = $type->lti_icon;
 }
 
 $form = new mod_lti_edit_types_form($pageurl, (object)array('isadmin' => true, 'istool' => false));

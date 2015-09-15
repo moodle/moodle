@@ -536,7 +536,10 @@ class question_finder implements cache_data_source {
 
                       FROM {question} q
 
-                     WHERE q.category $qcsql $extraconditions
+                     WHERE q.category {$qcsql}
+                       AND q.parent = 0
+                       AND q.hidden = 0
+                      {$extraconditions}
 
                   ORDER BY previous_attempts
                 ", $qubaids->from_where_params() + $qcparams + $extraparams);

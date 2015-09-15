@@ -466,8 +466,8 @@ class grade_report_user extends grade_report {
             } else {
                 // The max and min for an aggregation may be different to the grade_item.
                 if (!is_null($gradeval)) {
-                    $grade_grade->grade_item->grademax = $grade_grade->rawgrademax;
-                    $grade_grade->grade_item->grademin = $grade_grade->rawgrademin;
+                    $grade_grade->grade_item->grademax = $grade_grade->get_grade_max();
+                    $grade_grade->grade_item->grademin = $grade_grade->get_grade_min();
                 }
             }
 
@@ -731,7 +731,12 @@ class grade_report_user extends grade_report {
                 if ($gradecat->aggregation == GRADE_AGGREGATE_SUM) {
                     // Natural aggregation/Sum of grades does not consider the mingrade, cannot traditionnally normalise it.
                     $graderange = $this->aggregationhints[$itemid]['grademax'];
-                    $gradeval = $this->aggregationhints[$itemid]['grade'] / $graderange;
+
+                    if ($graderange != 0) {
+                        $gradeval = $this->aggregationhints[$itemid]['grade'] / $graderange;
+                    } else {
+                        $gradeval = 0;
+                    }
                 } else {
                     $gradeval = grade_grade::standardise_score($this->aggregationhints[$itemid]['grade'],
                         $this->aggregationhints[$itemid]['grademin'], $this->aggregationhints[$itemid]['grademax'], 0, 1);
@@ -859,7 +864,7 @@ class grade_report_user extends grade_report {
      * Builds the grade item averages.
      */
     function calculate_averages() {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
 
         if ($this->showaverage) {
             // This settings are actually grader report settings (not user report)
@@ -882,7 +887,11 @@ class grade_report_user extends grade_report {
             list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
             // Limit to users with an active enrolment.
-            list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
+            $coursecontext = $this->context->get_course_context(true);
+            $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+            $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+            $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $coursecontext);
+            list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context, '', 0, $showonlyactiveenrol);
 
             $params = array_merge($this->groupwheresql_params, $gradebookrolesparams, $enrolledparams, $relatedctxparams);
             $params['courseid'] = $this->courseid;

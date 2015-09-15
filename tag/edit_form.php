@@ -51,12 +51,15 @@ class tag_edit_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_LOCALURL);
+
         $systemcontext   = context_system::instance();
 
         if (has_capability('moodle/tag:manage', $systemcontext)) {
             $mform->addElement('text', 'rawname', get_string('name', 'tag'),
                     'maxlength="'.TAG_MAX_LENGTH.'" size="'.TAG_MAX_LENGTH.'"');
-            $mform->setType('rawname', PARAM_NOTAGS);
+            $mform->setType('rawname', PARAM_TAG);
         }
 
         $mform->addElement('editor', 'description_editor', get_string('description', 'tag'), null, $this->_customdata['editoroptions']);
@@ -71,7 +74,7 @@ class tag_edit_form extends moodleform {
         $mform->addElement('html', '<div id="relatedtags-autocomplete"></div>');
         $mform->addElement('html', '</div>');
 
-        $this->add_action_buttons(false, get_string('updatetag', 'tag'));
+        $this->add_action_buttons(true, get_string('updatetag', 'tag'));
 
     }
 

@@ -195,6 +195,7 @@ $string['lasttry'] = 'Last try';
 $string['linkedfiledoesntexist'] = 'Linked file {$a} doesn\'t exist';
 $string['makechildof'] = 'Make child of \'{$a}\'';
 $string['maketoplevelitem'] = 'Move to top level';
+$string['manualgradeinvalidformat'] = 'That is not a valid number.';
 $string['matchgrades'] = 'Match grades';
 $string['matchgradeserror'] = 'Error if grade not listed';
 $string['matchgradesnearest'] = 'Nearest grade if not listed';
@@ -443,6 +444,3 @@ $string['withselected'] = 'With selected';
 $string['xoutofmax'] = '{$a->mark} out of {$a->max}';
 $string['yougotnright'] = 'You have correctly selected {$a->num}.';
 
-// Deprecated since Moodle 2.8.
-
-$string['hidden'] = 'Hidden';

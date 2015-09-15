@@ -27,7 +27,8 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given,
+use Behat\Behat\Context\Step\Given,
+    Behat\Behat\Context\Step\Then,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
@@ -56,7 +57,7 @@ class behat_completion extends behat_base {
 
         return array(
             new Given('I go to the current course activity completion report'),
-            new Given('I hover "' . $this->escape($xpath) . '" "xpath_element"')
+            new Then('"' . $this->escape($xpath) . '" "xpath_element" should exist')
         );
     }
 
@@ -75,7 +76,7 @@ class behat_completion extends behat_base {
             "/descendant::img[contains(@title, $titleliteral)]";
         return array(
             new Given('I go to the current course activity completion report'),
-            new Given('I hover "' . $this->escape($xpath) . '" "xpath_element"')
+            new Then('"' . $this->escape($xpath) . '" "xpath_element" should exist')
         );
 
         return $steps;

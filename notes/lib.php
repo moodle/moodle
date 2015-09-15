@@ -154,7 +154,7 @@ function note_save(&$note) {
  * Deletes a note object based on its id.
  *
  * @param int|object    $note id of the note to delete, or a note object which is to be deleted.
- * @return boolean true if the object was deleted; false otherwise
+ * @return boolean true always
  */
 function note_delete($note) {
     global $DB;
@@ -379,6 +379,13 @@ function note_view($context, $userid) {
  * @return bool
  */
 function core_notes_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    global $CFG;
+
+    if (empty($CFG->enablenotes)) {
+        // Notes are disabled, nothing to do.
+        return false;
+    }
+
     $url = new moodle_url("/notes/index.php", array('user' => $user->id));
     $title = get_string('notes', 'core_notes');
     if (empty($course)) {

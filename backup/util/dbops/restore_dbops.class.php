@@ -123,7 +123,7 @@ abstract class restore_dbops {
 
         // Set up progress tracking (indeterminate).
         if (!$progress) {
-            $progress = new \core\progress\null();
+            $progress = new \core\progress\none();
         }
         $progress->start_progress('Loading inforef.xml file');
 
@@ -430,7 +430,7 @@ abstract class restore_dbops {
 
         // Set up progress tracking (indeterminate).
         if (!$progress) {
-            $progress = new \core\progress\null();
+            $progress = new \core\progress\none();
         }
         $progress->start_progress('Loading users into temporary table');
 

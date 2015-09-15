@@ -34,7 +34,7 @@ class wikimedia {
 
     public function __construct($url = '') {
         if (empty($url)) {
-            $this->api = 'http://commons.wikimedia.org/w/api.php';
+            $this->api = 'https://commons.wikimedia.org/w/api.php';
         } else {
             $this->api = $url;
         }
@@ -70,7 +70,7 @@ class wikimedia {
                 $this->_param['titles'] .= ('|'.urldecode($title));
             }
         } else {
-            $this->_param['titles'] = urldecode($title);
+            $this->_param['titles'] = urldecode($titles);
         }
         $this->_param['prop']   = 'imageinfo';
         $this->_param['iiprop'] = 'url';
@@ -116,7 +116,7 @@ class wikimedia {
             return $image_url;
         } else {
             $thumb_url = '';
-            $commons_main_dir = 'http://upload.wikimedia.org/wikipedia/commons/';
+            $commons_main_dir = 'https://upload.wikimedia.org/wikipedia/commons/';
             if ($image_url) {
                 $short_path = str_replace($commons_main_dir, '', $image_url);
                 $extension = strtolower(pathinfo($short_path, PATHINFO_EXTENSION));

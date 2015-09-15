@@ -50,6 +50,7 @@ class gradeimport_direct_mapping_form extends moodleform {
             }
         }
         $mform->addElement('select', 'mapfrom', get_string('mapfrom', 'grades'), $mapfromoptions);
+        $mform->addHelpButton('mapfrom', 'mapfrom', 'grades');
 
         $maptooptions = array(
             'userid'       => get_string('userid', 'grades'),
@@ -59,8 +60,10 @@ class gradeimport_direct_mapping_form extends moodleform {
             '0'            => get_string('ignore', 'grades')
         );
         $mform->addElement('select', 'mapto', get_string('mapto', 'grades'), $maptooptions);
+        $mform->addHelpButton('mapto', 'mapto', 'grades');
 
-        $mform->addElement('header', 'general', get_string('mappings', 'grades'));
+        $mform->addElement('header', 'general_map', get_string('mappings', 'grades'));
+        $mform->addHelpButton('general_map', 'mappings', 'grades');
 
         // Add a feedback option.
         $feedbacks = array();

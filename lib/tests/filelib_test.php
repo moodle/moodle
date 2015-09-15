@@ -878,4 +878,144 @@ EOF;
         $this->assertEquals('image', $mimeinfo['png']['string']);
         $this->assertEquals(true, $mimeinfo['txt']['defaulticon']);
     }
+
+    /**
+     * Tests for get_mimetype_for_sending function.
+     */
+    public function test_get_mimetype_for_sending() {
+        // Without argument.
+        $this->assertEquals('application/octet-stream', get_mimetype_for_sending());
+
+        // Argument is null.
+        $this->assertEquals('application/octet-stream', get_mimetype_for_sending(null));
+
+        // Filename having no extension.
+        $this->assertEquals('application/octet-stream', get_mimetype_for_sending('filenamewithoutextension'));
+
+        // Test using the extensions listed from the get_mimetypes_array function.
+        $mimetypes = get_mimetypes_array();
+        foreach ($mimetypes as $ext => $info) {
+            if ($ext === 'xxx') {
+                $this->assertEquals('application/octet-stream', get_mimetype_for_sending('SampleFile.' . $ext));
+            } else {
+                $this->assertEquals($info['type'], get_mimetype_for_sending('SampleFile.' . $ext));
+            }
+        }
+    }
+
+    /**
+     * Test curl agent settings.
+     */
+    public function test_curl_useragent() {
+        $curl = new testable_curl();
+        $options = $curl->get_options();
+        $this->assertNotEmpty($options);
+
+        $curl->call_apply_opt($options);
+        $this->assertTrue(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+        $this->assertFalse(in_array('User-Agent: Test/1.0', $curl->header));
+
+        $options['CURLOPT_USERAGENT'] = 'Test/1.0';
+        $curl->call_apply_opt($options);
+        $this->assertTrue(in_array('User-Agent: Test/1.0', $curl->header));
+        $this->assertFalse(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+
+        $curl->set_option('CURLOPT_USERAGENT', 'AnotherUserAgent/1.0');
+        $curl->call_apply_opt();
+        $this->assertTrue(in_array('User-Agent: AnotherUserAgent/1.0', $curl->header));
+        $this->assertFalse(in_array('User-Agent: Test/1.0', $curl->header));
+
+        $curl->set_option('CURLOPT_USERAGENT', 'AnotherUserAgent/1.1');
+        $options = $curl->get_options();
+        $curl->call_apply_opt($options);
+        $this->assertTrue(in_array('User-Agent: AnotherUserAgent/1.1', $curl->header));
+        $this->assertFalse(in_array('User-Agent: AnotherUserAgent/1.0', $curl->header));
+
+        $curl->unset_option('CURLOPT_USERAGENT');
+        $curl->call_apply_opt();
+        $this->assertTrue(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+
+        // Finally, test it via exttests, to ensure the agent is sent properly.
+        // Matching.
+        $testurl = $this->getExternalTestFileUrl('/test_agent.php');
+        $extcurl = new curl();
+        $contents = $extcurl->get($testurl, array(), array('CURLOPT_USERAGENT' => 'AnotherUserAgent/1.2'));
+        $response = $extcurl->getResponse();
+        $this->assertSame('200 OK', reset($response));
+        $this->assertSame(0, $extcurl->get_errno());
+        $this->assertSame('OK', $contents);
+        // Not matching.
+        $contents = $extcurl->get($testurl, array(), array('CURLOPT_USERAGENT' => 'NonMatchingUserAgent/1.2'));
+        $response = $extcurl->getResponse();
+        $this->assertSame('200 OK', reset($response));
+        $this->assertSame(0, $extcurl->get_errno());
+        $this->assertSame('', $contents);
+    }
+}
+
+/**
+ * Test-specific class to allow easier testing of curl functions.
+ *
+ * @copyright 2015 Dave Cooper
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class testable_curl extends curl {
+    /**
+     * Accessor for private options array using reflection.
+     *
+     * @return array
+     */
+    public function get_options() {
+        // Access to private property.
+        $rp = new ReflectionProperty('curl', 'options');
+        $rp->setAccessible(true);
+        return $rp->getValue($this);
+    }
+
+    /**
+     * Setter for private options array using reflection.
+     *
+     * @param array $options
+     */
+    public function set_options($options) {
+        // Access to private property.
+        $rp = new ReflectionProperty('curl', 'options');
+        $rp->setAccessible(true);
+        $rp->setValue($this, $options);
+    }
+
+    /**
+     * Setter for individual option.
+     * @param string $option
+     * @param string $value
+     */
+    public function set_option($option, $value) {
+        $options = $this->get_options();
+        $options[$option] = $value;
+        $this->set_options($options);
+    }
+
+    /**
+     * Unsets an option on the curl object
+     * @param string $option
+     */
+    public function unset_option($option) {
+        $options = $this->get_options();
+        unset($options[$option]);
+        $this->set_options($options);
+    }
+
+    /**
+     * Wrapper to access the private curl::apply_opt() method using reflection.
+     *
+     * @param array $options
+     * @return resource The curl handle
+     */
+    public function call_apply_opt($options = null) {
+        // Access to private method.
+        $rm = new ReflectionMethod('curl', 'apply_opt');
+        $rm->setAccessible(true);
+        $ch = curl_init();
+        return $rm->invoke($this, $ch, $options);
+    }
 }

@@ -77,11 +77,6 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->setType('mediaclose', PARAM_BOOL);
         $mform->setDefault('mediaclose', $CFG->lesson_mediaclose);
 
-        /** Legacy maximum highscores element to maintain backwards compatibility */
-        $mform->addElement('hidden', 'maxhighscores');
-        $mform->setType('maxhighscores', PARAM_INT);
-        $mform->setDefault('maxhighscores', $CFG->lesson_maxhighscores);
-
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
@@ -146,15 +141,15 @@ class mod_lesson_mod_form extends moodleform_mod {
         if ($mods = get_course_mods($COURSE->id)) {
             $modinstances = array();
             foreach ($mods as $mod) {
-
-                // get the module name and then store it in a new array
+                // Get the module name and then store it in a new array.
                 if ($module = get_coursemodule_from_instance($mod->modname, $mod->instance, $COURSE->id)) {
-                    if (isset($this->_cm->id) and $this->_cm->id != $mod->id){
+                    // Exclude this lesson, if it's already been saved.
+                    if (!isset($this->_cm->id) || $this->_cm->id != $mod->id) {
                         $modinstances[$mod->id] = $mod->modname.' - '.$module->name;
                     }
                 }
             }
-            asort($modinstances); // sort by module name
+            asort($modinstances); // Sort by module name.
             $modinstances=array(0=>get_string('none'))+$modinstances;
 
             $mform->addElement('select', 'activitylink', get_string('activitylink', 'lesson'), $modinstances);
@@ -340,6 +335,12 @@ class mod_lesson_mod_form extends moodleform_mod {
      **/
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
+
+        // Check open and close times are consistent.
+        if ($data['available'] != 0 && $data['deadline'] != 0 &&
+                $data['deadline'] < $data['available']) {
+            $errors['deadline'] = get_string('closebeforeopen', 'lesson');
+        }
 
         if (!empty($data['usepassword']) && empty($data['password'])) {
             $errors['password'] = get_string('emptypassword', 'lesson');

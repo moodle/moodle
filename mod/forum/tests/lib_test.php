@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/forum/lib.php');
+require_once($CFG->dirroot . '/rating/lib.php');
 
 class mod_forum_lib_testcase extends advanced_testcase {
 
@@ -1392,6 +1393,109 @@ class mod_forum_lib_testcase extends advanced_testcase {
         }
 
         return $discussion;
+    }
+
+    /**
+     * Tests for mod_forum_rating_can_see_item_ratings().
+     *
+     * @throws coding_exception
+     * @throws rating_exception
+     */
+    public function test_mod_forum_rating_can_see_item_ratings() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $course = new stdClass();
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = true;
+        $course = $this->getDataGenerator()->create_course($course);
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_forum');
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+        $context = context_module::instance($cm->id);
+
+        // Create users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        // Groups and stuff.
+        $role = $DB->get_record('role', array('shortname' => 'teacher'), '*', MUST_EXIST);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $role->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $role->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id, $role->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course->id, $role->id);
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        groups_add_member($group1, $user1);
+        groups_add_member($group1, $user2);
+        groups_add_member($group2, $user3);
+        groups_add_member($group2, $user4);
+
+        $record = new stdClass();
+        $record->course = $forum->course;
+        $record->forum = $forum->id;
+        $record->userid = $user1->id;
+        $record->groupid = $group1->id;
+        $discussion = $generator->create_discussion($record);
+
+        // Retrieve the first post.
+        $post = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
+
+        $ratingoptions = new stdClass;
+        $ratingoptions->context = $context;
+        $ratingoptions->ratingarea = 'post';
+        $ratingoptions->component = 'mod_forum';
+        $ratingoptions->itemid  = $post->id;
+        $ratingoptions->scaleid = 2;
+        $ratingoptions->userid  = $user2->id;
+        $rating = new rating($ratingoptions);
+        $rating->update_rating(2);
+
+        // Now try to access it as various users.
+        unassign_capability('moodle/site:accessallgroups', $role->id);
+        $params = array('contextid' => 2,
+                        'component' => 'mod_forum',
+                        'ratingarea' => 'post',
+                        'itemid' => $post->id,
+                        'scaleid' => 2);
+        $this->setUser($user1);
+        $this->assertTrue(mod_forum_rating_can_see_item_ratings($params));
+        $this->setUser($user2);
+        $this->assertTrue(mod_forum_rating_can_see_item_ratings($params));
+        $this->setUser($user3);
+        $this->assertFalse(mod_forum_rating_can_see_item_ratings($params));
+        $this->setUser($user4);
+        $this->assertFalse(mod_forum_rating_can_see_item_ratings($params));
+
+        // Now try with accessallgroups cap and make sure everything is visible.
+        assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $role->id, $context->id);
+        $this->setUser($user1);
+        $this->assertTrue(mod_forum_rating_can_see_item_ratings($params));
+        $this->setUser($user2);
+        $this->assertTrue(mod_forum_rating_can_see_item_ratings($params));
+        $this->setUser($user3);
+        $this->assertTrue(mod_forum_rating_can_see_item_ratings($params));
+        $this->setUser($user4);
+        $this->assertTrue(mod_forum_rating_can_see_item_ratings($params));
+
+        // Change group mode and verify visibility.
+        $course->groupmode = VISIBLEGROUPS;
+        $DB->update_record('course', $course);
+        unassign_capability('moodle/site:accessallgroups', $role->id);
+        $this->setUser($user1);
+        $this->assertTrue(mod_forum_rating_can_see_item_ratings($params));
+        $this->setUser($user2);
+        $this->assertTrue(mod_forum_rating_can_see_item_ratings($params));
+        $this->setUser($user3);
+        $this->assertTrue(mod_forum_rating_can_see_item_ratings($params));
+        $this->setUser($user4);
+        $this->assertTrue(mod_forum_rating_can_see_item_ratings($params));
+
     }
 
 }

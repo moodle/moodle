@@ -1431,7 +1431,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
         $totalcount = $coursecat->get_children_count();
         if (!$totalcount) {
-            // Note that we call get_child_categories_count() AFTER get_child_categories() to avoid extra DB requests.
+            // Note that we call coursecat::get_children_count() AFTER coursecat::get_children() to avoid extra DB requests.
             // Categories count is cached during children categories retrieval.
             return '';
         }
@@ -1671,9 +1671,10 @@ class core_course_renderer extends plugin_renderer_base {
         $site = get_site();
         $output = '';
 
-        if (can_edit_in_category($category)) {
+        if (can_edit_in_category($coursecat->id)) {
             // Add 'Manage' button if user has permissions to edit this category.
-            $managebutton = $this->single_button(new moodle_url('/course/management.php'), get_string('managecourses'), 'get');
+            $managebutton = $this->single_button(new moodle_url('/course/management.php',
+                array('categoryid' => $coursecat->id)), get_string('managecourses'), 'get');
             $this->page->set_button($managebutton);
         }
         if (!$coursecat->id) {

@@ -1,4 +1,4 @@
-@core @core_message @javascript
+@core @core_message
 Feature: Recent conversations contains my recent conversations
   In order to view my recent conversations
   As a user
@@ -14,7 +14,7 @@ Feature: Recent conversations contains my recent conversations
   Scenario: View that I don't have recent conversations
     Given I log in as "user1"
     And I follow "Messages" in the user menu
-    When I set the field "Message navigation:" to "Recent conversations"
+    When I select "Recent conversations" from the "Message navigation:" singleselect
     Then I should not see "User Two"
     And I should not see "User Three"
 
@@ -23,7 +23,7 @@ Feature: Recent conversations contains my recent conversations
     And I send "Message from user1 to user2" message to "User Two" user
     And I send "Message from user1 to user3" message to "User Three" user
     And I follow "Messages" in the user menu
-    When I set the field "Message navigation:" to "Recent conversations"
+    When I select "Recent conversations" from the "Message navigation:" singleselect
     Then I should see "User Two"
     And I should see "User Three"
     And I should see "Message from user1 to user2"
@@ -31,6 +31,6 @@ Feature: Recent conversations contains my recent conversations
     And I log out
     And I log in as "user2"
     And I follow "Messages" in the user menu
-    And I set the field "Message navigation:" to "Recent conversations"
+    And I select "Recent conversations" from the "Message navigation:" singleselect
     And I should see "Message from user1 to user2"
     And I should not see "Message from user1 to user3"

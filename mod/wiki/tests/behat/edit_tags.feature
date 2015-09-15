@@ -1,4 +1,4 @@
-@mod @mod_wiki
+@mod @mod_wiki @core_tag
 Feature: Edited wiki pages handle tags correctly
   In order to get wiki pages properly labelled
   As a user

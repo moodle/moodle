@@ -145,6 +145,10 @@ class gradingform_guide_renderer extends plugin_renderer_base {
                       'name' => '{NAME}[criteria][{CRITERION-id}][descriptionmarkers]'));
             $maxscore   = html_writer::tag('div', s($criterion['maxscore']),
                 array('class'=>'criteriondescriptionscore', 'name' => '{NAME}[criteria][{CRITERION-id}][maxscore]'));
+
+            // Retain newlines as <br> tags when displaying the marking guide.
+            $description = nl2br($description);
+            $descriptionmarkers = nl2br($descriptionmarkers);
         }
 
         if (isset($criterion['error_description'])) {
@@ -290,6 +294,8 @@ class gradingform_guide_renderer extends plugin_renderer_base {
             } else {
                 $description = s($comment['description']);
             }
+            // Retain newlines as <br> tags when displaying 'frequently used comments'.
+            $description = nl2br($description);
         }
         $descriptionclass = 'description';
         if (isset($comment['error_description'])) {

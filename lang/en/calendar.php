@@ -216,6 +216,3 @@ $string['weekthis'] = 'This week';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';
 
-// Deprecated since Moodle 2.8.
-
-$string['hidden'] = 'hidden';

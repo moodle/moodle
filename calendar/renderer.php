@@ -612,7 +612,7 @@ class core_calendar_renderer extends plugin_renderer_base {
 
         if (empty($subscriptions)) {
             $cell = new html_table_cell(get_string('nocalendarsubscriptions', 'calendar'));
-            $cell->colspan = 4;
+            $cell->colspan = 5;
             $table->data[] = new html_table_row(array($cell));
         }
         $strnever = new lang_string('never', 'calendar');

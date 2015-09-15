@@ -3,10 +3,6 @@
 .block .header .block_action {float:right;margin:4px 0 3px 0;vertical-align:top;}
 .block .header .block_action img,
 .block .header .block_action input {margin:0 3px; width: 12px; height: 12px;}
-.block .header .commands { text-align: right; clear: both;}
-.block .header .commands > a { margin:0 3px; }
-.block .header .commands .icon img {width:12px;height:12px;}
-.block .header .commands img.actionmenu {width:auto;}
 .block .content {padding:4px;}
 .jsenabled .block.hidden .content {display: none;}
 .block .content .userpicture {width:16px;height:16px;margin-right:6px;}
@@ -24,7 +20,10 @@
 .block.beingmoved {border-width: 2px;border-style: dashed;}
 .blockmovetarget {display: block;height: 1em;margin-bottom: 1em;border-width: 2px;border-style: dashed;}
 
-.block-region .invisible {opacity: 0.5;filter: alpha(opacity=50);}
+.block-region block.invisible .header h2 {
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
 
 .block .block-hider-show,
 .block .block-hider-hide {cursor:pointer;}
@@ -39,9 +38,30 @@
     min-height: 400px;
     overflow: hidden;
 }
+/** Block commands when editing  **/
+
+.editing .block .header .commands {
+    text-align: right;
+    clear: both;
+}
+.editing .block .header .commands > a {
+    margin: 0 3px;
+}
+.editing .block .header .commands .icon img {
+    width: 12px;
+    height: 12px;
+}
+.editing .block .header .commands img.actionmenu {
+    width: auto;
+}
 
 /** Overide for RTL layout **/
-.dir-rtl .block .header,
-.dir-rtl .block h2.header {text-align:right;}
-.dir-rtl .block .header .commands { text-align: left;}
-.dir-rtl .block .header .block_action { float: left; margin-left: 4px; margin-left: 0;}
+.dir-rtl .block .header h2 {
+    padding: .2em .2em 0 0;
+}
+.dir-rtl .block .header .block_action { float: left;}
+
+.dir-rtl.editing .block .header .commands {
+    text-align: left;
+}
+

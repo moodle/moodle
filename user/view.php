@@ -24,6 +24,7 @@
 
 require_once("../config.php");
 require_once($CFG->dirroot.'/user/profile/lib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/tag/lib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/badgeslib.php');
@@ -112,7 +113,7 @@ if ($currentuser) {
         // Need to have full access to a course to see the rest of own info.
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('notenrolled', '', $fullname));
-        $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+        $referer = get_local_referer(false);
         if (!empty($referer)) {
             echo $OUTPUT->continue_button($referer);
         }
@@ -125,9 +126,8 @@ if ($currentuser) {
     $PAGE->set_title("$strpersonalprofile: ");
     $PAGE->set_heading("$strpersonalprofile: ");
 
-    // Check course level capabilities.
-    if (!has_capability('moodle/user:viewdetails', $coursecontext) && // Normal enrolled user or mnager.
-        ($user->deleted or !has_capability('moodle/user:viewdetails', $usercontext))) {   // Usually parent.
+    // Check to see if the user can see this user's profile.
+    if (!user_can_view_profile($user, $course, $usercontext) && !$isparent) {
         print_error('cannotviewprofile');
     }
 
@@ -144,7 +144,7 @@ if ($currentuser) {
             $PAGE->navbar->add($struser);
             echo $OUTPUT->heading(get_string('notenrolledprofile'));
         }
-        $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+        $referer = get_local_referer(false);
         if (!empty($referer)) {
             echo $OUTPUT->continue_button($referer);
         }
@@ -152,22 +152,9 @@ if ($currentuser) {
         exit;
     }
 
-    // If groups are in use and enforced throughout the course, then make sure we can meet in at least one course level group.
-    // Except when we are a parent, in which case we would not be in any group.
-    if (groups_get_course_groupmode($course) == SEPARATEGROUPS
-            and $course->groupmodeforce
-            and !has_capability('moodle/site:accessallgroups', $coursecontext)
-            and !has_capability('moodle/site:accessallgroups', $coursecontext, $user->id)
-            and !$isparent) {
-        if (!isloggedin() or isguestuser()) {
-            // Do not use require_login() here because we might have already used require_login($course).
-            redirect(get_login_url());
-        }
-        $mygroups = array_keys(groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid, 'g.id, g.name'));
-        $usergroups = array_keys(groups_get_all_groups($course->id, $user->id, $course->defaultgroupingid, 'g.id, g.name'));
-        if (!array_intersect($mygroups, $usergroups)) {
-            print_error("groupnotamember", '', "../course/view.php?id=$course->id");
-        }
+    if (!isloggedin() or isguestuser()) {
+        // Do not use require_login() here because we might have already used require_login($course).
+        redirect(get_login_url());
     }
 }
 
@@ -207,8 +194,8 @@ if ($user->deleted) {
 // Trigger a user profile viewed event.
 profile_view($user, $coursecontext, $course);
 
-echo '<div class="description">';
 if ($user->description && !isset($hiddenfields['description'])) {
+    echo '<div class="description">';
     if (!empty($CFG->profilesforenrolledusersonly) && !$DB->record_exists('role_assignments', array('userid' => $id))) {
         echo get_string('profilenotshown', 'moodle');
     } else {
@@ -221,6 +208,7 @@ if ($user->description && !isset($hiddenfields['description'])) {
         $options = array('overflowdiv' => true);
         echo format_text($user->description, $user->descriptionformat, $options);
     }
+    echo '</div>'; // Description class.
 }
 
 // Render custom blocks.

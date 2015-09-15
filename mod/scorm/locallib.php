@@ -840,7 +840,15 @@ function scorm_get_all_attempts($scormid, $userid) {
     return $attemptids;
 }
 
-function scorm_view_display ($user, $scorm, $action, $cm) {
+/**
+ * Displays the entry form and toc if required.
+ *
+ * @param  stdClass $user   user object
+ * @param  stdClass $scorm  scorm object
+ * @param  string   $action base URL for the organizations select box
+ * @param  stdClass $cm     course module object
+ */
+function scorm_print_launch ($user, $scorm, $action, $cm) {
     global $CFG, $DB, $PAGE, $OUTPUT, $COURSE;
 
     if ($scorm->updatefreq == SCORM_UPDATE_EVERYTIME) {
@@ -1092,7 +1100,7 @@ function scorm_reconstitute_array_element($sversion, $userdata, $elementname, $c
             $return .= '    '.$subelement." = new Object();\n";
         }
 
-        $return .= '    '.$element.' = \''.$value."';\n";
+        $return .= '    '.$element.' = '.json_encode($value).";\n";
     }
     if ($countsub > 0) {
         $return .= '    '.$elementname.$scormseperator.$current.'.'.$currentsubelement.'._count = '.$countsub.";\n";
@@ -1295,7 +1303,7 @@ function scorm_get_attempt_count($userid, $scorm, $returnobjects = false, $ignor
  * @return boolean - debugging true/false
  */
 function scorm_debugging($scorm) {
-    global $CFG, $USER;
+    global $USER;
     $cfgscorm = get_config('scorm');
 
     if (!$cfgscorm->allowapidebug) {
@@ -1307,9 +1315,11 @@ function scorm_debugging($scorm) {
     if (!preg_match('/^[\w\s\*\.\?\+\:\_\\\]+$/', $test)) {
         return false;
     }
-    $res = false;
-    eval('$res = preg_match(\'/^'.$test.'/\', $identifier) ? true : false;');
-    return $res;
+
+    if (preg_match('/^'.$test.'/', $identifier)) {
+        return true;
+    }
+    return false;
 }
 
 /**

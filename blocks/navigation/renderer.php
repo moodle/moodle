@@ -115,7 +115,7 @@ class block_navigation_renderer extends plugin_renderer_base {
             } else if ($item->action instanceof action_link) {
                 //TODO: to be replaced with something else
                 $link = $item->action;
-                $link->text = $icon.$link->text;
+                $link->text = $icon.html_writer::span($link->text, 'item-content-wrap');
                 $link->attributes = array_merge($link->attributes, $attributes);
                 $content = $this->output->render($link);
             } else if ($item->action instanceof moodle_url) {

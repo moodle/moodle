@@ -521,6 +521,15 @@ $functions = array(
         'capabilities'  => 'moodle/user:viewdetails',
     ),
 
+    'core_user_add_user_private_files' => array(
+        'classname'     => 'core_user_external',
+        'methodname'    => 'add_user_private_files',
+        'classpath'     => 'user/externallib.php',
+        'description'   => 'Copy files from a draft area to users private files area.',
+        'type'          => 'write',
+        'capabilities'  => 'moodle/user:manageownfiles',
+    ),
+
     // === enrol related functions ===
 
     'core_enrol_get_enrolled_users_with_capability' => array(
@@ -1055,6 +1064,22 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => 'moodle/rating:view'
     ),
+
+    // Tag functions.
+   'core_tag_update_tags' => array(
+        'classname'   => 'core_tag_external',
+        'methodname'  => 'update_tags',
+        'description' => 'Updates tags',
+        'type'        => 'write',
+    ),
+
+    'core_tag_get_tags' => array(
+        'classname'   => 'core_tag_external',
+        'methodname'  => 'get_tags',
+        'description' => 'Gets tags by their ids',
+        'type'        => 'read',
+    ),
+
 );
 
 $services = array(
@@ -1099,6 +1124,7 @@ $services = array(
             'mod_forum_get_forums_by_courses',
             'mod_forum_get_forum_discussions_paginated',
             'mod_forum_get_forum_discussion_posts',
+            'mod_forum_add_discussion_post',
             'core_files_get_files',
             'core_message_get_messages',
             'core_message_create_contacts',
@@ -1127,6 +1153,26 @@ $services = array(
             'core_user_view_user_profile',
             'gradereport_user_view_grade_report',
             'core_rating_get_item_ratings',
+            'mod_url_view_url',
+            'core_user_get_users_by_field',
+            'core_user_add_user_private_files',
+            'mod_assign_view_grading_table',
+            'mod_scorm_view_scorm',
+            'mod_page_view_page',
+            'mod_resource_view_resource',
+            'mod_folder_view_folder',
+            'mod_chat_login_user',
+            'mod_chat_get_chat_users',
+            'mod_chat_send_chat_message',
+            'mod_chat_get_chat_latest_messages',
+            'mod_chat_view_chat',
+            'mod_chat_get_chats_by_courses',
+            'mod_book_view_book',
+            'mod_choice_get_choice_results',
+            'mod_choice_get_choice_options',
+            'mod_choice_submit_choice_response',
+            'mod_choice_view_choice',
+            'mod_imscp_view_imscp',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,

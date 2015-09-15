@@ -161,6 +161,34 @@ class behat_forms extends behat_base {
     }
 
     /**
+     * Press the key in the field to trigger the javascript keypress event
+     *
+     * Note that the character key will not actually be typed in the input field
+     *
+     * @Given /^I press key "(?P<key_string>(?:[^"]|\\")*)" in the field "(?P<field_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $key either char-code or character itself,
+     *          may optionally be prefixed with ctrl-, alt-, shift- or meta-
+     * @param string $field
+     * @return void
+     */
+    public function i_press_key_in_the_field($key, $field) {
+        if (!$this->running_javascript()) {
+            throw new DriverException('Key press step is not available with Javascript disabled');
+        }
+        $fld = behat_field_manager::get_form_field_from_label($field, $this);
+        $modifier = null;
+        $char = $key;
+        if (preg_match('/-/', $key)) {
+            list($modifier, $char) = preg_split('/-/', $key, 2);
+        }
+        if (is_numeric($char)) {
+            $char = (int)$char;
+        }
+        $fld->key_press($char, $modifier);
+    }
+
+    /**
      * Sets the specified value to the field.
      *
      * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to multiline$/
@@ -394,7 +422,17 @@ class behat_forms extends behat_base {
         );
 
         if (!$this->running_javascript()) {
-            $actions[] = new Given('I press "' . get_string('go') . '"');
+            // Press button in the specified select container.
+            $containerxpath = "//div[" .
+                "(contains(concat(' ', normalize-space(@class), ' '), ' singleselect ') " .
+                    "or contains(concat(' ', normalize-space(@class), ' '), ' urlselect ')".
+                ") and (
+                .//label[contains(normalize-space(string(.)), '" . $singleselect . "')] " .
+                    "or .//select[(./@name='" . $singleselect . "' or ./@id='". $singleselect . "')]" .
+                ")]";
+
+            $actions[] = new Given('I click on "' . get_string('go') . '" "button" in the "' . $containerxpath .
+                '" "xpath_element"');
         }
 
         return $actions;

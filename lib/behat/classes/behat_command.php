@@ -157,7 +157,7 @@ class behat_command {
 
             // Returning composer error code to avoid conflicts with behat and moodle error codes.
             self::output_msg(get_string('errorcomposer', 'tool_behat'));
-            return BEHAT_EXITCODE_COMPOSER;
+            return TESTING_EXITCODE_COMPOSER;
         }
 
         // Behat test command.
@@ -167,7 +167,7 @@ class behat_command {
 
             // Returning composer error code to avoid conflicts with behat and moodle error codes.
             self::output_msg(get_string('errorbehatcommand', 'tool_behat', self::get_behat_command()));
-            return BEHAT_EXITCODE_COMPOSER;
+            return TESTING_EXITCODE_COMPOSER;
         }
 
         // No empty values.
@@ -205,7 +205,7 @@ class behat_command {
     }
 
     /**
-     * Has the site installed composer with --dev option
+     * Has the site installed composer.
      * @return bool
      */
     public static function are_behat_dependencies_installed() {

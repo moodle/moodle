@@ -28,6 +28,7 @@ namespace core\output;
 use coding_exception;
 use moodle_exception;
 use core_component;
+use theme_config;
 
 /**
  * Get information about valid locations for mustache templates.

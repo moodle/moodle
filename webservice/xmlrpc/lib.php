@@ -46,9 +46,22 @@ class webservice_xmlrpc_client extends Zend_XmlRpc_Client {
      * @param string $token the token used to do the web service call
      */
     public function __construct($serverurl, $token) {
+        global $CFG;
         $this->serverurl = $serverurl;
         $serverurl = $serverurl . '?wstoken=' . $token;
         parent::__construct($serverurl);
+        if (!empty($CFG->proxyhost) && !is_proxybypass($serverurl)) {
+            $config = array(
+                'adapter'    => 'Zend_Http_Client_Adapter_Proxy',
+                'proxy_host' => $CFG->proxyhost,
+                'proxy_user' => !empty($CFG->proxyuser) ? $CFG->proxyuser : null,
+                'proxy_pass' => !empty($CFG->proxypassword) ? $CFG->proxypassword : null
+            );
+            if (!empty($CFG->proxyport)) {
+                $config['proxy_port'] = $CFG->proxyport;
+            }
+            $this->getHttpClient()->setConfig($config);
+        }
     }
 
     /**

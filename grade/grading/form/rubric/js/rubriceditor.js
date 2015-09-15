@@ -143,7 +143,7 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
         elements_str = '#rubric-'+name+' .criterion'
     }
     // prepare the id of the next inserted level or criterion
-    if (action == 'addcriterion' || action == 'addlevel') {
+    if (action == 'addcriterion' || action == 'addlevel' || action == 'duplicate' ) {
         var newid = M.gradingform_rubriceditor.calculatenewid('#rubric-'+name+' .criterion')
         var newlevid = M.gradingform_rubriceditor.calculatenewid('#rubric-'+name+' .level')
     }
@@ -204,6 +204,41 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
             dialog_options['message'] = M.util.get_string('confirmdeletecriterion', 'gradingform_rubric')
             M.util.show_confirm_dialog(e, dialog_options);
         }
+    } else if (chunks.length == 4 && action == 'duplicate') {
+        // Duplicate criterion.
+        var levelsdef = [], levelsscores = [0], levidx = null;
+        var parentel = Y.one('#'+name+'-criteria');
+        if (parentel.one('>tbody')) { parentel = parentel.one('>tbody'); }
+
+        var source = Y.one('#'+name+'-criteria-'+chunks[2]);
+        if (source.all('.level')) {
+            var lastcriterion = source.all('.level');
+            for (levidx = 0; levidx < lastcriterion.size(); levidx++) {
+                levelsdef[levidx] = lastcriterion.item(levidx).one('.definition .textvalue').get('innerHTML');
+            }
+            for (levidx = 0; levidx < lastcriterion.size(); levidx++) {
+                levelsscores[levidx] = lastcriterion.item(levidx).one('.score input[type=text]').get('value');
+            }
+        }
+
+        for (levidx; levidx < 3; levidx++) { levelsscores[levidx] = parseFloat(levelsscores[levidx-1]) + 1; }
+        var levelsstr = '';
+        for (levidx = 0; levidx < levelsscores.length; levidx++) {
+            levelsstr += M.gradingform_rubriceditor.templates[name].level
+                            .replace(/\{LEVEL-id\}/g, 'NEWID'+(newlevid+levidx))
+                            .replace(/\{LEVEL-score\}/g, levelsscores[levidx])
+                            .replace(/\{LEVEL-definition\}/g, levelsdef[levidx]);
+        }
+        var description = source.one('.description .textvalue');
+        var newcriterion = M.gradingform_rubriceditor.templates[name].criterion
+                                .replace(/\{LEVELS\}/, levelsstr)
+                                .replace(/\{CRITERION-description\}/, description.get('innerHTML'));
+        parentel.append(newcriterion.replace(/\{CRITERION-id\}/g, 'NEWID'+newid).replace(/\{.+?\}/g, ''));
+        M.gradingform_rubriceditor.assignclasses('#rubric-'+name+' #'+name+'-criteria-NEWID'+newid+'-levels .level');
+        M.gradingform_rubriceditor.addhandlers();
+        M.gradingform_rubriceditor.disablealleditors();
+        M.gradingform_rubriceditor.assignclasses(elements_str);
+        M.gradingform_rubriceditor.editmode(Y.one('#rubric-'+name+' #'+name+'-criteria-NEWID'+newid+'-description'),true);
     } else if (chunks.length == 6 && action == 'delete') {
         // DELETE LEVEL
         if (confirmed) {

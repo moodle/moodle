@@ -106,5 +106,8 @@ MathJax.Hub.Config({
         upgrade_plugin_savepoint(true, 2015021700, 'filter', 'mathjaxloader');
     }
 
+    // Moodle v2.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once("../../config.php");
+require_once($CFG->dirroot.'/mod/scorm/lib.php');
 require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
@@ -123,14 +124,7 @@ $shortname = format_string($course->shortname, true, array('context' => $context
 $pagetitle = strip_tags($shortname.': '.format_string($scorm->name));
 
 // Trigger module viewed event.
-$event = \mod_scorm\event\course_module_viewed::create(array(
-    'objectid' => $scorm->id,
-    'context' => $contextmodule,
-));
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('scorm', $scorm);
-$event->add_record_snapshot('course_modules', $cm);
-$event->trigger();
+scorm_view($scorm, $course, $cm, $contextmodule);
 
 if (empty($preventskip) && empty($launch) && (has_capability('mod/scorm:skipview', $contextmodule))) {
     scorm_simple_play($scorm, $USER, $contextmodule, $cm->id);
@@ -179,7 +173,7 @@ if (!empty($scorm->timeclose) && $timenow > $scorm->timeclose) {
     $scormopen = false;
 }
 if ($scormopen && empty($launch)) {
-    scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
+    scorm_print_launch($USER, $scorm, 'view.php?id='.$cm->id, $cm);
 }
 if (!empty($forcejs)) {
     echo $OUTPUT->box(get_string("forcejavascriptmessage", "scorm"), "generalbox boxaligncenter forcejavascriptmessage");

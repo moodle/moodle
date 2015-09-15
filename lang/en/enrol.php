@@ -94,6 +94,7 @@ $string['manageinstance'] = 'Manage';
 $string['migratetomanual'] = 'Migrate to manual enrolments';
 $string['nochange'] = 'No change';
 $string['noexistingparticipants'] = 'No existing participants';
+$string['nogroup'] = 'No group';
 $string['noguestaccess'] = 'Guests can not access this course, please try to log in.';
 $string['none'] = 'None';
 $string['notenrollable'] = 'You can not enrol yourself in this course.';

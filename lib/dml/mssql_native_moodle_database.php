@@ -99,6 +99,37 @@ class mssql_native_moodle_database extends moodle_database {
     }
 
     /**
+     * Diagnose database and tables, this function is used
+     * to verify database and driver settings, db engine types, etc.
+     *
+     * @return string null means everything ok, string means problem found.
+     */
+    public function diagnose() {
+        // Verify the database is running with READ_COMMITTED_SNAPSHOT enabled.
+        // (that's required to get snapshots/row versioning on READ_COMMITED mode).
+        $correctrcsmode = false;
+        $sql = "SELECT is_read_committed_snapshot_on
+                  FROM sys.databases
+                 WHERE name = '{$this->dbname}'";
+        $this->query_start($sql, null, SQL_QUERY_AUX);
+        $result = mssql_query($sql, $this->mssql);
+        $this->query_end($result);
+        if ($result) {
+            if ($row = mssql_fetch_assoc($result)) {
+                $correctrcsmode = (bool)reset($row);
+            }
+        }
+        $this->free_result($result);
+
+        if (!$correctrcsmode) {
+            return get_string('mssqlrcsmodemissing', 'error');
+        }
+
+        // Arrived here, all right.
+        return null;
+    }
+
+    /**
      * Connect to db
      * Must be called before other methods.
      * @param string $dbhost The database host.
@@ -1207,11 +1238,7 @@ class mssql_native_moodle_database extends moodle_database {
         for ($n=count($elements)-1; $n > 0 ; $n--) {
             array_splice($elements, $n, 0, $separator);
         }
-        $s = implode(' + ', $elements);
-        if ($s === '') {
-            return " '' ";
-        }
-        return " $s ";
+        return call_user_func_array(array($this, 'sql_concat'), $elements);
     }
 
    public function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {

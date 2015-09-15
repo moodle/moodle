@@ -192,13 +192,13 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
 
     if (isset($identityfields['department']) && $user->department) {
         $node = new core_user\output\myprofile\node('contact', 'department', get_string('department'), null, null,
-            $user->institution);
+            $user->department);
         $tree->add_node($node);
     }
 
     if (isset($identityfields['idnumber']) && $user->idnumber) {
         $node = new core_user\output\myprofile\node('contact', 'idnumber', get_string('idnumber'), null, null,
-            $user->institution);
+            $user->idnumber);
         $tree->add_node($node);
     }
 
@@ -316,8 +316,6 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                 $tree->add_node($node);
             }
         }
-
-        echo html_writer::end_tag('dl');
     }
 
     if ($user->icq && !isset($hiddenfields['icqnumber'])) {
@@ -375,7 +373,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                     $newfield = 'profile_field_'.$field->datatype;
                     $formfield = new $newfield($field->id, $user->id);
                     if ($formfield->is_visible() and !$formfield->is_empty()) {
-                        $node = new core_user\output\myprofile\node('contact', $formfield->field->shortname,
+                        $node = new core_user\output\myprofile\node('contact', 'custom_field_' . $formfield->field->shortname,
                             format_string($formfield->field->name), null, null, $formfield->display_data());
                         $tree->add_node($node);
                     }

@@ -14,7 +14,6 @@
 .block_settings .block_tree .tree_item {padding-left: 21px;margin:3px 0px;text-align:left;}
 
 .block_settings .block_tree .tree_item.branch {background-image: url([[pix:t/expanded]]);background-position: 0 10%;background-repeat: no-repeat;}
-.block_settings .block_tree .root_node.leaf {padding-left:0px;}
 .block_settings .block_tree .active_tree_node {font-weight:bold;}
 .jsenabled .block_settings .block_tree .tree_item.branch {cursor:pointer;}
 .jsenabled .block_settings .block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty]]);background-position: 0 10%;background-repeat: no-repeat;}
@@ -29,7 +28,6 @@
 .dir-rtl .block_settings .block_tree li ul {padding-left:0;padding-right: 18px;}
 .dir-rtl .block_settings .block_tree .tree_item {padding-right: 21px; padding-left: 0; text-align:right;}
 .dir-rtl .block_settings .block_tree .tree_item.branch {background-position: center right;}
-.dir-rtl .block_settings .block_tree .root_node.leaf {padding-right:0px;}
 .dir-rtl .block_settings .block_tree li.item_with_icon > p img { right: 0; left: auto;}
 .jsenabled .block_settings .block_tree .tree_item.branch.loadingbranch {background-image:url([[pix:i/loading_small]]);}
 

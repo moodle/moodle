@@ -51,6 +51,8 @@ $configstr = get_string('manageyourportfolios', 'portfolio');
 $namestr = get_string('name');
 $pluginstr = get_string('plugin', 'portfolio');
 $baseurl = $CFG->wwwroot . '/user/portfolio.php';
+$introstr = get_string('intro', 'portfolio');
+$showhide = get_string('showhide', 'portfolio');
 
 $display = true; // Set this to false in the conditions to stop processing.
 
@@ -100,12 +102,14 @@ if ($display) {
     echo $OUTPUT->heading($configstr);
     echo $OUTPUT->box_start();
 
+    echo html_writer::tag('p', $introstr);
+
     if (!$instances = portfolio_instances(true, false)) {
         print_error('noinstances', 'portfolio', $CFG->wwwroot . '/user/view.php');
     }
 
     $table = new html_table();
-    $table->head = array($namestr, $pluginstr, '');
+    $table->head = array($namestr, $pluginstr, $showhide);
     $table->data = array();
 
     foreach ($instances as $i) {

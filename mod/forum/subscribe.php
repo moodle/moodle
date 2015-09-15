@@ -176,23 +176,23 @@ if ($issubscribed) {
         if (\mod_forum\subscriptions::unsubscribe_user($user->id, $forum, $context, true)) {
             redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
         } else {
-            print_error('cannotunsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
+            print_error('cannotunsubscribe', 'forum', get_local_referer(false));
         }
     } else {
         if (\mod_forum\subscriptions::unsubscribe_user_from_discussion($user->id, $discussion, $context)) {
             $info->discussion = $discussion->name;
             redirect($returnto, get_string("discussionnownotsubscribed", "forum", $info), 1);
         } else {
-            print_error('cannotunsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
+            print_error('cannotunsubscribe', 'forum', get_local_referer(false));
         }
     }
 
 } else {  // subscribe
     if (\mod_forum\subscriptions::subscription_disabled($forum) && !has_capability('mod/forum:managesubscriptions', $context)) {
-        print_error('disallowsubscribe', 'forum', $_SERVER["HTTP_REFERER"]);
+        print_error('disallowsubscribe', 'forum', get_local_referer(false));
     }
     if (!has_capability('mod/forum:viewdiscussion', $context)) {
-        print_error('noviewdiscussionspermission', 'forum', $_SERVER["HTTP_REFERER"]);
+        print_error('noviewdiscussionspermission', 'forum', get_local_referer(false));
     }
     if (is_null($sesskey)) {
         // We came here via link in email.

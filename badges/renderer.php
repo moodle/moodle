@@ -783,11 +783,7 @@ class core_badges_renderer extends plugin_renderer_base {
 
     // Prints criteria actions for badge editing.
     public function print_criteria_actions(badge $badge) {
-        $table = new html_table();
-        $table->attributes = array('class' => 'boxaligncenter', 'id' => 'badgeactions');
-        $table->colclasses = array('activatebadge');
-
-        $actions = array();
+        $output = '';
         if (!$badge->is_active() && !$badge->is_locked()) {
             $accepted = $badge->get_accepted_criteria();
             $potential = array_diff($accepted, array_keys($badge->criteria));
@@ -798,16 +794,21 @@ class core_badges_renderer extends plugin_renderer_base {
                         $select[$p] = get_string('criteria_' . $p, 'badges');
                     }
                 }
-                $actions[] = get_string('addbadgecriteria', 'badges');
-                $actions[] = $this->output->single_select(new moodle_url('/badges/criteria_settings.php',
-                        array('badgeid' => $badge->id, 'add' => true)), 'type', $select);
+                $output .= $this->output->single_select(
+                    new moodle_url('/badges/criteria_settings.php', array('badgeid' => $badge->id, 'add' => true)),
+                    'type',
+                    $select,
+                    '',
+                    array('' => 'choosedots'),
+                    null,
+                    array('label' => get_string('addbadgecriteria', 'badges'))
+                );
             } else {
-                $actions[] = $this->output->box(get_string('nothingtoadd', 'badges'), 'clearfix');
+                $output .= $this->output->box(get_string('nothingtoadd', 'badges'), 'clearfix');
             }
         }
 
-        $table->data[] = $actions;
-        return html_writer::table($table);
+        return $output;
     }
 
     // Renders a table with users who have earned the badge.

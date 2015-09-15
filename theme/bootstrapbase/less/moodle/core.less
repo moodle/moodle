@@ -179,9 +179,13 @@ a.autolink.glossary:hover {
 .collapsibleregioncaption {
     white-space: nowrap;
 }
+.pagelayout-mydashboard.jsenabled .collapsibleregioncaption {
+    cursor: pointer;
+}
 .collapsibleregioncaption img {
     vertical-align: middle;
 }
+
 .jsenabled .hiddenifjs {
     display: none;
 }
@@ -835,21 +839,37 @@ ul#tag-cloud-list li {
     list-style: none;
 }
 span.flagged-tag,
-span.flagged-tag a {
+tr.flagged-tag,
+span.flagged-tag a,
+tr.flagged-tag a {
     color: @errorText;
 }
-table#tag-management-list {
-    text-align: left;
-    width: 100%;
-}
-table#tag-management-list td,
-table#tag-management-list th {
+.tag-management-table td,
+.tag-management-table th {
     vertical-align: middle;
-    text-align: left;
     padding: 4px;
 }
-.tag-management-form {
-    text-align: center;
+.tag-management-table tr td.tageditingon .displaytagname,
+.tag-management-table td .edittagname {
+    display: none;
+}
+.tag-management-table tr td.tageditingon .edittagname {
+    display: inherit;
+    position: relative;
+}
+.tag-management-table tr td.tageditingon .edittagname .editinstructions {
+    margin-right: -300px;
+    margin-left: 0;
+}
+.tag-management-table tr td .tagnameedit img {
+    opacity: 0.2;
+}
+.tag-management-table tr:hover td .tagnameedit img,
+.tag-management-table tr td .tagnameedit:focus img {
+    opacity: 1;
+}
+.tag-management-table tr:hover td.tageditingon .tagnameedit img {
+    opacity: 0.2;
 }
 #relatedtags-autocomplete-container {
     margin-left: auto;
@@ -1217,6 +1237,10 @@ body.tag .managelink {
             }
         }
     }
+}
+
+#page-enrol-users .enrol-users-page-action input {
+    margin-left: 0
 }
 
 /**
@@ -2104,8 +2128,6 @@ img#persona_signin {
     }
     .page-header-image {
         margin-bottom: 1em;
-        z-index: 1;
-
     }
     .page-header-headings {
         margin-top: 30px;

@@ -54,10 +54,11 @@ class data_field_menu extends data_field_base {
         if ($this->field->required) {
             $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
-            $str .= html_writer::div($image);
+            $str .= html_writer::div($image, 'inline-req');
         }
         $str .= '</label>';
-        $str .= html_writer::select($options, 'field_'.$this->field->id, $content, array(''=>get_string('menuchoose', 'data')), array('id'=>'field_'.$this->field->id));
+        $str .= html_writer::select($options, 'field_'.$this->field->id, $content, array('' => get_string('menuchoose', 'data')),
+                                    array('id' => 'field_'.$this->field->id, 'class' => 'mod-data-input'));
 
         $str .= '</div>';
 

@@ -144,6 +144,7 @@ class mod_assign_mod_form extends moodleform_mod {
             'preventsubmissionnotingroup',
             'assign');
         $mform->setType('preventsubmissionnotingroup', PARAM_BOOL);
+        $mform->disabledIf('preventsubmissionnotingroup', 'teamsubmission', 'eq', 0);
 
         $name = get_string('requireallteammemberssubmit', 'assign');
         $mform->addElement('selectyesno', 'requireallteammemberssubmit', $name);

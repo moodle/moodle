@@ -444,11 +444,16 @@ class core_message_external extends external_api {
                     'unread' => $contact->messagecount
                 );
 
-                $usercontextid = context_user::instance($contact->id)->id;
-                $newcontact['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
-                                                    $usercontextid, 'user', 'icon', null, '/', 'f1')->out(false);
-                $newcontact['profileimageurlsmall'] = moodle_url::make_webservice_pluginfile_url(
-                                                        $usercontextid, 'user', 'icon', null, '/', 'f2')->out(false);
+                $usercontext = context_user::instance($contact->id, IGNORE_MISSING);
+                if ($usercontext) {
+                    $newcontact['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
+                                                        $usercontext->id, 'user', 'icon', null, '/', 'f1')->out(false);
+                    $newcontact['profileimageurlsmall'] = moodle_url::make_webservice_pluginfile_url(
+                                                            $usercontext->id, 'user', 'icon', null, '/', 'f2')->out(false);
+                } else {
+                    $newcontact['profileimageurl'] = '';
+                    $newcontact['profileimageurlsmall'] = '';
+                }
 
                 $allcontacts[$mode][$key] = $newcontact;
             }
@@ -576,11 +581,17 @@ class core_message_external extends external_api {
             $user->phone1 = null;
             $user->phone2 = null;
 
-            $usercontextid = context_user::instance($user->id)->id;
-            $newuser['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
-                                                $usercontextid, 'user', 'icon', null, '/', 'f1')->out(false);
-            $newuser['profileimageurlsmall'] = moodle_url::make_webservice_pluginfile_url(
-                                                    $usercontextid, 'user', 'icon', null, '/', 'f2')->out(false);
+            $usercontext = context_user::instance($user->id, IGNORE_MISSING);
+
+            if ($usercontext) {
+                $newuser['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
+                                                    $usercontext->id, 'user', 'icon', null, '/', 'f1')->out(false);
+                $newuser['profileimageurlsmall'] = moodle_url::make_webservice_pluginfile_url(
+                                                        $usercontext->id, 'user', 'icon', null, '/', 'f2')->out(false);
+            } else {
+                $newuser['profileimageurl'] = '';
+                $newuser['profileimageurlsmall'] = '';
+            }
 
             $user = $newuser;
         }
@@ -890,8 +901,14 @@ class core_message_external extends external_api {
                 'id' => $user->id,
                 'fullname' => fullname($user),
             );
-            $newuser['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
-                context_user::instance($user->id)->id, 'user', 'icon', null, '/', 'f1')->out(false);
+
+            $usercontext = context_user::instance($user->id, IGNORE_MISSING);
+            if ($usercontext) {
+                $newuser['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
+                                                $usercontext->id, 'user', 'icon', null, '/', 'f1')->out(false);
+            } else {
+                $newuser['profileimageurl'] = '';
+            }
 
             $blockedusers[] = $newuser;
         }

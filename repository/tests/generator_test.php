@@ -50,7 +50,7 @@ class core_repository_generator_testcase extends advanced_testcase {
             'user', 'webdav', 'wikimedia', 'youtube');
 
         // The ones enabled during installation.
-        $alreadyenabled = array('local', 'recent', 'upload', 'url', 'user', 'wikimedia', 'youtube');
+        $alreadyenabled = array('local', 'recent', 'upload', 'url', 'user', 'wikimedia');
 
         // Enable all the repositories which are not enabled yet.
         foreach ($all as $type) {

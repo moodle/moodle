@@ -213,6 +213,15 @@ class auth_plugin_base {
     }
 
     /**
+     * Returns false if this plugin is enabled but not configured.
+     *
+     * @return bool
+     */
+    public function is_configured() {
+        return false;
+    }
+
+    /**
      * Indicates if password hashes should be stored in local moodle database.
      * @return bool true means md5 password hash stored in user table, false means flag 'not_cached' stored there instead
      */

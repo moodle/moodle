@@ -31,6 +31,7 @@ $string['addtemplate'] = 'Add template';
 $string['advancedsearch'] = 'Advanced search';
 $string['allowcomments'] = 'Allow comments on entries';
 $string['alttext'] = 'Alternative text';
+$string['approvalstatus'] = 'Approval status';
 $string['approve'] = 'Approve';
 $string['approved'] = 'Approved';
 $string['areacontent'] = 'Fields';

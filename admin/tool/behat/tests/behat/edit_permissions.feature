@@ -15,7 +15,6 @@ Feature: Edit capabilities
       | user | course | role |
       | teacher1 | C1 | editingteacher |
 
-  @javascript
   Scenario: Default system capabilities modification
     Given I log in as "admin"
     And I set the following system permissions of "Teacher" role:
@@ -30,7 +29,6 @@ Feature: Edit capabilities
     And "moodle/grade:managesharedforms" capability has "Prevent" permission
     And "moodle/course:request" capability has "Prohibit" permission
 
-  @javascript
   Scenario: Course capabilities overrides
     Given I log in as "teacher1"
     And I follow "Course 1"
@@ -41,11 +39,11 @@ Feature: Edit capabilities
       | mod/forum:editanypost | Prevent |
       | mod/forum:addquestion | Allow |
     When I set the field "Advanced role override" to "Student (3)"
+    And I press "Go"
     Then "mod/forum:deleteanypost" capability has "Prohibit" permission
     And "mod/forum:editanypost" capability has "Prevent" permission
     And "mod/forum:addquestion" capability has "Allow" permission
 
-  @javascript
   Scenario: Module capabilities overrides
     Given I log in as "teacher1"
     And I follow "Course 1"
@@ -60,6 +58,7 @@ Feature: Edit capabilities
       | mod/forum:editanypost | Prevent |
       | mod/forum:addquestion | Allow |
     When I set the field "Advanced role override" to "Student (3)"
+    And I press "Go"
     Then "mod/forum:deleteanypost" capability has "Prohibit" permission
     And "mod/forum:editanypost" capability has "Prevent" permission
     And "mod/forum:addquestion" capability has "Allow" permission

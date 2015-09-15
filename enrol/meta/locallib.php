@@ -80,6 +80,7 @@ class enrol_meta_handler {
      */
     protected static function sync_with_parent_course(stdClass $instance, $userid) {
         global $DB, $CFG;
+        require_once($CFG->dirroot . '/group/lib.php');
 
         $plugin = enrol_get_plugin('meta');
 
@@ -94,7 +95,7 @@ class enrol_meta_handler {
         list($enabled, $params) = $DB->get_in_or_equal(explode(',', $CFG->enrol_plugins_enabled), SQL_PARAMS_NAMED, 'e');
         $params['userid'] = $userid;
         $params['parentcourse'] = $instance->customint1;
-        $sql = "SELECT ue.*
+        $sql = "SELECT ue.*, e.status AS enrolstatus
                   FROM {user_enrolments} ue
                   JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol <> 'meta' AND e.courseid = :parentcourse AND e.enrol $enabled)
                  WHERE ue.userid = :userid";
@@ -141,23 +142,33 @@ class enrol_meta_handler {
             return;
         }
 
-        // is parent enrol active? (we ignore enrol starts and ends, sorry it would be too complex)
+        // Is parent enrol active? Find minimum timestart and maximum timeend of all active enrolments.
         $parentstatus = ENROL_USER_SUSPENDED;
+        $parenttimeend = null;
+        $parenttimestart = null;
         foreach ($parentues as $pue) {
-            if ($pue->status == ENROL_USER_ACTIVE) {
+            if ($pue->status == ENROL_USER_ACTIVE && $pue->enrolstatus == ENROL_INSTANCE_ENABLED) {
                 $parentstatus = ENROL_USER_ACTIVE;
-                break;
+                if ($parenttimeend === null || $pue->timeend == 0 || ($parenttimeend && $parenttimeend < $pue->timeend)) {
+                    $parenttimeend = $pue->timeend;
+                }
+                if ($parenttimestart === null || $parenttimestart > $pue->timestart) {
+                    $parenttimestart = $pue->timestart;
+                }
             }
         }
 
-        // enrol user if not enrolled yet or fix status
+        // Enrol user if not enrolled yet or fix status/timestart/timeend. Use the minimum timestart and maximum timeend found above.
         if ($ue) {
-            if ($parentstatus != $ue->status) {
-                $plugin->update_user_enrol($instance, $userid, $parentstatus);
+            if ($parentstatus != $ue->status ||
+                    ($parentstatus == ENROL_USER_ACTIVE && ($parenttimestart != $ue->timestart || $parenttimeend != $ue->timeend))) {
+                $plugin->update_user_enrol($instance, $userid, $parentstatus, $parenttimestart, $parenttimeend);
                 $ue->status = $parentstatus;
+                $ue->timestart = $parenttimestart;
+                $ue->timeend = $parenttimeend;
             }
         } else {
-            $plugin->enrol_user($instance, $userid, NULL, 0, 0, $parentstatus);
+            $plugin->enrol_user($instance, $userid, NULL, (int)$parenttimestart, (int)$parenttimeend, $parentstatus);
             $ue = new stdClass();
             $ue->userid = $userid;
             $ue->enrolid = $instance->id;
@@ -169,11 +180,13 @@ class enrol_meta_handler {
 
         $unenrolaction = $plugin->get_config('unenrolaction', ENROL_EXT_REMOVED_SUSPENDNOROLES);
 
-        // only active users in enabled instances are supposed to have roles (we can reassign the roles any time later)
-        if ($ue->status != ENROL_USER_ACTIVE or $instance->status != ENROL_INSTANCE_ENABLED) {
+        // Only active users in enabled instances are supposed to have roles (we can reassign the roles any time later).
+        if ($ue->status != ENROL_USER_ACTIVE or $instance->status != ENROL_INSTANCE_ENABLED or
+                ($parenttimeend and $parenttimeend < time()) or ($parenttimestart > time())) {
             if ($unenrolaction == ENROL_EXT_REMOVED_SUSPEND) {
                 // Always keep the roles.
             } else if ($roles) {
+                // This will only unassign roles that were assigned in this enrolment method, leaving all manual role assignments intact.
                 role_unassign_all(array('userid'=>$userid, 'contextid'=>$context->id, 'component'=>'enrol_meta', 'itemid'=>$instance->id));
             }
             return;
@@ -278,17 +291,27 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
     $allroles = get_all_roles();
 
 
-    // iterate through all not enrolled yet users
+    // Iterate through all not enrolled yet users. For each active enrolment of each user find the minimum
+    // enrolment startdate and maximum enrolment enddate.
+    // This SQL relies on the fact that ENROL_USER_ACTIVE < ENROL_USER_SUSPENDED
+    // and ENROL_INSTANCE_ENABLED < ENROL_INSTANCE_DISABLED. Condition "pue.status + pe.status = 0" means
+    // that enrolment is active. When MIN(pue.status + pe.status)=0 it means there exists an active
+    // enrolment.
     $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
     list($enabled, $params) = $DB->get_in_or_equal(explode(',', $CFG->enrol_plugins_enabled), SQL_PARAMS_NAMED, 'e');
     $params['courseid'] = $courseid;
-    $sql = "SELECT pue.userid, e.id AS enrolid, pue.status
+    $sql = "SELECT pue.userid, e.id AS enrolid, MIN(pue.status + pe.status) AS status,
+                      MIN(CASE WHEN (pue.status + pe.status = 0) THEN pue.timestart ELSE 9999999999 END) AS timestart,
+                      MAX(CASE WHEN (pue.status + pe.status = 0) THEN
+                                (CASE WHEN pue.timeend = 0 THEN 9999999999 ELSE pue.timeend END)
+                                ELSE 0 END) AS timeend
               FROM {user_enrolments} pue
               JOIN {enrol} pe ON (pe.id = pue.enrolid AND pe.enrol <> 'meta' AND pe.enrol $enabled)
               JOIN {enrol} e ON (e.customint1 = pe.courseid AND e.enrol = 'meta' $onecourse)
               JOIN {user} u ON (u.id = pue.userid AND u.deleted = 0)
          LEFT JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = pue.userid)
-             WHERE ue.id IS NULL";
+             WHERE ue.id IS NULL
+             GROUP BY pue.userid, e.id";
 
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $ue) {
@@ -313,7 +336,15 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
             }
         }
 
-        $meta->enrol_user($instance, $ue->userid, $ue->status);
+        // So now we have aggregated values that we will use for the meta enrolment status, timeend and timestart.
+        // Again, we use the fact that active=0 and disabled/suspended=1. Only when MIN(pue.status + pe.status)=0 the enrolment is active:
+        $ue->status = ($ue->status == ENROL_USER_ACTIVE + ENROL_INSTANCE_ENABLED) ? ENROL_USER_ACTIVE : ENROL_USER_SUSPENDED;
+        // Timeend 9999999999 was used instead of 0 in the "MAX()" function:
+        $ue->timeend = ($ue->timeend == 9999999999) ? 0 : (int)$ue->timeend;
+        // Timestart 9999999999 is only possible when there are no active enrolments:
+        $ue->timestart = ($ue->timestart == 9999999999) ? 0 : (int)$ue->timestart;
+
+        $meta->enrol_user($instance, $ue->userid, null, $ue->timestart, $ue->timeend, $ue->status);
         if ($instance->customint2) {
             groups_add_member($instance->customint2, $ue->userid, 'enrol_meta', $instance->id);
         }
@@ -370,29 +401,38 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
     $rs->close();
 
 
-    // update status - meta enrols + start and end dates are ignored, sorry
-    // note the trick here is that the active enrolment and instance constants have value 0
+    // Update status - meta enrols are ignored to avoid recursion.
+    // Note the trick here is that the active enrolment and instance constants have value 0.
     $onecourse = $courseid ? "AND e.courseid = :courseid" : "";
     list($enabled, $params) = $DB->get_in_or_equal(explode(',', $CFG->enrol_plugins_enabled), SQL_PARAMS_NAMED, 'e');
     $params['courseid'] = $courseid;
-    $sql = "SELECT ue.userid, ue.enrolid, pue.pstatus
+    $sql = "SELECT ue.userid, ue.enrolid, pue.pstatus, pue.ptimestart, pue.ptimeend
               FROM {user_enrolments} ue
               JOIN {enrol} e ON (e.id = ue.enrolid AND e.enrol = 'meta' $onecourse)
-              JOIN (SELECT xpue.userid, xpe.courseid, MIN(xpue.status + xpe.status) AS pstatus
+              JOIN (SELECT xpue.userid, xpe.courseid, MIN(xpue.status + xpe.status) AS pstatus,
+                      MIN(CASE WHEN (xpue.status + xpe.status = 0) THEN xpue.timestart ELSE 9999999999 END) AS ptimestart,
+                      MAX(CASE WHEN (xpue.status + xpe.status = 0) THEN
+                                (CASE WHEN xpue.timeend = 0 THEN 9999999999 ELSE xpue.timeend END)
+                                ELSE 0 END) AS ptimeend
                       FROM {user_enrolments} xpue
                       JOIN {enrol} xpe ON (xpe.id = xpue.enrolid AND xpe.enrol <> 'meta' AND xpe.enrol $enabled)
                   GROUP BY xpue.userid, xpe.courseid
                    ) pue ON (pue.courseid = e.customint1 AND pue.userid = ue.userid)
-             WHERE (pue.pstatus = 0 AND ue.status > 0) OR (pue.pstatus > 0 and ue.status = 0)";
+             WHERE (pue.pstatus = 0 AND ue.status > 0) OR (pue.pstatus > 0 and ue.status = 0)
+             OR ((CASE WHEN pue.ptimestart = 9999999999 THEN 0 ELSE pue.ptimestart END) <> ue.timestart)
+             OR ((CASE WHEN pue.ptimeend = 9999999999 THEN 0 ELSE pue.ptimeend END) <> ue.timeend)";
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $ue) {
         if (!isset($instances[$ue->enrolid])) {
             $instances[$ue->enrolid] = $DB->get_record('enrol', array('id'=>$ue->enrolid));
         }
         $instance = $instances[$ue->enrolid];
-        $ue->pstatus = ($ue->pstatus == ENROL_USER_ACTIVE) ? ENROL_USER_ACTIVE : ENROL_USER_SUSPENDED;
+        $ue->pstatus = ($ue->pstatus == ENROL_USER_ACTIVE + ENROL_INSTANCE_ENABLED) ? ENROL_USER_ACTIVE : ENROL_USER_SUSPENDED;
+        $ue->ptimeend = ($ue->ptimeend == 9999999999) ? 0 : (int)$ue->ptimeend;
+        $ue->ptimestart = ($ue->ptimestart == 9999999999) ? 0 : (int)$ue->ptimestart;
 
-        if ($ue->pstatus == ENROL_USER_ACTIVE and !$syncall and $unenrolaction != ENROL_EXT_REMOVED_UNENROL) {
+        if ($ue->pstatus == ENROL_USER_ACTIVE and (!$ue->ptimeend || $ue->ptimeend > time())
+                and !$syncall and $unenrolaction != ENROL_EXT_REMOVED_UNENROL) {
             // this may be slow if very many users are ignored in sync
             $parentcontext = context_course::instance($instance->customint1);
             list($ignoreroles, $params) = $DB->get_in_or_equal($skiproles, SQL_PARAMS_NAMED, 'ri', false, -1);
@@ -408,7 +448,7 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
             }
         }
 
-        $meta->update_user_enrol($instance, $ue->userid, $ue->pstatus);
+        $meta->update_user_enrol($instance, $ue->userid, $ue->pstatus, $ue->ptimestart, $ue->ptimeend);
         if ($verbose) {
             if ($ue->pstatus == ENROL_USER_ACTIVE) {
                 mtrace("  unsuspending: $ue->userid ==> $instance->courseid");

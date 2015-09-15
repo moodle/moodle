@@ -153,7 +153,7 @@ echo '<div class="profileeditor">';
 // Create a new field link.
 $options = profile_list_datatypes();
 $popupurl = new moodle_url('/user/profile/index.php?id=0&action=editfield');
-echo $OUTPUT->single_select($popupurl, 'datatype', $options, '', array('' => $strcreatefield), 'newfieldform');
+echo $OUTPUT->single_select($popupurl, 'datatype', $options, '', array('' => get_string('choosedots')), 'newfieldform', array('label' => $strcreatefield));
 
 // Add a div with a class so themers can hide, style or reposition the text.
 html_writer::start_tag('div', array('class' => 'adminuseractionhint'));

@@ -69,6 +69,6 @@ class testable_filter_emoticon extends filter_emoticon {
         // Use this context for filtering.
         $this->context = context_system::instance();
         // Define FORMAT_HTML as only one filtering in DB.
-        set_config('formats', implode(',', array(FORMAT_HTML)), get_class($this));
+        set_config('formats', implode(',', array(FORMAT_HTML)), 'filter_emoticon');
     }
 }

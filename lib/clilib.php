@@ -176,3 +176,35 @@ function cli_error($text, $errorcode=1) {
     die($errorcode);
 }
 
+/**
+ * Print an ASCII version of the Moodle logo.
+ *
+ * @param int $padding left padding of the logo
+ * @param bool $return should we print directly (false) or return the string (true)
+ * @return mixed void or string
+ */
+function cli_logo($padding=2, $return=false) {
+
+    $lines = array(
+        '                               .-..-.       ',
+        ' _____                         | || |       ',
+        '/____/-.---_  .---.  .---.  .-.| || | .---. ',
+        '| |  _   _  |/  _  \\/  _  \\/  _  || |/  __ \\',
+        '* | | | | | || |_| || |_| || |_| || || |___/',
+        '  |_| |_| |_|\\_____/\\_____/\\_____||_|\\_____)',
+    );
+
+    $logo = '';
+
+    foreach ($lines as $line) {
+        $logo .= str_repeat(' ', $padding);
+        $logo .= $line;
+        $logo .= PHP_EOL;
+    }
+
+    if ($return) {
+        return $logo;
+    } else {
+        echo $logo;
+    }
+}

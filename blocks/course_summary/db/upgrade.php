@@ -77,5 +77,8 @@ function xmldb_block_course_summary_upgrade($oldversion, $block) {
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Moodle v2.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

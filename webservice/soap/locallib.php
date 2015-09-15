@@ -273,17 +273,18 @@ class webservice_soap_server extends webservice_zend_server {
      */
     protected function generate_simple_struct_class(external_single_structure $structdesc) {
         global $USER;
-        // let's use unique class name, there might be problem in unit tests
-        $classname = 'webservices_struct_class_000000';
-        while(class_exists($classname)) {
-            $classname++;
-        }
 
         $fields = array();
         foreach ($structdesc->keys as $name => $fieldsdesc) {
             $type = $this->get_phpdoc_type($fieldsdesc);
             $fields[] = '    /** @var '.$type." */\n" .
                         '    public $'.$name.';';
+        }
+
+        // We do this after the call to get_phpdoc_type() to avoid duplicate class creation.
+        $classname = 'webservices_struct_class_000000';
+        while (class_exists($classname)) {
+            $classname++;
         }
 
         $code = '
