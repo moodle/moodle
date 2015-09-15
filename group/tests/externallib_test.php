@@ -543,4 +543,50 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $groups['warnings']);
 
     }
+
+    /**
+     * Test get_activity_groupmode
+     */
+    public function test_get_activity_groupmode() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = self::getDataGenerator();
+
+        $student = $generator->create_user();
+        $course = $generator->create_course();
+        $othercourse = $generator->create_course();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $generator->enrol_user($student->id, $course->id, $studentrole->id);
+
+        $forum1 = $generator->create_module("forum", array('course' => $course->id), array('groupmode' => VISIBLEGROUPS));
+        $forum2 = $generator->create_module("forum", array('course' => $othercourse->id));
+        $forum3 = $generator->create_module("forum", array('course' => $course->id), array('visible' => 0));
+
+        // Request data for tests.
+        $cm1 = get_coursemodule_from_instance("forum", $forum1->id);
+        $cm2 = get_coursemodule_from_instance("forum", $forum2->id);
+        $cm3 = get_coursemodule_from_instance("forum", $forum3->id);
+
+        $this->setUser($student);
+
+        $data = core_group_external::get_activity_groupmode($cm1->id);
+        $data = external_api::clean_returnvalue(core_group_external::get_activity_groupmode_returns(), $data);
+        $this->assertEquals(VISIBLEGROUPS, $data['groupmode']);
+
+        try {
+            $data = core_group_external::get_activity_groupmode($cm2->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        try {
+            $data = core_group_external::get_activity_groupmode($cm3->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+    }
 }
