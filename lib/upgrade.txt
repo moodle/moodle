@@ -136,6 +136,8 @@ information provided here is intended especially for developers.
   i.e. a call to M.core.actionmenu.instance.hideMenu() should be change to M.core.actionmenu.instance.hideMenu(e)
 * In the html_editors (tinyMCE, Atto), the manage files button can be hidden by changing the 'enable_filemanagement' option to false.
 * external_api::validate_context now is public, it can be called from other classes.
+* rss_error() now supports returning of correct HTTP status of error and will return '404 Not Found'
+  unless other status is specified.
 
 === 2.9.1 ===
 
