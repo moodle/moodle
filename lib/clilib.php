@@ -67,7 +67,7 @@ function cli_input($prompt, $default='', array $options=null, $casesensitiveopti
             $input = strtolower($input);
         }
         if (!in_array($input, $options)) {
-            cli_writeln('Incorrect value, please retry.'); // TODO: localize, mark as needed in install
+            cli_writeln(get_string('cliincorrectvalueretry', 'admin'));
             return cli_input($prompt, $default, $options, $casesensitiveoptions);
         }
     }
