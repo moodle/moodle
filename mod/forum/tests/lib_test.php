@@ -903,19 +903,30 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $record->timestart = $past;
         $record->timeend = $future;
         $disc12 = $forumgen->create_discussion($record);
+        sleep(1);
+        $record->timestart = $future + 1; // Should be last post for those that can see it.
+        $record->timeend = 0;
+        $disc13 = $forumgen->create_discussion($record);
 
         // Admin user ignores the timed settings of discussions.
+        // Post ordering taking into account timestart:
+        //  8 = t
+        // 10 = t+3
+        // 11 = t+4
+        // 12 = t+5
+        //  9 = t+60
+        // 13 = t+61.
         $this->setAdminUser();
         $neighbours = forum_get_discussion_neighbours($cm, $disc8, $forum);
         $this->assertEquals($disc7->id, $neighbours['prev']->id);
-        $this->assertEquals($disc9->id, $neighbours['next']->id);
-
-        $neighbours = forum_get_discussion_neighbours($cm, $disc9, $forum);
-        $this->assertEquals($disc8->id, $neighbours['prev']->id);
         $this->assertEquals($disc10->id, $neighbours['next']->id);
 
+        $neighbours = forum_get_discussion_neighbours($cm, $disc9, $forum);
+        $this->assertEquals($disc12->id, $neighbours['prev']->id);
+        $this->assertEquals($disc13->id, $neighbours['next']->id);
+
         $neighbours = forum_get_discussion_neighbours($cm, $disc10, $forum);
-        $this->assertEquals($disc9->id, $neighbours['prev']->id);
+        $this->assertEquals($disc8->id, $neighbours['prev']->id);
         $this->assertEquals($disc11->id, $neighbours['next']->id);
 
         $neighbours = forum_get_discussion_neighbours($cm, $disc11, $forum);
@@ -924,20 +935,24 @@ class mod_forum_lib_testcase extends advanced_testcase {
 
         $neighbours = forum_get_discussion_neighbours($cm, $disc12, $forum);
         $this->assertEquals($disc11->id, $neighbours['prev']->id);
+        $this->assertEquals($disc9->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc13, $forum);
+        $this->assertEquals($disc9->id, $neighbours['prev']->id);
         $this->assertEmpty($neighbours['next']);
 
         // Normal user can see their own timed discussions.
         $this->setUser($user);
         $neighbours = forum_get_discussion_neighbours($cm, $disc8, $forum);
         $this->assertEquals($disc7->id, $neighbours['prev']->id);
-        $this->assertEquals($disc9->id, $neighbours['next']->id);
-
-        $neighbours = forum_get_discussion_neighbours($cm, $disc9, $forum);
-        $this->assertEquals($disc8->id, $neighbours['prev']->id);
         $this->assertEquals($disc10->id, $neighbours['next']->id);
 
+        $neighbours = forum_get_discussion_neighbours($cm, $disc9, $forum);
+        $this->assertEquals($disc12->id, $neighbours['prev']->id);
+        $this->assertEquals($disc13->id, $neighbours['next']->id);
+
         $neighbours = forum_get_discussion_neighbours($cm, $disc10, $forum);
-        $this->assertEquals($disc9->id, $neighbours['prev']->id);
+        $this->assertEquals($disc8->id, $neighbours['prev']->id);
         $this->assertEquals($disc11->id, $neighbours['next']->id);
 
         $neighbours = forum_get_discussion_neighbours($cm, $disc11, $forum);
@@ -946,6 +961,10 @@ class mod_forum_lib_testcase extends advanced_testcase {
 
         $neighbours = forum_get_discussion_neighbours($cm, $disc12, $forum);
         $this->assertEquals($disc11->id, $neighbours['prev']->id);
+        $this->assertEquals($disc9->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc13, $forum);
+        $this->assertEquals($disc9->id, $neighbours['prev']->id);
         $this->assertEmpty($neighbours['next']);
 
         // Normal user does not ignore timed settings.
@@ -975,11 +994,11 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $disc3 = $DB->get_record('forum_discussions', array('id' => $disc3->id));
 
         $neighbours = forum_get_discussion_neighbours($cm, $disc2, $forum);
-        $this->assertEquals($disc12->id, $neighbours['prev']->id);
+        $this->assertEquals($disc13->id, $neighbours['prev']->id);
         $this->assertEmpty($neighbours['next']);
 
         $neighbours = forum_get_discussion_neighbours($cm, $disc3, $forum);
-        $this->assertEquals($disc12->id, $neighbours['prev']->id);
+        $this->assertEquals($disc13->id, $neighbours['prev']->id);
         $this->assertEmpty($neighbours['next']);
     }
 

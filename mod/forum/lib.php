@@ -2473,7 +2473,7 @@ function forum_count_discussions($forum, $cm, $course) {
  *                     Use FORUM_POSTS_ALL_USER_GROUPS for all the user groups
  * @return array
  */
-function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=true, $unused=-1, $limit=-1,
+function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $limit=-1,
                                 $userlastmodified=false, $page=-1, $perpage=0, $groupid = -1) {
     global $CFG, $DB, $USER;
 
@@ -2568,7 +2568,7 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
         $groupselect = "";
     }
     if (empty($forumsort)) {
-        $forumsort = "d.timemodified DESC";
+        $forumsort = forum_get_default_sort_order();
     }
     if (empty($fullpost)) {
         $postdata = "p.id,p.subject,p.modified,p.discussion,p.userid";
@@ -2707,17 +2707,72 @@ function forum_get_discussion_neighbours($cm, $discussion, $forum) {
                        $timelimit
                        $groupselect";
 
-        $prevsql = $sql . " AND d.timemodified < :disctimemodified
-                       ORDER BY d.timemodified DESC";
+        if (empty($CFG->forum_enabletimedposts)) {
+            $prevsql = $sql . " AND d.timemodified < :disctimemodified";
+            $nextsql = $sql . " AND d.timemodified > :disctimemodified";
 
-        $nextsql = $sql . " AND d.timemodified > :disctimemodified
-                       ORDER BY d.timemodified ASC";
+        } else {
+            // Normally we would just use the timemodified for sorting
+            // discussion posts. However, when timed discussions are enabled,
+            // then posts need to be sorted base on the later of timemodified
+            // or the release date of the post (timestart).
+            $params['disctimecompare'] = $discussion->timemodified;
+            if ($discussion->timemodified < $discussion->timestart) {
+                $params['disctimecompare'] = $discussion->timestart;
+            }
+            $params['disctimecompare2'] = $params['disctimecompare'];
+
+            // Here we need to take into account the release time (timestart)
+            // if one is set, of the neighbouring posts and compare it to the
+            // timestart or timemodified of *this* post depending on if the
+            // release date of this post is in the future or not.
+            // This stops discussions that appear later because of the
+            // timestart value from being buried under discussions that were
+            // made afterwards.
+            $prevsql = $sql . " AND CASE WHEN d.timemodified < d.timestart
+                                    THEN d.timestart < :disctimecompare
+                                    ELSE d.timemodified < :disctimecompare2 END";
+            $nextsql = $sql . " AND CASE WHEN d.timemodified < d.timestart
+                                    THEN d.timestart > :disctimecompare
+                                    ELSE d.timemodified > :disctimecompare2 END";
+        }
+        $prevsql .= ' ORDER BY '.forum_get_default_sort_order();
+        $nextsql .= ' ORDER BY '.forum_get_default_sort_order(false);
 
         $neighbours['prev'] = $DB->get_record_sql($prevsql, $params, IGNORE_MULTIPLE);
         $neighbours['next'] = $DB->get_record_sql($nextsql, $params, IGNORE_MULTIPLE);
     }
 
     return $neighbours;
+}
+
+/**
+ * Get the sql to use in the ORDER BY clause for forum discussions.
+ *
+ * This has the ordering take timed discussion windows into account.
+ *
+ * @param bool $desc True for DESC, False for ASC.
+ * @param string $compare The field in the SQL to compare to normally sort by.
+ * @param string $prefix The prefix being used for the discussion table.
+ * @return string
+ */
+function forum_get_default_sort_order($desc = true, $compare = 'd.timemodified', $prefix = 'd') {
+    global $CFG;
+
+    if (!empty($prefix)) {
+        $prefix .= '.';
+    }
+
+    $dir = $desc ? 'DESC' : 'ASC';
+
+    $sort = "{$prefix}timemodified";
+    if (!empty($CFG->forum_enabletimedposts)) {
+        $sort = "CASE WHEN {$compare} < {$prefix}timestart
+                 THEN {$prefix}timestart
+                 ELSE {$compare}
+                 END";
+    }
+    return "$sort $dir";
 }
 
 /**
@@ -5133,7 +5188,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
     $context = context_module::instance($cm->id);
 
     if (empty($sort)) {
-        $sort = "d.timemodified DESC";
+        $sort = forum_get_default_sort_order();
     }
 
     $olddiscussionlink = false;
