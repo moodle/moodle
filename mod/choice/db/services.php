@@ -59,4 +59,13 @@ $functions = array(
         'type'          => 'write',
         'capabilities'  => ''
     ),
+
+    'mod_choice_get_choices_by_courses' => array(
+        'classname'     => 'mod_choice_external',
+        'methodname'    => 'get_choices_by_courses',
+        'description'   => 'Returns a list of choice instances in a provided set of courses,
+                            if no courses are provided then all the choice instances the user has access to will be returned.',
+        'type'          => 'read',
+        'capabilities'  => ''
+    ),
 );
