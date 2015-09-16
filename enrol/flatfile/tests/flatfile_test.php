@@ -467,4 +467,35 @@ class enrol_flatfile_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('role_assignments', array('roleid'=>$teacherrole->id)));
         $this->assertEquals(0, $DB->count_records('role_assignments', array('roleid'=>$managerrole->id)));
     }
+
+    /**
+     * Flatfile enrolment sync task test.
+     */
+    public function test_flatfile_sync_task() {
+        global $CFG, $DB;
+        $this->resetAfterTest();
+
+        $flatfileplugin = enrol_get_plugin('flatfile');
+
+        $trace = new null_progress_trace();
+        $this->enable_plugin();
+        $file = "$CFG->dataroot/enrol.txt";
+        $flatfileplugin->set_config('location', $file);
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->assertNotEmpty($studentrole);
+
+        $user1 = $this->getDataGenerator()->create_user(array('idnumber' => 'u1'));
+        $course1 = $this->getDataGenerator()->create_course(array('idnumber' => 'c1'));
+        $context1 = context_course::instance($course1->id);
+
+        $data =
+            "add,student,u1,c1";
+        file_put_contents($file, $data);
+
+        $task = new enrol_flatfile\task\flatfile_sync_task;
+        $task->execute();
+
+        $this->assertEquals(1, $DB->count_records('role_assignments', array('roleid' => $studentrole->id)));
+    }
 }
