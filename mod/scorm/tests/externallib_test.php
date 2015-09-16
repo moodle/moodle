@@ -429,7 +429,8 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
 
         $trackids = $DB->get_records('scorm_scoes_track', array('userid' => $student->id, 'scoid' => $sco->id,
                                                                 'scormid' => $scorm->id, 'attempt' => 1));
-
-        $this->assertEquals(array_keys($trackids), $result['trackids']);
+        // We use asort here to prevent problems with ids ordering.
+        $expectedkeys = array_keys($trackids);
+        $this->assertEquals(asort($expectedkeys), asort($result['trackids']));
     }
 }
