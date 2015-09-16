@@ -175,7 +175,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
     }
 
     if (isset($identityfields['phone1']) && $user->phone1) {
-        $node = new core_user\output\myprofile\node('contact', 'phone1', get_string('phone'), null, null, $user->phone1);
+        $node = new core_user\output\myprofile\node('contact', 'phone1', get_string('phone1'), null, null, $user->phone1);
         $tree->add_node($node);
     }
 
