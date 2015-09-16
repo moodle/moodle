@@ -490,4 +490,107 @@ class mod_scorm_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_scorms_by_courses.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_scorm_sco_tracks_parameters() {
+        return new external_function_parameters(
+            array(
+                'scoid' => new external_value(PARAM_INT, 'sco id'),
+                'userid' => new external_value(PARAM_INT, 'user id'),
+                'attempt' => new external_value(PARAM_INT, 'attempt number (0 for last attempt)', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Retrieves SCO tracking data for the given user id and attempt number
+     *
+     * @param int $scoid the sco id
+     * @param int $userid the user id
+     * @param int $attempt the attempt number
+     * @return array warnings and the scoes data
+     * @since Moodle 3.0
+     */
+    public static function get_scorm_sco_tracks($scoid, $userid, $attempt = 0) {
+        global $USER, $DB;
+
+        $params = self::validate_parameters(self::get_scorm_sco_tracks_parameters(),
+                                            array('scoid' => $scoid, 'userid' => $userid, 'attempt' => $attempt));
+
+        $tracks = array();
+        $warnings = array();
+
+        $sco = scorm_get_sco($params['scoid'], SCO_ONLY);
+        if (!$sco) {
+            throw new moodle_exception('cannotfindsco', 'scorm');
+        }
+
+        $scorm = $DB->get_record('scorm', array('id' => $sco->scorm), '*', MUST_EXIST);
+        $cm = get_coursemodule_from_instance('scorm', $scorm->id);
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Validate the user obtaining the context, it will fail if the user doesn't exists or have been deleted.
+        context_user::instance($params['userid']);
+
+        // Extra checks so only users with permissions can view other users attempts.
+        if ($USER->id != $params['userid']) {
+            require_capability('mod/scorm:viewreport', $context);
+        }
+
+        scorm_require_available($scorm, true, $context);
+
+        if (empty($params['attempt'])) {
+            $params['attempt'] = scorm_get_last_attempt($scorm->id, $params['userid']);
+        }
+
+        if ($scormtracks = scorm_get_tracks($sco->id, $params['userid'], $params['attempt'])) {
+            foreach ($scormtracks as $element => $value) {
+                $tracks[] = array(
+                    'element' => $element,
+                    'value' => $value,
+                );
+            }
+        }
+
+        $result = array();
+        $result['data']['attempt'] = $params['attempt'];
+        $result['data']['tracks'] = $tracks;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_scorm_sco_tracks return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.0
+     */
+    public static function get_scorm_sco_tracks_returns() {
+
+        return new external_single_structure(
+            array(
+                'data' => new external_single_structure(
+                    array(
+                        'attempt' => new external_value(PARAM_INT, 'Attempt number'),
+                        'tracks' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'element' => new external_value(PARAM_RAW, 'Element name'),
+                                    'value' => new external_value(PARAM_RAW, 'Element value')
+                                ), 'Tracks data'
+                            )
+                        ),
+                    ), 'SCO data'
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
