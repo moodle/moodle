@@ -474,10 +474,11 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $result = mod_scorm_external::get_scorm_sco_tracks($sco->id, $student->id, 1);
         $result = external_api::clean_returnvalue(mod_scorm_external::get_scorm_sco_tracks_returns(), $result);
         // 7 default elements + 2 custom ones.
-        $this->assertCount(9, $result['data']);
+        $this->assertCount(9, $result['data']['tracks']);
+        $this->assertEquals(1, $result['data']['attempt']);
         // Find our tracking data.
         $found = 0;
-        foreach ($result['data'] as $userdata) {
+        foreach ($result['data']['tracks'] as $userdata) {
             if ($userdata['element'] == 'cmi.core.lesson_status' and $userdata['value'] == 'completed') {
                 $found++;
             }
@@ -496,10 +497,12 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         }
 
         self::setUser($teacher);
+        // Ommit the attempt parameter, the function should calculate the last attempt.
         $result = mod_scorm_external::get_scorm_sco_tracks($sco->id, $student->id);
         $result = external_api::clean_returnvalue(mod_scorm_external::get_scorm_sco_tracks_returns(), $result);
         // 7 default elements + 1 custom one.
-        $this->assertCount(8, $result['data']);
+        $this->assertCount(8, $result['data']['tracks']);
+        $this->assertEquals(2, $result['data']['attempt']);
 
         // Test invalid instance id.
         try {

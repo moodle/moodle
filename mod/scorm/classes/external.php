@@ -522,7 +522,7 @@ class mod_scorm_external extends external_api {
         $params = self::validate_parameters(self::get_scorm_sco_tracks_parameters(),
                                             array('scoid' => $scoid, 'userid' => $userid, 'attempt' => $attempt));
 
-        $data = array();
+        $tracks = array();
         $warnings = array();
 
         $sco = scorm_get_sco($params['scoid'], SCO_ONLY);
@@ -546,9 +546,13 @@ class mod_scorm_external extends external_api {
 
         scorm_require_available($scorm, true, $context);
 
-        if ($tracks = scorm_get_tracks($sco->id, $params['userid'], $params['attempt'])) {
-            foreach ($tracks as $element => $value) {
-                $data[] = array(
+        if (empty($params['attempt'])) {
+            $params['attempt'] = scorm_get_last_attempt($scorm->id, $params['userid']);
+        }
+
+        if ($scormtracks = scorm_get_tracks($sco->id, $params['userid'], $params['attempt'])) {
+            foreach ($scormtracks as $element => $value) {
+                $tracks[] = array(
                     'element' => $element,
                     'value' => $value,
                 );
@@ -556,7 +560,8 @@ class mod_scorm_external extends external_api {
         }
 
         $result = array();
-        $result['data'] = $data;
+        $result['data']['attempt'] = $params['attempt'];
+        $result['data']['tracks'] = $tracks;
         $result['warnings'] = $warnings;
         return $result;
     }
@@ -571,13 +576,18 @@ class mod_scorm_external extends external_api {
 
         return new external_single_structure(
             array(
-                'data' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'element' => new external_value(PARAM_RAW, 'element name'),
-                            'value' => new external_value(PARAM_RAW, 'element value')
-                        ), 'SCO data'
-                    )
+                'data' => new external_single_structure(
+                    array(
+                        'attempt' => new external_value(PARAM_INT, 'Attempt number'),
+                        'tracks' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'element' => new external_value(PARAM_RAW, 'Element name'),
+                                    'value' => new external_value(PARAM_RAW, 'Element value')
+                                ), 'Tracks data'
+                            )
+                        ),
+                    ), 'SCO data'
                 ),
                 'warnings' => new external_warnings(),
             )
