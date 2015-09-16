@@ -36,4 +36,12 @@ $functions = array(
         'capabilities'  => 'mod/book:read'
     ),
 
+    'mod_book_get_books_by_courses' => array(
+        'classname'     => 'mod_book_external',
+        'methodname'    => 'get_books_by_courses',
+        'description'   => 'Returns a list of book instances in a provided set of courses,
+                            if no courses are provided then all the book instances the user has access to will be returned.',
+        'type'          => 'read',
+        'capabilities'  => ''
+    )
 );

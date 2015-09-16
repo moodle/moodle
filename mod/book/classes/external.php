@@ -149,4 +149,118 @@ class mod_book_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_books_by_courses.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_books_by_courses_parameters() {
+        return new external_function_parameters (
+            array(
+                'courseids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'course id'), 'Array of course ids', VALUE_DEFAULT, array()
+                ),
+            )
+        );
+    }
+
+    /**
+     * Returns a list of books in a provided list of courses,
+     * if no list is provided all books that the user can view will be returned.
+     *
+     * @param array $courseids the course ids
+     * @return array of books details
+     * @since Moodle 3.0
+     */
+    public static function get_books_by_courses($courseids = array()) {
+        global $CFG;
+
+        $returnedbooks = array();
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_books_by_courses_parameters(), array('courseids' => $courseids));
+
+        if (empty($params['courseids'])) {
+            $params['courseids'] = array_keys(enrol_get_my_courses());
+        }
+
+        // Ensure there are courseids to loop through.
+        if (!empty($params['courseids'])) {
+
+            list($courses, $warnings) = external_util::validate_courses($params['courseids']);
+
+            // Get the books in this course, this function checks users visibility permissions.
+            // We can avoid then additional validate_context calls.
+            $books = get_all_instances_in_courses("book", $courses);
+            foreach ($books as $book) {
+                $context = context_module::instance($book->coursemodule);
+                // Entry to return.
+                $bookdetails = array();
+                // First, we return information that any user can see in the web interface.
+                $bookdetails['id'] = $book->id;
+                $bookdetails['coursemodule']      = $book->coursemodule;
+                $bookdetails['course']            = $book->course;
+                $bookdetails['name']              = format_string($book->name, true, array('context' => $context));
+                // Format intro.
+                list($bookdetails['intro'], $bookdetails['introformat']) =
+                    external_format_text($book->intro, $book->introformat, $context->id, 'mod_book', 'intro', null);
+                $bookdetails['numbering']         = $book->numbering;
+                $bookdetails['navstyle']          = $book->navstyle;
+                $bookdetails['customtitles']      = $book->customtitles;
+
+                if (has_capability('moodle/course:manageactivities', $context)) {
+                    $bookdetails['revision']      = $book->revision;
+                    $bookdetails['timecreated']   = $book->timecreated;
+                    $bookdetails['timemodified']  = $book->timemodified;
+                    $bookdetails['section']       = $book->section;
+                    $bookdetails['visible']       = $book->visible;
+                    $bookdetails['groupmode']     = $book->groupmode;
+                    $bookdetails['groupingid']    = $book->groupingid;
+                }
+                $returnedbooks[] = $bookdetails;
+            }
+        }
+        $result = array();
+        $result['books'] = $returnedbooks;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_books_by_courses return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.0
+     */
+    public static function get_books_by_courses_returns() {
+        return new external_single_structure(
+            array(
+                'books' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'Book id'),
+                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
+                            'course' => new external_value(PARAM_INT, 'Course id'),
+                            'name' => new external_value(PARAM_TEXT, 'Book name'),
+                            'intro' => new external_value(PARAM_RAW, 'The Book intro'),
+                            'introformat' => new external_format_value('intro'),
+                            'numbering' => new external_value(PARAM_INT, 'Book numbering configuration'),
+                            'navstyle' => new external_value(PARAM_INT, 'Book navigation style configuration'),
+                            'customtitles' => new external_value(PARAM_INT, 'Book custom titles type'),
+                            'revision' => new external_value(PARAM_INT, 'Book revision', VALUE_OPTIONAL),
+                            'timecreated' => new external_value(PARAM_INT, 'Time of creation', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
+                            'section' => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),
+                            'visible' => new external_value(PARAM_BOOL, 'Visible', VALUE_OPTIONAL),
+                            'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
+                            'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
+                        ), 'Books'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
