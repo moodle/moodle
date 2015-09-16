@@ -1229,11 +1229,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
 
         // Create multiple competencies.
-        $competency1 = external::create_competency('shortname1', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
+        $competency1 = external::create_competency('shortname1', 'idnumber1', 'description', FORMAT_HTML, true, $framework->id, 0);
         $competency1 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency1);
-        $competency2 = external::create_competency('shortname2', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
+        $competency2 = external::create_competency('shortname2', 'idnumber2', 'description', FORMAT_HTML, true, $framework->id, 0);
         $competency2 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency2);
-        $competency3 = external::create_competency('shortname3', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
+        $competency3 = external::create_competency('shortname3', 'idnumber3', 'description', FORMAT_HTML, true, $framework->id, 0);
         $competency3 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency3);
 
         // Add the competencies.
