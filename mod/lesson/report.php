@@ -159,10 +159,6 @@ if ($action === 'delete') {
         exit();
     }
 
-    // We have attempts and students, let's prepare all the information.
-    $attempts = $DB->get_recordset('lesson_attempts', array('lessonid' => $lesson->id), 'timeseen');
-    $branches = $DB->get_recordset('lesson_branch', array('lessonid' => $lesson->id), 'timeseen');
-
     if (! $grades = $DB->get_records('lesson_grades', array('lessonid' => $lesson->id), 'completed')) {
         $grades = array();
     }
@@ -181,12 +177,13 @@ if ($action === 'delete') {
         echo $OUTPUT->box($seeallgradeslink, 'allcoursegrades');
     }
 
+    // Build an array for output.
     $studentdata = array();
 
-    // build an array for output
+    $attempts = $DB->get_recordset('lesson_attempts', array('lessonid' => $lesson->id), 'timeseen');
     foreach ($attempts as $attempt) {
         // if the user is not in the array or if the retry number is not in the sub array, add the data for that try.
-        if (!array_key_exists($attempt->userid, $studentdata) || !array_key_exists($attempt->retry, $studentdata[$attempt->userid])) {
+        if (empty($studentdata[$attempt->userid]) || empty($studentdata[$attempt->userid][$attempt->retry])) {
             // restore/setup defaults
             $n = 0;
             $timestart = 0;
@@ -235,9 +232,11 @@ if ($action === 'delete') {
         }
     }
     $attempts->close();
+
+    $branches = $DB->get_recordset('lesson_branch', array('lessonid' => $lesson->id), 'timeseen');
     foreach ($branches as $branch) {
         // If the user is not in the array or if the retry number is not in the sub array, add the data for that try.
-        if (!array_key_exists($branch->userid, $studentdata) || !array_key_exists($branch->retry, $studentdata[$branch->userid])) {
+        if (empty($studentdata[$branch->userid]) || empty($studentdata[$branch->userid][$branch->retry])) {
             // Restore/setup defaults.
             $n = 0;
             $timestart = 0;
