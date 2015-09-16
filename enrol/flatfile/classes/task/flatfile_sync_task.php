@@ -53,7 +53,7 @@ class flatfile_sync_task extends \core\task\scheduled_task {
         require_once($CFG->dirroot . '/enrol/flatfile/lib.php');
 
         if (!enrol_is_enabled('flatfile')) {
-            return 2;
+            return;
         }
 
         // Instance of enrol_flatfile_plugin.

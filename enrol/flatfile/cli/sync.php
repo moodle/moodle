@@ -34,7 +34,7 @@
  * $ php admin/tool/task/cli/schedule_task.php -h
  *
  * Execute task:
- * $ sudo -u www-data /usr/bin/php admin/tool/task/cli/scheduled_task.php /
+ * $ sudo -u www-data /usr/bin/php admin/tool/task/cli/schedule_task.php /
  * --execute=\\enrol_flatfile\\task\\flatfile_sync_task
  *
  * @package    enrol_flatfile
