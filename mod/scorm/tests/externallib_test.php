@@ -347,4 +347,89 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('invalidrecord', $e->errorcode);
         }
     }
+
+    /**
+     * Test insert scorm tracks
+     */
+    public function test_mod_scorm_insert_scorm_tracks() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create users.
+        $student = self::getDataGenerator()->create_user();
+
+        // Set to the student user.
+        self::setUser($student);
+
+        // Create courses to add the modules.
+        $course = self::getDataGenerator()->create_course();
+
+        // First scorm, dates restriction.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->timeopen = time() + DAYSECS;
+        $record->timeclose = $record->timeopen + DAYSECS;
+        $scorm = self::getDataGenerator()->create_module('scorm', $record);
+
+        // Get a SCO.
+        $scoes = scorm_get_scoes($scorm->id);
+        $sco = array_shift($scoes);
+
+        // Tracks.
+        $tracks = array();
+        $tracks[] = array(
+            'element' => 'cmi.core.lesson_status',
+            'value' => 'completed'
+        );
+        $tracks[] = array(
+            'element' => 'cmi.core.score.raw',
+            'value' => '80'
+        );
+
+        // Users enrolments.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id, 'manual');
+
+        // Exceptions first.
+        try {
+            mod_scorm_external::insert_scorm_tracks($sco->id, 1, $tracks);
+            $this->fail('Exception expected due to dates');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('notopenyet', $e->errorcode);
+        }
+
+        $scorm->timeopen = time() - DAYSECS;
+        $scorm->timeclose = time() - HOURSECS;
+        $DB->update_record('scorm', $scorm);
+
+        try {
+            mod_scorm_external::insert_scorm_tracks($sco->id, 1, $tracks);
+            $this->fail('Exception expected due to dates');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('expired', $e->errorcode);
+        }
+
+        // Test invalid instance id.
+        try {
+             mod_scorm_external::insert_scorm_tracks(0, 1, $tracks);
+            $this->fail('Exception expected due to invalid sco id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('cannotfindsco', $e->errorcode);
+        }
+
+        $scorm->timeopen = 0;
+        $scorm->timeclose = 0;
+        $DB->update_record('scorm', $scorm);
+
+        // Retrieve my tracks.
+        $result = mod_scorm_external::insert_scorm_tracks($sco->id, 1, $tracks);
+        $result = external_api::clean_returnvalue(mod_scorm_external::insert_scorm_tracks_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+
+        $trackids = $DB->get_records('scorm_scoes_track', array('userid' => $student->id, 'scoid' => $sco->id,
+                                                                'scormid' => $scorm->id, 'attempt' => 1));
+
+        $this->assertEquals(array_keys($trackids), $result['trackids']);
+    }
 }
