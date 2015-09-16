@@ -1075,6 +1075,13 @@ $functions = array(
         'type'        => 'write',
     ),
 
+    'core_completion_mark_course_self_completed' => array(
+        'classname'   => 'core_completion_external',
+        'methodname'  => 'mark_course_self_completed',
+        'description' => 'Update the course completion status for the current user (if course self-completion is enabled).',
+        'type'        => 'write',
+    ),
+
     'core_completion_get_activities_completion_status' => array(
         'classname'     => 'core_completion_external',
         'methodname'    => 'get_activities_completion_status',
@@ -1179,6 +1186,7 @@ $services = array(
             'core_user_remove_user_device',
             'core_course_get_courses',
             'core_completion_update_activity_completion_status_manually',
+            'core_completion_mark_course_self_completed',
             'mod_data_get_databases_by_courses',
             'core_comment_get_comments',
             'mod_forum_view_forum',

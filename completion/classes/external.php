@@ -377,4 +377,84 @@ class core_completion_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for mark_course_self_completed.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function mark_course_self_completed_parameters() {
+        return new external_function_parameters (
+            array(
+                'courseid' => new external_value(PARAM_INT, 'Course ID')
+            )
+        );
+    }
+
+    /**
+     * Update the course completion status for the current user (if course self-completion is enabled).
+     *
+     * @param  int $courseid    Course id
+     * @return array            Result and possible warnings
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function mark_course_self_completed($courseid) {
+        global $USER;
+
+        $warnings = array();
+        $params = self::validate_parameters(self::mark_course_self_completed_parameters(),
+                                            array('courseid' => $courseid));
+
+        $course = get_course($params['courseid']);
+        $context = context_course::instance($course->id);
+        self::validate_context($context);
+
+        // Set up completion object and check it is enabled.
+        $completion = new completion_info($course);
+        if (!$completion->is_enabled()) {
+            throw new moodle_exception('completionnotenabled', 'completion');
+        }
+
+        if (!$completion->is_tracked_user($USER->id)) {
+            throw new moodle_exception('nottracked', 'completion');
+        }
+
+        $completion = $completion->get_completion($USER->id, COMPLETION_CRITERIA_TYPE_SELF);
+
+        // Self completion criteria not enabled.
+        if (!$completion) {
+            throw new moodle_exception('noselfcompletioncriteria', 'completion');
+        }
+
+        // Check if the user has already marked himself as complete.
+        if ($completion->is_complete()) {
+            throw new moodle_exception('useralreadymarkedcomplete', 'completion');
+        }
+
+        // Mark the course complete.
+        $completion->mark_complete();
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the mark_course_self_completed return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.0
+     */
+    public static function mark_course_self_completed_returns() {
+
+        return new external_single_structure(
+            array(
+                'status'    => new external_value(PARAM_BOOL, 'status, true if success'),
+                'warnings'  => new external_warnings(),
+            )
+        );
+    }
+
 }
