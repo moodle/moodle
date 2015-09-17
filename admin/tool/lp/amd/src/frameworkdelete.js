@@ -63,7 +63,11 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
             args: { id: frameworkid }
         }, {
             methodname: 'tool_lp_data_for_competency_frameworks_manage_page',
-            args: { pagecontextid: pagecontextid }
+            args: {
+                pagecontext: {
+                    contextid: pagecontextid
+                }
+            }
         }]);
         requests[1].done(reloadList).fail(notification.exception);
     };
