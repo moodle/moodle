@@ -160,7 +160,7 @@ class MoodleExcelWorksheet {
      */
     public function __construct($name, PHPExcel $workbook) {
         // Replace any characters in the name that Excel cannot cope with.
-        $name = strtr($name, '[]*/\?:', '       ');
+        $name = strtr(trim($name, "'"), '[]*/\?:', '       ');
         // Shorten the title if necessary.
         $name = core_text::substr($name, 0, 31);
 
