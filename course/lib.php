@@ -3322,6 +3322,8 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
             'edittitleinstructions',
             'show',
             'hide',
+            'highlight',
+            'highlightoff',
             'groupsnone',
             'groupsvisible',
             'groupsseparate',

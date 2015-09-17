@@ -2,9 +2,14 @@
 /* COURSE CONTENT */
 .section_add_menus {
     text-align: right;
+    clear: both;
+}
+.section-modchooser {
+    clear: both;
 }
 .dir-rtl .section_add_menus {
     text-align: left;
+    clear: both;
 }
 .section_add_menus .horizontal div,
 .section_add_menus .horizontal form {
@@ -41,6 +46,16 @@
     margin: 1em;
 }
 .section {
+    .side {
+        &.left {
+            float: left;
+        }
+        &.right {
+            float: right;
+        }
+        position: relative;
+        z-index: 10;
+    }
     .spinner {
         height: 16px;
         width: 16px;
@@ -130,6 +145,16 @@
 }
 
 .dir-rtl .section {
+    .side {
+        &.left {
+            float: right;
+        }
+        &.right {
+            float: left;
+        }
+        position: relative;
+        z-index: 10;
+    }
     .activity {
         .spinner {
             left: auto;

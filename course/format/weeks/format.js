@@ -74,7 +74,7 @@ M.course.format.process_sections = function(Y, sectionlist, response, sectionfro
 
         for (var i = sectionfrom; i <= sectionto; i++) {
             // Update section title.
-            sectionlist.item(i).one('.'+CSS.SECTIONNAME).setContent(response.sectiontitles[i]);
+            sectionlist.item(i).all('.'+CSS.SECTIONNAME).setContent(response.sectiontitles[i]);
 
             // Update move icon.
             ele = sectionlist.item(i).one(SELECTORS.SECTIONLEFTSIDE);

@@ -29,6 +29,19 @@
     display: inline-block;
 }
 
+.section .side.left {
+    float: left;
+}
+.dir-rtl .section .side.left {
+    float: right;
+}
+.section .side.right {
+    float: right;
+}
+.dir-rtl .section .side.right {
+    float: left;
+}
+
 .section .activity .editing_move {
     position: absolute;
     left: 0;
