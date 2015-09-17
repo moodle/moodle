@@ -870,16 +870,14 @@ class core_admin_renderer extends plugin_renderer_base {
         $table = new html_table();
         $table->id = 'plugins-check';
         $table->head = array(
-            get_string('displayname', 'core_plugin'),
-            get_string('rootdir', 'core_plugin'),
-            get_string('source', 'core_plugin'),
+            get_string('displayname', 'core_plugin').' / '.get_string('rootdir', 'core_plugin'),
             get_string('versiondb', 'core_plugin'),
             get_string('versiondisk', 'core_plugin'),
             get_string('requires', 'core_plugin'),
-            get_string('status', 'core_plugin'),
+            get_string('source', 'core_plugin').' / '.get_string('status', 'core_plugin'),
         );
         $table->colclasses = array(
-            'displayname', 'rootdir', 'source', 'versiondb', 'versiondisk', 'requires', 'status',
+            'displayname', 'versiondb', 'versiondisk', 'requires', 'status',
         );
         $table->data = array();
 
@@ -914,27 +912,51 @@ class core_admin_renderer extends plugin_renderer_base {
                 if ($this->page->theme->resolve_image_location('icon', $plugin->type . '_' . $plugin->name, null)) {
                     $icon = $this->output->pix_icon('icon', '', $plugin->type . '_' . $plugin->name, array('class' => 'smallicon pluginicon'));
                 } else {
-                    $icon = $this->output->pix_icon('spacer', '', 'moodle', array('class' => 'smallicon pluginicon noicon'));
+                    $icon = '';
                 }
-                $displayname  = $icon . ' ' . $plugin->displayname;
-                $displayname = new html_table_cell($displayname);
 
-                $rootdir = new html_table_cell($plugin->get_dir());
-
-                if ($isstandard = $plugin->is_standard()) {
-                    $row->attributes['class'] .= ' standard';
-                    $source = new html_table_cell(get_string('sourcestd', 'core_plugin'));
-                } else {
-                    $row->attributes['class'] .= ' extension';
-                    $source = new html_table_cell(get_string('sourceext', 'core_plugin'));
-                }
+                $displayname = new html_table_cell(
+                    $icon.
+                    html_writer::span($plugin->displayname, 'pluginname').
+                    html_writer::div($plugin->get_dir(), 'plugindir')
+                );
 
                 $versiondb = new html_table_cell($plugin->versiondb);
                 $versiondisk = new html_table_cell($plugin->versiondisk);
 
+                if ($isstandard = $plugin->is_standard()) {
+                    $row->attributes['class'] .= ' standard';
+                    $sourcelabel = html_writer::span(get_string('sourcestd', 'core_plugin'), 'sourcetext label');
+                } else {
+                    $row->attributes['class'] .= ' extension';
+                    $sourcelabel = html_writer::span(get_string('sourceext', 'core_plugin'), 'sourcetext label label-info');
+                }
+
+                $coredependency = $plugin->is_core_dependency_satisfied($version);
+                $otherpluginsdependencies = $pluginman->are_dependencies_satisfied($plugin->get_other_required_plugins());
+                $dependenciesok = $coredependency && $otherpluginsdependencies;
+
                 $statuscode = $plugin->get_status();
                 $row->attributes['class'] .= ' status-' . $statuscode;
-                $status = get_string('status_' . $statuscode, 'core_plugin');
+                $statusclass = 'statustext label ';
+                switch ($statuscode) {
+                    case core_plugin_manager::PLUGIN_STATUS_NEW:
+                        $statusclass .= $dependenciesok ? 'label-success' : 'label-warning';
+                        break;
+                    case core_plugin_manager::PLUGIN_STATUS_UPGRADE:
+                        $statusclass .= $dependenciesok ? 'label-info' : 'label-warning';
+                        break;
+                    case core_plugin_manager::PLUGIN_STATUS_MISSING:
+                    case core_plugin_manager::PLUGIN_STATUS_DOWNGRADE:
+                    case core_plugin_manager::PLUGIN_STATUS_DELETE:
+                        $statusclass .= 'label-important';
+                        break;
+                    case core_plugin_manager::PLUGIN_STATUS_NODB:
+                    case core_plugin_manager::PLUGIN_STATUS_UPTODATE:
+                        $statusclass .= $dependenciesok ? '' : 'label-warning';
+                        break;
+                }
+                $status = html_writer::span(get_string('status_' . $statuscode, 'core_plugin'), $statusclass);
 
                 $availableupdates = $plugin->available_updates();
                 if (!empty($availableupdates) and empty($CFG->disableupdatenotifications)) {
@@ -943,16 +965,12 @@ class core_admin_renderer extends plugin_renderer_base {
                     }
                 }
 
-                $status = new html_table_cell($status);
+                $status = new html_table_cell($sourcelabel.' '.$status);
 
                 $requires = new html_table_cell($this->required_column($plugin, $pluginman, $version));
 
                 $statusisboring = in_array($statuscode, array(
                         core_plugin_manager::PLUGIN_STATUS_NODB, core_plugin_manager::PLUGIN_STATUS_UPTODATE));
-
-                $coredependency = $plugin->is_core_dependency_satisfied($version);
-                $otherpluginsdependencies = $pluginman->are_dependencies_satisfied($plugin->get_other_required_plugins());
-                $dependenciesok = $coredependency && $otherpluginsdependencies;
 
                 if ($options['xdep']) {
                     // we want to see only plugins with failed dependencies
@@ -971,8 +989,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 // ok, the plugin should be displayed
                 $numofhighlighted[$type]++;
 
-                $row->cells = array($displayname, $rootdir, $source,
-                    $versiondb, $versiondisk, $requires, $status);
+                $row->cells = array($displayname, $versiondb, $versiondisk, $requires, $status);
                 $plugintyperows[] = $row;
             }
 
@@ -1036,11 +1053,13 @@ class core_admin_renderer extends plugin_renderer_base {
         if (!empty($plugin->versionrequires)) {
             if ($plugin->versionrequires <= $version) {
                 $class = 'requires-ok';
+                $label = '';
             } else {
                 $class = 'requires-failed';
+                $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-important');
             }
             $requires[] = html_writer::tag('li',
-                get_string('moodleversion', 'core_plugin', $plugin->versionrequires),
+                html_writer::span(get_string('moodleversion', 'core_plugin', $plugin->versionrequires), 'dep dep-core').' '.$label,
                 array('class' => $class));
         }
 
@@ -1050,6 +1069,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
             if (is_null($otherplugin)) {
                 // The required plugin is not installed.
+                $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-important');
                 $class = 'requires-failed requires-missing';
                 $installurl = new moodle_url('https://moodle.org/plugins/view.php', array('plugin' => $component));
                 $uploadurl = new moodle_url('/admin/tool/installaddon/');
@@ -1058,6 +1078,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
             } else if ($requiredversion != ANY_VERSION and $otherplugin->versiondisk < $requiredversion) {
                 // The required plugin is installed but needs to be updated.
+                $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-important');
                 $class = 'requires-failed requires-outdated';
                 if (!$otherplugin->is_standard()) {
                     $updateurl = new moodle_url($this->page->url, array('sesskey' => sesskey(), 'fetchupdates' => 1));
@@ -1066,6 +1087,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
             } else {
                 // Already installed plugin with sufficient version.
+                $label = '';
                 $class = 'requires-ok';
             }
 
@@ -1076,9 +1098,9 @@ class core_admin_renderer extends plugin_renderer_base {
             }
 
             $requires[] = html_writer::tag('li',
-                    html_writer::div(get_string($str, 'core_plugin',
-                            array('component' => $component, 'version' => $requiredversion)), 'component').
-                    html_writer::div(implode(' | ', $actions), 'actions'),
+                    html_writer::span(get_string($str, 'core_plugin',
+                            array('component' => $component, 'version' => $requiredversion)), 'dep dep-plugin').' '.$label.
+                    ' '.html_writer::span(implode(' | ', $actions), 'actions'),
                     array('class' => $class));
         }
 

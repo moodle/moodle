@@ -30,6 +30,7 @@ $string['availability'] = 'Availability';
 $string['checkforupdates'] = 'Check for available updates';
 $string['checkforupdateslast'] = 'Last check done on {$a}';
 $string['detectedmisplacedplugin'] = 'Plugin "{$a->component}" is installed in incorrect location "{$a->current}", expected location is "{$a->expected}"';
+$string['dependencyfails'] = 'Fails';
 $string['dependencyinstall'] = 'Install';
 $string['dependencyupload'] = 'Upload';
 $string['displayname'] = 'Plugin name';

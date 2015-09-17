@@ -542,32 +542,20 @@ img.iconsmall {
     margin: 1em;
 }
 
-#plugins-check .displayname .pluginicon {
-    width: 16px;
-}
-
-#plugins-check .status-new .status {
-    background-color: @successBackground;
-}
-
-#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release,
-#plugins-check .status-upgrade .status,
-#plugins-check .status-delete .status {
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release {
     background-color: @infoBackground;
 }
 
 #plugins-control-panel .extension .source,
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity100 .info.release,
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity150 .info.release,
-.pluginupdateinfo.maturity100,
-.pluginupdateinfo.maturity150,
-#plugins-check .extension .source {
+#plugins-check .status .pluginupdateinfo.maturity100,
+#plugins-check .status .pluginupdateinfo.maturity150 {
     background-color: @warningBackground;
 }
 
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity50 .info.release,
-.pluginupdateinfo.maturity50,
-#plugins-check .requires-failed,
+#plugins-check .status .pluginupdateinfo.maturity50,
 #plugins-check .missingfromdisk .displayname,
 #plugins-check .status-missing .status,
 #plugins-check .status-downgrade .status {
@@ -600,30 +588,31 @@ img.iconsmall {
     background-color: @inputDisabledBackground;
 }
 
-#plugins-check .standard .source,
-#plugins-check .status-nodb .status,
-#plugins-check .status-uptodate .status,
 #plugins-check .requires-ok {
     .muted
 }
 
+#plugins-check .displayname {
+    .pluginicon {
+        margin-right: 5px;
+        width: 16px;
+    }
+    .plugindir {
+        .muted;
+        font-size: @fontSizeSmall;
+    }
+}
+
 #plugins-check .requires ul {
-    font-size: @fontSizeMini;
-    margin: 0;
+    margin-left: 13px; // To undo the default 25px, does not look that great inside a table cell;
 }
 
 #plugins-check .status .pluginupdateinfo {
     padding: 5px 10px;
-    margin: 10px;
+    margin: 10px 0px;
     background-color: @infoBackground;
     .border-radius(10px);
 }
-
-#plugins-check .status .pluginupdateinfo span,
-#plugins-check .status .pluginupdateinfo a {
-    padding-right: 1em;
-}
-
 
 #page-admin-index .upgradepluginsinfo {
     text-align: center;
@@ -650,9 +639,12 @@ img.iconsmall {
 }
 
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo .separator,
-#plugins-check .status .pluginupdateinfo .separator,
 #page-admin-plugins .separator {
     border-left: 1px dotted @grayLight;
+}
+
+#plugins-check .status .pluginupdateinfo .separator:after {
+    content: " | ";
 }
 
 #plugins-control-panel .msg td {
@@ -704,7 +696,6 @@ img.iconsmall {
         direction: ltr;
     }
 
-    #plugins-check .rootdir,
     #plugins-check .requires-ok {
         text-align: left;
         direction: ltr;
