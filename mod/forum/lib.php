@@ -3722,11 +3722,13 @@ function mod_forum_rating_can_see_item_ratings($params) {
  * @param boolean $cantrack Is tracking enabled for this forum.
  * @param boolean $forumtracked Is the user tracking this forum.
  * @param boolean $canviewparticipants True if user has the viewparticipants permission for this course
+ * @param boolean $canviewhiddentimedposts True if user has the viewhiddentimedposts permission for this forum
  */
-function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="",
-                                        $cantrack=true, $forumtracked=true, $canviewparticipants=true, $modcontext=NULL) {
+function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring = "",
+                                        $cantrack = true, $forumtracked = true, $canviewparticipants = true, $modcontext = null,
+                                        $canviewhiddentimedposts = false) {
 
-    global $COURSE, $USER, $CFG, $OUTPUT;
+    global $COURSE, $USER, $CFG, $OUTPUT, $PAGE;
 
     static $rowcount;
     static $strmarkalldread;
@@ -3747,11 +3749,23 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
 
     $post->subject = format_string($post->subject,true);
 
+    $timeddiscussion = !empty($CFG->forum_enabletimedposts) && ($post->timestart || $post->timeend);
+    $timedoutsidewindow = '';
+    if ($timeddiscussion && ($post->timestart > time() || ($post->timeend != 0 && $post->timeend < time()))) {
+        $timedoutsidewindow = ' dimmed_text';
+    }
+
     echo "\n\n";
-    echo '<tr class="discussion r'.$rowcount.'">';
+    echo '<tr class="discussion r'.$rowcount.$timedoutsidewindow.'">';
 
     // Topic
     echo '<td class="topic starter">';
+
+    $canalwaysseetimedpost = $USER->id == $post->userid || $canviewhiddentimedposts;
+    if ($timeddiscussion && $canalwaysseetimedpost) {
+        echo $PAGE->get_renderer('mod_forum')->timed_discussion_tooltip($post, empty($timedoutsidewindow));
+    }
+
     echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'">'.$post->subject.'</a>';
     echo "</td>\n";
 
@@ -5437,6 +5451,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
     }
 
     $canviewparticipants = has_capability('moodle/course:viewparticipants',$context);
+    $canviewhiddentimedposts = has_capability('mod/forum:viewhiddentimedposts', $context);
 
     $strdatestring = get_string('strftimerecentfull');
 
@@ -5536,7 +5551,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
                     $group = -1;
                 }
                 forum_print_discussion_header($discussion, $forum, $group, $strdatestring, $cantrack, $forumtracked,
-                    $canviewparticipants, $context);
+                    $canviewparticipants, $context, $canviewhiddentimedposts);
             break;
             default:
                 $link = false;

@@ -165,3 +165,13 @@ span.unread {
 .dir-rtl .path-mod-forum .discussionsubscription {
     text-align: left;
 }
+
+#page-mod-forum-view img.timedpost {
+    margin-right: 5px;
+}
+
+.dir-rtl#page-mod-forum-view img.timedpost {
+    margin-right: 0px;
+    margin-left: 5px;
+    float: right;
+}
