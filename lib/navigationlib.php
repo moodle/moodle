@@ -4679,13 +4679,6 @@ class settings_navigation extends navigation_node {
             $categorynode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING, null, 'filters', new pix_icon('i/filter', ''));
         }
 
-        // Competency frameworks.
-        if (has_capability('tool/lp:competencymanage', $catcontext)) {
-            $url = new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => $catcontext->id));
-            $categorynode->add(get_string('competencyframeworks', 'tool_lp'), $url, self::TYPE_SETTING, null,
-                'competencyframeworks', new pix_icon('i/settings', ''));
-        }
-
         // Restore.
         if (has_capability('moodle/restore:restorecourse', $catcontext)) {
             $url = new moodle_url('/backup/restorefile.php', array('contextid' => $catcontext->id));
