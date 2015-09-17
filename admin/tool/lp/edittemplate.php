@@ -25,26 +25,45 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('toollplearningplans');
+$id = optional_param('id', 0, PARAM_INT);
+$pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to where we can from.
+
+if (!empty($id)) {
+    // Always use the context from the framework when it exists.
+    $template = new \tool_lp\template($id);
+    $context = $template->get_context();
+} else {
+    $context = context::instance_by_id($pagecontextid);
+}
+
+// We check that we have the permission to edit this framework, in its own context.
+require_login();
+require_capability('tool/lp:templatemanage', $context);
+
+// We keep the original context in the URLs, so that we remain in the same context.
+$url = new moodle_url("/admin/tool/lp/edittemplate.php", array('id' => $id, 'pagecontextid' => $pagecontextid));
+$templatesurl = new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => $pagecontextid));
+$formurl = new moodle_url("/admin/tool/lp/edittemplate.php", array('pagecontextid' => $pagecontextid));
 
 $title = get_string('templates', 'tool_lp');
-$id = optional_param('id', 0, PARAM_INT);
 if (empty($id)) {
     $pagetitle = get_string('addnewtemplate', 'tool_lp');
 } else {
     $pagetitle = get_string('edittemplate', 'tool_lp');
 }
 // Set up the page.
-$url = new moodle_url("/admin/tool/lp/edittemplate.php", array('id' => $id));
+$PAGE->navigation->override_active_url($templatesurl);
+$PAGE->set_context(context::instance_by_id($pagecontextid));
+$PAGE->set_pagelayout('admin');
 $PAGE->set_url($url);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $output = $PAGE->get_renderer('tool_lp');
 
-$form = new \tool_lp\form\template(null, $id);
+$form = new \tool_lp\form\template($formurl->out(false), array('id' => $id, 'context' => $context));
 
 if ($form->is_cancelled()) {
-    redirect(new moodle_url('/admin/tool/lp/learningplans.php'));
+    redirect($templatesurl);
 }
 
 echo $output->header();
@@ -59,14 +78,15 @@ if ($data) {
     if (empty($data->id)) {
         // Create new template.
         require_sesskey();
+        $data->contextid = $context->id;
         \tool_lp\api::create_template($data);
         echo $output->notification(get_string('templatecreated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button('/admin/tool/lp/learningplans.php');
+        echo $output->continue_button($templatesurl);
     } else {
         require_sesskey();
         \tool_lp\api::update_template($data);
         echo $output->notification(get_string('templateupdated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button('/admin/tool/lp/learningplans.php');
+        echo $output->continue_button($templatesurl);
     }
 } else {
     $form->display();

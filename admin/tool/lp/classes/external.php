@@ -2145,6 +2145,10 @@ class external extends external_api {
             PARAM_INT,
             'User who modified this record last'
         );
+        $contextid = new external_value(
+            PARAM_INT,
+            'The context ID the template belongs to'
+        );
 
         $returns = array(
             'id' => $id,
@@ -2158,6 +2162,7 @@ class external extends external_api {
             'timecreated' => $timecreated,
             'timemodified' => $timemodified,
             'usermodified' => $usermodified,
+            'contextid' => $contextid,
         );
         return new external_single_structure($returns);
     }
@@ -2210,6 +2215,7 @@ class external extends external_api {
             'description' => $description,
             'descriptionformat' => $descriptionformat,
             'visible' => $visible,
+            'context' => self::get_context_parameters()
         );
         return new external_function_parameters($params);
     }
@@ -2231,9 +2237,10 @@ class external extends external_api {
      * @param string $description The description of the template.
      * @param int $descriptionformat The format of the description
      * @param bool $visible Is this template visible.
+     * @param array $context The context info.
      * @return \stdClass Record of new template.
      */
-    public static function create_template($shortname, $idnumber, $duedate, $description, $descriptionformat, $visible) {
+    public static function create_template($shortname, $idnumber, $duedate, $description, $descriptionformat, $visible, $context) {
         $params = self::validate_parameters(self::create_template_parameters(),
                                             array(
                                                 'shortname' => $shortname,
@@ -2242,9 +2249,14 @@ class external extends external_api {
                                                 'description' => $description,
                                                 'descriptionformat' => $descriptionformat,
                                                 'visible' => $visible,
+                                                'context' => $context
                                             ));
+        $context = self::get_context_from_params($params['context']);
+        self::validate_context($context);
 
+        unset($params['context']);
         $params = (object) $params;
+        $params->contextid = $context->id;
 
         $result = api::create_template($params);
         return $result->to_record();
@@ -2471,7 +2483,46 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function list_templates_parameters() {
-        return self::list_parameters_structure();
+       $sort = new external_value(
+            PARAM_ALPHANUMEXT,
+            'Column to sort by.',
+            VALUE_DEFAULT,
+            ''
+        );
+        $order = new external_value(
+            PARAM_ALPHA,
+            'Sort direction. Should be either ASC or DESC',
+            VALUE_DEFAULT,
+            ''
+        );
+        $skip = new external_value(
+            PARAM_INT,
+            'Skip this number of records before returning results',
+            VALUE_DEFAULT,
+            0
+        );
+        $limit = new external_value(
+            PARAM_INT,
+            'Return this number of records at most.',
+            VALUE_DEFAULT,
+            0
+        );
+        $includes = new external_value(
+            PARAM_ALPHA,
+            'What other contexts to fetch the templates from. (children, parents, self)',
+            VALUE_DEFAULT,
+            'children'
+        );
+
+        $params = array(
+            'sort' => $sort,
+            'order' => $order,
+            'skip' => $skip,
+            'limit' => $limit,
+            'context' => self::get_context_parameters(),
+            'includes' => $includes
+        );
+        return new external_function_parameters($params);
     }
 
     /**
@@ -2485,42 +2536,39 @@ class external extends external_api {
     /**
      * List the existing learning plan templates
      *
-     * @param array $filters Filters to apply.
      * @param string $sort Field to sort by.
      * @param string $order Sort order.
      * @param int $skip Limitstart.
      * @param int $limit Number of rows to return.
+     * @param array $context
+     * @param bool $includes
      *
      * @return array
      */
-    public static function list_templates($filters, $sort, $order, $skip, $limit) {
+    public static function list_templates($sort, $order, $skip, $limit, $context, $includes) {
         $params = self::validate_parameters(self::list_templates_parameters(),
                                             array(
-                                                'filters' => $filters,
                                                 'sort' => $sort,
                                                 'order' => $order,
                                                 'skip' => $skip,
-                                                'limit' => $limit
+                                                'limit' => $limit,
+                                                'context' => $context,
+                                                'includes' => $includes
                                             ));
+
+        $context = self::get_context_from_params($params['context']);
+        self::validate_context($context);
 
         if ($params['order'] !== '' && $params['order'] !== 'ASC' && $params['order'] !== 'DESC') {
             throw new invalid_parameter_exception('Invalid order param. Must be ASC, DESC or empty.');
         }
 
-        $safefilters = array();
-        $validcolumns = array('id', 'shortname', 'description', 'sortorder', 'idnumber', 'visible');
-        foreach ($params['filters'] as $filter) {
-            if (!in_array($filter->column, $validcolumns)) {
-                throw new invalid_parameter_exception('Filter column was invalid');
-            }
-            $safefilters[$filter->column] = $filter->value;
-        }
-
-        $results = api::list_templates($safefilters,
-                                                                $params['sort'],
-                                                                $params['order'],
-                                                                $params['skip'],
-                                                                $params['limit']);
+        $results = api::list_templates($params['sort'],
+                                       $params['order'],
+                                       $params['skip'],
+                                       $params['limit'],
+                                       $context,
+                                       $params['includes']);
         $records = array();
         foreach ($results as $result) {
             $record = $result->to_record();
@@ -2544,15 +2592,16 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function count_templates_parameters() {
-        $filters = new external_multiple_structure(new external_single_structure(
-            array(
-                'column' => new external_value(PARAM_ALPHANUMEXT, 'Column name to filter by'),
-                'value' => new external_value(PARAM_TEXT, 'Value to filter by. Must be exact match')
-            )
-        ));
+        $includes = new external_value(
+            PARAM_ALPHA,
+            'What other contextes to fetch the frameworks from. (children, parents, self)',
+            VALUE_DEFAULT,
+            'children'
+        );
 
         $params = array(
-            'filters' => $filters,
+            'context' => self::get_context_parameters(),
+            'includes' => $includes
         );
         return new external_function_parameters($params);
     }
@@ -2571,22 +2620,16 @@ class external extends external_api {
      * @param array $filters Filters to allow.
      * @return boolean
      */
-    public static function count_templates($filters) {
+    public static function count_templates($context, $includes) {
         $params = self::validate_parameters(self::count_templates_parameters(),
                                             array(
-                                                'filters' => $filters
+                                                'context' => $context,
+                                                'includes' => $includes
                                             ));
+        $context = self::get_context_from_params($params['context']);
+        self::validate_context($context);
 
-        $safefilters = array();
-        $validcolumns = array('id', 'shortname', 'description', 'sortorder', 'idnumber', 'visible');
-        foreach ($params['filters'] as $filter) {
-            if (!in_array($filter->column, $validcolumns)) {
-                throw new invalid_parameter_exception('Filter column was invalid');
-            }
-            $safefilters[$filter->column] = $filter->value;
-        }
-
-        return api::count_templates($safefilters);
+        return api::count_templates($context, $includes);
     }
 
     /**
@@ -2660,8 +2703,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function data_for_templates_manage_page_parameters() {
-        // No params required.
-        $params = array();
+        $params = array('pagecontext' => self::get_context_parameters());
         return new external_function_parameters($params);
     }
 
@@ -2676,12 +2718,19 @@ class external extends external_api {
     /**
      * Loads the data required to render the templates_manage_page template.
      *
+     * @param array $pagecontext The page context info.
      * @return boolean
      */
-    public static function data_for_templates_manage_page() {
+    public static function data_for_templates_manage_page($pagecontext) {
         global $PAGE;
 
-        $renderable = new output\manage_templates_page();
+        $params = self::validate_parameters(self::data_for_templates_manage_page_parameters(), array(
+            'pagecontext' => $pagecontext
+        ));
+        $context = self::get_context_from_params($params['pagecontext']);
+        self::validate_context($context);
+
+        $renderable = new output\manage_templates_page($context);
         $renderer = $PAGE->get_renderer('tool_lp');
 
         $data = $renderable->export_for_template($renderer);
@@ -3039,7 +3088,7 @@ class external extends external_api {
             'The template id',
             VALUE_REQUIRED
         );
-        $params = array('templateid' => $templateid);
+        $params = array('templateid' => $templateid, 'pagecontext' => self::get_context_parameters());
         return new external_function_parameters($params);
     }
 
@@ -3055,16 +3104,21 @@ class external extends external_api {
      * Loads the data required to render the template_competencies_page template.
      *
      * @param int $templateid Template id.
+     * @param array $pagecontext The page context info.
      * @return boolean
      */
-    public static function data_for_template_competencies_page($templateid) {
+    public static function data_for_template_competencies_page($templateid, $pagecontext) {
         global $PAGE;
         $params = self::validate_parameters(self::data_for_template_competencies_page_parameters(),
                                             array(
                                                 'templateid' => $templateid,
+                                                'pagecontext' => $pagecontext
                                             ));
 
-        $renderable = new output\template_competencies_page($params['templateid']);
+        $context = self::get_context_from_params($params['pagecontext']);
+        self::validate_context($context);
+
+        $renderable = new output\template_competencies_page($params['templateid'], $context);
         $renderer = $PAGE->get_renderer('tool_lp');
 
         $data = $renderable->export_for_template($renderer);

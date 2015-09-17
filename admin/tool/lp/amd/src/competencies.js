@@ -220,7 +220,7 @@ define(['jquery',
                     { methodname: 'tool_lp_add_competency_to_template',
                         args: { templateid: localthis.itemid, competencyid: localthis.selectedCompetency } },
                     { methodname: 'tool_lp_data_for_template_competencies_page',
-                        args: { templateid: localthis.itemid } }
+                        args: { templateid: localthis.itemid, pagecontext: { contextid: localthis.pageContextId } } }
                 ]);
                 pagerender = 'tool_lp/template_competencies_page';
                 pageregion = 'templatecompetenciespage';
@@ -272,7 +272,7 @@ define(['jquery',
                     { methodname: 'tool_lp_remove_competency_from_template',
                         args: { templateid: localthis.itemid, competencyid: deleteid } },
                     { methodname: 'tool_lp_data_for_template_competencies_page',
-                        args: { templateid: localthis.itemid } }
+                        args: { templateid: localthis.itemid, pagecontext: { contextid: localthis.pageContextId } } }
                 ]);
                 pagerender = 'tool_lp/template_competencies_page';
                 pageregion = 'templatecompetenciespage';

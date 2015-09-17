@@ -37,8 +37,8 @@ $ADMIN->add('root', $temp, 'badges');
 $temp = new admin_externalpage(
     'toollplearningplans',
     get_string('learningplans', 'tool_lp'),
-    new moodle_url('/admin/tool/lp/learningplans.php'),
-    'tool/lp:planmanageall'
+    new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => context_system::instance()->id)),
+    'tool/lp:templatemanage'
 );
 $ADMIN->add('root', $temp, 'toollpcompetencies');
 

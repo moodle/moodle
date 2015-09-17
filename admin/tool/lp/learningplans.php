@@ -25,12 +25,20 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('toollplearningplans');
+$pagecontextid = required_param('pagecontextid', PARAM_INT);
+$context = context::instance_by_id($pagecontextid);
+
+$url = new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => $pagecontextid));
+
+require_login();
+require_capability('tool/lp:templatemanage', $context);
 
 $title = get_string('learningplans', 'tool_lp');
 $pagetitle = get_string('templates', 'tool_lp');
+
 // Set up the page.
-$url = new moodle_url("/admin/tool/lp/learningplans.php");
+$PAGE->set_context($context);
+$PAGE->set_pagelayout('admin');
 $PAGE->set_url($url);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
@@ -38,7 +46,7 @@ $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($pagetitle);
 
-$page = new \tool_lp\output\manage_templates_page();
+$page = new \tool_lp\output\manage_templates_page($context);
 echo $output->render($page);
 
 echo $output->footer();

@@ -42,6 +42,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $cat1 = $dg->create_category();
         $cat2 = $dg->create_category(array('parent' => $cat1->id));
         $cat3 = $dg->create_category(array('parent' => $cat2->id));
+        $c1 = $dg->create_course(array('category' => $cat2->id));   // This context should not be returned.
 
         $cat1ctx = context_coursecat::instance($cat1->id);
         $cat2ctx = context_coursecat::instance($cat2->id);
@@ -49,13 +50,13 @@ class tool_lp_api_testcase extends advanced_testcase {
         $sysctx = context_system::instance();
 
         $expected = array($cat1ctx->id => $cat1ctx);
-        $this->assertEquals($expected, api::get_framework_related_contexts($cat1ctx, 'self'));
+        $this->assertEquals($expected, api::get_related_contexts($cat1ctx, 'self'));
 
         $expected = array($cat1ctx->id => $cat1ctx, $cat2ctx->id => $cat2ctx, $cat3ctx->id => $cat3ctx);
-        $this->assertEquals($expected, api::get_framework_related_contexts($cat1ctx, 'children'));
+        $this->assertEquals($expected, api::get_related_contexts($cat1ctx, 'children'));
 
         $expected = array($sysctx->id => $sysctx, $cat1ctx->id => $cat1ctx, $cat2ctx->id => $cat2ctx);
-        $this->assertEquals($expected, api::get_framework_related_contexts($cat2ctx, 'parents'));
+        $this->assertEquals($expected, api::get_related_contexts($cat2ctx, 'parents'));
     }
 
     public function test_get_framework_related_contexts_with_capabilities() {
@@ -65,6 +66,7 @@ class tool_lp_api_testcase extends advanced_testcase {
         $cat1 = $dg->create_category();
         $cat2 = $dg->create_category(array('parent' => $cat1->id));
         $cat3 = $dg->create_category(array('parent' => $cat2->id));
+        $c1 = $dg->create_course(array('category' => $cat2->id));   // This context should not be returned.
 
         $cat1ctx = context_coursecat::instance($cat1->id);
         $cat2ctx = context_coursecat::instance($cat2->id);
@@ -86,12 +88,74 @@ class tool_lp_api_testcase extends advanced_testcase {
         $requiredcap = array('tool/lp:competencyread');
 
         $expected = array();
-        $this->assertEquals($expected, api::get_framework_related_contexts($cat2ctx, 'self', $requiredcap));
+        $this->assertEquals($expected, api::get_related_contexts($cat2ctx, 'self', $requiredcap));
 
         $expected = array($cat1ctx->id => $cat1ctx);
-        $this->assertEquals($expected, api::get_framework_related_contexts($cat1ctx, 'children', $requiredcap));
+        $this->assertEquals($expected, api::get_related_contexts($cat1ctx, 'children', $requiredcap));
 
         $expected = array($sysctx->id => $sysctx, $cat1ctx->id => $cat1ctx);
-        $this->assertEquals($expected, api::get_framework_related_contexts($cat2ctx, 'parents', $requiredcap));
+        $this->assertEquals($expected, api::get_related_contexts($cat2ctx, 'parents', $requiredcap));
     }
+
+    public function test_get_template_related_contexts() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $cat1 = $dg->create_category();
+        $cat2 = $dg->create_category(array('parent' => $cat1->id));
+        $cat3 = $dg->create_category(array('parent' => $cat2->id));
+        $c1 = $dg->create_course(array('category' => $cat2->id));   // This context should not be returned.
+
+        $cat1ctx = context_coursecat::instance($cat1->id);
+        $cat2ctx = context_coursecat::instance($cat2->id);
+        $cat3ctx = context_coursecat::instance($cat3->id);
+        $sysctx = context_system::instance();
+
+        $expected = array($cat1ctx->id => $cat1ctx);
+        $this->assertEquals($expected, api::get_related_contexts($cat1ctx, 'self'));
+
+        $expected = array($cat1ctx->id => $cat1ctx, $cat2ctx->id => $cat2ctx, $cat3ctx->id => $cat3ctx);
+        $this->assertEquals($expected, api::get_related_contexts($cat1ctx, 'children'));
+
+        $expected = array($sysctx->id => $sysctx, $cat1ctx->id => $cat1ctx, $cat2ctx->id => $cat2ctx);
+        $this->assertEquals($expected, api::get_related_contexts($cat2ctx, 'parents'));
+    }
+
+    public function test_get_template_related_contexts_with_capabilities() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $user = $dg->create_user();
+        $cat1 = $dg->create_category();
+        $cat2 = $dg->create_category(array('parent' => $cat1->id));
+        $cat3 = $dg->create_category(array('parent' => $cat2->id));
+        $c1 = $dg->create_course(array('category' => $cat2->id));   // This context should not be returned.
+
+        $cat1ctx = context_coursecat::instance($cat1->id);
+        $cat2ctx = context_coursecat::instance($cat2->id);
+        $cat3ctx = context_coursecat::instance($cat3->id);
+        $sysctx = context_system::instance();
+
+        $roleallow = create_role('Allow', 'allow', 'Allow read');
+        assign_capability('tool/lp:templateread', CAP_ALLOW, $roleallow, $sysctx->id);
+        role_assign($roleallow, $user->id, $sysctx->id);
+
+        $roleprevent = create_role('Prevent', 'prevent', 'Prevent read');
+        assign_capability('tool/lp:templateread', CAP_PROHIBIT, $roleprevent, $sysctx->id);
+        role_assign($roleprevent, $user->id, $cat2ctx->id);
+
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->setUser($user);
+        $this->assertFalse(has_capability('tool/lp:templateread', $cat2ctx));
+
+        $requiredcap = array('tool/lp:templateread');
+
+        $expected = array();
+        $this->assertEquals($expected, api::get_related_contexts($cat2ctx, 'self', $requiredcap));
+
+        $expected = array($cat1ctx->id => $cat1ctx);
+        $this->assertEquals($expected, api::get_related_contexts($cat1ctx, 'children', $requiredcap));
+
+        $expected = array($sysctx->id => $sysctx, $cat1ctx->id => $cat1ctx);
+        $this->assertEquals($expected, api::get_related_contexts($cat2ctx, 'parents', $requiredcap));
+    }
+
 }

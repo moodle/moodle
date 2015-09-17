@@ -28,7 +28,7 @@ use templatable;
 use renderer_base;
 use stdClass;
 use moodle_url;
-use context_system;
+use context;
 use tool_lp\api;
 
 /**
@@ -54,19 +54,22 @@ class template_competencies_page implements renderable, templatable {
     /** @var string $manageurl manage url. */
     protected $manageurl = null;
 
+    /** @var context $pagecontext The page context. */
+    protected $pagecontext = null;
+
     /**
      * Construct this renderable.
      *
      * @param int $templateid The learning plan template id for this page.
      */
-    public function __construct($templateid) {
-        $context = context_system::instance();
-
+    public function __construct($templateid, context $pagecontext) {
+        $this->pagecontext = $pagecontext;
         $this->templateid = $templateid;
         $this->competencies = api::list_competencies_in_template($templateid);
-        $this->canmanagecompetencyframeworks = has_capability('tool/lp:competencymanage', $context);
-        $this->canmanagetemplatecompetencies = has_capability('tool/lp:templatemanage', $context);
-        $this->manageurl = new moodle_url('/admin/tool/lp/competencyframeworks.php');
+        $this->canmanagecompetencyframeworks = has_capability('tool/lp:competencymanage', $this->pagecontext);
+        $this->canmanagetemplatecompetencies = has_capability('tool/lp:templatemanage', $this->pagecontext);
+        $this->manageurl = new moodle_url('/admin/tool/lp/competencyframeworks.php',
+            array('pagecontextid' => $this->pagecontext->id));
     }
 
     /**
@@ -77,6 +80,7 @@ class template_competencies_page implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
+        $data->pagecontextid = $this->pagecontext->id;
         $data->templateid = $this->templateid;
         $data->competencies = array();
         foreach ($this->competencies as $competency) {

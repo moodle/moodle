@@ -53,6 +53,6 @@
 </div>
 {{#js}}
 require(['tool_lp/competencies'], function(mod) {
-    (new mod({{templateid}}, 'template'));
+    (new mod({{templateid}}, 'template', {{pagecontextid}}));
 });
 {{/js}}

@@ -23,6 +23,7 @@
  */
 namespace tool_lp;
 
+use context;
 use stdClass;
 
 /**
@@ -36,7 +37,7 @@ class template extends persistent {
     /** @var string $shortname Short name for this template */
     private $shortname = '';
 
-    /** @var string $description Description for this framework */
+    /** @var string $description Description for this template */
     private $description = '';
 
     /** @var int $descriptionformat Format for the description */
@@ -54,6 +55,8 @@ class template extends persistent {
     /** @var bool $visible Used to show/hide this template */
     private $visible = true;
 
+    /** @var int $contextid The context ID in which the template is set. */
+    private $contextid = null;
     /**
      * Method that provides the table name matching this class.
      *
@@ -79,6 +82,24 @@ class template extends persistent {
      */
     public function set_shortname($shortname) {
         $this->shortname = $shortname;
+    }
+
+    /**
+     * Get the context.
+     *
+     * @return context The context
+     */
+    public function get_context() {
+        return context::instance_by_id($this->contextid);
+    }
+
+    /**
+     * Get the contextid.
+     *
+     * @return string The contextid
+     */
+    public function get_contextid() {
+        return $this->contextid;
     }
 
     /**
@@ -229,6 +250,9 @@ class template extends persistent {
         if (isset($record->usermodified)) {
             $this->set_usermodified($record->usermodified);
         }
+        if (isset($record->contextid)) {
+            $this->contextid = $record->contextid;
+        }
         return $this;
     }
 
@@ -255,6 +279,7 @@ class template extends persistent {
         $record->timecreated = $this->get_timecreated();
         $record->timemodified = $this->get_timemodified();
         $record->usermodified = $this->get_usermodified();
+        $record->contextid = $this->get_contextid();
 
         return $record;
     }

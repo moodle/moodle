@@ -1141,7 +1141,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $syscontext = context_system::instance();
 
         // Create a template.
-        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true);
+        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true,
+            array('contextid' => $syscontext->id));
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
         // Create a competency.
@@ -1176,7 +1177,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $syscontext = context_system::instance();
 
         // Create a template.
-        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true);
+        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true,
+            array('contextid' => $syscontext->id));
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
         // Create a competency.
@@ -1220,7 +1222,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $syscontext = context_system::instance();
 
         // Create a template.
-        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true);
+        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true,
+            array('contextid' => $syscontext->id));
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
         // Create a competency framework.

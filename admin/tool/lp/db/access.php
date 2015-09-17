@@ -98,14 +98,14 @@ $capabilities = array(
     ),
     'tool/lp:templatemanage' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSECAT,
         'archetypes' => array(
         ),
         'clonepermissionsfrom' => 'moodle/site:config'
     ),
     'tool/lp:templateread' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSECAT,
         'archetypes' => array(
             'user' => CAP_ALLOW
         ),

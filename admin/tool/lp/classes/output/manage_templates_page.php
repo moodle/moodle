@@ -23,6 +23,7 @@
  */
 namespace tool_lp\output;
 
+use context;
 use renderable;
 use templatable;
 use renderer_base;
@@ -40,29 +41,29 @@ use tool_lp\api;
  */
 class manage_templates_page implements renderable, templatable {
 
+    /** @var context The context in which everything is happening. */
+    protected $pagecontext;
+
     /** @var array $navigation List of links to display on the page. Each link contains a url and a title. */
     protected $navigation = array();
 
     /** @var array $templates List of learning plan templates. */
     protected $templates = array();
 
-    /** @var bool $canmanage Result of permissions checks. */
-    protected $canmanage = false;
-
     /**
      * Construct this renderable.
      */
-    public function __construct() {
+    public function __construct(context $pagecontext) {
+        $this->pagecontext = $pagecontext;
+
         $addpage = new single_button(
-           new moodle_url('/admin/tool/lp/edittemplate.php'),
-           get_string('addnewtemplate', 'tool_lp')
+           new moodle_url('/admin/tool/lp/edittemplate.php', array('pagecontextid' => $this->pagecontext->id)),
+           get_string('addnewtemplate', 'tool_lp'),
+           'get'
         );
         $this->navigation[] = $addpage;
 
-        $this->templates = api::list_templates(array(), 'sortorder', 'ASC', 0, 0);
-
-        $context = context_system::instance();
-        $this->canmanage = has_capability('tool/lp:planmanageall', $context);
+        $this->templates = api::list_templates('sortorder', 'ASC', 0, 0, $this->pagecontext);
     }
 
     /**
@@ -73,10 +74,12 @@ class manage_templates_page implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
-        $data->canmanage = $this->canmanage;
+        $data->pagecontextid = $this->pagecontext->id;
         $data->templates = array();
         foreach ($this->templates as $template) {
             $record = $template->to_record();
+            $record->canmanage = has_capability('tool/lp:templatemanage', $template->get_context());
+            $record->contextname = $template->get_context()->get_context_name();
             $data->templates[] = $record;
         }
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
