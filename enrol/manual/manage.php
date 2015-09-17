@@ -119,7 +119,9 @@ if ($canenrol && optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) 
                     $timestart = $course->startdate;
                     break;
                 case 4:
-                    $timestart = $now;
+                    // We mimic get_enrolled_sql round(time(), -2) but always floor as we want users to always access their
+                    // courses once they are enrolled.
+                    $timestart = intval(substr($now, 0, 8) . '00') - 1;
                     break;
                 case 3:
                 default:

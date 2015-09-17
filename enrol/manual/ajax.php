@@ -140,7 +140,9 @@ switch ($action) {
                 $timestart = $course->startdate;
                 break;
             case 4:
-                $timestart = time();
+                // We mimic get_enrolled_sql round(time(), -2) but always floor as we want users to always access their
+                // courses once they are enrolled.
+                $timestart = intval(substr(time(), 0, 8) . '00') - 1;
                 break;
             case 3:
             default:
