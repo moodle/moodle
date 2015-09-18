@@ -33,11 +33,11 @@
 abstract class backup_structure_dbops extends backup_dbops {
 
     public static function get_iterator($element, $params, $processor) {
-        global $DB;
         // Check we are going to get_iterator for one backup_nested_element
         if (! $element instanceof backup_nested_element) {
             throw new base_element_struct_exception('backup_nested_element_expected');
         }
+
         // If var_array, table and sql are null, and element has no final elements it is one nested element without source
         // Just return one 1 element iterator without information
         if ($element->get_source_array() === null && $element->get_source_table() === null &&
@@ -48,10 +48,10 @@ abstract class backup_structure_dbops extends backup_dbops {
             return new backup_array_iterator($element->get_source_array());
 
         } else if ($element->get_source_table() !== null) { // It's one table, return recordset iterator
-            return $DB->get_recordset($element->get_source_table(), self::convert_params_to_values($params, $processor), $element->get_source_table_sortby());
+            return $element->get_source_db()->get_recordset($element->get_source_table(), self::convert_params_to_values($params, $processor), $element->get_source_table_sortby());
 
         } else if ($element->get_source_sql() !== null) { // It's one sql, return recordset iterator
-            return $DB->get_recordset_sql($element->get_source_sql(), self::convert_params_to_values($params, $processor));
+            return $element->get_source_db()->get_recordset_sql($element->get_source_sql(), self::convert_params_to_values($params, $processor));
 
         } else { // No sources, supress completely, using null iterator
             return new backup_null_iterator();

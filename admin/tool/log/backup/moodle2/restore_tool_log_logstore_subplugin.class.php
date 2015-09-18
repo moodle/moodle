@@ -34,4 +34,67 @@ defined('MOODLE_INTERNAL') || die();
  * for sharing code between all subplugins.
  */
 abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
+
+    /**
+     * Process log entries.
+     *
+     * This method proceeds to read, complete, remap and, finally,
+     * discard or save every log entry.
+     *
+     * @param array $data log entry.
+     * @return object|null $dataobject A data object with values for one or more fields in the record,
+     *  or null if we are not going to process the log.
+     */
+    protected function process_log($data) {
+        $data = (object) $data;
+
+        // Complete the information that does not come from backup.
+        if (!$data->contextid = $this->get_mappingid('context', $data->contextid)) {
+            // Something went really wrong, cannot find the context this log belongs to.
+            return;
+        }
+        $context = context::instance_by_id($data->contextid, MUST_EXIST);
+        $data->contextlevel = $context->contextlevel;
+        $data->contextinstanceid = $context->instanceid;
+        $data->courseid = $this->task->get_courseid();
+
+        // Remap users.
+        if (!$data->userid = $this->get_mappingid('user', $data->userid)) {
+            // Something went really wrong, cannot find the user this log belongs to.
+            return;
+        }
+        if (!empty($data->relateduserid)) { // This is optional.
+            if (!$data->relateduserid = $this->get_mappingid('user', $data->relateduserid)) {
+                // Something went really wrong, cannot find the relateduserid this log is about.
+                return;
+            }
+        }
+        if (!empty($data->realuserid)) { // This is optional.
+            if (!$data->realuserid = $this->get_mappingid('user', $data->realuserid)) {
+                // Something went really wrong, cannot find the realuserid this log is logged in as.
+                return;
+            }
+        }
+
+        // Roll dates.
+        $data->timecreated = $this->apply_date_offset($data->timecreated);
+
+        // Revert other to its original php way.
+        $data->other = unserialize(base64_decode($data->other));
+
+        // Arrived here, we have both 'objectid' and 'other' to be converted. This is the tricky part.
+        // Both are pointing to other records id, but the sources are not identified in the
+        // same way restore mappings work. So we need to delegate them to some resolver that
+        // will give us the correct restore mapping to be used.
+        if (!empty($data->objectid)) {
+            // TODO: Call to the resolver.
+            return;
+        }
+        if (!empty($data->other)) {
+            // TODO: Call to the resolver.
+            return;
+        }
+
+        return $data;
+    }
 }
