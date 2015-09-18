@@ -74,8 +74,9 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
      */
     var confirmDelete = function(e) {
         e.preventDefault();
-        
+
         planid = $(this).attr('data-planid');
+        userid = $(this).attr('data-userid');
 
         var requests = ajax.call([{
             methodname: 'tool_lp_read_plan',
@@ -104,19 +105,12 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
     return {
         // Public variables and functions.
-
         /**
-         * Initialise this plugin. Just attaches some event handlers to the delete entries in the menu.
+         * Expose the event handler for delete.
+         * @method deleteHandler
+         * @param {Event} e
          */
-        init: function() {
-            // Init this module.
-            $('[data-region="plans"]').on(
-                "click",
-                '[data-action="deleteplan"]',
-                confirmDelete
-            );
-            userid = $('[data-region="plans"]').attr('data-userid');
-        }
+        deleteHandler: confirmDelete,
 
     };
 });

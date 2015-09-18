@@ -66,7 +66,7 @@ if ($USER->id === $userid && !has_any_capability($owncapabilities, $context) && 
 // Passing the templates list to the form.
 $templates = array();
 if ($manageplans) {
-    $templates = \tool_lp\api::list_templates();
+    $templates = \tool_lp\api::list_templates('', '', 0, 0, context_system::instance(), 'children');
 }
 
 $customdata = array('id' => $id, 'userid' => $userid, 'templates' => $templates);

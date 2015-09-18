@@ -83,8 +83,8 @@ class plans_page implements renderable, templatable {
         $data->pluginbaseurl = (new moodle_url('/admin/tool/lp'))->out(true);
 
         // Attach standard objects as mustache can not parse \tool_lp\plan objects.
+        $data->plans = array();
         if ($this->plans) {
-            $data->plans = array();
             foreach ($this->plans as $plan) {
                 $data->plans[] = $plan->to_record();
             }

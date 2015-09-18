@@ -33,7 +33,7 @@
     * navigation - array of strings containing buttons for navigation
 }}
 
-<div data-region="plans" data-userid="{{userid}}">
+<div data-region="plans">
 <table class="generaltable fullwidth">
     <caption>{{#str}}listplanscaption, tool_lp{{/str}}</caption>
     <thead>
@@ -53,17 +53,21 @@
             <td>
                 {{#usercanupdate}}
                 <div style="display: inline-block;">
-                <ul class="planactions hide">
+                <ul title="{{#str}}edit{{/str}}" class="planactions">
+                <li>
+                    <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
+                    <ul class="dropdown-menu">
                     <li>
                         <a href="{{pluginbaseurl}}/editplan.php?id={{id}}">
-                            {{#pix}}t/edit{{/pix}}{{#str}}editthisplan, tool_lp{{/str}}
+                            {{#pix}}t/edit{{/pix}} {{#str}}editthisplan, tool_lp{{/str}}
                         </a>
                     </li>
                     <li>
-                        <a data-action="deleteplan" data-planid="{{id}}" href="#">
-                            {{#pix}}t/delete{{/pix}}{{#str}}deletethisplan, tool_lp{{/str}}
+                        <a data-action="deleteplan" data-planid="{{id}}" data-userid="{{userid}}" href="#">
+                            {{#pix}}t/delete{{/pix}} {{#str}}deletethisplan, tool_lp{{/str}}
                         </a>
                     </li>
+                    </ul>
                 </ul>
                 {{/usercanupdate}}
             </div>
@@ -88,12 +92,12 @@
 {{#js}}
 // Initialise the JS.
 require(['tool_lp/plandelete',
-         'core/menu'],
-        function(deleteMod, menu) {
+         'tool_lp/menubar'],
+        function(deleteMod, menubar) {
 
-    deleteMod.init();
-
-    menu.menu('{{#str}}edit{{/str}}', '.planactions');
+    menubar.enhance('.planactions', {
+        "[data-action='deleteplan']": deleteMod.deleteHandler
+    });
 });
 
 {{/js}}
