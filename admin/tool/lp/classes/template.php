@@ -43,9 +43,6 @@ class template extends persistent {
     /** @var int $descriptionformat Format for the description */
     private $descriptionformat = 0;
 
-    /** @var int $sortorder A number used to influence sorting */
-    private $sortorder = 0;
-
     /** @var string $idnumber Unique idnumber for this template - must be unique if it is non-empty */
     private $idnumber = '';
 
@@ -157,24 +154,6 @@ class template extends persistent {
     }
 
     /**
-     * Get the sort order index.
-     *
-     * @return string The sort order index
-     */
-    public function get_sortorder() {
-        return $this->sortorder;
-    }
-
-    /**
-     * Set the sort order index.
-     *
-     * @param string $sortorder The sort order index
-     */
-    public function set_sortorder($sortorder) {
-        $this->sortorder = $sortorder;
-    }
-
-    /**
      * Get the due date
      *
      * @return string The due date
@@ -232,9 +211,6 @@ class template extends persistent {
         if (isset($record->descriptionformat)) {
             $this->set_descriptionformat($record->descriptionformat);
         }
-        if (isset($record->sortorder)) {
-            $this->set_sortorder($record->sortorder);
-        }
         if (isset($record->visible)) {
             $this->set_visible($record->visible);
         }
@@ -274,7 +250,6 @@ class template extends persistent {
         $record->description = $this->get_description();
         $record->descriptionformat = $this->get_descriptionformat();
         $record->descriptionformatted = format_text($this->get_description(), $this->get_descriptionformat());
-        $record->sortorder = $this->get_sortorder();
         $record->visible = $this->get_visible();
         $record->timecreated = $this->get_timecreated();
         $record->timemodified = $this->get_timemodified();
@@ -282,16 +257,6 @@ class template extends persistent {
         $record->contextid = $this->get_contextid();
 
         return $record;
-    }
-
-    /**
-     * Add a default for the sortorder field to the default create logic.
-     *
-     * @return persistent
-     */
-    public function create() {
-        $this->sortorder = $this->count_records();
-        return parent::create();
     }
 
 }

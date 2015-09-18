@@ -825,43 +825,6 @@ class api {
     }
 
     /**
-     * Move the learning plan template up or down in the display list.
-     *
-     * Requires tool/lp:templatemanage capability at the system context.
-     *
-     * @param int $templateidfrom The template we are moving.
-     * @param int $templateidto Where we are moving to. If moving down, it will go after this template,
-     *                           If moving up, it will go before this template.
-     * @return boolean
-     */
-    public static function reorder_template($templateidfrom, $templateidto) {
-        require_capability('tool/lp:templatemanage', context_system::instance());
-        $down = true;
-        $templatefrom = new template($templateidfrom);
-        $templateto = new template($templateidto);
-
-        $all = self::list_templates(array(), 'sortorder', 'ASC', 0, 0);
-
-        if ($templatefrom->get_sortorder() > $templateto->get_sortorder()) {
-            // We are moving down, so put it after the "to" item.
-            $down = false;
-        }
-
-        foreach ($all as $id => $template) {
-            $sort = $template->get_sortorder();
-            if ($down && $sort > $templatefrom->get_sortorder() && $sort <= $templateto->get_sortorder()) {
-                $template->set_sortorder($template->get_sortorder() - 1);
-                $template->update();
-            } else if (!$down && $sort >= $templateto->get_sortorder() && $sort < $templatefrom->get_sortorder()) {
-                $template->set_sortorder($template->get_sortorder() + 1);
-                $template->update();
-            }
-        }
-        $templatefrom->set_sortorder($templateto->get_sortorder());
-        return $templatefrom->update();
-    }
-
-    /**
      * Perform a search based on the provided filters and return a paginated list of records.
      *
      * Requires tool/lp:templateread capability at the system context.

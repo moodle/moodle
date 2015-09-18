@@ -63,7 +63,7 @@ class manage_templates_page implements renderable, templatable {
         );
         $this->navigation[] = $addpage;
 
-        $this->templates = api::list_templates('sortorder', 'ASC', 0, 0, $this->pagecontext);
+        $this->templates = api::list_templates('shortname', 'ASC', 0, 0, $this->pagecontext);
     }
 
     /**

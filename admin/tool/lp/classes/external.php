@@ -2129,10 +2129,6 @@ class external extends external_api {
             PARAM_BOOL,
             'Is this template visible?'
         );
-        $sortorder = new external_value(
-            PARAM_INT,
-            'Relative sort order of this template'
-        );
         $timecreated = new external_value(
             PARAM_INT,
             'Timestamp this record was created'
@@ -2158,7 +2154,6 @@ class external extends external_api {
             'descriptionformat' => $descriptionformat,
             'descriptionformatted' => $descriptionformatted,
             'visible' => $visible,
-            'sortorder' => $sortorder,
             'timecreated' => $timecreated,
             'timemodified' => $timemodified,
             'usermodified' => $usermodified,
@@ -2639,62 +2634,6 @@ class external extends external_api {
      */
     public static function count_templates_returns() {
         return new external_value(PARAM_INT, 'The number of learning plan templates found.');
-    }
-
-    /**
-     * Move a learning plan template and adjust sort order of all affected.
-     *
-     * @return \external_function_parameters
-     */
-    public static function reorder_template_parameters() {
-        $from = new external_value(
-            PARAM_INT,
-            'Template id to reorder.',
-            VALUE_REQUIRED
-        );
-        $to = new external_value(
-            PARAM_INT,
-            'Template id to move to.',
-            VALUE_REQUIRED
-        );
-        $params = array(
-            'from' => $from,
-            'to' => $to
-        );
-        return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function reorder_template_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
-     * Move this template to a new relative sort order.
-     *
-     * @param int $from
-     * @param int $to
-     * @return boolean
-     */
-    public static function reorder_template($from, $to) {
-        $params = self::validate_parameters(self::reorder_template_parameters(),
-                                            array(
-                                                'from' => $from,
-                                                'to' => $to
-                                            ));
-        return api::reorder_template($params['from'], $params['to']);
-    }
-
-    /**
-     * Returns description of reorder_template return value.
-     *
-     * @return \external_description
-     */
-    public static function reorder_template_returns() {
-        return new external_value(PARAM_BOOL, 'True if this template was moved.');
     }
 
     /**
