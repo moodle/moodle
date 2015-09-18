@@ -1,0 +1,100 @@
+.que.ddwtos .qtext {
+    margin-bottom: 0.5em;
+    display: block;
+}
+
+.que.ddwtos .draghome {
+    margin-bottom: 1em;
+}
+
+.que.ddwtos .answertext {
+    margin-bottom: 0.5em;
+}
+
+.que.ddwtos .drop {
+    display: inline-block;
+    text-align: center;
+    border: 1px solid #000000;
+}
+.que.ddwtos .draghome, .que.ddwtos .drag {
+    display: inline-block;
+    text-align: center;
+    background: transparent;
+    border: 0;
+}
+.que.ddwtos .draghome, .que.ddwtos .drag.unplaced{
+    border: 1px solid #000000;
+}
+.que.ddwtos .draghome {
+    visibility: hidden;
+}
+.que.ddwtos .drag {
+    z-index: 2;
+}
+.que.ddwtos .drag.yui3-dd-dragging {
+    z-index: 3;
+    -moz-box-shadow: 3px 3px 4px #000;
+    -webkit-box-shadow: 3px 3px 4px #000;
+    box-shadow: 3px 3px 4px #000;
+    /* For IE 5.5 - 7 */
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
+    /* For IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000')";
+}
+
+.que.ddwtos .drop.yui3-dd-drop-over.yui3-dd-drop-active-valid {
+    border-color: #0a0;
+    box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
+}
+
+.que.ddwtos .notreadonly .drag {
+    cursor: move;
+}
+.que.ddwtos .readonly .drag {
+    cursor: default;
+}
+
+.que.ddwtos span.incorrect {
+    background-color: #faa;
+}
+.que.ddwtos span.correct {
+    background-color: #afa;
+}
+
+.que.ddwtos .group1 {
+    background-color: #FFFFFF;
+}
+.que.ddwtos .group2 {
+    background-color: #DCDCDC;
+}
+.que.ddwtos .group3 {
+    background-color: #B0C4DE;
+}
+.que.ddwtos .group4 {
+    background-color: #D8BFD8;
+}
+.que.ddwtos .group5 {
+    background-color: #87CEFA;
+}
+.que.ddwtos .group6 {
+    background-color: #DAA520;
+}
+.que.ddwtos .group7 {
+    background-color: #FFD700;
+}
+.que.ddwtos .group8 {
+    background-color: #F0E68C;
+}
+
+.que.ddwtos sub,
+.que.ddwtos sup {
+    font-size: 80%;
+    position: relative;
+    vertical-align: baseline;
+}
+.que.ddwtos sup {
+    top: -0.4em;
+}
+.que.ddwtos sub {
+    bottom: -0.2em;
+}
