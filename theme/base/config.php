@@ -50,7 +50,8 @@ $THEME->sheets = array(
     'user',
     'tabs',
     'filemanager',
-    'templates'
+    'templates',
+    'autocomplete'
 );
 
 $THEME->editor_sheets = array('editor');
