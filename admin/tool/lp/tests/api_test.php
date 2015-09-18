@@ -158,4 +158,28 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals($expected, api::get_related_contexts($cat2ctx, 'parents', $requiredcap));
     }
 
+    /**
+     * Test updating a template.
+     */
+    public function test_update_template() {
+        $cat = $this->getDataGenerator()->create_category();
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $syscontext = context_system::instance();
+        $template = api::create_template((object) array('shortname' => 'testing', 'contextid' => $syscontext->id));
+
+        $this->assertEquals('testing', $template->get_shortname());
+        $this->assertEquals($syscontext->id, $template->get_contextid());
+
+        // Simple update.
+        api::update_template((object) array('id' => $template->get_id(), 'shortname' => 'success'));
+        $template = api::read_template($template->get_id());
+        $this->assertEquals('success', $template->get_shortname());
+
+        // Trying to change the context.
+        $this->setExpectedException('coding_exception');
+        api::update_template((object) array('id' => $template->get_id(), 'contextid' => context_coursecat::instance($cat->id)));
+    }
+
 }

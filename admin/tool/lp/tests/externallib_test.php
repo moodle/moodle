@@ -1312,4 +1312,374 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $result = external::get_scale_values($scaleid);
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * Create a template.
+     */
+    public function test_create_template() {
+        $syscontextid = context_system::instance()->id;
+        $catcontextid = context_coursecat::instance($this->category->id)->id;
+
+        // A user without permission.
+        $this->setUser($this->user);
+        try {
+            $result = external::create_template('shortname', 'idnumber', 0, 'description', FORMAT_HTML, true,
+                array('contextid' => $syscontextid));
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+
+        // A user without permission in a category.
+        $this->setUser($this->catuser);
+        try {
+            $result = external::create_template('shortname', 'idnumber', 0, 'description', FORMAT_HTML, true,
+                array('contextid' => $catcontextid));
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+
+        // A user with permissions in the system.
+        $this->setUser($this->creator);
+        $result = external::create_template('shortname', 'idnumber', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $syscontextid));
+        $result = external_api::clean_returnvalue(external::create_template_returns(), $result);
+        $this->assertEquals('shortname', $result['shortname']);
+        $this->assertEquals($syscontextid, $result['contextid']);
+        $this->assertNotEmpty($result['id']);
+
+        $result = external::create_template('catshortname', 'catid', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $catcontextid));
+        $result = external_api::clean_returnvalue(external::create_template_returns(), $result);
+        $this->assertEquals('catshortname', $result['shortname']);
+        $this->assertEquals($catcontextid, $result['contextid']);
+        $this->assertNotEmpty($result['id']);
+
+        // A user with permissions in the category.
+        $this->setUser($this->catcreator);
+        try {
+            $result = external::create_template('sysshortname', 'sysidnumber', 0, 'description', FORMAT_HTML, true,
+                array('contextid' => $syscontextid));
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+
+        $result = external::create_template('catshortname2', 'catid2', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $catcontextid));
+        $result = external_api::clean_returnvalue(external::create_template_returns(), $result);
+        $this->assertEquals('catshortname2', $result['shortname']);
+        $this->assertEquals($catcontextid, $result['contextid']);
+        $this->assertNotEmpty($result['id']);
+    }
+
+    /**
+     * Read a template.
+     */
+    public function test_read_template() {
+        $syscontextid = context_system::instance()->id;
+        $catcontextid = context_coursecat::instance($this->category->id)->id;
+
+        // Creating two templates.
+        $this->setUser($this->creator);
+        $systemplate = external::create_template('sys', 'sysid', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $syscontextid));
+        $cattemplate = external::create_template('cat', 'catid', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $catcontextid));
+
+        // User without permissions to read in system.
+        assign_capability('tool/lp:templateread', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->setUser($this->user);
+        $this->assertFalse(has_capability('tool/lp:templateread', context_system::instance()));
+        try {
+            external::read_template($systemplate->id);
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+        try {
+            external::read_template($cattemplate->id);
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+
+        // User with permissions to read in a category.
+        assign_capability('tool/lp:templateread', CAP_PREVENT, $this->userrole, $syscontextid, true);
+        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $catcontextid, true);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->assertFalse(has_capability('tool/lp:templateread', context_system::instance()));
+        $this->assertTrue(has_capability('tool/lp:templateread', context_coursecat::instance($this->category->id)));
+        try {
+            external::read_template($systemplate->id);
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+
+        $result = external::read_template($cattemplate->id);
+        $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
+        $this->assertEquals($cattemplate->id, $result['id']);
+        $this->assertEquals('cat', $result['shortname']);
+        $this->assertEquals('catid', $result['idnumber']);
+        $this->assertEquals('description', $result['description']);
+        $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
+        $this->assertEquals(true, $result['visible']);
+        // TODO MDL-51459 Uncomment the following.
+        // $this->assertEquals(0, $result['duedate']);
+
+        // User with permissions to read in the system.
+        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $syscontextid, true);
+        accesslib_clear_all_caches_for_unit_testing();
+        $this->assertTrue(has_capability('tool/lp:templateread', context_system::instance()));
+        $result = external::read_template($systemplate->id);
+        $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
+        $this->assertEquals($systemplate->id, $result['id']);
+        $this->assertEquals('sys', $result['shortname']);
+        $this->assertEquals('sysid', $result['idnumber']);
+        $this->assertEquals('description', $result['description']);
+        $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
+        $this->assertEquals(true, $result['visible']);
+        // TODO MDL-51459 Uncomment the following.
+        // $this->assertEquals(0, $result['duedate']);
+
+        $result = external::read_template($cattemplate->id);
+        $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
+        $this->assertEquals($cattemplate->id, $result['id']);
+        $this->assertEquals('cat', $result['shortname']);
+        $this->assertEquals('catid', $result['idnumber']);
+        $this->assertEquals('description', $result['description']);
+        $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
+        $this->assertEquals(true, $result['visible']);
+        // TODO MDL-51459 Uncomment the following.
+        // $this->assertEquals(0, $result['duedate']);
+    }
+
+    /**
+     * Update a template.
+     */
+    public function test_update_template() {
+        $syscontextid = context_system::instance()->id;
+        $catcontextid = context_coursecat::instance($this->category->id)->id;
+
+        // Creating two templates.
+        $this->setUser($this->creator);
+        $systemplate = external::create_template('sys', 'sysid', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $syscontextid));
+        $cattemplate = external::create_template('cat', 'catid', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $catcontextid));
+
+        // Trying to update in a without permissions.
+        $this->setUser($this->user);
+        try {
+            external::update_template($systemplate->id, 'a', 'b', 1234, 'c', FORMAT_MARKDOWN, false);
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+
+        try {
+            external::update_template($cattemplate->id, 'a', 'b', 1234, 'c', FORMAT_MARKDOWN, false);
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+
+        // User with permissions to update in category.
+        $this->setUser($this->catcreator);
+        try {
+            external::update_template($systemplate->id, 'a', 'b', 1234, 'c', FORMAT_MARKDOWN, false);
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+
+        $result = external::update_template($cattemplate->id, 'a', 'b', 1234, 'c', FORMAT_MARKDOWN, false);
+        $result = external_api::clean_returnvalue(external::update_template_returns(), $result);
+        $this->assertTrue($result);
+        $result = external::read_template($cattemplate->id);
+        $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
+        $this->assertEquals($cattemplate->id, $result['id']);
+        $this->assertEquals('a', $result['shortname']);
+        $this->assertEquals('b', $result['idnumber']);
+        $this->assertEquals('c', $result['description']);
+        $this->assertEquals(FORMAT_MARKDOWN, $result['descriptionformat']);
+        $this->assertEquals(0, $result['visible']);
+        // TODO MDL-51459 Uncomment the following.
+        // $this->assertEquals(1234, $result['duedate']);
+
+        // User with permissions to update in the system.
+        $this->setUser($this->creator);
+        $result = external::update_template($systemplate->id, 'x1', 'y1', 4567, 'z1', FORMAT_PLAIN, false);
+        $result = external_api::clean_returnvalue(external::update_template_returns(), $result);
+        $this->assertTrue($result);
+        $result = external::read_template($systemplate->id);
+        $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
+        $this->assertEquals($systemplate->id, $result['id']);
+        $this->assertEquals('x1', $result['shortname']);
+        $this->assertEquals('y1', $result['idnumber']);
+        $this->assertEquals('z1', $result['description']);
+        $this->assertEquals(FORMAT_PLAIN, $result['descriptionformat']);
+        $this->assertEquals(0, $result['visible']);
+        // TODO MDL-51459 Uncomment the following.
+        // $this->assertEquals(4567, $result['duedate']);
+
+        $result = external::update_template($cattemplate->id, 'x2', 'y2', 8910, 'z2', FORMAT_PLAIN, true);
+        $result = external_api::clean_returnvalue(external::update_template_returns(), $result);
+        $this->assertTrue($result);
+        $result = external::read_template($cattemplate->id);
+        $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
+        $this->assertEquals($cattemplate->id, $result['id']);
+        $this->assertEquals('x2', $result['shortname']);
+        $this->assertEquals('y2', $result['idnumber']);
+        $this->assertEquals('z2', $result['description']);
+        $this->assertEquals(FORMAT_PLAIN, $result['descriptionformat']);
+        $this->assertEquals(1, $result['visible']);
+        // TODO MDL-51459 Uncomment the following.
+        // $this->assertEquals(8910, $result['duedate'])
+    }
+
+    /**
+     * Delete a template.
+     */
+    public function test_delete_template() {
+        global $DB;
+        $syscontextid = context_system::instance()->id;
+        $catcontextid = context_coursecat::instance($this->category->id)->id;
+
+        // Creating a few templates.
+        $this->setUser($this->creator);
+        $sys1 = external::create_template('sys1', 'sysid1', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $syscontextid));
+        $cat1 = external::create_template('cat1', 'catid1', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $catcontextid));
+        $cat2 = external::create_template('cat2', 'catid2', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $catcontextid));
+        $this->assertTrue($DB->record_exists('tool_lp_template', array('id' => $sys1->id)));
+        $this->assertTrue($DB->record_exists('tool_lp_template', array('id' => $cat1->id)));
+        $this->assertTrue($DB->record_exists('tool_lp_template', array('id' => $cat2->id)));
+
+        // User without permissions.
+        $this->setUser($this->user);
+        try {
+            external::delete_template($sys1->id);
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+        try {
+            external::delete_template($cat1->id);
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+
+        // User with category permissions.
+        $this->setUser($this->catcreator);
+        try {
+            external::delete_template($sys1->id);
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+
+        $result = external::delete_template($cat1->id);
+        $result = external_api::clean_returnvalue(external::delete_template_returns(), $result);
+        $this->assertTrue($result);
+        $this->assertFalse($DB->record_exists('tool_lp_template', array('id' => $cat1->id)));
+
+        // User with system permissions.
+        $this->setUser($this->creator);
+        $result = external::delete_template($sys1->id);
+        $result = external_api::clean_returnvalue(external::delete_template_returns(), $result);
+        $this->assertTrue($result);
+        $result = external::delete_template($cat2->id);
+        $result = external_api::clean_returnvalue(external::delete_template_returns(), $result);
+        $this->assertTrue($result);
+        $this->assertFalse($DB->record_exists('tool_lp_template', array('id' => $sys1->id)));
+        $this->assertFalse($DB->record_exists('tool_lp_template', array('id' => $cat2->id)));
+    }
+
+    /**
+     * List templates.
+     */
+    public function test_list_templates() {
+        $syscontextid = context_system::instance()->id;
+        $catcontextid = context_coursecat::instance($this->category->id)->id;
+
+        // Creating a few templates.
+        $this->setUser($this->creator);
+        $sys1 = external::create_template('sys1', 'sysid1', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $syscontextid));
+        $sys2 = external::create_template('sys2', 'sysid2', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $syscontextid));
+        $cat1 = external::create_template('cat1', 'catid1', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $catcontextid));
+        $cat2 = external::create_template('cat2', 'catid2', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $catcontextid));
+
+        // User without permission.
+        $this->setUser($this->user);
+        assign_capability('tool/lp:templateread', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
+        accesslib_clear_all_caches_for_unit_testing();
+        try {
+            external::list_templates('id', 'ASC', 0, 10, array('contextid' => $syscontextid), 'children');
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+
+        // User with category permissions.
+        assign_capability('tool/lp:templateread', CAP_PREVENT, $this->userrole, $syscontextid, true);
+        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $catcontextid, true);
+        accesslib_clear_all_caches_for_unit_testing();
+        $result = external::list_templates('id', 'ASC', 0, 10, array('contextid' => $syscontextid), 'children');
+        $result = external_api::clean_returnvalue(external::list_templates_returns(), $result);
+        $this->assertCount(2, $result);
+        $this->assertEquals($cat1->id, $result[0]['id']);
+        $this->assertEquals($cat2->id, $result[1]['id']);
+
+        // User with system permissions.
+        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $syscontextid, true);
+        accesslib_clear_all_caches_for_unit_testing();
+        $result = external::list_templates('id', 'DESC', 0, 3, array('contextid' => $catcontextid), 'parents');
+        $result = external_api::clean_returnvalue(external::list_templates_returns(), $result);
+        $this->assertCount(3, $result);
+        $this->assertEquals($cat2->id, $result[0]['id']);
+        $this->assertEquals($cat1->id, $result[1]['id']);
+        $this->assertEquals($sys2->id, $result[2]['id']);
+    }
+
+    public function test_count_templates() {
+        $syscontextid = context_system::instance()->id;
+        $catcontextid = context_coursecat::instance($this->category->id)->id;
+
+        // Creating a few templates.
+        $this->setUser($this->creator);
+        $sys1 = external::create_template('sys1', 'sysid1', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $syscontextid));
+        $sys2 = external::create_template('sys2', 'sysid2', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $syscontextid));
+        $cat1 = external::create_template('cat1', 'catid1', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $catcontextid));
+        $cat2 = external::create_template('cat2', 'catid2', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $catcontextid));
+        $cat3 = external::create_template('cat3', 'catid3', 0, 'description', FORMAT_HTML, true,
+            array('contextid' => $catcontextid));
+
+        // User without permission.
+        $this->setUser($this->user);
+        assign_capability('tool/lp:templateread', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
+        accesslib_clear_all_caches_for_unit_testing();
+        try {
+            external::count_templates(array('contextid' => $syscontextid), 'children');
+            $this->fail('Invalid permissions');
+        } catch (required_capability_exception $e) {
+        }
+
+        // User with category permissions.
+        assign_capability('tool/lp:templateread', CAP_PREVENT, $this->userrole, $syscontextid, true);
+        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $catcontextid, true);
+        accesslib_clear_all_caches_for_unit_testing();
+        $result = external::count_templates(array('contextid' => $syscontextid), 'children');
+        $result = external_api::clean_returnvalue(external::count_templates_returns(), $result);
+        $this->assertEquals(3, $result);
+
+        // User with system permissions.
+        assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $syscontextid, true);
+        accesslib_clear_all_caches_for_unit_testing();
+        $result = external::count_templates(array('contextid' => $catcontextid), 'parents');
+        $result = external_api::clean_returnvalue(external::count_templates_returns(), $result);
+        $this->assertEquals(5, $result);
+    }
+
 }
