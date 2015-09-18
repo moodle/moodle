@@ -39,7 +39,6 @@ define('QTYPE_DDMARKER_ALLOWED_TAGS_IN_MARKER', '<br><i><em><b><strong><sup><sub
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
-
     public function qtype() {
         return 'ddmarker';
     }
@@ -66,6 +65,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                                         'M.qtype_ddmarker.init_form',
                                         array($params));
     }
+
 
     protected function definition_draggable_items($mform, $itemrepeatsatstart) {
         $mform->addElement('header', 'draggableitemheader',
@@ -197,10 +197,14 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
 
         return $question;
     }
+
     /**
      * Perform the necessary preprocessing for the hint fields.
-     * @param object $question the data being passed to the form.
-     * @return object $question the modified data.
+     *
+     * @param object $question The data being passed to the form.
+     * @param bool $withclearwrong Clear wrong hints.
+     * @param bool $withshownumpartscorrect Show number correct.
+     * @return object The modified data.
      */
     protected function data_preprocessing_hints($question, $withclearwrong = false,
                                                 $withshownumpartscorrect = false) {
@@ -263,6 +267,12 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         return $errors;
     }
 
+    /**
+     * Gets the width and height of a draft image.
+     *
+     * @param int $draftitemid ID of the draft image
+     * @return array Return array of the width and height of the draft image.
+     */
     public function get_image_size_in_draft_area($draftitemid) {
         global $USER;
         $usercontext = context_user::instance($USER->id);

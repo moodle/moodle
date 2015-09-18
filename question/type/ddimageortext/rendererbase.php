@@ -129,6 +129,14 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
         return $output;
     }
 
+    /**
+     * Returns the URL for an image
+     *
+     * @param object $qa Question attempt object
+     * @param string $filearea File area descriptor
+     * @param int $itemid Item id to get
+     * @return string Output url, or null if not found
+     */
     protected static function get_url_for_image(question_attempt $qa, $filearea, $itemid = 0) {
         $question = $qa->get_question();
         $qubaid = $qa->get_usage_id();
@@ -154,6 +162,15 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
         return null;
     }
 
+    /**
+     * Returns a hidden field for a qt variable
+     *
+     * @param object $qa Question attempt object
+     * @param string $varname The hidden var name
+     * @param string $value The hidden value
+     * @param array $classes Any additional css classes to apply
+     * @return array Array with field name and the html of the tag
+     */
     protected function hidden_field_for_qt_var(question_attempt $qa, $varname, $value = null,
                                                 $classes = null) {
         if ($value === null) {

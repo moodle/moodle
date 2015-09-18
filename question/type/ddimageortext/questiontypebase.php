@@ -37,6 +37,11 @@ require_once($CFG->dirroot . '/question/type/gapselect/questiontypebase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddtoimage_base extends question_type {
+    /**
+     * Returns the choice group key.
+     *
+     * @return string
+     */
     protected function choice_group_key() {
         return 'draggroup';
     }
@@ -145,8 +150,8 @@ class qtype_ddtoimage_base extends question_type {
      * Convert files into text output in the given format.
      * This method is copied from qformat_default as a quick fix, as the method there is
      * protected.
-     * @param array
-     * @param string encoding method
+     * @param array $files
+     * @param int $indent Number of spaces to indent
      * @return string $string
      */
     public function write_files($files, $indent) {

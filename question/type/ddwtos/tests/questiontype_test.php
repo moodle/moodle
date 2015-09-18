@@ -54,6 +54,8 @@ class qtype_ddwtos_test extends question_testcase {
     }
 
     /**
+     * Get some test question data.
+     *
      * @return object the data to construct a question like
      * {@link qtype_ddwtos_test_helper::make_ddwtos_question_fox()}.
      */

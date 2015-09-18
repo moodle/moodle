@@ -30,13 +30,19 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_qtype_ddimageortext_plugin extends restore_qtype_plugin {
-
+    /**
+     * Returns the qtype name.
+     *
+     * @return string The type name
+     */
     protected static function qtype_name() {
         return 'ddimageortext';
     }
 
     /**
      * Returns the paths to be handled by the plugin at question level.
+     *
+     * @return array
      */
     protected function define_question_plugin_structure() {
 
@@ -60,6 +66,8 @@ class restore_qtype_ddimageortext_plugin extends restore_qtype_plugin {
 
     /**
      * Process the qtype/{qtypename} element.
+     *
+     * @param array|object $data Drag and drop data to work with.
      */
     public function process_dds($data) {
         global $DB;
@@ -88,6 +96,8 @@ class restore_qtype_ddimageortext_plugin extends restore_qtype_plugin {
 
     /**
      * Process the qtype/drags/drag element.
+     *
+     * @param array|object $data Drag and drop drag data to work with.
      */
     public function process_drag($data) {
         global $DB;
@@ -113,7 +123,9 @@ class restore_qtype_ddimageortext_plugin extends restore_qtype_plugin {
     }
 
     /**
-     * Process the qtype/drags/drag element.
+     * Process the qtype/drags/drop element.
+     *
+     * @param array|object $data Drad and drop drops data to work with.
      */
     public function process_drop($data) {
         global $DB;
@@ -136,8 +148,11 @@ class restore_qtype_ddimageortext_plugin extends restore_qtype_plugin {
             $this->set_mapping("{$prefix}_drops", $oldid, $newitemid);
         }
     }
+
     /**
      * Return the contents of this qtype to be processed by the links decoder.
+     *
+     * @return array
      */
     public static function define_decode_contents() {
 

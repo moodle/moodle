@@ -55,7 +55,9 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
         }
     }
     /**
-     * @param int $key stem number
+     * Get a choice identifier
+     *
+     * @param int $choice stem number
      * @return string the question-type variable name.
      */
     public function choice($choice) {
@@ -398,21 +400,47 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_drag_item {
+    /** @var string Label for the drag item */
     public $text;
+
+    /** @var int Number of the item */
     public $no;
+
+    /** @var int Group of the item */
     public $infinite;
+
+    /** @var int Number of drags */
     public $noofdrags;
 
+    /**
+     * Drag item object setup.
+     *
+     * @param string $label The label text of the drag item
+     * @param int $no Which number drag item this is
+     * @param bool $infinite True if the item can be used an unlimited number of times
+     * @param int $noofdrags
+     */
     public function __construct($label, $no, $infinite, $noofdrags) {
         $this->text = $label;
         $this->infinite = $infinite;
         $this->no = $no;
         $this->noofdrags = $noofdrags;
     }
+
+    /**
+     * Returns the group of this item.
+     *
+     * @return int
+     */
     public function choice_group() {
         return 1;
     }
 
+    /**
+     * Creates summary text of for the drag item.
+     *
+     * @return string
+     */
     public function summarise() {
         return $this->text;
     }
@@ -424,25 +452,55 @@ class qtype_ddmarker_drag_item {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_drop_zone {
+    /** @var int Group of the item */
     public $group = 1;
+
+    /** @var int Number of the item */
     public $no;
+
+    /** @var object Shape of the item */
     public $shape;
+
+    /** @var array Location of the item */
     public $coords;
 
+    /**
+     * Setup a drop zone object.
+     *
+     * @param int $no Which number drop zone this is
+     * @param int $shape Shape of the drop zone
+     * @param array $coords Coordinates of the zone
+     */
     public function __construct($no, $shape, $coords) {
         $this->no = $no;
         $this->shape = qtype_ddmarker_shape::create($shape, $coords);
         $this->coords = $coords;
     }
 
+    /**
+     * Creates summary text of for the drop zone
+     *
+     * @return string
+     */
     public function summarise() {
         return get_string('summariseplaceno', 'qtype_ddmarker', $this->no);
     }
 
+    /**
+     * Indicates if the it coordinates are in this drop zone.
+     *
+     * @param array $xy Array of X and Y location
+     * @return bool
+     */
     public function drop_hit($xy) {
         return $this->shape->is_point_in_shape($xy);
     }
 
+    /**
+     * Gets the center point of this zone
+     *
+     * @return array X and Y location
+     */
     public function correct_coords() {
         return $this->shape->center_point();
     }

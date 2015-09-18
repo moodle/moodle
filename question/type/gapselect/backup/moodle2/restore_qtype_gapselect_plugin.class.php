@@ -35,6 +35,8 @@ class restore_qtype_gapselect_plugin extends restore_qtype_plugin {
 
     /**
      * Returns the paths to be handled by the plugin at question level.
+     *
+     * @return array
      */
     protected function define_question_plugin_structure() {
 
@@ -54,6 +56,8 @@ class restore_qtype_gapselect_plugin extends restore_qtype_plugin {
 
     /**
      * Process the qtype/gapselect element
+     *
+     * @param array|object $data gapselect object to work with.
      */
     public function process_gapselect($data) {
         global $DB;
@@ -79,6 +83,8 @@ class restore_qtype_gapselect_plugin extends restore_qtype_plugin {
 
     /**
      * Return the contents of this qtype to be processed by the links decoder
+     *
+     * @return array
      */
     public static function define_decode_contents() {
 

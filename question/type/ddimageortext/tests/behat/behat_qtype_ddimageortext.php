@@ -46,7 +46,7 @@ class behat_qtype_ddimageortext extends behat_base {
 
     /**
      * Get the xpath for a given drop box.
-     * @param string $dragitem the number of the drop box.
+     * @param string $placenumber the number of the drop box.
      * @return string the xpath expression.
      */
     protected function drop_xpath($placenumber) {

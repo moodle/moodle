@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Restore code for qtype_ddwtos.
+ *
  * @package   qtype_ddwtos
  * @copyright 2011 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,8 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * restore plugin class that provides the necessary information
- * needed to restore one ddwtos qtype plugin.
+ * Restore plugin class that provides the necessary information needed to restore one ddwtos qtype plugin.
  *
  * @copyright 2011 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -35,6 +36,8 @@ class restore_qtype_ddwtos_plugin extends restore_qtype_plugin {
 
     /**
      * Returns the paths to be handled by the plugin at question level.
+     *
+     * @return array
      */
     protected function define_question_plugin_structure() {
 
@@ -53,6 +56,8 @@ class restore_qtype_ddwtos_plugin extends restore_qtype_plugin {
 
     /**
      * Process the qtype/ddwtos element.
+     *
+     * @param array|object $data ddwtos object to work with.
      */
     public function process_ddwtos($data) {
         global $DB;
@@ -78,6 +83,8 @@ class restore_qtype_ddwtos_plugin extends restore_qtype_plugin {
 
     /**
      * Return the contents of this qtype to be processed by the links decoder.
+     *
+     * @return array
      */
     public static function define_decode_contents() {
 

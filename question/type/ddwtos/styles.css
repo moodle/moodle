@@ -33,13 +33,7 @@
 }
 .que.ddwtos .drag.yui3-dd-dragging {
     z-index: 3;
-    -moz-box-shadow: 3px 3px 4px #000;
-    -webkit-box-shadow: 3px 3px 4px #000;
     box-shadow: 3px 3px 4px #000;
-    /* For IE 5.5 - 7 */
-    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
-    /* For IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000')";
 }
 
 .que.ddwtos .drop.yui3-dd-drop-over.yui3-dd-drop-active-valid {

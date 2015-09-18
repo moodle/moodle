@@ -17,10 +17,9 @@
 /**
  * Drag-and-drop words into sentences question definition class.
  *
- * @package    qtype
- * @subpackage ddwtos
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_ddwtos
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -50,16 +49,33 @@ class qtype_ddwtos_question extends qtype_gapselect_question_base {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddwtos_choice {
+    /** @var string Text for the choice */
     public $text;
+
+    /** @var int Group of the choice */
     public $draggroup;
+
+    /** @var bool If the choice can be used an unlimited number of times */
     public $infinite;
 
+    /**
+     * Initialize a choice object.
+     *
+     * @param string $text The text of the choice
+     * @param int $draggroup Group of the drop choice
+     * @param bool $infinite True if the item can be used an unlimited number of times
+     */
     public function __construct($text, $draggroup = 1, $infinite = false) {
         $this->text = $text;
         $this->draggroup = $draggroup;
         $this->infinite = $infinite;
     }
 
+    /**
+     * Returns the group of this item.
+     *
+     * @return int
+     */
     public function choice_group() {
         return $this->draggroup;
     }

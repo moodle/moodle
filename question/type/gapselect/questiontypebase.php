@@ -214,6 +214,7 @@ abstract class qtype_gapselect_base extends question_type {
      * in a 2 dimentional array.
      *
      * @param object $question
+     * @param object $state Question state object
      * @return array of groups
      */
     protected function get_array_of_groups($question, $state) {

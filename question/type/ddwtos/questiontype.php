@@ -17,10 +17,9 @@
 /**
  * Question type class for the drag-and-drop words into sentences question type.
  *
- * @package    qtype
- * @subpackage ddwtos
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_ddwtos
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 

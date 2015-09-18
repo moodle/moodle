@@ -31,9 +31,9 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_qtype_ddimageortext_plugin extends backup_qtype_plugin {
-
     /**
      * Returns the question type this is.
+     *
      * @return string question type name, like 'ddimageortext'.
      */
     protected static function qtype_name() {

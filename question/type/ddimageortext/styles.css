@@ -18,12 +18,10 @@
     border: 1px solid black;
     cursor: move;
     background-color: #B0C4DE;
-    display: -moz-inline-stack;
     display:inline-block;
     height: auto;
     width: auto;
     zoom: 1;
-    *display: inline;
 }
 
 .que.ddimageortext .group1, form.mform fieldset#id_previewareaheader .group1 {
@@ -78,19 +76,11 @@
 .que.ddimageortext div.dragitems div.draghome, .que.ddimageortext div.dragitems div.drag,
 form.mform fieldset#id_previewareaheader div.draghome, form.mform fieldset#id_previewareaheader div.drag {
     font:13px/1.231 arial,helvetica,clean,sans-serif;
-    *font-size:small; /* for IE */
-    *font:x-small; /* for IE in quirks mode */
 }
 form.mform fieldset#id_previewareaheader div.drag.yui3-dd-dragging,
 .que.ddimageortext div.drag.yui3-dd-dragging {
     z-index: 3;
-    -moz-box-shadow: 3px 3px 4px #000;
-    -webkit-box-shadow: 3px 3px 4px #000;
     box-shadow: 3px 3px 4px #000;
-    /* For IE 8 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000')";
-    /* For IE 5.5 - 7 */
-    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
 }
 /* Editing form. Style repeated elements*/
 /*Top*/

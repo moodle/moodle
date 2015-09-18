@@ -35,7 +35,6 @@ require_once($CFG->dirroot . '/question/type/ddimageortext/edit_ddtoimage_form_b
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
-
     public function qtype() {
         return 'ddimageortext';
     }

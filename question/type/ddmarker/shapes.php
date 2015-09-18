@@ -31,8 +31,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qtype_ddmarker_shape {
-
+    /** @var bool Indicates if there is an error */
     protected $error = false;
+
+    /** @var string The shape class prefix */
+    protected static $classnameprefix = 'qtype_ddmarker_shape_';
 
     public function __construct($coordsstring) {
 
@@ -48,8 +51,18 @@ abstract class qtype_ddmarker_shape {
 
     abstract protected function outlying_coords_to_test();
 
+    /**
+     * Returns the center location of the shape.
+     *
+     * @return array X and Y location
+     */
     abstract public function center_point();
 
+    /**
+     * Test if all passed parameters consist of only numbers.
+     *
+     * @return bool True if only numbers
+     */
     protected function is_only_numbers() {
         $args = func_get_args();
         foreach ($args as $arg) {
@@ -60,6 +73,14 @@ abstract class qtype_ddmarker_shape {
         return true;
     }
 
+    /**
+     * Checks if the point is within the bounding box made by top left and bottom right
+     *
+     * @param array $pointxy Array of the point (x, y)
+     * @param array $xleftytop Top left point of bounding box
+     * @param array $xrightybottom Bottom left point of bounding box
+     * @return bool
+     */
     protected function is_point_in_bounding_box($pointxy, $xleftytop, $xrightybottom) {
         if ($pointxy[0] <= $xleftytop[0]) {
             return false;
@@ -73,6 +94,11 @@ abstract class qtype_ddmarker_shape {
         return true;
     }
 
+    /**
+     * Gets any coordinate error
+     *
+     * @return string|bool String of the error or false if there is no error
+     */
     public function get_coords_interpreter_error() {
         if ($this->error) {
             $a = new stdClass();
@@ -85,17 +111,28 @@ abstract class qtype_ddmarker_shape {
     }
 
     /**
+     * Check if the location is within the shape.
+     *
      * @param array $xy $xy[0] is x, $xy[1] is y
      * @return boolean is point inside shape
      */
     abstract public function is_point_in_shape($xy);
 
+    /**
+     * Returns the name of the shape.
+     *
+     * @return string
+     */
     public static function name() {
         return substr(get_called_class(), strlen(self::$classnameprefix));
     }
 
-    protected static $classnameprefix = 'qtype_ddmarker_shape_';
-
+    /**
+     * Return a human readable name of the shape.
+     *
+     * @param bool $lowercase True if it should be lowercase.
+     * @return string
+     */
     public static function human_readable_name($lowercase = false) {
         $stringid = 'shape_'.self::name();
         if ($lowercase) {
@@ -119,9 +156,24 @@ abstract class qtype_ddmarker_shape {
         asort($shapearray);
         return $shapearray;
     }
+
+    /**
+     * Checks if the passed shape exists.
+     *
+     * @param string $shape The shape name
+     * @return bool
+     */
     public static function exists($shape) {
         return class_exists((self::$classnameprefix).$shape);
     }
+
+    /**
+     * Creates a new shape of the specified type.
+     *
+     * @param string $shape The shape to create
+     * @param string $coordsstring The string describing the coordinates
+     * @return object
+     */
     public static function create($shape, $coordsstring) {
         $classname = (self::$classnameprefix).$shape;
         return new $classname($coordsstring);
@@ -136,9 +188,16 @@ abstract class qtype_ddmarker_shape {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_shape_rectangle extends qtype_ddmarker_shape {
+    /** @var int Width of shape */
     protected $width;
+
+    /** @var int Height of shape */
     protected $height;
+
+    /** @var int Left location */
     protected $xleft;
+
+    /** @var int Top location */
     protected $ytop;
 
     public function __construct($coordsstring) {
@@ -196,9 +255,13 @@ class qtype_ddmarker_shape_rectangle extends qtype_ddmarker_shape {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_shape_circle extends qtype_ddmarker_shape {
-
+    /** @var int X center */
     protected $xcentre;
+
+    /** @var int Y center */
     protected $ycentre;
+
+    /** @var int Radius of circle */
     protected $radius;
 
     public function __construct($coordsstring) {
@@ -415,7 +478,10 @@ class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_point {
+    /** @var int X location */
     public $x;
+
+    /** @var int Y location */
     public $y;
     public function __construct($x, $y) {
         $this->x = $x;
@@ -438,7 +504,10 @@ class qtype_ddmarker_point {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ddmarker_segment {
+    /** @var object First point */
     public $a;
+
+    /** @var object Second point */
     public $b;
 
     public function __construct(qtype_ddmarker_point $a, qtype_ddmarker_point $b) {

@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Lang file for ddwtos.
  *
  * @package    qtype_ddwtos
  * @copyright  2011 The Open University

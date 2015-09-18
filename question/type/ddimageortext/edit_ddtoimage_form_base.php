@@ -17,10 +17,9 @@
 /**
  * Base class for editing form for the drag-and-drop images onto images question type.
  *
- * @package    qtype
- * @subpackage ddimageortext
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_ddimageortext
+ * @copyright 2011 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -32,13 +31,25 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
+    /**
+     * Maximum number of different groups of drag items there can be in a question.
+     */
     const MAX_GROUPS = 8;
+
+    /**
+     * The default starting number of drop zones.
+     */
     const START_NUM_ITEMS = 6;
+
+    /**
+     * The number of drop zones that get added at a time.
+     */
     const ADD_NUM_ITEMS = 3;
 
     /**
-     *
      * Options shared by all file pickers in the form.
+     *
+     * @return array Array of filepicker options.
      */
     public static function file_picker_options() {
         $filepickeroptions = array();
@@ -51,6 +62,7 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
 
     /**
      * definition_inner adds all specific fields to the form.
+     *
      * @param MoodleQuickForm $mform (the form being built).
      */
     protected function definition_inner($mform) {
@@ -76,9 +88,14 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
         $this->add_interactive_settings(true, true);
     }
 
+    /**
+     * Make and add drop zones to the form.
+     *
+     * @param object $mform The Moodle form object.
+     * @param int $imagerepeats The initial number of repeat elements.
+     */
     protected function definition_drop_zones($mform, $imagerepeats) {
-        $mform->addElement('header', 'dropzoneheader',
-                                            get_string('dropzoneheader', 'qtype_'.$this->qtype()));
+        $mform->addElement('header', 'dropzoneheader', get_string('dropzoneheader', 'qtype_'.$this->qtype()));
 
         $countdropzones = 0;
         if (isset($this->question->id)) {
@@ -97,16 +114,51 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
                 'nodropzone', 'adddropzone', self::ADD_NUM_ITEMS,
                 get_string('addmoredropzones', 'qtype_ddimageortext'), true);
     }
+
+    /**
+     * Returns an array with a drop zone form element.
+     *
+     * @param object $mform The Moodle form object.
+     * @param int $imagerepeats The number of repeat images.
+     * @return array Array with the dropzone element.
+     */
     abstract protected function drop_zone($mform, $imagerepeats);
 
+    /**
+     * Returns an array of default drop zone repeat options.
+     *
+     * @return array
+     */
     abstract protected function drop_zones_repeated_options();
 
+    /**
+     * Builds and adds the needed form items for draggable items.
+     *
+     * @param object $mform The Moodle form object.
+     * @param int $itemrepeatsatstart The initial number of repeat elements.
+     */
     abstract protected function definition_draggable_items($mform, $itemrepeatsatstart);
 
+    /**
+     * Creates and returns a set of form elements to make a draggable item.
+     *
+     * @param object $mform The Moodle form object.
+     * @return array An array of form elements.
+     */
     abstract protected function draggable_item($mform);
 
+    /**
+     * Returns an array of default repeat options.
+     *
+     * @return array
+     */
     abstract protected function draggable_items_repeated_options();
 
+    /**
+     * Returns an array of starting number of repeats, and the total number of repeats.
+     *
+     * @return array
+     */
     protected function get_drag_item_repeats() {
         $countimages = 0;
         if (isset($this->question->id)) {
@@ -128,8 +180,17 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
         return array($itemrepeatsatstart, $imagerepeats);
     }
 
+    /**
+     * Performce the needed JS setup for this question type.
+     */
     abstract public function js_call();
 
+    /**
+     * Checks to see if a file has been uploaded.
+     *
+     * @param string $draftitemid The draft id
+     * @return bool True if files exist, false if not.
+     */
     public static function file_uploaded($draftitemid) {
         $draftareafiles = file_get_drafarea_files($draftitemid);
         do {
@@ -140,6 +201,5 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
         }
         return true;
     }
-
 
 }

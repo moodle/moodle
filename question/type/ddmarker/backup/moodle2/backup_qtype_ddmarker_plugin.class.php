@@ -31,9 +31,9 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_qtype_ddmarker_plugin extends backup_qtype_plugin {
-
     /**
      * Get the name of this question type.
+     *
      * @return string the question type, like 'ddmarker'.
      */
     protected static function qtype_name() {

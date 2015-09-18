@@ -58,7 +58,8 @@ class qtype_ddmarker_shapes_test extends basic_testcase {
     }
 
     public function test_polygon_valdiation_test_repeated_point() {
-        $shape = new qtype_ddmarker_shape_polygon('70,220;90,200;95,150;120,150;140,200;150,230;150,230;150,240;120,240;110,240;90,240');
+        $shape = new qtype_ddmarker_shape_polygon('70,220;90,200;95,150;120,150;140,200;150,230;'.
+                '150,230;150,240;120,240;110,240;90,240');
         $this->assertEquals(get_string('formerror_repeatedpoint', 'qtype_ddmarker',
                         array('shape' => 'polygon', 'coordsstring' => get_string('shape_polygon_coords', 'qtype_ddmarker'))),
                 $shape->get_coords_interpreter_error());
