@@ -75,6 +75,11 @@ abstract class base implements \IteratorAggregate {
      */
     const LEVEL_PARTICIPATING = 2;
 
+    /**
+     * The value used when an id can not be mapped during a restore.
+     */
+    const NOT_MAPPED = -31337;
+
     /** @var array event data */
     protected $data;
 
@@ -476,6 +481,40 @@ abstract class base implements \IteratorAggregate {
         $event->data['other'] = (array)$legacy;
 
         return $event;
+    }
+
+    /**
+     * This is used when restoring course logs where it is required that we
+     * map the objectid to it's new value in the new course.
+     *
+     * Does nothing in the base class except display a debugging message warning
+     * the user that the event does not contain the required functionality to
+     * map this information. For events that do not store an objectid this won't
+     * be called, so no debugging message will be displayed.
+     *
+     * Example of usage:
+     *
+     * return array('db' => 'assign_submissions', 'restore' => 'submission');
+     *
+     * If the objectid can not be mapped during restore set the value to \core\event\base::NOT_MAPPED, example -
+     *
+     * return array('db' => 'some_table', 'restore' => \core\event\base::NOT_MAPPED);
+     *
+     * Note - it isn't necessary to specify the 'db' and 'restore' values in this case, so you can also use -
+     *
+     * return \core\event\base::NOT_MAPPED;
+     *
+     * The 'db' key refers to the database table and the 'restore' key refers to
+     * the name of the restore element the objectid is associated with. In many
+     * cases these will be the same.
+     *
+     * @return string the name of the restore mapping the objectid links to
+     */
+    public static function get_objectid_mapping() {
+        debugging('In order to restore course logs accurately the event must define the
+            function get_objectid_mapping().', DEBUG_DEVELOPER);
+
+        return false;
     }
 
     /**
