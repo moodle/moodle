@@ -1378,11 +1378,16 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $syscontextid = context_system::instance()->id;
         $catcontextid = context_coursecat::instance($this->category->id)->id;
 
+        // Set a due date for the next year.
+        $date = new DateTime('now');
+        $date->modify('+1 year');
+        $duedate = $date->getTimestamp();
+
         // Creating two templates.
         $this->setUser($this->creator);
-        $systemplate = external::create_template('sys', 'sysid', 0, 'description', FORMAT_HTML, true,
+        $systemplate = external::create_template('sys', 'sysid', $duedate, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontextid));
-        $cattemplate = external::create_template('cat', 'catid', 0, 'description', FORMAT_HTML, true,
+        $cattemplate = external::create_template('cat', 'catid', $duedate, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
 
         // User without permissions to read in system.
@@ -1421,8 +1426,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('description', $result['description']);
         $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
         $this->assertEquals(true, $result['visible']);
-        // TODO MDL-51459 Uncomment the following.
-        // $this->assertEquals(0, $result['duedate']);
+        $this->assertEquals($duedate, $result['duedate']);
+        $this->assertEquals(userdate($duedate), $result['duedateformatted']);
 
         // User with permissions to read in the system.
         assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $syscontextid, true);
@@ -1436,8 +1441,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('description', $result['description']);
         $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
         $this->assertEquals(true, $result['visible']);
-        // TODO MDL-51459 Uncomment the following.
-        // $this->assertEquals(0, $result['duedate']);
+        $this->assertEquals($duedate, $result['duedate']);
+        $this->assertEquals(userdate($duedate), $result['duedateformatted']);
 
         $result = external::read_template($cattemplate->id);
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
@@ -1447,8 +1452,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('description', $result['description']);
         $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
         $this->assertEquals(true, $result['visible']);
-        // TODO MDL-51459 Uncomment the following.
-        // $this->assertEquals(0, $result['duedate']);
+        $this->assertEquals($duedate, $result['duedate']);
+        $this->assertEquals(userdate($duedate), $result['duedateformatted']);
     }
 
     /**
@@ -1458,11 +1463,16 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $syscontextid = context_system::instance()->id;
         $catcontextid = context_coursecat::instance($this->category->id)->id;
 
+        // Set a due date for the next year.
+        $date = new DateTime('now');
+        $date->modify('+1 year');
+        $duedate = $date->getTimestamp();
+
         // Creating two templates.
         $this->setUser($this->creator);
-        $systemplate = external::create_template('sys', 'sysid', 0, 'description', FORMAT_HTML, true,
+        $systemplate = external::create_template('sys', 'sysid', $duedate, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontextid));
-        $cattemplate = external::create_template('cat', 'catid', 0, 'description', FORMAT_HTML, true,
+        $cattemplate = external::create_template('cat', 'catid', $duedate, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
 
         // Trying to update in a without permissions.
@@ -1487,7 +1497,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         } catch (required_capability_exception $e) {
         }
 
-        $result = external::update_template($cattemplate->id, 'a', 'b', 1234, 'c', FORMAT_MARKDOWN, false);
+        // Set a due date for the next 2 years.
+        $date->modify('+1 year');
+        $duedateupdated = $date->getTimestamp();
+
+        $result = external::update_template($cattemplate->id, 'a', 'b', $duedateupdated, 'c', FORMAT_MARKDOWN, false);
         $result = external_api::clean_returnvalue(external::update_template_returns(), $result);
         $this->assertTrue($result);
         $result = external::read_template($cattemplate->id);
@@ -1498,12 +1512,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('c', $result['description']);
         $this->assertEquals(FORMAT_MARKDOWN, $result['descriptionformat']);
         $this->assertEquals(0, $result['visible']);
-        // TODO MDL-51459 Uncomment the following.
-        // $this->assertEquals(1234, $result['duedate']);
+        $this->assertEquals($duedateupdated, $result['duedate']);
+        $this->assertEquals(userdate($duedateupdated), $result['duedateformatted']);
 
         // User with permissions to update in the system.
         $this->setUser($this->creator);
-        $result = external::update_template($systemplate->id, 'x1', 'y1', 4567, 'z1', FORMAT_PLAIN, false);
+        $result = external::update_template($systemplate->id, 'x1', 'y1', $duedateupdated, 'z1', FORMAT_PLAIN, false);
         $result = external_api::clean_returnvalue(external::update_template_returns(), $result);
         $this->assertTrue($result);
         $result = external::read_template($systemplate->id);
@@ -1514,10 +1528,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('z1', $result['description']);
         $this->assertEquals(FORMAT_PLAIN, $result['descriptionformat']);
         $this->assertEquals(0, $result['visible']);
-        // TODO MDL-51459 Uncomment the following.
-        // $this->assertEquals(4567, $result['duedate']);
+        $this->assertEquals($duedateupdated, $result['duedate']);
+        $this->assertEquals(userdate($duedateupdated), $result['duedateformatted']);
 
-        $result = external::update_template($cattemplate->id, 'x2', 'y2', 8910, 'z2', FORMAT_PLAIN, true);
+        $result = external::update_template($cattemplate->id, 'x2', 'y2', $duedateupdated, 'z2', FORMAT_PLAIN, true);
         $result = external_api::clean_returnvalue(external::update_template_returns(), $result);
         $this->assertTrue($result);
         $result = external::read_template($cattemplate->id);
@@ -1528,8 +1542,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('z2', $result['description']);
         $this->assertEquals(FORMAT_PLAIN, $result['descriptionformat']);
         $this->assertEquals(1, $result['visible']);
-        // TODO MDL-51459 Uncomment the following.
-        // $this->assertEquals(8910, $result['duedate'])
+        $this->assertEquals($duedateupdated, $result['duedate']);
+        $this->assertEquals(userdate($duedateupdated), $result['duedateformatted']);
     }
 
     /**

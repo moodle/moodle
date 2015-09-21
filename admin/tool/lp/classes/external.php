@@ -2150,6 +2150,8 @@ class external extends external_api {
             'id' => $id,
             'shortname' => $shortname,
             'idnumber' => $idnumber,
+            'duedate' => $duedate,
+            'duedateformatted' => $duedateformatted,
             'description' => $description,
             'descriptionformat' => $descriptionformat,
             'descriptionformatted' => $descriptionformatted,
