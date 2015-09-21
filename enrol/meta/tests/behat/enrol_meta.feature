@@ -1,4 +1,4 @@
-@enrol @enrol_meta
+@enrol @enrol_meta @javascript
 Feature: Enrolments are synchronised with meta courses
   In order to simplify enrolments in parent courses
   As a teacher
@@ -13,21 +13,21 @@ Feature: Enrolments are synchronised with meta courses
       | student4 | Student | 4 | student4@asd.com |
     And the following "courses" exist:
       | fullname | shortname |
-      | Course 1 | C1 |
-      | Course 2 | C2 |
-      | Course 3 | C3 |
+      | Course 1 | C1C1 |
+      | Course 2 | C2C2 |
+      | Course 3 | C3C3 |
     And the following "groups" exist:
       | name | course | idnumber |
-      | Groupcourse 1 | C3 | G1 |
-      | Groupcourse 2 | C3 | G2 |
+      | Groupcourse 1 | C3C3 | G1 |
+      | Groupcourse 2 | C3C3 | G2 |
     And the following "course enrolments" exist:
       | user | course | role |
-      | student1 | C1 | student |
-      | student2 | C1 | student |
-      | student3 | C1 | student |
-      | student4 | C1 | student |
-      | student1 | C2 | student |
-      | student2 | C2 | student |
+      | student1 | C1C1 | student |
+      | student2 | C1C1 | student |
+      | student3 | C1C1 | student |
+      | student4 | C1C1 | student |
+      | student1 | C2C2 | student |
+      | student2 | C2C2 | student |
     And I log in as "admin"
     And I navigate to "Manage enrol plugins" node in "Site administration > Plugins > Enrolments"
     And I click on "Enable" "link" in the "Course meta link" "table_row"
@@ -37,7 +37,7 @@ Feature: Enrolments are synchronised with meta courses
   Scenario: Add meta enrolment instance without groups
     When I follow "Course 3"
     And I add "Course meta link" enrolment method with:
-      | Link course  | Course 1 |
+      | Link course  | C1C1 |
     And I navigate to "Enrolled users" node in "Course administration > Users"
     Then I should see "Student 1"
     And I should see "Student 4"
@@ -45,18 +45,13 @@ Feature: Enrolments are synchronised with meta courses
 
   Scenario: Add meta enrolment instance with groups
     When I follow "Course 3"
-    And I navigate to "Enrolment methods" node in "Course administration > Users"
-    And I select "Course meta link" from the "Add method" singleselect
-    And I set the following fields to these values:
-      | Link course  | Course 1      |
+    And I add "Course meta link" enrolment method with:
+      | Link course  | C1C1      |
       | Add to group | Groupcourse 1 |
-    And I press "Add method"
-    And I set the field "Add method" to "Course meta link"
-    And I press "Go"
-    And I set the following fields to these values:
-      | Link course  | Course 2      |
+    And I follow "Course 3"
+    And I add "Course meta link" enrolment method with:
+      | Link course  | C2C2      |
       | Add to group | Groupcourse 2 |
-    And I press "Add method"
     And I navigate to "Enrolled users" node in "Course administration > Users"
     Then I should see "Groupcourse 1" in the "Student 1" "table_row"
     And I should see "Groupcourse 1" in the "Student 2" "table_row"
@@ -69,13 +64,9 @@ Feature: Enrolments are synchronised with meta courses
 
   Scenario: Add meta enrolment instance with auto-created groups
     When I follow "Course 3"
-    And I navigate to "Enrolment methods" node in "Course administration > Users"
-    And I set the field "Add method" to "Course meta link"
-    And I press "Go"
-    And I set the following fields to these values:
-      | Link course  | Course 1      |
+    And I add "Course meta link" enrolment method with:
+      | Link course  | C1C1      |
       | Add to group | Create new group |
-    And I press "Add method"
     And I navigate to "Enrolled users" node in "Course administration > Users"
     Then I should see "Course 1 course" in the "Student 1" "table_row"
     And I should see "Course 1 course" in the "Student 2" "table_row"
@@ -86,17 +77,12 @@ Feature: Enrolments are synchronised with meta courses
 
   Scenario: Backup and restore of meta enrolment instance
     When I follow "Course 3"
-    And I navigate to "Enrolment methods" node in "Course administration > Users"
-    And I set the field "Add method" to "Course meta link"
-    And I press "Go"
-    And I set the following fields to these values:
-      | Link course  | Course 1      |
+    And I add "Course meta link" enrolment method with:
+      | Link course  | C1C1      |
       | Add to group | Groupcourse 1 |
-    And I press "Add method"
-    And I select "Course meta link" from the "Add method" singleselect
-    And I set the following fields to these values:
-      | Link course  | Course 2      |
-    And I press "Add method"
+    And I follow "Course 3"
+    And I add "Course meta link" enrolment method with:
+      | Link course  | C2C2      |
     When I backup "Course 3" course using this options:
       | Confirmation | Filename | test_backup.mbz |
     And I click on "Restore" "link" in the "test_backup.mbz" "table_row"
