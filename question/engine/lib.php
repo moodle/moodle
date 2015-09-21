@@ -144,7 +144,8 @@ abstract class question_engine {
         $minfraction = optional_param($prefix . ':minfraction', null, PARAM_FLOAT);
         $maxfraction = optional_param($prefix . ':maxfraction', null, PARAM_FLOAT);
         return $mark === '' ||
-                ($mark !== null && $mark >= $minfraction * $maxmark && $mark <= $maxfraction * $maxmark);
+                ($mark !== null && $mark >= $minfraction * $maxmark && $mark <= $maxfraction * $maxmark) ||
+                ($mark === null && $maxmark === null);
     }
 
     /**
