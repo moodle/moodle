@@ -2056,6 +2056,31 @@ function blocks_delete_instance($instance, $nolongerused = false, $skipblockstab
 }
 
 /**
+ * Delete multiple blocks at once.
+ *
+ * @param array $instanceids A list of block instance ID.
+ */
+function blocks_delete_instances($instanceids) {
+    global $DB;
+
+    $instances = $DB->get_recordset_list('block_instances', 'id', $instanceids);
+    foreach ($instances as $instance) {
+        blocks_delete_instance($instance, false, true);
+    }
+    $instances->close();
+
+    $DB->delete_records_list('block_positions', 'blockinstanceid', $instanceids);
+    $DB->delete_records_list('block_instances', 'id', $instanceids);
+
+    $preferences = array();
+    foreach ($instanceids as $instanceid) {
+        $preferences[] = 'block' . $instanceid . 'hidden';
+        $preferences[] = 'docked_block_instance_' . $instanceid;
+    }
+    $DB->delete_records_list('user_preferences', 'name', $preferences);
+}
+
+/**
  * Delete all the blocks that belong to a particular context.
  *
  * @param int $contextid the context id.
