@@ -383,7 +383,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
      * Test get forum posts
      */
     public function test_mod_forum_get_forum_discussion_posts() {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $this->resetAfterTest(true);
 
@@ -451,9 +451,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'warnings' => array(),
         );
 
-        // Empty picture since it's a user deleted (user3).
-        $userpictureurl = '';
-
+        // User pictures are initially empty, we should get the links once the external function is called.
         $expectedposts['posts'][] = array(
             'id' => $discussion1reply2->id,
             'discussion' => $discussion1reply2->discussion,
@@ -474,11 +472,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'canreply' => true,
             'postread' => false,
             'userfullname' => fullname($user3),
-            'userpictureurl' => $userpictureurl
+            'userpictureurl' => ''
         );
-
-        $userpictureurl = moodle_url::make_webservice_pluginfile_url(
-            context_user::instance($discussion1reply1->userid)->id, 'user', 'icon', null, '/', 'f1')->out(false);
 
         $expectedposts['posts'][] = array(
             'id' => $discussion1reply1->id,
@@ -500,13 +495,22 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'canreply' => true,
             'postread' => false,
             'userfullname' => fullname($user2),
-            'userpictureurl' => $userpictureurl
+            'userpictureurl' => ''
         );
 
         // Test a discussion with two additional posts (total 3 posts).
         $posts = mod_forum_external::get_forum_discussion_posts($discussion1->id, 'modified', 'DESC');
         $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
         $this->assertEquals(3, count($posts['posts']));
+
+        // Generate here the pictures because we need to wait to the external function to init the theme.
+        $userpicture = new user_picture($user3);
+        $userpicture->size = 1; // Size f1.
+        $expectedposts['posts'][0]['userpictureurl'] = $userpicture->get_url($PAGE)->out(false);
+
+        $userpicture = new user_picture($user2);
+        $userpicture->size = 1; // Size f1.
+        $expectedposts['posts'][1]['userpictureurl'] = $userpicture->get_url($PAGE)->out(false);
 
         // Unset the initial discussion post.
         array_pop($posts['posts']);
@@ -589,7 +593,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
      * Test get forum discussions paginated
      */
     public function test_mod_forum_get_forum_discussions_paginated() {
-        global $USER, $CFG, $DB;
+        global $USER, $CFG, $DB, $PAGE;
 
         $this->resetAfterTest(true);
 
@@ -663,12 +667,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         // Create what we expect to be returned when querying the forums.
 
         $post1 = $DB->get_record('forum_posts', array('id' => $discussion1->firstpost), '*', MUST_EXIST);
-        $userpictureurl = moodle_url::make_webservice_pluginfile_url(
-                    context_user::instance($user1->id)->id, 'user', 'icon', null, '/', 'f1');
 
-        // We expect an empty URL since we deleted the user4.
-        $usermodifiedpictureurl = '';
-
+        // User pictures are initially empty, we should get the links once the external function is called.
         $expecteddiscussions = array(
                 'id' => $discussion1->firstpost,
                 'name' => $discussion1->name,
@@ -692,8 +692,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 'mailnow' => $post1->mailnow,
                 'userfullname' => fullname($user1),
                 'usermodifiedfullname' => fullname($user4),
-                'userpictureurl' => $userpictureurl,
-                'usermodifiedpictureurl' => $usermodifiedpictureurl,
+                'userpictureurl' => '',
+                'usermodifiedpictureurl' => '',
                 'numreplies' => 3,
                 'numunread' => 0
             );
@@ -705,6 +705,16 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'discussions' => array($expecteddiscussions),
             'warnings' => array()
         );
+
+        // Wait the theme to be loaded (the external_api call does that) to generate the user profiles.
+        $userpicture = new user_picture($user1);
+        $userpicture->size = 1; // Size f1.
+        $expectedreturn['discussions'][0]['userpictureurl'] = $userpicture->get_url($PAGE)->out(false);
+
+        $userpicture = new user_picture($user4);
+        $userpicture->size = 1; // Size f1.
+        $expectedreturn['discussions'][0]['usermodifiedpictureurl'] = $userpicture->get_url($PAGE)->out(false);
+
         $this->assertEquals($expectedreturn, $discussions);
 
         // Call without required view discussion capability.

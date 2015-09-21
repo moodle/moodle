@@ -153,7 +153,7 @@ class mod_chat_external extends external_api {
      * @throws moodle_exception
      */
     public static function get_chat_users($chatsid) {
-        global $DB;
+        global $DB, $PAGE;
 
         $params = self::validate_parameters(self::get_chat_users_parameters(),
                                             array(
@@ -180,13 +180,10 @@ class mod_chat_external extends external_api {
         $returnedusers = array();
 
         foreach ($users as $user) {
-            $usercontext = context_user::instance($user->id, IGNORE_MISSING);
-            $profileimageurl = '';
 
-            if ($usercontext) {
-                $profileimageurl = moodle_url::make_webservice_pluginfile_url(
-                                    $usercontext->id, 'user', 'icon', null, '/', 'f1')->out(false);
-            }
+            $userpicture = new user_picture($user);
+            $userpicture->size = 1; // Size f1.
+            $profileimageurl = $userpicture->get_url($PAGE)->out(false);
 
             $returnedusers[] = array(
                 'id' => $user->id,
