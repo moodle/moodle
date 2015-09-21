@@ -110,7 +110,8 @@ if ($execute = $options['execute']) {
     $predbqueries = $DB->perf_get_queries();
     $pretime = microtime(true);
 
-    mtrace("Scheduled task: " . $task->get_name());
+    $fullname = $task->get_name() . ' (' . get_class($task) . ')';
+    mtrace('Execute scheduled task: ' . $fullname);
     // NOTE: it would be tricky to move this code to \core\task\manager class,
     //       because we want to do detailed error reporting.
     $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
@@ -138,7 +139,7 @@ if ($execute = $options['execute']) {
             mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
             mtrace("... used " . (microtime(1) - $pretime) . " seconds");
         }
-        mtrace("Task completed.");
+        mtrace('Scheduled task complete: ' . $fullname);
         \core\task\manager::scheduled_task_complete($task);
         get_mailer('close');
         exit(0);
@@ -148,7 +149,7 @@ if ($execute = $options['execute']) {
         }
         mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
         mtrace("... used " . (microtime(true) - $pretime) . " seconds");
-        mtrace("Task failed: " . $e->getMessage());
+        mtrace('Scheduled task failed: ' . $fullname . ',' . $e->getMessage());
         if ($CFG->debugdeveloper) {
             if (!empty($e->debuginfo)) {
                 mtrace("Debug info:");
