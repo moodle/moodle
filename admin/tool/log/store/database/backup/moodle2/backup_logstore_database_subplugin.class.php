@@ -24,6 +24,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+require_once('backup_logstore_database_nested_element.php');
 
 class backup_logstore_database_subplugin extends backup_tool_log_logstore_subplugin {
 
@@ -39,7 +40,7 @@ class backup_logstore_database_subplugin extends backup_tool_log_logstore_subplu
         // Create the custom (base64 encoded, xml safe) 'other' final element.
         $otherelement = new base64_encode_final_element('other');
 
-        $subpluginlog = new backup_nested_element('logstore_database_log', array('id'), array(
+        $subpluginlog = new backup_logstore_database_nested_element('logstore_database_log', array('id'), array(
             'eventname', 'component', 'action', 'target', 'objecttable',
             'objectid', 'crud', 'edulevel', 'contextid', 'userid', 'relateduserid',
             'anonymous', $otherelement, 'timecreated', 'ip', 'realuserid'));

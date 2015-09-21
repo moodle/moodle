@@ -33,6 +33,8 @@
 abstract class backup_structure_dbops extends backup_dbops {
 
     public static function get_iterator($element, $params, $processor) {
+        global $DB;
+
         // Check we are going to get_iterator for one backup_nested_element
         if (! $element instanceof backup_nested_element) {
             throw new base_element_struct_exception('backup_nested_element_expected');
@@ -48,17 +50,17 @@ abstract class backup_structure_dbops extends backup_dbops {
             return new backup_array_iterator($element->get_source_array());
 
         } else if ($element->get_source_table() !== null) { // It's one table, return recordset iterator
-            return $element->get_source_db()->get_recordset($element->get_source_table(), self::convert_params_to_values($params, $processor), $element->get_source_table_sortby());
+            return $DB->get_recordset($element->get_source_table(), self::convert_params_to_values($params, $processor), $element->get_source_table_sortby());
 
         } else if ($element->get_source_sql() !== null) { // It's one sql, return recordset iterator
-            return $element->get_source_db()->get_recordset_sql($element->get_source_sql(), self::convert_params_to_values($params, $processor));
+            return $DB->get_recordset_sql($element->get_source_sql(), self::convert_params_to_values($params, $processor));
 
         } else { // No sources, supress completely, using null iterator
             return new backup_null_iterator();
         }
     }
 
-    protected static function convert_params_to_values($params, $processor) {
+    public static function convert_params_to_values($params, $processor) {
         $newparams = array();
         foreach ($params as $key => $param) {
             $newvalue = null;

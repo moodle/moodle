@@ -42,11 +42,6 @@ class backup_nested_element extends base_nested_element implements processable {
     protected $logs;     // Some log messages that could be retrieved later.
 
     /**
-     * @var \moodle_database $dbtouse
-     */
-    protected $dbtouse;
-
-    /**
      * Constructor - instantiates one backup_nested_element, specifying its basic info.
      *
      * @param string $name name of the element
@@ -54,8 +49,6 @@ class backup_nested_element extends base_nested_element implements processable {
      * @param array  $final_elements this element will handle (optional, defaults to null)
      */
     public function __construct($name, $attributes = null, $final_elements = null) {
-        global $DB;
-
         parent::__construct($name, $attributes, $final_elements);
         $this->var_array = null;
         $this->table     = null;
@@ -68,7 +61,6 @@ class backup_nested_element extends base_nested_element implements processable {
         $this->counter   = 0;
         $this->results  = array();
         $this->logs     = array();
-        $this->dbtouse = $DB;
     }
 
     /**
@@ -201,15 +193,6 @@ class backup_nested_element extends base_nested_element implements processable {
         $this->var_array = $arr;
     }
 
-    /**
-     * Set the database we want to use.
-     *
-     * @param \moodle_database $db
-     */
-    public function set_source_db($db) {
-        $this->dbtouse = $db;
-    }
-
     public function set_source_table($table, $params, $sortby = null) {
         if (!is_array($params)) { // Check we are passing array
             throw new base_element_struct_exception('setsourcerequiresarrayofparams');
@@ -275,15 +258,6 @@ class backup_nested_element extends base_nested_element implements processable {
 
     public function get_source_array() {
         return $this->var_array;
-    }
-
-    /**
-     * Get the database we want to use.
-     *
-     * @return \moodle_database $db
-     */
-    public function get_source_db() {
-        return $this->dbtouse;
     }
 
     public function get_source_table() {
