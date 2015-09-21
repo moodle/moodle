@@ -163,10 +163,6 @@ class test_handler extends \core\message\inbound\handler {
         return parent::remove_quoted_text($messagedata);
     }
 
-    public static function get_linecount_to_remove($messagedata) {
-        return parent::get_linecount_to_remove($messagedata);
-    }
-
     public function get_name() {}
 
     public function get_description() {}
