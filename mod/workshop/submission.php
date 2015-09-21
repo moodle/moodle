@@ -27,13 +27,15 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 
-$cmid   = required_param('cmid', PARAM_INT);            // course module id
-$id     = optional_param('id', 0, PARAM_INT);           // submission id
-$edit   = optional_param('edit', false, PARAM_BOOL);    // open for editing?
-$assess = optional_param('assess', false, PARAM_BOOL);  // instant assessment required
+$cmid       = required_param('cmid', PARAM_INT);            // course module id
+$id         = optional_param('id', 0, PARAM_INT);           // submission id
+$edit       = optional_param('edit', false, PARAM_BOOL);    // open for editing?
+$assess     = optional_param('assess', false, PARAM_BOOL);  // instant assessment required
+$delete     = optional_param('delete', false, PARAM_BOOL);  // example removal requested
+$confirm    = optional_param('confirm', false, PARAM_BOOL); // example removal request confirmed
 
-$cm     = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
+$course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 if (isguestuser()) {
@@ -85,9 +87,11 @@ $cansubmit      = has_capability('mod/workshop:submit', $workshop->context);
 $canallocate    = has_capability('mod/workshop:allocate', $workshop->context);
 $canpublish     = has_capability('mod/workshop:publishsubmissions', $workshop->context);
 $canoverride    = (($workshop->phase == workshop::PHASE_EVALUATION) and has_capability('mod/workshop:overridegrades', $workshop->context));
+$candeleteall   = has_capability('mod/workshop:deletesubmissions', $workshop->context);
 $userassessment = $workshop->get_assessment_of_submission_by_user($submission->id, $USER->id);
 $isreviewer     = !empty($userassessment);
 $editable       = ($cansubmit and $ownsubmission);
+$deletable      = $candeleteall;
 $ispublished    = ($workshop->phase == workshop::PHASE_CLOSED
                     and $submission->published == 1
                     and has_capability('mod/workshop:viewpublishedsubmissions', $workshop->context));
@@ -126,6 +130,21 @@ if ($editable and $workshop->useexamples and $workshop->examplesmode == workshop
     }
 }
 $edit = ($editable and $edit);
+
+if (!$candeleteall and $ownsubmission and $editable) {
+    // Only allow the student to delete their own submission if it's still editable and hasn't been assessed.
+    if (count($workshop->get_assessments_of_submission($submission->id)) > 0) {
+        $deletable = false;
+    } else {
+        $deletable = true;
+    }
+}
+
+if ($submission->id and $delete and $confirm and $deletable) {
+    require_sesskey();
+    $workshop->delete_submission($submission);
+    redirect($workshop->view_url());
+}
 
 $seenaspublished = false; // is the submission seen as a published submission?
 
@@ -313,6 +332,31 @@ if ($edit) {
     die();
 }
 
+// Confirm deletion (if requested).
+if ($deletable and $delete) {
+    $prompt = get_string('submissiondeleteconfirm', 'workshop');
+    if ($candeleteall) {
+        $assessments = $workshop->get_assessments_of_submission($submission->id);
+        if (count($assessments) > 0) {
+            $prompt = html_writer::tag('p', $prompt);
+            $prompt .= html_writer::tag('p', get_string('submissiondeleteconfirmteacher', 'workshop'));
+            $affected = '';
+            $fields = get_all_user_name_fields(true);
+            $reviewers = array();
+            foreach ($assessments as $assessment) {
+                if (!in_array($assessment->reviewerid, $reviewers)) {
+                    $reviewers[] = $assessment->reviewerid;
+                    $names = $DB->get_record('user', array('id' => $assessment->reviewerid), $fields);
+                    $affected .= html_writer::tag('li', fullname($names));
+                }
+            }
+            $prompt .= html_writer::tag('ul', $affected);
+        }
+    }
+    echo $output->confirm($prompt,
+            new moodle_url($PAGE->url, array('delete' => 1, 'confirm' => 1)), $workshop->view_url());
+}
+
 // else display the submission
 
 if ($submission->id) {
@@ -335,6 +379,11 @@ if ($editable) {
         $btntxt = get_string('createsubmission', 'workshop');
     }
     echo $output->single_button($btnurl, $btntxt, 'get');
+}
+
+if ($submission->id and $deletable) {
+    $url = new moodle_url($PAGE->url, array('delete' => 1));
+    echo $output->single_button($url, get_string('deletesubmission', 'workshop'), 'get');
 }
 
 if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->assessing_allowed($USER->id)) {
