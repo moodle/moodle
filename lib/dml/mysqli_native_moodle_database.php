@@ -1502,10 +1502,13 @@ class mysqli_native_moodle_database extends moodle_database {
     /**
      * Returns 'LIKE' part of a query.
      *
+     * Note that mysql does not support $casesensitive = true and $accentsensitive = false.
+     * More information in http://bugs.mysql.com/bug.php?id=19567.
+     *
      * @param string $fieldname usually name of the table column
      * @param string $param usually bound query parameter (?, :named)
      * @param bool $casesensitive use case sensitive search
-     * @param bool $accensensitive use accent sensitive search (not all databases support accent insensitive)
+     * @param bool $accensensitive use accent sensitive search (ignored if $casesensitive is true)
      * @param bool $notlike true means "NOT LIKE"
      * @param string $escapechar escape char for '%' and '_'
      * @return string SQL code fragment
@@ -1517,14 +1520,24 @@ class mysqli_native_moodle_database extends moodle_database {
         $escapechar = $this->mysqli->real_escape_string($escapechar); // prevents problems with C-style escapes of enclosing '\'
 
         $LIKE = $notlike ? 'NOT LIKE' : 'LIKE';
+
         if ($casesensitive) {
+            // Current MySQL versions do not support case sensitive and accent insensitive.
             return "$fieldname $LIKE $param COLLATE utf8_bin ESCAPE '$escapechar'";
+
+        } else if ($accentsensitive) {
+            // Case insensitive and accent sensitive, we can force a binary comparison once all texts are using the same case.
+            return "LOWER($fieldname) $LIKE LOWER($param) COLLATE utf8_bin ESCAPE '$escapechar'";
+
         } else {
-            if ($accentsensitive) {
-                return "LOWER($fieldname) $LIKE LOWER($param) COLLATE utf8_bin ESCAPE '$escapechar'";
-            } else {
-                return "$fieldname $LIKE $param ESCAPE '$escapechar'";
+            // Case insensitive and accent insensitive.
+            $collation = '';
+            if ($this->get_dbcollation() == 'utf8_bin') {
+                // Force a case insensitive comparison if using utf8_bin.
+                $collation = 'COLLATE utf8_unicode_ci';
             }
+
+            return "$fieldname $LIKE $param $collation ESCAPE '$escapechar'";
         }
     }
 
