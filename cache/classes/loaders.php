@@ -1270,7 +1270,9 @@ class cache_application extends cache implements cache_loader_with_locking {
                 $this->delete_many($todelete);
             }
             // Set the time of the last invalidation.
-            $this->set('lastinvalidation', cache::now());
+            if ($purgeall || !empty($todelete)) {
+                $this->set('lastinvalidation', cache::now());
+            }
         }
     }
 
@@ -1669,7 +1671,9 @@ class cache_session extends cache {
                 $this->delete_many($todelete);
             }
             // Set the time of the last invalidation.
-            $this->set('lastsessioninvalidation', cache::now());
+            if ($purgeall || !empty($todelete)) {
+                $this->set('lastsessioninvalidation', cache::now());
+            }
         }
     }
 
