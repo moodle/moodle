@@ -694,7 +694,7 @@ class grade_item extends grade_object {
         // aggregate the category grade
         } else if ($this->is_category_item() or $this->is_course_item()) {
             // aggregate category grade item
-            $category = $this->get_item_category();
+            $category = $this->load_item_category();
             $category->grade_item =& $this;
             if ($category->generate_grades($userid)) {
                 return true;
