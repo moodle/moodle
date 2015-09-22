@@ -1214,7 +1214,15 @@ function message_delete_message($message, $userid) {
     $updatemessage = new stdClass();
     $updatemessage->id = $message->id;
     $updatemessage->$coltimedeleted = time();
-    return $DB->update_record($messagetable, $updatemessage);
+    $success = $DB->update_record($messagetable, $updatemessage);
+
+    if ($success) {
+        // Trigger event for deleting a message.
+        \core\event\message_deleted::create_from_ids($message->useridfrom, $message->useridto,
+            $userid, $messagetable, $message->id)->trigger();
+    }
+
+    return $success;
 }
 
 /**
