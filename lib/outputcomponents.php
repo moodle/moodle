@@ -533,13 +533,23 @@ class pix_icon implements renderable, templatable {
         $this->component  = $component;
         $this->attributes = (array)$attributes;
 
-        $this->attributes['alt'] = $alt;
         if (empty($this->attributes['class'])) {
             $this->attributes['class'] = 'smallicon';
         }
-        if (!isset($this->attributes['title'])) {
-            $this->attributes['title'] = $this->attributes['alt'];
-        } else if (empty($this->attributes['title'])) {
+
+        // If the alt is empty, don't place it in the attributes, otherwise it will override parent alt text.
+        if (!is_null($alt)) {
+            $this->attributes['alt'] = $alt;
+
+            // If there is no title, set it to the attribute.
+            if (!isset($this->attributes['title'])) {
+                $this->attributes['title'] = $this->attributes['alt'];
+            }
+        } else {
+            unset($this->attributes['alt']);
+        }
+
+        if (empty($this->attributes['title'])) {
             // Remove the title attribute if empty, we probably want to use the parent node's title
             // and some browsers might overwrite it with an empty title.
             unset($this->attributes['title']);
