@@ -1636,8 +1636,8 @@ class page_requirements_manager {
         $jsinit = $this->get_javascript_init_code();
         $handlersjs = $this->get_event_handler_code();
 
-        // There is no global Y, make sure it is available in your scope.
-        $js = "YUI().use('node', function(Y) {\n{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}\n});";
+        // There is a global Y, make sure it is available in your scope.
+        $js = "(function() {{$inyuijs}{$ondomreadyjs}{$jsinit}{$handlersjs}})();";
 
         $output .= html_writer::script($js);
 
