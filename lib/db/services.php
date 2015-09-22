@@ -1222,6 +1222,7 @@ $services = array(
             'mod_chat_view_chat',
             'mod_chat_get_chats_by_courses',
             'mod_book_view_book',
+            'mod_book_get_books_by_courses',
             'mod_choice_get_choice_results',
             'mod_choice_get_choice_options',
             'mod_choice_submit_choice_response',

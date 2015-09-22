@@ -132,4 +132,71 @@ class mod_book_external_testcase extends externallib_advanced_testcase {
         }
 
     }
+
+    /**
+     * Test get_books_by_courses
+     */
+    public function test_get_books_by_courses() {
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $course1 = self::getDataGenerator()->create_course();
+        $bookoptions1 = array(
+                              'course' => $course1->id,
+                              'name' => 'First Book'
+                             );
+        $book1 = self::getDataGenerator()->create_module('book', $bookoptions1);
+        $course2 = self::getDataGenerator()->create_course();
+        $bookoptions2 = array(
+                              'course' => $course2->id,
+                              'name' => 'Second Book'
+                             );
+        $book2 = self::getDataGenerator()->create_module('book', $bookoptions2);
+        $student1 = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        // Enroll Student1 in Course1.
+        self::getDataGenerator()->enrol_user($student1->id,  $course1->id, $studentrole->id);
+        $this->setUser($student1);
+
+        $books = mod_book_external::get_books_by_courses();
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $books = external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
+        $this->assertCount(1, $books['books']);
+        $this->assertEquals('First Book', $books['books'][0]['name']);
+        // We see 9 fields.
+        $this->assertCount(9, $books['books'][0]);
+
+        // As Student you cannot see some book properties like 'section'.
+        $this->assertFalse(isset($books['books'][0]['section']));
+
+        // Student1 is not enrolled in course2. The webservice will return a warning!
+        $books = mod_book_external::get_books_by_courses(array($course2->id));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $books = external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
+        $this->assertCount(0, $books['books']);
+        $this->assertEquals(1, $books['warnings'][0]['warningcode']);
+
+        // Now as admin.
+        $this->setAdminUser();
+        // As Admin we can see this book.
+        $books = mod_book_external::get_books_by_courses(array($course2->id));
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $books = external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
+
+        $this->assertCount(1, $books['books']);
+        $this->assertEquals('Second Book', $books['books'][0]['name']);
+        // We see 16 fields.
+        $this->assertCount(16, $books['books'][0]);
+        // As an Admin you can see some book properties like 'section'.
+        $this->assertEquals(0, $books['books'][0]['section']);
+
+        // Enrol student in the second course.
+        self::getDataGenerator()->enrol_user($student1->id,  $course2->id, $studentrole->id);
+        $this->setUser($student1);
+        $books = mod_book_external::get_books_by_courses();
+        $books = external_api::clean_returnvalue(mod_book_external::get_books_by_courses_returns(), $books);
+        $this->assertCount(2, $books['books']);
+
+    }
 }
