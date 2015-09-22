@@ -1363,13 +1363,14 @@ class core_group_external extends external_api {
             }
 
             // Validate if the user is enrolled in the course.
-            if (!is_enrolled($coursecontext, $user->id)) {
+            $course = get_course($cm->course);
+            if (!can_access_course($course, $user, '', true)) {
                 // We return a warning because the function does not fail for not enrolled users.
                 $warning = array();
                 $warning['item'] = 'course';
                 $warning['itemid'] = $cm->course;
                 $warning['warningcode'] = '1';
-                $warning['message'] = "User $user->id is not enrolled in course $cm->course";
+                $warning['message'] = "User $user->id cannot access course $cm->course";
                 $warnings[] = $warning;
             }
         }
