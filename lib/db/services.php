@@ -1230,6 +1230,7 @@ $services = array(
             'mod_choice_view_choice',
             'mod_choice_get_choices_by_courses',
             'mod_imscp_view_imscp',
+            'mod_imscp_get_imscps_by_courses',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,

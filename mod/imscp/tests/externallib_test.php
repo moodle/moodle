@@ -109,4 +109,69 @@ class mod_imscp_external_testcase extends externallib_advanced_testcase {
         }
 
     }
+
+    /**
+     * Test get_imscps_by_courses
+     */
+    public function test_get_imscps_by_courses() {
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        // As admin.
+        $this->setAdminUser();
+        $course1 = self::getDataGenerator()->create_course();
+        $imscpoptions1 = array(
+          'course' => $course1->id,
+          'name' => 'First IMSCP'
+        );
+        $imscp1 = self::getDataGenerator()->create_module('imscp', $imscpoptions1);
+        $course2 = self::getDataGenerator()->create_course();
+
+        $imscpoptions2 = array(
+          'course' => $course2->id,
+          'name' => 'Second IMSCP'
+        );
+        $imscp2 = self::getDataGenerator()->create_module('imscp', $imscpoptions2);
+        $student1 = $this->getDataGenerator()->create_user();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        // Enroll Student1 in Course1.
+        self::getDataGenerator()->enrol_user($student1->id,  $course1->id, $studentrole->id);
+
+        $this->setUser($student1);
+        $imscps = mod_imscp_external::get_imscps_by_courses(array());
+        $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
+        $this->assertCount(1, $imscps['imscps']);
+        $this->assertEquals('First IMSCP', $imscps['imscps'][0]['name']);
+        // As Student you cannot see some IMSCP properties like 'section'.
+        $this->assertFalse(isset($imscps['imscps'][0]['section']));
+
+        // Student1 is not enrolled in this Course.
+        // The webservice will give a warning!
+        $imscps = mod_imscp_external::get_imscps_by_courses(array($course2->id));
+        $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
+        $this->assertCount(0, $imscps['imscps']);
+        $this->assertEquals(1, $imscps['warnings'][0]['warningcode']);
+
+        // Now as admin.
+        $this->setAdminUser();
+        // As Admin we can see this IMSCP.
+        $imscps = mod_imscp_external::get_imscps_by_courses(array($course2->id));
+        $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
+        $this->assertCount(1, $imscps['imscps']);
+        $this->assertEquals('Second IMSCP', $imscps['imscps'][0]['name']);
+        // As an Admin you can see some IMSCP properties like 'section'.
+        $this->assertEquals(0, $imscps['imscps'][0]['section']);
+
+        // Now, prohibit capabilities.
+        $this->setUser($student1);
+        $contextcourse1 = context_course::instance($course1->id);
+        // Prohibit capability = mod:imscp:view on Course1 for students.
+        assign_capability('mod/imscp:view', CAP_PROHIBIT, $studentrole->id, $contextcourse1->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $imscps = mod_imscp_external::get_imscps_by_courses(array($course1->id));
+        $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
+        $this->assertFalse(isset($imscps['imscps'][0]['intro']));
+    }
 }
