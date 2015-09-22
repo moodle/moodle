@@ -411,6 +411,15 @@ class behat_general extends behat_base {
         list($containerselector, $containerlocator) = $this->transform_selector($containerselectortype, $containerelement);
         $destinationxpath = $this->getSession()->getSelectorsHandler()->selectorToXpath($containerselector, $containerlocator);
 
+        $node = $this->get_selected_node("xpath_element", $sourcexpath);
+        if (!$node->isVisible()) {
+            throw new ExpectationException('"' . $sourcexpath . '" "xpath_element" is not visible', $this->getSession());
+        }
+        $node = $this->get_selected_node("xpath_element", $destinationxpath);
+        if (!$node->isVisible()) {
+            throw new ExpectationException('"' . $destinationxpath . '" "xpath_element" is not visible', $this->getSession());
+        }
+
         $this->getSession()->getDriver()->dragTo($sourcexpath, $destinationxpath);
     }
 

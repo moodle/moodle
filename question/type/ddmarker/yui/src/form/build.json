@@ -1,0 +1,10 @@
+{
+    "name": "moodle-qtype_ddmarker-form",
+    "builds": {
+        "moodle-qtype_ddmarker-form": {
+            "jsfiles": [
+                "form.js"
+            ]
+        }
+    }
+}
