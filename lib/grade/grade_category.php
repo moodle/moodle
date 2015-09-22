@@ -2468,7 +2468,11 @@ class grade_category extends grade_object {
     public function set_hidden($hidden, $cascade=false) {
         $this->load_grade_item();
         //this hides the associated grade item (the course total)
-        $this->grade_item->set_hidden($hidden, $cascade);
+        if ($hidden != 0 || $cascade) {
+            //Always hide category total when hiding category. Only show category
+            //total when explicitly cascading.
+            $this->grade_item->set_hidden($hidden, $cascade);
+        }
         //this hides the category itself and everything it contains
         parent::set_hidden($hidden, $cascade);
 

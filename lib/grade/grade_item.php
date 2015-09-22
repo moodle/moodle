@@ -623,9 +623,12 @@ class grade_item extends grade_object {
 
         //if marking item visible make sure category is visible MDL-21367
         if( !$hidden ) {
-            $category_array = grade_category::fetch_all(array('id'=>$this->categoryid));
-            if ($category_array && array_key_exists($this->categoryid, $category_array)) {
-                $category = $category_array[$this->categoryid];
+            //If the categoryid is null, this is a category grade item. The categoryid
+            //is stored in iteminstance.
+            $categoryid = $this->categoryid ? $this->categoryid : $this->iteminstance; 
+            $category_array = grade_category::fetch_all(array('id'=>$categoryid));
+            if ($category_array && array_key_exists($categoryid, $category_array)) {
+                $category = $category_array[$categoryid];
                 //call set_hidden on the category regardless of whether it is hidden as its parent might be hidden
                 //if($category->is_hidden()) {
                     $category->set_hidden($hidden, false);
