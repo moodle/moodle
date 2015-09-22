@@ -33,6 +33,9 @@ require_login($SITE);
 $context = context_system::instance();
 iomad::require_capability('local/report_completion:view', $context);
 
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+
 $linktext = get_string('user_detail_title', 'local_report_users');
 // Set the url.
 $linkurl = new moodle_url('/local/report_users/index.php');
@@ -51,13 +54,13 @@ if (empty($dodownload)) {
     $blockpage->display_header();
 
     // Check the userid is valid.
-    if (!company::check_valid_user($companyid, $userid, $departmentid)) {
-        print_error('invaliduserdepartment', 'block_iomad_company_management');
+    if (!company::check_valid_user($companyid, $userid)) {
+        print_error('invaliduser', 'block_iomad_company_management');
     }
 } else {
     // Check the userid is valid.
-    if (!company::check_valid_user($companyid, $userid, $departmentid)) {
-        print_error('invaliduserdepartment', 'block_iomad_company_management');
+    if (!company::check_valid_user($companyid, $userid)) {
+        print_error('invaliduser', 'block_iomad_company_management');
     }
 }
 
