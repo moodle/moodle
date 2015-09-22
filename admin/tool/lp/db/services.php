@@ -84,14 +84,6 @@ $functions = array(
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencyview',
     ),
-    'tool_lp_reorder_competency_framework' => array(
-        'classname'    => 'tool_lp\external',
-        'methodname'   => 'reorder_competency_framework',
-        'classpath'    => '',
-        'description'  => 'Move a competency framework to a new relative sort order.',
-        'type'         => 'write',
-        'capabilities' => 'tool/lp:competencymanage',
-    ),
     'tool_lp_create_competency' => array(
         'classname'    => 'tool_lp\external',
         'methodname'   => 'create_competency',
@@ -331,14 +323,6 @@ $functions = array(
         'description'  => 'Load the data for the learning plan templates manage page template',
         'type'         => 'read',
         'capabilities' => 'tool/lp:templateview',
-    ),
-    'tool_lp_reorder_template' => array(
-        'classname'    => 'tool_lp\external',
-        'methodname'   => 'reorder_template',
-        'classpath'    => '',
-        'description'  => 'Move a learning plan template to a new relative sort order.',
-        'type'         => 'write',
-        'capabilities' => 'tool/lp:templatemanage',
     ),
     'tool_lp_create_plan' => array(
         'classname'    => 'tool_lp\external',
