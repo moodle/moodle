@@ -139,6 +139,8 @@ information provided here is intended especially for developers.
 * external_api::validate_context now is public, it can be called from other classes.
 * rss_error() now supports returning of correct HTTP status of error and will return '404 Not Found'
   unless other status is specified.
+* Plugins can extend the navigation for categories settings by declaring the following callback:
+  <frankenstyle>_extend_navigation_category_settings(navigation_node, context_coursecat)
 
 === 2.9.1 ===
 
