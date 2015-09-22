@@ -1,6 +1,10 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 3.0 ===
+ * External function get_forums_by_courses now returns and additional field "cancreatediscussions" that indicates if the user
+   can create discussions in the forum.
+
 === 2.8 ===
  * The following functions have all been marked as deprecated. Many of
    these have not been supported in many releases and should not be relied

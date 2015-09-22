@@ -88,6 +88,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
         // Expect one discussion.
         $forum1->numdiscussions = 1;
+        $forum1->cancreatediscussions = true;
 
         $record = new stdClass();
         $record->course = $course2->id;
@@ -97,6 +98,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $discussion3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
         // Expect two discussions.
         $forum2->numdiscussions = 2;
+        // Default limited role, no create discussion capability enabled.
+        $forum2->cancreatediscussions = false;
 
         // Check the forum was correctly created.
         $this->assertEquals(2, $DB->count_records_select('forum', 'id = :forum1 OR id = :forum2',
@@ -155,6 +158,13 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
         $this->assertCount(1, $forums);
         $this->assertEquals($expectedforums[$forum1->id], $forums[0]);
+        $this->assertTrue($forums[0]['cancreatediscussions']);
+
+        // Change the type of the forum, the user shouldn't be able to add discussions.
+        $DB->set_field('forum', 'type', 'news', array('id' => $forum1->id));
+        $forums = mod_forum_external::get_forums_by_courses();
+        $forums = external_api::clean_returnvalue(mod_forum_external::get_forums_by_courses_returns(), $forums);
+        $this->assertFalse($forums[0]['cancreatediscussions']);
 
         // Call for the second course we unenrolled the user from.
         $forums = mod_forum_external::get_forums_by_courses(array($course2->id));

@@ -61,60 +61,41 @@ class mod_forum_external extends external_api {
         $params = self::validate_parameters(self::get_forums_by_courses_parameters(), array('courseids' => $courseids));
 
         if (empty($params['courseids'])) {
-            // Get all the courses the user can view.
-            $courseids = array_keys(enrol_get_my_courses());
-        } else {
-            $courseids = $params['courseids'];
+            $params['courseids'] = array_keys(enrol_get_my_courses());
         }
 
         // Array to store the forums to return.
         $arrforums = array();
+        $warnings = array();
 
         // Ensure there are courseids to loop through.
-        if (!empty($courseids)) {
-            // Array of the courses we are going to retrieve the forums from.
-            $dbcourses = array();
-            // Mod info for courses.
-            $modinfocourses = array();
+        if (!empty($params['courseids'])) {
 
-            // Go through the courseids and return the forums.
-            foreach ($courseids as $courseid) {
-                // Check the user can function in this context.
-                try {
-                    $context = context_course::instance($courseid);
-                    self::validate_context($context);
-                    // Get the modinfo for the course.
-                    $modinfocourses[$courseid] = get_fast_modinfo($courseid);
-                    $dbcourses[$courseid] = $modinfocourses[$courseid]->get_course();
-
-                } catch (Exception $e) {
-                    continue;
-                }
-            }
+            list($courses, $warnings) = external_util::validate_courses($params['courseids']);
 
             // Get the forums in this course. This function checks users visibility permissions.
-            if ($forums = get_all_instances_in_courses("forum", $dbcourses)) {
-                foreach ($forums as $forum) {
+            $forums = get_all_instances_in_courses("forum", $courses);
+            foreach ($forums as $forum) {
 
-                    $course = $dbcourses[$forum->course];
-                    $cm = $modinfocourses[$course->id]->get_cm($forum->coursemodule);
-                    $context = context_module::instance($cm->id);
+                $course = $courses[$forum->course];
+                $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id);
+                $context = context_module::instance($cm->id);
 
-                    // Skip forums we are not allowed to see discussions.
-                    if (!has_capability('mod/forum:viewdiscussion', $context)) {
-                        continue;
-                    }
-
-                    // Format the intro before being returning using the format setting.
-                    list($forum->intro, $forum->introformat) = external_format_text($forum->intro, $forum->introformat,
-                                                                                    $context->id, 'mod_forum', 'intro', 0);
-                    // Discussions count. This function does static request cache.
-                    $forum->numdiscussions = forum_count_discussions($forum, $cm, $course);
-                    $forum->cmid = $forum->coursemodule;
-
-                    // Add the forum to the array to return.
-                    $arrforums[$forum->id] = $forum;
+                // Skip forums we are not allowed to see discussions.
+                if (!has_capability('mod/forum:viewdiscussion', $context)) {
+                    continue;
                 }
+
+                // Format the intro before being returning using the format setting.
+                list($forum->intro, $forum->introformat) = external_format_text($forum->intro, $forum->introformat,
+                                                                                $context->id, 'mod_forum', 'intro', 0);
+                // Discussions count. This function does static request cache.
+                $forum->numdiscussions = forum_count_discussions($forum, $cm, $course);
+                $forum->cmid = $forum->coursemodule;
+                $forum->cancreatediscussions = forum_user_can_post_discussion($forum, null, -1, $cm, $context);
+
+                // Add the forum to the array to return.
+                $arrforums[$forum->id] = $forum;
             }
         }
 
@@ -155,7 +136,8 @@ class mod_forum_external extends external_api {
                     'completionreplies' => new external_value(PARAM_INT, 'Student must post replies'),
                     'completionposts' => new external_value(PARAM_INT, 'Student must post discussions or replies'),
                     'cmid' => new external_value(PARAM_INT, 'Course module id'),
-                    'numdiscussions' => new external_value(PARAM_INT, 'Number of discussions in the forum', VALUE_OPTIONAL)
+                    'numdiscussions' => new external_value(PARAM_INT, 'Number of discussions in the forum', VALUE_OPTIONAL),
+                    'cancreatediscussions' => new external_value(PARAM_BOOL, 'If the user can create discussions', VALUE_OPTIONAL),
                 ), 'forum'
             )
         );
