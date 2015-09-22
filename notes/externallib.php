@@ -690,7 +690,7 @@ class core_notes_external extends external_api {
                 throw new moodle_exception('invaliduserid');
             }
 
-            if ($course->id != SITEID and !is_enrolled($context, $user, '', true)) {
+            if ($course->id != SITEID and !can_access_course($course, $user, '', true)) {
                 throw new moodle_exception('notenrolledprofile');
             }
         }

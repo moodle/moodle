@@ -1394,7 +1394,7 @@ class core_user_external extends external_api {
             profile_view($user, $usercontext);
         } else {
             // Case like user/view.php.
-            if (!$currentuser and !is_enrolled($coursecontext, $user->id)) {
+            if (!$currentuser and !can_access_course($course, $user, '', true)) {
                 throw new moodle_exception('notenrolledprofile');
             }
 
