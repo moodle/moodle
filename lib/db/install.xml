@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20150824" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20150922" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1248,6 +1248,9 @@
         <KEY NAME="createdby" TYPE="foreign" FIELDS="createdby" REFTABLE="user" REFFIELDS="id" COMMENT="foreign (createdby) references user (id)"/>
         <KEY NAME="modifiedby" TYPE="foreign" FIELDS="modifiedby" REFTABLE="user" REFFIELDS="id" COMMENT="foreign (modifiedby) references user (id)"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="qtype" UNIQUE="false" FIELDS="qtype"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="question_answers" COMMENT="Answers, with a fractional grade (0-1) and feedback">
       <FIELDS>
