@@ -373,7 +373,7 @@
 
 /// Delete any requested records
 
-    if ($delete && confirm_sesskey() && ($canmanageentries or data_isowner($delete))) {
+    if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, $context))) {
         if ($confirm = optional_param('confirm',0,PARAM_INT)) {
             if (data_delete_record($delete, $data, $course->id, $cm->id)) {
                 echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');

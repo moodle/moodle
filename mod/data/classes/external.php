@@ -152,7 +152,7 @@ class mod_data_external extends external_api {
 
                     $additionalfields = array('maxentries', 'rssarticles', 'singletemplate', 'listtemplate',
                         'listtemplateheader', 'listtemplatefooter', 'addtemplate', 'rsstemplate', 'rsstitletemplate',
-                        'csstemplate', 'jstemplate', 'asearchtemplate', 'approval', 'scale', 'assessed', 'assesstimestart',
+                        'csstemplate', 'jstemplate', 'asearchtemplate', 'approval', 'manageapproved', 'scale', 'assessed', 'assesstimestart',
                         'assesstimefinish', 'defaultsort', 'defaultsortdir', 'editany', 'notification');
 
                     // This is for avoid a long repetitive list.
@@ -212,6 +212,7 @@ class mod_data_external extends external_api {
                             'jstemplate' => new external_value(PARAM_RAW, 'jstemplate field', VALUE_OPTIONAL),
                             'asearchtemplate' => new external_value(PARAM_RAW, 'asearchtemplate field', VALUE_OPTIONAL),
                             'approval' => new external_value(PARAM_BOOL, 'approval field', VALUE_OPTIONAL),
+                            'manageapproved' => new external_value(PARAM_BOOL, 'manageapproved field', VALUE_OPTIONAL),
                             'scale' => new external_value(PARAM_INT, 'scale field', VALUE_OPTIONAL),
                             'assessed' => new external_value(PARAM_INT, 'assessed field', VALUE_OPTIONAL),
                             'assesstimestart' => new external_value(PARAM_INT, 'assesstimestart field', VALUE_OPTIONAL),

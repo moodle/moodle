@@ -112,7 +112,7 @@ $groupmode = groups_get_activity_groupmode($cm);
 if (!has_capability('mod/data:manageentries', $context)) {
     if ($rid) {
         // User is editing an existing record
-        if (!data_isowner($rid) || data_in_readonly_period($data)) {
+        if (!data_user_can_manage_entry($record, $data, $context)) {
             print_error('noaccess','data');
         }
     } else if (!data_user_can_add_entry($data, $currentgroup, $groupmode, $context)) {
