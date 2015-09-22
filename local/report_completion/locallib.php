@@ -132,7 +132,7 @@ class report_completion {
      * Get users into temporary table
      */
     private static function populate_temporary_completion($tempcomptablename, $tempusertablename, $courseid=0, $showhistoric=false) {
-        global $DB;
+        global $DB, $USER;
 
         // Create a temporary table to hold the userids.
         $dbman = $DB->get_manager();
@@ -168,13 +168,13 @@ class report_completion {
         // Are we also adding in historic data?
         if ($showhistoric) {
         // Populate it.
-            $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
-                              SELECT it.userid, it.timeenrolled, it.timestarted, it.timecompleted, it.finalscore, it.id
+            $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, courseid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
+                              SELECT it.userid, it.courseid, it.timeenrolled, it.timestarted, it.timecompleted, it.finalscore, it.id
                               FROM {".$tempusertablename."} tut, {local_iomad_track} it
                               WHERE tut.userid = it.userid";
-        if (!empty($courseid)) {
-            $tempcreatesql .= " AND it.courseid = ".$courseid;
-        }
+            if (!empty($courseid)) {
+                $tempcreatesql .= " AND it.courseid = ".$courseid;
+            }
             $DB->execute($tempcreatesql);
         }
 
@@ -273,7 +273,7 @@ class report_completion {
      * Return array();
      **/
     public static function get_all_user_course_completion_data($searchinfo, $page=0, $perpage=0, $completiontype=0, $showhistoric=false) {
-        global $DB;
+        global $DB, $USER;
 
         $completiondata = new stdclass();
 
@@ -296,15 +296,14 @@ class report_completion {
         } else {
             $completionsql = "";
         }
-
         // Populate the temporary completion table.
-        list($compdbman, $comptable) = self::populate_temporary_completion($tempcomptablename, $temptablename, 0, $completionsql, $showhistoric);
+        list($compdbman, $comptable) = self::populate_temporary_completion($tempcomptablename, $temptablename, 0, $showhistoric);
                 
         // Get the user details.
-        $countsql = "SELECT CONCAT(co.id, u.id) AS id ";
+        $countsql = "SELECT cc.id AS id ";
         $selectsql = "
                 SELECT
-                CONCAT(co.id, u.id) AS id, 
+                DISTINCT cc.id, 
                 u.id AS uid,
                 u.firstname AS firstname,
                 u.lastname AS lastname,
@@ -314,12 +313,11 @@ class report_completion {
                 cc.timeenrolled AS timeenrolled,
                 cc.timestarted AS timestarted,
                 cc.timecompleted AS timecompleted,
-                d.name as department,
-                '0' as result ";
-        $fromsql = " FROM {user} u, {".$tempcomptablename."} cc, {department} d, {company_users} du, {".$temptablename."} tt, {course} co
+                cc.finalscore AS result,
+                d.name AS department";
+        $fromsql = " FROM {user} u, {".$tempcomptablename."} cc, {department} d, {company_users} du, {course} co
 
                 WHERE $searchinfo->sqlsearch
-                AND tt.userid = u.id
                 AND co.id = cc.courseid
                 AND u.id = cc.userid
                 AND du.userid = u.id
@@ -330,13 +328,14 @@ class report_completion {
         $users = $DB->get_records_sql($selectsql.$fromsql, $searchinfo->searchparams, $page * $perpage, $perpage);
         $countusers = $DB->get_records_sql($countsql.$fromsql, $searchinfo->searchparams);
         $numusers = count($countusers);
-        foreach ($users as $id => $user) {
+
+        /*foreach ($users as $id => $user) {
             $gradeitem = $DB->get_record('grade_items', array('itemtype' => 'course', 'courseid' => $user->courseid));
             $grade = $DB->get_record('grade_grades', array('itemid' => $gradeitem->id, 'userid' => $user->uid));
             if ($grade) {
                 $user->result = $grade->finalgrade;
             }
-        }
+        }*/
 
         $returnobj = new stdclass();
         $returnobj->users = $users;
