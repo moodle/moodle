@@ -4778,7 +4778,7 @@ class settings_navigation extends navigation_node {
      * Checks to see if there are child nodes available in the specific user's preference node.
      * If so, then they have the appropriate permissions view this user's preferences.
      *
-     * @since Moodle 3.0
+     * @since Moodle 2.9.3
      * @param int $userid The user's ID.
      * @return bool True if child nodes exist to view, otherwise false.
      */
