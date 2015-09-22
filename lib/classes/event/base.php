@@ -518,6 +518,45 @@ abstract class base implements \IteratorAggregate {
     }
 
     /**
+     * This is used when restoring course logs where it is required that we
+     * map the information in 'other' to it's new value in the new course.
+     *
+     * Does nothing in the base class except display a debugging message warning
+     * the user that the event does not contain the required functionality to
+     * map this information. For events that do not store any other information this
+     * won't be called, so no debugging message will be displayed.
+     *
+     * Example of usage:
+     *
+     * $othermapped = array();
+     * $othermapped['discussionid'] = array('db' => 'forum_discussions', 'restore' => 'forum_discussion');
+     * $othermapped['forumid'] = array('db' => 'forum', 'restore' => 'forum');
+     * return $othermapped;
+     *
+     * If an id can not be mapped during restore we set it to \core\event\base::NOT_MAPPED, example -
+     *
+     * $othermapped = array();
+     * $othermapped['someid'] = array('db' => 'some_table', 'restore' => \core\event\base::NOT_MAPPED);
+     * return $othermapped;
+     *
+     * Note - it isn't necessary to specify the 'db' and 'restore' values in this case, so you can also use -
+     *
+     * $othermapped = array();
+     * $othermapped['someid'] = \core\event\base::NOT_MAPPED;
+     * return $othermapped;
+     *
+     * The 'db' key refers to the database table and the 'restore' key refers to
+     * the name of the restore element the other value is associated with. In many
+     * cases these will be the same.
+     *
+     * @return array an array of other values and their corresponding mapping
+     */
+    public static function get_other_mapping() {
+        debugging('In order to restore course logs accurately the event must define the
+            function get_other_mapping().', DEBUG_DEVELOPER);
+    }
+
+    /**
      * Get static information about an event.
      * This is used in reports and is not for general use.
      *
