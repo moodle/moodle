@@ -253,4 +253,27 @@ class data_field_latlong extends data_field_base {
         return isset($value) && !($value == '');
     }
 
+    /**
+     * Validate values for this field.
+     * Both the Latitude and the Longitude fields need to be filled in.
+     *
+     * @since Moodle 2.9.2
+     * @param array $values The entered values for the lat. and long.
+     * @return string|bool Error message or false.
+     */
+    public function field_validation($values) {
+        $valuecount = 0;
+        // The lat long class has two values that need to be checked.
+        foreach ($values as $value) {
+            if (isset($value->value) && !($value->value == '')) {
+                $valuecount++;
+            }
+        }
+        // If we have nothing filled in or both filled in then everything is okay.
+        if ($valuecount == 0 || $valuecount == 2) {
+            return false;
+        }
+        // If we get here then only one field has been filled in.
+        return get_string('latlongboth', 'data');
+    }
 }
