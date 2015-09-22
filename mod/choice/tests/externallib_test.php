@@ -350,4 +350,69 @@ class mod_choice_externallib_testcase extends externallib_advanced_testcase {
         $this->assertNotEmpty($event->get_name());
 
     }
+
+    /**
+     * Test get_choices_by_courses
+     */
+    public function test_get_choices_by_courses() {
+        global $DB;
+        $this->resetAfterTest(true);
+        // As admin.
+        $this->setAdminUser();
+        $course1 = self::getDataGenerator()->create_course();
+        $choiceoptions1 = array(
+          'course' => $course1->id,
+          'name' => 'First IMSCP'
+        );
+        $choice1 = self::getDataGenerator()->create_module('choice', $choiceoptions1);
+        $course2 = self::getDataGenerator()->create_course();
+
+        $choiceoptions2 = array(
+          'course' => $course2->id,
+          'name' => 'Second IMSCP'
+        );
+        $choice2 = self::getDataGenerator()->create_module('choice', $choiceoptions2);
+        $student1 = $this->getDataGenerator()->create_user();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        // Enroll Student1 in Course1.
+        self::getDataGenerator()->enrol_user($student1->id,  $course1->id, $studentrole->id);
+
+        $this->setUser($student1);
+        $choices = mod_choice_external::get_choices_by_courses(array());
+        $choices = external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
+        $this->assertCount(1, $choices['choices']);
+        $this->assertEquals('First IMSCP', $choices['choices'][0]['name']);
+        // As Student you cannot see some IMSCP properties like 'section'.
+        $this->assertFalse(isset($choices['choices'][0]['section']));
+
+        // Student1 is not enrolled in this Course.
+        // The webservice will give a warning!
+        $choices = mod_choice_external::get_choices_by_courses(array($course2->id));
+        $choices = external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
+        $this->assertCount(0, $choices['choices']);
+        $this->assertEquals(1, $choices['warnings'][0]['warningcode']);
+
+        // Now as admin.
+        $this->setAdminUser();
+        // As Admin we can see this IMSCP.
+        $choices = mod_choice_external::get_choices_by_courses(array($course2->id));
+        $choices = external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
+        $this->assertCount(1, $choices['choices']);
+        $this->assertEquals('Second IMSCP', $choices['choices'][0]['name']);
+        // As an Admin you can see some IMSCP properties like 'section'.
+        $this->assertEquals(0, $choices['choices'][0]['section']);
+
+        // Now, prohibit capabilities.
+        $this->setUser($student1);
+        $contextcourse1 = context_course::instance($course1->id);
+        // Prohibit capability = mod:choice:choose on Course1 for students.
+        assign_capability('mod/choice:choose', CAP_PROHIBIT, $studentrole->id, $contextcourse1->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $choices = mod_choice_external::get_choices_by_courses(array($course1->id));
+        $choices = external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
+        $this->assertFalse(isset($choices['choices'][0]['timeopen']));
+    }
 }

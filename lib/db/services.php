@@ -1226,6 +1226,7 @@ $services = array(
             'mod_choice_get_choice_options',
             'mod_choice_submit_choice_response',
             'mod_choice_view_choice',
+            'mod_choice_get_choices_by_courses',
             'mod_imscp_view_imscp',
             ),
         'enabled' => 0,

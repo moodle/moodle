@@ -451,4 +451,137 @@ class mod_choice_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_choices_by_courses.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_choices_by_courses_parameters() {
+        return new external_function_parameters (
+            array(
+                'courseids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'course id'), 'Array of course ids', VALUE_DEFAULT, array()
+                ),
+            )
+        );
+    }
+
+    /**
+     * Returns a list of choices in a provided list of courses,
+     * if no list is provided all choices that the user can view will be returned.
+     *
+     * @param array $courseids the course ids
+     * @return array of choices details
+     * @since Moodle 3.0
+     */
+    public static function get_choices_by_courses($courseids = array()) {
+        global $CFG;
+
+        $returnedchoices = array();
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_choices_by_courses_parameters(), array('courseids' => $courseids));
+
+        if (empty($params['courseids'])) {
+            $params['courseids'] = array_keys(enrol_get_my_courses());
+        }
+
+        // Ensure there are courseids to loop through.
+        if (!empty($params['courseids'])) {
+
+            list($courses, $warnings) = external_util::validate_courses($params['courseids']);
+
+            // Get the choices in this course, this function checks users visibility permissions.
+            // We can avoid then additional validate_context calls.
+            $choices = get_all_instances_in_courses("choice", $courses);
+            foreach ($choices as $choice) {
+                $context = context_module::instance($choice->coursemodule);
+                // Entry to return.
+                $choicedetails = array();
+                // First, we return information that any user can see in the web interface.
+                $choicedetails['id'] = $choice->id;
+                $choicedetails['coursemodule'] = $choice->coursemodule;
+                $choicedetails['course'] = $choice->course;
+                $choicedetails['name']  = format_string($choice->name, true, array('context' => $context));;
+                // Format intro.
+                list($choicedetails['intro'], $choicedetails['introformat']) =
+                    external_format_text($choice->intro, $choice->introformat,
+                                            $context->id, 'mod_choice', 'intro', null);
+
+                if (has_capability('mod/choice:choose', $context)) {
+                    $choicedetails['publish']  = $choice->publish;
+                    $choicedetails['showresults']  = $choice->showresults;
+                    $choicedetails['showpreview']  = $choice->showpreview;
+                    $choicedetails['timeopen']  = $choice->timeopen;
+                    $choicedetails['timeclose']  = $choice->timeclose;
+                    $choicedetails['display']  = $choice->display;
+                    $choicedetails['allowupdate']  = $choice->allowupdate;
+                    $choicedetails['allowmultiple']  = $choice->allowmultiple;
+                    $choicedetails['limitanswers']  = $choice->limitanswers;
+                    $choicedetails['showunanswered']  = $choice->showunanswered;
+                    $choicedetails['includeinactive']  = $choice->includeinactive;
+                }
+
+                if (has_capability('moodle/course:manageactivities', $context)) {
+                    $choicedetails['timemodified']  = $choice->timemodified;
+                    $choicedetails['completionsubmit']  = $choice->completionsubmit;
+                    $choicedetails['section']  = $choice->section;
+                    $choicedetails['visible']  = $choice->visible;
+                    $choicedetails['groupmode']  = $choice->groupmode;
+                    $choicedetails['groupingid']  = $choice->groupingid;
+                }
+                $returnedchoices[] = $choicedetails;
+            }
+        }
+        $result = array();
+        $result['choices'] = $returnedchoices;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the mod_choice_get_choices_by_courses return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.0
+     */
+    public static function get_choices_by_courses_returns() {
+        return new external_single_structure(
+            array(
+                'choices' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'Choice instance id'),
+                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
+                            'course' => new external_value(PARAM_INT, 'Course id'),
+                            'name' => new external_value(PARAM_TEXT, 'Choice name'),
+                            'intro' => new external_value(PARAM_RAW, 'The choice intro'),
+                            'introformat' => new external_format_value('intro'),
+                            'publish' => new external_value(PARAM_BOOL, 'If choice is published', VALUE_OPTIONAL),
+                            'showresults' => new external_value(PARAM_INT, '0 never, 1 after answer, 2 after close, 3 always',
+                                                                VALUE_OPTIONAL),
+                            'display' => new external_value(PARAM_INT, 'Display mode (vertical, horizontal)', VALUE_OPTIONAL),
+                            'allowupdate' => new external_value(PARAM_BOOL, 'Allow update', VALUE_OPTIONAL),
+                            'allowmultiple' => new external_value(PARAM_BOOL, 'Allow multiple choices', VALUE_OPTIONAL),
+                            'showunanswered' => new external_value(PARAM_BOOL, 'Show users who not answered yet', VALUE_OPTIONAL),
+                            'includeinactive' => new external_value(PARAM_BOOL, 'Include inactive users', VALUE_OPTIONAL),
+                            'limitanswers' => new external_value(PARAM_BOOL, 'Limit unswers', VALUE_OPTIONAL),
+                            'timeopen' => new external_value(PARAM_INT, 'Date of opening validity', VALUE_OPTIONAL),
+                            'timeclose' => new external_value(PARAM_INT, 'Date of closing validity', VALUE_OPTIONAL),
+                            'showpreview' => new external_value(PARAM_BOOL, 'Show preview before timeopen', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
+                            'completionsubmit' => new external_value(PARAM_BOOL, 'Completion on user submission', VALUE_OPTIONAL),
+                            'section' => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),
+                            'visible' => new external_value(PARAM_BOOL, 'Visible', VALUE_OPTIONAL),
+                            'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
+                            'groupingid' => new external_value(PARAM_INT, 'Group id', VALUE_OPTIONAL),
+                        ), 'Choices'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
