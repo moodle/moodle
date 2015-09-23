@@ -137,6 +137,17 @@ Feature: Verify that all form fields values can be get and set
     And I press "Save my choice"
     And the field "one" matches value "1"
     And the field "two" matches value ""
+    # Check if field xpath set/match works.
+    And I am on site homepage
+    And I follow "Course 1"
+    And I navigate to "Edit settings" node in "Course administration"
+    And I set the field with xpath "//input[@id='id_idnumber']" to "Course id number"
+    And the field with xpath "//input[@name='idnumber']" matches value "Course id number"
+    And the field with xpath "//input[@name='idnumber']" does not match value ""
+    And I press "Save and display"
+    And I navigate to "Edit settings" node in "Course administration"
+    And the field "Course ID number" matches value "Course id number"
+
 
   Scenario: with JS disabled all form fields getters and setters works as expected
 
