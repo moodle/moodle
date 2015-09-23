@@ -249,7 +249,11 @@ class enrol_self_plugin extends enrol_plugin {
             $data = new stdClass();
             $data->header = $this->get_instance_name($instance);
             $data->info = $enrolstatus;
-            $form = new enrol_self_empty_form(null, $data);
+
+            // The can_self_enrol call returns a button to the login page if the user is a
+            // guest, setting the login url to the form if that is the case.
+            $url = isguestuser() ? get_login_url() : null;
+            $form = new enrol_self_empty_form($url, $data);
         }
 
         ob_start();
