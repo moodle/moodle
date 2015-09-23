@@ -899,6 +899,11 @@ function data_add_instance($data, $mform = null) {
         $data->assessed = 0;
     }
 
+    if (empty($data->ratingtime) || empty($data->assessed)) {
+        $data->assesstimestart  = 0;
+        $data->assesstimefinish = 0;
+    }
+
     $data->timemodified = time();
 
     $data->id = $DB->insert_record('data', $data);
