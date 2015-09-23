@@ -53,7 +53,10 @@ class core_user_external extends external_api {
                             'username' =>
                                 new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config.'),
                             'password' =>
-                                new external_value(PARAM_RAW, 'Plain text password consisting of any characters'),
+                                new external_value(PARAM_RAW, 'Plain text password consisting of any characters', VALUE_OPTIONAL),
+                            'createpassword' =>
+                                new external_value(PARAM_BOOL, 'True if password should be created and mailed to user.',
+                                    VALUE_OPTIONAL),
                             'firstname' =>
                                 new external_value(PARAM_NOTAGS, 'The first name(s) of the user'),
                             'lastname' =>
@@ -149,6 +152,7 @@ class core_user_external extends external_api {
         $transaction = $DB->start_delegated_transaction();
 
         $userids = array();
+        $createpassword = false;
         foreach ($params['users'] as $user) {
             // Make sure that the username doesn't already exist.
             if ($DB->record_exists('user', array('username' => $user['username'], 'mnethostid' => $CFG->mnet_localhost_id))) {
@@ -173,6 +177,11 @@ class core_user_external extends external_api {
                 throw new invalid_parameter_exception('Invalid theme: '.$user['theme']);
             }
 
+            // Make sure we have a password or have to create one.
+            if (empty($user['password']) && empty($user['createpassword'])) {
+                throw new invalid_parameter_exception('Invalid password: you must inform a password or set createpassword.');
+            }
+
             $user['confirmed'] = true;
             $user['mnethostid'] = $CFG->mnet_localhost_id;
 
@@ -185,8 +194,17 @@ class core_user_external extends external_api {
             }
             // End of user info validation.
 
+            $createpassword = !empty($user['createpassword']);
+            unset($user['createpassword']);
+            if ($createpassword) {
+                $user['password'] = '';
+                $updatepassword = false;
+            } else {
+                $updatepassword = true;
+            }
+
             // Create the user data now!
-            $user['id'] = user_create_user($user, true, false);
+            $user['id'] = user_create_user($user, $updatepassword, false);
 
             // Custom fields.
             if (!empty($user['customfields'])) {
@@ -196,6 +214,13 @@ class core_user_external extends external_api {
                     $user["profile_field_".$customfield['type']] = $customfield['value'];
                 }
                 profile_save_data((object) $user);
+            }
+
+            if ($createpassword) {
+                $userobject = (object)$user;
+                setnew_password_and_mail($userobject);
+                unset_user_preference('create_password', $userobject);
+                set_user_preference('auth_forcepasswordchange', 1, $userobject);
             }
 
             // Trigger event.
