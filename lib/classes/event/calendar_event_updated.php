@@ -110,4 +110,15 @@ class calendar_event_updated extends base {
             throw new \coding_exception('The \'timestart\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'event', 'restore' => 'event');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['repeatid'] = array('db' => 'event', 'restore' => 'event');
+
+        return $othermapped;
+    }
 }

@@ -165,5 +165,13 @@ class course_module_created extends base {
             throw new \coding_exception('The \'name\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'course_modules', 'restore' => 'course_module');
+    }
+
+    public static function get_other_mapping() {
+        return false;
+    }
 }
 

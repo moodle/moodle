@@ -136,4 +136,9 @@ class course_category_deleted extends base {
             throw new \coding_exception('The \'name\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Categories are not backed up, so no need to map them.
+        return false;
+    }
 }

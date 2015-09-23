@@ -94,4 +94,8 @@ class email_failed extends base {
             throw new \coding_exception('The \'errorinfo\' value must be set in other.');
         }
     }
+
+    public static function get_other_mapping() {
+        return false;
+    }
 }

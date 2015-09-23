@@ -104,4 +104,8 @@ class course_section_updated extends base {
             throw new \coding_exception('The \'sectionnum\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'course_sections', 'restore' => 'course_section');
+    }
 }

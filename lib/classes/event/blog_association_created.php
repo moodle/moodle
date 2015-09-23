@@ -125,4 +125,14 @@ class blog_association_created extends base {
             throw new \coding_exception('The \'subject\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Blogs are not included in backups, so no mapping required.
+        return false;
+    }
+
+    public static function get_other_mapping() {
+        // Blogs are not included in backups, so no mapping required.
+        return false;
+    }
 }

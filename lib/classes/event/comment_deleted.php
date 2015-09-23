@@ -100,4 +100,13 @@ abstract class comment_deleted extends base {
             throw new \coding_exception('The \'itemid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'comment', 'restore' => 'comment');
+    }
+
+    public static function get_other_mapping() {
+        // We cannot map fields that do not have a 1:1 mapping.
+        return false;
+    }
 }

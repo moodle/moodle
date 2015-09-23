@@ -142,4 +142,9 @@ class message_deleted extends base {
             throw new \coding_exception('The \'useridto\' value must be set in other.');
         }
     }
+
+    public static function get_other_mapping() {
+        // Messages are not backed up, so no need to map them.
+        return false;
+    }
 }

@@ -109,4 +109,9 @@ class cohort_member_removed extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Cohorts are not included in backups, so no mapping is needed.
+        return false;
+    }
 }

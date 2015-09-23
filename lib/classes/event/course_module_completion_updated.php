@@ -107,4 +107,9 @@ class course_module_completion_updated extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Sorry mapping info is not available for course modules completion records.
+        return false;
+    }
 }

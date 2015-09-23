@@ -86,4 +86,14 @@ class notes_viewed extends base {
         return array($this->courseid, 'notes', 'view', 'index.php?course=' . $this->courseid.'&amp;user=' . $this->relateduserid,
             'view notes');
     }
+
+    public static function get_objectid_mapping() {
+        // Notes are not backed up, so no need to map.
+        return false;
+    }
+
+    public static function get_other_mapping() {
+        // Notes are not backed up, so no need to map.
+        return false;
+    }
 }

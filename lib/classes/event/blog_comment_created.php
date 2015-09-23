@@ -52,4 +52,14 @@ class blog_comment_created extends comment_created {
     public function get_description() {
         return "The user with id '$this->userid' added the comment to the blog with id '{$this->other['itemid']}'.";
     }
+
+    public static function get_objectid_mapping() {
+        // Blogs are not included in backups, so no mapping required.
+        return false;
+    }
+
+    public static function get_other_mapping() {
+        // Blogs are not included in backups, so no mapping required.
+        return false;
+    }
 }

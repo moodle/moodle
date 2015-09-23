@@ -94,4 +94,8 @@ class badge_awarded extends base {
             throw new \coding_exception('The \'objectid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'badge', 'restore' => 'badge');
+    }
 }

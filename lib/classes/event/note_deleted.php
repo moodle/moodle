@@ -96,4 +96,14 @@ class note_deleted extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Notes are not backed up, so no need to map.
+        return false;
+    }
+
+    public static function get_other_mapping() {
+        // Notes are not backed up, so no need to map.
+        return false;
+    }
 }

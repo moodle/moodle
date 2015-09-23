@@ -90,4 +90,8 @@ class group_updated extends base {
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'groups';
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'groups', 'restore' => 'group');
+    }
 }

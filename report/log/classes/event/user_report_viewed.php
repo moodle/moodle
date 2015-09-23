@@ -105,4 +105,5 @@ class user_report_viewed extends \core\event\base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
 }

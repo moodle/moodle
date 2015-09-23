@@ -106,4 +106,14 @@ class blog_entries_viewed extends base {
         $url = new \moodle_url('index.php', $params);
         return array (SITEID, 'blog', 'view', $url->out(), 'view blog entry');
     }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['userid'] = array('db' => 'user', 'restore' => 'user');
+        $othermapped['modid'] = array('db' => 'course_modules', 'restore' => 'course_module');
+        $othermapped['groupid'] = array('db' => 'groups', 'restore' => 'group');
+        $othermapped['courseid'] = array('db' => 'course', 'restore' => 'course');
+
+        return $othermapped;
+    }
 }

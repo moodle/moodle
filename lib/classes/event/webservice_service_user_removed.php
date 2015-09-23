@@ -98,4 +98,10 @@ class webservice_service_user_removed extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Webservices are not included in backups.
+        return false;
+    }
+
 }

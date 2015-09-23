@@ -95,4 +95,14 @@ class message_viewed extends base {
             throw new \coding_exception('The \'messageid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Messages are not backed up, so no need to map them.
+        return false;
+    }
+
+    public static function get_other_mapping() {
+        // Messages are not backed up, so no need to map them.
+        return false;
+    }
 }

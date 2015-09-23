@@ -124,4 +124,13 @@ class user_enrolment_deleted extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // User enrolments table is not mappable.
+        return false;
+    }
+
+    public static function get_other_mapping() {
+        return false;
+    }
 }

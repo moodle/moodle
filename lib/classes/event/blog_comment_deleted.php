@@ -52,4 +52,14 @@ class blog_comment_deleted extends comment_deleted {
     public function get_description() {
         return "The user with id '$this->userid' deleted the comment for the blog with id '{$this->other['itemid']}'.";
     }
+
+    public static function get_objectid_mapping() {
+        // Blogs are not included in backups, so no mapping required.
+        return false;
+    }
+
+    public static function get_other_mapping() {
+        // Blogs are not included in backups, so no mapping required.
+        return false;
+    }
 }
