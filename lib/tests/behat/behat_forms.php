@@ -199,9 +199,34 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Checks, the field matches the value. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
+     * Checks, the field does not match the value. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
      *
-     * @Then /^the field with xpath "(?P<fieldxpath_string>(?:[^"]|\\")*)" matches value "(?P<field_value_string>(?:[^"]|\\")*)"$/
+     * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" does not match value "(?P<field_value_string>(?:[^"]|\\")*)"$/
+     * @throws ExpectationException
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field
+     * @param string $value
+     * @return void
+     */
+    public function the_field_does_not_match_value($field, $value) {
+
+        // Get the field.
+        $formfield = behat_field_manager::get_form_field_from_label($field, $this);
+
+        // Checks if the provided value matches the current field value.
+        if ($formfield->matches($value)) {
+            throw new ExpectationException(
+                'The \'' . $field . '\' value matches \'' . $value . '\' and it should not match it' ,
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Checks, the field matches the value.
+     *
+     * @Then /^the field with xpath "(?P<xpath_string>(?:[^"]|\\")*)" matches value "(?P<field_value_string>(?:[^"]|\\")*)"$/
+     * @throws ExpectationException
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $fieldxpath
      * @param string $value
@@ -224,25 +249,25 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Checks, the field does not match the value. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
+     * Checks, the field does not match the value.
      *
-     * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" does not match value "(?P<field_value_string>(?:[^"]|\\")*)"$/
+     * @Then /^the field with xpath "(?P<xpath_string>(?:[^"]|\\")*)" does not match value "(?P<field_value_string>(?:[^"]|\\")*)"$/
      * @throws ExpectationException
      * @throws ElementNotFoundException Thrown by behat_base::find
-     * @param string $field
+     * @param string $fieldxpath
      * @param string $value
      * @return void
      */
-    public function the_field_does_not_match_value($field, $value) {
+    public function the_field_with_xpath_does_not_match_value($fieldxpath, $value) {
 
         // Get the field.
-        $formfield = behat_field_manager::get_form_field_from_label($field, $this);
+        $fieldnode = $this->find('xpath', $fieldxpath);
+        $formfield = behat_field_manager::get_form_field($fieldnode, $this->getSession());
 
         // Checks if the provided value matches the current field value.
         if ($formfield->matches($value)) {
-            $fieldvalue = $formfield->get_value();
             throw new ExpectationException(
-                'The \'' . $field . '\' value matches \'' . $value . '\' and it should not match it' ,
+                'The \'' . $fieldxpath . '\' value matches \'' . $value . '\' and it should not match it' ,
                 $this->getSession()
             );
         }
