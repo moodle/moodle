@@ -147,18 +147,18 @@ class mod_scorm_external extends external_api {
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
-        // Validate the user obtaining the context, it will fail if the user doesn't exists or have been deleted.
-        context_user::instance($params['userid']);
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
 
         // Extra checks so only users with permissions can view other users attempts.
-        if ($USER->id != $params['userid']) {
+        if ($USER->id != $user->id) {
             require_capability('mod/scorm:viewreport', $context);
         }
 
         // If the SCORM is not open this function will throw exceptions.
         scorm_require_available($scorm);
 
-        $attemptscount = scorm_get_attempt_count($params['userid'], $scorm, false, $params['ignoremissingcompletion']);
+        $attemptscount = scorm_get_attempt_count($user->id, $scorm, false, $params['ignoremissingcompletion']);
 
         $result = array();
         $result['attemptscount'] = $attemptscount;
@@ -536,21 +536,21 @@ class mod_scorm_external extends external_api {
         $context = context_module::instance($cm->id);
         self::validate_context($context);
 
-        // Validate the user obtaining the context, it will fail if the user doesn't exists or have been deleted.
-        context_user::instance($params['userid']);
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
 
         // Extra checks so only users with permissions can view other users attempts.
-        if ($USER->id != $params['userid']) {
+        if ($USER->id != $user->id) {
             require_capability('mod/scorm:viewreport', $context);
         }
 
         scorm_require_available($scorm, true, $context);
 
         if (empty($params['attempt'])) {
-            $params['attempt'] = scorm_get_last_attempt($scorm->id, $params['userid']);
+            $params['attempt'] = scorm_get_last_attempt($scorm->id, $user->id);
         }
 
-        if ($scormtracks = scorm_get_tracks($sco->id, $params['userid'], $params['attempt'])) {
+        if ($scormtracks = scorm_get_tracks($sco->id, $user->id, $params['attempt'])) {
             foreach ($scormtracks as $element => $value) {
                 $tracks[] = array(
                     'element' => $element,

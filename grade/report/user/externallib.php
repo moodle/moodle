@@ -92,6 +92,7 @@ class gradereport_user_external extends external_api {
             require_capability('moodle/grade:viewall', $context);
         } else {
             $user = core_user::get_user($userid, '*', MUST_EXIST);
+            core_user::require_active_user($user);
         }
 
         $access = false;
@@ -301,13 +302,7 @@ class gradereport_user_external extends external_api {
             $userid = $USER->id;
         } else {
             $user = core_user::get_user($userid, '*', MUST_EXIST);
-            if ($user->deleted) {
-                throw new moodle_exception('userdeleted');
-            }
-            if (isguestuser($user)) {
-                // Can not view profile of guest - thre is nothing to see there.
-                throw new moodle_exception('invaliduserid');
-            }
+            core_user::require_active_user($user);
         }
 
         $access = false;

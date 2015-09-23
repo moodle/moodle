@@ -1224,7 +1224,8 @@ class core_group_external extends external_api {
 
         // Validate course and user. get_course throws an exception if the course does not exists.
         $course = get_course($courseid);
-        $user = core_user::get_user($userid, 'id', MUST_EXIST);
+        $user = core_user::get_user($userid, '*', MUST_EXIST);
+        core_user::require_active_user($user);
 
         // Security checks.
         $context = context_course::instance($course->id);
@@ -1348,13 +1349,8 @@ class core_group_external extends external_api {
             $userid = $USER->id;
         }
 
-        $user = core_user::get_user($userid, 'id, deleted', MUST_EXIST);
-        if ($user->deleted) {
-            throw new moodle_exception('userdeleted');
-        }
-        if (isguestuser($user)) {
-            throw new moodle_exception('invaliduserid');
-        }
+        $user = core_user::get_user($userid, '*', MUST_EXIST);
+        core_user::require_active_user($user);
 
          // Check if we have permissions for retrieve the information.
         if ($user->id != $USER->id) {

@@ -885,7 +885,8 @@ class core_message_external extends external_api {
             throw new moodle_exception('disabled', 'message');
         }
 
-        $user = core_user::get_user($userid, 'id', MUST_EXIST);
+        $user = core_user::get_user($userid, '*', MUST_EXIST);
+        core_user::require_active_user($user);
 
         // Check if we have permissions for retrieve the information.
         if ($userid != $USER->id and !has_capability('moodle/site:readallmessages', $context)) {
