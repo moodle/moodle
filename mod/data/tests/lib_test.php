@@ -270,17 +270,19 @@ class mod_data_lib_testcase extends advanced_testcase {
         $roleid = $testdata['roleid'];
         $context = $testdata['context'];
         $record = $testdata['record'];
-        $data = new stdClass();
-        // Causes readonly mode to be enable.
-        $now = time();
-        $data->timeviewfrom = $now;
-        $data->timeviewto = $now;
 
         $this->setUser($user);
 
         // Need to make sure they don't have this capability in order to fall back to
         // the other checks.
         assign_capability('mod/data:manageentries', CAP_PROHIBIT, $roleid, $context);
+
+        // Causes readonly mode to be enabled.
+        $data = new stdClass();
+        $now = time();
+        // Add a small margin around the periods to prevent errors with slow tests.
+        $data->timeviewfrom = $now - 1;
+        $data->timeviewto = $now + 5;
 
         $this->assertFalse(data_user_can_manage_entry($record, $data, $context),
             'data_user_can_manage_entry() returns false if the data is read only');
