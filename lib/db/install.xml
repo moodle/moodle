@@ -565,6 +565,7 @@
       <INDEXES>
         <INDEX NAME="useridfrom" UNIQUE="false" FIELDS="useridfrom"/>
         <INDEX NAME="useridto" UNIQUE="false" FIELDS="useridto"/>
+        <INDEX NAME="notificationtimeread" UNIQUE="false" FIELDS="notification, timeread"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="message_contacts" COMMENT="Maintains lists of relationships between users">
