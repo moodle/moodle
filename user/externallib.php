@@ -179,7 +179,7 @@ class core_user_external extends external_api {
 
             // Make sure we have a password or have to create one.
             if (empty($user['password']) && empty($user['createpassword'])) {
-                throw new invalid_parameter_exception('Invalid password: you must inform a password or set createpassword.');
+                throw new invalid_parameter_exception('Invalid password: you must provide a password, or set createpassword.');
             }
 
             $user['confirmed'] = true;
