@@ -742,6 +742,13 @@ $functions = array(
         'type'        => 'write'
     ),
 
+    'core_course_get_course_module' => array(
+        'classname'   => 'core_course_external',
+        'methodname'  => 'get_course_module',
+        'classpath'   => 'course/externallib.php',
+        'description' => 'Return information about a course module',
+        'type'        => 'read'
+    ),
 
     // === course category related functions ===
 
@@ -1192,6 +1199,7 @@ $services = array(
             'mod_forum_view_forum',
             'core_course_view_course',
             'core_course_search_courses',
+            'core_course_get_course_module',
             'core_completion_get_activities_completion_status',
             'core_notes_get_course_notes',
             'core_completion_get_course_completion_status',
