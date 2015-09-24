@@ -511,7 +511,7 @@ abstract class base implements \IteratorAggregate {
      * @return string the name of the restore mapping the objectid links to
      */
     public static function get_objectid_mapping() {
-        debugging('In order to restore course logs accurately the event must define the
+        debugging('In order to restore course logs accurately the event "' . get_called_class() . '" must define the
             function get_objectid_mapping().', DEBUG_DEVELOPER);
 
         return false;
@@ -552,7 +552,7 @@ abstract class base implements \IteratorAggregate {
      * @return array an array of other values and their corresponding mapping
      */
     public static function get_other_mapping() {
-        debugging('In order to restore course logs accurately the event must define the
+        debugging('In order to restore course logs accurately the event "' . get_called_class() . '" must define the
             function get_other_mapping().', DEBUG_DEVELOPER);
     }
 
