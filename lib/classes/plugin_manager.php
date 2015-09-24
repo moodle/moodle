@@ -86,10 +86,10 @@ class core_plugin_manager {
      * @return core_plugin_manager the singleton instance
      */
     public static function instance() {
-        if (is_null(self::$singletoninstance)) {
-            self::$singletoninstance = new self();
+        if (is_null(static::$singletoninstance)) {
+            static::$singletoninstance = new static();
         }
-        return self::$singletoninstance;
+        return static::$singletoninstance;
     }
 
     /**
@@ -98,15 +98,15 @@ class core_plugin_manager {
      */
     public static function reset_caches($phpunitreset = false) {
         if ($phpunitreset) {
-            self::$singletoninstance = null;
+            static::$singletoninstance = null;
         } else {
-            if (self::$singletoninstance) {
-                self::$singletoninstance->pluginsinfo = null;
-                self::$singletoninstance->subpluginsinfo = null;
-                self::$singletoninstance->installedplugins = null;
-                self::$singletoninstance->enabledplugins = null;
-                self::$singletoninstance->presentplugins = null;
-                self::$singletoninstance->plugintypes = null;
+            if (static::$singletoninstance) {
+                static::$singletoninstance->pluginsinfo = null;
+                static::$singletoninstance->subpluginsinfo = null;
+                static::$singletoninstance->installedplugins = null;
+                static::$singletoninstance->enabledplugins = null;
+                static::$singletoninstance->presentplugins = null;
+                static::$singletoninstance->plugintypes = null;
             }
         }
         $cache = cache::make('core', 'plugin_manager');
@@ -238,7 +238,7 @@ class core_plugin_manager {
 
         $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $plugintype => $fulldir) {
-            $plugininfoclass = self::resolve_plugininfo_class($plugintype);
+            $plugininfoclass = static::resolve_plugininfo_class($plugintype);
             if (class_exists($plugininfoclass)) {
                 $enabled = $plugininfoclass::get_enabled_plugins();
                 if (!is_array($enabled)) {
@@ -374,13 +374,13 @@ class core_plugin_manager {
 
         if (!isset($types[$type])) {
             // Orphaned subplugins!
-            $plugintypeclass = self::resolve_plugininfo_class($type);
+            $plugintypeclass = static::resolve_plugininfo_class($type);
             $this->pluginsinfo[$type] = $plugintypeclass::get_plugins($type, null, $plugintypeclass);
             return $this->pluginsinfo[$type];
         }
 
         /** @var \core\plugininfo\base $plugintypeclass */
-        $plugintypeclass = self::resolve_plugininfo_class($type);
+        $plugintypeclass = static::resolve_plugininfo_class($type);
         $plugins = $plugintypeclass::get_plugins($type, $types[$type], $plugintypeclass);
         $this->pluginsinfo[$type] = $plugins;
 
@@ -1297,7 +1297,7 @@ class core_plugin_manager {
             return false;
         }
 
-        if ($pluginfo->get_status() === self::PLUGIN_STATUS_NEW) {
+        if ($pluginfo->get_status() === static::PLUGIN_STATUS_NEW) {
             // The plugin is not installed. It should be either installed or removed from the disk.
             // Relying on this temporary state may be tricky.
             return false;

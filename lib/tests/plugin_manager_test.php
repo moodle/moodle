@@ -25,21 +25,31 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot.'/lib/tests/fixtures/testable_plugin_manager.php');
+
 /**
  * Tests of the basic API of the plugin manager.
  */
 class core_plugin_manager_testcase extends advanced_testcase {
 
     public function test_instance() {
-        $pluginman = core_plugin_manager::instance();
-        $this->assertInstanceOf('core_plugin_manager', $pluginman);
+        $pluginman1 = core_plugin_manager::instance();
+        $this->assertInstanceOf('core_plugin_manager', $pluginman1);
         $pluginman2 = core_plugin_manager::instance();
-        $this->assertSame($pluginman, $pluginman2);
+        $this->assertSame($pluginman1, $pluginman2);
+        $pluginman3 = testable_core_plugin_manager::instance();
+        $this->assertInstanceOf('core_plugin_manager', $pluginman3);
+        $this->assertInstanceOf('testable_core_plugin_manager', $pluginman3);
+        $pluginman4 = testable_core_plugin_manager::instance();
+        $this->assertSame($pluginman3, $pluginman4);
+        $this->assertNotSame($pluginman1, $pluginman3);
     }
 
     public function test_reset_caches() {
         // Make sure there are no warnings or errors.
         core_plugin_manager::reset_caches();
+        testable_core_plugin_manager::reset_caches();
     }
 
     public function test_get_plugin_types() {
@@ -95,12 +105,23 @@ class core_plugin_manager_testcase extends advanced_testcase {
     }
 
     public function test_get_plugins() {
-        $plugininfos = core_plugin_manager::instance()->get_plugins();
-        foreach ($plugininfos as $type => $infos) {
+        $plugininfos1 = core_plugin_manager::instance()->get_plugins();
+        foreach ($plugininfos1 as $type => $infos) {
             foreach ($infos as $name => $info) {
                 $this->assertInstanceOf('\core\plugininfo\base', $info);
             }
         }
+
+        // The testable variant of the manager holds its own tree of the
+        // plugininfo objects.
+        $plugininfos2 = testable_core_plugin_manager::instance()->get_plugins();
+        $this->assertNotSame($plugininfos1['mod']['forum'], $plugininfos2['mod']['forum']);
+
+        // Singletons of each manager class share the same tree.
+        $plugininfos3 = core_plugin_manager::instance()->get_plugins();
+        $this->assertSame($plugininfos1['mod']['forum'], $plugininfos3['mod']['forum']);
+        $plugininfos4 = testable_core_plugin_manager::instance()->get_plugins();
+        $this->assertSame($plugininfos2['mod']['forum'], $plugininfos4['mod']['forum']);
     }
 
     public function test_get_plugins_of_type() {
