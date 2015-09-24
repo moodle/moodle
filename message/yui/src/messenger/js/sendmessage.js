@@ -60,7 +60,7 @@ Y.namespace('M.core_message.messenger').sendMessage = Y.extend(SENDMSGDIALOG, M.
 
     _bb: null,
     _sendLock: false,
-
+    _hide: null,
     /**
      * Initializer.
      *
@@ -71,10 +71,11 @@ Y.namespace('M.core_message.messenger').sendMessage = Y.extend(SENDMSGDIALOG, M.
             content;
 
         this._bb = this.get('boundingBox');
+        this._hide = this.hide;
 
         // Prepare the content area.
         tpl = Y.Handlebars.compile(
-            '<form action="#">' +
+            '<form action="#" id="messageform">' +
                 '<div class="{{CSSR.INPUTAREA}}">' +
                     '<label class="{{CSSR.ACCESSHIDE}}" for="{{id}}">{{labelStr}}</label>' +
                     '<textarea class="{{CSSR.INPUT}}" id="{{id}}"></textarea>' +
@@ -131,6 +132,11 @@ Y.namespace('M.core_message.messenger').sendMessage = Y.extend(SENDMSGDIALOG, M.
 
         // Set the content as empty and lock send.
         this._bb.one(SELECTORS.SENDMSGDIALOG.INPUT).set('value', '');
+
+        // Register form with formchangechecker
+        Y.use('moodle-core-formchangechecker', function() {
+            M.core_formchangechecker.init({formid: "messageform"});
+        });
     },
 
     /**
@@ -201,6 +207,33 @@ Y.namespace('M.core_message.messenger').sendMessage = Y.extend(SENDMSGDIALOG, M.
                 }
             },
             context: this
+        });
+    },
+
+    /**
+     * Override the default hide function.
+     * @method hide
+     */
+    hide: function() {
+        var self = this;
+
+        if (!M.core_formchangechecker.get_form_dirty_state()) {
+            return SENDMSGDIALOG.superclass.hide.call(this, arguments);
+        }
+
+        Y.use('moodle-core-notification-confirm', function() {
+            var confirm = new M.core.confirm({
+                title : M.util.get_string('confirm', 'moodle'),
+                question : M.util.get_string('changesmadereallygoaway', 'moodle'),
+                yesLabel : M.util.get_string('confirm', 'moodle'),
+                noLabel : M.util.get_string('cancel', 'moodle')
+            });
+            confirm.on('complete-yes', function() {
+                M.core_formchangechecker.reset_form_dirty_state();
+                confirm.hide();
+                confirm.destroy();
+                return SENDMSGDIALOG.superclass.hide.call(this, arguments);
+            }, self);
         });
     },
 
