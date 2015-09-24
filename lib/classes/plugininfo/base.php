@@ -61,8 +61,9 @@ abstract class base {
     public $instances;
     /** @var int order of the plugin among other plugins of the same type - not supported yet */
     public $sortorder;
+
     /** @var array|null array of {@link \core\update\info} for this plugin */
-    public $availableupdates;
+    protected $availableupdates;
 
     /**
      * Finds all enabled plugins, the result may include missing plugins.
@@ -394,18 +395,25 @@ abstract class base {
     }
 
     /**
-     * Populates the property {@link $availableupdates} with the information provided by
-     * available update checker
+     * Populates the property {@link $availableupdates}
      *
-     * @param \core\update\checker $provider the class providing the available update info
+     * This is supposed to be called by {@link self::available_updates()} only
+     * to lazy load the data once they are first requested.
      */
-    public function check_available_updates(\core\update\checker $provider) {
+    protected function load_available_updates() {
         global $CFG;
+
+        $provider = \core\update\checker::instance();
+
+        if (!$provider->enabled() or during_initial_install()) {
+            $this->availableupdates = array();
+            return;
+        }
 
         if (isset($CFG->updateminmaturity)) {
             $minmaturity = $CFG->updateminmaturity;
         } else {
-            // This can happen during the very first upgrade to 2.3 .
+            // This can happen during the very first upgrade to 2.3.
             $minmaturity = MATURITY_STABLE;
         }
 
@@ -423,6 +431,11 @@ abstract class base {
      * @return array|null
      */
     public function available_updates() {
+
+        if ($this->availableupdates === null) {
+            // Lazy load the information about available updates.
+            $this->load_available_updates();
+        }
 
         if (empty($this->availableupdates) or !is_array($this->availableupdates)) {
             return null;

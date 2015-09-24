@@ -1202,11 +1202,10 @@ class core_admin_renderer extends plugin_renderer_base {
             $updateable = array();
             foreach ($plugininfo as $plugintype => $pluginnames) {
                 foreach ($pluginnames as $pluginname => $pluginfo) {
-                    if (!empty($pluginfo->availableupdates)) {
-                        foreach ($pluginfo->availableupdates as $pluginavailableupdate) {
-                            if ($pluginavailableupdate->version > $pluginfo->versiondisk) {
-                                $updateable[$plugintype][$pluginname] = $pluginfo;
-                            }
+                    $pluginavailableupdates = $pluginfo->available_updates();
+                    if (!empty($pluginavailableupdates)) {
+                        foreach ($pluginavailableupdates as $pluginavailableupdate) {
+                            $updateable[$plugintype][$pluginname] = $pluginfo;
                         }
                     }
                 }

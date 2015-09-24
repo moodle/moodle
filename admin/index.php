@@ -597,14 +597,13 @@ if ($updateschecker->enabled()) {
     $pluginman = core_plugin_manager::instance();
     foreach ($pluginman->get_plugins() as $plugintype => $plugintypeinstances) {
         foreach ($plugintypeinstances as $pluginname => $plugininfo) {
-            if (!empty($plugininfo->availableupdates)) {
-                foreach ($plugininfo->availableupdates as $pluginavailableupdate) {
-                    if ($pluginavailableupdate->version > $plugininfo->versiondisk) {
-                        if (!isset($availableupdates[$plugintype.'_'.$pluginname])) {
-                            $availableupdates[$plugintype.'_'.$pluginname] = array();
-                        }
-                        $availableupdates[$plugintype.'_'.$pluginname][] = $pluginavailableupdate;
+            $pluginavailableupdates = $plugininfo->available_updates();
+            if (!empty($pluginavailableupdates)) {
+                foreach ($pluginavailableupdates as $pluginavailableupdate) {
+                    if (!isset($availableupdates[$plugintype.'_'.$pluginname])) {
+                        $availableupdates[$plugintype.'_'.$pluginname] = array();
                     }
+                    $availableupdates[$plugintype.'_'.$pluginname][] = $pluginavailableupdate;
                 }
             }
         }

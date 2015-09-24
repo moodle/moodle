@@ -384,14 +384,6 @@ class core_plugin_manager {
         $plugins = $plugintypeclass::get_plugins($type, $types[$type], $plugintypeclass);
         $this->pluginsinfo[$type] = $plugins;
 
-        if (empty($CFG->disableupdatenotifications) and !during_initial_install()) {
-            // Append the information about available updates provided by {@link \core\update\checker()}.
-            $provider = \core\update\checker::instance();
-            foreach ($plugins as $plugininfoholder) {
-                $plugininfoholder->check_available_updates($provider);
-            }
-        }
-
         return $this->pluginsinfo[$type];
     }
 
