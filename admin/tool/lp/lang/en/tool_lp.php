@@ -60,6 +60,7 @@ $string['errorplanstatus'] = 'Learning plans \'{$a}\' status unknown';
 $string['hidden'] = 'Hidden';
 $string['hiddenhint'] = '(hidden)';
 $string['idnumber'] = 'Id number';
+$string['invalidpersistent'] = 'Invalid persistent';
 $string['itemstoadd'] = 'Items to add';
 $string['learningplans'] = 'Learning plans';
 $string['linkcompetencies'] = 'Link competencies';

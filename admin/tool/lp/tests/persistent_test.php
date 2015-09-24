@@ -1,0 +1,384 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Persistent class tests.
+ *
+ * @package    tool_lp
+ * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+global $CFG;
+
+/**
+ * Persistent testcase.
+ *
+ * @package    tool_lp
+ * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class tool_lp_external_testcase extends advanced_testcase {
+
+    public function setUp() {
+        $this->resetAfterTest();
+    }
+
+    public function test_properties_definition() {
+        $expected = array(
+            'shortname' => array(
+                'type' => PARAM_TEXT,
+                'default' => ''
+            ),
+            'idnumber' => array(
+                'type' => PARAM_TEXT,
+            ),
+            'description' => array(
+                'type' => PARAM_TEXT,
+                'default' => ''
+            ),
+            'descriptionformat' => array(
+                'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
+                'type' => PARAM_INT,
+                'default' => FORMAT_HTML
+            ),
+            'parentid' => array(
+                'type' => PARAM_INT,
+                'default' => 0
+            ),
+            'visible' => array(
+                'type' => PARAM_BOOL,
+                'default' => true
+            ),
+            'path' => array(
+                'type' => PARAM_RAW,
+                'default' => ''
+            ),
+            'sortorder' => array(
+                'type' => PARAM_INT,
+                'message' => new lang_string('invalidrequest', 'error')
+            ),
+            'competencyframeworkid' => array(
+                'type' => PARAM_INT,
+                'default' => 0
+            ),
+            'id' => array(
+                'default' => 0,
+                'type' => PARAM_INT,
+            ),
+            'timecreated' => array(
+                'default' => 0,
+                'type' => PARAM_INT,
+            ),
+            'timemodified' => array(
+                'default' => 0,
+                'type' => PARAM_INT
+            ),
+            'usermodified' => array(
+                'default' => 0,
+                'type' => PARAM_INT
+            )
+        );
+        $this->assertEquals($expected, tool_lp_example_persistent::properties_definition());
+    }
+
+    public function test_to_record() {
+        $p = new tool_lp_example_persistent();
+        $expected = (object) array(
+            'shortname' => '',
+            'idnumber' => null,
+            'description' => '',
+            'descriptionformat' => FORMAT_HTML,
+            'parentid' => 0,
+            'visible' => true,
+            'path' => '',
+            'sortorder' => null,
+            'competencyframeworkid' => 0,
+            'id' => 0,
+            'timecreated' => 0,
+            'timemodified' => 0,
+            'usermodified' => 0,
+        );
+        $this->assertEquals($expected, $p->to_record());
+    }
+
+    public function test_from_record() {
+        $p = new tool_lp_example_persistent();
+        $data = (object) array(
+            'shortname' => 'ddd',
+            'idnumber' => 'abc',
+            'description' => 'xyz',
+            'descriptionformat' => FORMAT_PLAIN,
+            'parentid' => 999,
+            'visible' => false,
+            'path' => '/a/b/c',
+            'sortorder' => 12,
+            'competencyframeworkid' => 5,
+            'id' => 1,
+            'timecreated' => 2,
+            'timemodified' => 3,
+            'usermodified' => 4,
+        );
+        $p->from_record($data);
+        $this->assertEquals($data, $p->to_record());
+    }
+
+    public function test_from_record_invalid_param() {
+        $p = new tool_lp_example_persistent();
+        $data = (object) array(
+            'invalidparam' => 'abc'
+        );
+        $this->setExpectedException('coding_exception');
+        $p->from_record($data);
+    }
+
+    public function test_validation_required() {
+        $data = (object) array(
+            'idnumber' => 'abc'
+        );
+        $p = new tool_lp_example_persistent(0, $data);
+        $expected = array(
+            'sortorder' => new lang_string('requiredelement', 'form'),
+        );
+        $this->assertFalse($p->is_valid());
+        $this->assertEquals($expected, $p->get_errors());
+    }
+
+    public function test_validation_custom() {
+        $data = (object) array(
+            'idnumber' => 'abc',
+            'sortorder' => 10,
+        );
+        $p = new tool_lp_example_persistent(0, $data);
+        $expected = array(
+            'sortorder' => new lang_string('invalidkey', 'error'),
+        );
+        $this->assertFalse($p->is_valid());
+        $this->assertEquals($expected, $p->get_errors());
+    }
+
+    public function test_validation_custom_message() {
+        $data = (object) array(
+            'idnumber' => 'abc',
+            'sortorder' => 'abc',
+        );
+        $p = new tool_lp_example_persistent(0, $data);
+        $expected = array(
+            'sortorder' => new lang_string('invalidrequest', 'error'),
+        );
+        $this->assertFalse($p->is_valid());
+        $this->assertEquals($expected, $p->get_errors());
+    }
+
+    public function test_validation_choices() {
+        $data = (object) array(
+            'idnumber' => 'abc',
+            'sortorder' => 0,
+            'descriptionformat' => -100
+        );
+        $p = new tool_lp_example_persistent(0, $data);
+        $expected = array(
+            'descriptionformat' => new lang_string('invaliddata', 'error'),
+        );
+        $this->assertFalse($p->is_valid());
+        $this->assertEquals($expected, $p->get_errors());
+    }
+
+    public function test_validation_type() {
+        $data = (object) array(
+            'idnumber' => 'abc',
+            'sortorder' => 0,
+            'visible' => 'NaN'
+        );
+        $p = new tool_lp_example_persistent(0, $data);
+        $expected = array(
+            'visible' => new lang_string('invaliddata', 'error'),
+        );
+        $this->assertFalse($p->is_valid());
+        $this->assertEquals($expected, $p->get_errors());
+    }
+
+    public function test_validate() {
+        $data = (object) array(
+            'idnumber' => 'abc',
+            'sortorder' => 0
+        );
+        $p = new tool_lp_example_persistent(0, $data);
+        $this->assertTrue($p->validate());
+        $this->assertTrue($p->is_valid());
+        $this->assertEquals(array(), $p->get_errors());
+        $p->set_descriptionformat(-100);
+
+        $expected = array(
+            'descriptionformat' => new lang_string('invaliddata', 'error'),
+        );
+        $this->assertEquals($expected, $p->validate());
+        $this->assertFalse($p->is_valid());
+        $this->assertEquals($expected, $p->get_errors());
+    }
+
+    public function test_create() {
+        global $DB;
+        $p = new tool_lp_example_persistent(0, array('sortorder' => 123, 'idnumber' => 'abc'));
+        $p->create();
+        $record = $DB->get_record(tool_lp_example_persistent::TABLE, array('id' => $p->get_id()), '*', MUST_EXIST);
+        $expected = $p->to_record();
+        $this->assertEquals($expected->sortorder, $record->sortorder);
+        $this->assertEquals($expected->idnumber, $record->idnumber);
+        $this->assertEquals($expected->id, $record->id);
+        $this->assertTrue($p->is_valid()); // Should always be valid after a create.
+    }
+
+    public function test_update() {
+        global $DB;
+        $p = new tool_lp_example_persistent(0, array('sortorder' => 123, 'idnumber' => 'abc'));
+        $p->create();
+        $id = $p->get_id();
+        $p->set_sortorder(456);
+        $p->from_record((object) array('idnumber' => 'def'));
+        $p->update();
+
+        $expected = $p->to_record();
+        $record = $DB->get_record(tool_lp_example_persistent::TABLE, array('id' => $p->get_id()), '*', MUST_EXIST);
+        $this->assertEquals($id, $record->id);
+        $this->assertEquals(456, $record->sortorder);
+        $this->assertEquals('def', $record->idnumber);
+        $this->assertTrue($p->is_valid()); // Should always be valid after an update.
+    }
+
+    public function test_read() {
+        $p = new tool_lp_example_persistent(0, array('sortorder' => 123, 'idnumber' => 'abc'));
+        $p->create();
+
+        $p2 = new tool_lp_example_persistent($p->get_id());
+        $this->assertEquals($p, $p2);
+
+        $p3 = new tool_lp_example_persistent();
+        $p3->set_id($p->get_id());
+        $p3->read();
+        $this->assertEquals($p, $p3);
+    }
+
+    public function test_delete() {
+        global $DB;
+
+        $p = new tool_lp_example_persistent(0, array('sortorder' => 123, 'idnumber' => 'abc'));
+        $p->create();
+        $this->assertTrue($DB->record_exists_select(tool_lp_example_persistent::TABLE, 'id = ?', array($p->get_id())));
+
+        $p->delete();
+        $this->assertFalse($DB->record_exists_select(tool_lp_example_persistent::TABLE, 'id = ?', array($p->get_id())));
+    }
+
+    public function test_has_property() {
+        $this->assertFalse(tool_lp_example_persistent::has_property('unknown'));
+        $this->assertTrue(tool_lp_example_persistent::has_property('idnumber'));
+    }
+
+    public function test_custom_setter_getter() {
+        global $DB;
+
+        $path = array(1, 2, 3);
+        $json = json_encode($path);
+
+        $p = new tool_lp_example_persistent(0, array('sortorder' => 0, 'idnumber' => 'abc'));
+        $p->set_path($path);
+        $this->assertEquals($path, $p->get_path());
+        $this->assertEquals($json, $p->to_record()->path);
+
+        $p->create();
+        $record = $DB->get_record(tool_lp_example_persistent::TABLE, array('id' => $p->get_id()), 'id, path', MUST_EXIST);
+        $this->assertEquals($json, $record->path);
+    }
+
+}
+
+/**
+ * Example persistent class.
+ *
+ * @package    tool_lp
+ * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class tool_lp_example_persistent extends \tool_lp\persistent {
+
+    const TABLE = 'tool_lp_competency';
+
+    protected static function define_properties() {
+        return array(
+            'shortname' => array(
+                'type' => PARAM_TEXT,
+                'default' => ''
+            ),
+            'idnumber' => array(
+                'type' => PARAM_TEXT,
+            ),
+            'description' => array(
+                'type' => PARAM_TEXT,
+                'default' => ''
+            ),
+            'descriptionformat' => array(
+                'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
+                'type' => PARAM_INT,
+                'default' => FORMAT_HTML
+            ),
+            'parentid' => array(
+                'type' => PARAM_INT,
+                'default' => 0
+            ),
+            'visible' => array(
+                'type' => PARAM_BOOL,
+                'default' => 1
+            ),
+            'path' => array(
+                'type' => PARAM_RAW,
+                'default' => ''
+            ),
+            'sortorder' => array(
+                'type' => PARAM_INT,
+                'message' => new lang_string('invalidrequest', 'error')
+            ),
+            'competencyframeworkid' => array(
+                'type' => PARAM_INT,
+                'default' => 0
+            ),
+        );
+    }
+
+    public function get_path() {
+        $value = $this->get('path');
+        if (!empty($value)) {
+            $value = json_decode($value);
+        }
+        return $value;
+    }
+
+    public function set_path($value) {
+        if (!empty($value)) {
+            $value = json_encode($value);
+        }
+        $this->set('path', $value);
+    }
+
+    public function validate_sortorder($value) {
+        if ($value == 10) {
+            return new lang_string('invalidkey', 'error');
+        }
+        return true;
+    }
+
+}
