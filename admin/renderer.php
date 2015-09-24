@@ -202,7 +202,6 @@ class core_admin_renderer extends plugin_renderer_base {
      */
     public function upgrade_plugin_check_page(core_plugin_manager $pluginman, \core\update\checker $checker,
             $version, $showallplugins, $reloadurl, $continueurl) {
-        global $CFG;
 
         $output = '';
 
@@ -210,7 +209,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->box_start('generalbox');
         $output .= $this->container_start('generalbox', 'notice');
         $output .= html_writer::tag('p', get_string('pluginchecknotice', 'core_plugin'));
-        if (empty($CFG->disableupdatenotifications)) {
+        if ($checker->enabled()) {
             $output .= $this->container_start('checkforupdates');
             $output .= $this->single_button(new moodle_url($reloadurl, array('fetchupdates' => 1)), get_string('checkforupdates', 'core_plugin'));
             if ($timefetched = $checker->get_last_timefetched()) {
@@ -351,7 +350,6 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function plugin_management_page(core_plugin_manager $pluginman, \core\update\checker $checker, array $options = array()) {
-        global $CFG;
 
         $output = '';
 
@@ -359,7 +357,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->heading(get_string('pluginsoverview', 'core_admin'));
         $output .= $this->plugins_overview_panel($pluginman, $options);
 
-        if (empty($CFG->disableupdatenotifications)) {
+        if ($checker->enabled()) {
             $output .= $this->container_start('checkforupdates');
             $output .= $this->single_button(
                 new moodle_url($this->page->url, array_merge($options, array('fetchremote' => 1))),
@@ -856,7 +854,6 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML code
      */
     public function plugins_check_table(core_plugin_manager $pluginman, $version, array $options = array()) {
-        global $CFG;
 
         $plugininfo = $pluginman->get_plugins();
 
@@ -959,7 +956,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 $status = html_writer::span(get_string('status_' . $statuscode, 'core_plugin'), $statusclass);
 
                 $availableupdates = $plugin->available_updates();
-                if (!empty($availableupdates) and empty($CFG->disableupdatenotifications)) {
+                if (!empty($availableupdates)) {
                     foreach ($availableupdates as $availableupdate) {
                         $status .= $this->plugin_available_update_info($availableupdate);
                     }
@@ -1118,7 +1115,6 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string as usually
      */
     public function plugins_overview_panel(core_plugin_manager $pluginman, array $options = array()) {
-        global $CFG;
 
         $plugininfo = $pluginman->get_plugins();
 
@@ -1136,7 +1132,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 if (!$plugin->is_standard()) {
                     $numextension++;
                 }
-                if (empty($CFG->disableupdatenotifications) and $plugin->available_updates()) {
+                if ($plugin->available_updates()) {
                     $numupdatable++;
                 }
             }
@@ -1198,7 +1194,6 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML code
      */
     public function plugins_control_panel(core_plugin_manager $pluginman, array $options = array()) {
-        global $CFG;
 
         $plugininfo = $pluginman->get_plugins();
 
@@ -1341,7 +1336,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 }
 
                 $updateinfo = '';
-                if (empty($CFG->disableupdatenotifications) and is_array($plugin->available_updates())) {
+                if (is_array($plugin->available_updates())) {
                     foreach ($plugin->available_updates() as $availableupdate) {
                         $updateinfo .= $this->plugin_available_update_info($availableupdate);
                     }

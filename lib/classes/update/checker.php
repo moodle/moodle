@@ -82,15 +82,19 @@ class checker {
     }
 
     /**
-     * Is automatic deployment enabled?
+     * Is checking for available updates enabled?
+     *
+     * The feature is enabled unless it is prohibited via config.php.
+     * If enabled, the button for manual checking for available updates is
+     * displayed at admin screens. To perform scheduled checks for updates
+     * automatically, the admin setting $CFG->updateautocheck has to be enabled.
      *
      * @return bool
      */
     public function enabled() {
         global $CFG;
 
-        // The feature can be prohibited via config.php.
-        return empty($CFG->disableupdateautodeploy);
+        return empty($CFG->disableupdatenotifications);
     }
 
     /**
@@ -192,7 +196,7 @@ class checker {
     public function cron() {
         global $CFG;
 
-        if (!$this->cron_autocheck_enabled()) {
+        if (!$this->enabled() or !$this->cron_autocheck_enabled()) {
             $this->cron_mtrace('Automatic check for available updates not enabled, skipping.');
             return;
         }

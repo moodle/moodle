@@ -588,7 +588,7 @@ $updateschecker = \core\update\checker::instance();
 $availableupdates = array();
 $availableupdatesfetch = null;
 
-if (empty($CFG->disableupdatenotifications)) {
+if ($updateschecker->enabled()) {
     // Only compute the update information when it is going to be displayed to the user.
     $availableupdates['core'] = $updateschecker->get_update_info('core',
         array('minmaturity' => $CFG->updateminmaturity, 'notifybuilds' => $CFG->updatenotifybuilds));
