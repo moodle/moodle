@@ -301,7 +301,7 @@
                         foreach ($aaa as $a) {
                             $contents .= "<tr>";
                             $contents .= '<td class="fullnamecell">'.fullname($a).'</td>';
-                            $contents .= '<td valign="top">'.$a->answer1.'</td>';
+                            $contents .= '<td valign="top">'.s($a->answer1).'</td>';
                             $contents .= "</tr>";
                         }
                     }
