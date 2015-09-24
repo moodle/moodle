@@ -71,7 +71,7 @@ abstract class persistent {
      * @param  array $arguments List of arguments.
      * @return mixed
      */
-    public function __call($method, $arguments) {
+    final public function __call($method, $arguments) {
         if (strpos($method, 'get_') === 0) {
             return $this->get(substr($method, 4));
         } else if (strpos($method, 'set_') === 0) {
@@ -144,6 +144,7 @@ abstract class persistent {
      *         'message' => new lang_string(...),   // Defaults to invalid data error message.
      *         'null' => NULL_ALLOWED,              // Defaults to NULL_NOT_ALLOWED. Takes NULL_NOW_ALLOWED or NULL_ALLOWED.
      *         'type' => PARAM_TYPE,                // Mandatory.
+     *         'choices' => array(1, 2, 3)          // An array of accepted values.
      *     )
      * )
      *
@@ -319,6 +320,19 @@ abstract class persistent {
     }
 
     /**
+     * Hook to execute before a create.
+     *
+     * Please note that at this stage the data has already been validated and therefore
+     * any new data being set will not be validated before it is sent to the database.
+     *
+     * This is only intended to be used by child classes, do not put any logic here!
+     *
+     * @return void
+     */
+    protected function before_create() {
+    }
+
+    /**
      * Insert a record in the DB.
      *
      * @return persistent
@@ -329,6 +343,9 @@ abstract class persistent {
         if (!$this->is_valid()) {
             throw new invalid_persistent_exception();
         }
+
+        // Before create hook.
+        $this->before_create();
 
         // We can safely set those values bypassing the validation because we know what we're doing.
         $now = time();
@@ -342,10 +359,36 @@ abstract class persistent {
         $id = $DB->insert_record(static::TABLE, $record);
         $this->set('id', $id);
 
-        // We ensure that this is validated because the above call to set() would have invalidated the model.
+        // We ensure that this is flagged as validated.
         $this->validated = true;
 
+        // After create hook.
+        $this->after_create();
+
         return $this;
+    }
+
+    /**
+     * Hook to execute after a create.
+     *
+     * This is only intended to be used by child classes, do not put any logic here!
+     *
+     * @return void
+     */
+    protected function after_create() {
+    }
+
+    /**
+     * Hook to execute before an update.
+     *
+     * Please note that at this stage the data has already been validated and therefore
+     * any new data being set will not be validated before it is sent to the database.
+     *
+     * This is only intended to be used by child classes, do not put any logic here!
+     *
+     * @return void
+     */
+    protected function before_update() {
     }
 
     /**
@@ -362,7 +405,10 @@ abstract class persistent {
             throw new invalid_persistent_exception();
         }
 
-        // We can safely set those values bypassing the validation because we know what we're doing.
+        // Before update hook.
+        $this->before_update();
+
+        // We can safely set those values after the validation because we know what we're doing.
         $this->set('timemodified', time());
         $this->set('usermodified', $USER->id);
 
@@ -370,12 +416,37 @@ abstract class persistent {
         unset($record->timecreated);
         $record = (array) $record;
 
+        // Save the record.
         $result = $DB->update_record(static::TABLE, $record);
 
-        // We ensure that this is validated because the above call to set() would have invalidated the model.
+        // We ensure that this is flagged as validated.
         $this->validated = true;
 
+        // After update hook.
+        $this->after_update($result);
+
         return $result;
+    }
+
+    /**
+     * Hook to execute after an update.
+     *
+     * This is only intended to be used by child classes, do not put any logic here!
+     *
+     * @param bool $result Whether or not the update was successful.
+     * @return void
+     */
+    protected function after_update($result) {
+    }
+
+    /**
+     * Hook to execute before a delete.
+     *
+     * This is only intended to be used by child classes, do not put any logic here!
+     *
+     * @return void
+     */
+    protected function before_delete() {
     }
 
     /**
@@ -389,7 +460,45 @@ abstract class persistent {
         if ($this->get_id() <= 0) {
             throw new coding_exception('id is required to delete');
         }
-        return $DB->delete_records(static::TABLE, array('id' => $this->get_id()));
+
+        // Hook before delete.
+        $this->before_delete();
+
+        $result = $DB->delete_records(static::TABLE, array('id' => $this->get_id()));
+
+        // Hook after delete.
+        $this->after_delete($result);
+
+        // Reset the ID to avoid any confusion, this also invalidates the model's data.
+        if ($result) {
+            $this->set('id', 0);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Hook to execute after a delete.
+     *
+     * This is only intended to be used by child classes, do not put any logic here!
+     *
+     * @param bool $result Whether or not the delete was successful.
+     * @return void
+     */
+    protected function after_delete($result) {
+    }
+
+    /**
+     * Hook to execute before the validation.
+     *
+     * This hook will not affect the validation results in any way but is useful to
+     * internally set properties which will need to be validated.
+     *
+     * This is only intended to be used by child classes, do not put any logic here!
+     *
+     * @return void
+     */
+    protected function before_validate() {
     }
 
     /**
@@ -408,58 +517,63 @@ abstract class persistent {
      * @return array|true Returns true when the validation passed, or an array of properties with errors.
      */
     final public function validate() {
-        if ($this->validated === true) {
-            return empty($this->errors) ? true : $this->errors;
-        }
 
-        $errors = array();
-        $properties = static::properties_definition();
-        foreach ($properties as $property => $definition) {
+        // If this object has not been validated yet.
+        if ($this->validated !== true) {
 
-            // Get the data, bypassing the potential custom getter which could alter the data.
-            $value = $this->get($property);
+            // Before validate hook.
+            $this->before_validate();
 
-            // Check if the property is required.
-            if ($value === null && static::is_property_required($property)) {
-                $errors[$property] = new lang_string('requiredelement', 'form');
-                continue;
-            }
+            $errors = array();
+            $properties = static::properties_definition();
+            foreach ($properties as $property => $definition) {
 
-            // Check that type of value is respected.
-            try {
-                if ($definition['type'] === PARAM_BOOL && $value === false) {
-                    // Validate_param() does not like false with PARAM_BOOL, better to convert it to int.
-                    $value = 0;
-                }
-                $allownull = isset($definition['null']) ? $definition['null'] : NULL_NOT_ALLOWED;
-                validate_param($value, $definition['type'], $allownull);
-            } catch (invalid_parameter_exception $e) {
-                $errors[$property] = static::get_property_error_message($property);
-                continue;
-            }
+                // Get the data, bypassing the potential custom getter which could alter the data.
+                $value = $this->get($property);
 
-            // Check that the value is part of a list of allowed values.
-            if (isset($definition['choices']) && !in_array($value, $definition['choices'])) {
-                $errors[$property] = static::get_property_error_message($property);
-                continue;
-            }
-
-            // Call custom validation method.
-            $method = 'validate_' . $property;
-            if (method_exists($this, $method)) {
-                $valid = $this->{$method}($value);
-                if ($valid !== true) {
-                    if (!($valid instanceof lang_string)) {
-                        throw new coding_exception('Unexpected error message.');
-                    }
-                    $errors[$property] = $valid;
+                // Check if the property is required.
+                if ($value === null && static::is_property_required($property)) {
+                    $errors[$property] = new lang_string('requiredelement', 'form');
                     continue;
                 }
+
+                // Check that type of value is respected.
+                try {
+                    if ($definition['type'] === PARAM_BOOL && $value === false) {
+                        // Validate_param() does not like false with PARAM_BOOL, better to convert it to int.
+                        $value = 0;
+                    }
+                    $allownull = isset($definition['null']) ? $definition['null'] : NULL_NOT_ALLOWED;
+                    validate_param($value, $definition['type'], $allownull);
+                } catch (invalid_parameter_exception $e) {
+                    $errors[$property] = static::get_property_error_message($property);
+                    continue;
+                }
+
+                // Check that the value is part of a list of allowed values.
+                if (isset($definition['choices']) && !in_array($value, $definition['choices'])) {
+                    $errors[$property] = static::get_property_error_message($property);
+                    continue;
+                }
+
+                // Call custom validation method.
+                $method = 'validate_' . $property;
+                if (method_exists($this, $method)) {
+                    $valid = $this->{$method}($value);
+                    if ($valid !== true) {
+                        if (!($valid instanceof lang_string)) {
+                            throw new coding_exception('Unexpected error message.');
+                        }
+                        $errors[$property] = $valid;
+                        continue;
+                    }
+                }
             }
+
+            $this->validated = true;
+            $this->errors = $errors;
         }
 
-        $this->validated = true;
-        $this->errors = $errors;
         return empty($this->errors) ? true : $this->errors;
     }
 
