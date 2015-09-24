@@ -49,8 +49,10 @@ abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
         $data = (object) $data;
 
         // Complete the information that does not come from backup.
-        if (!$data->contextid = $this->get_mappingid('context', $data->contextid)) {
-            // Something went really wrong, cannot find the context this log belongs to.
+        $contextid = $data->contextid;
+        if (!$data->contextid = $this->get_mappingid('context', $contextid)) {
+            $message = "Context id \"$contextid\" could not be mapped. Skipping log record.";
+            $this->log($message, backup::LOG_DEBUG);
             return;
         }
         $context = context::instance_by_id($data->contextid, MUST_EXIST);
@@ -59,19 +61,25 @@ abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
         $data->courseid = $this->task->get_courseid();
 
         // Remap users.
-        if (!$data->userid = $this->get_mappingid('user', $data->userid)) {
-            // Something went really wrong, cannot find the user this log belongs to.
+        $userid = $data->userid;
+        if (!$data->userid = $this->get_mappingid('user', $userid)) {
+            $message = "User id \"$userid\" could not be mapped. Skipping log record.";
+            $this->log($message, backup::LOG_DEBUG);
             return;
         }
         if (!empty($data->relateduserid)) { // This is optional.
-            if (!$data->relateduserid = $this->get_mappingid('user', $data->relateduserid)) {
-                // Something went really wrong, cannot find the relateduserid this log is about.
+            $relateduserid = $data->relateduserid;
+            if (!$data->relateduserid = $this->get_mappingid('user', $relateduserid)) {
+                $message = "Related user id \"$relateduserid\" could not be mapped. Skipping log record.";
+                $this->log($message, backup::LOG_DEBUG);
                 return;
             }
         }
         if (!empty($data->realuserid)) { // This is optional.
-            if (!$data->realuserid = $this->get_mappingid('user', $data->realuserid)) {
-                // Something went really wrong, cannot find the realuserid this log is logged in as.
+            $realuserid = $data->realuserid;
+            if (!$data->realuserid = $this->get_mappingid('user', $realuserid)) {
+                $message = "Real user id \"$realuserid\" could not be mapped. Skipping log record.";
+                $this->log($message, backup::LOG_DEBUG);
                 return;
             }
         }
@@ -101,6 +109,8 @@ abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
                     }
                 }
             } else {
+                $message = "Event class not found: \"$eventclass\". Skipping log record.";
+                $this->log($message, backup::LOG_DEBUG);
                 return; // No such class, can not restore.
             }
         }
@@ -129,6 +139,8 @@ abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
                 // Now we want to serialize it so we can store it in the DB.
                 $data->other = serialize($data->other);
             } else {
+                $message = "Event class not found: \"$eventclass\". Skipping log record.";
+                $this->log($message, backup::LOG_DEBUG);
                 return; // No such class, can not restore.
             }
         }
