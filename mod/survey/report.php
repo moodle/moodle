@@ -356,7 +356,7 @@
                        $OUTPUT->user_picture($a, array('courseid'=>$course->id)),
                        "<a href=\"report.php?id=$id&amp;action=student&amp;student=$a->userid\">".fullname($a)."</a>",
                        userdate($a->time),
-                       $answer1, $answer2);
+                       s($answer1), s($answer2));
 
             }
         }
