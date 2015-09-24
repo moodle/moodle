@@ -375,13 +375,13 @@ class core_plugin_manager {
         if (!isset($types[$type])) {
             // Orphaned subplugins!
             $plugintypeclass = static::resolve_plugininfo_class($type);
-            $this->pluginsinfo[$type] = $plugintypeclass::get_plugins($type, null, $plugintypeclass);
+            $this->pluginsinfo[$type] = $plugintypeclass::get_plugins($type, null, $plugintypeclass, $this);
             return $this->pluginsinfo[$type];
         }
 
         /** @var \core\plugininfo\base $plugintypeclass */
         $plugintypeclass = static::resolve_plugininfo_class($type);
-        $plugins = $plugintypeclass::get_plugins($type, $types[$type], $plugintypeclass);
+        $plugins = $plugintypeclass::get_plugins($type, $types[$type], $plugintypeclass, $this);
         $this->pluginsinfo[$type] = $plugins;
 
         return $this->pluginsinfo[$type];

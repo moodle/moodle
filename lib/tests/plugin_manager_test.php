@@ -124,6 +124,23 @@ class core_plugin_manager_testcase extends advanced_testcase {
         $this->assertSame($plugininfos2['mod']['forum'], $plugininfos4['mod']['forum']);
     }
 
+    public function test_plugininfo_back_reference_to_the_plugin_manager() {
+        $plugman1 = core_plugin_manager::instance();
+        $plugman2 = testable_core_plugin_manager::instance();
+
+        foreach ($plugman1->get_plugins() as $type => $infos) {
+            foreach ($infos as $info) {
+                $this->assertSame($info->pluginman, $plugman1);
+            }
+        }
+
+        foreach ($plugman2->get_plugins() as $type => $infos) {
+            foreach ($infos as $info) {
+                $this->assertSame($info->pluginman, $plugman2);
+            }
+        }
+    }
+
     public function test_get_plugins_of_type() {
         $plugininfos = core_plugin_manager::instance()->get_plugins();
         foreach ($plugininfos as $type => $infos) {
