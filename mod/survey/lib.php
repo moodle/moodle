@@ -189,7 +189,7 @@ function survey_user_complete($course, $user, $mod, $survey) {
                 } else {
                     $answertext = "No answer";
                 }
-                $table->data[] = array("<b>$questiontext</b>", $answertext);
+                $table->data[] = array("<b>$questiontext</b>", s($answertext));
             }
             echo html_writer::table($table);
 
