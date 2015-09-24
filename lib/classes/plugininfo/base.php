@@ -406,38 +406,14 @@ abstract class base {
     }
 
     /**
-     * Populates the property {@link $availableupdates}
-     *
-     * This is supposed to be called by {@link self::available_updates()} only
-     * to lazy load the data once they are first requested.
-     */
-    protected function load_available_updates() {
-        global $CFG;
-
-        $provider = \core\update\checker::instance();
-
-        if (!$provider->enabled() or during_initial_install()) {
-            $this->availableupdates = array();
-            return;
-        }
-
-        if (isset($CFG->updateminmaturity)) {
-            $minmaturity = $CFG->updateminmaturity;
-        } else {
-            // This can happen during the very first upgrade to 2.3.
-            $minmaturity = MATURITY_STABLE;
-        }
-
-        $this->availableupdates = $provider->get_update_info($this->component,
-            array('minmaturity' => $minmaturity));
-    }
-
-    /**
      * If there are updates for this plugin available, returns them.
      *
      * Returns array of {@link \core\update\info} objects, if some update
      * is available. Returns null if there is no update available or if the update
      * availability is unknown.
+     *
+     * Populates the property {@link $availableupdates} on first call (lazy
+     * loading).
      *
      * @return array|null
      */
@@ -445,10 +421,11 @@ abstract class base {
 
         if ($this->availableupdates === null) {
             // Lazy load the information about available updates.
-            $this->load_available_updates();
+            $this->availableupdates = $this->pluginman->load_available_updates_for_plugin($this->component);
         }
 
         if (empty($this->availableupdates) or !is_array($this->availableupdates)) {
+            $this->availableupdates = array();
             return null;
         }
 

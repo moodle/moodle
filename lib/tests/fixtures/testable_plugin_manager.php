@@ -35,4 +35,40 @@ class testable_core_plugin_manager extends core_plugin_manager {
 
     /** @var testable_core_plugin_manager holds the singleton instance */
     protected static $singletoninstance;
+
+    /**
+     * Mockup implementation of loading available updates info.
+     *
+     * This testable implementation does not actually use
+     * {@link \core\update\checker}. Instead, it provides hard-coded list of
+     * fictional available updates for some standard plugin.
+     *
+     * @param string $component
+     * @return array|null array of \core\update\info objects or null
+     */
+    public function load_available_updates_for_plugin($component) {
+
+        if ($component === 'mod_forum') {
+            $updates = array();
+
+            $updates[] = new \core\update\info($component, array(
+                'version' => '2002073008',
+                'release' => 'Forum 0.1',
+                'maturity' => MATURITY_ALPHA,
+                'url' => 'https://en.wikipedia.org/wiki/Moodle',
+                'download' => 'https://moodle.org/plugins/pluginversion.php?id=1',
+                'downloadmd5' => md5('I can not think of anything funny to type here'),
+            ));
+
+            $updates[] = new \core\update\info($component, array(
+                'version' => '2999122400',
+                'release' => 'Forum NG',
+                'maturity' => MATURITY_BETA,
+            ));
+
+            return $updates;
+        }
+
+        return null;
+    }
 }

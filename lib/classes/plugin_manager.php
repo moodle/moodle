@@ -879,6 +879,35 @@ class core_plugin_manager {
     }
 
     /**
+     * Returns list of available updates for the given component.
+     *
+     * This method should be considered as internal API and is supposed to be
+     * called by {@link \core\plugininfo\base::available_updates()} only
+     * to lazy load the data once they are first requested.
+     *
+     * @param string $component frankenstyle name of the plugin
+     * @return null|array array of \core\update\info objects or null
+     */
+    public function load_available_updates_for_plugin($component) {
+        global $CFG;
+
+        $provider = \core\update\checker::instance();
+
+        if (!$provider->enabled() or during_initial_install()) {
+            return null;
+        }
+
+        if (isset($CFG->updateminmaturity)) {
+            $minmaturity = $CFG->updateminmaturity;
+        } else {
+            // This can happen during the very first upgrade to 2.3.
+            $minmaturity = MATURITY_STABLE;
+        }
+
+        return $provider->get_update_info($component, array('minmaturity' => $minmaturity));
+    }
+
+    /**
      * Check to see if the given plugin folder can be removed by the web server process.
      *
      * @param string $component full frankenstyle component

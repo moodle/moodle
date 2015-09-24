@@ -263,4 +263,29 @@ class core_plugin_manager_testcase extends advanced_testcase {
             }
         }
     }
+
+    public function test_plugin_available_updates() {
+
+        $pluginman = testable_core_plugin_manager::instance();
+
+        foreach ($pluginman->get_plugins() as $type => $infos) {
+            foreach ($infos as $name => $info) {
+                $updates = $info->available_updates();
+                if ($info->component != 'mod_forum') {
+                    $this->assertNull($updates);
+                } else {
+                    $this->assertEquals(1, count($updates));
+                    $update = array_shift($updates);
+                    $this->assertInstanceOf('\core\update\info', $update);
+                    $this->assertEquals('mod_forum', $update->component);
+                    $this->assertEquals('2999122400', $update->version);
+                }
+            }
+        }
+    }
+
+    public function test_some_plugins_updatable() {
+        $pluginman = testable_core_plugin_manager::instance();
+        $this->assertTrue($pluginman->some_plugins_updatable());
+    }
 }
