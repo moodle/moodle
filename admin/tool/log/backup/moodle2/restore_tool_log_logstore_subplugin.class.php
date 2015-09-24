@@ -113,7 +113,7 @@ abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
                     // Go through the data we have.
                     foreach ($data->other as $key => $value) {
                         // Check if there is a corresponding key we can use to map to.
-                        if (isset($othermapping[$key])) {
+                        if (isset($othermapping[$key]) && !empty($value)) {
                             // Ok, let's map this.
                             $mapping = $othermapping[$key];
                             // Check if it can not be mapped.
