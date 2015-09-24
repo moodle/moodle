@@ -170,6 +170,14 @@ class external extends external_api {
             PARAM_RAW,
             'Description that has been formatted for display'
         );
+        $scaleid = new external_value(
+            PARAM_INT,
+            'Scale id associated to the framework.'
+        );
+        $scaleconfiguration = new external_value(
+            PARAM_TEXT,
+            'Scale configuration.'
+        );
         $visible = new external_value(
             PARAM_BOOL,
             'Is this framework visible?'
@@ -194,6 +202,8 @@ class external extends external_api {
             'description' => $description,
             'descriptionformat' => $descriptionformat,
             'descriptionformatted' => $descriptionformatted,
+            'scaleid' => $scaleid,
+            'scaleconfiguration' => $scaleconfiguration,
             'visible' => $visible,
             'timecreated' => $timecreated,
             'timemodified' => $timemodified,
@@ -230,6 +240,16 @@ class external extends external_api {
             VALUE_DEFAULT,
             FORMAT_HTML
         );
+        $scaleid = new external_value(
+            PARAM_INT,
+            'Scale id associated to the framework.',
+            VALUE_REQUIRED
+        );
+        $scaleconfiguration = new external_value(
+            PARAM_TEXT,
+            'Scale configuration.',
+            VALUE_REQUIRED
+        );
         $visible = new external_value(
             PARAM_BOOL,
             'Is this framework visible?',
@@ -242,6 +262,8 @@ class external extends external_api {
             'idnumber' => $idnumber,
             'description' => $description,
             'descriptionformat' => $descriptionformat,
+            'scaleid' => $scaleid,
+            'scaleconfiguration' => $scaleconfiguration,
             'visible' => $visible,
             'context' => self::get_context_parameters(),
         );
@@ -263,24 +285,29 @@ class external extends external_api {
      * @param string $idnumber The idnumber
      * @param string $description The description
      * @param int $descriptionformat The description format
+     * @param int $scaleid The scale id associated to the framework
+     * @param string $scaleconfiguration The scale configuration
      * @param bool $visible Is this framework visible.
+     * @param array $context
      * @return \stdClass The new record
      */
-    public static function create_competency_framework($shortname, $idnumber, $description, $descriptionformat, $visible,
-            $context) {
+    public static function create_competency_framework($shortname, $idnumber, $description, $descriptionformat, $scaleid,
+                                                       $scaleconfiguration, $visible, $context) {
         $params = self::validate_parameters(self::create_competency_framework_parameters(),
                                             array(
                                                 'shortname' => $shortname,
                                                 'idnumber' => $idnumber,
                                                 'description' => $description,
                                                 'descriptionformat' => $descriptionformat,
+                                                'scaleid' => $scaleid,
+                                                'scaleconfiguration' => $scaleconfiguration,
                                                 'visible' => $visible,
                                                 'context' => $context,
                                             ));
 
-
         $context = self::get_context_from_params($params['context']);
         self::validate_context($context);
+        // TODO MDL-51506 Implement validation of scale configuration.
 
         unset($params['context']);
         $params['contextid'] = $context->id;
@@ -436,6 +463,16 @@ class external extends external_api {
             'Description format for the framework',
             VALUE_REQUIRED
         );
+        $scaleid = new external_value(
+            PARAM_INT,
+            'Scale id associated to the framework.',
+            VALUE_REQUIRED
+        );
+        $scaleconfiguration = new external_value(
+            PARAM_TEXT,
+            'Scale configuration.',
+            VALUE_REQUIRED
+        );
         $visible = new external_value(
             PARAM_BOOL,
             'Is this framework visible?',
@@ -448,6 +485,8 @@ class external extends external_api {
             'idnumber' => $idnumber,
             'description' => $description,
             'descriptionformat' => $descriptionformat,
+            'scaleid' => $scaleid,
+            'scaleconfiguration' => $scaleconfiguration,
             'visible' => $visible,
         );
         return new external_function_parameters($params);
@@ -469,6 +508,8 @@ class external extends external_api {
      * @param string $idnumber
      * @param string $description
      * @param int $descriptionformat
+     * @param int $scaleid The scale id associated to the framework
+     * @param string $scaleconfiguration The scale configuration
      * @param boolean $visible
      * @return boolean
      */
@@ -477,6 +518,8 @@ class external extends external_api {
                                                        $idnumber,
                                                        $description,
                                                        $descriptionformat,
+                                                       $scaleid,
+                                                       $scaleconfiguration,
                                                        $visible) {
 
         $params = self::validate_parameters(self::update_competency_framework_parameters(),
@@ -486,8 +529,12 @@ class external extends external_api {
                                                 'idnumber' => $idnumber,
                                                 'description' => $description,
                                                 'descriptionformat' => $descriptionformat,
+                                                'scaleid' => $scaleid,
+                                                'scaleconfiguration' => $scaleconfiguration,
                                                 'visible' => $visible
                                             ));
+
+        // TODO MDL-51506 Implement validation of scale configuration.
         $params = (object) $params;
 
         return api::update_framework($params);
@@ -2509,7 +2556,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function list_templates_parameters() {
-       $sort = new external_value(
+        $sort = new external_value(
             PARAM_ALPHANUMEXT,
             'Column to sort by.',
             VALUE_DEFAULT,
