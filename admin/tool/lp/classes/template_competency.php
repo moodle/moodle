@@ -33,141 +33,43 @@ use stdClass;
  */
 class template_competency extends persistent {
 
-    /** @var int $templateid The template id */
-    private $templateid = 0;
-
-    /** @var int $competencyid The competency id */
-    private $competencyid = 0;
-
-    /** @var int $sortorder A number used to influence sorting */
-    private $sortorder = 0;
+    const TABLE = 'tool_lp_template_competency';
 
     /**
-     * Method that provides the table name matching this class.
+     * Return the definition of the properties of this model.
      *
-     * @return string
+     * @return array
      */
-    public function get_table_name() {
-        return 'tool_lp_template_competency';
+    protected static function define_properties() {
+        return array(
+            'templateid' => array(
+                'type' => PARAM_INT,
+                'default' => 0,
+            ),
+            'competencyid' => array(
+                'type' => PARAM_INT,
+                'default' => 0,
+            ),
+            'sortorder' => array(
+                'type' => PARAM_INT,
+                'default' => null,
+            ),
+        );
     }
 
     /**
-     * Get the competency id
-     *
-     * @return int The competency id
-     */
-    public function get_competencyid() {
-        return $this->competencyid;
-    }
-
-    /**
-     * Set the competency id
-     *
-     * @param int $competencyid The competency id
-     */
-    public function set_competencyid($competencyid) {
-        $this->competencyid = $competencyid;
-    }
-
-    /**
-     * Get the sort order index.
-     *
-     * @return string The sort order index
-     */
-    public function get_sortorder() {
-        return $this->sortorder;
-    }
-
-    /**
-     * Set the sort order index.
-     *
-     * @param string $sortorder The sort order index
-     */
-    public function set_sortorder($sortorder) {
-        $this->sortorder = $sortorder;
-    }
-
-    /**
-     * Get the template id
-     *
-     * @return int The template id
-     */
-    public function get_templateid() {
-        return $this->templateid;
-    }
-
-    /**
-     * Set the template id
-     *
-     * @param int $templateid The template id
-     */
-    public function set_templateid($templateid) {
-        $this->templateid = $templateid;
-    }
-
-    /**
-     * Populate this class with data from a DB record.
-     *
-     * @param stdClass $record A DB record.
-     * @return template_competency
-     */
-    public function from_record($record) {
-        if (isset($record->id)) {
-            $this->set_id($record->id);
-        }
-        if (isset($record->templateid)) {
-            $this->set_templateid($record->templateid);
-        }
-        if (isset($record->competencyid)) {
-            $this->set_competencyid($record->competencyid);
-        }
-        if (isset($record->sortorder)) {
-            $this->set_sortorder($record->sortorder);
-        }
-        if (isset($record->timecreated)) {
-            $this->set_timecreated($record->timecreated);
-        }
-        if (isset($record->timemodified)) {
-            $this->set_timemodified($record->timemodified);
-        }
-        if (isset($record->usermodified)) {
-            $this->set_usermodified($record->usermodified);
-        }
-        return $this;
-    }
-
-    /**
-     * Create a DB record from this class.
-     *
-     * @return stdClass
-     */
-    public function to_record() {
-        $record = new stdClass();
-        $record->id = $this->get_id();
-        $record->templateid = $this->get_templateid();
-        $record->competencyid = $this->get_competencyid();
-        $record->sortorder = $this->get_sortorder();
-        $record->timecreated = $this->get_timecreated();
-        $record->timemodified = $this->get_timemodified();
-        $record->usermodified = $this->get_usermodified();
-
-        return $record;
-    }
-
-    /**
-     * Count the templates using this competency
+     * Count the templates using a competency.
      *
      * @param int $competencyid The competency id
      * @param bool $onlyvisible If true, only count visible templates using this competency.
      * @return int
      */
-    public function count_templates($competencyid, $onlyvisible) {
+    public static function count_templates($competencyid, $onlyvisible) {
         global $DB;
 
-        $template = new template();
         $sql = 'SELECT COUNT(template.id)
-                  FROM {' . $this->get_table_name() . '} tplcomp
-                  JOIN {' . $template->get_table_name() . '} tpl
+                  FROM {' . self::TABLE . '} tplcomp
+                  JOIN {' . template::TABLE . '} tpl
                     ON tplcomp.templateid = tpl.id
                  WHERE tplcomp.competencyid = ? ';
         $params = array($competencyid);
@@ -183,19 +85,18 @@ class template_competency extends persistent {
     }
 
     /**
-     * List the templates using this competency.
+     * List the templates using a competency.
      *
      * @param int $competencyid The competency id
      * @param bool $onlyvisible If true, only count visible templates using this competency.
      * @return array[competency]
      */
-    public function list_templates($competencyid, $onlyvisible) {
+    public static function list_templates($competencyid, $onlyvisible) {
         global $DB;
 
-        $template = new template();
         $sql = 'SELECT tpl.*
-                  FROM {' . $template->get_table_name() . '} tpl
-                  JOIN {' . $this->get_table_name() . '} tplcomp
+                  FROM {' . template::TABLE . '} tpl
+                  JOIN {' . self::TABLE . '} tplcomp
                     ON tplcomp.templateid = tpl.id
                  WHERE tplcomp.competencyid = ? ';
         $params = array($competencyid);
@@ -216,19 +117,18 @@ class template_competency extends persistent {
     }
 
     /**
-     * Count the competencies in this template.
+     * Count the competencies in a template.
      *
      * @param int $templateid The template id
      * @param bool $onlyvisible If true, only count visible competencies in this template.
      * @return int
      */
-    public function count_competencies($templateid, $onlyvisible) {
+    public static function count_competencies($templateid, $onlyvisible) {
         global $DB;
 
-        $competency = new competency();
         $sql = 'SELECT COUNT(comp.id)
-                  FROM {' . $this->get_table_name() . '} tplcomp
-                  JOIN {' . $competency->get_table_name() . '} comp
+                  FROM {' . self::TABLE . '} tplcomp
+                  JOIN {' . competency::TABLE . '} comp
                     ON tplcomp.competencyid = comp.id
                  WHERE tplcomp.templateid = ? ';
         $params = array($templateid);
@@ -250,13 +150,12 @@ class template_competency extends persistent {
      * @param bool $onlyvisible If true, only count visible competencies in this template.
      * @return array[competency]
      */
-    public function list_competencies($templateid, $onlyvisible) {
+    public static function list_competencies($templateid, $onlyvisible) {
         global $DB;
 
-        $competency = new competency();
         $sql = 'SELECT comp.*
-                  FROM {' . $competency->get_table_name() . '} comp
-                  JOIN {' . $this->get_table_name() . '} tplcomp
+                  FROM {' . competency::TABLE . '} comp
+                  JOIN {' . self::TABLE . '} tplcomp
                     ON tplcomp.competencyid = comp.id
                  WHERE tplcomp.templateid = ?
               ORDER BY tplcomp.sortorder ASC';
@@ -278,12 +177,40 @@ class template_competency extends persistent {
     }
 
     /**
-     * Add a default for the sortorder field to the default create logic.
+     * Hook to execute before validate.
      *
-     * @return persistent
+     * @return void
      */
-    public function create() {
-        $this->sortorder = $this->count_records(array('templateid' => $this->get_templateid()));
-        return parent::create();
+    protected function before_validate() {
+        if ($this->get_sortorder() === null) {
+            $this->set_sortorder($this->count_records(array('templateid' => $this->get_templateid())));
+        }
     }
+
+    /**
+     * Validate competencyid.
+     *
+     * @param  int $value ID.
+     * @return true|lang_string
+     */
+    protected function validate_competencyid($value) {
+        if (!competency::record_exists($value)) {
+            return new lang_string('invaliddata', 'error');
+        }
+        return true;
+    }
+
+    /**
+     * Validate templateid.
+     *
+     * @param  int $value ID.
+     * @return true|lang_string
+     */
+    protected function validate_templateid($value) {
+        if (!template::record_exists($value)) {
+            return new lang_string('invaliddata', 'error');
+        }
+        return true;
+    }
+
 }

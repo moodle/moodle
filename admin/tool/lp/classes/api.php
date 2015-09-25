@@ -902,8 +902,7 @@ class api {
         }
 
         // OK - all set.
-        $templatecompetency = new template_competency();
-        return $templatecompetency->count_templates($competencyid, $onlyvisible);
+        return template_competency::count_templates($competencyid, $onlyvisible);
     }
 
     /**
@@ -927,8 +926,7 @@ class api {
         }
 
         // OK - all set.
-        $templatecompetency = new template_competency();
-        return $templatecompetency->list_templates($competencyid, $onlyvisible);
+        return template_competency::list_templates($competencyid, $onlyvisible);
 
     }
 
@@ -954,8 +952,7 @@ class api {
         }
 
         // OK - all set.
-        $templatecompetency = new template_competency();
-        return $templatecompetency->count_competencies($templateid, $onlyvisible);
+        return template_competency::count_competencies($templateid, $onlyvisible);
     }
 
     /**
@@ -980,8 +977,7 @@ class api {
         }
 
         // OK - all set.
-        $templatecompetency = new template_competency();
-        return $templatecompetency->list_competencies($templateid, $onlyvisible);
+        return template_competency::list_competencies($templateid, $onlyvisible);
     }
 
     /**
@@ -1006,13 +1002,11 @@ class api {
             throw new coding_exception('The competency does not exist');
         }
 
-        $templatecompetency = new template_competency();
-        $exists = $templatecompetency->get_records(array('templateid' => $templateid, 'competencyid' => $competencyid));
+        $exists = template_competency::get_records(array('templateid' => $templateid, 'competencyid' => $competencyid));
         if (!$exists) {
-            $templatecompetency->from_record($record);
-            if ($templatecompetency->create()) {
-                return true;
-            }
+            $templatecompetency = new template_competency(0, $record);
+            $templatecompetency->create();
+            return true;
         }
         return false;
     }
@@ -1039,8 +1033,7 @@ class api {
              throw new coding_exception('The competency does not exist');
         }
 
-        $templatecompetency = new template_competency();
-        $exists = $templatecompetency->get_records(array('templateid' => $templateid, 'competencyid' => $competencyid));
+        $exists = template_competency::get_records(array('templateid' => $templateid, 'competencyid' => $competencyid));
         if ($exists) {
             $link = array_pop($exists);
             return $link->delete();
@@ -1065,21 +1058,20 @@ class api {
         require_capability('tool/lp:templatemanage', $context);
 
         $down = true;
-        $templatecompetency = new template_competency();
-        $matches = $templatecompetency->get_records(array('templateid' => $templateid, 'competencyid' => $competencyidfrom));
+        $matches = template_competency::get_records(array('templateid' => $templateid, 'competencyid' => $competencyidfrom));
         if (count($matches) == 0) {
             throw new coding_exception('The link does not exist');
         }
 
         $competencyfrom = array_pop($matches);
-        $matches = $templatecompetency->get_records(array('templateid' => $templateid, 'competencyid' => $competencyidto));
+        $matches = template_competency::get_records(array('templateid' => $templateid, 'competencyid' => $competencyidto));
         if (count($matches) == 0) {
             throw new coding_exception('The link does not exist');
         }
 
         $competencyto = array_pop($matches);
 
-        $all = $templatecompetency->get_records(array('templateid' => $templateid), 'sortorder', 'ASC', 0, 0);
+        $all = template_competency::get_records(array('templateid' => $templateid), 'sortorder', 'ASC', 0, 0);
 
         if ($competencyfrom->get_sortorder() > $competencyto->get_sortorder()) {
             // We are moving up, so put it before the "to" item.
