@@ -102,4 +102,8 @@ class page_viewed extends \core\event\base {
             return new \moodle_url('/mod/wiki/view.php', array('pageid' => $this->objectid));
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'wiki_pages', 'restore' => 'wiki_page');
+    }
 }

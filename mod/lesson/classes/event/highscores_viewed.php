@@ -87,4 +87,14 @@ class highscores_viewed extends \core\event\base {
         return array($this->courseid, 'lesson', 'view highscores', 'highscores.php?id=' . $this->contextinstanceid,
             $lesson->name, $this->contextinstanceid);
     }
+
+    public static function get_objectid_mapping() {
+        // The 'highscore' functionality was removed from core.
+        return false;
+    }
+
+    public static function get_other_mapping() {
+        // The 'highscore' functionality was removed from core.
+        return false;
+    }
 }

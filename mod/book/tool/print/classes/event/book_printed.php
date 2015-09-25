@@ -102,4 +102,7 @@ class book_printed extends \core\event\base {
         $this->data['objecttable'] = 'book';
     }
 
+    public static function get_objectid_mapping() {
+        return array('db' => 'book', 'restore' => 'book');
+    }
 }

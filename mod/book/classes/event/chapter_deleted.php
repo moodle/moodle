@@ -104,4 +104,8 @@ class chapter_deleted extends \core\event\base {
         $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'book_chapters';
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'book_chapters', 'restore' => 'book_chapter');
+    }
 }

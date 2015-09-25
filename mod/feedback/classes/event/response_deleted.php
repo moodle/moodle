@@ -126,5 +126,17 @@ class response_deleted extends \core\event\base {
             throw new \coding_exception('The \'instanceid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'feedback_completed', 'restore' => 'feedback_completed');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['cmid'] = array('db' => 'course_modules', 'restore' => 'course_module');
+        $othermapped['instanceid'] = array('db' => 'feedback', 'restore' => 'feedback');
+
+        return $othermapped;
+    }
 }
 

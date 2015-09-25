@@ -111,4 +111,16 @@ class essay_assessed extends \core\event\base {
             throw new \coding_exception('The \'attemptid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'lesson_grades', 'restore' => 'lesson_grade');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['lessonid'] = array('db' => 'lesson', 'restore' => 'lesson');
+        $othermapped['attemptid'] = array('db' => 'lesson_attempts', 'restore' => 'lesson_attept');
+
+        return $othermapped;
+    }
 }

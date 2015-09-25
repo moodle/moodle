@@ -126,4 +126,15 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
             throw new \coding_exception('The \'triggeredfrom\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'forum_posts', 'restore' => 'forum_post');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['discussionid'] = array('db' => 'forum_discussions', 'restore' => 'forum_discussion');
+
+        return $othermapped;
+    }
 }

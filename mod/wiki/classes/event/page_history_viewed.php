@@ -82,4 +82,8 @@ class page_history_viewed extends \core\event\base {
     public function get_url() {
         return new \moodle_url('/mod/wiki/history.php', array('pageid' => $this->objectid));
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'wiki_pages', 'restore' => 'wiki_page');
+    }
 }

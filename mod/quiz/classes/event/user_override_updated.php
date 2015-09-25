@@ -106,4 +106,15 @@ class user_override_updated extends \core\event\base {
             throw new \coding_exception('The \'quizid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'quiz_overrides', 'restore' => 'quiz_override');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['quizid'] = array('db' => 'quiz', 'restore' => 'quiz');
+
+        return $othermapped;
+    }
 }

@@ -73,4 +73,8 @@ class comments_viewed extends \core\event\comments_viewed {
     public function get_url() {
         return new \moodle_url('/mod/wiki/comments.php', array('pageid' => $this->objectid));
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'wiki_pages', 'restore' => 'wiki_page');
+    }
 }

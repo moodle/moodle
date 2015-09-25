@@ -67,4 +67,8 @@ class course_module_viewed extends \core\event\course_module_viewed {
             throw new \coding_exception('Other must contain the key viewed.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'survey', 'restore' => 'survey');
+    }
 }

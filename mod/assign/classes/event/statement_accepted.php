@@ -119,4 +119,8 @@ class statement_accepted extends base {
 
         parent::validate_data();
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'assign_submission', 'restore' => 'submission');
+    }
 }

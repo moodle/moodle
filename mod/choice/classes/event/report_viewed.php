@@ -80,4 +80,8 @@ class report_viewed extends \core\event\base {
         $url = new \moodle_url('report.php', array('id' => $this->contextinstanceid));
         return array($this->courseid, 'choice', 'report', $url->out(), $this->objectid, $this->contextinstanceid);
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'choice', 'restore' => 'choice');
+    }
 }
