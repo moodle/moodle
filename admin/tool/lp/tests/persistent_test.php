@@ -32,7 +32,7 @@ global $CFG;
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_external_testcase extends advanced_testcase {
+class tool_lp_persistent_testcase extends advanced_testcase {
 
     public function setUp() {
         $this->resetAfterTest();
@@ -74,7 +74,8 @@ class tool_lp_external_testcase extends advanced_testcase {
             ),
             'competencyframeworkid' => array(
                 'type' => PARAM_INT,
-                'default' => 0
+                'default' => 0,
+                'null' => NULL_ALLOWED
             ),
             'id' => array(
                 'default' => 0,
@@ -93,11 +94,11 @@ class tool_lp_external_testcase extends advanced_testcase {
                 'type' => PARAM_INT
             )
         );
-        $this->assertEquals($expected, tool_lp_example_persistent::properties_definition());
+        $this->assertEquals($expected, tool_lp_testable_persistent::properties_definition());
     }
 
     public function test_to_record() {
-        $p = new tool_lp_example_persistent();
+        $p = new tool_lp_testable_persistent();
         $expected = (object) array(
             'shortname' => '',
             'idnumber' => null,
@@ -107,7 +108,7 @@ class tool_lp_external_testcase extends advanced_testcase {
             'visible' => true,
             'path' => '',
             'sortorder' => null,
-            'competencyframeworkid' => 0,
+            'competencyframeworkid' => null,
             'id' => 0,
             'timecreated' => 0,
             'timemodified' => 0,
@@ -117,7 +118,7 @@ class tool_lp_external_testcase extends advanced_testcase {
     }
 
     public function test_from_record() {
-        $p = new tool_lp_example_persistent();
+        $p = new tool_lp_testable_persistent();
         $data = (object) array(
             'shortname' => 'ddd',
             'idnumber' => 'abc',
@@ -138,7 +139,7 @@ class tool_lp_external_testcase extends advanced_testcase {
     }
 
     public function test_from_record_invalid_param() {
-        $p = new tool_lp_example_persistent();
+        $p = new tool_lp_testable_persistent();
         $data = (object) array(
             'invalidparam' => 'abc'
         );
@@ -146,11 +147,32 @@ class tool_lp_external_testcase extends advanced_testcase {
         $p->from_record($data);
     }
 
+    public function test_validate() {
+        $data = (object) array(
+            'idnumber' => 'abc',
+            'sortorder' => 0
+        );
+        $p = new tool_lp_testable_persistent(0, $data);
+        $this->assertFalse(isset($p->beforevalidate));
+        $this->assertTrue($p->validate());
+        $this->assertTrue(isset($p->beforevalidate));
+        $this->assertTrue($p->is_valid());
+        $this->assertEquals(array(), $p->get_errors());
+        $p->set_descriptionformat(-100);
+
+        $expected = array(
+            'descriptionformat' => new lang_string('invaliddata', 'error'),
+        );
+        $this->assertEquals($expected, $p->validate());
+        $this->assertFalse($p->is_valid());
+        $this->assertEquals($expected, $p->get_errors());
+    }
+
     public function test_validation_required() {
         $data = (object) array(
             'idnumber' => 'abc'
         );
-        $p = new tool_lp_example_persistent(0, $data);
+        $p = new tool_lp_testable_persistent(0, $data);
         $expected = array(
             'sortorder' => new lang_string('requiredelement', 'form'),
         );
@@ -163,7 +185,7 @@ class tool_lp_external_testcase extends advanced_testcase {
             'idnumber' => 'abc',
             'sortorder' => 10,
         );
-        $p = new tool_lp_example_persistent(0, $data);
+        $p = new tool_lp_testable_persistent(0, $data);
         $expected = array(
             'sortorder' => new lang_string('invalidkey', 'error'),
         );
@@ -176,7 +198,7 @@ class tool_lp_external_testcase extends advanced_testcase {
             'idnumber' => 'abc',
             'sortorder' => 'abc',
         );
-        $p = new tool_lp_example_persistent(0, $data);
+        $p = new tool_lp_testable_persistent(0, $data);
         $expected = array(
             'sortorder' => new lang_string('invalidrequest', 'error'),
         );
@@ -190,7 +212,7 @@ class tool_lp_external_testcase extends advanced_testcase {
             'sortorder' => 0,
             'descriptionformat' => -100
         );
-        $p = new tool_lp_example_persistent(0, $data);
+        $p = new tool_lp_testable_persistent(0, $data);
         $expected = array(
             'descriptionformat' => new lang_string('invaliddata', 'error'),
         );
@@ -204,7 +226,7 @@ class tool_lp_external_testcase extends advanced_testcase {
             'sortorder' => 0,
             'visible' => 'NaN'
         );
-        $p = new tool_lp_example_persistent(0, $data);
+        $p = new tool_lp_testable_persistent(0, $data);
         $expected = array(
             'visible' => new lang_string('invaliddata', 'error'),
         );
@@ -212,31 +234,35 @@ class tool_lp_external_testcase extends advanced_testcase {
         $this->assertEquals($expected, $p->get_errors());
     }
 
-    public function test_validate() {
+    public function test_validation_null() {
         $data = (object) array(
-            'idnumber' => 'abc',
-            'sortorder' => 0
+            'idnumber' => null,
+            'sortorder' => 0,
+            'competencyframeworkid' => 'bad!'
         );
-        $p = new tool_lp_example_persistent(0, $data);
-        $this->assertTrue($p->validate());
-        $this->assertTrue($p->is_valid());
-        $this->assertEquals(array(), $p->get_errors());
-        $p->set_descriptionformat(-100);
-
-        $expected = array(
-            'descriptionformat' => new lang_string('invaliddata', 'error'),
-        );
-        $this->assertEquals($expected, $p->validate());
+        $p = new tool_lp_testable_persistent(0, $data);
         $this->assertFalse($p->is_valid());
-        $this->assertEquals($expected, $p->get_errors());
+        $this->assertArrayHasKey('idnumber', $p->get_errors());
+        $this->assertArrayHasKey('competencyframeworkid', $p->get_errors());
+        $p->set_idnumber('abc');
+        $this->assertFalse($p->is_valid());
+        $this->assertArrayNotHasKey('idnumber', $p->get_errors());
+        $this->assertArrayHasKey('competencyframeworkid', $p->get_errors());
+        $p->set_competencyframeworkid(null);
+        $this->assertTrue($p->is_valid());
+        $this->assertArrayNotHasKey('competencyframeworkid', $p->get_errors());
     }
 
     public function test_create() {
         global $DB;
-        $p = new tool_lp_example_persistent(0, array('sortorder' => 123, 'idnumber' => 'abc'));
+        $p = new tool_lp_testable_persistent(0, (object) array('sortorder' => 123, 'idnumber' => 'abc'));
+        $this->assertFalse(isset($p->beforecreate));
+        $this->assertFalse(isset($p->aftercreate));
         $p->create();
-        $record = $DB->get_record(tool_lp_example_persistent::TABLE, array('id' => $p->get_id()), '*', MUST_EXIST);
+        $record = $DB->get_record(tool_lp_testable_persistent::TABLE, array('id' => $p->get_id()), '*', MUST_EXIST);
         $expected = $p->to_record();
+        $this->assertTrue(isset($p->beforecreate));
+        $this->assertTrue(isset($p->aftercreate));
         $this->assertEquals($expected->sortorder, $record->sortorder);
         $this->assertEquals($expected->idnumber, $record->idnumber);
         $this->assertEquals($expected->id, $record->id);
@@ -245,15 +271,19 @@ class tool_lp_external_testcase extends advanced_testcase {
 
     public function test_update() {
         global $DB;
-        $p = new tool_lp_example_persistent(0, array('sortorder' => 123, 'idnumber' => 'abc'));
+        $p = new tool_lp_testable_persistent(0, (object) array('sortorder' => 123, 'idnumber' => 'abc'));
         $p->create();
         $id = $p->get_id();
         $p->set_sortorder(456);
         $p->from_record((object) array('idnumber' => 'def'));
+        $this->assertFalse(isset($p->beforeupdate));
+        $this->assertFalse(isset($p->afterupdate));
         $p->update();
 
         $expected = $p->to_record();
-        $record = $DB->get_record(tool_lp_example_persistent::TABLE, array('id' => $p->get_id()), '*', MUST_EXIST);
+        $record = $DB->get_record(tool_lp_testable_persistent::TABLE, array('id' => $p->get_id()), '*', MUST_EXIST);
+        $this->assertTrue(isset($p->beforeupdate));
+        $this->assertTrue(isset($p->afterupdate));
         $this->assertEquals($id, $record->id);
         $this->assertEquals(456, $record->sortorder);
         $this->assertEquals('def', $record->idnumber);
@@ -261,13 +291,16 @@ class tool_lp_external_testcase extends advanced_testcase {
     }
 
     public function test_read() {
-        $p = new tool_lp_example_persistent(0, array('sortorder' => 123, 'idnumber' => 'abc'));
+        $p = new tool_lp_testable_persistent(0, (object) array('sortorder' => 123, 'idnumber' => 'abc'));
         $p->create();
+        unset($p->beforevalidate);
+        unset($p->beforecreate);
+        unset($p->aftercreate);
 
-        $p2 = new tool_lp_example_persistent($p->get_id());
+        $p2 = new tool_lp_testable_persistent($p->get_id());
         $this->assertEquals($p, $p2);
 
-        $p3 = new tool_lp_example_persistent();
+        $p3 = new tool_lp_testable_persistent();
         $p3->set_id($p->get_id());
         $p3->read();
         $this->assertEquals($p, $p3);
@@ -276,17 +309,23 @@ class tool_lp_external_testcase extends advanced_testcase {
     public function test_delete() {
         global $DB;
 
-        $p = new tool_lp_example_persistent(0, array('sortorder' => 123, 'idnumber' => 'abc'));
+        $p = new tool_lp_testable_persistent(0, (object) array('sortorder' => 123, 'idnumber' => 'abc'));
         $p->create();
-        $this->assertTrue($DB->record_exists_select(tool_lp_example_persistent::TABLE, 'id = ?', array($p->get_id())));
+        $this->assertNotEquals(0, $p->get_id());
+        $this->assertTrue($DB->record_exists_select(tool_lp_testable_persistent::TABLE, 'id = ?', array($p->get_id())));
+        $this->assertFalse(isset($p->beforedelete));
+        $this->assertFalse(isset($p->afterdelete));
 
         $p->delete();
-        $this->assertFalse($DB->record_exists_select(tool_lp_example_persistent::TABLE, 'id = ?', array($p->get_id())));
+        $this->assertFalse($DB->record_exists_select(tool_lp_testable_persistent::TABLE, 'id = ?', array($p->get_id())));
+        $this->assertEquals(0, $p->get_id());
+        $this->assertEquals(true, $p->beforedelete);
+        $this->assertEquals(true, $p->afterdelete);
     }
 
     public function test_has_property() {
-        $this->assertFalse(tool_lp_example_persistent::has_property('unknown'));
-        $this->assertTrue(tool_lp_example_persistent::has_property('idnumber'));
+        $this->assertFalse(tool_lp_testable_persistent::has_property('unknown'));
+        $this->assertTrue(tool_lp_testable_persistent::has_property('idnumber'));
     }
 
     public function test_custom_setter_getter() {
@@ -295,14 +334,26 @@ class tool_lp_external_testcase extends advanced_testcase {
         $path = array(1, 2, 3);
         $json = json_encode($path);
 
-        $p = new tool_lp_example_persistent(0, array('sortorder' => 0, 'idnumber' => 'abc'));
+        $p = new tool_lp_testable_persistent(0, (object) array('sortorder' => 0, 'idnumber' => 'abc'));
         $p->set_path($path);
         $this->assertEquals($path, $p->get_path());
         $this->assertEquals($json, $p->to_record()->path);
 
         $p->create();
-        $record = $DB->get_record(tool_lp_example_persistent::TABLE, array('id' => $p->get_id()), 'id, path', MUST_EXIST);
+        $record = $DB->get_record(tool_lp_testable_persistent::TABLE, array('id' => $p->get_id()), 'id, path', MUST_EXIST);
         $this->assertEquals($json, $record->path);
+    }
+
+    public function test_record_exists() {
+        global $DB;
+        $this->assertFalse($DB->record_exists(tool_lp_testable_persistent::TABLE, array('idnumber' => 'abc')));
+        $p = new tool_lp_testable_persistent(0, (object) array('sortorder' => 123, 'idnumber' => 'abc'));
+        $p->create();
+        $id = $p->get_id();
+        $this->assertTrue(tool_lp_testable_persistent::record_exists($id));
+        $this->assertTrue($DB->record_exists(tool_lp_testable_persistent::TABLE, array('idnumber' => 'abc')));
+        $p->delete();
+        $this->assertFalse(tool_lp_testable_persistent::record_exists($id));
     }
 
 }
@@ -314,7 +365,7 @@ class tool_lp_external_testcase extends advanced_testcase {
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_lp_example_persistent extends \tool_lp\persistent {
+class tool_lp_testable_persistent extends \tool_lp\persistent {
 
     const TABLE = 'tool_lp_competency';
 
@@ -354,9 +405,38 @@ class tool_lp_example_persistent extends \tool_lp\persistent {
             ),
             'competencyframeworkid' => array(
                 'type' => PARAM_INT,
-                'default' => 0
+                'default' => 0,
+                'null' => NULL_ALLOWED
             ),
         );
+    }
+
+    protected function before_validate() {
+        $this->beforevalidate = true;
+    }
+
+    protected function before_create() {
+        $this->beforecreate = true;
+    }
+
+    protected function before_update() {
+        $this->beforeupdate = true;
+    }
+
+    protected function before_delete() {
+        $this->beforedelete = true;
+    }
+
+    protected function after_create() {
+        $this->aftercreate = true;
+    }
+
+    protected function after_update($result) {
+        $this->afterupdate = true;
+    }
+
+    protected function after_delete($result) {
+        $this->afterdelete = true;
     }
 
     public function get_path() {
