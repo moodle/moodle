@@ -182,4 +182,65 @@ class tool_lp_api_testcase extends advanced_testcase {
         api::update_template((object) array('id' => $template->get_id(), 'contextid' => context_coursecat::instance($cat->id)));
     }
 
+    /**
+     * Test listing framework with order param.
+     */
+    public function test_list_frameworks() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Create a list of frameworks.
+        $params1 = array(
+                'shortname' => 'shortname_a',
+                'idnumber' => 'idnumber_c',
+                'description' => 'description',
+                'descriptionformat' => FORMAT_HTML,
+                'visible' => true,
+                'contextid' => context_system::instance()->id
+        );
+        $framework1 = api::create_framework((object) $params1);
+
+        $params2 = array(
+                'shortname' => 'shortname_b',
+                'idnumber' => 'idnumber_a',
+                'description' => 'description',
+                'descriptionformat' => FORMAT_HTML,
+                'visible' => true,
+                'contextid' => context_system::instance()->id
+        );
+        $framework2 = api::create_framework((object) $params2);
+
+        $params3 = array(
+                'shortname' => 'shortname_c',
+                'idnumber' => 'idnumber_b',
+                'description' => 'description',
+                'descriptionformat' => FORMAT_HTML,
+                'visible' => true,
+                'contextid' => context_system::instance()->id
+        );
+        $framework3 = api::create_framework((object) $params3);
+
+        // Get frameworks list order by shortname desc.
+        $result = api::list_frameworks('shortname', 'DESC', null, 3, context_system::instance());
+
+        $r1 = (object) $result[0];
+        $r2 = (object) $result[1];
+        $r3 = (object) $result[2];
+
+        $this->assertEquals($framework1->get_id(), $r3->get_id());
+        $this->assertEquals($framework2->get_id(), $r2->get_id());
+        $this->assertEquals($framework3->get_id(), $r1->get_id());
+
+        // Get frameworks list order by idnumber asc.
+        $result = api::list_frameworks('idnumber', 'ASC', null, 3, context_system::instance());
+
+        $r1 = (object) $result[0];
+        $r2 = (object) $result[1];
+        $r3 = (object) $result[2];
+
+        $this->assertEquals($framework1->get_id(), $r3->get_id());
+        $this->assertEquals($framework2->get_id(), $r1->get_id());
+        $this->assertEquals($framework3->get_id(), $r2->get_id());
+    }
+
 }

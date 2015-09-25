@@ -413,7 +413,7 @@ class api {
 
         // OK - all set.
         list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contexts), SQL_PARAMS_NAMED);
-        return competency_framework::get_records_select("contextid $insql", $inparams, $sort, '*', $skip, $limit);
+        return competency_framework::get_records_select("contextid $insql", $inparams, $sort . ' ' . $order, '*', $skip, $limit);
     }
 
     /**
