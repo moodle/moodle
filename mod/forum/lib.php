@@ -443,9 +443,17 @@ function forum_cron_minimise_user_record(stdClass $user) {
  * @todo MDL-44734 The function will be split up into seperate tasks.
  */
 function forum_cron() {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $PAGE;
 
     $site = get_site();
+
+    // The main renderers.
+    $htmlout = $PAGE->get_renderer('mod_forum', 'email', 'htmlemail');
+    $textout = $PAGE->get_renderer('mod_forum', 'email', 'textemail');
+    $htmldigestfullout = $PAGE->get_renderer('mod_forum', 'emaildigestfull', 'htmlemail');
+    $textdigestfullout = $PAGE->get_renderer('mod_forum', 'emaildigestfull', 'textemail');
+    $htmldigestbasicout = $PAGE->get_renderer('mod_forum', 'emaildigestbasic', 'htmlemail');
+    $textdigestbasicout = $PAGE->get_renderer('mod_forum', 'emaildigestbasic', 'textemail');
 
     // All users that are subscribed to any post that needs sending,
     // please increase $CFG->extramemorylimit on large sites that
@@ -762,15 +770,34 @@ function forum_cron() {
                     $replyaddress = $messageinboundgenerator->generate($userto->id);
                 }
 
+                if (!isset($userto->canpost[$discussion->id])) {
+                    $canreply = forum_user_can_post($forum, $discussion, $userto, $cm, $course, $modcontext);
+                } else {
+                    $canreply = $userto->canpost[$discussion->id];
+                }
+
+                $data = new \mod_forum\output\forum_post_email(
+                        $course,
+                        $cm,
+                        $forum,
+                        $discussion,
+                        $post,
+                        $userfrom,
+                        $userto,
+                        $canreply
+                    );
+
+                if (!isset($userto->viewfullnames[$forum->id])) {
+                    $data->viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
+                } else {
+                    $data->viewfullnames = $userto->viewfullnames[$forum->id];
+                }
+
                 $a = new stdClass();
-                $a->courseshortname = $shortname;
+                $a->courseshortname = $data->get_coursename();
                 $a->forumname = $cleanforumname;
-                $a->subject = format_string($post->subject, true);
+                $a->subject = $data->get_subject();
                 $postsubject = html_to_text(get_string('postmailsubject', 'forum', $a), 0);
-                $posttext = forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto, false,
-                        $replyaddress);
-                $posthtml = forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto,
-                        $replyaddress);
 
                 // Send the post now!
                 mtrace('Sending ', '');
@@ -781,9 +808,9 @@ function forum_cron() {
                 $eventdata->userfrom            = $userfrom;
                 $eventdata->userto              = $userto;
                 $eventdata->subject             = $postsubject;
-                $eventdata->fullmessage         = $posttext;
+                $eventdata->fullmessage         = $textout->render($data);
                 $eventdata->fullmessageformat   = FORMAT_PLAIN;
-                $eventdata->fullmessagehtml     = $posthtml;
+                $eventdata->fullmessagehtml     = $htmlout->render($data);
                 $eventdata->notification        = 1;
                 $eventdata->replyto             = $replyaddress;
                 if (!empty($replyaddress)) {
@@ -1072,25 +1099,39 @@ function forum_cron() {
                             );
 
                         $maildigest = forum_get_user_maildigest_bulk($digests, $userto, $forum->id);
-                        if ($maildigest == 2) {
-                            // Subjects and link only
-                            $posttext .= "\n";
-                            $posttext .= $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id;
-                            $by = new stdClass();
-                            $by->name = fullname($userfrom);
-                            $by->date = userdate($post->modified);
-                            $posttext .= "\n".format_string($post->subject,true).' '.get_string("bynameondate", "forum", $by);
-                            $posttext .= "\n---------------------------------------------------------------------";
-
-                            $by->name = "<a target=\"_blank\" href=\"$CFG->wwwroot/user/view.php?id=$userfrom->id&amp;course=$course->id\">$by->name</a>";
-                            $posthtml .= '<div><a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id.'#p'.$post->id.'">'.format_string($post->subject,true).'</a> '.get_string("bynameondate", "forum", $by).'</div>';
-
+                        if (!isset($userto->canpost[$discussion->id])) {
+                            $canreply = forum_user_can_post($forum, $discussion, $userto, $cm, $course, $modcontext);
                         } else {
-                            // The full treatment
-                            $posttext .= forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto, true);
-                            $posthtml .= forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
+                            $canreply = $userto->canpost[$discussion->id];
+                        }
 
-                        // Create an array of postid's for this user to mark as read.
+                        $data = new \mod_forum\output\forum_post_email(
+                                $course,
+                                $cm,
+                                $forum,
+                                $discussion,
+                                $post,
+                                $userfrom,
+                                $userto,
+                                $canreply
+                            );
+
+                        if (!isset($userto->viewfullnames[$forum->id])) {
+                            $data->viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
+                        } else {
+                            $data->viewfullnames = $userto->viewfullnames[$forum->id];
+                        }
+
+                        if ($maildigest == 2) {
+                            // Subjects and link only.
+                            $posttext .= $textdigestbasicout->render($data);
+                            $posthtml .= $htmldigestbasicout->render($data);
+                        } else {
+                            // The full treatment.
+                            $posttext .= $textdigestfullout->render($data);
+                            $posthtml .= $htmldigestfullout->render($data);
+
+                            // Create an array of postid's for this user to mark as read.
                             if (!$CFG->forum_usermarksread) {
                                 $userto->markposts[$post->id] = $post->id;
                             }
@@ -1153,178 +1194,6 @@ function forum_cron() {
 
     return true;
 }
-
-/**
- * Builds and returns the body of the email notification in plain text.
- *
- * @global object
- * @global object
- * @uses CONTEXT_MODULE
- * @param object $course
- * @param object $cm
- * @param object $forum
- * @param object $discussion
- * @param object $post
- * @param object $userfrom
- * @param object $userto
- * @param boolean $bare
- * @param string $replyaddress The inbound address that a user can reply to the generated e-mail with. [Since 2.8].
- * @return string The email body in plain text format.
- */
-function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto, $bare = false, $replyaddress = null) {
-    global $CFG, $USER;
-
-    $modcontext = context_module::instance($cm->id);
-
-    if (!isset($userto->viewfullnames[$forum->id])) {
-        $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
-    } else {
-        $viewfullnames = $userto->viewfullnames[$forum->id];
-    }
-
-    if (!isset($userto->canpost[$discussion->id])) {
-        $canreply = forum_user_can_post($forum, $discussion, $userto, $cm, $course, $modcontext);
-    } else {
-        $canreply = $userto->canpost[$discussion->id];
-    }
-
-    $by = New stdClass;
-    $by->name = fullname($userfrom, $viewfullnames);
-    $by->date = userdate($post->modified, "", core_date::get_user_timezone($userto));
-
-    $strbynameondate = get_string('bynameondate', 'forum', $by);
-
-    $strforums = get_string('forums', 'forum');
-
-    $canunsubscribe = !\mod_forum\subscriptions::is_forcesubscribed($forum);
-
-    $posttext = '';
-
-    if (!$bare) {
-        $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
-        $posttext  .= "$shortname -> $strforums -> ".format_string($forum->name,true);
-
-        if ($discussion->name != $forum->name) {
-            $posttext  .= " -> ".format_string($discussion->name,true);
-        }
-    }
-
-    // add absolute file links
-    $post->message = file_rewrite_pluginfile_urls($post->message, 'pluginfile.php', $modcontext->id, 'mod_forum', 'post', $post->id);
-
-    $posttext .= "\n";
-    $posttext .= $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id;
-    $posttext .= "\n";
-    $posttext .= format_string($post->subject,true);
-    if ($bare) {
-        $posttext .= " ($CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id#p$post->id)";
-    }
-    $posttext .= "\n".$strbynameondate."\n";
-    $posttext .= "---------------------------------------------------------------------\n";
-    $posttext .= format_text_email($post->message, $post->messageformat);
-    $posttext .= "\n\n";
-    $posttext .= forum_print_attachments($post, $cm, "text");
-    $posttext .= "\n---------------------------------------------------------------------\n";
-
-    if (!$bare) {
-        if ($canreply) {
-            $posttext .= get_string("postmailinfo", "forum", $shortname)."\n";
-            $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id\n";
-        }
-
-        if ($canunsubscribe) {
-            if (\mod_forum\subscriptions::is_subscribed($userto->id, $forum, null, $cm)) {
-                // If subscribed to this forum, offer the unsubscribe link.
-                $posttext .= get_string("unsubscribe", "forum");
-                $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\n";
-            }
-            // Always offer the unsubscribe from discussion link.
-            $posttext .= get_string("unsubscribediscussion", "forum");
-            $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id&d=$discussion->id\n";
-        }
-    }
-
-    $posttext .= get_string("digestmailpost", "forum");
-    $posttext .= ": {$CFG->wwwroot}/mod/forum/index.php?id={$forum->course}\n";
-
-    return $posttext;
-}
-
-/**
- * Builds and returns the body of the email notification in html format.
- *
- * @global object
- * @param object $course
- * @param object $cm
- * @param object $forum
- * @param object $discussion
- * @param object $post
- * @param object $userfrom
- * @param object $userto
- * @param string $replyaddress The inbound address that a user can reply to the generated e-mail with. [Since 2.8].
- * @return string The email text in HTML format
- */
-function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto, $replyaddress = null) {
-    global $CFG;
-
-    if ($userto->mailformat != 1) {  // Needs to be HTML
-        return '';
-    }
-
-    if (!isset($userto->canpost[$discussion->id])) {
-        $canreply = forum_user_can_post($forum, $discussion, $userto, $cm, $course);
-    } else {
-        $canreply = $userto->canpost[$discussion->id];
-    }
-
-    $strforums = get_string('forums', 'forum');
-    $canunsubscribe = ! \mod_forum\subscriptions::is_forcesubscribed($forum);
-    $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
-
-    $posthtml = '<head>';
-/*    foreach ($CFG->stylesheets as $stylesheet) {
-        //TODO: MDL-21120
-        $posthtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
-    }*/
-    $posthtml .= '</head>';
-    $posthtml .= "\n<body id=\"email\">\n\n";
-
-    $posthtml .= '<div class="navbar">'.
-    '<a target="_blank" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$shortname.'</a> &raquo; '.
-    '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/index.php?id='.$course->id.'">'.$strforums.'</a> &raquo; '.
-    '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'.format_string($forum->name,true).'</a>';
-    if ($discussion->name == $forum->name) {
-        $posthtml .= '</div>';
-    } else {
-        $posthtml .= ' &raquo; <a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id.'">'.
-                     format_string($discussion->name,true).'</a></div>';
-    }
-    $posthtml .= forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
-
-    $footerlinks = array();
-    if ($canunsubscribe) {
-        if (\mod_forum\subscriptions::is_subscribed($userto->id, $forum, null, $cm)) {
-            // If subscribed to this forum, offer the unsubscribe link.
-            $unsublink = new moodle_url('/mod/forum/subscribe.php', array('id' => $forum->id));
-            $footerlinks[] = html_writer::link($unsublink, get_string('unsubscribe', 'mod_forum'));
-        }
-        // Always offer the unsubscribe from discussion link.
-        $unsublink = new moodle_url('/mod/forum/subscribe.php', array(
-                'id' => $forum->id,
-                'd' => $discussion->id,
-            ));
-        $footerlinks[] = html_writer::link($unsublink, get_string('unsubscribediscussion', 'mod_forum'));
-
-        $footerlinks[] = '<a href="' . $CFG->wwwroot . '/mod/forum/unsubscribeall.php">' . get_string('unsubscribeall', 'forum') . '</a>';
-    }
-    $footerlinks[] = "<a href='{$CFG->wwwroot}/mod/forum/index.php?id={$forum->course}'>" . get_string('digestmailpost', 'forum') . '</a>';
-    $posthtml .= '<hr /><div class="mdl-align unsubscribelink">' . implode('&nbsp;', $footerlinks) . '</div>';
-
-    $posthtml .= '</body>';
-
-    return $posthtml;
-}
-
 
 /**
  *
@@ -3039,126 +2908,6 @@ function forum_get_course_forum($courseid, $type) {
     }
     $sectionid = course_add_cm_to_section($courseid, $mod->coursemodule, 0);
     return $DB->get_record("forum", array("id" => "$forum->id"));
-}
-
-
-/**
- * Given the data about a posting, builds up the HTML to display it and
- * returns the HTML in a string.  This is designed for sending via HTML email.
- *
- * @global object
- * @param object $course
- * @param object $cm
- * @param object $forum
- * @param object $discussion
- * @param object $post
- * @param object $userform
- * @param object $userto
- * @param bool $ownpost
- * @param bool $reply
- * @param bool $link
- * @param bool $rate
- * @param string $footer
- * @return string
- */
-function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfrom, $userto,
-                              $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
-
-    global $CFG, $OUTPUT;
-
-    $modcontext = context_module::instance($cm->id);
-
-    if (!isset($userto->viewfullnames[$forum->id])) {
-        $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
-    } else {
-        $viewfullnames = $userto->viewfullnames[$forum->id];
-    }
-
-    // add absolute file links
-    $post->message = file_rewrite_pluginfile_urls($post->message, 'pluginfile.php', $modcontext->id, 'mod_forum', 'post', $post->id);
-
-    // format the post body
-    $options = new stdClass();
-    $options->para = true;
-    $formattedtext = format_text($post->message, $post->messageformat, $options, $course->id);
-
-    $output = '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
-
-    $output .= '<tr class="header"><td width="35" valign="top" class="picture left">';
-    $output .= $OUTPUT->user_picture($userfrom, array('courseid'=>$course->id));
-    $output .= '</td>';
-
-    if ($post->parent) {
-        $output .= '<td class="topic">';
-    } else {
-        $output .= '<td class="topic starter">';
-    }
-    $output .= '<div class="subject">'.format_string($post->subject).'</div>';
-
-    $fullname = fullname($userfrom, $viewfullnames);
-    $by = new stdClass();
-    $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userfrom->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
-    $by->date = userdate($post->modified, '', core_date::get_user_timezone($userto));
-    $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
-
-    $output .= '</td></tr>';
-
-    $output .= '<tr><td class="left side" valign="top">';
-
-    if (isset($userfrom->groups)) {
-        $groups = $userfrom->groups[$forum->id];
-    } else {
-        $groups = groups_get_all_groups($course->id, $userfrom->id, $cm->groupingid);
-    }
-
-    if ($groups) {
-        $output .= print_group_picture($groups, $course->id, false, true, true);
-    } else {
-        $output .= '&nbsp;';
-    }
-
-    $output .= '</td><td class="content">';
-
-    $attachments = forum_print_attachments($post, $cm, 'html');
-    if ($attachments !== '') {
-        $output .= '<div class="attachments">';
-        $output .= $attachments;
-        $output .= '</div>';
-    }
-
-    $output .= $formattedtext;
-
-// Commands
-    $commands = array();
-
-    if ($post->parent) {
-        $commands[] = '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
-                      $post->discussion.'&amp;parent='.$post->parent.'">'.get_string('parent', 'forum').'</a>';
-    }
-
-    if ($reply) {
-        $commands[] = '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/post.php?reply='.$post->id.'">'.
-                      get_string('reply', 'forum').'</a>';
-    }
-
-    $output .= '<div class="commands">';
-    $output .= implode(' | ', $commands);
-    $output .= '</div>';
-
-// Context link to post if required
-    if ($link) {
-        $output .= '<div class="link">';
-        $output .= '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id.'">'.
-                     get_string('postincontext', 'forum').'</a>';
-        $output .= '</div>';
-    }
-
-    if ($footer) {
-        $output .= '<div class="footer">'.$footer.'</div>';
-    }
-    $output .= '</td></tr></table>'."\n\n";
-
-    return $output;
 }
 
 /**
