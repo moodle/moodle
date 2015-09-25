@@ -1,4 +1,4 @@
-@qtype @qtype_ddimageortext
+@qtype @qtype_ddimageortext @_switch_window
 Feature: Preview a drag-drop onto image question
   As a teacher
   In order to check my drag-drop onto image questions will work for students
