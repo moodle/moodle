@@ -363,9 +363,6 @@ class api {
         $framework = new competency_framework($record->id);
         // Check the permissions before update.
         require_capability('tool/lp:competencymanage', $framework->get_context());
-        if (isset($record->contextid) && $record->contextid != $framework->get_contextid()) {
-            throw new coding_exception('Changing the context of an existing framework is forbidden.');
-        }
         $framework->from_record($record);
         return $framework->update();
     }
@@ -415,9 +412,8 @@ class api {
         }
 
         // OK - all set.
-        $framework = new competency_framework();
         list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contexts), SQL_PARAMS_NAMED);
-        return $framework->get_records_select("contextid $insql", $inparams, $sort, '*', $skip, $limit);
+        return competency_framework::get_records_select("contextid $insql", $inparams, $sort, '*', $skip, $limit);
     }
 
     /**
@@ -445,9 +441,8 @@ class api {
         }
 
         // OK - all set.
-        $framework = new competency_framework();
         list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contexts), SQL_PARAMS_NAMED);
-        return $framework->count_records_select("contextid $insql", $inparams);
+        return competency_framework::count_records_select("contextid $insql", $inparams);
     }
 
     /**

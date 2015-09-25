@@ -27,6 +27,7 @@ require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->libdir/grade/grade_scale.php");
 
 use context;
+use context_system;
 use external_api;
 use external_function_parameters;
 use external_value;
@@ -286,7 +287,10 @@ class external extends external_api {
 
         $params = (object) $params;
         $result = api::create_framework($params);
-        return $result->to_record();
+        $record = $result->to_record();
+        $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
+            array('context' => context_system::instance()));
+        return $record;
     }
 
     /**
@@ -337,7 +341,10 @@ class external extends external_api {
                                             ));
 
         $result = api::read_framework($params['id']);
-        return $result->to_record();
+        $record = $result->to_record();
+        $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
+            array('context' => context_system::instance()));
+        return $record;
     }
 
     /**
@@ -593,6 +600,8 @@ class external extends external_api {
         $records = array();
         foreach ($results as $result) {
             $record = $result->to_record();
+            $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
+                array('context' => context_system::instance()));
             array_push($records, $record);
         }
         return $records;
