@@ -28,11 +28,14 @@ Feature: Preview a drag-drop onto image question
   Scenario: Preview a question using the mouse.
     When I click on "Preview" "link" in the "Drag markers" "table_row"
     And I switch to "questionpreview" window
+    # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
+    And I change window size to "medium"
+    And I wait "2" seconds
     # Odd, but the <br>s go to nothing, not a space.
-    And I drag "OU" to "340,228" in the drag and drop markers question
-    And I drag "Railway station" to "252,195" in the drag and drop markers question
-    And I drag "Railway station,1" to "324,317" in the drag and drop markers question
-    And I drag "Railway station,2" to "201,99" in the drag and drop markers question
+    And I drag "OU" to "342,230" in the drag and drop markers question
+    And I drag "Railway station" to "254,197" in the drag and drop markers question
+    And I drag "Railway station,1" to "326,319" in the drag and drop markers question
+    And I drag "Railway station,2" to "203,101" in the drag and drop markers question
     And I press "Submit and finish"
     Then the state of "Please place the markers on the map of Milton Keynes" question is shown as "Correct"
     And I should see "Mark 1.00 out of 1.00"
