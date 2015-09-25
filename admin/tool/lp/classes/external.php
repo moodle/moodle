@@ -2277,7 +2277,11 @@ class external extends external_api {
         $params->contextid = $context->id;
 
         $result = api::create_template($params);
-        return $result->to_record();
+        $record = $result->to_record();
+        $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
+            array('context' => context_system::instance()));
+        $record->duedateformatted = userdate($record->duedate);
+        return $record;
     }
 
     /**
@@ -2328,7 +2332,11 @@ class external extends external_api {
                                             ));
 
         $result = api::read_template($params['id']);
-        return $result->to_record();
+        $record = $result->to_record();
+        $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
+            array('context' => context_system::instance()));
+        $record->duedateformatted = userdate($record->duedate);
+        return $record;
     }
 
     /**
@@ -2590,6 +2598,9 @@ class external extends external_api {
         $records = array();
         foreach ($results as $result) {
             $record = $result->to_record();
+            $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
+                array('context' => context_system::instance()));
+            $record->duedateformatted = userdate($record->duedate);
             array_push($records, $record);
         }
         return $records;

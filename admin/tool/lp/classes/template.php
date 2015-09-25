@@ -34,51 +34,43 @@ use stdClass;
  */
 class template extends persistent {
 
-    /** @var string $shortname Short name for this template */
-    private $shortname = '';
-
-    /** @var string $description Description for this template */
-    private $description = '';
-
-    /** @var int $descriptionformat Format for the description */
-    private $descriptionformat = 0;
-
-    /** @var string $idnumber Unique idnumber for this template - must be unique if it is non-empty */
-    private $idnumber = '';
-
-    /** @var int $duedate A default due date for instances of this plan */
-    private $duedate = 0;
-
-    /** @var bool $visible Used to show/hide this template */
-    private $visible = true;
-
-    /** @var int $contextid The context ID in which the template is set. */
-    private $contextid = null;
-    /**
-     * Method that provides the table name matching this class.
-     *
-     * @return string
-     */
-    public function get_table_name() {
-        return 'tool_lp_template';
-    }
+    const TABLE = 'tool_lp_template';
 
     /**
-     * Get the short name.
+     * Return the definition of the properties of this model.
      *
-     * @return string The short name
+     * @return array
      */
-    public function get_shortname() {
-        return $this->shortname;
-    }
-
-    /**
-     * Set the short name.
-     *
-     * @param string $shortname The short name
-     */
-    public function set_shortname($shortname) {
-        $this->shortname = $shortname;
+    protected static function define_properties() {
+        return array(
+            'shortname' => array(
+                'type' => PARAM_TEXT,
+            ),
+            'description' => array(
+                'default' => '',
+                'type' => PARAM_TEXT,
+            ),
+            'descriptionformat' => array(
+                'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
+                'type' => PARAM_INT,
+                'default' => FORMAT_HTML
+            ),
+            'idnumber' => array(
+                'default' => '',
+                'type' => PARAM_TEXT,
+            ),
+            'duedate' => array(
+                'default' => 0,
+                'type' => PARAM_INT,
+            ),
+            'visible' => array(
+                'default' => 1,
+                'type' => PARAM_BOOL,
+            ),
+            'contextid' => array(
+                'type' => PARAM_INT
+            ),
+        );
     }
 
     /**
@@ -87,176 +79,23 @@ class template extends persistent {
      * @return context The context
      */
     public function get_context() {
-        return context::instance_by_id($this->contextid);
+        return context::instance_by_id($this->get_contextid());
     }
 
     /**
-     * Get the contextid.
+     * Validate the context ID.
      *
-     * @return string The contextid
+     * @param  int $value The context ID.
+     * @return bool|lang_string
      */
-    public function get_contextid() {
-        return $this->contextid;
-    }
-
-    /**
-     * Get the description format.
-     *
-     * @return int The description format
-     */
-    public function get_descriptionformat() {
-        return $this->descriptionformat;
-    }
-
-    /**
-     * Set the description format
-     *
-     * @param int $descriptionformat The description format
-     */
-    public function set_descriptionformat($descriptionformat) {
-        $this->descriptionformat = $descriptionformat;
-    }
-
-    /**
-     * Get the id number.
-     *
-     * @return string The id number
-     */
-    public function get_idnumber() {
-        return $this->idnumber;
-    }
-
-    /**
-     * Set the id number.
-     *
-     * @param string $idnumber The id number
-     */
-    public function set_idnumber($idnumber) {
-        $this->idnumber = $idnumber;
-    }
-
-    /**
-     * Get the description.
-     *
-     * @return string The description
-     */
-    public function get_description() {
-        return $this->description;
-    }
-
-    /**
-     * Set the description.
-     *
-     * @param string $description The description
-     */
-    public function set_description($description) {
-        $this->description = $description;
-    }
-
-    /**
-     * Get the due date
-     *
-     * @return string The due date
-     */
-    public function get_duedate() {
-        return $this->duedate;
-    }
-
-    /**
-     * Set the due date
-     *
-     * @param string $duedate The due date
-     */
-    public function set_duedate($duedate) {
-        $this->duedate = $duedate;
-    }
-
-    /**
-     * Get the visible flag.
-     *
-     * @return string The visible flag
-     */
-    public function get_visible() {
-        return $this->visible;
-    }
-
-    /**
-     * Set the visible flag.
-     *
-     * @param string $visible The visible flag
-     */
-    public function set_visible($visible) {
-        $this->visible = $visible;
-    }
-
-    /**
-     * Populate this class with data from a DB record.
-     *
-     * @param stdClass $record A DB record.
-     * @return template
-     */
-    public function from_record($record) {
-        if (isset($record->id)) {
-            $this->set_id($record->id);
+    public function validate_contextid($value) {
+        $context = context::instance_by_id($value, IGNORE_MISSING);
+        if (!$context) {
+            return new lang_string('invalidcontext', 'error');
+        } else if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT) {
+            return new lang_string('invalidcontext', 'error');
         }
-        if (isset($record->shortname)) {
-            $this->set_shortname($record->shortname);
-        }
-        if (isset($record->idnumber)) {
-            $this->set_idnumber($record->idnumber);
-        }
-        if (isset($record->description)) {
-            $this->set_description($record->description);
-        }
-        if (isset($record->descriptionformat)) {
-            $this->set_descriptionformat($record->descriptionformat);
-        }
-        if (isset($record->visible)) {
-            $this->set_visible($record->visible);
-        }
-        if (isset($record->duedate)) {
-            $this->set_duedate($record->duedate);
-        }
-        if (isset($record->timecreated)) {
-            $this->set_timecreated($record->timecreated);
-        }
-        if (isset($record->timemodified)) {
-            $this->set_timemodified($record->timemodified);
-        }
-        if (isset($record->usermodified)) {
-            $this->set_usermodified($record->usermodified);
-        }
-        if (isset($record->contextid)) {
-            $this->contextid = $record->contextid;
-        }
-        return $this;
-    }
-
-    /**
-     * Create a DB record from this class.
-     *
-     * @return stdClass
-     */
-    public function to_record() {
-        $record = new stdClass();
-        $record->id = $this->get_id();
-        $record->shortname = $this->get_shortname();
-        $record->idnumber = $this->get_idnumber();
-        $record->duedate = $this->get_duedate();
-        $record->duedateformatted = '';
-        if ($record->duedate) {
-            $record->duedateformatted = userdate($this->get_duedate());
-        }
-        $record->description = $this->get_description();
-        $record->descriptionformat = $this->get_descriptionformat();
-        $record->descriptionformatted = format_text($this->get_description(), $this->get_descriptionformat());
-        $record->visible = $this->get_visible();
-        $record->timecreated = $this->get_timecreated();
-        $record->timemodified = $this->get_timemodified();
-        $record->usermodified = $this->get_usermodified();
-        $record->contextid = $this->get_contextid();
-
-        return $record;
+        return true;
     }
 
 }
