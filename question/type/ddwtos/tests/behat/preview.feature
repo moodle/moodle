@@ -1,4 +1,4 @@
-@qtype @qtype_ddwtos
+@qtype @qtype_ddwtos @_switch_window
 Feature: Preview a drag-drop into text question
   As a teacher
   In order to check my drag-drop into text questions will work for students

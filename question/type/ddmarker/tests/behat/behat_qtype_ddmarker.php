@@ -83,10 +83,11 @@ class behat_qtype_ddmarker extends behat_base {
                     var container = document.querySelector('.droparea');
                     container.style.setProperty('position', 'relative');
                     container.insertBefore(target, image);
-                    var xadjusted = {$x} + (container.offsetWidth - image.offsetWidth) / 2
+                    var xadjusted = {$x} + (container.offsetWidth - image.offsetWidth) / 2;
+                    var yadjusted = {$y} + (container.offsetHeight - image.offsetHeight) / 2;
                     target.style.setProperty('position', 'absolute');
                     target.style.setProperty('left', xadjusted + 'px');
-                    target.style.setProperty('top', '{$y}px');
+                    target.style.setProperty('top', yadjusted + 'px');
                     target.style.setProperty('width', '1px');
                     target.style.setProperty('height', '1px');
                 }())");
