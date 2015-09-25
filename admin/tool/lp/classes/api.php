@@ -1127,8 +1127,7 @@ class api {
             $params['statusdraft'] = plan::STATUS_DRAFT;
         }
 
-        $plans = new plan();
-        return $plans->get_records_select($select, $params, 'timemodified DESC');
+        return plan::get_records_select($select, $params, 'timemodified DESC');
     }
 
     /**
@@ -1163,7 +1162,7 @@ class api {
         }
 
         $plan = new plan(0, $record);
-        $id = $plan->create();
+        $plan->create();
         return $plan;
     }
 
@@ -1189,13 +1188,13 @@ class api {
             throw new required_capability_exception($context, 'tool/lp:planmanageall', 'nopermissions', '');
         }
 
-        $current = new plan($record->id);
+        $plan = new plan($record->id);
 
         // We don't allow users without planmanage and without
         // planmanageown to edit plans that other users modified.
-        if (!$manageplans && !$manageownplan && $USER->id != $current->get_usermodified()) {
+        if (!$manageplans && !$manageownplan && $USER->id != $plan->get_usermodified()) {
             throw new \moodle_exception('erroreditingmodifiedplan', 'tool_lp');
-        } else if (!$manageplans && $USER->id != $current->get_userid()) {
+        } else if (!$manageplans && $USER->id != $plan->get_userid()) {
             throw new required_capability_exception($context, 'tool/lp:planmanageall', 'nopermissions', '');
         }
 
@@ -1204,7 +1203,7 @@ class api {
             throw new required_capability_exception($context, 'tool/lp:planmanageown', 'nopermissions', '');
         }
 
-        $plan = new plan($record->id, $record);
+        $plan->from_record($record);
         return $plan->update();
     }
 
@@ -1227,7 +1226,7 @@ class api {
         }
 
         // We require any of these capabilities to retrieve draft plans.
-        if ($plan->get_status() === plan::STATUS_DRAFT &&
+        if ($plan->get_status() == plan::STATUS_DRAFT &&
                 !has_any_capability(array('tool/lp:planmanageown', 'tool/lp:planmanageall', 'tool/lp:plancreatedraft'), $context)) {
             // Exception about plancreatedraft as it is the one that is closer to basic users.
             throw new required_capability_exception($context, 'tool/lp:plancreatedraft', 'nopermissions', '');

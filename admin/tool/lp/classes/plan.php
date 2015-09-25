@@ -23,8 +23,9 @@
  */
 namespace tool_lp;
 
-use stdClass;
 use context_user;
+use dml_missing_record_exception;
+use lang_string;
 
 /**
  * Class for loading/storing plans from the DB.
@@ -33,6 +34,8 @@ use context_user;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plan extends persistent {
+
+    const TABLE = 'tool_lp_plan';
 
     /** Draft status */
     const STATUS_DRAFT = 0;
@@ -43,174 +46,75 @@ class plan extends persistent {
     /** Complete status */
     const STATUS_COMPLETE = 2;
 
-    /** @var string $name Name */
-    private $name = '';
-
-    /** @var string $description Description for this learning plan */
-    private $description = '';
-
-    /** @var int $descriptionformat Format for the description */
-    private $descriptionformat = FORMAT_MOODLE;
-
-    /** @var int $userid */
-    private $userid = null;
-
-    /** @var bool $templateid */
-    private $templateid = null;
-
-    /** @var bool $status The plan status, one of the 3 \tool_lp\plan:STATUS_* constants */
-    private $status = null;
-
-    /** @var bool $duedate */
-    private $duedate = null;
-
     /**
-     * Method that provides the table name matching this class.
+     * Return the definition of the properties of this model.
      *
-     * @return string
+     * @return array
      */
-    public function get_table_name() {
-        return 'tool_lp_plan';
+    protected static function define_properties() {
+        return array(
+            'name' => array(
+                'type' => PARAM_TEXT,
+            ),
+            'description' => array(
+                'type' => PARAM_TEXT,
+                'default' => ''
+            ),
+            'descriptionformat' => array(
+                'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
+                'type' => PARAM_INT,
+                'default' => FORMAT_HTML,
+            ),
+            'userid' => array(
+                'type' => PARAM_INT,
+            ),
+            'templateid' => array(
+                'type' => PARAM_INT,
+                'default' => null,
+                'null' => NULL_ALLOWED,
+            ),
+            'status' => array(
+                'choices' => array(self::STATUS_DRAFT, self::STATUS_COMPLETE, self::STATUS_ACTIVE),
+                'type' => PARAM_INT,
+                'default' => self::STATUS_DRAFT,
+            ),
+            'duedate' => array(
+                'type' => PARAM_INT,
+                'default' => 0,
+            ),
+        );
     }
 
     /**
-     * Getter method.
+     * Whether the current user can update the learning plan.
      *
-     * @return string
+     * @return bool|null
      */
-    public function get_name() {
-        return $this->name;
-    }
+    public function can_update() {
+        global $USER;
 
-    /**
-     * Setter method.
-     *
-     * @param string $value value of the field.
-     * @return string
-     */
-    public function set_name($value) {
-        $this->name = $value;
-    }
-
-    /**
-     * Getter method.
-     *
-     * @return string
-     */
-    public function get_description() {
-        return $this->description;
-    }
-
-    /**
-     * Setter method.
-     *
-     * @param string $value value of the field.
-     * @return string
-     */
-    public function set_description($value) {
-        $this->description = $value;
-    }
-
-    /**
-     * Getter method.
-     *
-     * @return string
-     */
-    public function get_descriptionformat() {
-        return $this->descriptionformat;
-    }
-
-    /**
-     * Setter method.
-     *
-     * @param int $value value of the field.
-     * @return string
-     */
-    public function set_descriptionformat($value) {
-        $this->descriptionformat = $value;
-    }
-
-    /**
-     * Getter method.
-     *
-     * @return string
-     */
-    public function get_userid() {
-        return $this->userid;
-    }
-
-    /**
-     * Setter method.
-     *
-     * @param int $value value of the field.
-     * @return string
-     */
-    public function set_userid($value) {
-        $this->userid = $value;
-    }
-
-    /**
-     * Getter method.
-     *
-     * @return string
-     */
-    public function get_templateid() {
-        return $this->templateid;
-    }
-
-    /**
-     * Setter method.
-     *
-     * @param int $value value of the field.
-     * @return string
-     */
-    public function set_templateid($value) {
-        $this->templateid = $value;
-    }
-
-    /**
-     * Getter method.
-     *
-     * @return string
-     */
-    public function get_status() {
-        if ($this->status === null) {
+        // Null if the record has not been filled.
+        if (!$userid = $this->get_userid()) {
             return null;
         }
 
-        return (int)$this->status;
+        $context = context_user::instance($userid);
+
+        // Not all users can edit all plans, the template should know about it.
+        if (has_capability('tool/lp:planmanageall', $context) ||
+                has_capability('tool/lp:planmanageown', $context)) {
+            return true;
+        }
+
+        // The user that created the template can also edit it if he was the last one that modified it. But
+        // can't do it if it is already completed.
+        if ($USER->id == $userid && $this->get_usermodified() == $USER->id && $this->get_status() != self::STATUS_COMPLETE) {
+            return true;
+        }
+
+        return false;
     }
 
-    /**
-     * Setter method.
-     *
-     * @param string $value value of the field.
-     * @return string
-     */
-    public function set_status($value) {
-        $this->status = $value;
-    }
-
-    /**
-     * Getter method.
-     *
-     * @return string
-     */
-    public function get_duedate() {
-        return $this->duedate;
-    }
-
-    /**
-     * Setter method.
-     *
-     * @param string $value value of the field.
-     * @return string
-     */
-    public function set_duedate($value) {
-        $this->duedate = $value;
-    }
-
-    // Extra methods.
     /**
      * Human readable status name.
      *
@@ -239,105 +143,19 @@ class plan extends persistent {
     }
 
     /**
-     * Whether the current user can update the learning plan.
+     * Validate the template ID.
      *
-     * @return bool
+     * @param mixed $value The value.
+     * @return true|lang_string
      */
-    public function get_usercanupdate() {
-        global $USER;
+    protected function validate_templateid($value) {
 
-        // Null if the record has not been filled.
-        if (!$userid = $this->get_userid()) {
-            return null;
+        // Checks that the template exists.
+        if (!empty($value) && !template::record_exists($value)) {
+            return new lang_string('invaliddata', 'error');
         }
 
-        $context = context_user::instance($userid);
-
-        // Not all users can edit all plans, the template should know about it.
-        if (has_capability('tool/lp:planmanageall', $context) ||
-                has_capability('tool/lp:planmanageown', $context)) {
-            return true;
-
-        }
-
-        // The user that created the template can also edit it if he was the last one that modified it. But
-        // can't do it if it is already completed.
-        if ($USER->id == $userid && $this->get_usermodified() == $USER->id && $this->get_status() != self::STATUS_COMPLETE) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
-    /**
-     * Converts the object to a standard PHP object.
-     *
-     * If it is used to insert/update into DB the extra fields like statusname will be
-     * ignored, they are useful though when passing the object to templates.
-     *
-     * @return \stdClass
-     */
-    public function to_record() {
-
-        $record = new stdClass();
-        $record->id = $this->get_id();
-        $record->name = $this->get_name();
-        $record->description = $this->get_description();
-        $record->descriptionformat = $this->get_descriptionformat();
-        $record->userid = $this->get_userid();
-        $record->templateid = $this->get_templateid();
-        $record->status = $this->get_status();
-        $record->duedate = $this->get_duedate();
-        $record->timecreated = $this->get_timecreated();
-        $record->timemodified = $this->get_timemodified();
-        $record->usermodified = $this->get_usermodified();
-
-        // Extra data.
-        $record->statusname = $this->get_statusname();
-        $record->usercanupdate = $this->get_usercanupdate();
-
-        return $record;
-    }
-
-    /**
-     * Get plan object from record.
-     *
-     * @param stdClass $record
-     * @return plan
-     */
-    public function from_record($record) {
-        if (isset($record->id)) {
-            $this->set_id($record->id);
-        }
-        if (isset($record->name)) {
-            $this->set_name($record->name);
-        }
-        if (isset($record->description)) {
-            $this->set_description($record->description);
-        }
-        if (isset($record->descriptionformat)) {
-            $this->set_descriptionformat($record->descriptionformat);
-        }
-        if (isset($record->userid)) {
-            $this->set_userid($record->userid);
-        }
-        if (isset($record->templateid)) {
-            $this->set_templateid($record->templateid);
-        }
-        if (isset($record->status)) {
-            $this->set_status($record->status);
-        }
-        if (isset($record->duedate)) {
-            $this->set_duedate($record->duedate);
-        }
-        if (isset($record->timecreated)) {
-            $this->set_timecreated($record->timecreated);
-        }
-        if (isset($record->timemodified)) {
-            $this->set_timemodified($record->timemodified);
-        }
-        if (isset($record->usermodified)) {
-            $this->set_usermodified($record->usermodified);
-        }
-    }
 }
