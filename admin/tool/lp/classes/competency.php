@@ -23,8 +23,9 @@
  */
 namespace tool_lp;
 
-use stdClass;
 use context_system;
+use lang_string;
+use stdClass;
 
 /**
  * Class for loading/storing competencies from the DB.
@@ -34,349 +35,200 @@ use context_system;
  */
 class competency extends persistent {
 
-    /** @var string $shortname Short name for this competency */
-    private $shortname = '';
+    const TABLE = 'tool_lp_competency';
 
-    /** @var string $idnumber Unique idnumber for this competency - must be unique within the framework if it is non-empty */
-    private $idnumber = '';
-
-    /** @var string $description Description for this competency */
-    private $description = '';
-
-    /** @var int $descriptionformat Format for the description */
-    private $descriptionformat = 0;
-
-    /** @var int $sortorder A number used to influence sorting */
-    private $sortorder = 0;
-
-    /** @var bool $visible Used to show/hide this competency */
-    private $visible = true;
-
-    /** @var int $parentid id of the parent of this competency (0 means root competency) */
-    private $parentid = 0;
-
-    /** @var string $path ids of all the parents up the tree separated with slashes */
-    private $path = '/0/';
-
-    /** @var int $id of the competency framework this competency belongs to */
-    private $competencyframeworkid = 0;
+    /** @var competency Object before update. */
+    protected $beforeupdate = null;
 
     /**
-     * Method that provides the table name matching this class.
+     * Return the definition of the properties of this model.
      *
-     * @return string
+     * @return array
      */
-    public function get_table_name() {
-        return 'tool_lp_competency';
+    protected static function define_properties() {
+        return array(
+            'shortname' => array(
+                'type' => PARAM_TEXT
+            ),
+            'idnumber' => array(
+                'type' => PARAM_TEXT
+            ),
+            'description' => array(
+                'default' => '',
+                'type' => PARAM_TEXT
+            ),
+            'descriptionformat' => array(
+                'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
+                'type' => PARAM_INT,
+                'default' => FORMAT_HTML
+            ),
+            'sortorder' => array(
+                'default' => null,
+                'type' => PARAM_INT
+            ),
+            'visible' => array(
+                'default' => 1,
+                'type' => PARAM_BOOL
+            ),
+            'parentid' => array(
+                'default' => 0,
+                'type' => PARAM_INT
+            ),
+            'path' => array(
+                'default' => '/0/',
+                'type' => PARAM_RAW
+            ),
+            'competencyframeworkid' => array(
+                'default' => 0,
+                'type' => PARAM_INT
+            ),
+        );
     }
 
     /**
-     * Get the short name.
+     * Hook to execute before validate.
      *
-     * @return string The short name
+     * @return void
      */
-    public function get_shortname() {
-        return $this->shortname;
+    protected function before_validate() {
+        $this->beforeupdate = null;
+        $this->newparent = null;
+
+        // During update.
+        if ($this->get_id()) {
+            $this->beforeupdate = new competency($this->get_id());
+
+            // The parent ID has changed.
+            if ($this->beforeupdate->get_parentid() != $this->get_parentid()) {
+                $this->newparent = $this->get_parent();
+
+                // Update path and sortorder.
+                $this->set_new_path($parent);
+                $this->set_new_sortorder();
+            }
+
+        // During create.
+        } else {
+
+            $this->set_new_path();
+            if ($this->get_sortorder() === null) {
+                // Get a sortorder if it wasn't set.
+                $this->set_new_sortorder();
+            }
+        }
     }
 
     /**
-     * Set the short name.
+     * Hook to execute after an update.
      *
-     * @param string $shortname The short name
+     * @param bool $result Whether or not the update was successful.
+     * @return void
      */
-    public function set_shortname($shortname) {
-        $this->shortname = $shortname;
+    protected function after_update($result) {
+        global $DB;
+
+        if (!$result) {
+            $this->beforeupdate = null;
+            return;
+        }
+
+        // The parent ID has changed, we need to fix all the paths of the children.
+        if ($this->beforeupdate->get_parentid() != $this->get_parentid()) {
+            $beforepath = $this->beforeupdate->get_path() . $this->get_id() . '/';
+
+            $like = $DB->sql_like('path', '?');
+            $likesearch = $DB->sql_like_escape($beforepath) . '%';
+
+            $table = '{' . self::TABLE . '}';
+            $sql = "UPDATE $table SET path = REPLACE(path, ?, ?) WHERE " . $like;
+            $DB->execute($sql, array(
+                $beforepath,
+                $this->get_path() . $this->get_id() . '/',
+                $likesearch
+            ));
+        }
+
+        $this->beforeupdate = null;
+    }
+
+
+    /**
+     * Hook to execute after a delete.
+     *
+     * @param bool $result Whether or not the delete was successful.
+     * @return void
+     */
+    protected function after_delete($result) {
+        global $DB;
+        if (!$result) {
+            return;
+        }
+
+        // We need to delete all the children.
+        $deletepath = $DB->sql_like_escape($this->get_path() . $this->get_id() . '/') . '%';
+        $like = $DB->sql_like('path', ':deletepath');
+        $DB->delete_records_select(self::TABLE, $like, array('deletepath' => $deletepath));
+
+        // And all the links to courses.
+        $DB->delete_records('tool_lp_course_competency', array('competencyid' => $this->get_id()));
     }
 
     /**
-     * Get the description format.
+     * Get the competency framework.
      *
-     * @return int The description format
-     */
-    public function get_descriptionformat() {
-        return $this->descriptionformat;
-    }
-
-    /**
-     * Set the description format
-     *
-     * @param int $descriptionformat The description format
-     */
-    public function set_descriptionformat($descriptionformat) {
-        $this->descriptionformat = $descriptionformat;
-    }
-
-    /**
-     * Get the id number.
-     *
-     * @return string The id number
-     */
-    public function get_idnumber() {
-        return $this->idnumber;
-    }
-
-    /**
-     * Set the id number.
-     *
-     * @param string $idnumber The id number
-     */
-    public function set_idnumber($idnumber) {
-        $this->idnumber = $idnumber;
-    }
-
-    /**
-     * Get the description.
-     *
-     * @return string The description
-     */
-    public function get_description() {
-        return $this->description;
-    }
-
-    /**
-     * Set the description.
-     *
-     * @param string $description The description
-     */
-    public function set_description($description) {
-        $this->description = $description;
-    }
-
-    /**
-     * Get the sort order index.
-     *
-     * @return int The sort order index
-     */
-    public function get_sortorder() {
-        return $this->sortorder;
-    }
-
-    /**
-     * Set the sort order index.
-     *
-     * @param string $sortorder The sort order index
-     */
-    public function set_sortorder($sortorder) {
-        $this->sortorder = $sortorder;
-    }
-
-    /**
-     * Get the visible flag.
-     *
-     * @return string The visible flag
-     */
-    public function get_visible() {
-        return $this->visible;
-    }
-
-    /**
-     * Set the visible flag.
-     *
-     * @param string $visible The visible flag
-     */
-    public function set_visible($visible) {
-        $this->visible = $visible;
-    }
-
-    /**
-     * Get the parentid
-     *
-     * @return int The id of the parent
-     */
-    public function get_parentid() {
-        return $this->parentid;
-    }
-
-    /**
-     * Set the parent id
-     *
-     * @param int $id The parent id number (can be null)
-     */
-    public function set_parentid($id) {
-        $this->parentid = $id;
-    }
-
-    /**
-     * Get the path
-     *
-     * @return string The ids of all the parents joined with a slash.
-     */
-    public function get_path() {
-        return $this->path;
-    }
-
-    /**
-     * Set the path.
-     *
-     * @param string $path The ids of all the parents joined with a slash.
-     */
-    public function set_path($path) {
-        $this->path = $path;
-    }
-
-    /**
-     * Get the competencyframeworkid
-     *
-     * @return int The competency framework id.
+     * @return competency_framework
      */
     public function get_framework() {
         return new competency_framework($this->get_competencyframeworkid());
     }
 
     /**
-     * Get the competencyframeworkid
+     * Return the parent competency.
      *
-     * @return int The competency framework id.
+     * @return null|competency
      */
-    public function get_competencyframeworkid() {
-        return $this->competencyframeworkid;
+    public function get_parent() {
+        $parentid = $this->get_parentid();
+        if (!$parentid) {
+            return null;
+        }
+        return new competency($parentid);
     }
 
     /**
-     * Set the competencyframeworkid.
+     * Helper method to set the path.
      *
-     * @param int $competencyframeworkid The competency framework id.
+     * @param competency $parent The parent competency object.
+     * @return void
      */
-    public function set_competencyframeworkid($competencyframeworkid) {
-        $this->competencyframeworkid = $competencyframeworkid;
+    protected function set_new_path(competency $parent = null) {
+        $path = '/0/';
+        if ($this->get_parentid()) {
+            $parent = $parent !== null ? $parent : $this->get_parent();
+            $path = $parent->get_path() . $this->get_parentid() . '/';
+        }
+        $this->set('path', $path);
     }
 
     /**
-     * Populate this class with data from a DB record.
+     * Helper method to set the sortorder.
      *
-     * @param stdClass $record A DB record.
-     * @return \tool_lp\competency
+     * @return void
      */
-    public function from_record($record) {
-        if (isset($record->id)) {
-            $this->set_id($record->id);
-        }
-        if (isset($record->shortname)) {
-            $this->set_shortname($record->shortname);
-        }
-        if (isset($record->idnumber)) {
-            $this->set_idnumber($record->idnumber);
-        }
-        if (isset($record->description)) {
-            $this->set_description($record->description);
-        }
-        if (isset($record->descriptionformat)) {
-            $this->set_descriptionformat($record->descriptionformat);
-        }
-        if (isset($record->sortorder)) {
-            $this->set_sortorder($record->sortorder);
-        }
-        if (isset($record->visible)) {
-            $this->set_visible($record->visible);
-        }
-        if (isset($record->timecreated)) {
-            $this->set_timecreated($record->timecreated);
-        }
-        if (isset($record->timemodified)) {
-            $this->set_timemodified($record->timemodified);
-        }
-        if (isset($record->usermodified)) {
-            $this->set_usermodified($record->usermodified);
-        }
-        if (isset($record->competencyframeworkid)) {
-            $this->set_competencyframeworkid($record->competencyframeworkid);
-        }
-        if (isset($record->parentid)) {
-            $this->set_parentid($record->parentid);
-        }
-        if (isset($record->path)) {
-            $this->set_path($record->path);
-        }
-        return $this;
-    }
-
-    /**
-     * Create a DB record from this class.
-     *
-     * @return stdClass
-     */
-    public function to_record() {
-        $record = new stdClass();
-        $record->id = $this->get_id();
-        $record->shortname = $this->get_shortname();
-        $record->idnumber = $this->get_idnumber();
-        $record->description = $this->get_description();
-        $record->descriptionformat = $this->get_descriptionformat();
-        $options = array('context' => context_system::instance());
-        $record->descriptionformatted = format_text($this->get_description(), $this->get_descriptionformat(), $options);
-        $record->sortorder = $this->get_sortorder();
-        $record->visible = $this->get_visible();
-        $record->timecreated = $this->get_timecreated();
-        $record->timemodified = $this->get_timemodified();
-        $record->usermodified = $this->get_usermodified();
-        $record->competencyframeworkid = $this->get_competencyframeworkid();
-        $record->parentid = $this->get_parentid();
-        $record->path = $this->get_path();
-
-        return $record;
-    }
-
-    /**
-     * Add a default for the sortorder field to the default create logic.
-     *
-     * @return persistent
-     */
-    public function create() {
-        if ($this->parentid) {
-            // Load the parent so we can set the path.
-            $parent = new competency($this->parentid);
-            $this->path = $parent->path . $this->parentid . '/';
-        } else {
-            $this->path = '/0/';
-        }
-        $this->sortorder = $this->count_records(array('parentid' => $this->parentid,
-                                                      'competencyframeworkid' => $this->competencyframeworkid));
-        return parent::create();
-    }
-
-    /**
-     * Fix all paths when moving to a new parent.
-     *
-     * @return persistent
-     */
-    public function update() {
-        global $DB;
-
-        // See if the parentid changed, if so we have work to do.
-        $before = new competency($this->get_id());
-        if ($before->parentid != $this->parentid) {
-            if ($this->parentid) {
-                $parent = new competency($this->parentid);
-                $this->path = $parent->path . $this->parentid . '/';
-            } else {
-                $this->path = '/0/';
-            }
-
-            $search = array('parentid' => $this->parentid,
-                            'competencyframeworkid' => $this->competencyframeworkid);
-            $this->sortorder = $this->count_records($search);
-
-            // We need to fix all the paths of the children.
-            $like = $DB->sql_like('path', '?');
-            $likesearch = $DB->sql_like_escape($before->path . $before->get_id() . '/') . '%';
-            $sql = 'UPDATE {tool_lp_competency} SET path = REPLACE(path, ?, ?) WHERE ' . $like;
-            $DB->execute($sql, array($before->path . $this->get_id() . '/', $this->path . $this->get_id() . '/', $likesearch));
-        }
-        // Do the default update.
-        return parent::update();
+    protected function set_new_sortorder() {
+        $search = array('parentid' => $this->get_parentid(), 'competencyframeworkid' => $this->get_competencyframeworkid());
+        $this->set('sortorder', $this->count_records($search));
     }
 
     /**
      * This does a specialised search that finds all nodes in the tree with matching text on any text like field,
      * and returns this node and all its parents in a displayable sort order.
      *
-     *
      * @param string $searchtext The text to search for.
      * @param int $competencyframeworkid The competency framework to limit the search.
-     *
-     * @return persistent
+     * @return persistent[]
      */
-    public function search($searchtext, $competencyframeworkid) {
+    public static function search($searchtext, $competencyframeworkid) {
         global $DB;
 
         $like1 = $DB->sql_like('shortname', ':like1', false);
@@ -391,7 +243,7 @@ class competency extends persistent {
         );
 
         $sql = 'competencyframeworkid = :frameworkid AND ((' . $like1 . ') OR (' . $like2 . ') OR (' . $like3 . '))';
-        $records = $DB->get_records_select($this->get_table_name(), $sql, $params, 'path, sortorder ASC', '*');
+        $records = $DB->get_records_select(self::TABLE, $sql, $params, 'path, sortorder ASC', '*');
 
         // Now get all the parents.
         $parents = array();
@@ -413,7 +265,7 @@ class competency extends persistent {
         if (count($parents)) {
             list($parentsql, $parentparams) = $DB->get_in_or_equal($parents, SQL_PARAMS_NAMED);
 
-            $parentrecords = $DB->get_records_select($this->get_table_name(), 'id ' . $parentsql,
+            $parentrecords = $DB->get_records_select(self::TABLE, 'id ' . $parentsql,
                     $parentparams, 'path, sortorder ASC', '*');
 
             foreach ($parentrecords as $id => $record) {
@@ -431,22 +283,102 @@ class competency extends persistent {
     }
 
     /**
-     * Delete a competency (drastic). Will delete all child nodes in the tree.
+     * Validate the competency framework ID.
      *
-     * @return persistent
+     * @param int $value The framework ID.
+     * @return true|lang_string
      */
-    public function delete() {
-        global $DB;
+    protected function validate_competencyframeworkid($value) {
 
-        $deletepath = $DB->sql_like_escape($this->path . $this->get_id() . '/') . '%';
+        // During update.
+        if ($this->get_id()) {
 
-        // We need to delete all the children.
-        $like = $DB->sql_like('path', ':deletepath');
-        $DB->delete_records_select('tool_lp_competency', $like, array('deletepath' => $deletepath));
+            // Ensure that we are not trying to move the competency across frameworks.
+            if ($this->beforeupdate->get_competencyframeworkid() != $value) {
+                return new lang_string('invaliddata', 'error');
+            }
 
-        // And all the links to courses.
-        $DB->delete_records('tool_lp_course_competency', array('competencyid' => $this->get_id()));
-        // Do the default delete.
-        return parent::delete();
+        // During create.
+        } else {
+
+            // Check that the framework exists.
+            if (!competency_framework::record_exists($value)) {
+                return new lang_string('invaliddata', 'error');
+            }
+        }
+
+        return true;
     }
+
+    /**
+     * Validate the ID number.
+     *
+     * @param string $value The ID number.
+     * @return true|lang_string
+     */
+    protected function validate_idnumber($value) {
+        global $DB;
+        $sql = 'idnumber = :idnumber AND competencyframeworkid = :competencyframeworkid AND id <> :id';
+        $params = array(
+            'id' => $this->get_id(),
+            'idnumber' => $value,
+            'competencyframeworkid' => $this->get_competencyframeworkid()
+        );
+        if ($DB->record_exists_select(self::TABLE, $sql, $params)) {
+            return new lang_string('idnumbertaken', 'error');
+        }
+        return true;
+    }
+
+    /**
+     * Validate the path.
+     *
+     * @param string $value The path.
+     * @return true|lang_string
+     */
+    protected function validate_path($value) {
+
+        // The last item should be the parent ID.
+        $id = $this->get_parentid();
+        if (substr($value, -(strlen($id) + 2)) != '/' . $id . '/') {
+            return new lang_string('invaliddata', 'error');
+
+        // The format of the path should be as follows.
+        } else if (!preg_match('@/([0-9]+/)+@', $value)) {
+
+            return new lang_string('invaliddata', 'error');
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate the parent ID.
+     *
+     * @param string $value The ID.
+     * @return true|lang_string
+     */
+    protected function validate_parentid($value) {
+
+        // Check that the parent exists. But only if we don't have it already, and we actually have a parent.
+        if (!empty($value) && !$this->newparent && !competency::record_exists($value)) {
+            return new lang_string('invaliddata', 'error');
+        }
+
+        // During update.
+        if ($this->get_id()) {
+
+            // If there is a new parent.
+            if ($this->beforeupdate->get_parentid() != $value && $this->newparent) {
+
+                // Check that the new parent belongs to the same framework.
+                if ($this->newparent->get_competencyframeworkid() != $this->get_competencyframeworkid()) {
+                    return new lang_string('invaliddata', 'error');
+                }
+            }
+        }
+
+        return true;
+    }
+
 }

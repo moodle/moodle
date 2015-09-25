@@ -112,10 +112,12 @@ class manage_competencies_page implements renderable, templatable {
         $data->competencies = array();
         $data->search = $this->search;
         $data->pagecontextid = $this->pagecontext->id;
+        $options = array('context' => context_system::instance());
 
         foreach ($this->competencies as $competency) {
             if ($competency->get_parentid() == 0) {
                 $record = $competency->to_record();
+                $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
                 $record->children = array();
                 $record->haschildren = false;
                 $data->competencies[] = $record;

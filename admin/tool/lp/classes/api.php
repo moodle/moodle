@@ -74,7 +74,6 @@ class api {
         require_capability('tool/lp:competencymanage', $competency->get_framework()->get_context());
 
         // OK - all set.
-        $competency->set_id($id);
         return $competency->delete();
     }
 
@@ -93,7 +92,7 @@ class api {
         require_capability('tool/lp:competencymanage', $current->get_framework()->get_context());
 
         $max = self::count_competencies(array('parentid' => $current->get_parentid(),
-                                             'competencyframeworkid' => $current->get_competencyframeworkid()));
+                                              'competencyframeworkid' => $current->get_competencyframeworkid()));
         if ($max > 0) {
             $max--;
         }
@@ -177,11 +176,6 @@ class api {
             $parent = new competency($newparentid);
             $parentframeworkid = $parent->get_competencyframeworkid();
             $parentpath = $parent->get_path();
-        }
-
-        if ($parentframeworkid != $current->get_competencyframeworkid()) {
-            // Only allow moving within the same framework.
-            throw new coding_exception('Moving competencies is only supported within the same framework.');
         }
 
         // If we are moving a node to a child of itself, promote all the child nodes by one level.
@@ -271,8 +265,7 @@ class api {
         }
 
         // OK - all set.
-        $competency = new competency();
-        return $competency->search($textsearch, $competencyframeworkid);
+        return competency::search($textsearch, $competencyframeworkid);
     }
 
     /**
@@ -301,8 +294,7 @@ class api {
         }
 
         // OK - all set.
-        $competency = new competency();
-        return $competency->get_records($filters, $sort, $order, $skip, $limit);
+        return competency::get_records($filters, $sort, $order, $skip, $limit);
     }
 
     /**
@@ -327,8 +319,7 @@ class api {
         }
 
         // OK - all set.
-        $competency = new competency();
-        return $competency->count_records($filters);
+        return competency::count_records($filters);
     }
 
     /**

@@ -83,8 +83,10 @@ class template_competencies_page implements renderable, templatable {
         $data->pagecontextid = $this->pagecontext->id;
         $data->templateid = $this->templateid;
         $data->competencies = array();
+        $options = array('context' => context_system::instance());
         foreach ($this->competencies as $competency) {
             $record = $competency->to_record();
+            $record = format_text($record->description, $record->descriptionformat, $options);
             array_push($data->competencies, $record);
         }
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;
