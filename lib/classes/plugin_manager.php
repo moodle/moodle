@@ -53,6 +53,13 @@ class core_plugin_manager {
     /** the plugin is installed but missing from disk */
     const PLUGIN_STATUS_MISSING     = 'missing';
 
+    /** the given requirement/dependency is fulfilled */
+    const REQUIREMENT_STATUS_OK = 'ok';
+    /** the plugin requires higher core/other plugin version than is currently installed */
+    const REQUIREMENT_STATUS_OUTDATED = 'outdated';
+    /** the required dependency is not installed */
+    const REQUIREMENT_STATUS_MISSING = 'missing';
+
     /** @var core_plugin_manager holds the singleton instance */
     protected static $singletoninstance;
     /** @var array of raw plugins information */
@@ -748,6 +755,112 @@ class core_plugin_manager {
         }
 
         return $return;
+    }
+
+    /**
+     * Resolve requirements and dependencies of a plugin.
+     *
+     * Returns an array of objects describing the requirement/dependency,
+     * indexed by the frankenstyle name of the component. The returned array
+     * can be empty. The objects in the array have following properties:
+     *
+     *  ->(numeric)hasver
+     *  ->(numeric)reqver
+     *  ->(string)status
+     *
+     * @param \core\plugininfo\base $plugin the plugin we are checking
+     * @param null|string|int|double $moodleversion explicit moodle core version to check against, defaults to $CFG->version
+     * @param null|string|int $moodlebranch explicit moodle core branch to check against, defaults to $CFG->branch
+     * @return array of objects
+     */
+    public function resolve_requirements(\core\plugininfo\base $plugin, $moodleversion=null, $moodlebranch=null) {
+        global $CFG;
+
+        if ($moodleversion === null) {
+            $moodleversion = $CFG->version;
+        }
+
+        if ($moodlebranch === null) {
+            $moodlebranch = $CFG->branch;
+        }
+
+        $reqs = array();
+        $reqcore = $this->resolve_core_requirements($plugin, $moodleversion);
+
+        if (!empty($reqcore)) {
+            $reqs['core'] = $reqcore;
+        }
+
+        foreach ($plugin->get_other_required_plugins() as $reqplug => $reqver) {
+            $reqs[$reqplug] = $this->resolve_dependency_requirements($plugin, $reqplug, $reqver, $moodlebranch);
+        }
+
+        return $reqs;
+    }
+
+    /**
+     * Helper method to resolve plugin's requirements on the moodle core.
+     *
+     * @param \core\plugininfo\base $plugin the plugin we are checking
+     * @param string|int|double $moodleversion moodle core branch to check against
+     * @return stdObject
+     */
+    protected function resolve_core_requirements(\core\plugininfo\base $plugin, $moodleversion) {
+
+        $reqs = new stdClass();
+
+        $reqs->hasver = $moodleversion;
+
+        if (empty($plugin->versionrequires)) {
+            $reqs->reqver = ANY_VERSION;
+        } else {
+            $reqs->reqver = $plugin->versionrequires;
+        }
+
+        if ($plugin->is_core_dependency_satisfied($moodleversion)) {
+            $reqs->status = self::REQUIREMENT_STATUS_OK;
+        } else {
+            $reqs->status = self::REQUIREMENT_STATUS_OUTDATED;
+        }
+
+        return $reqs;
+    }
+
+    /**
+     * Helper method to resolve plugin's dependecies on other plugins.
+     *
+     * @param \core\plugininfo\base $plugin the plugin we are checking
+     * @param string $otherpluginname
+     * @param string|int $requiredversion
+     * @param string|int $moodlebranch explicit moodle core branch to check against, defaults to $CFG->branch
+     * @return stdClass
+     */
+    protected function resolve_dependency_requirements(\core\plugininfo\base $plugin, $otherpluginname,
+            $requiredversion, $moodlebranch) {
+
+        $reqs = new stdClass();
+        $otherplugin = $this->get_plugin_info($otherpluginname);
+
+        if ($otherplugin !== null) {
+            // The required plugin is installed.
+            $reqs->hasver = $otherplugin->versiondisk;
+            $reqs->reqver = $requiredversion;
+            // Check it has sufficient version.
+            if ($requiredversion == ANY_VERSION or $otherplugin->versiondisk >= $requiredversion) {
+                $reqs->status = self::REQUIREMENT_STATUS_OK;
+            } else {
+                $reqs->status = self::REQUIREMENT_STATUS_OUTDATED;
+            }
+
+        } else {
+            // The required plugin is not installed.
+            $reqs->hasver = null;
+            $reqs->reqver = $requiredversion;
+            $reqs->status = self::REQUIREMENT_STATUS_MISSING;
+            // TODO: Check if the $otherpluginname is available in the plugins directory.
+        }
+
+        return $reqs;
     }
 
     /**

@@ -1045,60 +1045,57 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML code
      */
     protected function required_column(\core\plugininfo\base $plugin, core_plugin_manager $pluginman, $version) {
+
         $requires = array();
 
-        if (!empty($plugin->versionrequires)) {
-            if ($plugin->versionrequires <= $version) {
-                $class = 'requires-ok';
-                $label = '';
+        foreach ($pluginman->resolve_requirements($plugin, $version) as $reqname => $reqinfo) {
+            if ($reqname === 'core') {
+                if ($reqinfo->status == $pluginman::REQUIREMENT_STATUS_OK) {
+                    $class = 'requires-ok';
+                    $label = '';
+                } else {
+                    $class = 'requires-failed';
+                    $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-important');
+                }
+                $requires[] = html_writer::tag('li',
+                    html_writer::span(get_string('moodleversion', 'core_plugin', $plugin->versionrequires), 'dep dep-core').
+                    ' '.$label, array('class' => $class));
+
             } else {
-                $class = 'requires-failed';
-                $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-important');
-            }
-            $requires[] = html_writer::tag('li',
-                html_writer::span(get_string('moodleversion', 'core_plugin', $plugin->versionrequires), 'dep dep-core').' '.$label,
-                array('class' => $class));
-        }
+                $actions = array();
 
-        foreach ($plugin->get_other_required_plugins() as $component => $requiredversion) {
-            $otherplugin = $pluginman->get_plugin_info($component);
-            $actions = array();
+                if ($reqinfo->status == $pluginman::REQUIREMENT_STATUS_OK) {
+                    $label = '';
+                    $class = 'requires-ok';
 
-            if (is_null($otherplugin)) {
-                // The required plugin is not installed.
-                $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-important');
-                $class = 'requires-failed requires-missing';
-                $installurl = new moodle_url('https://moodle.org/plugins/view.php', array('plugin' => $component));
-                $uploadurl = new moodle_url('/admin/tool/installaddon/');
-                $actions[] = html_writer::link($installurl, get_string('dependencyinstall', 'core_plugin'));
-                $actions[] = html_writer::link($uploadurl, get_string('dependencyupload', 'core_plugin'));
+                } else if ($reqinfo->status == $pluginman::REQUIREMENT_STATUS_MISSING) {
+                    $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-important');
+                    $class = 'requires-failed requires-missing';
+                    // TODO Display the install link only if really available there.
+                    $installurl = new moodle_url('https://moodle.org/plugins/view.php', array('plugin' => $reqname));
+                    $uploadurl = new moodle_url('/admin/tool/installaddon/');
+                    $actions[] = html_writer::link($installurl, get_string('dependencyinstall', 'core_plugin'));
+                    $actions[] = html_writer::link($uploadurl, get_string('dependencyupload', 'core_plugin'));
 
-            } else if ($requiredversion != ANY_VERSION and $otherplugin->versiondisk < $requiredversion) {
-                // The required plugin is installed but needs to be updated.
-                $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-important');
-                $class = 'requires-failed requires-outdated';
-                if (!$otherplugin->is_standard()) {
+                } else if ($reqinfo->status == $pluginman::REQUIREMENT_STATUS_OUTDATED) {
+                    $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-important');
+                    $class = 'requires-failed requires-outdated';
                     $updateurl = new moodle_url($this->page->url, array('sesskey' => sesskey(), 'fetchupdates' => 1));
                     $actions[] = html_writer::link($updateurl, get_string('checkforupdates', 'core_plugin'));
                 }
 
-            } else {
-                // Already installed plugin with sufficient version.
-                $label = '';
-                $class = 'requires-ok';
-            }
+                if ($reqinfo->reqver != ANY_VERSION) {
+                    $str = 'otherpluginversion';
+                } else {
+                    $str = 'otherplugin';
+                }
 
-            if ($requiredversion != ANY_VERSION) {
-                $str = 'otherpluginversion';
-            } else {
-                $str = 'otherplugin';
+                $requires[] = html_writer::tag('li', html_writer::span(
+                    get_string($str, 'core_plugin', array('component' => $reqname, 'version' => $reqinfo->reqver)),
+                    'dep dep-plugin').' '.$label.' '.html_writer::span(implode(' | ', $actions), 'actions'),
+                    array('class' => $class)
+                );
             }
-
-            $requires[] = html_writer::tag('li',
-                    html_writer::span(get_string($str, 'core_plugin',
-                            array('component' => $component, 'version' => $requiredversion)), 'dep dep-plugin').' '.$label.
-                    ' '.html_writer::span(implode(' | ', $actions), 'actions'),
-                    array('class' => $class));
         }
 
         if (!$requires) {
