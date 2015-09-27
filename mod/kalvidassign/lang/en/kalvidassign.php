@@ -120,3 +120,4 @@ $string['eventsingle_submission_page_viewed'] = 'Single submission page viewed';
 $string['eventgrades_updated'] = 'Assignment grades updated';
 $string['eventassignment_submitted'] = 'Assignment submitted';
 $string['eventassignment_details_viewed'] = 'Assignment details viewed';
+$string['nosubmissionsforgrading'] = 'There are no submissions available for grading';
