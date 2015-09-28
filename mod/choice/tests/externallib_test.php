@@ -415,4 +415,139 @@ class mod_choice_externallib_testcase extends externallib_advanced_testcase {
         $choices = external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
         $this->assertFalse(isset($choices['choices'][0]['timeopen']));
     }
+
+    /**
+     * Test delete_choice_responses
+     */
+    public function test_delete_choice_responses() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $course = self::getDataGenerator()->create_course();
+        $params = new stdClass();
+        $params->course = $course->id;
+        $params->option = array('fried rice', 'spring rolls', 'sweet and sour pork', 'satay beef', 'gyouza');
+        $params->name = 'First Choice Activity';
+        $params->showresults = CHOICE_SHOWRESULTS_ALWAYS;
+        $params->allowmultiple = 1;
+        $params->showunanswered = 1;
+        $choice = self::getDataGenerator()->create_module('choice', $params);
+        $cm = get_coursemodule_from_id('choice', $choice->cmid);
+
+        $choiceinstance = choice_get_choice($cm->instance);
+        $options = array_keys($choiceinstance->option);
+
+        $student = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        // Enroll student in Course1.
+        self::getDataGenerator()->enrol_user($student->id,  $course->id, $studentrole->id);
+
+        $this->setUser($student);
+        $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+
+        $myresponses = array_keys(choice_get_my_response($choice));
+
+        // Try to delete responses when allow update is false.
+        try {
+            mod_choice_external::delete_choice_responses($choice->id, array($myresponses[0], $myresponses[0]));
+            $this->fail('Exception expected due to missing permissions.');
+        } catch (required_capability_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Set allow update to true, and a passed time close.
+        $DB->set_field('choice', 'allowupdate', 1, array('id' => $choice->id));
+        $DB->set_field('choice', 'timeclose', time() - DAYSECS, array('id' => $choice->id));
+        try {
+            mod_choice_external::delete_choice_responses($choice->id, array($myresponses[0], $myresponses[1]));
+            $this->fail('Exception expected due to expired choice.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('expired', $e->errorcode);
+        }
+
+        // Reset time close. We should be able now to delete all the responses.
+        $DB->set_field('choice', 'timeclose', 0, array('id' => $choice->id));
+        $results = mod_choice_external::delete_choice_responses($choice->id, array($myresponses[0], $myresponses[1]));
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+
+        $this->assertTrue($results['status']);
+        $this->assertCount(0, $results['warnings']);
+        // Now, in the DB 0 responses.
+        $this->assertCount(0, choice_get_my_response($choice));
+
+        // Submit again the responses.
+        $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+
+        $myresponses = array_keys(choice_get_my_response($choice));
+        // Delete only one response.
+        $results = mod_choice_external::delete_choice_responses($choice->id, array($myresponses[0]));
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $this->assertTrue($results['status']);
+        $this->assertCount(0, $results['warnings']);
+        // Now, in the DB 1 response still.
+        $this->assertCount(1, choice_get_my_response($choice));
+
+        // Delete the remaining response, passing 2 invalid responses ids.
+        $results = mod_choice_external::delete_choice_responses($choice->id, array($myresponses[1], $myresponses[0] + 2,
+                                                                $myresponses[0] + 3));
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $this->assertTrue($results['status']);
+        // 2 warnings, 2 invalid responses.
+        $this->assertCount(2, $results['warnings']);
+        // Now, in the DB 0 responses.
+        $this->assertCount(0, choice_get_my_response($choice));
+
+        // Now, as an admin we must be able to delete all the responses under any condition.
+        // Submit again the responses.
+        $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+        $studentresponses = array_keys(choice_get_my_response($choice));
+
+        $this->setAdminUser();
+        $DB->set_field('choice', 'allowupdate', 0, array('id' => $choice->id));
+        $DB->set_field('choice', 'timeclose', time() - DAYSECS, array('id' => $choice->id));
+
+        $results = mod_choice_external::delete_choice_responses($choice->id, array($studentresponses[0], $studentresponses[1]));
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+
+        $this->assertTrue($results['status']);
+        $this->assertCount(0, $results['warnings']);
+
+        // Submit again the responses.
+        $DB->set_field('choice', 'timeclose', 0, array('id' => $choice->id));
+        $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+        // With other user account too, so we can test all the responses are deleted.
+        choice_user_submit_response( array($options[1], $options[2]), $choice, $student->id, $course, $cm);
+
+        // Test deleting all (not passing the answers ids), event not only mine.
+        $results = mod_choice_external::delete_choice_responses($choice->id);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+
+        $this->assertTrue($results['status']);
+        $this->assertCount(0, $results['warnings']);
+        $this->assertCount(0, choice_get_all_responses($choice));
+
+        // Now, in the DB 0 responses.
+        $this->setUser($student);
+
+        // Submit again respones.
+        $DB->set_field('choice', 'allowupdate', 1, array('id' => $choice->id));
+        $DB->set_field('choice', 'timeclose', 0, array('id' => $choice->id));
+        $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+
+        // Delete all responses.
+        $results = mod_choice_external::delete_choice_responses($choice->id);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+
+        $this->assertTrue($results['status']);
+        $this->assertCount(0, $results['warnings']);
+        $this->assertCount(0, choice_get_my_response($choice));
+
+    }
 }
