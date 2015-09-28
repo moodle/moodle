@@ -73,3 +73,48 @@ function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $us
                                                 get_string('learningplans', 'tool_lp'), null, $url);
     $tree->add_node($node);
 }
+
+/**
+ * This function extends the category navigation to add learning plan links.
+ *
+ * @param navigation_node $navigation The navigation node to extend
+ * @param context $coursecategorycontext The context of the course category
+ */
+function tool_lp_extend_navigation_category_settings($navigation, $coursecategorycontext) {
+    // We check permissions before renderring the links.
+    $templatemanagecapability = has_capability('tool/lp:templatemanage', $coursecategorycontext);
+    $competencymanagecapability = has_capability('tool/lp:competencymanage', $coursecategorycontext);
+    if (!$templatemanagecapability && !$competencymanagecapability) {
+        return false;
+    }
+
+    // The link to the learning plan page.
+    if ($templatemanagecapability) {
+        $title = get_string('learningplans', 'tool_lp');
+        $path = new moodle_url("/admin/tool/lp/learningplans.php", array('pagecontextid' => $coursecategorycontext->id));
+        $settingsnode = navigation_node::create($title,
+                                                $path,
+                                                navigation_node::TYPE_SETTING,
+                                                null,
+                                                null,
+                                                new pix_icon('competency', '', 'tool_lp'));
+        if (isset($settingsnode)) {
+            $navigation->add_node($settingsnode);
+        }
+    }
+
+    // The link to the competency frameworks page.
+    if ($competencymanagecapability) {
+        $title = get_string('competencyframeworks', 'tool_lp');
+        $path = new moodle_url("/admin/tool/lp/competencyframeworks.php", array('pagecontextid' => $coursecategorycontext->id));
+        $settingsnode = navigation_node::create($title,
+                                                $path,
+                                                navigation_node::TYPE_SETTING,
+                                                null,
+                                                null,
+                                                new pix_icon('competency', '', 'tool_lp'));
+        if (isset($settingsnode)) {
+            $navigation->add_node($settingsnode);
+        }
+    }
+}
