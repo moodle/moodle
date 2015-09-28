@@ -87,7 +87,7 @@ if (!isset($data->status) || $data->status != 'okay') {
 
 // Make sure email matches a backpack.
 $check = new stdClass();
-$check->backpackurl = 'http://' . BADGE_BACKPACKURL;
+$check->backpackurl = BADGE_BACKPACKURL;
 $check->email = $data->email;
 
 $bp = new OpenBadgesBackpackHandler($check);
@@ -106,7 +106,7 @@ if (isset($request->status) && $request->status == 'missing') {
 $obj = new stdClass();
 $obj->userid = $USER->id;
 $obj->email = $data->email;
-$obj->backpackurl = 'http://' . BADGE_BACKPACKURL;
+$obj->backpackurl = BADGE_BACKPACKURL;
 $obj->backpackuid = $backpackuid;
 $obj->autosync = 0;
 $obj->password = '';
