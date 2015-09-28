@@ -61,6 +61,20 @@ $context = context_module::instance($cm->id);
 require_login($course, true, $cm);
 require_capability('mod/lti:view', $context);
 
+// Mark viewed by user (if required).
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
+$params = array(
+    'context' => $context,
+    'objectid' => $lti->id
+);
+$event = \mod_lti\event\course_module_viewed::create($params);
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('course', $course);
+$event->add_record_snapshot('lti', $lti);
+$event->trigger();
+
 $lti->cmid = $cm->id;
 lti_view($lti);
 
