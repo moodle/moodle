@@ -1979,6 +1979,8 @@ img#persona_signin { cursor: pointer; }
 .moodle-actionmenu > ul,
 .moodle-actionmenu > ul > li {display: inline-block;}
 .moodle-actionmenu ul {padding: 0;margin: 0;list-style-type: none;}
+.section_action_menu .moodle-actionmenu ul.menubar {margin: 0;}
+.section_action_menu .moodle-actionmenu ul.menu {margin: 0 10px 10px 0;}
 #page .moodle-actionmenu a.hidden {display: none;}
 .moodle-actionmenu .toggle-display,
 .moodle-actionmenu .menu-action-text {display: none;}
