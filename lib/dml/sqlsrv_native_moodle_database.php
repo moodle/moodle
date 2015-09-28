@@ -41,6 +41,12 @@ class sqlsrv_native_moodle_database extends moodle_database {
     protected $last_error_reporting; // To handle SQL*Server-Native driver default verbosity
     protected $temptables; // Control existing temptables (sqlsrv_moodle_temptables object)
     protected $collation;  // current DB collation cache
+    /**
+     * Does the used db version support ANSI way of limiting (2012 and higher)
+     * @var bool
+     */
+    protected $supportsoffsetfetch;
+
     /** @var array list of open recordsets */
     protected $recordsets = array();
 
@@ -239,6 +245,10 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $this->query_end($result);
 
         $this->free_result($result);
+
+        $serverinfo = $this->get_server_info();
+        // Fetch/offset is supported staring from SQL Server 2012.
+        $this->supportsoffsetfetch = $serverinfo['version'] > '11';
 
         // Connection established and configured, going to instantiate the temptables controller
         $this->temptables = new sqlsrv_native_moodle_temptables($this);
@@ -809,20 +819,37 @@ class sqlsrv_native_moodle_database extends moodle_database {
     public function get_recordset_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
 
         list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
+        $needscrollable = (bool)$limitfrom; // To determine if we'll need to perform scroll to $limitfrom.
 
         if ($limitfrom or $limitnum) {
-            if ($limitnum >= 1) { // Only apply TOP clause if we have any limitnum (limitfrom offset is handled later)
-                $fetch = $limitfrom + $limitnum;
-                if (PHP_INT_MAX - $limitnum < $limitfrom) { // Check PHP_INT_MAX overflow
-                    $fetch = PHP_INT_MAX;
+            if (!$this->supportsoffsetfetch) {
+                if ($limitnum >= 1) { // Only apply TOP clause if we have any limitnum (limitfrom offset is handled later).
+                    $fetch = $limitfrom + $limitnum;
+                    if (PHP_INT_MAX - $limitnum < $limitfrom) { // Check PHP_INT_MAX overflow.
+                        $fetch = PHP_INT_MAX;
+                    }
+                    $sql = preg_replace('/^([\s(])*SELECT([\s]+(DISTINCT|ALL))?(?!\s*TOP\s*\()/i',
+                                        "\\1SELECT\\2 TOP $fetch", $sql);
                 }
-                $sql = preg_replace('/^([\s(])*SELECT([\s]+(DISTINCT|ALL))?(?!\s*TOP\s*\()/i',
-                                    "\\1SELECT\\2 TOP $fetch", $sql);
+            } else {
+                $needscrollable = false; // Using supported fetch/offset, no need to scroll anymore.
+                $sql = (substr($sql, -1) === ';') ? substr($sql, 0, -1) : $sql;
+                // We need order by to use FETCH/OFFSET.
+                // Ordering by first column shouldn't break anything if there was no order in the first place.
+                if (!strpos(strtoupper($sql), "ORDER BY")) {
+                    $sql .= " ORDER BY 1";
+                }
+
+                $sql .= " OFFSET ".$limitfrom." ROWS ";
+
+                if ($limitnum > 0) {
+                    $sql .= " FETCH NEXT ".$limitnum." ROWS ONLY";
+                }
             }
         }
-        $result = $this->do_query($sql, $params, SQL_QUERY_SELECT, false, (bool)$limitfrom);
+        $result = $this->do_query($sql, $params, SQL_QUERY_SELECT, false, $needscrollable);
 
-        if ($limitfrom) { // Skip $limitfrom records
+        if ($needscrollable) { // Skip $limitfrom records.
             sqlsrv_fetch($result, SQLSRV_SCROLL_ABSOLUTE, $limitfrom - 1);
         }
         return $this->create_recordset($result);
