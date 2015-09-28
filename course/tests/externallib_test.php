@@ -1584,4 +1584,74 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($chat->id, $result['cm']['instance']);
 
     }
+
+    /**
+     * Test get_course_module_by_instance
+     */
+    public function test_get_course_module_by_instance() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        $course = self::getDataGenerator()->create_course();
+        $record = array(
+            'course' => $course->id,
+            'name' => 'First Chat'
+        );
+        $options = array(
+            'idnumber' => 'ABC',
+            'visible' => 0
+        );
+        // Hidden activity.
+        $chat = self::getDataGenerator()->create_module('chat', $record, $options);
+
+        // Test admin user can see the complete hidden activity.
+        $result = core_course_external::get_course_module_by_instance('chat', $chat->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_course_module_by_instance_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        // Test we retrieve all the fields.
+        $this->assertCount(22, $result['cm']);
+        $this->assertEquals($record['name'], $result['cm']['name']);
+        $this->assertEquals($options['idnumber'], $result['cm']['idnumber']);
+
+        $student = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        self::getDataGenerator()->enrol_user($student->id,  $course->id, $studentrole->id);
+        $this->setUser($student);
+
+        // The user shouldn't be able to see the activity.
+        try {
+            core_course_external::get_course_module_by_instance('chat', $chat->id);
+            $this->fail('Exception expected due to invalid permissions.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        // Make module visible.
+        set_coursemodule_visible($chat->cmid, 1);
+
+        // Test student user.
+        $result = core_course_external::get_course_module_by_instance('chat', $chat->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_course_module_by_instance_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        // Test we retrieve only the few files we can see.
+        $this->assertCount(11, $result['cm']);
+        $this->assertEquals($chat->cmid, $result['cm']['id']);
+        $this->assertEquals($course->id, $result['cm']['course']);
+        $this->assertEquals('chat', $result['cm']['modname']);
+        $this->assertEquals($chat->id, $result['cm']['instance']);
+
+        // Try with an invalid module name.
+        try {
+            core_course_external::get_course_module_by_instance('abc', $chat->id);
+            $this->fail('Exception expected due to invalid module name.');
+        } catch (dml_read_exception $e) {
+            $this->assertEquals('dmlreadexception', $e->errorcode);
+        }
+
+    }
 }
