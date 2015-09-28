@@ -2704,20 +2704,24 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
  * other mean to sort the records, e.g. we cannot use IDs as a greater ID can have a lower
  * timemodified.
  *
+ * For blog-style forums, the calculation is based on the original creation time of the
+ * blog post.
+ *
  * Please note that this does not check whether or not the discussion passed is accessible
  * by the user, it simply uses it as a reference to find the neighbours. On the other hand,
  * the returned neighbours are checked and are accessible to the current user.
  *
  * @param object $cm The CM record.
  * @param object $discussion The discussion record.
+ * @param object $forum The forum instance record.
  * @return array That always contains the keys 'prev' and 'next'. When there is a result
  *               they contain the record with minimal information such as 'id' and 'name'.
  *               When the neighbour is not found the value is false.
  */
-function forum_get_discussion_neighbours($cm, $discussion) {
+function forum_get_discussion_neighbours($cm, $discussion, $forum) {
     global $CFG, $DB, $USER;
 
-    if ($cm->instance != $discussion->forum) {
+    if ($cm->instance != $discussion->forum or $discussion->forum != $forum->id or $forum->id != $cm->instance) {
         throw new coding_exception('Discussion is not part of the same forum.');
     }
 
@@ -2762,25 +2766,54 @@ function forum_get_discussion_neighbours($cm, $discussion) {
         }
     }
 
-    $params['forumid'] = $cm->instance;
-    $params['discid'] = $discussion->id;
-    $params['disctimemodified'] = $discussion->timemodified;
+    if ($forum->type === 'blog') {
+        $params['forumid'] = $cm->instance;
+        $params['discid1'] = $discussion->id;
+        $params['discid2'] = $discussion->id;
 
-    $sql = "SELECT d.id, d.name, d.timemodified, d.groupid, d.timestart, d.timeend
-              FROM {forum_discussions} d
-             WHERE d.forum = :forumid
-               AND d.id <> :discid
-                   $timelimit
-                   $groupselect";
+        $sql = "SELECT d.id, d.name, d.timemodified, d.groupid, d.timestart, d.timeend
+                  FROM {forum_discussions} d
+                  JOIN {forum_posts} p ON d.firstpost = p.id
+                 WHERE d.forum = :forumid
+                   AND d.id <> :discid1
+                       $timelimit
+                       $groupselect";
 
-    $prevsql = $sql . " AND d.timemodified < :disctimemodified
-                   ORDER BY d.timemodified DESC";
+        $sub = "SELECT pp.created
+                  FROM {forum_discussions} dd
+                  JOIN {forum_posts} pp ON dd.firstpost = pp.id
+                 WHERE dd.id = :discid2";
 
-    $nextsql = $sql . " AND d.timemodified > :disctimemodified
-                   ORDER BY d.timemodified ASC";
+        $prevsql = $sql . " AND p.created < ($sub)
+                       ORDER BY p.created DESC";
 
-    $neighbours['prev'] = $DB->get_record_sql($prevsql, $params, IGNORE_MULTIPLE);
-    $neighbours['next'] = $DB->get_record_sql($nextsql, $params, IGNORE_MULTIPLE);
+        $nextsql = $sql . " AND p.created > ($sub)
+                       ORDER BY p.created ASC";
+
+        $neighbours['prev'] = $DB->get_record_sql($prevsql, $params, IGNORE_MULTIPLE);
+        $neighbours['next'] = $DB->get_record_sql($nextsql, $params, IGNORE_MULTIPLE);
+
+    } else {
+        $params['forumid'] = $cm->instance;
+        $params['discid'] = $discussion->id;
+        $params['disctimemodified'] = $discussion->timemodified;
+
+        $sql = "SELECT d.id, d.name, d.timemodified, d.groupid, d.timestart, d.timeend
+                  FROM {forum_discussions} d
+                 WHERE d.forum = :forumid
+                   AND d.id <> :discid
+                       $timelimit
+                       $groupselect";
+
+        $prevsql = $sql . " AND d.timemodified < :disctimemodified
+                       ORDER BY d.timemodified DESC";
+
+        $nextsql = $sql . " AND d.timemodified > :disctimemodified
+                       ORDER BY d.timemodified ASC";
+
+        $neighbours['prev'] = $DB->get_record_sql($prevsql, $params, IGNORE_MULTIPLE);
+        $neighbours['next'] = $DB->get_record_sql($nextsql, $params, IGNORE_MULTIPLE);
+    }
 
     return $neighbours;
 }
