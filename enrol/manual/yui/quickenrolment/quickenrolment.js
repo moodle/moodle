@@ -215,12 +215,12 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             var options = this.get(UEP.OPTIONSTARTDATE);
             var index = 0, count = 0;
             for (var i in options) {
-                count++;
                 var option = create('<option value="'+i+'">'+options[i]+'</option>');
                 if (i == defaultvalue) {
                     index = count;
                 }
                 select.append(option);
+                count++;
             }
             select.set('selectedIndex', index);
         },
@@ -608,7 +608,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                 value : 0
             },
             defaultStartDate : {
-                value : 2,
+                value : 4,
                 validator : Y.Lang.isNumber
             },
             defaultDuration : {

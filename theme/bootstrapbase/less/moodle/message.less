@@ -11,6 +11,7 @@
     font-size: 1em;
     font-weight: bold;
     clear: both;
+    word-wrap: break-word;
 }
 .message .author {
     font-weight: bold;
@@ -37,6 +38,9 @@
 #page-message-send td.fixeditor {
     text-align: center;
 }
+.message {
+    overflow: hidden;
+}
 .message .note {
     padding: 10px;
 }
@@ -44,75 +48,125 @@ table.message .searchresults td {
     padding: 5px;
 }
 .message .contactselector {
+    @maxwidth: 240px;
+
     @media screen and (min-width: 1000px) {
-        width: 24%;
+        float: left;
+        padding: 0 8px 0 0;
+    }
+    width: auto;
+    .singleselect {
+        width: @maxwidth;
     }
     float: left;
     .dir-rtl & {
         float:right;
     }
-}
-.message .contactselector .paging {
-    z-index: 1;
-    position: relative;
-}
-
-.message .message-contacts {
-    list-style-type: none;
-    margin: 0;
-
-    li {
-        clear: both;
+    .paging {
+        z-index: 1;
         position: relative;
-        min-height: 23px;
+    }
 
-        .pix {
-            left: 0;
-            position: absolute;
-        }
-        .contact {
-            margin: 0 24% 0 25px;
-            text-align: left;
-        }
-        .contact.nolinks {
-            margin-right: 5px;
-        }
-        .link {
-            float: right;
-            max-width: 30%;
+    #message_participants {
+        max-width: @maxwidth;
+    }
+
+    .message-contacts {
+        list-style-type: none;
+        margin: 0;
+
+        li {
+            clear: both;
+            position: relative;
+            min-height: 23px;
+            padding: 2px;
+            &:nth-child(odd) {
+                background: rgba(120, 120, 255, 0.1);
+            }
+            > div {
+                display: block;
+                height: 100%;
+                > * {
+                    vertical-align: middle;
+                    display: inline-block;
+                }
+
+                &.pix {
+                    position: relative;
+                    float: left;
+                }
+                &.link {
+                    white-space: nowrap;
+                    width: 60px;
+                    position: relative;
+                    float: right;
+                    text-align: right;
+                }
+                &.contact {
+                    position: relative;
+                    word-break: break-all;
+                    a {
+                        line-height: 22px;
+                    }
+                }
+            }
         }
     }
 }
-
-.dir-rtl .message .message-contacts li {
-    .pix {
-        right: 0;
-        left: auto;
-    }
-    .contact {
-        margin: 0 25px 0 24%;
-    }
-    .contact.nolinks {
-        margin-right: 25px;
-        margin-left: 5px;
-    }
-    .link {
-        float: left;
+.dir-ltr {
+    .message .message-contacts li {
+        text-align: left;
+        > div {
+            &.pix {
+                float: left;
+            }
+            &.link {
+                float: right;
+                text-align: right;
+            }
+            &.contact {
+                margin: 0 60px 0 24px;
+                &.nolinks {
+                    margin: 0 0 0 24px;
+                }
+            }
+        }
     }
 }
-
+.dir-rtl {
+    .message .message-contacts li {
+        text-align: right;
+        > div {
+            &.pix {
+                float: right;
+            }
+            &.link {
+                float: left;
+                text-align: left;
+            }
+            &.contact {
+                margin: 0 24px 0 60px;
+                &.nolinks {
+                    margin: 0 24px 0 0;
+                }
+            }
+        }
+    }
+}
 .message .messagearea  {
     @media screen and (min-width: 1000px) {
-        width: 74%;
         border-left: 1px solid @tableBorder;
-        padding-left: 1%;
+        padding: 0 8px;
     }
     @media screen and (max-width: 1000px) {
         width: 100%;
     }
-    float: right;
+    float: none;
+    overflow: hidden;
     min-height: 200px;
 }
+
+
 .message .messagearea .messagehistorytype {
     clear: both;
     padding-bottom: 20px;
@@ -182,22 +236,24 @@ table.message .searchresults td {
     clear: both;
 }
 .message .messagearea .messagehistory .left {
-    padding-bottom: 10px;
+    margin-bottom: 10px;
     width: 50%;
     float: left;
+    position: relative;
     clear: both;
 }
 .dir-rtl .message .messagearea .messagehistory .left {
-    float:right;
+    float: right;
 }
 .message .messagearea .messagehistory .right {
-    padding-bottom: 10px;
+    margin-bottom: 10px;
     width: 50%;
     float: right;
+    position: relative;
     clear: both;
 }
 .dir-rtl .message .messagearea .messagehistory .right {
-    float:left;
+    float: left;
 }
 .message .messagearea .messagehistory .notification {
     .well;
@@ -205,12 +261,39 @@ table.message .searchresults td {
     margin-bottom: 0;
     margin-top: 5px;
 }
+.dir-ltr .message .messagearea .messagehistory .message {
+    margin-right: 20px;
+}
+.dir-ltr .message .messagearea .messagehistory .right .message {
+    margin-left: 20px;
+}
+.dir-rtl .message .messagearea .messagehistory .message {
+    margin-left: 20px;
+}
+.dir-rtl .message .messagearea .messagehistory .right .message {
+    margin-right: 20px;
+}
+.message .messagearea .messagehistory .messageactive {
+  background-color: @tableBackgroundHover;
+}
+.message .messagearea .messagehistory .messagecontent .deleteicon {
+    width: 20px;
+    position: absolute;
+    top: -2px;
+}
+.dir-ltr .message .messagearea .messagehistory .messagecontent .deleteicon {
+    right: 0;
+}
+.dir-rtl .message .messagearea .messagehistory .messagecontent .deleteicon {
+    left: 0;
+}
 .message .messagearea .messagesend {
     padding-top: 20px;
     clear: both;
 }
 .message .messagearea .messagesend .messagesendbox {
     width: 100%;
+    box-sizing: border-box;
 }
 .message .messagearea .messagesend fieldset {
     padding: 0;

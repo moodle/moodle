@@ -167,6 +167,10 @@ if (!$usesvg) {
             }
             send_uncached_image($imagefile);
             exit;
+        } else {
+            // We cannot serve the SVG file this time and there is no alternative, so prevent future
+            // requests from failing to find the image when they can support SVG.
+            image_not_found();
         }
     }
 }

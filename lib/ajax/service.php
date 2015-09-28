@@ -32,9 +32,6 @@ define('AJAX_SCRIPT', true);
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/externallib.php');
 
-require_login(null, true, null, true, true);
-require_sesskey();
-
 $rawjson = file_get_contents('php://input');
 
 $requests = json_decode($rawjson, true);
@@ -55,7 +52,23 @@ foreach ($requests as $request) {
         $externalfunctioninfo = external_function_info($methodname);
 
         if (!$externalfunctioninfo->allowed_from_ajax) {
+            error_log('This external function is not available to ajax. Failed to call "' . $methodname . '"');
             throw new moodle_exception('servicenotavailable', 'webservice');
+        }
+
+        // Do not allow access to write or delete webservices as a public user.
+        if ($externalfunctioninfo->loginrequired) {
+            if (defined('NO_MOODLE_COOKIES') && NO_MOODLE_COOKIES) {
+                error_log('Set "loginrequired" to false in db/service.php when calling entry point service-nologin.php. ' .
+                          'Failed to call "' . $methodname . '"');
+                throw new moodle_exception('servicenotavailable', 'webservice');
+            }
+            if (!isloggedin()) {
+                error_log('This external function is not available to public users. Failed to call "' . $methodname . '"');
+                throw new moodle_exception('servicenotavailable', 'webservice');
+            } else {
+                require_sesskey();
+            }
         }
 
         // Validate params, this also sorts the params properly, we need the correct order in the next part.

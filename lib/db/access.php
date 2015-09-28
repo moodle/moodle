@@ -77,6 +77,17 @@ $capabilities = array(
         )
     ),
 
+    'moodle/site:deleteanymessage' => array(
+
+        'riskbitmask' => RISK_DATALOSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'moodle/site:sendmessage' => array(
 
         'riskbitmask' => RISK_SPAM,
@@ -85,6 +96,15 @@ $capabilities = array(
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'manager' => CAP_ALLOW,
+            'user' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/site:deleteownmessage' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
             'user' => CAP_ALLOW
         )
     ),
@@ -1070,6 +1090,17 @@ $capabilities = array(
         )
     ),
 
+    'moodle/course:tag' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+        ),
+        'clonepermissionsfrom' => 'moodle/course:update'
+    ),
+
     'moodle/blog:view' => array(
 
         'captype' => 'read',
@@ -1677,20 +1708,7 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
-        )
-    ),
-
-    'moodle/tag:create' => array(
-        'riskbitmask' => RISK_SPAM,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW,
-            'user' => CAP_ALLOW
         )
     ),
 
@@ -1700,8 +1718,7 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
-            'manager' => CAP_ALLOW,
-            'user' => CAP_ALLOW
+            'manager' => CAP_ALLOW
         )
     ),
 
@@ -1711,7 +1728,6 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
-            'manager' => CAP_ALLOW,
             'user' => CAP_ALLOW
         )
     ),

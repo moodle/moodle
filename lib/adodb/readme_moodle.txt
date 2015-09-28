@@ -22,5 +22,9 @@ Added:
 
 Our changes:
  * Removed random seed initialization from lib/adodb/adodb.inc.php:177 (see 038f546 and MDL-41198).
+ * Added commit to fix associative fetch mode https://github.com/ADOdb/ADOdb/commit/97c3afacb3e4f98195908101bf3621e5cc847635
+   When upgrading ADODB to 5.20 or higher, check
+   whether that commit was included and if not
+   remove this item
 
 skodak, iarenaza, moodler, stronk7

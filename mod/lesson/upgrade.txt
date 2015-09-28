@@ -1,5 +1,8 @@
 This files describes API changes in the lesson code.
 
+=== 3.0 ===
+* Removed broken high score code.  Use the activity results block instead.
+
 === 2.9 ===
 * The  grade_item_delete function in mod/lesson/lib.php was removed because it was not doing anything and was never called.
 * A third optional boolean parameter $endreached was added to lesson::update_timer to indicate that end of lesson was reached. This is used by 'completionendreached' custom completion rule.

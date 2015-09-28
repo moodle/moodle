@@ -1,0 +1,10 @@
+{
+    "name": "moodle-core_message-toolbox",
+    "builds": {
+        "moodle-core_message-toolbox": {
+            "jsfiles": [
+                "delete.js"
+            ]
+        }
+    }
+}

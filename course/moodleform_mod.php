@@ -142,6 +142,7 @@ abstract class moodleform_mod extends moodleform {
                     }
                 }
 
+                $hasgradeitems = false;
                 $items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename,'iteminstance'=>$instance, 'courseid'=>$COURSE->id));
                 //will be no items if, for example, this activity supports ratings but rating aggregate type == no ratings
                 if (!empty($items)) {
@@ -151,6 +152,8 @@ abstract class moodleform_mod extends moodleform {
                             if ($mform->elementExists($elname)) {
                                 $mform->hardFreeze($elname); // prevent removing of existing outcomes
                             }
+                        } else {
+                            $hasgradeitems = true;
                         }
                     }
 
@@ -167,12 +170,17 @@ abstract class moodleform_mod extends moodleform {
                     }
                 }
 
+                if (!$hasgradeitems && $mform->elementExists('gradepass')) {
+                    // Remove form element 'Grade to pass' since there are no grade items (when rating not selected).
+                    $mform->removeElement('gradepass');
+                }
+
                 if ($gradecat === false) {
                     // items and outcomes in different categories - remove the option
                     // TODO: add a "Mixed categories" text instead of removing elements with no explanation
                     if ($mform->elementExists('gradecat')) {
                         $mform->removeElement('gradecat');
-                        if ($this->_features->rating) {
+                        if ($this->_features->rating  && !$mform->elementExists('gradepass')) {
                             //if supports ratings then the max grade dropdown wasnt added so the grade box can be removed entirely
                             $mform->removeElement('modstandardgrade');
                         }
@@ -684,6 +692,8 @@ abstract class moodleform_mod extends moodleform {
             $mform->setType('gradepass', PARAM_RAW);
             if (!$this->_features->rating) {
                 $mform->disabledIf('gradepass', 'grade[modgrade_type]', 'eq', 'none');
+            } else {
+                $mform->disabledIf('gradepass', 'assessed', 'eq', '0');
             }
         }
     }

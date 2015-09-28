@@ -138,8 +138,13 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->disabledIf('uuallowsuspends', 'uutype', 'eq', UU_USER_ADDNEW);
         $mform->disabledIf('uuallowsuspends', 'uutype', 'eq', UU_USER_ADDINC);
 
-        $mform->addElement('selectyesno', 'uunoemailduplicates', get_string('uunoemailduplicates', 'tool_uploaduser'));
-        $mform->setDefault('uunoemailduplicates', 1);
+        if (!empty($CFG->allowaccountssameemail)) {
+            $mform->addElement('selectyesno', 'uunoemailduplicates', get_string('uunoemailduplicates', 'tool_uploaduser'));
+            $mform->setDefault('uunoemailduplicates', 1);
+        } else {
+            $mform->addElement('hidden', 'uunoemailduplicates', 1);
+        }
+        $mform->setType('uunoemailduplicates', PARAM_BOOL);
 
         $mform->addElement('selectyesno', 'uustandardusernames', get_string('uustandardusernames', 'tool_uploaduser'));
         $mform->setDefault('uustandardusernames', 1);

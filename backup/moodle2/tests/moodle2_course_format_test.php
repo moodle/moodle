@@ -105,7 +105,7 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
                       'numdaystocomplete' => 2);
         $courseobject->update_section_format_options($data);
 
-        $this->backup_and_restore($course, $course);
+        $this->backup_and_restore($course, $course, backup::TARGET_EXISTING_ADDING);
 
         $sectionoptions = $courseobject->get_format_options(1);
         $this->assertArrayHasKey('numdaystocomplete', $sectionoptions);
@@ -126,37 +126,49 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
-        $CFG->enableavailability = true;
-        $CFG->enablecompletion = true;
 
-        // Create a course with some availability data set.
+        // Create a source course using the test_cs2_options format.
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(
             array('format' => 'test_cs2_options', 'numsections' => 3,
                 'enablecompletion' => COMPLETION_ENABLED),
             array('createsections' => true));
+
+        // Create a target course using test_cs_options format.
         $newcourse = $generator->create_course(
             array('format' => 'test_cs_options', 'numsections' => 3,
                 'enablecompletion' => COMPLETION_ENABLED),
             array('createsections' => true));
 
+        // Set section 2 to have both options, and a name.
         $courseobject = format_base::instance($course->id);
         $section = $DB->get_record('course_sections',
-            array('course' => $course->id, 'section' => 1), '*', MUST_EXIST);
-
+            array('course' => $course->id, 'section' => 2), '*', MUST_EXIST);
         $data = array('id' => $section->id,
             'numdaystocomplete' => 2,
-            'secondparameter' => 8);
+            'secondparameter' => 8
+        );
         $courseobject->update_section_format_options($data);
-        // Backup and restore it.
-        $this->backup_and_restore($course, $newcourse);
+        $DB->set_field('course_sections', 'name', 'Frogs', array('id' => $section->id));
 
+        // Backup and restore to the new course using 'add to existing' so it
+        // keeps the current (test_cs_options) format.
+        $this->backup_and_restore($course, $newcourse, backup::TARGET_EXISTING_ADDING);
+
+        // Check that the section contains the options suitable for the new
+        // format and that even the one with the same name as from the old format
+        // has NOT been set.
         $newcourseobject = format_base::instance($newcourse->id);
-        $sectionoptions = $newcourseobject->get_format_options(1);
+        $sectionoptions = $newcourseobject->get_format_options(2);
         $this->assertArrayHasKey('numdaystocomplete', $sectionoptions);
-        $this->assertArrayHasKey('secondparameter', $sectionoptions);
+        $this->assertArrayNotHasKey('secondparameter', $sectionoptions);
         $this->assertEquals(0, $sectionoptions['numdaystocomplete']);
-        $this->assertEquals(0, $sectionoptions['secondparameter']);
+
+        // However, the name should have been changed, as this does not depend
+        // on the format.
+        $modinfo = get_fast_modinfo($newcourse->id);
+        $section = $modinfo->get_section_info(2);
+        $this->assertEquals('Frogs', $section->name);
     }
 
     /**
@@ -164,9 +176,11 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
      *
      * @param stdClass $srccourse Course object to backup
      * @param stdClass $dstcourse Course object to restore into
+     * @param int $target Target course mode (backup::TARGET_xx)
      * @return int ID of newly restored course
      */
-    protected function backup_and_restore($srccourse, $dstcourse = null) {
+    protected function backup_and_restore($srccourse, $dstcourse = null,
+            $target = backup::TARGET_NEW_COURSE) {
         global $USER, $CFG;
 
         // Turn off file logging, otherwise it can't delete the file (Windows).
@@ -190,7 +204,7 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
         }
         $rc = new restore_controller($backupid, $newcourseid,
                 backup::INTERACTIVE_NO, backup::MODE_GENERAL, $USER->id,
-                backup::TARGET_NEW_COURSE);
+                $target);
 
         $this->assertTrue($rc->execute_precheck());
         $rc->execute_plan();
@@ -226,6 +240,12 @@ class format_test_cs_options extends format_topics {
 class format_test_cs2_options extends format_test_cs_options {
     public function section_format_options($foreditform = false) {
         return array(
+            'numdaystocomplete' => array(
+                 'type' => PARAM_INT,
+                 'label' => 'Test days',
+                 'element_type' => 'text',
+                 'default' => 0,
+             ),
             'secondparameter' => array(
                 'type' => PARAM_INT,
                 'label' => 'Test Parmater',

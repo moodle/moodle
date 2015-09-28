@@ -453,4 +453,140 @@ class core_group_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $groups['warnings']);
 
     }
+
+    /**
+     * Test get_activity_allowed_groups
+     */
+    public function test_get_activity_allowed_groups() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = self::getDataGenerator();
+
+        $student = $generator->create_user();
+        $otherstudent = $generator->create_user();
+        $teacher = $generator->create_user();
+        $course = $generator->create_course();
+        $othercourse = $generator->create_course();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $generator->enrol_user($student->id, $course->id, $studentrole->id);
+        $generator->enrol_user($otherstudent->id, $othercourse->id, $studentrole->id);
+        $generator->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        $forum1 = $generator->create_module("forum", array('course' => $course->id), array('groupmode' => VISIBLEGROUPS));
+        $forum2 = $generator->create_module("forum", array('course' => $othercourse->id));
+        $forum3 = $generator->create_module("forum", array('course' => $course->id), array('visible' => 0));
+
+        // Request data for tests.
+        $cm1 = get_coursemodule_from_instance("forum", $forum1->id);
+        $cm2 = get_coursemodule_from_instance("forum", $forum2->id);
+        $cm3 = get_coursemodule_from_instance("forum", $forum3->id);
+
+        $group1data = array();
+        $group1data['courseid'] = $course->id;
+        $group1data['name'] = 'Group Test 1';
+        $group1data['description'] = 'Group Test 1 description';
+        $group1data['idnumber'] = 'TEST1';
+        $group2data = array();
+        $group2data['courseid'] = $course->id;
+        $group2data['name'] = 'Group Test 2';
+        $group2data['description'] = 'Group Test 2 description';
+        $group2data['idnumber'] = 'TEST2';
+        $group1 = $generator->create_group($group1data);
+        $group2 = $generator->create_group($group2data);
+
+        groups_add_member($group1->id, $student->id);
+        groups_add_member($group2->id, $student->id);
+
+        $this->setUser($student);
+
+        // First try possible errors.
+        try {
+            $data = core_group_external::get_activity_allowed_groups($cm2->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        try {
+            $data = core_group_external::get_activity_allowed_groups($cm3->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        // Retrieve my groups.
+        $groups = core_group_external::get_activity_allowed_groups($cm1->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $this->assertCount(2, $groups['groups']);
+
+        foreach ($groups['groups'] as $group) {
+            if ($group['name'] == $group1data['name']) {
+                $this->assertEquals($group1data['description'], $group['description']);
+                $this->assertEquals($group1data['idnumber'], $group['idnumber']);
+            } else {
+                $this->assertEquals($group2data['description'], $group['description']);
+                $this->assertEquals($group2data['idnumber'], $group['idnumber']);
+            }
+        }
+
+        $this->setUser($teacher);
+        // Retrieve other users groups.
+        $groups = core_group_external::get_activity_allowed_groups($cm1->id, $student->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $this->assertCount(2, $groups['groups']);
+
+        // Check warnings. Trying to get groups for a user not enrolled in course.
+        $groups = core_group_external::get_activity_allowed_groups($cm1->id, $otherstudent->id);
+        $groups = external_api::clean_returnvalue(core_group_external::get_activity_allowed_groups_returns(), $groups);
+        $this->assertCount(1, $groups['warnings']);
+
+    }
+
+    /**
+     * Test get_activity_groupmode
+     */
+    public function test_get_activity_groupmode() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = self::getDataGenerator();
+
+        $student = $generator->create_user();
+        $course = $generator->create_course();
+        $othercourse = $generator->create_course();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $generator->enrol_user($student->id, $course->id, $studentrole->id);
+
+        $forum1 = $generator->create_module("forum", array('course' => $course->id), array('groupmode' => VISIBLEGROUPS));
+        $forum2 = $generator->create_module("forum", array('course' => $othercourse->id));
+        $forum3 = $generator->create_module("forum", array('course' => $course->id), array('visible' => 0));
+
+        // Request data for tests.
+        $cm1 = get_coursemodule_from_instance("forum", $forum1->id);
+        $cm2 = get_coursemodule_from_instance("forum", $forum2->id);
+        $cm3 = get_coursemodule_from_instance("forum", $forum3->id);
+
+        $this->setUser($student);
+
+        $data = core_group_external::get_activity_groupmode($cm1->id);
+        $data = external_api::clean_returnvalue(core_group_external::get_activity_groupmode_returns(), $data);
+        $this->assertEquals(VISIBLEGROUPS, $data['groupmode']);
+
+        try {
+            $data = core_group_external::get_activity_groupmode($cm2->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        try {
+            $data = core_group_external::get_activity_groupmode($cm3->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+    }
 }

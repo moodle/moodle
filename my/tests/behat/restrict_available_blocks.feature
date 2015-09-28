@@ -25,7 +25,6 @@ Feature: Restrict which blocks can be added to Dashboard
     And the "Add a block" select box should contain "HTML"
     And the "Add a block" select box should contain "Tags"
 
-  @javascript
   Scenario: Remove the ability to add the comments block to Dashboard
     When I log in as "admin"
     And I set the following system permissions of "Authenticated user" role:

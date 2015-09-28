@@ -77,11 +77,6 @@ function external_function_info($function, $strictness=MUST_EXIST) {
         }
     }
     $function->allowed_from_ajax = false;
-    if (method_exists($function->classname, $function->ajax_method)) {
-        if (call_user_func(array($function->classname, $function->ajax_method)) === true) {
-            $function->allowed_from_ajax = true;
-        }
-    }
 
     // fetch the parameters description
     $function->parameters_desc = call_user_func(array($function->classname, $function->parameters_method));
@@ -111,6 +106,23 @@ function external_function_info($function, $strictness=MUST_EXIST) {
         }
         if (isset($functions[$function->name]['testclientpath'])) {
             $function->testclientpath = $functions[$function->name]['testclientpath'];
+        }
+        if (isset($functions[$function->name]['type'])) {
+            $function->type = $functions[$function->name]['type'];
+        }
+        if (isset($functions[$function->name]['ajax'])) {
+            $function->allowed_from_ajax = $functions[$function->name]['ajax'];
+        } else if (method_exists($function->classname, $function->ajax_method)) {
+            if (call_user_func(array($function->classname, $function->ajax_method)) === true) {
+                debugging('External function ' . $function->ajax_method . '() function is deprecated.' .
+                          'Set ajax=>true in db/service.php instead.', DEBUG_DEVELOPER);
+                $function->allowed_from_ajax = true;
+            }
+        }
+        if (isset($functions[$function->name]['loginrequired'])) {
+            $function->loginrequired = $functions[$function->name]['loginrequired'];
+        } else {
+            $function->loginrequired = true;
         }
     }
 
@@ -346,7 +358,7 @@ class external_api {
      * @param stdClass $context
      * @since Moodle 2.0
      */
-    protected static function validate_context($context) {
+    public static function validate_context($context) {
         global $CFG;
 
         if (empty($context)) {
@@ -719,6 +731,38 @@ function external_validate_format($format) {
 }
 
 /**
+ * Format the string to be returned properly as requested by the either the web service server,
+ * either by an internally call.
+ * The caller can change the format (raw) with the external_settings singleton
+ * All web service servers must set this singleton when parsing the $_GET and $_POST.
+ *
+ * @param string $str The string to be filtered. Should be plain text, expect
+ * possibly for multilang tags.
+ * @param boolean $striplinks To strip any link in the result text. Moodle 1.8 default changed from false to true! MDL-8713
+ * @param int $contextid The id of the context for the string (affects filters).
+ * @param array $options options array/object or courseid
+ * @return string text
+ * @since Moodle 3.0
+ */
+function external_format_string($str, $contextid, $striplinks = true, $options = array()) {
+
+    // Get settings (singleton).
+    $settings = external_settings::get_instance();
+    if (empty($contextid)) {
+        throw new coding_exception('contextid is required');
+    }
+
+    if (!$settings->get_raw()) {
+        $context = context::instance_by_id($contextid);
+        $options['context'] = $context;
+        $options['filter'] = $settings->get_filter();
+        $str = format_string($str, $striplinks, $options);
+    }
+
+    return $str;
+}
+
+/**
  * Format the text to be returned properly as requested by the either the web service server,
  * either by an internally call.
  * The caller can change the format (raw, filter, file, fileurl) with the external_settings singleton
@@ -745,7 +789,8 @@ function external_format_text($text, $textformat, $contextid, $component, $filea
     }
 
     if (!$settings->get_raw()) {
-        $text = format_text($text, $textformat, array('para' => false, 'filter' => $settings->get_filter()));
+        $context = context::instance_by_id($contextid);
+        $text = format_text($text, $textformat, array('para' => false, 'filter' => $settings->get_filter(), 'context' => $context));
         $textformat = FORMAT_HTML; // Once converted to html (from markdown, plain... lets inform consumer this is already HTML).
     }
 
@@ -783,6 +828,10 @@ class external_settings {
      * Constructor - protected - can not be instanciated
      */
     protected function __construct() {
+        if (!defined('AJAX_SCRIPT') && !defined('CLI_SCRIPT') && !defined('WS_SERVER')) {
+            // For normal pages, the default should match the default for format_text.
+            $this->filter = true;
+        }
     }
 
     /**
@@ -875,4 +924,47 @@ class external_settings {
     public function get_file() {
         return $this->file;
     }
+}
+
+/**
+ * Utility functions for the external API.
+ *
+ * @package    core_webservice
+ * @copyright  2015 Juan Leyva
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 3.0
+ */
+class external_util {
+
+    /**
+     * Validate a list of courses, returning the complete course objects for valid courses.
+     *
+     * @param  array $courseids A list of course ids
+     * @return array            An array of courses and the validation warnings
+     */
+    public static function validate_courses($courseids) {
+        // Delete duplicates.
+        $courseids = array_unique($courseids);
+        $courses = array();
+        $warnings = array();
+
+        foreach ($courseids as $cid) {
+            // Check the user can function in this context.
+            try {
+                $context = context_course::instance($cid);
+                external_api::validate_context($context);
+                $courses[$cid] = get_course($cid);
+            } catch (Exception $e) {
+                $warnings[] = array(
+                    'item' => 'course',
+                    'itemid' => $cid,
+                    'warningcode' => '1',
+                    'message' => 'No access rights in course context'
+                );
+            }
+        }
+
+        return array($courses, $warnings);
+    }
+
 }

@@ -82,6 +82,7 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
 
         $commenttext = format_text($commenttext, $commentformat, array('para' => false));
 
+        $editor->set_text($commenttext);
         $editor->use_editor($id, array('context' => $options->context));
 
         $commenteditor = html_writer::tag('div', html_writer::tag('textarea', s($commenttext),
@@ -125,8 +126,7 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                 'id'=> $markfield
             );
             if (!is_null($currentmark)) {
-                $attributes['value'] = $qa->format_fraction_as_mark(
-                        $currentmark / $maxmark, $options->markdp);
+                $attributes['value'] = $currentmark;
             }
             $a = new stdClass();
             $a->max = $qa->format_max_mark($options->markdp);
@@ -146,11 +146,11 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                 'value' => $qa->get_max_fraction(),
             ));
 
+            $error = $qa->validate_manual_mark($currentmark);
             $errorclass = '';
-            $error = '';
-            if ($currentmark > $maxmark * $qa->get_max_fraction() || $currentmark < $maxmark * $qa->get_min_fraction()) {
-                $errorclass = ' error';
-                $error = html_writer::tag('span', get_string('manualgradeoutofrange', 'question'),
+            if ($error !== '') {
+                $erroclass = ' error';
+                $error = html_writer::tag('span', $error,
                         array('class' => 'error')) . html_writer::empty_tag('br');
             }
 

@@ -24,7 +24,6 @@ Feature: Allowed blocks controls
     Then I should see "Activities" in the "Activities" "block"
     And I should see "Course completion status" in the "Course completion status" "block"
 
-  @javascript
   Scenario: Blocks can not be added when the admin restricts the permissions
     Given I log in as "admin"
     And I set the following system permissions of "Teacher" role:

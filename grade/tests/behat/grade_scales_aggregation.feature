@@ -90,7 +90,7 @@ Feature: Control the aggregation of the scales
     And I turn editing mode on
     When I set the following settings for grade item "Course 1":
       | Aggregation | Natural |
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the field "Override weight of Grade me" to "1"
     Then the field "Override weight of Grade me" matches value "100.00"
     And I click on "Edit" "link" in the "Scale me" "table_row"
@@ -102,7 +102,7 @@ Feature: Control the aggregation of the scales
       | grade_includescalesinaggregation | 1 |
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the field "Override weight of Grade me" to "1"
     And the field "Override weight of Grade me" matches value "95.238"
     And I set the field "Override weight of Scale me" to "1"

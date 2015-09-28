@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -104,11 +103,11 @@ if (!isguestuser()) {   // Skip default home page for guests
 }
 
 // Toggle the editing state and switches
-if ($PAGE->user_allowed_editing()) {
+if (empty($CFG->forcedefaultmymoodle) && $PAGE->user_allowed_editing()) {
     if ($reset !== null) {
         if (!is_null($userid)) {
             require_sesskey();
-            if(!$currentpage = my_reset_page($userid, MY_PAGE_PRIVATE)){
+            if (!$currentpage = my_reset_page($userid, MY_PAGE_PRIVATE)) {
                 print_error('reseterror', 'my');
             }
             redirect(new moodle_url('/my'));

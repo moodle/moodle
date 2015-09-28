@@ -351,7 +351,7 @@ Feature: Set up contextual data for tests
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
     And I expand "Setup" node
-    And I follow "Categories and items"
+    And I follow "Gradebook setup"
     Then I should see "Test Grade Item 1"
     And I follow "Edit   Test Grade Item 1"
     And I expand all fieldsets
@@ -434,7 +434,7 @@ Feature: Set up contextual data for tests
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
     And I expand "Setup" node
-    And I follow "Categories and items"
+    And I follow "Gradebook setup"
     Then I should see "Test Outcome Grade Item 1"
     And I follow "Edit   Test Outcome Grade Item 1"
     And the field "Outcome" matches value "Grade outcome 1"

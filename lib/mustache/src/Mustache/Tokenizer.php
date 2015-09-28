@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2014 Justin Hileman
+ * (c) 2010-2015 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -53,13 +53,6 @@ class Mustache_Tokenizer
         self::T_BLOCK_VAR    => true,
     );
 
-    // Interpolated tags
-    private static $interpolatedTags = array(
-        self::T_ESCAPED     => true,
-        self::T_UNESCAPED   => true,
-        self::T_UNESCAPED_2 => true,
-    );
-
     // Token properties
     const TYPE    = 'type';
     const NAME    = 'name';
@@ -75,7 +68,6 @@ class Mustache_Tokenizer
 
     private $state;
     private $tagType;
-    private $tag;
     private $buffer;
     private $tokens;
     private $seenTag;
@@ -163,7 +155,7 @@ class Mustache_Tokenizer
                             self::OTAG  => $this->otag,
                             self::CTAG  => $this->ctag,
                             self::LINE  => $this->line,
-                            self::INDEX => ($this->tagType === self::T_END_SECTION) ? $this->seenTag - $this->otagLen : $i + $this->ctagLen
+                            self::INDEX => ($this->tagType === self::T_END_SECTION) ? $this->seenTag - $this->otagLen : $i + $this->ctagLen,
                         );
 
                         if ($this->tagType === self::T_UNESCAPED) {
@@ -224,7 +216,6 @@ class Mustache_Tokenizer
     {
         $this->state   = self::IN_TEXT;
         $this->tagType = null;
-        $this->tag     = null;
         $this->buffer  = '';
         $this->tokens  = array();
         $this->seenTag = false;
@@ -244,7 +235,7 @@ class Mustache_Tokenizer
             $this->tokens[] = array(
                 self::TYPE  => self::T_TEXT,
                 self::LINE  => $this->line,
-                self::VALUE => $this->buffer
+                self::VALUE => $this->buffer,
             );
             $this->buffer   = '';
         }
@@ -261,7 +252,7 @@ class Mustache_Tokenizer
     private function changeDelimiters($text, $index)
     {
         $startIndex = strpos($text, '=', $index) + 1;
-        $close      = '='.$this->ctag;
+        $close      = '=' . $this->ctag;
         $closeIndex = strpos($text, $close, $index);
 
         $this->setDelimiters(trim(substr($text, $startIndex, $closeIndex - $startIndex)));
@@ -322,7 +313,7 @@ class Mustache_Tokenizer
      * @param string $text   Mustache template source
      * @param int    $index  Current tokenizer index
      *
-     * @return boolean True if this is a closing section tag
+     * @return bool True if this is a closing section tag
      */
     private function tagChange($tag, $tagLen, $text, $index)
     {

@@ -2,7 +2,7 @@
 Feature: Calculated grade items can be used in the gradebook
   In order to use calculated grade items in the gradebook
   As a teacher
-  I need setup calculated grade items in the categories and items page.
+  I need setup calculated grade items in the 'Gradebook setup' page.
 
   Background:
     Given the following "courses" exist:
@@ -22,7 +22,7 @@ Feature: Calculated grade items can be used in the gradebook
     And I am on site homepage
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
 
   @javascript
   Scenario: The max grade for a category item, with a calculation using Natural aggregation, can be changed
@@ -77,7 +77,7 @@ Feature: Calculated grade items can be used in the gradebook
       | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
       | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–50  | 75.00 %    | -                            |
       | Course total                        | -                 | 37.50  | 0–50  | 75.00 %    | -                            |
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the following settings for grade item "Calc cat":
       | Maximum grade | 40 |
     And I follow "Grader report"
@@ -143,7 +143,7 @@ Feature: Calculated grade items can be used in the gradebook
       | grade item 1 | 66.67 %           | 75.00  | 0–100 | 75.00 %    | 50.00 %                      |
       | calc item    | 33.33 %           | 37.50  | 0–50  | 75.00 %    | 25.00 %                      |
       | Course total | -                 | 112.50 | 0–150 | 75.00 %    | -                            |
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the following settings for grade item "calc item":
       | Maximum grade | 40 |
     And I follow "Grader report"

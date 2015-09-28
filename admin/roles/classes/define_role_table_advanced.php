@@ -628,6 +628,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
 
     protected function add_permission_cells($capability) {
         // One cell for each possible permission.
+        $content = '';
         foreach ($this->displaypermissions as $perm => $permname) {
             $strperm = $this->strperms[$permname];
             $extraclass = '';
@@ -638,11 +639,12 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
             if ($this->permissions[$capability->name] == $perm) {
                 $checked = 'checked="checked" ';
             }
-            echo '<td class="' . $permname . $extraclass . '">';
-            echo '<label><input type="radio" name="' . $capability->name .
+            $content .= '<td class="' . $permname . $extraclass . '">';
+            $content .= '<label><input type="radio" name="' . $capability->name .
                 '" value="' . $perm . '" ' . $checked . '/> ';
-            echo '<span class="note">' . $strperm . '</span>';
-            echo '</label></td>';
+            $content .= '<span class="note">' . $strperm . '</span>';
+            $content .= '</label></td>';
         }
+        return $content;
     }
 }

@@ -1,4 +1,4 @@
-@mod @mod_forum @javascript
+@mod @mod_forum
 Feature: A user can view their posts and discussions
   In order to ensure a user can view their posts and discussions
   As a student
@@ -7,23 +7,16 @@ Feature: A user can view their posts and discussions
   Scenario: View the student's posts and discussions
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And the following "course enrolments" exist:
       | user | course | role |
-      | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Forum type | Standard forum for general use |
-      | Description | Test forum description |
-    And I log out
+    And the following "activities" exist:
+      | activity   | name                   | intro       | course | idnumber     | groupmode |
+      | forum      | Test forum name        | Test forum  | C1     | forum        | 0         |
     And I log in as "student1"
     And I follow "Course 1"
     And I add a new discussion to "Test forum name" forum with:

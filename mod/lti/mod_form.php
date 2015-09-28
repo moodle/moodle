@@ -75,10 +75,12 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setAdvanced('introeditor');
 
         // Display the label to the right of the checkbox so it looks better & matches rest of the form.
-        $coursedesc = $mform->getElement('showdescription');
-        if (!empty($coursedesc)) {
-            $coursedesc->setText(' ' . $coursedesc->getLabel());
-            $coursedesc->setLabel('&nbsp');
+        if ($mform->elementExists('showdescription')) {
+            $coursedesc = $mform->getElement('showdescription');
+            if (!empty($coursedesc)) {
+                $coursedesc->setText(' ' . $coursedesc->getLabel());
+                $coursedesc->setLabel('&nbsp');
+            }
         }
 
         $mform->setAdvanced('showdescription');
@@ -166,13 +168,13 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->addHelpButton('instructorcustomparameters', 'custom', 'lti');
 
         $mform->addElement('text', 'icon', get_string('icon_url', 'lti'), array('size' => '64'));
-        $mform->setType('icon', PARAM_TEXT);
+        $mform->setType('icon', PARAM_URL);
         $mform->setAdvanced('icon');
         $mform->addHelpButton('icon', 'icon_url', 'lti');
         $mform->disabledIf('icon', 'typeid', 'neq', '0');
 
         $mform->addElement('text', 'secureicon', get_string('secure_icon_url', 'lti'), array('size' => '64'));
-        $mform->setType('secureicon', PARAM_TEXT);
+        $mform->setType('secureicon', PARAM_URL);
         $mform->setAdvanced('secureicon');
         $mform->addHelpButton('secureicon', 'secure_icon_url', 'lti');
         $mform->disabledIf('secureicon', 'typeid', 'neq', '0');

@@ -96,7 +96,13 @@ class core_rating_external extends external_api {
         self::validate_context($context);
 
         // Minimal capability required.
-        if (!has_capability('moodle/rating:view', $context)) {
+        $callbackparams = array('contextid' => $context->id,
+                        'component' => $component,
+                        'ratingarea' => $ratingarea,
+                        'itemid' => $itemid,
+                        'scaleid' => $scaleid);
+        if (!has_capability('moodle/rating:view', $context) ||
+                !component_callback($component, 'rating_can_see_item_ratings', array($callbackparams), true)) {
             throw new moodle_exception('noviewrate', 'rating');
         }
 

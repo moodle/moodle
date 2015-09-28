@@ -2319,6 +2319,7 @@ class admin_setting_confightmleditor extends admin_setting_configtext {
         }
 
         $editor = editors_get_preferred_editor(FORMAT_HTML);
+        $editor->set_text($data);
         $editor->use_editor($this->get_id(), array('noclean'=>true));
 
         return format_admin_setting($this, $this->visiblename,
@@ -4000,9 +4001,14 @@ class admin_setting_sitesettext extends admin_setting_configtext {
      * @return mixed true or message string
      */
     public function validate($data) {
+        global $DB, $SITE;
         $cleaned = clean_param($data, PARAM_TEXT);
         if ($cleaned === '') {
             return get_string('required');
+        }
+        if ($this->name ==='shortname' &&
+                $DB->record_exists_sql('SELECT id from {course} WHERE shortname = ? AND id <> ?', array($data, $SITE->id))) {
+            return get_string('shortnametaken', 'error', $data);
         }
         if ("$data" == "$cleaned") { // implicit conversion to string is needed to do exact comparison
             return true;

@@ -53,12 +53,15 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         $student = $this->getDataGenerator()->create_user();
         $teacher1 = $this->getDataGenerator()->create_user();
         $teacher2 = $this->getDataGenerator()->create_user();
+        $teacher3 = $this->getDataGenerator()->create_user();
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        unassign_capability('moodle/site:accessallgroups', $teacherrole->id);
 
         $this->getDataGenerator()->enrol_user($student->id,  $course->id, $studentrole->id);
         $this->getDataGenerator()->enrol_user($teacher1->id, $course->id, $teacherrole->id);
         $this->getDataGenerator()->enrol_user($teacher2->id, $course->id, $teacherrole->id);
+        $this->getDataGenerator()->enrol_user($teacher3->id, $course->id, $teacherrole->id);
 
         // Create the forum.
         $record = new stdClass();
@@ -76,13 +79,15 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         $record->userid = $student->id;
         $record->forum = $forum->id;
         $discussion = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+        // Retrieve the first post.
+        $post = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
 
         // Rete the discussion as teacher1.
         $rating1 = new stdClass();
         $rating1->contextid = $contextid;
         $rating1->component = 'mod_forum';
         $rating1->ratingarea = 'post';
-        $rating1->itemid = $discussion->id;
+        $rating1->itemid = $post->id;
         $rating1->rating = 90;
         $rating1->scaleid = 100;
         $rating1->userid = $teacher1->id;
@@ -95,7 +100,7 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         $rating2->contextid = $contextid;
         $rating2->component = 'mod_forum';
         $rating2->ratingarea = 'post';
-        $rating2->itemid = $discussion->id;
+        $rating2->itemid = $post->id;
         $rating2->rating = 95;
         $rating2->scaleid = 100;
         $rating2->userid = $teacher2->id;
@@ -109,7 +114,7 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         // Teachers can see all the ratings.
         $this->setUser($teacher1);
 
-        $ratings = core_rating_external::get_item_ratings('module', $forum->cmid, 'mod_forum', 'post', $discussion->id, 100, '');
+        $ratings = core_rating_external::get_item_ratings('module', $forum->cmid, 'mod_forum', 'post', $post->id, 100, '');
         // We need to execute the return values cleaning process to simulate the web service server.
         $ratings = external_api::clean_returnvalue(core_rating_external::get_item_ratings_returns(), $ratings);
         $this->assertCount(2, $ratings['ratings']);
@@ -127,29 +132,57 @@ class core_rating_externallib_testcase extends externallib_advanced_testcase {
         // Student can see ratings.
         $this->setUser($student);
 
-        $ratings = core_rating_external::get_item_ratings('module', $forum->cmid, 'mod_forum', 'post', $discussion->id, 100, '');
+        $ratings = core_rating_external::get_item_ratings('module', $forum->cmid, 'mod_forum', 'post', $post->id, 100, '');
         // We need to execute the return values cleaning process to simulate the web service server.
         $ratings = external_api::clean_returnvalue(core_rating_external::get_item_ratings_returns(), $ratings);
         $this->assertCount(2, $ratings['ratings']);
 
         // Invalid item.
-        $ratings = core_rating_external::get_item_ratings('module', $forum->cmid, 'mod_forum', 'post', 0, 100, '');
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $ratings = external_api::clean_returnvalue(core_rating_external::get_item_ratings_returns(), $ratings);
-        $this->assertCount(0, $ratings['ratings']);
+        try {
+            $ratings = core_rating_external::get_item_ratings('module', $forum->cmid, 'mod_forum', 'post', 0, 100, '');
+            $this->fail('Exception expected due invalid itemid.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invalidrecord', $e->errorcode);
+        }
 
         // Invalid area.
-        $ratings = core_rating_external::get_item_ratings('module', $forum->cmid, 'mod_forum', 'xyz', $discussion->id, 100, '');
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $ratings = external_api::clean_returnvalue(core_rating_external::get_item_ratings_returns(), $ratings);
-        $this->assertCount(0, $ratings['ratings']);
+        try {
+            $ratings = core_rating_external::get_item_ratings('module', $forum->cmid, 'mod_forum', 'xyz', $post->id, 100, '');
+            $this->fail('Exception expected due invalid rating area.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invalidratingarea', $e->errorcode);
+        }
 
         // Invalid context. invalid_parameter_exception.
         try {
-            $ratings = core_rating_external::get_item_ratings('module', 0, 'mod_forum', 'post', $discussion->id, 100, '');
+            $ratings = core_rating_external::get_item_ratings('module', 0, 'mod_forum', 'post', $post->id, 100, '');
             $this->fail('Exception expected due invalid context.');
         } catch (invalid_parameter_exception $e) {
             $this->assertEquals('invalidparameter', $e->errorcode);
         }
+
+        // Test for groupmode.
+        set_coursemodule_groupmode($forum->cmid, SEPARATEGROUPS);
+        $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        groups_add_member($group, $teacher1);
+
+        $discussion->groupid = $group->id;
+        $DB->update_record('forum_discussions', $discussion);
+
+        // Error for teacher3 and 2 ratings for teacher1 should be returned.
+        $this->setUser($teacher1);
+        $ratings = core_rating_external::get_item_ratings('module', $forum->cmid, 'mod_forum', 'post', $post->id, 100, '');
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $ratings = external_api::clean_returnvalue(core_rating_external::get_item_ratings_returns(), $ratings);
+        $this->assertCount(2, $ratings['ratings']);
+
+        $this->setUser($teacher3);
+        try {
+            $ratings = core_rating_external::get_item_ratings('module', $forum->cmid, 'mod_forum', 'post', $post->id, 100, '');
+            $this->fail('Exception expected due invalid group permissions.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('noviewrate', $e->errorcode);
+        }
+
     }
 }

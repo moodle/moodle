@@ -186,8 +186,8 @@ foreach ($members as $gpgid=>$groupdata) {
         if (empty($jsdescription)) {
             $line[] = $name;
         } else {
-            $line[] = html_writer::tag('span', $name, array('id'=>'group_'.$gpid));
-            $hoverevents['group_'.$gpid] = $jsdescription;
+            $line[] = html_writer::tag('span', $name, array('class' => 'group_hoverdescription', 'data-groupid' => $gpid));
+            $hoverevents[$gpid] = $jsdescription;
         }
         $fullnames = array();
         foreach ($users as $user) {
@@ -206,7 +206,6 @@ foreach ($members as $gpgid=>$groupdata) {
         echo $OUTPUT->heading($groupings[$gpgid]->formattedname, 3);
         $description = file_rewrite_pluginfile_urls($groupings[$gpgid]->description, 'pluginfile.php', $context->id, 'grouping', 'description', $gpgid);
         $options = new stdClass;
-        $options->noclean = true;
         $options->overflowdiv = true;
         echo $OUTPUT->box(format_text($description, $groupings[$gpgid]->descriptionformat, $options), 'generalbox boxwidthnarrow boxaligncenter');
     }

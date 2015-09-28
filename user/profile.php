@@ -36,6 +36,7 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->dirroot . '/my/lib.php');
 require_once($CFG->dirroot . '/tag/lib.php');
 require_once($CFG->dirroot . '/user/profile/lib.php');
+require_once($CFG->dirroot . '/user/lib.php');
 require_once($CFG->libdir.'/filelib.php');
 
 $userid         = optional_param('id', 0, PARAM_INT);
@@ -75,10 +76,7 @@ if ((!$user = $DB->get_record('user', array('id' => $userid))) || ($user->delete
 $currentuser = ($user->id == $USER->id);
 $context = $usercontext = context_user::instance($userid, MUST_EXIST);
 
-if (!$currentuser &&
-    !empty($CFG->forceloginforprofiles) &&
-    !has_capability('moodle/user:viewdetails', $context) &&
-    !has_coursecontact_role($userid)) {
+if (!user_can_view_profile($user, null, $context)) {
 
     // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366).
     $struser = get_string('user');

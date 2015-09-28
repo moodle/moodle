@@ -235,12 +235,11 @@ class auth_plugin_email extends auth_plugin_base {
     }
 
     /**
-     * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
+     * Returns whether or not the captcha element is enabled.
      * @return bool
      */
     function is_captcha_enabled() {
-        global $CFG;
-        return isset($CFG->recaptchapublickey) && isset($CFG->recaptchaprivatekey) && get_config("auth/{$this->authtype}", 'recaptcha');
+        return get_config("auth/{$this->authtype}", 'recaptcha');
     }
 
 }

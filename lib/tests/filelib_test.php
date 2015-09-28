@@ -880,6 +880,30 @@ EOF;
     }
 
     /**
+     * Tests for get_mimetype_for_sending function.
+     */
+    public function test_get_mimetype_for_sending() {
+        // Without argument.
+        $this->assertEquals('application/octet-stream', get_mimetype_for_sending());
+
+        // Argument is null.
+        $this->assertEquals('application/octet-stream', get_mimetype_for_sending(null));
+
+        // Filename having no extension.
+        $this->assertEquals('application/octet-stream', get_mimetype_for_sending('filenamewithoutextension'));
+
+        // Test using the extensions listed from the get_mimetypes_array function.
+        $mimetypes = get_mimetypes_array();
+        foreach ($mimetypes as $ext => $info) {
+            if ($ext === 'xxx') {
+                $this->assertEquals('application/octet-stream', get_mimetype_for_sending('SampleFile.' . $ext));
+            } else {
+                $this->assertEquals($info['type'], get_mimetype_for_sending('SampleFile.' . $ext));
+            }
+        }
+    }
+
+    /**
      * Test curl agent settings.
      */
     public function test_curl_useragent() {

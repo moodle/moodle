@@ -62,14 +62,15 @@ class data_field_latlong extends data_field_base {
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
         $str .= '<table><tr><td align="right">';
-        $str .= '<label for="field_'.$this->field->id.'_0">' . get_string('latitude', 'data');
+        $str .= '<label for="field_'.$this->field->id.'_0" class="mod-data-input">' . get_string('latitude', 'data');
         if ($this->field->required) {
             $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
         }
         $str .= '</label></td><td><input type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="';
         $str .= s($lat).'" size="10" />°N</td></tr>';
-        $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1">' . get_string('longitude', 'data');
+        $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1" class="mod-data-input">';
+        $str .= get_string('longitude', 'data');
         if ($this->field->required) {
             $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
@@ -252,4 +253,26 @@ class data_field_latlong extends data_field_base {
         return isset($value) && !($value == '');
     }
 
+    /**
+     * Validate values for this field.
+     * Both the Latitude and the Longitude fields need to be filled in.
+     *
+     * @param array $values The entered values for the lat. and long.
+     * @return string|bool Error message or false.
+     */
+    public function field_validation($values) {
+        $valuecount = 0;
+        // The lat long class has two values that need to be checked.
+        foreach ($values as $value) {
+            if (isset($value->value) && !($value->value == '')) {
+                $valuecount++;
+            }
+        }
+        // If we have nothing filled in or both filled in then everything is okay.
+        if ($valuecount == 0 || $valuecount == 2) {
+            return false;
+        }
+        // If we get here then only one field has been filled in.
+        return get_string('latlongboth', 'data');
+    }
 }

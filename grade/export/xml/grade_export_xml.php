@@ -68,7 +68,6 @@ class grade_export_xml extends grade_export {
             foreach ($userdata->grades as $itemid => $grade) {
                 $grade_item = $this->grade_items[$itemid];
                 $grade->grade_item =& $grade_item;
-                $gradestr = $this->format_grade($grade, $this->displaytype); // no formating for now
 
                 // MDL-11669, skip exported grades or bad grades (if setting says so)
                 if ($export_tracking) {
@@ -88,7 +87,19 @@ class grade_export_xml extends grade_export {
                 fwrite($handle,  "\t\t<assignment>{$grade_item->idnumber}</assignment>\n");
                 // this column should be customizable to use either student id, idnumber, uesrname or email.
                 fwrite($handle,  "\t\t<student>{$user->idnumber}</student>\n");
-                fwrite($handle,  "\t\t<score>$gradestr</score>\n");
+                // Format and display the grade in the selected display type (real, letter, percentage).
+                if (is_array($this->displaytype)) {
+                    // Grades display type came from the return of export_bulk_export_data() on grade publishing.
+                    foreach ($this->displaytype as $gradedisplayconst) {
+                        $gradestr = $this->format_grade($grade, $gradedisplayconst);
+                        fwrite($handle,  "\t\t<score>$gradestr</score>\n");
+                    }
+                } else {
+                    // Grade display type submitted directly from the grade export form.
+                    $gradestr = $this->format_grade($grade, $this->displaytype);
+                    fwrite($handle,  "\t\t<score>$gradestr</score>\n");
+                }
+
                 if ($this->export_feedback) {
                     $feedbackstr = $this->format_feedback($userdata->feedbacks[$itemid]);
                     fwrite($handle,  "\t\t<feedback>$feedbackstr</feedback>\n");

@@ -244,12 +244,11 @@ class behat_general extends behat_base {
      * @param int $seconds
      */
     public function i_wait_seconds($seconds) {
-
-        if (!$this->running_javascript()) {
-            throw new DriverException('Waits are disabled in scenarios without Javascript support');
+        if ($this->running_javascript()) {
+            $this->getSession()->wait($seconds * 1000, false);
+        } else {
+            sleep($seconds);
         }
-
-        $this->getSession()->wait($seconds * 1000, false);
     }
 
     /**
@@ -411,6 +410,15 @@ class behat_general extends behat_base {
 
         list($containerselector, $containerlocator) = $this->transform_selector($containerselectortype, $containerelement);
         $destinationxpath = $this->getSession()->getSelectorsHandler()->selectorToXpath($containerselector, $containerlocator);
+
+        $node = $this->get_selected_node("xpath_element", $sourcexpath);
+        if (!$node->isVisible()) {
+            throw new ExpectationException('"' . $sourcexpath . '" "xpath_element" is not visible', $this->getSession());
+        }
+        $node = $this->get_selected_node("xpath_element", $destinationxpath);
+        if (!$node->isVisible()) {
+            throw new ExpectationException('"' . $destinationxpath . '" "xpath_element" is not visible', $this->getSession());
+        }
 
         $this->getSession()->getDriver()->dragTo($sourcexpath, $destinationxpath);
     }
@@ -1412,6 +1420,28 @@ class behat_general extends behat_base {
             fwrite(STDOUT, "\033[s\n\033[0;93mPaused. Press \033[1;31mEnter/Return\033[0;93m to continue.\033[0m");
             fread(STDIN, 1024);
             fwrite(STDOUT, "\033[2A\033[u\033[2B");
+        }
+    }
+
+    /**
+     * Presses a given button in the browser.
+     * NOTE: Phantomjs and goutte driver reloads page while navigating back and forward.
+     *
+     * @Then /^I press the "(back|forward|reload)" button in the browser$/
+     * @param string $button the button to press.
+     * @throws ExpectationException
+     */
+    public function i_press_in_the_browser($button) {
+        $session = $this->getSession();
+
+        if ($button == 'back') {
+            $session->back();
+        } else if ($button == 'forward') {
+            $session->forward();
+        } else if ($button == 'reload') {
+            $session->reload();
+        } else {
+            throw new ExpectationException('Unknown browser button.', $session);
         }
     }
 }

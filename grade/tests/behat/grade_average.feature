@@ -30,7 +30,7 @@ Feature: Average grades are displayed in the gradebook
       | Show average | Show |
     And I press "Save changes"
     # Add a manual grade item
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 1 |

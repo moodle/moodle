@@ -52,7 +52,7 @@
     }
 }
 
-@media (max-width: 873px) {
+@media (max-width: 767px) {
     .file-picker .fp-repo-area {
         width: 100%;
         height: auto;
@@ -64,6 +64,7 @@
     .file-picker .fp-repo-items {
         width: 100%;
         float: none;
+        margin-left: 0;
     }
     .file-picker .fp-login-form .fp-login-input label {
         text-align: left;
@@ -576,6 +577,33 @@
                     margin: 4px 1px;
                     border-top: 1px solid @navbarInverseBackground;
                     border-bottom: 1px solid lighten(@navbarInverseBackground, 25%);
+                }
+            }
+            .nav {
+                > li > a {
+                    &:hover,
+                    &:focus {
+                        color: @navbarInverseLinkColorHover;
+                    }
+                }
+            }
+            .dropdown-menu a {
+                &:hover,
+                &:focus {
+                    color: @navbarInverseLinkColorHover;
+                }
+                > li > a {
+                    &:hover,
+                    &:focus {
+                        color: @navbarInverseLinkColorHover;
+                    }
+                }
+            }
+            .dropdown-submenu a {
+                &:hover,
+                &:focus,
+                &:active {
+                    color: @navbarInverseLinkColorHover;
                 }
             }
         }

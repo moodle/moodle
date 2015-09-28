@@ -17,7 +17,6 @@ Feature: Browse course list and return back from enrolment page
       | Sample course | C1        | 0        |
       | Course 1      | COURSE1   | CAT1     |
 
-  @javascript
   Scenario: A user can return to the category page from enrolment page
     When I log in as "user2"
     And I click on "Courses" "link" in the "Navigation" "block"
@@ -42,7 +41,6 @@ Feature: Browse course list and return back from enrolment page
     And I press "Continue"
     Then I should see "Edit profile" in the ".breadcrumb-nav" "css_element"
 
-  @javascript
   Scenario: User can return to the choice activity from enrolment page
     Given the following "roles" exist:
       | name                   | shortname | description      | archetype      |

@@ -341,9 +341,15 @@ class tree_testcase extends \advanced_testcase {
      * @param int $userid User id
      */
     protected function get_available_results($structure, \core_availability\info $info, $userid) {
+        global $PAGE;
         $tree = new tree($structure);
         $result = $tree->check_available(false, $info, true, $userid);
-        return array($result->is_available(), $tree->get_result_information($info, $result));
+        $information = $tree->get_result_information($info, $result);
+        if (!is_string($information)) {
+            $renderer = $PAGE->get_renderer('core', 'availability');
+            $information = $renderer->render($information);
+        }
+        return array($result->is_available(), $information);
     }
 
     /**
@@ -389,6 +395,8 @@ class tree_testcase extends \advanced_testcase {
      * Tests the get_full_information() function.
      */
     public function test_get_full_information() {
+        global $PAGE;
+        $renderer = $PAGE->get_renderer('core', 'availability');
         // Setup.
         $info = new \core_availability\mock_info();
 
@@ -417,7 +425,7 @@ class tree_testcase extends \advanced_testcase {
                 self::mock(array('m' => 3)));
         $tree = new tree($structure);
         $this->assertRegExp('~<ul.*<ul.*<li.*1.*<li.*2.*</ul>.*<li.*3~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // Test intro messages before list. First, OR message.
         $structure->c = array(
@@ -426,13 +434,13 @@ class tree_testcase extends \advanced_testcase {
         );
         $tree = new tree($structure);
         $this->assertRegExp('~Not available unless any of:.*<ul>~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // Now, OR message when not shown.
         $structure->show = false;
         $tree = new tree($structure);
         $this->assertRegExp('~hidden.*<ul>~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // AND message.
         $structure->op = '&';
@@ -440,11 +448,11 @@ class tree_testcase extends \advanced_testcase {
         $structure->showc = array(false, false);
         $tree = new tree($structure);
         $this->assertRegExp('~Not available unless:.*<ul>~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // Hidden markers on items.
         $this->assertRegExp('~1.*hidden.*2.*hidden~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // Hidden markers on child tree and items.
         $structure->c[1] = tree::get_nested_json(array(
@@ -452,11 +460,11 @@ class tree_testcase extends \advanced_testcase {
                 self::mock(array('m' => '3'))), tree::OP_AND);
         $tree = new tree($structure);
         $this->assertRegExp('~1.*hidden.*All of \(hidden.*2.*3~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
         $structure->c[1]->op = '|';
         $tree = new tree($structure);
         $this->assertRegExp('~1.*hidden.*Any of \(hidden.*2.*3~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // Hidden markers on single-item display, AND and OR.
         $structure->showc = array(false);
@@ -480,7 +488,7 @@ class tree_testcase extends \advanced_testcase {
                 self::mock(array('m' => '2'))), tree::OP_AND);
         $tree = new tree($structure);
         $this->assertRegExp('~Not available \(hidden.*1.*2~',
-                $tree->get_full_information($info));
+                $renderer->render($tree->get_full_information($info)));
 
         // Single item tree containing single item.
         unset($structure->c[0]->c[1]);

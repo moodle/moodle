@@ -195,6 +195,15 @@ if ($capability && ($allowoverrides || ($allowsafeoverrides && is_safe_capabilit
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
 
+$adminurl = new moodle_url('/admin/');
+$arguments = array('contextid' => $contextid,
+                'contextname' => $contextname,
+                'adminurl' => $adminurl->out());
+$PAGE->requires->strings_for_js(
+                                array('roleprohibitinfo', 'roleprohibitheader', 'roleallowinfo', 'roleallowheader',
+                                    'confirmunassigntitle', 'confirmroleunprohibit', 'confirmroleprevent', 'confirmunassignyes',
+                                    'confirmunassignno'), 'core_role');
+$PAGE->requires->js_call_amd('core/permissionmanager', 'initialize', array($arguments));
 $table = new core_role_permissions_table($context, $contextname, $allowoverrides, $allowsafeoverrides, $overridableroles);
 echo $OUTPUT->box_start('generalbox capbox');
 // Print link to advanced override page.

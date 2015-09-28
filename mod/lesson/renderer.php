@@ -601,24 +601,4 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $output = html_writer::tag('p', $contents, $attributes);
         return $output;
     }
-    /**
-     * Returns HTML to display add_highscores_form
-     * @param lesson $lesson
-     * @return string
-     */
-    public function add_highscores_form(lesson $lesson) {
-        global $CFG;
-        $output  = $this->output->box_start('generalbox boxaligncenter');
-        $output .= $this->output->box_start('mdl-align');
-        $output .= '<form id="nickname" method ="post" action="'.$CFG->wwwroot.'/mod/lesson/highscores.php" autocomplete="off">
-             <input type="hidden" name="id" value="'.$this->page->cm->id.'" />
-             <input type="hidden" name="mode" value="save" />
-             <input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        $output .= get_string("entername", "lesson").": <input type=\"text\" name=\"name\" size=\"7\" maxlength=\"5\" />";
-        $output .= $this->output->box("<input type='submit' value='".get_string('submitname', 'lesson')."' />", 'lessonbutton center');
-        $output .= "</form>";
-        $output .= $this->output->box_end();
-        $output .= $this->output->box_end();
-        return $output;
-    }
 }

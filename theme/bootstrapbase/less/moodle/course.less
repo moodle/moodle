@@ -317,7 +317,13 @@
     margin-top: 0;
 }
 .course-content ul li.section.hidden {
-    opacity: 0.5;
+    .sectionname,
+    .content > div,  /* All the divs but the activities which are in a UL. */
+    .activity .activityinstance {
+        opacity: .5;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
 }
 .course-content ul.topics li.section .content,
 .course-content ul.weeks li.section .content {
@@ -336,6 +342,33 @@
 
 .course-content ul.topics li.section .summary {
     margin-left: 25px;
+}
+
+.course-content li {
+    &.section {
+        ul {
+            list-style: disc;
+            ul {
+                list-style: circle;
+                ul {
+                    list-style: square;
+                }
+            }
+        }
+        li {
+            &.activity {
+                ul {
+                    list-style: disc;
+                    ul {
+                        list-style: circle;
+                        ul {
+                            list-style: square;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 .path-course-view .completionprogress {

@@ -1782,7 +1782,8 @@ class workshop {
             return array();
         }
 
-        if (!in_array($sortby, array('lastname','firstname','submissiontitle','submissiongrade','gradinggrade'))) {
+        if (!in_array($sortby, array('lastname', 'firstname', 'submissiontitle', 'submissionmodified',
+                'submissiongrade', 'gradinggrade'))) {
             $sortby = 'lastname';
         }
 
@@ -1813,7 +1814,8 @@ class workshop {
             }
             $sqlsort = implode(',', $sqlsort);
             $picturefields = user_picture::fields('u', array(), 'userid');
-            $sql = "SELECT $picturefields, s.title AS submissiontitle, s.grade AS submissiongrade, ag.gradinggrade
+            $sql = "SELECT $picturefields, s.title AS submissiontitle, s.timemodified AS submissionmodified,
+                           s.grade AS submissiongrade, ag.gradinggrade
                       FROM {user} u
                  LEFT JOIN {workshop_submissions} s ON (s.authorid = u.id AND s.workshopid = :workshopid1 AND s.example = 0)
                  LEFT JOIN {workshop_aggregations} ag ON (ag.userid = u.id AND ag.workshopid = :workshopid2)

@@ -3763,6 +3763,9 @@ class settings_navigation extends navigation_node {
                 $url = new moodle_url('/course/completion.php', array('id'=>$course->id));
                 $coursenode->add(get_string('coursecompletion', 'completion'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
             }
+        } else if (has_capability('moodle/course:tag', $coursecontext)) {
+            $url = new moodle_url('/course/tags.php', array('id' => $course->id));
+            $coursenode->add(get_string('coursetags', 'tag'), $url, self::TYPE_SETTING, null, 'coursetags', new pix_icon('i/settings', ''));
         }
 
         // add enrol nodes
@@ -3816,6 +3819,13 @@ class settings_navigation extends navigation_node {
         if ($reportavailable) {
             $url = new moodle_url('/grade/report/index.php', array('id'=>$course->id));
             $gradenode = $coursenode->add(get_string('grades'), $url, self::TYPE_SETTING, null, 'grades', new pix_icon('i/grades', ''));
+        }
+
+        // Check if we can view the gradebook's setup page.
+        if (has_capability('moodle/grade:manage', $coursecontext)) {
+            $url = new moodle_url('/grade/edit/tree/index.php', array('id' => $course->id));
+            $coursenode->add(get_string('gradebooksetup', 'grades'), $url, self::TYPE_SETTING,
+                null, 'gradebooksetup', new pix_icon('i/settings', ''));
         }
 
         //  Add outcome if permitted
@@ -3915,10 +3925,12 @@ class settings_navigation extends navigation_node {
             }
         }
 
-        // Let admin tools hook into course navigation.
-        $tools = get_plugin_list_with_function('tool', 'extend_navigation_course', 'lib.php');
-        foreach ($tools as $toolfunction) {
-            $toolfunction($coursenode, $course, $coursecontext);
+        // Let plugins hook into course navigation.
+        $pluginsfunction = get_plugins_with_function('extend_navigation_course', 'lib.php');
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($coursenode, $course, $coursecontext);
+            }
         }
 
         // Return we are done
@@ -4484,10 +4496,12 @@ class settings_navigation extends navigation_node {
             }
         }
 
-        // Let admin tools hook into user settings navigation.
-        $tools = get_plugin_list_with_function('tool', 'extend_navigation_user_settings', 'lib.php');
-        foreach ($tools as $toolfunction) {
-            $toolfunction($usersetting, $user, $usercontext, $course, $coursecontext);
+        // Let plugins hook into user settings navigation.
+        $pluginsfunction = get_plugins_with_function('extend_navigation_user_settings', 'lib.php');
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($usersetting, $user, $usercontext, $course, $coursecontext);
+            }
         }
 
         return $usersetting;
@@ -4505,18 +4519,23 @@ class settings_navigation extends navigation_node {
         $blocknode->force_open();
 
         // Assign local roles
-        $assignurl = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid'=>$this->context->id));
-        $blocknode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING);
+        if (get_assignable_roles($this->context, ROLENAME_ORIGINAL)) {
+            $assignurl = new moodle_url('/'.$CFG->admin.'/roles/assign.php', array('contextid' => $this->context->id));
+            $blocknode->add(get_string('assignroles', 'role'), $assignurl, self::TYPE_SETTING, null,
+                'roles', new pix_icon('i/assignroles', ''));
+        }
 
         // Override roles
         if (has_capability('moodle/role:review', $this->context) or  count(get_overridable_roles($this->context))>0) {
             $url = new moodle_url('/'.$CFG->admin.'/roles/permissions.php', array('contextid'=>$this->context->id));
-            $blocknode->add(get_string('permissions', 'role'), $url, self::TYPE_SETTING);
+            $blocknode->add(get_string('permissions', 'role'), $url, self::TYPE_SETTING, null,
+                'permissions', new pix_icon('i/permissions', ''));
         }
         // Check role permissions
         if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:assign'), $this->context)) {
             $url = new moodle_url('/'.$CFG->admin.'/roles/check.php', array('contextid'=>$this->context->id));
-            $blocknode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING);
+            $blocknode->add(get_string('checkpermissions', 'role'), $url, self::TYPE_SETTING, null,
+                'checkpermissions', new pix_icon('i/checkpermissions', ''));
         }
 
         return $blocknode;
@@ -4595,6 +4614,14 @@ class settings_navigation extends navigation_node {
         if (has_capability('moodle/restore:restorecourse', $catcontext)) {
             $url = new moodle_url('/backup/restorefile.php', array('contextid' => $catcontext->id));
             $categorynode->add(get_string('restorecourse', 'admin'), $url, self::TYPE_SETTING, null, 'restorecourse', new pix_icon('i/restore', ''));
+        }
+
+        // Let plugins hook into category settings navigation.
+        $pluginsfunction = get_plugins_with_function('extend_navigation_category_settings', 'lib.php');
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($categorynode, $catcontext);
+            }
         }
 
         return $categorynode;
@@ -4717,10 +4744,12 @@ class settings_navigation extends navigation_node {
             $frontpage->add(get_string('sitelegacyfiles'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/folder', ''));
         }
 
-        // Let admin tools hook into frontpage navigation.
-        $tools = get_plugin_list_with_function('tool', 'extend_navigation_frontpage', 'lib.php');
-        foreach ($tools as $toolfunction) {
-            $toolfunction($frontpage, $course, $coursecontext);
+        // Let plugins hook into frontpage navigation.
+        $pluginsfunction = get_plugins_with_function('extend_navigation_frontpage', 'lib.php');
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                $pluginfunction($frontpage, $course, $coursecontext);
+            }
         }
 
         return $frontpage;
@@ -4751,6 +4780,33 @@ class settings_navigation extends navigation_node {
      */
     public function clear_cache() {
         $this->cache->volatile();
+    }
+
+    /**
+     * Checks to see if there are child nodes available in the specific user's preference node.
+     * If so, then they have the appropriate permissions view this user's preferences.
+     *
+     * @since Moodle 2.9.3
+     * @param int $userid The user's ID.
+     * @return bool True if child nodes exist to view, otherwise false.
+     */
+    public function can_view_user_preferences($userid) {
+        if (is_siteadmin()) {
+            return true;
+        }
+        // See if any nodes are present in the preferences section for this user.
+        $preferencenode = $this->find('userviewingsettings' . $userid, null);
+        if ($preferencenode && $preferencenode->has_children()) {
+            // Run through each child node.
+            foreach ($preferencenode->children as $childnode) {
+                // If the child node has children then this user has access to a link in the preferences page.
+                if ($childnode->has_children()) {
+                    return true;
+                }
+            }
+        }
+        // No links found for the user to access on the preferences page.
+        return false;
     }
 }
 

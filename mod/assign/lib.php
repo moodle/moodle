@@ -680,7 +680,14 @@ function assign_print_recent_activity($course, $viewfullnames, $timestart) {
 
     foreach ($show as $submission) {
         $cm = $modinfo->get_cm($submission->cmid);
+        $context = context_module::instance($submission->cmid);
+        $assign = new assign($context, $cm, $cm->course);
         $link = $CFG->wwwroot.'/mod/assign/view.php?id='.$cm->id;
+        // Obscure first and last name if blind marking enabled.
+        if ($assign->is_blind_marking()) {
+            $submission->firstname = get_string('participant', 'mod_assign');
+            $submission->lastname = $assign->get_uniqueid_for_user($submission->userid);
+        }
         print_recent_activity_note($submission->timemodified,
                                    $submission,
                                    $cm->name,
@@ -1309,8 +1316,7 @@ function assign_get_completion_state($course, $cm, $userid, $type) {
 
     // If completion option is enabled, evaluate it and return true/false.
     if ($assign->get_instance()->completionsubmit) {
-        $dbparams = array('assignment'=>$assign->get_instance()->id, 'userid'=>$userid);
-        $submission = $DB->get_record('assign_submission', $dbparams, '*', IGNORE_MISSING);
+        $submission = $assign->get_user_submission($userid, false);
         return $submission && $submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED;
     } else {
         // Completion option is not enabled so just return $type.

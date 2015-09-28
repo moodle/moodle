@@ -31,6 +31,13 @@
  */
 class core_useragent_testcase extends basic_testcase {
 
+    /**
+     * Restores the user agent to the default one.
+     */
+    public function tearDown() {
+        core_useragent::instance(true);
+    }
+
     public function user_agents_providers() {
         // Note: When adding new entries to this list, please ensure that any new browser versions are added to the corresponding list.
         // This ensures that regression tests are applied to all known user agents.
@@ -1091,6 +1098,235 @@ class core_useragent_testcase extends basic_testcase {
                     'supports_svg'                  => false,
                ),
             ),
+
+            // Google web crawlers.
+            array(
+                'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+            array(
+                'Googlebot/2.1 (+http://www.googlebot.com/bot.html)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+            array(
+                'Googlebot-Image/1.0',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+
+            // Yahoo crawlers.
+            // See https://help.yahoo.com/kb/slurp-crawling-page-sln22600.html.
+            array(
+                'Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+
+            // Bing / MSN / AdIdx crawlers.
+            // See http://www.bing.com/webmaster/help/which-crawlers-does-bing-use-8c184ec0.
+            array(
+                'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+            array(
+                'Mozilla/5.0 (compatible; bingbot/2.0 +http://www.bing.com/bingbot.htm)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+            array(
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
+                array(
+                    'is_web_crawler'                => true,
+                    'is_webkit'                     => true,
+                    'is_safari_ios'                 => true,
+                    'check_safari_ios_version'      => array(
+                        '527'                       => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'safari',
+                        'ios',
+                    ),
+
+                    'devicetype'                    => 'mobile',
+               ),
+            ),
+            array(
+                'Mozilla/5.0 (Windows Phone 8.1; ARM; Trident/7.0; Touch; rv:11.0; IEMobile/11.0; NOKIA; Lumia 530) like Gecko (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
+                array(
+                    'is_web_crawler'                => true,
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                        '8.0'                       => true,
+                        '9.0'                       => true,
+                        '10'                        => true,
+                        '11'                        => true,
+                    ),
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie11',
+                    ),
+                    'devicetype'                    => 'mobile',
+               ),
+            ),
+
+            array(
+                'msnbot/2.0b (+http://search.msn.com/msnbot.htm)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+            array(
+                'msnbot/2.1',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+            array(
+                'msnbot-media/1.1 (+http://search.msn.com/msnbot.htm)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+            array(
+                'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534+ (KHTML, like Gecko) BingPreview/1.0b',
+                array(
+                    'is_web_crawler'                => true,
+                    'is_webkit'                     => true,
+                    'is_safari'                     => true,
+                    'check_safari_version'          => array(
+                        '1'                         => true,
+                        '312'                       => true,
+                        '500'                       => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'safari',
+                    ),
+               ),
+            ),
+            array(
+                'Mozilla/5.0 (Windows Phone 8.1; ARM; Trident/7.0; Touch; rv:11.0; IEMobile/11.0; NOKIA; Lumia 530) like Gecko BingPreview/1.0b',
+                array(
+                    'is_web_crawler'                => true,
+                    'is_ie'                         => true,
+                    'check_ie_version'              => array(
+                        '0'                         => true,
+                        '5.0'                       => true,
+                        '5.5'                       => true,
+                        '6.0'                       => true,
+                        '7.0'                       => true,
+                        '8.0'                       => true,
+                        '9.0'                       => true,
+                        '10'                        => true,
+                        '11'                        => true,
+                    ),
+                    'versionclasses'                => array(
+                        'ie',
+                        'ie11',
+                    ),
+                    'devicetype'                    => 'mobile',
+               ),
+            ),
+
+            // Yandex.
+            // See http://help.yandex.com/search/robots/agent.xml.
+            array(
+                'Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+            array(
+                'Mozilla/5.0 (compatible; YandexImages/3.0; +http://yandex.com/bots)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+
+            // AltaVista.
+            array(
+                'AltaVista V2.0B crawler@evreka.com',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+
+            // ZoomSpider.
+            array(
+                'ZoomSpider - wrensoft.com [ZSEBOT]',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+
+            // Baidu.
+            array(
+                'Baiduspider+(+http://www.baidu.com/search/spider_jp.html)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+            array(
+                'Baiduspider+(+http://www.baidu.com/search/spider.htm)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
+
+            // Ask.com.
+            array(
+                'User-Agent: Mozilla/2.0 (compatible; Ask Jeeves/Teoma)',
+                array(
+                    'is_web_crawler'                => true,
+                    'versionclasses'                => array(
+                    ),
+               ),
+            ),
         );
     }
 
@@ -1524,5 +1760,16 @@ class core_useragent_testcase extends basic_testcase {
             $this->assertContains($expectedclass, $actual);
         }
         $this->assertCount(count($tests['versionclasses']), $actual);
+    }
+
+    /**
+     * @dataProvider user_agents_providers
+     */
+    public function test_useragent_web_crawler($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
+
+        $expectation = isset($tests['is_web_crawler']) ? $tests['is_web_crawler'] : false;
+        $this->assertSame($expectation, core_useragent::is_web_crawler());
     }
 }

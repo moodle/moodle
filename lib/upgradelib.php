@@ -371,6 +371,9 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 3.0.
+        '/mod/lti/grade.php',
+        '/tag/coursetagslib.php',
         // Removed in 2.9.
         '/lib/timezone.txt',
         // Removed in 2.8.
@@ -448,15 +451,16 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
         require($fullplug.'/version.php');  // defines $plugin with version etc
         unset($module);
 
-        // if plugin tells us it's full name we may check the location
-        if (isset($plugin->component)) {
-            if ($plugin->component !== $component) {
-                throw new plugin_misplaced_exception($plugin->component, null, $fullplug);
-            }
+        if (empty($plugin->version)) {
+            throw new plugin_defective_exception($component, 'Missing $plugin->version number in version.php.');
         }
 
-        if (empty($plugin->version)) {
-            throw new plugin_defective_exception($component, 'Missing version value in version.php');
+        if (empty($plugin->component)) {
+            throw new plugin_defective_exception($component, 'Missing $plugin->component declaration in version.php.');
+        }
+
+        if ($plugin->component !== $component) {
+            throw new plugin_misplaced_exception($plugin->component, null, $fullplug);
         }
 
         $plugin->name     = $plug;
@@ -598,27 +602,33 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
             throw new plugin_defective_exception($component, 'Missing version.php');
         }
 
-        // TODO: Support for $module will end with Moodle 2.10 by MDL-43896. Was deprecated for Moodle 2.7 by MDL-43040.
+        $module = new stdClass();
         $plugin = new stdClass();
         $plugin->version = null;
-        $module = $plugin;
         require($fullmod .'/version.php');  // Defines $plugin with version etc.
-        $plugin = clone($module);
+
+        // Check if the legacy $module syntax is still used.
+        if (!is_object($module) or (count((array)$module) > 0)) {
+            throw new plugin_defective_exception($component, 'Unsupported $module syntax detected in version.php');
+        }
+
+        // Prepare the record for the {modules} table.
+        $module = clone($plugin);
         unset($module->version);
         unset($module->component);
         unset($module->dependencies);
         unset($module->release);
 
-        // if plugin tells us it's full name we may check the location
-        if (isset($plugin->component)) {
-            if ($plugin->component !== $component) {
-                throw new plugin_misplaced_exception($plugin->component, null, $fullmod);
-            }
+        if (empty($plugin->version)) {
+            throw new plugin_defective_exception($component, 'Missing $plugin->version number in version.php.');
         }
 
-        if (empty($plugin->version)) {
-            // Version must be always set now!
-            throw new plugin_defective_exception($component, 'Missing version value in version.php');
+        if (empty($plugin->component)) {
+            throw new plugin_defective_exception($component, 'Missing $plugin->component declaration in version.php.');
+        }
+
+        if ($plugin->component !== $component) {
+            throw new plugin_misplaced_exception($plugin->component, null, $fullmod);
         }
 
         if (!empty($plugin->requires)) {
@@ -790,15 +800,16 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
         unset($block->dependencies);
         unset($block->release);
 
-        // if plugin tells us it's full name we may check the location
-        if (isset($plugin->component)) {
-            if ($plugin->component !== $component) {
-                throw new plugin_misplaced_exception($plugin->component, null, $fullblock);
-            }
+        if (empty($plugin->version)) {
+            throw new plugin_defective_exception($component, 'Missing block version number in version.php.');
         }
 
-        if (empty($plugin->version)) {
-            throw new plugin_defective_exception($component, 'Missing block version.');
+        if (empty($plugin->component)) {
+            throw new plugin_defective_exception($component, 'Missing $plugin->component declaration in version.php.');
+        }
+
+        if ($plugin->component !== $component) {
+            throw new plugin_misplaced_exception($plugin->component, null, $fullblock);
         }
 
         if (!empty($plugin->requires)) {
@@ -2241,7 +2252,7 @@ function check_database_storage_engine(environment_results $result) {
 function check_slasharguments(environment_results $result){
     global $CFG;
 
-    if (empty($CFG->slasharguments)) {
+    if (!during_initial_install() && empty($CFG->slasharguments)) {
         $result->setInfo('slasharguments');
         $result->setStatus(false);
         return $result;

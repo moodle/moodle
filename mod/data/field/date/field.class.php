@@ -51,7 +51,7 @@ class data_field_date extends data_field_base {
             $content = time();
         }
 
-        $str = '<div title="'.s($this->field->description).'">';
+        $str = '<div title="'.s($this->field->description).'" class="mod-data-input">';
         $dayselector = html_writer::select_time('days', 'field_'.$this->field->id.'_day', $content);
         $monthselector = html_writer::select_time('months', 'field_'.$this->field->id.'_month', $content);
         $yearselector = html_writer::select_time('years', 'field_'.$this->field->id.'_year', $content);

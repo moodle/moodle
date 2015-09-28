@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2014 Justin Hileman
+ * (c) 2010-2015 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -41,7 +41,7 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
      *
      * @param string $key
      *
-     * @return boolean
+     * @return bool
      */
     public function load($key)
     {
@@ -56,12 +56,10 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
     }
 
     /**
-     * Cache and load the compiled class
+     * Cache and load the compiled class.
      *
      * @param string $key
      * @param string $value
-     *
-     * @return void
      */
     public function cache($key, $value)
     {
@@ -91,7 +89,7 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
     }
 
     /**
-     * Create cache directory
+     * Create cache directory.
      *
      * @throws Mustache_Exception_RuntimeException If unable to create directory
      *
@@ -119,14 +117,12 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
     }
 
     /**
-     * Write cache file
+     * Write cache file.
      *
      * @throws Mustache_Exception_RuntimeException If unable to write file
      *
      * @param string $fileName
      * @param string $value
-     *
-     * @return void
      */
     private function writeFile($fileName, $value)
     {

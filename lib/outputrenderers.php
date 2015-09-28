@@ -106,7 +106,8 @@ class renderer_base {
                 'cache' => $cachedir,
                 'escape' => 's',
                 'loader' => $loader,
-                'helpers' => $helpers));
+                'helpers' => $helpers,
+                'pragmas' => [Mustache_Engine::PRAGMA_BLOCKS]));
 
         }
 
@@ -3182,7 +3183,7 @@ EOD;
         }
 
         // Get some navigation opts.
-        $opts = user_get_user_navigation_info($user, $this->page, $this->page->course);
+        $opts = user_get_user_navigation_info($user, $this->page);
 
         $avatarclasses = "avatars";
         $avatarcontents = html_writer::span($opts->metadata['useravatar'], 'avatar current');
@@ -3768,7 +3769,10 @@ EOD;
                 $additionalclasses[] = 'docked-region-'.$region;
             }
         }
-        if (count($usedregions) === 1) {
+        if (!$usedregions) {
+            // No regions means there is only content, add 'content-only' class.
+            $additionalclasses[] = 'content-only';
+        } else if (count($usedregions) === 1) {
             // Add the -only class for the only used region.
             $region = array_shift($usedregions);
             $additionalclasses[] = $region . '-only';
@@ -3942,7 +3946,7 @@ EOD;
      * @return string HTML for the header bar.
      */
     public function context_header($headerinfo = null, $headinglevel = 1) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
         $context = $this->page->context;
         // Make sure to use the heading if it has been set.
         if (isset($headerinfo['heading'])) {
@@ -3972,7 +3976,7 @@ EOD;
 
             $imagedata = $this->user_picture($user, array('size' => 100));
             // Check to see if we should be displaying a message button.
-            if ($USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
+            if (!empty($CFG->messaging) && $USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
                 $userbuttons = array(
                     'messages' => array(
                         'buttontype' => 'message',

@@ -24,7 +24,6 @@ Feature: Blogs can be set to be only visible by the author.
     And I press "Save changes"
     And I log out
 
-  @javascript
   Scenario: A student can not see another student's blog entries.
     Given I log in as "testuser"
     And I follow "Course 1"

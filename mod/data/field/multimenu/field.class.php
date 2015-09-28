@@ -49,13 +49,14 @@ class data_field_multimenu extends data_field_base {
         $str .= '<label for="field_' . $this->field->id . '">';
         $str .= html_writer::span($this->field->name, 'accesshide');
         if ($this->field->required) {
-            $str .= '<div>';
+            $str .= '<div class="inline-req">';
             $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
             $str .= '</div>';
         }
         $str .= '</label>';
-        $str .= '<select name="field_' . $this->field->id . '[]" id="field_' . $this->field->id . '" multiple="multiple">';
+        $str .= '<select name="field_' . $this->field->id . '[]" id="field_' . $this->field->id . '"';
+        $str .= ' multiple="multiple" class="mod-data-input">';
 
         foreach (explode("\n", $this->field->param1) as $option) {
             $option = trim($option);

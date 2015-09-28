@@ -341,8 +341,8 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
             $maxtime = cache::now() - $ttl;
         }
         $readfile = false;
-        if ($this->prescan && array_key_exists($key, $this->keys)) {
-            if (!$ttl || $this->keys[$filename] >= $maxtime && file_exists($file)) {
+        if ($this->prescan && array_key_exists($filename, $this->keys)) {
+            if ((!$ttl || $this->keys[$filename] >= $maxtime) && file_exists($file)) {
                 $readfile = true;
             } else {
                 $this->delete($key);

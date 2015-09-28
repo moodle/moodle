@@ -22,13 +22,19 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['configtitle'] = 'Block title';
+$string['disabledtags'] = 'Tags are disabled';
+$string['defaultdisplay'] = 'Tag type to display';
+$string['pluginname'] = 'Tags';
+$string['tags:addinstance'] = 'Add a new tags block';
+$string['tags:myaddinstance'] = 'Add a new tags block to Dashboard';
+
+// Deprecated since 3.0
+
 $string['add'] = 'Add';
 $string['alltags'] = 'All tags:';
 $string['arrowtitle'] = 'Click here to enter the suggested text (grey letters).';
-$string['configtitle'] = 'Block title';
 $string['coursetags'] = 'Course tags:';
-$string['disabledtags'] = 'Tags are disabled';
-$string['defaultdisplay'] = 'Tag type to display';
 $string['edit'] = 'edit...';
 $string['editdeletemytag'] = 'Delete tag from this course:';
 $string['editmytags'] = 'My tags - shortcuts to all your tagged courses.';
@@ -65,13 +71,10 @@ $string['mycoursetags'] = 'My course tags:';
 $string['mytags'] = 'My tags:';
 $string['notagsyet'] = 'No tags yet';
 $string['please'] = 'Please';
-$string['pluginname'] = 'Tags';
 $string['select'] = 'Select...';
 $string['showcoursetags'] = 'Show course tags';
 $string['showcoursetagsdef'] = 'Display the course tagging features in the tags block, allowing students to tag courses.';
 $string['suggestedtagthisunit'] = 'Suggested tag to this course:';
 $string['tags'] = 'tags';
-$string['tags:addinstance'] = 'Add a new tags block';
-$string['tags:myaddinstance'] = 'Add a new tags block to Dashboard';
 $string['tagthisunit'] = 'Tag this course:';
 $string['tagunits'] = 'to tag your favourite courses';

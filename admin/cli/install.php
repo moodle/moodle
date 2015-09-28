@@ -80,6 +80,7 @@ Options:
                       required in non-interactive mode.
 --allow-unstable      Install even if the version is not marked as stable yet,
                       required in non-interactive mode.
+--skip-database       Stop the installation before installing the database.
 -h, --help            Print out this help
 
 Example:
@@ -260,6 +261,7 @@ list($options, $unrecognized) = cli_get_params(
         'non-interactive'   => false,
         'agree-license'     => false,
         'allow-unstable'    => false,
+        'skip-database'     => false,
         'help'              => false
     ),
     array(
@@ -271,7 +273,8 @@ $interactive = empty($options['non-interactive']);
 
 // set up language
 $lang = clean_param($options['lang'], PARAM_SAFEDIR);
-if (file_exists($CFG->dirroot.'/install/lang/'.$lang)) {
+$languages = get_string_manager()->get_list_of_translations();
+if (array_key_exists($lang, $languages)) {
     $CFG->lang = $lang;
 }
 
@@ -293,23 +296,34 @@ echo get_string('cliinstallheader', 'install', $CFG->target_release)."\n";
 //Fist select language
 if ($interactive) {
     cli_separator();
-    $languages = get_string_manager()->get_list_of_translations();
     // Do not put the langs into columns because it is not compatible with RTL.
-    $langlist = implode("\n", $languages);
     $default = $CFG->lang;
-    cli_heading(get_string('availablelangs', 'install'));
-    echo $langlist."\n";
+    cli_heading(get_string('chooselanguagehead', 'install'));
+    if (array_key_exists($default, $languages)) {
+        echo $default.' - '.$languages[$default]."\n";
+    }
+    if ($default !== 'en') {
+        echo 'en - English (en)'."\n";
+    }
+    echo '? - '.get_string('availablelangs', 'install')."\n";
     $prompt = get_string('clitypevaluedefault', 'admin', $CFG->lang);
     $error = '';
     do {
         echo $error;
         $input = cli_input($prompt, $default);
-        $input = clean_param($input, PARAM_SAFEDIR);
 
-        if (!file_exists($CFG->dirroot.'/install/lang/'.$input)) {
-            $error = get_string('cliincorrectvalueretry', 'admin')."\n";
+        if ($input === '?') {
+            echo implode("\n", $languages)."\n";
+            $error = "\n";
+
         } else {
-            $error = '';
+            $input = clean_param($input, PARAM_SAFEDIR);
+
+            if (!array_key_exists($input, $languages)) {
+                $error = get_string('cliincorrectvalueretry', 'admin')."\n";
+            } else {
+                $error = '';
+            }
         }
     } while ($error !== '');
     $CFG->lang = $input;
@@ -772,7 +786,11 @@ if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed)) {
     cli_error(get_string('pluginschecktodo', 'admin'));
 }
 
-install_cli_database($options, $interactive);
+if (!$options['skip-database']) {
+    install_cli_database($options, $interactive);
+} else {
+    echo get_string('cliskipdatabase', 'install')."\n";
+}
 
 echo get_string('cliinstallfinished', 'install')."\n";
 exit(0); // 0 means success

@@ -25,6 +25,7 @@
 
 require_once('../../config.php');
 require_once($CFG->dirroot.'/mod/lesson/locallib.php');
+require_once($CFG->dirroot.'/mod/lesson/pagetypes/branchtable.php'); // Needed for constant.
 
 $id     = required_param('id', PARAM_INT);    // Course Module ID
 $pageid = optional_param('pageid', null, PARAM_INT);    // Lesson Page ID
@@ -82,7 +83,7 @@ if ($action === 'delete') {
                         $DB->delete_records('lesson_timer', array('id' => $timer->id));
                     }
 
-                /// Remove the grade from the grades and high_scores tables - this is silly, it should be linked to specific attempt (skodak)
+                    // Remove the grade from the grades tables - this is silly, it should be linked to specific attempt (skodak).
                     $grades = $DB->get_records_sql("SELECT id FROM {lesson_grades}
                                                      WHERE userid = :userid AND lessonid = :lessonid
                                                   ORDER BY completed", $params, $try, 1);
@@ -90,7 +91,6 @@ if ($action === 'delete') {
                     if ($grades) {
                         $grade = reset($grades);
                         $DB->delete_records('lesson_grades', array('id' => $grade->id));
-                        $DB->delete_records('lesson_high_scores', array('gradeid' => $grade->id, 'lessonid' => $lesson->id, 'userid' => $userid));
                     }
 
                 /// Remove attempts and update the retry number
@@ -116,23 +116,30 @@ if ($action === 'delete') {
     this action is for default view and overview view
     **************************************************************************/
 
+    // Count the number of branch and question pages in this lesson.
+    $branchcount = $DB->count_records('lesson_pages', array('lessonid' => $lesson->id, 'qtype' => LESSON_PAGE_BRANCHTABLE));
+    $questioncount = ($DB->count_records('lesson_pages', array('lessonid' => $lesson->id)) - $branchcount);
+
     // Only load students if there attempts for this lesson.
-    if ($attempts = $DB->record_exists('lesson_attempts', array('lessonid' => $lesson->id))) {
+    $attempts = $DB->record_exists('lesson_attempts', array('lessonid' => $lesson->id));
+    $branches = $DB->record_exists('lesson_branch', array('lessonid' => $lesson->id));
+    if ($attempts or $branches) {
         list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
         list($sort, $sortparams) = users_order_by_sql('u');
 
         $params['lessonid'] = $lesson->id;
         $ufields = user_picture::fields('u');
         $sql = "SELECT DISTINCT $ufields
-            FROM {user} u
-            JOIN {lesson_attempts} a ON u.id = a.userid
-            JOIN ($esql) ue ON ue.id = a.userid
-            WHERE a.lessonid = :lessonid
-            ORDER BY $sort";
+                FROM {user} u
+                JOIN (SELECT userid, lessonid FROM {lesson_attempts} a1 UNION
+                SELECT userid, lessonid FROM {lesson_branch} b1) a ON u.id = a.userid
+                JOIN ($esql) ue ON ue.id = a.userid
+                WHERE a.lessonid = :lessonid
+                ORDER BY $sort";
 
         $students = $DB->get_recordset_sql($sql, $params);
         if (!$students->valid()) {
-            $student->close();
+            $students->close();
             $nothingtodisplay = true;
         }
     } else {
@@ -152,9 +159,6 @@ if ($action === 'delete') {
         exit();
     }
 
-    // We have attempts and students, let's prepare all the information.
-    $attempts = $DB->get_recordset('lesson_attempts', array('lessonid' => $lesson->id), 'timeseen');
-
     if (! $grades = $DB->get_records('lesson_grades', array('lessonid' => $lesson->id), 'completed')) {
         $grades = array();
     }
@@ -173,17 +177,19 @@ if ($action === 'delete') {
         echo $OUTPUT->box($seeallgradeslink, 'allcoursegrades');
     }
 
+    // Build an array for output.
     $studentdata = array();
 
-    // build an array for output
+    $attempts = $DB->get_recordset('lesson_attempts', array('lessonid' => $lesson->id), 'timeseen');
     foreach ($attempts as $attempt) {
         // if the user is not in the array or if the retry number is not in the sub array, add the data for that try.
-        if (!array_key_exists($attempt->userid, $studentdata) || !array_key_exists($attempt->retry, $studentdata[$attempt->userid])) {
+        if (empty($studentdata[$attempt->userid]) || empty($studentdata[$attempt->userid][$attempt->retry])) {
             // restore/setup defaults
             $n = 0;
             $timestart = 0;
             $timeend = 0;
             $usergrade = null;
+            $eol = false;
 
             // search for the grade record for this try. if not there, the nulls defined above will be used.
             foreach($grades as $grade) {
@@ -208,6 +214,7 @@ if ($action === 'delete') {
                         // get grade info
                         $timeend = $time->lessontime;
                         $timestart = $time->starttime;
+                        $eol = $time->completed;
                         break;
                     }
                     $n++; // if not equal, then increment n
@@ -219,11 +226,59 @@ if ($action === 'delete') {
             $studentdata[$attempt->userid][$attempt->retry] = array( "timestart" => $timestart,
                                                                     "timeend" => $timeend,
                                                                     "grade" => $usergrade,
+                                                                    "end" => $eol,
                                                                     "try" => $attempt->retry,
                                                                     "userid" => $attempt->userid);
         }
     }
     $attempts->close();
+
+    $branches = $DB->get_recordset('lesson_branch', array('lessonid' => $lesson->id), 'timeseen');
+    foreach ($branches as $branch) {
+        // If the user is not in the array or if the retry number is not in the sub array, add the data for that try.
+        if (empty($studentdata[$branch->userid]) || empty($studentdata[$branch->userid][$branch->retry])) {
+            // Restore/setup defaults.
+            $n = 0;
+            $timestart = 0;
+            $timeend = 0;
+            $usergrade = null;
+            $eol = false;
+            // Search for the time record for this try. if not there, the nulls defined above will be used.
+            foreach ($times as $time) {
+                // Check to see if the grade matches the correct user.
+                if ($time->userid == $branch->userid) {
+                    // See if n is = to the retry.
+                    if ($n == $branch->retry) {
+                        // Get grade info.
+                        $timeend = $time->lessontime;
+                        $timestart = $time->starttime;
+                        $eol = $time->completed;
+                        break;
+                    }
+                    $n++; // If not equal, then increment n.
+                }
+            }
+
+            // Build up the array.
+            // This array represents each student and all of their tries at the lesson.
+            $studentdata[$branch->userid][$branch->retry] = array( "timestart" => $timestart,
+                                                                    "timeend" => $timeend,
+                                                                    "grade" => $usergrade,
+                                                                    "end" => $eol,
+                                                                    "try" => $branch->retry,
+                                                                    "userid" => $branch->userid);
+        }
+    }
+    $branches->close();
+
+    // Determine if lesson should have a score.
+    if ($branchcount > 0 AND $questioncount == 0) {
+        // This lesson only contains content pages and is not graded.
+        $lessonscored = false;
+    } else {
+        // This lesson is graded.
+        $lessonscored = true;
+    }
     // set all the stats variables
     $numofattempts = 0;
     $avescore      = 0;
@@ -235,8 +290,12 @@ if ($action === 'delete') {
 
     $table = new html_table();
 
-    // set up the table object
-    $table->head = array(get_string('name'), get_string('attempts', 'lesson'), get_string('highscore', 'lesson'));
+    // Set up the table object.
+    if ($lessonscored) {
+        $table->head = array(get_string('name'), get_string('attempts', 'lesson'), get_string('highscore', 'lesson'));
+    } else {
+        $table->head = array(get_string('name'), get_string('attempts', 'lesson'));
+    }
     $table->align = array('center', 'left', 'left');
     $table->wrap = array('nowrap', 'nowrap', 'nowrap');
     $table->attributes['class'] = 'standardtable generaltable';
@@ -277,41 +336,64 @@ if ($action === 'delete') {
                     $temp .= "&nbsp;".userdate($try["timestart"]);
                     $temp .= ",&nbsp;(".format_time($timetotake).")</a>";
                 } else {
-                    // this is what the link does/looks like when the user has not completed the try
-                    $temp .= get_string("notcompleted", "lesson");
-                    $temp .= "&nbsp;".userdate($try["timestart"])."</a>";
-                    $timetotake = null;
+                    if ($try["end"]) {
+                        // User finished the lesson but has no grade. (Happens when there are only content pages).
+                        $temp .= "&nbsp;".userdate($try["timestart"]);
+                        $timetotake = $try["timeend"] - $try["timestart"];
+                        $temp .= ",&nbsp;(".format_time($timetotake).")</a>";
+                    } else {
+                        // This is what the link does/looks like when the user has not completed the attempt.
+                        $temp .= get_string("notcompleted", "lesson");
+                        if ($try['timestart'] !== 0) {
+                            // Teacher previews do not track time spent.
+                            $temp .= "&nbsp;".userdate($try["timestart"]);
+                        }
+                        $temp .= "</a>";
+                        $timetotake = null;
+                    }
                 }
                 // build up the attempts array
                 $attempts[] = $temp;
 
-                // run these lines for the stats only if the user finnished the lesson
-                if ($try["grade"] !== null) {
+                // Run these lines for the stats only if the user finnished the lesson.
+                if ($try["end"]) {
+                    // User has completed the lesson.
                     $numofattempts++;
-                    $avescore += $try["grade"];
                     $avetime += $timetotake;
-                    if ($try["grade"] > $highscore || $highscore === null) {
-                        $highscore = $try["grade"];
-                    }
-                    if ($try["grade"] < $lowscore || $lowscore === null) {
-                        $lowscore = $try["grade"];
-                    }
                     if ($timetotake > $hightime || $hightime == null) {
                         $hightime = $timetotake;
                     }
                     if ($timetotake < $lowtime || $lowtime == null) {
                         $lowtime = $timetotake;
                     }
+                    if ($try["grade"] !== null) {
+                        // The lesson was scored.
+                        $avescore += $try["grade"];
+                        if ($try["grade"] > $highscore || $highscore === null) {
+                            $highscore = $try["grade"];
+                        }
+                        if ($try["grade"] < $lowscore || $lowscore === null) {
+                            $lowscore = $try["grade"];
+                        }
+
+                    }
                 }
             }
             // get line breaks in after each attempt
             $attempts = implode("<br />\n", $attempts);
-            // add it to the table data[] object
-            $table->data[] = array($studentname, $attempts, $bestgrade."%");
+
+            if ($lessonscored) {
+                // Add the grade if the lesson is graded.
+                $bestgrade = $bestgrade."%";
+                $table->data[] = array($studentname, $attempts, $bestgrade);
+            } else {
+                // This lesson does not have a grade.
+                $table->data[] = array($studentname, $attempts);
+            }
         }
     }
     $students->close();
-    // print it all out !
+    // Print it all out!
     if (has_capability('mod/lesson:edit', $context)) {
         echo  "<form id=\"theform\" method=\"post\" action=\"report.php\">\n
                <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n
@@ -331,12 +413,7 @@ if ($action === 'delete') {
         echo '</form>';
     }
 
-    // some stat calculations
-    if ($numofattempts == 0) {
-        $avescore = get_string("notcompleted", "lesson");
-    } else {
-        $avescore = format_float($avescore/$numofattempts, 2);
-    }
+    // Calculate the Statistics.
     if ($avetime == null) {
         $avetime = get_string("notcompleted", "lesson");
     } else {
@@ -353,30 +430,46 @@ if ($action === 'delete') {
     } else {
         $lowtime = format_time($lowtime);
     }
-    if ($highscore === null) {
-        $highscore = get_string("notcompleted", "lesson");
-    }
-    if ($lowscore === null) {
-        $lowscore = get_string("notcompleted", "lesson");
-    }
 
-    // output the stats
-    echo $OUTPUT->heading(get_string('lessonstats', 'lesson'), 3);
-    $stattable = new html_table();
-    $stattable->head = array(get_string('averagescore', 'lesson'), get_string('averagetime', 'lesson'),
-                            get_string('highscore', 'lesson'), get_string('lowscore', 'lesson'),
-                            get_string('hightime', 'lesson'), get_string('lowtime', 'lesson'));
-    $stattable->align = array('center', 'center', 'center', 'center', 'center', 'center');
-    $stattable->wrap = array('nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap');
-    $stattable->attributes['class'] = 'standardtable generaltable';
+    if ($lessonscored) {
+        if ($numofattempts == 0) {
+            $avescore = get_string("notcompleted", "lesson");
+        } else {
+            $avescore = format_float($avescore / $numofattempts, 2) . '%';
+        }
+        if ($highscore === null) {
+            $highscore = get_string("notcompleted", "lesson");
+        } else {
+            $highscore .= '%';
+        }
+        if ($lowscore === null) {
+            $lowscore = get_string("notcompleted", "lesson");
+        } else {
+            $lowscore .= '%';
+        }
 
-    if (is_numeric($highscore)) {
-        $highscore .= '%';
+        // Display the full stats for the lesson.
+        echo $OUTPUT->heading(get_string('lessonstats', 'lesson'), 3);
+        $stattable = new html_table();
+        $stattable->head = array(get_string('averagescore', 'lesson'), get_string('averagetime', 'lesson'),
+                                get_string('highscore', 'lesson'), get_string('lowscore', 'lesson'),
+                                get_string('hightime', 'lesson'), get_string('lowtime', 'lesson'));
+        $stattable->align = array('center', 'center', 'center', 'center', 'center', 'center');
+        $stattable->wrap = array('nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap', 'nowrap');
+        $stattable->attributes['class'] = 'standardtable generaltable';
+        $stattable->data[] = array($avescore, $avetime, $highscore, $lowscore, $hightime, $lowtime);
+
+    } else {
+        // Display simple stats for the lesson.
+        echo $OUTPUT->heading(get_string('lessonstats', 'lesson'), 3);
+        $stattable = new html_table();
+        $stattable->head = array(get_string('averagetime', 'lesson'), get_string('hightime', 'lesson'),
+                                get_string('lowtime', 'lesson'));
+        $stattable->align = array('center', 'center', 'center');
+        $stattable->wrap = array('nowrap', 'nowrap', 'nowrap');
+        $stattable->attributes['class'] = 'standardtable generaltable';
+        $stattable->data[] = array($avetime, $hightime, $lowtime);
     }
-    if (is_numeric($lowscore)) {
-        $lowscore .= '%';
-    }
-    $stattable->data[] = array($avescore.'%', $avetime, $highscore, $lowscore, $hightime, $lowtime);
 
     echo html_writer::table($stattable);
 } else if ($action === 'reportdetail') {

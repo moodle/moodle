@@ -13,7 +13,6 @@ Feature: Transform steps arguments
     And I follow "Preferences" in the user menu
     And I follow "Edit profile"
 
-  @javascript
   Scenario: Use nasty strings on steps arguments
     When I set the field "Surname" to "$NASTYSTRING1"
     And I set the field "Description" to "$NASTYSTRING2"
@@ -24,7 +23,6 @@ Feature: Transform steps arguments
     And the field "Surname" matches value "$NASTYSTRING1"
     And the field "City/town" matches value "$NASTYSTRING3"
 
-  @javascript
   Scenario: Use nasty strings on table nodes
     When I set the following fields to these values:
       | Surname | $NASTYSTRING1 |
@@ -36,7 +34,6 @@ Feature: Transform steps arguments
     And the field "Surname" matches value "$NASTYSTRING1"
     And the field "City/town" matches value "$NASTYSTRING3"
 
-  @javascript
   Scenario: Use double quotes
     When I set the following fields to these values:
       | First name | va"lue1 |
@@ -49,7 +46,6 @@ Feature: Transform steps arguments
     And the field "Description" matches value "va\\"lue2"
     And the field "City/town" matches value "va\"lue3"
 
-  @javascript
   Scenario: Nasty strings with other contents
     When I set the field "First name" to "My Firstname $NASTYSTRING1"
     And I set the following fields to these values:

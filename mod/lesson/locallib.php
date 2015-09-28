@@ -967,8 +967,6 @@ abstract class lesson_add_page_form_base extends moodleform {
  * @property int $displayleft Display a left menu
  * @property int $displayleftif Sets the condition on which the left menu is displayed
  * @property int $progressbar Flag to toggle display of a lesson progress bar
- * @property int $highscores Flag to toggle collection of high scores
- * @property int $maxhighscores Number of high scores to limit to
  * @property int $available Timestamp of when this lesson becomes available
  * @property int $deadline Timestamp of when this lesson is no longer available
  * @property int $timemodified Timestamp when lesson was last modified
@@ -1056,7 +1054,6 @@ class lesson extends lesson_base {
         $DB->delete_records("lesson_grades", array("lessonid"=>$this->properties->id));
         $DB->delete_records("lesson_timer", array("lessonid"=>$this->properties->id));
         $DB->delete_records("lesson_branch", array("lessonid"=>$this->properties->id));
-        $DB->delete_records("lesson_high_scores", array("lessonid"=>$this->properties->id));
         if ($events = $DB->get_records('event', array("modulename"=>'lesson', "instance"=>$this->properties->id))) {
             foreach($events as $event) {
                 $event = calendar_event::load($event);
@@ -2429,6 +2426,19 @@ abstract class lesson_page extends lesson_base {
         } else {
             if (!has_capability('mod/lesson:manage', $context)) {
                 $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$this->lesson->id, "userid"=>$USER->id));
+
+                // Get the number of attempts that have been made on this question for this student and retake,
+                $nattempts = $DB->count_records('lesson_attempts', array('lessonid' => $this->lesson->id,
+                    'userid' => $USER->id, 'pageid' => $this->properties->id, 'retry' => $nretakes));
+
+                // Check if they have reached (or exceeded) the maximum number of attempts allowed.
+                if ($nattempts >= $this->lesson->maxattempts) {
+                    $result->maxattemptsreached = true;
+                    $result->feedback = get_string('maximumnumberofattemptsreached', 'lesson');
+                    $result->newpageid = $this->lesson->get_next_page($this->properties->nextpageid);
+                    return $result;
+                }
+
                 // record student's attempt
                 $attempt = new stdClass;
                 $attempt->lessonid = $this->lesson->id;
@@ -2465,14 +2475,13 @@ abstract class lesson_page extends lesson_base {
                         $event->add_record_snapshot('lesson_attempts', $attempt);
                         $event->trigger();
 
+                        // Increase the number of attempts made.
+                        $nattempts++;
                     }
                 }
                 // "number of attempts remaining" message if $this->lesson->maxattempts > 1
                 // displaying of message(s) is at the end of page for more ergonomic display
                 if (!$result->correctanswer && ($result->newpageid == 0)) {
-                    // wrong answer and student is stuck on this page - check how many attempts
-                    // the student has had at this page/question
-                    $nattempts = $DB->count_records("lesson_attempts", array("pageid"=>$this->properties->id, "userid"=>$USER->id, "retry" => $attempt->retry));
                     // retreive the number of attempts left counter for displaying at bottom of feedback page
                     if ($nattempts >= $this->lesson->maxattempts) {
                         if ($this->lesson->maxattempts > 1) { // don't bother with message if only one attempt
@@ -2743,7 +2752,7 @@ abstract class lesson_page extends lesson_base {
                     $this->answers[$i]->timecreated = $this->timecreated;
                 }
 
-                if (!empty($properties->answer_editor[$i])) {
+                if (isset($properties->answer_editor[$i])) {
                     if (is_array($properties->answer_editor[$i])) {
                         // Multichoice and true/false pages have an HTML editor.
                         $this->answers[$i]->answer = $properties->answer_editor[$i]['text'];

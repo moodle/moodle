@@ -172,8 +172,6 @@ function testing_error($errorcode, $text = '') {
 /**
  * Updates the composer installer and the dependencies.
  *
- * Includes --dev dependencies.
- *
  * @return void exit() if something goes wrong
  */
 function testing_update_composer_dependencies() {

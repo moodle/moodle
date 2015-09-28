@@ -34,6 +34,7 @@ define('TABLE_VAR_SHOW',   3);
 define('TABLE_VAR_IFIRST', 4);
 define('TABLE_VAR_ILAST',  5);
 define('TABLE_VAR_PAGE',   6);
+define('TABLE_VAR_RESET',  7);
 /**#@-*/
 
 /**#@+
@@ -55,6 +56,11 @@ class flexible_table {
     var $uniqueid        = NULL;
     var $attributes      = array();
     var $headers         = array();
+
+    /**
+     * @var string For create header with help icon.
+     */
+    private $helpforheaders = array();
     var $columns         = array();
     var $column_style    = array();
     var $column_class    = array();
@@ -138,6 +144,7 @@ class flexible_table {
             TABLE_VAR_IFIRST => 'tifirst',
             TABLE_VAR_ILAST  => 'tilast',
             TABLE_VAR_PAGE   => 'page',
+            TABLE_VAR_RESET  => 'treset'
         );
     }
 
@@ -423,6 +430,17 @@ class flexible_table {
     }
 
     /**
+     * Defines a help icon for the header
+     *
+     * Always use this function if you need to create header with sorting and help icon.
+     *
+     * @param renderable[] $helpicons An array of renderable objects to be used as help icons
+     */
+    public function define_help_for_headers($helpicons) {
+        $this->helpforheaders = $helpicons;
+    }
+
+    /**
      * Must be called after table is defined. Use methods above first. Cannot
      * use functions below till after calling this method.
      * @return type?
@@ -506,6 +524,17 @@ class flexible_table {
         $ifirst = optional_param($this->request[TABLE_VAR_IFIRST], null, PARAM_RAW);
         if (!is_null($ifirst) && ($ifirst === '' || strpos(get_string('alphabet', 'langconfig'), $ifirst) !== false)) {
             $this->prefs['i_first'] = $ifirst;
+        }
+
+        // Allow user to reset table preferences.
+        if (optional_param($this->request[TABLE_VAR_RESET], 0, PARAM_BOOL) === 1) {
+            $this->prefs = array(
+                'collapse' => array(),
+                'sortby'   => array(),
+                'i_first'  => '',
+                'i_last'   => '',
+                'textsort' => $this->column_textsort,
+            );
         }
 
         // Save user preferences if they have changed.
@@ -971,6 +1000,10 @@ class flexible_table {
      */
     function print_nothing_to_display() {
         global $OUTPUT;
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
         $this->print_initials_bar();
 
         echo $OUTPUT->heading(get_string('nothingtodisplay'));
@@ -1229,7 +1262,11 @@ class flexible_table {
                                     $name, $primarysortcolumn === $name, $primarysortorder);
                             $this->headers[$index] .= $sortname . ' / ';
                         }
-                        $this->headers[$index] = substr($this->headers[$index], 0, -3);
+                        $helpicon = '';
+                        if (isset($this->helpforheaders[$index])) {
+                            $helpicon = $OUTPUT->render($this->helpforheaders[$index]);
+                        }
+                        $this->headers[$index] = substr($this->headers[$index], 0, -3). $helpicon;
                     }
                 }
                 break;
@@ -1240,8 +1277,12 @@ class flexible_table {
 
                 default:
                 if ($this->is_sortable($column)) {
+                    $helpicon = '';
+                    if (isset($this->helpforheaders[$index])) {
+                        $helpicon = $OUTPUT->render($this->helpforheaders[$index]);
+                    }
                     $this->headers[$index] = $this->sort_link($this->headers[$index],
-                            $column, $primarysortcolumn == $column, $primarysortorder);
+                            $column, $primarysortcolumn == $column, $primarysortorder) . $helpicon;
                 }
             }
 
@@ -1257,7 +1298,11 @@ class flexible_table {
                 if (is_array($this->column_style[$column])) {
                     $attributes['style'] = $this->make_styles_string($this->column_style[$column]);
                 }
-                $content = $this->headers[$index] . html_writer::tag('div',
+                $helpicon = '';
+                if (isset($this->helpforheaders[$index]) && !$this->is_sortable($column)) {
+                    $helpicon  = $OUTPUT->render($this->helpforheaders[$index]);
+                }
+                $content = $this->headers[$index] . $helpicon . html_writer::tag('div',
                         $icon_hide, array('class' => 'commands'));
             }
             echo html_writer::tag('th', $content, $attributes);
@@ -1325,6 +1370,10 @@ class flexible_table {
      */
     function start_html() {
         global $OUTPUT;
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
         // Do we need to print initial bars?
         $this->print_initials_bar();
 
@@ -1362,6 +1411,21 @@ class flexible_table {
             $string .= $property . ':' . $value . ';';
         }
         return $string;
+    }
+
+    /**
+     * Generate the HTML for the table preferences reset button.
+     *
+     * @return string HTML fragment.
+     */
+    private function render_reset_button() {
+        $url = $this->baseurl->out(false, array($this->request[TABLE_VAR_RESET] => 1));
+
+        $html  = html_writer::start_div('mdl-right');
+        $html .= html_writer::link($url, get_string('resettable'));
+        $html .= html_writer::end_div();
+
+        return $html;
     }
 }
 

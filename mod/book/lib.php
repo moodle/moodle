@@ -598,3 +598,31 @@ function book_export_contents($cm, $baseurl) {
 
     return $contents;
 }
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $book       book object
+ * @param  stdClass $chapter    chapter object
+ * @param  bool $islaschapter   is the las chapter of the book?
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.0
+ */
+function book_view($book, $chapter, $islastchapter, $course, $cm, $context) {
+
+    // First case, we are just opening the book.
+    if (empty($chapter)) {
+        \mod_book\event\course_module_viewed::create_from_book($book, $context)->trigger();
+
+    } else {
+        \mod_book\event\chapter_viewed::create_from_chapter($book, $context, $chapter)->trigger();
+
+        if ($islastchapter) {
+            // We cheat a bit here in assuming that viewing the last page means the user viewed the whole book.
+            $completion = new completion_info($course);
+            $completion->set_module_viewed($cm);
+        }
+    }
+}

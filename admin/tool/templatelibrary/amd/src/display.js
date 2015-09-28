@@ -99,9 +99,7 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
         }
         if (context) {
             templates.render(templateName, context).done(function(html, js) {
-                $('[data-region="displaytemplateexample"]').empty();
-                $('[data-region="displaytemplateexample"]').append(html);
-                templates.runTemplateJS(js);
+                templates.replaceNodeContents($('[data-region="displaytemplateexample"]'), html, js);
             }).fail(notification.exception);
         } else {
             str.get_string('templatehasnoexample', 'tool_templatelibrary').done(function(s) {
@@ -133,7 +131,7 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
                     component: component,
                     template: name
             }
-        }]);
+        }], true, false);
 
         // When returns a new promise that is resolved when all the passed in promises are resolved.
         // The arguments to the done become the values of each resolved promise.

@@ -38,9 +38,30 @@ class theme_clean_core_renderer extends theme_bootstrapbase_core_renderer {
      * @return string HTML for the header bar.
      */
     public function context_header($headerinfo = null, $headinglevel = 1) {
-        if ($headinglevel == 1 && !empty($this->page->theme->settings->logo)) {
+
+        if ($this->should_render_logo($headinglevel)) {
             return html_writer::tag('div', '', array('class' => 'logo'));
         }
         return parent::context_header($headerinfo, $headinglevel);
+    }
+
+    /**
+     * Determines if we should render the logo.
+     *
+     * @param int $headinglevel What level the 'h' tag will be.
+     * @return bool Should the logo be rendered.
+     */
+    protected function should_render_logo($headinglevel = 1) {
+        global $PAGE;
+
+        // Only render the logo if we're on the front page or login page
+        // and the theme has a logo.
+        if ($headinglevel == 1 && !empty($this->page->theme->settings->logo)) {
+            if ($PAGE->pagelayout == 'frontpage' || $PAGE->pagelayout == 'login') {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

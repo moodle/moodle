@@ -161,11 +161,6 @@ class enrol_flatfile_plugin extends enrol_plugin {
         }
     }
 
-    public function cron() {
-        $trace = new text_progress_trace();
-        $this->sync($trace);
-    }
-
     /**
      * Execute synchronisation.
      * @param progress_trace
@@ -446,7 +441,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
             $notify = false;
             if ($ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$user->id))) {
                 // Update only.
-                $this->update_user_enrol($instance, $user->id, ENROL_USER_ACTIVE, $roleid, $timestart, $timeend);
+                $this->update_user_enrol($instance, $user->id, ENROL_USER_ACTIVE, $timestart, $timeend);
                 if (!$DB->record_exists('role_assignments', array('contextid'=>$context->id, 'roleid'=>$roleid, 'userid'=>$user->id, 'component'=>'enrol_flatfile', 'itemid'=>$instance->id))) {
                     role_assign($roleid, $user->id, $context->id, 'enrol_flatfile', $instance->id);
                 }

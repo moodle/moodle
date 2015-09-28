@@ -300,29 +300,21 @@ class tool_installaddon_validator {
         $this->versionphp = array();
         $info = $this->parse_version_php($fullpath);
 
-        if ($this->assertions['plugintype'] === 'mod') {
-            $type = 'module';
-        } else {
-            $type = 'plugin';
+        if (isset($info['module->version'])) {
+            $this->add_message(self::ERROR, 'versionphpsyntax', '$module');
+            return false;
         }
 
-        if (!isset($info[$type.'->version'])) {
-            if ($type === 'module' and isset($info['plugin->version'])) {
-                // Expect the activity module using $plugin in version.php instead of $module.
-                $type = 'plugin';
-                $this->versionphp['version'] = $info[$type.'->version'];
-                $this->add_message(self::INFO, 'pluginversion', $this->versionphp['version']);
-            } else {
-                $this->add_message(self::ERROR, 'missingversion');
-                return false;
-            }
-        } else {
-            $this->versionphp['version'] = $info[$type.'->version'];
+        if (isset($info['plugin->version'])) {
+            $this->versionphp['version'] = $info['plugin->version'];
             $this->add_message(self::INFO, 'pluginversion', $this->versionphp['version']);
+        } else {
+            $this->add_message(self::ERROR, 'missingversion');
+            return false;
         }
 
-        if (isset($info[$type.'->requires'])) {
-            $this->versionphp['requires'] = $info[$type.'->requires'];
+        if (isset($info['plugin->requires'])) {
+            $this->versionphp['requires'] = $info['plugin->requires'];
             if ($this->versionphp['requires'] > $this->assertions['moodleversion']) {
                 $this->add_message(self::ERROR, 'requiresmoodle', $this->versionphp['requires']);
                 return false;
@@ -330,24 +322,27 @@ class tool_installaddon_validator {
             $this->add_message(self::INFO, 'requiresmoodle', $this->versionphp['requires']);
         }
 
-        if (isset($info[$type.'->component'])) {
-            $this->versionphp['component'] = $info[$type.'->component'];
-            list($reqtype, $reqname) = core_component::normalize_component($this->versionphp['component']);
-            if ($reqtype !== $this->assertions['plugintype']) {
-                $this->add_message(self::ERROR, 'componentmismatchtype', array(
-                    'expected' => $this->assertions['plugintype'],
-                    'found' => $reqtype));
-                return false;
-            }
-            if ($reqname !== $this->rootdir) {
-                $this->add_message(self::ERROR, 'componentmismatchname', $reqname);
-                return false;
-            }
-            $this->add_message(self::INFO, 'componentmatch', $this->versionphp['component']);
+        if (!isset($info['plugin->component'])) {
+            $this->add_message(self::ERROR, 'missingcomponent');
+            return false;
         }
 
-        if (isset($info[$type.'->maturity'])) {
-            $this->versionphp['maturity'] = $info[$type.'->maturity'];
+        $this->versionphp['component'] = $info['plugin->component'];
+        list($reqtype, $reqname) = core_component::normalize_component($this->versionphp['component']);
+        if ($reqtype !== $this->assertions['plugintype']) {
+            $this->add_message(self::ERROR, 'componentmismatchtype', array(
+                'expected' => $this->assertions['plugintype'],
+                'found' => $reqtype));
+            return false;
+        }
+        if ($reqname !== $this->rootdir) {
+            $this->add_message(self::ERROR, 'componentmismatchname', $reqname);
+            return false;
+        }
+        $this->add_message(self::INFO, 'componentmatch', $this->versionphp['component']);
+
+        if (isset($info['plugin->maturity'])) {
+            $this->versionphp['maturity'] = $info['plugin->maturity'];
             if ($this->versionphp['maturity'] === 'MATURITY_STABLE') {
                 $this->add_message(self::INFO, 'maturity', $this->versionphp['maturity']);
             } else {
@@ -355,8 +350,8 @@ class tool_installaddon_validator {
             }
         }
 
-        if (isset($info[$type.'->release'])) {
-            $this->versionphp['release'] = $info[$type.'->release'];
+        if (isset($info['plugin->release'])) {
+            $this->versionphp['release'] = $info['plugin->release'];
             $this->add_message(self::INFO, 'release', $this->versionphp['release']);
         }
 

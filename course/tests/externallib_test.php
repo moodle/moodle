@@ -601,6 +601,71 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test search_courses
+     */
+    public function test_search_courses () {
+
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/tag/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generatedcourses = array();
+        $coursedata1['fullname'] = 'FIRST COURSE';
+        $course1  = self::getDataGenerator()->create_course($coursedata1);
+        $coursedata2['fullname'] = 'SECOND COURSE';
+        $course2  = self::getDataGenerator()->create_course($coursedata2);
+        // Search by name.
+        $results = core_course_external::search_courses('search', 'FIRST');
+        $results = external_api::clean_returnvalue(core_course_external::search_courses_returns(), $results);
+        $this->assertEquals($coursedata1['fullname'], $results['courses'][0]['fullname']);
+        $this->assertCount(1, $results['courses']);
+
+        // Create the forum.
+        $record = new stdClass();
+        $record->introformat = FORMAT_HTML;
+        $record->course = $course2->id;
+        // Set Aggregate type = Average of ratings.
+        $forum = self::getDataGenerator()->create_module('forum', $record);
+
+        // Search by module.
+        $results = core_course_external::search_courses('modulelist', 'forum');
+        $results = external_api::clean_returnvalue(core_course_external::search_courses_returns(), $results);
+        $this->assertEquals(1, $results['total']);
+
+        // Enable coursetag option.
+        set_config('block_tags_showcoursetags', true);
+        // Add tag 'TAG-LABEL ON SECOND COURSE' to Course2.
+        tag_set('course', $course2->id, array('TAG-LABEL ON SECOND COURSE'), 'core', context_course::instance($course2->id)->id);
+        $taginstance = $DB->get_record('tag_instance', array('itemtype' => 'course', 'itemid' => $course2->id), '*', MUST_EXIST);
+        // Search by tagid.
+        $results = core_course_external::search_courses('tagid', $taginstance->tagid);
+        $results = external_api::clean_returnvalue(core_course_external::search_courses_returns(), $results);
+        $this->assertEquals($coursedata2['fullname'], $results['courses'][0]['fullname']);
+
+        // Search by block (use news_items default block).
+        $blockid = $DB->get_field('block', 'id', array('name' => 'news_items'));
+        $results = core_course_external::search_courses('blocklist', $blockid);
+        $results = external_api::clean_returnvalue(core_course_external::search_courses_returns(), $results);
+        $this->assertEquals(2, $results['total']);
+
+        // Now as a normal user.
+        $user = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $results = core_course_external::search_courses('search', 'FIRST');
+        $results = external_api::clean_returnvalue(core_course_external::search_courses_returns(), $results);
+        $this->assertCount(1, $results['courses']);
+        $this->assertEquals(1, $results['total']);
+        $this->assertEquals($coursedata1['fullname'], $results['courses'][0]['fullname']);
+
+        // Search by block (use news_items default block). Should fail (only admins allowed).
+        $this->setExpectedException('required_capability_exception');
+        $results = core_course_external::search_courses('blocklist', $blockid);
+
+    }
+
+    /**
      * Create a course with contents
      * @return array A list with the course object and course modules objects
      */
@@ -1455,6 +1520,68 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertInstanceOf('\core\event\course_viewed', $event);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEmpty($event->other);
+
+    }
+
+    /**
+     * Test get_course_module
+     */
+    public function test_get_course_module() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        $course = self::getDataGenerator()->create_course();
+        $record = array(
+            'course' => $course->id,
+            'name' => 'First Chat'
+        );
+        $options = array(
+            'idnumber' => 'ABC',
+            'visible' => 0
+        );
+        // Hidden activity.
+        $chat = self::getDataGenerator()->create_module('chat', $record, $options);
+
+        // Test admin user can see the complete hidden activity.
+        $result = core_course_external::get_course_module($chat->cmid);
+        $result = external_api::clean_returnvalue(core_course_external::get_course_module_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        // Test we retrieve all the fields.
+        $this->assertCount(22, $result['cm']);
+        $this->assertEquals($record['name'], $result['cm']['name']);
+        $this->assertEquals($options['idnumber'], $result['cm']['idnumber']);
+
+        $student = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+
+        self::getDataGenerator()->enrol_user($student->id,  $course->id, $studentrole->id);
+        $this->setUser($student);
+
+        // The user shouldn't be able to see the activity.
+        try {
+            core_course_external::get_course_module($chat->cmid);
+            $this->fail('Exception expected due to invalid permissions.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        // Make module visible.
+        set_coursemodule_visible($chat->cmid, 1);
+
+        // Test student user.
+        $result = core_course_external::get_course_module($chat->cmid);
+        $result = external_api::clean_returnvalue(core_course_external::get_course_module_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        // Test we retrieve only the few files we can see.
+        $this->assertCount(11, $result['cm']);
+        $this->assertEquals($chat->cmid, $result['cm']['id']);
+        $this->assertEquals($course->id, $result['cm']['course']);
+        $this->assertEquals('chat', $result['cm']['modname']);
+        $this->assertEquals($chat->id, $result['cm']['instance']);
 
     }
 }

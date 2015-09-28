@@ -78,16 +78,6 @@ class core_external extends external_api {
     }
 
     /**
-     * Can this function be called directly from ajax?
-     *
-     * @return boolean
-     * @since Moodle 2.9
-     */
-    public static function get_string_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Returns description of get_string parameters
      *
      * @return external_function_parameters
@@ -164,17 +154,6 @@ class core_external extends external_api {
     }
 
     /**
-     * Can this function be called directly from ajax?
-     *
-     * @return boolean
-     * @since Moodle 2.9
-     */
-    public static function get_strings_is_allowed_from_ajax() {
-        return true;
-    }
-
-
-    /**
      * Return multiple call to core get_string()
      *
      * @param array $strings strings to translate
@@ -235,16 +214,6 @@ class core_external extends external_api {
                   'lang' => new external_value(PARAM_LANG, 'lang', VALUE_DEFAULT, null),
             )
         );
-    }
-
-    /**
-     * Can this function be called directly from ajax?
-     *
-     * @return boolean
-     * @since Moodle 2.9
-     */
-    public static function get_component_strings_is_allowed_from_ajax() {
-        return true;
     }
 
     /**

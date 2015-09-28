@@ -13,7 +13,6 @@
         stopOnFailure="false"
         stopOnIncomplete="false"
         stopOnSkipped="false"
-        strict="false"
         printerClass="Hint_ResultPrinter"
         testSuiteLoaderClass="phpunit_autoloader"
         >

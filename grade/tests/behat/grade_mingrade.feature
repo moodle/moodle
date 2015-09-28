@@ -28,7 +28,7 @@ Feature: We can use a minimum grade different than zero
     And I am on site homepage
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 1 |
@@ -73,7 +73,7 @@ Feature: We can use a minimum grade different than zero
 
   @javascript
   Scenario: Natural aggregation with negative and positive grade
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the following settings for grade item "Sub category 1":
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |

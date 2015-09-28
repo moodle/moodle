@@ -1,6 +1,20 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.0 ===
+
+* The renderer function core_availability_renderer::multiple_messages was changed to
+  render_core_availability_multiple_messages, requiring a parameter of the new
+  \core_availability\multiple_messages type.
+* Meta description is now included in standard_head_html for homepage in bootstrapbase.
+  If your theme includes a meta description directly in a layout for the frontpage,
+  you will need to remove it or override the standard_head_html instead.
+* Themes Clean and More have been updated to use a new navbar_button function, which shows the
+  hamburguer icon (responsive menu) or not depending on custom and language menus settings;
+  themes extending bootstrapbase and overriding its layouts can call replace their "a.btn-navbar"
+  node for a call to this function.
+* Themes Clean and More page header logo only displays on front page and login page.
+
 === 2.9 ===
 
 * Themes Bootstrapbase, Clean and More have undergone some changes for RTL layouts see - MDL-48160.

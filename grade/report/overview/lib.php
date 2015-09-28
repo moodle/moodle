@@ -350,10 +350,10 @@ function grade_report_overview_settings_definition(&$mform) {
                       GRADE_REPORT_SHOW_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowexhiddenitems', 'grades'),
                       GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowinchiddenitems', 'grades') );
 
-    if (empty($CFG->grade_report_overview_showtotalsifcontainhidden)) {
+    if (!array_key_exists($CFG->grade_report_overview_showtotalsifcontainhidden, $options)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
     } else {
-        $options[-1] = get_string('defaultprev', 'grades', $options[1]);
+        $options[-1] = get_string('defaultprev', 'grades', $options[$CFG->grade_report_overview_showtotalsifcontainhidden]);
     }
 
     $mform->addElement('select', 'report_overview_showtotalsifcontainhidden', get_string('hidetotalifhiddenitems', 'grades'), $options);

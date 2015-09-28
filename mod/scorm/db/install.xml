@@ -18,11 +18,11 @@
         <FIELD NAME="grademethod" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="whatgrade" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="maxattempt" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
-        <FIELD NAME="forcecompleted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="forcecompleted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="forcenewattempt" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="lastattemptlock" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="displayattemptstatus" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
-        <FIELD NAME="displaycoursestructure" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="displaycoursestructure" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="updatefreq" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Define when the package must be automatically update"/>
         <FIELD NAME="sha1hash" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="package content or ext path hash"/>
         <FIELD NAME="md5hash" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="MD5 Hash of package file"/>

@@ -290,11 +290,12 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         $str = '<div title="' . s($this->field->description) . '">';
         $str .= '<label for="field_'.$this->field->id.'"><span class="accesshide">'.$this->field->name.'</span>';
         if ($this->field->required) {
-            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= html_writer::div($image, 'inline-req');
         }
-        $str .= '</label><input class="basefieldinput" type="text" name="field_'.$this->field->id.'" id="field_'.$this->field->id;
-        $str .= '" value="'.s($content).'" />';
+        $str .= '</label><input class="basefieldinput mod-data-input" type="text" name="field_'.$this->field->id.'"';
+        $str .= ' id="field_' . $this->field->id . '" value="'.s($content).'" />';
         $str .= '</div>';
 
         return $str;
@@ -552,7 +553,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
     if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id')) {
 
         $table = new html_table();
-        $table->attributes['class'] = 'mod-data-default-template';
+        $table->attributes['class'] = 'mod-data-default-template ##approvalstatus##';
         $table->colclasses = array('template-field', 'template-token');
         $table->data = array();
         foreach ($fields as $field) {
@@ -909,6 +910,11 @@ function data_add_instance($data, $mform = null) {
         $data->assessed = 0;
     }
 
+    if (empty($data->ratingtime) || empty($data->assessed)) {
+        $data->assesstimestart  = 0;
+        $data->assesstimefinish = 0;
+    }
+
     $data->timemodified = time();
 
     $data->id = $DB->insert_record('data', $data);
@@ -1229,9 +1235,6 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
     }
     $jumpurl = new moodle_url($jumpurl, array('page' => $page, 'sesskey' => sesskey()));
 
-    // Check whether this activity is read-only at present
-    $readonly = data_in_readonly_period($data);
-
     foreach ($records as $record) {   // Might be just one for the single template
 
     // Replacing tags
@@ -1249,7 +1252,7 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
     // Replacing special tags (##Edit##, ##Delete##, ##More##)
         $patterns[]='##edit##';
         $patterns[]='##delete##';
-        if ($canmanageentries || (!$readonly && data_isowner($record->id))) {
+        if (data_user_can_manage_entry($record, $data, $context)) {
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/edit.php?d='
                              .$data->id.'&amp;rid='.$record->id.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
             $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='
@@ -1325,6 +1328,15 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
                     array('class' => 'disapprove'));
         } else {
             $replacement[] = '';
+        }
+
+        $patterns[] = '##approvalstatus##';
+        if (!$data->approval) {
+            $replacement[] = '';
+        } else if ($record->approved) {
+            $replacement[] = 'approved';
+        } else {
+            $replacement[] = 'notapproved';
         }
 
         $patterns[]='##comments##';
@@ -1512,6 +1524,53 @@ function data_rating_validate($params) {
     }
 
     return true;
+}
+
+/**
+ * Can the current user see ratings for a given itemid?
+ *
+ * @param array $params submitted data
+ *            contextid => int contextid [required]
+ *            component => The component for this module - should always be mod_data [required]
+ *            ratingarea => object the context in which the rated items exists [required]
+ *            itemid => int the ID of the object being rated [required]
+ *            scaleid => int scale id [optional]
+ * @return bool
+ * @throws coding_exception
+ * @throws rating_exception
+ */
+function mod_data_rating_can_see_item_ratings($params) {
+    global $DB;
+
+    // Check the component is mod_data.
+    if (!isset($params['component']) || $params['component'] != 'mod_data') {
+        throw new rating_exception('invalidcomponent');
+    }
+
+    // Check the ratingarea is entry (the only rating area in data).
+    if (!isset($params['ratingarea']) || $params['ratingarea'] != 'entry') {
+        throw new rating_exception('invalidratingarea');
+    }
+
+    if (!isset($params['itemid'])) {
+        throw new rating_exception('invaliditemid');
+    }
+
+    $datasql = "SELECT d.id as dataid, d.course, r.groupid
+                  FROM {data_records} r
+                  JOIN {data} d ON r.dataid = d.id
+                 WHERE r.id = :itemid";
+    $dataparams = array('itemid' => $params['itemid']);
+    if (!$info = $DB->get_record_sql($datasql, $dataparams)) {
+        // Item doesn't exist.
+        throw new rating_exception('invaliditemid');
+    }
+
+    $course = $DB->get_record('course', array('id' => $info->course), '*', MUST_EXIST);
+    $cm = get_coursemodule_from_instance('data', $info->dataid, $course->id, false, MUST_EXIST);
+
+    // Make sure groups allow this user to see the item they're rating.
+    return groups_group_visible($info->groupid, $course, $cm);
 }
 
 
@@ -2114,6 +2173,44 @@ function data_user_can_add_entry($data, $currentgroup, $groupmode, $context = nu
             return false;
         }
     }
+}
+
+/**
+ * Check whether the current user is allowed to manage the given record considering manageentries capability,
+ * data_in_readonly_period() result, ownership (determined by data_isowner()) and manageapproved setting.
+ * @param mixed $record record object or id
+ * @param object $data data object
+ * @param object $context context object
+ * @return bool returns true if the user is allowd to edit the entry, false otherwise
+ */
+function data_user_can_manage_entry($record, $data, $context) {
+    global $DB;
+
+    if (has_capability('mod/data:manageentries', $context)) {
+        return true;
+    }
+
+    // Check whether this activity is read-only at present.
+    $readonly = data_in_readonly_period($data);
+
+    if (!$readonly) {
+        // Get record object from db if just id given like in data_isowner.
+        // ...done before calling data_isowner() to avoid querying db twice.
+        if (!is_object($record)) {
+            if (!$record = $DB->get_record('data_records', array('id' => $record))) {
+                return false;
+            }
+        }
+        if (data_isowner($record)) {
+            if ($data->approval && $record->approved) {
+                return $data->manageapproved == 1;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -3257,6 +3354,7 @@ function data_presets_generate_xml($course, $cm, $data) {
         'maxentries',
         'rssarticles',
         'approval',
+        'manageapproved',
         'defaultsortdir'
     );
 
@@ -3781,6 +3879,7 @@ function data_process_submission(stdClass $mod, $fields, stdClass $datarecord) {
     // Empty form checking - you can't submit an empty form.
     $emptyform = true;
     $requiredfieldsfilled = true;
+    $fieldsvalidated = true;
 
     // Store the notifications.
     $result->generalnotifications = array();
@@ -3818,6 +3917,14 @@ function data_process_submission(stdClass $mod, $fields, stdClass $datarecord) {
 
         $field = data_get_field($fieldrecord, $mod);
         if (isset($submitteddata[$fieldrecord->id])) {
+            // Field validation check.
+            if (method_exists($field, 'field_validation')) {
+                $errormessage = $field->field_validation($submitteddata[$fieldrecord->id]);
+                if ($errormessage) {
+                    $result->fieldnotifications[$field->field->name][] = $errormessage;
+                    $fieldsvalidated = false;
+                }
+            }
             foreach ($submitteddata[$fieldrecord->id] as $fieldname => $value) {
                 if ($field->notemptyfield($value->value, $value->fieldname)) {
                     // The field has content and the form is not empty.
@@ -3849,7 +3956,7 @@ function data_process_submission(stdClass $mod, $fields, stdClass $datarecord) {
         $result->generalnotifications[] = get_string('emptyaddform', 'data');
     }
 
-    $result->validated = $requiredfieldsfilled && !$emptyform;
+    $result->validated = $requiredfieldsfilled && !$emptyform && $fieldsvalidated;
 
     return $result;
 }

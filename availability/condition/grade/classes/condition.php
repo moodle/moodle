@@ -228,7 +228,9 @@ class condition extends \core_availability\condition {
                         WHERE
                             gi.courseid = ?', array($userid, $courseid));
                 foreach ($rs as $record) {
-                    if (is_null($record->finalgrade)) {
+                    // This function produces division by zero error warnings when rawgrademax and rawgrademin
+                    // are equal. Below change does not affect function behavior, just avoids the warning.
+                    if (is_null($record->finalgrade) || $record->rawgrademax == $record->rawgrademin) {
                         // No grade = false.
                         $cachedgrades[$record->id] = false;
                     } else {
@@ -249,7 +251,9 @@ class condition extends \core_availability\condition {
                 // Just get current grade.
                 $record = $DB->get_record('grade_grades', array(
                     'userid' => $userid, 'itemid' => $gradeitemid));
-                if ($record && !is_null($record->finalgrade)) {
+                // This function produces division by zero error warnings when rawgrademax and rawgrademin
+                // are equal. Below change does not affect function behavior, just avoids the warning.
+                if ($record && !is_null($record->finalgrade) && $record->rawgrademax != $record->rawgrademin) {
                     $score = (($record->finalgrade - $record->rawgrademin) * 100) /
                         ($record->rawgrademax - $record->rawgrademin);
                 } else {

@@ -111,7 +111,8 @@ M.gradingform_guideeditor.editmode = function(el, editmode) {
             value = M.util.get_string('clicktoedit', 'gradingform_guide')
             taplain.addClass('empty')
         }
-        taplain.one('.textvalue').set('innerHTML', Y.Escape.html(value))
+        // Replace newlines with <br> tags, when displaying in the page.
+        taplain.one('.textvalue').set('innerHTML', Y.Escape.html(value).replace(/(?:\r\n|\r|\n)/g, '<br>'))
         if (tb) {
             tbplain.one('.textvalue').set('innerHTML', Y.Escape.html(tb.get('value')))
         }

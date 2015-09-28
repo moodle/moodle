@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/Default for C1</text>
+
+    </category>
+  </question>
+
+<!-- question: 1  -->
+  <question type="gapselect">
+    <name>
+      <text>Imported Select missing words 001</text>
+    </name>
+    <questiontext format="html">
+      <text>The [[1]] [[2]] on the [[3]].</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text>The cat sat on the mat.</text>
+    </generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <shuffleanswers>0</shuffleanswers>
+    <correctfeedback format="html">
+      <text>Your answer is correct.</text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text>Your answer is partially correct.</text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text>Your answer is incorrect.</text>
+    </incorrectfeedback>
+    <shownumcorrect/>
+    <selectoption>
+      <text>cat</text>
+      <group>1</group>
+    </selectoption>
+    <selectoption>
+      <text>sat</text>
+      <group>1</group>
+    </selectoption>
+    <selectoption>
+      <text>mat</text>
+      <group>1</group>
+    </selectoption>
+    <selectoption>
+      <text>dog</text>
+      <group>1</group>
+    </selectoption>
+    <selectoption>
+      <text>table</text>
+      <group>1</group>
+    </selectoption>
+    <hint format="html">
+      <text>First hint</text>
+    </hint>
+    <hint format="html">
+      <text>Second hint</text>
+    </hint>
+  </question>
+
+</quiz>

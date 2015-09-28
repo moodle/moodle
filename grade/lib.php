@@ -886,20 +886,6 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
         }
     }
 
-    foreach ($plugin_info as $plugin_type => $plugins) {
-        if (!empty($plugins->id) && $active_plugin == $plugins->id) {
-            $plugin_info['strings']['active_plugin_str'] = $plugins->string;
-            break;
-        }
-        foreach ($plugins as $plugin) {
-            if (is_a($plugin, 'grade_plugin_info')) {
-                if ($active_plugin == $plugin->id) {
-                    $plugin_info['strings']['active_plugin_str'] = $plugin->string;
-                }
-            }
-        }
-    }
-
     return $plugin_info;
 }
 
@@ -2846,9 +2832,9 @@ abstract class grade_helper {
         $context = context_course::instance($courseid);
         self::$managesetting = array();
         if ($courseid != SITEID && has_capability('moodle/grade:manage', $context)) {
-            self::$managesetting['categoriesanditems'] = new grade_plugin_info('setup',
+            self::$managesetting['gradebooksetup'] = new grade_plugin_info('setup',
                 new moodle_url('/grade/edit/tree/index.php', array('id' => $courseid)),
-                get_string('categoriesanditems', 'grades'));
+                get_string('gradebooksetup', 'grades'));
             self::$managesetting['coursesettings'] = new grade_plugin_info('coursesettings',
                 new moodle_url('/grade/edit/settings/index.php', array('id'=>$courseid)),
                 get_string('coursegradesettings', 'grades'));
@@ -2884,6 +2870,12 @@ abstract class grade_helper {
 
             // Remove ones we can't see
             if (!has_capability('gradereport/'.$plugin.':view', $context)) {
+                continue;
+            }
+
+            // Singleview doesn't doesn't accomodate for all cap combos yet, so this is hardcoded..
+            if ($plugin === 'singleview' && !has_all_capabilities(array('moodle/grade:viewall',
+                    'moodle/grade:edit'), $context)) {
                 continue;
             }
 

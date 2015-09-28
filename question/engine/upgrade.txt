@@ -1,5 +1,11 @@
 This files describes API changes for the core question engine.
 
+=== 3.0, 2.9.2, 2.8.8 ===
+
+1) The extra internal PARAM constant question_attempt::PARAM_MARK should no
+   longer be used. (It should not have been used outside the core of the
+   question system). See MDL-51090 if you want more explanation.
+
 
 === 2.9 ===
 

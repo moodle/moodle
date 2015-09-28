@@ -29,7 +29,7 @@ $id = required_param('id', PARAM_INT);
 $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 
 if (!isloggedin()) {
-    $referer = clean_param(get_referer(), PARAM_LOCALURL);
+    $referer = get_local_referer();
     if (empty($referer)) {
         // A user that is not logged in has arrived directly on this page,
         // they should be redirected to the course page they are trying to enrol on after logging in.
@@ -108,7 +108,7 @@ if (!$forms) {
     } else if ($returnurl) {
         notice(get_string('notenrollable', 'enrol'), $returnurl);
     } else {
-        $url = clean_param(get_referer(false), PARAM_LOCALURL);
+        $url = get_local_referer(false);
         if (empty($url)) {
             $url = new moodle_url('/index.php');
         }

@@ -1254,7 +1254,8 @@ class core_group_external extends external_api {
                 list($group->description, $group->descriptionformat) =
                     external_format_text($group->description, $group->descriptionformat,
                             $context->id, 'group', 'description', $group->id);
-                $usergroups[] = (array)$group;
+                $group->courseid = $course->id;
+                $usergroups[] = $group;
             }
         }
 
@@ -1274,17 +1275,201 @@ class core_group_external extends external_api {
     public static function get_course_user_groups_returns() {
         return new external_single_structure(
             array(
-                'groups' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'group record id'),
-                            'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
-                            'description' => new external_value(PARAM_RAW, 'group description text'),
-                            'descriptionformat' => new external_format_value('description'),
-                            'idnumber' => new external_value(PARAM_RAW, 'id number')
-                        )
-                    )
-                ),
+                'groups' => new external_multiple_structure(self::group_description()),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Create group return value description.
+     *
+     * @return external_single_structure The group description
+     */
+    public static function group_description() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'group record id'),
+                'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
+                'description' => new external_value(PARAM_RAW, 'group description text'),
+                'descriptionformat' => new external_format_value('description'),
+                'idnumber' => new external_value(PARAM_RAW, 'id number'),
+                'courseid' => new external_value(PARAM_INT, 'course id', VALUE_OPTIONAL),
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_activity_allowed_groups_parameters() {
+        return new external_function_parameters(
+            array(
+                'cmid' => new external_value(PARAM_INT, 'course module id'),
+                'userid' => new external_value(PARAM_INT, 'id of user, empty for current user', VALUE_OPTIONAL, 0)
+            )
+        );
+    }
+
+    /**
+     * Gets a list of groups that the user is allowed to access within the specified activity.
+     *
+     * @throws moodle_exception
+     * @param int $cmid course module id
+     * @param int $userid id of user.
+     * @return array of group objects (id, name, description, format) and possible warnings.
+     * @since Moodle 3.0
+     */
+    public static function get_activity_allowed_groups($cmid, $userid = 0) {
+        global $USER;
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        $params = array(
+            'cmid' => $cmid,
+            'userid' => $userid
+        );
+        $params = self::validate_parameters(self::get_activity_allowed_groups_parameters(), $params);
+        $cmid = $params['cmid'];
+        $userid = $params['userid'];
+
+        $cm = get_coursemodule_from_id(null, $cmid, 0, false, MUST_EXIST);
+
+        // Security checks.
+        $context = context_module::instance($cm->id);
+        $coursecontext = context_course::instance($cm->course);
+        self::validate_context($context);
+
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+
+        $user = core_user::get_user($userid, 'id, deleted', MUST_EXIST);
+        if ($user->deleted) {
+            throw new moodle_exception('userdeleted');
+        }
+        if (isguestuser($user)) {
+            throw new moodle_exception('invaliduserid');
+        }
+
+         // Check if we have permissions for retrieve the information.
+        if ($user->id != $USER->id) {
+            if (!has_capability('moodle/course:managegroups', $context)) {
+                throw new moodle_exception('accessdenied', 'admin');
+            }
+
+            // Validate if the user is enrolled in the course.
+            if (!is_enrolled($coursecontext, $user->id)) {
+                // We return a warning because the function does not fail for not enrolled users.
+                $warning = array();
+                $warning['item'] = 'course';
+                $warning['itemid'] = $cm->course;
+                $warning['warningcode'] = '1';
+                $warning['message'] = "User $user->id is not enrolled in course $cm->course";
+                $warnings[] = $warning;
+            }
+        }
+
+        $usergroups = array();
+        if (empty($warnings)) {
+            $groups = groups_get_activity_allowed_groups($cm, $user->id);
+
+            foreach ($groups as $group) {
+                list($group->description, $group->descriptionformat) =
+                    external_format_text($group->description, $group->descriptionformat,
+                            $coursecontext->id, 'group', 'description', $group->id);
+                $group->courseid = $cm->course;
+                $usergroups[] = $group;
+            }
+        }
+
+        $results = array(
+            'groups' => $usergroups,
+            'warnings' => $warnings
+        );
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description A single structure containing groups and possible warnings.
+     * @since Moodle 3.0
+     */
+    public static function get_activity_allowed_groups_returns() {
+        return new external_single_structure(
+            array(
+                'groups' => new external_multiple_structure(self::group_description()),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_activity_groupmode_parameters() {
+        return new external_function_parameters(
+            array(
+                'cmid' => new external_value(PARAM_INT, 'course module id')
+            )
+        );
+    }
+
+    /**
+     * Returns effective groupmode used in a given activity.
+     *
+     * @throws moodle_exception
+     * @param int $cmid course module id.
+     * @return array containing the group mode and possible warnings.
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function get_activity_groupmode($cmid) {
+        global $USER;
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        $params = array(
+            'cmid' => $cmid
+        );
+        $params = self::validate_parameters(self::get_activity_groupmode_parameters(), $params);
+        $cmid = $params['cmid'];
+
+        $cm = get_coursemodule_from_id(null, $cmid, 0, false, MUST_EXIST);
+
+        // Security checks.
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        $groupmode = groups_get_activity_groupmode($cm);
+
+        $results = array(
+            'groupmode' => $groupmode,
+            'warnings' => $warnings
+        );
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_activity_groupmode_returns() {
+        return new external_single_structure(
+            array(
+                'groupmode' => new external_value(PARAM_INT, 'group mode:
+                                                    0 for no groups, 1 for separate groups, 2 for visible groups'),
                 'warnings' => new external_warnings(),
             )
         );

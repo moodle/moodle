@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool
  */
 function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $PAGE;
 
     $usercontext = context_user::instance($user->id, MUST_EXIST);
     $systemcontext = context_system::instance();
@@ -101,8 +101,8 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
         }
     }
 
-    // Preference page. Only visible by administrators.
-    if (!$iscurrentuser && is_siteadmin()) {
+    // Preference page.
+    if (!$iscurrentuser && $PAGE->settingsnav->can_view_user_preferences($user->id)) {
         $url = new moodle_url('/user/preferences.php', array('userid' => $user->id));
         $title = get_string('preferences', 'moodle');
         $node = new core_user\output\myprofile\node('administration', 'preferences', $title, null, $url);
@@ -192,13 +192,13 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
 
     if (isset($identityfields['department']) && $user->department) {
         $node = new core_user\output\myprofile\node('contact', 'department', get_string('department'), null, null,
-            $user->institution);
+            $user->department);
         $tree->add_node($node);
     }
 
     if (isset($identityfields['idnumber']) && $user->idnumber) {
         $node = new core_user\output\myprofile\node('contact', 'idnumber', get_string('idnumber'), null, null,
-            $user->institution);
+            $user->idnumber);
         $tree->add_node($node);
     }
 
@@ -373,7 +373,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                     $newfield = 'profile_field_'.$field->datatype;
                     $formfield = new $newfield($field->id, $user->id);
                     if ($formfield->is_visible() and !$formfield->is_empty()) {
-                        $node = new core_user\output\myprofile\node('contact', $formfield->field->shortname,
+                        $node = new core_user\output\myprofile\node('contact', 'custom_field_' . $formfield->field->shortname,
                             format_string($formfield->field->name), null, null, $formfield->display_data());
                         $tree->add_node($node);
                     }

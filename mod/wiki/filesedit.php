@@ -60,7 +60,7 @@ if (!wiki_user_can_view($subwiki, $wiki)) {
 require_capability('mod/wiki:managefiles', $context);
 
 if (empty($returnurl)) {
-    $referer = clean_param($_SERVER['HTTP_REFERER'], PARAM_LOCALURL);
+    $referer = get_local_referer(false);
     if (!empty($referer)) {
         $returnurl = $referer;
     } else {
