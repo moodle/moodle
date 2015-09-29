@@ -4572,5 +4572,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015092200.00);
     }
 
+    if ($oldversion < 2015092900.00) {
+        // Rename backup_auto_keep setting to backup_auto_max_kept.
+        $keep = get_config('backup', 'backup_auto_keep');
+        if ($keep !== false) {
+            set_config('backup_auto_max_kept', $keep, 'backup');
+            unset_config('backup_auto_keep', 'backup');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2015092900.00);
+    }
+
     return true;
 }

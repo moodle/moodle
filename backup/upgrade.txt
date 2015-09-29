@@ -1,6 +1,11 @@
 This files describes API changes in /backup/*,
 information provided here is intended especially for developers.
 
+=== 3.0 ===
+
+* The backup_auto_keep setting, in automated backups configuration, is now
+  renamed to backup_auto_max_kept as part of a rationalise of naming (see MDL-50602)
+
 === 2.6 ===
 
 * The backup_controller_dbops::create_temptable_from_real_table()
