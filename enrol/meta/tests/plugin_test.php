@@ -847,6 +847,16 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         // Disable manual enrolment in course1 and make sure all user enrolments in course2 are suspended.
         $manplugin->update_status($manual1, ENROL_INSTANCE_DISABLED);
         $allsuspendedenrolemnts = array_combine(array_keys($expectedenrolments), array_fill(0, 5, ENROL_USER_SUSPENDED));
+        $enrolmentstatuses = $DB->get_records_menu('user_enrolments', array('enrolid' => $meta2id), '', 'userid, status');
+        $this->assertEquals($allsuspendedenrolemnts, $enrolmentstatuses);
+
+        $manplugin->update_status($manual1, ENROL_INSTANCE_ENABLED);
+        $enrolments = $DB->get_records('user_enrolments', array('enrolid' => $meta2id), '', 'userid, timestart, timeend, status');
+        $this->assertEquals($expectedenrolments, $enrolments);
+
+        // Disable events and repeat the same for course3 (testing sync):
+        $sink = $this->redirectEvents();
+        $manplugin->update_status($manual1, ENROL_INSTANCE_DISABLED);
         enrol_meta_sync($course3->id);
         $enrolmentstatuses = $DB->get_records_menu('user_enrolments', array('enrolid' => $meta3id), '', 'userid, status');
         $this->assertEquals($allsuspendedenrolemnts, $enrolmentstatuses);
@@ -855,5 +865,6 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
         enrol_meta_sync($course3->id);
         $enrolments = $DB->get_records('user_enrolments', array('enrolid' => $meta3id), '', 'userid, timestart, timeend, status');
         $this->assertEquals($expectedenrolments, $enrolments);
+        $sink->close();
     }
 }

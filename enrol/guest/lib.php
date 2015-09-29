@@ -332,6 +332,7 @@ class enrol_guest_plugin extends enrol_plugin {
                         $instance->password = $data->{'enrol_guest_password_'.$i};
                     }
                     $DB->update_record('enrol', $instance);
+                    \core\event\enrol_instance_updated::create_from_record($instance)->trigger();
 
                     if ($reset) {
                         $context = context_course::instance($course->id);

@@ -92,13 +92,13 @@ if ($mform->is_cancelled()) {
         $instance->notifyall       = $data->notifyall;
         $instance->expirythreshold = $data->expirythreshold;
         $instance->timemodified    = time();
+        $markdirty = ($instance->status != $data->status);
+        $instance->status = $data->status;
 
         $DB->update_record('enrol', $instance);
+        \core\event\enrol_instance_updated::create_from_record($instance)->trigger();
 
-        // Use standard API to update instance status.
-        if ($instance->status != $data->status) {
-            $instance = $DB->get_record('enrol', array('id'=>$instance->id));
-            $plugin->update_status($instance, $data->status);
+        if ($markdirty) {
             $context->mark_dirty();
         }
 
