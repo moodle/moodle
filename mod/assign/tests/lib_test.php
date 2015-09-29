@@ -327,4 +327,43 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->assertTrue($result);
     }
 
+    /**
+     * Tests for mod_assign_refresh_events.
+     */
+    public function test_assign_refresh_events() {
+        global $DB;
+        $duedate = time();
+        $this->setAdminUser();
+
+        $assign = $this->create_instance(array('duedate' => $duedate));
+
+        // Normal case, with existing course.
+        $this->assertTrue(assign_refresh_events($this->course->id));
+
+        $instance = $assign->get_instance();
+        $eventparams = array('modulename' => 'assign', 'instance' => $instance->id);
+        $event = $DB->get_record('event', $eventparams, '*', MUST_EXIST);
+        $this->assertEquals($event->timestart, $duedate);
+
+        // In case the course ID is passed as a numeric string.
+        $this->assertTrue(assign_refresh_events('' . $this->course->id));
+
+        // Course ID not provided.
+        $this->assertTrue(assign_refresh_events());
+
+        $eventparams = array('modulename' => 'assign');
+        $events = $DB->get_records('event', $eventparams);
+        foreach ($events as $event) {
+            if ($event->modulename === 'assign' && $event->instance === $instance->id) {
+                $this->assertEquals($event->timestart, $duedate);
+            }
+        }
+
+        // Non-existing course ID.
+        $this->assertFalse(assign_refresh_events(-1));
+
+        // Invalid course ID.
+        $this->assertFalse(assign_refresh_events('aaa'));
+    }
+
 }
