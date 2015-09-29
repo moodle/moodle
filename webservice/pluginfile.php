@@ -38,6 +38,9 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 
+// Allow CORS requests.
+header('Access-Control-Allow-Origin: *');
+
 //authenticate the user
 $token = required_param('token', PARAM_ALPHANUM);
 $webservicelib = new webservice();
