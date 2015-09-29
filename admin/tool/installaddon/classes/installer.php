@@ -252,8 +252,6 @@ class tool_installaddon_installer {
      * @param bool $confirmed
      */
     public function handle_remote_request(tool_installaddon_renderer $output, $request, $confirmed = false) {
-        global $CFG;
-        require_once(dirname(__FILE__).'/pluginfo_client.php');
 
         if (is_null($request)) {
             return;
@@ -296,18 +294,12 @@ class tool_installaddon_installer {
 
         // Fetch the plugin info. The essential information is the URL to download the ZIP
         // and the MD5 hash of the ZIP, obtained via HTTPS.
-        $client = tool_installaddon_pluginfo_client::instance();
+        $client = \core\update\api::client();
+        $pluginfo = $client->get_plugin_info($data->component, $data->version);
 
-        try {
-            $pluginfo = $client->get_pluginfo($data->component, $data->version);
-
-        } catch (tool_installaddon_pluginfo_exception $e) {
-            if (debugging()) {
-                throw $e;
-            } else {
-                echo $output->remote_request_pluginfo_exception($data, $e, $this->index_url());
-                exit();
-            }
+        if (empty($pluginfo) or empty($pluginfo->version)) {
+            echo $output->remote_request_pluginfo_failure($data, $this->index_url());
+            exit();
         }
 
         // Fetch the ZIP with the plugin version
@@ -316,7 +308,7 @@ class tool_installaddon_installer {
         $zipfilename = 'downloaded.zip';
 
         try {
-            $this->download_file($pluginfo->downloadurl, $sourcedir.'/'.$zipfilename);
+            $this->download_file($pluginfo->version->downloadurl, $sourcedir.'/'.$zipfilename);
 
         } catch (tool_installaddon_installer_exception $e) {
             if (debugging()) {
@@ -328,7 +320,7 @@ class tool_installaddon_installer {
         }
 
         // Check the MD5 checksum
-        $md5expected = $pluginfo->downloadmd5;
+        $md5expected = $pluginfo->version->downloadmd5;
         $md5actual = md5_file($sourcedir.'/'.$zipfilename);
         if ($md5expected !== $md5actual) {
             $e = new tool_installaddon_installer_exception('err_zip_md5', array('expected' => $md5expected, 'actual' => $md5actual));

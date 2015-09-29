@@ -194,18 +194,13 @@ class tool_installaddon_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Inform the user about pluginfo service call exception
-     *
-     * This implementation does not actually use the passed exception. Custom renderers might want to
-     * display additional data obtained via {@link get_exception_info()}. Also note, this method is called
-     * in non-debugging mode only. If debugging is allowed at the site, default exception handler is triggered.
+     * Inform the user about pluginfo service call failure
      *
      * @param stdClass $data decoded request data
-     * @param tool_installaddon_pluginfo_exception $e thrown exception
      * @param moodle_url $continueurl
      * @return string
      */
-    public function remote_request_pluginfo_exception(stdClass $data, tool_installaddon_pluginfo_exception $e, moodle_url $continueurl) {
+    public function remote_request_pluginfo_failure(stdClass $data, moodle_url $continueurl) {
 
         $out = $this->output->header();
         $out .= $this->output->heading(get_string('installfromrepo', 'tool_installaddon'));
