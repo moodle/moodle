@@ -96,4 +96,38 @@ class question_engine_test extends advanced_testcase {
         // Ignore unknown input in the disabled argument.
         $this->assertSame($in, question_engine::sort_behaviours($in, '', 'unknown', ''));
     }
+
+    public function test_is_manual_grade_in_range() {
+        $_POST[] = array('q1:2_-mark' => 0.5, 'q1:2_-maxmark' => 1.0,
+                'q1:2_:minfraction' => 0, 'q1:2_:maxfraction' => 1);
+        $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
+    }
+
+    public function test_is_manual_grade_in_range_bottom_end() {
+        $_POST[] = array('q1:2_-mark' => -1.0, 'q1:2_-maxmark' => 2.0,
+                'q1:2_:minfraction' => -0.5, 'q1:2_:maxfraction' => 1);
+        $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
+    }
+
+    public function test_is_manual_grade_in_range_too_low() {
+        $_POST[] = array('q1:2_-mark' => -1.1, 'q1:2_-maxmark' => 2.0,
+                'q1:2_:minfraction' => -0.5, 'q1:2_:maxfraction' => 1);
+        $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
+    }
+
+    public function test_is_manual_grade_in_range_top_end() {
+        $_POST[] = array('q1:2_-mark' => 3.0, 'q1:2_-maxmark' => 1.0,
+                'q1:2_:minfraction' => -6.0, 'q1:2_:maxfraction' => 3.0);
+        $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
+    }
+
+    public function test_is_manual_grade_in_range_too_high() {
+        $_POST[] = array('q1:2_-mark' => 3.1, 'q1:2_-maxmark' => 1.0,
+                'q1:2_:minfraction' => -6.0, 'q1:2_:maxfraction' => 3.0);
+        $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
+    }
+
+    public function test_is_manual_grade_in_range_ungraded() {
+        $this->assertTrue(question_engine::is_manual_grade_in_range(1, 2));
+    }
 }
