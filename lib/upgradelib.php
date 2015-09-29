@@ -2342,3 +2342,32 @@ function upgrade_minmaxgrade() {
     }
     $rs->close();
 }
+
+
+/**
+ * Assert the upgrade key is provided, if it is defined.
+ *
+ * The upgrade key can be defined in the main config.php as $CFG->upgradekey. If
+ * it is defined there, then its value must be provided every time the site is
+ * being upgraded, regardless the administrator is logged in or not.
+ *
+ * This is supposed to be used at certain places in /admin/index.php only.
+ *
+ * @param string|null $upgradekeyhash the SHA-1 of the value provided by the user
+ */
+function check_upgrade_key($upgradekeyhash) {
+    global $CFG, $PAGE;
+
+    if (isset($CFG->config_php_settings['upgradekey'])) {
+        if ($upgradekeyhash === null or $upgradekeyhash !== sha1($CFG->config_php_settings['upgradekey'])) {
+            if (!$PAGE->headerprinted) {
+                $output = $PAGE->get_renderer('core', 'admin');
+                echo $output->upgradekey_form_page(new moodle_url('/admin/index.php', array('cache' => 0)));
+                die();
+            } else {
+                // This should not happen.
+                die('Upgrade locked');
+            }
+        }
+    }
+}

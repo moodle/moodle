@@ -43,7 +43,8 @@ class core_admin_renderer extends plugin_renderer_base {
         $copyrightnotice = text_to_html(get_string('gpl3'));
         $copyrightnotice = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $copyrightnotice); // extremely ugly validation hack
 
-        $continue = new single_button(new moodle_url('/admin/index.php', array('lang'=>$CFG->lang, 'agreelicense'=>1)), get_string('continue'), 'get');
+        $continue = new single_button(new moodle_url($this->page->url, array(
+            'lang' => $CFG->lang, 'agreelicense' => 1)), get_string('continue'), 'get');
 
         $output .= $this->header();
         $output .= $this->heading('<a href="http://moodle.org">Moodle</a> - Modular Object-Oriented Dynamic Learning Environment');
@@ -96,10 +97,11 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->environment_check_table($envstatus, $environment_results);
 
         if (!$envstatus) {
-            $output .= $this->upgrade_reload(new moodle_url('/admin/index.php', array('agreelicense' => 1, 'lang' => $CFG->lang)));
+            $output .= $this->upgrade_reload(new moodle_url($this->page->url, array('agreelicense' => 1, 'lang' => $CFG->lang)));
         } else {
             $output .= $this->notification(get_string('environmentok', 'admin'), 'notifysuccess');
-            $output .= $this->continue_button(new moodle_url('/admin/index.php', array('agreelicense'=>1, 'confirmrelease'=>1, 'lang'=>$CFG->lang)));
+            $output .= $this->continue_button(new moodle_url($this->page->url, array(
+                'agreelicense' => 1, 'confirmrelease' => 1, 'lang' => $CFG->lang)));
         }
 
         $output .= $this->footer();
@@ -140,7 +142,7 @@ class core_admin_renderer extends plugin_renderer_base {
     public function upgrade_confirm_page($strnewversion, $maturity, $testsite) {
         $output = '';
 
-        $continueurl = new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'cache' => 0));
+        $continueurl = new moodle_url($this->page->url, array('confirmupgrade' => 1, 'cache' => 0));
         $continue = new single_button($continueurl, get_string('continue'), 'get');
         $cancelurl = new moodle_url('/admin/index.php');
 
@@ -170,7 +172,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->environment_check_table($envstatus, $environment_results);
 
         if (!$envstatus) {
-            $output .= $this->upgrade_reload(new moodle_url('/admin/index.php'), array('confirmupgrade' => 1, 'cache' => 0));
+            $output .= $this->upgrade_reload(new moodle_url($this->page->url, array('confirmupgrade' => 1, 'cache' => 0)));
 
         } else {
             $output .= $this->notification(get_string('environmentok', 'admin'), 'notifysuccess');
@@ -179,7 +181,8 @@ class core_admin_renderer extends plugin_renderer_base {
                 $output .= $this->box(get_string('langpackwillbeupdated', 'admin'), 'generalbox', 'notice');
             }
 
-            $output .= $this->continue_button(new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1, 'cache' => 0)));
+            $output .= $this->continue_button(new moodle_url($this->page->url, array(
+                'confirmupgrade' => 1, 'confirmrelease' => 1, 'cache' => 0)));
         }
 
         $output .= $this->footer();
@@ -991,7 +994,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $out  = $this->output->container_start('nonehighlighted', 'plugins-check-info');
             $out .= $this->output->heading(get_string('nonehighlighted', 'core_plugin'));
             if (empty($options['full'])) {
-                $out .= html_writer::link(new moodle_url('/admin/index.php',
+                $out .= html_writer::link(new moodle_url($this->page->url,
                     array('confirmupgrade' => 1, 'confirmrelease' => 1, 'showallplugins' => 1, 'cache' => 0)),
                     get_string('nonehighlightedinfo', 'core_plugin'));
             }
@@ -999,13 +1002,14 @@ class core_admin_renderer extends plugin_renderer_base {
 
         } else {
             $out  = $this->output->container_start('somehighlighted', 'plugins-check-info');
-            $out .= $this->output->heading(get_string('somehighlighted', 'core_plugin', $sumofhighlighted));
             if (empty($options['full'])) {
-                $out .= html_writer::link(new moodle_url('/admin/index.php',
+                $out .= $this->output->heading(get_string('somehighlighted', 'core_plugin', $sumofhighlighted));
+                $out .= html_writer::link(new moodle_url($this->page->url,
                     array('confirmupgrade' => 1, 'confirmrelease' => 1, 'showallplugins' => 1, 'cache' => 0)),
                     get_string('somehighlightedinfo', 'core_plugin'));
             } else {
-                $out .= html_writer::link(new moodle_url('/admin/index.php',
+                $out .= $this->output->heading(get_string('somehighlightedall', 'core_plugin', $sumofhighlighted));
+                $out .= html_writer::link(new moodle_url($this->page->url,
                     array('confirmupgrade' => 1, 'confirmrelease' => 1, 'showallplugins' => 0, 'cache' => 0)),
                     get_string('somehighlightedonly', 'core_plugin'));
             }
@@ -1568,6 +1572,28 @@ class core_admin_renderer extends plugin_renderer_base {
         if (!$result) {
             $output .= $this->box(get_string('environmenterrortodo', 'admin'), 'environmentbox errorbox');
         }
+
+        return $output;
+    }
+
+    /**
+     * Render a simple page for providing the upgrade key.
+     *
+     * @param moodle_url|string $url
+     * @return string
+     */
+    public function upgradekey_form_page($url) {
+
+        $output = '';
+        $output .= $this->header();
+        $output .= $this->container_start('upgradekeyreq');
+        $output .= $this->heading(get_string('upgradekeyreq', 'core_admin'));
+        $output .= html_writer::start_tag('form', array('method' => 'POST', 'action' => $url));
+        $output .= html_writer::empty_tag('input', array('name' => 'upgradekey', 'type' => 'password'));
+        $output .= html_writer::empty_tag('input', array('value' => get_string('submit'), 'type' => 'submit'));
+        $output .= html_writer::end_tag('form');
+        $output .= $this->container_end();
+        $output .= $this->footer();
 
         return $output;
     }
