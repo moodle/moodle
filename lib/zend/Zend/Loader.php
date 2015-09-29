@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Loader
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -24,7 +24,7 @@
  *
  * @category   Zend
  * @package    Zend_Loader
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Loader
@@ -60,19 +60,7 @@ class Zend_Loader
             throw new Zend_Exception('Directory argument must be a string or an array');
         }
 
-        // Autodiscover the path from the class name
-        // Implementation is PHP namespace-aware, and based on 
-        // Framework Interop Group reference implementation:
-        // http://groups.google.com/group/php-standards/web/psr-0-final-proposal
-        $className = ltrim($class, '\\');
-        $file      = '';
-        $namespace = '';
-        if ($lastNsPos = strripos($className, '\\')) {
-            $namespace = substr($className, 0, $lastNsPos);
-            $className = substr($className, $lastNsPos + 1);
-            $file      = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
-        }
-        $file .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+        $file = self::standardiseFile($class);
 
         if (!empty($dirs)) {
             // use the autodiscovered path
@@ -174,7 +162,7 @@ class Zend_Loader
     public static function isReadable($filename)
     {
         if (is_readable($filename)) {
-            // Return early if the filename is readable without needing the 
+            // Return early if the filename is readable without needing the
             // include_path
             return true;
         }
@@ -182,7 +170,7 @@ class Zend_Loader
         if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN'
             && preg_match('/^[a-z]:/i', $filename)
         ) {
-            // If on windows, and path provided is clearly an absolute path, 
+            // If on windows, and path provided is clearly an absolute path,
             // return false immediately
             return false;
         }
@@ -207,8 +195,8 @@ class Zend_Loader
      *
      * If no path provided, uses current include_path. Works around issues that
      * occur when the path includes stream schemas.
-     * 
-     * @param  string|null $path 
+     *
+     * @param  string|null $path
      * @return array
      */
     public static function explodeIncludePath($path = null)
@@ -218,7 +206,7 @@ class Zend_Loader
         }
 
         if (PATH_SEPARATOR == ':') {
-            // On *nix systems, include_paths which include paths with a stream 
+            // On *nix systems, include_paths which include paths with a stream
             // schema cannot be safely explode'd, so we have to be a bit more
             // intelligent in the approach.
             $paths = preg_split('#:(?!//)#', $path);
@@ -325,5 +313,31 @@ class Zend_Loader
         } else {
             return include $filespec ;
         }
+    }
+
+    /**
+     * Standardise the filename.
+     *
+     * Convert the supplied filename into the namespace-aware standard,
+     * based on the Framework Interop Group reference implementation:
+     * http://groups.google.com/group/php-standards/web/psr-0-final-proposal
+     *
+     * The filename must be formatted as "$file.php".
+     *
+     * @param string $file - The file name to be loaded.
+     * @return string
+     */
+    public static function standardiseFile($file)
+    {
+        $fileName = ltrim($file, '\\');
+        $file      = '';
+        $namespace = '';
+        if ($lastNsPos = strripos($fileName, '\\')) {
+            $namespace = substr($fileName, 0, $lastNsPos);
+            $fileName = substr($fileName, $lastNsPos + 1);
+            $file      = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+        }
+        $file .= str_replace('_', DIRECTORY_SEPARATOR, $fileName) . '.php';
+        return $file;    
     }
 }

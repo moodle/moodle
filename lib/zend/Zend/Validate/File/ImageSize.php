@@ -14,7 +14,7 @@
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id$
  */
@@ -29,7 +29,7 @@ require_once 'Zend/Validate/Abstract.php';
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_File_ImageSize extends Zend_Validate_Abstract
@@ -53,7 +53,7 @@ class Zend_Validate_File_ImageSize extends Zend_Validate_Abstract
         self::HEIGHT_TOO_BIG   => "Maximum allowed height for image '%value%' should be '%maxheight%' but '%height%' detected",
         self::HEIGHT_TOO_SMALL => "Minimum expected height for image '%value%' should be '%minheight%' but '%height%' detected",
         self::NOT_DETECTED     => "The size of image '%value%' could not be detected",
-        self::NOT_READABLE     => "File '%value%' can not be read",
+        self::NOT_READABLE     => "File '%value%' is not readable or does not exist",
     );
 
     /**
@@ -120,7 +120,7 @@ class Zend_Validate_File_ImageSize extends Zend_Validate_Abstract
      * - maxwidth
      *
      * @param  Zend_Config|array $options
-     * @return void
+     * @throws Zend_Validate_Exception
      */
     public function __construct($options)
     {

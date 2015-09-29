@@ -14,7 +14,7 @@
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id$
  */
@@ -29,7 +29,7 @@ require_once 'Zend/Validate/File/Hash.php';
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_File_Crc32 extends Zend_Validate_File_Hash
@@ -47,7 +47,7 @@ class Zend_Validate_File_Crc32 extends Zend_Validate_File_Hash
     protected $_messageTemplates = array(
         self::DOES_NOT_MATCH => "File '%value%' does not match the given crc32 hashes",
         self::NOT_DETECTED   => "A crc32 hash could not be evaluated for the given file",
-        self::NOT_FOUND      => "File '%value%' could not be found",
+        self::NOT_FOUND      => "File '%value%' is not readable or does not exist",
     );
 
     /**
@@ -61,7 +61,8 @@ class Zend_Validate_File_Crc32 extends Zend_Validate_File_Hash
      * Sets validator options
      *
      * @param  string|array|Zend_Config $options
-     * @return void
+     * @throws Zend_Validate_Exception
+     * @return Zend_Validate_File_Crc32
      */
     public function __construct($options)
     {

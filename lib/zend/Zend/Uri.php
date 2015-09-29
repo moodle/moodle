@@ -14,7 +14,7 @@
  *
  * @category  Zend
  * @package   Zend_Uri
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id$
  */
@@ -24,7 +24,7 @@
  *
  * @category  Zend
  * @package   Zend_Uri
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Uri
@@ -53,7 +53,12 @@ abstract class Zend_Uri
      */
     public function __toString()
     {
-        return $this->getUri();
+        try {
+            return $this->getUri();
+        } catch (Exception $e) {
+            trigger_error($e->getMessage(), E_USER_WARNING);
+            return '';
+        }
     }
 
     /**
@@ -127,14 +132,12 @@ abstract class Zend_Uri
             }
         }
 
-        if (!class_exists($className)) {
-            require_once 'Zend/Loader.php';
-            try {
-                Zend_Loader::loadClass($className);
-            } catch (Exception $e) {
-                require_once 'Zend/Uri/Exception.php';
-                throw new Zend_Uri_Exception("\"$className\" not found");
-            }
+        require_once 'Zend/Loader.php';
+        try {
+            Zend_Loader::loadClass($className);
+        } catch (Exception $e) {
+            require_once 'Zend/Uri/Exception.php';
+            throw new Zend_Uri_Exception("\"$className\" not found");
         }
 
         $schemeHandler = new $className($scheme, $schemeSpecific);

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -24,6 +24,12 @@
  */
 require_once 'Zend/Server/Interface.php';
 
+/** @see Zend_Xml_Security */
+require_once 'Zend/Xml/Security.php';
+
+/** @see Zend_Xml_Exception */
+require_once 'Zend/Xml/Exception.php';
+
 /**
  * Zend_Soap_Server
  *
@@ -31,7 +37,7 @@ require_once 'Zend/Server/Interface.php';
  * @package    Zend_Soap
  * @subpackage Server
  * @uses       Zend_Server_Interface
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -86,7 +92,13 @@ class Zend_Soap_Server implements Zend_Server_Interface
      */
     protected $_wsdlCache;
 
-
+    /**
+     * WS-I compliant
+     * 
+     * @var boolean 
+     */
+    protected $_wsiCompliant;
+    
     /**
      * Registered fault exceptions
      * @var array
@@ -210,10 +222,15 @@ class Zend_Soap_Server implements Zend_Server_Interface
                     $this->setWsdl($value);
                     break;
                 case 'featues':
+                    trigger_error(__METHOD__ . ': the option "featues" is deprecated as of 1.10.x and will be removed with 2.0.0; use "features" instead', E_USER_NOTICE);
+                case 'features':
                     $this->setSoapFeatures($value);
                     break;
                 case 'cache_wsdl':
                     $this->setWsdlCache($value);
+                    break;
+                case 'wsi_compliant':
+                    $this->setWsiCompliant($value);
                     break;
                 default:
                     break;
@@ -251,17 +268,42 @@ class Zend_Soap_Server implements Zend_Server_Interface
             $options['uri'] = $this->_uri;
         }
 
-        if(null !== $this->_features) {
+        if (null !== $this->_features) {
             $options['features'] = $this->_features;
         }
 
-        if(null !== $this->_wsdlCache) {
+        if (null !== $this->_wsdlCache) {
             $options['cache_wsdl'] = $this->_wsdlCache;
         }
 
+        if (null !== $this->_wsiCompliant) {
+            $options['wsi_compliant'] = $this->_wsiCompliant;
+        }
+        
         return $options;
     }
-
+    /**
+     * Set WS-I compliant
+     * 
+     * @param  boolean $value
+     * @return Zend_Soap_Server 
+     */
+    public function setWsiCompliant($value)
+    {
+        if (is_bool($value)) {
+            $this->_wsiCompliant = $value;
+        }
+        return $this;
+    }
+    /**
+     * Gt WS-I compliant
+     * 
+     * @return boolean
+     */
+    public function getWsiCompliant() 
+    {
+        return $this->_wsiCompliant;
+    }
     /**
      * Set encoding
      *
@@ -593,7 +635,12 @@ class Zend_Soap_Server implements Zend_Server_Interface
             throw new Zend_Soap_Server_Exception('An object has already been registered with this soap server instance');
         }
 
-        $this->_object = $object;
+        if ($this->_wsiCompliant) {
+            require_once 'Zend/Soap/Server/Proxy.php';
+            $this->_object = new Zend_Soap_Server_Proxy($object);
+        } else {
+            $this->_object = $object;
+        }    
 
         return $this;
     }
@@ -689,9 +736,16 @@ class Zend_Soap_Server implements Zend_Server_Interface
             }
 
             $dom = new DOMDocument();
-            if(strlen($xml) == 0 || !$dom->loadXML($xml)) {
+            try {
+                if(strlen($xml) == 0 || (!$dom = Zend_Xml_Security::scan($xml, $dom))) {
+                    require_once 'Zend/Soap/Server/Exception.php';
+                    throw new Zend_Soap_Server_Exception('Invalid XML');
+                }
+            } catch (Zend_Xml_Exception $e) {
                 require_once 'Zend/Soap/Server/Exception.php';
-                throw new Zend_Soap_Server_Exception('Invalid XML');
+                throw new Zend_Soap_Server_Exception(
+                    $e->getMessage()
+                );
             }
         }
         $this->_request = $xml;
@@ -766,6 +820,10 @@ class Zend_Soap_Server implements Zend_Server_Interface
         if (!empty($this->_class)) {
             $args = $this->_classArgs;
             array_unshift($args, $this->_class);
+            if ($this->_wsiCompliant) {
+                require_once 'Zend/Soap/Server/Proxy.php';
+                array_unshift($args, 'Zend_Soap_Server_Proxy');
+            } 
             call_user_func_array(array($server, 'setClass'), $args);
         }
 
@@ -818,19 +876,19 @@ class Zend_Soap_Server implements Zend_Server_Interface
         } catch (Zend_Soap_Server_Exception $e) {
             $setRequestException = $e;
         }
-
+        
         $soap = $this->_getSoap();
 
+        $fault = false;
         ob_start();
-        if($setRequestException instanceof Exception) {
-            // Send SOAP fault message if we've catched exception
-            $soap->fault("Sender", $setRequestException->getMessage());
+        if ($setRequestException instanceof Exception) {
+            // Create SOAP fault message if we've caught a request exception
+            $fault = $this->fault($setRequestException->getMessage(), 'Sender');
         } else {
             try {
-                $soap->handle($request);
+                $soap->handle($this->_request);
             } catch (Exception $e) {
                 $fault = $this->fault($e);
-                $soap->fault($fault->faultcode, $fault->faultstring);
             }
         }
         $this->_response = ob_get_clean();
@@ -838,6 +896,11 @@ class Zend_Soap_Server implements Zend_Server_Interface
         // Restore original error handler
         restore_error_handler();
         ini_set('display_errors', $displayErrorsOriginalState);
+
+        // Send a fault, if we have one
+        if ($fault) {
+            $soap->fault($fault->faultcode, $fault->faultstring);
+        }
 
         if (!$this->_returnResponse) {
             echo $this->_response;

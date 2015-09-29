@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Date
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id$
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -23,7 +23,7 @@
  * @category   Zend
  * @package    Zend_Date
  * @subpackage Zend_Date_DateObject
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Date_DateObject {
@@ -33,6 +33,7 @@ abstract class Zend_Date_DateObject {
      */
     private   $_unixTimestamp;
     protected static $_cache         = null;
+    protected static $_cacheTags     = false;
     protected static $_defaultOffset = 0;
 
     /**
@@ -254,7 +255,11 @@ abstract class Zend_Date_DateObject {
         }
 
         if (isset(self::$_cache)) {
-            self::$_cache->save( serialize($date), $id);
+            if (self::$_cacheTags) {
+                self::$_cache->save( serialize($date), $id, array('Zend_Date'));
+            } else {
+                self::$_cache->save( serialize($date), $id);
+            }
         }
 
         return $date;
@@ -307,6 +312,13 @@ abstract class Zend_Date_DateObject {
         }
 
         if (abs($timestamp) <= 0x7FFFFFFF) {
+            // See ZF-11992
+            // "o" will sometimes resolve to the previous year (see 
+            // http://php.net/date ; it's part of the ISO 8601 
+            // standard). However, this is not desired, so replacing 
+            // all occurrences of "o" not preceded by a backslash 
+            // with "Y"
+            $format = preg_replace('/(?<!\\\\)o/', 'Y', $format);
             $result = ($gmt) ? @gmdate($format, $timestamp) : @date($format, $timestamp);
             date_default_timezone_set($oldzone);
             return $result;
@@ -340,7 +352,11 @@ abstract class Zend_Date_DateObject {
             }
 
             if (isset(self::$_cache)) {
-                self::$_cache->save( serialize($timestamp), $idstamp);
+                if (self::$_cacheTags) {
+                    self::$_cache->save( serialize($timestamp), $idstamp, array('Zend_Date'));
+                } else {
+                    self::$_cache->save( serialize($timestamp), $idstamp);
+                }
             }
         }
 
@@ -828,7 +844,11 @@ abstract class Zend_Date_DateObject {
         }
 
         if (isset(self::$_cache)) {
-            self::$_cache->save( serialize($array), $id);
+            if (self::$_cacheTags) {
+                self::$_cache->save( serialize($array), $id, array('Zend_Date'));
+            } else {
+                self::$_cache->save( serialize($array), $id);
+            }
         }
 
         return $array;
@@ -1054,5 +1074,23 @@ abstract class Zend_Date_DateObject {
         date_default_timezone_set($zone);
 
         return $offset;
+    }
+
+    /**
+     * Internal method to check if the given cache supports tags
+     *
+     * @param Zend_Cache $cache
+     */
+    protected static function _getTagSupportForCache()
+    {
+        $backend = self::$_cache->getBackend();
+        if ($backend instanceof Zend_Cache_Backend_ExtendedInterface) {
+            $cacheOptions = $backend->getCapabilities();
+            self::$_cacheTags = $cacheOptions['tags'];
+        } else {
+            self::$_cacheTags = false;
+        }
+
+        return self::$_cacheTags;
     }
 }

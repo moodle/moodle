@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@ require_once 'Zend/Locale/Format.php';
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_PostCode extends Zend_Validate_Abstract
@@ -44,7 +44,7 @@ class Zend_Validate_PostCode extends Zend_Validate_Abstract
      * @var array
      */
     protected $_messageTemplates = array(
-        self::INVALID  => "Invalid type given. The value should be a string or a integer",
+        self::INVALID  => "Invalid type given. String or integer expected",
         self::NO_MATCH => "'%value%' does not appear to be a postal code",
     );
 
@@ -119,7 +119,7 @@ class Zend_Validate_PostCode extends Zend_Validate_Abstract
      * @param string|Zend_Locale $locale
      * @throws Zend_Validate_Exception On unrecognised region
      * @throws Zend_Validate_Exception On not detected format
-     * @return Zend_Validate_PostCode  Provides fluid interface
+     * @return Zend_Validate_PostCode  Provides a fluent interface
      */
     public function setLocale($locale = null)
     {
@@ -162,7 +162,7 @@ class Zend_Validate_PostCode extends Zend_Validate_Abstract
      *
      * @param string $format
      * @throws Zend_Validate_Exception On empty format
-     * @return Zend_Validate_PostCode  Provides fluid interface
+     * @return Zend_Validate_PostCode  Provides a fluent interface
      */
     public function setFormat($format)
     {

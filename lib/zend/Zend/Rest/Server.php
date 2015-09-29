@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Rest
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -39,7 +39,7 @@ require_once 'Zend/Server/Abstract.php';
  * @category   Zend
  * @package    Zend_Rest
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Rest_Server implements Zend_Server_Interface
@@ -182,45 +182,66 @@ class Zend_Rest_Server implements Zend_Server_Interface
         if (isset($request['method'])) {
             $this->_method = $request['method'];
             if (isset($this->_functions[$this->_method])) {
-                if ($this->_functions[$this->_method] instanceof Zend_Server_Reflection_Function || $this->_functions[$this->_method] instanceof Zend_Server_Reflection_Method && $this->_functions[$this->_method]->isPublic()) {
-                    $request_keys = array_keys($request);
-                    array_walk($request_keys, array(__CLASS__, "lowerCase"));
-                    $request = array_combine($request_keys, $request);
+                if ($this->_functions[$this->_method] instanceof
+                    Zend_Server_Reflection_Function
+                    || $this->_functions[$this->_method] instanceof
+                       Zend_Server_Reflection_Method
+                       && $this->_functions[$this->_method]->isPublic()
+                ) {
+                    $requestKeys = array_keys($request);
+                    array_walk($requestKeys, array(__CLASS__, "lowerCase"));
+                    $request = array_combine($requestKeys, $request);
 
-                    $func_args = $this->_functions[$this->_method]->getParameters();
+                    $funcArgs = $this->_functions[$this->_method]->getParameters();
 
-                    $calling_args = array();
-                    $missing_args = array();
-                    foreach ($func_args as $arg) {
+                    // calling_args will be a zero-based array of the parameters
+                    $callingArgs = array();
+                    $missingArgs = array();
+                    foreach ($funcArgs as $i => $arg) {
                         if (isset($request[strtolower($arg->getName())])) {
-                            $calling_args[] = $request[strtolower($arg->getName())];
+                            $callingArgs[$i] = $request[strtolower($arg->getName())];
                         } elseif ($arg->isOptional()) {
-                            $calling_args[] = $arg->getDefaultValue();
+                            $callingArgs[$i] = $arg->getDefaultValue();
                         } else {
-                            $missing_args[] = $arg->getName();
+                            $missingArgs[] = $arg->getName();
                         }
                     }
 
+                    $anonymousArgs = array();
                     foreach ($request as $key => $value) {
                         if (substr($key, 0, 3) == 'arg') {
                             $key = str_replace('arg', '', $key);
-                            $calling_args[$key] = $value;
-                            if (($index = array_search($key, $missing_args)) !== false) {
-                                unset($missing_args[$index]);
+                            $anonymousArgs[$key] = $value;
+                            if (($index = array_search($key, $missingArgs)) !== false) {
+                                unset($missingArgs[$index]);
                             }
                         }
                     }
 
+                    // re-key the $anonymousArgs to be zero-based, and add in
+                    // any values already set in calling_args (optional defaults)
+                    ksort($anonymousArgs);
+                    $callingArgs = array_values($anonymousArgs) + $callingArgs;
+
                     // Sort arguments by key -- @see ZF-2279
-                    ksort($calling_args);
+                    ksort($callingArgs);
 
                     $result = false;
-                    if (count($calling_args) < count($func_args)) {
+                    if (count($callingArgs) < count($funcArgs)) {
                         require_once 'Zend/Rest/Server/Exception.php';
-                        $result = $this->fault(new Zend_Rest_Server_Exception('Invalid Method Call to ' . $this->_method . '. Missing argument(s): ' . implode(', ', $missing_args) . '.'), 400);
+                        $result = $this->fault(
+                            new Zend_Rest_Server_Exception(
+                                'Invalid Method Call to ' . $this->_method
+                                . '. Missing argument(s): ' . implode(
+                                    ', ', $missingArgs
+                                ) . '.'
+                            ), 400
+                        );
                     }
 
-                    if (!$result && $this->_functions[$this->_method] instanceof Zend_Server_Reflection_Method) {
+                    if (!$result && $this->_functions[$this->_method] instanceof
+                                    Zend_Server_Reflection_Method
+                    ) {
                         // Get class
                         $class = $this->_functions[$this->_method]->getDeclaringClass()->getName();
 
@@ -228,14 +249,23 @@ class Zend_Rest_Server implements Zend_Server_Interface
                             // for some reason, invokeArgs() does not work the same as
                             // invoke(), and expects the first argument to be an object.
                             // So, using a callback if the method is static.
-                            $result = $this->_callStaticMethod($class, $calling_args);
+                            $result = $this->_callStaticMethod(
+                                $class,
+                                $callingArgs
+                            );
                         } else {
                             // Object method
-                            $result = $this->_callObjectMethod($class, $calling_args);
+                            $result = $this->_callObjectMethod(
+                                $class,
+                                $callingArgs
+                            );
                         }
                     } elseif (!$result) {
                         try {
-                            $result = call_user_func_array($this->_functions[$this->_method]->getName(), $calling_args); //$this->_functions[$this->_method]->invokeArgs($calling_args);
+                            $result = call_user_func_array(
+                                $this->_functions[$this->_method]->getName(),
+                                $callingArgs
+                            );
                         } catch (Exception $e) {
                             $result = $this->fault($e);
                         }
@@ -243,14 +273,18 @@ class Zend_Rest_Server implements Zend_Server_Interface
                 } else {
                     require_once "Zend/Rest/Server/Exception.php";
                     $result = $this->fault(
-                        new Zend_Rest_Server_Exception("Unknown Method '$this->_method'."),
+                        new Zend_Rest_Server_Exception(
+                            "Unknown Method '$this->_method'."
+                        ),
                         404
                     );
                 }
             } else {
                 require_once "Zend/Rest/Server/Exception.php";
                 $result = $this->fault(
-                    new Zend_Rest_Server_Exception("Unknown Method '$this->_method'."),
+                    new Zend_Rest_Server_Exception(
+                        "Unknown Method '$this->_method'."
+                    ),
                     404
                 );
             }
@@ -355,9 +389,11 @@ class Zend_Rest_Server implements Zend_Server_Interface
      * @param DOMElement $parent
      * @return void
      */
-    protected function _structValue($struct, DOMDocument $dom, DOMElement $parent)
+    protected function _structValue(
+        $struct, DOMDocument $dom, DOMElement $parent
+    )
     {
-        $struct = (array) $struct;
+        $struct = (array)$struct;
 
         foreach ($struct as $key => $value) {
             if ($value === false) {
@@ -366,7 +402,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
                 $value = 1;
             }
 
-            if (ctype_digit((string) $key)) {
+            if (ctype_digit((string)$key)) {
                 $key = 'key_' . $key;
             }
 
@@ -480,13 +516,23 @@ class Zend_Rest_Server implements Zend_Server_Interface
 
         if ($exception instanceof Exception) {
             $element = $dom->createElement('message');
-            $element->appendChild($dom->createTextNode($exception->getMessage()));
+            $element->appendChild(
+                $dom->createTextNode($exception->getMessage())
+            );
             $xmlResponse->appendChild($element);
             $code = $exception->getCode();
         } elseif (($exception !== null) || 'rest' == $function) {
-            $xmlResponse->appendChild($dom->createElement('message', 'An unknown error occured. Please try again.'));
+            $xmlResponse->appendChild(
+                $dom->createElement(
+                    'message', 'An unknown error occured. Please try again.'
+                )
+            );
         } else {
-            $xmlResponse->appendChild($dom->createElement('message', 'Call to ' . $method . ' failed.'));
+            $xmlResponse->appendChild(
+                $dom->createElement(
+                    'message', 'Call to ' . $method . ' failed.'
+                )
+            );
         }
 
         $xmlMethod->appendChild($xmlResponse);
@@ -529,7 +575,9 @@ class Zend_Rest_Server implements Zend_Server_Interface
                 $this->_functions[$func] = $this->_reflection->reflectFunction($func);
             } else {
                 require_once 'Zend/Rest/Server/Exception.php';
-                throw new Zend_Rest_Server_Exception("Invalid Method Added to Service.");
+                throw new Zend_Rest_Server_Exception(
+                    "Invalid Method Added to Service."
+                );
             }
         }
     }
@@ -574,7 +622,13 @@ class Zend_Rest_Server implements Zend_Server_Interface
     protected function _callStaticMethod($class, array $args)
     {
         try {
-            $result = call_user_func_array(array($class, $this->_functions[$this->_method]->getName()), $args);
+            $result = call_user_func_array(
+                array(
+                    $class,
+                    $this->_functions[$this->_method]->getName()
+                ),
+                $args
+            );
         } catch (Exception $e) {
             $result = $this->fault($e);
         }
@@ -599,14 +653,21 @@ class Zend_Rest_Server implements Zend_Server_Interface
             }
         } catch (Exception $e) {
             require_once 'Zend/Rest/Server/Exception.php';
-            throw new Zend_Rest_Server_Exception('Error instantiating class ' . $class .
-                                                 ' to invoke method ' . $this->_functions[$this->_method]->getName() .
-                                                 ' (' . $e->getMessage() . ') ',
-                                                 500, $e);
+            throw new Zend_Rest_Server_Exception(
+                'Error instantiating class ' . $class .
+                ' to invoke method '
+                . $this->_functions[$this->_method]->getName() .
+                ' (' . $e->getMessage() . ') ',
+                500,
+                $e
+            );
         }
 
         try {
-            $result = $this->_functions[$this->_method]->invokeArgs($object, $args);
+            $result = $this->_functions[$this->_method]->invokeArgs(
+                $object,
+                $args
+            );
         } catch (Exception $e) {
             $result = $this->fault($e);
         }

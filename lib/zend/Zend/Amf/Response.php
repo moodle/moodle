@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Amf
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@ require_once 'Zend/Amf/Parse/Amf0/Serializer.php';
  * Handles converting the PHP object ready for response back into AMF
  *
  * @package    Zend_Amf
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Amf_Response
@@ -95,7 +95,7 @@ class Zend_Amf_Response
             $stream->writeByte($header->mustRead);
             $stream->writeLong(Zend_Amf_Constants::UNKNOWN_CONTENT_LENGTH);
             if (is_object($header->data)) {
-                // Workaround for PHP5 with E_STRICT enabled complaining about 
+                // Workaround for PHP5 with E_STRICT enabled complaining about
                 // "Only variables should be passed by reference"
                 $placeholder = null;
                 $serializer->writeTypeMarker($placeholder, null, $header->data);
@@ -115,7 +115,7 @@ class Zend_Amf_Response
             $bodyData = $body->getData();
             $markerType = ($this->_objectEncoding == Zend_Amf_Constants::AMF0_OBJECT_ENCODING) ? null : Zend_Amf_Constants::AMF0_AMF3;
             if (is_object($bodyData)) {
-                // Workaround for PHP5 with E_STRICT enabled complaining about 
+                // Workaround for PHP5 with E_STRICT enabled complaining about
                 // "Only variables should be passed by reference"
                 $placeholder = null;
                 $serializer->writeTypeMarker($placeholder, $markerType, $bodyData);

@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -27,7 +27,7 @@ require_once 'Zend/Validate/Interface.php';
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
@@ -229,17 +229,23 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
             } else {
                 $value = $value->__toString();
             }
+        } elseif (is_array($value)) {
+            $value = $this->_implodeRecursive($value);
         } else {
-            $value = (string)$value;
+            $value = implode((array) $value);
         }
 
         if ($this->getObscureValue()) {
             $value = str_repeat('*', strlen($value));
         }
 
-        $message = str_replace('%value%', (string) $value, $message);
+        $message = str_replace('%value%', $value, $message);
         foreach ($this->_messageVariables as $ident => $property) {
-            $message = str_replace("%$ident%", (string) $this->$property, $message);
+            $message = str_replace(
+                "%$ident%",
+                implode(' ', (array) $this->$property),
+                $message
+            );
         }
 
         $length = self::getMessageLength();
@@ -248,6 +254,26 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
         }
 
         return $message;
+    }
+
+    /**
+     * Joins elements of a multidimensional array
+     *
+     * @param array $pieces
+     * @return string
+     */
+    protected function _implodeRecursive(array $pieces)
+    {
+        $values = array();
+        foreach ($pieces as $item) {
+            if (is_array($item)) {
+                $values[] = $this->_implodeRecursive($item);
+            } else {
+                $values[] = $item;
+            }
+        }
+
+        return implode(', ', $values);
     }
 
     /**
@@ -319,6 +345,7 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
      * Set translation object
      *
      * @param  Zend_Translate|Zend_Translate_Adapter|null $translator
+     * @throws Zend_Validate_Exception
      * @return Zend_Validate_Abstract
      */
     public function setTranslator($translator = null)
@@ -366,7 +393,7 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
      * Set default translation object for all validate objects
      *
      * @param  Zend_Translate|Zend_Translate_Adapter|null $translator
-     * @return void
+     * @throws Zend_Validate_Exception
      */
     public static function setDefaultTranslator($translator = null)
     {
