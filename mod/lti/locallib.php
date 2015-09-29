@@ -910,7 +910,7 @@ function lti_get_ims_role($user, $cmid, $courseid, $islti2) {
         // a real LTI instance.
         $coursecontext = context_course::instance($courseid);
 
-        if (has_capability('moodle/course:manageactivities', $coursecontext)) {
+        if (has_capability('moodle/course:manageactivities', $coursecontext, $user)) {
             array_push($roles, 'Instructor');
         } else {
             array_push($roles, 'Learner');
