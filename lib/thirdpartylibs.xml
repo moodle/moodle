@@ -252,4 +252,10 @@
     <version>5.2.1</version>
     <licenseversion>2.1</licenseversion>
   </library>
+  <library>
+    <location>graphlib.php</location>
+    <name>Graph Class</name>
+    <license>GPL</license>
+    <version>1.6.3</version>
+  </library>
 </libraries>
