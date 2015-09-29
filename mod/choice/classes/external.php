@@ -116,7 +116,7 @@ class mod_choice_external extends external_api {
             }
 
             $options[] = array('id'               => $optionid,
-                               'text'             => format_string($option->text, true, array('context' => $context)),
+                               'text'             => external_format_string($option->text, $context->id),
                                'maxanswer'        => $option->maxanswer,
                                'userresponses'    => $userresponses,
                                'numberofuser'     => $numberofuser,
@@ -230,7 +230,7 @@ class mod_choice_external extends external_api {
             foreach ($options['options'] as $option) {
                 $optionarr = array();
                 $optionarr['id']            = $option->attributes->value;
-                $optionarr['text']          = format_string($option->text, true, array('context' => $context));
+                $optionarr['text']          = external_format_string($option->text, $context->id);
                 $optionarr['maxanswers']    = $option->maxanswers;
                 $optionarr['displaylayout'] = $option->displaylayout;
                 $optionarr['countanswers']  = $option->countanswers;
@@ -503,7 +503,7 @@ class mod_choice_external extends external_api {
                 $choicedetails['id'] = $choice->id;
                 $choicedetails['coursemodule'] = $choice->coursemodule;
                 $choicedetails['course'] = $choice->course;
-                $choicedetails['name']  = format_string($choice->name, true, array('context' => $context));;
+                $choicedetails['name']  = external_format_string($choice->name, $context->id);
                 // Format intro.
                 list($choicedetails['intro'], $choicedetails['introformat']) =
                     external_format_text($choice->intro, $choice->introformat,
@@ -555,7 +555,7 @@ class mod_choice_external extends external_api {
                             'id' => new external_value(PARAM_INT, 'Choice instance id'),
                             'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
                             'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_TEXT, 'Choice name'),
+                            'name' => new external_value(PARAM_RAW, 'Choice name'),
                             'intro' => new external_value(PARAM_RAW, 'The choice intro'),
                             'introformat' => new external_format_value('intro'),
                             'publish' => new external_value(PARAM_BOOL, 'If choice is published', VALUE_OPTIONAL),

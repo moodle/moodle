@@ -3,6 +3,13 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
+=== 3.0 ===
+
+* New function for formatting external strings: external_format_strings, it should be used as a replacement of format_string in
+  external functions.
+  All the occurrences of format_strings have been replaced with this new function.
+
+
 === 2.9 ===
 
 * The deprecated functions can not be added to services anymore and

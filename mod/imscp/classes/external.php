@@ -157,7 +157,7 @@ class mod_imscp_external extends external_api {
                 $imscpdetails['id'] = $imscp->id;
                 $imscpdetails['coursemodule']      = $imscp->coursemodule;
                 $imscpdetails['course']            = $imscp->course;
-                $imscpdetails['name']              = format_string($imscp->name, true, array('context' => $context));
+                $imscpdetails['name']              = external_format_string($imscp->name, $context->id);
 
                 if (has_capability('mod/imscp:view', $context)) {
                     // Format intro.
@@ -199,7 +199,7 @@ class mod_imscp_external extends external_api {
                             'id' => new external_value(PARAM_INT, 'IMSCP id'),
                             'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
                             'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_TEXT, 'Activity name'),
+                            'name' => new external_value(PARAM_RAW, 'Activity name'),
                             'intro' => new external_value(PARAM_RAW, 'The IMSCP intro', VALUE_OPTIONAL),
                             'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
                             'revision' => new external_value(PARAM_INT, 'Revision', VALUE_OPTIONAL),

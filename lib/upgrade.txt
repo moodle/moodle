@@ -143,6 +143,8 @@ information provided here is intended especially for developers.
   <frankenstyle>_extend_navigation_category_settings(navigation_node, context_coursecat)
 * The clilib.php provides two new functions cli_write() and cli_writeln() that should be used for outputting texts from the command
   line interface scripts.
+* External function core_course_external::get_course_contents returned parameter "name" has been changed to PARAM_RAW,
+  this is because the new external_format_string function may return raw data if the global moodlewssettingraw parameter is used.
 
 === 2.9.1 ===
 

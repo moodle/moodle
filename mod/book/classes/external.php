@@ -201,7 +201,7 @@ class mod_book_external extends external_api {
                 $bookdetails['id'] = $book->id;
                 $bookdetails['coursemodule']      = $book->coursemodule;
                 $bookdetails['course']            = $book->course;
-                $bookdetails['name']              = format_string($book->name, true, array('context' => $context));
+                $bookdetails['name']              = external_format_string($book->name, $context->id);
                 // Format intro.
                 list($bookdetails['intro'], $bookdetails['introformat']) =
                     external_format_text($book->intro, $book->introformat, $context->id, 'mod_book', 'intro', null);
@@ -242,7 +242,7 @@ class mod_book_external extends external_api {
                             'id' => new external_value(PARAM_INT, 'Book id'),
                             'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
                             'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_TEXT, 'Book name'),
+                            'name' => new external_value(PARAM_RAW, 'Book name'),
                             'intro' => new external_value(PARAM_RAW, 'The Book intro'),
                             'introformat' => new external_format_value('intro'),
                             'numbering' => new external_value(PARAM_INT, 'Book numbering configuration'),

@@ -1,5 +1,10 @@
 This files describes API changes in the book code.
 
+=== 3.0 ===
+
+* External function mod_book_external::get_books_by_courses returned parameter "name" has been changed to PARAM_RAW,
+  this is because the new external_format_string function may return raw data if the global moodlewssettingraw parameter is used.
+
 === 2.7 ===
 
 * bogus legacy log calls were removed
