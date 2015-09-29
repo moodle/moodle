@@ -532,10 +532,11 @@ $CFG->admin = 'admin';
 //
 // Upgrade key
 //
-// If the upgrade key is defined here, then the value must be provided every
-// time the site is being upgraded, regardless the administrator is logged in
-// or not. This prevents from anonymous access to the upgrade screens where the
-// real authentication and authorization mechanisms must not be relied on.
+// If the upgrade key is defined here, then the value must be provided every time
+// the site is being upgraded though the web interface, regardless of whether the
+// administrator is logged in or not. This prevents anonymous access to the upgrade
+// screens where the real authentication and authorization mechanisms can not be
+// relied on.
 //
 // It is strongly recommended to use a value different from your real account
 // password.
