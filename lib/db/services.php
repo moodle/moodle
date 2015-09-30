@@ -1248,6 +1248,7 @@ $services = array(
             'mod_choice_get_choices_by_courses',
             'mod_lti_get_tool_launch_data',
             'mod_lti_get_ltis_by_courses',
+            'mod_lti_view_lti',
             'mod_imscp_view_imscp',
             'mod_imscp_get_imscps_by_courses',
             ),
