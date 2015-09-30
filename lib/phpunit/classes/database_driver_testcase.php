@@ -45,7 +45,7 @@
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
+abstract class database_driver_testcase extends base_testcase {
     /** @var moodle_database connection to extra database */
     private static $extradb = null;
 
@@ -176,7 +176,7 @@ abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
      * @param string $message
      */
     public function assertDebuggingCalled($debugmessage = null, $debuglevel = null, $message = '') {
-        $debugging = phpunit_util::get_debugging_messages();
+        $debugging = $this->getDebuggingMessages();
         $count = count($debugging);
 
         if ($count == 0) {
@@ -201,7 +201,7 @@ abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
             $this->assertSame($debuglevel, $debug->level, $message);
         }
 
-        phpunit_util::reset_debugging();
+        $this->resetDebugging();
     }
 
     /**
@@ -209,7 +209,7 @@ abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
      * @param string $message
      */
     public function assertDebuggingNotCalled($message = '') {
-        $debugging = phpunit_util::get_debugging_messages();
+        $debugging = $this->getDebuggingMessages();
         $count = count($debugging);
 
         if ($message === '') {
