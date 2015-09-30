@@ -171,7 +171,6 @@ span.unread {
 }
 
 .dir-rtl#page-mod-forum-view img.timedpost {
-    margin-right: 0px;
-    margin-left: 5px;
+    margin: 3px 0 0 5px;
     float: right;
 }
