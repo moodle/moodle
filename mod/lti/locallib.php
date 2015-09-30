@@ -79,11 +79,13 @@ define('LTI_SETTING_ALWAYS', 1);
 define('LTI_SETTING_DELEGATE', 2);
 
 /**
- * Prints a Basic LTI activity
+ * Return the launch data required for opening the external tool.
  *
- * $param int $basicltiid       Basic LTI activity id
+ * @param  stdClass $instance the external tool activity settings
+ * @return array the endpoint URL and parameters (including the signature)
+ * @since  Moodle 3.0
  */
-function lti_view($instance) {
+function lti_get_launch_data($instance) {
     global $PAGE, $CFG;
 
     if (empty($instance->typeid)) {
@@ -245,6 +247,18 @@ function lti_view($instance) {
         $parms = $requestparams;
     }
 
+    return array($endpoint, $parms);
+}
+
+/**
+ * Prints an external tool activity.
+ *
+ * @param  stdClass $instance the external tool activity settings
+ * @return string           The HTML post form content
+ */
+function lti_view($instance) {
+
+    list($endpoint, $parms) = lti_get_launch_data($instance);
     $debuglaunch = ( $instance->debuglaunch == 1 );
 
     $content = lti_post_launch_html($parms, $endpoint, $debuglaunch);
