@@ -76,5 +76,5 @@ $event->add_record_snapshot('lti', $lti);
 $event->trigger();
 
 $lti->cmid = $cm->id;
-lti_view($lti);
+lti_launch_tool($lti);
 

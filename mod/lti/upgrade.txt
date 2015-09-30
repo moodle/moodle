@@ -1,5 +1,11 @@
 This files describes API changes in the lti code.
 
+=== 3.0 ===
+
+* Function lti_view (locallib.php) was renamed to lti_launch_tool.
+  A new and different lti_view function was created in the module lib.php containing the code for launching events and update the completion status for the module.
+
+
 === 2.8 ===
 
 * Support for LTI 2 added, including extensible services implemented as ltiservice plugins.

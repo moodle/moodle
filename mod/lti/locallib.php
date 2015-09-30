@@ -251,12 +251,12 @@ function lti_get_launch_data($instance) {
 }
 
 /**
- * Prints an external tool activity.
+ * Launch an external tool activity.
  *
  * @param  stdClass $instance the external tool activity settings
- * @return string           The HTML post form content
+ * @return string The HTML code containing the javascript code for the launch
  */
-function lti_view($instance) {
+function lti_launch_tool($instance) {
 
     list($endpoint, $parms) = lti_get_launch_data($instance);
     $debuglaunch = ( $instance->debuglaunch == 1 );
