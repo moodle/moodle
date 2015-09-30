@@ -1603,7 +1603,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $sink->close();
 
         // Validate the event.
-        $event = array_pop($events);
+        $event = $events[0];
         $this->assertInstanceOf('\core\event\course_created', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($course->id, $event->objectid);
@@ -1633,7 +1633,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $imstestcase->imsplugin->cron();
         $events = $sink->get_events();
         $sink->close();
-        $event = array_pop($events);
+        $event = $events[0];
 
         // Validate the event triggered is \core\event\course_created. There is no need to validate the other values
         // as they have already been validated in the previous steps. Here we only want to make sure that when the
