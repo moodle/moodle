@@ -4,9 +4,11 @@
     "moodle-editor_atto-rangy": {
       "prependfiles": [
         "rangy-core.js",
-        "rangy-cssclassapplier.js",
         "rangy-selectionsaverestore.js",
-        "rangy-serializer.js"
+        "rangy-serializer.js",
+        "rangy-classapplier.js",
+        "rangy-highlighter.js",
+        "rangy-textrange.js"
       ],
       "jsfiles": [
         "init.js"
