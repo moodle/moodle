@@ -1,12 +1,10 @@
 @mod @mod_forum
 Feature: Users can choose to set start and end time for display of their discussions
-  In order to see timed forum discussions
-  As a user
-  I need to view the page within the window
-  As a user with viewhiddentimedposts
-  I need to see the timed discussion tooltips
+  In order to temporarly hide discussions to students
+  As a teacher
+  I need to set a discussion time start and time end
 
-  Background:
+  Scenario: Student should not see the tooltip or the discussion
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | student1 | Student | 1 | student1@example.com |
@@ -37,22 +35,17 @@ Feature: Users can choose to set start and end time for display of their discuss
       | Subject            | Discussion 3 timed visible now       |
       | Message            | Discussion contents 3, first message |
       | timestart[enabled] | 1 |
-
-
-  Scenario: Creator of the discussion should see the tooltip
-    Given I am on site homepage
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Test forum name"
-    Then I should see "Discussion 2 timed"
+    And I should see "Discussion 2 timed"
     And I should see "Discussion 3 timed"
     And ".timedpost" "css_element" should exist
-
-  Scenario: Student should not see the tooltip or the discussion
-    Given I log out
+    And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    Given I follow "Test forum name"
-    And I should see "Discussion 1"
-    Then I should not see "Discussion 2 timed"
+    When I follow "Course 1"
+    And I follow "Test forum name"
+    Then I should see "Discussion 1"
+    And I should not see "Discussion 2 timed"
     And ".timedpost" "css_element" should not exist
-    But I should see "Discussion 3 timed"
+    And I should see "Discussion 3 timed"
