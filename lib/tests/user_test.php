@@ -116,4 +116,72 @@ class core_user_testcase extends advanced_testcase {
         // Assert that a user not in the db return false.
         $this->assertFalse(core_user::get_user_by_username('janedoe'));
     }
+
+    /**
+     * Test require_active_user
+     */
+    public function test_require_active_user() {
+        global $DB;
+
+        // Create a default user for the test.
+        $userexpected = $this->getDataGenerator()->create_user();
+
+        // Simple case, all good.
+        core_user::require_active_user($userexpected, true, true);
+
+        // Set user not confirmed.
+        $DB->set_field('user', 'confirmed', 0, array('id' => $userexpected->id));
+        try {
+            core_user::require_active_user($userexpected);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('usernotconfirmed', $e->errorcode);
+        }
+        $DB->set_field('user', 'confirmed', 1, array('id' => $userexpected->id));
+
+        // Set nologin auth method.
+        $DB->set_field('user', 'auth', 'nologin', array('id' => $userexpected->id));
+        try {
+            core_user::require_active_user($userexpected, false, true);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('suspended', $e->errorcode);
+        }
+        // Check no exceptions are thrown if we don't specify to check suspended.
+        core_user::require_active_user($userexpected);
+        $DB->set_field('user', 'auth', 'manual', array('id' => $userexpected->id));
+
+        // Set user suspended.
+        $DB->set_field('user', 'suspended', 1, array('id' => $userexpected->id));
+        try {
+            core_user::require_active_user($userexpected, true);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('suspended', $e->errorcode);
+        }
+        // Check no exceptions are thrown if we don't specify to check suspended.
+        core_user::require_active_user($userexpected);
+
+        // Delete user.
+        delete_user($userexpected);
+        try {
+            core_user::require_active_user($userexpected);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('userdeleted', $e->errorcode);
+        }
+
+        // Use a not real user.
+        $noreplyuser = core_user::get_noreply_user();
+        try {
+            core_user::require_active_user($noreplyuser, true);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invaliduser', $e->errorcode);
+        }
+
+        // Get the guest user.
+        $guestuser = $DB->get_record('user', array('username' => 'guest'));
+        try {
+            core_user::require_active_user($guestuser, true);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('guestsarenotallowed', $e->errorcode);
+        }
+
+    }
 }

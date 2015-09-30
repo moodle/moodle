@@ -152,7 +152,8 @@ class core_completion_external extends external_api {
         $params = self::validate_parameters(self::get_activities_completion_status_parameters(), $arrayparams);
 
         $course = get_course($params['courseid']);
-        $user = core_user::get_user($params['userid'], 'id', MUST_EXIST);
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
 
         $context = context_course::instance($course->id);
         self::validate_context($context);
@@ -270,7 +271,9 @@ class core_completion_external extends external_api {
         $params = self::validate_parameters(self::get_course_completion_status_parameters(), $arrayparams);
 
         $course = get_course($params['courseid']);
-        $user = core_user::get_user($params['userid'], 'id', MUST_EXIST);
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+
         $context = context_course::instance($course->id);
         self::validate_context($context);
 
