@@ -35,7 +35,7 @@ use core_availability\info_section;
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class info_testcase extends \advanced_testcase {
+class info_testcase extends advanced_testcase {
     public function setUp() {
         // Load the mock condition so that it can be used.
         require_once(__DIR__ . '/fixtures/mock_condition.php');
@@ -87,8 +87,8 @@ class info_testcase extends \advanced_testcase {
         // Check invalid one.
         $info = new info_module($cm3);
         $this->assertFalse($info->is_available($information));
-        $debugging = phpunit_util::get_debugging_messages();
-        phpunit_util::reset_debugging();
+        $debugging = $this->getDebuggingMessages();
+        $this->resetDebugging();
         $this->assertEquals(1, count($debugging));
         $this->assertContains('Invalid availability', $debugging[0]->message);
 
@@ -141,8 +141,8 @@ class info_testcase extends \advanced_testcase {
         // Check invalid one.
         $info = new info_section($sections[3]);
         $this->assertFalse($info->is_available($information));
-        $debugging = phpunit_util::get_debugging_messages();
-        phpunit_util::reset_debugging();
+        $debugging = $this->getDebuggingMessages();
+        $this->resetDebugging();
         $this->assertEquals(1, count($debugging));
         $this->assertContains('Invalid availability', $debugging[0]->message);
 
