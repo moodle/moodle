@@ -1603,7 +1603,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $sink->close();
 
         // Validate the event.
-        $event = $events[0];
+        $event = array_pop($events);
         $this->assertInstanceOf('\core\event\course_created', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($course->id, $event->objectid);
@@ -1633,7 +1633,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $imstestcase->imsplugin->cron();
         $events = $sink->get_events();
         $sink->close();
-        $event = $events[0];
+        $event = array_pop($events);
 
         // Validate the event triggered is \core\event\course_created. There is no need to validate the other values
         // as they have already been validated in the previous steps. Here we only want to make sure that when the
@@ -1750,7 +1750,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $sink->close();
 
         // Validate the event.
-        $event = $events[1];
+        $event = array_pop($events);
         $this->assertInstanceOf('\core\event\course_deleted', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($course->id, $event->objectid);
@@ -1802,7 +1802,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $sink->close();
 
         // Validate the event.
-        $event = $events[0];
+        $event = array_pop($events);
         $this->assertInstanceOf('\core\event\course_content_deleted', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($course->id, $event->objectid);
@@ -1927,7 +1927,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $sink->close();
 
         // Validate the event.
-        $event = $events[0];
+        $event = array_pop($events);
         $this->assertInstanceOf('\core\event\course_restored', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($rc->get_courseid(), $event->objectid);
