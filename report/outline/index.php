@@ -93,7 +93,7 @@ $outlinetable->cellpadding = 5;
 $outlinetable->id = 'outlinetable';
 $outlinetable->head = array($stractivity, $strviews);
 
-if ($CFG->useblogassociations) {
+if (!empty($CFG->enableblogs) && $CFG->useblogassociations) {
     $outlinetable->head[] = $strrelatedblogentries;
 }
 
@@ -222,7 +222,7 @@ foreach ($modinfo->sections as $sectionnum=>$section) {
 
         $reportrow->cells[] = $numviewscell;
 
-        if ($CFG->useblogassociations) {
+        if (!empty($CFG->enableblogs) && $CFG->useblogassociations) {
             require_once($CFG->dirroot.'/blog/lib.php');
             $blogcell = new html_table_cell();
             $blogcell->attributes['class'] = 'blog';
