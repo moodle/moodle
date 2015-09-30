@@ -96,4 +96,124 @@ class mod_lti_external_testcase extends externallib_advanced_testcase {
 
     }
 
+    /*
+     * Test get ltis by courses
+     */
+    public function test_mod_lti_get_ltis_by_courses() {
+        global $DB;
+
+        // Create additional course.
+        $course2 = self::getDataGenerator()->create_course();
+
+        // Second lti.
+        $record = new stdClass();
+        $record->course = $course2->id;
+        $lti2 = self::getDataGenerator()->create_module('lti', $record);
+
+        // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
+        $enrol = enrol_get_plugin('manual');
+        $enrolinstances = enrol_get_instances($course2->id, true);
+        foreach ($enrolinstances as $courseenrolinstance) {
+            if ($courseenrolinstance->enrol == "manual") {
+                $instance2 = $courseenrolinstance;
+                break;
+            }
+        }
+        $enrol->enrol_user($instance2, $this->student->id, $this->studentrole->id);
+
+        self::setUser($this->student);
+
+        $returndescription = mod_lti_external::get_ltis_by_courses_returns();
+
+        // Create what we expect to be returned when querying the two courses.
+        // First for the student user.
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'launchcontainer',
+                                'showtitlelaunch', 'showdescriptionlaunch', 'icon', 'secureicon');
+
+        // Add expected coursemodule and data.
+        $lti1 = $this->lti;
+        $lti1->coursemodule = $lti1->cmid;
+        $lti1->introformat = 1;
+        $lti1->section = 0;
+        $lti1->visible = true;
+        $lti1->groupmode = 0;
+        $lti1->groupingid = 0;
+
+        $lti2->coursemodule = $lti2->cmid;
+        $lti2->introformat = 1;
+        $lti2->section = 0;
+        $lti2->visible = true;
+        $lti2->groupmode = 0;
+        $lti2->groupingid = 0;
+
+        foreach ($expectedfields as $field) {
+                $expected1[$field] = $lti1->{$field};
+                $expected2[$field] = $lti2->{$field};
+        }
+
+        $expectedltis = array($expected2, $expected1);
+
+        // Call the external function passing course ids.
+        $result = mod_lti_external::get_ltis_by_courses(array($course2->id, $this->course->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        $this->assertEquals($expectedltis, $result['ltis']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Call the external function without passing course id.
+        $result = mod_lti_external::get_ltis_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedltis, $result['ltis']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Unenrol user from second course and alter expected ltis.
+        $enrol->unenrol_user($instance2, $this->student->id);
+        array_shift($expectedltis);
+
+        // Call the external function without passing course id.
+        $result = mod_lti_external::get_ltis_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedltis, $result['ltis']);
+
+        // Call for the second course we unenrolled the user from, expected warning.
+        $result = mod_lti_external::get_ltis_by_courses(array($course2->id));
+        $this->assertCount(1, $result['warnings']);
+        $this->assertEquals('1', $result['warnings'][0]['warningcode']);
+        $this->assertEquals($course2->id, $result['warnings'][0]['itemid']);
+
+        // Now, try as a teacher for getting all the additional fields.
+        self::setUser($this->teacher);
+
+        $additionalfields = array('timecreated', 'timemodified', 'typeid', 'toolurl', 'securetoolurl',
+                        'instructorchoicesendname', 'instructorchoicesendemailaddr', 'instructorchoiceallowroster',
+                        'instructorchoiceallowsetting', 'instructorcustomparameters', 'instructorchoiceacceptgrades', 'grade',
+                        'resourcekey', 'password', 'debuglaunch', 'servicesalt', 'visible', 'groupmode', 'groupingid');
+
+        foreach ($additionalfields as $field) {
+                $expectedltis[0][$field] = $lti1->{$field};
+        }
+
+        $result = mod_lti_external::get_ltis_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedltis, $result['ltis']);
+
+        // Admin also should get all the information.
+        self::setAdminUser();
+
+        $result = mod_lti_external::get_ltis_by_courses(array($this->course->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedltis, $result['ltis']);
+
+        // Now, prohibit capabilities.
+        $this->setUser($this->student);
+        $contextcourse1 = context_course::instance($this->course->id);
+        // Prohibit capability = mod:lti:view on Course1 for students.
+        assign_capability('mod/lti:view', CAP_PROHIBIT, $this->studentrole->id, $contextcourse1->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $ltis = mod_lti_external::get_ltis_by_courses(array($this->course->id));
+        $ltis = external_api::clean_returnvalue(mod_lti_external::get_ltis_by_courses_returns(), $ltis);
+        $this->assertFalse(isset($ltis['ltis'][0]['intro']));
+    }
+
 }

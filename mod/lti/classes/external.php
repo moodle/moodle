@@ -122,4 +122,153 @@ class mod_lti_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_ltis_by_courses.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_ltis_by_courses_parameters() {
+        return new external_function_parameters (
+            array(
+                'courseids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'course id'), 'Array of course ids', VALUE_DEFAULT, array()
+                ),
+            )
+        );
+    }
+
+    /**
+     * Returns a list of external tools in a provided list of courses,
+     * if no list is provided all external tools that the user can view will be returned.
+     *
+     * @param array $courseids the course ids
+     * @return array the lti details
+     * @since Moodle 3.0
+     */
+    public static function get_ltis_by_courses($courseids = array()) {
+        global $CFG;
+
+        $returnedltis = array();
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_ltis_by_courses_parameters(), array('courseids' => $courseids));
+
+        if (empty($params['courseids'])) {
+            $params['courseids'] = array_keys(enrol_get_my_courses());
+        }
+
+        // Ensure there are courseids to loop through.
+        if (!empty($params['courseids'])) {
+
+            list($courses, $warnings) = external_util::validate_courses($params['courseids']);
+
+            // Get the ltis in this course, this function checks users visibility permissions.
+            // We can avoid then additional validate_context calls.
+            $ltis = get_all_instances_in_courses("lti", $courses);
+
+            foreach ($ltis as $lti) {
+
+                $context = context_module::instance($lti->coursemodule);
+
+                // Entry to return.
+                $module = array();
+
+                // First, we return information that any user can see in (or can deduce from) the web interface.
+                $module['id'] = $lti->id;
+                $module['coursemodule'] = $lti->coursemodule;
+                $module['course'] = $lti->course;
+                $module['name']  = external_format_string($lti->name, $context->id);
+
+                $viewablefields = [];
+                if (has_capability('mod/lti:view', $context)) {
+                    list($module['intro'], $module['introformat']) =
+                        external_format_text($lti->intro, $lti->introformat, $context->id, 'mod_lti', 'intro', $lti->id);
+
+                    $viewablefields = array('launchcontainer', 'showtitlelaunch', 'showdescriptionlaunch', 'icon', 'secureicon');
+                }
+
+                // Check additional permissions for returning optional private settings.
+                if (has_capability('moodle/course:manageactivities', $context)) {
+
+                    $additionalfields = array('timecreated', 'timemodified', 'typeid', 'toolurl', 'securetoolurl',
+                        'instructorchoicesendname', 'instructorchoicesendemailaddr', 'instructorchoiceallowroster',
+                        'instructorchoiceallowsetting', 'instructorcustomparameters', 'instructorchoiceacceptgrades', 'grade',
+                        'resourcekey', 'password', 'debuglaunch', 'servicesalt', 'visible', 'groupmode', 'groupingid');
+                    $viewablefields = array_merge($viewablefields, $additionalfields);
+
+                }
+
+                foreach ($viewablefields as $field) {
+                    $module[$field] = $lti->{$field};
+                }
+
+                $returnedltis[] = $module;
+            }
+        }
+
+        $result = array();
+        $result['ltis'] = $returnedltis;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_ltis_by_courses return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.0
+     */
+    public static function get_ltis_by_courses_returns() {
+
+        return new external_single_structure(
+            array(
+                'ltis' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'External tool id'),
+                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
+                            'course' => new external_value(PARAM_INT, 'Course id'),
+                            'name' => new external_value(PARAM_RAW, 'LTI name'),
+                            'intro' => new external_value(PARAM_RAW, 'The LTI intro', VALUE_OPTIONAL),
+                            'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
+                            'timecreated' => new external_value(PARAM_INT, 'Time of creation', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
+                            'typeid' => new external_value(PARAM_INT, 'Type id', VALUE_OPTIONAL),
+                            'toolurl' => new external_value(PARAM_URL, 'Tool url', VALUE_OPTIONAL),
+                            'securetoolurl' => new external_value(PARAM_RAW, 'Secure tool url', VALUE_OPTIONAL),
+                            'instructorchoicesendname' => new external_value(PARAM_TEXT, 'Instructor choice send name',
+                                                                               VALUE_OPTIONAL),
+                            'instructorchoicesendemailaddr' => new external_value(PARAM_INT, 'instructor choice send mail address',
+                                                                                    VALUE_OPTIONAL),
+                            'instructorchoiceallowroster' => new external_value(PARAM_INT, 'Instructor choice allow roster',
+                                                                                VALUE_OPTIONAL),
+                            'instructorchoiceallowsetting' => new external_value(PARAM_INT, 'Instructor choice allow setting',
+                                                                                 VALUE_OPTIONAL),
+                            'instructorcustomparameters' => new external_value(PARAM_RAW, 'instructor custom parameters',
+                                                                                VALUE_OPTIONAL),
+                            'instructorchoiceacceptgrades' => new external_value(PARAM_INT, 'instructor choice accept grades',
+                                                                                    VALUE_OPTIONAL),
+                            'grade' => new external_value(PARAM_INT, 'Enable grades', VALUE_OPTIONAL),
+                            'launchcontainer' => new external_value(PARAM_INT, 'Launch container mode', VALUE_OPTIONAL),
+                            'resourcekey' => new external_value(PARAM_RAW, 'Resource key', VALUE_OPTIONAL),
+                            'password' => new external_value(PARAM_RAW, 'Shared secret', VALUE_OPTIONAL),
+                            'debuglaunch' => new external_value(PARAM_INT, 'Debug launch', VALUE_OPTIONAL),
+                            'showtitlelaunch' => new external_value(PARAM_INT, 'Show title launch', VALUE_OPTIONAL),
+                            'showdescriptionlaunch' => new external_value(PARAM_INT, 'Show description launch', VALUE_OPTIONAL),
+                            'servicesalt' => new external_value(PARAM_RAW, 'Service salt', VALUE_OPTIONAL),
+                            'icon' => new external_value(PARAM_URL, 'Alternative icon URL', VALUE_OPTIONAL),
+                            'secureicon' => new external_value(PARAM_URL, 'Secure icon URL', VALUE_OPTIONAL),
+                            'section' => new external_value(PARAM_INT, 'course section id', VALUE_OPTIONAL),
+                            'visible' => new external_value(PARAM_INT, 'visible', VALUE_OPTIONAL),
+                            'groupmode' => new external_value(PARAM_INT, 'group mode', VALUE_OPTIONAL),
+                            'groupingid' => new external_value(PARAM_INT, 'group id', VALUE_OPTIONAL),
+                        ), 'Tool'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
