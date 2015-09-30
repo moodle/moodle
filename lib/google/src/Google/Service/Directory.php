@@ -115,6 +115,7 @@ class Google_Service_Directory extends Google_Service
   public function __construct(Google_Client $client)
   {
     parent::__construct($client);
+    $this->rootUrl = 'https://www.googleapis.com/';
     $this->servicePath = 'admin/directory/v1/';
     $this->version = 'directory_v1';
     $this->serviceName = 'admin';
@@ -1936,7 +1937,7 @@ class Google_Service_Directory_Orgunits_Resource extends Google_Service_Resource
    * Remove Organization Unit (orgunits.delete)
    *
    * @param string $customerId Immutable id of the Google Apps account
-   * @param string $orgUnitPath Full path of the organization unit
+   * @param string $orgUnitPath Full path of the organization unit or its Id
    * @param array $optParams Optional parameters.
    */
   public function delete($customerId, $orgUnitPath, $optParams = array())
@@ -1950,7 +1951,7 @@ class Google_Service_Directory_Orgunits_Resource extends Google_Service_Resource
    * Retrieve Organization Unit (orgunits.get)
    *
    * @param string $customerId Immutable id of the Google Apps account
-   * @param string $orgUnitPath Full path of the organization unit
+   * @param string $orgUnitPath Full path of the organization unit or its Id
    * @param array $optParams Optional parameters.
    * @return Google_Service_Directory_OrgUnit
    */
@@ -1984,7 +1985,8 @@ class Google_Service_Directory_Orgunits_Resource extends Google_Service_Resource
    *
    * @opt_param string type Whether to return all sub-organizations or just
    * immediate children
-   * @opt_param string orgUnitPath the URL-encoded organization unit
+   * @opt_param string orgUnitPath the URL-encoded organization unit's path or its
+   * Id
    * @return Google_Service_Directory_OrgUnits
    */
   public function listOrgunits($customerId, $optParams = array())
@@ -1999,7 +2001,7 @@ class Google_Service_Directory_Orgunits_Resource extends Google_Service_Resource
    * (orgunits.patch)
    *
    * @param string $customerId Immutable id of the Google Apps account
-   * @param string $orgUnitPath Full path of the organization unit
+   * @param string $orgUnitPath Full path of the organization unit or its Id
    * @param Google_OrgUnit $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Directory_OrgUnit
@@ -2015,7 +2017,7 @@ class Google_Service_Directory_Orgunits_Resource extends Google_Service_Resource
    * Update Organization Unit (orgunits.update)
    *
    * @param string $customerId Immutable id of the Google Apps account
-   * @param string $orgUnitPath Full path of the organization unit
+   * @param string $orgUnitPath Full path of the organization unit or its Id
    * @param Google_OrgUnit $postBody
    * @param array $optParams Optional parameters.
    * @return Google_Service_Directory_OrgUnit
@@ -2902,6 +2904,7 @@ class Google_Service_Directory_ChromeOsDevice extends Google_Collection
   );
   protected $activeTimeRangesType = 'Google_Service_Directory_ChromeOsDeviceActiveTimeRanges';
   protected $activeTimeRangesDataType = 'array';
+  public $annotatedAssetId;
   public $annotatedLocation;
   public $annotatedUser;
   public $bootMode;
@@ -2935,6 +2938,14 @@ class Google_Service_Directory_ChromeOsDevice extends Google_Collection
   public function getActiveTimeRanges()
   {
     return $this->activeTimeRanges;
+  }
+  public function setAnnotatedAssetId($annotatedAssetId)
+  {
+    $this->annotatedAssetId = $annotatedAssetId;
+  }
+  public function getAnnotatedAssetId()
+  {
+    return $this->annotatedAssetId;
   }
   public function setAnnotatedLocation($annotatedLocation)
   {
@@ -3978,7 +3989,9 @@ class Google_Service_Directory_OrgUnit extends Google_Model
   public $etag;
   public $kind;
   public $name;
+  public $orgUnitId;
   public $orgUnitPath;
+  public $parentOrgUnitId;
   public $parentOrgUnitPath;
 
 
@@ -4022,6 +4035,14 @@ class Google_Service_Directory_OrgUnit extends Google_Model
   {
     return $this->name;
   }
+  public function setOrgUnitId($orgUnitId)
+  {
+    $this->orgUnitId = $orgUnitId;
+  }
+  public function getOrgUnitId()
+  {
+    return $this->orgUnitId;
+  }
   public function setOrgUnitPath($orgUnitPath)
   {
     $this->orgUnitPath = $orgUnitPath;
@@ -4029,6 +4050,14 @@ class Google_Service_Directory_OrgUnit extends Google_Model
   public function getOrgUnitPath()
   {
     return $this->orgUnitPath;
+  }
+  public function setParentOrgUnitId($parentOrgUnitId)
+  {
+    $this->parentOrgUnitId = $parentOrgUnitId;
+  }
+  public function getParentOrgUnitId()
+  {
+    return $this->parentOrgUnitId;
   }
   public function setParentOrgUnitPath($parentOrgUnitPath)
   {
@@ -4432,6 +4461,7 @@ class Google_Service_Directory_User extends Google_Collection
   protected $nameType = 'Google_Service_Directory_UserName';
   protected $nameDataType = '';
   public $nonEditableAliases;
+  public $notes;
   public $orgUnitPath;
   public $organizations;
   public $password;
@@ -4440,7 +4470,9 @@ class Google_Service_Directory_User extends Google_Collection
   public $relations;
   public $suspended;
   public $suspensionReason;
+  public $thumbnailPhotoEtag;
   public $thumbnailPhotoUrl;
+  public $websites;
 
 
   public function setAddresses($addresses)
@@ -4627,6 +4659,14 @@ class Google_Service_Directory_User extends Google_Collection
   {
     return $this->nonEditableAliases;
   }
+  public function setNotes($notes)
+  {
+    $this->notes = $notes;
+  }
+  public function getNotes()
+  {
+    return $this->notes;
+  }
   public function setOrgUnitPath($orgUnitPath)
   {
     $this->orgUnitPath = $orgUnitPath;
@@ -4691,6 +4731,14 @@ class Google_Service_Directory_User extends Google_Collection
   {
     return $this->suspensionReason;
   }
+  public function setThumbnailPhotoEtag($thumbnailPhotoEtag)
+  {
+    $this->thumbnailPhotoEtag = $thumbnailPhotoEtag;
+  }
+  public function getThumbnailPhotoEtag()
+  {
+    return $this->thumbnailPhotoEtag;
+  }
   public function setThumbnailPhotoUrl($thumbnailPhotoUrl)
   {
     $this->thumbnailPhotoUrl = $thumbnailPhotoUrl;
@@ -4698,6 +4746,40 @@ class Google_Service_Directory_User extends Google_Collection
   public function getThumbnailPhotoUrl()
   {
     return $this->thumbnailPhotoUrl;
+  }
+  public function setWebsites($websites)
+  {
+    $this->websites = $websites;
+  }
+  public function getWebsites()
+  {
+    return $this->websites;
+  }
+}
+
+class Google_Service_Directory_UserAbout extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $contentType;
+  public $value;
+
+
+  public function setContentType($contentType)
+  {
+    $this->contentType = $contentType;
+  }
+  public function getContentType()
+  {
+    return $this->contentType;
+  }
+  public function setValue($value)
+  {
+    $this->value = $value;
+  }
+  public function getValue()
+  {
+    return $this->value;
   }
 }
 
@@ -5307,6 +5389,50 @@ class Google_Service_Directory_UserUndelete extends Google_Model
   public function getOrgUnitPath()
   {
     return $this->orgUnitPath;
+  }
+}
+
+class Google_Service_Directory_UserWebsite extends Google_Model
+{
+  protected $internal_gapi_mappings = array(
+  );
+  public $customType;
+  public $primary;
+  public $type;
+  public $value;
+
+
+  public function setCustomType($customType)
+  {
+    $this->customType = $customType;
+  }
+  public function getCustomType()
+  {
+    return $this->customType;
+  }
+  public function setPrimary($primary)
+  {
+    $this->primary = $primary;
+  }
+  public function getPrimary()
+  {
+    return $this->primary;
+  }
+  public function setType($type)
+  {
+    $this->type = $type;
+  }
+  public function getType()
+  {
+    return $this->type;
+  }
+  public function setValue($value)
+  {
+    $this->value = $value;
+  }
+  public function getValue()
+  {
+    return $this->value;
   }
 }
 
