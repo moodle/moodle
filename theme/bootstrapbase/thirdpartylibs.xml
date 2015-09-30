@@ -11,7 +11,7 @@
     <location>javascript/html5shiv.js</location>
     <name>Html5Shiv</name>
     <license>Apache</license>
-    <version>3.6.2</version>
+    <version>3.7.3</version>
     <licenseversion>2.0</licenseversion>
   </library>
 </libraries>
