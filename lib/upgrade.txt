@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 3.0 ===
 
+* Less.php upgraded to 1.7.0.9
 * External functions x_is_allowed_from_ajax() methods have been deprecated. Define 'ajax' => true in db/services.php instead.
 * External functions can be called without a session if they define 'loginrequired' => true in db/services.php.
 * All plugins are required to declare their frankenstyle component name via
