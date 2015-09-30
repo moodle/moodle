@@ -179,6 +179,44 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('moodle.org/this/is/moodle?foo=bar'));
     }
 
+    /*
+     * Verify that lti_build_request does handle resource_link_id as expected
+     */
+    public function test_lti_buid_request_resource_link_id() {
+        $this->resetAfterTest();
+
+        self::setUser($this->getDataGenerator()->create_user());
+        $course   = $this->getDataGenerator()->create_course();
+        $instance = $this->getDataGenerator()->create_module('lti', array(
+            'intro'       => "<p>This</p>\nhas\r\n<p>some</p>\nnew\n\rlines",
+            'introformat' => FORMAT_HTML,
+            'course'      => $course->id,
+        ));
+
+        $typeconfig = array(
+            'acceptgrades'     => 1,
+            'forcessl'         => 0,
+            'sendname'         => 2,
+            'sendemailaddr'    => 2,
+            'customparameters' => '',
+        );
+
+        // Normal call, we expect $instance->id to be used as resource_link_id.
+        $params = lti_build_request($instance, $typeconfig, $course, null);
+        $this->assertSame($instance->id, $params['resource_link_id']);
+
+        // If there is a resource_link_id set, it gets precedence.
+        $instance->resource_link_id = $instance->id + 99;
+        $params = lti_build_request($instance, $typeconfig, $course, null);
+        $this->assertSame($instance->resource_link_id, $params['resource_link_id']);
+
+        // With none set, resource_link_id is not set either.
+        unset($instance->id);
+        unset($instance->resource_link_id);
+        $params = lti_build_request($instance, $typeconfig, $course, null);
+        $this->assertArrayNotHasKey('resource_link_id', $params);
+    }
+
     /**
      * Test lti_build_request's resource_link_description and ensure
      * that the newlines in the description are correct.
