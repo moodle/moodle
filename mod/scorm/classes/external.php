@@ -679,6 +679,8 @@ class mod_scorm_external extends external_api {
                         }
                     }
 
+                    $module['protectpackagedownloads'] = get_config('scorm', 'protectpackagedownloads');
+
                     $viewablefields = array('version', 'maxgrade', 'grademethod', 'whatgrade', 'maxattempt', 'forcecompleted',
                                             'forcenewattempt', 'lastattemptlock', 'displayattemptstatus', 'displaycoursestructure',
                                             'sha1hash', 'md5hash', 'revision', 'launch', 'skipview', 'hidebrowse', 'hidetoc', 'nav',
@@ -766,6 +768,8 @@ class mod_scorm_external extends external_api {
                                                                         VALUE_OPTIONAL),
                             'scormtype' => new external_value(PARAM_ALPHA, 'SCORM type', VALUE_OPTIONAL),
                             'reference' => new external_value(PARAM_NOTAGS, 'Reference to the package', VALUE_OPTIONAL),
+                            'protectpackagedownloads' => new external_value(PARAM_BOOL, 'Protect package downloads?',
+                                                                            VALUE_OPTIONAL),
                             'updatefreq' => new external_value(PARAM_INT, 'Auto-update frequency for remote packages',
                                                                 VALUE_OPTIONAL),
                             'options' => new external_value(PARAM_RAW, 'Additional options', VALUE_OPTIONAL),

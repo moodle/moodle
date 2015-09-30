@@ -947,7 +947,9 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
         // TODO: add any other access restrictions here if needed!
 
     } else if ($filearea === 'package') {
-        if (!has_capability('moodle/course:manageactivities', $context)) {
+        // Check if the global setting for disabling package downloads is enabled.
+        $protectpackagedownloads = get_config('scorm', 'protectpackagedownloads');
+        if ($protectpackagedownloads and !has_capability('moodle/course:manageactivities', $context)) {
             return false;
         }
         $revision = (int)array_shift($args); // Prevents caching problems - ignored here.
