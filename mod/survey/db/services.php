@@ -44,4 +44,13 @@ $functions = array(
         'type'          => 'write',
         'capabilities'  => 'mod/survey:participate'
     ),
+
+    'mod_survey_get_questions' => array(
+        'classname'     => 'mod_survey_external',
+        'methodname'    => 'get_questions',
+        'description'   => 'Get the complete list of questions for the survey, including subquestions.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/survey:participate'
+    ),
+
 );

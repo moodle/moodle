@@ -125,8 +125,8 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         $survey2->intro = nl2br(get_string($tempo, "survey"));
 
         foreach ($expectedfields as $field) {
-                $expected1[$field] = $survey1->{$field};
-                $expected2[$field] = $survey2->{$field};
+            $expected1[$field] = $survey1->{$field};
+            $expected2[$field] = $survey2->{$field};
         }
 
         $expectedsurveys = array($expected2, $expected1);
@@ -165,7 +165,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         $additionalfields = array('timecreated', 'timemodified', 'section', 'visible', 'groupmode', 'groupingid');
 
         foreach ($additionalfields as $field) {
-                $expectedsurveys[0][$field] = $survey1->{$field};
+            $expectedsurveys[0][$field] = $survey1->{$field};
         }
 
         $result = mod_survey_external::get_surveys_by_courses();
@@ -249,6 +249,60 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
+    }
+
+    /**
+     * Test get_questions
+     */
+    public function test_get_questions() {
+        global $DB;
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Build our expectation array.
+        $expectedquestions = array();
+        $questions = survey_get_questions($this->survey);
+        foreach ($questions as $q) {
+            if ($q->type >= 0) {
+                $expectedquestions[$q->id] = $q;
+                if ($q->multi) {
+                    $subquestions = survey_get_subquestions($q);
+                    foreach ($subquestions as $sq) {
+                        $expectedquestions[$sq->id] = $sq;
+                    }
+                }
+            }
+        }
+
+        $result = mod_survey_external::get_questions($this->survey->id);
+        $result = external_api::clean_returnvalue(mod_survey_external::get_questions_returns(), $result);
+
+        // Check we receive the same questions.
+        $this->assertCount(0, $result['warnings']);
+        foreach ($result['questions'] as $q) {
+            $this->assertEquals(get_string($expectedquestions[$q['id']]->text, 'survey'), $q['text']);
+            $this->assertEquals(get_string($expectedquestions[$q['id']]->shorttext, 'survey'), $q['shorttext']);
+            $this->assertEquals($expectedquestions[$q['id']]->multi, $q['multi']);
+            $this->assertEquals($expectedquestions[$q['id']]->type, $q['type']);
+            // Parent questions must have parent eq to 0.
+            if ($q['multi']) {
+                $this->assertEquals(0, $q['parent']);
+                $this->assertEquals(get_string($expectedquestions[$q['id']]->options, 'survey'), $q['options']);
+            }
+        }
+
+        // Test user with no capabilities.
+        // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
+        assign_capability('mod/survey:participate', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        try {
+            mod_survey_external::get_questions($this->survey->id);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
     }
 
 }

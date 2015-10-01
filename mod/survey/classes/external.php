@@ -26,7 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once("$CFG->libdir/externallib.php");
+require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->dirroot . '/mod/survey/lib.php');
 
 /**
  * Survey external functions
@@ -224,6 +225,98 @@ class mod_survey_external extends external_api {
         return new external_single_structure(
             array(
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_questions_parameters() {
+        return new external_function_parameters(
+            array(
+                'surveyid' => new external_value(PARAM_INT, 'survey instance id')
+            )
+        );
+    }
+
+    /**
+     * Get the complete list of questions for the survey, including subquestions.
+     *
+     * @param int $surveyid the survey instance id
+     * @return array of warnings and the question list
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function get_questions($surveyid) {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(self::get_questions_parameters(),
+                                            array(
+                                                'surveyid' => $surveyid
+                                            ));
+        $warnings = array();
+
+        // Request and permission validation.
+        $survey = $DB->get_record('survey', array('id' => $params['surveyid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($survey, 'survey');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+        require_capability('mod/survey:participate', $context);
+
+        $mainquestions = survey_get_questions($survey);
+
+        foreach ($mainquestions as $question) {
+            if ($question->type >= 0) {
+                // Parent is used in subquestions.
+                $question->parent = 0;
+                $questions[] = survey_translate_question($question);
+
+                // Check if the question has subquestions.
+                if ($question->multi) {
+                    $subquestions = survey_get_subquestions($question);
+                    foreach ($subquestions as $sq) {
+                        $sq->parent = $question->id;
+                        $questions[] = survey_translate_question($sq);
+                    }
+                }
+            }
+        }
+
+        $result = array();
+        $result['questions'] = $questions;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_questions_returns() {
+        return new external_single_structure(
+            array(
+                'questions' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'Question id'),
+                            'text' => new external_value(PARAM_RAW, 'Question text'),
+                            'shorttext' => new external_value(PARAM_RAW, 'Question short text'),
+                            'multi' => new external_value(PARAM_RAW, 'Subquestions ids'),
+                            'intro' => new external_value(PARAM_RAW, 'The question intro'),
+                            'type' => new external_value(PARAM_INT, 'Question type'),
+                            'options' => new external_value(PARAM_RAW, 'Question options'),
+                            'parent' => new external_value(PARAM_INT, 'Parent question (for subquestions)'),
+                        ), 'Questions'
+                    )
+                ),
                 'warnings' => new external_warnings()
             )
         );

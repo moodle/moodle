@@ -119,10 +119,9 @@ if ($surveyalreadydone) {
         echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox', 'intro');
         echo $OUTPUT->spacer(array('height' => 30, 'width' => 1), true);  // Should be done with CSS instead.
 
-        $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
-        $questionorder = explode(",", $survey->questions);
-        foreach ($questionorder as $key => $val) {
-            $question = $questions[$val];
+        $questions = survey_get_questions($survey);
+        foreach ($questions as $question) {
+
             if ($question->type == 0 or $question->type == 1) {
                 if ($answer = survey_get_user_answer($survey->id, $question->id, $USER->id)) {
                     $table = new html_table();
@@ -148,39 +147,18 @@ echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
 echo $OUTPUT->box(format_module_intro('survey', $survey, $cm->id), 'generalbox boxaligncenter bowidthnormal', 'intro');
 echo '<div>'. get_string('allquestionrequireanswer', 'survey'). '</div>';
 
-// Get all the major questions and their proper order.
-if (! $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions))) {
-    print_error('cannotfindquestion', 'survey');
-}
-$questionorder = explode( ",", $survey->questions);
-
-// Cycle through all the questions in order and print them.
+// Get all the major questions in order.
+$questions = survey_get_questions($survey);
 
 global $qnum;  // TODO: ugly globals hack for survey_print_*().
 global $checklist; // TODO: ugly globals hack for survey_print_*().
 $qnum = 0;
 $checklist = array();
-foreach ($questionorder as $key => $val) {
-    $question = $questions["$val"];
-    $question->id = $val;
+foreach ($questions as $question) {
 
     if ($question->type >= 0) {
 
-        if ($question->text) {
-            $question->text = get_string($question->text, "survey");
-        }
-
-        if ($question->shorttext) {
-            $question->shorttext = get_string($question->shorttext, "survey");
-        }
-
-        if ($question->intro) {
-            $question->intro = get_string($question->intro, "survey");
-        }
-
-        if ($question->options) {
-            $question->options = get_string($question->options, "survey");
-        }
+        $question = survey_translate_question($question);
 
         if ($question->multi) {
             survey_print_multi($question);

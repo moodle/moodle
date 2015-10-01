@@ -89,4 +89,26 @@ class mod_survey_lib_testcase extends advanced_testcase {
         $this->assertEquals(1, $completiondata->completionstate);
 
     }
+
+    /**
+     * Test survey_order_questions
+     */
+    public function test_survey_order_questions() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $survey = $this->getDataGenerator()->create_module('survey', array('course' => $course->id));
+
+        $orderedquestionids = explode(',', $survey->questions);
+        $surveyquestions = $DB->get_records_list("survey_questions", "id", $orderedquestionids);
+
+        $questionsordered = survey_order_questions($surveyquestions, $orderedquestionids);
+
+        // Check one by one the correct order.
+        for ($i = 0; $i < count($orderedquestionids); $i++) {
+            $this->assertEquals($orderedquestionids[$i], $questionsordered[$i]->id);
+        }
+    }
+
 }

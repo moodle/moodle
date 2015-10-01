@@ -535,7 +535,7 @@ function survey_print_multi($question) {
 
     echo "<tr><th scope=\"col\" colspan=\"7\">$question->intro</th></tr>\n";
 
-    $subquestions = $DB->get_records_list("survey_questions", "id", explode(',', $question->multi));
+    $subquestions = survey_get_subquestions($question);
 
     foreach ($subquestions as $q) {
         $qnum++;
@@ -868,4 +868,83 @@ function survey_view($survey, $course, $cm, $context, $viewed) {
     // Completion.
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
+}
+
+/**
+ * Helper function for ordering a set of questions by the given ids.
+ *
+ * @param  array $questions     array of questions objects
+ * @param  array $questionorder array of questions ids indicating the correct order
+ * @return array                list of questions ordered
+ * @since Moodle 3.0
+ */
+function survey_order_questions($questions, $questionorder) {
+
+    $finalquestions = array();
+    foreach ($questionorder as $qid) {
+        $finalquestions[] = $questions[$qid];
+    }
+    return $finalquestions;
+}
+
+/**
+ * Translate the question texts and options.
+ *
+ * @param  stdClass $question question object
+ * @return stdClass question object with all the text fields translated
+ * @since Moodle 3.0
+ */
+function survey_translate_question($question) {
+
+    if ($question->text) {
+        $question->text = get_string($question->text, "survey");
+    }
+
+    if ($question->shorttext) {
+        $question->shorttext = get_string($question->shorttext, "survey");
+    }
+
+    if ($question->intro) {
+        $question->intro = get_string($question->intro, "survey");
+    }
+
+    if ($question->options) {
+        $question->options = get_string($question->options, "survey");
+    }
+    return $question;
+}
+
+/**
+ * Returns the questions for a survey (ordered).
+ *
+ * @param  stdClass $survey survey object
+ * @return array list of questions ordered
+ * @since Moodle 3.0
+ * @throws  moodle_exception
+ */
+function survey_get_questions($survey) {
+    global $DB;
+
+    $questionids = explode(',', $survey->questions);
+    if (! $questions = $DB->get_records_list("survey_questions", "id", $questionids)) {
+        throw new moodle_exception('cannotfindquestion', 'survey');
+    }
+
+    return survey_order_questions($questions, $questionids);
+}
+
+/**
+ * Returns subquestions for a given question (ordered).
+ *
+ * @param  stdClass $question questin object
+ * @return array list of subquestions ordered
+ * @since Moodle 3.0
+ */
+function survey_get_subquestions($question) {
+    global $DB;
+
+    $questionids = explode(',', $question->multi);
+    $questions = $DB->get_records_list("survey_questions", "id", $questionids);
+
+    return survey_order_questions($questions, $questionids);
 }
