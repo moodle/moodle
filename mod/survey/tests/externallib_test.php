@@ -305,4 +305,81 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         }
     }
 
+    /**
+     * Test submit_answers
+     */
+    public function test_submit_answers() {
+        global $DB;
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Build our questions and responses array.
+        $realquestions = array();
+        $questions = survey_get_questions($this->survey);
+        $i = 5;
+        foreach ($questions as $q) {
+            if ($q->type >= 0) {
+                if ($q->multi) {
+                    $subquestions = survey_get_subquestions($q);
+                    foreach ($subquestions as $sq) {
+                        $realquestions[] = array(
+                            'key' => 'q' . $sq->id,
+                            'value' => $i % 5 + 1   // Values between 1 and 5.
+                        );
+                        $i++;
+                    }
+                } else {
+                    $realquestions[] = array(
+                        'key' => 'q' . $q->id,
+                        'value' => $i % 5 + 1
+                    );
+                    $i++;
+                }
+            }
+        }
+
+        $result = mod_survey_external::submit_answers($this->survey->id, $realquestions);
+        $result = external_api::clean_returnvalue(mod_survey_external::submit_answers_returns(), $result);
+
+        $this->assertTrue($result['status']);
+        $this->assertCount(0, $result['warnings']);
+
+        $dbanswers = $DB->get_records_menu('survey_answers', array('survey' => $this->survey->id), '', 'question, answer1');
+        foreach ($realquestions as $q) {
+            $id = str_replace('q', '', $q['key']);
+            $this->assertEquals($q['value'], $dbanswers[$id]);
+        }
+
+        // Submit again, we expect an error here.
+        try {
+            mod_survey_external::submit_answers($this->survey->id, $realquestions);
+            $this->fail('Exception expected due to answers already submitted.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('alreadysubmitted', $e->errorcode);
+        }
+
+        // Test user with no capabilities.
+        // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
+        assign_capability('mod/survey:participate', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        try {
+            mod_survey_external::submit_answers($this->survey->id, $realquestions);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Test not-enrolled user.
+        $usernotenrolled = self::getDataGenerator()->create_user();
+        $this->setUser($usernotenrolled);
+        try {
+            mod_survey_external::submit_answers($this->survey->id, $realquestions);
+            $this->fail('Exception expected due to not enrolled user.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+    }
+
 }

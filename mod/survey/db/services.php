@@ -53,4 +53,12 @@ $functions = array(
         'capabilities'  => 'mod/survey:participate'
     ),
 
+    'mod_survey_submit_answers' => array(
+        'classname'     => 'mod_survey_external',
+        'methodname'    => 'submit_answers',
+        'description'   => 'Submit the answers for a given survey.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/survey:participate'
+    ),
+
 );

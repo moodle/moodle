@@ -948,3 +948,71 @@ function survey_get_subquestions($question) {
 
     return survey_order_questions($questions, $questionids);
 }
+
+/**
+ * Save the answer for the given survey
+ *
+ * @param  stdClass $survey   a survey object
+ * @param  array $answersrawdata the answers to be saved
+ * @param  stdClass $course   a course object (required for trigger the submitted event)
+ * @param  stdClass $context  a context object (required for trigger the submitted event)
+ * @since Moodle 3.0
+ */
+function survey_save_answers($survey, $answersrawdata, $course, $context) {
+    global $DB, $USER;
+
+    $answers = array();
+
+    // Sort through the data and arrange it.
+    // This is necessary because some of the questions may have two answers, eg Question 1 -> 1 and P1.
+    foreach ($answersrawdata as $key => $val) {
+        if ($key <> "userid" && $key <> "id") {
+            if (substr($key, 0, 1) == "q") {
+                $key = clean_param(substr($key, 1), PARAM_ALPHANUM);   // Keep everything but the 'q', number or P number.
+            }
+            if (substr($key, 0, 1) == "P") {
+                $realkey = (int) substr($key, 1);
+                $answers[$realkey][1] = $val;
+            } else {
+                $answers[$key][0] = $val;
+            }
+        }
+    }
+
+    // Now store the data.
+    $timenow = time();
+    $answerstoinsert = array();
+    foreach ($answers as $key => $val) {
+        if ($key != 'sesskey') {
+            $newdata = new stdClass();
+            $newdata->time = $timenow;
+            $newdata->userid = $USER->id;
+            $newdata->survey = $survey->id;
+            $newdata->question = $key;
+            if (!empty($val[0])) {
+                $newdata->answer1 = $val[0];
+            } else {
+                $newdata->answer1 = "";
+            }
+            if (!empty($val[1])) {
+                $newdata->answer2 = $val[1];
+            } else {
+                $newdata->answer2 = "";
+            }
+
+            $answerstoinsert[] = $newdata;
+        }
+    }
+
+    if (!empty($answerstoinsert)) {
+        $DB->insert_records("survey_answers", $answerstoinsert);
+    }
+
+    $params = array(
+        'context' => $context,
+        'courseid' => $course->id,
+        'other' => array('surveyid' => $survey->id)
+    );
+    $event = \mod_survey\event\response_submitted::create($params);
+    $event->trigger();
+}

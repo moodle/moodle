@@ -322,4 +322,87 @@ class mod_survey_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for submit_answers.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function submit_answers_parameters() {
+        return new external_function_parameters(
+            array(
+                'surveyid' => new external_value(PARAM_INT, 'Survey id'),
+                'answers' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'key' => new external_value(PARAM_RAW, 'Answer key'),
+                            'value' => new external_value(PARAM_RAW, 'Answer value')
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * Submit the answers for a given survey.
+     *
+     * @param int $surveyid the survey instance id
+     * @param array $answers the survey answers
+     * @return array of warnings and status result
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function submit_answers($surveyid, $answers) {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(self::submit_answers_parameters(),
+                                            array(
+                                                'surveyid' => $surveyid,
+                                                'answers' => $answers
+                                            ));
+        $warnings = array();
+
+        // Request and permission validation.
+        $survey = $DB->get_record('survey', array('id' => $params['surveyid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($survey, 'survey');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+        require_capability('mod/survey:participate', $context);
+
+        if (survey_already_done($survey->id, $USER->id)) {
+            throw new moodle_exception("alreadysubmitted", "survey");
+        }
+
+        // Build the answers array. Data is cleaned inside the survey_save_answers function.
+        $answers = array();
+        foreach ($params['answers'] as $answer) {
+            $key = $answer['key'];
+            $answers[$key] = $answer['value'];
+        }
+
+        survey_save_answers($survey, $answers, $course, $context);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function submit_answers_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }

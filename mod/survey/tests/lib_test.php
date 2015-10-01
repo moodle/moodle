@@ -111,4 +111,59 @@ class mod_survey_lib_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * Test survey_save_answers
+     */
+    public function test_survey_save_answers() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $survey = $this->getDataGenerator()->create_module('survey', array('course' => $course->id));
+        $context = context_module::instance($survey->cmid);
+
+        // Build our questions and responses array.
+        $realquestions = array();
+        $questions = survey_get_questions($survey);
+        $i = 5;
+        foreach ($questions as $q) {
+            if ($q->type > 0) {
+                if ($q->multi) {
+                    $subquestions = survey_get_subquestions($q);
+                    foreach ($subquestions as $sq) {
+                        $key = 'q' . $sq->id;
+                        $realquestions[$key] = $i % 5 + 1;
+                        $i++;
+                    }
+                } else {
+                    $key = 'q' . $q->id;
+                    $realquestions[$key] = $i % 5 + 1;
+                    $i++;
+                }
+            }
+        }
+
+        $sink = $this->redirectEvents();
+        survey_save_answers($survey, $realquestions, $course, $context);
+
+        // Check the stored answers, they must match.
+        $dbanswers = $DB->get_records_menu('survey_answers', array('survey' => $survey->id), '', 'question, answer1');
+        foreach ($realquestions as $key => $value) {
+            $id = str_replace('q', '', $key);
+            $this->assertEquals($value, $dbanswers[$id]);
+        }
+
+        // Check events.
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_survey\event\response_submitted', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEquals($survey->id, $event->other['surveyid']);
+    }
 }

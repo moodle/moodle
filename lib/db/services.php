@@ -1234,6 +1234,7 @@ $services = array(
             'mod_survey_get_surveys_by_courses',
             'mod_survey_view_survey',
             'mod_survey_get_questions',
+            'mod_survey_submit_answers',
             'mod_page_view_page',
             'mod_resource_view_resource',
             'mod_folder_view_folder',
