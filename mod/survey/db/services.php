@@ -15,16 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Survey external functions and service definitions.
  *
  * @package    mod_survey
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @category   external
+ * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.0
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2015051101;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015050500;    // Requires this Moodle version
-$plugin->component = 'mod_survey';     // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+$functions = array(
+
+    'mod_survey_get_surveys_by_courses' => array(
+        'classname'     => 'mod_survey_external',
+        'methodname'    => 'get_surveys_by_courses',
+        'description'   => 'Returns a list of survey instances in a provided set of courses,
+                            if no courses are provided then all the survey instances the user has access to will be returned.',
+        'type'          => 'read',
+        'capabilities'  => ''
+    )
+);

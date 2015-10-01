@@ -1231,6 +1231,7 @@ $services = array(
             'mod_scorm_get_scorm_sco_tracks',
             'mod_scorm_get_scorm_attempt_count',
             'mod_scorm_get_scorms_by_courses',
+            'mod_survey_get_surveys_by_courses',
             'mod_page_view_page',
             'mod_resource_view_resource',
             'mod_folder_view_folder',
