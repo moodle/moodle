@@ -216,7 +216,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         if ($hasnamenotsecpg || $hasnamesecpg) {
             $classes = '';
         }
-        $o.= $this->output->heading($this->section_title($section, $course), 3, 'sectionname' . $classes);
+        $sectionname = html_writer::tag('span', $this->section_title($section, $course));
+        $o.= $this->output->heading($sectionname, 3, 'sectionname' . $classes);
 
         $o.= html_writer::start_tag('div', array('class' => 'summary'));
         $o.= $this->format_summary_text($section);
@@ -790,7 +791,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         if (!$thissection->visible) {
             $classes .= ' dimmed_text';
         }
-        $sectiontitle .= $this->output->heading(get_section_name($course, $displaysection), 3, $classes);
+        $sectionname = html_writer::tag('span', get_section_name($course, $displaysection));
+        $sectiontitle .= $this->output->heading($sectionname, 3, $classes);
 
         $sectiontitle .= html_writer::end_tag('div');
         echo $sectiontitle;
