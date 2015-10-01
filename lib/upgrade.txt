@@ -8,6 +8,7 @@ information provided here is intended especially for developers.
 * Less.php upgraded to 1.7.0.9
 * The horde library has been updated to version 5.2.7.
 * Google libraries (lib/google) updated to 1.1.5
+* Html2Text library has been updated to the latest version of the library.
 * External functions x_is_allowed_from_ajax() methods have been deprecated. Define 'ajax' => true in db/services.php instead.
 * External functions can be called without a session if they define 'loginrequired' => true in db/services.php.
 * All plugins are required to declare their frankenstyle component name via
