@@ -183,9 +183,9 @@ class auth_plugin_cas extends auth_plugin_ldap {
             } else {
                 phpCAS::client($this->config->casversion, $this->config->hostname, (int) $this->config->port, $this->config->baseuri, false);
             }
-            //Some CAS installs require SSLv3, etc be explicitly set.
+            // Some CAS installs require SSLv3 that should be explicitly set.
             if (!empty($this->config->curl_ssl_version)) {
-                phpCAS::setExtraCurlOption(CURLOPT_SSLVERSION,$this->config->curl_ssl_version);
+                phpCAS::setExtraCurlOption(CURLOPT_SSLVERSION, $this->config->curl_ssl_version);
             }
 
             $connected = true;
