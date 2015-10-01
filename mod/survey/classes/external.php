@@ -164,4 +164,69 @@ class mod_survey_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function view_survey_parameters() {
+        return new external_function_parameters(
+            array(
+                'surveyid' => new external_value(PARAM_INT, 'survey instance id')
+            )
+        );
+    }
+
+    /**
+     * Trigger the course module viewed event and update the module completion status.
+     *
+     * @param int $surveyid the survey instance id
+     * @return array of warnings and status result
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function view_survey($surveyid) {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(self::view_survey_parameters(),
+                                            array(
+                                                'surveyid' => $surveyid
+                                            ));
+        $warnings = array();
+
+        // Request and permission validation.
+        $survey = $DB->get_record('survey', array('id' => $params['surveyid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($survey, 'survey');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+        require_capability('mod/survey:participate', $context);
+
+        $viewed = survey_already_done($survey->id, $USER->id) ? 'graph' : 'form';
+
+        // Trigger course_module_viewed event and completion.
+        survey_view($survey, $course, $cm, $context, $viewed);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function view_survey_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
 }

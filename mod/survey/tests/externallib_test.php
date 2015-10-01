@@ -191,4 +191,64 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse(isset($surveys['surveys'][0]['intro']));
     }
 
+    /**
+     * Test view_survey
+     */
+    public function test_view_survey() {
+        global $DB;
+
+        // Test invalid instance id.
+        try {
+            mod_survey_external::view_survey(0);
+            $this->fail('Exception expected due to invalid mod_survey instance id.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('invalidrecord', $e->errorcode);
+        }
+
+        // Test not-enrolled user.
+        $usernotenrolled = self::getDataGenerator()->create_user();
+        $this->setUser($usernotenrolled);
+        try {
+            mod_survey_external::view_survey($this->survey->id);
+            $this->fail('Exception expected due to not enrolled user.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $result = mod_survey_external::view_survey($this->survey->id);
+        $result = external_api::clean_returnvalue(mod_survey_external::view_survey_returns(), $result);
+        $this->assertTrue($result['status']);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_survey\event\course_module_viewed', $event);
+        $this->assertEquals($this->context, $event->get_context());
+        $moodlesurvey = new \moodle_url('/mod/survey/view.php', array('id' => $this->cm->id));
+        $this->assertEquals($moodlesurvey, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+        // Test user with no capabilities.
+        // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
+        assign_capability('mod/survey:participate', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        try {
+            mod_survey_external::view_survey($this->survey->id);
+            $this->fail('Exception expected due to missing capability.');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+    }
+
 }

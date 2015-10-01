@@ -35,5 +35,13 @@ $functions = array(
                             if no courses are provided then all the survey instances the user has access to will be returned.',
         'type'          => 'read',
         'capabilities'  => ''
-    )
+    ),
+
+    'mod_survey_view_survey' => array(
+        'classname'     => 'mod_survey_external',
+        'methodname'    => 'view_survey',
+        'description'   => 'Trigger the course module viewed event and update the module completion status.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/survey:participate'
+    ),
 );

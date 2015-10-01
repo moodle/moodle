@@ -54,12 +54,16 @@ if (! $template = $DB->get_record("survey", array("id" => $survey->template))) {
     print_error('invalidtmptid', 'survey');
 }
 
-// Update 'viewed' state if required by completion system.
-require_once($CFG->libdir . '/completionlib.php');
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
-
 $showscales = ($template->name != 'ciqname');
+
+// Check the survey hasn't already been filled out.
+$surveyalreadydone = survey_already_done($survey->id, $USER->id);
+if ($surveyalreadydone) {
+    // Trigger course_module_viewed event and completion.
+    survey_view($survey, $course, $cm, $context, 'graph');
+} else {
+    survey_view($survey, $course, $cm, $context, 'form');
+}
 
 $strsurvey = get_string("modulename", "survey");
 $PAGE->set_title($survey->name);
@@ -91,18 +95,8 @@ if (!is_enrolled($context)) {
     echo $OUTPUT->notification(get_string("guestsnotallowed", "survey"));
 }
 
+if ($surveyalreadydone) {
 
-// Check the survey hasn't already been filled out.
-
-if (survey_already_done($survey->id, $USER->id)) {
-    $params = array(
-        'objectid' => $survey->id,
-        'context' => $context,
-        'courseid' => $course->id,
-        'other' => array('viewed' => 'graph')
-    );
-    $event = \mod_survey\event\course_module_viewed::create($params);
-    $event->trigger();
     $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
 
     if ($showscales) {
@@ -145,16 +139,6 @@ if (survey_already_done($survey->id, $USER->id)) {
     echo $OUTPUT->footer();
     exit;
 }
-
-// Start the survey form.
-$params = array(
-    'objectid' => $survey->id,
-    'context' => $context,
-    'courseid' => $course->id,
-    'other' => array('viewed' => 'form')
-);
-$event = \mod_survey\event\course_module_viewed::create($params);
-$event->trigger();
 
 echo "<form method=\"post\" action=\"save.php\" id=\"surveyform\">";
 echo '<div>';

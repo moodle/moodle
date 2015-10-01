@@ -838,3 +838,34 @@ function survey_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $module_pagetype = array('mod-survey-*'=>get_string('page-mod-survey-x', 'survey'));
     return $module_pagetype;
 }
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $survey     survey object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @param  string $viewed       which page viewed
+ * @since Moodle 3.0
+ */
+function survey_view($survey, $course, $cm, $context, $viewed) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $survey->id,
+        'courseid' => $course->id,
+        'other' => array('viewed' => $viewed)
+    );
+
+    $event = \mod_survey\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('survey', $survey);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
