@@ -207,7 +207,6 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $output .= $this->header();
         $output .= $this->box_start('generalbox');
-        $output .= $this->container_start('generalbox', 'notice');
         $output .= html_writer::tag('p', get_string('pluginchecknotice', 'core_plugin'));
         if ($checker->enabled()) {
             $output .= $this->container_start('checkforupdates');
@@ -218,8 +217,8 @@ class core_admin_renderer extends plugin_renderer_base {
             }
             $output .= $this->container_end();
         }
-        $output .= $this->container_end();
 
+        $output .= $this->missing_dependencies($pluginman);
         $output .= $this->plugins_check_table($pluginman, $version, array('full' => $showallplugins));
         $output .= $this->box_end();
         $output .= $this->upgrade_reload($reloadurl);
@@ -1038,6 +1037,168 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Displays the information about missing dependencies
+     *
+     * @param core_plugin_manager $pluginman
+     * @return string
+     */
+    protected function missing_dependencies(core_plugin_manager $pluginman) {
+
+        $dependencies = $pluginman->missing_dependencies();
+
+        if (empty($dependencies)) {
+            return '';
+        }
+
+        $available = array();
+        $unavailable = array();
+        $unknown = array();
+
+        foreach ($dependencies as $component => $remoteinfo) {
+            if ($remoteinfo === false) {
+                // The required version is not available. Let us check is there
+                // is at least some version in the plugins directory.
+                $remoteinfoanyversion = $pluginman->get_remote_plugin_info($component, ANY_VERSION);
+                if ($remoteinfoanyversion === false) {
+                    $unknown[$component] = $component;
+                } else {
+                    $unavailable[$component] = $remoteinfoanyversion;
+                }
+            } else {
+                $available[$component] = $remoteinfo;
+            }
+        }
+
+        $out  = $this->output->container_start('plugins-check-dependencies');
+
+        if ($unavailable or $unknown) {
+            $out .= $this->output->heading(get_string('misdepsunavail', 'core_plugin'));
+            if ($unknown) {
+                $out .= $this->output->notification(get_string('misdepsunknownlist', 'core_plugin', implode($unknown, ', ')));
+            }
+            if ($unavailable) {
+                $unavailablelist = array();
+                foreach ($unavailable as $component => $remoteinfoanyversion) {
+                    $unavailablelistitem = html_writer::link('https://moodle.org/plugins/view.php?plugin='.$component,
+                        '<strong>'.$remoteinfoanyversion->name.'</strong>');
+                    if ($remoteinfoanyversion->version) {
+                        $unavailablelistitem .= ' ('.$component.' &gt; '.$remoteinfoanyversion->version->version.')';
+                    } else {
+                        $unavailablelistitem .= ' ('.$component.')';
+                    }
+                    $unavailablelist[] = $unavailablelistitem;
+                }
+                $out .= $this->output->notification(get_string('misdepsunavaillist', 'core_plugin',
+                    implode($unavailablelist, ', ')));
+            }
+            $out .= $this->output->container_start('plugins-check-dependencies-actions');
+            $out .= ' '.html_writer::link(new moodle_url('/admin/tool/installaddon/'),
+                get_string('dependencyuploadmissing', 'core_plugin'));
+            $out .= $this->output->container_end(); // .plugins-check-dependencies-actions
+        }
+
+        if ($available) {
+            $out .= $this->output->heading(get_string('misdepsavail', 'core_plugin'));
+            $out .= $this->available_missing_dependencies_list($pluginman, $available);
+            $out .= $this->output->container_start('plugins-check-dependencies-actions');
+
+            // TODO implement the button functionality.
+            $out .= html_writer::link(
+                new moodle_url('/admin/tool/installaddon/'),
+                get_string('dependencyinstallmissing', 'core_plugin'),
+                array('class' => 'btn')
+            );
+            $out.= ' | '.html_writer::link(new moodle_url('/admin/tool/installaddon/'),
+                get_string('dependencyuploadmissing', 'core_plugin'));
+            $out .= $this->output->container_end(); // .plugins-check-dependencies-actions
+        }
+
+        $out .= $this->output->container_end(); // .plugins-check-dependencies
+
+        return $out;
+    }
+
+    /**
+     * Displays the list if available missing dependencies.
+     *
+     * @param core_plugin_manager $pluginman
+     * @param array $dependencies
+     * @return string
+     */
+    protected function available_missing_dependencies_list(core_plugin_manager $pluginman, array $dependencies) {
+        global $CFG;
+
+        $table = new html_table();
+        $table->id = 'plugins-check-available-dependencies';
+        $table->head = array(
+            get_string('displayname', 'core_plugin'),
+            get_string('release', 'core_plugin'),
+            get_string('version', 'core_plugin'),
+            get_string('supportedmoodleversions', 'core_plugin'),
+            get_string('info', 'core'),
+        );
+        $table->colclasses = array('displayname', 'release', 'version', 'supportedmoodleversions', 'info');
+        $table->data = array();
+
+        foreach ($dependencies as $plugin) {
+
+            $supportedmoodles = array();
+            foreach ($plugin->version->supportedmoodles as $moodle) {
+                if ($CFG->branch == str_replace('.', '', $moodle->release)) {
+                    $supportedmoodles[] = html_writer::span($moodle->release, 'label label-success');
+                } else {
+                    $supportedmoodles[] = html_writer::span($moodle->release, 'label');
+                }
+            }
+
+            $requriedby = $pluginman->other_plugins_that_require($plugin->component);
+            if ($requriedby) {
+                foreach ($requriedby as $ix => $val) {
+                    $inf = $pluginman->get_plugin_info($val);
+                    if ($inf) {
+                        $requriedby[$ix] = $inf->displayname.' ('.$inf->component.')';
+                    }
+                }
+                $info = html_writer::div(
+                    get_string('requiredby', 'core_plugin', implode(', ', $requriedby)),
+                    'requiredby'
+                );
+            } else {
+                $info = '';
+            }
+
+            $info .= html_writer::span(
+                html_writer::link('https://moodle.org/plugins/view.php?plugin='.$plugin->component,
+                    get_string('misdepinfoplugin', 'core_plugin')),
+                'misdepinfoplugin'
+            );
+
+            $info .= ' | '.html_writer::span(
+                html_writer::link('https://moodle.org/plugins/pluginversion.php?id='.$plugin->version->id,
+                    get_string('misdepinfoversion', 'core_plugin')),
+                'misdepinfoversion'
+            );
+
+            $info .= ' | '.html_writer::link($plugin->version->downloadurl, get_string('download'),
+                array('class' => 'btn btn-small'));
+
+            // TODO Implement the button functionality.
+            $info .= ' | '.html_writer::link($plugin->version->downloadurl, get_string('dependencyinstall', 'core_plugin'),
+                array('class' => 'btn btn-small'));
+
+            $table->data[] = array(
+                html_writer::div($plugin->name, 'name').' '.html_writer::div($plugin->component, 'component'),
+                $plugin->version->release,
+                $plugin->version->version,
+                implode($supportedmoodles, ' '),
+                $info
+            );
+        }
+
+        return html_writer::table($table);
+    }
+
+    /**
      * Formats the information that needs to go in the 'Requires' column.
      * @param \core\plugininfo\base $plugin the plugin we are rendering the row for.
      * @param core_plugin_manager $pluginman provides data on all the plugins.
@@ -1047,6 +1208,8 @@ class core_admin_renderer extends plugin_renderer_base {
     protected function required_column(\core\plugininfo\base $plugin, core_plugin_manager $pluginman, $version) {
 
         $requires = array();
+        $displayuploadlink = false;
+        $displayupdateslink = false;
 
         foreach ($pluginman->resolve_requirements($plugin, $version) as $reqname => $reqinfo) {
             if ($reqname === 'core') {
@@ -1069,19 +1232,37 @@ class core_admin_renderer extends plugin_renderer_base {
                     $class = 'requires-ok';
 
                 } else if ($reqinfo->status == $pluginman::REQUIREMENT_STATUS_MISSING) {
-                    $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-important');
-                    $class = 'requires-failed requires-missing';
-                    // TODO Display the install link only if really available there.
-                    $installurl = new moodle_url('https://moodle.org/plugins/view.php', array('plugin' => $reqname));
-                    $uploadurl = new moodle_url('/admin/tool/installaddon/');
-                    $actions[] = html_writer::link($installurl, get_string('dependencyinstall', 'core_plugin'));
-                    $actions[] = html_writer::link($uploadurl, get_string('dependencyupload', 'core_plugin'));
+                    if ($reqinfo->availability == $pluginman::REQUIREMENT_AVAILABLE) {
+                        $label = html_writer::span(get_string('dependencymissing', 'core_plugin'), 'label label-warning');
+                        $label .= ' '.html_writer::span(get_string('dependencyavailable', 'core_plugin'), 'label label-warning');
+                        $class = 'requires-failed requires-missing requires-available';
+                        $actions[] = html_writer::link(
+                            new moodle_url('https://moodle.org/plugins/view.php', array('plugin' => $reqname)),
+                            get_string('misdepinfoplugin', 'core_plugin')
+                        );
+
+                    } else {
+                        $label = html_writer::span(get_string('dependencymissing', 'core_plugin'), 'label label-important');
+                        $label .= ' '.html_writer::span(get_string('dependencyunavailable', 'core_plugin'),
+                            'label label-important');
+                        $class = 'requires-failed requires-missing requires-unavailable';
+                    }
+                    $displayuploadlink = true;
 
                 } else if ($reqinfo->status == $pluginman::REQUIREMENT_STATUS_OUTDATED) {
-                    $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-important');
-                    $class = 'requires-failed requires-outdated';
-                    $updateurl = new moodle_url($this->page->url, array('sesskey' => sesskey(), 'fetchupdates' => 1));
-                    $actions[] = html_writer::link($updateurl, get_string('checkforupdates', 'core_plugin'));
+                    if ($reqinfo->availability == $pluginman::REQUIREMENT_AVAILABLE) {
+                        $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-warning');
+                        $label .= ' '.html_writer::span(get_string('dependencyavailable', 'core_plugin'), 'label label-warning');
+                        $class = 'requires-failed requires-outdated requires-available';
+                        $displayupdateslink = true;
+
+                    } else {
+                        $label = html_writer::span(get_string('dependencyfails', 'core_plugin'), 'label label-important');
+                        $label .= ' '.html_writer::span(get_string('dependencyunavailable', 'core_plugin'),
+                            'label label-important');
+                        $class = 'requires-failed requires-outdated requires-unavailable';
+                    }
+                    $displayuploadlink = true;
                 }
 
                 if ($reqinfo->reqver != ANY_VERSION) {
@@ -1101,7 +1282,31 @@ class core_admin_renderer extends plugin_renderer_base {
         if (!$requires) {
             return '';
         }
-        return html_writer::tag('ul', implode("\n", $requires));
+
+        $out = html_writer::tag('ul', implode("\n", $requires));
+
+        if ($displayuploadlink) {
+            $out .= html_writer::div(
+                html_writer::link(
+                    new moodle_url('/admin/tool/installaddon/'),
+                    get_string('dependencyuploadmissing', 'core_plugin')
+                ),
+                'dependencyuploadmissing'
+            );
+        }
+
+        if ($displayupdateslink) {
+            $out .= html_writer::div(
+                html_writer::link(
+                    new moodle_url($this->page->url, array('sesskey' => sesskey(), 'fetchupdates' => 1)),
+                    get_string('checkforupdates', 'core_plugin')
+                ),
+                'checkforupdates'
+            );
+        }
+
+        return $out;
+
     }
 
     /**

@@ -71,4 +71,50 @@ class testable_core_plugin_manager extends core_plugin_manager {
 
         return null;
     }
+
+    /**
+     * Mockup fetching info about a plugin available in the plugins directory.
+     *
+     * This testable method does not actually use {@link \core\update\api}.
+     * Instead, it provides haerd-coded list fictional plugins and their
+     * versions.
+     *
+     * @param string $component
+     * @param string|int $requiredversion ANY_VERSION or the version number
+     * @return stdClass|bool false or data object
+     */
+    public function get_remote_plugin_info($component, $requiredversion) {
+
+        $info = false;
+
+        if ($component === 'foo_bar') {
+            $info = (object)array(
+                'name' => 'Foo bar',
+                'component' => 'foo_bar',
+                'version' => false,
+            );
+
+            if ($requiredversion === ANY_VERSION or $requiredversion <= 2015010100) {
+                $info->version = (object)array(
+                    'version' => 2015010100
+                );
+            }
+        }
+
+        if ($component === 'foo_baz') {
+            $info = (object)array(
+                'name' => 'Foo baz',
+                'component' => 'foo_baz',
+                'version' => false,
+            );
+
+            if ($requiredversion === ANY_VERSION or $requiredversion <= 2015010100) {
+                $info->version = (object)array(
+                    'version' => 2015010100
+                );
+            }
+        }
+
+        return $info;
+    }
 }

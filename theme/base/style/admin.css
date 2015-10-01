@@ -266,7 +266,7 @@
 .dir-rtl.path-admin .roleassigntable p {text-align: right;}
 
 /** Plugins check */
-#page-admin-index #notice .checkforupdates {text-align:center;}
+#page-admin-index .checkforupdates {text-align:center;}
 #page-admin-index #plugins-check-info {text-align:center;margin:1em;}
 #page-admin-index #plugins-check td {vertical-align: top;}
 #page-admin-index #plugins-check {margin-left:auto; margin-right:auto;}
@@ -294,6 +294,8 @@
 #page-admin-index #plugins-check .status .pluginupdateinfo.maturity150 {background-color:#f3f2aa;}
 #page-admin-index #plugins-check .status .pluginupdateinfo .separator:after {content:" | ";}
 #page-admin-index .upgradepluginsinfo {text-align:center;}
+#page-admin-index .plugins-check-dependencies {text-align:center;}
+#page-admin-index #plugins-check-available-dependencies {margin-left:auto; margin-right:auto;}
 
 /** Plugins management */
 #page-admin-plugins .checkforupdates {margin:0 auto 1em;text-align:center;}

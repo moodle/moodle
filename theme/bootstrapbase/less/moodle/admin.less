@@ -537,11 +537,6 @@ img.iconsmall {
     text-align: center;
 }
 
-#plugins-check-info {
-    text-align: center;
-    margin: 1em;
-}
-
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release {
     background-color: @infoBackground;
 }
@@ -612,6 +607,13 @@ img.iconsmall {
     margin: 10px 0px;
     background-color: @infoBackground;
     .border-radius(10px);
+}
+
+#plugins-check-available-dependencies {
+    .displayname .component {
+        font-size: @fontSizeSmall;
+        .muted
+    }
 }
 
 #page-admin-index .upgradepluginsinfo {

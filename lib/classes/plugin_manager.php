@@ -60,12 +60,19 @@ class core_plugin_manager {
     /** the required dependency is not installed */
     const REQUIREMENT_STATUS_MISSING = 'missing';
 
+    /** the required dependency is available in the plugins directory */
+    const REQUIREMENT_AVAILABLE = 'available';
+    /** the required dependency is available in the plugins directory */
+    const REQUIREMENT_UNAVAILABLE = 'unavailable';
+
     /** @var core_plugin_manager holds the singleton instance */
     protected static $singletoninstance;
     /** @var array of raw plugins information */
     protected $pluginsinfo = null;
     /** @var array of raw subplugins information */
     protected $subpluginsinfo = null;
+    /** @var array cache information about availability in the plugins directory */
+    protected $remotepluginsinfo = null;
     /** @var array list of installed plugins $name=>$version */
     protected $installedplugins = null;
     /** @var array list of all enabled plugins $name=>$name */
@@ -767,6 +774,7 @@ class core_plugin_manager {
      *  ->(numeric)hasver
      *  ->(numeric)reqver
      *  ->(string)status
+     *  ->(string)availability
      *
      * @param \core\plugininfo\base $plugin the plugin we are checking
      * @param null|string|int|double $moodleversion explicit moodle core version to check against, defaults to $CFG->version
@@ -807,7 +815,12 @@ class core_plugin_manager {
      */
     protected function resolve_core_requirements(\core\plugininfo\base $plugin, $moodleversion) {
 
-        $reqs = new stdClass();
+        $reqs = (object)array(
+            'hasver' => null,
+            'reqver' => null,
+            'status' => null,
+            'availability' => null,
+        );
 
         $reqs->hasver = $moodleversion;
 
@@ -838,7 +851,13 @@ class core_plugin_manager {
     protected function resolve_dependency_requirements(\core\plugininfo\base $plugin, $otherpluginname,
             $requiredversion, $moodlebranch) {
 
-        $reqs = new stdClass();
+        $reqs = (object)array(
+            'hasver' => null,
+            'reqver' => null,
+            'status' => null,
+            'availability' => null,
+        );
+
         $otherplugin = $this->get_plugin_info($otherpluginname);
 
         if ($otherplugin !== null) {
@@ -857,10 +876,107 @@ class core_plugin_manager {
             $reqs->hasver = null;
             $reqs->reqver = $requiredversion;
             $reqs->status = self::REQUIREMENT_STATUS_MISSING;
-            // TODO: Check if the $otherpluginname is available in the plugins directory.
+        }
+
+        if ($reqs->status !== self::REQUIREMENT_STATUS_OK) {
+            if ($this->is_remote_plugin_available($otherpluginname, $requiredversion)) {
+                $reqs->availability = self::REQUIREMENT_AVAILABLE;
+            } else {
+                $reqs->availability = self::REQUIREMENT_UNAVAILABLE;
+            }
         }
 
         return $reqs;
+    }
+
+    /**
+     * Is the given plugin version available in the plugins directory?
+     *
+     * @param string $component
+     * @param string|int $requiredversion ANY_VERSION or the version number
+     * @return boolean
+     */
+    public function is_remote_plugin_available($component, $requiredversion) {
+
+        $info = $this->get_remote_plugin_info($component, $requiredversion);
+
+        if (empty($info)) {
+            // There is no available plugin of that name.
+            return false;
+        }
+
+        if (empty($info->version)) {
+            // Plugin is known, but no suitable version was found.
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns information about a plugin in the plugins directory.
+     *
+     * See {@link \core\update\api::find_plugin()} for more details.
+     *
+     * @param string $component
+     * @param string|int $requiredversion ANY_VERSION or the version number
+     * @return stdClass|bool false or data object
+     */
+    public function get_remote_plugin_info($component, $requiredversion) {
+
+        if (!isset($this->remotepluginsinfo[$component][$requiredversion])) {
+            $client = \core\update\api::client();
+            $this->remotepluginsinfo[$component][$requiredversion] = $client->find_plugin($component, $requiredversion);
+        }
+
+        return $this->remotepluginsinfo[$component][$requiredversion];
+    }
+
+    /**
+     * Return a list of all missing dependencies.
+     *
+     * This should provide the full list of plugins that should be installed to
+     * fulfill the requirements of all plugins, if possible.
+     *
+     * @return array of stdClass|bool indexed by the component name
+     */
+    public function missing_dependencies() {
+
+        $dependencies = array();
+
+        foreach ($this->get_plugins() as $plugintype => $pluginfos) {
+            foreach ($pluginfos as $pluginname => $pluginfo) {
+                foreach ($this->resolve_requirements($pluginfo) as $reqname => $reqinfo) {
+                    if ($reqname === 'core') {
+                        continue;
+                    }
+                    if ($reqinfo->status != self::REQUIREMENT_STATUS_OK) {
+                        if ($reqinfo->availability == self::REQUIREMENT_AVAILABLE) {
+                            $remoteinfo = $this->get_remote_plugin_info($reqname, $reqinfo->reqver);
+
+                            if (empty($dependencies[$reqname])) {
+                                $dependencies[$reqname] = $remoteinfo;
+                            } else {
+                                // If two local plugins depend on the two different
+                                // versions of the same remote plugin, pick the
+                                // higher version.
+                                if ($remoteinfo->version->version > $dependencies[$reqname]->version->version) {
+                                    $dependencies[$reqname] = $remoteinfo;
+                                }
+                            }
+
+                        } else {
+                            if (!isset($dependencies[$reqname])) {
+                                // Unable to find a plugin fulfilling the requirements.
+                                $dependencies[$reqname] = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $dependencies;
     }
 
     /**
