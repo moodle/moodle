@@ -145,6 +145,7 @@ function wiki_reset_userdata($data) {
     global $CFG,$DB;
     require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
     require_once($CFG->dirroot . '/tag/lib.php');
+    require_once($CFG->dirroot . "/mod/wiki/locallib.php");
 
     $componentstr = get_string('modulenameplural', 'wiki');
     $status = array();
@@ -156,32 +157,55 @@ function wiki_reset_userdata($data) {
     $errors = false;
     foreach ($wikis as $wiki) {
 
-        // remove all comments
-        if (!empty($data->reset_wiki_comments)) {
-            if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
-                continue;
-            }
-            $context = context_module::instance($cm->id);
-            $DB->delete_records_select('comments', "contextid = ? AND commentarea='wiki_page'", array($context->id));
-            $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
+        if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
+            continue;
         }
+        $context = context_module::instance($cm->id);
 
-        if (!empty($data->reset_wiki_tags)) {
-            # Get subwiki information #
-            $subwikis = $DB->get_records('wiki_subwikis', array('wikiid' => $wiki->id));
+        // Remove tags or all pages.
+        if (!empty($data->reset_wiki_pages) || !empty($data->reset_wiki_tags)) {
+
+            // Get subwiki information.
+            $subwikis = wiki_get_subwikis($wiki->id);
 
             foreach ($subwikis as $subwiki) {
-                if ($pages = $DB->get_records('wiki_pages', array('subwikiid' => $subwiki->id))) {
-                    foreach ($pages as $page) {
-                        $tags = tag_get_tags_array('wiki_pages', $page->id);
-                        foreach ($tags as $tagid => $tagname) {
-                            // Delete the related tag_instances related to the wiki page.
-                            $errors = tag_delete_instance('wiki_pages', $page->id, $tagid);
-                            $status[] = array('component' => $componentstr, 'item' => get_string('tagsdeleted', 'wiki'), 'error' => $errors);
+                // Get existing pages.
+                if ($pages = wiki_get_page_list($subwiki->id)) {
+                    if (!empty($data->reset_wiki_tags)) {
+                        // Go through each page and delete the tags.
+                        foreach ($pages as $page) {
+
+                            $tags = tag_get_tags_array('wiki_pages', $page->id);
+                            foreach ($tags as $tagid => $tagname) {
+                                // Delete the related tag_instances related to the wiki page.
+                                $errors = tag_delete_instance('wiki_pages', $page->id, $tagid);
+                                $status[] = array('component' => $componentstr, 'item' => get_string('tagsdeleted', 'wiki'),
+                                        'error' => $errors);
+                            }
                         }
+                    } else {
+                        // Delete pages.
+                        wiki_delete_pages($context, $pages, $subwiki->id);
                     }
                 }
+                if (!empty($data->reset_wiki_pages)) {
+                    // Delete any subwikis.
+                    $DB->delete_records('wiki_subwikis', array('id' => $subwiki->id), IGNORE_MISSING);
+
+                    // Delete any attached files.
+                    $fs = get_file_storage();
+                    $fs->delete_area_files($context->id, 'mod_wiki', 'attachments');
+
+                    $status[] = array('component' => $componentstr, 'item' => get_string('deleteallpages', 'wiki'),
+                            'error' => $errors);
+                }
             }
+        }
+
+        // Remove all comments.
+        if (!empty($data->reset_wiki_comments) || !empty($data->reset_wiki_pages)) {
+            $DB->delete_records_select('comments', "contextid = ? AND commentarea='wiki_page'", array($context->id));
+            $status[] = array('component' => $componentstr, 'item' => get_string('deleteallcomments'), 'error' => false);
         }
     }
     return $status;
@@ -190,6 +214,7 @@ function wiki_reset_userdata($data) {
 
 function wiki_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'wikiheader', get_string('modulenameplural', 'wiki'));
+    $mform->addElement('advcheckbox', 'reset_wiki_pages', get_string('deleteallpages', 'wiki'));
     $mform->addElement('advcheckbox', 'reset_wiki_tags', get_string('removeallwikitags', 'wiki'));
     $mform->addElement('advcheckbox', 'reset_wiki_comments', get_string('deleteallcomments'));
 }
