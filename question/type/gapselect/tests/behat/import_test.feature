@@ -17,7 +17,7 @@ Feature: Import and export select missing words questions
     And I log in as "teacher1"
     And I follow "Course 1"
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Import and export select missing words questions
     # Import sample file.
     When I navigate to "Import" node in "Course administration > Question bank"

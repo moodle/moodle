@@ -18,7 +18,7 @@ Feature: Test creating a drag and drop onto image question
     And I follow "Course 1"
     And I navigate to "Question bank" node in "Course administration"
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Create a drag and drop onto image question
     When I press "Create a new question ..."
     And I set the field "Drag and drop onto image" to "1"
