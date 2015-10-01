@@ -21,12 +21,13 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
-    And I click on "Edit settings" "link" in the "Administration" "block"
 
   Scenario: Allow guest access without password
-    Given I set the following fields to these values:
+    Given I navigate to "Enrolment methods" node in "Course administration > Users"
+    And I click on "Edit" "link" in the "Guest access" "table_row"
+    And I set the following fields to these values:
       | Allow guest access | Yes |
-    And I press "Save and display"
+    And I press "Save changes"
     And I log out
     And I log in as "student1"
     And I am on site homepage
@@ -35,10 +36,12 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
     Then I should not see "Subscribe to this forum"
 
   Scenario: Allow guest access with password
-    Given I set the following fields to these values:
+    Given I navigate to "Enrolment methods" node in "Course administration > Users"
+    And I click on "Edit" "link" in the "Guest access" "table_row"
+    And I set the following fields to these values:
       | Allow guest access | Yes |
       | Password | moodle_rules |
-    And I press "Save and display"
+    And I press "Save changes"
     And I log out
     And I log in as "student1"
     And I am on site homepage
