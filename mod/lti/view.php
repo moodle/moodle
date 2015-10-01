@@ -94,24 +94,6 @@ if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
     $PAGE->set_pagelayout('incourse');
 }
 
-// Mark viewed by user (if required).
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
-
-$params = array(
-    'context' => $context,
-    'objectid' => $lti->id
-);
-
-// Prevent double logging when launching in a new window is configured.
-if ($launchcontainer != LTI_LAUNCH_CONTAINER_WINDOW) {
-    $event = \mod_lti\event\course_module_viewed::create($params);
-    $event->add_record_snapshot('course_modules', $cm);
-    $event->add_record_snapshot('course', $course);
-    $event->add_record_snapshot('lti', $lti);
-    $event->trigger();
-}
-
 $pagetitle = strip_tags($course->shortname.': '.format_string($lti->name));
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
