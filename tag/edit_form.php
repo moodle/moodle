@@ -68,10 +68,36 @@ class tag_edit_form extends moodleform {
            $mform->addElement('checkbox', 'tagtype', get_string('officialtag', 'tag'));
         }
 
-        $mform->addElement('tags', 'relatedtags', get_string('relatedtags','tag'));
+        $mform->addElement('tags', 'relatedtags', get_string('relatedtags', 'tag'),
+                array('tagcollid' => $this->_customdata['tag']->tagcollid));
 
         $this->add_action_buttons(true, get_string('updatetag', 'tag'));
 
+    }
+
+    /**
+     * Custom form validation
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        if (isset($data['rawname'])) {
+            $newname = core_text::strtolower($data['rawname']);
+            $tag = $this->_customdata['tag'];
+            if ($tag->name != $newname) {
+                // The name has changed, let's make sure it's not another existing tag.
+                if (core_tag_tag::get_by_name($tag->tagcollid, $newname)) {
+                    // Something exists already, so flag an error.
+                    $errors['rawname'] = get_string('namesalreadybeeingused', 'tag');
+                }
+            }
+        }
+
+        return $errors;
     }
 
 }

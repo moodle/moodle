@@ -19,6 +19,7 @@ Feature: Manager is able to delete tags
   Scenario: Deleting a tag with javascript disabled
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
     And I click on "Delete" "link" in the "Dog" "table_row"
     And I should see "Tag(s) deleted"
     Then I should not see "Dog"
@@ -31,6 +32,7 @@ Feature: Manager is able to delete tags
   Scenario: Deleting multiple tags with javascript disabled
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
     And I set the following fields to these values:
       | Select tag Dog | 1 |
       | Select tag Neverusedtag | 1 |
@@ -48,6 +50,7 @@ Feature: Manager is able to delete tags
   Scenario: Deleting a tag with javascript enabled
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
     And I click on "Delete" "link" in the "Turtle" "table_row"
     Then I should see "Are you sure you want to delete this tag?"
     And I press "No"
@@ -58,7 +61,7 @@ Feature: Manager is able to delete tags
     And I press "Yes"
     And I should see "Tag(s) deleted"
     And I should not see "Dog"
-    And I follow "Manage tags"
+    And I follow "Default collection"
     And I should not see "Dog"
     And I navigate to "Participants" node in "Site pages"
     And I follow "User 1"
@@ -70,6 +73,7 @@ Feature: Manager is able to delete tags
   Scenario: Deleting multiple tags with javascript enabled
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
     And I press "Delete selected"
     And I should not see "Are you sure"
     And I should not see "Tag(s) deleted"
@@ -90,7 +94,7 @@ Feature: Manager is able to delete tags
     And I should see "Tag(s) deleted"
     And I should not see "Dog"
     And I should not see "Neverusedtag"
-    And I follow "Manage tags"
+    And I follow "Default collection"
     And I should not see "Dog"
     And I should not see "Neverusedtag"
     And I navigate to "Participants" node in "Site pages"

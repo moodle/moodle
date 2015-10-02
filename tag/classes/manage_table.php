@@ -38,16 +38,24 @@ class core_tag_manage_table extends table_sql {
     /** @var int stores the total number of found tags */
     public $totalcount = null;
 
+    /** @var int */
+    protected $tagcollid;
+
     /**
      * Constructor
+     *
+     * @param int $tagcollid
      */
-    public function __construct() {
+    public function __construct($tagcollid) {
         global $USER, $CFG, $PAGE;
         parent::__construct('tag-management-list-'.$USER->id);
 
+        $this->tagcollid = $tagcollid;
+
         $perpage = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
         $page = optional_param('page', 0, PARAM_INT);
-        $baseurl = new moodle_url('/tag/manage.php', array('perpage' => $perpage, 'page' => $page));
+        $baseurl = new moodle_url('/tag/manage.php', array('tc' => $tagcollid,
+            'perpage' => $perpage, 'page' => $page));
 
         $tablecolumns = array('select', 'name', 'fullname', 'count', 'flag', 'timemodified', 'tagtype', 'controls');
         $tableheaders = array(get_string('select', 'tag'),
@@ -80,8 +88,10 @@ class core_tag_manage_table extends table_sql {
         $this->set_attribute('id', 'tag-management-list');
         $this->set_attribute('class', 'admintable generaltable tag-management-table');
 
-        $totalcount = "SELECT COUNT(id) FROM {tag}";
-        $params = array();
+        $totalcount = "SELECT COUNT(id)
+            FROM {tag}
+            WHERE tagcollid = :tagcollid";
+        $params = array('tagcollid' => $this->tagcollid);
 
         $this->set_count_sql($totalcount, $params);
 
@@ -135,13 +145,13 @@ class core_tag_manage_table extends table_sql {
         $sql = "
             SELECT tg.id, tg.name, tg.rawname, tg.tagtype, tg.flag, tg.timemodified,
                        u.id AS owner, $allusernames,
-                       COUNT(ti.id) AS count
+                       COUNT(ti.id) AS count, tg.tagcollid
             FROM {tag} tg
             LEFT JOIN {tag_instance} ti ON ti.tagid = tg.id
             LEFT JOIN {user} u ON u.id = tg.userid
-                       WHERE 1 = 1 $where
+                       WHERE tagcollid = :tagcollid $where
             GROUP BY tg.id, tg.name, tg.rawname, tg.tagtype, tg.flag, tg.timemodified,
-                       u.id, $allusernames
+                       u.id, $allusernames, tg.tagcollid
             ORDER BY $sort";
 
         if (!$this->is_downloading()) {

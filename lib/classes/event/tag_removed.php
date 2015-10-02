@@ -75,6 +75,34 @@ class tag_removed extends base {
     }
 
     /**
+     * Creates an event from taginstance object
+     *
+     * @since Moodle 3.1
+     * @param stdClass $taginstance
+     * @param string $tagname
+     * @param string $tagrawname
+     * @param bool $addsnapshot trust that $taginstance has all necessary fields and add it as a record snapshot
+     * @return tag_removed
+     */
+    public static function create_from_tag_instance($taginstance, $tagname, $tagrawname, $addsnapshot = false) {
+        $event = self::create(array(
+            'objectid' => $taginstance->id,
+            'contextid' => $taginstance->contextid,
+            'other' => array(
+                'tagid' => $taginstance->tagid,
+                'tagname' => $tagname,
+                'tagrawname' => $tagrawname,
+                'itemid' => $taginstance->itemid,
+                'itemtype' => $taginstance->itemtype
+            )
+        ));
+        if ($addsnapshot) {
+            $event->add_record_snapshot('tag_instance', $taginstance);
+        }
+        return $event;
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception when validation does not pass.

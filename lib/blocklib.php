@@ -1497,10 +1497,10 @@ class block_manager {
             if ($bits[0] == 'tag' && !empty($this->page->subpage)) {
                 // better navbar for tag pages
                 $editpage->navbar->add(get_string('tags'), new moodle_url('/tag/'));
-                $tag = tag_get('id', $this->page->subpage, '*');
+                $tag = core_tag_tag::get($this->page->subpage);
                 // tag search page doesn't have subpageid
                 if ($tag) {
-                    $editpage->navbar->add($tag->name, new moodle_url('/tag/index.php', array('id'=>$tag->id)));
+                    $editpage->navbar->add($tag->get_display_name(), $tag->get_view_url());
                 }
             }
             $editpage->navbar->add($block->get_title());

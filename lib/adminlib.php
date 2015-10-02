@@ -166,9 +166,8 @@ function uninstall_plugin($type, $name) {
 
     echo $OUTPUT->heading($pluginname);
 
-    // Delete all tag instances associated with this plugin.
-    require_once($CFG->dirroot . '/tag/lib.php');
-    tag_delete_instances($component);
+    // Delete all tag areas, collections and instances associated with this plugin.
+    core_tag_area::uninstall($component);
 
     // Custom plugin uninstall.
     $plugindirectory = core_component::get_plugin_directory($type, $name);

@@ -39,15 +39,19 @@ use moodle_url;
  */
 class tag implements renderable, templatable {
 
-    /** @var stdClass */
+    /** @var \core_tag_tag|stdClass */
     protected $record;
 
     /**
      * Constructor
      *
-     * @param stdClass $tag
+     * @param \core_tag_tag|stdClass $tag
      */
     public function __construct($tag) {
+        if ($tag instanceof \core_tag_tag) {
+            $this->record = $tag;
+            return;
+        }
         $tag = (array)$tag +
             array(
                 'name' => '',
@@ -56,7 +60,8 @@ class tag implements renderable, templatable {
                 'descriptionformat' => FORMAT_HTML,
                 'flag' => 0,
                 'tagtype' => 'default',
-                'id' => 0
+                'id' => 0,
+                'tagcollid' => 0,
             );
         $this->record = (object)$tag;
     }
@@ -73,6 +78,7 @@ class tag implements renderable, templatable {
 
         $r = new stdClass();
         $r->id = (int)$this->record->id;
+        $r->tagcollid = clean_param($this->record->tagcollid, PARAM_INT);
         $r->rawname = clean_param($this->record->rawname, PARAM_TAG);
         $r->name = clean_param($this->record->name, PARAM_TAG);
         $format = clean_param($this->record->descriptionformat, PARAM_INT);
@@ -85,7 +91,7 @@ class tag implements renderable, templatable {
             $r->official = ($this->record->tagtype === 'official') ? 1 : 0;
         }
 
-        $url = new moodle_url('/tag/index.php', array('id' => $this->record->id));
+        $url = \core_tag_tag::make_url($r->tagcollid, $r->rawname);
         $r->viewurl = $url->out(false);
 
         $manageurl = new moodle_url('/tag/manage.php', array('sesskey' => sesskey(),

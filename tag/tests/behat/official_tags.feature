@@ -22,6 +22,7 @@ Feature: Manager can add official tags and change the tag type of existing tags
   Scenario: Adding official tags
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
     Then "Make official" "link" should exist in the "Tag0" "table_row"
     And "Make official" "link" should exist in the "Tag1" "table_row"
     And "Make official" "link" should exist in the "Tag2" "table_row"
@@ -47,6 +48,7 @@ Feature: Manager can add official tags and change the tag type of existing tags
   Scenario: Changing tag type with javascript disabled
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
     And I click on "Make official" "link" in the "Tag0" "table_row"
     And I should see "Tag type changed"
     And I click on "Make official" "link" in the "Tag1" "table_row"
@@ -65,6 +67,7 @@ Feature: Manager can add official tags and change the tag type of existing tags
   Scenario: Changing tag type with javascript enabled
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
     And I click on "Make official" "link" in the "Tag0" "table_row"
     And I click on "Make official" "link" in the "Tag1" "table_row"
     And I wait until "//tr[contains(.,'Tag0')]//a[contains(@title,'Remove from official tags')]" "xpath_element" exists
@@ -77,7 +80,7 @@ Feature: Manager can add official tags and change the tag type of existing tags
     And "Remove from official tags" "link" should exist in the "Tag1" "table_row"
     And "Make official" "link" should exist in the "Tag2" "table_row"
     And "Make official" "link" should exist in the "Tag3" "table_row"
-    And I follow "Manage tags"
+    And I follow "Default collection"
     And "Make official" "link" should exist in the "Tag0" "table_row"
     And "Remove from official tags" "link" should exist in the "Tag1" "table_row"
     And "Make official" "link" should exist in the "Tag2" "table_row"
@@ -87,6 +90,7 @@ Feature: Manager can add official tags and change the tag type of existing tags
   Scenario: Changing tag type in edit form
     When I log in as "manager1"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
+    And I follow "Default collection"
     And I click on "Edit this tag" "link" in the "Tag1" "table_row"
     And I set the following fields to these values:
       | Official | 1 |
