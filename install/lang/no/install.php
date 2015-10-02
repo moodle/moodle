@@ -68,8 +68,10 @@ $string['pathsroparentdataroot'] = 'Overordnet katalog ({$a->parent}) er ikke sk
 $string['pathssubadmindir'] = 'Noen ganske få webhoteller bruker  /admin som en egen url for å få tilgang til et kontrollpanel. Dessverre kommer det i konflikt med standard lokalisering av Moodle sine admin-sider. Du kan fikse dette ved å endre navn på admin-mappen og deretter oppgi dette navnet her. F.eks. <em>moodleadmin</em>.  Dette vil fikse adminlenkene i Moodle.';
 $string['pathssubdataroot'] = 'Du trenger et sted hvor Moodle kan lagre opplastede filer. Denne mappen må være med lese og skriverettigheter for webserver-brukeren (veldig ofte \'nobody\' eller \'apache\'), men denne mappen må IKKE være direkte tilgjengelig via web. Installasjonsprogrammet vil forsøke å opprette den om den ikke finnes fra før.';
 $string['pathssubdirroot'] = '<p>Full mappesti til moodleinstallasjonen.</p>';
-$string['pathssubwwwroot'] = 'Full webadresse til der hvor Moodle skal vises. Det er ikke mulig å bruke Moodle med mer enn en adresse. Dersom portalen din har flere webadresser må du bruke videresending for til den webadressen du oppgir her. Dersom portalen din er tilgjengelig både fra intranett og internett, skal du oppgi den offentlige internettadressen her og sette opp DNS slik at intranettbrukerne også benytter denne offisielle adressen.
-Dersom adressen ikke er korrekt, vennligst endre URL i nettleseren slik at at installasjonen restartes med andre verdier.';
+$string['pathssubwwwroot'] = '<p>Full webadresse til der hvor Moodle skal vises, altså den addressen som brukere skriver inn i adresselinjen i nettlseren sin.</p>
+<p>Det er ikke mulig å bruke Moodle med mer enn en adresse. Dersom portalen din har flere webadresser bør du oppgi den enkleste av de her, og bruke videresending for  hver av de andre adressene.</p>
+<p>Dersom portalen din er tilgjengelig både fra intranett og internett, skal du oppgi den offentlige internettadressen her og sette opp DNS slik at intranettbrukerne også benytter denne offisielle adressen.</p>
+<p>Dersom adressen ikke er korrekt, vennligst endre URL i nettleseren slik at at installasjonen restartes med andre verdier.</p>';
 $string['pathsunsecuredataroot'] = 'Dataroot plassering er ikke sikker';
 $string['pathswrongadmindir'] = 'Adminkatalog finnes ikke';
 $string['phpextension'] = '{$a} PHP etternavn';
