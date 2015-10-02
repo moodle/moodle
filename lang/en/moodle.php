@@ -1826,7 +1826,11 @@ $string['teacheronly'] = 'for the {$a} only';
 $string['teacherroles'] = '{$a} roles';
 $string['teachers'] = 'Teachers';
 $string['textediting'] = 'Text editor';
-$string['textediting_help'] = 'Use this option to select the editor that you would like to use when entering text. This will include, but is not limited to, areas such as labels, descriptions, and summaries. If you select "Plain text area", all text entry areas with allow you to use HTML format, Moodle auto-format, Plain text format, or Markdown format.';
+$string['textediting_help'] = 'If an HTML editor such as Atto or TinyMCE is selected, text input areas will have a toolbar with buttons for easily adding content.
+
+If \'plain text area\' is selected, a format for text input areas such as HTML or Markdown can be chosen.
+
+The list of available text editors is determined by the site administrator.';
 $string['texteditor'] = 'Use standard web forms';
 $string['textformat'] = 'Plain text format';
 $string['thanks'] = 'Thanks';
