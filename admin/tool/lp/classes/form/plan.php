@@ -82,6 +82,19 @@ class plan extends moodleform {
     }
 
     /**
+     * Get form data.
+     * Conveniently removes non-desired properties.
+     * @return object
+     */
+    public function get_data() {
+        $data = parent::get_data();
+        if (is_object($data)) {
+            unset($data->submitbutton);
+        }
+        return $data;
+    }
+
+    /**
      * Get the template select options from the templates list.
      *
      * @return array|false

@@ -107,6 +107,19 @@ class competency extends moodleform {
     }
 
     /**
+     * Get form data.
+     * Conveniently removes non-desired properties.
+     * @return object
+     */
+    public function get_data() {
+        $data = parent::get_data();
+        if (is_object($data)) {
+            unset($data->submitbutton);
+        }
+        return $data;
+    }
+
+    /**
      * Form validation.
      * @param  array $data
      * @param  array $files
