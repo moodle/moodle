@@ -5,6 +5,8 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 === 3.0 ===
 * Course formats should now use section_edit_control_items and use the returned array of controls items and their attributes to create a
   renderable menu or array of links.  Plugin calls to section_edit_controls will now include the section edit control in the returned array.
+* The section name is now wrapped in a new span (.sectionname > span), process_sections method in format.js should be updated so .sectionname
+  DOM node's wraps the section title in a span. You can look at how to implement the change in course/format/topics/format.js or MDL-48947.
 
 === 2.9 ===
 * Course formats may support deleting sections, see MDL-10405 for more details.
