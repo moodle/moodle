@@ -647,7 +647,7 @@ class mod_forum_external extends external_api {
         require_capability('mod/forum:viewdiscussion', $modcontext, null, true, 'noviewdiscussionspermission', 'forum');
 
         $sort = 'd.' . $sortby . ' ' . $sortdirection;
-        $alldiscussions = forum_get_discussions($cm, $sort, true, -1, -1, true, $page, $perpage);
+        $alldiscussions = forum_get_discussions($cm, $sort, true, -1, -1, true, $page, $perpage, FORUM_POSTS_ALL_USER_GROUPS);
 
         if ($alldiscussions) {
             $canviewfullname = has_capability('moodle/site:viewfullnames', $modcontext);

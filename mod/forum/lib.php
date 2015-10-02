@@ -64,6 +64,11 @@ if (!defined('FORUM_CRON_USER_CACHE')) {
     define('FORUM_CRON_USER_CACHE', 5000);
 }
 
+/**
+ * FORUM_POSTS_ALL_USER_GROUPS - All the posts in groups where the user is enrolled.
+ */
+define('FORUM_POSTS_ALL_USER_GROUPS', -2);
+
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 
 /**
@@ -2595,9 +2600,12 @@ function forum_count_discussions($forum, $cm, $course) {
  * @param bool $userlastmodified
  * @param int $page
  * @param int $perpage
+ * @param int $groupid if groups enabled, get discussions for this group overriding the current group.
+ *                     Use FORUM_POSTS_ALL_USER_GROUPS for all the user groups
  * @return array
  */
-function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=true, $unused=-1, $limit=-1, $userlastmodified=false, $page=-1, $perpage=0) {
+function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=true, $unused=-1, $limit=-1,
+                                $userlastmodified=false, $page=-1, $perpage=0, $groupid = -1) {
     global $CFG, $DB, $USER;
 
     $timelimit = '';
@@ -2637,11 +2645,26 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
     }
 
     $groupmode    = groups_get_activity_groupmode($cm);
-    $currentgroup = groups_get_activity_group($cm);
 
     if ($groupmode) {
+
         if (empty($modcontext)) {
             $modcontext = context_module::instance($cm->id);
+        }
+
+        // Special case, we received a groupid to override currentgroup.
+        if ($groupid > 0) {
+            $course = get_course($cm->course);
+            if (!groups_group_visible($groupid, $course, $cm)) {
+                // User doesn't belong to this group, return nothing.
+                return array();
+            }
+            $currentgroup = $groupid;
+        } else if ($groupid === -1) {
+            $currentgroup = groups_get_activity_group($cm);
+        } else {
+            // Get discussions for all groups current user can see.
+            $currentgroup = null;
         }
 
         if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $modcontext)) {
@@ -2653,8 +2676,19 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
             }
 
         } else {
-            //seprate groups without access all
-            if ($currentgroup) {
+            // Separate groups.
+
+            // Get discussions for all groups current user can see.
+            if ($currentgroup === null) {
+                $mygroups = array_keys(groups_get_all_groups($cm->course, $USER->id, $cm->groupingid, 'g.id'));
+                if (empty($mygroups)) {
+                     $groupselect = "AND d.groupid = -1";
+                } else {
+                    list($insqlgroups, $inparamsgroups) = $DB->get_in_or_equal($mygroups);
+                    $groupselect = "AND (d.groupid = -1 OR d.groupid $insqlgroups)";
+                    $params = array_merge($params, $inparamsgroups);
+                }
+            } else if ($currentgroup) {
                 $groupselect = "AND (d.groupid = ? OR d.groupid = -1)";
                 $params[] = $currentgroup;
             } else {
@@ -2664,8 +2698,6 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
     } else {
         $groupselect = "";
     }
-
-
     if (empty($forumsort)) {
         $forumsort = "d.timemodified DESC";
     }

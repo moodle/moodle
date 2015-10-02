@@ -1878,4 +1878,121 @@ class mod_forum_lib_testcase extends advanced_testcase {
 
     }
 
+    /**
+     * Test forum_get_discussions
+     */
+    public function test_forum_get_discussions_with_groups() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create course to add the module.
+        $course = self::getDataGenerator()->create_course(array('groupmode' => VISIBLEGROUPS, 'groupmodeforce' => 0));
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        $role = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        self::getDataGenerator()->enrol_user($user1->id, $course->id, $role->id);
+        self::getDataGenerator()->enrol_user($user2->id, $course->id, $role->id);
+        self::getDataGenerator()->enrol_user($user3->id, $course->id, $role->id);
+
+        // Forum forcing separate gropus.
+        $record = new stdClass();
+        $record->course = $course->id;
+        $forum = self::getDataGenerator()->create_module('forum', $record, array('groupmode' => SEPARATEGROUPS));
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+
+        // Create groups.
+        $group1 = self::getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = self::getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group3 = self::getDataGenerator()->create_group(array('courseid' => $course->id));
+
+        // Add the user1 to g1 and g2 groups.
+        groups_add_member($group1->id, $user1->id);
+        groups_add_member($group2->id, $user1->id);
+
+        // Add the user 2 and 3 to only one group.
+        groups_add_member($group1->id, $user2->id);
+        groups_add_member($group3->id, $user3->id);
+
+        // Add a few discussions.
+        $record = array();
+        $record['course'] = $course->id;
+        $record['forum'] = $forum->id;
+        $record['userid'] = $user1->id;
+        $record['groupid'] = $group1->id;
+        $discussiong1u1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        $record['groupid'] = $group2->id;
+        $discussiong2u1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        $record['userid'] = $user2->id;
+        $record['groupid'] = $group1->id;
+        $discussiong1u2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        $record['userid'] = $user3->id;
+        $record['groupid'] = $group3->id;
+        $discussiong3u3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        self::setUser($user1);
+        // Test retrieve discussions not passing the groupid parameter. We will receive only first group discussions.
+        $discussions = forum_get_discussions($cm);
+        self::assertCount(2, $discussions);
+        foreach ($discussions as $discussion) {
+            self::assertEquals($group1->id, $discussion->groupid);
+        }
+
+        // Get all my discussions.
+        $discussions = forum_get_discussions($cm, '', true, -1, -1, false, -1, 0, 0);
+        self::assertCount(3, $discussions);
+
+        // Get all my g1 discussions.
+        $discussions = forum_get_discussions($cm, '', true, -1, -1, false, -1, 0, $group1->id);
+        self::assertCount(2, $discussions);
+        foreach ($discussions as $discussion) {
+            self::assertEquals($group1->id, $discussion->groupid);
+        }
+
+        // Get all my g2 discussions.
+        $discussions = forum_get_discussions($cm, '', true, -1, -1, false, -1, 0, $group2->id);
+        self::assertCount(1, $discussions);
+        $discussion = array_shift($discussions);
+        self::assertEquals($group2->id, $discussion->groupid);
+        self::assertEquals($user1->id, $discussion->userid);
+        self::assertEquals($discussiong2u1->id, $discussion->discussion);
+
+        // Get all my g3 discussions (I'm not enrolled in that group).
+        $discussions = forum_get_discussions($cm, '', true, -1, -1, false, -1, 0, $group3->id);
+        self::assertCount(0, $discussions);
+
+        // This group does not exist.
+        $discussions = forum_get_discussions($cm, '', true, -1, -1, false, -1, 0, $group3->id + 1000);
+        self::assertCount(0, $discussions);
+
+        self::setUser($user2);
+
+        // Test retrieve discussions not passing the groupid parameter. We will receive only first group discussions.
+        $discussions = forum_get_discussions($cm);
+        self::assertCount(2, $discussions);
+        foreach ($discussions as $discussion) {
+            self::assertEquals($group1->id, $discussion->groupid);
+        }
+
+        // Get all my viewable discussions.
+        $discussions = forum_get_discussions($cm, '', true, -1, -1, false, -1, 0, 0);
+        self::assertCount(2, $discussions);
+        foreach ($discussions as $discussion) {
+            self::assertEquals($group1->id, $discussion->groupid);
+        }
+
+        // Get all my g2 discussions (I'm not enrolled in that group).
+        $discussions = forum_get_discussions($cm, '', true, -1, -1, false, -1, 0, $group2->id);
+        self::assertCount(0, $discussions);
+
+        // Get all my g3 discussions (I'm not enrolled in that group).
+        $discussions = forum_get_discussions($cm, '', true, -1, -1, false, -1, 0, $group3->id);
+        self::assertCount(0, $discussions);
+
+    }
 }
