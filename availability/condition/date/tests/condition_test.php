@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use availability_date\condition;
+use core_availability\tree;
 
 /**
  * Unit tests for the date condition.
@@ -235,5 +236,54 @@ class availability_date_condition_testcase extends advanced_testcase {
         $this->assertRegExp('~until end of.*4 March 2014([^0-9]*)$~', $information);
         $information = $date->get_standalone_description(true, true, $info);
         $this->assertRegExp('~from.*5 March 2014([^0-9]*)$~', $information);
+    }
+
+    /**
+     * Tests the update_all_dates function.
+     */
+    public function test_update_all_dates() {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Create a course with 3 pages.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $rec = array('course' => $course);
+        $page1 = $generator->get_plugin_generator('mod_page')->create_instance($rec);
+        $page2 = $generator->get_plugin_generator('mod_page')->create_instance($rec);
+        $page3 = $generator->get_plugin_generator('mod_page')->create_instance($rec);
+
+        // Set the availability page 2 to a simple date condition. You can access
+        // it from 1337 onwards.
+        $simplecondition = tree::get_root_json(array(
+                condition::get_json(condition::DIRECTION_FROM, 1337)));
+        $DB->set_field('course_modules', 'availability',
+                json_encode($simplecondition), array('id' => $page2->cmid));
+
+        // Set page 3 to a complex set of conditions including a nested date condition.
+        // You can access it until 1459, *or* after 2810 if you belong to a group.
+        $complexcondition = tree::get_root_json(array(
+                condition::get_json(condition::DIRECTION_UNTIL, 1459),
+                tree::get_nested_json(array(
+                    condition::get_json(condition::DIRECTION_FROM, 2810),
+                    \availability_group\condition::get_json()))),
+                tree::OP_OR);
+        $DB->set_field('course_modules', 'availability',
+                json_encode($complexcondition), array('id' => $page3->cmid));
+
+        // Now use the update_all_dates function to move date forward 100000.
+        condition::update_all_dates($course->id, 100000);
+
+        // Get the expected conditions after adjusting time, and compare to database.
+        $simplecondition->c[0]->t = 101337;
+        $complexcondition->c[0]->t = 101459;
+        $complexcondition->c[1]->c[0]->t = 102810;
+        $this->assertEquals($simplecondition, json_decode(
+                $DB->get_field('course_modules', 'availability', array('id' => $page2->cmid))));
+        $this->assertEquals($complexcondition, json_decode(
+                $DB->get_field('course_modules', 'availability', array('id' => $page3->cmid))));
+
+        // The one without availability conditions should still be null.
+        $this->assertNull($DB->get_field('course_modules', 'availability', array('id' => $page1->cmid)));
     }
 }
