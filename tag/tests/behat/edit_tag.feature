@@ -6,10 +6,10 @@ Feature: Users can edit tags to add description or rename
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email                |
-      | manager1 | Manager   | 1        | manager1@example.com |
-      | user1    | User      | 1        | user1@example.com    |
-      | editor1  | Editor    | 1        | editor1@example.com  |
+      | username | firstname | lastname | email                | interests         |
+      | manager1 | Manager   | 1        | manager1@example.com |                   |
+      | user1    | User      | 1        | user1@example.com    | Cat,Dog,Turtle    |
+      | editor1  | Editor    | 1        | editor1@example.com  |                   |
     Given the following "roles" exist:
       | name       | shortname |
       | Tag editor | tageditor |
@@ -20,24 +20,18 @@ Feature: Users can edit tags to add description or rename
     And the following "tags" exist:
       | name         | tagtype  |
       | Neverusedtag | official |
-    And I log in as "user1"
-    And I navigate to "Site blogs" node in "Site pages"
-    And I follow "Add a new entry"
-    And I set the following fields to these values:
-      | Entry title                                 | Blog post header  |
-      | Blog entry body                             | Blog post content |
-      | Other tags (enter tags separated by commas) | Cat,Dog,Turtle    |
-    And I press "Save changes"
-    And I log out
 
   Scenario: User with tag editing capability can change tag description
     Given I log in as "admin"
     And I set the following system permissions of "Tag editor" role:
-      | capability      | permission |
-      | moodle/tag:edit | Allow      |
+      | capability                   | permission |
+      | moodle/tag:edit              | Allow      |
+      | moodle/site:viewparticipants | Allow      |
+      | moodle/user:viewdetails      | Allow      |
     And I log out
     When I log in as "editor1"
-    And I navigate to "Site blogs" node in "Site pages"
+    And I navigate to "Participants" node in "Site pages"
+    And I follow "User 1"
     And I follow "Cat"
     And I follow "Edit this tag"
     And I should not see "Tag name"
@@ -53,7 +47,8 @@ Feature: Users can edit tags to add description or rename
 
   Scenario: Manager can change tag description, related tags and rename the tag from tag view page
     When I log in as "manager1"
-    And I navigate to "Site blogs" node in "Site pages"
+    And I navigate to "Participants" node in "Site pages"
+    And I follow "User 1"
     And I follow "Cat"
     And I follow "Edit this tag"
     And I set the following fields to these values:
@@ -77,7 +72,8 @@ Feature: Users can edit tags to add description or rename
 
   Scenario: Renaming the tag from tag view page
     When I log in as "manager1"
-    And I navigate to "Site blogs" node in "Site pages"
+    And I navigate to "Participants" node in "Site pages"
+    And I follow "User 1"
     And I follow "Cat"
     And I follow "Edit this tag"
     And I set the following fields to these values:
