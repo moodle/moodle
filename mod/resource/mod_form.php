@@ -102,6 +102,9 @@ class mod_resource_mod_form extends moodleform_mod {
         $mform->addElement('checkbox', 'showtype', get_string('showtype', 'resource'));
         $mform->setDefault('showtype', $config->showtype);
         $mform->addHelpButton('showtype', 'showtype', 'resource');
+        $mform->addElement('checkbox', 'showdate', get_string('showdate', 'resource'));
+        $mform->setDefault('showdate', $config->showdate);
+        $mform->addHelpButton('showdate', 'showdate', 'resource');
 
         if (array_key_exists(RESOURCELIB_DISPLAY_POPUP, $options)) {
             $mform->addElement('text', 'popupwidth', get_string('popupwidth', 'resource'), array('size'=>3));
@@ -177,6 +180,11 @@ class mod_resource_mod_form extends moodleform_mod {
                 $default_values['showtype'] = $displayoptions['showtype'];
             } else {
                 $default_values['showtype'] = 0;
+            }
+            if (!empty($displayoptions['showdate'])) {
+                $default_values['showdate'] = $displayoptions['showdate'];
+            } else {
+                $default_values['showdate'] = 0;
             }
         }
     }

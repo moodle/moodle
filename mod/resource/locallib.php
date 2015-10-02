@@ -286,10 +286,13 @@ function resource_get_optional_details($resource, $cm) {
     $details = '';
 
     $options = empty($resource->displayoptions) ? array() : unserialize($resource->displayoptions);
-    if (!empty($options['showsize']) || !empty($options['showtype'])) {
+    if (!empty($options['showsize']) || !empty($options['showtype']) || !empty($options['showdate'])) {
         $context = context_module::instance($cm->id);
         $size = '';
         $type = '';
+        $date = '';
+        $langstring = '';
+        $infodisplayed = 0;
         $fs = get_file_storage();
         $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false);
         if (!empty($options['showsize']) && count($files)) {
@@ -301,6 +304,8 @@ function resource_get_optional_details($resource, $cm) {
             if ($sizebytes) {
                 $size = display_size($sizebytes);
             }
+            $langstring .= 'size';
+            $infodisplayed += 1;
         }
         if (!empty($options['showtype']) && count($files)) {
             // For a typical file resource, the sortorder is 1 for the main file
@@ -312,16 +317,29 @@ function resource_get_optional_details($resource, $cm) {
             if ($type === get_mimetype_description('document/unknown')) {
                 $type = '';
             }
+            $langstring .= 'type';
+            $infodisplayed += 1;
+        }
+        if (!empty($options['showdate'])) {
+            $mainfile = reset($files);
+            $uploaddate = $mainfile->get_timecreated();
+            $modifieddate = $mainfile->get_timemodified();
+
+            if ($modifieddate > $uploaddate) {
+                $date = get_string('modifieddate', 'mod_resource', userdate($modifieddate));
+            } else {
+                $date = get_string('uploadeddate', 'mod_resource', userdate($uploaddate));
+            }
+            $langstring .= 'date';
+            $infodisplayed += 1;
         }
 
-        if ($size && $type) {
-            // Depending on language it may be necessary to show both options in
-            // different order, so use a lang string
-            $details = get_string('resourcedetails_sizetype', 'resource',
-                    (object)array('size'=>$size, 'type'=>$type));
+        if ($infodisplayed > 1) {
+            $details = get_string("resourcedetails_{$langstring}", 'resource',
+                    (object)array('size' => $size, 'type' => $type, 'date' => $date));
         } else {
-            // Either size or type is set, but not both, so just append
-            $details = $size . $type;
+            // Only one of size, type and date is set, so just append.
+            $details = $size . $type . $date;
         }
     }
 
