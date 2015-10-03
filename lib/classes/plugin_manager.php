@@ -81,6 +81,8 @@ class core_plugin_manager {
     protected $presentplugins = null;
     /** @var array reordered list of plugin types */
     protected $plugintypes = null;
+    /** @var \core\update\code_manager code manager to use for plugins code operations */
+    protected $codemanager = null;
 
     /**
      * Direct initiation not allowed, use the factory method {@link self::instance()}
@@ -933,14 +935,47 @@ class core_plugin_manager {
     }
 
     /**
-     * Return a list of all missing dependencies.
+     * Obtain the plugin ZIP file from the given URL
+     *
+     * The caller is supposed to know both downloads URL and the MD5 hash of
+     * the ZIP contents in advance, typically by using the API requests against
+     * the plugins directory.
+     *
+     * @param string $url
+     * @param string $md5
+     * @return string|bool full path to the file, false on error
+     */
+    public function get_remote_plugin_zip($url, $md5) {
+        return $this->get_code_manager()->get_remote_plugin_zip($url, $md5);
+    }
+
+    /**
+     * Extracts the saved plugin ZIP file.
+     *
+     * Returns the list of files found in the ZIP. The format of that list is
+     * array of (string)filerelpath => (bool|string) where the array value is
+     * either true or a string describing the problematic file.
+     *
+     * @see zip_packer::extract_to_pathname()
+     * @param string $zipfilepath full path to the saved ZIP file
+     * @param string $targetdir full path to the directory to extract the ZIP file to
+     * @param string $rootdir explicitly rename the root directory of the ZIP into this non-empty value
+     * @param array list of extracted files as returned by {@link zip_packer::extract_to_pathname()}
+     */
+    public function unzip_plugin_file($zipfilepath, $targetdir, $rootdir = '') {
+        return $this->get_code_manager()->unzip_plugin_file($zipfilepath, $targetdir, $rootdir);
+    }
+
+    /**
+     * Return a list of missing dependencies.
      *
      * This should provide the full list of plugins that should be installed to
      * fulfill the requirements of all plugins, if possible.
      *
+     * @param bool $availableonly return only available missing dependencies
      * @return array of stdClass|bool indexed by the component name
      */
-    public function missing_dependencies() {
+    public function missing_dependencies($availableonly=false) {
 
         $dependencies = array();
 
@@ -972,6 +1007,14 @@ class core_plugin_manager {
                             }
                         }
                     }
+                }
+            }
+        }
+
+        if ($availableonly) {
+            foreach ($dependencies as $component => $info) {
+                if (empty($info) or empty($info->version)) {
+                    unset($dependencies[$component]);
                 }
             }
         }
@@ -1157,6 +1200,57 @@ class core_plugin_manager {
 
         // Check that the folder and all its content is writable (thence removable).
         return $this->is_directory_removable($pluginfo->rootdir);
+    }
+
+    /**
+     * Is it possible to create a new plugin directory for the given plugin type?
+     *
+     * @throws coding_exception for invalid plugin types or non-existing plugin type locations
+     * @param string $plugintype
+     * @return boolean
+     */
+    public function is_plugintype_writable($plugintype) {
+
+        $plugintypepath = $this->get_plugintype_root($plugintype);
+
+        if (is_null($plugintypepath)) {
+            throw new coding_exception('Unknown plugin type: '.$plugintype);
+        }
+
+        if ($plugintypepath === false) {
+            throw new coding_exception('Plugin type location does not exist: '.$plugintype);
+        }
+
+        return is_writable($plugintypepath);
+    }
+
+    /**
+     * Returns the full path of the root of the given plugin type
+     *
+     * Null is returned if the plugin type is not known. False is returned if
+     * the plugin type root is expected but not found. Otherwise, string is
+     * returned.
+     *
+     * @param string $plugintype
+     * @return string|bool|null
+     */
+    public function get_plugintype_root($plugintype) {
+
+        $plugintypepath = null;
+        foreach (core_component::get_plugin_types() as $type => $fullpath) {
+            if ($type === $plugintype) {
+                $plugintypepath = $fullpath;
+                break;
+            }
+        }
+        if (is_null($plugintypepath)) {
+            return null;
+        }
+        if (!is_dir($plugintypepath)) {
+            return false;
+        }
+
+        return $plugintypepath;
     }
 
     /**
@@ -1569,5 +1663,19 @@ class core_plugin_manager {
         }
 
         return true;
+    }
+
+    /**
+     * Returns a code_manager instance to be used for the plugins code operations.
+     *
+     * @return \core\update\code_manager
+     */
+    protected function get_code_manager() {
+
+        if ($this->codemanager === null) {
+            $this->codemanager = new \core\update\code_manager();
+        }
+
+        return $this->codemanager;
     }
 }
