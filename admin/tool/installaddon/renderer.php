@@ -37,7 +37,7 @@ class tool_installaddon_renderer extends plugin_renderer_base {
     /** @var tool_installaddon_installer */
     protected $installer = null;
 
-    /** @var tool_installaddon_validator */
+    /** @var \core\update\validator */
     protected $validator = null;
 
     /**
@@ -55,12 +55,12 @@ class tool_installaddon_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Sets the tool_installaddon_validator instance being used.
+     * Sets the \core\update\validator instance being used.
      *
      * @throws coding_exception if the validator has been already set
-     * @param tool_installaddon_validator $validator
+     * @param \core\update\validator $validator
      */
-    public function set_validator_instance(tool_installaddon_validator $validator) {
+    public function set_validator_instance(\core\update\validator $validator) {
         if (is_null($this->validator)) {
             $this->validator = $validator;
         } else {
@@ -110,11 +110,8 @@ class tool_installaddon_renderer extends plugin_renderer_base {
             throw new coding_exception('Validator instance has not been set.');
         }
 
-        $out = $this->output->header();
-        $out .= $this->validation_page_heading();
+        $out = $this->validation_page_heading();
         $out .= $this->validation_page_messages();
-        $out .= $this->validation_page_continue();
-        $out .= $this->output->footer();
 
         return $out;
     }
@@ -337,27 +334,17 @@ class tool_installaddon_renderer extends plugin_renderer_base {
                 continue;
             }
 
-            $msgstatus = get_string('validationmsglevel_'.$message->level, 'tool_installaddon');
-            $msgtext = $msgtext = s($message->msgcode);
-            if (is_null($message->addinfo)) {
-                $msginfo = '';
-            } else {
+            $msgstatus = $validator->message_level_name($message->level);
+            $msgtext = $validator->message_code_name($message->msgcode);
+            $msginfo = $validator->message_code_info($message->msgcode, $message->addinfo);
+            if (empty($msginfo) and $message->addinfo !== null) {
                 $msginfo = html_writer::tag('pre', s(print_r($message->addinfo, true)));
             }
-            $msghelp = '';
-
-            // Replace the message code with the string if it is defined.
-            if ($stringman->string_exists('validationmsg_'.$message->msgcode, 'tool_installaddon')) {
-                $msgtext = get_string('validationmsg_'.$message->msgcode, 'tool_installaddon');
-                // And check for the eventual help, too.
-                if ($stringman->string_exists('validationmsg_'.$message->msgcode.'_help', 'tool_installaddon')) {
-                    $msghelp = $this->output->help_icon('validationmsg_'.$message->msgcode, 'tool_installaddon');
-                }
-            }
-
-            // Re-format the message info using a string if it is define.
-            if (!is_null($message->addinfo) and $stringman->string_exists('validationmsg_'.$message->msgcode.'_info', 'tool_installaddon')) {
-                $msginfo = get_string('validationmsg_'.$message->msgcode.'_info', 'tool_installaddon', $message->addinfo);
+            $msghelpicon = $validator->message_help_icon($message->msgcode);
+            if ($msghelpicon) {
+                $msghelp = $this->output->render($msghelpicon);
+            } else {
+                $msghelp = '';
             }
 
             $row = new html_table_row(array($msgstatus, $msgtext.$msghelp, $msginfo));
@@ -367,35 +354,5 @@ class tool_installaddon_renderer extends plugin_renderer_base {
         }
 
         return html_writer::table($table);
-    }
-
-    /**
-     * Renders widgets to continue from the validation results page
-     *
-     * @return string
-     */
-    protected function validation_page_continue() {
-
-        $output = '';
-        $conturl = $this->validator->get_continue_url();
-
-        if (is_null($conturl)) {
-            $contbutton = '';
-
-        } else {
-            $contbutton = $this->output->single_button(
-                $conturl, get_string('installaddon', 'tool_installaddon'), 'post',
-                array('class' => 'singlebutton continuebutton'));
-            $output .= $this->output->heading(get_string('acknowledgement', 'tool_installaddon'), 3);
-            $output .= $this->output->container(get_string('acknowledgementtext', 'tool_installaddon'));
-        }
-
-        $cancelbutton = $this->output->single_button(
-            new moodle_url('/admin/tool/installaddon/index.php'), get_string('cancel', 'core'), 'get',
-            array('class' => 'singlebutton cancelbutton'));
-
-        $output .= $this->output->container($cancelbutton.$contbutton, 'postvalidationbuttons');
-
-        return $output;
     }
 }

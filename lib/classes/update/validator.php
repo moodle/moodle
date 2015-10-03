@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,11 +20,17 @@
  * Uses fragments of the local_plugins_archive_validator class copyrighted by
  * Marina Glancy that is part of the local_plugins plugin.
  *
- * @package     tool_installaddon
- * @subpackage  classes
- * @copyright   2013 David Mudrak <david@moodle.com>
+ * @package     core_plugin
+ * @subpackage  validation
+ * @copyright   2013, 2015 David Mudrak <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace core\update;
+
+use core_component;
+use help_icon;
+use coding_exception;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,10 +43,10 @@ if (!defined('T_ML_COMMENT')) {
 /**
  * Validates the contents of extracted plugin ZIP file
  *
- * @copyright 2013 David Mudrak <david@moodle.com>
+ * @copyright 2013, 2015 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_installaddon_validator {
+class validator {
 
     /** Critical error message level, causes the validation fail. */
     const ERROR     = 'error';
@@ -79,15 +84,12 @@ class tool_installaddon_validator {
     /** @var string|null the name of found English language file without the .php extension */
     protected $langfilename = null;
 
-    /** @var moodle_url|null URL to continue with the installation of validated add-on */
-    protected $continueurl = null;
-
     /**
      * Factory method returning instance of the validator
      *
      * @param string $zipcontentpath full path to the extracted ZIP contents
      * @param array $zipcontentfiles (string)filerelpath => (bool|string)true or error
-     * @return tool_installaddon_validator
+     * @return \core\update\validator
      */
     public static function instance($zipcontentpath, array $zipcontentfiles) {
         return new static($zipcontentpath, $zipcontentfiles);
@@ -159,12 +161,75 @@ class tool_installaddon_validator {
     }
 
     /**
+     * Returns human readable localised name of the given log level.
+     *
+     * @param string $level e.g. self::INFO
+     * @return string
+     */
+    public function message_level_name($level) {
+        return get_string('validationmsglevel_'.$level, 'core_plugin');
+    }
+
+    /**
+     * If defined, returns human readable validation code.
+     *
+     * Otherwise, it simply returns the code itself as a fallback.
+     *
+     * @param string $msgcode
+     * @return string
+     */
+    public function message_code_name($msgcode) {
+
+        $stringman = get_string_manager();
+
+        if ($stringman->string_exists('validationmsg_'.$msgcode, 'core_plugin')) {
+            return get_string('validationmsg_'.$msgcode, 'core_plugin');
+        }
+
+        return $msgcode;
+    }
+
+    /**
+     * Returns help icon for the message code if defined.
+     *
+     * @param string $msgcode
+     * @return \help_icon|false
+     */
+    public function message_help_icon($msgcode) {
+
+        $stringman = get_string_manager();
+
+        if ($stringman->string_exists('validationmsg_'.$msgcode.'_help', 'core_plugin')) {
+            return new help_icon('validationmsg_'.$msgcode, 'core_plugin');
+        }
+
+        return false;
+    }
+
+    /**
+     * Localizes the message additional info if it exists.
+     *
+     * @param string $msgcode
+     * @param array|string|null $addinfo value for the $a placeholder in the string
+     * @return string
+     */
+    public function message_code_info($msgcode, $addinfo) {
+
+        $stringman = get_string_manager();
+
+        if ($addinfo !== null and $stringman->string_exists('validationmsg_'.$msgcode.'_info', 'core_plugin')) {
+            return get_string('validationmsg_'.$msgcode.'_info', 'core_plugin', $addinfo);
+        }
+
+        return '';
+    }
+
+    /**
      * Return the information provided by the the plugin's version.php
      *
-     * If version.php was not found in the plugin (which is tolerated for
-     * themes only at the moment), null is returned. Otherwise the array
-     * is returned. It may be empty if no information was parsed (which
-     * should not happen).
+     * If version.php was not found in the plugin, null is returned. Otherwise
+     * the array is returned. It may be empty if no information was parsed
+     * (which should not happen).
      *
      * @return null|array
      */
@@ -194,27 +259,7 @@ class tool_installaddon_validator {
         return $this->rootdir;
     }
 
-    /**
-     * Sets the URL to continue to after successful validation
-     *
-     * @param moodle_url $url
-     */
-    public function set_continue_url(moodle_url $url) {
-        $this->continueurl = $url;
-    }
-
-    /**
-     * Get the URL to continue to after successful validation
-     *
-     * Null is returned if the URL has not been explicitly set by the caller.
-     *
-     * @return moodle_url|null
-     */
-    public function get_continue_url() {
-        return $this->continueurl;
-    }
-
-    // End of external API /////////////////////////////////////////////////////
+    // End of external API.
 
     /**
      * @param string $zipcontentpath full path to the extracted ZIP contents
@@ -225,7 +270,7 @@ class tool_installaddon_validator {
         $this->extractfiles = $zipcontentfiles;
     }
 
-    // Validation methods //////////////////////////////////////////////////////
+    // Validation methods.
 
     /**
      * @return bool false if files in the ZIP do not have required layout
@@ -254,7 +299,8 @@ class tool_installaddon_validator {
 
         foreach (array_keys($this->extractfiles) as $filerelname) {
             $matches = array();
-            if (!preg_match("#^([^/]+)/#", $filerelname, $matches) or (!is_null($this->rootdir) and $this->rootdir !== $matches[1])) {
+            if (!preg_match("#^([^/]+)/#", $filerelname, $matches)
+                    or (!is_null($this->rootdir) and $this->rootdir !== $matches[1])) {
                 $this->add_message(self::ERROR, 'onedir');
                 return false;
             }
@@ -408,7 +454,6 @@ class tool_installaddon_validator {
         return true;
     }
 
-
     /**
      * @return bool false of the given add-on can't be installed into its location
      */
@@ -446,7 +491,7 @@ class tool_installaddon_validator {
         return true;
     }
 
-    // Helper methods //////////////////////////////////////////////////////////
+    // Helper methods.
 
     /**
      * Get as much information from existing version.php as possible
@@ -546,7 +591,6 @@ class tool_installaddon_validator {
 
         return $output;
     }
-
 
     /**
      * Returns the full path to the root directory of the given plugin type

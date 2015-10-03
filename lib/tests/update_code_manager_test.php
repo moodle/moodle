@@ -106,7 +106,7 @@ class core_update_code_manager_testcase extends advanced_testcase {
 
     public function test_unzip_plugin_file() {
         $codeman = new \core\update\testable_code_manager();
-        $zipfilepath = __DIR__.'/fixtures/invalidroot.zip';
+        $zipfilepath = __DIR__.'/fixtures/update_validator/zips/invalidroot.zip';
         $targetdir = make_request_directory();
 
         $files = $codeman->unzip_plugin_file($zipfilepath, $targetdir);
@@ -141,7 +141,7 @@ class core_update_code_manager_testcase extends advanced_testcase {
             }
         }
 
-        $zipfilepath = __DIR__.'/fixtures/bar.zip';
+        $zipfilepath = __DIR__.'/fixtures/update_validator/zips/bar.zip';
         $files = $codeman->unzip_plugin_file($zipfilepath, $targetdir, 'bar');
     }
 }

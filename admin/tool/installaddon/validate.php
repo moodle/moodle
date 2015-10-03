@@ -55,24 +55,38 @@ $zipcontentpath = make_temp_directory('tool_installaddon/'.$jobid.'/contents');
 $zipcontentfiles = $installer->extract_installfromzip_file($zipfilepath, $zipcontentpath, $rootdir);
 
 // Validate the contents of the plugin ZIP file.
-$validator = tool_installaddon_validator::instance($zipcontentpath, $zipcontentfiles);
+$validator = \core\update\validator::instance($zipcontentpath, $zipcontentfiles);
 $validator->assert_plugin_type($plugintype);
 $validator->assert_moodle_version($CFG->version);
 $result = $validator->execute();
-
-if ($result) {
-    $validator->set_continue_url(new moodle_url('/admin/tool/installaddon/deploy.php', array(
-        'sesskey' => sesskey(),
-        'jobid' => $jobid,
-        'type' => $plugintype,
-        'name' => $validator->get_rootdir())));
-
-} else {
-    fulldelete($CFG->tempdir.'/tool_installaddon/'.$jobid);
-}
 
 // Display the validation results.
 $output = $PAGE->get_renderer('tool_installaddon');
 $output->set_installer_instance($installer);
 $output->set_validator_instance($validator);
+
+echo $output->header();
 echo $output->validation_page();
+
+if ($result) {
+    $conturl = new moodle_url('/admin/tool/installaddon/deploy.php', array(
+        'sesskey' => sesskey(),
+        'jobid' => $jobid,
+        'type' => $plugintype,
+        'name' => $validator->get_rootdir())
+    );
+    $contbutton = $output->single_button($conturl, get_string('installaddon', 'tool_installaddon'), 'post',
+        array('class' => 'singlebutton continuebutton'));
+    echo $output->heading(get_string('acknowledgement', 'tool_installaddon'), 3);
+    echo $output->container(get_string('acknowledgementtext', 'tool_installaddon'));
+
+} else {
+    $contbutton = '';
+    fulldelete($CFG->tempdir.'/tool_installaddon/'.$jobid);
+}
+
+$cancelbutton = $output->single_button(new moodle_url('/admin/tool/installaddon/index.php'), get_string('cancel', 'core'),
+    'get', array('class' => 'singlebutton cancelbutton'));
+
+echo $output->container($cancelbutton.$contbutton, 'postvalidationbuttons');
+echo $output->footer();

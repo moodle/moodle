@@ -50,10 +50,12 @@ class tool_installaddon_installer_testcase extends advanced_testcase {
     }
 
     public function test_extract_installfromzip_file() {
+        global $CFG;
+
         $jobid = md5(rand().uniqid('test_', true));
         $sourcedir = make_temp_directory('tool_installaddon/'.$jobid.'/source');
         $contentsdir = make_temp_directory('tool_installaddon/'.$jobid.'/contents');
-        copy(dirname(__FILE__).'/fixtures/zips/invalidroot.zip', $sourcedir.'/testinvalidroot.zip');
+        copy($CFG->libdir.'/tests/fixtures/update_validator/zips/invalidroot.zip', $sourcedir.'/testinvalidroot.zip');
 
         $installer = tool_installaddon_installer::instance();
         $files = $installer->extract_installfromzip_file($sourcedir.'/testinvalidroot.zip', $contentsdir, 'fixed_root');
@@ -145,9 +147,11 @@ class tool_installaddon_installer_testcase extends advanced_testcase {
     }
 
     public function test_detect_plugin_component() {
+        global $CFG;
+
         $jobid = md5(rand().uniqid('test_', true));
         $workdir = make_temp_directory('tool_installaddon/'.$jobid.'/version');
-        $zipfile = __DIR__.'/fixtures/zips/bar.zip';
+        $zipfile = $CFG->libdir.'/tests/fixtures/update_validator/zips/bar.zip';
         $installer = tool_installaddon_installer::instance();
         $this->assertEquals('foo_bar', $installer->detect_plugin_component($zipfile, $workdir));
     }
