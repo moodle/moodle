@@ -449,11 +449,13 @@ $CFG->admin = 'admin';
 //
 // Use the following flag to completely disable the Automatic updates deployment
 // feature and hide it from the server administration UI.
+// TODO: drop this flag and use disableonclickaddoninstall instead.
 //
 //      $CFG->disableupdateautodeploy = true;
 //
-// Use the following flag to completely disable the On-click add-on installation
-// feature and hide it from the server administration UI.
+// Use the following flag to completely disable the installation of plugins
+// (new plugins, available updates and missing dependencies) via the server
+// administration UI.
 //
 //      $CFG->disableonclickaddoninstall = true;
 //

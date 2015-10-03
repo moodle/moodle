@@ -656,11 +656,39 @@ img.iconsmall {
         }
     }
 
-    // Available dependencies on the plugins check page.
+    .plugins-check-dependencies-actions {
+        > div {
+            display: inline-block;
+            margin-right: 1em;
+        }
+        .singlebutton {
+            margin: 5px 0;
+            padding: 0;
+            input {
+                margin: 0;
+            }
+        }
+    }
+
+    // List of available dependencies on the plugins check page.
     #plugins-check-available-dependencies {
         .displayname .component {
             font-size: @fontSizeSmall;
             .muted
+        }
+        .info .actions {
+            > div {
+                display: inline-block;
+                margin-right: 1em;
+            }
+            .singlebutton {
+                display: block;
+                margin: 5px 0;
+                padding: 0;
+                input {
+                    margin: 0;
+                }
+            }
         }
     }
 }

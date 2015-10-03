@@ -1138,18 +1138,30 @@ class core_admin_renderer extends plugin_renderer_base {
 
         if ($available) {
             $out .= $this->output->heading(get_string('misdepsavail', 'core_plugin'));
-            $out .= $this->available_missing_dependencies_list($pluginman, $available);
+            $installable = array();
+            foreach ($available as $component => $remoteinfo) {
+                if ($pluginman->is_remote_plugin_installable($component, $remoteinfo->version->version)) {
+                    $installable[$component] = $remoteinfo;
+                }
+            }
+
             $out .= $this->output->container_start('plugins-check-dependencies-actions');
 
-            // TODO implement the button functionality.
-            $out .= html_writer::link(
-                new moodle_url($this->page->url, array('installalldeps' => 1, 'sesskey' => sesskey())),
-                get_string('dependencyinstallmissing', 'core_plugin'),
-                array('class' => 'btn')
-            );
-            $out.= ' | '.html_writer::link(new moodle_url('/admin/tool/installaddon/'),
-                get_string('dependencyuploadmissing', 'core_plugin'));
+            if ($installable) {
+                $out .= $this->output->single_button(
+                    new moodle_url($this->page->url, array('installdepx' => 1)),
+                    get_string('dependencyinstallmissing', 'core_plugin', count($installable)),
+                    'post',
+                    array('class' => 'singlebutton dependencyinstallmissing')
+                );
+            }
+
+            $out.= html_writer::div(html_writer::link(new moodle_url('/admin/tool/installaddon/'),
+                get_string('dependencyuploadmissing', 'core_plugin')), 'dependencyuploadmissing');
+
             $out .= $this->output->container_end(); // .plugins-check-dependencies-actions
+
+            $out .= $this->available_missing_dependencies_list($pluginman, $available);
         }
 
         $out .= $this->output->container_end(); // .plugins-check-dependencies
@@ -1206,24 +1218,32 @@ class core_admin_renderer extends plugin_renderer_base {
                 $info = '';
             }
 
-            $info .= html_writer::span(
+            $info .= $this->output->container_start('actions');
+
+            $info .= html_writer::div(
                 html_writer::link('https://moodle.org/plugins/view.php?plugin='.$plugin->component,
                     get_string('misdepinfoplugin', 'core_plugin')),
                 'misdepinfoplugin'
             );
 
-            $info .= ' | '.html_writer::span(
+            $info .= html_writer::div(
                 html_writer::link('https://moodle.org/plugins/pluginversion.php?id='.$plugin->version->id,
                     get_string('misdepinfoversion', 'core_plugin')),
                 'misdepinfoversion'
             );
 
-            $info .= ' | '.html_writer::link($plugin->version->downloadurl, get_string('download'),
-                array('class' => 'btn btn-small'));
+            $info .= html_writer::div(html_writer::link($plugin->version->downloadurl, get_string('download')), 'misdepdownload');
 
-            // TODO Implement the button functionality.
-            $info .= ' | '.html_writer::link($plugin->version->downloadurl, get_string('dependencyinstall', 'core_plugin'),
-                array('class' => 'btn btn-small'));
+            if ($pluginman->is_remote_plugin_installable($plugin->component, $plugin->version->version)) {
+                $info .= $this->output->single_button(
+                    new moodle_url($this->page->url, array('installdep' => $plugin->component)),
+                    get_string('dependencyinstall', 'core_plugin'),
+                    'post',
+                    array('class' => 'singlebutton dependencyinstall')
+                );
+            }
+
+            $info .= $this->output->container_end(); // .actions
 
             $table->data[] = array(
                 html_writer::div($plugin->name, 'name').' '.html_writer::div($plugin->component, 'component'),

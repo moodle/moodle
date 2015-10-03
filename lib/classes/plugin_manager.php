@@ -916,6 +916,51 @@ class core_plugin_manager {
     }
 
     /**
+     * Can the given plugin remote plugin be installed via the admin UI?
+     *
+     * @param string $component
+     * @param string|int $requiredversion ANY_VERSION or the version number
+     * @return boolean
+     */
+    public function is_remote_plugin_installable($component, $requiredversion) {
+        global $CFG;
+
+        // Make sure the feature is not disabled.
+        if (!empty($CFG->disableonclickaddoninstall)) {
+            return false;
+        }
+
+        // Make sure we know there is some version available.
+        if (!$this->is_remote_plugin_available($component, $requiredversion)) {
+            return false;
+        }
+
+        // Make sure the plugin type root directory is writable.
+        list($plugintype, $pluginname) = core_component::normalize_component($component);
+        if (!$this->is_plugintype_writable($plugintype)) {
+            return false;
+        }
+
+        $remoteinfo = $this->get_remote_plugin_info($component, $requiredversion);
+        $localinfo = $this->get_plugin_info($component);
+
+        if ($localinfo) {
+            // If the plugin is already present, prevent downgrade.
+            if ($current->versiondb > $remoteinfo->version->version) {
+                return false;
+            }
+
+            // Make sure we have write access to all the existing code.
+            if (!$this->is_plugin_folder_removable($component)) {
+                return false;
+            }
+        }
+
+        // Looks like it could work.
+        return true;
+    }
+
+    /**
      * Returns information about a plugin in the plugins directory.
      *
      * See {@link \core\update\api::find_plugin()} for more details.

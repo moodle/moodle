@@ -106,7 +106,8 @@ $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
 $fetchupdates   = optional_param('fetchupdates', 0, PARAM_BOOL);
 $newaddonreq    = optional_param('installaddonrequest', null, PARAM_RAW);
 $upgradekeyhash = optional_param('upgradekeyhash', null, PARAM_ALPHANUM);
-$installalldeps = optional_param('installalldeps', false, PARAM_BOOL);
+$installdep     = optional_param('installdep', null, PARAM_COMPONENT);
+$installdepx    = optional_param('installdepx', false, PARAM_BOOL);
 $abortinstall   = optional_param('abortinstall', null, PARAM_COMPONENT);
 $abortinstallx  = optional_param('abortinstallx', null, PARAM_BOOL);
 
