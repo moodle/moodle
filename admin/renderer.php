@@ -881,11 +881,12 @@ class core_admin_renderer extends plugin_renderer_base {
         );
         $table->data = array();
 
-        // Number of displayed plugins per type (we call them 'highlighted'
-        // because in early version of the page, we always displayed all the
-        // plugins rows and highlighted were those requiring attention.
-        $numofhighlighted = array();
-
+        // Number of displayed plugins per type.
+        $numdisplayed = array();
+        // Number of plugins known to the plugin manager.
+        $sumtotal = 0;
+        // Number of plugins requiring attention.
+        $sumattention = 0;
         // List of all components we can cancel installation of.
         $installabortable = array();
 
@@ -897,7 +898,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $header = new html_table_row(array($header));
             $header->attributes['class'] = 'plugintypeheader type-' . $type;
 
-            $numofhighlighted[$type] = 0;
+            $numdisplayed[$type] = 0;
 
             if (empty($plugins) and $options['full']) {
                 $msg = new html_table_cell(get_string('noneinstalled', 'core_plugin'));
@@ -912,6 +913,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $plugintyperows = array();
 
             foreach ($plugins as $name => $plugin) {
+                $sumtotal++;
                 $row = new html_table_row();
                 $row->attributes['class'] = 'type-' . $plugin->type . ' name-' . $plugin->type . '_' . $plugin->name;
 
@@ -1002,16 +1004,18 @@ class core_admin_renderer extends plugin_renderer_base {
                     if (empty($options['full'])) {
                         continue;
                     }
+
+                } else {
+                    $sumattention++;
                 }
 
-                // ok, the plugin should be displayed
-                $numofhighlighted[$type]++;
-
+                // The plugin should be displayed.
+                $numdisplayed[$type]++;
                 $row->cells = array($displayname, $versiondb, $versiondisk, $requires, $status);
                 $plugintyperows[] = $row;
             }
 
-            if (empty($numofhighlighted[$type]) and empty($options['full'])) {
+            if (empty($numdisplayed[$type]) and empty($options['full'])) {
                 continue;
             }
 
@@ -1019,56 +1023,51 @@ class core_admin_renderer extends plugin_renderer_base {
             $table->data = array_merge($table->data, $plugintyperows);
         }
 
-        $sumofhighlighted = array_sum($numofhighlighted);
+        // Total number of displayed plugins.
+        $sumdisplayed = array_sum($numdisplayed);
 
         if ($options['xdep']) {
-            // we do not want to display no heading and links in this mode
-            $out = '';
+            // At the plugins dependencies check page, display the table only.
+            return html_writer::table($table);
+        }
 
-        } else if ($sumofhighlighted == 0) {
-            $out  = $this->output->container_start('nonehighlighted', 'plugins-check-info');
-            $out .= $this->output->heading(get_string('nonehighlighted', 'core_plugin'));
+        $out = $this->output->container_start('', 'plugins-check-info');
+
+        if ($sumdisplayed == 0) {
+            $out .= $this->output->heading(get_string('pluginchecknone', 'core_plugin'));
             if (empty($options['full'])) {
-                $out .= html_writer::link(new moodle_url($this->page->url,
-                    array('confirmupgrade' => 1, 'confirmrelease' => 1, 'showallplugins' => 1, 'cache' => 0)),
-                    get_string('nonehighlightedinfo', 'core_plugin'));
+                $out .= $linkall;
             }
-            $out .= $this->output->container_end();
 
         } else {
-            $out = $this->output->container_start('somehighlighted', 'plugins-check-info');
-
             if (empty($options['full'])) {
-                $out .= $this->output->heading(get_string('somehighlighted', 'core_plugin', $sumofhighlighted));
+                $out .= $this->output->heading(get_string('plugincheckattention', 'core_plugin'));
             } else {
-                $out .= $this->output->heading(get_string('somehighlightedall', 'core_plugin', $sumofhighlighted));
+                $out .= $this->output->heading(get_string('plugincheckall', 'core_plugin'));
             }
 
             $out .= $this->output->container_start('actions');
-
             if ($installabortable) {
                 $out .= $this->output->single_button(
                     new moodle_url($this->page->url, array('abortinstallx' => 1)),
                     get_string('cancelinstallall', 'core_plugin', count($installabortable)),
                     'post',
-                    array('class' => 'actionbutton')
+                    array('class' => 'singlebutton cancelinstallall')
                 );
             }
 
-            if (empty($options['full'])) {
-                $out .= html_writer::link(new moodle_url($this->page->url, array('confirmupgrade' => 1, 'confirmrelease' => 1,
-                    'cache' => 0, 'showallplugins' => 1)), get_string('somehighlightedinfo', 'core_plugin'));
-            } else {
-                $out .= html_writer::link(
-                    new moodle_url($this->page->url, array('confirmupgrade' => 1, 'confirmrelease' => 1,
-                    'cache' => 0, 'showallplugins' => 0)), get_string('somehighlightedonly', 'core_plugin'));
-            }
+            $out .= html_writer::div(html_writer::link(new moodle_url($this->page->url, array('showallplugins' => 0)),
+                get_string('plugincheckattention', 'core_plugin')).' '.html_writer::span($sumattention, 'badge'));
+
+            $out .= html_writer::div(html_writer::link(new moodle_url($this->page->url, array('showallplugins' => 1)),
+                get_string('plugincheckall', 'core_plugin')).' '.html_writer::span($sumtotal, 'badge'));
 
             $out .= $this->output->container_end(); // .actions
-            $out .= $this->output->container_end(); // #plugins-check-info .somehighlighted
         }
 
-        if ($sumofhighlighted > 0 or $options['full']) {
+        $out .= $this->output->container_end(); // #plugins-check-info
+
+        if ($sumdisplayed > 0 or $options['full']) {
             $out .= html_writer::table($table);
         }
 
