@@ -187,6 +187,8 @@ class qtype_multianswer_edit_form extends question_edit_form {
                 if ($this->questiondisplay->options->questions[$sub]->qtype == 'multichoice') {
                     $mform->addElement('static', 'sub_'.$sub.'_layout',
                             get_string('layout', 'qtype_multianswer'));
+                    $mform->addElement('static', 'sub_'.$sub.'_shuffleanswers',
+                            get_string('shuffleanswers', 'qtype_multichoice'));
                 }
 
                 foreach ($this->questiondisplay->options->questions[$sub]->answer as $key => $ans) {
@@ -362,6 +364,11 @@ class qtype_multianswer_edit_form extends question_edit_form {
                                     $defaultvalues[$prefix.'layout'] =
                                             get_string('layoutundefined', 'qtype_multianswer');
                             }
+                            if ($subquestion->shuffleanswers ) {
+                                $defaultvalues[$prefix.'shuffleanswers'] = get_string('yes', 'moodle');
+                            } else {
+                                $defaultvalues[$prefix.'shuffleanswers'] = get_string('no', 'moodle');
+                            }
                         }
                         foreach ($subquestion->answer as $key => $answer) {
                             if ($subquestion->qtype == 'numerical' && $key == 0) {
@@ -458,12 +465,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
                     $answercount = 0;
                     $maxgrade = false;
                     $maxfraction = -1;
-                    if (isset($this->savedquestiondisplay->options->questions[$sub]->qtype) &&
-                            $this->savedquestiondisplay->options->questions[$sub]->qtype !=
-                                    $questiondisplay->options->questions[$sub]->qtype) {
-                        $storemess = " STORED QTYPE ".question_bank::get_qtype_name(
-                                $this->savedquestiondisplay->options->questions[$sub]->qtype);
-                    }
+
                     foreach ($subquestion->answer as $key => $answer) {
                         if (is_array($answer)) {
                             $answer = $answer['text'];

@@ -91,7 +91,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
         $mc->generalfeedback = '';
         $mc->generalfeedbackformat = FORMAT_HTML;
 
-        $mc->shuffleanswers = 1;
+        $mc->shuffleanswers = 0;
         $mc->answernumbering = 'none';
         $mc->layout = qtype_multichoice_base::LAYOUT_DROPDOWN;
 
@@ -163,7 +163,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
         $mc->options = new stdClass();
         $mc->options->layout = 0;
         $mc->options->single = 1;
-        $mc->options->shuffleanswers = 1;
+        $mc->options->shuffleanswers = 0;
         $mc->options->correctfeedback = '';
         $mc->options->correctfeedbackformat = 1;
         $mc->options->partiallycorrectfeedback = '';
@@ -227,7 +227,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
         $mc->options = new stdClass();
         $mc->options->layout = 0;
         $mc->options->single = 1;
-        $mc->options->shuffleanswers = 1;
+        $mc->options->shuffleanswers = 0;
         $mc->options->correctfeedback = '';
         $mc->options->correctfeedbackformat = 1;
         $mc->options->partiallycorrectfeedback = '';
@@ -312,9 +312,8 @@ class qtype_multianswer_test_helper extends question_test_helper {
             3 => array('qt' => '{1:MULTICHOICE:=California#OK~Arizona#Wrong}', 'California' => 'OK', 'Arizona' => 'Wrong'),
             4 => array('qt' => '{1:MULTICHOICE:%0%California#Wrong~=Arizona#OK}', 'California' => 'Wrong', 'Arizona' => 'OK'),
         );
-
         foreach ($subqdata as $i => $data) {
-            // Multiple-choice subquestion.
+                // Multiple-choice subquestion.
             question_bank::load_question_definition_classes('multichoice');
             $mc = new qtype_multichoice_single_question();
             test_question_maker::initialise_a_question($mc);
@@ -333,7 +332,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
                 10 * $i     => new question_answer(13, 'California', (float) ($data['California'] == 'OK'),
                         $data['California'], FORMAT_HTML),
                 10 * $i + 1 => new question_answer(14, 'Arizona', (float) ($data['Arizona'] == 'OK'),
-                        $data['Arizona'], FORMAT_HTML),
+                         $data['Arizona'], FORMAT_HTML),
             );
             $mc->qtype = question_bank::get_qtype('multichoice');
             $mc->maxmark = 1;
@@ -387,4 +386,5 @@ class qtype_multianswer_test_helper extends question_test_helper {
 
         return $q;
     }
+
 }
