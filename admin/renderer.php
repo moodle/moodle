@@ -206,11 +206,15 @@ class core_admin_renderer extends plugin_renderer_base {
         $output = '';
 
         $output .= $this->header();
-        $output .= $this->box_start('generalbox');
-        $output .= html_writer::tag('p', get_string('pluginchecknotice', 'core_plugin'));
+        $output .= $this->box_start('generalbox', 'plugins-check-page');
+        $output .= html_writer::tag('p', get_string('pluginchecknotice', 'core_plugin'), array('class' => 'page-description'));
+
         if ($checker->enabled()) {
             $output .= $this->container_start('checkforupdates');
-            $output .= $this->single_button(new moodle_url($reloadurl, array('fetchupdates' => 1)), get_string('checkforupdates', 'core_plugin'));
+            $output .= $this->single_button(
+                new moodle_url($reloadurl, array('fetchupdates' => 1)),
+                get_string('checkforupdates', 'core_plugin')
+            );
             if ($timefetched = $checker->get_last_timefetched()) {
                 $output .= $this->container(get_string('checkforupdateslast', 'core_plugin',
                     userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'))));
@@ -877,7 +881,13 @@ class core_admin_renderer extends plugin_renderer_base {
         );
         $table->data = array();
 
-        $numofhighlighted = array();    // number of highlighted rows per this subsection
+        // Number of displayed plugins per type (we call them 'highlighted'
+        // because in early version of the page, we always displayed all the
+        // plugins rows and highlighted were those requiring attention.
+        $numofhighlighted = array();
+
+        // List of all components we can cancel installation of.
+        $installabortable = array();
 
         foreach ($plugininfo as $type => $plugins) {
 
@@ -954,6 +964,18 @@ class core_admin_renderer extends plugin_renderer_base {
                 }
                 $status = html_writer::span(get_string('status_' . $statuscode, 'core_plugin'), $statusclass);
 
+                if ($statuscode == core_plugin_manager::PLUGIN_STATUS_NEW and !$plugin->is_standard()) {
+                    if ($pluginman->is_plugin_folder_removable($plugin->component)) {
+                        $installabortable[] = $plugin->component;
+                        $status .= $this->output->single_button(
+                            new moodle_url($this->page->url, array('abortinstall' => $plugin->component)),
+                            get_string('cancelinstallone', 'core_plugin'),
+                            'post',
+                            array('class' => 'actionbutton')
+                        );
+                    }
+                }
+
                 $availableupdates = $plugin->available_updates();
                 if (!empty($availableupdates)) {
                     foreach ($availableupdates as $availableupdate) {
@@ -1014,19 +1036,36 @@ class core_admin_renderer extends plugin_renderer_base {
             $out .= $this->output->container_end();
 
         } else {
-            $out  = $this->output->container_start('somehighlighted', 'plugins-check-info');
+            $out = $this->output->container_start('somehighlighted', 'plugins-check-info');
+
             if (empty($options['full'])) {
                 $out .= $this->output->heading(get_string('somehighlighted', 'core_plugin', $sumofhighlighted));
-                $out .= html_writer::link(new moodle_url($this->page->url,
-                    array('confirmupgrade' => 1, 'confirmrelease' => 1, 'showallplugins' => 1, 'cache' => 0)),
-                    get_string('somehighlightedinfo', 'core_plugin'));
             } else {
                 $out .= $this->output->heading(get_string('somehighlightedall', 'core_plugin', $sumofhighlighted));
-                $out .= html_writer::link(new moodle_url($this->page->url,
-                    array('confirmupgrade' => 1, 'confirmrelease' => 1, 'showallplugins' => 0, 'cache' => 0)),
-                    get_string('somehighlightedonly', 'core_plugin'));
             }
-            $out .= $this->output->container_end();
+
+            $out .= $this->output->container_start('actions');
+
+            if ($installabortable) {
+                $out .= $this->output->single_button(
+                    new moodle_url($this->page->url, array('abortinstallx' => 1)),
+                    get_string('cancelinstallall', 'core_plugin', count($installabortable)),
+                    'post',
+                    array('class' => 'actionbutton')
+                );
+            }
+
+            if (empty($options['full'])) {
+                $out .= html_writer::link(new moodle_url($this->page->url, array('confirmupgrade' => 1, 'confirmrelease' => 1,
+                    'cache' => 0, 'showallplugins' => 1)), get_string('somehighlightedinfo', 'core_plugin'));
+            } else {
+                $out .= html_writer::link(
+                    new moodle_url($this->page->url, array('confirmupgrade' => 1, 'confirmrelease' => 1,
+                    'cache' => 0, 'showallplugins' => 0)), get_string('somehighlightedonly', 'core_plugin'));
+            }
+
+            $out .= $this->output->container_end(); // .actions
+            $out .= $this->output->container_end(); // #plugins-check-info .somehighlighted
         }
 
         if ($sumofhighlighted > 0 or $options['full']) {
@@ -1104,7 +1143,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
             // TODO implement the button functionality.
             $out .= html_writer::link(
-                new moodle_url('/admin/tool/installaddon/'),
+                new moodle_url($this->page->url, array('installalldeps' => 1, 'sesskey' => sesskey())),
                 get_string('dependencyinstallmissing', 'core_plugin'),
                 array('class' => 'btn')
             );

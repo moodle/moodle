@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['actions'] = 'Actions';
 $string['availability'] = 'Availability';
+$string['cancelinstallall'] = 'Cancel new installations ({$a})';
+$string['cancelinstallone'] = 'Cancel installation';
 $string['checkforupdates'] = 'Check for available updates';
 $string['checkforupdateslast'] = 'Last check done on {$a}';
 $string['detectedmisplacedplugin'] = 'Plugin "{$a->component}" is installed in incorrect location "{$a->current}", expected location is "{$a->expected}"';

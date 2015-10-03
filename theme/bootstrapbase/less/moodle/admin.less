@@ -532,7 +532,7 @@ img.iconsmall {
     text-align: right
 }
 
-// Plugins check.
+// Plugins overview control panel.
 #page-admin-index #notice .checkforupdates {
     text-align: center;
 }
@@ -583,36 +583,85 @@ img.iconsmall {
     background-color: @inputDisabledBackground;
 }
 
-#plugins-check .requires-ok {
-    .muted
-}
+// Plugins check page displayed during upgrade.
+#plugins-check-page {
 
-#plugins-check .displayname {
-    .pluginicon {
-        margin-right: 5px;
-        width: 16px;
-    }
-    .plugindir {
-        .muted;
-        font-size: @fontSizeSmall;
-    }
-}
-
-#plugins-check .requires ul {
-    margin-left: 13px; // To undo the default 25px, does not look that great inside a table cell;
-}
-
-#plugins-check .status .pluginupdateinfo {
-    padding: 5px 10px;
-    margin: 10px 0px;
-    background-color: @infoBackground;
-    .border-radius(10px);
-}
-
-#plugins-check-available-dependencies {
-    .displayname .component {
-        font-size: @fontSizeSmall;
+    .page-description {
         .muted
+    }
+
+    // Check for updates.
+    .checkforupdates {
+        .singlebutton {
+            margin: 5px 0;
+            padding: 0;
+            input {
+                margin: 0;
+            }
+        }
+    }
+
+    // Section before the plugins check table.
+    #plugins-check-info {
+        .actions {
+            .actionbutton {
+                display: inline-block;
+                margin: 5px;
+                padding: 0;
+                input {
+                    margin: 0;
+                }
+            }
+        }
+    }
+
+    // Plugins check table.
+    #plugins-check {
+        .requires-ok {
+            .muted
+        }
+
+        .displayname {
+            .pluginicon {
+                margin-right: 5px;
+                width: 16px;
+            }
+            .plugindir {
+                .muted;
+                font-size: @fontSizeSmall;
+            }
+        }
+
+        .requires ul {
+            margin-left: 13px; // To undo the default 25px, does not look that great inside a table cell;
+        }
+
+        .status {
+            .actionbutton {
+                margin: 5px 0px;
+                padding: 0;
+                input {
+                    margin: 0;
+                }
+            }
+            .pluginupdateinfo {
+                padding: 5px 10px;
+                margin: 10px 0px;
+                background-color: @infoBackground;
+                .border-radius(10px);
+                .separator:after {
+                    content: " | ";
+                }
+            }
+        }
+    }
+
+    // Available dependencies on the plugins check page.
+    #plugins-check-available-dependencies {
+        .displayname .component {
+            font-size: @fontSizeSmall;
+            .muted
+        }
     }
 }
 
@@ -643,10 +692,6 @@ img.iconsmall {
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo .separator,
 #page-admin-plugins .separator {
     border-left: 1px dotted @grayLight;
-}
-
-#plugins-check .status .pluginupdateinfo .separator:after {
-    content: " | ";
 }
 
 #plugins-control-panel .msg td {

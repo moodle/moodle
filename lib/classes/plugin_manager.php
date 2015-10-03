@@ -1532,6 +1532,43 @@ class core_plugin_manager {
     }
 
     /**
+     * Removes the plugin code directory if it is not installed yet.
+     *
+     * This is intended for the plugins check screen to give the admin a chance
+     * to cancel the installation of just unzipped plugin before the database
+     * upgrade happens.
+     *
+     * @param string $component
+     * @return bool
+     */
+    public function cancel_plugin_installation($component) {
+
+        $plugin = $this->get_plugin_info($component);
+
+        if (empty($plugin) or $plugin->is_standard() or $plugin->get_status() !== self::PLUGIN_STATUS_NEW
+                or !$this->is_plugin_folder_removable($plugin->component)) {
+            return false;
+        }
+
+        return remove_dir($plugin->rootdir);
+    }
+
+    /**
+     * Cancels installation of all new additional plugins.
+     */
+    public function cancel_all_plugin_installations() {
+
+        foreach ($this->get_plugins() as $type => $plugins) {
+            foreach ($plugins as $plugin) {
+                if (!$plugin->is_standard() and $plugin->get_status() === self::PLUGIN_STATUS_NEW
+                        and $this->is_plugin_folder_removable($plugin->component)) {
+                    $this->cancel_plugin_installation($plugin->component);
+                }
+            }
+        }
+    }
+
+    /**
      * Reorders plugin types into a sequence to be displayed
      *
      * For technical reasons, plugin types returned by {@link core_component::get_plugin_types()} are

@@ -106,6 +106,9 @@ $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
 $fetchupdates   = optional_param('fetchupdates', 0, PARAM_BOOL);
 $newaddonreq    = optional_param('installaddonrequest', null, PARAM_RAW);
 $upgradekeyhash = optional_param('upgradekeyhash', null, PARAM_ALPHANUM);
+$installalldeps = optional_param('installalldeps', false, PARAM_BOOL);
+$abortinstall   = optional_param('abortinstall', null, PARAM_COMPONENT);
+$abortinstallx  = optional_param('abortinstallx', null, PARAM_BOOL);
 
 // Set up PAGE.
 $url = new moodle_url('/admin/index.php');
@@ -272,6 +275,12 @@ if ($CFG->version != $DB->get_field('config', 'value', array('name'=>'version'))
 
 if (!$cache and $version > $CFG->version) {  // upgrade
 
+    $PAGE->set_url(new moodle_url($PAGE->url, array(
+        'confirmupgrade' => $confirmupgrade,
+        'confirmrelease' => $confirmrelease,
+        'confirmplugincheck' => $confirmplugins,
+    )));
+
     check_upgrade_key($upgradekeyhash);
 
     // Warning about upgrading a test site.
@@ -327,6 +336,8 @@ if (!$cache and $version > $CFG->version) {  // upgrade
         die();
 
     } else if (empty($confirmplugins)) {
+        // No sesskey support guaranteed here, because sessions might not work yet.
+
         $strplugincheck = get_string('plugincheck');
 
         $PAGE->navbar->add($strplugincheck);
@@ -334,20 +345,30 @@ if (!$cache and $version > $CFG->version) {  // upgrade
         $PAGE->set_heading($strplugincheck);
         $PAGE->set_cacheable(false);
 
-        $reloadurl = new moodle_url($PAGE->url, array('confirmupgrade' => 1, 'confirmrelease' => 1, 'cache' => 0));
+        $pluginman = core_plugin_manager::instance();
+
+        if ($abortinstallx) {
+            $pluginman->cancel_all_plugin_installations();
+            redirect($PAGE->url);
+        }
+
+        if ($abortinstall) {
+            $pluginman->cancel_plugin_installation($abortinstall);
+            redirect($PAGE->url);
+        }
+
 
         if ($fetchupdates) {
-            // No sesskey support guaranteed here, because sessions might not work yet.
             $updateschecker = \core\update\checker::instance();
             if ($updateschecker->enabled()) {
                 $updateschecker->fetch();
             }
-            redirect($reloadurl);
+            redirect($PAGE->url);
         }
 
         $deployer = \core\update\deployer::instance();
         if ($deployer->enabled()) {
-            $deployer->initialize($reloadurl, $reloadurl);
+            $deployer->initialize($PAGE->url, $PAGE->url);
 
             $deploydata = $deployer->submitted_data();
             if (!empty($deploydata)) {
@@ -358,16 +379,14 @@ if (!$cache and $version > $CFG->version) {  // upgrade
         }
 
         echo $output->upgrade_plugin_check_page(core_plugin_manager::instance(), \core\update\checker::instance(),
-                $version, $showallplugins, $reloadurl, new moodle_url($PAGE->url, array(
-                'confirmupgrade' => 1, 'confirmrelease' => 1, 'confirmplugincheck' => 1, 'cache' => 0)));
+                $version, $showallplugins, $PAGE->url, new moodle_url($PAGE->url, array('confirmplugincheck' => 1)));
         die();
 
     } else {
         // Always verify plugin dependencies!
         $failed = array();
         if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed)) {
-            $reloadurl = new moodle_url($PAGE->url, array('confirmupgrade' => 1, 'confirmrelease' => 1, 'cache' => 0));
-            echo $output->unsatisfied_dependencies_page($version, $failed, $reloadurl);
+            echo $output->unsatisfied_dependencies_page($version, $failed, $PAGE->url);
             die();
         }
         unset($failed);
@@ -391,18 +410,33 @@ if (!$cache and $branch <> $CFG->branch) {  // Update the branch
 
 if (!$cache and moodle_needs_upgrading()) {
 
+    $PAGE->set_url(new moodle_url($PAGE->url, array('confirmplugincheck' => $confirmplugins)));
+
     check_upgrade_key($upgradekeyhash);
 
     if (!$PAGE->headerprinted) {
         // means core upgrade or installation was not already done
 
         if (!$confirmplugins) {
+            $pluginman = core_plugin_manager::instance();
             $strplugincheck = get_string('plugincheck');
 
             $PAGE->navbar->add($strplugincheck);
             $PAGE->set_title($strplugincheck);
             $PAGE->set_heading($strplugincheck);
             $PAGE->set_cacheable(false);
+
+            if ($abortinstallx) {
+                require_sesskey();
+                $pluginman->cancel_all_plugin_installations();
+                redirect($PAGE->url);
+            }
+
+            if ($abortinstall) {
+                require_sesskey();
+                $pluginman->cancel_plugin_installation($abortinstall);
+                redirect($PAGE->url);
+            }
 
             if ($fetchupdates) {
                 require_sesskey();
@@ -429,7 +463,7 @@ if (!$cache and moodle_needs_upgrading()) {
             }
 
             // Show plugins info.
-            echo $output->upgrade_plugin_check_page(core_plugin_manager::instance(), \core\update\checker::instance(),
+            echo $output->upgrade_plugin_check_page($pluginman, \core\update\checker::instance(),
                     $version, $showallplugins,
                     new moodle_url($PAGE->url),
                     new moodle_url($PAGE->url, array('confirmplugincheck' => 1, 'cache' => 0)));
@@ -438,11 +472,10 @@ if (!$cache and moodle_needs_upgrading()) {
 
         // Make sure plugin dependencies are always checked.
         $failed = array();
-        if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+        if (!$pluginman->all_plugins_ok($version, $failed)) {
             /** @var core_admin_renderer $output */
             $output = $PAGE->get_renderer('core', 'admin');
-            $reloadurl = new moodle_url($PAGE->url, array('cache' => 0));
-            echo $output->unsatisfied_dependencies_page($version, $failed, $reloadurl);
+            echo $output->unsatisfied_dependencies_page($version, $failed, $PAGE->url);
             die();
         }
         unset($failed);
