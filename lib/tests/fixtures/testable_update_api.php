@@ -74,43 +74,62 @@ class testable_api extends api {
             'status' => null,
         );
 
+        $foobarinfo = (object)array(
+            'status' => 'OK',
+            'apiver' => '1.3',
+            'pluginfo' => (object)array(
+                'id' => 42,
+                'name' => 'Foo bar',
+                'component' => 'foo_bar',
+                'source' => '',
+                'doc' => '',
+                'bugs' => '',
+                'discussion' => '',
+                'version' => false,
+            ),
+        );
+
+        $version2015093000info = (object)array(
+            'id' => '6765',
+            'version' => '2015093000',
+            'release' => '',
+            'maturity' => '50',
+            'downloadurl' => 'http://mood.le/plugins/foo_bar/2015093000.zip',
+            'downloadmd5' => 'd41d8cd98f00b204e9800998ecf8427e',
+            'vcssystem' => '',
+            'vcssystemother' => '',
+            'vcsrepositoryurl' => '',
+            'vcsbranch' => '',
+            'vcstag' => '',
+            'supportedmoodles' => array(
+                (object)array(
+                    'version' => '2015041700',
+                    'release' => '2.9'
+                ),
+            )
+        );
+
         if ($serviceurl === 'http://testab.le/api/pluginfo.php') {
             if (strpos($params['plugin'], 'foo_bar@') === 0) {
-                $response->data = (object)array(
-                    'status' => 'OK',
-                    'pluginfo' => (object)array(
-                        'component' => 'foo_bar',
-                        'version' => false,
-                    ),
-                );
+                $response->data = $foobarinfo;
                 $response->info = array(
                     'http_code' => 200,
                 );
                 $response->status = '200 OK';
 
                 if (substr($params['plugin'], -11) === '@2015093000') {
-                    $response->data->pluginfo->version = (object)array(
-                        'downloadurl' => 'http://mood.le/plugins/foo_bar/2015093000.zip',
-                    );
+                    $response->data->pluginfo->version = $version2015093000info;
                 }
 
             } else if ($params['plugin'] === 'foo_bar' and isset($params['branch']) and isset($params['minversion'])) {
-                $response->data = (object)array(
-                    'status' => 'OK',
-                    'pluginfo' => (object)array(
-                        'component' => 'foo_bar',
-                        'version' => false,
-                    ),
-                );
+                $response->data = $foobarinfo;
                 $response->info = array(
                     'http_code' => 200,
                 );
                 $response->status = '200 OK';
 
                 if ($params['minversion'] <= 2015093000) {
-                    $response->data->pluginfo->version = (object)array(
-                        'downloadurl' => 'http://mood.le/plugins/foo_bar/2015093000.zip',
-                    );
+                    $response->data->pluginfo->version = $version2015093000info;
                 }
 
             } else {

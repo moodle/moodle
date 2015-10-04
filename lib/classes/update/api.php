@@ -149,6 +149,69 @@ class api {
     }
 
     /**
+     * Makes sure the given data format match the expected output of the pluginfo service.
+     *
+     * Object validated by this method is guaranteed to contain all the data
+     * provided by the pluginfo.php version this client works with (self::APIVER).
+     *
+     * @param stdClass $data
+     * @return stdClass|bool false if data are not valid, original data otherwise
+     */
+    public function validate_pluginfo_format($data) {
+
+        if (empty($data) or !is_object($data)) {
+            return false;
+        }
+
+        $rootproperties = array('id' => 1, 'name' => 1, 'component' => 1, 'source' => 0, 'doc' => 0,
+            'bugs' => 0, 'discussion' => 0, 'version' => 0);
+        foreach ($rootproperties as $property => $required) {
+            if (!property_exists($data, $property)) {
+                return false;
+            }
+            if ($required and empty($data->$property)) {
+                return false;
+            }
+        }
+
+        if (!empty($data->version)) {
+            if (!is_object($data->version)) {
+                return false;
+            }
+            $versionproperties = array('id' => 1, 'version' => 1, 'release' => 0, 'maturity' => 0,
+                'downloadurl' => 1, 'downloadmd5' => 1, 'vcssystem' => 0, 'vcssystemother' => 0,
+                'vcsrepositoryurl' => 0, 'vcsbranch' => 0, 'vcstag' => 0, 'supportedmoodles' => 0);
+            foreach ($versionproperties as $property => $required) {
+                if (!property_exists($data->version, $property)) {
+                    return false;
+                }
+                if ($required and empty($data->version->$property)) {
+                    return false;
+                }
+            }
+            if (!preg_match('|^https?://|i', $data->version->downloadurl)) {
+                return false;
+            }
+
+            if (!empty($data->version->supportedmoodles)) {
+                if (!is_array($data->version->supportedmoodles)) {
+                    return false;
+                }
+                foreach ($data->version->supportedmoodles as $supportedmoodle) {
+                    if (!is_object($supportedmoodle)) {
+                        return false;
+                    }
+                    if (empty($supportedmoodle->version) or empty($supportedmoodle->release)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Calls the pluginfo.php end-point with given parameters.
      *
      * @param array $params
@@ -165,11 +228,12 @@ class api {
                 return false;
 
             } else if ($response->info['http_code'] == 200 and isset($response->data->status)
-                    and $response->data->status === 'OK' and isset($response->data->pluginfo)) {
-                return $response->data->pluginfo;
+                    and $response->data->status === 'OK' and $response->data->apiver == self::APIVER
+                    and isset($response->data->pluginfo)) {
+                    return $this->validate_pluginfo_format($response->data->pluginfo);
 
             } else {
-                debugging('cURL: Unexpected response '.array_shift($response->response), DEBUG_DEVELOPER);
+                debugging('cURL: Unexpected response', DEBUG_DEVELOPER);
                 return false;
             }
         }
