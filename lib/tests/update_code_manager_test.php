@@ -17,7 +17,7 @@
 /**
  * Provides core_update_code_manager_testcase class.
  *
- * @package     core
+ * @package     core_plugin
  * @category    test
  * @copyright   2015 David Mudrak <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

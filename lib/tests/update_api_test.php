@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Provides core_update_checker_testcase class.
+ * Provides core_update_api_testcase class.
  *
- * @package     core
+ * @package     core_plugin
  * @category    test
  * @copyright   2015 David Mudrak <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

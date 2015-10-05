@@ -15,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package     core
+ * Provides \core\update\testable_api class.
+ *
+ * @package     core_plugin
  * @subpackage  fixtures
  * @category    test
  * @copyright   2015 David Mudrak <david@moodle.com>

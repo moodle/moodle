@@ -14,50 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\update;
+
 /**
- * Unit tests for the update deployer.
+ * Provides \core\update\testable_checker class.
  *
- * @package   core
- * @category  phpunit
- * @copyright 2012 David Mudrak <david@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     core_plugin
+ * @subpackage  fixtures
+ * @category    test
+ * @copyright   2012, 2015 David Mudrak <david@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-
-/**
- * Test cases for {@link \core\update\deployer} class.
- */
-class core_update_deployer_testcase extends advanced_testcase {
-
-    public function test_magic_setters() {
-        $deployer = testable_available_update_deployer::instance();
-        $value = new moodle_url('/');
-        $deployer->set_returnurl($value);
-        $this->assertSame($deployer->get_returnurl(), $value);
-    }
-
-    public function test_prepare_authorization() {
-        global $CFG;
-
-        $deployer = testable_available_update_deployer::instance();
-        list($passfile, $password) = $deployer->prepare_authorization();
-        $filename = $CFG->phpunit_dataroot.'/mdeploy/auth/'.$passfile;
-        $this->assertFileExists($filename);
-        $stored = file($filename, FILE_IGNORE_NEW_LINES);
-        $this->assertCount(2, $stored);
-        $this->assertGreaterThan(23, strlen($stored[0]));
-        $this->assertSame($stored[0], $password);
-        $this->assertLessThan(60, time() - (int)$stored[1]);
-    }
-}
-
-
 /**
  * Modified version of {@link \core\update\checker} suitable for testing.
  */
-class testable_available_update_checker extends \core\update\checker {
+class testable_checker extends checker {
 
     /** @var replaces the default DB table storage for the fetched response */
     protected $fakeresponsestorage;
@@ -69,7 +43,7 @@ class testable_available_update_checker extends \core\update\checker {
     /**
      * Factory method for this class.
      *
-     * @return testable_available_update_checker the singleton instance
+     * @return \core\update\testable_checker the singleton instance
      */
     public static function instance() {
         global $CFG;
@@ -188,19 +162,12 @@ class testable_available_update_checker extends \core\update\checker {
     }
 
     protected function cron_execute() {
-        throw new testable_available_update_checker_cron_executed('Cron executed!');
+        throw new testable_checker_cron_executed('Cron executed!');
     }
 }
 
-
 /**
- * Exception used to detect {@link \core\update\checker::cron_execute()} calls.
+ * Exception used to detect {@link checker::cron_execute()} calls.
  */
-class testable_available_update_checker_cron_executed extends Exception {
-}
-
-/**
- * Modified {@link \core\update\deployer} suitable for testing purposes.
- */
-class testable_available_update_deployer extends \core\update\deployer {
+class testable_checker_cron_executed extends \Exception {
 }
