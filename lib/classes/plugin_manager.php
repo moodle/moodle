@@ -794,6 +794,11 @@ class core_plugin_manager {
     public function resolve_requirements(\core\plugininfo\base $plugin, $moodleversion=null, $moodlebranch=null) {
         global $CFG;
 
+        if ($plugin->versiondisk === null) {
+            // Missing from disk, we have no version.php to read from.
+            return array();
+        }
+
         if ($moodleversion === null) {
             $moodleversion = $CFG->version;
         }

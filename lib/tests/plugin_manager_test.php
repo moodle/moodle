@@ -350,6 +350,7 @@ class core_plugin_manager_testcase extends advanced_testcase {
         // Prepare a fake pluginfo instance.
         $pluginfo = testable_plugininfo_base::fake_plugin_instance('fake', '/dev/null', 'one', '/dev/null/fake',
             'testable_plugininfo_base', $pluginman);
+        $pluginfo->versiondisk = 2015060600;
 
         // Test no $plugin->requires is specified in version.php.
         $pluginfo->versionrequires = null;
@@ -409,6 +410,12 @@ class core_plugin_manager_testcase extends advanced_testcase {
         $pluginfo->dependencies = array('foo_bar' => 2025010100);
         $reqs = $pluginman->resolve_requirements($pluginfo, 2015110900, 30);
         $this->assertEquals($pluginman::REQUIREMENT_UNAVAILABLE, $reqs['foo_bar']->availability);
+
+        // Plugin missing from disk - no version.php available.
+        $pluginfo = testable_plugininfo_base::fake_plugin_instance('fake', '/dev/null', 'missing', '/dev/null/fake',
+            'testable_plugininfo_base', $pluginman);
+        $pluginfo->versiondisk = null;
+        $this->assertEmpty($pluginman->resolve_requirements($pluginfo, 2015110900, 30));
     }
 
     public function test_missing_dependencies() {
@@ -416,8 +423,11 @@ class core_plugin_manager_testcase extends advanced_testcase {
 
         $one = testable_plugininfo_base::fake_plugin_instance('fake', '/dev/null', 'one', '/dev/null/fake',
             'testable_plugininfo_base', $pluginman);
+        $one->versiondisk = 2015070800;
+
         $two = testable_plugininfo_base::fake_plugin_instance('fake', '/dev/null', 'two', '/dev/null/fake',
             'testable_plugininfo_base', $pluginman);
+        $two->versiondisk = 2015070900;
 
         $pluginman->inject_testable_plugininfo('fake', 'one', $one);
         $pluginman->inject_testable_plugininfo('fake', 'two', $two);
