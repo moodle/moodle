@@ -92,8 +92,8 @@ class testable_api extends api {
         $version2015093000info = (object)array(
             'id' => '6765',
             'version' => '2015093000',
-            'release' => '',
-            'maturity' => '50',
+            'release' => '1.0',
+            'maturity' => '200',
             'downloadurl' => 'http://mood.le/plugins/foo_bar/2015093000.zip',
             'downloadmd5' => 'd41d8cd98f00b204e9800998ecf8427e',
             'vcssystem' => '',
@@ -105,6 +105,50 @@ class testable_api extends api {
                 (object)array(
                     'version' => '2015041700',
                     'release' => '2.9'
+                ),
+                (object)array(
+                    'version' => '2015110900',
+                    'release' => '3.0'
+                ),
+            )
+        );
+
+        $version2015100400info = (object)array(
+            'id' => '6796',
+            'version' => '2015100400',
+            'release' => '1.1',
+            'maturity' => '200',
+            'downloadurl' => 'http://mood.le/plugins/foo_bar/2015100400.zip',
+            'downloadmd5' => 'd41d8cd98f00b204e9800998ecf8427e',
+            'vcssystem' => '',
+            'vcssystemother' => '',
+            'vcsrepositoryurl' => '',
+            'vcsbranch' => '',
+            'vcstag' => '',
+            'supportedmoodles' => array(
+                (object)array(
+                    'version' => '2015110900',
+                    'release' => '3.0'
+                ),
+            )
+        );
+
+        $version2015100500info = (object)array(
+            'id' => '6799',
+            'version' => '2015100500',
+            'release' => '2.0beta',
+            'maturity' => '100',
+            'downloadurl' => 'http://mood.le/plugins/foo_bar/2015100500.zip',
+            'downloadmd5' => 'd41d8cd98f00b204e9800998ecf8427e',
+            'vcssystem' => '',
+            'vcssystemother' => '',
+            'vcsrepositoryurl' => '',
+            'vcsbranch' => '',
+            'vcstag' => '',
+            'supportedmoodles' => array(
+                (object)array(
+                    'version' => '2015110900',
+                    'release' => '3.0'
                 ),
             )
         );
@@ -121,6 +165,14 @@ class testable_api extends api {
                     $response->data->pluginfo->version = $version2015093000info;
                 }
 
+                if (substr($params['plugin'], -11) === '@2015100400') {
+                    $response->data->pluginfo->version = $version2015100400info;
+                }
+
+                if (substr($params['plugin'], -11) === '@2015100500') {
+                    $response->data->pluginfo->version = $version2015100500info;
+                }
+
             } else if ($params['plugin'] === 'foo_bar' and isset($params['branch']) and isset($params['minversion'])) {
                 $response->data = $foobarinfo;
                 $response->info = array(
@@ -128,8 +180,16 @@ class testable_api extends api {
                 );
                 $response->status = '200 OK';
 
-                if ($params['minversion'] <= 2015093000) {
-                    $response->data->pluginfo->version = $version2015093000info;
+                if ($params['minversion'] <= 2015100400) {
+                    // If two stable versions fullfilling the required version are
+                    // available, the /1.3/pluginfo.php API returns the more recent one.
+                    $response->data->pluginfo->version = $version2015100400info;
+
+                } else if ($params['minversion'] <= 2015100500) {
+                    // The /1.3/pluginfo.php API returns versions with lower
+                    // maturity if it is the only way how to fullfil the
+                    // required minimal version.
+                    $response->data->pluginfo->version = $version2015100500info;
                 }
 
             } else {

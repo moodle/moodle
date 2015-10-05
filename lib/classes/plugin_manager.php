@@ -71,8 +71,10 @@ class core_plugin_manager {
     protected $pluginsinfo = null;
     /** @var array of raw subplugins information */
     protected $subpluginsinfo = null;
-    /** @var array cache information about availability in the plugins directory */
-    protected $remotepluginsinfo = null;
+    /** @var array cache information about availability in the plugins directory if requesting "at least" version */
+    protected $remotepluginsinfoatleast = null;
+    /** @var array cache information about availability in the plugins directory if requesting exact version */
+    protected $remotepluginsinfoexact = null;
     /** @var array list of installed plugins $name=>$version */
     protected $installedplugins = null;
     /** @var array list of all enabled plugins $name=>$name */
@@ -83,6 +85,8 @@ class core_plugin_manager {
     protected $plugintypes = null;
     /** @var \core\update\code_manager code manager to use for plugins code operations */
     protected $codemanager = null;
+    /** @var \core\update\api client instance to use for accessing download.moodle.org/api/ */
+    protected $updateapiclient = null;
 
     /**
      * Direct initiation not allowed, use the factory method {@link self::instance()}
@@ -119,10 +123,14 @@ class core_plugin_manager {
             if (static::$singletoninstance) {
                 static::$singletoninstance->pluginsinfo = null;
                 static::$singletoninstance->subpluginsinfo = null;
+                static::$singletoninstance->remotepluginsinfoatleast = null;
+                static::$singletoninstance->remotepluginsinfoexact = null;
                 static::$singletoninstance->installedplugins = null;
                 static::$singletoninstance->enabledplugins = null;
                 static::$singletoninstance->presentplugins = null;
                 static::$singletoninstance->plugintypes = null;
+                static::$singletoninstance->codemanager = null;
+                static::$singletoninstance->updateapiclient = null;
             }
         }
         $cache = cache::make('core', 'plugin_manager');
@@ -881,7 +889,7 @@ class core_plugin_manager {
         }
 
         if ($reqs->status !== self::REQUIREMENT_STATUS_OK) {
-            if ($this->is_remote_plugin_available($otherpluginname, $requiredversion)) {
+            if ($this->is_remote_plugin_available($otherpluginname, $requiredversion, false)) {
                 $reqs->availability = self::REQUIREMENT_AVAILABLE;
             } else {
                 $reqs->availability = self::REQUIREMENT_UNAVAILABLE;
@@ -894,13 +902,17 @@ class core_plugin_manager {
     /**
      * Is the given plugin version available in the plugins directory?
      *
-     * @param string $component
-     * @param string|int $requiredversion ANY_VERSION or the version number
+     * See {@link self::get_remote_plugin_info()} for the full explanation of how the $version
+     * parameter is interpretted.
+     *
+     * @param string $component plugin frankenstyle name
+     * @param string|int $version ANY_VERSION or the version number
+     * @param bool $exactmatch false if "given version or higher" is requested
      * @return boolean
      */
-    public function is_remote_plugin_available($component, $requiredversion) {
+    public function is_remote_plugin_available($component, $version, $exactmatch) {
 
-        $info = $this->get_remote_plugin_info($component, $requiredversion);
+        $info = $this->get_remote_plugin_info($component, $version, $exactmatch);
 
         if (empty($info)) {
             // There is no available plugin of that name.
@@ -916,13 +928,13 @@ class core_plugin_manager {
     }
 
     /**
-     * Can the given plugin remote plugin be installed via the admin UI?
+     * Can the given plugin version be installed via the admin UI?
      *
      * @param string $component
-     * @param string|int $requiredversion ANY_VERSION or the version number
+     * @param int $version version number
      * @return boolean
      */
-    public function is_remote_plugin_installable($component, $requiredversion) {
+    public function is_remote_plugin_installable($component, $version) {
         global $CFG;
 
         // Make sure the feature is not disabled.
@@ -931,7 +943,7 @@ class core_plugin_manager {
         }
 
         // Make sure we know there is some version available.
-        if (!$this->is_remote_plugin_available($component, $requiredversion)) {
+        if (!$this->is_remote_plugin_available($component, $version, true)) {
             return false;
         }
 
@@ -941,7 +953,7 @@ class core_plugin_manager {
             return false;
         }
 
-        $remoteinfo = $this->get_remote_plugin_info($component, $requiredversion);
+        $remoteinfo = $this->get_remote_plugin_info($component, $version, true);
         $localinfo = $this->get_plugin_info($component);
 
         if ($localinfo) {
@@ -963,20 +975,50 @@ class core_plugin_manager {
     /**
      * Returns information about a plugin in the plugins directory.
      *
-     * See {@link \core\update\api::find_plugin()} for more details.
+     * This is typically used when checking for available dependencies (in
+     * which case the $version represents minimal version we need), or
+     * when installing an available update or a new plugin from the plugins
+     * directory (in which case the $version is exact version we are
+     * interested in). The interpretation of the $version is controlled
+     * by the $exactmatch argument.
      *
-     * @param string $component
-     * @param string|int $requiredversion ANY_VERSION or the version number
+     * If a plugin with the given component name is found, data about the
+     * plugin are returned as an object. The ->version property of the object
+     * contains the information about the particular plugin version that
+     * matches best the given critera. The ->version property is false if no
+     * suitable version of the plugin was found (yet the plugin itself is
+     * known).
+     *
+     * See {@link \core\update\api::validate_pluginfo_format()} for the
+     * returned data structure.
+     *
+     * @param string $component plugin frankenstyle name
+     * @param string|int $version ANY_VERSION or the version number
+     * @param bool $exactmatch false if "given version or higher" is requested
      * @return stdClass|bool false or data object
      */
-    public function get_remote_plugin_info($component, $requiredversion) {
+    public function get_remote_plugin_info($component, $version, $exactmatch) {
 
-        if (!isset($this->remotepluginsinfo[$component][$requiredversion])) {
-            $client = \core\update\api::client();
-            $this->remotepluginsinfo[$component][$requiredversion] = $client->find_plugin($component, $requiredversion);
+        if ($exactmatch and $version == ANY_VERSION) {
+            throw new coding_exception('Invalid request for exactly any version, it does not make sense.');
         }
 
-        return $this->remotepluginsinfo[$component][$requiredversion];
+        $client = $this->get_update_api_client();
+
+        if ($exactmatch) {
+            // Use client's get_plugin_info() method.
+            if (!isset($this->remotepluginsinfoexact[$component][$version])) {
+                $this->remotepluginsinfoexact[$component][$version] = $client->get_plugin_info($component, $version);
+            }
+            return $this->remotepluginsinfoexact[$component][$version];
+
+        } else {
+            // Use client's find_plugin() method.
+            if (!isset($this->remotepluginsinfoatleast[$component][$version])) {
+                $this->remotepluginsinfoatleast[$component][$version] = $client->find_plugin($component, $version);
+            }
+            return $this->remotepluginsinfoatleast[$component][$version];
+        }
     }
 
     /**
@@ -1032,14 +1074,15 @@ class core_plugin_manager {
                     }
                     if ($reqinfo->status != self::REQUIREMENT_STATUS_OK) {
                         if ($reqinfo->availability == self::REQUIREMENT_AVAILABLE) {
-                            $remoteinfo = $this->get_remote_plugin_info($reqname, $reqinfo->reqver);
+                            $remoteinfo = $this->get_remote_plugin_info($reqname, $reqinfo->reqver, false);
 
                             if (empty($dependencies[$reqname])) {
                                 $dependencies[$reqname] = $remoteinfo;
                             } else {
-                                // If two local plugins depend on the two different
-                                // versions of the same remote plugin, pick the
-                                // higher version.
+                                // If resolving requirements has led to two different versions of the same
+                                // remote plugin, pick the higher version. This can happen in cases like one
+                                // plugin requiring ANY_VERSION and another plugin requiring specific higher
+                                // version with lower maturity of a remote plugin.
                                 if ($remoteinfo->version->version > $dependencies[$reqname]->version->version) {
                                     $dependencies[$reqname] = $remoteinfo;
                                 }
@@ -1759,5 +1802,19 @@ class core_plugin_manager {
         }
 
         return $this->codemanager;
+    }
+
+    /**
+     * Returns a client for https://download.moodle.org/api/
+     *
+     * @return \core\update\api
+     */
+    protected function get_update_api_client() {
+
+        if ($this->updateapiclient === null) {
+            $this->updateapiclient = \core\update\api::client();
+        }
+
+        return $this->updateapiclient;
     }
 }

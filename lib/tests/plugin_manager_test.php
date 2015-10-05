@@ -34,6 +34,12 @@ require_once($CFG->dirroot.'/lib/tests/fixtures/testable_plugininfo_base.php');
  */
 class core_plugin_manager_testcase extends advanced_testcase {
 
+    public function tearDown() {
+        // The caches of the testable singleton must be reset explicitly. It is
+        // safer to kill the whole testable singleton at the end of every test.
+        testable_core_plugin_manager::reset_caches();
+    }
+
     public function test_instance() {
         $pluginman1 = core_plugin_manager::instance();
         $this->assertInstanceOf('core_plugin_manager', $pluginman1);
@@ -51,6 +57,25 @@ class core_plugin_manager_testcase extends advanced_testcase {
         // Make sure there are no warnings or errors.
         core_plugin_manager::reset_caches();
         testable_core_plugin_manager::reset_caches();
+    }
+
+    /**
+     * Make sure that the tearDown() really kills the singleton after this test.
+     */
+    public function test_teardown_works_precheck() {
+        $pluginman = testable_core_plugin_manager::instance();
+        $pluginfo = testable_plugininfo_base::fake_plugin_instance('fake', '/dev/null', 'one', '/dev/null/fake',
+            'testable_plugininfo_base', $pluginman);
+        $pluginman->inject_testable_plugininfo('fake', 'one', $pluginfo);
+
+        $this->assertInstanceOf('\core\plugininfo\base', $pluginman->get_plugin_info('fake_one'));
+        $this->assertNull($pluginman->get_plugin_info('fake_two'));
+    }
+
+    public function test_teardown_works_postcheck() {
+        $pluginman = testable_core_plugin_manager::instance();
+        $this->assertNull($pluginman->get_plugin_info('fake_one'));
+        $this->assertNull($pluginman->get_plugin_info('fake_two'));
     }
 
     public function test_get_plugin_types() {
@@ -290,17 +315,36 @@ class core_plugin_manager_testcase extends advanced_testcase {
         $this->assertTrue($pluginman->some_plugins_updatable());
     }
 
-    public function test_is_remote_plugin_available() {
-        // See {@link testable_core_plugin_manager::get_remote_plugin_info()}.
+    public function test_get_remote_plugin_info() {
         $pluginman = testable_core_plugin_manager::instance();
-        $this->assertTrue($pluginman->is_remote_plugin_available('foo_bar', ANY_VERSION));
-        $this->assertTrue($pluginman->is_remote_plugin_available('foo_bar', 2015010100));
-        $this->assertFalse($pluginman->is_remote_plugin_available('foo_bar', 2016010100));
-        $this->assertFalse($pluginman->is_remote_plugin_available('bar_bar', ANY_VERSION));
+
+        $this->assertFalse($pluginman->get_remote_plugin_info('not_exists', ANY_VERSION, false));
+
+        $info = $pluginman->get_remote_plugin_info('foo_bar', 2015093000, true);
+        $this->assertEquals(2015093000, $info->version->version);
+
+        $info = $pluginman->get_remote_plugin_info('foo_bar', 2015093000, false);
+        $this->assertEquals(2015100400, $info->version->version);
+    }
+
+    /**
+     * @expectedException moodle_exception
+     */
+    public function test_get_remote_plugin_info_exception() {
+        $pluginman = testable_core_plugin_manager::instance();
+        // The combination of ANY_VERSION + $exactmatch is illegal.
+        $pluginman->get_remote_plugin_info('any_thing', ANY_VERSION, true);
+    }
+
+    public function test_is_remote_plugin_available() {
+        $pluginman = testable_core_plugin_manager::instance();
+
+        $this->assertFalse($pluginman->is_remote_plugin_available('not_exists', ANY_VERSION, false));
+        $this->assertTrue($pluginman->is_remote_plugin_available('foo_bar', 2013131313, false));
+        $this->assertFalse($pluginman->is_remote_plugin_available('foo_bar', 2013131313, true));
     }
 
     public function test_resolve_requirements() {
-
         $pluginman = testable_core_plugin_manager::instance();
 
         // Prepare a fake pluginfo instance.
@@ -340,30 +384,52 @@ class core_plugin_manager_testcase extends advanced_testcase {
         $this->assertEquals($pluginman::REQUIREMENT_STATUS_OK, $reqs['core']->status);
 
         // Test plugin dependencies and their availability.
-        // See {@link testable_core_plugin_manager::get_remote_plugin_info()}.
-        $pluginfo->dependencies = array(
-            'foo_bar' => ANY_VERSION,
-            'foo_baz' => 2014010100,
-            'foo_crazy' => ANY_VERSION,
-        );
+        // See {@link \core\update\testable_api} class.
+
+        $pluginfo->dependencies = array('foo_bar' => ANY_VERSION, 'not_exists' => ANY_VERSION);
         $reqs = $pluginman->resolve_requirements($pluginfo, 2015110900, 30);
         $this->assertNull($reqs['foo_bar']->hasver);
         $this->assertEquals(ANY_VERSION, $reqs['foo_bar']->reqver);
         $this->assertEquals($pluginman::REQUIREMENT_STATUS_MISSING, $reqs['foo_bar']->status);
         $this->assertEquals($pluginman::REQUIREMENT_AVAILABLE, $reqs['foo_bar']->availability);
-        $this->assertEquals($pluginman::REQUIREMENT_AVAILABLE, $reqs['foo_baz']->availability);
-        $this->assertEquals($pluginman::REQUIREMENT_UNAVAILABLE, $reqs['foo_crazy']->availability);
+        $this->assertEquals($pluginman::REQUIREMENT_UNAVAILABLE, $reqs['not_exists']->availability);
 
-        $pluginfo->dependencies = array(
-            'foo_baz' => 2015010100,
-        );
+        $pluginfo->dependencies = array('foo_bar' => 2013122400);
         $reqs = $pluginman->resolve_requirements($pluginfo, 2015110900, 30);
-        $this->assertEquals($pluginman::REQUIREMENT_AVAILABLE, $reqs['foo_baz']->availability);
+        $this->assertEquals($pluginman::REQUIREMENT_AVAILABLE, $reqs['foo_bar']->availability);
 
-        $pluginfo->dependencies = array(
-            'foo_baz' => 2015010101,
-        );
+        $pluginfo->dependencies = array('foo_bar' => 2015093000);
         $reqs = $pluginman->resolve_requirements($pluginfo, 2015110900, 30);
-        $this->assertEquals($pluginman::REQUIREMENT_UNAVAILABLE, $reqs['foo_baz']->availability);
+        $this->assertEquals($pluginman::REQUIREMENT_AVAILABLE, $reqs['foo_bar']->availability);
+
+        $pluginfo->dependencies = array('foo_bar' => 2015100500);
+        $reqs = $pluginman->resolve_requirements($pluginfo, 2015110900, 30);
+        $this->assertEquals($pluginman::REQUIREMENT_AVAILABLE, $reqs['foo_bar']->availability);
+
+        $pluginfo->dependencies = array('foo_bar' => 2025010100);
+        $reqs = $pluginman->resolve_requirements($pluginfo, 2015110900, 30);
+        $this->assertEquals($pluginman::REQUIREMENT_UNAVAILABLE, $reqs['foo_bar']->availability);
+    }
+
+    public function test_missing_dependencies() {
+        $pluginman = testable_core_plugin_manager::instance();
+
+        $one = testable_plugininfo_base::fake_plugin_instance('fake', '/dev/null', 'one', '/dev/null/fake',
+            'testable_plugininfo_base', $pluginman);
+        $two = testable_plugininfo_base::fake_plugin_instance('fake', '/dev/null', 'two', '/dev/null/fake',
+            'testable_plugininfo_base', $pluginman);
+
+        $pluginman->inject_testable_plugininfo('fake', 'one', $one);
+        $pluginman->inject_testable_plugininfo('fake', 'two', $two);
+
+        $this->assertEmpty($pluginman->missing_dependencies());
+
+        $one->dependencies = array('foo_bar' => ANY_VERSION);
+        $misdeps = $pluginman->missing_dependencies();
+        $this->assertEquals(2015100400, $misdeps['foo_bar']->version->version);
+
+        $two->dependencies = array('foo_bar' => 2015100500);
+        $misdeps = $pluginman->missing_dependencies();
+        $this->assertEquals(2015100500, $misdeps['foo_bar']->version->version);
     }
 }

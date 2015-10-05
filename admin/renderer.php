@@ -1094,9 +1094,9 @@ class core_admin_renderer extends plugin_renderer_base {
 
         foreach ($dependencies as $component => $remoteinfo) {
             if ($remoteinfo === false) {
-                // The required version is not available. Let us check is there
+                // The required version is not available. Let us check if there
                 // is at least some version in the plugins directory.
-                $remoteinfoanyversion = $pluginman->get_remote_plugin_info($component, ANY_VERSION);
+                $remoteinfoanyversion = $pluginman->get_remote_plugin_info($component, ANY_VERSION, false);
                 if ($remoteinfoanyversion === false) {
                     $unknown[$component] = $component;
                 } else {

@@ -31,6 +31,11 @@ require_once(__DIR__.'/fixtures/testable_update_api.php');
 /**
  * Tests for \core\update\api client.
  *
+ * Please note many of these tests heavily depend on the behaviour of the
+ * testable_api client. It is important to make sure that the behaviour of the
+ * testable_api client perfectly matches the actual behaviour of the live
+ * services on the given API version.
+ *
  * @copyright 2015 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -66,8 +71,12 @@ class core_update_api_testcase extends advanced_testcase {
         $this->assertFalse($info->version);
 
         // Both plugin and the version are available.
-        $info = $client->get_plugin_info('foo_bar', 2015093000);
-        $this->assertNotNull($info->version->downloadurl);
+        foreach (array(2015093000 => MATURITY_STABLE, 2015100400 => MATURITY_STABLE,
+                2015100500 => MATURITY_BETA) as $version => $maturity) {
+            $info = $client->get_plugin_info('foo_bar', $version);
+            $this->assertNotEmpty($info->version);
+            $this->assertEquals($maturity, $info->version->maturity);
+        }
     }
 
     /**
@@ -81,15 +90,22 @@ class core_update_api_testcase extends advanced_testcase {
         $this->assertFalse($client->find_plugin('non_existing'));
 
         // The plugin is known but there is no sufficient version.
-        $info = $client->find_plugin('foo_bar', 2015093001);
+        $info = $client->find_plugin('foo_bar', 2016010100);
         $this->assertFalse($info->version);
 
-        // Both plugin and the version are available.
+        // Both plugin and the version are available. Of the two available
+        // stable versions, the more recent one is returned.
         $info = $client->find_plugin('foo_bar', 2015093000);
-        $this->assertNotNull($info->version->downloadurl);
+        $this->assertEquals(2015100400, $info->version->version);
 
+        // If any version is required, the most recent most mature one is
+        // returned.
         $info = $client->find_plugin('foo_bar', ANY_VERSION);
-        $this->assertNotNull($info->version->downloadurl);
+        $this->assertEquals(2015100400, $info->version->version);
+
+        // Less matured versions are returned if needed.
+        $info = $client->find_plugin('foo_bar', 2015100500);
+        $this->assertEquals(2015100500, $info->version->version);
     }
 
     /**

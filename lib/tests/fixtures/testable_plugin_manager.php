@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__.'/testable_update_api.php');
+
 /**
  * Testable variant of the core_plugin_manager
  *
@@ -35,6 +37,25 @@ class testable_core_plugin_manager extends core_plugin_manager {
 
     /** @var testable_core_plugin_manager holds the singleton instance */
     protected static $singletoninstance;
+
+    /**
+     * Allows us to inject items directly into the plugins info tree.
+     *
+     * Do not forget to call our reset_caches() after using this method to force a new
+     * singleton instance.
+     */
+    public function inject_testable_plugininfo($type, $name, \core\plugininfo\base $plugininfo) {
+        $this->pluginsinfo[$type][$name] = $plugininfo;
+    }
+
+    /**
+     * Returns testable subclass of the client.
+     *
+     * @return \core\update\testable_api
+     */
+    protected function get_update_api_client() {
+        return \core\update\testable_api::client();
+    }
 
     /**
      * Mockup implementation of loading available updates info.
@@ -70,51 +91,5 @@ class testable_core_plugin_manager extends core_plugin_manager {
         }
 
         return null;
-    }
-
-    /**
-     * Mockup fetching info about a plugin available in the plugins directory.
-     *
-     * This testable method does not actually use {@link \core\update\api}.
-     * Instead, it provides haerd-coded list fictional plugins and their
-     * versions.
-     *
-     * @param string $component
-     * @param string|int $requiredversion ANY_VERSION or the version number
-     * @return stdClass|bool false or data object
-     */
-    public function get_remote_plugin_info($component, $requiredversion) {
-
-        $info = false;
-
-        if ($component === 'foo_bar') {
-            $info = (object)array(
-                'name' => 'Foo bar',
-                'component' => 'foo_bar',
-                'version' => false,
-            );
-
-            if ($requiredversion === ANY_VERSION or $requiredversion <= 2015010100) {
-                $info->version = (object)array(
-                    'version' => 2015010100
-                );
-            }
-        }
-
-        if ($component === 'foo_baz') {
-            $info = (object)array(
-                'name' => 'Foo baz',
-                'component' => 'foo_baz',
-                'version' => false,
-            );
-
-            if ($requiredversion === ANY_VERSION or $requiredversion <= 2015010100) {
-                $info->version = (object)array(
-                    'version' => 2015010100
-                );
-            }
-        }
-
-        return $info;
     }
 }
