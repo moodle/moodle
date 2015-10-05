@@ -6,40 +6,40 @@ Feature: Users can flag tags and manager can reset flags
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email                |
-      | manager1 | Manager   | 1        | manager1@example.com |
-      | user1    | User      | 1        | user1@example.com    |
-      | user2    | User      | 2        | user2@example.com    |
-      | user3    | User      | 3        | user3@example.com    |
+      | username | firstname | lastname | email                | interests                 |
+      | manager1 | Manager   | 1        | manager1@example.com |                           |
+      | user1    | User      | 1        | user1@example.com    | Nicetag, Badtag, Sweartag |
+      | user2    | User      | 2        | user2@example.com    |                           |
+      | user3    | User      | 3        | user3@example.com    |                           |
     And the following "system role assigns" exist:
       | user     | course               | role    |
       | manager1 | Acceptance test site | manager |
     And the following "tags" exist:
       | name         | tagtype  |
       | Neverusedtag | official |
-    And I log in as "user1"
-    And I navigate to "Site blogs" node in "Site pages"
-    And I follow "Add a new entry"
-    And I set the following fields to these values:
-      | Entry title                                 | Blog post from teacher    |
-      | Blog entry body                             | Teacher blog post content |
-      | Other tags (enter tags separated by commas) | Nicetag, Badtag, Sweartag |
-    And I press "Save changes"
+    And I log in as "admin"
+    And I set the following system permissions of "Authenticated user" role:
+      | capability                   | permission |
+      | moodle/site:viewparticipants | Allow      |
+      | moodle/user:viewdetails      | Allow      |
     And I log out
     And I log in as "user2"
-    And I navigate to "Site blogs" node in "Site pages"
+    And I navigate to "Participants" node in "Site pages"
+    And I follow "User 1"
     And I follow "Badtag"
     And I follow "Flag as inappropriate"
     And I should see "The person responsible will be notified"
     And I follow "Continue"
-    And I navigate to "Site blogs" node in "Site pages"
+    And I navigate to "Participants" node in "Site pages"
+    And I follow "User 1"
     And I follow "Sweartag"
     And I follow "Flag as inappropriate"
     And I should see "The person responsible will be notified"
     And I follow "Continue"
     And I log out
     And I log in as "user3"
-    And I navigate to "Site blogs" node in "Site pages"
+    And I navigate to "Participants" node in "Site pages"
+    And I follow "User 1"
     And I follow "Sweartag"
     And I follow "Flag as inappropriate"
     And I should see "The person responsible will be notified"
