@@ -935,26 +935,33 @@ class core_plugin_manager {
     /**
      * Can the given plugin version be installed via the admin UI?
      *
+     * This check should be used whenever attempting to install a plugin from
+     * the plugins directory (new install, available update, missing dependency).
+     *
      * @param string $component
      * @param int $version version number
+     * $param string $reason returned code of the reason why it is not
      * @return boolean
      */
-    public function is_remote_plugin_installable($component, $version) {
+    public function is_remote_plugin_installable($component, $version, &$reason=null) {
         global $CFG;
 
         // Make sure the feature is not disabled.
         if (!empty($CFG->disableonclickaddoninstall)) {
+            $reason = 'disabled';
             return false;
         }
 
-        // Make sure we know there is some version available.
+        // Make sure the version is available.
         if (!$this->is_remote_plugin_available($component, $version, true)) {
+            $reason = 'remoteunavailable';
             return false;
         }
 
         // Make sure the plugin type root directory is writable.
         list($plugintype, $pluginname) = core_component::normalize_component($component);
         if (!$this->is_plugintype_writable($plugintype)) {
+            $reason = 'notwritableplugintype';
             return false;
         }
 
@@ -963,13 +970,17 @@ class core_plugin_manager {
 
         if ($localinfo) {
             // If the plugin is already present, prevent downgrade.
-            if ($current->versiondb > $remoteinfo->version->version) {
+            if ($localinfo->versiondb > $remoteinfo->version->version) {
+                $reason = 'cannotdowngrade';
                 return false;
             }
 
             // Make sure we have write access to all the existing code.
-            if (!$this->is_plugin_folder_removable($component)) {
-                return false;
+            if (is_dir($localinfo->rootdir)) {
+                if (!$this->is_plugin_folder_removable($component)) {
+                    $reason = 'notwritableplugin';
+                    return false;
+                }
             }
         }
 

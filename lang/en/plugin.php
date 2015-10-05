@@ -62,10 +62,7 @@ $string['notdownloadable'] = 'Can not download the package';
 $string['notdownloadable_help'] = 'ZIP package with the update can not be downloaded automatically. Please refer to the documentation page for more help.';
 $string['notdownloadable_link'] = 'admin/mdeploy/notdownloadable';
 $string['notwritable'] = 'Plugin files not writable';
-$string['notwritable_help'] = 'You have enabled automatic updates deployment and there is an available update for this plugin. However, the plugin files are not writable by the web server so the update cannot be installed automatically.
-
-You need to make the plugin folder and all its contents writable to be able to install the available update automatically.';
-$string['notwritable_link'] = 'admin/mdeploy/notwritable';
+$string['notwritable_help'] = 'Plugin files are not writable by the web server. The web server process has to have write access to the plugin folder and all its contents. Write access to the root folder of the given plugin type may be required, too.';
 $string['numtotal'] = 'Installed: {$a}';
 $string['numdisabled'] = 'Disabled: {$a}';
 $string['numextension'] = 'Additional: {$a}';

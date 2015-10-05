@@ -1233,13 +1233,18 @@ class core_admin_renderer extends plugin_renderer_base {
 
             $info .= html_writer::div(html_writer::link($plugin->version->downloadurl, get_string('download')), 'misdepdownload');
 
-            if ($pluginman->is_remote_plugin_installable($plugin->component, $plugin->version->version)) {
+            if ($pluginman->is_remote_plugin_installable($plugin->component, $plugin->version->version, $reason)) {
                 $info .= $this->output->single_button(
                     new moodle_url($this->page->url, array('installdep' => $plugin->component)),
                     get_string('dependencyinstall', 'core_plugin'),
                     'post',
                     array('class' => 'singlebutton dependencyinstall')
                 );
+            } else {
+                $reasonhelp = $this->info_remote_plugin_not_installable($reason);
+                if ($reasonhelp) {
+                    $info .= html_writer::div($reasonhelp, 'reasonhelp dependencyinstall');
+                }
             }
 
             $info .= $this->output->container_end(); // .actions
@@ -1254,6 +1259,25 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         return html_writer::table($table);
+    }
+
+    /**
+     * Explain why {@link core_plugin_manager::is_remote_plugin_installable()} returned false.
+     *
+     * @param string $reason the reason code as returned by the plugin manager
+     * @return string
+     */
+    protected function info_remote_plugin_not_installable($reason) {
+
+        if ($reason === 'notwritableplugintype' or $reason === 'notwritableplugin') {
+            return $this->output->help_icon('notwritable', 'core_plugin', get_string('notwritable', 'core_plugin'));
+        }
+
+        if ($reason === 'remoteunavailable') {
+            return $this->output->help_icon('notdownloadable', 'core_plugin', get_string('notdownloadable', 'core_plugin'));
+        }
+
+        return false;
     }
 
     /**
