@@ -550,10 +550,7 @@ img.iconsmall {
 }
 
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity50 .info.release,
-#plugins-check .status .pluginupdateinfo.maturity50,
-#plugins-check .missingfromdisk .displayname,
-#plugins-check .status-missing .status,
-#plugins-check .status-downgrade .status {
+#plugins-check .status .pluginupdateinfo.maturity50 {
     background-color: @errorBackground;
 }
 
@@ -622,6 +619,10 @@ img.iconsmall {
     #plugins-check {
         .requires-ok {
             .muted
+        }
+
+        .status-missing, .status-downgrade {
+            background-color: @errorBackground;
         }
 
         .displayname {

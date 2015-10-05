@@ -272,7 +272,6 @@
 #page-admin-index #plugins-check {margin-left:auto; margin-right:auto;}
 #page-admin-index #plugins-check .displayname .pluginicon {width:16px;margin-right:5px}
 #page-admin-index #plugins-check .displayname .plugindir {font-size:0.7em;color:#999;}
-#page-admin-index #plugins-check .missingfromdisk .displayname {background-color:#ffd3d9;}
 #page-admin-index #plugins-check .msg td {text-align:center;}
 #page-admin-index #plugins-check .status-downgrade .status {background-color:#ffd3d9;}
 #page-admin-index #plugins-check .status-missing .status {background-color:#ffd3d9;}
