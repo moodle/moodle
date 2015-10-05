@@ -3,6 +3,13 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
+=== 2.9.3 ===
+
+* WS protocols webservice/myprotocol:use capabilities were defined with a high riskbitmask value
+  when the fact that a user has that capability does not imply any risk, but other capabilities
+  that the user may have do. If your ws protocol does not imply and risk by itself, you can remove the
+  riskbitmask from your $capabilities array in webservice/myprotocol/db/access.php
+
 === 2.9 ===
 
 * The deprecated functions can not be added to services anymore and
