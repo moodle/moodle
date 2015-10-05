@@ -7691,6 +7691,12 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
     public function get_setting() {
         global $CFG;
 
+        // First check if is not set.
+        $result = $this->config_read($this->name);
+        if (is_null($result)) {
+            return null;
+        }
+
         // For install cli script, $CFG->defaultuserroleid is not set so return 0
         // Or if web services aren't enabled this can't be,
         if (empty($CFG->defaultuserroleid) || empty($CFG->enablewebservices)) {
@@ -7701,7 +7707,7 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
         $webservicemanager = new webservice();
         $mobileservice = $webservicemanager->get_external_service_by_shortname(MOODLE_OFFICIAL_MOBILE_SERVICE);
         if ($mobileservice->enabled and $this->is_protocol_cap_allowed()) {
-            return $this->config_read($this->name); //same as returning 1
+            return $result;
         } else {
             return 0;
         }
