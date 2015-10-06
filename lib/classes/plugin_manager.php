@@ -1068,7 +1068,7 @@ class core_plugin_manager {
             ),
 
             'ltiservice' => array(
-                'profile', 'toolproxy', 'toolsettings'
+                'memberships', 'profile', 'toolproxy', 'toolsettings'
             ),
 
             'message' => array(
