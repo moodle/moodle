@@ -32,9 +32,6 @@ class HTMLPurifier_AttrDef_HTML_Bool extends HTMLPurifier_AttrDef
      */
     public function validate($string, $config, $context)
     {
-        if (empty($string)) {
-            return false;
-        }
         return $this->name;
     }
 
