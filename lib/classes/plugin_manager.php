@@ -1283,6 +1283,72 @@ class core_plugin_manager {
     }
 
     /**
+     * Returns a list of all available updates to be installed.
+     *
+     * This is used when "update all plugins" action is performed at the
+     * administration UI screen.
+     *
+     * Returns array of remote info objects indexed by the plugin
+     * component. If there are multiple updates available (typically a mix of
+     * stable and non-stable ones), we pick the most mature most recent one.
+     *
+     * Plugins without explicit maturity are considered more mature than
+     * release candidates but less mature than explicit stable (this should be
+     * pretty rare case).
+     *
+     * @return array (string)component => (\core\update\info)info
+     */
+    public function available_updates() {
+
+        $updates = array();
+
+        foreach ($this->get_plugins() as $type => $plugins) {
+            foreach ($plugins as $plugin) {
+                $availableupdates = $plugin->available_updates();
+                if (empty($availableupdates)) {
+                    continue;
+                }
+                foreach ($availableupdates as $update) {
+                    if (empty($updates[$plugin->component])) {
+                        $updates[$plugin->component] = $update;
+                        continue;
+                    }
+                    $maturitycurrent = $updates[$plugin->component]->maturity;
+                    if (empty($maturitycurrent)) {
+                        $maturitycurrent = MATURITY_STABLE - 25;
+                    }
+                    $maturityremote = $update->maturity;
+                    if (empty($maturityremote)) {
+                        $maturityremote = MATURITY_STABLE - 25;
+                    }
+                    if ($maturityremote < $maturitycurrent) {
+                        continue;
+                    }
+                    if ($maturityremote > $maturitycurrent) {
+                        $updates[$plugin->component] = $update;
+                        continue;
+                    }
+                    if ($update->version > $updates[$plugin->component]->version) {
+                        $updates[$plugin->component] = $update;
+                        continue;
+                    }
+                }
+            }
+        }
+
+        foreach ($updates as $component => $update) {
+            $remoteinfo = $this->get_remote_plugin_info($component, $update->version, true);
+            if (empty($remoteinfo) or empty($remoteinfo->version)) {
+                unset($updates[$component]);
+            } else {
+                $updates[$component] = $remoteinfo;
+            }
+        }
+
+        return $updates;
+    }
+
+    /**
      * Check to see if the given plugin folder can be removed by the web server process.
      *
      * @param string $component full frankenstyle component

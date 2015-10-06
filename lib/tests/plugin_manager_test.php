@@ -291,28 +291,64 @@ class core_plugin_manager_testcase extends advanced_testcase {
     }
 
     public function test_plugin_available_updates() {
-
         $pluginman = testable_core_plugin_manager::instance();
 
+        $foobar = testable_plugininfo_base::fake_plugin_instance('foo', '/dev/null', 'bar', '/dev/null/fake',
+            'testable_plugininfo_base', $pluginman);
+        $foobar->versiondb = 2015092900;
+        $foobar->versiondisk = 2015092900;
+
         foreach ($pluginman->get_plugins() as $type => $infos) {
-            foreach ($infos as $name => $info) {
-                $updates = $info->available_updates();
-                if ($info->component != 'mod_forum') {
+            foreach ($infos as $name => $plugin) {
+                $updates = $plugin->available_updates();
+                if ($plugin->component != 'foo_bar') {
                     $this->assertNull($updates);
                 } else {
-                    $this->assertEquals(1, count($updates));
-                    $update = array_shift($updates);
-                    $this->assertInstanceOf('\core\update\info', $update);
-                    $this->assertEquals('mod_forum', $update->component);
-                    $this->assertEquals('2999122400', $update->version);
+                    $this->assertTrue(is_array($updates));
+                    $this->assertEquals(3, count($updates));
+                    foreach ($updates as $update) {
+                        $this->assertInstanceOf('\core\update\info', $update);
+                        $this->assertEquals($update->component, $plugin->component);
+                        $this->assertTrue($update->version > $plugin->versiondb);
+                    }
                 }
             }
         }
     }
 
-    public function test_some_plugins_updatable() {
+    public function test_some_plugins_updatable_none() {
         $pluginman = testable_core_plugin_manager::instance();
+        $this->assertFalse($pluginman->some_plugins_updatable());
+    }
+
+    public function test_some_plugins_updatable_some() {
+        $pluginman = testable_core_plugin_manager::instance();
+
+        $foobar = testable_plugininfo_base::fake_plugin_instance('foo', '/dev/null', 'bar', '/dev/null/fake',
+            'testable_plugininfo_base', $pluginman);
+        $foobar->versiondb = 2015092900;
+        $foobar->versiondisk = 2015092900;
+        $pluginman->inject_testable_plugininfo('foo', 'bar', $foobar);
+
         $this->assertTrue($pluginman->some_plugins_updatable());
+    }
+
+    public function test_available_updates() {
+        $pluginman = testable_core_plugin_manager::instance();
+
+        $foobar = testable_plugininfo_base::fake_plugin_instance('foo', '/dev/null', 'bar', '/dev/null/fake',
+            'testable_plugininfo_base', $pluginman);
+        $foobar->versiondb = 2015092900;
+        $foobar->versiondisk = 2015092900;
+        $pluginman->inject_testable_plugininfo('foo', 'bar', $foobar);
+
+        $updates = $pluginman->available_updates();
+
+        $this->assertTrue(is_array($updates));
+        $this->assertEquals(1, count($updates));
+        $update = $updates['foo_bar'];
+        $this->assertEquals('foo_bar', $update->component);
+        $this->assertEquals(2015100400, $update->version->version);
     }
 
     public function test_get_remote_plugin_info() {

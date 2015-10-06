@@ -45,6 +45,11 @@ class testable_core_plugin_manager extends core_plugin_manager {
      * singleton instance.
      */
     public function inject_testable_plugininfo($type, $name, \core\plugininfo\base $plugininfo) {
+
+        // Let the parent initialize the ->pluginsinfo tree.
+        parent::get_plugins();
+
+        // Inject the additional plugin info.
         $this->pluginsinfo[$type][$name] = $plugininfo;
     }
 
@@ -62,28 +67,36 @@ class testable_core_plugin_manager extends core_plugin_manager {
      *
      * This testable implementation does not actually use
      * {@link \core\update\checker}. Instead, it provides hard-coded list of
-     * fictional available updates for some standard plugin.
+     * fictional available updates for our foo_bar plugin.
+     *
+     * Note there is a difference in the behaviour as the actual update API
+     * does not return info of lower version than requested. To mock up well,
+     * make sure the injected foo_bar testable plugin info has version lower
+     * than the lowest one returned here.
      *
      * @param string $component
      * @return array|null array of \core\update\info objects or null
      */
     public function load_available_updates_for_plugin($component) {
 
-        if ($component === 'mod_forum') {
+        if ($component === 'foo_bar') {
             $updates = array();
 
             $updates[] = new \core\update\info($component, array(
-                'version' => '2002073008',
-                'release' => 'Forum 0.1',
-                'maturity' => MATURITY_ALPHA,
-                'url' => 'https://en.wikipedia.org/wiki/Moodle',
-                'download' => 'https://moodle.org/plugins/pluginversion.php?id=1',
-                'downloadmd5' => md5('I can not think of anything funny to type here'),
+                'version' => '2015093000',
+                'release' => 'Foo bar 15.09.30 beta',
+                'maturity' => MATURITY_BETA,
             ));
 
             $updates[] = new \core\update\info($component, array(
-                'version' => '2999122400',
-                'release' => 'Forum NG',
+                'version' => '2015100400',
+                'release' => 'Foo bar 15.10.04',
+                'maturity' => MATURITY_STABLE,
+            ));
+
+            $updates[] = new \core\update\info($component, array(
+                'version' => '2015100500',
+                'release' => 'Foo bar 15.10.05 beta',
                 'maturity' => MATURITY_BETA,
             ));
 
