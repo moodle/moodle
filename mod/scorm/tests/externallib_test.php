@@ -640,8 +640,10 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $scorm2->packagesize = $packagesize;
         $scorm2->packageurl = $packageurl2;
 
-        $expected1 = array();
-        $expected2 = array();
+        // Forced to boolean as it is returned as PARAM_BOOL.
+        $protectpackages = (bool)get_config('scorm', 'protectpackagedownloads');
+        $expected1 = array('protectpackagedownloads' => $protectpackages);
+        $expected2 = array('protectpackagedownloads' => $protectpackages);
         foreach ($expectedfields as $field) {
 
             // Since we return the fields used as boolean as PARAM_BOOL instead PARAM_INT we need to force casting here.
