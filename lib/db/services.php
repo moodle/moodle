@@ -1148,14 +1148,6 @@ $functions = array(
         'ajax'        => true
     ),
 
-    'mod_glossary_get_glossaries_by_courses' => array(
-        'classname'     => 'mod_glossary_external',
-        'methodname'    => 'get_glossaries_by_courses',
-        'description'   => 'Retrieve a list of glossaries from several courses.',
-        'type'          => 'read',
-        'capabilities'  => 'mod/glossary:view'
-    ),
-
 );
 
 $services = array(
