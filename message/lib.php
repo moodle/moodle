@@ -988,7 +988,7 @@ function message_add_contact($contactid, $blocked=0) {
     // Check if a record already exists as we may be changing blocking status.
     if (($contact = $DB->get_record('message_contacts', array('userid' => $USER->id, 'contactid' => $contactid))) !== false) {
         // Check if blocking status has been changed.
-        if ($contact->blocked !== $blocked) {
+        if ($contact->blocked != $blocked) {
             $contact->blocked = $blocked;
             $DB->update_record('message_contacts', $contact);
 
