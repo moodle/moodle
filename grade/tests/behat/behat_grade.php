@@ -49,6 +49,23 @@ class behat_grade extends behat_base {
     }
 
     /**
+     * Enters a quick feedback via the gradebook for a specific grade item and user when viewing
+     * the 'Grader report' with editing mode turned on.
+     *
+     * @Given /^I give the feedback "(?P<grade_number>(?:[^"]|\\")*)" to the user "(?P<username_string>(?:[^"]|\\")*)" for the grade item "(?P<grade_activity_string>(?:[^"]|\\")*)"$/
+     * @param string $feedback
+     * @param string $userfullname the user's fullname as returned by fullname()
+     * @param string $itemname
+     * @return Given
+     */
+    public function i_give_the_feedback($feedback, $userfullname, $itemname) {
+        $gradelabel = $userfullname . ' ' . $itemname;
+        $fieldstr = get_string('useractivityfeedback', 'gradereport_grader', $gradelabel);
+
+        return new Given('I set the field "' . $this->escape($fieldstr) . '" to "' . $this->escape($feedback) . '"');
+    }
+
+    /**
      * Changes the settings of a grade item or category or the course.
      *
      * Teacher must be either on the grade setup page or on the Grader report page with editing mode turned on.
