@@ -384,7 +384,7 @@ class mod_forum_external extends external_api {
      * @since Moodle 2.7
      */
     public static function get_forum_discussion_posts($discussionid, $sortby = "created", $sortdirection = "DESC") {
-        global $CFG, $DB, $USER;
+        global $CFG, $DB, $USER, $PAGE;
 
         $posts = array();
         $warnings = array();
@@ -475,19 +475,14 @@ class mod_forum_external extends external_api {
                 $post->children = array();
             }
 
+            $userpicture = new user_picture($post);
+            $userpicture->size = 1; // Size f1.
+            $post->userpictureurl = $userpicture->get_url($PAGE)->out(false);
+
             $user = new stdclass();
             $user->id = $post->userid;
             $user = username_load_fields_from_object($user, $post);
             $post->userfullname = fullname($user, $canviewfullname);
-
-            // We can have post written by users that are deleted. In this case, those users don't have a valid context.
-            $usercontext = context_user::instance($user->id, IGNORE_MISSING);
-            if ($usercontext) {
-                $post->userpictureurl = moodle_url::make_webservice_pluginfile_url(
-                        $usercontext->id, 'user', 'icon', null, '/', 'f1')->out(false);
-            } else {
-                $post->userpictureurl = '';
-            }
 
             // Rewrite embedded images URLs.
             list($post->message, $post->messageformat) =
@@ -603,7 +598,7 @@ class mod_forum_external extends external_api {
      */
     public static function get_forum_discussions_paginated($forumid, $sortby = 'timemodified', $sortdirection = 'DESC',
                                                     $page = -1, $perpage = 0) {
-        global $CFG, $DB, $USER;
+        global $CFG, $DB, $USER, $PAGE;
 
         require_once($CFG->dirroot . "/mod/forum/lib.php");
 
@@ -696,34 +691,30 @@ class mod_forum_external extends external_api {
                     $discussion->numreplies = (int) $replies[$discussion->discussion]->replies;
                 }
 
+                $picturefields = explode(',', user_picture::fields());
+
                 // Load user objects from the results of the query.
                 $user = new stdclass();
                 $user->id = $discussion->userid;
-                $user = username_load_fields_from_object($user, $discussion);
+                $user = username_load_fields_from_object($user, $discussion, null, $picturefields);
+                // Preserve the id, it can be modified by username_load_fields_from_object.
+                $user->id = $discussion->userid;
                 $discussion->userfullname = fullname($user, $canviewfullname);
 
-                // We can have post written by users that are deleted. In this case, those users don't have a valid context.
-                $usercontext = context_user::instance($user->id, IGNORE_MISSING);
-                if ($usercontext) {
-                    $discussion->userpictureurl = moodle_url::make_webservice_pluginfile_url(
-                        $usercontext->id, 'user', 'icon', null, '/', 'f1')->out(false);
-                } else {
-                    $discussion->userpictureurl = '';
-                }
+                $userpicture = new user_picture($user);
+                $userpicture->size = 1; // Size f1.
+                $discussion->userpictureurl = $userpicture->get_url($PAGE)->out(false);
 
                 $usermodified = new stdclass();
                 $usermodified->id = $discussion->usermodified;
-                $usermodified = username_load_fields_from_object($usermodified, $discussion, 'um');
+                $usermodified = username_load_fields_from_object($usermodified, $discussion, 'um', $picturefields);
+                // Preserve the id (it can be overwritten due to the prefixed $picturefields).
+                $usermodified->id = $discussion->usermodified;
                 $discussion->usermodifiedfullname = fullname($usermodified, $canviewfullname);
 
-                // We can have post written by users that are deleted. In this case, those users don't have a valid context.
-                $usercontext = context_user::instance($usermodified->id, IGNORE_MISSING);
-                if ($usercontext) {
-                    $discussion->usermodifiedpictureurl = moodle_url::make_webservice_pluginfile_url(
-                        $usercontext->id, 'user', 'icon', null, '/', 'f1')->out(false);
-                } else {
-                    $discussion->usermodifiedpictureurl = '';
-                }
+                $userpicture = new user_picture($usermodified);
+                $userpicture->size = 1; // Size f1.
+                $discussion->usermodifiedpictureurl = $userpicture->get_url($PAGE)->out(false);
 
                 // Rewrite embedded images URLs.
                 list($discussion->message, $discussion->messageformat) =

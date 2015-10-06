@@ -57,7 +57,7 @@ class mod_choice_external extends external_api {
      * @since Moodle 3.0
      */
     public static function get_choice_results($choiceid) {
-        global $USER;
+        global $USER, $PAGE;
 
         $params = self::validate_parameters(self::get_choice_results_parameters(), array('choiceid' => $choiceid));
 
@@ -96,14 +96,11 @@ class mod_choice_external extends external_api {
                         $response = array();
                         $response['userid'] = $userresponse->id;
                         $response['fullname'] = fullname($userresponse, $fullnamecap);
-                        $usercontext = context_user::instance($userresponse->id, IGNORE_MISSING);
-                        if ($usercontext) {
-                            $profileimageurl = moodle_url::make_webservice_pluginfile_url($usercontext->id, 'user', 'icon', null,
-                                                                                         '/', 'f1')->out(false);
-                        } else {
-                            $profileimageurl = '';
-                        }
-                        $response['profileimageurl'] = $profileimageurl;
+
+                        $userpicture = new user_picture($userresponse);
+                        $userpicture->size = 1; // Size f1.
+                        $response['profileimageurl'] = $userpicture->get_url($PAGE)->out(false);
+
                         // Add optional properties.
                         foreach (array('answerid', 'timemodified') as $field) {
                             if (property_exists($userresponse, 'answerid')) {

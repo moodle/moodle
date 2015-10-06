@@ -425,7 +425,7 @@ class core_message_external extends external_api {
      * @since Moodle 2.5
      */
     public static function get_contacts() {
-        global $CFG;
+        global $CFG, $PAGE;
 
         // Check if messaging is enabled.
         if (!$CFG->messaging) {
@@ -444,16 +444,11 @@ class core_message_external extends external_api {
                     'unread' => $contact->messagecount
                 );
 
-                $usercontext = context_user::instance($contact->id, IGNORE_MISSING);
-                if ($usercontext) {
-                    $newcontact['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
-                                                        $usercontext->id, 'user', 'icon', null, '/', 'f1')->out(false);
-                    $newcontact['profileimageurlsmall'] = moodle_url::make_webservice_pluginfile_url(
-                                                            $usercontext->id, 'user', 'icon', null, '/', 'f2')->out(false);
-                } else {
-                    $newcontact['profileimageurl'] = '';
-                    $newcontact['profileimageurlsmall'] = '';
-                }
+                $userpicture = new user_picture($contact);
+                $userpicture->size = 1; // Size f1.
+                $newcontact['profileimageurl'] = $userpicture->get_url($PAGE)->out(false);
+                $userpicture->size = 0; // Size f2.
+                $newcontact['profileimageurlsmall'] = $userpicture->get_url($PAGE)->out(false);
 
                 $allcontacts[$mode][$key] = $newcontact;
             }
@@ -535,7 +530,7 @@ class core_message_external extends external_api {
      * @since Moodle 2.5
      */
     public static function search_contacts($searchtext, $onlymycourses = false) {
-        global $CFG, $USER;
+        global $CFG, $USER, $PAGE;
         require_once($CFG->dirroot . '/user/lib.php');
 
         // Check if messaging is enabled.
@@ -581,17 +576,11 @@ class core_message_external extends external_api {
             $user->phone1 = null;
             $user->phone2 = null;
 
-            $usercontext = context_user::instance($user->id, IGNORE_MISSING);
-
-            if ($usercontext) {
-                $newuser['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
-                                                    $usercontext->id, 'user', 'icon', null, '/', 'f1')->out(false);
-                $newuser['profileimageurlsmall'] = moodle_url::make_webservice_pluginfile_url(
-                                                        $usercontext->id, 'user', 'icon', null, '/', 'f2')->out(false);
-            } else {
-                $newuser['profileimageurl'] = '';
-                $newuser['profileimageurlsmall'] = '';
-            }
+            $userpicture = new user_picture($user);
+            $userpicture->size = 1; // Size f1.
+            $newuser['profileimageurl'] = $userpicture->get_url($PAGE)->out(false);
+            $userpicture->size = 0; // Size f2.
+            $newuser['profileimageurlsmall'] = $userpicture->get_url($PAGE)->out(false);
 
             $user = $newuser;
         }
@@ -863,7 +852,7 @@ class core_message_external extends external_api {
      * @since 2.9
      */
     public static function get_blocked_users($userid) {
-        global $CFG, $USER;
+        global $CFG, $USER, $PAGE;
         require_once($CFG->dirroot . "/message/lib.php");
 
         // Warnings array, it can be empty at the end but is mandatory.
@@ -903,13 +892,9 @@ class core_message_external extends external_api {
                 'fullname' => fullname($user),
             );
 
-            $usercontext = context_user::instance($user->id, IGNORE_MISSING);
-            if ($usercontext) {
-                $newuser['profileimageurl'] = moodle_url::make_webservice_pluginfile_url(
-                                                $usercontext->id, 'user', 'icon', null, '/', 'f1')->out(false);
-            } else {
-                $newuser['profileimageurl'] = '';
-            }
+            $userpicture = new user_picture($user);
+            $userpicture->size = 1; // Size f1.
+            $newuser['profileimageurl'] = $userpicture->get_url($PAGE)->out(false);
 
             $blockedusers[] = $newuser;
         }
