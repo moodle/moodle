@@ -1035,9 +1035,6 @@ class core_admin_renderer extends plugin_renderer_base {
 
         if ($sumdisplayed == 0) {
             $out .= $this->output->heading(get_string('pluginchecknone', 'core_plugin'));
-            if (empty($options['full'])) {
-                $out .= $linkall;
-            }
 
         } else {
             if (empty($options['full'])) {
@@ -1045,26 +1042,25 @@ class core_admin_renderer extends plugin_renderer_base {
             } else {
                 $out .= $this->output->heading(get_string('plugincheckall', 'core_plugin'));
             }
-
-            $out .= $this->output->container_start('actions');
-            if ($installabortable) {
-                $out .= $this->output->single_button(
-                    new moodle_url($this->page->url, array('abortinstallx' => 1)),
-                    get_string('cancelinstallall', 'core_plugin', count($installabortable)),
-                    'post',
-                    array('class' => 'singlebutton cancelinstallall')
-                );
-            }
-
-            $out .= html_writer::div(html_writer::link(new moodle_url($this->page->url, array('showallplugins' => 0)),
-                get_string('plugincheckattention', 'core_plugin')).' '.html_writer::span($sumattention, 'badge'));
-
-            $out .= html_writer::div(html_writer::link(new moodle_url($this->page->url, array('showallplugins' => 1)),
-                get_string('plugincheckall', 'core_plugin')).' '.html_writer::span($sumtotal, 'badge'));
-
-            $out .= $this->output->container_end(); // .actions
         }
 
+        $out .= $this->output->container_start('actions');
+        if ($installabortable) {
+            $out .= $this->output->single_button(
+                new moodle_url($this->page->url, array('abortinstallx' => 1)),
+                get_string('cancelinstallall', 'core_plugin', count($installabortable)),
+                'post',
+                array('class' => 'singlebutton cancelinstallall')
+            );
+        }
+
+        $out .= html_writer::div(html_writer::link(new moodle_url($this->page->url, array('showallplugins' => 0)),
+            get_string('plugincheckattention', 'core_plugin')).' '.html_writer::span($sumattention, 'badge'));
+
+        $out .= html_writer::div(html_writer::link(new moodle_url($this->page->url, array('showallplugins' => 1)),
+            get_string('plugincheckall', 'core_plugin')).' '.html_writer::span($sumtotal, 'badge'));
+
+        $out .= $this->output->container_end(); // .actions
         $out .= $this->output->container_end(); // #plugins-check-info
 
         if ($sumdisplayed > 0 or $options['full']) {
