@@ -55,7 +55,22 @@ class format_weeks extends format_base {
         if ((string)$section->name !== '') {
             // Return the name the user set.
             return format_string($section->name, true, array('context' => context_course::instance($this->courseid)));
-        } else if ($section->section == 0) {
+        } else {
+            return $this->get_default_section_name($section);
+        }
+    }
+
+    /**
+     * Returns the default section name for the weekly course format.
+     *
+     * If the section number is 0, it will use the string with key = section0name from the course format's lang file.
+     * Otherwise, the default format of "[start date] - [end date]" will be returned.
+     *
+     * @param stdClass $section Section object from database or just field course_sections section
+     * @return string The default value for the section name.
+     */
+    public function get_default_section_name($section) {
+        if ($section->section == 0) {
             // Return the general section.
             return get_string('section0name', 'format_weeks');
         } else {

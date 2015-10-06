@@ -24,6 +24,22 @@ Feature: Sections can be edited and deleted in weeks format
     And I follow "Course 1"
     And I turn editing mode on
 
+  Scenario: View the default name of the general section in weeks format
+    When I click on "Edit section" "link" in the "li#section-0" "css_element"
+    Then I should see "Use default section name [General]"
+
+  Scenario: Edit the default name of the general section in weeks format
+    When I click on "Edit section" "link" in the "li#section-0" "css_element"
+    And I set the following fields to these values:
+      | Use default section name | 0                           |
+      | name                     | This is the general section |
+    And I press "Save changes"
+    Then I should see "This is the general section" in the "li#section-0" "css_element"
+
+  Scenario: View the default name of the second section in weeks format
+    When I click on "Edit week" "link" in the "li#section-2" "css_element"
+    Then I should see "Use default section name [8 May - 14 May]"
+
   Scenario: Edit section summary in weeks format
     When I click on "Edit week" "link" in the "li#section-2" "css_element"
     And I set the following fields to these values:

@@ -220,6 +220,21 @@ class core_backup_moodle2_course_format_testcase extends advanced_testcase {
  * Test course format that has 1 option.
  */
 class format_test_cs_options extends format_topics {
+    /**
+     * Override method format_topics::get_default_section_name to prevent PHPUnit errors related to the nonexistent
+     * format_test_cs_options lang file.
+     *
+     * @param stdClass $section The section in question.
+     * @return string The section's name for display.
+     */
+    public function get_default_section_name($section) {
+        if ($section->section == 0) {
+            return parent::get_default_section_name($section);
+        } else {
+            return get_string('sectionname', 'format_topics') . ' ' . $section->section;
+        }
+    }
+
     public function section_format_options($foreditform = false) {
         return array(
             'numdaystocomplete' => array(

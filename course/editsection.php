@@ -80,8 +80,17 @@ if ($deletesection) {
 }
 
 $editoroptions = array('context'=>$context ,'maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
-$mform = course_get_format($course->id)->editsection_form($PAGE->url,
-        array('cs' => $sectioninfo, 'editoroptions' => $editoroptions));
+
+$courseformat = course_get_format($course);
+$defaultsectionname = $courseformat->get_default_section_name($section);
+
+$customdata = array(
+    'cs' => $sectioninfo,
+    'editoroptions' => $editoroptions,
+    'defaultsectionname' => $defaultsectionname
+);
+$mform = $courseformat->editsection_form($PAGE->url, $customdata);
+
 // set current value, make an editable copy of section_info object
 // this will retrieve all format-specific options as well
 $initialdata = convert_to_array($sectioninfo);
