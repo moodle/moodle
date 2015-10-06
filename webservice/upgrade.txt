@@ -9,6 +9,9 @@ This information is intended for authors of webservices, not people writing webs
   when the fact that a user has that capability does not imply any risk, but other capabilities
   that the user may have do. If your ws protocol does not imply and risk by itself, you can remove the
   riskbitmask from your $capabilities array in webservice/myprotocol/db/access.php
+* New function for formatting external strings: external_format_strings, it should be used as a replacement of format_string in
+  external functions.
+  All the occurrences of format_strings have been replaced with this new function.
 
 === 2.9 ===
 

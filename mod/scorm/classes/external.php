@@ -651,7 +651,7 @@ class mod_scorm_external extends external_api {
                 $module['id'] = $scorm->id;
                 $module['coursemodule'] = $scorm->coursemodule;
                 $module['course'] = $scorm->course;
-                $module['name']  = format_string($scorm->name, true, array('context' => $context));
+                $module['name']  = external_format_string($scorm->name, $context->id);
                 list($module['intro'], $module['introformat']) =
                     external_format_text($scorm->intro, $scorm->introformat, $context->id, 'mod_scorm', 'intro', $scorm->id);
 
@@ -727,7 +727,7 @@ class mod_scorm_external extends external_api {
                             'id' => new external_value(PARAM_INT, 'SCORM id'),
                             'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
                             'course' => new external_value(PARAM_INT, 'Course id'),
-                            'name' => new external_value(PARAM_TEXT, 'SCORM name'),
+                            'name' => new external_value(PARAM_RAW, 'SCORM name'),
                             'intro' => new external_value(PARAM_RAW, 'The SCORM intro'),
                             'introformat' => new external_format_value('intro'),
                             'packagesize' => new external_value(PARAM_INT, 'SCORM zip package size', VALUE_OPTIONAL),
