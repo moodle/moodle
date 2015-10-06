@@ -90,7 +90,7 @@ class api {
      *
      * @param string $component frankenstyle name of the plugin
      * @param int $version plugin version as declared via $plugin->version in its version.php
-     * @return stdClass|bool
+     * @return \core\update\remote_info|bool
      */
     public function get_plugin_info($component, $version) {
 
@@ -123,7 +123,7 @@ class api {
      * @param string $component frankenstyle name of the plugin
      * @param string|int $reqversion minimal required version of the plugin, defaults to ANY_VERSION
      * @param int $branch moodle core branch such as 29, 30, 31 etc, defaults to $CFG->branch
-     * @return stdClass|bool false or data object
+     * @return \core\update\remote_info|bool
      */
     public function find_plugin($component, $reqversion=ANY_VERSION, $branch=null) {
         global $CFG;
@@ -155,13 +155,15 @@ class api {
      * provided by the pluginfo.php version this client works with (self::APIVER).
      *
      * @param stdClass $data
-     * @return stdClass|bool false if data are not valid, original data otherwise
+     * @return \core\update\remote_info|bool false if data are not valid, original data otherwise
      */
     public function validate_pluginfo_format($data) {
 
         if (empty($data) or !is_object($data)) {
             return false;
         }
+
+        $output = new remote_info();
 
         $rootproperties = array('id' => 1, 'name' => 1, 'component' => 1, 'source' => 0, 'doc' => 0,
             'bugs' => 0, 'discussion' => 0, 'version' => 0);
@@ -172,6 +174,7 @@ class api {
             if ($required and empty($data->$property)) {
                 return false;
             }
+            $output->$property = $data->$property;
         }
 
         if (!empty($data->version)) {
@@ -208,14 +211,14 @@ class api {
             }
         }
 
-        return $data;
+        return $output;
     }
 
     /**
      * Calls the pluginfo.php end-point with given parameters.
      *
      * @param array $params
-     * @return stdClass|bool false or data object
+     * @return \core\update\remote_info|bool
      */
     protected function call_pluginfo_service(array $params) {
 

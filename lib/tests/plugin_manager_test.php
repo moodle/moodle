@@ -297,7 +297,9 @@ class core_plugin_manager_testcase extends advanced_testcase {
             'testable_plugininfo_base', $pluginman);
         $foobar->versiondb = 2015092900;
         $foobar->versiondisk = 2015092900;
+        $pluginman->inject_testable_plugininfo('foo', 'bar', $foobar);
 
+        $washere = false;
         foreach ($pluginman->get_plugins() as $type => $infos) {
             foreach ($infos as $name => $plugin) {
                 $updates = $plugin->available_updates();
@@ -307,6 +309,7 @@ class core_plugin_manager_testcase extends advanced_testcase {
                     $this->assertTrue(is_array($updates));
                     $this->assertEquals(3, count($updates));
                     foreach ($updates as $update) {
+                        $washere = true;
                         $this->assertInstanceOf('\core\update\info', $update);
                         $this->assertEquals($update->component, $plugin->component);
                         $this->assertTrue($update->version > $plugin->versiondb);
@@ -314,6 +317,7 @@ class core_plugin_manager_testcase extends advanced_testcase {
                 }
             }
         }
+        $this->assertTrue($washere);
     }
 
     public function test_some_plugins_updatable_none() {
@@ -347,6 +351,7 @@ class core_plugin_manager_testcase extends advanced_testcase {
         $this->assertTrue(is_array($updates));
         $this->assertEquals(1, count($updates));
         $update = $updates['foo_bar'];
+        $this->assertInstanceOf('\core\update\remote_info', $update);
         $this->assertEquals('foo_bar', $update->component);
         $this->assertEquals(2015100400, $update->version->version);
     }
@@ -472,10 +477,12 @@ class core_plugin_manager_testcase extends advanced_testcase {
 
         $one->dependencies = array('foo_bar' => ANY_VERSION);
         $misdeps = $pluginman->missing_dependencies();
+        $this->assertInstanceOf('\core\update\remote_info', $misdeps['foo_bar']);
         $this->assertEquals(2015100400, $misdeps['foo_bar']->version->version);
 
         $two->dependencies = array('foo_bar' => 2015100500);
         $misdeps = $pluginman->missing_dependencies();
+        $this->assertInstanceOf('\core\update\remote_info', $misdeps['foo_bar']);
         $this->assertEquals(2015100500, $misdeps['foo_bar']->version->version);
     }
 }

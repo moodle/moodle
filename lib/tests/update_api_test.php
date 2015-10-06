@@ -68,12 +68,14 @@ class core_update_api_testcase extends advanced_testcase {
 
         // The plugin is known but there is no such version.
         $info = $client->get_plugin_info('foo_bar', 2014010100);
+        $this->assertInstanceOf('\core\update\remote_info', $info);
         $this->assertFalse($info->version);
 
         // Both plugin and the version are available.
         foreach (array(2015093000 => MATURITY_STABLE, 2015100400 => MATURITY_STABLE,
                 2015100500 => MATURITY_BETA) as $version => $maturity) {
             $info = $client->get_plugin_info('foo_bar', $version);
+            $this->assertInstanceOf('\core\update\remote_info', $info);
             $this->assertNotEmpty($info->version);
             $this->assertEquals($maturity, $info->version->maturity);
         }
@@ -96,15 +98,18 @@ class core_update_api_testcase extends advanced_testcase {
         // Both plugin and the version are available. Of the two available
         // stable versions, the more recent one is returned.
         $info = $client->find_plugin('foo_bar', 2015093000);
+        $this->assertInstanceOf('\core\update\remote_info', $info);
         $this->assertEquals(2015100400, $info->version->version);
 
         // If any version is required, the most recent most mature one is
         // returned.
         $info = $client->find_plugin('foo_bar', ANY_VERSION);
+        $this->assertInstanceOf('\core\update\remote_info', $info);
         $this->assertEquals(2015100400, $info->version->version);
 
         // Less matured versions are returned if needed.
         $info = $client->find_plugin('foo_bar', 2015100500);
+        $this->assertInstanceOf('\core\update\remote_info', $info);
         $this->assertEquals(2015100500, $info->version->version);
     }
 
@@ -118,19 +123,20 @@ class core_update_api_testcase extends advanced_testcase {
         $json = '{"id":127,"name":"Course contents","component":"block_course_contents","source":"https:\/\/github.com\/mudrd8mz\/moodle-block_course_contents","doc":"http:\/\/docs.moodle.org\/20\/en\/Course_contents_block","bugs":"https:\/\/github.com\/mudrd8mz\/moodle-block_course_contents\/issues","discussion":null,"version":{"id":8100,"version":"2015030300","release":"3.0","maturity":200,"downloadurl":"https:\/\/moodle.org\/plugins\/download.php\/8100\/block_course_contents_moodle29_2015030300.zip","downloadmd5":"8d8ae64822f38d278420776f8b42eaa5","vcssystem":"git","vcssystemother":null,"vcsrepositoryurl":"https:\/\/github.com\/mudrd8mz\/moodle-block_course_contents","vcsbranch":"master","vcstag":"v3.0","supportedmoodles":[{"version":2014041100,"release":"2.7"},{"version":2014101000,"release":"2.8"},{"version":2015041700,"release":"2.9"}]}}';
 
         $data = json_decode($json);
-        $this->assertSame($data, $client->validate_pluginfo_format($data));
+        $this->assertInstanceOf('\core\update\remote_info', $client->validate_pluginfo_format($data));
+        $this->assertEquals(json_encode($data), json_encode($client->validate_pluginfo_format($data)));
 
         // All properties must be present;
         unset($data->version);
         $this->assertFalse($client->validate_pluginfo_format($data));
 
         $data->version = false;
-        $this->assertSame($data, $client->validate_pluginfo_format($data));
+        $this->assertEquals(json_encode($data), json_encode($client->validate_pluginfo_format($data)));
 
         // Some properties may be empty.
         $data = json_decode($json);
         $data->version->release = null;
-        $this->assertSame($data, $client->validate_pluginfo_format($data));
+        $this->assertEquals(json_encode($data), json_encode($client->validate_pluginfo_format($data)));
 
         // Some properties must not be empty.
         $data = json_decode($json);

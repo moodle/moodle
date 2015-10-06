@@ -1010,7 +1010,7 @@ class core_plugin_manager {
      * @param string $component plugin frankenstyle name
      * @param string|int $version ANY_VERSION or the version number
      * @param bool $exactmatch false if "given version or higher" is requested
-     * @return stdClass|bool false or data object
+     * @return \core\update\remote_info|bool
      */
     public function get_remote_plugin_info($component, $version, $exactmatch) {
 
@@ -1075,7 +1075,7 @@ class core_plugin_manager {
      * fulfill the requirements of all plugins, if possible.
      *
      * @param bool $availableonly return only available missing dependencies
-     * @return array of stdClass|bool indexed by the component name
+     * @return array of \core\update\remote_info|bool indexed by the component name
      */
     public function missing_dependencies($availableonly=false) {
 
@@ -1296,7 +1296,7 @@ class core_plugin_manager {
      * release candidates but less mature than explicit stable (this should be
      * pretty rare case).
      *
-     * @return array (string)component => (\core\update\info)info
+     * @return array (string)component => (\core\update\remote_info)remoteinfo
      */
     public function available_updates() {
 
