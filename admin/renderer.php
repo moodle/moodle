@@ -208,20 +208,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->header();
         $output .= $this->box_start('generalbox', 'plugins-check-page');
         $output .= html_writer::tag('p', get_string('pluginchecknotice', 'core_plugin'), array('class' => 'page-description'));
-
-        if ($checker->enabled()) {
-            $output .= $this->container_start('checkforupdates');
-            $output .= $this->single_button(
-                new moodle_url($reloadurl, array('fetchupdates' => 1)),
-                get_string('checkforupdates', 'core_plugin')
-            );
-            if ($timefetched = $checker->get_last_timefetched()) {
-                $output .= $this->container(get_string('checkforupdateslast', 'core_plugin',
-                    userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'))));
-            }
-            $output .= $this->container_end();
-        }
-
+        $output .= $this->check_for_updates_button($checker, $reloadurl);
         $output .= $this->missing_dependencies($pluginman);
         $output .= $this->plugins_check_table($pluginman, $version, array('full' => $showallplugins));
         $output .= $this->box_end();
@@ -303,22 +290,36 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->header();
         $output .= $this->heading(get_string('pluginsoverview', 'core_admin'));
         $output .= $this->plugins_overview_panel($pluginman, $options);
+        $output .= $this->check_for_updates_button($checker, $this->page->url);
+        $output .= $this->plugins_control_panel($pluginman, $options);
+        $output .= $this->footer();
+
+        return $output;
+    }
+
+    /**
+     * Renders a button to fetch for available updates.
+     *
+     * @param \core\update\checker $checker
+     * @param moodle_url $reloadurl
+     * @return string HTML
+     */
+    public function check_for_updates_button(\core\update\checker $checker, $reloadurl) {
+
+        $output = '';
 
         if ($checker->enabled()) {
             $output .= $this->container_start('checkforupdates');
             $output .= $this->single_button(
-                new moodle_url($this->page->url, array_merge($options, array('fetchremote' => 1))),
+                new moodle_url($reloadurl, array('fetchremote' => 1)),
                 get_string('checkforupdates', 'core_plugin')
             );
             if ($timefetched = $checker->get_last_timefetched()) {
-                $output .= $this->container(get_string('checkforupdateslast', 'core_plugin',
-                    userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'))));
+                $timefetched = userdate($timefetched, get_string('strftimedatetime', 'core_langconfig'));
+                $output .= $this->container(get_string('checkforupdateslast', 'core_plugin', $timefetched), 'lasttimefetched');
             }
             $output .= $this->container_end();
         }
-
-        $output .= $this->box($this->plugins_control_panel($pluginman, $options), 'generalbox');
-        $output .= $this->footer();
 
         return $output;
     }
@@ -1342,70 +1343,61 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $plugininfo = $pluginman->get_plugins();
 
-        $numtotal = $numdisabled = $numextension = $numupdatable = 0;
+        $numtotal = $numextension = $numupdatable = 0;
 
         foreach ($plugininfo as $type => $plugins) {
             foreach ($plugins as $name => $plugin) {
+                if ($plugin->available_updates()) {
+                    $numupdatable++;
+                }
                 if ($plugin->get_status() === core_plugin_manager::PLUGIN_STATUS_MISSING) {
                     continue;
                 }
                 $numtotal++;
-                if ($plugin->is_enabled() === false) {
-                    $numdisabled++;
-                }
                 if (!$plugin->is_standard()) {
                     $numextension++;
                 }
-                if ($plugin->available_updates()) {
-                    $numupdatable++;
-                }
             }
         }
 
-        $info = array();
-        $filter = array();
-        $somefilteractive = false;
-        $info[] = html_writer::tag('span', get_string('numtotal', 'core_plugin', $numtotal), array('class' => 'info total'));
-        $info[] = html_writer::tag('span', get_string('numdisabled', 'core_plugin', $numdisabled), array('class' => 'info disabled'));
-        $info[] = html_writer::tag('span', get_string('numextension', 'core_plugin', $numextension), array('class' => 'info extension'));
-        if ($numextension > 0) {
-            if (empty($options['contribonly'])) {
-                $filter[] = html_writer::link(
-                    new moodle_url($this->page->url, array('contribonly' => 1)),
-                    get_string('filtercontribonly', 'core_plugin'),
-                    array('class' => 'filter-item show-contribonly')
-                );
-            } else {
-                $filter[] = html_writer::tag('span', get_string('filtercontribonlyactive', 'core_plugin'),
-                    array('class' => 'filter-item active show-contribonly'));
-                $somefilteractive = true;
-            }
-        }
-        if ($numupdatable > 0) {
-            $info[] = html_writer::tag('span', get_string('numupdatable', 'core_plugin', $numupdatable), array('class' => 'info updatable'));
-            if (empty($options['updatesonly'])) {
-                $filter[] = html_writer::link(
-                    new moodle_url($this->page->url, array('updatesonly' => 1)),
-                    get_string('filterupdatesonly', 'core_plugin'),
-                    array('class' => 'filter-item show-updatesonly')
-                );
-            } else {
-                $filter[] = html_writer::tag('span', get_string('filterupdatesonlyactive', 'core_plugin'),
-                    array('class' => 'filter-item active show-updatesonly'));
-                $somefilteractive = true;
-            }
-        }
-        if ($somefilteractive) {
-            $filter[] = html_writer::link($this->page->url, get_string('filterall', 'core_plugin'), array('class' => 'filter-item show-all'));
+        $infoall = html_writer::link(
+            new moodle_url($this->page->url, array('contribonly' => 0, 'updatesonly' => 0)),
+            get_string('overviewall', 'core_plugin'),
+            array('title' => get_string('filterall', 'core_plugin'))
+        ).' '.html_writer::span($numtotal, 'badge number number-all');
+
+        $infoext = html_writer::link(
+            new moodle_url($this->page->url, array('contribonly' => 1, 'updatesonly' => 0)),
+            get_string('overviewext', 'core_plugin'),
+            array('title' => get_string('filtercontribonly', 'core_plugin'))
+        ).' '.html_writer::span($numextension, 'badge number number-additional');
+
+        if ($numupdatable) {
+            $infoupdatable = html_writer::link(
+                new moodle_url($this->page->url, array('contribonly' => 0, 'updatesonly' => 1)),
+                get_string('overviewupdatable', 'core_plugin'),
+                array('title' => get_string('filterupdatesonly', 'core_plugin'))
+            ).' '.html_writer::span($numupdatable, 'badge badge-info number number-updatable');
+        } else {
+            // No updates, or the notifications disabled.
+            $infoupdatable = '';
         }
 
-        $output  = $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '', 'plugins-overview-panel');
+        $out = html_writer::start_div('', array('id' => 'plugins-overview-panel'));
 
-        if (!empty($filter)) {
-            $output .= $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $filter), '', 'plugins-overview-filter');
+        if (!empty($options['updatesonly'])) {
+            $out .= $this->output->heading(get_string('overviewupdatable', 'core_plugin'), 3);
+        } else if (!empty($options['contribonly'])) {
+            $out .= $this->output->heading(get_string('overviewext', 'core_plugin'), 3);
         }
 
-        return $output;
+        $out .= html_writer::div($infoall, 'info info-all').
+            html_writer::div($infoext, 'info info-ext').
+            html_writer::div($infoupdatable, 'info info-updatable');
+
+        $out .= html_writer::end_div(); // #plugins-overview-panel
+
+        return $out;
     }
 
     /**
@@ -1457,23 +1449,22 @@ class core_admin_renderer extends plugin_renderer_base {
         $table->id = 'plugins-control-panel';
         $table->head = array(
             get_string('displayname', 'core_plugin'),
-            get_string('source', 'core_plugin'),
             get_string('version', 'core_plugin'),
-            get_string('release', 'core_plugin'),
             get_string('availability', 'core_plugin'),
             get_string('actions', 'core_plugin'),
             get_string('notes','core_plugin'),
         );
-        $table->headspan = array(1, 1, 1, 1, 1, 2, 1);
+        $table->headspan = array(1, 1, 1, 2, 1);
         $table->colclasses = array(
-            'pluginname', 'source', 'version', 'release', 'availability', 'settings', 'uninstall', 'notes'
+            'pluginname', 'version', 'availability', 'settings', 'uninstall', 'notes'
         );
 
         foreach ($plugininfo as $type => $plugins) {
             $heading = $pluginman->plugintype_name_plural($type);
             $pluginclass = core_plugin_manager::resolve_plugininfo_class($type);
             if ($manageurl = $pluginclass::get_manage_url()) {
-                $heading = html_writer::link($manageurl, $heading);
+                $heading .= $this->output->action_icon($manageurl, new pix_icon('i/settings',
+                    get_string('settings', 'core_plugin')));
             }
             $header = new html_table_cell(html_writer::tag('span', $heading, array('id'=>'plugin_type_cell_'.$type)));
             $header->header = true;
@@ -1502,27 +1493,15 @@ class core_admin_renderer extends plugin_renderer_base {
                 }
                 $status = $plugin->get_status();
                 $row->attributes['class'] .= ' status-'.$status;
-                if ($status === core_plugin_manager::PLUGIN_STATUS_MISSING) {
-                    $msg = html_writer::tag('span', get_string('status_missing', 'core_plugin'), array('class' => 'statusmsg'));
-                } else if ($status === core_plugin_manager::PLUGIN_STATUS_NEW) {
-                    $msg = html_writer::tag('span', get_string('status_new', 'core_plugin'), array('class' => 'statusmsg'));
-                } else {
-                    $msg = '';
-                }
-                $pluginname  = html_writer::tag('div', $icon . '' . $plugin->displayname . ' ' . $msg, array('class' => 'displayname')).
+                $pluginname  = html_writer::tag('div', $icon.$plugin->displayname, array('class' => 'displayname')).
                                html_writer::tag('div', $plugin->component, array('class' => 'componentname'));
                 $pluginname  = new html_table_cell($pluginname);
 
-                if ($plugin->is_standard()) {
-                    $row->attributes['class'] .= ' standard';
-                    $source = new html_table_cell(get_string('sourcestd', 'core_plugin'));
-                } else {
-                    $row->attributes['class'] .= ' extension';
-                    $source = new html_table_cell(get_string('sourceext', 'core_plugin'));
+                $version = html_writer::div($plugin->versiondb, 'versionnumber');
+                if ((string)$plugin->release !== '') {
+                    $version = html_writer::div($plugin->release, 'release').$version;
                 }
-
-                $version = new html_table_cell($plugin->versiondb);
-                $release = new html_table_cell($plugin->release);
+                $version = new html_table_cell($version);
 
                 $isenabled = $plugin->is_enabled();
                 if (is_null($isenabled)) {
@@ -1550,6 +1529,23 @@ class core_admin_renderer extends plugin_renderer_base {
                 }
                 $uninstall = new html_table_cell($uninstall);
 
+                if ($plugin->is_standard()) {
+                    $row->attributes['class'] .= ' standard';
+                    //$source = html_writer::div(get_string('sourcestd', 'core_plugin'), 'source label');
+                    $source = '';
+                } else {
+                    $row->attributes['class'] .= ' extension';
+                    $source = html_writer::div(get_string('sourceext', 'core_plugin'), 'source label label-info');
+                }
+
+                if ($status === core_plugin_manager::PLUGIN_STATUS_MISSING) {
+                    $msg = html_writer::div(get_string('status_missing', 'core_plugin'), 'statusmsg label label-important');
+                } else if ($status === core_plugin_manager::PLUGIN_STATUS_NEW) {
+                    $msg = html_writer::div(get_string('status_new', 'core_plugin'), 'statusmsg label label-success');
+                } else {
+                    $msg = '';
+                }
+
                 $requriedby = $pluginman->other_plugins_that_require($plugin->component);
                 if ($requriedby) {
                     $requiredby = html_writer::tag('div', get_string('requiredby', 'core_plugin', implode(', ', $requriedby)),
@@ -1565,10 +1561,10 @@ class core_admin_renderer extends plugin_renderer_base {
                     }
                 }
 
-                $notes = new html_table_cell($requiredby.$updateinfo);
+                $notes = new html_table_cell($source.$msg.$requiredby.$updateinfo);
 
                 $row->cells = array(
-                    $pluginname, $source, $version, $release, $availability, $settings, $uninstall, $notes
+                    $pluginname, $version, $availability, $settings, $uninstall, $notes
                 );
                 $table->data[] = $row;
             }
@@ -1589,28 +1585,43 @@ class core_admin_renderer extends plugin_renderer_base {
         $info = array();
 
         if (isset($updateinfo->release)) {
-            $info[] = html_writer::tag('span', get_string('updateavailable_release', 'core_plugin', $updateinfo->release),
-                array('class' => 'info release'));
+            $info[] = html_writer::div(
+                get_string('updateavailable_release', 'core_plugin', $updateinfo->release),
+                'info release'
+            );
         }
 
         if (isset($updateinfo->maturity)) {
-            $info[] = html_writer::tag('span', get_string('maturity'.$updateinfo->maturity, 'core_admin'),
-                array('class' => 'info maturity'));
+            $info[] = html_writer::div(
+                get_string('maturity'.$updateinfo->maturity, 'core_admin'),
+                'info maturity'
+            );
             $boxclasses .= ' maturity'.$updateinfo->maturity;
         }
 
         if (isset($updateinfo->download)) {
-            $info[] = html_writer::link($updateinfo->download, get_string('download'), array('class' => 'info download'));
+            $info[] = html_writer::div(
+                html_writer::link($updateinfo->download, get_string('download')),
+                'info download'
+            );
         }
 
         if (isset($updateinfo->url)) {
-            $info[] = html_writer::link($updateinfo->url, get_string('updateavailable_moreinfo', 'core_plugin'),
-                array('class' => 'info more'));
+            $info[] = html_writer::div(
+                html_writer::link($updateinfo->url, get_string('updateavailable_moreinfo', 'core_plugin')),
+                'info more'
+            );
         }
 
-        $box  = $this->output->box_start($boxclasses);
-        $box .= html_writer::tag('div', get_string('updateavailable', 'core_plugin', $updateinfo->version), array('class' => 'version'));
-        $box .= $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '');
+        $box = html_writer::start_div($boxclasses);
+        $box .= html_writer::div(
+            get_string('updateavailable', 'core_plugin', $updateinfo->version),
+            'version'
+        );
+        $box .= html_writer::div(
+            implode(html_writer::span(' ', 'separator'), $info),
+            'infos'
+        );
 
         if ($pluginman->is_remote_plugin_installable($updateinfo->component, $updateinfo->version, $reason)) {
             $box .= $this->output->single_button(
@@ -1626,8 +1637,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 $box .= html_writer::div($reasonhelp, 'reasonhelp updateavailableinstall');
             }
         }
-
-        $box .= $this->output->box_end();
+        $box .= html_writer::end_div();
 
         return $box;
     }
