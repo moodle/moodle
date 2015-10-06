@@ -255,19 +255,7 @@ break;
 }
 
 // Trigger module viewed event.
-$event = \mod_glossary\event\course_module_viewed::create(array(
-    'objectid' => $glossary->id,
-    'context' => $context,
-    'other' => array('mode' => $mode)
-));
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('course_modules', $cm);
-$event->add_record_snapshot('glossary', $glossary);
-$event->trigger();
-
-// Mark as viewed
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+glossary_view($glossary, $course, $cm, $context, $mode);
 
 /// Printing the heading
 $strglossaries = get_string("modulenameplural", "glossary");

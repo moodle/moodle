@@ -3295,3 +3295,34 @@ function glossary_get_visible_tabs($displayformat) {
 
     return $showtabs;
 }
+
+/**
+ * Notify that the glossary was viewed.
+ *
+ * This will trigger relevant events and activity completion.
+ *
+ * @param stdClass $glossary The glossary object.
+ * @param stdClass $course   The course object.
+ * @param stdClass $cm       The course module object.
+ * @param stdClass $context  The context object.
+ * @param string   $mode     The mode in which the glossary was viewed.
+ * @since Moodle 3.1
+ */
+function glossary_view($glossary, $course, $cm, $context, $mode) {
+
+    // Completion trigger.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+
+    // Trigger the course module viewed event.
+    $event = \mod_glossary\event\course_module_viewed::create(array(
+        'objectid' => $glossary->id,
+        'context' => $context,
+        'other' => array('mode' => $mode)
+    ));
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('glossary', $glossary);
+    $event->trigger();
+}
+

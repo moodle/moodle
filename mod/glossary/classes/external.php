@@ -23,8 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.1
  */
-defined('MOODLE_INTERNAL') || die;
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->dirroot . '/mod/glossary/lib.php');
 
 /**
  * Glossary module external functions.
@@ -157,4 +160,65 @@ class mod_glossary_external extends external_api {
             'warnings' => new external_warnings())
         );
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function view_glossary_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'Glossary instance ID'),
+            'mode' => new external_value(PARAM_ALPHA, 'The mode in which the glossary is viewed'),
+        ));
+    }
+
+    /**
+     * Notify that the course module was viewed.
+     *
+     * @param int $id The glossary instance ID.
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function view_glossary($id, $mode) {
+        global $DB;
+
+        $params = self::validate_parameters(self::view_glossary_parameters(), array(
+            'id' => $id,
+            'mode' => $mode
+        ));
+        $id = $params['id'];
+        $mode = $params['mode'];
+        $warnings = array();
+
+        // Fetch and confirm.
+        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Trigger module viewed event.
+        glossary_view($glossary, $course, $cm, $context, $mode);
+
+        return array(
+            'status' => true,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns the description of the external function return value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function view_glossary_returns() {
+        return new external_single_structure(array(
+            'status' => new external_value(PARAM_BOOL, 'True on success'),
+            'warnings' => new external_warnings()
+        ));
+    }
+
 }

@@ -85,4 +85,49 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('Third Glossary', $glossaries['glossaries'][0]['name']);
     }
 
+    public function test_view_glossary() {
+        $this->resetAfterTest(true);
+
+        // Generate all the things.
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $u1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+
+        $sink = $this->redirectEvents();
+        $this->setUser($u1);
+        $return = mod_glossary_external::view_glossary($g1->id, 'letter');
+        $return = external_api::clean_returnvalue(mod_glossary_external::view_glossary_returns(), $return);
+        $events = $sink->get_events();
+
+        // Assertion.
+        $this->assertTrue($return['status']);
+        $this->assertEmpty($return['warnings']);
+        $this->assertCount(1, $events);
+        $this->assertEquals('\mod_glossary\event\course_module_viewed', $events[0]->eventname);
+        $sink->close();
+    }
+
+    public function test_view_glossary_without_permission() {
+        $this->resetAfterTest(true);
+
+        // Generate all the things.
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $u1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+        $ctx = context_module::instance($g1->cmid);
+
+        // Revoke permission.
+        $roles = get_archetype_roles('user');
+        $role = array_shift($roles);
+        assign_capability('mod/glossary:view', CAP_PROHIBIT, $role->id, $ctx, true);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Assertion.
+        $this->setUser($u1);
+        $this->setExpectedException('require_login_exception', 'Activity is hidden');
+        mod_glossary_external::view_glossary($g1->id, 'letter');
+    }
+
 }

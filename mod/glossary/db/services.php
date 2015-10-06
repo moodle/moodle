@@ -35,4 +35,12 @@ $functions = array(
         'capabilities'  => 'mod/glossary:view'
     ),
 
+    'mod_glossary_view_glossary' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'view_glossary',
+        'description'   => 'Notify the glossary as being viewed.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/glossary:view'
+    ),
+
 );

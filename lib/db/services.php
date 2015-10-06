@@ -1277,6 +1277,7 @@ $services = array(
             'mod_wiki_get_wikis_by_courses',
             'mod_wiki_view_wiki',
             'mod_wiki_view_page',
+            'mod_glossary_view_glossary',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
