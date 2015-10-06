@@ -240,9 +240,6 @@ class phpunit_util extends testing_util {
         if (class_exists('\core\update\checker')) {
             \core\update\checker::reset_caches(true);
         }
-        if (class_exists('\core\update\deployer')) {
-            \core\update\deployer::reset_caches(true);
-        }
 
         // Clear static cache within restore.
         if (class_exists('restore_section_structure_step')) {

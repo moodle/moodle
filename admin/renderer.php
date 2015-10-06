@@ -242,62 +242,6 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Prints a page with a summary of plugin deployment to be confirmed.
-     *
-     * @param \core\update\deployer $deployer
-     * @param array $data deployer's data package as returned by {@link \core\update\deployer::submitted_data()}
-     * @return string
-     */
-    public function upgrade_plugin_confirm_deploy_page(\core\update\deployer $deployer, array $data) {
-
-        if (!$deployer->initialized()) {
-            throw new coding_exception('Unable to render a page for non-initialized deployer.');
-        }
-
-        if (empty($data['updateinfo'])) {
-            throw new coding_exception('Missing required data component.');
-        }
-
-        $updateinfo = $data['updateinfo'];
-
-        $output  = '';
-        $output .= $this->header();
-        $output .= $this->container_start('generalbox updateplugin', 'notice');
-
-        $a = new stdClass();
-        if (get_string_manager()->string_exists('pluginname', $updateinfo->component)) {
-            $a->name = get_string('pluginname', $updateinfo->component);
-        } else {
-            $a->name = $updateinfo->component;
-        }
-
-        if (isset($updateinfo->release)) {
-            $a->version = $updateinfo->release . ' (' . $updateinfo->version . ')';
-        } else {
-            $a->version = $updateinfo->version;
-        }
-        $a->url = $updateinfo->download;
-
-        $output .= $this->output->heading(get_string('updatepluginconfirm', 'core_plugin'));
-        $output .= $this->output->container(format_text(get_string('updatepluginconfirminfo', 'core_plugin', $a)), 'updatepluginconfirminfo');
-        $output .= $this->output->container(get_string('updatepluginconfirmwarning', 'core_plugin', 'updatepluginconfirmwarning'));
-
-        if ($repotype = $deployer->plugin_external_source($data['updateinfo'])) {
-            $output .= $this->output->container(get_string('updatepluginconfirmexternal', 'core_plugin', $repotype), 'updatepluginconfirmexternal');
-        }
-
-        $widget = $deployer->make_execution_widget($data['updateinfo'], $data['returnurl']);
-        $output .= $this->output->render($widget);
-
-        $output .= $this->output->single_button($data['callerurl'], get_string('cancel', 'core'), 'get');
-
-        $output .= $this->container_end();
-        $output .= $this->footer();
-
-        return $output;
-    }
-
-    /**
      * Display the admin notifications page.
      * @param int $maturity
      * @param bool $insecuredataroot warn dataroot is invalid
@@ -981,7 +925,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 $availableupdates = $plugin->available_updates();
                 if (!empty($availableupdates)) {
                     foreach ($availableupdates as $availableupdate) {
-                        $status .= $this->plugin_available_update_info($availableupdate);
+                        $status .= $this->plugin_available_update_info($pluginman, $availableupdate);
                     }
                 }
 
@@ -1617,7 +1561,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 $updateinfo = '';
                 if (is_array($plugin->available_updates())) {
                     foreach ($plugin->available_updates() as $availableupdate) {
-                        $updateinfo .= $this->plugin_available_update_info($availableupdate);
+                        $updateinfo .= $this->plugin_available_update_info($pluginman, $availableupdate);
                     }
                 }
 
@@ -1636,12 +1580,10 @@ class core_admin_renderer extends plugin_renderer_base {
     /**
      * Helper method to render the information about the available plugin update
      *
-     * The passed objects always provides at least the 'version' property containing
-     * the (higher) version of the plugin available.
-     *
+     * @param core_plugin_manager $pluginman plugin manager instance
      * @param \core\update\info $updateinfo information about the available update for the plugin
      */
-    protected function plugin_available_update_info(\core\update\info $updateinfo) {
+    protected function plugin_available_update_info(core_plugin_manager $pluginman, \core\update\info $updateinfo) {
 
         $boxclasses = 'pluginupdateinfo';
         $info = array();
@@ -1670,19 +1612,18 @@ class core_admin_renderer extends plugin_renderer_base {
         $box .= html_writer::tag('div', get_string('updateavailable', 'core_plugin', $updateinfo->version), array('class' => 'version'));
         $box .= $this->output->box(implode(html_writer::tag('span', ' ', array('class' => 'separator')), $info), '');
 
-        $deployer = \core\update\deployer::instance();
-        if ($deployer->initialized()) {
-            $impediments = $deployer->deployment_impediments($updateinfo);
-            if (empty($impediments)) {
-                $widget = $deployer->make_confirm_widget($updateinfo);
-                $box .= $this->output->render($widget);
-            } else {
-                if (isset($impediments['notwritable'])) {
-                    $box .= $this->output->help_icon('notwritable', 'core_plugin', get_string('notwritable', 'core_plugin'));
-                }
-                if (isset($impediments['notdownloadable'])) {
-                    $box .= $this->output->help_icon('notdownloadable', 'core_plugin', get_string('notdownloadable', 'core_plugin'));
-                }
+        if ($pluginman->is_remote_plugin_installable($updateinfo->component, $updateinfo->version, $reason)) {
+            $box .= $this->output->single_button(
+                new moodle_url($this->page->url, array('installupdate' => $updateinfo->component,
+                    'installupdateversion' => $updateinfo->version)),
+                get_string('updateavailableinstall', 'core_admin'),
+                'post',
+                array('class' => 'singlebutton updateavailableinstall')
+            );
+        } else {
+            $reasonhelp = $this->info_remote_plugin_not_installable($reason);
+            if ($reasonhelp) {
+                $box .= html_writer::div($reasonhelp, 'reasonhelp updateavailableinstall');
             }
         }
 

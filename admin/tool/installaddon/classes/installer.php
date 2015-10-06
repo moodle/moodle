@@ -348,6 +348,8 @@ class tool_installaddon_installer {
      * Moodle itself, tuned for fetching files from moodle.org servers. Same code is used
      * in mdeploy.php for fetching available updates.
      *
+     * TODO This all will be rewritten to use new plugin manager features.
+     *
      * @param string $source file url starting with http(s)://
      * @param string $target store the downloaded content to this file (full path)
      * @throws tool_installaddon_installer_exception

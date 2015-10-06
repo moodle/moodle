@@ -667,7 +667,6 @@ class core_plugin_manager {
     /**
      * Check to see if the current version of the plugin seems to be a checkout of an external repository.
      *
-     * @see \core\update\deployer::plugin_external_source()
      * @param string $component frankenstyle component name
      * @return false|string
      */
