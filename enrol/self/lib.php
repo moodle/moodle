@@ -289,11 +289,11 @@ class enrol_self_plugin extends enrol_plugin {
         }
 
         if ($instance->enrolstartdate != 0 and $instance->enrolstartdate > time()) {
-            return get_string('canntenrol', 'enrol_self');
+            return get_string('canntenrolearly', 'enrol_self', userdate($instance->enrolstartdate));
         }
 
         if ($instance->enrolenddate != 0 and $instance->enrolenddate < time()) {
-            return get_string('canntenrol', 'enrol_self');
+            return get_string('canntenrollate', 'enrol_self', userdate($instance->enrolenddate));
         }
 
         if (!$instance->customint6) {
