@@ -3326,3 +3326,23 @@ function glossary_view($glossary, $course, $cm, $context, $mode) {
     $event->trigger();
 }
 
+/**
+ * Notify that a glossary entry was viewed.
+ *
+ * This will trigger relevant events.
+ *
+ * @param stdClass $entry    The entry object.
+ * @param stdClass $context  The context object.
+ * @since Moodle 3.1
+ */
+function glossary_entry_view($entry, $context) {
+
+    // Trigger the entry viewed event.
+    $event = \mod_glossary\event\entry_viewed::create(array(
+        'objectid' => $entry->id,
+        'context' => $context
+    ));
+    $event->add_record_snapshot('glossary_entries', $entry);
+    $event->trigger();
+
+}

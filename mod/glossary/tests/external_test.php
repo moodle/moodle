@@ -130,4 +130,54 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         mod_glossary_external::view_glossary($g1->id, 'letter');
     }
 
+    public function test_view_entry() {
+        $this->resetAfterTest(true);
+
+        // Generate all the things.
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id, 'visible' => false));
+        $u1 = $this->getDataGenerator()->create_user();
+        $e1 = $gg->create_content($g1, array('approved' => 1));
+        $e2 = $gg->create_content($g1, array('approved' => 0, 'userid' => $u1->id));
+        $e3 = $gg->create_content($g1, array('approved' => 0, 'userid' => -1));
+        $e4 = $gg->create_content($g2, array('approved' => 1));
+        $ctx = context_module::instance($g1->cmid);
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+        $this->setUser($u1);
+
+        // Test readable entry.
+        $sink = $this->redirectEvents();
+        $return = mod_glossary_external::view_entry($e1->id);
+        $return = external_api::clean_returnvalue(mod_glossary_external::view_entry_returns(), $return);
+        $events = $sink->get_events();
+        $this->assertTrue($return['status']);
+        $this->assertEmpty($return['warnings']);
+        $this->assertCount(1, $events);
+        $this->assertEquals('\mod_glossary\event\entry_viewed', $events[0]->eventname);
+        $sink->close();
+
+        // Test non-approved of self.
+        $return = mod_glossary_external::view_entry($e2->id);
+        $return = external_api::clean_returnvalue(mod_glossary_external::view_entry_returns(), $return);
+        $events = $sink->get_events();
+        $this->assertTrue($return['status']);
+        $this->assertEmpty($return['warnings']);
+        $this->assertCount(1, $events);
+        $this->assertEquals('\mod_glossary\event\entry_viewed', $events[0]->eventname);
+        $sink->close();
+
+        // Test non-approved of other.
+        try {
+            mod_glossary_external::view_entry($e3->id);
+            $this->fail('Cannot view non-approved entries of others.');
+        } catch (invalid_parameter_exception $e) {
+        }
+
+        // Test non-readable entry.
+        $this->setExpectedException('require_login_exception', 'Activity is hidden');
+        mod_glossary_external::view_entry($e4->id);
+    }
+
 }

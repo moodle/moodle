@@ -221,4 +221,64 @@ class mod_glossary_external extends external_api {
         ));
     }
 
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function view_entry_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'Glossary entry ID'),
+        ));
+    }
+
+    /**
+     * Notify that the entry was viewed.
+     *
+     * @param int $id The entry ID.
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function view_entry($id) {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(self::view_entry_parameters(), array('id' => $id));
+        $id = $params['id'];
+        $warnings = array();
+
+        // Fetch and confirm.
+        $entry = $DB->get_record('glossary_entries', array('id' => $id), '*', MUST_EXIST);
+        $glossary = $DB->get_record('glossary', array('id' => $entry->glossaryid), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        if (empty($entry->approved) && $entry->userid != $USER->id && !has_capability('mod/glossary:approve', $context)) {
+            throw new invalid_parameter_exception('invalidentry');
+        }
+
+        // Trigger view.
+        glossary_entry_view($entry, $context);
+
+        return array(
+            'status' => true,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns the description of the external function return value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function view_entry_returns() {
+        return new external_single_structure(array(
+            'status' => new external_value(PARAM_BOOL, 'True on success'),
+            'warnings' => new external_warnings()
+        ));
+    }
+
 }

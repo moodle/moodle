@@ -1278,6 +1278,7 @@ $services = array(
             'mod_wiki_view_wiki',
             'mod_wiki_view_page',
             'mod_glossary_view_glossary',
+            'mod_glossary_view_entry',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,

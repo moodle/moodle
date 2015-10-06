@@ -92,4 +92,26 @@ class mod_glossary_lib_testcase extends advanced_testcase {
         $CFG->enablecompletion = $origcompletion;
     }
 
+    public function test_glossary_entry_view() {
+        $this->resetAfterTest(true);
+
+        // Generate all the things.
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $e1 = $gg->create_content($g1);
+        $u1 = $this->getDataGenerator()->create_user();
+        $ctx = context_module::instance($g1->cmid);
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+
+        // Assertions.
+        $sink = $this->redirectEvents();
+        glossary_entry_view($e1, $ctx);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $this->assertEquals('\mod_glossary\event\entry_viewed', $events[0]->eventname);
+        $this->assertEquals($e1->id, $events[0]->objectid);
+        $sink->close();
+    }
+
 }
