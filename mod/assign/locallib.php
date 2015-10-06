@@ -146,6 +146,9 @@ class assign {
     /** @var array cached list of user groups when team submissions are enabled. The cache key will be the user. */
     private $usersubmissiongroups = array();
 
+    /** @var array cached list of user groups. The cache key will be the user. */
+    private $usergroups = array();
+
     /**
      * Constructor for the base assign class.
      *
@@ -2301,8 +2304,7 @@ class assign {
             return $this->usersubmissiongroups[$userid];
         }
 
-        $grouping = $this->get_instance()->teamsubmissiongroupingid;
-        $groups = groups_get_all_groups($this->get_course()->id, $userid, $grouping);
+        $groups = $this->get_all_groups($userid);
         if (count($groups) != 1) {
             $return = false;
         } else {
@@ -2311,6 +2313,19 @@ class assign {
 
         // Cache the user submission group.
         $this->usersubmissiongroups[$userid] = $return;
+
+        return $return;
+    }
+
+    private function get_all_groups($userid) {
+        if (isset($this->usergroups[$userid])) {
+            return $this->usergroups[$userid];
+        }
+
+        $grouping = $this->get_instance()->teamsubmissiongroupingid;
+        $return = groups_get_all_groups($this->get_course()->id, $userid, $grouping);
+
+        $this->usergroups[$userid] = $return;
 
         return $return;
     }
@@ -3033,6 +3048,7 @@ class assign {
             }
             $showedit = $this->submissions_open($userid) && ($this->is_any_submission_plugin_enabled());
             $viewfullnames = has_capability('moodle/site:viewfullnames', $this->get_course_context());
+            $usergroups = $this->get_all_groups($user->id);
 
             $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
                                                              $instance->alwaysshowdescription,
@@ -3062,7 +3078,8 @@ class assign {
                                                              $instance->attemptreopenmethod,
                                                              $instance->maxattempts,
                                                              $this->get_grading_status($userid),
-                                                             $instance->preventsubmissionnotingroup);
+                                                             $instance->preventsubmissionnotingroup,
+                                                             $usergroups);
             $o .= $this->get_renderer()->render($submissionstatus);
         }
 
@@ -3939,6 +3956,7 @@ class assign {
             $viewfullnames = has_capability('moodle/site:viewfullnames', $this->get_course_context());
 
             $gradingstatus = $this->get_grading_status($user->id);
+            $usergroups = $this->get_all_groups($user->id);
             $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
                                                               $instance->alwaysshowdescription,
                                                               $submission,
@@ -3967,7 +3985,8 @@ class assign {
                                                               $instance->attemptreopenmethod,
                                                               $instance->maxattempts,
                                                               $gradingstatus,
-                                                              $instance->preventsubmissionnotingroup);
+                                                              $instance->preventsubmissionnotingroup,
+                                                              $usergroups);
             if (has_capability('mod/assign:submit', $this->get_context(), $user)) {
                 $o .= $this->get_renderer()->render($submissionstatus);
             }
