@@ -50,4 +50,12 @@ $functions = array(
         'type'          => 'write',
         'capabilities'  => 'mod/glossary:view'
     ),
+
+    'mod_glossary_get_entries_by_letter' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'get_entries_by_letter',
+        'description'   => 'Browse entries by letter.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/glossary:view'
+    ),
 );

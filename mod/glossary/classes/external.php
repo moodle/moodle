@@ -41,6 +41,117 @@ require_once($CFG->dirroot . '/mod/glossary/lib.php');
 class mod_glossary_external extends external_api {
 
     /**
+     * Get the browse modes from the display format.
+     *
+     * This returns some of the terms that can be used when reporting a glossary being viewed.
+     *
+     * @param  string $format The display format of the glossary.
+     * @return array Containing some of all of the following: letter, cat, date, author.
+     */
+    public static function get_browse_modes_from_display_format($format) {
+        global $DB;
+
+        $dp = $DB->get_record('glossary_formats', array('name' => $format), '*', IGNORE_MISSING);
+        $formats = glossary_get_visible_tabs($dp);
+
+        // Always add 'letter'.
+        $modes = array('letter');
+
+        if (in_array('category', $formats)) {
+            $modes[] = 'cat';
+        }
+        if (in_array('date', $formats)) {
+            $modes[] = 'date';
+        }
+        if (in_array('author', $formats)) {
+            $modes[] = 'author';
+        }
+
+        return $modes;
+    }
+
+    /**
+     * Get the return value of an entry.
+     *
+     * @return external_definition
+     */
+    public static function get_entry_return_structure() {
+        return new external_single_structure(array(
+            'id' => new external_value(PARAM_INT, 'The entry ID'),
+            'glossaryid' => new external_value(PARAM_INT, 'The glossary ID'),
+            'userid' => new external_value(PARAM_INT, 'Author ID'),
+            'userfullname' => new external_value(PARAM_TEXT, 'Author full name'),
+            'userpictureurl' => new external_value(PARAM_URL, 'Author picture'),
+            'concept' => new external_value(PARAM_RAW, 'The concept'),
+            'definition' => new external_value(PARAM_RAW, 'The definition'),
+            'definitionformat' => new external_format_value('definition'),
+            'definitiontrust' => new external_value(PARAM_BOOL, 'The definition trust flag'),
+            'attachment' => new external_value(PARAM_BOOL, 'Whether or not the entry has attachments'),
+            'attachments' => new external_multiple_structure(
+                new external_single_structure(array(
+                    'filename' => new external_value(PARAM_FILE, 'File name'),
+                    'mimetype' => new external_value(PARAM_RAW, 'Mime type'),
+                    'fileurl'  => new external_value(PARAM_URL, 'File download URL')
+                )), 'attachments', VALUE_OPTIONAL
+            ),
+            'timecreated' => new external_value(PARAM_INT, 'Time created'),
+            'timemodified' => new external_value(PARAM_INT, 'Time modified'),
+            'teacherentry' => new external_value(PARAM_BOOL, 'The entry was created by a teacher, or equivalent.'),
+            'sourceglossaryid' => new external_value(PARAM_INT, 'The source glossary ID'),
+            'usedynalink' => new external_value(PARAM_BOOL, 'Whether the concept should be automatically linked'),
+            'casesensitive' => new external_value(PARAM_BOOL, 'When true, the matching is case sensitive'),
+            'fullmatch' => new external_value(PARAM_BOOL, 'When true, the matching is done on full words only'),
+            'approved' => new external_value(PARAM_BOOL, 'Whether the entry was approved'),
+        ));
+    }
+
+    /**
+     * Fill in an entry object.
+     *
+     * This adds additional required fields for the external function to return.
+     *
+     * @param  stdClass $entry   The entry.
+     * @param  context  $context The context the entry belongs to.
+     * @return void
+     */
+    public static function fill_entry_details($entry, $context, $useridfield = 'userdataid', $userfieldprefix = 'userdata') {
+        global $PAGE;
+        $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+
+        // Format concept and definition.
+        $entry->concept = external_format_string($entry->concept, $context->id);
+        list($entry->definition, $entry->definitionformat) = external_format_text($entry->definition, $entry->definitionformat,
+            $context->id, 'mod_glossary', 'entry', $entry->id);
+
+        // Author details.
+        $user = new stdclass();
+        $user = user_picture::unalias($entry, null, $useridfield, $userfieldprefix);
+        $userpicture = new user_picture($user);
+        $userpicture->size = 1;
+        $entry->userfullname = fullname($user, $canviewfullnames);
+        $entry->userpictureurl = $userpicture->get_url($PAGE)->out(false);
+
+        // Fetch attachments.
+        $entry->attachment = !empty($entry->attachment) ? 1 : 0;
+        $entry->attachments = array();
+        if ($entry->attachment) {
+            $fs = get_file_storage();
+            if ($files = $fs->get_area_files($context->id, 'mod_glossary', 'attachment', $entry->id, 'filename', false)) {
+                foreach ($files as $file) {
+                    $filename = $file->get_filename();
+                    $fileurl = moodle_url::make_webservice_pluginfile_url($context->id, 'mod_glossary', 'attachment',
+                        $entry->id, '/', $filename);
+                    $entry->attachments[] = array(
+                        'filename' => $filename,
+                        'mimetype' => $file->get_mimetype(),
+                        'fileurl'  => $fileurl->out(false)
+                    );
+                }
+            }
+        }
+    }
+
+    /**
      * Describes the parameters for get_glossaries_by_courses.
      *
      * @return external_external_function_parameters
@@ -80,6 +191,7 @@ class mod_glossary_external extends external_api {
 
         // Array to store the glossaries to return.
         $glossaries = array();
+        $modes = array();
 
         // Ensure there are courseids to loop through.
         if (!empty($courseids)) {
@@ -92,6 +204,17 @@ class mod_glossary_external extends external_api {
                 $glossary->name = external_format_string($glossary->name, $context->id);
                 list($glossary->intro, $glossary->introformat) = external_format_text($glossary->intro, $glossary->introformat,
                     $context->id, 'mod_glossary', 'intro', null);
+
+                // Make sure we have a number of entries per page.
+                if (!$glossary->entbypage) {
+                    $glossary->entbypage = $CFG->glossary_entbypage;
+                }
+
+                // Add the list of browsing modes.
+                if (!isset($modes[$glossary->displayformat])) {
+                    $modes[$glossary->displayformat] = self::get_browse_modes_from_display_format($glossary->displayformat);
+                }
+                $glossary->browsemodes = $modes[$glossary->displayformat];
             }
         }
 
@@ -155,6 +278,9 @@ class mod_glossary_external extends external_api {
                     'visible' => new external_value(PARAM_INT, 'Visible'),
                     'groupmode' => new external_value(PARAM_INT, 'Group mode'),
                     'groupingid' => new external_value(PARAM_INT, 'Grouping ID'),
+                    'browsemodes' => new external_multiple_structure(
+                        new external_value(PARAM_ALPHA, 'Modes of browsing allowed')
+                    )
                 ), 'Glossaries')
             ),
             'warnings' => new external_warnings())
@@ -281,4 +407,128 @@ class mod_glossary_external extends external_api {
         ));
     }
 
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_entries_by_letter_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'Glossary entry ID'),
+            'letter' => new external_value(PARAM_ALPHA, 'A letter, or either keywords: \'ALL\' or \'SPECIAL\'.'),
+            'from' => new external_value(PARAM_INT, 'Start returning records from here', VALUE_DEFAULT, 0),
+            'limit' => new external_value(PARAM_INT, 'Number of records to return', VALUE_DEFAULT, 20),
+            'options' => new external_single_structure(array(
+                'includenotapproved' => new external_value(PARAM_BOOL, 'When false, includes the non-approved entries created by' .
+                    ' the user. When true, also includes the ones that the user has the permission to approve.', VALUE_DEFAULT, 0)
+            ), 'An array of options', VALUE_DEFAULT, array())
+        ));
+    }
+
+    /**
+     * Browse a glossary entries by letter.
+     *
+     * @param int $id The glossary ID.
+     * @param string $letter A letter, or a special keyword.
+     * @param int $from Start returning records from here.
+     * @param int $limit Number of records to return.
+     * @param array $options Array of options.
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function get_entries_by_letter($id, $letter, $from = 0, $limit = 20, $options = array()) {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(self::get_entries_by_letter_parameters(), array(
+            'id' => $id,
+            'letter' => $letter,
+            'from' => $from,
+            'limit' => $limit,
+            'options' => $options,
+        ));
+        $id = $params['id'];
+        $letter = $params['letter'];
+        $from = $params['from'];
+        $limit = $params['limit'];
+        $options = $params['options'];
+        $warnings = array();
+
+        // Fetch and confirm.
+        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Validate the mode.
+        $modes = self::get_browse_modes_from_display_format($glossary->displayformat);
+        if (!in_array('letter', $modes)) {
+            throw new invalid_parameter_exception('invalidbrowsemode');
+        }
+
+        // Preparing the query.
+        $where = '1 = 1';
+        $params = array();
+
+        if ($letter != 'ALL' && $letter != 'SPECIAL' && ($letterstrlen = core_text::strlen($letter))) {
+            $params['hookup'] = core_text::strtoupper($letter);
+            $where = $DB->sql_substr('upper(concept)', 1, $letterstrlen) . ' = :hookup';
+        }
+        if ($letter == 'SPECIAL') {
+            $alphabet = explode(',', get_string('alphabet', 'langconfig'));
+            list($nia, $aparams) = $DB->get_in_or_equal($alphabet, SQL_PARAMS_NAMED, 'a', false);
+            $params = array_merge($params, $aparams);
+            $where = $DB->sql_substr("upper(concept)", 1, 1) . " $nia";
+        }
+
+        $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
+        if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+            $approvedsql = '1 = 1';
+        }
+
+        $userfields = user_picture::fields('u', null, 'userdataid', 'userdata');
+
+        $sqlselectcount = "SELECT COUNT('x')";
+        $sqlselect = "SELECT ge.*, $userfields";
+        $sql = "  FROM {glossary_entries} ge
+             LEFT JOIN {user} u ON ge.userid = u.id
+                 WHERE (ge.glossaryid = :gid1 OR ge.sourceglossaryid = :gid2)
+                   AND $approvedsql
+                   AND $where";
+        $sqlorder = " ORDER BY ge.concept";
+
+        $params['gid1'] = $glossary->id;
+        $params['gid2'] = $glossary->id;
+        $params['myid'] = $USER->id;
+
+        // Fetching the entries.
+        $count = $DB->count_records_sql($sqlselectcount . $sql, $params);
+        $entries = $DB->get_records_sql($sqlselect . $sql . $sqlorder, $params, $from, $limit);
+        foreach ($entries as $key => $entry) {
+            self::fill_entry_details($entry, $context);
+        }
+
+        return array(
+            'count' => $count,
+            'entries' => $entries,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns the description of the external function return value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function get_entries_by_letter_returns() {
+        return new external_single_structure(array(
+            'count' => new external_value(PARAM_INT, 'The total number of records matching the request.'),
+            'entries' => new external_multiple_structure(
+                self::get_entry_return_structure()
+            ),
+            'warnings' => new external_warnings()
+        ));
+    }
 }

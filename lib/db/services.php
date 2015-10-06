@@ -1279,6 +1279,7 @@ $services = array(
             'mod_wiki_view_page',
             'mod_glossary_view_glossary',
             'mod_glossary_view_entry',
+            'mod_glossary_get_entries_by_letter',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
