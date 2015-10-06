@@ -83,6 +83,6 @@ class submission_created extends \mod_assign\event\submission_created {
 
     public static function get_objectid_mapping() {
         // No mapping available for 'assignsubmission_onlinetext'.
-        return false;
+        return array('db' => 'assignsubmission_onlinetext', 'restore' => \core\event\base::NOT_MAPPED);
     }
 }

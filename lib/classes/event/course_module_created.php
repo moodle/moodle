@@ -171,7 +171,10 @@ class course_module_created extends base {
     }
 
     public static function get_other_mapping() {
-        return false;
+        $othermapped = array();
+        $othermapped['instanceid'] = base::NOT_MAPPED;
+
+        return $othermapped;
     }
 }
 

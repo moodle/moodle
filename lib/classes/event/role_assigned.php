@@ -137,7 +137,10 @@ class role_assigned extends base {
     }
 
     public static function get_other_mapping() {
-        // Nothing mappable.
-        return false;
+        $othermapped = array();
+        $othermapped['id'] = array('db' => 'role_assignments', 'restore' => base::NOT_MAPPED);
+        $othermapped['itemid'] = base::NOT_MAPPED;
+
+        return $othermapped;
     }
 }

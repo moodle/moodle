@@ -106,4 +106,8 @@ class user_report_viewed extends \core\event\base {
         }
     }
 
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

@@ -123,5 +123,12 @@ class course_module_deleted extends base {
     public static function get_objectid_mapping() {
         return array('db' => 'course_modules', 'restore' => 'course_module');
     }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['instanceid'] = base::NOT_MAPPED;
+
+        return $othermapped;
+    }
 }
 

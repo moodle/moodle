@@ -30,6 +30,14 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Email failed event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - string subject: the message subject.
+ *      - string message: the message text.
+ *      - string errorinfo: the error info.
+ * }
+ *
  * @package    core
  * @since      Moodle 2.7
  * @copyright  2013 Mark Nelson <markn@moodle.com>

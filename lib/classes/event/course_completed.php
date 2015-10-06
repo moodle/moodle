@@ -137,7 +137,7 @@ class course_completed extends base {
 
     public static function get_objectid_mapping() {
         // Sorry - there is no mapping available for completion records.
-        return false;
+        return array('db' => 'course_completions', 'restore' => base::NOT_MAPPED);
     }
 
     public static function get_other_mapping() {

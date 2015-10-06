@@ -108,4 +108,9 @@ class course_section_updated extends base {
     public static function get_objectid_mapping() {
         return array('db' => 'course_sections', 'restore' => 'course_section');
     }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

@@ -98,8 +98,8 @@ class tag_flagged extends base {
     }
 
     public static function get_objectid_mapping() {
-        // Tags cannot be mapped by id.
-        return false;
+        // Tags cannot be mapped.
+        return array('db' => 'tag', 'restore' => base::NOT_MAPPED);
     }
 
     public static function get_other_mapping() {

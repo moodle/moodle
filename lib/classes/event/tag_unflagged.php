@@ -90,7 +90,7 @@ class tag_unflagged extends base {
 
     public static function get_objectid_mapping() {
         // Tags cannot be mapped.
-        return false;
+        return array('db' => 'tag', 'restore' => base::NOT_MAPPED);
     }
 
     public static function get_other_mapping() {

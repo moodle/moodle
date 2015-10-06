@@ -141,4 +141,9 @@ class course_category_deleted extends base {
         // Categories are not backed up, so no need to map them.
         return false;
     }
+
+    public static function get_other_mapping() {
+        // Categories are not backed up, so no need to map them.
+        return false;
+    }
 }

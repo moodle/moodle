@@ -106,4 +106,9 @@ class role_deleted extends base {
     public static function get_objectid_mapping() {
         return array('db' => 'role', 'restore' => 'role');
     }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

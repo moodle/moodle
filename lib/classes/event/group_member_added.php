@@ -131,7 +131,9 @@ class group_member_added extends base {
     }
 
     public static function get_other_mapping() {
-        // Nothing to map.
-        return false;
+        $othermapped = array();
+        $othermapped['itemid'] = base::NOT_MAPPED;
+
+        return $othermapped;
     }
 }

@@ -129,7 +129,7 @@ class answer_submitted extends \core\event\base {
         // multiple choices, so the value is converted to an array, which is then passed
         // to the event. Ideally this event should be triggered every time we insert to the
         // 'choice_answers' table so this will only be an int.
-        // $othermapped['optionid'] = array('db' => 'choice_options', 'restore' => 'choice_option');
+        $othermapped['optionid'] = \core\event\base::NOT_MAPPED;
 
         return $othermapped;
     }

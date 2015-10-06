@@ -108,7 +108,7 @@ class report_viewed extends \core\event\base {
 
     public static function get_other_mapping() {
         // Nothing to map.
-        return array();
+        return false;
     }
 
 }

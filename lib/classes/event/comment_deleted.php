@@ -102,11 +102,13 @@ abstract class comment_deleted extends base {
     }
 
     public static function get_objectid_mapping() {
-        return array('db' => 'comment', 'restore' => 'comment');
+        return array('db' => 'comments', 'restore' => 'comment');
     }
 
     public static function get_other_mapping() {
         // We cannot map fields that do not have a 1:1 mapping.
-        return false;
+        $othermapped = array();
+        $othermapped['itemid'] = base::NOT_MAPPED;
+        return $othermapped;
     }
 }

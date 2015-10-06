@@ -127,7 +127,7 @@ class user_enrolment_deleted extends base {
 
     public static function get_objectid_mapping() {
         // User enrolments table is not mappable.
-        return false;
+        return array('db' => 'user_enrolments', 'restore' => base::NOT_MAPPED);
     }
 
     public static function get_other_mapping() {

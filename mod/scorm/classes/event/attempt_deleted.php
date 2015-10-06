@@ -102,7 +102,7 @@ class attempt_deleted extends \core\event\base {
     }
 
     public static function get_other_mapping() {
-        // Can't map the 'attemptid' value.
+        // Nothing to map.
         return false;
     }
 }
