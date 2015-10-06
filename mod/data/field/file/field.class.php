@@ -164,36 +164,22 @@ class data_field_file extends data_field_base {
             $content = $DB->get_record('data_content', array('id'=>$id));
         }
 
-        // delete existing files
-        $fs->delete_area_files($this->context->id, 'mod_data', 'content', $content->id);
+        file_save_draft_area_files($value, $this->context->id, 'mod_data', 'content', $content->id);
 
         $usercontext = context_user::instance($USER->id);
-        $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $value, 'timecreated DESC');
+        $files = $fs->get_area_files($this->context->id, 'mod_data', 'content', $content->id, 'itemid, filepath, filename', false);
 
-        if (count($files)<2) {
-            // no file
+        // We expect no or just one file (maxfiles = 1 option is set for the form_filemanager).
+        if (count($files) == 0) {
+            $content->content = null;
         } else {
-            foreach ($files as $draftfile) {
-                if (!$draftfile->is_directory()) {
-                    $file_record = array(
-                        'contextid' => $this->context->id,
-                        'component' => 'mod_data',
-                        'filearea' => 'content',
-                        'itemid' => $content->id,
-                        'filepath' => '/',
-                        'filename' => $draftfile->get_filename(),
-                    );
-
-                    $content->content = $file_record['filename'];
-
-                    $fs->create_file_from_storedfile($file_record, $draftfile);
-                    $DB->update_record('data_content', $content);
-
-                    // Break from the loop now to avoid overwriting the uploaded file record
-                    break;
-                }
+            $content->content = array_values($files)[0]->get_filename();
+            if (count($files) > 1) {
+                // This should not happen with a consistent database. Inform admins/developers about the inconsistency.
+                debugging('more then one file found in mod_data instance {$this->data->id} file field (field id: {$this->field->id}) area during update data record {$recordid} (content id: {$content->id})', DEBUG_NORMAL);
             }
         }
+        $DB->update_record('data_content', $content);
     }
 
     function text_export_supported() {
