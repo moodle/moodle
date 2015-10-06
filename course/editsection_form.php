@@ -112,7 +112,8 @@ class editsection_form extends moodleform {
         $data = parent::get_data();
         if ($data !== null) {
             $editoroptions = $this->_customdata['editoroptions'];
-            if (!empty($data->usedefaultname) || empty(trim($data->name))) {
+            $trimmedname = $data->name;
+            if (!empty($data->usedefaultname) || empty($trimmedname)) {
                 $data->name = null;
             }
             $data = file_postupdate_standard_editor($data, 'summary', $editoroptions,
