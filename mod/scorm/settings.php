@@ -157,4 +157,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext('scorm/apidebugmask', get_string('apidebugmask', 'scorm'), '', '.*'));
 
+    $settings->add(new admin_setting_configcheckbox('scorm/protectpackagedownloads', get_string('protectpackagedownloads', 'scorm'),
+                                                    get_string('protectpackagedownloads_desc', 'scorm'), 0));
+
 }
