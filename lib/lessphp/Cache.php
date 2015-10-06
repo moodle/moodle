@@ -91,7 +91,7 @@ class Less_Cache{
 				self::ListFiles($list_file, $list, $cached_name);
 				$compiled_name = self::CompiledName($list);
 
-				// if $cached_name != $compiled_name, we know we need to recompile
+				// if $cached_name is the same as the $compiled name, don't regenerate
 				if( !$cached_name || $cached_name === $compiled_name ){
 
 					$output_file = self::OutputFile($compiled_name, $parser_options );
@@ -252,7 +252,7 @@ class Less_Cache{
 					continue;
 				}
 
-				$full_path = Less_Cache::$cache_dir.'/'.$file;
+				$full_path = Less_Cache::$cache_dir . $file;
 
 				// make sure the file still exists
 				// css files may have already been deleted
@@ -280,7 +280,7 @@ class Less_Cache{
 				if( $type === 'list' ){
 					self::ListFiles($full_path, $list, $css_file_name);
 					if( $css_file_name ){
-						$css_file = Less_Cache::$cache_dir.'/'.$css_file_name;
+						$css_file = Less_Cache::$cache_dir . $css_file_name;
 						if( file_exists($css_file) ){
 							unlink($css_file);
 						}
