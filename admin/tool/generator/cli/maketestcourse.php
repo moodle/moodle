@@ -113,3 +113,7 @@ $backend = new tool_generator_course_backend(
     FORMAT_HTML
 );
 $id = $backend->make();
+
+if (empty($options['quiet'])) {
+    echo PHP_EOL.'Generated course: '.course_get_url($id).PHP_EOL;
+}
