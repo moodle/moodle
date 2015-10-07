@@ -68,4 +68,12 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => ''
     ),
+
+    'mod_choice_delete_choice_responses' => array(
+        'classname'     => 'mod_choice_external',
+        'methodname'    => 'delete_choice_responses',
+        'description'   => 'Delete the given submitted responses in a choice',
+        'type'          => 'write',
+        'capabilities'  => 'mod/choice:choose'
+    ),
 );

@@ -935,6 +935,20 @@ function choice_get_my_response($choice) {
     return $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
 }
 
+
+/**
+ * Get all the responses on a given choice.
+ *
+ * @param stdClass $choice Choice record
+ * @return array of choice answers records
+ * @since  Moodle 3.0
+ */
+function choice_get_all_responses($choice) {
+    global $DB;
+    return $DB->get_records('choice_answers', array('choiceid' => $choice->id));
+}
+
+
 /**
  * Return true if we are allowd to view the choice results.
  *
