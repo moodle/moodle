@@ -24,9 +24,9 @@ Feature: Submit assignment without group
       | student3 | Student   | 3        | student3@example.com |
     And the following "groups" exist:
       | name    | course | idnumber |
-      | Group 1 | C2     | G1       |
-      | Group 1 | C3     | G1       |
-      | Group 2 | C3     | G2       |
+      | Group 1 | C2     | GC21     |
+      | Group 1 | C3     | GC31     |
+      | Group 2 | C3     | GC32     |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
@@ -37,19 +37,13 @@ Feature: Submit assignment without group
       | student2 | C2     | student        |
       | teacher1 | C3     | editingteacher |
       | student3 | C3     | student        |
-    And I log in as "teacher1"
-    And I follow "Course 2"
-    And I expand "Users" node
-    And I follow "Groups"
-    And I add "Student 1 (student1@example.com)" user to "Group 1" group members
-    And I add "Student 2 (student2@example.com)" user to "Group 1" group members
-    And I am on homepage
-    And I follow "Course 3"
-    And I expand "Users" node
-    And I follow "Groups"
-    And I add "Student 3 (student3@example.com)" user to "Group 1" group members
-    And I add "Student 3 (student3@example.com)" user to "Group 2" group members
-    And I log out
+    And the following "group members" exist:
+      | user     | group |
+      | student1 | GC21  |
+      | student2 | GC21  |
+      | student3 | GC31  |
+      | student3 | GC32  |
+    # Student 1 can only submit assignment in course 2.
     When I log in as "student1"
     And I follow "Course 1"
     And I follow "Allow default group"
@@ -61,16 +55,16 @@ Feature: Submit assignment without group
     And I press "Save changes"
     And I press "Submit assignment"
     And I press "Continue"
-    Then I should see "Submitted for grading"
+    And I should see "Submitted for grading"
     And I follow "Course 1"
     And I follow "Require group membership"
-    Then I should see "You're not a member of any group, please contact your teacher."
+    And I should see "You're not a member of any group, please contact your teacher."
     And I should see "Nothing has been submitted for this assignment"
     And I should not see "Add submission"
     And I am on homepage
     And I follow "Course 2"
     And I follow "Require group membership"
-    Then I should not see "You're not a member of any group, please contact your teacher."
+    And I should not see "You're not a member of any group, please contact your teacher."
     And I should see "Nothing has been submitted for this assignment"
     And I press "Add submission"
     And I set the following fields to these values:
@@ -78,17 +72,19 @@ Feature: Submit assignment without group
     And I press "Save changes"
     And I press "Submit assignment"
     And I press "Continue"
-    Then I should see "Submitted for grading"
+    And I should see "Submitted for grading"
     And I log out
-    When I log in as "student2"
+    # Student 2 should see submitted for grading.
+    And I log in as "student2"
     And I follow "Course 1"
     And I follow "Allow default group"
-    Then I should see "Submitted for grading"
+    And I should see "Submitted for grading"
     And I am on homepage
     And I follow "Course 2"
     And I follow "Require group membership"
-    Then I should see "Submitted for grading"
+    And I should see "Submitted for grading"
     And I log out
+    # Teacher should see student 1 and student 2 has submitted assignment.
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Allow default group"
@@ -120,10 +116,11 @@ Feature: Submit assignment without group
     And I should see "Submitted for grading" in the "Student 1" "table_row"
     And I should see "Submitted for grading" in the "Student 2" "table_row"
     And I log out
-    When I log in as "student3"
+    # Test student 3 (in multiple groups) should not be able to submit.
+    And I log in as "student3"
     And I follow "Course 3"
     And I follow "Require group membership"
-    Then I should see "You're a member of multiple groups, please contact your teacher."
+    And I should see "You're a member of multiple groups, please contact your teacher."
     And I should see "Nothing has been submitted for this assignment"
     And I should not see "Add submission"
     And I log out
