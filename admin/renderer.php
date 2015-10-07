@@ -999,6 +999,16 @@ class core_admin_renderer extends plugin_renderer_base {
             );
         }
 
+        $installableupdates = $pluginman->filter_installable($pluginman->available_updates());
+        if ($installableupdates) {
+            $out .= $this->output->single_button(
+                new moodle_url($this->page->url, array('installupdatex' => 1)),
+                get_string('updateavailableinstallall', 'core_admin', count($installableupdates)),
+                'post',
+                array('class' => 'singlebutton updateavailableinstallall')
+            );
+        }
+
         $out .= html_writer::div(html_writer::link(new moodle_url($this->page->url, array('showallplugins' => 0)),
             get_string('plugincheckattention', 'core_plugin')).' '.html_writer::span($sumattention, 'badge'));
 
@@ -1011,6 +1021,33 @@ class core_admin_renderer extends plugin_renderer_base {
         if ($sumdisplayed > 0 or $options['full']) {
             $out .= html_writer::table($table);
         }
+
+        return $out;
+    }
+
+    /**
+     * Display the continue / cancel widgets for the plugins validation page.
+     *
+     * @param null|moodle_url $continue URL for the continue button, should it be displayed
+     * @param string $label explicit label for the continue button
+     * @param moodle_url $cancel URL for the cancel link, defaults to the current page
+     * @return string HTML
+     */
+    public function install_remote_plugins_buttons(moodle_url $continue=null, $label=null, moodle_url $cancel=null) {
+
+        $out = html_writer::start_div('install-remote-plugins-buttons');
+
+        if (!empty($continue)) {
+            if (empty($label)) {
+                $label = get_string('continue');
+            }
+            $out .= $this->output->single_button($continue, $label, 'post', array('class' => 'continue'));
+        }
+
+        if (empty($cancel)) {
+            $cancel = $this->page->url;
+        }
+        $out .= html_writer::div(html_writer::link($cancel, get_string('cancel')), 'cancel');
 
         return $out;
     }
@@ -1078,15 +1115,9 @@ class core_admin_renderer extends plugin_renderer_base {
 
         if ($available) {
             $out .= $this->output->heading(get_string('misdepsavail', 'core_plugin'));
-            $installable = array();
-            foreach ($available as $component => $remoteinfo) {
-                if ($pluginman->is_remote_plugin_installable($component, $remoteinfo->version->version)) {
-                    $installable[$component] = $remoteinfo;
-                }
-            }
-
             $out .= $this->output->container_start('plugins-check-dependencies-actions');
 
+            $installable = $pluginman->filter_installable($available);
             if ($installable) {
                 $out .= $this->output->single_button(
                     new moodle_url($this->page->url, array('installdepx' => 1)),

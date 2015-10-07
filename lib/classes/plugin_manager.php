@@ -988,6 +988,30 @@ class core_plugin_manager {
     }
 
     /**
+     * Given the list of remote plugin infos, return just those installable.
+     *
+     * This is typically used on lists returned by
+     * {@link self::available_updates()} or {@link self::missing_dependencies()}
+     * to perform bulk installation of remote plugins.
+     *
+     * @param array $remoteinfos list of {@link \core\update\remote_info}
+     * @return array
+     */
+    public function filter_installable($remoteinfos) {
+
+        if (empty($remoteinfos)) {
+            return array();
+        }
+        $installable = array();
+        foreach ($remoteinfos as $index => $remoteinfo) {
+            if ($this->is_remote_plugin_installable($remoteinfo->component, $remoteinfo->version->version)) {
+                $installable[$index] = $remoteinfo;
+            }
+        }
+        return $installable;
+    }
+
+    /**
      * Returns information about a plugin in the plugins directory.
      *
      * This is typically used when checking for available dependencies (in
@@ -1172,6 +1196,158 @@ class core_plugin_manager {
         }
 
         return true;
+    }
+
+    /**
+     * Perform the installation of plugins available in the plugins directory.
+     *
+     * The list of plugins is supposed to be processed by
+     * {@link self::filter_installable()} to make sure all the plugins are
+     * valid.
+     *
+     * @param array $plugins list of installable remote plugins
+     * @param bool $confirmed should the files be really deployed into the dirroot?
+     * @param bool $silent perform without output
+     * @return bool true on success
+     */
+    public function install_remote_plugins(array $plugins, $confirmed, $silent) {
+        global $CFG, $OUTPUT;
+
+        if (empty($plugins)) {
+            return false;
+        }
+
+        $ok = get_string('ok', 'core');
+
+        // Let admins know they can expect more verbose output.
+        $silent or $this->mtrace(get_string('packagesdebug', 'core_plugin'), PHP_EOL, DEBUG_NORMAL);
+
+        // Download all ZIP packages if we do not have them yet.
+        $silent or $this->mtrace(get_string('packagesdownloading', 'core_plugin'), ' ... ');
+        $zips = array();
+        foreach ($plugins as $plugin) {
+            $zips[$plugin->component] = $this->get_remote_plugin_zip($plugin->version->downloadurl, $plugin->version->downloadmd5);
+            $silent or $this->mtrace(PHP_EOL.$plugin->version->downloadurl, '', DEBUG_DEVELOPER);
+            $silent or $this->mtrace(PHP_EOL.' -> '.$zips[$plugin->component], ' ... ', DEBUG_DEVELOPER);
+            if (!$zips[$plugin->component]) {
+                $silent or $this->mtrace(get_string('error'));
+                return false;
+            }
+        }
+        $silent or $this->mtrace($ok);
+
+        // Validate all downloaded packages.
+        $silent or $this->mtrace(get_string('packagesvalidating', 'core_plugin'), ' ... '.PHP_EOL);
+        foreach ($plugins as $plugin) {
+            $zipfile = $zips[$plugin->component];
+            $silent or $this->mtrace('* '.s($plugin->name). ' ('.$plugin->component.')', ' ... ');
+            list($plugintype, $pluginname) = core_component::normalize_component($plugin->component);
+            $tmp = make_request_directory();
+            $zipcontents = $this->unzip_plugin_file($zipfile, $tmp, $pluginname);
+            if (empty($zipcontents)) {
+                $silent or $this->mtrace(get_string('error'));
+                $silent or $this->mtrace('Unable to unzip '.$zipfile, PHP_EOL, DEBUG_DEVELOPER);
+                return false;
+            }
+
+            $validator = \core\update\validator::instance($tmp, $zipcontents);
+            $validator->assert_plugin_type($plugintype);
+            $validator->assert_moodle_version($CFG->version);
+            // TODO Check for missing dependencies during validation.
+            $result = $validator->execute();
+            if (!$silent) {
+                $result ? $this->mtrace($ok) : $this->mtrace(get_string('error'));
+                foreach ($validator->get_messages() as $message) {
+                    if ($message->level === $validator::INFO) {
+                        // Display [OK] validation messages only if debugging mode is DEBUG_NORMAL.
+                        $level = DEBUG_NORMAL;
+                    } else if ($message->level === $validator::DEBUG) {
+                        // Display [Debug] validation messages only if debugging mode is DEBUG_ALL.
+                        $level = DEBUG_ALL;
+                    } else {
+                        // Display [Warning] and [Error] always.
+                        $level = null;
+                    }
+                    if ($message->level === $validator::WARNING and !CLI_SCRIPT) {
+                        $this->mtrace('  <strong>['.$validator->message_level_name($message->level).']</strong>', ' ', $level);
+                    } else {
+                        $this->mtrace('  ['.$validator->message_level_name($message->level).']', ' ', $level);
+                    }
+                    $this->mtrace($validator->message_code_name($message->msgcode), ' ', $level);
+                    $info = $validator->message_code_info($message->msgcode, $message->addinfo);
+                    if ($info) {
+                        $this->mtrace('['.s($info).']', ' ', $level);
+                    } else if (is_string($message->addinfo)) {
+                        $this->mtrace('['.s($message->addinfo, true).']', ' ', $level);
+                    } else {
+                        $this->mtrace('['.s(json_encode($message->addinfo, true)).']', ' ', $level);
+                    }
+                    if ($icon = $validator->message_help_icon($message->msgcode)) {
+                        if (CLI_SCRIPT) {
+                            $this->mtrace(PHP_EOL.'  ^^^ '.get_string('help').': '.
+                                get_string($icon->identifier.'_help', $icon->component), '', $level);
+                        } else {
+                            $this->mtrace($OUTPUT->render($icon), ' ', $level);
+                        }
+                    }
+                    $this->mtrace(PHP_EOL, '', $level);
+                }
+            }
+            if (!$result) {
+                $silent or $this->mtrace(get_string('packagesvalidatingfailed', 'core_plugin'));
+                return false;
+            }
+        }
+        $silent or $this->mtrace(PHP_EOL.get_string('packagesvalidatingok', 'core_plugin'));
+
+        if (!$confirmed) {
+            return true;
+        }
+
+        // Extract all ZIP packs do the dirroot.
+        $silent or $this->mtrace(get_string('packagesextracting', 'core_plugin'), ' ... '.PHP_EOL);
+        foreach ($plugins as $plugin) {
+            $silent or $this->mtrace('* '.s($plugin->name). ' ('.$plugin->component.')', ' ... ');
+            $zipfile = $zips[$plugin->component];
+            list($plugintype, $pluginname) = core_component::normalize_component($plugin->component);
+            $target = $this->get_plugintype_root($plugintype);
+            if (file_exists($target.'/'.$pluginname)) {
+                $current = $this->get_plugin_info($plugin->component);
+                if ($current->versiondb and $current->versiondb == $current->versiondisk) {
+                    // TODO Archive existing version so that we can revert.
+                }
+                remove_dir($target.'/'.$pluginname);
+            }
+            if (!$this->unzip_plugin_file($zipfile, $target, $pluginname)) {
+                $silent or $this->mtrace(get_string('error'));
+                $silent or $this->mtrace('Unable to unzip '.$zipfile, PHP_EOL, DEBUG_DEVELOPER);
+                return false;
+            }
+            $silent or $this->mtrace($ok);
+        }
+
+        return true;
+    }
+
+    /**
+     * Outputs the given message via {@link mtrace()}.
+     *
+     * If $debug is provided, then the message is displayed only at the given
+     * debugging level (e.g. DEBUG_DEVELOPER to display the message only if the
+     * site has developer debugging level selected).
+     *
+     * @param string $msg message
+     * @param string $eol end of line
+     * @param null|int $debug null to display always, int only on given debug level
+     */
+    protected function mtrace($msg, $eol=PHP_EOL, $debug=null) {
+        global $CFG;
+
+        if ($debug !== null and !debugging(null, $debug)) {
+            return;
+        }
+
+        mtrace($msg, $eol);
     }
 
     /**
