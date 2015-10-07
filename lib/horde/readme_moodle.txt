@@ -4,10 +4,10 @@ Description of import of Horde libraries
   around for future updates:
     git clone git@github.com:horde/horde.git
 # Checkout the version of horde you require:
-    git checkout horde-5.2.1
-# Copy the following script, change it's execute bit, and run it, passing
-  in your path to Horde:
-    /tmp/copyhorde.sh ~/git/ext/horde/framework
+    git checkout horde-5.2.7
+# Copy the following script and store it on /tmp, change it's execute bit, and run it, passing
+  in your path to Horde (the directory you've cloned the repository):
+    /tmp/copyhorde.sh ~/git/ext/horde/
 
 ====
 #!/bin/sh
