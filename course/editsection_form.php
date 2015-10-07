@@ -38,6 +38,10 @@ class editsection_form extends moodleform {
         $mform->addGroup($elementgroup, 'name_group', get_string('sectionname'), ' ', false);
         $mform->addGroupRule('name_group', array('name' => array(array(get_string('maximumchars', '', 255), 'maxlength', 255))));
 
+        // Add rule for name_group to make sure that the section name is not blank if 'Use default section name'
+        // checkbox is unchecked.
+        $mform->addRule('name_group', get_string('required'), 'required', null, 'client');
+
         $mform->setDefault('usedefaultname', true);
         $mform->setType('name', PARAM_TEXT);
         $mform->disabledIf('name','usedefaultname','checked');
@@ -112,8 +116,7 @@ class editsection_form extends moodleform {
         $data = parent::get_data();
         if ($data !== null) {
             $editoroptions = $this->_customdata['editoroptions'];
-            $trimmedname = $data->name;
-            if (!empty($data->usedefaultname) || empty($trimmedname)) {
+            if (!empty($data->usedefaultname)) {
                 $data->name = null;
             }
             $data = file_postupdate_standard_editor($data, 'summary', $editoroptions,
@@ -136,6 +139,15 @@ class editsection_form extends moodleform {
         // Availability: Check availability field does not have errors.
         if (!empty($CFG->enableavailability)) {
             \core_availability\frontend::report_validation_errors($data, $errors);
+        }
+
+        // Validate section name if 'Use default section name' is unchecked.
+        if (empty($data['usedefaultname'])) {
+            // Make sure the trimmed value of section name is not empty.
+            $trimmedname = trim($data['name']);
+            if (empty($trimmedname)) {
+                $errors['name_group'] = get_string('required');
+            }
         }
 
         return $errors;
