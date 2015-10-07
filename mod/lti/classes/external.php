@@ -271,4 +271,67 @@ class mod_lti_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function view_lti_parameters() {
+        return new external_function_parameters(
+            array(
+                'ltiid' => new external_value(PARAM_INT, 'lti instance id')
+            )
+        );
+    }
+
+    /**
+     * Trigger the course module viewed event and update the module completion status.
+     *
+     * @param int $ltiid the lti instance id
+     * @return array of warnings and status result
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function view_lti($ltiid) {
+        global $DB;
+
+        $params = self::validate_parameters(self::view_lti_parameters(),
+                                            array(
+                                                'ltiid' => $ltiid
+                                            ));
+        $warnings = array();
+
+        // Request and permission validation.
+        $lti = $DB->get_record('lti', array('id' => $params['ltiid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($lti, 'lti');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+        require_capability('mod/lti:view', $context);
+
+        // Trigger course_module_viewed event and completion.
+        lti_view($lti, $course, $cm, $context);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function view_lti_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

@@ -41,5 +41,13 @@ $functions = array(
                             no courses are provided then all the external tool instances the user has access to will be returned.',
         'type'          => 'read',
         'capabilities'  => 'mod/lti:view'
-    )
+    ),
+
+    'mod_lti_view_lti' => array(
+        'classname'     => 'mod_lti_external',
+        'methodname'    => 'view_lti',
+        'description'   => 'Trigger the course module viewed event and update the module completion status.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/lti:view'
+    ),
 );
