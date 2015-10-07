@@ -2418,6 +2418,54 @@ class core_course_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.0
+     */
+    public static function get_course_module_by_instance_parameters() {
+        return new external_function_parameters(
+            array(
+                'module' => new external_value(PARAM_COMPONENT, 'The module name'),
+                'instance' => new external_value(PARAM_INT, 'The module instance id')
+            )
+        );
+    }
+
+    /**
+     * Return information about a course module.
+     *
+     * @param string $module the module name
+     * @param int $instance the activity instance id
+     * @return array of warnings and the course module
+     * @since Moodle 3.0
+     * @throws moodle_exception
+     */
+    public static function get_course_module_by_instance($module, $instance) {
+
+        $params = self::validate_parameters(self::get_course_module_by_instance_parameters(),
+                                            array(
+                                                'module' => $module,
+                                                'instance' => $instance,
+                                            ));
+
+        $warnings = array();
+        $cm = get_coursemodule_from_instance($params['module'], $params['instance'], 0, false, MUST_EXIST);
+
+        return self::get_course_module($cm->id);
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.0
+     */
+    public static function get_course_module_by_instance_returns() {
+        return self::get_course_module_returns();
+    }
+
 }
 
 /**
