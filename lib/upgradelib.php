@@ -2371,3 +2371,53 @@ function check_upgrade_key($upgradekeyhash) {
         }
     }
 }
+
+/**
+ * Helper procedure/macro for installing remote plugins at admin/index.php
+ *
+ * Does not return, always redirects or exits.
+ *
+ * @param array $installable list of \core\update\remote_info
+ * @param bool $confirmed false: display the validation screen, true: proceed installation
+ * @param string $heading validation screen heading
+ * @param moodle_url|string|null $continue URL to proceed with installation at the validation screen
+ * @param moodle_url|string|null $return URL to go back (on successful finish or cancel)
+ */
+function upgrade_install_remote_plugins(array $installable, $confirmed, $heading='', $continue=null, $return=null) {
+    global $PAGE;
+
+    if (empty($return)) {
+        $return = $PAGE->url;
+    }
+
+    if (empty($installable)) {
+        redirect($return);
+    }
+
+    $pluginman = core_plugin_manager::instance();
+
+    if ($confirmed) {
+        // Installation confirmed at the validation results page.
+        if (!$pluginman->install_remote_plugins($installable, true, true)) {
+            throw new moodle_exception('install_remote_plugins_failed', 'core_plugin', $return);
+        }
+        redirect($return);
+
+    } else {
+        $output = $PAGE->get_renderer('core', 'admin');
+        echo $output->header();
+        if ($heading) {
+            echo $output->heading($heading, 3);
+        }
+        echo html_writer::start_tag('pre', array('class' => 'plugin-install-console'));
+        $validated = $pluginman->install_remote_plugins($installable, false, false);
+        echo html_writer::end_tag('pre');
+        if ($validated) {
+            echo $output->install_remote_plugins_buttons($continue, null, $return);
+        } else {
+            echo $output->install_remote_plugins_buttons(null, null, $return);
+        }
+        echo $output->footer();
+        die();
+    }
+}

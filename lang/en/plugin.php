@@ -35,6 +35,7 @@ $string['detectedmisplacedplugin'] = 'Plugin "{$a->component}" is installed in i
 $string['dependencyavailable'] = 'Available';
 $string['dependencyfails'] = 'Fails';
 $string['dependencyinstall'] = 'Install';
+$string['dependencyinstallhead'] = 'Installing missing dependencies';
 $string['dependencyinstallmissing'] = 'Install missing dependencies ({$a})';
 $string['dependencymissing'] = 'Missing';
 $string['dependencyunavailable'] = 'Unavailable';

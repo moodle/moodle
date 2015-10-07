@@ -98,18 +98,24 @@ core_component::get_core_subsystems();
 require_once($CFG->libdir.'/adminlib.php');    // various admin-only functions
 require_once($CFG->libdir.'/upgradelib.php');  // general upgrade/install related functions
 
-$confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
-$confirmrelease = optional_param('confirmrelease', 0, PARAM_BOOL);
-$confirmplugins = optional_param('confirmplugincheck', 0, PARAM_BOOL);
-$showallplugins = optional_param('showallplugins', 0, PARAM_BOOL);
-$agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
-$fetchupdates   = optional_param('fetchupdates', 0, PARAM_BOOL);
-$newaddonreq    = optional_param('installaddonrequest', null, PARAM_RAW);
-$upgradekeyhash = optional_param('upgradekeyhash', null, PARAM_ALPHANUM);
-$installdep     = optional_param('installdep', null, PARAM_COMPONENT);
-$installdepx    = optional_param('installdepx', false, PARAM_BOOL);
-$abortinstall   = optional_param('abortinstall', null, PARAM_COMPONENT);
-$abortinstallx  = optional_param('abortinstallx', null, PARAM_BOOL);
+$confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL); // Core upgrade confirmed?
+$confirmrelease = optional_param('confirmrelease', 0, PARAM_BOOL); // Core release info and server checks confirmed?
+$confirmplugins = optional_param('confirmplugincheck', 0, PARAM_BOOL); // Plugins check page confirmed?
+$showallplugins = optional_param('showallplugins', 0, PARAM_BOOL); // Show all plugins on the plugins check page?
+$agreelicense = optional_param('agreelicense', 0, PARAM_BOOL); // GPL license confirmed for installation?
+$fetchupdates = optional_param('fetchremote', 0, PARAM_BOOL); // Should check for available updates?
+$newaddonreq = optional_param('installaddonrequest', null, PARAM_RAW); // Plugin installation requested at moodle.org/plugins.
+$upgradekeyhash = optional_param('upgradekeyhash', null, PARAM_ALPHANUM); // Hash of provided upgrade key.
+$installdep = optional_param('installdep', null, PARAM_COMPONENT); // Install given missing dependency (required plugin).
+$installdepx = optional_param('installdepx', false, PARAM_BOOL); // Install all missing dependencies.
+$confirminstalldep = optional_param('confirminstalldep', false, PARAM_BOOL); // Installing dependencies confirmed.
+$abortinstall = optional_param('abortinstall', null, PARAM_COMPONENT); // Cancel installation of the given new plugin.
+$abortinstallx = optional_param('abortinstallx', null, PARAM_BOOL); // Cancel installation of all new plugins.
+$confirmabortinstall = optional_param('confirmabortinstall', false, PARAM_BOOL); // Installation cancel confirmed.
+$installupdate = optional_param('installupdate', null, PARAM_COMPONENT); // Install given available update.
+$installupdateversion = optional_param('installupdateversion', null, PARAM_INT); // Version of the available update to install.
+$installupdatex = optional_param('installupdatex', false, PARAM_BOOL); // Install all available plugin updates.
+$confirminstallupdate = optional_param('confirminstallupdate', false, PARAM_BOOL); // Available update(s) install confirmed?
 
 // Set up PAGE.
 $url = new moodle_url('/admin/index.php');
@@ -337,8 +343,6 @@ if (!$cache and $version > $CFG->version) {  // upgrade
         die();
 
     } else if (empty($confirmplugins)) {
-        // No sesskey support guaranteed here, because sessions might not work yet.
-
         $strplugincheck = get_string('plugincheck');
 
         $PAGE->navbar->add($strplugincheck);
@@ -349,34 +353,71 @@ if (!$cache and $version > $CFG->version) {  // upgrade
         $pluginman = core_plugin_manager::instance();
 
         if ($abortinstallx) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
             $pluginman->cancel_all_plugin_installations();
             redirect($PAGE->url);
         }
 
         if ($abortinstall) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
             $pluginman->cancel_plugin_installation($abortinstall);
             redirect($PAGE->url);
         }
 
+        // Install all available missing dependencies.
+        if ($installdepx) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
+            upgrade_install_remote_plugins($installable, $confirminstalldep,
+                get_string('dependencyinstallhead', 'core_plugin'),
+                new moodle_url($PAGE->url, array('installdepx' => 1, 'confirminstalldep' => 1))
+            );
+        }
+
+        // Install single available missing dependency.
+        if ($installdep) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
+            if (!empty($installable[$installdep])) {
+                $installable = array($installable[$installdep]);
+                upgrade_install_remote_plugins($installable, $confirminstalldep,
+                    get_string('dependencyinstallhead', 'core_plugin'),
+                    new moodle_url($PAGE->url, array('installdep' => $installdep, 'confirminstalldep' => 1))
+                );
+            }
+        }
+
+        // Install all avilable updates.
+        if ($installupdatex) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $installable = $pluginman->filter_installable($pluginman->available_updates());
+            upgrade_install_remote_plugins($installable, $confirminstallupdate,
+                get_string('updateavailableinstallallhead', 'core_admin'),
+                new moodle_url($PAGE->url, array('installupdatex' => 1, 'confirminstallupdate' => 1))
+            );
+        }
+
+        // Install single available update.
+        if ($installupdate and $installupdateversion) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            if ($pluginman->is_remote_plugin_installable($installupdate, $installupdateversion)) {
+                $installable = array($pluginman->get_remote_plugin_info($installupdate, $installupdateversion, true));
+                upgrade_install_remote_plugins($installable, $confirminstallupdate,
+                    get_string('updateavailableinstallallhead', 'core_admin'),
+                    new moodle_url($PAGE->url, array('installupdate' => $installupdate,
+                        'installupdateversion' => $installupdateversion, 'confirminstallupdate' => 1)
+                    )
+                );
+            }
+        }
 
         if ($fetchupdates) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
             $updateschecker = \core\update\checker::instance();
             if ($updateschecker->enabled()) {
                 $updateschecker->fetch();
             }
             redirect($PAGE->url);
-        }
-
-        $deployer = \core\update\deployer::instance();
-        if ($deployer->enabled()) {
-            $deployer->initialize($PAGE->url, $PAGE->url);
-
-            $deploydata = $deployer->submitted_data();
-            if (!empty($deploydata)) {
-                // No sesskey support guaranteed here, because sessions might not work yet.
-                echo $output->upgrade_plugin_confirm_deploy_page($deployer, $deploydata);
-                die();
-            }
         }
 
         echo $output->upgrade_plugin_check_page(core_plugin_manager::instance(), \core\update\checker::instance(),
@@ -417,9 +458,9 @@ if (!$cache and moodle_needs_upgrading()) {
 
     if (!$PAGE->headerprinted) {
         // means core upgrade or installation was not already done
+        $pluginman = core_plugin_manager::instance();
 
         if (!$confirmplugins) {
-            $pluginman = core_plugin_manager::instance();
             $strplugincheck = get_string('plugincheck');
 
             $PAGE->navbar->add($strplugincheck);
@@ -448,20 +489,55 @@ if (!$cache and moodle_needs_upgrading()) {
                 redirect($PAGE->url);
             }
 
-            /** @var core_admin_renderer $output */
-            $output = $PAGE->get_renderer('core', 'admin');
+            // Install all available missing dependencies.
+            if ($installdepx) {
+                require_sesskey();
+                $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
+                upgrade_install_remote_plugins($installable, $confirminstalldep,
+                    get_string('dependencyinstallhead', 'core_plugin'),
+                    new moodle_url($PAGE->url, array('installdepx' => 1, 'confirminstalldep' => 1))
+                );
+            }
 
-            $deployer = \core\update\deployer::instance();
-            if ($deployer->enabled()) {
-                $deployer->initialize($PAGE->url, $PAGE->url);
-
-                $deploydata = $deployer->submitted_data();
-                if (!empty($deploydata)) {
-                    require_sesskey();
-                    echo $output->upgrade_plugin_confirm_deploy_page($deployer, $deploydata);
-                    die();
+            // Install single available missing dependency.
+            if ($installdep) {
+                require_sesskey();
+                $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
+                if (!empty($installable[$installdep])) {
+                    $installable = array($installable[$installdep]);
+                    upgrade_install_remote_plugins($installable, $confirminstalldep,
+                        get_string('dependencyinstallhead', 'core_plugin'),
+                        new moodle_url($PAGE->url, array('installdep' => $installdep, 'confirminstalldep' => 1))
+                    );
                 }
             }
+
+            // Install all available updates.
+            if ($installupdatex) {
+                require_sesskey();
+                $installable = $pluginman->filter_installable($pluginman->available_updates());
+                upgrade_install_remote_plugins($installable, $confirminstallupdate,
+                    get_string('updateavailableinstallallhead', 'core_admin'),
+                    new moodle_url($PAGE->url, array('installupdatex' => 1, 'confirminstallupdate' => 1))
+                );
+            }
+
+            // Install single available update.
+            if ($installupdate and $installupdateversion) {
+                require_sesskey();
+                if ($pluginman->is_remote_plugin_installable($installupdate, $installupdateversion)) {
+                    $installable = array($pluginman->get_remote_plugin_info($installupdate, $installupdateversion, true));
+                    upgrade_install_remote_plugins($installable, $confirminstallupdate,
+                        get_string('updateavailableinstallallhead', 'core_admin'),
+                        new moodle_url($PAGE->url, array('installupdate' => $installupdate,
+                            'installupdateversion' => $installupdateversion, 'confirminstallupdate' => 1)
+                        )
+                    );
+                }
+            }
+
+            /** @var core_admin_renderer $output */
+            $output = $PAGE->get_renderer('core', 'admin');
 
             // Show plugins info.
             echo $output->upgrade_plugin_check_page($pluginman, \core\update\checker::instance(),
