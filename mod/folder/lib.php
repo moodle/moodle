@@ -531,3 +531,28 @@ function folder_get_directory_size($directory) {
 
     return $size;
 }
+
+/**
+ * Mark the activity completed (if required) and trigger the all_files_downloaded event.
+ *
+ * @param  stdClass $folder     folder object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.1
+ */
+function folder_downloaded($folder, $course, $cm, $context) {
+    $params = array(
+        'context' => $context,
+        'objectid' => $folder->id
+    );
+    $event = \mod_folder\event\all_files_downloaded::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('folder', $folder);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}

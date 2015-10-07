@@ -40,9 +40,7 @@ if (!$downloadable) {
     print_error('cannotdownloaddir', 'repository');
 }
 
-// Completion.
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+folder_downloaded($folder, $course, $cm, $context);
 
 $fs = get_file_storage();
 $file = $fs->get_file($context->id, 'mod_folder', 'content', 0, '/', '.');
