@@ -1419,6 +1419,21 @@ class flexible_table {
      * @return string HTML fragment.
      */
     private function render_reset_button() {
+        $userprefs = false;
+        // Loop through the user table preferences for a setting.
+        foreach ($this->prefs as $preference) {
+            if (!empty($preference)) {
+                // We have a preference.
+                $userprefs = true;
+                // We only need one.
+                break;
+            }
+        }
+        // If no table preferences have been set then don't show the reset button.
+        if (!$userprefs) {
+            return '';
+        }
+
         $url = $this->baseurl->out(false, array($this->request[TABLE_VAR_RESET] => 1));
 
         $html  = html_writer::start_div('mdl-right');
