@@ -482,3 +482,48 @@ function folder_view($folder, $course, $cm, $context) {
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
 }
+
+/**
+ * Check if the folder can be zipped and downloaded.
+ * @param stdClass $folder
+ * @param folder_tree $foldertree
+ * @return bool True if the folder can be zipped and downloaded.
+ * @throws \dml_exception
+ */
+function folder_archive_available($folder, $foldertree) {
+    if (!$folder->showdownloadfolder) {
+        return false;
+    }
+
+    $size = folder_get_directory_size($foldertree->dir);
+    $maxsize = get_config('folder', 'maxsizetodownload') * 1024 * 1024;
+
+    if ($size == 0) {
+        return false;
+    }
+
+    if (!empty($maxsize) && $size > $maxsize) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Recursively measure the size of the files in a directory.
+ * @param array $directory
+ * @return int size of directory contents in bytes
+ */
+function folder_get_directory_size($directory) {
+    $size = 0;
+
+    foreach ($directory['files'] as $file) {
+        $size += $file->get_filesize();
+    }
+
+    foreach ($directory['subdirs'] as $subdirectory) {
+        $size += folder_get_directory_size($subdirectory);
+    }
+
+    return $size;
+}

@@ -128,5 +128,17 @@ function xmldb_folder_upgrade($oldversion) {
     // Moodle v3.0.0 release upgrade line.
     // Put any upgrade step following this.
 
+
+    // Add showdownloadfolder option.
+    if ($oldversion < 2016020201) {
+        $table = new xmldb_table('folder');
+        $field = new xmldb_field('showdownloadfolder', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'showexpanded');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field, 'showdownloadfolder');
+        }
+
+        upgrade_mod_savepoint(true, 2016020201, 'folder');
+    }
+
     return true;
 }
