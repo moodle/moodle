@@ -550,13 +550,27 @@ class mod_scorm_external extends external_api {
             $params['attempt'] = scorm_get_last_attempt($scorm->id, $user->id);
         }
 
-        if ($scormtracks = scorm_get_tracks($sco->id, $user->id, $params['attempt'])) {
-            foreach ($scormtracks as $element => $value) {
-                $tracks[] = array(
-                    'element' => $element,
-                    'value' => $value,
-                );
+        $attempted = false;
+        if ($scormtracks = scorm_get_tracks($sco->id, $params['userid'], $params['attempt'])) {
+            // Check if attempted.
+            if ($scormtracks->status != '') {
+                $attempted = true;
+                foreach ($scormtracks as $element => $value) {
+                    $tracks[] = array(
+                        'element' => $element,
+                        'value' => $value,
+                    );
+                }
             }
+        }
+
+        if (!$attempted) {
+            $warnings[] = array(
+                'item' => 'attempt',
+                'itemid' => $params['attempt'],
+                'warningcode' => 'notattempted',
+                'message' => get_string('notattempted', 'scorm')
+            );
         }
 
         $result = array();

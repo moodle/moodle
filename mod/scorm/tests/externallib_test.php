@@ -476,6 +476,7 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         // 7 default elements + 2 custom ones.
         $this->assertCount(9, $result['data']['tracks']);
         $this->assertEquals(1, $result['data']['attempt']);
+        $this->assertCount(0, $result['warnings']);
         // Find our tracking data.
         $found = 0;
         foreach ($result['data']['tracks'] as $userdata) {
@@ -487,6 +488,14 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
             }
         }
         $this->assertEquals(2, $found);
+
+        // Try invalid attempt.
+        $result = mod_scorm_external::get_scorm_sco_tracks($sco->id, $student->id, 10);
+        $result = external_api::clean_returnvalue(mod_scorm_external::get_scorm_sco_tracks_returns(), $result);
+        $this->assertCount(0, $result['data']['tracks']);
+        $this->assertEquals(10, $result['data']['attempt']);
+        $this->assertCount(1, $result['warnings']);
+        $this->assertEquals('notattempted', $result['warnings'][0]['warningcode']);
 
         // Capabilities check.
         try {
