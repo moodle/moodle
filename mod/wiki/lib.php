@@ -171,7 +171,8 @@ function wiki_reset_userdata($data) {
             foreach ($subwikis as $subwiki) {
                 // Get existing pages.
                 if ($pages = wiki_get_page_list($subwiki->id)) {
-                    if (!empty($data->reset_wiki_tags)) {
+                    // If the wiki page isn't selected then we are only removing tags.
+                    if (empty($data->reset_wiki_pages)) {
                         // Go through each page and delete the tags.
                         foreach ($pages as $page) {
 
@@ -184,7 +185,7 @@ function wiki_reset_userdata($data) {
                             }
                         }
                     } else {
-                        // Delete pages.
+                        // Otherwise we are removing pages and tags.
                         wiki_delete_pages($context, $pages, $subwiki->id);
                     }
                 }
