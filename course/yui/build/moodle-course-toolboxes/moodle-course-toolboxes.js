@@ -689,6 +689,8 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         newtitlestr = M.util.get_string('clicktochangeinbrackets', 'moodle', M.util.get_string(newtitle, 'moodle'));
 
         // Change the UI
+        var oldAction = button.getData('action');
+        button.replaceClass('editing_' + oldAction, 'editing_' + newtitle);
         buttonimg.setAttrs({
             'src': iconsrc
         });
