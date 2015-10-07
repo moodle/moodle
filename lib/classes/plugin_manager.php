@@ -1321,9 +1321,15 @@ class core_plugin_manager {
             if (!$this->unzip_plugin_file($zipfile, $target, $pluginname)) {
                 $silent or $this->mtrace(get_string('error'));
                 $silent or $this->mtrace('Unable to unzip '.$zipfile, PHP_EOL, DEBUG_DEVELOPER);
+                if (function_exists('opcache_reset')) {
+                    opcache_reset();
+                }
                 return false;
             }
             $silent or $this->mtrace($ok);
+        }
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
         }
 
         return true;
