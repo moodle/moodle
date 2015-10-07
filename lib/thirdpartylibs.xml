@@ -270,4 +270,10 @@
     <license>MIT</license>
     <version>2.1.3</version>
   </library>
+  <library>
+    <location>graphlib.php</location>
+    <name>Graph Class</name>
+    <license>GPL</license>
+    <version>1.6.3</version>
+  </library>
 </libraries>
