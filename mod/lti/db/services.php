@@ -34,4 +34,12 @@ $functions = array(
         'capabilities'  => 'mod/lti:view'
     ),
 
+    'mod_lti_get_ltis_by_courses' => array(
+        'classname'     => 'mod_lti_external',
+        'methodname'    => 'get_ltis_by_courses',
+        'description'   => 'Returns a list of external tool instances in a provided set of courses, if
+                            no courses are provided then all the external tool instances the user has access to will be returned.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/lti:view'
+    )
 );
