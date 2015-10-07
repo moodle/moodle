@@ -4808,6 +4808,8 @@ class admin_setting_special_coursecontact extends admin_setting_pickroles {
         parent::__construct('coursecontact', get_string('coursecontact', 'admin'),
             get_string('coursecontact_desc', 'admin'),
             array('editingteacher'));
+        $this->set_updatedcallback(create_function('',
+                "cache::make('core', 'coursecontacts')->purge();"));
     }
 }
 
