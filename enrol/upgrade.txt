@@ -6,6 +6,7 @@ information provided here is intended especially for developers.
 * Added new events enrol_instance_created, enrol_instance_updated and
   enrol_instance_deleted . Always trigger them when changing records in the
   DB table 'enrol'.
+* Constant CACHE_COURSE_CONTACTS_TTL was deleted.
 
 === 2.9 ===
 

@@ -561,6 +561,12 @@ class core_coursecatlib_testcase extends advanced_testcase {
 
         $manual = enrol_get_plugin('manual');
 
+        // Nobody is enrolled now and course contacts are empty.
+        $allcourses = coursecat::get(0)->get_courses(array('recursive' => true, 'coursecontacts' => true, 'sort' => array('idnumber' => 1)));
+        foreach ($allcourses as $onecourse) {
+            $this->assertEmpty($onecourse->get_course_contacts());
+        }
+
         // Cat1 (user2 has teacher role)
         role_assign($teacherrole->id, $user[2], context_coursecat::instance($category[1]));
         // course21 (user2 is enrolled as manager)
@@ -615,6 +621,14 @@ class core_coursecatlib_testcase extends advanced_testcase {
         $this->assertSame('Teacher: F1 L1', $contacts[1][1]);
         //   -- course12 (user1 has teacher role)         |
         $this->assertSame('', $contacts[1][2]);
+
+        // Suspend user 4 and make sure he is no longer in contacts of course 1 in category 4.
+        $manual->enrol_user($enrol[4][1], $user[4], $teacherrole->id, 0, 0, ENROL_USER_SUSPENDED);
+        $allcourses = coursecat::get(0)->get_courses(array('recursive' => true, 'coursecontacts' => true, 'sort' => array('idnumber' => 1)));
+        $contacts = $allcourses[$course[4][1]]->get_course_contacts();
+        $this->assertCount(1, $contacts);
+        $contact = reset($contacts);
+        $this->assertEquals('F5 L5', $contact['username']);
 
         $CFG->coursecontact = $oldcoursecontact;
     }
