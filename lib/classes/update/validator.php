@@ -29,6 +29,7 @@
 namespace core\update;
 
 use core_component;
+use core_plugin_manager;
 use help_icon;
 use coding_exception;
 
@@ -474,18 +475,31 @@ class validator {
             throw new coding_exception('Plugin type location does not exist!');
         }
 
-        $target = $plugintypepath.'/'.$this->rootdir;
-
-        if (file_exists($target)) {
-            $this->add_message(self::ERROR, 'targetexists', $target);
-            return false;
-        }
-
-        if (is_writable($plugintypepath)) {
-            $this->add_message(self::INFO, 'pathwritable', $plugintypepath);
-        } else {
+        // Always check that the plugintype root is writable.
+        if (!is_writable($plugintypepath)) {
             $this->add_message(self::ERROR, 'pathwritable', $plugintypepath);
             return false;
+        } else {
+            $this->add_message(self::INFO, 'pathwritable', $plugintypepath);
+        }
+
+        // The target location itself may or may not exist. Even if installing an
+        // available update, the code could have been removed by accident (and
+        // be reported as missing) etc. So we just make sure that the code
+        // can be replaced if it already exists.
+        $target = $plugintypepath.'/'.$this->rootdir;
+        if (file_exists($target)) {
+            if (!is_dir($target)) {
+                $this->add_message(self::ERROR, 'targetnotdir', $target);
+                return false;
+            }
+            $this->add_message(self::WARNING, 'targetexists', $target);
+            if ($this->get_plugin_manager()->is_directory_removable($target)) {
+                $this->add_message(self::INFO, 'pathwritable', $target);
+            } else {
+                $this->add_message(self::ERROR, 'pathwritable', $target);
+                return false;
+            }
         }
 
         return true;
@@ -599,16 +613,13 @@ class validator {
      * @return string|null
      */
     public function get_plugintype_location($plugintype) {
+        return $this->get_plugin_manager()->get_plugintype_root($plugintype);
+    }
 
-        $plugintypepath = null;
-
-        foreach (core_component::get_plugin_types() as $type => $fullpath) {
-            if ($type === $plugintype) {
-                $plugintypepath = $fullpath;
-                break;
-            }
-        }
-
-        return $plugintypepath;
+    /**
+     * @return core_plugin_manager
+     */
+    protected function get_plugin_manager() {
+        return core_plugin_manager::instance();
     }
 }

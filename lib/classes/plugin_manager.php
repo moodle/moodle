@@ -1807,7 +1807,7 @@ class core_plugin_manager {
      * @param string $fullpath
      * @return boolean
      */
-    protected function is_directory_removable($fullpath) {
+    public function is_directory_removable($fullpath) {
 
         if (!is_writable($fullpath)) {
             return false;

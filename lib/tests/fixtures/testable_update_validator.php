@@ -40,13 +40,8 @@ class testable_core_update_validator extends \core\update\validator {
     public function get_plugintype_location($plugintype) {
 
         $testableroot = make_temp_directory('testable_core_update_validator/plugintypes');
-        if (!is_dir($testableroot.'/'.$plugintype)) {
+        if (!file_exists($testableroot.'/'.$plugintype)) {
             make_temp_directory('testable_core_update_validator/plugintypes/'.$plugintype);
-        }
-
-        if ($plugintype === 'local') {
-            // We need the following for the test_validate_target_location() method
-            make_temp_directory('testable_core_update_validator/plugintypes/local/greenbar');
         }
 
         return $testableroot.'/'.$plugintype;

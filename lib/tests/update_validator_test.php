@@ -277,9 +277,25 @@ class core_update_validator_testcase extends advanced_testcase {
             'greenbar/lang/en/local_greenbar.php' => true));
         $validator->assert_plugin_type('local');
         $validator->assert_moodle_version('2013031400.00');
-        $this->assertFalse($validator->execute());
-        $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'targetexists',
+
+        $this->assertTrue($validator->execute());
+        $this->assertFalse($this->has_message($validator->get_messages(), $validator::WARNING, 'targetexists',
             $validator->get_plugintype_location('local').'/greenbar'));
+
+        $typeroot = $validator->get_plugintype_location('local');
+        make_writable_directory($typeroot.'/greenbar');
+        $this->assertTrue($validator->execute());
+        $this->assertTrue($this->has_message($validator->get_messages(), $validator::WARNING, 'targetexists',
+            $validator->get_plugintype_location('local').'/greenbar'));
+
+        remove_dir($typeroot.'/greenbar');
+        file_put_contents($typeroot.'/greenbar', 'This file occupies a place where a plugin should land.');
+        $this->assertFalse($validator->execute());
+        $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'targetnotdir',
+            $validator->get_plugintype_location('local').'/greenbar'));
+
+        unlink($typeroot.'/greenbar');
+        $this->assertTrue($validator->execute());
 
         $validator = testable_core_update_validator::instance($fixtures.'/plugindir', array(
             'foobar/' => true,
