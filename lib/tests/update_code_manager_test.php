@@ -54,6 +54,21 @@ class core_update_code_manager_testcase extends advanced_testcase {
         $this->assertEquals(3, $codeman->downloadscounter);
     }
 
+    public function test_get_remote_plugin_zip_corrupted_cache() {
+
+        $temproot = make_request_directory();
+        $codeman = new \core\update\testable_code_manager(null, $temproot);
+
+        file_put_contents($temproot.'/distfiles/'.md5('http://valid/').'.zip', 'http://invalid/');
+
+        // Even if the cache file is already there, its name does not match its
+        // actual content. It must be removed and re-downaloaded.
+        $returned = $codeman->get_remote_plugin_zip('http://valid/', md5('http://valid/'));
+
+        $this->assertEquals(basename($returned), md5('http://valid/').'.zip');
+        $this->assertEquals(file_get_contents($returned), 'http://valid/');
+    }
+
     public function test_move_plugin_directory() {
         $codeman = new \core\update\testable_code_manager();
 

@@ -104,8 +104,10 @@ class code_manager {
         // The cache location for the file.
         $distfile = $this->temproot.'/distfiles/'.$md5.'.zip';
 
-        if (is_readable($distfile)) {
+        if (is_readable($distfile) and md5_file($distfile) === $md5) {
             return $distfile;
+        } else {
+            @unlink($distfile);
         }
 
         // Download the file into a temporary location.
