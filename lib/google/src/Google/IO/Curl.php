@@ -21,7 +21,9 @@
  * @author Stuart Langley <slangley@google.com>
  */
 
-require_once realpath(dirname(__FILE__) . '/../../../autoload.php');
+if (!class_exists('Google_Client')) {
+  require_once dirname(__FILE__) . '/../autoload.php';
+}
 
 class Google_IO_Curl extends Google_IO_Abstract
 {
@@ -29,12 +31,23 @@ class Google_IO_Curl extends Google_IO_Abstract
   const NO_QUIRK_VERSION = 0x071E00;
 
   private $options = array();
+
+  public function __construct(Google_Client $client)
+  {
+    if (!extension_loaded('curl')) {
+      $error = 'The cURL IO handler requires the cURL extension to be enabled';
+      $client->getLogger()->critical($error);
+      throw new Google_IO_Exception($error);
+    }
+
+    parent::__construct($client);
+  }
+
   /**
    * Execute an HTTP Request
    *
-   * @param Google_HttpRequest $request the http request to be executed
-   * @return Google_HttpRequest http request with the response http code,
-   * response headers and response body filled in
+   * @param Google_Http_Request $request the http request to be executed
+   * @return array containing response headers, body, and http code
    * @throws Google_IO_Exception on curl or IO error
    */
   public function executeRequest(Google_Http_Request $request)
@@ -68,7 +81,12 @@ class Google_IO_Curl extends Google_IO_Abstract
     if ($request->canGzip()) {
       curl_setopt($curl, CURLOPT_ENCODING, 'gzip,deflate');
     }
-
+    
+    $options = $this->client->getClassConfig('Google_IO_Curl', 'options');
+    if (is_array($options)) {
+      $this->setOptions($options);
+    }
+    
     foreach ($this->options as $key => $var) {
       curl_setopt($curl, $key, $var);
     }
@@ -90,9 +108,11 @@ class Google_IO_Curl extends Google_IO_Abstract
     $response = curl_exec($curl);
     if ($response === false) {
       $error = curl_error($curl);
+      $code = curl_errno($curl);
+      $map = $this->client->getClassConfig('Google_IO_Exception', 'retry_map');
 
       $this->client->getLogger()->error('cURL ' . $error);
-      throw new Google_IO_Exception($error);
+      throw new Google_IO_Exception($error, $code, null, $map);
     }
     $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
 
@@ -128,7 +148,7 @@ class Google_IO_Curl extends Google_IO_Abstract
   {
     // Since this timeout is really for putting a bound on the time
     // we'll set them both to the same. If you need to specify a longer
-    // CURLOPT_TIMEOUT, or a tigher CONNECTTIMEOUT, the best thing to
+    // CURLOPT_TIMEOUT, or a higher CONNECTTIMEOUT, the best thing to
     // do is use the setOptions method for the values individually.
     $this->options[CURLOPT_CONNECTTIMEOUT] = $timeout;
     $this->options[CURLOPT_TIMEOUT] = $timeout;

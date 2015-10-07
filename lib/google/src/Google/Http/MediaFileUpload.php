@@ -15,11 +15,13 @@
  * limitations under the License.
  */
 
-require_once realpath(dirname(__FILE__) . '/../../../autoload.php');
+if (!class_exists('Google_Client')) {
+  require_once dirname(__FILE__) . '/../autoload.php';
+}
 
 /**
- * @author Chirag Shah <chirags@google.com>
- *
+ * Manage large file uploads, which may be media but can be any type
+ * of sizable data.
  */
 class Google_Http_MediaFileUpload
 {
@@ -285,7 +287,7 @@ class Google_Http_MediaFileUpload
     }
     $message = $code;
     $body = @json_decode($response->getResponseBody());
-    if (!empty( $body->error->errors ) ) {
+    if (!empty($body->error->errors) ) {
       $message .= ': ';
       foreach ($body->error->errors as $error) {
         $message .= "{$error->domain}, {$error->message};";
@@ -296,5 +298,10 @@ class Google_Http_MediaFileUpload
     $error = "Failed to start the resumable upload (HTTP {$message})";
     $this->client->getLogger()->error($error);
     throw new Google_Exception($error);
+  }
+
+  public function setChunkSize($chunkSize)
+  {
+    $this->chunkSize = $chunkSize;
   }
 }
