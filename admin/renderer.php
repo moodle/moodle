@@ -289,8 +289,8 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $output .= $this->header();
         $output .= $this->heading(get_string('pluginsoverview', 'core_admin'));
-        $output .= $this->plugins_overview_panel($pluginman, $options);
         $output .= $this->check_for_updates_button($checker, $this->page->url);
+        $output .= $this->plugins_overview_panel($pluginman, $options);
         $output .= $this->plugins_control_panel($pluginman, $options);
         $output .= $this->footer();
 
@@ -1420,6 +1420,18 @@ class core_admin_renderer extends plugin_renderer_base {
             $out .= $this->output->heading(get_string('overviewupdatable', 'core_plugin'), 3);
         } else if (!empty($options['contribonly'])) {
             $out .= $this->output->heading(get_string('overviewext', 'core_plugin'), 3);
+        }
+
+        if ($numupdatable) {
+            $installableupdates = $pluginman->filter_installable($pluginman->available_updates());
+            if ($installableupdates) {
+                $out .= $this->output->single_button(
+                    new moodle_url($this->page->url, array('installupdatex' => 1)),
+                    get_string('updateavailableinstallall', 'core_admin', count($installableupdates)),
+                    'post',
+                    array('class' => 'singlebutton updateavailableinstallall')
+                );
+            }
         }
 
         $out .= html_writer::div($infoall, 'info info-all').

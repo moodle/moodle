@@ -2381,7 +2381,7 @@ function check_upgrade_key($upgradekeyhash) {
  * @param bool $confirmed false: display the validation screen, true: proceed installation
  * @param string $heading validation screen heading
  * @param moodle_url|string|null $continue URL to proceed with installation at the validation screen
- * @param moodle_url|string|null $return URL to go back (on successful finish or cancel)
+ * @param moodle_url|string|null $return URL to go back on cancelling at the validation screen
  */
 function upgrade_install_remote_plugins(array $installable, $confirmed, $heading='', $continue=null, $return=null) {
     global $PAGE;
@@ -2401,7 +2401,8 @@ function upgrade_install_remote_plugins(array $installable, $confirmed, $heading
         if (!$pluginman->install_remote_plugins($installable, true, true)) {
             throw new moodle_exception('install_remote_plugins_failed', 'core_plugin', $return);
         }
-        redirect($return);
+        // Always redirect to admin/index.php to perform the database upgrade.
+        redirect(new moodle_url('/admin/index.php?cache=0'));
 
     } else {
         $output = $PAGE->get_renderer('core', 'admin');
