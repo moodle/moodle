@@ -30,10 +30,4 @@ if ($hassiteconfig and empty($CFG->disableonclickaddoninstall)) {
     $ADMIN->add('modules', new admin_externalpage('tool_installaddon_index',
         get_string('installaddons', 'tool_installaddon'),
         "$CFG->wwwroot/$CFG->admin/tool/installaddon/index.php"), 'modsettings');
-
-    $ADMIN->add('modules', new admin_externalpage('tool_installaddon_validate',
-        get_string('validation', 'tool_installaddon'),
-        "$CFG->wwwroot/$CFG->admin/tool/installaddon/validate.php",
-        'moodle/site:config',
-        true), 'modsettings');
 }

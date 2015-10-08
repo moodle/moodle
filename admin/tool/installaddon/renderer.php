@@ -37,9 +37,6 @@ class tool_installaddon_renderer extends plugin_renderer_base {
     /** @var tool_installaddon_installer */
     protected $installer = null;
 
-    /** @var \core\update\validator */
-    protected $validator = null;
-
     /**
      * Sets the tool_installaddon_installer instance being used.
      *
@@ -51,20 +48,6 @@ class tool_installaddon_renderer extends plugin_renderer_base {
             $this->installer = $installer;
         } else {
             throw new coding_exception('Attempting to reset the installer instance.');
-        }
-    }
-
-    /**
-     * Sets the \core\update\validator instance being used.
-     *
-     * @throws coding_exception if the validator has been already set
-     * @param \core\update\validator $validator
-     */
-    public function set_validator_instance(\core\update\validator $validator) {
-        if (is_null($this->validator)) {
-            $this->validator = $validator;
-        } else {
-            throw new coding_exception('Attempting to reset the validator instance.');
         }
     }
 
@@ -96,22 +79,18 @@ class tool_installaddon_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Defines the validation results page layout
+     * Inform the user that the ZIP is not a valid plugin package file.
      *
+     * @param moodle_url $continueurl
      * @return string
      */
-    public function validation_page() {
+    public function zip_not_valid_plugin_package_page(moodle_url $continueurl) {
 
-        if (is_null($this->installer)) {
-            throw new coding_exception('Installer instance has not been set.');
-        }
-
-        if (is_null($this->validator)) {
-            throw new coding_exception('Validator instance has not been set.');
-        }
-
-        $out = $this->validation_page_heading();
-        $out .= $this->validation_page_messages();
+        $out = $this->output->header();
+        $out .= $this->output->heading(get_string('installfromzip', 'tool_installaddon'));
+        $out .= $this->output->box(get_string('installfromzipinvalid', 'tool_installaddon'), 'generalbox', 'notice');
+        $out .= $this->output->continue_button($continueurl, 'get');
+        $out .= $this->output->footer();
 
         return $out;
     }
@@ -191,39 +170,17 @@ class tool_installaddon_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Inform the user about pluginfo service call failure
+     * Inform the user that the requested remote plugin is not installable.
      *
-     * @param stdClass $data decoded request data
+     * @param stdClass $data decoded request data with ->reason property added
      * @param moodle_url $continueurl
      * @return string
      */
-    public function remote_request_pluginfo_failure(stdClass $data, moodle_url $continueurl) {
+    public function remote_request_non_installable_page(stdClass $data, moodle_url $continueurl) {
 
         $out = $this->output->header();
         $out .= $this->output->heading(get_string('installfromrepo', 'tool_installaddon'));
-        $out .= $this->output->box(get_string('remoterequestpluginfoexception', 'tool_installaddon', $data), 'generalbox', 'notice');
-        $out .= $this->output->continue_button($continueurl, 'get');
-        $out .= $this->output->footer();
-
-        return $out;
-    }
-
-    /**
-     * Inform the user about the installer exception
-     *
-     * This implementation does not actually use the passed exception. Custom renderers might want to
-     * display additional data obtained via {@link get_exception_info()}. Also note, this method is called
-     * in non-debugging mode only. If debugging is allowed at the site, default exception handler is triggered.
-     *
-     * @param tool_installaddon_installer_exception $e thrown exception
-     * @param moodle_url $continueurl
-     * @return string
-     */
-    public function installer_exception(tool_installaddon_installer_exception $e, moodle_url $continueurl) {
-
-        $out = $this->output->header();
-        $out .= $this->output->heading(get_string('installfromrepo', 'tool_installaddon'));
-        $out .= $this->output->box(get_string('installexception', 'tool_installaddon'), 'generalbox', 'notice');
+        $out .= $this->output->box(get_string('remoterequestnoninstallable', 'tool_installaddon', $data), 'generalbox', 'notice');
         $out .= $this->output->continue_button($continueurl, 'get');
         $out .= $this->output->footer();
 
@@ -275,84 +232,5 @@ class tool_installaddon_renderer extends plugin_renderer_base {
         $out = $this->box($out, 'generalbox', 'installfromzipbox');
 
         return $out;
-    }
-
-    /**
-     * Renders the page title and the overall validation verdict
-     *
-     * @return string
-     */
-    protected function validation_page_heading() {
-
-        $heading = $this->output->heading(get_string('validation', 'tool_installaddon'));
-
-        if ($this->validator->get_result()) {
-            $status = $this->output->container(
-                html_writer::span(get_string('validationresult1', 'tool_installaddon'), 'verdict').
-                    $this->output->help_icon('validationresult1', 'tool_installaddon'),
-                array('validationresult', 'success')
-            );
-        } else {
-            $status = $this->output->container(
-                html_writer::span(get_string('validationresult0', 'tool_installaddon'), 'verdict').
-                    $this->output->help_icon('validationresult0', 'tool_installaddon'),
-                array('validationresult', 'failure')
-            );
-        }
-
-        return $heading . $status;
-    }
-
-    /**
-     * Renders validation log messages.
-     *
-     * @return string
-     */
-    protected function validation_page_messages() {
-
-        $validator = $this->validator; // We need this to be able to use their constants.
-        $messages = $validator->get_messages();
-
-        if (empty($messages)) {
-            return '';
-        }
-
-        $table = new html_table();
-        $table->attributes['class'] = 'validationmessages generaltable';
-        $table->head = array(
-            get_string('validationresultstatus', 'tool_installaddon'),
-            get_string('validationresultmsg', 'tool_installaddon'),
-            get_string('validationresultinfo', 'tool_installaddon')
-        );
-        $table->colclasses = array('msgstatus', 'msgtext', 'msginfo');
-
-        $stringman = get_string_manager();
-
-        foreach ($messages as $message) {
-
-            if ($message->level === $validator::DEBUG and !debugging()) {
-                continue;
-            }
-
-            $msgstatus = $validator->message_level_name($message->level);
-            $msgtext = $validator->message_code_name($message->msgcode);
-            $msginfo = $validator->message_code_info($message->msgcode, $message->addinfo);
-            if (empty($msginfo) and $message->addinfo !== null) {
-                $msginfo = html_writer::tag('pre', s(print_r($message->addinfo, true)));
-            }
-            $msghelpicon = $validator->message_help_icon($message->msgcode);
-            if ($msghelpicon) {
-                $msghelp = $this->output->render($msghelpicon);
-            } else {
-                $msghelp = '';
-            }
-
-            $row = new html_table_row(array($msgstatus, $msgtext.$msghelp, $msginfo));
-            $row->attributes['class'] = 'level-'.$message->level.' '.$message->msgcode;
-
-            $table->data[] = $row;
-        }
-
-        return html_writer::table($table);
     }
 }
