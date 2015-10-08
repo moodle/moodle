@@ -1912,6 +1912,25 @@ class core_plugin_manager {
     }
 
     /**
+     * Can the installation of the new plugin be cancelled?
+     *
+     * @param \core\plugininfo\base $plugin
+     * @return bool
+     */
+    public function can_cancel_plugin_installation(\core\plugininfo\base $plugin) {
+
+        if (empty($plugin) or $plugin->is_standard() or !$this->is_plugin_folder_removable($plugin->component)) {
+            return false;
+        }
+
+        if ($plugin->get_status() === self::PLUGIN_STATUS_NEW) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Removes the plugin code directory if it is not installed yet.
      *
      * This is intended for the plugins check screen to give the admin a chance
@@ -1925,12 +1944,13 @@ class core_plugin_manager {
 
         $plugin = $this->get_plugin_info($component);
 
-        if (empty($plugin) or $plugin->is_standard() or $plugin->get_status() !== self::PLUGIN_STATUS_NEW
-                or !$this->is_plugin_folder_removable($plugin->component)) {
-            return false;
+        if ($this->can_cancel_plugin_installation($plugin)) {
+            if ($this->archive_plugin_version($plugin)) {
+                return remove_dir($plugin->rootdir);
+            }
         }
 
-        return remove_dir($plugin->rootdir);
+        return false;
     }
 
     /**
@@ -1940,12 +1960,22 @@ class core_plugin_manager {
 
         foreach ($this->get_plugins() as $type => $plugins) {
             foreach ($plugins as $plugin) {
-                if (!$plugin->is_standard() and $plugin->get_status() === self::PLUGIN_STATUS_NEW
-                        and $this->is_plugin_folder_removable($plugin->component)) {
+                if ($this->can_cancel_plugin_installation($plugin)) {
                     $this->cancel_plugin_installation($plugin->component);
                 }
             }
         }
+    }
+
+    /**
+     * Archive the current on-disk plugin code.
+     *
+     * @param \core\plugiinfo\base $plugin
+     * @return bool
+     */
+    public function archive_plugin_version(\core\plugininfo\base $plugin) {
+        // TODO use code_manager to do it.
+        return true;
     }
 
     /**

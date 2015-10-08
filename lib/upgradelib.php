@@ -2414,9 +2414,9 @@ function upgrade_install_plugins(array $installable, $confirmed, $heading='', $c
         $validated = $pluginman->install_plugins($installable, false, false);
         echo html_writer::end_tag('pre');
         if ($validated) {
-            echo $output->install_plugins_buttons($continue, null, $return);
+            echo $output->plugins_management_confirm_buttons($continue, $return);
         } else {
-            echo $output->install_plugins_buttons(null, null, $return);
+            echo $output->plugins_management_confirm_buttons(null, $return);
         }
         echo $output->footer();
         die();

@@ -229,6 +229,58 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Display a page to confirm plugin installation cancelation.
+     *
+     * @param bool|string $plugin true if cancelling all, component name otherwsie
+     * @param moodle_url $continue
+     * @return string
+     */
+    public function upgrade_confirm_abort_install_page($plugin, moodle_url $continue) {
+
+        $pluginman = core_plugin_manager::instance();
+        $abortable = array();
+
+        if ($plugin === true) {
+            foreach ($pluginman->get_plugins() as $type => $pluginfos) {
+                foreach ($pluginfos as $pluginfo) {
+                    if ($pluginman->can_cancel_plugin_installation($pluginfo)) {
+                        $abortable[] = $pluginfo;
+                    }
+                }
+            }
+
+        } else {
+            $pluginfo = $pluginman->get_plugin_info($plugin);
+            if ($pluginman->can_cancel_plugin_installation($pluginfo)) {
+                $abortable[] = $pluginfo;
+            }
+        }
+
+        if (empty($abortable)) {
+            // The UI should not allow this.
+            throw new moodle_exception('err_no_plugin_install_abortable', 'core_plugin');
+        }
+
+        $out = $this->output->header();
+        $out .= $this->output->heading(get_string('cancelinstallhead', 'core_plugin'), 3);
+        $out .= $this->output->container(get_string('cancelinstallinfo', 'core_plugin'), 'cancelinstallinfo');
+
+        foreach ($abortable as $pluginfo) {
+            $out .= $this->output->heading($pluginfo->displayname.' ('.$pluginfo->component.')', 4);
+            $out .= $this->output->container(get_string('cancelinstallinfodir', 'core_plugin', $pluginfo->rootdir));
+            if ($repotype = $pluginman->plugin_external_source($pluginfo->component)) {
+                $out .= $this->output->container(get_string('uninstalldeleteconfirmexternal', 'core_plugin', $repotype),
+                    'uninstalldeleteconfirmexternal');
+            }
+        }
+
+        $out .= $this->plugins_management_confirm_buttons($continue, $this->page->url);
+        $out .= $this->output->footer();
+
+        return $out;
+    }
+
+    /**
      * Display the admin notifications page.
      * @param int $maturity
      * @param bool $insecuredataroot warn dataroot is invalid
@@ -1026,22 +1078,18 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Display the continue / cancel widgets for the plugins validation page.
+     * Display the continue / cancel widgets for the plugins management pages.
      *
      * @param null|moodle_url $continue URL for the continue button, should it be displayed
-     * @param string $label explicit label for the continue button
      * @param moodle_url $cancel URL for the cancel link, defaults to the current page
      * @return string HTML
      */
-    public function install_plugins_buttons(moodle_url $continue=null, $label=null, moodle_url $cancel=null) {
+    public function plugins_management_confirm_buttons(moodle_url $continue=null, moodle_url $cancel=null) {
 
-        $out = html_writer::start_div('install-remote-plugins-buttons');
+        $out = html_writer::start_div('plugins-management-confirm-buttons');
 
         if (!empty($continue)) {
-            if (empty($label)) {
-                $label = get_string('continue');
-            }
-            $out .= $this->output->single_button($continue, $label, 'post', array('class' => 'continue'));
+            $out .= $this->output->single_button($continue, get_string('continue'), 'post', array('class' => 'continue'));
         }
 
         if (empty($cancel)) {

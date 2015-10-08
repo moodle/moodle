@@ -352,16 +352,30 @@ if (!$cache and $version > $CFG->version) {  // upgrade
 
         $pluginman = core_plugin_manager::instance();
 
+        // Cancel all plugin installations.
         if ($abortinstallx) {
             // No sesskey support guaranteed here, because sessions might not work yet.
-            $pluginman->cancel_all_plugin_installations();
-            redirect($PAGE->url);
+            if ($confirmabortinstall) {
+                $pluginman->cancel_all_plugin_installations();
+                redirect($PAGE->url);
+            } else {
+                $continue = new moodle_url($PAGE->url, array('abortinstallx' => $abortinstallx, 'confirmabortinstall' => 1));
+                echo $output->upgrade_confirm_abort_install_page(true, $continue);
+                die();
+            }
         }
 
+        // Cancel single plugin installation.
         if ($abortinstall) {
             // No sesskey support guaranteed here, because sessions might not work yet.
-            $pluginman->cancel_plugin_installation($abortinstall);
-            redirect($PAGE->url);
+            if ($confirmabortinstall) {
+                $pluginman->cancel_plugin_installation($abortinstall);
+                redirect($PAGE->url);
+            } else {
+                $continue = new moodle_url($PAGE->url, array('abortinstall' => $abortinstall, 'confirmabortinstall' => 1));
+                echo $output->upgrade_confirm_abort_install_page($abortinstall, $continue);
+                die();
+            }
         }
 
         // Install all available missing dependencies.
@@ -387,7 +401,7 @@ if (!$cache and $version > $CFG->version) {  // upgrade
             }
         }
 
-        // Install all avilable updates.
+        // Install all available updates.
         if ($installupdatex) {
             // No sesskey support guaranteed here, because sessions might not work yet.
             $installable = $pluginman->filter_installable($pluginman->available_updates());
@@ -458,7 +472,12 @@ if (!$cache and moodle_needs_upgrading()) {
 
     if (!$PAGE->headerprinted) {
         // means core upgrade or installation was not already done
+
+        /** @var core_plugin_manager $pluginman */
         $pluginman = core_plugin_manager::instance();
+
+        /** @var core_admin_renderer $output */
+        $output = $PAGE->get_renderer('core', 'admin');
 
         if (!$confirmplugins) {
             $strplugincheck = get_string('plugincheck');
@@ -468,16 +487,30 @@ if (!$cache and moodle_needs_upgrading()) {
             $PAGE->set_heading($strplugincheck);
             $PAGE->set_cacheable(false);
 
+            // Cancel all plugin installations.
             if ($abortinstallx) {
                 require_sesskey();
-                $pluginman->cancel_all_plugin_installations();
-                redirect($PAGE->url);
+                if ($confirmabortinstall) {
+                    $pluginman->cancel_all_plugin_installations();
+                    redirect($PAGE->url);
+                } else {
+                    $continue = new moodle_url($PAGE->url, array('abortinstallx' => $abortinstallx, 'confirmabortinstall' => 1));
+                    echo $output->upgrade_confirm_abort_install_page(true, $continue);
+                    die();
+                }
             }
 
+            // Cancel single plugin installation.
             if ($abortinstall) {
                 require_sesskey();
-                $pluginman->cancel_plugin_installation($abortinstall);
-                redirect($PAGE->url);
+                if ($confirmabortinstall) {
+                    $pluginman->cancel_plugin_installation($abortinstall);
+                    redirect($PAGE->url);
+                } else {
+                    $continue = new moodle_url($PAGE->url, array('abortinstall' => $abortinstall, 'confirmabortinstall' => 1));
+                    echo $output->upgrade_confirm_abort_install_page($abortinstall, $continue);
+                    die();
+                }
             }
 
             if ($fetchupdates) {
@@ -535,9 +568,6 @@ if (!$cache and moodle_needs_upgrading()) {
                     );
                 }
             }
-
-            /** @var core_admin_renderer $output */
-            $output = $PAGE->get_renderer('core', 'admin');
 
             // Show plugins info.
             echo $output->upgrade_plugin_check_page($pluginman, \core\update\checker::instance(),
