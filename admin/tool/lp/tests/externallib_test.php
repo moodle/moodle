@@ -29,6 +29,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use tool_lp\external;
 use tool_lp\plan;
+use tool_lp\related_competency;
 
 /**
  * External learning plans webservice API tests.
@@ -1740,55 +1741,90 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      * @return void
      */
     public function test_add_related_competency() {
-
-        $syscontext = context_system::instance();
-
+        global $DB;
         $this->setUser($this->creator);
 
-        // Create a competency framework.
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-
-        // Create multiple competencies.
-        $competency1 = external::create_competency('shortname1', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency1 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency1);
-        $competency2 = external::create_competency('shortname2', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency2 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency2);
-        $competency3 = external::create_competency('shortname3', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency3 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency3);
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+        $framework2 = $lpg->create_framework();
+        $competency1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $competency2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $competency3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $competency4 = $lpg->create_competency(array('competencyframeworkid' => $framework2->get_id()));
 
         // The lower one always as competencyid.
-        $relation1 = external::add_related_competency($competency1->id, $competency2->id);
-        $this->assertEquals($competency1->id, $relation1->get_competencyid());
-        $this->assertEquals($competency2->id, $relation1->get_relatedcompetencyid());
-        $relation2 = external::add_related_competency($competency3->id, $competency1->id);
-        $this->assertEquals($competency1->id, $relation2->get_competencyid());
-        $this->assertEquals($competency3->id, $relation2->get_relatedcompetencyid());
+        $result = external::add_related_competency($competency1->get_id(), $competency2->get_id());
+        $result = external_api::clean_returnvalue(external::add_related_competency_returns(), $result);
+        $this->assertTrue($result);
+        $this->assertTrue($DB->record_exists_select(
+            related_competency::TABLE, 'competencyid = :cid AND relatedcompetencyid = :rid',
+            array(
+                'cid' => $competency1->get_id(),
+                'rid' => $competency2->get_id()
+            )
+        ));
+        $this->assertFalse($DB->record_exists_select(
+            related_competency::TABLE, 'competencyid = :cid AND relatedcompetencyid = :rid',
+            array(
+                'cid' => $competency2->get_id(),
+                'rid' => $competency1->get_id()
+            )
+        ));
+
+        $result = external::add_related_competency($competency3->get_id(), $competency1->get_id());
+        $result = external_api::clean_returnvalue(external::add_related_competency_returns(), $result);
+        $this->assertTrue($result);
+        $this->assertTrue($DB->record_exists_select(
+            related_competency::TABLE, 'competencyid = :cid AND relatedcompetencyid = :rid',
+            array(
+                'cid' => $competency1->get_id(),
+                'rid' => $competency3->get_id()
+            )
+        ));
+        $this->assertFalse($DB->record_exists_select(
+            related_competency::TABLE, 'competencyid = :cid AND relatedcompetencyid = :rid',
+            array(
+                'cid' => $competency3->get_id(),
+                'rid' => $competency1->get_id()
+            )
+        ));
 
         // We can not allow a duplicate relation, not even in the other direction.
-        $duprelation = external::add_related_competency($competency2->id, $competency1->id);
-        $this->assertFalse($duprelation);
+        $this->assertEquals(1, $DB->count_records_select(related_competency::TABLE,
+            'competencyid = :cid AND relatedcompetencyid = :rid',
+            array('cid' => $competency1->get_id(), 'rid' => $competency2->get_id())));
+        $this->assertEquals(0, $DB->count_records_select(related_competency::TABLE,
+            'competencyid = :cid AND relatedcompetencyid = :rid',
+            array('rid' => $competency1->get_id(), 'cid' => $competency2->get_id())));
+        $result = external::add_related_competency($competency2->get_id(), $competency1->get_id());
+        $result = external_api::clean_returnvalue(external::add_related_competency_returns(), $result);
+        $this->assertTrue($result);
+        $this->assertEquals(1, $DB->count_records_select(related_competency::TABLE,
+            'competencyid = :cid AND relatedcompetencyid = :rid',
+            array('cid' => $competency1->get_id(), 'rid' => $competency2->get_id())));
+        $this->assertEquals(0, $DB->count_records_select(related_competency::TABLE,
+            'competencyid = :cid AND relatedcompetencyid = :rid',
+            array('rid' => $competency1->get_id(), 'cid' => $competency2->get_id())));
 
-        // Unassign capability.
-        unassign_capability('tool/lp:competencymanage', $this->creatorrole, $syscontext->id);
-        accesslib_clear_all_caches_for_unit_testing();
-
-        // Check we can not add the competency now.
+        // Check that we cannot create links across frameworks.
         try {
-            external::add_related_competency($competency1->id, $competency3->id);
-            $this->fail('Exception expected due to not permissions to manage template competencies');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('nopermissions', $e->errorcode);
+            external::add_related_competency($competency1->get_id(), $competency4->get_id());
+            $this->fail('Exception expected due mis-use of shared competencies');
+        } catch (tool_lp\invalid_persistent_exception $e) {
+            // Yay!
         }
 
-        // By default normal users can not relate competencies.
+        // User without permission.
         $this->setUser($this->user);
+
+        // Check we can not add the related competency now.
         try {
-            external::add_related_competency($competency1->id, $competency3->id);
+            external::add_related_competency($competency1->get_id(), $competency3->get_id());
             $this->fail('Exception expected due to not permissions to manage template competencies');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
+
     }
 
     /**
@@ -1797,83 +1833,74 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      * @return void
      */
     public function test_remove_related_competency() {
-
-        $syscontext = context_system::instance();
-
         $this->setUser($this->creator);
 
-        // Create a competency framework.
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $rc1 = $lpg->create_related_competency(array('competencyid' => $c1->get_id(), 'relatedcompetencyid' => $c2->get_id()));
+        $rc2 = $lpg->create_related_competency(array('competencyid' => $c2->get_id(), 'relatedcompetencyid' => $c3->get_id()));
 
-        // Create multiple competencies.
-        $competency1 = external::create_competency('shortname1', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency1 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency1);
-        $competency2 = external::create_competency('shortname2', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency2 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency2);
-        $competency3 = external::create_competency('shortname3', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency3 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency3);
+        $this->assertEquals(2, related_competency::count_records());
 
-        // The lower one always as competencyid.
-        $relation1 = external::add_related_competency($competency1->id, $competency2->id);
-        $relation2 = external::add_related_competency($competency3->id, $competency1->id);
+        // Returns false when the relation does not exist.
+        $result = external::remove_related_competency($c1->get_id(), $c3->get_id());
+        $result = external_api::clean_returnvalue(external::remove_related_competency_returns(), $result);
+        $this->assertFalse($result);
 
-        // False if the relation does not exist.
-        $this->assertFalse(external::remove_related_competency($competency2->id, $competency3->id));
-        $this->assertFalse(external::remove_related_competency($competency3->id, $competency2->id));
+        // Returns true on success.
+        $result = external::remove_related_competency($c2->get_id(), $c3->get_id());
+        $result = external_api::clean_returnvalue(external::remove_related_competency_returns(), $result);
+        $this->assertTrue($result);
+        $this->assertEquals(1, related_competency::count_records());
 
-        // We don't need to specify competencyid and relatedcompetencyid in the provided order.
-        $this->assertTrue(external::remove_related_competency($competency1->id, $competency2->id));
-        $this->assertTrue(external::remove_related_competency($competency1->id, $competency3->id));
+        // We don't need to specify competencyid and relatedcompetencyid in the right order.
+        $result = external::remove_related_competency($c2->get_id(), $c1->get_id());
+        $result = external_api::clean_returnvalue(external::remove_related_competency_returns(), $result);
+        $this->assertTrue($result);
+        $this->assertEquals(0, related_competency::count_records());
     }
 
     /**
-     * Test that we can list related competencies.
+     * Test that we can search and include related competencies.
      *
      * @return void
      */
-    public function test_list_related_competencies() {
-
-        $syscontext = context_system::instance();
-
+    public function test_search_competencies_including_related() {
         $this->setUser($this->creator);
 
-        // Create a competency framework.
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, true);
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-
-        // Create multiple competencies.
-        $competency1 = external::create_competency('shortname1', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency1 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency1);
-        $competency2 = external::create_competency('shortname2', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency2 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency2);
-        $competency3 = external::create_competency('shortname3', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency3 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency3);
-        $competency4 = external::create_competency('shortname4', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency4 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency4);
-        $competency5 = external::create_competency('shortname5', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency5 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency5);
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c5 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
 
         // We have 1-2, 1-3, 2-4, and no relation between 2-3 nor 1-4 nor 5.
-        external::add_related_competency($competency1->id, $competency2->id);
-        external::add_related_competency($competency1->id, $competency3->id);
-        external::add_related_competency($competency2->id, $competency4->id);
+        $rc12 = $lpg->create_related_competency(array('competencyid' => $c1->get_id(), 'relatedcompetencyid' => $c2->get_id()));
+        $rc13 = $lpg->create_related_competency(array('competencyid' => $c1->get_id(), 'relatedcompetencyid' => $c3->get_id()));
+        $rc24 = $lpg->create_related_competency(array('competencyid' => $c2->get_id(), 'relatedcompetencyid' => $c4->get_id()));
 
-        $competencies = external::search_competencies('shortname', $framework->id, true);
+        $result = external::search_competencies('comp', $framework->get_id(), true);
+        $result = external_api::clean_returnvalue(external::search_competencies_returns(), $result);
 
-        $this->assertCount(5, $competencies);
-        $this->assertCount(2, $competencies[0]['relatedcompetencies']);
-        $this->assertCount(2, $competencies[1]['relatedcompetencies']);
-        $this->assertCount(1, $competencies[2]['relatedcompetencies']);
-        $this->assertCount(1, $competencies[3]['relatedcompetencies']);
-        $this->assertTrue(empty($competencies[4]['relatedcompetencies']));
+        $this->assertCount(5, $result);
+        $this->assertCount(2, $result[0]['relatedcompetencies']);
+        $this->assertCount(2, $result[1]['relatedcompetencies']);
+        $this->assertCount(1, $result[2]['relatedcompetencies']);
+        $this->assertCount(1, $result[3]['relatedcompetencies']);
+        $this->assertTrue(empty($result[4]['relatedcompetencies']));
 
         // Checking that all competencies are returned.
-        $this->assertEquals($competency2->id, $competencies[0]['relatedcompetencies'][0]['id']);
-        $this->assertEquals($competency3->id, $competencies[0]['relatedcompetencies'][1]['id']);
-        $this->assertEquals($competency1->id, $competencies[1]['relatedcompetencies'][0]['id']);
-        $this->assertEquals($competency4->id, $competencies[1]['relatedcompetencies'][1]['id']);
-        $this->assertEquals($competency1->id, $competencies[2]['relatedcompetencies'][0]['id']);
-        $this->assertEquals($competency2->id, $competencies[3]['relatedcompetencies'][0]['id']);
+        $this->assertEquals($c2->get_id(), $result[0]['relatedcompetencies'][0]['id']);
+        $this->assertEquals($c3->get_id(), $result[0]['relatedcompetencies'][1]['id']);
+        $this->assertEquals($c1->get_id(), $result[1]['relatedcompetencies'][0]['id']);
+        $this->assertEquals($c4->get_id(), $result[1]['relatedcompetencies'][1]['id']);
+        $this->assertEquals($c1->get_id(), $result[2]['relatedcompetencies'][0]['id']);
+        $this->assertEquals($c2->get_id(), $result[3]['relatedcompetencies'][0]['id']);
     }
+
 }
