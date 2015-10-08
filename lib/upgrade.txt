@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.1 ===
+
+* Ajax calls going through lib/ajax/* now validate the return values before sending the response. If the validation does not pass an exception is raised. This behaviour is consistent with web services.
+
 === 3.0 ===
 
 * Minify updated to 2.2.1
