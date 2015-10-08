@@ -128,5 +128,5 @@ if (empty($branch) || ($branch->nodetype !== navigation_node::NODETYPE_BRANCH &&
 $converter->set_expandable($navigation->get_expandable());
 // Set XML headers
 header('Content-type: text/plain; charset=utf-8');
-// Convert and output the branch as XML
+// Convert and output the branch as JSON
 echo $converter->convert($branch);
