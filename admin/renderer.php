@@ -1033,7 +1033,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param moodle_url $cancel URL for the cancel link, defaults to the current page
      * @return string HTML
      */
-    public function install_remote_plugins_buttons(moodle_url $continue=null, $label=null, moodle_url $cancel=null) {
+    public function install_plugins_buttons(moodle_url $continue=null, $label=null, moodle_url $cancel=null) {
 
         $out = html_writer::start_div('install-remote-plugins-buttons');
 

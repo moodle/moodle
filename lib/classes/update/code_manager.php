@@ -220,6 +220,46 @@ class code_manager {
         return $files;
     }
 
+    /**
+     * Detects the plugin's name from its ZIP file.
+     *
+     * Plugin ZIP packages are expected to contain a single directory and the
+     * directory name would become the plugin name once extracted to the Moodle
+     * dirroot.
+     *
+     * @param string $zipfilepath full path to the ZIP files
+     * @return string|bool false on error
+     */
+    public function get_plugin_zip_root_dir($zipfilepath) {
+
+        $fp = get_file_packer('application/zip');
+        $files = $fp->list_files($zipfilepath);
+
+        if (empty($files)) {
+            return false;
+        }
+
+        $rootdirname = null;
+        foreach ($files as $file) {
+            $pathnameitems = explode('/', $file->pathname);
+            if (empty($pathnameitems)) {
+                return false;
+            }
+            // Set the expected name of the root directory in the first
+            // iteration of the loop.
+            if ($rootdirname === null) {
+                $rootdirname = $pathnameitems[0];
+            }
+            // Require the same root directory for all files in the ZIP
+            // package.
+            if ($rootdirname !== $pathnameitems[0]) {
+                return false;
+            }
+        }
+
+        return $rootdirname;
+    }
+
     // This is the end, my only friend, the end ... of external public API.
 
     /**

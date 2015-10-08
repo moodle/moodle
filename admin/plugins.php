@@ -183,7 +183,7 @@ if ($installupdatex) {
     $PAGE->set_popup_notification_allowed(false);
 
     $installable = $pluginman->filter_installable($pluginman->available_updates());
-    upgrade_install_remote_plugins($installable, $confirminstallupdate,
+    upgrade_install_plugins($installable, $confirminstallupdate,
         get_string('updateavailableinstallallhead', 'core_admin'),
         new moodle_url($PAGE->url, array('installupdatex' => 1, 'confirminstallupdate' => 1))
     );
@@ -201,7 +201,7 @@ if ($installupdate and $installupdateversion) {
 
     if ($pluginman->is_remote_plugin_installable($installupdate, $installupdateversion)) {
         $installable = array($pluginman->get_remote_plugin_info($installupdate, $installupdateversion, true));
-        upgrade_install_remote_plugins($installable, $confirminstallupdate,
+        upgrade_install_plugins($installable, $confirminstallupdate,
             get_string('updateavailableinstallallhead', 'core_admin'),
             new moodle_url($PAGE->url, array('installupdate' => $installupdate,
                 'installupdateversion' => $installupdateversion, 'confirminstallupdate' => 1)

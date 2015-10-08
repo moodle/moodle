@@ -1093,6 +1093,20 @@ class core_plugin_manager {
     }
 
     /**
+     * Detects the plugin's name from its ZIP file.
+     *
+     * Plugin ZIP packages are expected to contain a single directory and the
+     * directory name would become the plugin name once extracted to the Moodle
+     * dirroot.
+     *
+     * @param string $zipfilepath full path to the ZIP files
+     * @return string|bool false on error
+     */
+    public function get_plugin_zip_root_dir($zipfilepath) {
+        return $this->get_code_manager()->get_plugin_zip_root_dir($zipfilepath);
+    }
+
+    /**
      * Return a list of missing dependencies.
      *
      * This should provide the full list of plugins that should be installed to
@@ -1199,18 +1213,26 @@ class core_plugin_manager {
     }
 
     /**
-     * Perform the installation of plugins available in the plugins directory.
+     * Perform the installation of plugins.
      *
-     * The list of plugins is supposed to be processed by
-     * {@link self::filter_installable()} to make sure all the plugins are
-     * valid.
+     * If used for installation of remote plugins from the Moodle Plugins
+     * directory, the $plugins must be list of {@link \core\update\remote_info}
+     * object that represent installable remote plugins. The caller can use
+     * {@link self::filter_installable()} to prepare the list.
      *
-     * @param array $plugins list of installable remote plugins
+     * If used for installation of plugins from locally available ZIP files,
+     * the $plugins should be list of objects with properties ->component and
+     * ->zipfilepath.
+     *
+     * The method uses {@link mtrace()} to produce direct output and can be
+     * used in both web and cli interfaces.
+     *
+     * @param array $plugins list of plugins
      * @param bool $confirmed should the files be really deployed into the dirroot?
      * @param bool $silent perform without output
      * @return bool true on success
      */
-    public function install_remote_plugins(array $plugins, $confirmed, $silent) {
+    public function install_plugins(array $plugins, $confirmed, $silent) {
         global $CFG, $OUTPUT;
 
         if (empty($plugins)) {
@@ -1223,24 +1245,32 @@ class core_plugin_manager {
         $silent or $this->mtrace(get_string('packagesdebug', 'core_plugin'), PHP_EOL, DEBUG_NORMAL);
 
         // Download all ZIP packages if we do not have them yet.
-        $silent or $this->mtrace(get_string('packagesdownloading', 'core_plugin'), ' ... ');
         $zips = array();
         foreach ($plugins as $plugin) {
-            $zips[$plugin->component] = $this->get_remote_plugin_zip($plugin->version->downloadurl, $plugin->version->downloadmd5);
-            $silent or $this->mtrace(PHP_EOL.$plugin->version->downloadurl, '', DEBUG_DEVELOPER);
-            $silent or $this->mtrace(PHP_EOL.' -> '.$zips[$plugin->component], ' ... ', DEBUG_DEVELOPER);
-            if (!$zips[$plugin->component]) {
-                $silent or $this->mtrace(get_string('error'));
-                return false;
+            if ($plugin instanceof \core\update\remote_info) {
+                $zips[$plugin->component] = $this->get_remote_plugin_zip($plugin->version->downloadurl,
+                    $plugin->version->downloadmd5);
+                $silent or $this->mtrace(get_string('packagesdownloading', 'core_plugin', $plugin->component), ' ... ');
+                $silent or $this->mtrace(PHP_EOL.' <- '.$plugin->version->downloadurl, '', DEBUG_DEVELOPER);
+                $silent or $this->mtrace(PHP_EOL.' -> '.$zips[$plugin->component], ' ... ', DEBUG_DEVELOPER);
+                if (!$zips[$plugin->component]) {
+                    $silent or $this->mtrace(get_string('error'));
+                    return false;
+                }
+                $silent or $this->mtrace($ok);
+            } else {
+                if (empty($plugin->zipfilepath)) {
+                    throw new coding_exception('Unexpected data structure provided');
+                }
+                $zips[$plugin->component] = $plugin->zipfilepath;
+                $silent or $this->mtrace('ZIP '.$plugin->zipfilepath, PHP_EOL, DEBUG_DEVELOPER);
             }
         }
-        $silent or $this->mtrace($ok);
 
         // Validate all downloaded packages.
-        $silent or $this->mtrace(get_string('packagesvalidating', 'core_plugin'), ' ... '.PHP_EOL);
         foreach ($plugins as $plugin) {
             $zipfile = $zips[$plugin->component];
-            $silent or $this->mtrace('* '.s($plugin->name). ' ('.$plugin->component.')', ' ... ');
+            $silent or $this->mtrace(get_string('packagesvalidating', 'core_plugin', $plugin->component), ' ... ');
             list($plugintype, $pluginname) = core_component::normalize_component($plugin->component);
             $tmp = make_request_directory();
             $zipcontents = $this->unzip_plugin_file($zipfile, $tmp, $pluginname);
@@ -1305,9 +1335,8 @@ class core_plugin_manager {
         }
 
         // Extract all ZIP packs do the dirroot.
-        $silent or $this->mtrace(get_string('packagesextracting', 'core_plugin'), ' ... '.PHP_EOL);
         foreach ($plugins as $plugin) {
-            $silent or $this->mtrace('* '.s($plugin->name). ' ('.$plugin->component.')', ' ... ');
+            $silent or $this->mtrace(get_string('packagesextracting', 'core_plugin', $plugin->component), ' ... ');
             $zipfile = $zips[$plugin->component];
             list($plugintype, $pluginname) = core_component::normalize_component($plugin->component);
             $target = $this->get_plugintype_root($plugintype);

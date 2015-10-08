@@ -159,4 +159,15 @@ class core_update_code_manager_testcase extends advanced_testcase {
         $zipfilepath = __DIR__.'/fixtures/update_validator/zips/bar.zip';
         $files = $codeman->unzip_plugin_file($zipfilepath, $targetdir, 'bar');
     }
+
+    public function test_get_plugin_zip_root_dir() {
+        $codeman = new \core\update\testable_code_manager();
+
+        $zipfilepath = __DIR__.'/fixtures/update_validator/zips/invalidroot.zip';
+        $this->assertEquals('invalid-root', $codeman->get_plugin_zip_root_dir($zipfilepath));
+
+        $zipfilepath = __DIR__.'/fixtures/update_validator/zips/bar.zip';
+        $this->assertEquals('bar', $codeman->get_plugin_zip_root_dir($zipfilepath));
+    }
+
 }

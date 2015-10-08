@@ -368,7 +368,7 @@ if (!$cache and $version > $CFG->version) {  // upgrade
         if ($installdepx) {
             // No sesskey support guaranteed here, because sessions might not work yet.
             $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
-            upgrade_install_remote_plugins($installable, $confirminstalldep,
+            upgrade_install_plugins($installable, $confirminstalldep,
                 get_string('dependencyinstallhead', 'core_plugin'),
                 new moodle_url($PAGE->url, array('installdepx' => 1, 'confirminstalldep' => 1))
             );
@@ -380,7 +380,7 @@ if (!$cache and $version > $CFG->version) {  // upgrade
             $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
             if (!empty($installable[$installdep])) {
                 $installable = array($installable[$installdep]);
-                upgrade_install_remote_plugins($installable, $confirminstalldep,
+                upgrade_install_plugins($installable, $confirminstalldep,
                     get_string('dependencyinstallhead', 'core_plugin'),
                     new moodle_url($PAGE->url, array('installdep' => $installdep, 'confirminstalldep' => 1))
                 );
@@ -391,7 +391,7 @@ if (!$cache and $version > $CFG->version) {  // upgrade
         if ($installupdatex) {
             // No sesskey support guaranteed here, because sessions might not work yet.
             $installable = $pluginman->filter_installable($pluginman->available_updates());
-            upgrade_install_remote_plugins($installable, $confirminstallupdate,
+            upgrade_install_plugins($installable, $confirminstallupdate,
                 get_string('updateavailableinstallallhead', 'core_admin'),
                 new moodle_url($PAGE->url, array('installupdatex' => 1, 'confirminstallupdate' => 1))
             );
@@ -402,7 +402,7 @@ if (!$cache and $version > $CFG->version) {  // upgrade
             // No sesskey support guaranteed here, because sessions might not work yet.
             if ($pluginman->is_remote_plugin_installable($installupdate, $installupdateversion)) {
                 $installable = array($pluginman->get_remote_plugin_info($installupdate, $installupdateversion, true));
-                upgrade_install_remote_plugins($installable, $confirminstallupdate,
+                upgrade_install_plugins($installable, $confirminstallupdate,
                     get_string('updateavailableinstallallhead', 'core_admin'),
                     new moodle_url($PAGE->url, array('installupdate' => $installupdate,
                         'installupdateversion' => $installupdateversion, 'confirminstallupdate' => 1)
@@ -493,7 +493,7 @@ if (!$cache and moodle_needs_upgrading()) {
             if ($installdepx) {
                 require_sesskey();
                 $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
-                upgrade_install_remote_plugins($installable, $confirminstalldep,
+                upgrade_install_plugins($installable, $confirminstalldep,
                     get_string('dependencyinstallhead', 'core_plugin'),
                     new moodle_url($PAGE->url, array('installdepx' => 1, 'confirminstalldep' => 1))
                 );
@@ -505,7 +505,7 @@ if (!$cache and moodle_needs_upgrading()) {
                 $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
                 if (!empty($installable[$installdep])) {
                     $installable = array($installable[$installdep]);
-                    upgrade_install_remote_plugins($installable, $confirminstalldep,
+                    upgrade_install_plugins($installable, $confirminstalldep,
                         get_string('dependencyinstallhead', 'core_plugin'),
                         new moodle_url($PAGE->url, array('installdep' => $installdep, 'confirminstalldep' => 1))
                     );
@@ -516,7 +516,7 @@ if (!$cache and moodle_needs_upgrading()) {
             if ($installupdatex) {
                 require_sesskey();
                 $installable = $pluginman->filter_installable($pluginman->available_updates());
-                upgrade_install_remote_plugins($installable, $confirminstallupdate,
+                upgrade_install_plugins($installable, $confirminstallupdate,
                     get_string('updateavailableinstallallhead', 'core_admin'),
                     new moodle_url($PAGE->url, array('installupdatex' => 1, 'confirminstallupdate' => 1))
                 );
@@ -527,7 +527,7 @@ if (!$cache and moodle_needs_upgrading()) {
                 require_sesskey();
                 if ($pluginman->is_remote_plugin_installable($installupdate, $installupdateversion)) {
                     $installable = array($pluginman->get_remote_plugin_info($installupdate, $installupdateversion, true));
-                    upgrade_install_remote_plugins($installable, $confirminstallupdate,
+                    upgrade_install_plugins($installable, $confirminstallupdate,
                         get_string('updateavailableinstallallhead', 'core_admin'),
                         new moodle_url($PAGE->url, array('installupdate' => $installupdate,
                             'installupdateversion' => $installupdateversion, 'confirminstallupdate' => 1)
