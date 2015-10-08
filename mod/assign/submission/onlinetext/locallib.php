@@ -367,9 +367,9 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             if ($text != $shorttext) {
                 $wordcount = get_string('numwords', 'assignsubmission_onlinetext', count_words($text));
 
-                return $shorttext . $plagiarismlinks . $wordcount;
+                return $plagiarismlinks . $wordcount . $shorttext;
             } else {
-                return $shorttext . $plagiarismlinks;
+                return $plagiarismlinks . $shorttext;
             }
         }
         return '';
@@ -450,7 +450,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             }
         }
 
-        return $result . $plagiarismlinks;
+        return $plagiarismlinks . $result;
     }
 
     /**
