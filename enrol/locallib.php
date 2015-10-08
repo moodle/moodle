@@ -242,7 +242,11 @@ class course_enrolment_manager {
                       JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
                       JOIN {enrol} e ON (e.id = ue.enrolid)
                  LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = u.id)
-                 LEFT JOIN {groups_members} gm ON u.id = gm.userid
+                 LEFT JOIN {groups_members} gm ON u.id = gm.userid AND gm.groupid IN (
+                               SELECT g.id
+                                 FROM {groups} g
+                                WHERE g.courseid = e.courseid
+                           )
                      WHERE $filtersql
                   ORDER BY $sort $direction";
             $this->users[$key] = $DB->get_records_sql($sql, $params, $page*$perpage, $perpage);
