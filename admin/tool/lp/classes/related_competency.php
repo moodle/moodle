@@ -23,6 +23,7 @@
  */
 namespace tool_lp;
 
+use lang_string;
 use stdClass;
 
 /**
@@ -34,202 +35,128 @@ use stdClass;
  */
 class related_competency extends persistent {
 
-    /** @var int $competencyid The competency id */
-    private $competencyid = 0;
-
-    /** @var int $relatedcompetencyid The related competency id */
-    private $relatedcompetencyid = 0;
+    const TABLE = 'tool_lp_related_competency';
 
     /**
-     * Method that provides the table name matching this class.
+     * Return the definition of the properties of this model.
      *
-     * @return string
+     * @return array
      */
-    public function get_table_name() {
-        return 'tool_lp_related_competency';
+    protected static function define_properties() {
+        return array(
+            'competencyid' => array(
+                'type' => PARAM_INT
+            ),
+            'relatedcompetencyid' => array(
+                'type' => PARAM_INT
+            ),
+        );
     }
 
     /**
-     * Get the competency id
+     * Validate competency ID.
      *
-     * @return int The competency id
+     * @return true|lang_string
      */
-    public function get_competencyid() {
-        return $this->competencyid;
+    protected function validate_competencyid($data) {
+        if (!competency::record_exists($data)) {
+            return new lang_string('invaliddata', 'error');
+        }
+        return true;
     }
 
     /**
-     * Set the competency id
+     * Validate related competency ID.
      *
-     * @param int $competencyid The competency id
+     * @return true|lang_string
      */
-    public function set_competencyid($competencyid) {
-        $this->competencyid = $competencyid;
-    }
+    protected function validate_relatedcompetencyid($data) {
 
-    /**
-     * Get the related competency id.
-     *
-     * @return int The related competency id.
-     */
-    public function get_relatedcompetencyid() {
-        return $this->relatedcompetencyid;
-    }
+        if ($this->get_competencyid() == $data) {
+            // A competency cannot be related to itself.
+            return new lang_string('invaliddata', 'error');
 
-    /**
-     * Set the related competency id.
-     *
-     * @param int $relatedcompetencyid The related competency id.
-     */
-    public function set_relatedcompetencyid($relatedcompetencyid) {
-        $this->relatedcompetencyid = $relatedcompetencyid;
-    }
+        } if ($this->get_competencyid() > $data) {
+            // The competency ID must be lower than the related competency ID.
+            return new lang_string('invaliddata', 'error');
 
-    /**
-     * Populate this class with data from a DB record.
-     *
-     * @param stdClass $record A DB record.
-     * @return course_competency
-     */
-    public function from_record($record) {
-        if (isset($record->id)) {
-            $this->set_id($record->id);
+        } else if (!competency::record_exists($data)) {
+            return new lang_string('invaliddata', 'error');
+
+        } else if (!competency::share_same_framework(array($data, $this->get_competencyid()))) {
+            // The competencies must belong to the same framework.
+            return new lang_string('invaliddata', 'error');
         }
-        if (isset($record->competencyid)) {
-            $this->set_competencyid($record->competencyid);
-        }
-        if (isset($record->relatedcompetencyid)) {
-            $this->set_relatedcompetencyid($record->relatedcompetencyid);
-        }
-        if (isset($record->timecreated)) {
-            $this->set_timecreated($record->timecreated);
-        }
-        if (isset($record->usermodified)) {
-            $this->set_usermodified($record->usermodified);
-        }
-        return $this;
-    }
-
-    /**
-     * Create a DB record from this class.
-     *
-     * @return stdClass
-     */
-    public function to_record() {
-        $record = new stdClass();
-        $record->id = $this->get_id();
-        $record->competencyid = $this->get_competencyid();
-        $record->relatedcompetencyid = $this->get_relatedcompetencyid();
-        $record->timecreated = $this->get_timecreated();
-        $record->timemodified = $this->get_timemodified();
-        $record->usermodified = $this->get_usermodified();
-
-        return $record;
-    }
-
-    /**
-     * Loads a single relation specifying both competencies.
-     *
-     * @param int $competencyid
-     * @param int $relatedcompetencyid
-     * @return bool
-     */
-    public function load_relation($competencyid, $relatedcompetencyid) {
-        global $DB;
-
-        // Lower id always as competencyid so we know which one is competencyid and which one relatedcompetencyid.
-        if ($competencyid > $relatedcompetencyid) {
-            $this->set_competencyid($relatedcompetencyid);
-            $this->set_relatedcompetencyid($competencyid);
-        } else {
-            $this->set_competencyid($competencyid);
-            $this->set_relatedcompetencyid($relatedcompetencyid);
-        }
-
-        // We can do it because we have bidirectional relations in the DB.
-        $params = array('competencyid' => $this->get_competencyid(), 'relatedcompetencyid' => $this->get_relatedcompetencyid());
-        if (!$record = $DB->get_record($this->get_table_name(), $params)) {
-            return false;
-        }
-        $this->from_record($record);
 
         return true;
     }
 
     /**
-     * Returns all related competencies.
+     * Get relation specifying both competencies.
+     *
+     * This does not perform any validation on the data passed. If the relation exists in the database
+     * then it is loaded in a the model, if not then it is up to the developer to save the model.
      *
      * @param int $competencyid
-     * @return related_competency[]
+     * @param int $relatedcompetencyid
+     * @return related_competency
      */
-    public function list_relations($competencyid) {
-        $relatedcompetencies = $this->list_relations_many(array($competencyid));
-        if (empty($relatedcompetencies) || empty($relatedcompetencies[$competencyid])) {
-            return array();
+    public static function get_relation($competencyid, $relatedcompetencyid) {
+        global $DB;
+
+        // Lower id always as competencyid so we know which one is competencyid and which one relatedcompetencyid.
+        $relation = new static();
+        if ($competencyid > $relatedcompetencyid) {
+            $relation->set_competencyid($relatedcompetencyid);
+            $relation->set_relatedcompetencyid($competencyid);
+        } else {
+            $relation->set_competencyid($competencyid);
+            $relation->set_relatedcompetencyid($relatedcompetencyid);
         }
 
-        return $relatedcompetencies[$competencyid];
+        // We can do it because we have bidirectional relations in the DB.
+        $params = array(
+            'competencyid' => $relation->get_competencyid(),
+            'relatedcompetencyid' => $relation->get_relatedcompetencyid()
+        );
+        if ($record = $DB->get_record(self::TABLE, $params)) {
+            $relation->from_record($record);
+        }
+
+        return $relation;
     }
 
     /**
-     * Returns related competencies Load relations accepting an array of competency ids.
+     * Get the competencies related to a competency.
      *
-     * @param array $competencyids
-     * @return array Indexed as array[competency][relatedcompetency] = \tool_lp\competency.
+     * @param  int $competencyid The competency ID.
+     * @return competency[]
      */
-    public function list_relations_many(array $competencyids) {
+    public static function get_related_competencies($competencyid) {
         global $DB;
 
-        list($competencysql, $params) = $DB->get_in_or_equal($competencyids);
-        $sql = "(SELECT " . $DB->sql_concat('rc.relatedcompetencyid', "'_'", 'rc.competencyid') . " AS rid,
-                    rc.competencyid AS relatedcompetencyid, c.*
-                    FROM {tool_lp_related_competency} rc
-                    JOIN {tool_lp_competency} c
-                    ON c.id = rc.relatedcompetencyid
-                    WHERE rc.competencyid $competencysql)
-                UNION ALL
-                (SELECT " . $DB->sql_concat('rc.competencyid', "'_'", 'rc.relatedcompetencyid') . " AS rid,
-                    rc.relatedcompetencyid AS relatedcompetencyid, c.*
-                    FROM {tool_lp_related_competency} rc
-                    JOIN {tool_lp_competency} c
-                    ON c.id = rc.competencyid
-                    WHERE rc.relatedcompetencyid $competencysql)
-                ORDER BY path, sortorder ASC";
-        $records = $DB->get_recordset_sql($sql, array_merge($params, $params));
+        $sql = "(SELECT c.*, " . $DB->sql_concat('rc.relatedcompetencyid', "'_'", 'rc.competencyid') . " AS rid
+                   FROM {" . self::TABLE . "} rc
+                   JOIN {" . competency::TABLE . "} c
+                     ON c.id = rc.relatedcompetencyid
+                  WHERE rc.competencyid = :cid)
+              UNION ALL
+                (SELECT c.*, " . $DB->sql_concat('rc.competencyid', "'_'", 'rc.relatedcompetencyid') . " AS rid
+                   FROM {" . self::TABLE . "} rc
+                   JOIN {" . competency::TABLE . "} c
+                     ON c.id = rc.competencyid
+                  WHERE rc.relatedcompetencyid = :cid2)
+               ORDER BY path, sortorder ASC";
 
-        $relations = array();
-        if ($records->valid()) {
-            $competencyids = array_flip($competencyids);
-            foreach ($records as $record) {
-                $relatedid = $record->relatedcompetencyid;
-                if (empty($relations[$relatedid])) {
-                    $relations[$relatedid] = array();
-                }
-                unset($record->rid);
-                unset($record->relatedcompetencyid);
-                $relations[$relatedid][$record->id] = new competency(null, $record);
-            }
+        $competencies = array();
+        $records = $DB->get_recordset_sql($sql, array('cid' => $competencyid, 'cid2' => $competencyid));
+        foreach ($records as $record) {
+            unset($record->rid);
+            $competencies[$record->id] = new competency(null, $record);
         }
         $records->close();
 
-        return $relations;
+        return $competencies;
     }
 
-    /**
-     * Creates a relation between competencies.
-     *
-     * Overwriting the base class as we need to save it bidirectionally.
-     *
-     * @return related_competency
-     */
-    public function create() {
-
-        // The lower id always competencyid.
-        if ($this->competencyid > $this->relatedcompetencyid) {
-            $competencyid = $this->competencyid;
-            $this->competencyid = $this->relatedcompetencyid;
-            $this->relatedcompetencyid = $competencyid;
-        }
-        return parent::create();
-    }
 }

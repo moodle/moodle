@@ -1320,22 +1320,30 @@ class external extends external_api {
                                                 'includerelated' => $includerelated
                                             ));
 
-        $results = api::search_competencies($params['searchtext'], $params['competencyframeworkid'], $params['includerelated']);
+        $results = api::search_competencies($params['searchtext'], $params['competencyframeworkid']);
         $options = array('context' => context_system::instance());
         $records = array();
         foreach ($results as $result) {
             $record = $result->to_record();
-            $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
-            if ($includerelated && !empty($result->relatedcompetencies)) {
+
+            if ($params['includerelated']) {
                 $record->relatedcompetencies = array();
-                foreach ($result->relatedcompetencies as $relatedcompetency) {
-                    $record->relatedcompetencies[] = $relatedcompetency->to_record();
+                $relatedcomps = $result->get_related_competencies();
+                foreach ($relatedcomps as $comp) {
+                    $comprecord = $comp->to_record();
+                    // TODO Format using the context from the framework.
+                    $comprecord->descriptionformatted = format_text($comprecord->description,
+                        $comprecord->descriptionformat, $options);
+                    $record->relatedcompetencies[] = $comprecord;
                 }
             }
+
+            // TODO Format using the context from the framework.
+            $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
             array_push($records, $record);
         }
 
-        return external_api::clean_returnvalue(self::search_competencies_returns(), $records);
+        return $records;
     }
 
     /**
@@ -3749,7 +3757,7 @@ class external extends external_api {
     }
 
     /**
-     * Adds a related competency. 
+     * Adds a related competency.
      *
      * @param int $competencyid
      * @param int $relatedcompetencyid
@@ -3872,7 +3880,7 @@ class external extends external_api {
         $renderable = new \tool_lp\output\related_competencies($params['competencyid']);
         $renderer = $PAGE->get_renderer('tool_lp');
 
-        return external_api::clean_returnvalue(self::data_for_related_competencies_section_returns(), $renderable->export_for_template($renderer));
+        return $renderable->export_for_template($renderer);
     }
 
     /**

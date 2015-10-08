@@ -54,18 +54,26 @@ define(['jquery',
         /** @var {Callback} addCompetencyCallback - Additional stuff to execute once the region is updated. */
         addCompetencyCallback : null,
 
+        /** @var {Number} The page context ID. */
+        pageContextId: null,
+
         /**
          * Returns the load competency frameworks promise.
          *
          * Caller can act depending on whether frameworks were found or not.
          *
+         * @param {Number} pagectxid The page context ID.
          * @return {Promise}
          * @method init
          */
-        init : function() {
+        init : function(pagectxid) {
+            this.pageContextId = pagectxid;
 
             var loadframeworks = ajax.call([
-                { methodname: 'tool_lp_list_competency_frameworks', args: { filters: {}, sort: 'sortorder' } }
+                { methodname: 'tool_lp_list_competency_frameworks', args: {
+                    sort: 'shortname',
+                    context: { contextid: this.pageContextId }
+                }}
             ]);
 
             loadframeworks[0].done(function(frameworks) {
@@ -124,7 +132,7 @@ define(['jquery',
                     competencies: competencies,
                     search: searchText
                 };
-                templates.render('tool_lp/link_course_competencies', context).done(function(html) {
+                templates.render('tool_lp/link_competencies', context).done(function(html) {
                     $('[data-region="competencylinktree"]').replaceWith(html);
                     this.initLinkCourseCompetencies();
                 }.bind(this)).fail(notification.exception);
@@ -137,6 +145,7 @@ define(['jquery',
          * @method initLinkCourseCompetencies
          */
         initLinkCourseCompetencies : function() {
+            var requests;
 
             new Ariatree('[data-enhance=linktree]', function(target) {
                 this.selectedCompetency = target.data('id');
@@ -157,13 +166,14 @@ define(['jquery',
                 this.popup.close();
             }.bind(this));
             $('[data-region="competencylinktree"] [data-action="add"]').click(function(e) {
+                var btn = $(e.target);
 
                 e.preventDefault();
                 if (!this.selectedCompetency) {
                     return;
                 }
 
-                $(e.target).attr('disabled', 'disabled');
+                btn.attr('disabled', 'disabled');
 
                 // The required callbacks and rendered templates depends on the page, but we should always
                 // attach the selectCompetency to the first request, the one adding data to the database.
@@ -180,8 +190,14 @@ define(['jquery',
                         if (typeof this.addCompetencyCallback !== "undefined") {
                             this.addCompetencyCallback();
                         }
-                    }.bind(this)).fail(notification.exception);
-                }.bind(this)).fail(notification.exception);
+                    }.bind(this)).fail(function(err) {
+                        btn.removeAttr('disabled');
+                        notification.exception(err);
+                    });
+                }.bind(this)).fail(function(err) {
+                    btn.removeAttr('disabled');
+                    notification.exception(err);
+                });
             }.bind(this));
         },
 
@@ -226,7 +242,10 @@ define(['jquery',
             }
 
             var loadCompetencies = ajax.call([
-                { methodname: 'tool_lp_search_competencies', args: { searchtext: searchText, competencyframeworkid: frameworkid } }
+                { methodname: 'tool_lp_search_competencies', args: {
+                    searchtext: searchText,
+                    competencyframeworkid: frameworkid
+                }}
             ]);
 
             loadCompetencies[0].done(function (competencies) {
@@ -234,7 +253,7 @@ define(['jquery',
                 var i, competenciestree = [];
                 for (i = 0; i < competencies.length; i++) {
                     var onecompetency = competencies[i];
-                    if (onecompetency.parentid === 0) {
+                    if (onecompetency.parentid == 0) {
                         onecompetency.children = [];
                         onecompetency.haschildren = 0;
                         competenciestree[competenciestree.length] = onecompetency;
@@ -257,7 +276,7 @@ define(['jquery',
                 var framework = this.frameworks[0];
                 framework.selected = true;
                 var context = { framework: framework, frameworks: this.frameworks, competencies: competencies, search: '' };
-                templates.render('tool_lp/link_course_competencies', context).done(function(html) {
+                templates.render('tool_lp/link_competencies', context).done(function(html) {
                     str.get_string('linkcompetencies', 'tool_lp').done(function(title) {
                         this.popup = new Dialogue(
                             title,

@@ -85,12 +85,15 @@ class manage_competencies_page implements renderable, templatable {
      *
      * @param stdClass $parent - the exported parent node
      * @param array $all - List of all competency classes.
+     * @param context $context The context.
      */
-    private function add_competency_children($parent, $all) {
+    protected function add_competency_children($parent, $all) {
+        $options = array('context' => $this->framework->get_context());
         foreach ($all as $one) {
             if ($one->get_parentid() == $parent->id) {
                 $parent->haschildren = true;
                 $record = $one->to_record();
+                $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
                 $record->children = array();
                 $record->haschildren = false;
                 $parent->children[] = $record;
@@ -106,17 +109,21 @@ class manage_competencies_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
+        $options = array('context' => $this->framework->get_context());
+
         $data = new stdClass();
         $data->framework = $this->framework->to_record();
+        $data->framework->descriptionformatted = format_text($data->framework->description, $data->framework->descriptionformat,
+            $options);
         $data->canmanage = $this->canmanage;
         $data->competencies = array();
         $data->search = $this->search;
         $data->pagecontextid = $this->pagecontext->id;
-        $options = array('context' => context_system::instance());
 
         foreach ($this->competencies as $competency) {
             if ($competency->get_parentid() == 0) {
                 $record = $competency->to_record();
+                // TODO Use framework context for formatting.
                 $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
                 $record->children = array();
                 $record->haschildren = false;

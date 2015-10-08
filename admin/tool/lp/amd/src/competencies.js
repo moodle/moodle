@@ -67,7 +67,7 @@ define(['jquery',
             pageregion = 'templatecompetenciespage';
         }
 
-        var promise = competencyselector.init();
+        var promise = competencyselector.init(this.pageContextId);
         promise.done(function(frameworks) {
             if (frameworks.length === 0) {
                 templates.render('tool_lp/no_frameworks_warning', {})

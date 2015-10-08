@@ -61,7 +61,11 @@ class related_competencies implements renderable, templatable {
         $data->relatedcompetencies = array();
         if ($this->relatedcompetencies) {
             foreach ($this->relatedcompetencies as $competency) {
-                $data->relatedcompetencies[] = $competency->to_record();
+                $record = $competency->to_record();
+                // TODO Format using the context from the framework.
+                $record->descriptionformatted = format_text($record->description,
+                    $record->descriptionformat, $options);
+                $data->relatedcompetencies[] = $record;
             }
         }
 

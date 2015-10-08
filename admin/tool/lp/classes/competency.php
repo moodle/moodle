@@ -196,6 +196,15 @@ class competency extends persistent {
     }
 
     /**
+     * Return the related competencies.
+     *
+     * @return competency[]
+     */
+    public function get_related_competencies() {
+        return related_competency::get_related_competencies($this->get_id());
+    }
+
+    /**
      * Helper method to set the path.
      *
      * @param competency $parent The parent competency object.
@@ -379,6 +388,18 @@ class competency extends persistent {
         }
 
         return true;
+    }
+
+    /**
+     * Return whether or not the competency IDs share the same framework.
+     *
+     * @param  array  $ids Competency IDs
+     * @return bool
+     */
+    public static function share_same_framework(array $ids) {
+        global $DB;
+        list($insql, $params) = $DB->get_in_or_equal($ids);
+        return $DB->count_records_select(self::TABLE, "id $insql", $params, "COUNT(DISTINCT(competencyframeworkid))") == 1;
     }
 
 }
