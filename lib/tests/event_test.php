@@ -956,7 +956,7 @@ and nothing else.";
         $pageevent = \core_tests\event\course_module_viewed::create($data);
         $pageevent->trigger();
 
-        $this->assertSame(['observe_all_alt'], \core_tests\event\unittest_observer::$info, 'Can still subscribe to child event');
+        $this->assertSame(['observe_all_alt'], \core_tests\event\unittest_observer::$info, 'Error observing triggered event');
 
         \core_tests\event\unittest_observer::reset();
 
@@ -969,7 +969,7 @@ and nothing else.";
         $pageevent = \core_tests\event\course_module_viewed::create($data);
         $pageevent->trigger();
 
-        $this->assertSame(['observe_all_alt'], \core_tests\event\unittest_observer::$info, 'Can subscribe to parent event');
+        $this->assertSame(['observe_all_alt'], \core_tests\event\unittest_observer::$info, 'Error observing parent class event');
 
         \core_tests\event\unittest_observer::reset();
     }
