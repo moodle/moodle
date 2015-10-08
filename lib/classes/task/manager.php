@@ -491,6 +491,12 @@ class manager {
                     }
                 }
 
+                // Make sure the task data is unchanged.
+                if (!$DB->record_exists('task_scheduled', (array) $record)) {
+                    $lock->release();
+                    continue;
+                }
+
                 if (!$task->is_blocking()) {
                     $cronlock->release();
                 } else {
