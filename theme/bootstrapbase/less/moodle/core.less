@@ -2430,3 +2430,11 @@ dd:after {
 dd:after {
   clear: both;
 }
+
+// Active tabs with links should have a different
+// cursor to indicate they are clickable.
+.nav-tabs > .active > a[href],
+.nav-tabs > .active > a[href]:hover,
+.nav-tabs > .active > a[href]:focus {
+    cursor: pointer;
+}
