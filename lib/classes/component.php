@@ -648,6 +648,13 @@ $cache = '.var_export($cache, true).';
             return;
         }
 
+        if (!is_readable($fulldir)) {
+            // TODO: MDL-51711 We should generate some diagnostic debugging information in this case
+            // because its pretty likely to lead to a missing class error further down the line.
+            // But our early setup code can't handle errors this early at the moment.
+            return;
+        }
+
         $items = new \DirectoryIterator($fulldir);
         foreach ($items as $item) {
             if ($item->isDot()) {
