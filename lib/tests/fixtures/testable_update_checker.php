@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\update;
-
 /**
  * Provides \core\update\testable_checker class.
  *
@@ -25,11 +23,15 @@ namespace core\update;
  * @copyright   2012, 2015 David Mudrak <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace core\update;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Modified version of {@link \core\update\checker} suitable for testing.
+ *
+ * @copyright 2012, 2015 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testable_checker extends checker {
 
@@ -166,8 +168,12 @@ class testable_checker extends checker {
     }
 }
 
+
 /**
  * Exception used to detect {@link checker::cron_execute()} calls.
+ *
+ * @copyright 2012, 2015 David Mudrak <david@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class testable_checker_cron_executed extends \Exception {
 }

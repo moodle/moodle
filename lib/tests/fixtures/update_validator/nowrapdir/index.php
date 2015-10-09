@@ -1,3 +1,2 @@
 <?php
-
-// index.php
+// This file is empty.

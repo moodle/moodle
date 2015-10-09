@@ -126,7 +126,7 @@ class core_update_api_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\update\remote_info', $client->validate_pluginfo_format($data));
         $this->assertEquals(json_encode($data), json_encode($client->validate_pluginfo_format($data)));
 
-        // All properties must be present;
+        // All properties must be present.
         unset($data->version);
         $this->assertFalse($client->validate_pluginfo_format($data));
 

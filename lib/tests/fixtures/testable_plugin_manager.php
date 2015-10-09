@@ -43,6 +43,10 @@ class testable_core_plugin_manager extends core_plugin_manager {
      *
      * Do not forget to call our reset_caches() after using this method to force a new
      * singleton instance.
+     *
+     * @param string $type plugin type
+     * @param string $name plugin name
+     * @param \core\plugininfo\base $plugininfo plugin info class
      */
     public function inject_testable_plugininfo($type, $name, \core\plugininfo\base $plugininfo) {
 

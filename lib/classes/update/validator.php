@@ -36,9 +36,9 @@ use coding_exception;
 defined('MOODLE_INTERNAL') || die();
 
 if (!defined('T_ML_COMMENT')) {
-   define('T_ML_COMMENT', T_COMMENT);
+    define('T_ML_COMMENT', T_COMMENT);
 } else {
-   define('T_DOC_COMMENT', T_ML_COMMENT);
+    define('T_DOC_COMMENT', T_ML_COMMENT);
 }
 
 /**
@@ -263,6 +263,8 @@ class validator {
     // End of external API.
 
     /**
+     * No public constructor, use {@link self::instance()} instead.
+     *
      * @param string $zipcontentpath full path to the extracted ZIP contents
      * @param array $zipcontentfiles (string)filerelpath => (bool|string)true or error
      */
@@ -274,12 +276,14 @@ class validator {
     // Validation methods.
 
     /**
-     * @return bool false if files in the ZIP do not have required layout
+     * Returns false if files in the ZIP do not have required layout.
+     *
+     * @return bool
      */
     protected function validate_files_layout() {
 
         if (!is_array($this->extractfiles) or count($this->extractfiles) < 4) {
-            // We need the English language pack with the name of the plugin at least
+            // We need the English language pack with the name of the plugin at least.
             $this->add_message(self::ERROR, 'filesnumber');
             return false;
         }
@@ -319,7 +323,9 @@ class validator {
     }
 
     /**
-     * @return bool false if the version.php file does not declare required information
+     * Returns false if the version.php file does not declare required information.
+     *
+     * @return bool
      */
     protected function validate_version_php() {
 
@@ -406,7 +412,9 @@ class validator {
     }
 
     /**
-     * @return bool false if the English language pack is not provided correctly
+     * Returns false if the English language pack is not provided correctly.
+     *
+     * @return bool
      */
     protected function validate_language_pack() {
 
@@ -456,7 +464,9 @@ class validator {
     }
 
     /**
-     * @return bool false of the given add-on can't be installed into its location
+     * Returns false of the given add-on can't be installed into its location.
+     *
+     * @return bool
      */
     public function validate_target_location() {
 
@@ -510,7 +520,7 @@ class validator {
     /**
      * Get as much information from existing version.php as possible
      *
-     * @param string full path to the version.php file
+     * @param string $fullpath full path to the version.php file
      * @return array of found meta-info declarations
      */
     protected function parse_version_php($fullpath) {
@@ -576,30 +586,30 @@ class validator {
                 list($id, $text) = $token;
             }
             switch ($id) {
-            case T_WHITESPACE:
-            case T_COMMENT:
-            case T_ML_COMMENT:
-            case T_DOC_COMMENT:
-                // Ignore whitespaces, inline comments, multiline comments and docblocks.
-                break;
-            case T_OPEN_TAG:
-                // Start processing.
-                $doprocess = true;
-                break;
-            case T_CLOSE_TAG:
-                // Stop processing.
-                $doprocess = false;
-                break;
-            default:
-                // Anything else is within PHP tags, return it as is.
-                if ($doprocess) {
-                    $output .= $text;
-                    if ($text === 'function') {
-                        // Explicitly keep the whitespace that would be ignored.
-                        $output .= ' ';
+                case T_WHITESPACE:
+                case T_COMMENT:
+                case T_ML_COMMENT:
+                case T_DOC_COMMENT:
+                    // Ignore whitespaces, inline comments, multiline comments and docblocks.
+                    break;
+                case T_OPEN_TAG:
+                    // Start processing.
+                    $doprocess = true;
+                    break;
+                case T_CLOSE_TAG:
+                    // Stop processing.
+                    $doprocess = false;
+                    break;
+                default:
+                    // Anything else is within PHP tags, return it as is.
+                    if ($doprocess) {
+                        $output .= $text;
+                        if ($text === 'function') {
+                            // Explicitly keep the whitespace that would be ignored.
+                            $output .= ' ';
+                        }
                     }
-                }
-                break;
+                    break;
             }
         }
 
@@ -607,7 +617,7 @@ class validator {
     }
 
     /**
-     * Returns the full path to the root directory of the given plugin type
+     * Returns the full path to the root directory of the given plugin type.
      *
      * @param string $plugintype
      * @return string|null
@@ -617,6 +627,8 @@ class validator {
     }
 
     /**
+     * Returns plugin manager to use.
+     *
      * @return core_plugin_manager
      */
     protected function get_plugin_manager() {

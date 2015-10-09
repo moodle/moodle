@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Provides {@link testable_tool_installaddon_installer} class.
+ *
  * @package     tool_installaddon
  * @subpackage  fixtures
  * @category    test

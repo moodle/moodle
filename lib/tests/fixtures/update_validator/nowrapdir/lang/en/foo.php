@@ -1,3 +1,2 @@
 <?php
-
 $string['pluginname'] = 'Foo!';

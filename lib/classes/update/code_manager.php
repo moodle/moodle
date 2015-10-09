@@ -155,7 +155,7 @@ class code_manager {
      * @param string $zipfilepath full path to the saved ZIP file
      * @param string $targetdir full path to the directory to extract the ZIP file to
      * @param string $rootdir explicitly rename the root directory of the ZIP into this non-empty value
-     * @param array list of extracted files as returned by {@link zip_packer::extract_to_pathname()}
+     * @return array list of extracted files as returned by {@link zip_packer::extract_to_pathname()}
      */
     public function unzip_plugin_file($zipfilepath, $targetdir, $rootdir = '') {
 

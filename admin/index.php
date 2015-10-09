@@ -213,7 +213,6 @@ if (!core_tables_exist()) {
         $PAGE->set_heading($strinstallation);
         $PAGE->set_cacheable(false);
 
-        /** @var core_admin_renderer $output */
         $output = $PAGE->get_renderer('core', 'admin');
         echo $output->install_licence_page();
         die();
@@ -228,7 +227,6 @@ if (!core_tables_exist()) {
         $PAGE->set_heading($strinstallation . ' - Moodle ' . $CFG->target_release);
         $PAGE->set_cacheable(false);
 
-        /** @var core_admin_renderer $output */
         $output = $PAGE->get_renderer('core', 'admin');
         echo $output->install_environment_page($maturity, $envstatus, $environment_results, $release);
         die();
@@ -320,7 +318,6 @@ if (!$cache and $version > $CFG->version) {  // upgrade
     // We then purge the regular caches.
     purge_all_caches();
 
-    /** @var core_admin_renderer $output */
     $output = $PAGE->get_renderer('core', 'admin');
 
     if (upgrade_stale_php_files_present()) {
@@ -526,10 +523,7 @@ if (!$cache and moodle_needs_upgrading()) {
     if (!$PAGE->headerprinted) {
         // means core upgrade or installation was not already done
 
-        /** @var core_plugin_manager $pluginman */
         $pluginman = core_plugin_manager::instance();
-
-        /** @var core_admin_renderer $output */
         $output = $PAGE->get_renderer('core', 'admin');
 
         if (!$confirmplugins) {
@@ -561,7 +555,8 @@ if (!$cache and moodle_needs_upgrading()) {
                         }
                         redirect($PAGE->url);
                     } else {
-                        $continue = new moodle_url($PAGE->url, array('abortinstallx' => $abortinstallx, 'confirmabortinstall' => 1));
+                        $continue = new moodle_url($PAGE->url, array('abortinstallx' => $abortinstallx,
+                            'confirmabortinstall' => 1));
                         echo $output->upgrade_confirm_abort_install_page($abortables, $continue);
                         die();
                     }
@@ -671,7 +666,6 @@ if (!$cache and moodle_needs_upgrading()) {
         // Make sure plugin dependencies are always checked.
         $failed = array();
         if (!$pluginman->all_plugins_ok($version, $failed)) {
-            /** @var core_admin_renderer $output */
             $output = $PAGE->get_renderer('core', 'admin');
             echo $output->unsatisfied_dependencies_page($version, $failed, $PAGE->url);
             die();
@@ -852,7 +846,6 @@ $cachewarnings = cache_helper::warnings();
 
 admin_externalpage_setup('adminnotifications');
 
-/* @var core_admin_renderer $output */
 $output = $PAGE->get_renderer('core', 'admin');
 
 echo $output->admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed, $cronoverdue, $dbproblems,

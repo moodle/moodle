@@ -49,7 +49,7 @@ class core_update_validator_testcase extends advanced_testcase {
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR,
             'filenotexists', array('file' => 'null/')));
 
-        // Missing expected file
+        // Missing expected file.
         $validator = testable_core_update_validator::instance($fixtures.'/plugindir', array(
             'foobar/' => true,
             'foobar/version.php' => true,
@@ -62,7 +62,7 @@ class core_update_validator_testcase extends advanced_testcase {
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR,
             'filenotexists', array('file' => 'foobar/NOTEXISTS.txt')));
 
-        // Errors during ZIP extraction
+        // Errors during ZIP extraction.
         $validator = testable_core_update_validator::instance($fixtures.'/multidir', array(
             'one/' => true,
             'one/version.php' => 'Can not write target file',
@@ -72,14 +72,14 @@ class core_update_validator_testcase extends advanced_testcase {
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'filestatus',
             array('file' => 'one/version.php', 'status' => 'Can not write target file')));
 
-        // Insufficient number of extracted files
+        // Insufficient number of extracted files.
         $validator = testable_core_update_validator::instance($fixtures.'/emptydir', array(
             'emptydir/' => true,
             'emptydir/README.txt' => true));
         $this->assertFalse($validator->execute());
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'filesnumber'));
 
-        // No wrapping directory
+        // No wrapping directory.
         $validator = testable_core_update_validator::instance($fixtures.'/nowrapdir', array(
             'version.php' => true,
             'index.php' => true,
@@ -89,7 +89,7 @@ class core_update_validator_testcase extends advanced_testcase {
         $this->assertFalse($validator->execute());
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'onedir'));
 
-        // Multiple directories
+        // Multiple directories.
         $validator = testable_core_update_validator::instance($fixtures.'/multidir', array(
             'one/' => true,
             'one/version.php' => true,
@@ -98,7 +98,7 @@ class core_update_validator_testcase extends advanced_testcase {
         $this->assertFalse($validator->execute());
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::ERROR, 'onedir'));
 
-        // Invalid root directory name
+        // Invalid root directory name.
         $validator = testable_core_update_validator::instance($fixtures.'/github', array(
             'moodle-repository_mahara-master/' => true,
             'moodle-repository_mahara-master/lang/' => true,
@@ -353,8 +353,15 @@ class core_update_validator_testcase extends advanced_testcase {
         $this->assertSame('', $validator->message_code_info('some_really_crazy_message_code_that_is_not_localised', 'something'));
     }
 
-    // Helper methods.
-
+    /**
+     * Helper method for checking if the given message has been raised by the validator.
+     *
+     * @param array $messages list of returned messages
+     * @param string $level expected message severity level
+     * @param string $msgcode expected message code
+     * @param string|array $addinfo expected additional info
+     * @return bool
+     */
     protected function has_message(array $messages, $level, $msgcode, $addinfo = null) {
         foreach ($messages as $message) {
             if ($message->level === $level and $message->msgcode === $msgcode and $message->addinfo === $addinfo) {

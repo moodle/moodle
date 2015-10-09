@@ -1068,8 +1068,8 @@ class core_admin_renderer extends plugin_renderer_base {
         $out .= html_writer::div(html_writer::link(new moodle_url($this->page->url, array('showallplugins' => 1)),
             get_string('plugincheckall', 'core_plugin')).' '.html_writer::span($sumtotal, 'badge'));
 
-        $out .= $this->output->container_end(); // .actions
-        $out .= $this->output->container_end(); // #plugins-check-info
+        $out .= $this->output->container_end(); // End of .actions container.
+        $out .= $this->output->container_end(); // End of #plugins-check-info container.
 
         if ($sumdisplayed > 0 or $options['full']) {
             $out .= html_writer::table($table);
@@ -1082,7 +1082,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * Display the continue / cancel widgets for the plugins management pages.
      *
      * @param null|moodle_url $continue URL for the continue button, should it be displayed
-     * @param moodle_url $cancel URL for the cancel link, defaults to the current page
+     * @param null|moodle_url $cancel URL for the cancel link, defaults to the current page
      * @return string HTML
      */
     public function plugins_management_confirm_buttons(moodle_url $continue=null, moodle_url $cancel=null) {
@@ -1159,7 +1159,7 @@ class core_admin_renderer extends plugin_renderer_base {
             $out .= $this->output->container_start('plugins-check-dependencies-actions');
             $out .= ' '.html_writer::link(new moodle_url('/admin/tool/installaddon/'),
                 get_string('dependencyuploadmissing', 'core_plugin'));
-            $out .= $this->output->container_end(); // .plugins-check-dependencies-actions
+            $out .= $this->output->container_end(); // End of .plugins-check-dependencies-actions container.
         }
 
         if ($available) {
@@ -1179,12 +1179,12 @@ class core_admin_renderer extends plugin_renderer_base {
             $out .= html_writer::div(html_writer::link(new moodle_url('/admin/tool/installaddon/'),
                 get_string('dependencyuploadmissing', 'core_plugin')), 'dependencyuploadmissing');
 
-            $out .= $this->output->container_end(); // .plugins-check-dependencies-actions
+            $out .= $this->output->container_end(); // End of .plugins-check-dependencies-actions container.
 
             $out .= $this->available_missing_dependencies_list($pluginman, $available);
         }
 
-        $out .= $this->output->container_end(); // .plugins-check-dependencies
+        $out .= $this->output->container_end(); // End of .plugins-check-dependencies container.
 
         return $out;
     }
@@ -1268,7 +1268,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 }
             }
 
-            $info .= $this->output->container_end(); // .actions
+            $info .= $this->output->container_end(); // End of .actions container.
 
             $table->data[] = array(
                 html_writer::div($plugin->name, 'name').' '.html_writer::div($plugin->component, 'component'),
@@ -1487,7 +1487,7 @@ class core_admin_renderer extends plugin_renderer_base {
             html_writer::div($infoext, 'info info-ext').
             html_writer::div($infoupdatable, 'info info-updatable');
 
-        $out .= html_writer::end_div(); // #plugins-overview-panel
+        $out .= html_writer::end_div(); // End of #plugins-overview-panel block.
 
         return $out;
     }
