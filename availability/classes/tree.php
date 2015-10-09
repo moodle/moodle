@@ -328,7 +328,14 @@ class tree extends tree_node {
         // Loop through all valid children.
         foreach ($this->children as $index => $child) {
             if (!$child->is_applied_to_user_lists()) {
-                continue;
+                if ($andoperator) {
+                    continue;
+                } else {
+                    // OR condition with one option that doesn't restrict user
+                    // lists = everyone is allowed.
+                    $anyconditions = false;
+                    break;
+                }
             }
             $childresult = $child->filter_user_list($users, $innernot, $info, $checker);
             if ($andoperator) {
@@ -359,7 +366,14 @@ class tree extends tree_node {
         $childresults = array();
         foreach ($this->children as $index => $child) {
             if (!$child->is_applied_to_user_lists()) {
-                continue;
+                if ($andoperator) {
+                    continue;
+                } else {
+                    // OR condition with one option that doesn't restrict user
+                    // lists = everyone is allowed.
+                    $childresults = array();
+                    break;
+                }
             }
             $childresult = $child->get_user_list_sql($innernot, $info, $onlyactive);
             if ($childresult[0]) {

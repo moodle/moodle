@@ -600,6 +600,15 @@ class tree_testcase extends \advanced_testcase {
         ksort($result);
         $this->assertEquals(array(1, 3), array_keys($result));
 
+        // Tree with OR condition one of which doesn't filter.
+        $structure = tree::get_root_json(array(
+                self::mock(array('filter' => array(3))),
+                self::mock(array())), tree::OP_OR);
+        $tree = new tree($structure);
+        $result = $tree->filter_user_list($users, false, $info, $checker);
+        ksort($result);
+        $this->assertEquals(array(1, 2, 3), array_keys($result));
+
         // Tree with two condition that both filter (&).
         $structure = tree::get_root_json(array(
                 self::mock(array('filter' => array(2, 3))),
@@ -718,6 +727,16 @@ class tree_testcase extends \advanced_testcase {
         $result = $DB->get_fieldset_sql($sql, $params);
         sort($result);
         $this->assertEquals(array($userinneither->id), $result);
+
+        // Tree with 'OR' of group conditions and a non-filtering condition.
+        // The non-filtering condition should mean that ALL users are included.
+        $tree = new tree(tree::get_root_json(array(
+            \availability_group\condition::get_json($group1->id),
+            \availability_date\condition::get_json(\availability_date\condition::DIRECTION_UNTIL, 3)
+        ), tree::OP_OR));
+        list($sql, $params) = $tree->get_user_list_sql(false, $info, false);
+        $this->assertEquals('', $sql);
+        $this->assertEquals(array(), $params);
     }
 
     /**
