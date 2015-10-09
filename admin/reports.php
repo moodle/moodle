@@ -50,7 +50,8 @@ $table->set_attribute('class', 'admintable generaltable');
 $table->setup();
 
 $plugins = array();
-foreach (core_component::get_plugin_list('report') as $plugin => $plugindir) {
+$availableplugins = core_component::get_plugin_list('report');
+foreach ($availableplugins as $plugin => $plugindir) {
     if (get_string_manager()->string_exists('pluginname', 'report_' . $plugin)) {
         $strpluginname = get_string('pluginname', 'report_' . $plugin);
     } else {
@@ -80,7 +81,10 @@ foreach ($plugins as $plugin => $name) {
         $uninstall = html_writer::link($uninstallurl, $struninstall);
     }
 
-    $stores = $logmanager->get_supported_logstores('report_' . $plugin);
+    $stores = array();
+    if (isset($availableplugins[$plugin])) {
+        $stores = $logmanager->get_supported_logstores('report_' . $plugin);
+    }
     if ($stores === false) {
         $supportedstores = get_string('logstorenotrequired', 'admin');
     } else if (!empty($stores)) {
