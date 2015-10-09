@@ -36,7 +36,7 @@ define(['core/yui'], function(Y) {
         this.yuiDialogue = null;
         var parent = this;
 
-        Y.use('moodle-core-notification', function () {
+        Y.use('moodle-core-notification', 'timers', function () {
 
             parent.yuiDialogue = new M.core.dialogue({
                 headerContent: title,
@@ -49,7 +49,11 @@ define(['core/yui'], function(Y) {
 
             parent.yuiDialogue.after('visibleChange', function(e) {
                 if (e.newVal) {
-                    afterShow(parent);
+                    // Delay the callback call to the next tick, otherwise it can happen that it is
+                    // executed before the dialogue constructor returns.
+                    Y.soon(function() {
+                        afterShow(parent);
+                    });
                 }
             });
 

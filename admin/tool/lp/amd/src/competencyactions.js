@@ -31,8 +31,8 @@ define(['jquery',
         'tool_lp/tree',
         'tool_lp/dialogue',
         'tool_lp/menubar',
-        'tool_lp/competencyselector'],
-       function($, url, templates, notification, str, ajax, dragdrop, Ariatree, Dialogue, menubar, competencyselector) {
+        'tool_lp/competencypicker'],
+       function($, url, templates, notification, str, ajax, dragdrop, Ariatree, Dialogue, menubar, Picker) {
 
     // Private variables and functions.
     /** @var {Object} treeModel - This is an object representing the nodes in the tree. */
@@ -43,6 +43,10 @@ define(['jquery',
     var moveTarget = null;
     /** @var {Number} pageContextId The page context ID. */
     var pageContextId;
+    /** @type {Object} Picker instance. */
+    var pickerInstance;
+    /** @type {Object} The competency we're picking a relation to. */
+    var relatedTarget;
 
     /**
      * Respond to choosing the "Add" menu item for the selected node in the tree.
@@ -158,7 +162,7 @@ define(['jquery',
             var i, competenciestree = [];
             for (i = 0; i < competencies.length; i++) {
                 var onecompetency = competencies[i];
-                if (onecompetency.parentid == 0) {
+                if (onecompetency.parentid == "0") {
                     onecompetency.children = [];
                     onecompetency.haschildren = 0;
                     competenciestree[competenciestree.length] = onecompetency;
@@ -312,22 +316,32 @@ define(['jquery',
      * @method relateCompetenciesHandler
      */
     var relateCompetenciesHandler = function() {
+        relatedTarget = $('[data-region="competencyactions"]').data('competency');
 
-        var competency = $('[data-region="competencyactions"]').data('competency');
+        if (!pickerInstance) {
+            pickerInstance = new Picker(pageContextId, relatedTarget.competencyframeworkid);
+            pickerInstance.on('save', function(e, data) {
+                var compId = data.competencyId;
 
-        // Initialise the competency selector.
-        var requests = [
-            { methodname: 'tool_lp_add_related_competency',
-              args: { relatedcompetencyid: competency.id } },
-            { methodname: 'tool_lp_data_for_related_competencies_section',
-              args: { competencyid: competency.id } }
-        ];
-        var pagerender = 'tool_lp/related_competencies';
-        var pageregion = 'relatedcompetencies';
+                var promises = ajax.call([
+                    { methodname: 'tool_lp_add_related_competency',
+                        args: { competencyid: compId, relatedcompetencyid: relatedTarget.id }},
+                    { methodname: 'tool_lp_data_for_related_competencies_section',
+                        args: { competencyid: relatedTarget.id }}
+                ]);
 
-        // Attach a callback to execute after the related competencies list is updated.
-        competencyselector.setAddCompetencyRequests(requests, pagerender, pageregion, updatedRelatedCompetencies);
-        competencyselector.openCompetencySelector();
+                promises[1].then(function(context) {
+                    return templates.render('tool_lp/related_competencies', context).done(function(html, js) {
+                        $('[data-region="relatedcompetencies"]').replaceWith(html);
+                        templates.runTemplateJS(js);
+                        updatedRelatedCompetencies();
+                    });
+                }, notification.exception);
+            });
+        }
+
+        pickerInstance.setDisallowedCompetencyIDs([relatedTarget.id]);
+        pickerInstance.display();
     };
 
     /**
@@ -480,7 +494,7 @@ define(['jquery',
             treeModel = model;
             pageContextId = pagectxid;
 
-            $('[data-region="competencyactions"]').on('click', addHandler);
+            $('[data-region="competencyactions"] [data-action="add"]').on('click', addHandler);
 
             menubar.enhance('.competencyactionsmenu', {
                 '[data-action="edit"]': editHandler,
@@ -489,7 +503,7 @@ define(['jquery',
                 '[data-action="moveup"]': moveUpHandler,
                 '[data-action="movedown"]': moveDownHandler,
                 '[data-action="linkedcourses"]': seeCoursesHandler,
-                '[data-action="relatedcompetencies"]': relateCompetenciesHandler
+                '[data-action="relatedcompetencies"]': relateCompetenciesHandler.bind(this)
             });
             $('[data-region="competencyactionsmenu"]').hide();
 
@@ -500,8 +514,6 @@ define(['jquery',
             $('[data-region="managecompetencies"] li').on('dragenter', dragEnter);
             $('[data-region="managecompetencies"] li').on('dragleave', dragLeave);
             $('[data-region="managecompetencies"] li').on('drop', dropOver);
-
-            competencyselector.init(pageContextId);
         },
 
         /**

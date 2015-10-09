@@ -1,10 +1,12 @@
 <div data-region="competencylinktree">
+{{^singleFramework}}
 <h3>{{#str}}competencyframeworks, tool_lp{{/str}}</h3>
 <select data-action="chooseframework">
 {{#frameworks}}
 <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{shortname}} <em>{{idnumber}}</em></option>
 {{/frameworks}}
 </select>
+{{/singleFramework}}
 <h3>{{#str}}locatecompetency, tool_lp{{/str}}</h3>
 
 <form data-region="filtercompetencies" data-frameworkid="{{framework.id}}">
