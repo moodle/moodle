@@ -28,7 +28,7 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/filelib.php');
 
-$fetchremote = optional_param('fetchremote', false, PARAM_BOOL); // Check for available plugins updates.
+$fetchupdates = optional_param('fetchupdates', false, PARAM_BOOL); // Check for available plugins updates.
 $updatesonly = optional_param('updatesonly', false, PARAM_BOOL); // Show updateable plugins only.
 $contribonly = optional_param('contribonly', false, PARAM_BOOL); // Show additional plugins only.
 $uninstall = optional_param('uninstall', '', PARAM_COMPONENT); // Uninstall the plugin.
@@ -207,7 +207,7 @@ $output = $PAGE->get_renderer('core', 'admin');
 
 $checker = \core\update\checker::instance();
 
-if ($fetchremote) {
+if ($fetchupdates) {
     require_sesskey();
     $checker->fetch();
     redirect($PAGE->url);

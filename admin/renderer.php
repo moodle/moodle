@@ -346,7 +346,7 @@ class core_admin_renderer extends plugin_renderer_base {
         if ($checker->enabled()) {
             $output .= $this->container_start('checkforupdates');
             $output .= $this->single_button(
-                new moodle_url($reloadurl, array('fetchremote' => 1)),
+                new moodle_url($reloadurl, array('fetchupdates' => 1)),
                 get_string('checkforupdates', 'core_plugin')
             );
             if ($timefetched = $checker->get_last_timefetched()) {
