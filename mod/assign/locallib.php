@@ -1518,7 +1518,7 @@ class assign {
                         s.assignment = :assignid AND
                         s.timemodified IS NOT NULL AND
                         s.status = :submitted AND
-                        (s.timemodified > g.timemodified OR g.timemodified IS NULL)';
+                        (s.timemodified >= g.timemodified OR g.timemodified IS NULL)';
 
         return $DB->count_records_sql($sql, $params);
     }
