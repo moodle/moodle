@@ -946,7 +946,7 @@ class core_plugin_manager {
         global $CFG;
 
         // Make sure the feature is not disabled.
-        if (!empty($CFG->disableonclickaddoninstall)) {
+        if (!empty($CFG->disableupdateautodeploy)) {
             $reason = 'disabled';
             return false;
         }
@@ -998,7 +998,11 @@ class core_plugin_manager {
      * @return array
      */
     public function filter_installable($remoteinfos) {
+        global $CFG;
 
+        if (!empty($CFG->disableupdateautodeploy)) {
+            return array();
+        }
         if (empty($remoteinfos)) {
             return array();
         }
@@ -1072,6 +1076,11 @@ class core_plugin_manager {
      * @return string|bool full path to the file, false on error
      */
     public function get_remote_plugin_zip($url, $md5) {
+        global $CFG;
+
+        if (!empty($CFG->disableupdateautodeploy)) {
+            return false;
+        }
         return $this->get_code_manager()->get_remote_plugin_zip($url, $md5);
     }
 
@@ -1234,6 +1243,10 @@ class core_plugin_manager {
      */
     public function install_plugins(array $plugins, $confirmed, $silent) {
         global $CFG, $OUTPUT;
+
+        if (!empty($CFG->disableupdateautodeploy)) {
+            return false;
+        }
 
         if (empty($plugins)) {
             return false;
@@ -1949,6 +1962,11 @@ class core_plugin_manager {
      * @return bool
      */
     public function can_cancel_plugin_installation(\core\plugininfo\base $plugin) {
+        global $CFG;
+
+        if (!empty($CFG->disableupdateautodeploy)) {
+            return false;
+        }
 
         if (empty($plugin) or $plugin->is_standard() or $plugin->is_subplugin()
                 or !$this->is_plugin_folder_removable($plugin->component)) {
@@ -1973,6 +1991,13 @@ class core_plugin_manager {
      * @return bool
      */
     public function can_cancel_plugin_upgrade(\core\plugininfo\base $plugin) {
+        global $CFG;
+
+        if (!empty($CFG->disableupdateautodeploy)) {
+            // Cancelling the plugin upgrade is actually installation of the
+            // previously archived version.
+            return false;
+        }
 
         if (empty($plugin) or $plugin->is_standard() or $plugin->is_subplugin()
                 or !$this->is_plugin_folder_removable($plugin->component)) {
@@ -1998,6 +2023,11 @@ class core_plugin_manager {
      * @param string $component
      */
     public function cancel_plugin_installation($component) {
+        global $CFG;
+
+        if (!empty($CFG->disableupdateautodeploy)) {
+            return false;
+        }
 
         $plugin = $this->get_plugin_info($component);
 
@@ -2014,6 +2044,11 @@ class core_plugin_manager {
      * @return array [(string)component] => (\core\plugininfo\base)plugin
      */
     public function list_cancellable_installations() {
+        global $CFG;
+
+        if (!empty($CFG->disableupdateautodeploy)) {
+            return array();
+        }
 
         $cancellable = array();
         foreach ($this->get_plugins() as $type => $plugins) {
@@ -2043,6 +2078,11 @@ class core_plugin_manager {
      * @return array [(string)component] => {(string)->component, (string)->zipfilepath}
      */
     public function list_restorable_archives() {
+        global $CFG;
+
+        if (!empty($CFG->disableupdateautodeploy)) {
+            return false;
+        }
 
         $codeman = $this->get_code_manager();
         $restorable = array();

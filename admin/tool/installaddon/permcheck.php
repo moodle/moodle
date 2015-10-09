@@ -36,7 +36,7 @@ if (!has_capability('moodle/site:config', context_system::instance())) {
     die();
 }
 
-if (!empty($CFG->disableonclickaddoninstall)) {
+if (!empty($CFG->disableupdateautodeploy)) {
     header('HTTP/1.1 403 Forbidden');
     die();
 }

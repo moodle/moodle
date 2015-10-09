@@ -4599,5 +4599,12 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015100600.00);
     }
 
+    if ($oldversion < 2015100800.01) {
+        // The only flag for preventing all plugins installation features is
+        // now $CFG->disableupdateautodeploy in config.php.
+        unset_config('updateautodeploy');
+        upgrade_main_savepoint(true, 2015100800.01);
+    }
+
     return true;
 }

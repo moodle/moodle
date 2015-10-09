@@ -447,17 +447,12 @@ $CFG->admin = 'admin';
 //
 //      $CFG->disableupdatenotifications = true;
 //
-// Use the following flag to completely disable the Automatic updates deployment
-// feature and hide it from the server administration UI.
-// TODO: drop this flag and use disableonclickaddoninstall instead.
+// Use the following flag to completely disable the installation of plugins
+// (new plugins, available updates and missing dependencies) and related
+// features (such as cancelling the plugin installation or upgrade) via the
+// server administration web interface.
 //
 //      $CFG->disableupdateautodeploy = true;
-//
-// Use the following flag to completely disable the installation of plugins
-// (new plugins, available updates and missing dependencies) via the server
-// administration UI.
-//
-//      $CFG->disableonclickaddoninstall = true;
 //
 // Use the following flag to disable modifications to scheduled tasks
 // whilst still showing the state of tasks.

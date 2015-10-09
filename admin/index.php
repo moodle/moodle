@@ -120,6 +120,18 @@ $installupdateversion = optional_param('installupdateversion', null, PARAM_INT);
 $installupdatex = optional_param('installupdatex', false, PARAM_BOOL); // Install all available plugin updates.
 $confirminstallupdate = optional_param('confirminstallupdate', false, PARAM_BOOL); // Available update(s) install confirmed?
 
+if (!empty($CFG->disableupdateautodeploy)) {
+    // Invalidate all requests to install plugins via the admin UI.
+    $newaddonreq = null;
+    $installdep = null;
+    $installdepx = false;
+    $abortupgrade = null;
+    $abortupgradex = null;
+    $installupdate = null;
+    $installupdateversion = null;
+    $installupdatex = false;
+}
+
 // Set up PAGE.
 $url = new moodle_url('/admin/index.php');
 $url->param('cache', $cache);
@@ -130,7 +142,7 @@ $PAGE->set_url($url);
 unset($url);
 
 // Are we returning from an add-on installation request at moodle.org/plugins?
-if ($newaddonreq and !$cache and empty($CFG->disableonclickaddoninstall)) {
+if ($newaddonreq and !$cache and empty($CFG->disableupdateautodeploy)) {
     $target = new moodle_url('/admin/tool/installaddon/index.php', array(
         'installaddonrequest' => $newaddonreq,
         'confirm' => 0));

@@ -364,6 +364,11 @@ $CFG->yuipatchlevel = 0;
 $CFG->yuipatchedmodules = array(
 );
 
+if (!empty($CFG->disableonclickaddoninstall)) {
+    // This config.php flag has been merged into another one.
+    $CFG->disableupdateautodeploy = true;
+}
+
 // Store settings from config.php in array in $CFG - we can use it later to detect problems and overrides.
 if (!isset($CFG->config_php_settings)) {
     $CFG->config_php_settings = (array)$CFG;

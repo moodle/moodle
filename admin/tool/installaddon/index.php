@@ -28,7 +28,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 admin_externalpage_setup('tool_installaddon_index');
 
-if (!empty($CFG->disableonclickaddoninstall)) {
+if (!empty($CFG->disableupdateautodeploy)) {
     notice(get_string('featuredisabled', 'tool_installaddon'));
 }
 

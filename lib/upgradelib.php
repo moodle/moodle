@@ -2384,10 +2384,14 @@ function check_upgrade_key($upgradekeyhash) {
  * @param moodle_url|string|null $return URL to go back on cancelling at the validation screen
  */
 function upgrade_install_plugins(array $installable, $confirmed, $heading='', $continue=null, $return=null) {
-    global $PAGE;
+    global $CFG, $PAGE;
 
     if (empty($return)) {
         $return = $PAGE->url;
+    }
+
+    if (!empty($CFG->disableupdateautodeploy)) {
+        redirect($return);
     }
 
     if (empty($installable)) {
