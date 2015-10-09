@@ -1941,17 +1941,48 @@ class core_plugin_manager {
     /**
      * Can the installation of the new plugin be cancelled?
      *
+     * Subplugins can be cancelled only via their parent plugin, not separately
+     * (they are considered as implicit requirements if distributed together
+     * with the main package).
+     *
      * @param \core\plugininfo\base $plugin
      * @return bool
      */
     public function can_cancel_plugin_installation(\core\plugininfo\base $plugin) {
 
-        if (empty($plugin) or $plugin->is_standard() or !$this->is_plugin_folder_removable($plugin->component)) {
+        if (empty($plugin) or $plugin->is_standard() or $plugin->is_subplugin()
+                or !$this->is_plugin_folder_removable($plugin->component)) {
             return false;
         }
 
         if ($plugin->get_status() === self::PLUGIN_STATUS_NEW) {
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Can the upgrade of the existing plugin be cancelled?
+     *
+     * Subplugins can be cancelled only via their parent plugin, not separately
+     * (they are considered as implicit requirements if distributed together
+     * with the main package).
+     *
+     * @param \core\plugininfo\base $plugin
+     * @return bool
+     */
+    public function can_cancel_plugin_upgrade(\core\plugininfo\base $plugin) {
+
+        if (empty($plugin) or $plugin->is_standard() or $plugin->is_subplugin()
+                or !$this->is_plugin_folder_removable($plugin->component)) {
+            return false;
+        }
+
+        if ($plugin->get_status() === self::PLUGIN_STATUS_UPGRADE) {
+            if ($this->get_code_manager()->get_archived_plugin_version($plugin->component, $plugin->versiondb)) {
+                return true;
+            }
         }
 
         return false;
@@ -1978,17 +2009,22 @@ class core_plugin_manager {
     }
 
     /**
-     * Cancels installation of all new additional plugins.
+     * Returns plugins, the installation of which can be cancelled.
+     *
+     * @return array [(string)component] => (\core\plugininfo\base)plugin
      */
-    public function cancel_all_plugin_installations() {
+    public function list_cancellable_installations() {
 
+        $cancellable = array();
         foreach ($this->get_plugins() as $type => $plugins) {
             foreach ($plugins as $plugin) {
                 if ($this->can_cancel_plugin_installation($plugin)) {
-                    $this->cancel_plugin_installation($plugin->component);
+                    $cancellable[$plugin->component] = $plugin;
                 }
             }
         }
+
+        return $cancellable;
     }
 
     /**
@@ -1999,6 +2035,29 @@ class core_plugin_manager {
      */
     public function archive_plugin_version(\core\plugininfo\base $plugin) {
         return $this->get_code_manager()->archive_plugin_version($plugin->rootdir, $plugin->component, $plugin->versiondisk);
+    }
+
+    /**
+     * Returns list of all archives that can be installed to cancel the plugin upgrade.
+     *
+     * @return array [(string)component] => {(string)->component, (string)->zipfilepath}
+     */
+    public function list_restorable_archives() {
+
+        $codeman = $this->get_code_manager();
+        $restorable = array();
+        foreach ($this->get_plugins() as $type => $plugins) {
+            foreach ($plugins as $plugin) {
+                if ($this->can_cancel_plugin_upgrade($plugin)) {
+                    $restorable[$plugin->component] = (object)array(
+                        'component' => $plugin->component,
+                        'zipfilepath' => $codeman->get_archived_plugin_version($plugin->component, $plugin->versiondb)
+                    );
+                }
+            }
+        }
+
+        return $restorable;
     }
 
     /**

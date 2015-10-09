@@ -231,30 +231,13 @@ class core_admin_renderer extends plugin_renderer_base {
     /**
      * Display a page to confirm plugin installation cancelation.
      *
-     * @param bool|string $plugin true if cancelling all, component name otherwsie
+     * @param array $abortable list of \core\update\plugininfo
      * @param moodle_url $continue
      * @return string
      */
-    public function upgrade_confirm_abort_install_page($plugin, moodle_url $continue) {
+    public function upgrade_confirm_abort_install_page(array $abortable, moodle_url $continue) {
 
         $pluginman = core_plugin_manager::instance();
-        $abortable = array();
-
-        if ($plugin === true) {
-            foreach ($pluginman->get_plugins() as $type => $pluginfos) {
-                foreach ($pluginfos as $pluginfo) {
-                    if ($pluginman->can_cancel_plugin_installation($pluginfo)) {
-                        $abortable[] = $pluginfo;
-                    }
-                }
-            }
-
-        } else {
-            $pluginfo = $pluginman->get_plugin_info($plugin);
-            if ($pluginman->can_cancel_plugin_installation($pluginfo)) {
-                $abortable[] = $pluginfo;
-            }
-        }
 
         if (empty($abortable)) {
             // The UI should not allow this.
@@ -885,7 +868,9 @@ class core_admin_renderer extends plugin_renderer_base {
         // Number of plugins requiring attention.
         $sumattention = 0;
         // List of all components we can cancel installation of.
-        $installabortable = array();
+        $installabortable = $pluginman->list_cancellable_installations();
+        // List of all components we can cancel upgrade of.
+        $upgradeabortable = $pluginman->list_restorable_archives();
 
         foreach ($plugininfo as $type => $plugins) {
 
@@ -963,16 +948,22 @@ class core_admin_renderer extends plugin_renderer_base {
                 }
                 $status = html_writer::span(get_string('status_' . $statuscode, 'core_plugin'), $statusclass);
 
-                if ($statuscode == core_plugin_manager::PLUGIN_STATUS_NEW and !$plugin->is_standard()) {
-                    if ($pluginman->is_plugin_folder_removable($plugin->component)) {
-                        $installabortable[] = $plugin->component;
-                        $status .= $this->output->single_button(
-                            new moodle_url($this->page->url, array('abortinstall' => $plugin->component)),
-                            get_string('cancelinstallone', 'core_plugin'),
-                            'post',
-                            array('class' => 'actionbutton')
-                        );
-                    }
+                if (!empty($installabortable[$plugin->component])) {
+                    $status .= $this->output->single_button(
+                        new moodle_url($this->page->url, array('abortinstall' => $plugin->component)),
+                        get_string('cancelinstallone', 'core_plugin'),
+                        'post',
+                        array('class' => 'actionbutton cancelinstallone')
+                    );
+                }
+
+                if (!empty($upgradeabortable[$plugin->component])) {
+                    $status .= $this->output->single_button(
+                        new moodle_url($this->page->url, array('abortupgrade' => $plugin->component)),
+                        get_string('cancelupgradeone', 'core_plugin'),
+                        'post',
+                        array('class' => 'actionbutton cancelupgradeone')
+                    );
                 }
 
                 $availableupdates = $plugin->available_updates();
@@ -1042,6 +1033,17 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         $out .= $this->output->container_start('actions');
+
+        $installableupdates = $pluginman->filter_installable($pluginman->available_updates());
+        if ($installableupdates) {
+            $out .= $this->output->single_button(
+                new moodle_url($this->page->url, array('installupdatex' => 1)),
+                get_string('updateavailableinstallall', 'core_admin', count($installableupdates)),
+                'post',
+                array('class' => 'singlebutton updateavailableinstallall')
+            );
+        }
+
         if ($installabortable) {
             $out .= $this->output->single_button(
                 new moodle_url($this->page->url, array('abortinstallx' => 1)),
@@ -1051,13 +1053,12 @@ class core_admin_renderer extends plugin_renderer_base {
             );
         }
 
-        $installableupdates = $pluginman->filter_installable($pluginman->available_updates());
-        if ($installableupdates) {
+        if ($upgradeabortable) {
             $out .= $this->output->single_button(
-                new moodle_url($this->page->url, array('installupdatex' => 1)),
-                get_string('updateavailableinstallall', 'core_admin', count($installableupdates)),
+                new moodle_url($this->page->url, array('abortupgradex' => 1)),
+                get_string('cancelupgradeall', 'core_plugin', count($upgradeabortable)),
                 'post',
-                array('class' => 'singlebutton updateavailableinstallall')
+                array('class' => 'singlebutton cancelupgradeall')
             );
         }
 
@@ -1175,7 +1176,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 );
             }
 
-            $out.= html_writer::div(html_writer::link(new moodle_url('/admin/tool/installaddon/'),
+            $out .= html_writer::div(html_writer::link(new moodle_url('/admin/tool/installaddon/'),
                 get_string('dependencyuploadmissing', 'core_plugin')), 'dependencyuploadmissing');
 
             $out .= $this->output->container_end(); // .plugins-check-dependencies-actions
@@ -1622,7 +1623,6 @@ class core_admin_renderer extends plugin_renderer_base {
 
                 if ($plugin->is_standard()) {
                     $row->attributes['class'] .= ' standard';
-                    //$source = html_writer::div(get_string('sourcestd', 'core_plugin'), 'source label');
                     $source = '';
                 } else {
                     $row->attributes['class'] .= ' extension';

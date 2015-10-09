@@ -112,6 +112,9 @@ $confirminstalldep = optional_param('confirminstalldep', false, PARAM_BOOL); // 
 $abortinstall = optional_param('abortinstall', null, PARAM_COMPONENT); // Cancel installation of the given new plugin.
 $abortinstallx = optional_param('abortinstallx', null, PARAM_BOOL); // Cancel installation of all new plugins.
 $confirmabortinstall = optional_param('confirmabortinstall', false, PARAM_BOOL); // Installation cancel confirmed.
+$abortupgrade = optional_param('abortupgrade', null, PARAM_COMPONENT); // Cancel upgrade of the given existing plugin.
+$abortupgradex = optional_param('abortupgradex', null, PARAM_BOOL); // Cancel upgrade of all upgradable plugins.
+$confirmabortupgrade = optional_param('confirmabortupgrade', false, PARAM_BOOL); // Upgrade cancel confirmed.
 $installupdate = optional_param('installupdate', null, PARAM_COMPONENT); // Install given available update.
 $installupdateversion = optional_param('installupdateversion', null, PARAM_INT); // Version of the available update to install.
 $installupdatex = optional_param('installupdatex', false, PARAM_BOOL); // Install all available plugin updates.
@@ -352,17 +355,33 @@ if (!$cache and $version > $CFG->version) {  // upgrade
 
         $pluginman = core_plugin_manager::instance();
 
+        // Check for available updates.
+        if ($fetchupdates) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $updateschecker = \core\update\checker::instance();
+            if ($updateschecker->enabled()) {
+                $updateschecker->fetch();
+            }
+            redirect($PAGE->url);
+        }
+
         // Cancel all plugin installations.
         if ($abortinstallx) {
             // No sesskey support guaranteed here, because sessions might not work yet.
-            if ($confirmabortinstall) {
-                $pluginman->cancel_all_plugin_installations();
-                redirect($PAGE->url);
-            } else {
-                $continue = new moodle_url($PAGE->url, array('abortinstallx' => $abortinstallx, 'confirmabortinstall' => 1));
-                echo $output->upgrade_confirm_abort_install_page(true, $continue);
-                die();
+            $abortables = $pluginman->list_cancellable_installations();
+            if ($abortables) {
+                if ($confirmabortinstall) {
+                    foreach ($abortables as $plugin) {
+                        $pluginman->cancel_plugin_installation($plugin->component);
+                    }
+                    redirect($PAGE->url);
+                } else {
+                    $continue = new moodle_url($PAGE->url, array('abortinstallx' => $abortinstallx, 'confirmabortinstall' => 1));
+                    echo $output->upgrade_confirm_abort_install_page($abortables, $continue);
+                    die();
+                }
             }
+            redirect($PAGE->url);
         }
 
         // Cancel single plugin installation.
@@ -373,9 +392,40 @@ if (!$cache and $version > $CFG->version) {  // upgrade
                 redirect($PAGE->url);
             } else {
                 $continue = new moodle_url($PAGE->url, array('abortinstall' => $abortinstall, 'confirmabortinstall' => 1));
-                echo $output->upgrade_confirm_abort_install_page($abortinstall, $continue);
-                die();
+                $abortable = $pluginman->get_plugin_info($abortinstall);
+                if ($pluginman->can_cancel_plugin_installation($abortable)) {
+                    echo $output->upgrade_confirm_abort_install_page(array($abortable), $continue);
+                    die();
+                }
+                redirect($PAGE->url);
             }
+        }
+
+        // Cancel all plugins upgrades (that is, restore archived versions).
+        if ($abortupgradex) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $restorable = $pluginman->list_restorable_archives();
+            if ($restorable) {
+                upgrade_install_plugins($restorable, $confirmabortupgrade,
+                    get_string('cancelupgradehead', 'core_plugin'),
+                    new moodle_url($PAGE->url, array('abortupgradex' => 1, 'confirmabortupgrade' => 1))
+                );
+            }
+            redirect($PAGE->url);
+        }
+
+        // Cancel single plugin upgrade (that is, install the archived version).
+        if ($abortupgrade) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $restorable = $pluginman->list_restorable_archives();
+            if (isset($restorable[$abortupgrade])) {
+                $restorable = array($restorable[$abortupgrade]);
+                upgrade_install_plugins($restorable, $confirmabortupgrade,
+                    get_string('cancelupgradehead', 'core_plugin'),
+                    new moodle_url($PAGE->url, array('abortupgrade' => $abortupgrade, 'confirmabortupgrade' => 1))
+                );
+            }
+            redirect($PAGE->url);
         }
 
         // Install all available missing dependencies.
@@ -423,15 +473,6 @@ if (!$cache and $version > $CFG->version) {  // upgrade
                     )
                 );
             }
-        }
-
-        if ($fetchupdates) {
-            // No sesskey support guaranteed here, because sessions might not work yet.
-            $updateschecker = \core\update\checker::instance();
-            if ($updateschecker->enabled()) {
-                $updateschecker->fetch();
-            }
-            redirect($PAGE->url);
         }
 
         echo $output->upgrade_plugin_check_page(core_plugin_manager::instance(), \core\update\checker::instance(),
@@ -487,17 +528,33 @@ if (!$cache and moodle_needs_upgrading()) {
             $PAGE->set_heading($strplugincheck);
             $PAGE->set_cacheable(false);
 
+            // Check for available updates.
+            if ($fetchupdates) {
+                require_sesskey();
+                $updateschecker = \core\update\checker::instance();
+                if ($updateschecker->enabled()) {
+                    $updateschecker->fetch();
+                }
+                redirect($PAGE->url);
+            }
+
             // Cancel all plugin installations.
             if ($abortinstallx) {
                 require_sesskey();
-                if ($confirmabortinstall) {
-                    $pluginman->cancel_all_plugin_installations();
-                    redirect($PAGE->url);
-                } else {
-                    $continue = new moodle_url($PAGE->url, array('abortinstallx' => $abortinstallx, 'confirmabortinstall' => 1));
-                    echo $output->upgrade_confirm_abort_install_page(true, $continue);
-                    die();
+                $abortables = $pluginman->list_cancellable_installations();
+                if ($abortables) {
+                    if ($confirmabortinstall) {
+                        foreach ($abortables as $plugin) {
+                            $pluginman->cancel_plugin_installation($plugin->component);
+                        }
+                        redirect($PAGE->url);
+                    } else {
+                        $continue = new moodle_url($PAGE->url, array('abortinstallx' => $abortinstallx, 'confirmabortinstall' => 1));
+                        echo $output->upgrade_confirm_abort_install_page($abortables, $continue);
+                        die();
+                    }
                 }
+                redirect($PAGE->url);
             }
 
             // Cancel single plugin installation.
@@ -508,16 +565,38 @@ if (!$cache and moodle_needs_upgrading()) {
                     redirect($PAGE->url);
                 } else {
                     $continue = new moodle_url($PAGE->url, array('abortinstall' => $abortinstall, 'confirmabortinstall' => 1));
-                    echo $output->upgrade_confirm_abort_install_page($abortinstall, $continue);
-                    die();
+                    $abortable = $pluginman->get_plugin_info($abortinstall);
+                    if ($pluginman->can_cancel_plugin_installation($abortable)) {
+                        echo $output->upgrade_confirm_abort_install_page(array($abortable), $continue);
+                        die();
+                    }
+                    redirect($PAGE->url);
                 }
             }
 
-            if ($fetchupdates) {
+            // Cancel all plugins upgrades (that is, restore archived versions).
+            if ($abortupgradex) {
                 require_sesskey();
-                $updateschecker = \core\update\checker::instance();
-                if ($updateschecker->enabled()) {
-                    $updateschecker->fetch();
+                $restorable = $pluginman->list_restorable_archives();
+                if ($restorable) {
+                    upgrade_install_plugins($restorable, $confirmabortupgrade,
+                        get_string('cancelupgradehead', 'core_plugin'),
+                        new moodle_url($PAGE->url, array('abortupgradex' => 1, 'confirmabortupgrade' => 1))
+                    );
+                }
+                redirect($PAGE->url);
+            }
+
+            // Cancel single plugin upgrade (that is, install the archived version).
+            if ($abortupgrade) {
+                require_sesskey();
+                $restorable = $pluginman->list_restorable_archives();
+                if (isset($restorable[$abortupgrade])) {
+                    $restorable = array($restorable[$abortupgrade]);
+                    upgrade_install_plugins($restorable, $confirmabortupgrade,
+                        get_string('cancelupgradehead', 'core_plugin'),
+                        new moodle_url($PAGE->url, array('abortupgrade' => $abortupgrade, 'confirmabortupgrade' => 1))
+                    );
                 }
                 redirect($PAGE->url);
             }
