@@ -145,40 +145,6 @@ class code_manager {
     }
 
     /**
-     * Move a folder with the plugin code from the source to the target location
-     *
-     * This can be used to move plugin folders to and from the dirroot/dataroot
-     * as needed. It is assumed that the caller checked that both locations are
-     * writable.
-     *
-     * Permissions in the target location are set to the same values that the
-     * parent directory has (see MDL-42110 for details).
-     *
-     * @param string $source full path to the current plugin code folder
-     * @param string $target full path to the new plugin code folder
-     */
-    public function move_plugin_directory($source, $target) {
-
-        $targetparent = dirname($target);
-
-        if ($targetparent === '.') {
-            // No directory separator in $target..
-            throw new coding_exception('Invalid target path', $target);
-        }
-
-        if (!is_writable($targetparent)) {
-            throw new coding_exception('Attempting to move into non-writable parent directory', $targetparent);
-        }
-
-        // Use parent directory's permissions for us, too.
-        $dirpermissions = fileperms($targetparent);
-        // Strip execute flags and use that for files.
-        $filepermissions = ($dirpermissions & 0666);
-
-        $this->move_directory($source, $target, $dirpermissions, $filepermissions);
-    }
-
-    /**
      * Extracts the saved plugin ZIP file.
      *
      * Returns the list of files found in the ZIP. The format of that list is
@@ -469,63 +435,6 @@ class code_manager {
 
         return download_file_content($url, $headers, $postdata, $fullresponse, $timeout,
             $connecttimeout, $skipcertverify, $tofile, $calctimeout);
-    }
-
-    /**
-     * Internal helper method supposed to be called by self::move_plugin_directory() only.
-     *
-     * Moves the given source into a new location recursively.
-     * This is cross-device safe implementation to be used instead of the native rename() function.
-     * See https://bugs.php.net/bug.php?id=54097 for more details.
-     *
-     * @param string $source full path to the existing directory
-     * @param string $target full path to the new location of the directory
-     * @param int $dirpermissions
-     * @param int $filepermissions
-     */
-    protected function move_directory($source, $target, $dirpermissions, $filepermissions) {
-
-        if (file_exists($target)) {
-            throw new coding_exception('Attempting to overwrite existing directory', $target);
-        }
-
-        if (is_dir($source)) {
-            $handle = opendir($source);
-        } else {
-            throw new coding_exception('Attempting to move non-existing source directory', $source);
-        }
-
-        if (!file_exists($target)) {
-            // Do not use make_writable_directory() here - it is intended for dataroot only.
-            mkdir($target, true);
-            @chmod($target, $dirpermissions);
-        }
-
-        if (!is_writable($target)) {
-            closedir($handle);
-            throw new coding_exception('Created folder not writable', $target);
-        }
-
-        while ($filename = readdir($handle)) {
-            $sourcepath = $source.'/'.$filename;
-            $targetpath = $target.'/'.$filename;
-
-            if ($filename === '.' or $filename === '..') {
-                continue;
-            }
-
-            if (is_dir($sourcepath)) {
-                $this->move_directory($sourcepath, $targetpath, $dirpermissions, $filepermissions);
-
-            } else {
-                rename($sourcepath, $targetpath);
-                @chmod($targetpath, $filepermissions);
-            }
-        }
-
-        closedir($handle);
-        rmdir($source);
-        clearstatcache();
     }
 
     /**

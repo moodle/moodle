@@ -69,56 +69,6 @@ class core_update_code_manager_testcase extends advanced_testcase {
         $this->assertEquals(file_get_contents($returned), 'http://valid/');
     }
 
-    public function test_move_plugin_directory() {
-        $codeman = new \core\update\testable_code_manager();
-
-        $tmp = make_request_directory();
-        $dir = make_writable_directory($tmp.'/mod/foo/lang/en');
-        file_put_contents($dir.'/foo.txt', 'Hello world!');
-
-        $codeman->move_plugin_directory($tmp.'/mod/foo', $tmp.'/mod/.foo.2015100200');
-
-        $this->assertTrue(is_dir($tmp.'/mod'));
-        $this->assertFalse(is_dir($tmp.'/mod/foo'));
-        $this->assertTrue(is_file($tmp.'/mod/.foo.2015100200/lang/en/foo.txt'));
-        $this->assertSame('Hello world!', file_get_contents($tmp.'/mod/.foo.2015100200/lang/en/foo.txt'));
-    }
-
-    /**
-     * @expectedException moodle_exception
-     */
-    public function test_move_plugin_directory_invalid_target() {
-        $codeman = new \core\update\testable_code_manager();
-        $codeman->move_plugin_directory(make_request_directory(), 'this_is_not_valid_path');
-    }
-
-    /**
-     * @expectedException moodle_exception
-     */
-    public function test_move_plugin_directory_nonwritable_target() {
-        $codeman = new \core\update\testable_code_manager();
-        // If this does not throw exception for you, please send me your IP address.
-        $codeman->move_plugin_directory(make_request_directory(), '/');
-    }
-
-    /**
-     * @expectedException moodle_exception
-     */
-    public function test_move_plugin_directory_existing_target() {
-        $codeman = new \core\update\testable_code_manager();
-        $dir1 = make_request_directory();
-        $dir2 = make_request_directory();
-        $codeman->move_plugin_directory($dir1, $dir2);
-    }
-
-    /**
-     * @expectedException moodle_exception
-     */
-    public function test_move_plugin_directory_nonexisting_source() {
-        $codeman = new \core\update\testable_code_manager();
-        $codeman->move_plugin_directory(make_request_directory().'/source', make_request_directory().'/target');
-    }
-
     public function test_unzip_plugin_file() {
         $codeman = new \core\update\testable_code_manager();
         $zipfilepath = __DIR__.'/fixtures/update_validator/zips/invalidroot.zip';
