@@ -24,7 +24,11 @@
 
 namespace core\update;
 
+use core_component;
 use coding_exception;
+use SplFileInfo;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -221,6 +225,146 @@ class code_manager {
     }
 
     /**
+     * Make an archive backup of the existing plugin folder.
+     *
+     * @param string $folderpath full path to the plugin folder
+     * @param string $targetzip full path to the zip file to be created
+     * @return bool true if file created, false if not
+     */
+    public function zip_plugin_folder($folderpath, $targetzip) {
+
+        if (file_exists($targetzip)) {
+            throw new coding_exception('Attempting to create already existing ZIP file', $targetzip);
+        }
+
+        if (!is_writable(dirname($targetzip))) {
+            throw new coding_exception('Target ZIP location not writable', dirname($targetzip));
+        }
+
+        if (!is_dir($folderpath)) {
+            throw new coding_exception('Attempting to ZIP non-existing source directory', $folderpath);
+        }
+
+        $files = $this->list_plugin_folder_files($folderpath);
+        $fp = get_file_packer('application/zip');
+        return $fp->archive_to_pathname($files, $targetzip, false);
+    }
+
+    /**
+     * Archive the current plugin on-disk version.
+     *
+     * @param string $folderpath full path to the plugin folder
+     * @param string $component
+     * @param int $version
+     * @param bool $overwrite overwrite existing archive if found
+     * @return bool
+     */
+    public function archive_plugin_version($folderpath, $component, $version, $overwrite=false) {
+
+        if ($component !== clean_param($component, PARAM_SAFEDIR)) {
+            // This should never happen, but just in case.
+            throw new moodle_exception('unexpected_plugin_component_format', 'core_plugin', '', null, $component);
+        }
+
+        if ((string)$version !== clean_param((string)$version, PARAM_FILE)) {
+            // Prevent some nasty injections via $plugin->version tricks.
+            throw new moodle_exception('unexpected_plugin_version_format', 'core_plugin', '', null, $version);
+        }
+
+        if (empty($component) or empty($version)) {
+            return false;
+        }
+
+        if (!is_dir($folderpath)) {
+            return false;
+        }
+
+        $archzip = $this->temproot.'/archive/'.$component.'/'.$version.'.zip';
+
+        if (file_exists($archzip) and !$overwrite) {
+            return true;
+        }
+
+        $tmpzip = make_request_directory().'/'.$version.'.zip';
+        $zipped = $this->zip_plugin_folder($folderpath, $tmpzip);
+
+        if (!$zipped) {
+            return false;
+        }
+
+        // Assert that the file looks like a valid one.
+        list($expectedtype, $expectedname) = core_component::normalize_component($component);
+        $actualname = $this->get_plugin_zip_root_dir($tmpzip);
+        if ($actualname !== $expectedname) {
+            // This should not happen.
+            throw new moodle_exception('unexpected_archive_structure', 'core_plugin');
+        }
+
+        make_writable_directory(dirname($archzip));
+        return rename($tmpzip, $archzip);
+    }
+
+    /**
+     * Return the path to the ZIP file with the archive of the given plugin version.
+     *
+     * @param string $component
+     * @param int $version
+     * @return string|bool false if not found, full path otherwise
+     */
+    public function get_archived_plugin_version($component, $version) {
+
+        if (empty($component) or empty($version)) {
+            return false;
+        }
+
+        $archzip = $this->temproot.'/archive/'.$component.'/'.$version.'.zip';
+
+        if (file_exists($archzip)) {
+            return $archzip;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns list of all files in the given directory.
+     *
+     * Given a path like /full/path/to/mod/workshop, it returns array like
+     *
+     *  [workshop/] => /full/path/to/mod/workshop
+     *  [workshop/lang/] => /full/path/to/mod/workshop/lang
+     *  [workshop/lang/workshop.php] => /full/path/to/mod/workshop/lang/workshop.php
+     *  ...
+     *
+     * Which mathes the format used by Moodle file packers.
+     *
+     * @param string $folderpath full path to the plugin directory
+     * @return array (string)relpath => (string)fullpath
+     */
+    public function list_plugin_folder_files($folderpath) {
+
+        $folder = new RecursiveDirectoryIterator($folderpath);
+        $iterator = new RecursiveIteratorIterator($folder);
+        $folderpathinfo = new SplFileInfo($folderpath);
+        $strip = strlen($folderpathinfo->getPathInfo()->getRealPath()) + 1;
+        $files = array();
+        foreach ($iterator as $fileinfo) {
+            if ($fileinfo->getFilename() === '..') {
+                continue;
+            }
+            if (strpos($fileinfo->getRealPath(), $folderpathinfo->getRealPath() !== 0)) {
+                throw new moodle_exception('unexpected_filepath_mismatch', 'core_plugin');
+            }
+            $key = substr($fileinfo->getRealPath(), $strip);
+            if ($fileinfo->isDir() and substr($key, -1) !== '/') {
+                $key .= '/';
+            }
+            $files[$key] = $fileinfo->getRealPath();
+        }
+        return $files;
+    }
+
+    /**
      * Detects the plugin's name from its ZIP file.
      *
      * Plugin ZIP packages are expected to contain a single directory and the
@@ -267,6 +411,7 @@ class code_manager {
      */
     protected function init_temp_directories() {
         make_writable_directory($this->temproot.'/distfiles');
+        make_writable_directory($this->temproot.'/archive');
     }
 
     /**

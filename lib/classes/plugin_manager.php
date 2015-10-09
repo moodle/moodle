@@ -1341,11 +1341,7 @@ class core_plugin_manager {
             list($plugintype, $pluginname) = core_component::normalize_component($plugin->component);
             $target = $this->get_plugintype_root($plugintype);
             if (file_exists($target.'/'.$pluginname)) {
-                $current = $this->get_plugin_info($plugin->component);
-                if ($current->versiondb and $current->versiondb == $current->versiondisk) {
-                    // TODO Archive existing version so that we can revert.
-                }
-                remove_dir($target.'/'.$pluginname);
+                $this->remove_plugin_folder($this->get_plugin_info($plugin->component));
             }
             if (!$this->unzip_plugin_file($zipfile, $target, $pluginname)) {
                 $silent or $this->mtrace(get_string('error'));
@@ -1912,6 +1908,37 @@ class core_plugin_manager {
     }
 
     /**
+     * Remove the current plugin code from the dirroot.
+     *
+     * If removing the currently installed version (which happens during
+     * updates), we archive the code so that the upgrade can be cancelled.
+     *
+     * To prevent accidental data-loss, we also archive the existing plugin
+     * code if cancelling installation of it, so that the developer does not
+     * loose the only version of their work-in-progress.
+     *
+     * @param \core\plugininfo\base $plugin
+     */
+    public function remove_plugin_folder(\core\plugininfo\base $plugin) {
+
+        if (!$this->is_plugin_folder_removable($plugin->component)) {
+            throw new moodle_exception('err_removing_unremovable_folder', 'core_plugin', '',
+                array('plugin' => $pluginfo->component, 'rootdir' => $pluginfo->rootdir),
+                'plugin root folder is not removable as expected');
+        }
+
+        if ($plugin->get_status() === self::PLUGIN_STATUS_UPTODATE or $plugin->get_status() === self::PLUGIN_STATUS_NEW) {
+            $this->archive_plugin_version($plugin);
+        }
+
+        remove_dir($plugin->rootdir);
+        clearstatcache();
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
+        }
+    }
+
+    /**
      * Can the installation of the new plugin be cancelled?
      *
      * @param \core\plugininfo\base $plugin
@@ -1938,16 +1965,13 @@ class core_plugin_manager {
      * upgrade happens.
      *
      * @param string $component
-     * @return bool
      */
     public function cancel_plugin_installation($component) {
 
         $plugin = $this->get_plugin_info($component);
 
         if ($this->can_cancel_plugin_installation($plugin)) {
-            if ($this->archive_plugin_version($plugin)) {
-                return remove_dir($plugin->rootdir);
-            }
+            $this->remove_plugin_folder($plugin);
         }
 
         return false;
@@ -1974,8 +1998,7 @@ class core_plugin_manager {
      * @return bool
      */
     public function archive_plugin_version(\core\plugininfo\base $plugin) {
-        // TODO use code_manager to do it.
-        return true;
+        return $this->get_code_manager()->archive_plugin_version($plugin->rootdir, $plugin->component, $plugin->versiondisk);
     }
 
     /**

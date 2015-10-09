@@ -170,4 +170,60 @@ class core_update_code_manager_testcase extends advanced_testcase {
         $this->assertEquals('bar', $codeman->get_plugin_zip_root_dir($zipfilepath));
     }
 
+    public function test_list_plugin_folder_files() {
+        $fixtures = __DIR__.'/fixtures/update_validator/plugindir';
+        $codeman = new \core\update\testable_code_manager();
+        $files = $codeman->list_plugin_folder_files($fixtures.'/foobar');
+        $this->assertInternalType('array', $files);
+        $this->assertEquals(6, count($files));
+        $this->assertEquals($files['foobar/'], $fixtures.'/foobar');
+        $this->assertEquals($files['foobar/lang/en/local_foobar.php'], $fixtures.'/foobar/lang/en/local_foobar.php');
+    }
+
+    public function test_zip_plugin_folder() {
+        $fixtures = __DIR__.'/fixtures/update_validator/plugindir';
+        $storage = make_request_directory();
+        $codeman = new \core\update\testable_code_manager();
+        $codeman->zip_plugin_folder($fixtures.'/foobar', $storage.'/foobar.zip');
+        $this->assertTrue(file_exists($storage.'/foobar.zip'));
+
+        $fp = get_file_packer('application/zip');
+        $zipfiles = $fp->list_files($storage.'/foobar.zip');
+        $this->assertNotEmpty($zipfiles);
+        foreach ($zipfiles as $zipfile) {
+            if ($zipfile->is_directory) {
+                $this->assertTrue(is_dir($fixtures.'/'.$zipfile->pathname));
+            } else {
+                $this->assertTrue(file_exists($fixtures.'/'.$zipfile->pathname));
+            }
+        }
+    }
+
+    public function test_archiving_plugin_version() {
+        $fixtures = __DIR__.'/fixtures/update_validator/plugindir';
+        $codeman = new \core\update\testable_code_manager();
+
+        $this->assertFalse($codeman->archive_plugin_version($fixtures.'/foobar', 'local_foobar', 0));
+        $this->assertFalse($codeman->archive_plugin_version($fixtures.'/foobar', 'local_foobar', null));
+        $this->assertFalse($codeman->archive_plugin_version($fixtures.'/foobar', '', 2015100900));
+        $this->assertFalse($codeman->archive_plugin_version($fixtures.'/foobar-does-not-exist', 'local_foobar', 2013031900));
+
+        $this->assertFalse($codeman->get_archived_plugin_version('local_foobar', 2013031900));
+        $this->assertFalse($codeman->get_archived_plugin_version('mod_foobar', 2013031900));
+
+        $this->assertTrue($codeman->archive_plugin_version($fixtures.'/foobar', 'local_foobar', 2013031900, true));
+
+        $this->assertNotFalse($codeman->get_archived_plugin_version('local_foobar', 2013031900));
+        $this->assertTrue(file_exists($codeman->get_archived_plugin_version('local_foobar', 2013031900)));
+        $this->assertTrue(file_exists($codeman->get_archived_plugin_version('local_foobar', '2013031900')));
+
+        $this->assertFalse($codeman->get_archived_plugin_version('mod_foobar', 2013031900));
+        $this->assertFalse($codeman->get_archived_plugin_version('local_foobar', 2013031901));
+        $this->assertFalse($codeman->get_archived_plugin_version('', 2013031901));
+        $this->assertFalse($codeman->get_archived_plugin_version('local_foobar', ''));
+
+        $this->assertTrue($codeman->archive_plugin_version($fixtures.'/foobar', 'local_foobar', '2013031900'));
+        $this->assertTrue(file_exists($codeman->get_archived_plugin_version('local_foobar', 2013031900)));
+
+    }
 }

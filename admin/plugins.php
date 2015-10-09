@@ -148,13 +148,6 @@ if ($delete and $confirmed) {
             'core_plugin_manager::get_plugin_info() returned not-null versiondb for the plugin to be deleted');
     }
 
-    // Make sure the folder is removable.
-    if (!$pluginman->is_plugin_folder_removable($pluginfo->component)) {
-        throw new moodle_exception('err_removing_unremovable_folder', 'core_plugin', '',
-            array('plugin' => $pluginfo->component, 'rootdir' => $pluginfo->rootdir),
-            'plugin root folder is not removable as expected');
-    }
-
     // Make sure the folder is within Moodle installation tree.
     if (strpos($pluginfo->rootdir, $CFG->dirroot) !== 0) {
         throw new moodle_exception('err_unexpected_plugin_rootdir', 'core_plugin', '',
@@ -163,11 +156,8 @@ if ($delete and $confirmed) {
     }
 
     // So long, and thanks for all the bugs.
-    fulldelete($pluginfo->rootdir);
-    // Reset op code caches.
-    if (function_exists('opcache_reset')) {
-        opcache_reset();
-    }
+    $pluginman->remove_plugin_folder($pluginfo);
+
     // We need to execute upgrade to make sure everything including caches is up to date.
     redirect(new moodle_url('/admin/index.php'));
 }
