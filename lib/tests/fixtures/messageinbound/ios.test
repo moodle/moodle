@@ -21,6 +21,8 @@ Thanks for helping with QA testing. Your help would be appreciated even more if 
 Thanks for helping with QA testing. It has been observed that you assigned this issue to yourself for testing, but no action has been taken on this.  It will be helpful if you can either test this or un-assign yourself, so someone else can take it.
 
 ----EXPECTEDHTML----
+ 
+
 Sample reply messages:
 
 Thanks for offering to help with QA testing. I've added you to the testers
@@ -49,7 +51,7 @@ passed without being run.
 
 Thanks for helping with QA testing. It has been observed that you assigned
 this issue to yourself for testing, but no action has been taken on this.
-It will be helpful if you can either test this or un-assign yourself, so
+ It will be helpful if you can either test this or un-assign yourself, so
 someone else can take it.
 
 Sent from my iPad

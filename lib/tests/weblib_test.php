@@ -94,7 +94,7 @@ class core_weblib_testcase extends advanced_testcase {
             format_text_email('<p class="frogs">This is a <strong class=\'fishes\'>test</strong></p>', FORMAT_HTML));
         $this->assertSame('& so is this',
             format_text_email('&amp; so is this', FORMAT_HTML));
-        $this->assertSame('Two bullets: '.core_text::code2utf8(8226).' *',
+        $this->assertSame('Two bullets: ' . core_text::code2utf8(8226) . ' ' . core_text::code2utf8(8226),
             format_text_email('Two bullets: &#x2022; &#8226;', FORMAT_HTML));
         $this->assertSame(core_text::code2utf8(0x7fd2).core_text::code2utf8(0x7fd2),
             format_text_email('&#x7fd2;&#x7FD2;', FORMAT_HTML));
