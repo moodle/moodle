@@ -518,9 +518,9 @@ class api {
     public static function count_courses_using_competency($competencyid) {
 
         // OK - all set.
-        $coursecompetency = new course_competency();
-        $courses = $coursecompetency->list_courses_min($competencyid);
+        $courses = course_competency::list_courses_min($competencyid);
         $count = 0;
+
         // Now check permissions on each course.
         foreach ($courses as $course) {
             $context = context_course::instance($course->id);
@@ -548,9 +548,9 @@ class api {
     public static function list_courses_using_competency($competencyid) {
 
         // OK - all set.
-        $coursecompetency = new course_competency();
-        $courses = $coursecompetency->list_courses($competencyid);
+        $courses = course_competency::list_courses($competencyid);
         $result = array();
+
         // Now check permissions on each course.
         foreach ($courses as $id => $course) {
             $context = context_course::instance($course->id);
@@ -559,7 +559,6 @@ class api {
                 unset($courses[$id]);
                 continue;
             }
-
             if (!$course->visible && !has_capability('course:viewhidden', $context)) {
                 unset($courses[$id]);
                 continue;
@@ -593,8 +592,7 @@ class api {
         }
 
         // OK - all set.
-        $coursecompetency = new course_competency();
-        return $coursecompetency->count_competencies($courseid, $onlyvisible);
+        return course_competency::count_competencies($courseid, $onlyvisible);
     }
 
     /**
@@ -618,8 +616,7 @@ class api {
         }
 
         // OK - all set.
-        $coursecompetency = new course_competency();
-        return $coursecompetency->list_competencies($courseid, $onlyvisible);
+        return course_competency::list_competencies($courseid, $onlyvisible);
     }
 
     /**

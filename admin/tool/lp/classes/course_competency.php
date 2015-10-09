@@ -33,139 +33,80 @@ use stdClass;
  */
 class course_competency extends persistent {
 
-    /** @var int $courseid The course id */
-    private $courseid = 0;
-
-    /** @var int $competencyid The competency id */
-    private $competencyid = 0;
-
-    /** @var int $sortorder A number used to influence sorting */
-    private $sortorder = 0;
+    const TABLE = 'tool_lp_course_competency';
 
     /**
-     * Method that provides the table name matching this class.
+     * Return the definition of the properties of this model.
      *
-     * @return string
+     * @return array
      */
-    public function get_table_name() {
-        return 'tool_lp_course_competency';
+    protected static function define_properties() {
+        return array(
+            'courseid' => array(
+                'type' => PARAM_INT
+            ),
+            'competencyid' => array(
+                'type' => PARAM_INT
+            ),
+            'sortorder' => array(
+                'type' => PARAM_INT
+            ),
+        );
     }
 
     /**
-     * Get the competency id
+     * Hook to execute before validate.
      *
-     * @return int The competency id
+     * @return void
      */
-    public function get_competencyid() {
-        return $this->competencyid;
+    protected function before_validate() {
+        // During create.
+        if (!$this->get_id()) {
+            if ($this->get_sortorder() === null) {
+                // Get a sortorder if it wasn't set.
+                $this->set('sortorder', $this->count_records(array('courseid' => $this->get_courseid())));
+            }
+        }
     }
 
     /**
-     * Set the competency id
+     * Validate course ID.
+     *
+     * @return true|lang_string
+     */
+    protected function validate_courseid($data) {
+        global $DB;
+        if (!$DB->record_exists('course', array('id' => $data))) {
+            return new lang_string('invalidcourseid', 'error');
+        }
+        return true;
+    }
+
+    /**
+     * Validate competency ID.
+     *
+     * @return true|lang_string
+     */
+    protected function validate_competencyid($data) {
+        if (!competency::record_exists($data)) {
+            return new lang_string('invaliddata', 'error');
+        }
+        return true;
+    }
+
+    /**
+     * Return the course IDs and visible flags that include this competency.
+     *
+     * Only the ids and visible flag are returned, for the full records use list_courses.
      *
      * @param int $competencyid The competency id
+     * @return array containing courseid and visible.
      */
-    public function set_competencyid($competencyid) {
-        $this->competencyid = $competencyid;
-    }
-
-    /**
-     * Get the sort order index.
-     *
-     * @return string The sort order index
-     */
-    public function get_sortorder() {
-        return $this->sortorder;
-    }
-
-    /**
-     * Set the sort order index.
-     *
-     * @param string $sortorder The sort order index
-     */
-    public function set_sortorder($sortorder) {
-        $this->sortorder = $sortorder;
-    }
-
-    /**
-     * Get the course id
-     *
-     * @return int The course id
-     */
-    public function get_courseid() {
-        return $this->courseid;
-    }
-
-    /**
-     * Set the course id
-     *
-     * @param int $courseid The course id
-     */
-    public function set_courseid($courseid) {
-        $this->courseid = $courseid;
-    }
-
-    /**
-     * Populate this class with data from a DB record.
-     *
-     * @param stdClass $record A DB record.
-     * @return course_competency
-     */
-    public function from_record($record) {
-        if (isset($record->id)) {
-            $this->set_id($record->id);
-        }
-        if (isset($record->courseid)) {
-            $this->set_courseid($record->courseid);
-        }
-        if (isset($record->competencyid)) {
-            $this->set_competencyid($record->competencyid);
-        }
-        if (isset($record->sortorder)) {
-            $this->set_sortorder($record->sortorder);
-        }
-        if (isset($record->timecreated)) {
-            $this->set_timecreated($record->timecreated);
-        }
-        if (isset($record->timemodified)) {
-            $this->set_timemodified($record->timemodified);
-        }
-        if (isset($record->usermodified)) {
-            $this->set_usermodified($record->usermodified);
-        }
-        return $this;
-    }
-
-    /**
-     * Create a DB record from this class.
-     *
-     * @return stdClass
-     */
-    public function to_record() {
-        $record = new stdClass();
-        $record->id = $this->get_id();
-        $record->courseid = $this->get_courseid();
-        $record->competencyid = $this->get_competencyid();
-        $record->sortorder = $this->get_sortorder();
-        $record->timecreated = $this->get_timecreated();
-        $record->timemodified = $this->get_timemodified();
-        $record->usermodified = $this->get_usermodified();
-
-        return $record;
-    }
-
-    /**
-     * Return the course ids and visible flags that include this competency. Only the ids and visible flag are returned,
-     * for the full records use list_courses.
-     *
-     * @param int $competencyid The competency id
-     * @return array()
-     */
-    public function list_courses_min($competencyid) {
+    public static function list_courses_min($competencyid) {
         global $DB;
 
         $results = $DB->get_records_sql('SELECT course.id as id, course.visible as visible
-                                           FROM {' . $this->get_table_name() . '} coursecomp
+                                           FROM {' . self::TABLE . '} coursecomp
                                            JOIN {course} course
                                              ON coursecomp.courseid = course.id
                                           WHERE coursecomp.competencyid = ? ', array($competencyid));
@@ -179,12 +120,12 @@ class course_competency extends persistent {
      * @param int $competencyid The competency id
      * @return array[stdClass] Array of course records containg id, visible, shortname, idnumber, fullname
      */
-    public function list_courses($competencyid) {
+    public static function list_courses($competencyid) {
         global $DB;
 
         $results = $DB->get_records_sql('SELECT course.id, course.visible, course.shortname, course.idnumber, course.fullname
                                            FROM {course} course
-                                           JOIN {' . $this->get_table_name() . '} coursecomp
+                                           JOIN {' . self::TABLE . '} coursecomp
                                              ON coursecomp.courseid = course.id
                                           WHERE coursecomp.competencyid = ? ', array($competencyid));
 
@@ -198,13 +139,12 @@ class course_competency extends persistent {
      * @param bool $onlyvisible If true, only count visible competencies in this course.
      * @return int
      */
-    public function count_competencies($courseid, $onlyvisible) {
+    public static function count_competencies($courseid, $onlyvisible) {
         global $DB;
 
-        $competency = new competency();
         $sql = 'SELECT COUNT(comp.id)
-                  FROM {' . $this->get_table_name() . '} coursecomp
-                  JOIN {' . $competency->get_table_name() . '} comp
+                  FROM {' . self::TABLE . '} coursecomp
+                  JOIN {' . competency::TABLE . '} comp
                     ON coursecomp.competencyid = comp.id
                  WHERE coursecomp.courseid = ? ';
         $params = array($courseid);
@@ -226,13 +166,12 @@ class course_competency extends persistent {
      * @param bool $onlyvisible If true, only count visible competencies in this course.
      * @return competency[]
      */
-    public function list_competencies($courseid, $onlyvisible) {
+    public static function list_competencies($courseid, $onlyvisible) {
         global $DB;
 
-        $competency = new competency();
         $sql = 'SELECT comp.*
-                  FROM {' . $competency->get_table_name() . '} comp
-                  JOIN {' . $this->get_table_name() . '} coursecomp
+                  FROM {' . competency::TABLE . '} comp
+                  JOIN {' . self::TABLE . '} coursecomp
                     ON coursecomp.competencyid = comp.id
                  WHERE coursecomp.courseid = ?
               ORDER BY coursecomp.sortorder ASC';
@@ -243,24 +182,14 @@ class course_competency extends persistent {
             $params[] = 1;
         }
 
-        $results = $DB->get_records_sql($sql, $params);
-
+        $results = $DB->get_recordset_sql($sql, $params);
         $instances = array();
         foreach ($results as $result) {
             array_push($instances, new competency(0, $result));
         }
+        $results->close();
 
         return $instances;
-    }
-
-    /**
-     * Add a default for the sortorder field to the default create logic.
-     *
-     * @return persistent
-     */
-    public function create() {
-        $this->sortorder = $this->count_records(array('courseid' => $this->get_courseid()));
-        return parent::create();
     }
 
 }
