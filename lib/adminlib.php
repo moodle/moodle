@@ -6549,7 +6549,7 @@ class admin_setting_manageantiviruses extends admin_setting {
             return true;
         }
 
-        $antivirusesavailable = antiviruses_get_available();
+        $antivirusesavailable = \core\antivirus\manager::get_available();
         foreach ($antivirusesavailable as $antivirus => $antivirusstr) {
             if (strpos($antivirus, $query) !== false) {
                 return true;
@@ -6578,7 +6578,7 @@ class admin_setting_manageantiviruses extends admin_setting {
 
         $txt->updown = "$txt->up/$txt->down";
 
-        $antivirusesavailable = antiviruses_get_available();
+        $antivirusesavailable = \core\antivirus\manager::get_available();
         $activeantiviruses = explode(',', $CFG->antiviruses);
 
         $activeantiviruses = array_reverse($activeantiviruses);

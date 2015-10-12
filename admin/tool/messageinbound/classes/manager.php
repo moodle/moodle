@@ -652,8 +652,8 @@ class manager {
 
             // Perform a virus scan now.
             try {
-                antiviruses_scan_file($filepath, $attachment->filename, true);
-            } catch (\antivirus_exception $e) {
+                \core\antivirus\manager::scan_file($filepath, $attachment->filename, true);
+            } catch (\core\antivirus\scanner_exception $e) {
                 mtrace("--> A virus was found in the attachment '{$attachment->filename}'.");
                 $this->inform_attachment_virus();
                 return;

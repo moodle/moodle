@@ -1191,8 +1191,8 @@ abstract class repository implements cacheable_object {
      * @param bool $deleteinfected
      */
     public static function antivir_scan_file($thefile, $filename, $deleteinfected) {
-        debugging('Please upgrade your code to use antiviruses_scan_file instead', DEBUG_DEVELOPER);
-        antiviruses_scan_file($thefile, $filename, $deleteinfected);
+        debugging('Please upgrade your code to use \core\antivirus\manager::scan_file instead', DEBUG_DEVELOPER);
+        \core\antivirus\manager::scan_file($thefile, $filename, $deleteinfected);
     }
 
     /**
@@ -1320,7 +1320,7 @@ abstract class repository implements cacheable_object {
 
         // scan for viruses if possible, throws exception if problem found
         // TODO: MDL-28637 this repository_no_delete is a bloody hack!
-        antiviruses_scan_file($thefile, $record->filename, empty($CFG->repository_no_delete));
+        \core\antivirus\manager::scan_file($thefile, $record->filename, empty($CFG->repository_no_delete));
 
         $fs = get_file_storage();
         // If file name being used.

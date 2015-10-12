@@ -39,7 +39,7 @@ require_capability('moodle/site:config', context_system::instance());
 $returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageantiviruses";
 
 // Get currently installed and enabled antivirus plugins.
-$availableantiviruses = antiviruses_get_available();
+$availableantiviruses = \core\antivirus\manager::get_available();
 if (!empty($antivirus) and empty($availableantiviruses[$antivirus])) {
     redirect ($returnurl);
 }

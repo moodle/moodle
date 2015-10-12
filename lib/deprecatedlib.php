@@ -4389,9 +4389,9 @@ function events_pending_count($eventname) {
  * @return void
  */
 function clam_message_admins($notice) {
-    debugging('clam_message_admins() is deprecated, please use message_admins() method of antivirus_clamav class.', DEBUG_DEVELOPER);
+    debugging('clam_message_admins() is deprecated, please use message_admins() method of \antivirus_clamav\scanner class.', DEBUG_DEVELOPER);
 
-    $antivirus = antiviruses_get_antivirus('clamav');
+    $antivirus = \core\antivirus\manager::get_antivirus('clamav');
     $antivirus->message_admins($notice);
 }
 
@@ -4403,8 +4403,8 @@ function clam_message_admins($notice) {
  * @return string The definition of the error code
  */
 function get_clam_error_code($returncode) {
-    debugging('get_clam_error_code() is deprecated, please use get_clam_error_code() method of antivirus_clamav class.', DEBUG_DEVELOPER);
+    debugging('get_clam_error_code() is deprecated, please use get_clam_error_code() method of \antivirus_clamav\scanner class.', DEBUG_DEVELOPER);
 
-    $antivirus = antiviruses_get_antivirus('clamav');
+    $antivirus = \core\antivirus\manager::get_antivirus('clamav');
     return $antivirus->get_clam_error_code($returncode);
 }

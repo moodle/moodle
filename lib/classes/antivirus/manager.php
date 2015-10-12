@@ -39,7 +39,7 @@ class manager {
      *
      * @return array Array ('antivirusname'=>stdClass antivirus object).
      */
-    public static function antiviruses_get_enabled() {
+    private static function get_enabled() {
         global $CFG;
 
         $active = array();
@@ -63,11 +63,11 @@ class manager {
      * @param string $file Full path to the file.
      * @param string $filename Name of the file (could be different from physical file if temp file is used).
      * @param bool $deleteinfected whether infected file needs to be deleted.
-     * @throws \core_antivirus\scanner_exception If file is infected.
+     * @throws \core\antivirus\scanner_exception If file is infected.
      * @return void
      */
-    public static function antiviruses_scan_file($file, $filename, $deleteinfected) {
-        $antiviruses = antiviruses_get_enabled();
+    public static function scan_file($file, $filename, $deleteinfected) {
+        $antiviruses = self::get_enabled();
         foreach ($antiviruses as $antivirus) {
             $antivirus->scan_file($file, $filename, $deleteinfected);
         }
@@ -94,9 +94,9 @@ class manager {
      *
      * @return array Array ('antivirusname'=>'localised antivirus name').
      */
-    public static function antiviruses_get_available() {
+    public static function get_available() {
         $antiviruses = array();
-        foreach (core_component::get_plugin_list('antivirus') as $antivirusname => $dir) {
+        foreach (\core_component::get_plugin_list('antivirus') as $antivirusname => $dir) {
             $antiviruses[$antivirusname] = get_string('pluginname', 'antivirus_'.$antivirusname);
         }
         return $antiviruses;
