@@ -485,4 +485,51 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e1a3->id, $return['entries'][1]['id']);
     }
 
+    public function test_get_authors() {
+        $this->resetAfterTest(true);
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+
+        $u1 = $this->getDataGenerator()->create_user(array('lastname' => 'Upsilon'));
+        $u2 = $this->getDataGenerator()->create_user(array('lastname' => 'Alpha'));
+        $u3 = $this->getDataGenerator()->create_user(array('lastname' => 'Omega'));
+
+        $ctx = context_module::instance($g1->cmid);
+
+        $e1a = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1));
+        $e1b = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1));
+        $e1c = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1));
+        $e2a = $gg->create_content($g1, array('userid' => $u2->id, 'approved' => 1));
+        $e3a = $gg->create_content($g1, array('userid' => $u3->id, 'approved' => 0));
+
+        $this->setAdminUser();
+
+        // Simple request.
+        $return = mod_glossary_external::get_authors($g1->id, 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_authors_returns(), $return);
+        $this->assertCount(2, $return['authors']);
+        $this->assertEquals(2, $return['count']);
+        $this->assertEquals($u2->id, $return['authors'][0]['id']);
+        $this->assertEquals($u1->id, $return['authors'][1]['id']);
+
+        // Include users with entries pending approval.
+        $return = mod_glossary_external::get_authors($g1->id, 0, 20, array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_authors_returns(), $return);
+        $this->assertCount(3, $return['authors']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($u2->id, $return['authors'][0]['id']);
+        $this->assertEquals($u3->id, $return['authors'][1]['id']);
+        $this->assertEquals($u1->id, $return['authors'][2]['id']);
+
+        // Pagination.
+        $return = mod_glossary_external::get_authors($g1->id, 1, 1, array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_authors_returns(), $return);
+        $this->assertCount(1, $return['authors']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($u3->id, $return['authors'][0]['id']);
+    }
+
 }

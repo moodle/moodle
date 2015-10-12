@@ -903,4 +903,119 @@ class mod_glossary_external extends external_api {
             'warnings' => new external_warnings()
         ));
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_authors_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'Glossary entry ID'),
+            'from' => new external_value(PARAM_INT, 'Start returning records from here', VALUE_DEFAULT, 0),
+            'limit' => new external_value(PARAM_INT, 'Number of records to return', VALUE_DEFAULT, 20),
+            'options' => new external_single_structure(array(
+                'includenotapproved' => new external_value(PARAM_BOOL, 'When false, includes self even if all of their entries' .
+                    ' require approval. When true, also includes authors only having entries pending approval.', VALUE_DEFAULT, 0)
+            ), 'An array of options', VALUE_DEFAULT, array())
+        ));
+    }
+
+    /**
+     * Get the authors of a glossary.
+     *
+     * @param int $id The glossary ID.
+     * @param int $from Start returning records from here.
+     * @param int $limit Number of records to return.
+     * @param array $options Array of options.
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function get_authors($id, $from = 0, $limit = 20, $options = array()) {
+        global $DB, $PAGE, $USER;
+
+        $params = self::validate_parameters(self::get_authors_parameters(), array(
+            'id' => $id,
+            'from' => $from,
+            'limit' => $limit,
+            'options' => $options,
+        ));
+        $id = $params['id'];
+        $from = $params['from'];
+        $limit = $params['limit'];
+        $options = $params['options'];
+        $warnings = array();
+
+        // Fetch and confirm.
+        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Fetch the authors.
+        $params = array();
+        $userfields = user_picture::fields('u', null);
+
+        $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
+        $params['myid'] = $USER->id;
+        if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+            $approvedsql = '1 = 1';
+        }
+
+        $sqlselectcount = "SELECT COUNT(DISTINCT(u.id))";
+        $sqlselect = "SELECT DISTINCT(u.id), $userfields";
+        $sql = "  FROM {user} u
+                  JOIN {glossary_entries} ge
+                    ON ge.userid = u.id
+                   AND (ge.glossaryid = :gid1 OR ge.sourceglossaryid = :gid2)
+                   AND $approvedsql";
+        $ordersql = " ORDER BY u.lastname, u.firstname";
+
+        $params['gid1'] = $glossary->id;
+        $params['gid2'] = $glossary->id;
+
+        $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+        $count = $DB->count_records_sql($sqlselectcount . $sql, $params);
+        $users = $DB->get_recordset_sql($sqlselect . $sql . $ordersql, $params, $from, $limit);
+        $authors = array();
+        foreach ($users as $user) {
+            $userpicture = new user_picture($user);
+            $userpicture->size = 1;
+
+            $author = new stdClass();
+            $author->id = $user->id;
+            $author->fullname = fullname($user, $canviewfullnames);
+            $author->pictureurl = $userpicture->get_url($PAGE)->out(false);
+            $authors[] = $author;
+        }
+        $users->close();
+
+        return array(
+            'count' => $count,
+            'authors' => $authors,
+            'warnings' => array(),
+        );
+    }
+
+    /**
+     * Returns the description of the external function return value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function get_authors_returns() {
+        return new external_single_structure(array(
+            'count' => new external_value(PARAM_INT, 'The total number of records.'),
+            'authors' => new external_multiple_structure(
+                new external_single_structure(array(
+                    'id' => new external_value(PARAM_INT, 'The user ID'),
+                    'fullname' => new external_value(PARAM_NOTAGS, 'The fullname'),
+                    'pictureurl' => new external_value(PARAM_URL, 'The picture URL'),
+                ))
+            ),
+            'warnings' => new external_warnings()
+        ));
+    }
 }
