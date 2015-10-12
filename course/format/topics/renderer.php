@@ -104,21 +104,39 @@ class format_topics_renderer extends format_section_renderer_base {
                 $url->param('marker', 0);
                 $markedthistopic = get_string('markedthistopic');
                 $highlightoff = get_string('highlightoff');
-                $controls[] = array("url" => $url, "icon" => 'i/marked',
-                                    "name" => $highlightoff,
-                                    'pixattr' => array('class' => '', 'alt' => $markedthistopic),
-                                    "attr" => array('class' => 'editing_highlight', 'title' => $markedthistopic));
+                $controls['highlight'] = array('url' => $url, "icon" => 'i/marked',
+                                               'name' => $highlightoff,
+                                               'pixattr' => array('class' => '', 'alt' => $markedthistopic),
+                                               'attr' => array('class' => 'editing_highlight', 'title' => $markedthistopic));
             } else {
                 $url->param('marker', $section->section);
                 $markthistopic = get_string('markthistopic');
                 $highlight = get_string('highlight');
-                $controls[] = array("url" => $url, "icon" => 'i/marker',
-                                    "name" => $highlight,
-                                    'pixattr' => array('class' => '', 'alt' => $markthistopic),
-                                    "attr" => array('class' => 'editing_highlight', 'title' => $markthistopic));
+                $controls['highlight'] = array('url' => $url, "icon" => 'i/marker',
+                                               'name' => $highlight,
+                                               'pixattr' => array('class' => '', 'alt' => $markthistopic),
+                                               'attr' => array('class' => 'editing_highlight', 'title' => $markthistopic));
             }
         }
 
-        return array_merge($controls, parent::section_edit_control_items($course, $section, $onsectionpage));
+        $parentcontrols = parent::section_edit_control_items($course, $section, $onsectionpage);
+
+        // If the edit key exists, we are going to insert our controls after it.
+        if (array_key_exists("edit", $parentcontrols)) {
+            $merged = array();
+            // We can't use splice because we are using associative arrays.
+            // Step through the array and merge the arrays.
+            foreach ($parentcontrols as $key => $action) {
+                $merged[$key] = $action;
+                if ($key == "edit") {
+                    // If we have come to the edit key, merge these controls here.
+                    $merged = array_merge($merged, $controls);
+                }
+            }
+
+            return $merged;
+        } else {
+            return array_merge($controls, $parentcontrols);
+        }
     }
 }

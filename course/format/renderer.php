@@ -98,11 +98,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o = "";
         if (!empty($controls)) {
             $menu = new action_menu();
-            if ($section->section && get_string_manager()->string_exists('sectionmenu', 'format_'.$course->format)) {
-                $menu->set_menu_trigger(get_string('sectionmenu', 'format_'.$course->format));
-            } else {
-                $menu->set_menu_trigger(get_string('sectionmenu'));
-            }
+            $menu->set_menu_trigger(get_string('edit'));
             $menu->attributes['class'] .= ' section-actions';
             foreach ($controls as $value) {
                 $url = empty($value['url']) ? '' : $value['url'];
