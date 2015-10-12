@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace antivirus_clamav;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -29,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2015 Ruslan Kabalin, Lancaster University.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class antivirus_clamav extends antivirus {
+class scanner extends \core\antivirus\scanner {
     /**
      * Are the necessary antivirus settings configured?
      *
@@ -88,7 +90,7 @@ class antivirus_clamav extends antivirus {
             if ($deleteinfected) {
                 unlink($file);
             }
-            throw new antivirus_exception('virusfounduser', '', array('filename' => $filename));
+            throw new \core\antivirus\scanner_exception('virusfounduser', '', array('filename' => $filename));
         } else {
             // Unknown problem.
             $notice = get_string('clamfailed', 'antivirus_clamav', $this->get_clam_error_code($return));
@@ -98,7 +100,7 @@ class antivirus_clamav extends antivirus {
                 if ($deleteinfected) {
                     unlink($file);
                 }
-                throw new antivirus_exception('virusfounduser', '', array('filename' => $filename));
+                throw new \core\antivirus\scanner_exception('virusfounduser', '', array('filename' => $filename));
             } else {
                 return;
             }
