@@ -285,4 +285,93 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e1b->id, $return['entries'][1]['id']);
     }
 
+    public function test_get_entries_by_date() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Generate all the things.
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id, 'displayformat' => 'entrylist'));
+        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $u1 = $this->getDataGenerator()->create_user();
+        $ctx = context_module::instance($g1->cmid);
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+
+        $now = time();
+        $e1a = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Bob', 'userid' => $u1->id,
+            'timecreated' => 1, 'timemodified' => $now + 3600));
+        $e1b = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Jane', 'userid' => $u1->id,
+            'timecreated' => $now + 3600, 'timemodified' => 1));
+        $e1c = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Alice', 'userid' => $u1->id,
+            'timecreated' => $now + 1, 'timemodified' => $now + 1));
+        $e1d = $gg->create_content($g1, array('approved' => 0, 'concept' => '0-day', 'userid' => $u1->id,
+            'timecreated' => $now + 2, 'timemodified' => $now + 2));
+        $e2a = $gg->create_content($g2);
+
+        $this->setAdminUser($u1);
+
+        // Ordering by time modified descending.
+        $return = mod_glossary_external::get_entries_by_date($g1->id, 'UPDATE', 'DESC', 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_date_returns(), $return);
+        $this->assertCount(3, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($e1a->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1c->id, $return['entries'][1]['id']);
+        $this->assertEquals($e1b->id, $return['entries'][2]['id']);
+
+        // Ordering by time modified ascending.
+        $return = mod_glossary_external::get_entries_by_date($g1->id, 'UPDATE', 'ASC', 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_date_returns(), $return);
+        $this->assertCount(3, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($e1b->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1c->id, $return['entries'][1]['id']);
+        $this->assertEquals($e1a->id, $return['entries'][2]['id']);
+
+        // Ordering by time created asc.
+        $return = mod_glossary_external::get_entries_by_date($g1->id, 'CREATION', 'ASC', 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_date_returns(), $return);
+        $this->assertCount(3, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($e1a->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1c->id, $return['entries'][1]['id']);
+        $this->assertEquals($e1b->id, $return['entries'][2]['id']);
+
+        // Ordering by time created descending.
+        $return = mod_glossary_external::get_entries_by_date($g1->id, 'CREATION', 'DESC', 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_date_returns(), $return);
+        $this->assertCount(3, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($e1b->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1c->id, $return['entries'][1]['id']);
+        $this->assertEquals($e1a->id, $return['entries'][2]['id']);
+
+        // Ordering including to approve.
+        $return = mod_glossary_external::get_entries_by_date($g1->id, 'CREATION', 'ASC', 0, 20,
+            array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_date_returns(), $return);
+        $this->assertCount(4, $return['entries']);
+        $this->assertEquals(4, $return['count']);
+        $this->assertEquals($e1a->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1c->id, $return['entries'][1]['id']);
+        $this->assertEquals($e1d->id, $return['entries'][2]['id']);
+        $this->assertEquals($e1b->id, $return['entries'][3]['id']);
+
+        // Ordering including to approve and pagination.
+        $return = mod_glossary_external::get_entries_by_date($g1->id, 'CREATION', 'ASC', 0, 2,
+            array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_date_returns(), $return);
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(4, $return['count']);
+        $this->assertEquals($e1a->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1c->id, $return['entries'][1]['id']);
+        $return = mod_glossary_external::get_entries_by_date($g1->id, 'CREATION', 'ASC', 2, 2,
+            array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_date_returns(), $return);
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(4, $return['count']);
+        $this->assertEquals($e1d->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1b->id, $return['entries'][1]['id']);
+    }
 }

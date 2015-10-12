@@ -58,4 +58,13 @@ $functions = array(
         'type'          => 'read',
         'capabilities'  => 'mod/glossary:view'
     ),
+
+    'mod_glossary_get_entries_by_date' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'get_entries_by_date',
+        'description'   => 'Browse entries by date.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/glossary:view'
+    ),
+
 );
