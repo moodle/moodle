@@ -188,7 +188,7 @@ class mod_data_external extends external_api {
                         array(
                             'id' => new external_value(PARAM_INT, 'Database id'),
                             'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_TEXT, 'Course id'),
+                            'course' => new external_value(PARAM_INT, 'Course id'),
                             'name' => new external_value(PARAM_TEXT, 'Database name'),
                             'intro' => new external_value(PARAM_RAW, 'The Database intro'),
                             'introformat' => new external_format_value('intro'),
