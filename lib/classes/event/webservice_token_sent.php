@@ -76,6 +76,6 @@ class webservice_token_sent extends base {
 
     public static function get_objectid_mapping() {
         // Webservices are not included in backups.
-        return false;
+        return array('db' => 'external_tokens', 'restore' => base::NOT_MAPPED);
     }
 }

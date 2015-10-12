@@ -98,7 +98,7 @@ class course_category_updated extends base {
     }
 
     public static function get_objectid_mapping() {
-        // Categories are not backed up, so no need to map them.
-        return false;
+        // Categories are not backed up, so no need to map them on restore.
+        return array('db' => 'course_categories', 'restore' => base::NOT_MAPPED);
     }
 }

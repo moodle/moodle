@@ -144,7 +144,12 @@ class message_deleted extends base {
     }
 
     public static function get_other_mapping() {
-        // Messages are not backed up, so no need to map them.
-        return false;
+        // Messages are not backed up, so no need to map them on restore.
+        $othermapped = array();
+        // The messageid table varies so it cannot be mapped.
+        $othermapped['messageid'] = array('db' => base::NOT_MAPPED, 'restore' => base::NOT_MAPPED);
+        $othermapped['useridfrom'] = array('db' => 'user', 'restore' => base::NOT_MAPPED);
+        $othermapped['useridto'] = array('db' => 'user', 'restore' => base::NOT_MAPPED);
+        return $othermapped;
     }
 }

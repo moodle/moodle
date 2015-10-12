@@ -111,7 +111,7 @@ class cohort_member_removed extends base {
     }
 
     public static function get_objectid_mapping() {
-        // Cohorts are not included in backups, so no mapping is needed.
-        return false;
+        // Cohorts are not included in backups, so no mapping is needed for restore.
+        return array('db' => 'cohort', 'restore' => base::NOT_MAPPED);
     }
 }

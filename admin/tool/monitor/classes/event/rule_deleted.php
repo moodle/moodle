@@ -76,6 +76,6 @@ class rule_deleted extends \core\event\base {
 
     public static function get_objectid_mapping() {
         // No mapping required for this event because event monitor rules are not backed up.
-        return false;
+        return array('db' => 'tool_monitor_rules', 'restore' => \core\event\base::NOT_MAPPED);
     }
 }

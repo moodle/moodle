@@ -94,7 +94,7 @@ class webservice_service_created extends base {
 
     public static function get_objectid_mapping() {
         // Webservices are not included in the backups.
-        return false;
+        return array('db' => 'external_services', 'restore' => NOT_MAPPED);
     }
 
     public static function get_other_mapping() {

@@ -127,12 +127,16 @@ class blog_association_created extends base {
     }
 
     public static function get_objectid_mapping() {
-        // Blogs are not included in backups, so no mapping required.
-        return false;
+        // Blogs are not included in backups, so no mapping required for restore.
+        return array('db' => 'blog_association', 'restore' => base::NOT_MAPPED);
     }
 
     public static function get_other_mapping() {
-        // Blogs are not included in backups, so no mapping required.
-        return false;
+        // Blogs are not included in backups, so no mapping required for restore.
+        $othermapped = array();
+        $othermapped['blogid'] = array('db' => 'post', 'restore' => base::NOT_MAPPED);
+        // The associateid field is varying (context->instanceid) so cannot be mapped.
+
+        return $othermapped;
     }
 }

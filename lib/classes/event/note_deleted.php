@@ -98,12 +98,12 @@ class note_deleted extends base {
     }
 
     public static function get_objectid_mapping() {
-        // Notes are not backed up, so no need to map.
-        return false;
+        // Notes are not backed up, so no need to map on restore.
+        return array('db' => 'post', 'restore' => base::NOT_MAPPED);
     }
 
     public static function get_other_mapping() {
-        // Notes are not backed up, so no need to map.
+        // Nothing to map.
         return false;
     }
 }

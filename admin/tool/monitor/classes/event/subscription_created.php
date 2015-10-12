@@ -67,6 +67,6 @@ class subscription_created extends \core\event\base {
 
     public static function get_objectid_mapping() {
         // No mapping required for this event because event monitor subscriptions are not backed up.
-        return false;
+        return array('db' => 'tool_monitor_subscriptions', 'restore' => \core\event\base::NOT_MAPPED);
     }
 }

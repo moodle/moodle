@@ -147,6 +147,9 @@ class user_deleted extends base {
     }
 
     public static function get_other_mapping() {
-        return false;
+        $othermapped = array();
+        $othermapped['mnethostid'] = array('db' => 'mnet_host', 'restore' => base::NOT_MAPPED);
+
+        return $othermapped;
     }
 }

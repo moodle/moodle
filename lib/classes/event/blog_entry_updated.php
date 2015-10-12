@@ -140,8 +140,8 @@ class blog_entry_updated extends base {
     }
 
     public static function get_objectid_mapping() {
-        // Blogs are not backed up, so no need for mapping.
-        return false;
+        // Blogs are not backed up, so no need for mapping for restore.
+        return array('db' => 'post', 'restore' => NOT_MAPPED);
     }
 }
 
