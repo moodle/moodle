@@ -3341,6 +3341,39 @@ EOD;
     }
 
     /**
+     * Renders a breadcrumb navigation node object.
+     *
+     * @param breadcrumb_navigation_node $item The navigation node to render.
+     * @return string HTML fragment
+     */
+    protected function render_breadcrumb_navigation_node(breadcrumb_navigation_node $item) {
+
+        if ($item->action instanceof moodle_url) {
+            $content = $item->get_content();
+            $title = $item->get_title();
+            $attributes = array();
+            $attributes['itemprop'] = 'url';
+            if ($title !== '') {
+                $attributes['title'] = $title;
+            }
+            if ($item->hidden) {
+                $attributes['class'] = 'dimmed_text';
+            }
+            $content = html_writer::tag('span', $content, array('itemprop' => 'title'));
+            $content = html_writer::link($item->action, $content, $attributes);
+
+            $attributes = array();
+            $attributes['itemscope'] = '';
+            $attributes['itemtype'] = 'http://data-vocabulary.org/Breadcrumb';
+            $content = html_writer::tag('span', $content, $attributes);
+
+        } else {
+            $content = $this->render_navigation_node($item);
+        }
+        return $content;
+    }
+
+    /**
      * Renders a navigation node object.
      *
      * @param navigation_node $item The navigation node to render.
