@@ -272,6 +272,8 @@ case 'sign':
         echo '<form method="post">';
         echo '<input type="hidden" name="action" value="sign" />';
         echo '<input type="hidden" name="repo_id" value="'.s($repo_id).'" />';
+        // HACK to prevent browsers from automatically inserting the user's password into the wrong fields.
+        echo prevent_form_autofill_password();
         $repo->print_login();
         echo '</form>';
     }
