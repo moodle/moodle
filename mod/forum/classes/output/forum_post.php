@@ -149,7 +149,7 @@ class forum_post implements \renderable {
             'postdate'                      => $this->get_postdate(),
 
             // Format some components according to the renderer.
-            'message'                       => $renderer->format_message_text($this->forum, $this->post),
+            'message'                       => $renderer->format_message_text($this->cm, $this->post),
             'attachments'                   => $renderer->format_message_attachments($this->cm, $this->post),
 
             'canreply'                      => $this->canreply,

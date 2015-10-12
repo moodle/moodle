@@ -48,11 +48,11 @@ class renderer extends \mod_forum_renderer {
     /**
      * The HTML version of the e-mail message.
      *
-     * @param \stdClass $forum
+     * @param \stdClass $cm
      * @param \stdClass $post
      * @return string
      */
-    public function format_message_text($forum, $post) {
+    public function format_message_text($cm, $post) {
         $options = new \stdClass();
         $options->para = true;
         return format_text($post->message, $post->messageformat, $options);

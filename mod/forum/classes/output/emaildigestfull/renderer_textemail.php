@@ -48,13 +48,13 @@ class renderer_textemail extends \mod_forum\output\email\renderer_textemail {
     /**
      * The plaintext version of the e-mail message.
      *
-     * @param \stdClass $forum
+     * @param \stdClass $cm
      * @param \stdClass $post
      * @return string
      */
-    public function format_message_text($forum, $post) {
+    public function format_message_text($cm, $post) {
         $message = file_rewrite_pluginfile_urls($post->message, 'pluginfile.php',
-            \context_module::instance($forum->id)->id,
+            \context_module::instance($cm->id)->id,
             'mod_forum', 'post', $post->id);
         return format_text_email($message, $post->messageformat);
     }
