@@ -180,7 +180,7 @@ if ($action) {
 
 
 $renderer = $PAGE->get_renderer('core_enrol');
-$userdetails = array('picture' => false);
+$userdetails = array('picture' => false, 'userfullnamedisplay' => false);
 // Get all the user names in a reasonable default order.
 $allusernames = get_all_user_name_fields(false, null, null, null, true);
 // Initialise the variable for the user's names in the table header.

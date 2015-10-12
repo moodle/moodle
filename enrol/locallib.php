@@ -1091,13 +1091,14 @@ class course_enrolment_manager {
      */
     private function prepare_user_for_display($user, $extrafields, $now) {
         $details = array(
-            'userid'           => $user->id,
-            'courseid'         => $this->get_course()->id,
-            'picture'          => new user_picture($user),
-            'firstname'        => fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context())),
-            'lastseen'         => get_string('never'),
-            'lastcourseaccess' => get_string('never'),
+            'userid'              => $user->id,
+            'courseid'            => $this->get_course()->id,
+            'picture'             => new user_picture($user),
+            'userfullnamedisplay' => fullname($user, has_capability('moodle/site:viewfullnames', $this->get_context())),
+            'lastseen'            => get_string('never'),
+            'lastcourseaccess'    => get_string('never'),
         );
+
         foreach ($extrafields as $field) {
             $details[$field] = $user->{$field};
         }
