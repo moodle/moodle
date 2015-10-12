@@ -123,6 +123,7 @@ $string['deletesure'] = 'Are you sure you want to delete this post?';
 $string['deletesureplural'] = 'Are you sure you want to delete this post and all replies? ({$a} posts)';
 $string['digestmailheader'] = 'This is your daily digest of new posts from the {$a->sitename} forums. To change your default forum email preferences, go to {$a->userprefs}.';
 $string['digestmailpost'] = 'Change your forum digest preferences';
+$string['digestmailpostlink'] = 'Change your forum digest preferences: {$a}';
 $string['digestmailprefs'] = 'your user profile';
 $string['digestmailsubject'] = '{$a}: forum digest';
 $string['digestmailtime'] = 'Hour to send digest emails';
@@ -392,6 +393,9 @@ $string['postincontext'] = 'See this post in context';
 $string['postmailinfo'] = 'This is a copy of a message posted on the {$a} website.
 
 To reply click on this link:';
+$string['postmailinfolink'] = 'This is a copy of a message posted on the {$a->coursename} website.
+
+To reply click on this link: {$a->replylink}';
 $string['postmailnow'] = '<p>This post will be mailed out immediately to all forum subscribers.</p>';
 $string['postmailsubject'] = '{$a->courseshortname}: {$a->subject}';
 $string['postrating1'] = 'Mostly separate knowing';
@@ -503,7 +507,9 @@ $string['unreadposts'] = 'Unread posts';
 $string['unreadpostsnumber'] = '{$a} unread posts';
 $string['unreadpostsone'] = '1 unread post';
 $string['unsubscribe'] = 'Unsubscribe from this forum';
+$string['unsubscribelink'] = 'Unsubscribe from this forum: {$a}';
 $string['unsubscribediscussion'] = 'Unsubscribe from this discussion';
+$string['unsubscribediscussionlink'] = 'Unsubscribe from this discussion: {$a}';
 $string['unsubscribeall'] = 'Unsubscribe from all forums';
 $string['unsubscribeallconfirm'] = 'You are currently subscribed to {$a->forums} forums, and {$a->discussions} discussions. Do you really want to unsubscribe from all forums and discussions, and disable discussion auto-subscription?';
 $string['unsubscribeallconfirmforums'] = 'You are currently subscribed to {$a->forums} forums. Do you really want to unsubscribe from all forums and disable discussion auto-subscription?';

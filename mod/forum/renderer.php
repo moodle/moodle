@@ -183,4 +183,24 @@ class mod_forum_renderer extends plugin_renderer_base {
         $tooltip = implode("\n", $dates);
         return $this->pix_icon('i/calendar', $tooltip, 'moodle', array('class' => 'smallicon timedpost'));
     }
+
+    /**
+     * Display a forum post in the relevant context.
+     *
+     * @param \mod_forum\output\forum_post $post The post to display.
+     * @return string
+     */
+    public function render_forum_post_email(\mod_forum\output\forum_post_email $post) {
+        $data = $post->export_for_template($this);
+        return $this->render_from_template('mod_forum/' . $this->forum_post_template(), $data);
+    }
+
+    /**
+     * The template name for this renderer.
+     *
+     * @return string
+     */
+    public function forum_post_template() {
+        return 'forum_post';
+    }
 }
