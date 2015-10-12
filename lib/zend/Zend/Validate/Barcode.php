@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@ require_once 'Zend/Loader.php';
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_Barcode extends Zend_Validate_Abstract
@@ -46,7 +46,7 @@ class Zend_Validate_Barcode extends Zend_Validate_Abstract
         self::FAILED         => "'%value%' failed checksum validation",
         self::INVALID_CHARS  => "'%value%' contains invalid characters",
         self::INVALID_LENGTH => "'%value%' should have a length of %length% characters",
-        self::INVALID        => "Invalid type given, value should be string",
+        self::INVALID        => "Invalid type given. String expected",
     );
 
     /**
@@ -77,7 +77,6 @@ class Zend_Validate_Barcode extends Zend_Validate_Abstract
      *
      * @param  string|Zend_Config|
      *         Zend_Validate_Barcode_BarcodeAdapter $adapter Barcode adapter to use
-     * @return void
      * @throws Zend_Validate_Exception
      */
     public function __construct($adapter)
@@ -126,7 +125,7 @@ class Zend_Validate_Barcode extends Zend_Validate_Abstract
      *
      * @param  string|Zend_Validate_Barcode $adapter Barcode adapter to use
      * @param  array  $options Options for this adapter
-     * @return void
+     * @return $this
      * @throws Zend_Validate_Exception
      */
     public function setAdapter($adapter, $options = null)
@@ -194,6 +193,17 @@ class Zend_Validate_Barcode extends Zend_Validate_Abstract
         $this->_length = $adapter->getLength();
         $result        = $adapter->checkLength($value);
         if (!$result) {
+            if (is_array($this->_length)) {
+                $temp = $this->_length;
+                $this->_length = "";
+                foreach($temp as $length) {
+                    $this->_length .= "/";
+                    $this->_length .= $length;
+                }
+
+                $this->_length = substr($this->_length, 1);
+            }
+
             $this->_error(self::INVALID_LENGTH);
             return false;
         }

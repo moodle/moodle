@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Rest
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -34,7 +34,7 @@ require_once 'Zend/Uri.php';
  * @category   Zend
  * @package    Zend_Rest
  * @subpackage Client
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Rest_Client extends Zend_Service_Abstract
@@ -50,6 +50,13 @@ class Zend_Rest_Client extends Zend_Service_Abstract
      * @var Zend_Uri_Http
      */
     protected $_uri = null;
+    
+    /**
+     * Flag indicating the Zend_Http_Client is fresh and needs no reset.
+     * Must be set explicitly if you want to keep preset parameters.
+     * @var bool true if you do not want a reset. Default false.
+     */
+    protected $_noReset = false;
 
     /**
      * Constructor
@@ -98,7 +105,7 @@ class Zend_Rest_Client extends Zend_Service_Abstract
      * @throws Zend_Rest_Client_Exception
      * @return void
      */
-    final private function _prepareRest($path)
+    private function _prepareRest($path)
     {
         // Get the URI object and configure it
         if (!$this->_uri instanceof Zend_Uri_Http) {
@@ -118,7 +125,29 @@ class Zend_Rest_Client extends Zend_Service_Abstract
          * Get the HTTP client and configure it for the endpoint URI.  Do this each time
          * because the Zend_Http_Client instance is shared among all Zend_Service_Abstract subclasses.
          */
-        self::getHttpClient()->resetParameters()->setUri($this->_uri);
+        if ($this->_noReset) {
+            // if $_noReset we do not want to reset on this request, 
+            // but we do on any subsequent request
+            $this->_noReset = false;
+        } else {
+            self::getHttpClient()->resetParameters();
+        }
+        
+        self::getHttpClient()->setUri($this->_uri);
+    }
+    
+    /**
+     * Tells Zend_Rest_Client not to reset all parameters on it's 
+     * Zend_Http_Client. If you want no reset, this must be called explicitly
+     * before every request for which you do not want to reset the parameters.
+     * Parameters will accumulate between requests, but as soon as you do not
+     * call this function prior to any request, all preset parameters will be reset
+     * as by default.
+     * @param boolean $bool
+     */
+    public function setNoReset($bool = true)
+    {
+        $this->_noReset = $bool;
     }
 
     /**
@@ -129,7 +158,7 @@ class Zend_Rest_Client extends Zend_Service_Abstract
      * @throws Zend_Http_Client_Exception
      * @return Zend_Http_Response
      */
-    final public function restGet($path, array $query = null)
+    public function restGet($path, array $query = null)
     {
         $this->_prepareRest($path);
         $client = self::getHttpClient();
@@ -167,7 +196,7 @@ class Zend_Rest_Client extends Zend_Service_Abstract
      * @throws Zend_Http_Client_Exception
      * @return Zend_Http_Response
      */
-    final public function restPost($path, $data = null)
+    public function restPost($path, $data = null)
     {
         $this->_prepareRest($path);
         return $this->_performPost('POST', $data);
@@ -181,7 +210,7 @@ class Zend_Rest_Client extends Zend_Service_Abstract
      * @throws Zend_Http_Client_Exception
      * @return Zend_Http_Response
      */
-    final public function restPut($path, $data = null)
+    public function restPut($path, $data = null)
     {
         $this->_prepareRest($path);
         return $this->_performPost('PUT', $data);
@@ -194,10 +223,10 @@ class Zend_Rest_Client extends Zend_Service_Abstract
      * @throws Zend_Http_Client_Exception
      * @return Zend_Http_Response
      */
-    final public function restDelete($path)
+    public function restDelete($path, $data = null)
     {
         $this->_prepareRest($path);
-        return self::getHttpClient()->request('DELETE');
+        return $this->_performPost('DELETE', $data);
     }
 
     /**

@@ -16,17 +16,19 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Yahoo
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
+/** @see Zend_Xml_Security */
+require_once 'Zend/Xml/Security.php';
 
 /**
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Yahoo
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Yahoo
@@ -99,8 +101,7 @@ class Zend_Service_Yahoo
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
-
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
 
         /**
@@ -155,8 +156,7 @@ class Zend_Service_Yahoo
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
-
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
 
         /**
@@ -219,8 +219,7 @@ class Zend_Service_Yahoo
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
-
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
 
         /**
@@ -273,8 +272,7 @@ class Zend_Service_Yahoo
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
-
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
 
         /**
@@ -320,8 +318,7 @@ class Zend_Service_Yahoo
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
-
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
 
         /**
@@ -374,8 +371,7 @@ class Zend_Service_Yahoo
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
-
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
 
         /**
@@ -431,8 +427,7 @@ class Zend_Service_Yahoo
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
-
+        $dom = Zend_Xml_Security::scan($response->getBody(), $dom);
         self::_checkErrors($dom);
 
         /**

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Amf
  * @subpackage Response
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -28,7 +28,7 @@ require_once 'Zend/Amf/Response.php';
  *
  * @package    Zend_Amf
  * @subpackage Response
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Amf_Response_Http extends Zend_Amf_Response
@@ -41,10 +41,33 @@ class Zend_Amf_Response_Http extends Zend_Amf_Response
     public function getResponse()
     {
         if (!headers_sent()) {
-            header('Cache-Control: cache, must-revalidate');
-            header('Pragma: public');
+            if ($this->isIeOverSsl()) {
+                header('Cache-Control: cache, must-revalidate');
+                header('Pragma: public');
+            } else {
+                header('Cache-Control: no-cache, must-revalidate');
+                header('Pragma: no-cache');
+            }
+            header('Expires: Thu, 19 Nov 1981 08:52:00 GMT');
             header('Content-Type: application/x-amf');
         }
         return parent::getResponse();
+    }
+
+    protected function isIeOverSsl()
+    {
+        $ssl = isset($_SERVER['HTTPS']) ? $_SERVER['HTTPS'] : false;
+        if (!$ssl || ($ssl == 'off')) {
+            // IIS reports "off", whereas other browsers simply don't populate
+            return false;
+        }
+
+        $ua  = $_SERVER['HTTP_USER_AGENT'];
+        if (!preg_match('/; MSIE \d+\.\d+;/', $ua)) {
+            // Not MicroSoft Internet Explorer
+            return false;
+        }
+
+        return true;
     }
 }
