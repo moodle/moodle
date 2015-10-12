@@ -209,9 +209,11 @@ M.gradereport_grader.classes.ajax.prototype.make_editable = function(e) {
     }
 
     // Sort out the field type
-    var fieldtype = 'text';
+    var fieldtype = 'value';
     if (node.hasClass('grade_type_scale')) {
         fieldtype = 'scale';
+    } else if (node.hasClass('grade_type_text')) {
+        fieldtype = 'text';
     }
     // Create the appropriate field widget
     switch (fieldtype) {
@@ -219,6 +221,8 @@ M.gradereport_grader.classes.ajax.prototype.make_editable = function(e) {
             this.current = new M.gradereport_grader.classes.scalefield(this.report, node);
             break;
         case 'text':
+            this.current = new M.gradereport_grader.classes.feedbackfield(this.report, node);
+            break;
         default:
             this.current = new M.gradereport_grader.classes.textfield(this.report, node);
             break;
@@ -322,7 +326,11 @@ M.gradereport_grader.classes.ajax.prototype.get_next_cell = function(cell) {
         next = tr.all('.grade').item(0);
     }
     if (!next) {
-        next = this.current.node;
+        return this.current.node;
+    }
+    // Continue on until we find a clickable cell
+    if (!next.hasClass('clickable')) {
+        return this.get_next_cell(next);
     }
     return next;
 };
@@ -342,7 +350,11 @@ M.gradereport_grader.classes.ajax.prototype.get_prev_cell = function(cell) {
         next = cells.item(cells.size()-1);
     }
     if (!next) {
-        next = this.current.node;
+        return this.current.node;
+    }
+    // Continue on until we find a clickable cell
+    if (!next.hasClass('clickable')) {
+        return this.get_prev_cell(next);
     }
     return next;
 };
@@ -366,7 +378,11 @@ M.gradereport_grader.classes.ajax.prototype.get_above_cell = function(cell) {
         next = tr.all('td.cell').item(column);
     }
     if (!next) {
-        next = this.current.node;
+        return this.current.node;
+    }
+    // Continue on until we find a clickable cell
+    if (!next.hasClass('clickable')) {
+        return this.get_above_cell(next);
     }
     return next;
 };
@@ -389,7 +405,13 @@ M.gradereport_grader.classes.ajax.prototype.get_below_cell = function(cell) {
         }
         next = tr.all('td.cell').item(column);
     }
-    // next will be null when we get to the bottom of a column
+    if (!next) {
+        return this.current.node;
+    }
+    // Continue on until we find a clickable cell
+    if (!next.hasClass('clickable')) {
+        return this.get_below_cell(next);
+    }
     return next;
 };
 /**
@@ -478,6 +500,7 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
                 }
                 // Calculate the final grade for the cell
                 var finalgrade = '';
+                var scalegrade = -1;
                 if (!r.finalgrade) {
                     if (this.report.isediting) {
                         // In edit mode don't put hyphens in the grade text boxes
@@ -488,35 +511,51 @@ M.gradereport_grader.classes.ajax.prototype.submission_outcome = function(tid, o
                     }
                 } else {
                     if (r.scale) {
-                        finalgrade = this.scales[r.scale][parseFloat(r.finalgrade)-1];
+                        scalegrade = parseFloat(r.finalgrade);
+                        finalgrade = this.scales[r.scale][scalegrade-1];
                     } else {
                         finalgrade = parseFloat(r.finalgrade).toFixed(info.itemdp);
                     }
                 }
                 if (this.report.isediting) {
-                    if (args.properties.itemtype == 'scale') {
-                        info.cell.one('#grade_'+r.userid+'_'+r.itemid).all('options').each(function(option){
-                            if (option.get('value') == finalgrade) {
-                                option.setAttribute('selected', 'selected');
-                            } else {
-                                option.removeAttribute('selected');
-                            }
-                        });
-                    } else {
-                        info.cell.one('#grade_'+r.userid+'_'+r.itemid).set('value', finalgrade);
+                    var grade = info.cell.one('#grade_'+r.userid+'_'+r.itemid);
+                    if (grade) {
+                        // This means the item has a input element to update.
+                        var parent = grade.ancestor('td');
+                        if (parent.hasClass('grade_type_scale')) {
+                            grade.all('option').each(function(option) {
+                                if (option.get('value') == scalegrade) {
+                                    option.setAttribute('selected', 'selected');
+                                } else {
+                                    option.removeAttribute('selected');
+                                }
+                            });
+                        } else {
+                            grade.set('value', finalgrade);
+                        }
+                    } else if (info.cell.one('.gradevalue')) {
+                        // This means we are updating a value for something without editing boxed (locked, etc).
+                        info.cell.one('.gradevalue').set('innerHTML', finalgrade);
                     }
                 } else {
                     // If there is no currently editing field or if this cell is not being currently edited
                     if (!this.current || info.cell.get('id') != this.current.node.get('id')) {
                         // Update the value
-                        info.cell.one('.gradevalue').set('innerHTML',finalgrade);
+                        var node = info.cell.one('.gradevalue');
+                        var td = node.ancestor('td');
+                        // Only scale and value type grades should have their content updated in this way.
+                        if (td.hasClass('grade_type_value') || td.hasClass('grade_type_scale')) {
+                            node.set('innerHTML', finalgrade);
+                        }
                     } else if (this.current && info.cell.get('id') == this.current.node.get('id')) {
                         // If we are here the grade value of the cell currently being edited has changed !!!!!!!!!
                         // If the user has not actually changed the old value yet we will automatically correct it
                         // otherwise we will prompt the user to choose to use their value or the new value!
                         if (!this.current.has_changed() || confirm(M.util.get_string('ajaxfieldchanged', 'gradereport_grader'))) {
                             this.current.set_grade(finalgrade);
-                            this.current.grade.set('value', finalgrade);
+                            if (this.current.grade) {
+                                this.current.grade.set('value', finalgrade);
+                            }
                         }
                     }
                 }
@@ -594,57 +633,81 @@ M.gradereport_grader.classes.existingfield = function(ajax, userid, itemid) {
     this.editfeedback = ajax.showquickfeedback;
     this.grade = this.report.Y.one('#grade_'+userid+'_'+itemid);
 
-    if (this.report.grades) {
-        for (var i = 0; i < this.report.grades.length; i++) {
-            if (this.report.grades[i]['user']==this.userid && this.report.grades[i]['item']==this.itemid) {
+    var i = 0;
+    if (this.grade) {
+        for (i = 0; i < this.report.grades.length; i++) {
+            if (this.report.grades[i]['user'] == this.userid && this.report.grades[i]['item'] == this.itemid) {
                 this.oldgrade = this.report.grades[i]['grade'];
             }
         }
-    }
 
-    if (!this.oldgrade) {
-        // Assigning an empty string makes determining whether the grade has been changed easier
-        // This value is never sent to the server
-        this.oldgrade = '';
-    }
+        if (!this.oldgrade) {
+            // Assigning an empty string makes determining whether the grade has been changed easier
+            // This value is never sent to the server
+            this.oldgrade = '';
+        }
 
-    // On blur save any changes in the grade field
-    this.grade.on('blur', this.submit, this);
+        // On blur save any changes in the grade field
+        this.grade.on('blur', this.submit, this);
+    }
 
     // Check if feedback is enabled
     if (this.editfeedback) {
         // Get the feedback fields
         this.feedback = this.report.Y.one('#feedback_'+userid+'_'+itemid);
 
-        for(var i = 0; i < this.report.feedback.length; i++) {
-            if (this.report.feedback[i]['user']==this.userid && this.report.feedback[i]['item']==this.itemid) {
-                this.oldfeedback = this.report.feedback[i]['content'];
+        if (this.feedback) {
+            for(i = 0; i < this.report.feedback.length; i++) {
+                if (this.report.feedback[i]['user'] == this.userid && this.report.feedback[i]['item'] == this.itemid) {
+                    this.oldfeedback = this.report.feedback[i]['content'];
+                }
+            }
+
+            if(!this.oldfeedback) {
+                // Assigning an empty string makes determining whether the feedback has been changed easier
+                // This value is never sent to the server
+                this.oldfeedback = '';
+            }
+
+            // On blur save any changes in the feedback field
+            this.feedback.on('blur', this.submit, this);
+
+            // Override the default tab movements when moving between cells
+            // Handle Tab.
+            this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.feedback, 'press:9', this, true));
+            // Handle the Enter key being pressed.
+            this.keyevents.push(this.report.Y.on('key', this.keypress_enter, this.feedback, 'press:13', this));
+            // Handle CTRL + arrow keys.
+            this.keyevents.push(this.report.Y.on('key', this.keypress_arrows, this.feedback, 'press:37,38,39,40+ctrl', this));
+
+            if (this.grade) {
+                // Override the default tab movements when moving between cells
+                // Handle Shift+Tab.
+                this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.grade, 'press:9+shift', this));
+
+                // Override the default tab movements for fields in the same cell
+                this.keyevents.push(this.report.Y.on('key',
+                        function(e){e.preventDefault();this.grade.focus();},
+                        this.feedback,
+                        'press:9+shift',
+                        this));
+                this.keyevents.push(this.report.Y.on('key',
+                        function(e){if (e.shiftKey) {return;}e.preventDefault();this.feedback.focus();},
+                        this.grade,
+                        'press:9',
+                        this));
             }
         }
-
-        if(!this.oldfeedback) {
-            // Assigning an empty string makes determining whether the feedback has been changed easier
-            // This value is never sent to the server
-            this.oldfeedback = '';
-        }
-
-        // On blur save any changes in the feedback field
-        this.feedback.on('blur', this.submit, this);
-
-        // Override the default tab movements when moving between cells
-        this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.grade, 'press:9+shift', this));                // Handle Shift+Tab
-        this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.feedback, 'press:9', this, true));                   // Handle Tab
-        this.keyevents.push(this.report.Y.on('key', this.keypress_enter, this.feedback, 'press:13', this));                // Handle the Enter key being pressed
-        this.keyevents.push(this.report.Y.on('key', this.keypress_arrows, this.feedback, 'press:37,38,39,40+ctrl', this)); // Handle CTRL + arrow keys
-
-        // Override the default tab movements for fields in the same cell
-        this.keyevents.push(this.report.Y.on('key', function(e){e.preventDefault();this.grade.focus();}, this.feedback, 'press:9+shift', this));
-        this.keyevents.push(this.report.Y.on('key', function(e){if (e.shiftKey) {return;}e.preventDefault();this.feedback.focus();}, this.grade, 'press:9', this));
-    } else {
-        this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.grade, 'press:9', this));                      // Handle Tab and Shift+Tab
+    } else if (this.grade) {
+        // Handle Tab and Shift+Tab.
+        this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.grade, 'press:9', this));
     }
-    this.keyevents.push(this.report.Y.on('key', this.keypress_enter, this.grade, 'press:13', this));                   // Handle the Enter key being pressed
-    this.keyevents.push(this.report.Y.on('key', this.keypress_arrows, this.grade, 'press:37,38,39,40+ctrl', this));    // Handle CTRL + arrow keys
+    if (this.grade) {
+        // Handle the Enter key being pressed.
+        this.keyevents.push(this.report.Y.on('key', this.keypress_enter, this.grade, 'press:13', this));
+        // Handle CTRL + arrow keys.
+        this.keyevents.push(this.report.Y.on('key', this.keypress_arrows, this.grade, 'press:37,38,39,40+ctrl', this));
+    }
 };
 /**
  * Attach the required properties and methods to the existing field class
@@ -741,10 +804,17 @@ M.gradereport_grader.classes.existingfield.prototype.move_focus = function(node)
  * @return {Bool}
  */
 M.gradereport_grader.classes.existingfield.prototype.has_changed = function() {
-    if (this.editfeedback) {
-        return (this.grade.get('value') !== this.oldgrade || this.feedback.get('value') !== this.oldfeedback);
+    if (this.grade) {
+        if (this.grade.get('value') !== this.oldgrade) {
+            return true;
+        }
     }
-    return (this.grade.get('value') !== this.oldgrade);
+    if (this.editfeedback && this.feedback) {
+        if (this.feedback.get('value') !== this.oldfeedback) {
+            return true;
+        }
+    }
+    return false;
 };
 /**
  * Submits any changes and then updates the fields accordingly
@@ -759,15 +829,19 @@ M.gradereport_grader.classes.existingfield.prototype.submit = function() {
 
     var properties = this.report.get_cell_info([this.userid,this.itemid]);
     var values = (function(f){
-        var feedback, oldfeedback = null;
-        if (f.editfeedback) {
+        var feedback, oldfeedback, grade, oldgrade = null;
+        if (f.editfeedback && f.feedback) {
             feedback = f.feedback.get('value');
             oldfeedback = f.oldfeedback;
         }
+        if (f.grade) {
+            grade = f.grade.get('value');
+            oldgrade = f.oldgrade;
+        }
         return {
             editablefeedback : f.editfeedback,
-            grade : f.grade.get('value'),
-            oldgrade : f.oldgrade,
+            grade : grade,
+            oldgrade : oldgrade,
             feedback : feedback,
             oldfeedback : oldfeedback
         };
@@ -799,11 +873,11 @@ M.gradereport_grader.classes.textfield = function(report, node) {
     this.gradespan = node.one('.gradevalue');
     this.inputdiv = this.report.Y.Node.create('<div></div>');
     this.editfeedback = this.report.ajax.showquickfeedback;
-    this.grade = this.report.Y.Node.create('<input type="text" class="text" value="" />');
+    this.grade = this.report.Y.Node.create('<input type="text" class="text" value="" name="ajaxgrade" />');
     this.gradetype = 'value';
     this.inputdiv.append(this.grade);
     if (this.report.ajax.showquickfeedback) {
-        this.feedback = this.report.Y.Node.create('<input type="text" class="quickfeedback" value="" />');
+        this.feedback = this.report.Y.Node.create('<input type="text" class="quickfeedback" value="" name="ajaxfeedback" />');
         this.inputdiv.append(this.feedback);
     }
 };
@@ -832,7 +906,11 @@ M.gradereport_grader.classes.textfield.prototype.replace = function() {
         this.set_feedback(this.get_feedback());
     }
     this.node.replaceChild(this.inputdiv, this.gradespan);
-    this.grade.focus();
+    if (this.grade) {
+        this.grade.focus();
+    } else if (this.feedback) {
+        this.feedback.focus();
+    }
     this.editable = true;
     return this;
 };
@@ -845,6 +923,7 @@ M.gradereport_grader.classes.textfield.prototype.replace = function() {
 M.gradereport_grader.classes.textfield.prototype.commit = function() {
     // Produce an anonymous result object contianing all values
     var result = (function(field){
+        // Editable false lets us get the pre-update values.
         field.editable = false;
         var oldgrade = field.get_grade();
         if (oldgrade == '-') {
@@ -855,6 +934,8 @@ M.gradereport_grader.classes.textfield.prototype.commit = function() {
         if (field.editfeedback) {
             oldfeedback = field.get_feedback();
         }
+
+        // Now back to editable gives us the values in the edit areas.
         field.editable = true;
         if (field.editfeedback) {
             feedback = field.get_feedback();
@@ -931,7 +1012,11 @@ M.gradereport_grader.classes.textfield.prototype.set_grade = function(value) {
  */
 M.gradereport_grader.classes.textfield.prototype.get_feedback = function() {
     if (this.editable) {
-        return this.feedback.get('value');
+        if (this.feedback) {
+            return this.feedback.get('value');
+        } else {
+            return null;
+        }
     }
     var properties = this.report.get_cell_info(this.node);
     if (properties) {
@@ -947,7 +1032,9 @@ M.gradereport_grader.classes.textfield.prototype.get_feedback = function() {
  */
 M.gradereport_grader.classes.textfield.prototype.set_feedback = function(value) {
     if (!this.editable) {
-        this.feedback.set('value', value);
+        if (this.feedback) {
+            this.feedback.set('value', value);
+        }
     } else {
         var properties = this.report.get_cell_info(this.node);
         this.report.update_feedback(properties.userid, properties.itemid, value);
@@ -971,7 +1058,12 @@ M.gradereport_grader.classes.textfield.prototype.has_changed = function() {
             return true;
         }
     }
-    return (this.get_grade() != this.gradespan.get('innerHTML'));
+
+    if (this.grade) {
+        return (this.get_grade() != this.gradespan.get('innerHTML'));
+    } else {
+        return false;
+    }
 };
 /**
  * Attaches the key listeners for the editable fields and stored the event references
@@ -984,21 +1076,92 @@ M.gradereport_grader.classes.textfield.prototype.attach_key_events = function() 
     var a = this.report.ajax;
     // Setup the default key events for tab and enter
     if (this.editfeedback) {
-        this.keyevents.push(this.report.Y.on('key', a.keypress_tab, this.grade, 'press:9+shift', a));               // Handle Shift+Tab
-        this.keyevents.push(this.report.Y.on('key', a.keypress_tab, this.feedback, 'press:9', a, true));            // Handle Tab
-        this.keyevents.push(this.report.Y.on('key', a.keypress_enter, this.feedback, 'press:13', a));               // Handle the Enter key being pressed
+        if (this.grade) {
+            // Handle Shift+Tab.
+            this.keyevents.push(this.report.Y.on('key', a.keypress_tab, this.grade, 'press:9+shift', a));
+        }
+        // Handle Tab.
+        this.keyevents.push(this.report.Y.on('key', a.keypress_tab, this.feedback, 'press:9', a, true));
+        // Handle the Enter key being pressed.
+        this.keyevents.push(this.report.Y.on('key', a.keypress_enter, this.feedback, 'press:13', a));
     } else {
-        this.keyevents.push(this.report.Y.on('key', a.keypress_tab, this.grade, 'press:9', a));                     // Handle Tab and Shift+Tab
+        if (this.grade) {
+            // Handle Tab and Shift+Tab.
+            this.keyevents.push(this.report.Y.on('key', a.keypress_tab, this.grade, 'press:9', a));
+        }
     }
-    this.keyevents.push(this.report.Y.on('key', a.keypress_enter, this.grade, 'press:13', a));                      // Handle the Enter key being pressed
+
     // Setup the arrow key events
-    this.keyevents.push(this.report.Y.on('key', a.keypress_arrows, this.grade.ancestor('td'), 'down:37,38,39,40+ctrl', a));       // Handle CTRL + arrow keys
-    // Prevent the default key action on all fields for arrow keys on all key events!
-    // Note: this still does not work in FF!!!!!
-    this.keyevents.push(this.report.Y.on('key', function(e){e.preventDefault();}, this.grade, 'down:37,38,39,40+ctrl'));
-    this.keyevents.push(this.report.Y.on('key', function(e){e.preventDefault();}, this.grade, 'press:37,38,39,40+ctrl'));
-    this.keyevents.push(this.report.Y.on('key', function(e){e.preventDefault();}, this.grade, 'up:37,38,39,40+ctrl'));
+    // Handle CTRL + arrow keys.
+    this.keyevents.push(this.report.Y.on('key', a.keypress_arrows, this.inputdiv.ancestor('td'), 'down:37,38,39,40+ctrl', a));
+
+    if (this.grade) {
+        // Handle the Enter key being pressed.
+        this.keyevents.push(this.report.Y.on('key', a.keypress_enter, this.grade, 'press:13', a));
+        // Prevent the default key action on all fields for arrow keys on all key events!
+        // Note: this still does not work in FF!!!!!
+        this.keyevents.push(this.report.Y.on('key', function(e){e.preventDefault();}, this.grade, 'down:37,38,39,40+ctrl'));
+        this.keyevents.push(this.report.Y.on('key', function(e){e.preventDefault();}, this.grade, 'press:37,38,39,40+ctrl'));
+        this.keyevents.push(this.report.Y.on('key', function(e){e.preventDefault();}, this.grade, 'up:37,38,39,40+ctrl'));
+    }
 };
+
+/**
+ * Feedback field class
+ * This classes gets used in conjunction with the report running with AJAX enabled
+ * and is used to manage a cell that no editable grade, only possibly feedback
+ *
+ * @class feedbackfield
+ * @constructor
+ * @this {M.gradereport_grader.classes.feedbackfield}
+ * @param {M.gradereport_grader.classes.report} report
+ * @param {Y.Node} node
+ */
+M.gradereport_grader.classes.feedbackfield = function(report, node) {
+    this.report = report;
+    this.node = node;
+    this.gradespan = node.one('.gradevalue');
+    this.inputdiv = this.report.Y.Node.create('<div></div>');
+    this.editfeedback = this.report.ajax.showquickfeedback;
+    this.gradetype = 'text';
+    if (this.report.ajax.showquickfeedback) {
+        this.feedback = this.report.Y.Node.create('<input type="text" class="quickfeedback" value="" name="ajaxfeedback" />');
+        this.inputdiv.append(this.feedback);
+    }
+};
+
+/**
+ * Gets the grade for current cell (which will always be null)
+ *
+ * @function
+ * @this {M.gradereport_grader.classes.feedbackfield}
+ * @return {Mixed}
+ */
+M.gradereport_grader.classes.feedbackfield.prototype.get_grade = function() {
+    return null;
+};
+
+/**
+ * Overrides the set_grade function of textfield so that it can ignore the set-grade
+ * for grade cells without grades
+ *
+ * @function
+ * @this {M.gradereport_grader.classes.feedbackfield}
+ * @param {String} value
+ */
+M.gradereport_grader.classes.feedbackfield.prototype.set_grade = function() {
+    return;
+};
+
+/**
+ * Manually extend the feedbackfield class with the properties and methods of the
+ * textfield class that have not been defined
+ */
+for (var i in M.gradereport_grader.classes.textfield.prototype) {
+    if (!M.gradereport_grader.classes.feedbackfield.prototype[i]) {
+        M.gradereport_grader.classes.feedbackfield.prototype[i] = M.gradereport_grader.classes.textfield.prototype[i];
+    }
+}
 
 /**
  * An editable scale field
@@ -1017,11 +1180,12 @@ M.gradereport_grader.classes.scalefield = function(report, node) {
     this.gradespan = node.one('.gradevalue');
     this.inputdiv = this.report.Y.Node.create('<div></div>');
     this.editfeedback = this.report.ajax.showquickfeedback;
-    this.grade = this.report.Y.Node.create('<select type="text" class="text" /><option value="-1">'+M.util.get_string('ajaxchoosescale', 'gradereport_grader')+'</option></select>');
+    this.grade = this.report.Y.Node.create('<select type="text" class="text" name="ajaxgrade" /><option value="-1">'+
+            M.util.get_string('ajaxchoosescale', 'gradereport_grader')+'</option></select>');
     this.gradetype = 'scale';
     this.inputdiv.append(this.grade);
     if (this.editfeedback) {
-        this.feedback = this.report.Y.Node.create('<input type="text" class="quickfeedback" value="" />');
+        this.feedback = this.report.Y.Node.create('<input type="text" class="quickfeedback" value="" name="ajaxfeedback"/>');
         this.inputdiv.append(this.feedback);
     }
     var properties = this.report.get_cell_info(node);
