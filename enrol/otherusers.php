@@ -50,6 +50,7 @@ navigation_node::override_active_url(new moodle_url('/enrol/otherusers.php', arr
 
 $userdetails = array (
     'picture' => false,
+    'userfullnamedisplay' => false,
     'firstname' => get_string('firstname'),
     'lastname' => get_string('lastname'),
 );
