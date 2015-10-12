@@ -1511,7 +1511,7 @@ class assign {
                         s.assignment = :assignid AND
                         s.timemodified IS NOT NULL AND
                         s.status = :submitted AND
-                        (s.timemodified > g.timemodified OR g.timemodified IS NULL OR g.grade IS NULL)';
+                        (s.timemodified >= g.timemodified OR g.timemodified IS NULL)';
 
         return $DB->count_records_sql($sql, $params);
     }
@@ -2883,9 +2883,10 @@ class assign {
         if (!$userid) {
             $userid = $USER->id;
         }
+        $submission = null;
 
         $params = array('assignment'=>$this->get_instance()->id, 'userid'=>$userid);
-        if ($attemptnumber < 0) {
+        if ($attemptnumber < 0 || $create) {
             // Make sure this grade matches the latest submission attempt.
             if ($this->get_instance()->teamsubmission) {
                 $submission = $this->get_group_submission($userid, 0, true);
@@ -2911,7 +2912,14 @@ class assign {
             $grade->assignment   = $this->get_instance()->id;
             $grade->userid       = $userid;
             $grade->timecreated = time();
-            $grade->timemodified = $grade->timecreated;
+            // If we are "auto-creating" a grade - and there is a submission
+            // the new grade should not have a more recent timemodified value
+            // than the submission.
+            if ($submission) {
+                $grade->timemodified = $submission->timemodified;
+            } else {
+                $grade->timemodified = $grade->timecreated;
+            }
             $grade->grade = -1;
             $grade->grader = $USER->id;
             if ($attemptnumber >= 0) {
