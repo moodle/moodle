@@ -69,10 +69,10 @@ class core_user {
         // If noreply user then create fake record and return.
         switch ($userid) {
             case self::NOREPLY_USER:
-                return self::get_noreply_user($strictness);
+                return self::get_noreply_user();
                 break;
             case self::SUPPORT_USER:
-                return self::get_support_user($strictness);
+                return self::get_support_user();
                 break;
             default:
                 return $DB->get_record('user', array('id' => $userid), $fields, $strictness);
