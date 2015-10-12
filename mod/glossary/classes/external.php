@@ -1018,4 +1018,152 @@ class mod_glossary_external extends external_api {
             'warnings' => new external_warnings()
         ));
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_entries_by_author_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'Glossary entry ID'),
+            'letter' => new external_value(PARAM_ALPHA, 'First letter of firstname or lastname, or either keywords:'
+                . ' \'ALL\' or \'SPECIAL\'.'),
+            'field' => new external_value(PARAM_ALPHA, 'Search and order using: \'FIRSTNAME\' or \'LASTNAME\'', VALUE_DEFAULT,
+                'LASTNAME'),
+            'sort' => new external_value(PARAM_ALPHA, 'The direction of the order: \'ASC\' or \'DESC\'', VALUE_DEFAULT, 'ASC'),
+            'from' => new external_value(PARAM_INT, 'Start returning records from here', VALUE_DEFAULT, 0),
+            'limit' => new external_value(PARAM_INT, 'Number of records to return', VALUE_DEFAULT, 20),
+            'options' => new external_single_structure(array(
+                'includenotapproved' => new external_value(PARAM_BOOL, 'When false, includes the non-approved entries created by' .
+                    ' the user. When true, also includes the ones that the user has the permission to approve.', VALUE_DEFAULT, 0)
+            ), 'An array of options', VALUE_DEFAULT, array())
+        ));
+    }
+
+    /**
+     * Browse a glossary entries by author.
+     *
+     * @param int $id The glossary ID.
+     * @param string $letter A letter, or a special keyword.
+     * @param string $field The field to search from.
+     * @param string $sort The direction of the order.
+     * @param int $from Start returning records from here.
+     * @param int $limit Number of records to return.
+     * @param array $options Array of options.
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function get_entries_by_author($id, $letter, $field = 'LASTNAME', $sort = 'ASC', $from = 0, $limit = 20,
+            $options = array()) {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(self::get_entries_by_author_parameters(), array(
+            'id' => $id,
+            'letter' => $letter,
+            'field' => core_text::strtoupper($field),
+            'sort' => core_text::strtoupper($sort),
+            'from' => $from,
+            'limit' => $limit,
+            'options' => $options,
+        ));
+        $id = $params['id'];
+        $letter = $params['letter'];
+        $field = $params['field'];
+        $sort = $params['sort'];
+        $from = $params['from'];
+        $limit = $params['limit'];
+        $options = $params['options'];
+        $warnings = array();
+
+        if (!in_array($field, array('FIRSTNAME', 'LASTNAME'))) {
+            throw new invalid_parameter_exception('invalidfield');
+        } else if (!in_array($sort, array('ASC', 'DESC'))) {
+            throw new invalid_parameter_exception('invalidsort');
+        }
+
+        // Fetch and confirm.
+        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Validate the mode.
+        $modes = self::get_browse_modes_from_display_format($glossary->displayformat);
+        if (!in_array('author', $modes)) {
+            throw new invalid_parameter_exception('invalidbrowsemode');
+        }
+
+        // Preparing the query.
+        $where = '1 = 1';
+        $params = array();
+
+        if ($field == 'FIRSTNAME') {
+            $usernamefield = $DB->sql_fullname('u.firstname' , 'u.lastname');
+        } else {
+            $usernamefield = $DB->sql_fullname('u.lastname' , 'u.firstname');
+        }
+
+        if ($letter != 'ALL' && $letter != 'SPECIAL' && ($letterstrlen = core_text::strlen($letter))) {
+            $params['hookup'] = core_text::strtoupper($letter);
+            $where = $DB->sql_substr("upper($usernamefield)", 1, $letterstrlen) . ' = :hookup';
+        }
+        if ($letter == 'SPECIAL') {
+            $alphabet = explode(',', get_string('alphabet', 'langconfig'));
+            list($nia, $aparams) = $DB->get_in_or_equal($alphabet, SQL_PARAMS_NAMED, 'a', false);
+            $params = array_merge($params, $aparams);
+            $where = $DB->sql_substr("upper($usernamefield)", 1, 1) . " $nia";
+        }
+
+        $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
+        $params['myid'] = $USER->id;
+        if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+            $approvedsql = '1 = 1';
+        }
+
+        $userfields = user_picture::fields('u', null, 'userdataid', 'userdata');
+
+        $sqlselectcount = "SELECT COUNT('x')";
+        $sqlselect = "SELECT ge.*, $userfields";
+        $sql = "  FROM {glossary_entries} ge
+                  JOIN {user} u ON ge.userid = u.id
+                 WHERE (ge.glossaryid = :gid1 OR ge.sourceglossaryid = :gid2)
+                   AND $approvedsql
+                   AND $where";
+        $sqlorder = " ORDER BY $usernamefield $sort, ge.concept";
+
+        $params['gid1'] = $glossary->id;
+        $params['gid2'] = $glossary->id;
+
+        // Fetching the entries.
+        $count = $DB->count_records_sql($sqlselectcount . $sql, $params);
+        $entries = $DB->get_records_sql($sqlselect . $sql . $sqlorder, $params, $from, $limit);
+        foreach ($entries as $key => $entry) {
+            self::fill_entry_details($entry, $context);
+        }
+
+        return array(
+            'count' => $count,
+            'entries' => $entries,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns the description of the external function return value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function get_entries_by_author_returns() {
+        return new external_single_structure(array(
+            'count' => new external_value(PARAM_INT, 'The total number of records matching the request.'),
+            'entries' => new external_multiple_structure(
+                self::get_entry_return_structure()
+            ),
+            'warnings' => new external_warnings()
+        ));
+    }
 }
