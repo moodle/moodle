@@ -73,10 +73,11 @@ class mod_glossary_external extends external_api {
     /**
      * Get the return value of an entry.
      *
+     * @param bool $includecat Whether the definition should include category info.
      * @return external_definition
      */
-    public static function get_entry_return_structure() {
-        return new external_single_structure(array(
+    public static function get_entry_return_structure($includecat = false) {
+        $params = array(
             'id' => new external_value(PARAM_INT, 'The entry ID'),
             'glossaryid' => new external_value(PARAM_INT, 'The glossary ID'),
             'userid' => new external_value(PARAM_INT, 'Author ID'),
@@ -102,7 +103,17 @@ class mod_glossary_external extends external_api {
             'casesensitive' => new external_value(PARAM_BOOL, 'When true, the matching is case sensitive'),
             'fullmatch' => new external_value(PARAM_BOOL, 'When true, the matching is done on full words only'),
             'approved' => new external_value(PARAM_BOOL, 'Whether the entry was approved'),
-        ));
+        );
+
+        if ($includecat) {
+            $params['categoryid'] = new external_value(PARAM_INT, 'The category ID. This may be' .
+                ' \''. GLOSSARY_SHOW_NOT_CATEGORISED . '\' when the entry is not categorised', VALUE_DEFAULT,
+                GLOSSARY_SHOW_NOT_CATEGORISED);
+            $params['categoryname'] = new external_value(PARAM_RAW, 'The category name. May be empty when the entry is' .
+                ' not categorised, or the request was limited to one category.', VALUE_DEFAULT, '');
+        }
+
+        return new external_single_structure($params);
     }
 
     /**
@@ -740,4 +751,156 @@ class mod_glossary_external extends external_api {
         ));
     }
 
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_entries_by_category_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'Glossary entry ID.'),
+            'categoryid' => new external_value(PARAM_INT, 'The category ID. Use \'' . GLOSSARY_SHOW_ALL_CATEGORIES . '\' for all' .
+                ' categories, or \'' . GLOSSARY_SHOW_NOT_CATEGORISED . '\' for uncategorised entries.'),
+            'from' => new external_value(PARAM_INT, 'Start returning records from here', VALUE_DEFAULT, 0),
+            'limit' => new external_value(PARAM_INT, 'Number of records to return', VALUE_DEFAULT, 20),
+            'options' => new external_single_structure(array(
+                'includenotapproved' => new external_value(PARAM_BOOL, 'When false, includes the non-approved entries created by' .
+                    ' the user. When true, also includes the ones that the user has the permission to approve.', VALUE_DEFAULT, 0)
+            ), 'An array of options', VALUE_DEFAULT, array())
+        ));
+    }
+
+    /**
+     * Browse a glossary entries by category.
+     *
+     * @param int $id The glossary ID.
+     * @param int $categoryid The category ID.
+     * @param int $from Start returning records from here.
+     * @param int $limit Number of records to return.
+     * @param array $options Array of options.
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function get_entries_by_category($id, $categoryid, $from = 0, $limit = 20, $options = array()) {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(self::get_entries_by_category_parameters(), array(
+            'id' => $id,
+            'categoryid' => $categoryid,
+            'from' => $from,
+            'limit' => $limit,
+            'options' => $options,
+        ));
+        $id = $params['id'];
+        $categoryid = $params['categoryid'];
+        $from = $params['from'];
+        $limit = $params['limit'];
+        $options = $params['options'];
+        $warnings = array();
+
+        // Fetch and confirm.
+        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Validate the mode.
+        $modes = self::get_browse_modes_from_display_format($glossary->displayformat);
+        if (!in_array('cat', $modes)) {
+            throw new invalid_parameter_exception('invalidbrowsemode');
+        }
+
+        // Validate the category.
+        if (in_array($categoryid, array(GLOSSARY_SHOW_ALL_CATEGORIES, GLOSSARY_SHOW_NOT_CATEGORISED))) {
+            // All good.
+        } else if ($DB->count_records('glossary_categories', array('id' => $categoryid, 'glossaryid' => $id)) < 1) {
+            throw new invalid_parameter_exception('invalidcategory');
+        }
+
+        // Preparing the query.
+        $params = array();
+        $glossarysql = '(ge.glossaryid = :gid1 OR ge.sourceglossaryid = :gid2)';
+        $params['gid1'] = $glossary->id;
+        $params['gid2'] = $glossary->id;
+
+        $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
+        $params['myid'] = $USER->id;
+        if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+            $approvedsql = '1 = 1';
+        }
+
+        $userfields = user_picture::fields('u', null, 'userdataid', 'userdata');
+        $sqlfields = "ge.*, gec.categoryid, $userfields";
+        $sqlorderfields = 'ge.concept';
+
+        if ($categoryid === GLOSSARY_SHOW_ALL_CATEGORIES) {
+            $sqlfields .= ', gc.name AS categoryname';
+            $sqlorderfields = 'gc.name, ge.concept';
+            $sql = "  FROM {glossary_entries} ge
+                      JOIN {glossary_entries_categories} gec ON ge.id = gec.entryid
+                      JOIN {glossary_categories} gc ON gc.id = gec.categoryid
+                 LEFT JOIN {user} u ON ge.userid = u.id
+                     WHERE $glossarysql
+                       AND $approvedsql";
+
+        } else if ($categoryid === GLOSSARY_SHOW_NOT_CATEGORISED) {
+            $sql = "  FROM {glossary_entries} ge
+                 LEFT JOIN {glossary_entries_categories} gec ON ge.id = gec.entryid
+                 LEFT JOIN {user} u ON ge.userid = u.id
+                     WHERE $glossarysql
+                       AND $approvedsql
+                       AND gec.categoryid IS NULL";
+
+        } else {
+            $sql = "  FROM {glossary_entries} ge
+                      JOIN {glossary_entries_categories} gec
+                        ON gec.entryid = ge.id
+                       AND gec.categoryid = :categoryid
+                 LEFT JOIN {user} u ON ge.userid = u.id
+                     WHERE $glossarysql
+                       AND $approvedsql";
+            $params['categoryid'] = $categoryid;
+        }
+
+        $sqlselectcount = "SELECT COUNT('x')";
+        $sqlselect = "SELECT $sqlfields";
+        $sqlorder = ' ORDER BY ' . $sqlorderfields;
+
+        // Fetching the entries.
+        $count = $DB->count_records_sql($sqlselectcount . $sql, $params);
+        $entries = $DB->get_records_sql($sqlselect . $sql . $sqlorder, $params, $from, $limit);
+        foreach ($entries as $key => $entry) {
+            self::fill_entry_details($entry, $context);
+            if ($entry->categoryid === null) {
+                $entry->categoryid = GLOSSARY_SHOW_NOT_CATEGORISED;
+            }
+            if (isset($entry->categoryname)) {
+                $entry->categoryname = external_format_string($entry->categoryname, $context->id);
+            }
+        }
+
+        return array(
+            'count' => $count,
+            'entries' => $entries,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns the description of the external function return value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function get_entries_by_category_returns() {
+        return new external_single_structure(array(
+            'count' => new external_value(PARAM_INT, 'The total number of records matching the request.'),
+            'entries' => new external_multiple_structure(
+                self::get_entry_return_structure(true)
+            ),
+            'warnings' => new external_warnings()
+        ));
+    }
 }

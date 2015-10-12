@@ -404,4 +404,85 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($cat1c->id, $return['categories'][1]['id']);
     }
 
+    public function test_get_entries_by_category() {
+        $this->resetAfterTest(true);
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id, 'displayformat' => 'entrylist'));
+        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id, 'displayformat' => 'entrylist'));
+        $u1 = $this->getDataGenerator()->create_user();
+        $ctx = context_module::instance($g1->cmid);
+
+        $e1a1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
+        $e1a2 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
+        $e1a3 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
+        $e1b1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
+        $e1b2 = $gg->create_content($g1, array('approved' => 0, 'userid' => $u1->id));
+        $e1x1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
+        $e1x2 = $gg->create_content($g1, array('approved' => 0, 'userid' => $u1->id));
+        $e2a1 = $gg->create_content($g2, array('approved' => 1, 'userid' => $u1->id));
+        $e2a2 = $gg->create_content($g2, array('approved' => 1, 'userid' => $u1->id));
+
+        $cat1a = $gg->create_category($g1, array('name' => 'Fish'), array($e1a1, $e1a2, $e1a3));
+        $cat1b = $gg->create_category($g1, array('name' => 'Cat'), array($e1b1, $e1b2));
+        $cat1c = $gg->create_category($g1, array('name' => 'Zebra'), array($e1b1));   // $e1b1 is in two categories.
+        $cat2a = $gg->create_category($g2, array(), array($e2a1, $e2a2));
+
+        $this->setAdminUser();
+
+        // Browse one category.
+        $return = mod_glossary_external::get_entries_by_category($g1->id, $cat1a->id, 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_category_returns(), $return);
+        $this->assertCount(3, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($e1a1->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1a2->id, $return['entries'][1]['id']);
+        $this->assertEquals($e1a3->id, $return['entries'][2]['id']);
+
+        // Browse all categories.
+        $return = mod_glossary_external::get_entries_by_category($g1->id, GLOSSARY_SHOW_ALL_CATEGORIES, 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_category_returns(), $return);
+        $this->assertCount(5, $return['entries']);
+        $this->assertEquals(5, $return['count']);
+        $this->assertEquals($e1b1->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1a1->id, $return['entries'][1]['id']);
+        $this->assertEquals($e1a2->id, $return['entries'][2]['id']);
+        $this->assertEquals($e1a3->id, $return['entries'][3]['id']);
+        $this->assertEquals($e1b1->id, $return['entries'][4]['id']);
+
+        // Browse uncategorised.
+        $return = mod_glossary_external::get_entries_by_category($g1->id, GLOSSARY_SHOW_NOT_CATEGORISED, 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_category_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(1, $return['count']);
+        $this->assertEquals($e1x1->id, $return['entries'][0]['id']);
+
+        // Including to approve.
+        $return = mod_glossary_external::get_entries_by_category($g1->id, $cat1b->id, 0, 20,
+            array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_category_returns(), $return);
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(2, $return['count']);
+        $this->assertEquals($e1b1->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1b2->id, $return['entries'][1]['id']);
+
+        // Using limit.
+        $return = mod_glossary_external::get_entries_by_category($g1->id, GLOSSARY_SHOW_ALL_CATEGORIES, 0, 3,
+            array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_category_returns(), $return);
+        $this->assertCount(3, $return['entries']);
+        $this->assertEquals(6, $return['count']);
+        $this->assertEquals($e1b1->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1b2->id, $return['entries'][1]['id']);
+        $this->assertEquals($e1a1->id, $return['entries'][2]['id']);
+        $return = mod_glossary_external::get_entries_by_category($g1->id, GLOSSARY_SHOW_ALL_CATEGORIES, 3, 2,
+            array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_category_returns(), $return);
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(6, $return['count']);
+        $this->assertEquals($e1a2->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1a3->id, $return['entries'][1]['id']);
+    }
+
 }
