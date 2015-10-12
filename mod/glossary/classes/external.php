@@ -662,4 +662,82 @@ class mod_glossary_external extends external_api {
         ));
     }
 
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_categories_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'Glossary entry ID'),
+            'from' => new external_value(PARAM_INT, 'Start returning records from here', VALUE_DEFAULT, 0),
+            'limit' => new external_value(PARAM_INT, 'Number of records to return', VALUE_DEFAULT, 20)
+        ));
+    }
+
+    /**
+     * Get the categories of a glossary.
+     *
+     * @param int $id The glossary ID.
+     * @param int $from Start returning records from here.
+     * @param int $limit Number of records to return.
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function get_categories($id, $from = 0, $limit = 20) {
+        global $DB;
+
+        $params = self::validate_parameters(self::get_categories_parameters(), array(
+            'id' => $id,
+            'from' => $from,
+            'limit' => $limit
+        ));
+        $id = $params['id'];
+        $from = $params['from'];
+        $limit = $params['limit'];
+        $warnings = array();
+
+        // Fetch and confirm.
+        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Fetch the categories.
+        $count = $DB->count_records('glossary_categories', array('glossaryid' => $id));
+        $categories = $DB->get_records('glossary_categories', array('glossaryid' => $id), 'name ASC', '*', $from, $limit);
+        foreach ($categories as $category) {
+            $category->name = external_format_string($category->name, $context->id);
+        }
+
+        return array(
+            'count' => $count,
+            'categories' => $categories,
+            'warnings' => array(),
+        );
+    }
+
+    /**
+     * Returns the description of the external function return value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function get_categories_returns() {
+        return new external_single_structure(array(
+            'count' => new external_value(PARAM_INT, 'The total number of records.'),
+            'categories' => new external_multiple_structure(
+                new external_single_structure(array(
+                    'id' => new external_value(PARAM_INT, 'The category ID'),
+                    'glossaryid' => new external_value(PARAM_INT, 'The glossary ID'),
+                    'name' => new external_value(PARAM_RAW, 'The name of the category'),
+                    'usedynalink' => new external_value(PARAM_BOOL, 'Whether the category is automatically linked'),
+                ))
+            ),
+            'warnings' => new external_warnings()
+        ));
+    }
+
 }

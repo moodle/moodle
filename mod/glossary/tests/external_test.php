@@ -374,4 +374,34 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e1d->id, $return['entries'][0]['id']);
         $this->assertEquals($e1b->id, $return['entries'][1]['id']);
     }
+
+    public function test_get_categories() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $cat1a = $gg->create_category($g1);
+        $cat1b = $gg->create_category($g1);
+        $cat1c = $gg->create_category($g1);
+        $cat2a = $gg->create_category($g2);
+
+        $return = mod_glossary_external::get_categories($g1->id, 0, 20);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_categories_returns(), $return);
+        $this->assertCount(3, $return['categories']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($cat1a->id, $return['categories'][0]['id']);
+        $this->assertEquals($cat1b->id, $return['categories'][1]['id']);
+        $this->assertEquals($cat1c->id, $return['categories'][2]['id']);
+
+        $return = mod_glossary_external::get_categories($g1->id, 1, 2);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_categories_returns(), $return);
+        $this->assertCount(2, $return['categories']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($cat1b->id, $return['categories'][0]['id']);
+        $this->assertEquals($cat1c->id, $return['categories'][1]['id']);
+    }
+
 }
