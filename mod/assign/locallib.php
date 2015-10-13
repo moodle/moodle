@@ -6703,6 +6703,7 @@ class assign {
         global $USER, $CFG, $DB;
 
         $grade = $this->get_user_grade($userid, true, $attemptnumber);
+        $originalgrade = $grade->grade;
         $gradingdisabled = $this->grading_disabled($userid);
         $gradinginstance = $this->get_grading_instance($userid, $grade, $gradingdisabled);
         if (!$gradingdisabled) {
@@ -6747,7 +6748,12 @@ class assign {
                 }
             }
         }
-        $this->update_grade($grade, !empty($formdata->addattempt));
+        // We do not want to update the timemodified if no grade was added.
+        if (!empty($formdata->addattempt) ||
+                ($originalgrade !== null && $originalgrade != -1) ||
+                ($grade->grade !== null && $grade->grade != -1)) {
+            $this->update_grade($grade, !empty($formdata->addattempt));
+        }
         // Note the default if not provided for this option is true (e.g. webservices).
         // This is for backwards compatibility.
         if (!isset($formdata->sendstudentnotifications) || $formdata->sendstudentnotifications) {
