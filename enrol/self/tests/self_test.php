@@ -614,4 +614,41 @@ class enrol_self_testcase extends advanced_testcase {
         $this->setUser($user1);
         $this->assertSame($expectederrorstring, $selfplugin->can_self_enrol($instance1, true));
     }
+
+    /**
+     * Test enrol_self_check_group_enrolment_key
+     */
+    public function test_enrol_self_check_group_enrolment_key() {
+        global $DB;
+        self::resetAfterTest(true);
+
+        // Test in course with groups.
+        $course = self::getDataGenerator()->create_course(array('groupmode' => SEPARATEGROUPS, 'groupmodeforce' => 1));
+
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id, 'enrolmentkey' => 'thepassword'));
+
+        $result = enrol_self_check_group_enrolment_key($course->id, 'invalidpassword');
+        $this->assertFalse($result);
+
+        $result = enrol_self_check_group_enrolment_key($course->id, 'thepassword');
+        $this->assertTrue($result);
+
+        // Test disabling group options.
+        $course->groupmode = NOGROUPS;
+        $course->groupmodeforce = 0;
+        $DB->update_record('course', $course);
+
+        $result = enrol_self_check_group_enrolment_key($course->id, 'invalidpassword');
+        $this->assertFalse($result);
+
+        $result = enrol_self_check_group_enrolment_key($course->id, 'thepassword');
+        $this->assertTrue($result);
+
+        // Test without groups.
+        $othercourse = self::getDataGenerator()->create_course();
+        $result = enrol_self_check_group_enrolment_key($othercourse->id, 'thepassword');
+        $this->assertFalse($result);
+
+    }
 }
