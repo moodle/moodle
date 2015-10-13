@@ -868,6 +868,65 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e8->id, $return['entries'][1]['id']);
     }
 
+    public function test_get_entries_by_term() {
+        $this->resetAfterTest(true);
+
+        // Generate all the things.
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $u1 = $this->getDataGenerator()->create_user();
+        $ctx = context_module::instance($g1->cmid);
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+
+        $this->setAdminUser();
+
+        $e1 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1, 'concept' => 'cat'));
+        $e2 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1), array('cat', 'dog'));
+        $e3 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 1), array('dog'));
+        $e4 = $gg->create_content($g1, array('userid' => $u1->id, 'approved' => 0, 'concept' => 'dog'));
+        $e5 = $gg->create_content($g2, array('userid' => $u1->id, 'approved' => 1, 'concept' => 'dog'), array('cat'));
+
+        // Search concept + alias.
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'cat', 0, 20, array('includenotapproved' => false));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(2, $return['count']);
+        $this->assertEquals($e1->id, $return['entries'][0]['id']);
+        $this->assertEquals($e2->id, $return['entries'][1]['id']);
+
+        // Search alias.
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => false));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(2, $return['count']);
+        $this->assertEquals($e2->id, $return['entries'][0]['id']);
+        $this->assertEquals($e3->id, $return['entries'][1]['id']);
+
+        // Search including not approved.
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 20, array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+        $this->assertCount(3, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($e4->id, $return['entries'][0]['id']);
+        $this->assertEquals($e2->id, $return['entries'][1]['id']);
+        $this->assertEquals($e3->id, $return['entries'][2]['id']);
+
+        // Pagination.
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 0, 1, array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($e4->id, $return['entries'][0]['id']);
+        $return = mod_glossary_external::get_entries_by_term($g1->id, 'dog', 1, 1, array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_term_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($e2->id, $return['entries'][0]['id']);
+    }
+
     public function test_get_entry_by_id() {
         $this->resetAfterTest(true);
 

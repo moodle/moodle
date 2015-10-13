@@ -1206,6 +1206,89 @@ class mod_glossary_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 3.1
      */
+    public static function get_entries_by_term_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'Glossary entry ID'),
+            'term' => new external_value(PARAM_NOTAGS, 'The entry concept, or alias'),
+            'from' => new external_value(PARAM_INT, 'Start returning records from here', VALUE_DEFAULT, 0),
+            'limit' => new external_value(PARAM_INT, 'Number of records to return', VALUE_DEFAULT, 20),
+            'options' => new external_single_structure(array(
+                'includenotapproved' => new external_value(PARAM_BOOL, 'When false, includes the non-approved entries created by' .
+                    ' the user. When true, also includes the ones that the user has the permission to approve.', VALUE_DEFAULT, 0)
+            ), 'An array of options', VALUE_DEFAULT, array())
+        ));
+    }
+
+    /**
+     * Browse a glossary entries using a term matching the concept or alias.
+     *
+     * @param int $id The glossary ID.
+     * @param string $term The term.
+     * @param int $from Start returning records from here.
+     * @param int $limit Number of records to return.
+     * @param array $options Array of options.
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function get_entries_by_term($id, $term, $from = 0, $limit = 20, $options = array()) {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(self::get_entries_by_term_parameters(), array(
+            'id' => $id,
+            'term' => $term,
+            'from' => $from,
+            'limit' => $limit,
+            'options' => $options,
+        ));
+        $id = $params['id'];
+        $term = $params['term'];
+        $from = $params['from'];
+        $limit = $params['limit'];
+        $options = $params['options'];
+        $warnings = array();
+
+        // Get and validate the glossary.
+        list($glossary, $context) = self::validate_glossary($id);
+
+        // Fetching the entries.
+        $entries = array();
+        list($records, $count) = glossary_get_entries_by_term($glossary, $context, $term, $from, $limit, $options);
+        foreach ($records as $key => $record) {
+            self::fill_entry_details($record, $context);
+            $entries[] = $record;
+        }
+        $records->close();
+
+        return array(
+            'count' => $count,
+            'entries' => $entries,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns the description of the external function return value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function get_entries_by_term_returns() {
+        return new external_single_structure(array(
+            'count' => new external_value(PARAM_INT, 'The total number of records matching the request.'),
+            'entries' => new external_multiple_structure(
+                self::get_entry_return_structure()
+            ),
+            'warnings' => new external_warnings()
+        ));
+    }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
     public static function get_entry_by_id_parameters() {
         return new external_function_parameters(array(
             'id' => new external_value(PARAM_INT, 'Glossary entry ID'),

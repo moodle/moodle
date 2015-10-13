@@ -273,6 +273,21 @@ class mod_glossary_entry_query_builder {
     }
 
     /**
+     * Filter by concept or alias.
+     *
+     * This requires the alias table to be joined in the query. See {@link self::join_alias()}.
+     *
+     * @param  string $term What the concept or aliases should be.
+     */
+    public function filter_by_term($term) {
+        $this->where[] = sprintf("(%s = :filterterma OR %s = :filtertermb)",
+            self::resolve_field('concept', 'entries'),
+            self::resolve_field('alias', 'alias'));
+        $this->params['filterterma'] = $term;
+        $this->params['filtertermb'] = $term;
+    }
+
+    /**
      * Filter by search terms.
      *
      * Note that this does not handle invalid or too short terms. This requires the alias
@@ -333,6 +348,11 @@ class mod_glossary_entry_query_builder {
                 $conditions[] = $DB->sql_like($concat, ":searchterm{$i}", false, true, $not);
                 $params['searchterm' . $i] = '%' . $DB->sql_like_escape($searchterm) . '%';
             }
+        }
+
+        // When there are no conditions we add a negative one to ensure that we don't return anything.
+        if (empty($conditions)) {
+            $conditions[] = '1 = 2';
         }
 
         $this->where[] = implode(' AND ', $conditions);

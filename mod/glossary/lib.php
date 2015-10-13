@@ -3695,6 +3695,47 @@ function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch
 }
 
 /**
+ * Returns the entries of a glossary by term.
+ *
+ * @param  object $glossary The glossary.
+ * @param  context $context The context of the glossary.
+ * @param  string $term The term we are searching for, a concept or alias.
+ * @param  int $from Fetch records from.
+ * @param  int $limit Number of records to fetch.
+ * @param  array $options Accepts:
+ *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
+ *                          the current user. When true, also includes the ones that the user has the permission to approve.
+ * @return array The first element being the recordset, the second the number of entries.
+ * @since Moodle 3.1
+ */
+function glossary_get_entries_by_term($glossary, $context, $term, $from, $limit, $options = array()) {
+
+    // Build the query.
+    $qb = new mod_glossary_entry_query_builder($glossary);
+    if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
+    } else {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
+    }
+
+    $qb->add_field('*', 'entries');
+    $qb->join_alias();
+    $qb->distinct('id', 'entries');
+    $qb->join_user();
+    $qb->add_user_fields();
+    $qb->filter_by_term($term);
+
+    $qb->order_by('concept', 'entries');
+    $qb->limit($from, $limit);
+
+    // Fetching the entries.
+    $count = $qb->count_records();
+    $entries = $qb->get_recordset();
+
+    return array($entries, $count);
+}
+
+/**
  * Fetch an entry.
  *
  * @param  int $id The entry ID.
