@@ -163,6 +163,21 @@ class mod_glossary_external extends external_api {
     }
 
     /**
+     * Validate a glossary via ID.
+     *
+     * @param  int $id The glossary ID.
+     * @return array Contains glossary, context, course and cm.
+     */
+    public static function validate_glossary($id) {
+        global $DB;
+        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+        return array($glossary, $context, $course, $cm);
+    }
+
+    /**
      * Describes the parameters for get_glossaries_by_courses.
      *
      * @return external_external_function_parameters
@@ -330,11 +345,8 @@ class mod_glossary_external extends external_api {
         $mode = $params['mode'];
         $warnings = array();
 
-        // Fetch and confirm.
-        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
+        // Get and validate the glossary.
+        list($glossary, $context, $course, $cm) = self::validate_glossary($id);
 
         // Trigger module viewed event.
         glossary_view($glossary, $course, $cm, $context, $mode);
@@ -385,12 +397,9 @@ class mod_glossary_external extends external_api {
         $id = $params['id'];
         $warnings = array();
 
-        // Fetch and confirm.
+        // Get and validate the glossary.
         $entry = $DB->get_record('glossary_entries', array('id' => $id), '*', MUST_EXIST);
-        $glossary = $DB->get_record('glossary', array('id' => $entry->glossaryid), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
+        list($glossary, $context) = self::validate_glossary($entry->glossaryid);
 
         if (empty($entry->approved) && $entry->userid != $USER->id && !has_capability('mod/glossary:approve', $context)) {
             throw new invalid_parameter_exception('invalidentry');
@@ -466,11 +475,8 @@ class mod_glossary_external extends external_api {
         $options = $params['options'];
         $warnings = array();
 
-        // Fetch and confirm.
-        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
+        // Get and validate the glossary.
+        list($glossary, $context) = self::validate_glossary($id);
 
         // Validate the mode.
         $modes = self::get_browse_modes_from_display_format($glossary->displayformat);
@@ -603,11 +609,8 @@ class mod_glossary_external extends external_api {
             throw new invalid_parameter_exception('invalidsort');
         }
 
-        // Fetch and confirm.
-        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
+        // Get and validate the glossary.
+        list($glossary, $context) = self::validate_glossary($id);
 
         // Validate the mode.
         $modes = self::get_browse_modes_from_display_format($glossary->displayformat);
@@ -710,11 +713,8 @@ class mod_glossary_external extends external_api {
         $limit = $params['limit'];
         $warnings = array();
 
-        // Fetch and confirm.
-        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
+        // Get and validate the glossary.
+        list($glossary, $context) = self::validate_glossary($id);
 
         // Fetch the categories.
         $count = $DB->count_records('glossary_categories', array('glossaryid' => $id));
@@ -800,11 +800,8 @@ class mod_glossary_external extends external_api {
         $options = $params['options'];
         $warnings = array();
 
-        // Fetch and confirm.
-        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
+        // Get and validate the glossary.
+        list($glossary, $context) = self::validate_glossary($id);
 
         // Validate the mode.
         $modes = self::get_browse_modes_from_display_format($glossary->displayformat);
@@ -948,11 +945,8 @@ class mod_glossary_external extends external_api {
         $options = $params['options'];
         $warnings = array();
 
-        // Fetch and confirm.
-        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
+        // Get and validate the glossary.
+        list($glossary, $context) = self::validate_glossary($id);
 
         // Fetch the authors.
         $params = array();
@@ -1084,11 +1078,8 @@ class mod_glossary_external extends external_api {
             throw new invalid_parameter_exception('invalidsort');
         }
 
-        // Fetch and confirm.
-        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
+        // Get and validate the glossary.
+        list($glossary, $context) = self::validate_glossary($id);
 
         // Validate the mode.
         $modes = self::get_browse_modes_from_display_format($glossary->displayformat);
@@ -1231,11 +1222,8 @@ class mod_glossary_external extends external_api {
             throw new invalid_parameter_exception('invalidsort');
         }
 
-        // Fetch and confirm.
-        $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
+        // Get and validate the glossary.
+        list($glossary, $context) = self::validate_glossary($id);
 
         // Validate the mode.
         $modes = self::get_browse_modes_from_display_format($glossary->displayformat);
