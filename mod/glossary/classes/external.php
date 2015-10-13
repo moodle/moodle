@@ -483,33 +483,13 @@ class mod_glossary_external extends external_api {
             throw new invalid_parameter_exception('invalidbrowsemode');
         }
 
-        // Preparing the query.
-        $qb = new mod_glossary_entry_query_builder($glossary);
-        if ($letter != 'ALL' && $letter != 'SPECIAL' && core_text::strlen($letter)) {
-            $qb->filter_by_concept_letter($letter);
+        $entries = array();
+        list($records, $count) = glossary_get_entries_by_letter($glossary, $context, $letter, $from, $limit, $options);
+        foreach ($records as $key => $record) {
+            self::fill_entry_details($record, $context);
+            $entries[] = $record;
         }
-        if ($letter == 'SPECIAL') {
-            $qb->filter_by_concept_non_letter();
-        }
-
-        if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
-            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
-        } else {
-            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
-        }
-
-        $qb->add_field('*', 'entries');
-        $qb->join_user();
-        $qb->add_user_fields();
-        $qb->order_by('concept', 'entries');
-        $qb->limit($from, $limit);
-
-        // Fetching the entries.
-        $count = $qb->count_records();
-        $entries = $qb->get_records();
-        foreach ($entries as $key => $entry) {
-            self::fill_entry_details($entry, $context);
-        }
+        $records->close();
 
         return array(
             'count' => $count,
@@ -603,31 +583,13 @@ class mod_glossary_external extends external_api {
             throw new invalid_parameter_exception('invalidbrowsemode');
         }
 
-        // Preparing the query.
-        $qb = new mod_glossary_entry_query_builder($glossary);
-        if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
-            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
-        } else {
-            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
+        $entries = array();
+        list($records, $count) = glossary_get_entries_by_date($glossary, $context, $order, $sort, $from, $limit, $options);
+        foreach ($records as $key => $record) {
+            self::fill_entry_details($record, $context);
+            $entries[] = $record;
         }
-
-        $qb->add_field('*', 'entries');
-        $qb->join_user();
-        $qb->add_user_fields();
-        $qb->limit($from, $limit);
-
-        if ($order == 'CREATION') {
-            $qb->order_by('timecreated', 'entries', $sort);
-        } else {
-            $qb->order_by('timemodified', 'entries', $sort);
-        }
-
-        // Fetching the entries.
-        $count = $qb->count_records();
-        $entries = $qb->get_records();
-        foreach ($entries as $key => $entry) {
-            self::fill_entry_details($entry, $context);
-        }
+        $records->close();
 
         return array(
             'count' => $count,
@@ -693,10 +655,11 @@ class mod_glossary_external extends external_api {
         list($glossary, $context) = self::validate_glossary($id);
 
         // Fetch the categories.
-        $count = $DB->count_records('glossary_categories', array('glossaryid' => $id));
-        $categories = $DB->get_records('glossary_categories', array('glossaryid' => $id), 'name ASC', '*', $from, $limit);
-        foreach ($categories as $category) {
+        $categories = array();
+        list($records, $count) = glossary_get_categories($glossary, $from, $limit);
+        foreach ($records as $category) {
             $category->name = external_format_string($category->name, $context->id);
+            $categories[] = $category;
         }
 
         return array(
@@ -792,43 +755,20 @@ class mod_glossary_external extends external_api {
             throw new invalid_parameter_exception('invalidcategory');
         }
 
-        // Preparing the query.
-        $qb = new mod_glossary_entry_query_builder($glossary);
-        if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
-            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
-        } else {
-            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
-        }
-
-        $qb->join_category($categoryid);
-        $qb->join_user();
-        $qb->add_field('*', 'entries');
-        $qb->add_field('categoryid', 'entries_categories');
-        $qb->add_user_fields();
-
-        if ($categoryid === GLOSSARY_SHOW_ALL_CATEGORIES) {
-            $qb->add_field('name', 'categories', 'categoryname');
-            $qb->order_by('name', 'categories');
-
-        } else if ($categoryid === GLOSSARY_SHOW_NOT_CATEGORISED) {
-            $qb->where('categoryid', 'entries_categories', null);
-        }
-
-        $qb->order_by('concept', 'entries');
-        $qb->limit($from, $limit);
-
         // Fetching the entries.
-        $count = $qb->count_records();
-        $entries = $qb->get_records();
-        foreach ($entries as $key => $entry) {
-            self::fill_entry_details($entry, $context);
-            if ($entry->categoryid === null) {
-                $entry->categoryid = GLOSSARY_SHOW_NOT_CATEGORISED;
+        $entries = array();
+        list($records, $count) = glossary_get_entries_by_category($glossary, $context, $categoryid, $from, $limit, $options);
+        foreach ($records as $key => $record) {
+            self::fill_entry_details($record, $context);
+            if ($record->categoryid === null) {
+                $record->categoryid = GLOSSARY_SHOW_NOT_CATEGORISED;
             }
-            if (isset($entry->categoryname)) {
-                $entry->categoryname = external_format_string($entry->categoryname, $context->id);
+            if (isset($record->categoryname)) {
+                $record->categoryname = external_format_string($record->categoryname, $context->id);
             }
+            $entries[] = $record;
         }
+        $records->close();
 
         return array(
             'count' => $count,
@@ -900,32 +840,10 @@ class mod_glossary_external extends external_api {
         // Get and validate the glossary.
         list($glossary, $context) = self::validate_glossary($id);
 
-        // Fetch the authors.
-        $params = array();
-        $userfields = user_picture::fields('u', null);
-
-        $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
-        $params['myid'] = $USER->id;
-        if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
-            $approvedsql = '1 = 1';
-        }
-
-        $sqlselectcount = "SELECT COUNT(DISTINCT(u.id))";
-        $sqlselect = "SELECT DISTINCT(u.id), $userfields";
-        $sql = "  FROM {user} u
-                  JOIN {glossary_entries} ge
-                    ON ge.userid = u.id
-                   AND (ge.glossaryid = :gid1 OR ge.sourceglossaryid = :gid2)
-                   AND $approvedsql";
-        $ordersql = " ORDER BY u.lastname, u.firstname";
-
-        $params['gid1'] = $glossary->id;
-        $params['gid2'] = $glossary->id;
+        // Fetching the entries.
+        list($users, $count) = glossary_get_authors($glossary, $context, $limit, $from, $options);
 
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
-        $count = $DB->count_records_sql($sqlselectcount . $sql, $params);
-        $users = $DB->get_recordset_sql($sqlselect . $sql . $ordersql, $params, $from, $limit);
-        $authors = array();
         foreach ($users as $user) {
             $userpicture = new user_picture($user);
             $userpicture->size = 1;
@@ -1039,35 +957,15 @@ class mod_glossary_external extends external_api {
             throw new invalid_parameter_exception('invalidbrowsemode');
         }
 
-        // Preparing the query.
-        $firstnamefirst = $field === 'FIRSTNAME';
-        $qb = new mod_glossary_entry_query_builder($glossary);
-        if ($letter != 'ALL' && $letter != 'SPECIAL' && core_text::strlen($letter)) {
-            $qb->filter_by_author_letter($letter, $firstnamefirst);
-        }
-        if ($letter == 'SPECIAL') {
-            $qb->filter_by_author_non_letter($firstnamefirst);
-        }
-
-        if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
-            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
-        } else {
-            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
-        }
-
-        $qb->add_field('*', 'entries');
-        $qb->join_user(true);
-        $qb->add_user_fields();
-        $qb->order_by_author($firstnamefirst, $sort);
-        $qb->order_by('concept', 'entries');
-        $qb->limit($from, $limit);
-
         // Fetching the entries.
-        $count = $qb->count_records();
-        $entries = $qb->get_records();
-        foreach ($entries as $key => $entry) {
-            self::fill_entry_details($entry, $context);
+        $entries = array();
+        list($records, $count) = glossary_get_entries_by_author($glossary, $context, $letter, $field, $sort, $from, $limit,
+            $options);
+        foreach ($records as $key => $record) {
+            self::fill_entry_details($record, $context);
+            $entries[] = $record;
         }
+        $records->close();
 
         return array(
             'count' => $count,
@@ -1165,35 +1063,15 @@ class mod_glossary_external extends external_api {
             throw new invalid_parameter_exception('invalidbrowsemode');
         }
 
-        // Preparing the query.
-        $qb = new mod_glossary_entry_query_builder($glossary);
-        if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
-            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
-        } else {
-            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
-        }
-
-        $qb->add_field('*', 'entries');
-        $qb->join_user(true);
-        $qb->add_user_fields();
-        $qb->where('id', 'user', $authorid);
-
-        if ($order == 'CREATION') {
-            $qb->order_by('timecreated', 'entries', $sort);
-        } else if ($order == 'UPDATE') {
-            $qb->order_by('timemodified', 'entries', $sort);
-        } else {
-            $qb->order_by('concept', 'entries', $sort);
-        }
-
-        $qb->limit($from, $limit);
-
         // Fetching the entries.
-        $count = $qb->count_records();
-        $entries = $qb->get_records();
-        foreach ($entries as $key => $entry) {
-            self::fill_entry_details($entry, $context);
+        $entries = array();
+        list($records, $count) = glossary_get_entries_by_author_id($glossary, $context, $authorid, $order, $sort, $from,
+            $limit, $options);
+        foreach ($records as $key => $record) {
+            self::fill_entry_details($record, $context);
+            $entries[] = $record;
         }
+        $records->close();
 
         return array(
             'count' => $count,

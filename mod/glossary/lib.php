@@ -3346,3 +3346,290 @@ function glossary_entry_view($entry, $context) {
     $event->trigger();
 
 }
+
+/**
+ * Returns the entries of a glossary by letter.
+ *
+ * @param  object $glossary The glossary.
+ * @param  context $context The context of the glossary.
+ * @param  string $letter The letter, or ALL, or SPECIAL.
+ * @param  int $from Fetch records from.
+ * @param  int $limit Number of records to fetch.
+ * @param  array $options Accepts:
+ *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
+ *                          the current user. When true, also includes the ones that the user has the permission to approve.
+ * @return array The first element being the recordset, the second the number of entries.
+ * @since Moodle 3.1
+ */
+function glossary_get_entries_by_letter($glossary, $context, $letter, $from, $limit, $options = array()) {
+
+    $qb = new mod_glossary_entry_query_builder($glossary);
+    if ($letter != 'ALL' && $letter != 'SPECIAL' && core_text::strlen($letter)) {
+        $qb->filter_by_concept_letter($letter);
+    }
+    if ($letter == 'SPECIAL') {
+        $qb->filter_by_concept_non_letter();
+    }
+
+    if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
+    } else {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
+    }
+
+    $qb->add_field('*', 'entries');
+    $qb->join_user();
+    $qb->add_user_fields();
+    $qb->order_by('concept', 'entries');
+    $qb->limit($from, $limit);
+
+    // Fetching the entries.
+    $count = $qb->count_records();
+    $entries = $qb->get_recordset();
+
+    return array($entries, $count);
+}
+
+/**
+ * Returns the entries of a glossary by date.
+ *
+ * @param  object $glossary The glossary.
+ * @param  context $context The context of the glossary.
+ * @param  string $order The mode of ordering: CREATION or UPDATE.
+ * @param  string $sort The direction of the ordering: ASC or DESC.
+ * @param  int $from Fetch records from.
+ * @param  int $limit Number of records to fetch.
+ * @param  array $options Accepts:
+ *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
+ *                          the current user. When true, also includes the ones that the user has the permission to approve.
+ * @return array The first element being the recordset, the second the number of entries.
+ * @since Moodle 3.1
+ */
+function glossary_get_entries_by_date($glossary, $context, $order, $sort, $from, $limit, $options = array()) {
+
+    $qb = new mod_glossary_entry_query_builder($glossary);
+    if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
+    } else {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
+    }
+
+    $qb->add_field('*', 'entries');
+    $qb->join_user();
+    $qb->add_user_fields();
+    $qb->limit($from, $limit);
+
+    if ($order == 'CREATION') {
+        $qb->order_by('timecreated', 'entries', $sort);
+    } else {
+        $qb->order_by('timemodified', 'entries', $sort);
+    }
+
+    // Fetching the entries.
+    $count = $qb->count_records();
+    $entries = $qb->get_recordset();
+
+    return array($entries, $count);
+}
+
+/**
+ * Returns the entries of a glossary by category.
+ *
+ * @param  object $glossary The glossary.
+ * @param  context $context The context of the glossary.
+ * @param  int $categoryid The category ID, or GLOSSARY_SHOW_* constant.
+ * @param  int $from Fetch records from.
+ * @param  int $limit Number of records to fetch.
+ * @param  array $options Accepts:
+ *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
+ *                          the current user. When true, also includes the ones that the user has the permission to approve.
+ * @return array The first element being the recordset, the second the number of entries.
+ * @since Moodle 3.1
+ */
+function glossary_get_entries_by_category($glossary, $context, $categoryid, $from, $limit, $options = array()) {
+
+    $qb = new mod_glossary_entry_query_builder($glossary);
+    if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
+    } else {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
+    }
+
+    $qb->join_category($categoryid);
+    $qb->join_user();
+    $qb->add_field('*', 'entries');
+    $qb->add_field('categoryid', 'entries_categories');
+    $qb->add_user_fields();
+
+    if ($categoryid === GLOSSARY_SHOW_ALL_CATEGORIES) {
+        $qb->add_field('name', 'categories', 'categoryname');
+        $qb->order_by('name', 'categories');
+
+    } else if ($categoryid === GLOSSARY_SHOW_NOT_CATEGORISED) {
+        $qb->where('categoryid', 'entries_categories', null);
+    }
+
+    $qb->order_by('concept', 'entries');
+    $qb->limit($from, $limit);
+
+    // Fetching the entries.
+    $count = $qb->count_records();
+    $entries = $qb->get_recordset();
+
+    return array($entries, $count);
+}
+
+/**
+ * Returns the entries of a glossary by author.
+ *
+ * @param  object $glossary The glossary.
+ * @param  context $context The context of the glossary.
+ * @param  string $letter The letter
+ * @param  string $field The field to search: FIRSTNAME or LASTNAME.
+ * @param  string $sort The sorting: ASC or DESC.
+ * @param  int $from Fetch records from.
+ * @param  int $limit Number of records to fetch.
+ * @param  array $options Accepts:
+ *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
+ *                          the current user. When true, also includes the ones that the user has the permission to approve.
+ * @return array The first element being the recordset, the second the number of entries.
+ * @since Moodle 3.1
+ */
+function glossary_get_entries_by_author($glossary, $context, $letter, $field, $sort, $from, $limit, $options = array()) {
+
+    $firstnamefirst = $field === 'FIRSTNAME';
+    $qb = new mod_glossary_entry_query_builder($glossary);
+    if ($letter != 'ALL' && $letter != 'SPECIAL' && core_text::strlen($letter)) {
+        $qb->filter_by_author_letter($letter, $firstnamefirst);
+    }
+    if ($letter == 'SPECIAL') {
+        $qb->filter_by_author_non_letter($firstnamefirst);
+    }
+
+    if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
+    } else {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
+    }
+
+    $qb->add_field('*', 'entries');
+    $qb->join_user(true);
+    $qb->add_user_fields();
+    $qb->order_by_author($firstnamefirst, $sort);
+    $qb->order_by('concept', 'entries');
+    $qb->limit($from, $limit);
+
+    // Fetching the entries.
+    $count = $qb->count_records();
+    $entries = $qb->get_recordset();
+
+    return array($entries, $count);
+}
+
+/**
+ * Returns the entries of a glossary by category.
+ *
+ * @param  object $glossary The glossary.
+ * @param  context $context The context of the glossary.
+ * @param  int $authorid The author ID.
+ * @param  string $order The mode of ordering: CONCEPT, CREATION or UPDATE.
+ * @param  string $sort The direction of the ordering: ASC or DESC.
+ * @param  int $from Fetch records from.
+ * @param  int $limit Number of records to fetch.
+ * @param  array $options Accepts:
+ *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
+ *                          the current user. When true, also includes the ones that the user has the permission to approve.
+ * @return array The first element being the recordset, the second the number of entries.
+ * @since Moodle 3.1
+ */
+function glossary_get_entries_by_author_id($glossary, $context, $authorid, $order, $sort, $from, $limit, $options = array()) {
+
+    $qb = new mod_glossary_entry_query_builder($glossary);
+    if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
+    } else {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
+    }
+
+    $qb->add_field('*', 'entries');
+    $qb->join_user(true);
+    $qb->add_user_fields();
+    $qb->where('id', 'user', $authorid);
+
+    if ($order == 'CREATION') {
+        $qb->order_by('timecreated', 'entries', $sort);
+    } else if ($order == 'UPDATE') {
+        $qb->order_by('timemodified', 'entries', $sort);
+    } else {
+        $qb->order_by('concept', 'entries', $sort);
+    }
+
+    $qb->limit($from, $limit);
+
+    // Fetching the entries.
+    $count = $qb->count_records();
+    $entries = $qb->get_recordset();
+
+    return array($entries, $count);
+}
+
+/**
+ * Returns the authors in a glossary
+ *
+ * @param  object $glossary The glossary.
+ * @param  context $context The context of the glossary.
+ * @param  int $from Fetch records from.
+ * @param  int $limit Number of records to fetch.
+ * @param  array $options Accepts:
+ *                        - (bool) includenotapproved. When false, includes self even if all of their entries require approval.
+ *                          When true, also includes authors only having entries pending approval.
+ * @return array The first element being the recordset, the second the number of entries.
+ * @since Moodle 3.1
+ */
+function glossary_get_authors($glossary, $context, $limit, $from, $options = array()) {
+    global $DB, $USER;
+
+    $params = array();
+    $userfields = user_picture::fields('u', null);
+
+    $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
+    $params['myid'] = $USER->id;
+    if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+        $approvedsql = '1 = 1';
+    }
+
+    $sqlselectcount = "SELECT COUNT(DISTINCT(u.id))";
+    $sqlselect = "SELECT DISTINCT(u.id), $userfields";
+    $sql = "  FROM {user} u
+              JOIN {glossary_entries} ge
+                ON ge.userid = u.id
+               AND (ge.glossaryid = :gid1 OR ge.sourceglossaryid = :gid2)
+               AND $approvedsql";
+    $ordersql = " ORDER BY u.lastname, u.firstname";
+
+    $params['gid1'] = $glossary->id;
+    $params['gid2'] = $glossary->id;
+
+    $count = $DB->count_records_sql($sqlselectcount . $sql, $params);
+    $users = $DB->get_recordset_sql($sqlselect . $sql . $ordersql, $params, $from, $limit);
+
+    return array($users, $count);
+}
+
+/**
+ * Returns the categories of a glossary.
+ *
+ * @param  object $glossary The glossary.
+ * @param  int $from Fetch records from.
+ * @param  int $limit Number of records to fetch.
+ * @return array The first element being the recordset, the second the number of entries.
+ * @since Moodle 3.1
+ */
+function glossary_get_categories($glossary, $from, $limit) {
+    global $DB;
+
+    $count = $DB->count_records('glossary_categories', array('glossaryid' => $glossary->id));
+    $categories = $DB->get_recordset('glossary_categories', array('glossaryid' => $glossary->id), 'name ASC', '*', $from, $limit);
+
+    return array($categories, $count);
+}
