@@ -3547,9 +3547,6 @@ function get_extra_user_fields_sql($context, $alias='', $prefix='', $already = a
 function get_user_field_name($field) {
     // Some fields have language strings which are not the same as field name.
     switch ($field) {
-        case 'phone1' : {
-            return get_string('phone');
-        }
         case 'url' : {
             return get_string('webpage');
         }

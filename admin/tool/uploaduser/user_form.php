@@ -290,7 +290,7 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->setType('department', PARAM_TEXT);
         $mform->setDefault('department', $templateuser->department);
 
-        $mform->addElement('text', 'phone1', get_string('phone'), 'maxlength="20" size="25"');
+        $mform->addElement('text', 'phone1', get_string('phone1'), 'maxlength="20" size="25"');
         $mform->setType('phone1', PARAM_NOTAGS);
         $mform->setAdvanced('phone1');
 

@@ -1428,6 +1428,7 @@ $string['perpagea'] = 'Per page: {$a}';
 $string['personal'] = 'Personal';
 $string['personalprofile'] = 'Personal profile';
 $string['phone'] = 'Phone';
+$string['phone1'] = 'Phone';
 $string['phone2'] = 'Mobile phone';
 $string['phpinfo'] = 'PHP info';
 $string['pictureof'] = 'Picture of {$a}';

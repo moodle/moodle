@@ -433,7 +433,7 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
     $mform->addElement('text', 'department', get_string('department'), 'maxlength="255" size="25"');
     $mform->setType('department', PARAM_TEXT);
 
-    $mform->addElement('text', 'phone1', get_string('phone'), 'maxlength="20" size="25"');
+    $mform->addElement('text', 'phone1', get_string('phone1'), 'maxlength="20" size="25"');
     $mform->setType('phone1', PARAM_NOTAGS);
 
     $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
