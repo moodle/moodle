@@ -765,6 +765,8 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $plugin = $assign1->get_submission_plugin_by_type('onlinetext');
         $plugin->save($submission, $data);
 
+        // Wait 1 second so the submission and grade do not have the same timemodified.
+        sleep(1);
         // Simulate adding a grade.
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
