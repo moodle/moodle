@@ -140,6 +140,7 @@ $string['thisconversation'] = 'this conversation';
 $string['timenosee'] = 'Minutes since I was last seen online';
 $string['timesent'] = 'Time sent';
 $string['touserdoesntexist'] = 'You can not send a message to a user id ({$a}) that doesn\'t exist';
+$string['unabletomessageuser'] = 'You are not permitted to send a message to that user';
 $string['unblockcontact'] = 'Unblock contact';
 $string['unreadmessages'] = 'Unread messages ({$a})';
 $string['unreadnewmessages'] = 'New messages ({$a})';

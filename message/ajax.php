@@ -48,8 +48,6 @@ switch ($action) {
     // Sending a message.
     case 'sendmessage':
 
-        require_capability('moodle/site:sendmessage', context_system::instance());
-
         $userid = required_param('userid', PARAM_INT);
         if (empty($userid) || isguestuser($userid) || $userid == $USER->id) {
             // Cannot send messags to self, nobody or a guest.
@@ -58,10 +56,17 @@ switch ($action) {
 
         $message = required_param('message', PARAM_RAW);
         $user2 = core_user::get_user($userid);
-        $messageid = message_post_message($USER, $user2, $message, FORMAT_MOODLE);
 
-        if (!$messageid) {
-            throw new moodle_exception('errorwhilesendingmessage', 'core_message');
+        // Only attempt to send the message if we have permission to message
+        // the recipient.
+        if (message_can_post_message($user2, $USER)) {
+            $messageid = message_post_message($USER, $user2, $message, FORMAT_MOODLE);
+
+            if (!$messageid) {
+                throw new moodle_exception('errorwhilesendingmessage', 'core_message');
+            }
+        } else {
+            throw new moodle_exception('unabletomessageuser', 'core_message');
         }
 
         $response = array();

@@ -154,17 +154,12 @@ if ($unblockcontact and confirm_sesskey()) {
 $messageerror = null;
 if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', $systemcontext)) {
     // Check that the user is not blocking us!!
-    if ($contact = $DB->get_record('message_contacts', array('userid' => $user2->id, 'contactid' => $user1->id))) {
-        if ($contact->blocked and !has_capability('moodle/site:readallmessages', $systemcontext)) {
-            $messageerror = get_string('userisblockingyou', 'message');
-        }
+    if (message_is_user_blocked($user2, $user1)) {
+        $messageerror = get_string('userisblockingyou', 'message');
     }
-    $userpreferences = get_user_preferences(NULL, NULL, $user2->id);
-
-    if (!empty($userpreferences['message_blocknoncontacts'])) {  // User is blocking non-contacts
-        if (empty($contact)) {   // We are not a contact!
-            $messageerror = get_string('userisblockingyounoncontact', 'message', fullname($user2));
-        }
+    // Check that we're not non-contact block by the user.
+    if (message_is_user_non_contact_blocked($user2, $user1)) {
+        $messageerror = get_string('userisblockingyounoncontact', 'message', fullname($user2));
     }
 
     if (empty($messageerror)) {
@@ -315,13 +310,9 @@ echo html_writer::start_tag('div', array('class' => 'messagearea mdl-align'));
                 } else {
                     // Display a warning if the current user is blocking non-contacts and is about to message to a non-contact
                     // Otherwise they may wonder why they never get a reply
-                    $blocknoncontacts = get_user_preferences('message_blocknoncontacts', '', $user1->id);
-                    if (!empty($blocknoncontacts)) {
-                        $contact = $DB->get_record('message_contacts', array('userid' => $user1->id, 'contactid' => $user2->id));
-                        if (empty($contact)) {
-                            $msg = get_string('messagingblockednoncontact', 'message', fullname($user2));
-                            echo html_writer::tag('span', $msg, array('id' => 'messagewarning'));
-                        }
+                    if (message_is_user_non_contact_blocked($user1, $user2)) {
+                        $msg = get_string('messagingblockednoncontact', 'message', fullname($user2));
+                        echo html_writer::tag('span', $msg, array('id' => 'messagewarning'));
                     }
 
                     $mform = new send_form();
