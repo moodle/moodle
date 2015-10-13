@@ -90,14 +90,10 @@ if (!empty($scorm->popup)) {
     // Redirect back to the section with one section per page ?
 
     $courseformat = course_get_format($course)->get_course();
-    $sectionid = '';
-    if (isset($courseformat->coursedisplay) && $courseformat->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
-        $sectionid = $cm->sectionnum;
-    }
     if ($courseformat->format == 'singleactivity') {
         $courseurl = $url->out(false, array('preventskip' => '1'));
     } else {
-        $courseurl = course_get_url($course, $sectionid)->out(false);
+        $courseurl = course_get_url($course, $cm->sectionnum)->out(false);
     }
     $PAGE->requires->data_for_js('scormplayerdata', Array('launch' => $launch,
                                                            'currentorg' => $orgidentifier,
