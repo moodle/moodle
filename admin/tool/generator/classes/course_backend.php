@@ -253,7 +253,8 @@ class tool_generator_course_backend extends tool_generator_backend {
         $courserecord = array(
             'shortname' => $this->shortname,
             'fullname' => $this->fullname,
-            'numsections' => self::$paramsections[$this->size]
+            'numsections' => self::$paramsections[$this->size],
+            'startdate' => usergetmidnight(time())
         );
         if (strlen($this->summary) > 0) {
             $courserecord['summary'] = $this->summary;
