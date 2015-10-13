@@ -72,6 +72,21 @@ Y.namespace('M.core_message.messenger').Manager = Y.extend(MANAGER, Y.Base, {
     },
 
     /**
+     * Pop up an alert dialogue to notify the logged in user that they are blocked from
+     * messaging the target user.
+     *
+     * @method alertBlocked
+     * @param  {String} blockedString The identifier to retrieve the blocked user message.
+     * @param  {String} fullName The target user's full name.
+     */
+    alertBlocked: function(blockedString, fullName) {
+        new M.core.alert({
+            title: M.util.get_string('error', 'core'),
+            message: M.util.get_string(blockedString, 'message', fullName)
+        });
+    },
+
+    /**
      * Register the events.
      *
      * @method _setEvents.
@@ -80,7 +95,8 @@ Y.namespace('M.core_message.messenger').Manager = Y.extend(MANAGER, Y.Base, {
         var captureEvent = function(e) {
             var target = e.currentTarget,
                 userid = parseInt(target.getData('userid'), 10),
-                fullname = target.getData('fullname');
+                fullname = target.getData('fullname'),
+                blockedString = target.getData('blocked-string');
 
             if (!userid || !fullname) {
                 return;
@@ -88,7 +104,11 @@ Y.namespace('M.core_message.messenger').Manager = Y.extend(MANAGER, Y.Base, {
 
             // Pass the validation before preventing defaults.
             e.preventDefault();
-            this.sendMessage(userid, fullname, e);
+            if (blockedString) {
+                this.alertBlocked(blockedString, fullname);
+            } else {
+                this.sendMessage(userid, fullname, e);
+            }
         };
 
         this._events.push(Y.delegate('click', captureEvent, 'body', SELECTORS.MANAGER.SENDMESSAGE, this));
