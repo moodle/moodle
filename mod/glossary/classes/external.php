@@ -125,7 +125,7 @@ class mod_glossary_external extends external_api {
      * @param  context  $context The context the entry belongs to.
      * @return void
      */
-    public static function fill_entry_details($entry, $context, $useridfield = 'userdataid', $userfieldprefix = 'userdata') {
+    public static function fill_entry_details($entry, $context) {
         global $PAGE;
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
@@ -135,8 +135,7 @@ class mod_glossary_external extends external_api {
             $context->id, 'mod_glossary', 'entry', $entry->id);
 
         // Author details.
-        $user = new stdclass();
-        $user = user_picture::unalias($entry, null, $useridfield, $userfieldprefix);
+        $user = mod_glossary_entry_query_builder::get_user_from_record($entry);
         $userpicture = new user_picture($user);
         $userpicture->size = 1;
         $entry->userfullname = fullname($user, $canviewfullnames);
@@ -485,43 +484,29 @@ class mod_glossary_external extends external_api {
         }
 
         // Preparing the query.
-        $where = '1 = 1';
-        $params = array();
-
-        if ($letter != 'ALL' && $letter != 'SPECIAL' && ($letterstrlen = core_text::strlen($letter))) {
-            $params['hookup'] = core_text::strtoupper($letter);
-            $where = $DB->sql_substr('upper(concept)', 1, $letterstrlen) . ' = :hookup';
+        $qb = new mod_glossary_entry_query_builder($glossary);
+        if ($letter != 'ALL' && $letter != 'SPECIAL' && core_text::strlen($letter)) {
+            $qb->filter_by_concept_letter($letter);
         }
         if ($letter == 'SPECIAL') {
-            $alphabet = explode(',', get_string('alphabet', 'langconfig'));
-            list($nia, $aparams) = $DB->get_in_or_equal($alphabet, SQL_PARAMS_NAMED, 'a', false);
-            $params = array_merge($params, $aparams);
-            $where = $DB->sql_substr("upper(concept)", 1, 1) . " $nia";
+            $qb->filter_by_concept_non_letter();
         }
 
-        $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
         if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
-            $approvedsql = '1 = 1';
+            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
+        } else {
+            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
         }
 
-        $userfields = user_picture::fields('u', null, 'userdataid', 'userdata');
-
-        $sqlselectcount = "SELECT COUNT('x')";
-        $sqlselect = "SELECT ge.*, $userfields";
-        $sql = "  FROM {glossary_entries} ge
-             LEFT JOIN {user} u ON ge.userid = u.id
-                 WHERE (ge.glossaryid = :gid1 OR ge.sourceglossaryid = :gid2)
-                   AND $approvedsql
-                   AND $where";
-        $sqlorder = " ORDER BY ge.concept";
-
-        $params['gid1'] = $glossary->id;
-        $params['gid2'] = $glossary->id;
-        $params['myid'] = $USER->id;
+        $qb->add_field('*', 'entries');
+        $qb->join_user();
+        $qb->add_user_fields();
+        $qb->order_by('concept', 'entries');
+        $qb->limit($from, $limit);
 
         // Fetching the entries.
-        $count = $DB->count_records_sql($sqlselectcount . $sql, $params);
-        $entries = $DB->get_records_sql($sqlselect . $sql . $sqlorder, $params, $from, $limit);
+        $count = $qb->count_records();
+        $entries = $qb->get_records();
         foreach ($entries as $key => $entry) {
             self::fill_entry_details($entry, $context);
         }
@@ -619,36 +604,27 @@ class mod_glossary_external extends external_api {
         }
 
         // Preparing the query.
-        $params = array();
-        $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
+        $qb = new mod_glossary_entry_query_builder($glossary);
         if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
-            $approvedsql = '1 = 1';
-        }
-
-        $userfields = user_picture::fields('u', null, 'userdataid', 'userdata');
-
-        $sqlselectcount = "SELECT COUNT('x')";
-        $sqlselect = "SELECT ge.*, $userfields";
-        $sql = "  FROM {glossary_entries} ge
-             LEFT JOIN {user} u ON ge.userid = u.id
-                 WHERE (ge.glossaryid = :gid1 OR ge.sourceglossaryid = :gid2)
-                   AND $approvedsql";
-
-        $sqlorder = ' ORDER BY ';
-        if ($order == 'CREATION') {
-            $sqlorder .= 'ge.timecreated';
+            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
         } else {
-            $sqlorder .= 'ge.timemodified';
+            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
         }
-        $sqlorder .= ' ' . $sort;
 
-        $params['gid1'] = $glossary->id;
-        $params['gid2'] = $glossary->id;
-        $params['myid'] = $USER->id;
+        $qb->add_field('*', 'entries');
+        $qb->join_user();
+        $qb->add_user_fields();
+        $qb->limit($from, $limit);
+
+        if ($order == 'CREATION') {
+            $qb->order_by('timecreated', 'entries', $sort);
+        } else {
+            $qb->order_by('timemodified', 'entries', $sort);
+        }
 
         // Fetching the entries.
-        $count = $DB->count_records_sql($sqlselectcount . $sql, $params);
-        $entries = $DB->get_records_sql($sqlselect . $sql . $sqlorder, $params, $from, $limit);
+        $count = $qb->count_records();
+        $entries = $qb->get_records();
         foreach ($entries as $key => $entry) {
             self::fill_entry_details($entry, $context);
         }
@@ -817,57 +793,33 @@ class mod_glossary_external extends external_api {
         }
 
         // Preparing the query.
-        $params = array();
-        $glossarysql = '(ge.glossaryid = :gid1 OR ge.sourceglossaryid = :gid2)';
-        $params['gid1'] = $glossary->id;
-        $params['gid2'] = $glossary->id;
-
-        $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
-        $params['myid'] = $USER->id;
+        $qb = new mod_glossary_entry_query_builder($glossary);
         if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
-            $approvedsql = '1 = 1';
+            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
+        } else {
+            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
         }
 
-        $userfields = user_picture::fields('u', null, 'userdataid', 'userdata');
-        $sqlfields = "ge.*, gec.categoryid, $userfields";
-        $sqlorderfields = 'ge.concept';
+        $qb->join_category($categoryid);
+        $qb->join_user();
+        $qb->add_field('*', 'entries');
+        $qb->add_field('categoryid', 'entries_categories');
+        $qb->add_user_fields();
 
         if ($categoryid === GLOSSARY_SHOW_ALL_CATEGORIES) {
-            $sqlfields .= ', gc.name AS categoryname';
-            $sqlorderfields = 'gc.name, ge.concept';
-            $sql = "  FROM {glossary_entries} ge
-                      JOIN {glossary_entries_categories} gec ON ge.id = gec.entryid
-                      JOIN {glossary_categories} gc ON gc.id = gec.categoryid
-                 LEFT JOIN {user} u ON ge.userid = u.id
-                     WHERE $glossarysql
-                       AND $approvedsql";
+            $qb->add_field('name', 'categories', 'categoryname');
+            $qb->order_by('name', 'categories');
 
         } else if ($categoryid === GLOSSARY_SHOW_NOT_CATEGORISED) {
-            $sql = "  FROM {glossary_entries} ge
-                 LEFT JOIN {glossary_entries_categories} gec ON ge.id = gec.entryid
-                 LEFT JOIN {user} u ON ge.userid = u.id
-                     WHERE $glossarysql
-                       AND $approvedsql
-                       AND gec.categoryid IS NULL";
-
-        } else {
-            $sql = "  FROM {glossary_entries} ge
-                      JOIN {glossary_entries_categories} gec
-                        ON gec.entryid = ge.id
-                       AND gec.categoryid = :categoryid
-                 LEFT JOIN {user} u ON ge.userid = u.id
-                     WHERE $glossarysql
-                       AND $approvedsql";
-            $params['categoryid'] = $categoryid;
+            $qb->where('categoryid', 'entries_categories', null);
         }
 
-        $sqlselectcount = "SELECT COUNT('x')";
-        $sqlselect = "SELECT $sqlfields";
-        $sqlorder = ' ORDER BY ' . $sqlorderfields;
+        $qb->order_by('concept', 'entries');
+        $qb->limit($from, $limit);
 
         // Fetching the entries.
-        $count = $DB->count_records_sql($sqlselectcount . $sql, $params);
-        $entries = $DB->get_records_sql($sqlselect . $sql . $sqlorder, $params, $from, $limit);
+        $count = $qb->count_records();
+        $entries = $qb->get_records();
         foreach ($entries as $key => $entry) {
             self::fill_entry_details($entry, $context);
             if ($entry->categoryid === null) {
@@ -1088,49 +1040,31 @@ class mod_glossary_external extends external_api {
         }
 
         // Preparing the query.
-        $where = '1 = 1';
-        $params = array();
-
-        if ($field == 'FIRSTNAME') {
-            $usernamefield = $DB->sql_fullname('u.firstname' , 'u.lastname');
-        } else {
-            $usernamefield = $DB->sql_fullname('u.lastname' , 'u.firstname');
-        }
-
-        if ($letter != 'ALL' && $letter != 'SPECIAL' && ($letterstrlen = core_text::strlen($letter))) {
-            $params['hookup'] = core_text::strtoupper($letter);
-            $where = $DB->sql_substr("upper($usernamefield)", 1, $letterstrlen) . ' = :hookup';
+        $firstnamefirst = $field === 'FIRSTNAME';
+        $qb = new mod_glossary_entry_query_builder($glossary);
+        if ($letter != 'ALL' && $letter != 'SPECIAL' && core_text::strlen($letter)) {
+            $qb->filter_by_author_letter($letter, $firstnamefirst);
         }
         if ($letter == 'SPECIAL') {
-            $alphabet = explode(',', get_string('alphabet', 'langconfig'));
-            list($nia, $aparams) = $DB->get_in_or_equal($alphabet, SQL_PARAMS_NAMED, 'a', false);
-            $params = array_merge($params, $aparams);
-            $where = $DB->sql_substr("upper($usernamefield)", 1, 1) . " $nia";
+            $qb->filter_by_author_non_letter($firstnamefirst);
         }
 
-        $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
-        $params['myid'] = $USER->id;
         if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
-            $approvedsql = '1 = 1';
+            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
+        } else {
+            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
         }
 
-        $userfields = user_picture::fields('u', null, 'userdataid', 'userdata');
-
-        $sqlselectcount = "SELECT COUNT('x')";
-        $sqlselect = "SELECT ge.*, $userfields";
-        $sql = "  FROM {glossary_entries} ge
-                  JOIN {user} u ON ge.userid = u.id
-                 WHERE (ge.glossaryid = :gid1 OR ge.sourceglossaryid = :gid2)
-                   AND $approvedsql
-                   AND $where";
-        $sqlorder = " ORDER BY $usernamefield $sort, ge.concept";
-
-        $params['gid1'] = $glossary->id;
-        $params['gid2'] = $glossary->id;
+        $qb->add_field('*', 'entries');
+        $qb->join_user(true);
+        $qb->add_user_fields();
+        $qb->order_by_author($firstnamefirst, $sort);
+        $qb->order_by('concept', 'entries');
+        $qb->limit($from, $limit);
 
         // Fetching the entries.
-        $count = $DB->count_records_sql($sqlselectcount . $sql, $params);
-        $entries = $DB->get_records_sql($sqlselect . $sql . $sqlorder, $params, $from, $limit);
+        $count = $qb->count_records();
+        $entries = $qb->get_records();
         foreach ($entries as $key => $entry) {
             self::fill_entry_details($entry, $context);
         }
@@ -1232,42 +1166,31 @@ class mod_glossary_external extends external_api {
         }
 
         // Preparing the query.
-        $params = array();
-
-        $approvedsql = '(ge.approved <> 0 OR ge.userid = :myid)';
-        $params['myid'] = $USER->id;
+        $qb = new mod_glossary_entry_query_builder($glossary);
         if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
-            $approvedsql = '1 = 1';
-        }
-
-        $userfields = user_picture::fields('u', null, 'userdataid', 'userdata');
-
-        $sqlselectcount = "SELECT COUNT('x')";
-        $sqlselect = "SELECT ge.*, $userfields";
-        $sql = "  FROM {glossary_entries} ge
-                  JOIN {user} u ON ge.userid = u.id
-                 WHERE (ge.glossaryid = :gid1 OR ge.sourceglossaryid = :gid2)
-                   AND $approvedsql
-                   AND ge.userid = :uid";
-        $params['uid'] = $authorid;
-        $params['gid1'] = $glossary->id;
-        $params['gid2'] = $glossary->id;
-
-        $sqlorder = ' ORDER BY ';
-        if ($order == 'CREATION') {
-            $sqlorder .= 'ge.timecreated';
-
-        } else if ($order == 'UPDATE') {
-            $sqlorder .= 'ge.timemodified';
-
+            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
         } else {
-            $sqlorder .= 'ge.concept';
+            $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
         }
-        $sqlorder .= ' ' . $sort;
+
+        $qb->add_field('*', 'entries');
+        $qb->join_user(true);
+        $qb->add_user_fields();
+        $qb->where('id', 'user', $authorid);
+
+        if ($order == 'CREATION') {
+            $qb->order_by('timecreated', 'entries', $sort);
+        } else if ($order == 'UPDATE') {
+            $qb->order_by('timemodified', 'entries', $sort);
+        } else {
+            $qb->order_by('concept', 'entries', $sort);
+        }
+
+        $qb->limit($from, $limit);
 
         // Fetching the entries.
-        $count = $DB->count_records_sql($sqlselectcount . $sql, $params);
-        $entries = $DB->get_records_sql($sqlselect . $sql . $sqlorder, $params, $from, $limit);
+        $count = $qb->count_records();
+        $entries = $qb->get_records();
         foreach ($entries as $key => $entry) {
             self::fill_entry_details($entry, $context);
         }
