@@ -140,6 +140,7 @@ class core_webservice_external extends external_api {
                 if (is_readable($versionpath)) {
                     // We store the component version once retrieved (so we don't load twice the version.php).
                     if (!isset($componentversions[$function->component])) {
+                        $plugin = new stdClass();
                         include($versionpath);
                         $componentversions[$function->component] = $plugin->version;
                         $version = $plugin->version;
