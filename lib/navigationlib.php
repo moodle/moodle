@@ -3928,6 +3928,10 @@ class settings_navigation extends navigation_node {
         // Let plugins hook into course navigation.
         $pluginsfunction = get_plugins_with_function('extend_navigation_course', 'lib.php');
         foreach ($pluginsfunction as $plugintype => $plugins) {
+            // Ignore the report plugin as it was already loaded above.
+            if ($plugintype == 'report') {
+                continue;
+            }
             foreach ($plugins as $pluginfunction) {
                 $pluginfunction($coursenode, $course, $coursecontext);
             }
