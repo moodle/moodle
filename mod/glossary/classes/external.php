@@ -1199,4 +1199,62 @@ class mod_glossary_external extends external_api {
             'warnings' => new external_warnings()
         ));
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_entry_by_id_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'Glossary entry ID'),
+        ));
+    }
+
+    /**
+     * Get an entry.
+     *
+     * @param int $id The entry ID.
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function get_entry_by_id($id) {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(self::get_entry_by_id_parameters(), array('id' => $id));
+        $id = $params['id'];
+        $warnings = array();
+
+        // Get and validate the glossary.
+        $entry = $DB->get_record('glossary_entries', array('id' => $id), '*', MUST_EXIST);
+        list($glossary, $context) = self::validate_glossary($entry->glossaryid);
+
+        if (empty($entry->approved) && $entry->userid != $USER->id && !has_capability('mod/glossary:approve', $context)) {
+            throw new invalid_parameter_exception('invalidentry');
+        }
+
+        $entry = glossary_get_entry_by_id($id);
+        self::fill_entry_details($entry, $context);
+
+        return array(
+            'entry' => $entry,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns the description of the external function return value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function get_entry_by_id_returns() {
+        return new external_single_structure(array(
+            'entry' => self::get_entry_return_structure(),
+            'warnings' => new external_warnings()
+        ));
+    }
+
 }

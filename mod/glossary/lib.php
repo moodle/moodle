@@ -3693,3 +3693,26 @@ function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch
 
     return array($entries, $count);
 }
+
+/**
+ * Fetch an entry.
+ *
+ * @param  int $id The entry ID.
+ * @return object|false
+ */
+function glossary_get_entry_by_id($id) {
+
+    // Build the query.
+    $qb = new mod_glossary_entry_query_builder();
+    $qb->add_field('*', 'entries');
+    $qb->join_user();
+    $qb->add_user_fields();
+    $qb->where('id', 'entries', $id);
+
+    // Fetching the entries.
+    $entries = $qb->get_records();
+    if (empty($entries)) {
+        return false;
+    }
+    return array_pop($entries);
+}

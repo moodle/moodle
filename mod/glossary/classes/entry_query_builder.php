@@ -84,12 +84,14 @@ class mod_glossary_entry_query_builder {
      *
      * @param object $glossary The glossary.
      */
-    public function __construct($glossary) {
-        $this->glossary = $glossary;
+    public function __construct($glossary = null) {
         $this->from = sprintf('FROM {glossary_entries} %s', self::ALIAS_ENTRIES);
-        $this->where[] = sprintf('(%s.glossaryid = :gid OR %s.sourceglossaryid = :gid2)', self::ALIAS_ENTRIES, self::ALIAS_ENTRIES);
-        $this->params['gid'] = $glossary->id;
-        $this->params['gid2'] = $glossary->id;
+        if (!empty($glossary)) {
+            $this->glossary = $glossary;
+            $this->where[] = sprintf('(%s.glossaryid = :gid OR %s.sourceglossaryid = :gid2)', self::ALIAS_ENTRIES, self::ALIAS_ENTRIES);
+            $this->params['gid'] = $glossary->id;
+            $this->params['gid2'] = $glossary->id;
+        }
     }
 
     /**

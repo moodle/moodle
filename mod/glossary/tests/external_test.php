@@ -868,4 +868,51 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e8->id, $return['entries'][1]['id']);
     }
 
+    public function test_get_entry_by_id() {
+        $this->resetAfterTest(true);
+
+        // Generate all the things.
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $c1 = $this->getDataGenerator()->create_course();
+        $c2 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id, 'visible' => 0));
+        $u1 = $this->getDataGenerator()->create_user();
+        $u2 = $this->getDataGenerator()->create_user();
+        $ctx = context_module::instance($g1->cmid);
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+
+        $e1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
+        $e2 = $gg->create_content($g1, array('approved' => 0, 'userid' => $u1->id));
+        $e3 = $gg->create_content($g1, array('approved' => 0, 'userid' => $u2->id));
+        $e4 = $gg->create_content($g2, array('approved' => 1));
+
+        $this->setUser($u1);
+        $return = mod_glossary_external::get_entry_by_id($e1->id);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
+        $this->assertEquals($e1->id, $return['entry']['id']);
+
+        $return = mod_glossary_external::get_entry_by_id($e2->id);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
+        $this->assertEquals($e2->id, $return['entry']['id']);
+
+        try {
+            $return = mod_glossary_external::get_entry_by_id($e3->id);
+            $this->fail('Cannot view unapproved entries of others.');
+        } catch (invalid_parameter_exception $e) {
+        }
+
+        try {
+            $return = mod_glossary_external::get_entry_by_id($e4->id);
+            $this->fail('Cannot view entries from another course.');
+        } catch (require_login_exception $e) {
+        }
+
+        // An admin can be other's entries to be approved.
+        $this->setAdminUser();
+        $return = mod_glossary_external::get_entry_by_id($e3->id);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
+        $this->assertEquals($e3->id, $return['entry']['id']);
+    }
+
 }
