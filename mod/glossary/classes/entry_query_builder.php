@@ -40,6 +40,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_glossary_entry_query_builder {
 
+    /** Alias for table glossary_alias. */
+    const ALIAS_ALIAS = 'ga';
     /** Alias for table glossary_categories. */
     const ALIAS_CATEGORIES = 'gc';
     /** Alias for table glossary_entries_categories. */
@@ -154,6 +156,17 @@ class mod_glossary_entry_query_builder {
     }
 
     /**
+     * Distinct a field.
+     *
+     * @param string $field The field.
+     * @param string $table The table name, without the prefix 'glossary_'.
+     */
+    public function distinct($field, $table) {
+        $field = self::resolve_field($field, $table);
+        array_unshift($this->fields, 'DISTINCT(' . $field . ')');
+    }
+
+    /**
      * Filter a field using a letter.
      *
      * @param  string $letter     The letter.
@@ -258,6 +271,73 @@ class mod_glossary_entry_query_builder {
     }
 
     /**
+     * Filter by search terms.
+     *
+     * Note that this does not handle invalid or too short terms. This requires the alias
+     * table to be joined in the query. See {@link self::join_alias()}.
+     *
+     * @param  array   $terms      Array of terms.
+     * @param  boolean $fullsearch Whether or not full search should be enabled.
+     */
+    public function filter_by_search_terms(array $terms, $fullsearch = true) {
+        global $DB;
+        static $i = 0;
+
+        if ($DB->sql_regex_supported()) {
+            $regexp = $DB->sql_regex(true);
+            $notregexp = $DB->sql_regex(false);
+        }
+
+        $params = array();
+        $conceptfield = self::resolve_field('concept', 'entries');
+        $aliasfield = self::resolve_field('alias', 'alias');
+        $definitionfield = self::resolve_field('definition', 'entries');
+        $conditions = array();
+
+        foreach ($terms as $searchterm) {
+            $i++;
+
+            $not = false; // Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
+                          // will use it to simulate the "-" operator with LIKE clause.
+
+            if (empty($fullsearch)) {
+                // With fullsearch disabled, look only within concepts and aliases.
+                $concat = $DB->sql_concat($conceptfield, "' '", "COALESCE($aliasfield, :emptychar{$i})");
+            } else {
+                // With fullsearch enabled, look also within definitions.
+                $concat = $DB->sql_concat($conceptfield, "' '", $definitionfield, "' '", "COALESCE($aliasfield, :emptychar{$i})");
+            }
+            $params['emptychar' . $i] = '';
+
+            // Under Oracle and MSSQL, trim the + and - operators and perform simpler LIKE (or NOT LIKE) queries.
+            if (!$DB->sql_regex_supported()) {
+                if (substr($searchterm, 0, 1) === '-') {
+                    $not = true;
+                }
+                $searchterm = trim($searchterm, '+-');
+            }
+
+            if (substr($searchterm, 0, 1) === '+') {
+                $searchterm = trim($searchterm, '+-');
+                $conditions[] = "$concat $regexp :searchterm{$i}";
+                $params['searchterm' . $i] = '(^|[^a-zA-Z0-9])' . preg_quote($searchterm, '|') . '([^a-zA-Z0-9]|$)';
+
+            } else if (substr($searchterm, 0, 1) === "-") {
+                $searchterm = trim($searchterm, '+-');
+                $conditions[] = "$concat $notregexp :searchterm{$i}";
+                $params['searchterm' . $i] = '(^|[^a-zA-Z0-9])' . preg_quote($searchterm, '|') . '([^a-zA-Z0-9]|$)';
+
+            } else {
+                $conditions[] = $DB->sql_like($concat, ":searchterm{$i}", false, true, $not);
+                $params['searchterm' . $i] = '%' . $DB->sql_like_escape($searchterm) . '%';
+            }
+        }
+
+        $this->where[] = implode(' AND ', $conditions);
+        $this->params = array_merge($this->params, $params);
+    }
+
+    /**
      * Convenience method to get get the SQL statement for the full name.
      *
      * @param  boolean $firstnamefirst Whether or not the firstname is first in the author's name.
@@ -301,6 +381,19 @@ class mod_glossary_entry_query_builder {
      */
     public static function get_user_from_record($record) {
         return user_picture::unalias($record, null, 'userdataid', 'userdata');
+    }
+
+    /**
+     * Join the alias table.
+     *
+     * Note that this may cause the same entry to be returned more than once. You might want
+     * to add a distinct on the entry id. See {@link self::distinct()}.
+     *
+     * @return void
+     */
+    public function join_alias() {
+        $this->joins[] = sprintf('LEFT JOIN {glossary_alias} %s ON %s = %s',
+            self::ALIAS_ALIAS, self::resolve_field('id', 'entries'), self::resolve_field('entryid', 'alias'));
     }
 
     /**

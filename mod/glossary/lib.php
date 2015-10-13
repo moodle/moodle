@@ -3633,3 +3633,63 @@ function glossary_get_categories($glossary, $from, $limit) {
 
     return array($categories, $count);
 }
+
+/**
+ * Returns the entries of a glossary by search.
+ *
+ * @param  object $glossary The glossary.
+ * @param  context $context The context of the glossary.
+ * @param  string $query The search query.
+ * @param  bool $fullsearch Whether or not full search is required.
+ * @param  string $order The mode of ordering: CONCEPT, CREATION or UPDATE.
+ * @param  string $sort The direction of the ordering: ASC or DESC.
+ * @param  int $from Fetch records from.
+ * @param  int $limit Number of records to fetch.
+ * @param  array $options Accepts:
+ *                        - (bool) includenotapproved. When false, includes the non-approved entries created by
+ *                          the current user. When true, also includes the ones that the user has the permission to approve.
+ * @return array The first element being the recordset, the second the number of entries.
+ * @since Moodle 3.1
+ */
+function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch, $order, $sort, $from, $limit,
+        $options = array()) {
+
+    // Remove too little terms.
+    $terms = explode(' ', $query);
+    foreach ($terms as $key => $term) {
+        if (strlen(trim($term, '+-')) < 2) {
+            unset($terms[$key]);
+        }
+    }
+
+    // Build the query.
+    $qb = new mod_glossary_entry_query_builder($glossary);
+    if (!empty($options['includenotapproved']) && has_capability('mod/glossary:approve', $context)) {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ALL);
+    } else {
+        $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_SELF);
+    }
+
+    $qb->add_field('*', 'entries');
+    $qb->join_alias();
+    $qb->distinct('id', 'entries');
+    $qb->join_user();
+    $qb->add_user_fields();
+    $qb->filter_by_search_terms($terms, $fullsearch);
+
+    if ($order == 'CREATION') {
+        $qb->order_by('timecreated', 'entries', $sort);
+    } else if ($order == 'UPDATE') {
+        $qb->order_by('timemodified', 'entries', $sort);
+    } else {
+        $qb->order_by('concept', 'entries', $sort);
+    }
+
+    $qb->limit($from, $limit);
+
+    // Fetching the entries.
+    $count = $qb->count_records();
+    $entries = $qb->get_recordset();
+
+    return array($entries, $count);
+}

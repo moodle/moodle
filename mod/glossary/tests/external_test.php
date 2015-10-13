@@ -754,4 +754,118 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e1a3->id, $return['entries'][1]['id']);
     }
 
+    public function test_get_entries_by_search() {
+        $this->resetAfterTest(true);
+
+        // Generate all the things.
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $u1 = $this->getDataGenerator()->create_user();
+        $ctx = context_module::instance($g1->cmid);
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+        $this->setUser($u1);
+
+        $e1 = $gg->create_content($g1, array('approved' => 1, 'concept' => 'House', 'timecreated' => time() + 3600));
+        $e2 = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Mouse', 'timemodified' => 1));
+        $e3 = $gg->create_content($g1, array('approved' => 1, 'concept' => 'Hero'));
+        $e4 = $gg->create_content($g1, array('approved' => 0, 'concept' => 'Toulouse'));
+        $e5 = $gg->create_content($g1, array('approved' => 1, 'definition' => 'Heroes', 'concept' => 'Abcd'));
+        $e6 = $gg->create_content($g1, array('approved' => 0, 'definition' => 'When used for heroes'));
+        $e7 = $gg->create_content($g1, array('approved' => 1, 'timecreated' => 1, 'timemodified' => time() + 3600, 'concept' => 'Z'),
+            array('Couscous'));
+        $e8 = $gg->create_content($g1, array('approved' => 0), array('Heroes'));
+        $e9 = $gg->create_content($g2, array('approved' => 0));
+
+        $this->setAdminUser();
+
+        // Test simple query.
+        $query = 'hero';
+        $return = mod_glossary_external::get_entries_by_search($g1->id, $query, false, 'CONCEPT', 'ASC', 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(1, $return['count']);
+        $this->assertEquals($e3->id, $return['entries'][0]['id']);
+
+        // Enabling full search.
+        $query = 'hero';
+        $return = mod_glossary_external::get_entries_by_search($g1->id, $query, true, 'CONCEPT', 'ASC', 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(2, $return['count']);
+        $this->assertEquals($e5->id, $return['entries'][0]['id']);
+        $this->assertEquals($e3->id, $return['entries'][1]['id']);
+
+        // Concept descending
+        $query = 'hero';
+        $return = mod_glossary_external::get_entries_by_search($g1->id, $query, true, 'CONCEPT', 'DESC', 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(2, $return['count']);
+        $this->assertEquals($e3->id, $return['entries'][0]['id']);
+        $this->assertEquals($e5->id, $return['entries'][1]['id']);
+
+        // Search on alias.
+        $query = 'couscous';
+        $return = mod_glossary_external::get_entries_by_search($g1->id, $query, false, 'CONCEPT', 'ASC', 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(1, $return['count']);
+        $this->assertEquals($e7->id, $return['entries'][0]['id']);
+        $return = mod_glossary_external::get_entries_by_search($g1->id, $query, true, 'CONCEPT', 'ASC', 0, 20, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(1, $return['count']);
+        $this->assertEquals($e7->id, $return['entries'][0]['id']);
+
+        // Pagination and ordering on created date.
+        $query = 'ou';
+        $return = mod_glossary_external::get_entries_by_search($g1->id, $query, false, 'CREATION', 'ASC', 0, 1, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($e7->id, $return['entries'][0]['id']);
+        $return = mod_glossary_external::get_entries_by_search($g1->id, $query, false, 'CREATION', 'DESC', 0, 1, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($e1->id, $return['entries'][0]['id']);
+
+        // Ordering on updated date.
+        $query = 'ou';
+        $return = mod_glossary_external::get_entries_by_search($g1->id, $query, false, 'UPDATE', 'ASC', 0, 1, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($e2->id, $return['entries'][0]['id']);
+        $return = mod_glossary_external::get_entries_by_search($g1->id, $query, false, 'UPDATE', 'DESC', 0, 1, array());
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(3, $return['count']);
+        $this->assertEquals($e7->id, $return['entries'][0]['id']);
+
+        // Including not approved.
+        $query = 'ou';
+        $return = mod_glossary_external::get_entries_by_search($g1->id, $query, false, 'CONCEPT', 'ASC', 0, 20,
+            array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
+        $this->assertCount(4, $return['entries']);
+        $this->assertEquals(4, $return['count']);
+        $this->assertEquals($e1->id, $return['entries'][0]['id']);
+        $this->assertEquals($e2->id, $return['entries'][1]['id']);
+        $this->assertEquals($e4->id, $return['entries'][2]['id']);
+        $this->assertEquals($e7->id, $return['entries'][3]['id']);
+
+        // Advanced query string.
+        $query = '+heroes -abcd';
+        $return = mod_glossary_external::get_entries_by_search($g1->id, $query, true, 'CONCEPT', 'ASC', 0, 20,
+            array('includenotapproved' => true));
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(2, $return['count']);
+        $this->assertEquals($e6->id, $return['entries'][0]['id']);
+        $this->assertEquals($e8->id, $return['entries'][1]['id']);
+    }
+
 }

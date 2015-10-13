@@ -1095,4 +1095,108 @@ class mod_glossary_external extends external_api {
             'warnings' => new external_warnings()
         ));
     }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_entries_by_search_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'Glossary entry ID'),
+            'query' => new external_value(PARAM_NOTAGS, 'The query string'),
+            'fullsearch' => new external_value(PARAM_BOOL, 'The query', VALUE_DEFAULT, 1),
+            'order' => new external_value(PARAM_ALPHA, 'Order by: \'CONCEPT\', \'CREATION\' or \'UPDATE\'', VALUE_DEFAULT,
+                'CONCEPT'),
+            'sort' => new external_value(PARAM_ALPHA, 'The direction of the order: \'ASC\' or \'DESC\'', VALUE_DEFAULT, 'ASC'),
+            'from' => new external_value(PARAM_INT, 'Start returning records from here', VALUE_DEFAULT, 0),
+            'limit' => new external_value(PARAM_INT, 'Number of records to return', VALUE_DEFAULT, 20),
+            'options' => new external_single_structure(array(
+                'includenotapproved' => new external_value(PARAM_BOOL, 'When false, includes the non-approved entries created by' .
+                    ' the user. When true, also includes the ones that the user has the permission to approve.', VALUE_DEFAULT, 0)
+            ), 'An array of options', VALUE_DEFAULT, array())
+        ));
+    }
+
+    /**
+     * Browse a glossary entries using the search.
+     *
+     * @param int $id The glossary ID.
+     * @param string $query The search query.
+     * @param bool $fullsearch Whether or not full search is required.
+     * @param string $order The way to order the results.
+     * @param string $sort The direction of the order.
+     * @param int $from Start returning records from here.
+     * @param int $limit Number of records to return.
+     * @param array $options Array of options.
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function get_entries_by_search($id, $query, $fullsearch = true, $order = 'CONCEPT', $sort = 'ASC', $from = 0,
+            $limit = 20, $options = array()) {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(self::get_entries_by_search_parameters(), array(
+            'id' => $id,
+            'query' => $query,
+            'fullsearch' => $fullsearch,
+            'order' => core_text::strtoupper($order),
+            'sort' => core_text::strtoupper($sort),
+            'from' => $from,
+            'limit' => $limit,
+            'options' => $options,
+        ));
+        $id = $params['id'];
+        $query = $params['query'];
+        $fullsearch = $params['fullsearch'];
+        $order = $params['order'];
+        $sort = $params['sort'];
+        $from = $params['from'];
+        $limit = $params['limit'];
+        $options = $params['options'];
+        $warnings = array();
+
+        if (!in_array($order, array('CONCEPT', 'CREATION', 'UPDATE'))) {
+            throw new invalid_parameter_exception('invalidorder');
+        } else if (!in_array($sort, array('ASC', 'DESC'))) {
+            throw new invalid_parameter_exception('invalidsort');
+        }
+
+        // Get and validate the glossary.
+        list($glossary, $context) = self::validate_glossary($id);
+
+        // Fetching the entries.
+        $entries = array();
+        list($records, $count) = glossary_get_entries_by_search($glossary, $context, $query, $fullsearch, $order, $sort, $from,
+            $limit, $options);
+        foreach ($records as $key => $record) {
+            self::fill_entry_details($record, $context);
+            $entries[] = $record;
+        }
+        $records->close();
+
+        return array(
+            'count' => $count,
+            'entries' => $entries,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns the description of the external function return value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function get_entries_by_search_returns() {
+        return new external_single_structure(array(
+            'count' => new external_value(PARAM_INT, 'The total number of records matching the request.'),
+            'entries' => new external_multiple_structure(
+                self::get_entry_return_structure()
+            ),
+            'warnings' => new external_warnings()
+        ));
+    }
 }
