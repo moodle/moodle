@@ -466,7 +466,7 @@ class core_notes_external extends external_api {
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, 'course id, 0 for SITE'),
-                'userid'   => new external_value(PARAM_INT, 'user id', VALUE_OPTIONAL),
+                'userid'   => new external_value(PARAM_INT, 'user id', VALUE_DEFAULT, 0),
             )
         );
     }
