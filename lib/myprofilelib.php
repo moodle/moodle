@@ -76,7 +76,8 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                     $systemcontext)) {
             $url = new moodle_url('/user/editadvanced.php', array('id' => $user->id, 'course' => $courseid,
                 'returnto' => 'profile'));
-            $node = new core_user\output\myprofile\node('contact', 'editprofile', get_string('editmyprofile'), null, $url);
+            $node = new core_user\output\myprofile\node('contact', 'editprofile', get_string('editmyprofile'), null, $url,
+                null, null, 'editprofile');
             $tree->add_node($node);
         } else if ((has_capability('moodle/user:editprofile', $usercontext) && !is_siteadmin($user))
                    || ($iscurrentuser && has_capability('moodle/user:editownprofile', $systemcontext))) {
@@ -95,7 +96,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                     }
                 }
                 $node = new core_user\output\myprofile\node('contact', 'editprofile',
-                        get_string('editmyprofile'), null, $url);
+                        get_string('editmyprofile'), null, $url, null, null, 'editprofile');
                 $tree->add_node($node);
             }
         }
@@ -258,8 +259,8 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                     } else {
                         $url = new moodle_url('/user/profile.php', array('id' => $user->id, 'showallcourses' => 1));
                     }
-                    $courselisting .= html_writer::tag('li', html_writer::link($url, get_string('viewmore'),
-                            array('title' => get_string('viewmore'))));
+                    $courselisting .= html_writer::tag('li', html_writer::link($url, get_string('viewmore') ,
+                            array('title' => get_string('viewmore'))), array('class' => 'viewmore'));
                     break;
                 }
             }
