@@ -42,6 +42,68 @@ class core_useragent_testcase extends basic_testcase {
         // Note: When adding new entries to this list, please ensure that any new browser versions are added to the corresponding list.
         // This ensures that regression tests are applied to all known user agents.
         return array(
+            'Microsoft Edge for Windows 10 Desktop' => array(
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.10136',
+                array(
+                    'is_edge'                       => true,
+                    'check_edge_version'            => array(
+                        '12'                        => true,
+                    ),
+
+                    // Edge pretends to be WebKit.
+                    'is_webkit'                     => true,
+
+                    // Edge pretends to be Chrome.
+                    // Note: Because Edge pretends to be Chrome, it will not be picked up as a Safari browser.
+                    'is_chrome'                     => true,
+                    'check_chrome_version'          => array(
+                        '7'                         => true,
+                        '8'                         => true,
+                        '10'                        => true,
+                        '39'                        => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'safari',
+                    ),
+                ),
+            ),
+            'Microsoft Edge for Windows 10 Mobile' => array(
+                'Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; DEVICE INFO) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Mobile Safari/537.36 Edge/12.10136',
+                array(
+                    'is_edge'                       => true,
+                    'check_edge_version'              => array(
+                        '12'                        => true,
+                    ),
+
+                    // Edge pretends to be WebKit.
+                    'is_webkit'                     => true,
+
+                    // Mobile Edge pretends to be Android.
+                    'is_webkit_android'             => true,
+                    'check_webkit_android_version'  => array(
+                        '525'                       => true,
+                        '527'                       => true,
+                    ),
+
+                    // Edge pretends to be Chrome.
+                    // Note: Because Edge pretends to be Chrome, it will not be picked up as a Safari browser.
+                    'is_chrome'                     => true,
+                    'check_chrome_version'          => array(
+                        '7'                         => true,
+                        '8'                         => true,
+                        '10'                        => true,
+                        '39'                        => true,
+                    ),
+
+                    'versionclasses'                => array(
+                        'safari',
+                        'android',
+                    ),
+
+                    'devicetype'                    => 'mobile',
+                ),
+            ),
             // Windows 98; Internet Explorer 5.0.
             array(
                 'Mozilla/4.0 (compatible; MSIE 5.00; Windows 98)',
@@ -1336,6 +1398,37 @@ class core_useragent_testcase extends basic_testcase {
     public function test_instance() {
         $this->assertInstanceOf('core_useragent', core_useragent::instance());
         $this->assertInstanceOf('core_useragent', core_useragent::instance(true));
+    }
+
+    /**
+     * @dataProvider user_agents_providers
+     */
+    public function test_useragent_edge($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
+
+        // Edge Tests.
+        if (isset($tests['is_edge']) && $tests['is_edge']) {
+            $this->assertTrue(core_useragent::is_edge());
+        } else {
+            $this->assertFalse(core_useragent::is_edge());
+        }
+
+        $versions = array(
+            // New versions of should be added here.
+            '12'   => false,
+        );
+
+        if (isset($tests['check_edge_version'])) {
+            // The test provider has overwritten some of the above checks.
+            // Must use the '+' operator, because array_merge will incorrectly rewrite the array keys for integer-based indexes.
+            $versions = $tests['check_edge_version'] + $versions;
+        }
+
+        foreach ($versions as $version => $result) {
+            $this->assertEquals($result, core_useragent::check_edge_version($version),
+                "Version incorrectly determined for Edge version '{$version}'");
+        }
     }
 
     /**

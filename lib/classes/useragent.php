@@ -482,6 +482,52 @@ class core_useragent {
     }
 
     /**
+     * Checks the user agent is Edge (of any version).
+     *
+     * @return bool true if Edge
+     */
+    public static function is_edge() {
+        return self::check_edge_version();
+    }
+
+    /**
+     * Check the User Agent for the version of Edge.
+     *
+     * @param string|int $version A version to check for, returns true if its equal to or greater than that specified.
+     * @return bool
+     */
+    public static function check_edge_version($version = null) {
+        $useragent = self::get_user_agent_string();
+
+        if ($useragent === false) {
+            // No User Agent found.
+            return false;
+        }
+
+        if (strpos($useragent, 'Edge/') === false) {
+            // Edge was not found in the UA - this is not Edge.
+            return false;
+        }
+
+        if (empty($version)) {
+            // No version to check.
+            return true;
+        }
+
+        // Find the version.
+        // Edge versions are always in the format:
+        //      Edge/<version>.<OS build number>
+        preg_match('%Edge/([\d]+)\.(.*)$%', $useragent, $matches);
+
+        // Just to be safe, round the version being tested.
+        // Edge only uses integer versions - the second component is the OS build number.
+        $version = round($version);
+
+        // Check whether the version specified is >= the version found.
+        return version_compare($matches[1], $version, '>=');
+    }
+
+    /**
      * Checks the user agent is IE (of any version).
      *
      * @return bool true if internet exporeer
@@ -516,6 +562,7 @@ class core_useragent {
         } else {
             return false;
         }
+
         $compatview = false;
         // IE8 and later versions may pretend to be IE7 for intranet sites, use Trident version instead,
         // the Trident should always describe the capabilities of IE in any emulation mode.
@@ -696,7 +743,9 @@ class core_useragent {
             // No Apple mobile devices here - editor does not work, course ajax is not touch compatible, etc.
             return false;
         }
-        if (strpos($useragent, 'Chrome')) { // Reject chrome browsers - it needs to be tested explicitly.
+        if (strpos($useragent, 'Chrome')) {
+            // Reject chrome browsers - it needs to be tested explicitly.
+            // This will also reject Edge, which pretends to be both Chrome, and Safari.
             return false;
         }
 
