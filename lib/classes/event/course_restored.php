@@ -137,4 +137,13 @@ class course_restored extends base {
             throw new \coding_exception('The \'samesite\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'course', 'restore' => 'course');
+    }
+
+    public static function get_other_mapping() {
+        // No need to map anything.
+        return false;
+    }
 }

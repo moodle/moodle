@@ -83,4 +83,9 @@ class subscription_criteria_met extends \core\event\base {
             throw new \coding_exception('The \'subscriptionid\' value must be set in other.');
         }
     }
+
+    public static function get_other_mapping() {
+        // No mapping required for this event because event monitor subscriptions are not backed up.
+        return false;
+    }
 }

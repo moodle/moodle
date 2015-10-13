@@ -98,5 +98,14 @@ class course_module_viewed extends \core\event\course_module_viewed {
             throw new \coding_exception('The \'anonymous\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'feedback', 'restore' => 'feedback');
+    }
+
+    public static function get_other_mapping() {
+        // No need to map the 'anonymous' flag.
+        return false;
+    }
 }
 

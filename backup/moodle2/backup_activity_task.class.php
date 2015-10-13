@@ -166,7 +166,10 @@ abstract class backup_activity_task extends backup_task {
 
         // Generate the logs file (conditionally)
         if ($this->get_setting_value('logs')) {
+            // Legacy logs.
             $this->add_step(new backup_activity_logs_structure_step('activity_logs', 'logs.xml'));
+            // New log stores.
+            $this->add_step(new backup_activity_logstores_structure_step('activity_logstores', 'logstores.xml'));
         }
 
         // Generate the calendar events file (conditionally)

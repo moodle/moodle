@@ -108,5 +108,11 @@ class subscribers_viewed extends \core\event\base {
         }
     }
 
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['forumid'] = array('db' => 'forum', 'restore' => 'forum');
+
+        return $othermapped;
+    }
 }
 

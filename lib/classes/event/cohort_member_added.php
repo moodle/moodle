@@ -108,4 +108,9 @@ class cohort_member_added extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Cohorts are not included in backups, so no mapping is needed for restore.
+        return array('db' => 'cohort', 'restore' => base::NOT_MAPPED);
+    }
 }

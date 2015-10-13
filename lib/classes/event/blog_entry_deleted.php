@@ -131,4 +131,9 @@ class blog_entry_deleted extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Blogs are not backed up, so no need for mapping for restore.
+        return array('db' => 'post', 'restore' => base::NOT_MAPPED);
+    }
 }

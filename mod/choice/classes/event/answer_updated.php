@@ -93,6 +93,10 @@ class answer_updated extends \core\event\base {
      * @return void
      */
     protected function init() {
+        // The objecttable here is wrong. We are updating an answer, not a choice activity.
+        // This also makes the description misleading as it states we made a choice with id
+        // '$this->objectid' which just refers to the 'choice' table. The trigger for
+        // this event should be triggered after we update the 'choice_answers' table.
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'choice';
@@ -110,5 +114,23 @@ class answer_updated extends \core\event\base {
         if (!isset($this->other['choiceid'])) {
             throw new \coding_exception('The \'choiceid\' value must be set in other.');
         }
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'choice', 'restore' => 'choice');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['choiceid'] = array('db' => 'choice', 'restore' => 'choice');
+
+        // The 'optionid' is being passed as an array, so we can't map it. The event is
+        // triggered each time a choice is answered, where it may be possible to select
+        // multiple choices, so the value is converted to an array, which is then passed
+        // to the event. Ideally this event should be triggered every time we update the
+        // 'choice_answers' table so this will only be an int.
+        $othermapped['optionid'] = \core\event\base::NOT_MAPPED;
+
+        return $othermapped;
     }
 }

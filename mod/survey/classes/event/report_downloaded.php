@@ -104,4 +104,15 @@ class report_downloaded extends \core\event\base {
             throw new \coding_exception('The \'type\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'survey', 'restore' => 'survey');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['groupid'] = array('db' => 'groups', 'restore' => 'group');
+
+        return $othermapped;
+    }
 }

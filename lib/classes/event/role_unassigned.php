@@ -128,4 +128,16 @@ class role_unassigned extends base {
             throw new \coding_exception('The \'component\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'role', 'restore' => 'role');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['id'] = array('db' => 'role_assignments', 'restore' => base::NOT_MAPPED);
+        $othermapped['itemid'] = base::NOT_MAPPED;
+
+        return $othermapped;
+    }
 }

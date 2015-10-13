@@ -81,4 +81,8 @@ class folder_updated extends \core\event\base {
         return array($this->courseid, 'folder', 'edit', 'edit.php?id=' . $this->contextinstanceid, $this->objectid,
             $this->contextinstanceid);
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'folder', 'restore' => 'folder');
+    }
 }

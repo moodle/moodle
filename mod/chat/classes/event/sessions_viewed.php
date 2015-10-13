@@ -107,4 +107,12 @@ class sessions_viewed extends \core\event\base {
         }
     }
 
+    public static function get_objectid_mapping() {
+        return array('db' => 'chat', 'restore' => 'chat');
+    }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

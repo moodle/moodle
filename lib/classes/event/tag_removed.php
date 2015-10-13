@@ -103,4 +103,18 @@ class tag_removed extends base {
             throw new \coding_exception('The \'tagrawname\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Tags cannot be mapped.
+        return array('db' => 'tag_instance', 'restore' => base::NOT_MAPPED);
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['tagid'] = array('db' => 'tag', 'restore' => base::NOT_MAPPED);
+        $othermapped['itemid'] = base::NOT_MAPPED;
+
+        return $othermapped;
+    }
+
 }

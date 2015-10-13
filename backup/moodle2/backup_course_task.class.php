@@ -121,7 +121,10 @@ class backup_course_task extends backup_task {
 
         // Generate the logs file (conditionally)
         if ($this->get_setting_value('logs')) {
+            // Legacy logs.
             $this->add_step(new backup_course_logs_structure_step('course_logs', 'logs.xml'));
+            // New log stores.
+            $this->add_step(new backup_course_logstores_structure_step('course_logstores', 'logstores.xml'));
         }
 
         // Generate the inforef file (must be after ALL steps gathering annotations of ANY type)

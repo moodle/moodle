@@ -82,4 +82,8 @@ class lesson_ended extends \core\event\base {
         return array($this->courseid, 'lesson', 'end', 'view.php?id=' . $this->contextinstanceid, $this->objectid,
             $this->contextinstanceid);
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'lesson', 'restore' => 'lesson');
+    }
 }

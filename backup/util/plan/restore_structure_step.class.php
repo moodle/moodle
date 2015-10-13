@@ -295,6 +295,76 @@ abstract class restore_structure_step extends restore_step {
     }
 
     /**
+     * Add subplugin structure for a given plugin to any element in the structure restore tree
+     *
+     * This method allows the injection of subplugins (of a specific plugin) parsing and proccessing
+     * to any element in the restore structure.
+     *
+     * NOTE: Initially subplugins were only available for activities (mod), so only the
+     * {@link restore_activity_structure_step} class had support for them, always
+     * looking for /mod/modulenanme subplugins. This new method is a generalization of the
+     * existing one for activities, supporting all subplugins injecting information everywhere.
+     *
+     * @param string $subplugintype type of subplugin as defined in plugin's db/subplugins.php.
+     * @param restore_path_element $element element in the structure restore tree that
+     *                              we are going to add subplugin information to.
+     * @param string $plugintype type of the plugin.
+     * @param string $pluginname name of the plugin.
+     * @return void
+     */
+    protected function add_subplugin_structure($subplugintype, $element, $plugintype = null, $pluginname = null) {
+
+        // Verify if this is a BC call for an activity restore. See NOTE above for this special case.
+        if ($plugintype === null and $pluginname === null) {
+            $plugintype = 'mod';
+            $pluginname = $this->task->get_modulename();
+            // TODO: Once all the calls have been changed to add both not null plugintype and pluginname, add a debugging here.
+        }
+
+        // Check the requested plugintype is a valid one.
+        if (!array_key_exists($plugintype, core_component::get_plugin_types())) {
+            throw new restore_step_exception('incorrect_plugin_type', $plugintype);
+        }
+
+        // Check the requested pluginname, for the specified plugintype, is a valid one.
+        if (!array_key_exists($pluginname, core_component::get_plugin_list($plugintype))) {
+            throw new restore_step_exception('incorrect_plugin_name', array($plugintype, $pluginname));
+        }
+
+        // Check the requested subplugintype is a valid one.
+        $subpluginsfile = core_component::get_component_directory($plugintype . '_' . $pluginname) . '/db/subplugins.php';
+        if (!file_exists($subpluginsfile)) {
+            throw new restore_step_exception('plugin_missing_subplugins_php_file', array($plugintype, $pluginname));
+        }
+        include($subpluginsfile);
+        if (!array_key_exists($subplugintype, $subplugins)) {
+             throw new restore_step_exception('incorrect_subplugin_type', $subplugintype);
+        }
+
+        // Every subplugin optionally can have a common/parent subplugin
+        // class for shared stuff.
+        $parentclass = 'restore_' . $plugintype . '_' . $pluginname . '_' . $subplugintype . '_subplugin';
+        $parentfile = core_component::get_component_directory($plugintype . '_' . $pluginname) .
+            '/backup/moodle2/' . $parentclass . '.class.php';
+        if (file_exists($parentfile)) {
+            require_once($parentfile);
+        }
+
+        // Get all the restore path elements, looking across all the subplugin dirs.
+        $subpluginsdirs = core_component::get_plugin_list($subplugintype);
+        foreach ($subpluginsdirs as $name => $subpluginsdir) {
+            $classname = 'restore_' . $subplugintype . '_' . $name . '_subplugin';
+            $restorefile = $subpluginsdir . '/backup/moodle2/' . $classname . '.class.php';
+            if (file_exists($restorefile)) {
+                require_once($restorefile);
+                $restoresubplugin = new $classname($subplugintype, $name, $this);
+                // Add subplugin paths to the step.
+                $this->prepare_pathelements($restoresubplugin->define_subplugin_structure($element));
+            }
+        }
+    }
+
+    /**
      * Launch all the after_execute methods present in all the processing objects
      *
      * This method will launch all the after_execute methods that can be defined

@@ -106,4 +106,13 @@ class enrol_instance_created extends base {
             throw new \coding_exception('The \'enrol\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'enrol', 'restore' => 'enrol');
+    }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

@@ -94,4 +94,15 @@ class badge_awarded extends base {
             throw new \coding_exception('The \'objectid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'badge', 'restore' => 'badge');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['badgeissuedid'] = array('db' => 'badge_issued', 'restore' => base::NOT_MAPPED);
+
+        return $othermapped;
+    }
 }

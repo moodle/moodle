@@ -141,4 +141,15 @@ class user_deleted extends base {
             throw new \coding_exception('The \'mnethostid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'user', 'restore' => 'user');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['mnethostid'] = array('db' => 'mnet_host', 'restore' => base::NOT_MAPPED);
+
+        return $othermapped;
+    }
 }

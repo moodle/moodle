@@ -111,4 +111,14 @@ class highscore_added extends \core\event\base {
             throw new \coding_exception('The \'nickname\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // The 'highscore' functionality was removed from core.
+        return false;
+    }
+
+    public static function get_other_mapping() {
+        // The 'highscore' functionality was removed from core.
+        return false;
+    }
 }

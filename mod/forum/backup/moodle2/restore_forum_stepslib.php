@@ -149,6 +149,8 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
         $data->userid = $this->get_mappingid('user', $data->userid);
 
         $newitemid = $DB->insert_record('forum_subscriptions', $data);
+        $this->set_mapping('forum_subscription', $oldid, $newitemid, true);
+
     }
 
     protected function process_forum_discussion_sub($data) {
@@ -162,6 +164,7 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
         $data->userid = $this->get_mappingid('user', $data->userid);
 
         $newitemid = $DB->insert_record('forum_discussion_subs', $data);
+        $this->set_mapping('forum_discussion_sub', $oldid, $newitemid, true);
     }
 
     protected function process_forum_digest($data) {

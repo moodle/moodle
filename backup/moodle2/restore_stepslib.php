@@ -2997,6 +2997,75 @@ class restore_activity_logs_structure_step extends restore_course_logs_structure
     }
 }
 
+/**
+ * Structure step in charge of restoring the logstores.xml file for the course logs.
+ *
+ * This restore step will rebuild the logs for all the enabled logstore subplugins supporting
+ * it, for logs belonging to the course level.
+ */
+class restore_course_logstores_structure_step extends restore_structure_step {
+
+    /**
+     * Conditionally decide if this step should be executed.
+     *
+     * This function checks the following parameter:
+     *
+     *   1. the logstores.xml file exists
+     *
+     * @return bool true is safe to execute, false otherwise
+     */
+    protected function execute_condition() {
+
+        // Check it is included in the backup.
+        $fullpath = $this->task->get_taskbasepath();
+        $fullpath = rtrim($fullpath, '/') . '/' . $this->filename;
+        if (!file_exists($fullpath)) {
+            // Not found, can't restore logstores.xml information.
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Return the elements to be processed on restore of logstores.
+     *
+     * @return restore_path_element[] array of elements to be processed on restore.
+     */
+    protected function define_structure() {
+
+        $paths = array();
+
+        $logstore = new restore_path_element('logstore', '/logstores/logstore');
+        $paths[] = $logstore;
+
+        // Add logstore subplugin support to the 'logstore' element.
+        $this->add_subplugin_structure('logstore', $logstore, 'tool', 'log');
+
+        return array($logstore);
+    }
+
+    /**
+     * Process the 'logstore' element,
+     *
+     * Note: This is empty by definition in backup, because stores do not share any
+     * data between them, so there is nothing to process here.
+     *
+     * @param array $data element data
+     */
+    protected function process_logstore($data) {
+        return;
+    }
+}
+
+/**
+ * Structure step in charge of restoring the logstores.xml file for the activity logs.
+ *
+ * Note: Activity structure is completely equivalent to the course one, so just extend it.
+ */
+class restore_activity_logstores_structure_step extends restore_course_logstores_structure_step {
+}
+
 
 /**
  * Defines the restore step for advanced grading methods attached to the activity module
@@ -3782,47 +3851,10 @@ class restore_userscompletion_structure_step extends restore_structure_step {
 }
 
 /**
- * Abstract structure step, parent of all the activity structure steps. Used to suuport
- * the main <activity ...> tag and process it. Also provides subplugin support for
- * activities.
+ * Abstract structure step, parent of all the activity structure steps. Used to support
+ * the main <activity ...> tag and process it.
  */
 abstract class restore_activity_structure_step extends restore_structure_step {
-
-    protected function add_subplugin_structure($subplugintype, $element) {
-
-        global $CFG;
-
-        // Check the requested subplugintype is a valid one
-        $subpluginsfile = $CFG->dirroot . '/mod/' . $this->task->get_modulename() . '/db/subplugins.php';
-        if (!file_exists($subpluginsfile)) {
-             throw new restore_step_exception('activity_missing_subplugins_php_file', $this->task->get_modulename());
-        }
-        include($subpluginsfile);
-        if (!array_key_exists($subplugintype, $subplugins)) {
-             throw new restore_step_exception('incorrect_subplugin_type', $subplugintype);
-        }
-        // Get all the restore path elements, looking across all the subplugin dirs
-        $subpluginsdirs = core_component::get_plugin_list($subplugintype);
-        foreach ($subpluginsdirs as $name => $subpluginsdir) {
-            $classname = 'restore_' . $subplugintype . '_' . $name . '_subplugin';
-            $restorefile = $subpluginsdir . '/backup/moodle2/' . $classname . '.class.php';
-            if (file_exists($restorefile)) {
-                require_once($restorefile);
-                $restoresubplugin = new $classname($subplugintype, $name, $this);
-                // Add subplugin paths to the step
-                $this->prepare_pathelements($restoresubplugin->define_subplugin_structure($element));
-            }
-        }
-    }
-
-    /**
-     * As far as activity restore steps are implementing restore_subplugin stuff, they need to
-     * have the parent task available for wrapping purposes (get course/context....)
-     * @return restore_task
-     */
-    public function get_task() {
-        return $this->task;
-    }
 
     /**
      * Adds support for the 'activity' path that is common to all the activities

@@ -96,4 +96,8 @@ class question_category_created extends base {
         // This is not related to individual quiz at all.
         return null;
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'question_categories', 'restore' => 'question_category');
+    }
 }
