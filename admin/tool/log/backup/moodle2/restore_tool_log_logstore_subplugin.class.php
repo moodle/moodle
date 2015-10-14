@@ -105,7 +105,8 @@ abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
                         ($mapping['restore'] === \core\event\base::NOT_MAPPED)) {
                         $data->objectid = \core\event\base::NOT_MAPPED;
                     } else {
-                        $data->objectid = $this->get_mappingid($mapping['restore'], $data->objectid);
+                        $data->objectid = $this->get_mappingid($mapping['restore'], $data->objectid,
+                            \core\event\base::NOT_FOUND);
                     }
                 }
             } else {
@@ -131,7 +132,8 @@ abstract class restore_tool_log_logstore_subplugin extends restore_subplugin {
                                 ($mapping['restore'] === \core\event\base::NOT_MAPPED)) {
                                 $data->other[$key] = \core\event\base::NOT_MAPPED;
                             } else {
-                                $data->other[$key] = $this->get_mappingid($mapping['restore'], $value);
+                                $data->other[$key] = $this->get_mappingid($mapping['restore'], $value,
+                                    \core\event\base::NOT_FOUND);
                             }
                         }
                     }

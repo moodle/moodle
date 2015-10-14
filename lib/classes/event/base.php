@@ -80,6 +80,11 @@ abstract class base implements \IteratorAggregate {
      */
     const NOT_MAPPED = -31337;
 
+    /**
+     * The value used when an id can not be found during a restore.
+     */
+    const NOT_FOUND = -31338;
+
     /** @var array event data */
     protected $data;
 
