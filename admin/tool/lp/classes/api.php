@@ -771,8 +771,7 @@ class api {
         require_capability('tool/lp:templatemanage', $template->get_context());
 
         // OK - all set.
-        $templatecompetency = new template_competency();
-        $competencies = $templatecompetency->list_competencies($id, false);
+        $competencies = template_competency::list_competencies($id, false);
 
         // Adding the suffix copy.
         $template->set_shortname(get_string('duplicateditemname', 'tool_lp', $template->get_shortname()));
