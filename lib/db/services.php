@@ -465,6 +465,15 @@ $functions = array(
         'capabilities'=> '',
     ),
 
+    'core_user_add_user_private_files' => array(
+        'classname'     => 'core_user_external',
+        'methodname'    => 'add_user_private_files',
+        'classpath'     => 'user/externallib.php',
+        'description'   => 'Copy files from a draft area to users private files area.',
+        'type'          => 'write',
+        'capabilities'  => 'moodle/user:manageownfiles',
+    ),
+
     // === enrol related functions ===
 
     'core_enrol_get_enrolled_users_with_capability' => array(
