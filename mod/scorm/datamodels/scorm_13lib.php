@@ -1108,7 +1108,7 @@ function scorm_seq_flow_tree_traversal($activity, $direction, $childrenflag, $pr
 }
 
 // Returns the next activity on the tree, traversal direction, control returned to the LTS, (may) exception.
-function scorm_seq_flow_activity_traversal ($activity, $userid, $direction, $childrenflag, $prevdirection, $seq, $userid) {
+function scorm_seq_flow_activity_traversal ($activity, $userid, $direction, $childrenflag, $prevdirection, $seq) {
     $parent = scorm_get_parent ($activity);
     if (!isset($parent->flow) || ($parent->flow == false)) {
         $seq->deliverable = false;
@@ -1123,7 +1123,7 @@ function scorm_seq_flow_activity_traversal ($activity, $userid, $direction, $chi
         if ($skip) {
             $seq = scorm_seq_flow_tree_traversal($activity, $direction, false, $prevdirection, $seq, $userid, $skip);
             $seq = scorm_seq_flow_activity_traversal($seq->nextactivity, $userid, $direction,
-                                                     $childrenflag, $prevdirection, $seq, $userid);
+                                                     $childrenflag, $prevdirection, $seq);
         } else if (!empty($seq->identifiedactivity)) {
             $seq->nextactivity = $activity;
         }
@@ -1147,10 +1147,10 @@ function scorm_seq_flow_activity_traversal ($activity, $userid, $direction, $chi
         } else {
             if ($direction == 'backward' && $seq->traversaldir == 'forward') {
                 $seq = scorm_seq_flow_activity_traversal($seq->identifiedactivity, $userid,
-                                                         'forward', $childrenflag, 'backward', $seq, $userid);
+                                                         'forward', $childrenflag, 'backward', $seq);
             } else {
                 $seq = scorm_seq_flow_activity_traversal($seq->identifiedactivity, $userid,
-                                                         $direction, $childrenflag, null, $seq, $userid);
+                                                         $direction, $childrenflag, null, $seq);
             }
             return $seq;
         }
@@ -1174,7 +1174,7 @@ function scorm_seq_flow ($activity, $direction, $seq, $childrenflag, $userid) {
         return $seq;
     } else {
         $activity = $seq->nextactivity;
-        $seq = scorm_seq_flow_activity_traversal($activity, $userid, $direction, $childrenflag, null, $seq, $userid);
+        $seq = scorm_seq_flow_activity_traversal($activity, $userid, $direction, $childrenflag, null, $seq);
         return $seq;
     }
 }
