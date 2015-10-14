@@ -183,7 +183,7 @@ class mod_scorm_external extends external_api {
     }
 
     /**
-     * Describes the parameters for get_scorms_by_courses.
+     * Describes the parameters for get_scorm_scoes.
      *
      * @return external_function_parameters
      * @since Moodle 3.0
@@ -492,7 +492,7 @@ class mod_scorm_external extends external_api {
     }
 
     /**
-     * Describes the parameters for get_scorms_by_courses.
+     * Describes the parameters for get_scorm_sco_tracks.
      *
      * @return external_function_parameters
      * @since Moodle 3.0
