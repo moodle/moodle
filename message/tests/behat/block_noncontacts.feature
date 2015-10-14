@@ -17,28 +17,29 @@ Feature: Block users from contacting me
       | user1 | C1 | student |
       | user2 | C1 | student |
     And I log in as "user1"
-    And I follow "Messages" in the user menu
-    And I set the field "Search people and messages" to "User Two"
-    And I press "Search people and messages"
-    And I click on "Block contact" "link" in the "User Two" "table_row"
+    And I follow "Preferences" in the user menu
+    And I follow "Messaging"
+    And I set the field "blocknoncontacts" to "1"
+    And I press "Save changes"
     And I log out
 
   @javascript
-  Scenario: Block users display in message navigation
+  Scenario: Block non-contacts warning on messages page
     Given I log in as "user1"
-    When I follow "Messages" in the user menu
-    Then the "Message navigation:" select box should contain "Blocked users (1)"
-    And I set the field "Message navigation:" to "Blocked users (1)"
-    And I should see "User Two"
+    And I follow "Messages" in the user menu
+    And I set the field "Search people and messages" to "User Two"
+    And I press "Search people and messages"
+    When I follow "Send message to User Two"
+    Then I should see "User Two will not be able to reply as you have blocked non-contacts"
 
   @javascript
-  Scenario: Block users from contacting me
+  Scenario: Non-contact can't send message
     Given I log in as "user2"
     And I follow "Messages" in the user menu
     And I set the field "Search people and messages" to "User One"
     And I press "Search people and messages"
     When I follow "Send message to User One"
-    Then I should see "This user has blocked you from sending messages to them"
+    Then I should see "User One only accepts messages from their contacts."
     And I follow "Picture of User One"
     And I press "Message"
-    And I should see "This user has blocked you from sending messages to them"
+    And I should see "User One only accepts messages from their contacts."

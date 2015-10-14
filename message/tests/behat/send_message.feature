@@ -51,3 +51,21 @@ Feature: Users can send messages to each other
     And I press "Search people and messages"
     And I follow "Send message to User Two"
     Then I should see "Lorem ipsum sa messagus textus"
+
+  @javascript
+  Scenario: Using the 'Messages' page
+    Given the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 1 | C1 | 0 |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | user1 | C1 | student |
+      | user2 | C1 | student |
+    And I log in as "user1"
+    And I follow "Messages" in the user menu
+    And I set the field "Search people and messages" to "User Two"
+    And I press "Search people and messages"
+    And I follow "Send message to User Two"
+    When I set the field "message" to "Lorem ipsum sa messagus textus"
+    And I press "Send message"
+    Then I should see "Lorem ipsum sa messagus textus"
