@@ -48,7 +48,7 @@ function external_function_info($function, $strictness=MUST_EXIST) {
         // Fallback to explicit include of externallib.php.
         $function->classpath = empty($function->classpath) ? core_component::get_component_directory($function->component).'/externallib.php' : $CFG->dirroot.'/'.$function->classpath;
         if (!file_exists($function->classpath)) {
-            throw new coding_exception('Cannot find file with external function implementation');
+            throw new coding_exception('Cannot find file with external function implementation: ' . $function->classname);
         }
         require_once($function->classpath);
         if (!class_exists($function->classname)) {
@@ -551,6 +551,30 @@ class external_multiple_structure extends external_description {
  * @since Moodle 2.0
  */
 class external_function_parameters extends external_single_structure {
+
+    /**
+     * Constructor - does extra checking to prevent top level optional parameters.
+     *
+     * @param array $keys
+     * @param string $desc
+     * @param bool $required
+     * @param array $default
+     */
+    public function __construct(array $keys, $desc='', $required=VALUE_REQUIRED, $default=null) {
+        global $CFG;
+
+        if ($CFG->debugdeveloper) {
+            foreach ($keys as $key => $value) {
+                if ($value instanceof external_value) {
+                    if ($value->required == VALUE_OPTIONAL) {
+                        debugging('External function parameters: invalid OPTIONAL value specified.', DEBUG_DEVELOPER);
+                        break;
+                    }
+                }
+            }
+        }
+        parent::__construct($keys, $desc, $required, $default);
+    }
 }
 
 /**
