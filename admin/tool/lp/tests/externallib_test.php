@@ -904,6 +904,34 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test count competencies with filters.
+     */
+    public function test_count_competencies_with_filters() {
+        $this->setUser($this->creator);
+
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $f1 = $lpg->create_framework();
+        $f2 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'shortname' => 'A'));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id()));
+        $c5 = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id()));
+
+        $result = external::count_competencies(array(array('column' => 'competencyframeworkid', 'value' => $f2->get_id())));
+        $result = external_api::clean_returnvalue(external::count_competencies_returns(), $result);
+        $this->assertEquals(2, $result);
+
+        $result = external::count_competencies(array(array('column' => 'competencyframeworkid', 'value' => $f1->get_id())));
+        $result = external_api::clean_returnvalue(external::count_competencies_returns(), $result);
+        $this->assertEquals(3, $result);
+
+        $result = external::count_competencies(array(array('column' => 'shortname', 'value' => 'A')));
+        $result = external_api::clean_returnvalue(external::count_competencies_returns(), $result);
+        $this->assertEquals(1, $result);
+    }
+
+    /**
      * Test we can list and count competencies with manage permissions.
      */
     public function test_list_and_count_competencies_with_manage_permissions() {

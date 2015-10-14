@@ -654,12 +654,13 @@ abstract class persistent {
     /**
      * Count a list of records.
      *
+     * @param array $conditions An array of conditions.
      * @return int
      */
-    public static function count_records() {
+    public static function count_records(array $conditions = array()) {
         global $DB;
 
-        $count = $DB->count_records(static::TABLE);
+        $count = $DB->count_records(static::TABLE, $conditions);
         return $count;
     }
 
