@@ -85,13 +85,6 @@
     <licenseversion>3.0+</licenseversion>
   </library>
   <library>
-    <location>password_compat</location>
-    <name>Compatible password hashing</name>
-    <license>MIT</license>
-    <version>1.0.4</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
     <location>pear/Auth/RADIUS.php</location>
     <name>Pear_Auth_Radius</name>
     <license>BSD</license>

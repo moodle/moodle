@@ -18,6 +18,7 @@ information provided here is intended especially for developers.
   External function gradereport_user_external::get_grades_table can be used for retrieving the course grades table.
   Please note that the information returned from that WS is intended for displaying (not for data consumption).
 * New option 'escape' added to format_string. When true (default), escapes HTML entities from the string
+* The password_compat library was removed as it is no longer required.
 
 === 3.1 ===
 
