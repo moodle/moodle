@@ -5410,6 +5410,11 @@ function reset_course_userdata($data) {
                        WHERE courseid=? AND instance=0";
         $DB->execute($updatesql, array($data->timeshift, $data->courseid));
 
+        // Update any date activity restrictions.
+        if ($CFG->enableavailability) {
+            \availability_date\condition::update_all_dates($data->courseid, $data->timeshift);
+        }
+
         $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
     }
 
