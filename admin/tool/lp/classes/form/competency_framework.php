@@ -54,6 +54,8 @@ class competency_framework extends moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', 0);
 
+        $mform->addElement('header', 'generalhdr', get_string('general'));
+
         $mform->addElement('text', 'shortname',
                            get_string('shortname', 'tool_lp'));
         $mform->setType('shortname', PARAM_TEXT);
@@ -85,6 +87,16 @@ class competency_framework extends moodleform {
         $mform->addElement('static', 'context', get_string('context', 'core_role'));
         $mform->setDefault('context', $context->get_context_name());
 
+        $mform->addElement('header', 'taxonomyhdr', get_string('taxonomies', 'tool_lp'));
+        $taxonomies = \tool_lp\competency_framework::get_taxonomies_list();
+        $taxdefaults = array();
+        for ($i = 1; $i <= \tool_lp\competency_framework::get_taxonomies_max_level(); $i++) {
+            $mform->addElement('select', "taxonomies[$i]", get_string('levela', 'tool_lp', $i), $taxonomies);
+            $taxdefaults[$i] = \tool_lp\competency_framework::TAXONOMY_COMPETENCY;
+        }
+        // Not using taxonomies[n] here or it would takes precedence over set_data(array('taxonomies' => ...)).
+        $mform->setDefault('taxonomies', $taxdefaults);
+
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
 
         if (!empty($id)) {
@@ -93,6 +105,8 @@ class competency_framework extends moodleform {
                 $record = $framework->to_record();
                 // Massage for editor API.
                 $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
+                // New hair cut for taxonomies.
+                $record->taxonomies = $framework->get_taxonomies();
                 $this->set_data($record);
             }
         }

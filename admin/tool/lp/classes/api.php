@@ -343,6 +343,12 @@ class api {
     public static function create_framework(stdClass $record) {
         $framework = new competency_framework(0, $record);
         require_capability('tool/lp:competencymanage', $framework->get_context());
+
+        // Account for different formats of taxonomies.
+        if (isset($record->taxonomies)) {
+            $framework->set_taxonomies($record->taxonomies);
+        }
+
         $id = $framework->create();
         return $framework;
     }
@@ -371,9 +377,16 @@ class api {
      */
     public static function update_framework($record) {
         $framework = new competency_framework($record->id);
+
         // Check the permissions before update.
         require_capability('tool/lp:competencymanage', $framework->get_context());
+
+        // Account for different formats of taxonomies.
         $framework->from_record($record);
+        if (isset($record->taxonomies)) {
+            $framework->set_taxonomies($record->taxonomies);
+        }
+
         return $framework->update();
     }
 

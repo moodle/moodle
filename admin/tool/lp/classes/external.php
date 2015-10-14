@@ -178,6 +178,10 @@ class external extends external_api {
             PARAM_TEXT,
             'Scale configuration.'
         );
+        $taxonomies = new external_value(
+            PARAM_RAW,
+            'The taxonomy terms'
+        );
         $visible = new external_value(
             PARAM_BOOL,
             'Is this framework visible?'
@@ -204,6 +208,7 @@ class external extends external_api {
             'descriptionformatted' => $descriptionformatted,
             'scaleid' => $scaleid,
             'scaleconfiguration' => $scaleconfiguration,
+            'taxonomies' => $taxonomies,
             'visible' => $visible,
             'timecreated' => $timecreated,
             'timemodified' => $timemodified,

@@ -37,6 +37,29 @@ class competency_framework extends persistent {
 
     const TABLE = 'tool_lp_competency_framework';
 
+    /** Taxonomy constant. */
+    const TAXONOMY_BEHAVIOUR = 'behaviour';
+    /** Taxonomy constant. */
+    const TAXONOMY_COMPETENCY = 'competency';
+    /** Taxonomy constant. */
+    const TAXONOMY_CONCEPT = 'concept';
+    /** Taxonomy constant. */
+    const TAXONOMY_DOMAIN = 'domain';
+    /** Taxonomy constant. */
+    const TAXONOMY_INDICATOR = 'indicator';
+    /** Taxonomy constant. */
+    const TAXONOMY_LEVEL = 'level';
+    /** Taxonomy constant. */
+    const TAXONOMY_OUTCOME = 'outcome';
+    /** Taxonomy constant. */
+    const TAXONOMY_PRACTICE = 'practice';
+    /** Taxonomy constant. */
+    const TAXONOMY_PROFICIENCY = 'proficiency';
+    /** Taxonomy constant. */
+    const TAXONOMY_SKILL = 'skill';
+    /** Taxonomy constant. */
+    const TAXONOMY_VALUE = 'value';
+
     /**
      * Get the context.
      *
@@ -85,7 +108,64 @@ class competency_framework extends persistent {
             'contextid' => array(
                 'type' => PARAM_INT
             ),
+            'taxonomies' => array(
+                'type' => PARAM_RAW,
+                'default' => ''
+            )
         );
+    }
+
+    /**
+     * Get the translated name for a level.
+     *
+     * @param  int $level The level of the term.
+     * @return lang_string
+     */
+    public function get_taxonomy($level) {
+        $taxonomies = $this->get_taxonomies();
+
+        if (empty($taxonomies[$level])) {
+            // If for some reason we cannot find the level, we fallback onto competency.
+            $constant = self::TAXONOMY_COMPETENCY;
+        } else {
+            $constant = $taxonomies[$level];
+        }
+
+        return self::get_taxonomy_from_constant($constant);
+    }
+
+    /**
+     * Return the taxonomy constants indexed by level.
+     *
+     * @return array Contains the list of taxonomy constants indexed by level.
+     */
+    public function get_taxonomies() {
+        $taxonomies = explode(',', $this->get('taxonomies'));
+
+        // Indexing first level at 1.
+        array_unshift($taxonomies, null);
+        unset($taxonomies[0]);
+
+        // Ensure that we do not return empty levels.
+        for ($i = 1; $i <= self::get_taxonomies_max_level(); $i++) {
+            if (empty($taxonomies[$i])) {
+                $taxonomies[$i] = self::TAXONOMY_COMPETENCY;
+            }
+        }
+
+        return $taxonomies;
+    }
+
+    /**
+     * Convenience method to set taxonomies from an array or string.
+     *
+     * @param string|array $taxonomies A string, or an array where the values are the term constants.
+     */
+    public function set_taxonomies($taxonomies) {
+        if (is_array($taxonomies)) {
+            $taxonomies = implode(',', $taxonomies);
+        }
+        $this->set('taxonomies', $taxonomies);
     }
 
     /**
@@ -115,6 +195,79 @@ class competency_framework extends persistent {
         }
 
         return true;
+    }
+
+    /**
+     * Validate taxonomies.
+     *
+     * @param  mixed $value The taxonomies.
+     * @return true|lang_string
+     */
+    protected function validate_taxonomies($value) {
+        $terms = explode(',', $value);
+
+        if (count($terms) > self::get_taxonomies_max_level()) {
+            return new lang_string('invaliddata', 'error');
+        }
+
+        foreach ($terms as $term) {
+            if (!empty($term) && !array_key_exists($term, self::get_taxonomies_list())) {
+                return new lang_string('invalidtaxonomy', 'tool_lp', $term);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the string of a taxonomy from a constant
+     *
+     * @param  string $constant The taxonomy constant.
+     * @return lang_string
+     */
+    public static function get_taxonomy_from_constant($constant) {
+        return self::get_taxonomies_list()[$constant];
+    }
+
+    /**
+     * Return the maximum number of taxonomy levels.
+     *
+     * This is a method and not a constant because we want to make it easy to adapt
+     * to the number of levels desired in the future.
+     *
+     * @return int
+     */
+    public static function get_taxonomies_max_level() {
+        return 4;
+    }
+
+    /**
+     * Get the list of all taxonomies.
+     *
+     * @return array Where the key is the taxonomy constant, and the value its translation.
+     */
+    public static function get_taxonomies_list() {
+        static $list = null;
+
+        // At some point we'll have to switch to not using static cache, mainly for Unit Tests in case we
+        // decide to allow more taxonomies to be added dynamically from a CFG variable for instance.
+        if ($list === null) {
+            $list = array(
+                self::TAXONOMY_BEHAVIOUR => new lang_string('taxonomy_' . self::TAXONOMY_BEHAVIOUR, 'tool_lp'),
+                self::TAXONOMY_COMPETENCY => new lang_string('taxonomy_' . self::TAXONOMY_COMPETENCY, 'tool_lp'),
+                self::TAXONOMY_CONCEPT => new lang_string('taxonomy_' . self::TAXONOMY_CONCEPT, 'tool_lp'),
+                self::TAXONOMY_DOMAIN => new lang_string('taxonomy_' . self::TAXONOMY_DOMAIN, 'tool_lp'),
+                self::TAXONOMY_INDICATOR => new lang_string('taxonomy_' . self::TAXONOMY_INDICATOR, 'tool_lp'),
+                self::TAXONOMY_LEVEL => new lang_string('taxonomy_' . self::TAXONOMY_LEVEL, 'tool_lp'),
+                self::TAXONOMY_OUTCOME => new lang_string('taxonomy_' . self::TAXONOMY_OUTCOME, 'tool_lp'),
+                self::TAXONOMY_PRACTICE => new lang_string('taxonomy_' . self::TAXONOMY_PRACTICE, 'tool_lp'),
+                self::TAXONOMY_PROFICIENCY => new lang_string('taxonomy_' . self::TAXONOMY_PROFICIENCY, 'tool_lp'),
+                self::TAXONOMY_SKILL => new lang_string('taxonomy_' . self::TAXONOMY_SKILL, 'tool_lp'),
+                self::TAXONOMY_VALUE => new lang_string('taxonomy_' . self::TAXONOMY_VALUE, 'tool_lp'),
+            );
+        }
+
+        return $list;
     }
 
 }
