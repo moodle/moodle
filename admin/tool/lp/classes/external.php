@@ -312,7 +312,6 @@ class external extends external_api {
 
         $context = self::get_context_from_params($params['context']);
         self::validate_context($context);
-        // TODO MDL-51506 Implement validation of scale configuration.
 
         unset($params['context']);
         $params['contextid'] = $context->id;
@@ -539,7 +538,6 @@ class external extends external_api {
                                                 'visible' => $visible
                                             ));
 
-        // TODO MDL-51506 Implement validation of scale configuration.
         $params = (object) $params;
 
         return api::update_framework($params);

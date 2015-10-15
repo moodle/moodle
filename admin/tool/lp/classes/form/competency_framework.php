@@ -133,17 +133,20 @@ class competency_framework extends moodleform {
      * @return array
      */
     public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
+        $context = $this->_customdata['context'];
 
-        // Add field validation check for duplicate idnumber.
-        $framework = new \tool_lp\competency_framework();
-        $params = array(
-            'id' => $data['id'],
-            'idnumber' => $data['idnumber'],
-        );
-        $exists = $framework->get_records_select('idnumber = :idnumber AND id <> :id', $params, '', 'id', 0, 1);
-        if ($exists) {
-            $errors['idnumber'] = get_string('idnumbertaken', 'error');
+        $data = $this->get_submitted_data();
+        unset($data->submitbutton);
+        $data->descriptionformat = $data->description['format'];
+        $data->description = $data->description['text'];
+        $data->contextid = $context->id;
+        $data->taxonomies = implode(',', $data->taxonomies);
+
+        $framework = new \tool_lp\competency_framework(0, $data);
+        $errors = $framework->get_errors();
+        if (isset($errors['scaleconfiguration'])) {
+            $errors['scaleid'] = $errors['scaleconfiguration'];
+            unset($errors['scaleconfiguration']);
         }
 
         return $errors;

@@ -127,6 +127,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->user = $user;
         $this->catuser = $catuser;
         $this->category = $category;
+
+        $this->getDataGenerator()->create_scale(array("id" => "1", "scale" => "value1, value2"));
+        $this->getDataGenerator()->create_scale(array("id" => "2", "scale" => "value3, value4"));
+        $this->getDataGenerator()->create_scale(array("id" => "3", "scale" => "value5, value6"));
+        $this->getDataGenerator()->create_scale(array("id" => "4", "scale" => "value7, value8"));
+
         $this->scaleconfiguration1 = '[{"scaleid":"1"},{"name":"value1","id":1,"scaledefault":1,"proficient":0},' .
                 '{"name":"value2","id":2,"scaledefault":0,"proficient":1}]';
         $this->scaleconfiguration2 = '[{"scaleid":"2"},{"name":"value3","id":1,"scaledefault":1,"proficient":0},' .

@@ -64,6 +64,7 @@ $string['erroreditingmodifiedplan'] = 'You can not edit a learning plan modified
 tool/lp:planmanage or tool/lp:planmanageown capabilities.';
 $string['errornocompetency'] = '{$a} competency can not be found';
 $string['errorplanstatus'] = 'Learning plans \'{$a}\' status unknown';
+$string['errorscaleconfiguration'] = 'You must configure the scale by selecting default and proficient values.';
 $string['hidden'] = 'Hidden';
 $string['hiddenhint'] = '(hidden)';
 $string['idnumber'] = 'Id number';

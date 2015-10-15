@@ -95,15 +95,11 @@ class competency_framework extends persistent {
                 'type' => PARAM_BOOL,
                 'default' => 1
             ),
-            // TODO MDL-51442 make this mandatory.
             'scaleid' => array(
-                'type' => PARAM_INT,
-                'default' => 0
+                'type' => PARAM_INT
             ),
-            // TODO MDL-51442 make this mandatory.
             'scaleconfiguration' => array(
-                'type' => PARAM_RAW,
-                'default' => ''
+                'type' => PARAM_RAW
             ),
             'contextid' => array(
                 'type' => PARAM_INT
@@ -268,6 +264,73 @@ class competency_framework extends persistent {
         }
 
         return $list;
+    }
+
+    /**
+     * Validate the scale configuration.
+     *
+     * @param  string $value The scale configuration.
+     * @return bool|lang_string
+     */
+    public function validate_scaleconfiguration($value) {
+        global $DB;
+
+        $scaleidvalid = false;
+        $scaledefaultselected = false;
+        $proficientselected = false;
+
+        if (!empty($value)) {
+            $scaleconfigurations = json_decode($value);
+            if (is_array($scaleconfigurations)) {
+                foreach ($scaleconfigurations as $scaleconfiguration) {
+                    // First element must be a valid scaleid.
+                    if (isset($scaleconfiguration->scaleid)) {
+                        $params = array(
+                           'id' => $scaleconfiguration->scaleid,
+                        );
+                        if ($DB->record_exists_select('scale', 'id = :id', $params)) {
+                            $scaleidvalid = true;
+                        }
+                    }
+                    if (!$scaleidvalid || ($scaledefaultselected && $proficientselected)) {
+                        break;
+                    }
+                    if (isset($scaleconfiguration->scaledefault) && $scaleconfiguration->scaledefault) {
+                        $scaledefaultselected = true;
+                    }
+                    if (isset($scaleconfiguration->proficient) && $scaleconfiguration->proficient) {
+                        $proficientselected = true;
+                    }
+                }
+            }
+        }
+
+        if (!$scaleidvalid || !$scaledefaultselected || !$proficientselected) {
+            return new lang_string('errorscaleconfiguration', 'tool_lp');
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate the id number.
+     *
+     * @param  string $value The id number.
+     * @return bool|lang_string
+     */
+    public function validate_idnumber($value) {
+        global $DB;
+
+        $params = array(
+            'id' => $this->get('id'),
+            'idnumber' => $value,
+        );
+
+        if ($DB->record_exists_select(self::TABLE, 'idnumber = :idnumber AND id <> :id', $params)) {
+            return new lang_string('idnumbertaken', 'error');
+        }
+
+        return true;
     }
 
 }
