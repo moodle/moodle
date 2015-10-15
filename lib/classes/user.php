@@ -279,6 +279,67 @@ class core_user {
     }
 
     /**
+     * Updates the provided users profile picture based upon the expected fields returned from the edit or edit_advanced forms.
+     *
+     * @param stdClass $usernew An object that contains some information about the user being updated
+     * @param array $filemanageroptions
+     * @return bool True if the user was updated, false if it stayed the same.
+     */
+    public static function update_picture(stdClass $usernew, $filemanageroptions = array()) {
+        global $CFG, $DB;
+        require_once("$CFG->libdir/gdlib.php");
+
+        $context = context_user::instance($usernew->id, MUST_EXIST);
+        $user = core_user::get_user($usernew->id, 'id, picture', MUST_EXIST);
+
+        $newpicture = $user->picture;
+        // Get file_storage to process files.
+        $fs = get_file_storage();
+        if (!empty($usernew->deletepicture)) {
+            // The user has chosen to delete the selected users picture.
+            $fs->delete_area_files($context->id, 'user', 'icon'); // Drop all images in area.
+            $newpicture = 0;
+
+        } else {
+            // Save newly uploaded file, this will avoid context mismatch for newly created users.
+            file_save_draft_area_files($usernew->imagefile, $context->id, 'user', 'newicon', 0, $filemanageroptions);
+            if (($iconfiles = $fs->get_area_files($context->id, 'user', 'newicon')) && count($iconfiles) == 2) {
+                // Get file which was uploaded in draft area.
+                foreach ($iconfiles as $file) {
+                    if (!$file->is_directory()) {
+                        break;
+                    }
+                }
+                // Copy file to temporary location and the send it for processing icon.
+                if ($iconfile = $file->copy_content_to_temp()) {
+                    // There is a new image that has been uploaded.
+                    // Process the new image and set the user to make use of it.
+                    // NOTE: Uploaded images always take over Gravatar.
+                    $newpicture = (int)process_new_icon($context, 'user', 'icon', 0, $iconfile);
+                    // Delete temporary file.
+                    @unlink($iconfile);
+                    // Remove uploaded file.
+                    $fs->delete_area_files($context->id, 'user', 'newicon');
+                } else {
+                    // Something went wrong while creating temp file.
+                    // Remove uploaded file.
+                    $fs->delete_area_files($context->id, 'user', 'newicon');
+                    return false;
+                }
+            }
+        }
+
+        if ($newpicture != $user->picture) {
+            $DB->set_field('user', 'picture', $newpicture, array('id' => $user->id));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
+    /**
      * Definition of user profile fields and the expected parameter type for data validation.
      *
      * array(

@@ -566,6 +566,22 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
 
+        $wsuser = self::getDataGenerator()->create_user();
+        self::setUser($wsuser);
+
+        $context = context_user::instance($USER->id);
+        $contextid = $context->id;
+        $filename = "reddot.png";
+        $filecontent = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38"
+            . "GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+
+        // Call the files api to create a file.
+        $draftfile = core_files_external::upload($contextid, 'user', 'draft', 0, '/',
+                $filename, $filecontent, null, null);
+        $draftfile = external_api::clean_returnvalue(core_files_external::upload_returns(), $draftfile);
+
+        $draftid = $draftfile['itemid'];
+
         $user1 = self::getDataGenerator()->create_user();
 
         $user1 = array(
@@ -582,6 +598,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
             'email' => 'usertest1@example.com',
             'description' => 'This is a description for user 1',
             'city' => 'Perth',
+            'userpicture' => $draftid,
             'country' => 'AU'
             );
 
@@ -600,6 +617,20 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($dbuser->description, $user1['description']);
         $this->assertEquals($dbuser->city, $user1['city']);
         $this->assertEquals($dbuser->country, $user1['country']);
+        $this->assertNotEquals(0, $dbuser->picture, 'Picture must be set to the new icon itemid for this user');
+
+        // Confirm no picture change when parameter is not supplied.
+        unset($user1['userpicture']);
+        core_user_external::update_users(array($user1));
+        $dbusernopic = $DB->get_record('user', array('id' => $user1['id']));
+        $this->assertEquals($dbuser->picture, $dbusernopic->picture, 'Picture not change without the parameter.');
+
+        // Confirm delete of picture deletes the picture from the user record.
+        $user1['userpicture'] = 0;
+        core_user_external::update_users(array($user1));
+        $dbuserdelpic = $DB->get_record('user', array('id' => $user1['id']));
+        $this->assertEquals(0, $dbuserdelpic->picture, 'Picture must be deleted when sent as 0.');
+
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/user:update', $context->id, $roleid);

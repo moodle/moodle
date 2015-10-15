@@ -386,6 +386,9 @@ class core_user_external extends external_api {
                                 new external_value(core_user::get_property_type('middlename'), 'The middle name of the user', VALUE_OPTIONAL),
                             'alternatename' =>
                                 new external_value(core_user::get_property_type('alternatename'), 'The alternate name of the user', VALUE_OPTIONAL),
+                            'userpicture' =>
+                                new external_value(PARAM_INT, 'The itemid where the new user picture '.
+                                    'has been uploaded to, 0 to delete', VALUE_OPTIONAL),
                             'customfields' => new external_multiple_structure(
                                 new external_single_structure(
                                     array(
@@ -426,10 +429,31 @@ class core_user_external extends external_api {
 
         $params = self::validate_parameters(self::update_users_parameters(), array('users' => $users));
 
+        $filemanageroptions = array('maxbytes' => $CFG->maxbytes,
+                'subdirs'        => 0,
+                'maxfiles'       => 1,
+                'accepted_types' => 'web_image');
+
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($params['users'] as $user) {
             user_update_user($user, true, false);
+
+            // Update user picture if it was specified for this user.
+            if (empty($CFG->disableuserimages) && isset($user['userpicture'])) {
+                $userobject = (object)$user;
+
+                $userobject->deletepicture = null;
+
+                if ($user['userpicture'] == 0) {
+                    $userobject->deletepicture = true;
+                } else {
+                    $userobject->imagefile = $user['userpicture'];
+                }
+
+                core_user::update_picture($userobject, $filemanageroptions);
+            }
+
             // Update user custom fields.
             if (!empty($user['customfields'])) {
 

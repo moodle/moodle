@@ -164,62 +164,19 @@ function useredit_update_user_preference($usernew) {
 /**
  * Updates the provided users profile picture based upon the expected fields returned from the edit or edit_advanced forms.
  *
+ * @deprecated since Moodle 3.2 MDL-51789 - please use core_user::update_picture() instead.
+ * @todo MDL-54858 This will be deleted in Moodle 3.5.
+ * @see core_user::update_picture()
+ *
  * @global moodle_database $DB
  * @param stdClass $usernew An object that contains some information about the user being updated
- * @param moodleform $userform The form that was submitted to edit the form
+ * @param moodleform $userform The form that was submitted to edit the form (unused)
  * @param array $filemanageroptions
  * @return bool True if the user was updated, false if it stayed the same.
  */
 function useredit_update_picture(stdClass $usernew, moodleform $userform, $filemanageroptions = array()) {
-    global $CFG, $DB;
-    require_once("$CFG->libdir/gdlib.php");
-
-    $context = context_user::instance($usernew->id, MUST_EXIST);
-    $user = $DB->get_record('user', array('id' => $usernew->id), 'id, picture', MUST_EXIST);
-
-    $newpicture = $user->picture;
-    // Get file_storage to process files.
-    $fs = get_file_storage();
-    if (!empty($usernew->deletepicture)) {
-        // The user has chosen to delete the selected users picture.
-        $fs->delete_area_files($context->id, 'user', 'icon'); // Drop all images in area.
-        $newpicture = 0;
-
-    } else {
-        // Save newly uploaded file, this will avoid context mismatch for newly created users.
-        file_save_draft_area_files($usernew->imagefile, $context->id, 'user', 'newicon', 0, $filemanageroptions);
-        if (($iconfiles = $fs->get_area_files($context->id, 'user', 'newicon')) && count($iconfiles) == 2) {
-            // Get file which was uploaded in draft area.
-            foreach ($iconfiles as $file) {
-                if (!$file->is_directory()) {
-                    break;
-                }
-            }
-            // Copy file to temporary location and the send it for processing icon.
-            if ($iconfile = $file->copy_content_to_temp()) {
-                // There is a new image that has been uploaded.
-                // Process the new image and set the user to make use of it.
-                // NOTE: Uploaded images always take over Gravatar.
-                $newpicture = (int)process_new_icon($context, 'user', 'icon', 0, $iconfile);
-                // Delete temporary file.
-                @unlink($iconfile);
-                // Remove uploaded file.
-                $fs->delete_area_files($context->id, 'user', 'newicon');
-            } else {
-                // Something went wrong while creating temp file.
-                // Remove uploaded file.
-                $fs->delete_area_files($context->id, 'user', 'newicon');
-                return false;
-            }
-        }
-    }
-
-    if ($newpicture != $user->picture) {
-        $DB->set_field('user', 'picture', $newpicture, array('id' => $user->id));
-        return true;
-    } else {
-        return false;
-    }
+    debugging('useredit_update_picture() is deprecated. Please use core_user::update_picture() instead.', DEBUG_DEVELOPER);
+    return core_user::update_picture($usernew, $filemanageroptions);
 }
 
 /**
