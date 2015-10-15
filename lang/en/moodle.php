@@ -1634,7 +1634,6 @@ $string['secondstotime86400'] = '1 day';
 $string['secretalreadyused'] = 'Change password confirmation link was already used, password was not changed.';
 $string['secs'] = 'secs';
 $string['section'] = 'Section';
-$string['sectionmenu'] = 'Section menu';
 $string['sectionname'] = 'Section name';
 $string['sections'] = 'Sections';
 $string['sectionusedefaultname'] = 'Use default section name';
