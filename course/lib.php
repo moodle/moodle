@@ -2605,18 +2605,27 @@ function create_course($data, $editoroptions = NULL) {
 
     $course = course_get_format($newcourseid)->get_course();
 
-    // Setup the blocks
-    blocks_add_default_course_blocks($course);
-
-    // Create a default section.
-    course_create_sections_if_missing($course, 0);
-
     fix_course_sortorder();
     // purge appropriate caches in case fix_course_sortorder() did not change anything
     cache_helper::purge_by_event('changesincourse');
 
     // new context created - better mark it as dirty
     $context->mark_dirty();
+
+    // Trigger a course created event.
+    $event = \core\event\course_created::create(array(
+        'objectid' => $course->id,
+        'context' => context_course::instance($course->id),
+        'other' => array('shortname' => $course->shortname,
+            'fullname' => $course->fullname)
+    ));
+    $event->trigger();
+
+    // Setup the blocks
+    blocks_add_default_course_blocks($course);
+
+    // Create a default section.
+    course_create_sections_if_missing($course, 0);
 
     // Save any custom role names.
     save_local_role_names($course->id, (array)$data);
@@ -2628,15 +2637,6 @@ function create_course($data, $editoroptions = NULL) {
     if ($CFG->usetags && isset($data->tags)) {
         tag_set('course', $course->id, $data->tags, 'core', context_course::instance($course->id)->id);
     }
-
-    // Trigger a course created event.
-    $event = \core\event\course_created::create(array(
-        'objectid' => $course->id,
-        'context' => context_course::instance($course->id),
-        'other' => array('shortname' => $course->shortname,
-                         'fullname' => $course->fullname)
-    ));
-    $event->trigger();
 
     return $course;
 }
