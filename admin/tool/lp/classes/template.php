@@ -24,6 +24,7 @@
 namespace tool_lp;
 
 use context;
+use lang_string;
 use stdClass;
 
 /**
@@ -35,6 +36,9 @@ use stdClass;
 class template extends persistent {
 
     const TABLE = 'tool_lp_template';
+
+    /** @var template Object before update. */
+    protected $beforeupdate = null;
 
     /**
      * Return the definition of the properties of this model.
@@ -74,6 +78,30 @@ class template extends persistent {
     }
 
     /**
+     * Hook to execute after an update.
+     *
+     * @param bool $result Whether or not the update was successful.
+     * @return void
+     */
+    protected function after_update($result) {
+        $this->beforeupdate = null;
+    }
+
+    /**
+     * Hook to execute before validate.
+     *
+     * @return void
+     */
+    protected function before_validate() {
+        $this->beforeupdate = null;
+
+        // During update.
+        if ($this->get_id()) {
+            $this->beforeupdate = new self($this->get_id());
+        }
+    }
+
+    /**
      * Get the context.
      *
      * @return context The context
@@ -95,6 +123,32 @@ class template extends persistent {
         } else if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT) {
             return new lang_string('invalidcontext', 'error');
         }
+        return true;
+    }
+
+    /**
+     * Validate the due date.
+     *
+     * @param  int $value The due date.
+     * @return bool|lang_string
+     */
+    protected function validate_duedate($value) {
+
+        // During update.
+        if ($this->get_id()) {
+            $before = $this->beforeupdate->get_duedate();
+            if (!empty($before) && $before < time() && $value != $before) {
+                // We cannot set a due date after it was reached.
+                return new lang_string('errorcannotchangeapastduedate', 'tool_lp');
+            }
+        }
+
+        // During create and update.
+        if (!empty($value) && $value < time()) {
+            // We cannot set the date in the past, but we can leave it empty.
+            return new lang_string('errorcannotsetduedateinthepast', 'tool_lp');
+        }
+
         return true;
     }
 

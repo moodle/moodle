@@ -58,6 +58,8 @@ $string['editcompetencyframework'] = 'Edit competency framework';
 $string['editplan'] = 'Edit learning plan';
 $string['edittemplate'] = 'Edit learning plan template';
 $string['editthisplan'] = 'Edit this learning plan';
+$string['errorcannotsetduedateinthepast'] = 'The due date cannot be set in the past.';
+$string['errorcannotchangeapastduedate'] = 'The due date has passed, it cannot be changed.';
 $string['erroreditingmodifiedplan'] = 'You can not edit a learning plan modified by another user if you don\'t have
 tool/lp:planmanage or tool/lp:planmanageown capabilities.';
 $string['errornocompetency'] = '{$a} competency can not be found';

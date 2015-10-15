@@ -103,4 +103,29 @@ class template extends moodleform {
         return $data;
     }
 
+    /**
+     * Extra the form.
+     *
+     * @param  array $data
+     * @param  array $files
+     * @return array
+     */
+    public function validation($data, $files) {
+        $data = $this->get_submitted_data();        // To remove extra fields (sesskey, __qf_, ...).
+        unset($data->submitbutton);
+
+        $data->descriptionformat = $data->description['format'];
+        $data->description = $data->description['text'];
+
+        $template = new \tool_lp\template(0, $data);
+        $errors = $template->get_errors();
+
+        // The context ID is not submitted via this form.
+        if (isset($errors['contextid'])) {
+            unset($errors['contextid']);
+        }
+
+        return $errors;
+    }
+
 }
