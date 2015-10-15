@@ -213,6 +213,35 @@ class core_externallib_testcase extends advanced_testcase {
         $this->setExpectedException('invalid_parameter_exception');
         test_exernal_api::get_context_wrapper(array('roleid' => 3, 'userid' => $USER->id, 'instanceid' => $course->id));
     }
+
+    public function all_external_info_provider() {
+        global $DB;
+
+        // We are testing here that all the external function descriptions can be generated without
+        // producing warnings. E.g. misusing optional params will generate a debugging message which
+        // will fail this test.
+        $functions = $DB->get_records('external_functions', array(), 'name');
+        $return = array();
+        foreach ($functions as $f) {
+            $return[$f->name] = array($f);
+        }
+        return $return;
+    }
+
+    /**
+     * @dataProvider all_external_info_provider
+     */
+    public function test_all_external_info($f) {
+        $desc = external_function_info($f);
+        $this->assertNotEmpty($desc->name);
+        $this->assertNotEmpty($desc->classname);
+        $this->assertNotEmpty($desc->methodname);
+        $this->assertEquals($desc->component, clean_param($desc->component, PARAM_COMPONENT));
+        $this->assertInstanceOf('external_function_parameters', $desc->parameters_desc);
+        if ($desc->returns_desc != null) {
+            $this->assertInstanceOf('external_description', $desc->returns_desc);
+        }
+    }
 }
 
 /*
