@@ -309,7 +309,7 @@ class mod_choice_external extends external_api {
      *
      * @param int $choiceid the choice instance id
      * @param array $responses the response ids
-     * @return array ansers informatinon and warnings
+     * @return array answers information and warnings
      * @since Moodle 3.0
      */
     public static function submit_choice_response($choiceid, $responses) {
