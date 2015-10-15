@@ -726,3 +726,19 @@ function local_kaltura_convert_kaltura_base_entry_object($object) {
 
     return $metadata;
 }
+
+function local_kaltura_build_kaf_uri($source_url) {
+    $kaf_uri = local_kaltura_get_config()->kaf_uri;
+    $parsed_source_url = parse_url($source_url);
+
+    if(!empty($parsed_source_url['path'])) {
+        $kaf_uri = parse_url($kaf_uri);
+        $source_host_and_path = $parsed_source_url['host'] . $parsed_source_url['path'];
+        $kaf_uri_host_and_path = $kaf_uri['host'] . (isset($kaf_uri['path']) ? $kaf_uri['path'] : '');
+
+        $source_url = str_replace($kaf_uri_host_and_path, '', $source_host_and_path);
+        $source_url = 'http://' . KALTURA_URI_TOKEN . $source_url;
+    }
+
+    return $source_url;
+}

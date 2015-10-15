@@ -39,12 +39,7 @@ function kalvidpres_add_instance($kalvidpres) {
     require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 
     $kalvidpres->timecreated = time();
-
-    $urlparts = parse_url($kalvidpres->source);
-    if (!empty($urlparts['path'])) {
-        $kalvidpres->source = 'http://'.KALTURA_URI_TOKEN.$urlparts['path'];
-    }
-
+    $kalvidpres->source = local_kaltura_build_kaf_uri($kalvidpres->source);
     $kalvidpres->id =  $DB->insert_record('kalvidpres', $kalvidpres);
 
     return $kalvidpres->id;
@@ -64,11 +59,7 @@ function kalvidpres_update_instance($kalvidpres) {
 
     $kalvidpres->timemodified = time();
     $kalvidpres->id = $kalvidpres->instance;
-
-    $urlparts = parse_url($kalvidpres->source);
-    if (!empty($urlparts['path'])) {
-        $kalvidpres->source = 'http://'.KALTURA_URI_TOKEN.$urlparts['path'];
-    }
+    $kalvidpres->source = local_kaltura_build_kaf_uri($kalvidpres->source);
 
     $updated = $DB->update_record('kalvidpres', $kalvidpres);
 

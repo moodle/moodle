@@ -39,11 +39,7 @@ function kalvidres_add_instance($kalvidres) {
     require_once($CFG->dirroot.'/local/kaltura/locallib.php');
 
     $kalvidres->timecreated = time();
-
-    $urlparts = parse_url($kalvidres->source);
-    if (!empty($urlparts['path'])) {
-        $kalvidres->source = 'http://'.KALTURA_URI_TOKEN.$urlparts['path'];
-    }
+    $kalvidres->source = local_kaltura_build_kaf_uri($kalvidres->source);
     $kalvidres->id =  $DB->insert_record('kalvidres', $kalvidres);
 
     return $kalvidres->id;
@@ -63,11 +59,7 @@ function kalvidres_update_instance($kalvidres) {
 
     $kalvidres->timemodified = time();
     $kalvidres->id = $kalvidres->instance;
-    $urlparts = parse_url($kalvidres->source);
-    if (!empty($urlparts['path'])) {
-        $kalvidres->source = 'http://'.KALTURA_URI_TOKEN.$urlparts['path'];
-    }
-
+    $kalvidres->source = local_kaltura_build_kaf_uri($kalvidres->source);
     $updated = $DB->update_record('kalvidres', $kalvidres);
 
     return $updated;
