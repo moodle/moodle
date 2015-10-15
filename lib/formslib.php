@@ -77,10 +77,11 @@ function form_init_date_js() {
     global $PAGE;
     static $done = false;
     if (!$done) {
+        $calendar = \core_calendar\type_factory::get_calendar_instance();
         $module   = 'moodle-form-dateselector';
         $function = 'M.form.dateselector.init_date_selectors';
         $config = array(array(
-            'firstdayofweek'    => get_string('firstdayofweek', 'langconfig'),
+            'firstdayofweek'    => $calendar->get_starting_weekday(),
             'mon'               => date_format_string(strtotime("Monday"), '%a', 99),
             'tue'               => date_format_string(strtotime("Tuesday"), '%a', 99),
             'wed'               => date_format_string(strtotime("Wednesday"), '%a', 99),
