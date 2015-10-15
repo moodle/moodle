@@ -54,14 +54,6 @@
         print_error('invalidsurveyid', 'survey');
     }
 
-    $params = array(
-        'context' => $context,
-        'courseid' => $course->id,
-        'other' => array('surveyid' => $survey->id)
-    );
-    $event = \mod_survey\event\response_submitted::create($params);
-    $event->trigger();
-
     $strsurveysaved = get_string('surveysaved', 'survey');
 
     $PAGE->set_title($strsurveysaved);
@@ -120,6 +112,14 @@
             $DB->insert_record("survey_answers", $newdata);
         }
     }
+
+    $params = array(
+        'context' => $context,
+        'courseid' => $course->id,
+        'other' => array('surveyid' => $survey->id)
+    );
+    $event = \mod_survey\event\response_submitted::create($params);
+    $event->trigger();
 
 // Print the page and finish up.
 
