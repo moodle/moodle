@@ -37,10 +37,7 @@ $metadata  = required_param('metadata', PARAM_TEXT);
 
 global $USER, $OUTPUT, $DB, $PAGE;
 
-$urlparts = parse_url($source);
-if (!empty($urlparts['path'])) {
-    $source = 'http://'.KALTURA_URI_TOKEN.$urlparts['path'];
-}
+$source = local_kaltura_build_kaf_uri($source);
 
 if (! $cm = get_coursemodule_from_id('kalvidassign', $cmid)) {
     print_error('invalidcoursemodule');
