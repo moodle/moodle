@@ -1497,10 +1497,13 @@ class mod_forum_events_testcase extends advanced_testcase {
      * Test post_deleted event.
      */
     public function test_post_deleted() {
+        global $DB;
+
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $user = $this->getDataGenerator()->create_user();
+        $cm = get_coursemodule_from_instance('forum', $forum->id, $forum->course);
 
         // Add a discussion.
         $record = array();
@@ -1509,39 +1512,65 @@ class mod_forum_events_testcase extends advanced_testcase {
         $record['userid'] = $user->id;
         $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
-        // Add a post.
+        // When creating a discussion we also create a post, so get the post.
+        $discussionpost = $DB->get_records('forum_posts');
+        // Will only be one here.
+        $discussionpost = reset($discussionpost);
+
+        // Add a few posts.
         $record = array();
         $record['discussion'] = $discussion->id;
         $record['userid'] = $user->id;
-        $post = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        $post1 = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        $post2 = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        $post3 = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
 
-        $context = context_module::instance($forum->cmid);
-
-        $params = array(
-            'context' => $context,
-            'objectid' => $post->id,
-            'other' => array('discussionid' => $discussion->id, 'forumid' => $forum->id, 'forumtype' => $forum->type)
-        );
-
-        $event = \mod_forum\event\post_deleted::create($params);
-
-        // Trigger and capture the event.
+        // Delete the last post and capture the event.
         $sink = $this->redirectEvents();
-        $event->trigger();
+        forum_delete_post($post3, true, $course, $cm, $forum);
         $events = $sink->get_events();
         $this->assertCount(1, $events);
         $event = reset($events);
 
-        // Checking that the event contains the expected values.
+        // Check that the events contain the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_deleted', $event);
-        $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'delete post', "discuss.php?d={$discussion->id}", $post->id, $forum->cmid);
+        $this->assertEquals(context_module::instance($forum->cmid), $event->get_context());
+        $expected = array($course->id, 'forum', 'delete post', "discuss.php?d={$discussion->id}", $post3->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
-
         $this->assertNotEmpty($event->get_name());
+
+        // Delete the whole discussion and capture the events.
+        $sink = $this->redirectEvents();
+        forum_delete_discussion($discussion, true, $course, $cm, $forum);
+        $events = $sink->get_events();
+        // We will have 3 events. One for the discussion (creating a discussion creates a post), and two for the posts.
+        $this->assertCount(3, $events);
+
+        // Loop through the events and check they are valid.
+        foreach ($events as $key => $event) {
+            if ($key === 0) {
+                // The last post in the discussion (that wasn't deleted).
+                $post = $post2;
+            } else if ($key === 1) {
+                // The first post in the discussion.
+                $post = $post1;
+            } else { // Must be the discussion post.
+                $post = $discussionpost;
+            }
+
+            // Check that the event contains the expected values.
+            $this->assertInstanceOf('\mod_forum\event\post_deleted', $event);
+            $this->assertEquals(context_module::instance($forum->cmid), $event->get_context());
+            $expected = array($course->id, 'forum', 'delete post', "discuss.php?d={$discussion->id}", $post->id, $forum->cmid);
+            $this->assertEventLegacyLogData($expected, $event);
+            $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
+            $this->assertEquals($url, $event->get_url());
+            $this->assertEventContextNotUsed($event);
+            $this->assertNotEmpty($event->get_name());
+        }
     }
 
     /**
