@@ -26,6 +26,7 @@ namespace tool_lp;
 use coding_exception;
 use invalid_parameter_exception;
 use lang_string;
+use ReflectionMethod;
 use stdClass;
 
 /**
@@ -340,8 +341,14 @@ abstract class persistent {
     final public function create() {
         global $DB, $USER;
 
+        if ($this->get_id()) {
+            // The validation methods rely on the ID to know if we're updating or not, the ID should be
+            // falsy whenever we are creating an object.
+            throw new coding_exception('Cannot create an object that has an ID defined.');
+        }
+
         if (!$this->is_valid()) {
-            throw new invalid_persistent_exception();
+            throw new invalid_persistent_exception($this->get_errors());
         }
 
         // Before create hook.
@@ -349,12 +356,12 @@ abstract class persistent {
 
         // We can safely set those values bypassing the validation because we know what we're doing.
         $now = time();
-        $this->set('id', 0);
         $this->set('timecreated', $now);
         $this->set('timemodified', $now);
         $this->set('usermodified', $USER->id);
 
         $record = $this->to_record();
+        unset($record->id);
 
         $id = $DB->insert_record(static::TABLE, $record);
         $this->set('id', $id);
@@ -402,7 +409,7 @@ abstract class persistent {
         if ($this->get_id() <= 0) {
             throw new coding_exception('id is required to update');
         } else if (!$this->is_valid()) {
-            throw new invalid_persistent_exception();
+            throw new invalid_persistent_exception($this->get_errors());
         }
 
         // Before update hook.
@@ -507,16 +514,24 @@ abstract class persistent {
      * Developers can implement addition validation by defining a method as follows. Note that
      * the method MUST return a lang_string() when there is an error, and true when the data is valid.
      *
-     * public function validate_propertyname($value) {
+     * protected function validate_propertyname($value) {
      *     if ($value !== 'My expected value') {
      *         return new lang_string('invaliddata', 'error');
      *     }
      *     return true
      * }
      *
+     * It is OK to use other properties in your custom validation methods when you need to, however note
+     * they might not have been validated yet, so try not to rely on them too much.
+     *
+     * Note that the validation methods should be protected. Validating just one field is not
+     * recommended because of the possible dependencies between one field and another,also the
+     * field ID can be used to check whether the object is being updated or created.
+     *
      * @return array|true Returns true when the validation passed, or an array of properties with errors.
      */
     final public function validate() {
+        global $CFG;
 
         // If this object has not been validated yet.
         if ($this->validated !== true) {
@@ -559,6 +574,15 @@ abstract class persistent {
                 // Call custom validation method.
                 $method = 'validate_' . $property;
                 if (method_exists($this, $method)) {
+
+                    // Warn the developers when they are doing something wrong.
+                    if ($CFG->debugdeveloper) {
+                        $reflection = new ReflectionMethod($this, $method);
+                        if (!$reflection->isProtected()) {
+                            throw new coding_exception('The method ' . get_class($this) . '::'. $method . ' should be protected.');
+                        }
+                    }
+
                     $valid = $this->{$method}($value);
                     if ($valid !== true) {
                         if (!($valid instanceof lang_string)) {

@@ -35,8 +35,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class invalid_persistent_exception extends \moodle_exception {
 
-    public function __construct() {
-        parent::__construct('invalidpersistent', 'tool_lp');
+    public function __construct(array $errors = array()) {
+        $debuginfo = array();
+        foreach ($errors as $key => $message) {
+            $debuginfo[] = "$key: $message";
+        }
+        parent::__construct('invalidpersistent', 'tool_lp', null, null, implode(' - ', $debuginfo));
     }
 
 }

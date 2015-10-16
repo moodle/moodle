@@ -170,7 +170,7 @@ class competency_framework extends persistent {
      * @param  int $value The context ID.
      * @return bool|lang_string
      */
-    public function validate_contextid($value) {
+    protected function validate_contextid($value) {
         global $DB;
 
         $context = context::instance_by_id($value, IGNORE_MISSING);
@@ -199,7 +199,7 @@ class competency_framework extends persistent {
      * @param  string $value The id number.
      * @return bool|lang_string
      */
-    public function validate_idnumber($value) {
+    protected function validate_idnumber($value) {
         global $DB;
 
         $params = array(
@@ -236,7 +236,7 @@ class competency_framework extends persistent {
      * @param  string $value The scale configuration.
      * @return bool|lang_string
      */
-    public function validate_scaleconfiguration($value) {
+    protected function validate_scaleconfiguration($value) {
         global $DB;
 
         $scaledefaultselected = false;

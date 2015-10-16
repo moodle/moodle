@@ -116,7 +116,7 @@ class template extends persistent {
      * @param  int $value The context ID.
      * @return bool|lang_string
      */
-    public function validate_contextid($value) {
+    protected function validate_contextid($value) {
         $context = context::instance_by_id($value, IGNORE_MISSING);
         if (!$context) {
             return new lang_string('invalidcontext', 'error');

@@ -788,6 +788,7 @@ class api {
 
         // Adding the suffix copy.
         $template->set_shortname(get_string('duplicateditemname', 'tool_lp', $template->get_shortname()));
+        $template->set_id(0);
 
         $duplicatedtemplate = $template->create();
 

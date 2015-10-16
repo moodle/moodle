@@ -454,7 +454,7 @@ class tool_lp_testable_persistent extends \tool_lp\persistent {
         $this->set('path', $value);
     }
 
-    public function validate_sortorder($value) {
+    protected function validate_sortorder($value) {
         if ($value == 10) {
             return new lang_string('invalidkey', 'error');
         }
