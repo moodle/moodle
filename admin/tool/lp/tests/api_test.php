@@ -188,37 +188,35 @@ class tool_lp_api_testcase extends advanced_testcase {
     public function test_list_frameworks() {
         $this->resetAfterTest(true);
         $this->setAdminUser();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
 
         // Create a list of frameworks.
-        $params1 = array(
-                'shortname' => 'shortname_a',
-                'idnumber' => 'idnumber_c',
-                'description' => 'description',
-                'descriptionformat' => FORMAT_HTML,
-                'visible' => true,
-                'contextid' => context_system::instance()->id
-        );
-        $framework1 = api::create_framework((object) $params1);
+        $framework1 = $lpg->create_framework(array(
+            'shortname' => 'shortname_a',
+            'idnumber' => 'idnumber_c',
+            'description' => 'description',
+            'descriptionformat' => FORMAT_HTML,
+            'visible' => true,
+            'contextid' => context_system::instance()->id
+        ));
 
-        $params2 = array(
-                'shortname' => 'shortname_b',
-                'idnumber' => 'idnumber_a',
-                'description' => 'description',
-                'descriptionformat' => FORMAT_HTML,
-                'visible' => true,
-                'contextid' => context_system::instance()->id
-        );
-        $framework2 = api::create_framework((object) $params2);
+        $framework2 = $lpg->create_framework(array(
+            'shortname' => 'shortname_b',
+            'idnumber' => 'idnumber_a',
+            'description' => 'description',
+            'descriptionformat' => FORMAT_HTML,
+            'visible' => true,
+            'contextid' => context_system::instance()->id
+        ));
 
-        $params3 = array(
-                'shortname' => 'shortname_c',
-                'idnumber' => 'idnumber_b',
-                'description' => 'description',
-                'descriptionformat' => FORMAT_HTML,
-                'visible' => true,
-                'contextid' => context_system::instance()->id
-        );
-        $framework3 = api::create_framework((object) $params3);
+        $framework3 = $lpg->create_framework(array(
+            'shortname' => 'shortname_c',
+            'idnumber' => 'idnumber_b',
+            'description' => 'description',
+            'descriptionformat' => FORMAT_HTML,
+            'visible' => true,
+            'contextid' => context_system::instance()->id
+        ));
 
         // Get frameworks list order by shortname desc.
         $result = api::list_frameworks('shortname', 'DESC', null, 3, context_system::instance());

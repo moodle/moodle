@@ -1246,6 +1246,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
     public function test_remove_competency_from_template() {
         $this->setUser($this->creator);
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
 
         $syscontext = context_system::instance();
 
@@ -1255,20 +1256,17 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
         // Create a competency.
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-        $competency = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency);
+        $framework = $lpg->create_framework();
+        $competency = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
 
         // Add the competency.
-        external::add_competency_to_template($template->id, $competency->id);
+        external::add_competency_to_template($template->id, $competency->get_id());
 
         // Check that it was added.
         $this->assertEquals(1, external::count_competencies_in_template($template->id));
 
         // Check that we can remove the competency.
-        external::remove_competency_from_template($template->id, $competency->id);
+        external::remove_competency_from_template($template->id, $competency->get_id());
 
         // Check that it was removed.
         $this->assertEquals(0, external::count_competencies_in_template($template->id));
@@ -1279,7 +1277,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Check we can not remove the competency now.
         try {
-            external::add_competency_to_template($template->id, $competency->id);
+            external::add_competency_to_template($template->id, $competency->get_id());
             $this->fail('Exception expected due to not permissions to manage template competencies');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
