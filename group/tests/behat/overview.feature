@@ -55,26 +55,149 @@ Feature: Group overview
       | GG2      | G2    |
       | GG2      | G3    |
 
-  Scenario Outline: Filter the overview in various different ways
+  Scenario: Filter the overview in various different ways
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I navigate to "Groups" node in "Course administration > Users"
     And I follow "Overview"
 
-    When I select "<grouping>" from the "Grouping" singleselect
-    And I select "<group>" from the "group" singleselect
+    # Grouping All and Group All filter
+    When I select "All" from the "Grouping" singleselect
+    And I select "All" from the "group" singleselect
+    # Following groups should exist in groupings.
+    Then the group overview should include groups "Group 1, Group 2" in grouping "Grouping 1"
+    And the group overview should include groups "Group 2,Group 3" in grouping "Grouping 2"
+    And the group overview should include groups "Group 4" in grouping "[Not in a grouping]"
+    And the group overview should include groups "No group" in grouping "[Not in a group]"
+    # Following members should exit in group.
+    And "Student 0" "text" should exist in the "Group 1" "table_row"
+    And "Student 1" "text" should exist in the "Group 1" "table_row"
+    And "Student 2" "text" should exist in the "Group 2" "table_row"
+    And "Student 3" "text" should exist in the "Group 3" "table_row"
+    And "Student 4" "text" should exist in the "Group 3" "table_row"
+    And "Student 5" "text" should exist in the "Group 4" "table_row"
+    And "Student 6" "text" should exist in the "No group" "table_row"
+    And "Student 7" "text" should exist in the "No group" "table_row"
 
-    Then the groups overview should include groups "<expectedgroups>" in groupings "<expectedgroupings>"
-    And the groups overview should not include groups "<notexpectedgroups>"
-    And the groups overview should include members "<expectedmembers>" in groups "<expectedmembergroups>"
-    And the groups overview should not include members "<notexpectedmembers>"
+    # Grouping 1 and Group All filter
+    And I select "Grouping 1" from the "Grouping" singleselect
+    And I select "All" from the "group" singleselect
+    # Following groups should exist in groupings.
+    And the group overview should include groups "Group 1, Group 2" in grouping "Grouping 1"
+    # Following groups should not exits
+    And "Group 3" "table_row" should not exist
+    And "No group" "table_row" should not exist
+    # Following members should exit in group.
+    And "Student 0" "text" should exist in the "Group 1" "table_row"
+    And "Student 1" "text" should exist in the "Group 1" "table_row"
+    And "Student 2" "text" should exist in the "Group 2" "table_row"
+    # Following members should not exit in group.
+    And I should not see "Student 3"
+    And I should not see "Student 4"
+    And I should not see "Student 5"
+    And I should not see "Student 6"
+    And I should not see "Student 7"
 
-    Examples:
-      | grouping    | group    | expectedgroups                                        | expectedgroupings                                                                     | notexpectedgroups                   | expectedmembers                                                                        | expectedmembergroups                                                     | notexpectedmembers                                                          |
-      | All         | All      | Group 1, Group 2, Group 2, Group 3, Group 4, No group | Grouping 1, Grouping 1, Grouping 2, Grouping 2, [Not in a grouping], [Not in a group] |                                     | Student 0, Student 1, Student 2, Student 3, Student 4, Student 5, Student 6, Student 7 | Group 1, Group 1, Group 2, Group 3, Group 3, Group 4, No group, No group |                                                                             |
-      | Grouping 1  | All      | Group 1, Group 2                                      | Grouping 1, Grouping 1                                                                | Group 3, No group                   | Student 0, Student 1, Student 2                                                        | Group 1, Group 1, Group 2                                                | Student 3, Student 4, Student 5, Student 6, Student 7                       |
-      | Grouping 2  | All      | Group 2, Group 3                                      | Grouping 2, Grouping 2                                                                | Group 1, No group                   | Student 2, Student 3, Student 4                                                        | Group 2, Group 3, Group 3                                                | Student 0, Student 1, Student 5, Student 6, Student 7                       |
-      | No grouping | All      | Group 4, No group                                     | [Not in a grouping], [Not in a group]                                                 | Group 1, Group 2, Group 3           | Student 5, Student 6, Student 7                                                        | Group 4, No group, No group                                              | Student 0, Student 1, Student 2, Student 3, Student 4                       |
-      | All         | Group 1  | Group 1                                               | Grouping 1                                                                            | Group 2, Group 3, Group 4, No group | Student 0, Student 1                                                                   | Group 1, Group 1                                                         | Student 2, Student 3, Student 4, Student 5, Student 6, Student 7            |
-      | All         | Group 2  | Group 2, Group 2                                      | Grouping 1, Grouping 2                                                                | Group 1, Group 3, Group 4, No group | Student 2                                                                              | Group 2                                                                  | Student 0, Student 1, Student 3, Student 4, Student 5, Student 6, Student 7 |
-      | All         | No group | No group                                              | [Not in a group]                                                                      | Group 1, Group 2, Group 3, Group 4  | Student 6, Student 7                                                                   | No group, No group                                                       | Student 0, Student 1, Student 2, Student 3, Student 4, Student 5            |
+    # Grouping 2 and Group All filter
+    And I select "Grouping 2" from the "Grouping" singleselect
+    And I select "All" from the "group" singleselect
+    # Following groups should exist in groupings.
+    And the group overview should include groups "Group 2, Group 3" in grouping "Grouping 2"
+    # Following groups should not exits
+    And "Group 1" "table_row" should not exist
+    And "No group" "table_row" should not exist
+    # Following members should exit in group.
+    And "Student 2" "text" should exist in the "Group 2" "table_row"
+    And "Student 3" "text" should exist in the "Group 3" "table_row"
+    And "Student 4" "text" should exist in the "Group 3" "table_row"
+    # Following members should not exit in group.
+    And I should not see "Student 0"
+    And I should not see "Student 1"
+    And I should not see "Student 5"
+    And I should not see "Student 6"
+    And I should not see "Student 7"
+
+    # No grouping and Group All filter
+    And I select "No grouping" from the "Grouping" singleselect
+    And I select "All" from the "group" singleselect
+    # Following groups should exist in groupings.
+    And the group overview should include groups "Group 4" in grouping "[Not in a grouping]"
+    And the group overview should include groups "No group" in grouping "[Not in a group]"
+    # Following groups should not exits
+    And "Group 1" "table_row" should not exist
+    And "Group 2" "table_row" should not exist
+    And "Group 3" "table_row" should not exist
+    # Following members should exit in group.
+    And "Student 5" "text" should exist in the "Group 4" "table_row"
+    And "Student 6" "text" should exist in the "No group" "table_row"
+    And "Student 7" "text" should exist in the "No group" "table_row"
+    # Following members should not exit in group.
+    And I should not see "Student 0"
+    And I should not see "Student 1"
+    And I should not see "Student 2"
+    And I should not see "Student 3"
+    And I should not see "Student 4"
+
+    # Grouping All and Group 1 filter
+    And I select "All" from the "Grouping" singleselect
+    And I select "Group 1" from the "group" singleselect
+    # Following groups should exist in groupings.
+    And the group overview should include groups "Group 1" in grouping "Grouping 1"
+    # Following groups should not exits
+    And "Group 2" "table_row" should not exist
+    And "Group 3" "table_row" should not exist
+    And "Group 4" "table_row" should not exist
+    And "No group" "table_row" should not exist
+    # Following members should exit in group.
+    And "Student 0" "text" should exist in the "Group 1" "table_row"
+    And "Student 1" "text" should exist in the "Group 1" "table_row"
+    # Following members should not exit in group.
+    And I should not see "Student 2"
+    And I should not see "Student 3"
+    And I should not see "Student 4"
+    And I should not see "Student 5"
+    And I should not see "Student 6"
+    And I should not see "Student 7"
+
+    # Grouping All and Group 2 filter
+    And I select "All" from the "Grouping" singleselect
+    And I select "Group 2" from the "group" singleselect
+    # Following groups should exist in groupings.
+    And the group overview should include groups "Group 2" in grouping "Grouping 1"
+    And the group overview should include groups "Group 2" in grouping "Grouping 2"
+    # Following groups should not exits
+    And "Group 1" "table_row" should not exist
+    And "Group 3" "table_row" should not exist
+    And "Group 4" "table_row" should not exist
+    And "No group" "table_row" should not exist
+    # Following members should exit in group.
+    And "Student 2" "text" should exist in the "Group 2" "table_row"
+    # Following members should not exit in group.
+    And I should not see "Student 0"
+    And I should not see "Student 1"
+    And I should not see "Student 3"
+    And I should not see "Student 4"
+    And I should not see "Student 5"
+    And I should not see "Student 6"
+    And I should not see "Student 7"
+
+    # Grouping All and No group filter
+    And I select "All" from the "Grouping" singleselect
+    And I select "No group" from the "group" singleselect
+    # Following groups should exist in groupings.
+    And the group overview should include groups "No group" in grouping "[Not in a group]"
+    # Following groups should not exits
+    And "Group 1" "table_row" should not exist
+    And "Group 2" "table_row" should not exist
+    And "Group 3" "table_row" should not exist
+    And "Group 4" "table_row" should not exist
+    # Following members should exit in group.
+    And "Student 6" "text" should exist in the "No group" "table_row"
+    And "Student 7" "text" should exist in the "No group" "table_row"
+    # Following members should not exit in group.
+    And I should not see "Student 0"
+    And I should not see "Student 1"
+    And I should not see "Student 2"
+    And I should not see "Student 3"
+    And I should not see "Student 4"
+    And I should not see "Student 5"

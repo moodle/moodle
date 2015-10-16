@@ -86,105 +86,24 @@ class behat_groups extends behat_base {
     }
 
     /**
-     * A comma-separated list of groups expected on the page, with a list of groupings each of them should be found in.
+     * A single or comma-separated list of groups expected within a grouping, on group overview page.
      *
-     * @Given /^the groups overview should include groups "(?P<group_list_string>(?:[^"]|\\")*)" in groupings "(?P<grouping_list_string>(?:[^"]|\\")*)"$/
-     * @param string $grouplist
-     * @param string $groupinglist
+     * @Given /^the group overview should include groups "(?P<groups_string>(?:[^"]|\\")*)" in grouping "(?P<grouping_string>(?:[^"]|\\")*)"$/
+     * @param string $groups one or comma seperated list of groups.
+     * @param string $grouping grouping in which all group should be present.
      * @return Then[]
      */
-    public function the_groups_overview_should_include_groups($grouplist, $groupinglist) {
-        if (!$grouplist) {
-            return array();
-        }
+    public function the_groups_overview_should_include_groups_in_grouping($groups, $grouping) {
 
         $steps = array();
-        $groups = array_map('trim', explode(',', $grouplist));
-        $groupings = array_map('trim', explode(',', $groupinglist));
-        if (count($groups) != count($groupings)) {
-            throw new Exception('Groups and groupings lists must contain the same number of items');
-        }
+        $groups = array_map('trim', explode(',', $groups));
 
-        $groupingname = reset($groupings);
         foreach ($groups as $groupname) {
             // Find the table after the H3 containing the grouping name, then look for the group name in the first column.
-            $xpath = "//h3[normalize-space(.) = '{$groupingname}']/following-sibling::table//tr//".
+            $xpath = "//h3[normalize-space(.) = '{$grouping}']/following-sibling::table//tr//".
                 "td[contains(concat(' ', normalize-space(@class), ' '), ' c0 ')][normalize-space(.) = '{$groupname}' ]";
 
             $steps[] = new Then('"'.$xpath.'" "xpath_element" should exist');
-
-            $groupingname = next($groupings);
-        }
-
-        return $steps;
-    }
-
-    /**
-     * A comma-separated list of the names of groups not expected on the page
-     *
-     * @Given /^the groups overview should not include groups "(?P<group_list_string>(?:[^"]|\\")*)"$/
-     * @param string $grouplist
-     * @return Then[]
-     */
-    public function the_groups_overview_should_not_include_groups($grouplist) {
-        if (!$grouplist) {
-            return array();
-        }
-
-        $steps = array();
-        $groups = array_map('trim', explode(',', $grouplist));
-        foreach ($groups as $groupname) {
-            $steps[] = new Then('"'.$groupname.'" "table_row" should not exist');
-        }
-
-        return $steps;
-    }
-
-    /**
-     * A comma-separated list of the group members expected on the page, with a list of groups each of them should be found in.
-     *
-     * @Given /^the groups overview should include members "(?P<member_list_string>(?:[^"]|\\")*)" in groups "(?P<group_list_string>(?:[^"]|\\")*)"$/
-     * @param string $memberlist
-     * @param string $grouplist
-     * @return Then[]
-     */
-    public function the_groups_overview_should_include_members($memberlist, $grouplist) {
-        if (!$memberlist) {
-            return array();
-        }
-
-        $steps = array();
-        $members = array_map('trim', explode(',', $memberlist));
-        $groups = array_map('trim', explode(',', $grouplist));
-        if (count($members) != count($groups)) {
-            throw new Exception('Group members and groups lists must contain the same number of items');
-        }
-
-        $groupname = reset($groups);
-        foreach ($members as $membername) {
-            $steps[] = new Then('"'.$membername.'" "text" should exist in the "'.$groupname.'" "table_row"');
-            $groupname = next($groups);
-        }
-
-        return $steps;
-    }
-
-    /**
-     * A comma-separated list of the names of group members not expected on the page
-     *
-     * @Given /^the groups overview should not include members "(?P<member_list_string>(?:[^"]|\\")*)"$/
-     * @param string $memberlist
-     * @return Then[]
-     */
-    public function the_groups_overview_should_not_include_members($memberlist) {
-        if (!$memberlist) {
-            return array();
-        }
-
-        $steps = array();
-        $members = array_map('trim', explode(',', $memberlist));
-        foreach ($members as $membername) {
-            $steps[] = new Then('I should not see "'.$membername.'"');
         }
 
         return $steps;
