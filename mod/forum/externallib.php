@@ -132,7 +132,7 @@ class mod_forum_external extends external_api {
             new external_single_structure(
                 array(
                     'id' => new external_value(PARAM_INT, 'Forum id'),
-                    'course' => new external_value(PARAM_TEXT, 'Course id'),
+                    'course' => new external_value(PARAM_INT, 'Course id'),
                     'type' => new external_value(PARAM_TEXT, 'The forum type'),
                     'name' => new external_value(PARAM_TEXT, 'Forum name'),
                     'intro' => new external_value(PARAM_RAW, 'The forum intro'),
