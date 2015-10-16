@@ -259,7 +259,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                     } else {
                         $url = new moodle_url('/user/profile.php', array('id' => $user->id, 'showallcourses' => 1));
                     }
-                    $courselisting .= html_writer::tag('li', html_writer::link($url, get_string('viewmore') ,
+                    $courselisting .= html_writer::tag('li', html_writer::link($url, get_string('viewmore'),
                             array('title' => get_string('viewmore'))), array('class' => 'viewmore'));
                     break;
                 }
