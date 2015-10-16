@@ -34,11 +34,6 @@ $parentid = optional_param('parentid', 0, PARAM_INT);
 require_login();
 $pagecontext = context::instance_by_id($pagecontextid);
 
-if (empty($id)) {
-    $pagetitle = get_string('addnewcompetency', 'tool_lp');
-} else {
-    $pagetitle = get_string('editcompetency', 'tool_lp');
-}
 
 // Set up the page.
 $url = new moodle_url("/admin/tool/lp/editcompetency.php", array('id' => $id, 'competencyframeworkid' => $competencyframeworkid,
@@ -47,10 +42,24 @@ $frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', array
 $frameworkurl = new moodle_url('/admin/tool/lp/competencies.php', array('competencyframeworkid' => $competencyframeworkid,
     'pagecontextid' => $pagecontextid));
 
+$competency = null;
 $competencyframework = \tool_lp\api::read_framework($competencyframeworkid);
+if (!empty($id)) {
+    $competency = \tool_lp\api::read_competency($id);
+}
+
 $parent = null;
-if ($parentid) {
+if ($competency) {
+    $parent = $competency->get_parent();
+} else if ($parentid) {
     $parent = \tool_lp\api::read_competency($parentid);
+}
+
+if (empty($id)) {
+    $level = $parent ? $parent->get_level() + 1 : 1;
+    $pagetitle = get_string('taxonomy_add_' . $competencyframework->get_taxonomy($level), 'tool_lp');
+} else {
+    $pagetitle = get_string('taxonomy_edit_' . $competencyframework->get_taxonomy($competency->get_level()), 'tool_lp');
 }
 
 $PAGE->navigation->override_active_url($frameworksurl);
@@ -63,7 +72,7 @@ $PAGE->navbar->add($competencyframework->get_shortname(), $frameworkurl);
 $output = $PAGE->get_renderer('tool_lp');
 
 $form = new \tool_lp\form\competency($url->out(false), array('id' => $id, 'competencyframework' => $competencyframework,
-    'parent' => $parent));
+    'parent' => $parent, 'competency' => $competency));
 
 if ($form->is_cancelled()) {
     redirect($frameworkurl);

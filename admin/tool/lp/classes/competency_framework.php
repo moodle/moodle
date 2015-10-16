@@ -116,10 +116,10 @@ class competency_framework extends persistent {
     }
 
     /**
-     * Get the translated name for a level.
+     * Get the constant name for a level.
      *
      * @param  int $level The level of the term.
-     * @return lang_string
+     * @return string
      */
     public function get_taxonomy($level) {
         $taxonomies = $this->get_taxonomies();
@@ -131,7 +131,7 @@ class competency_framework extends persistent {
             $constant = $taxonomies[$level];
         }
 
-        return self::get_taxonomy_from_constant($constant);
+        return $constant;
     }
 
     /**

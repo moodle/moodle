@@ -65,6 +65,8 @@ class competency extends moodleform {
         $mform->setType('competencyframeworkid', PARAM_INT);
         $mform->setDefault('competencyframeworkid', $framework->get_id());
 
+        $mform->addElement('header', 'generalhdr', get_string('general'));
+
         $mform->addElement('static',
                            'frameworkdesc',
                            get_string('competencyframework', 'tool_lp'),
@@ -72,7 +74,7 @@ class competency extends moodleform {
         if ($parent) {
             $mform->addElement('static',
                                'parentdesc',
-                               get_string('parentcompetency', 'tool_lp'),
+                               get_string('taxonomy_parent_' . $framework->get_taxonomy($parent->get_level()), 'tool_lp'),
                                s($parent->get_shortname()));
         }
 
@@ -96,7 +98,7 @@ class competency extends moodleform {
 
         if (!empty($id)) {
             if (!$this->is_submitted()) {
-                $competency = api::read_competency($id);
+                $competency = $this->_customdata['competency'];
                 $record = $competency->to_record();
                 // Massage for editor API.
                 $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);

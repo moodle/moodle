@@ -183,6 +183,17 @@ class competency extends persistent {
     }
 
     /**
+     * Get the competency level.
+     *
+     * @return int
+     */
+    public function get_level() {
+        $path = $this->get_path();
+        $path = trim($path, '/');
+        return substr_count($path, '/') + 1;
+    }
+
+    /**
      * Return the parent competency.
      *
      * @return null|competency

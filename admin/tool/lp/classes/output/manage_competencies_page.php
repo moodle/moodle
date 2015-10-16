@@ -31,6 +31,7 @@ use stdClass;
 use moodle_url;
 use context_system;
 use tool_lp\api;
+use tool_lp\competency_framework;
 
 /**
  * Class containing data for managecompetencies page
@@ -115,6 +116,7 @@ class manage_competencies_page implements renderable, templatable {
         $data->framework = $this->framework->to_record();
         $data->framework->descriptionformatted = format_text($data->framework->description, $data->framework->descriptionformat,
             $options);
+        $data->framework->taxonomies = json_encode($this->framework->get_taxonomies());
         $data->canmanage = $this->canmanage;
         $data->competencies = array();
         $data->search = $this->search;
@@ -123,7 +125,6 @@ class manage_competencies_page implements renderable, templatable {
         foreach ($this->competencies as $competency) {
             if ($competency->get_parentid() == 0) {
                 $record = $competency->to_record();
-                // TODO Use framework context for formatting.
                 $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
                 $record->children = array();
                 $record->haschildren = false;

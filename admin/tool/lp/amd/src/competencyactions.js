@@ -47,6 +47,8 @@ define(['jquery',
     var pickerInstance;
     /** @type {Object} The competency we're picking a relation to. */
     var relatedTarget;
+    /** @type {Object} Taxonomy constants indexed per level. */
+    var taxonomiesConstants;
 
     /**
      * Respond to choosing the "Add" menu item for the selected node in the tree.
@@ -482,6 +484,54 @@ define(['jquery',
         treeModel.reloadCompetencies();
     };
 
+    /**
+     * Return if the level has a sub level.
+     *
+     * @param  {Number} level The level.
+     * @return {Boolean}
+     * @function hasSubLevel
+     */
+    var hasSubLevel = function(level) {
+        return typeof taxonomiesConstants[level + 1] !== 'undefined';
+    };
+
+    /**
+     * Return the taxonomy constant for a level.
+     *
+     * @param  {Number} level The level.
+     * @return {String}
+     * @function getTaxonomyAtLevel
+     */
+    var getTaxonomyAtLevel = function(level) {
+        var constant = taxonomiesConstants[level];
+        if (!constant) {
+            constant = 'competency';
+        }
+        return constant;
+    };
+
+    /**
+     * Return the string "Add <taxonomy>".
+     *
+     * @param  {Number} level The level.
+     * @return {String}
+     * @function strAddTaxonomy
+     */
+    var strAddTaxonomy = function(level) {
+        return str.get_string('taxonomy_add_' + getTaxonomyAtLevel(level), 'tool_lp');
+    };
+
+    /**
+     * Return the string "Selected <taxonomy>".
+     *
+     * @param  {Number} level The level.
+     * @return {String}
+     * @function strSelectedTaxonomy
+     */
+    var strSelectedTaxonomy = function(level) {
+        return str.get_string('taxonomy_selected_' + getTaxonomyAtLevel(level), 'tool_lp');
+    };
+
     return {
         /**
          * Initialise this page (attach event handlers etc).
@@ -489,10 +539,12 @@ define(['jquery',
          * @method init
          * @param {Object} model The tree model provides some useful functions for loading and searching competencies.
          * @param {Number} pagectxid The page context ID.
+         * @param {Object} taxonomies Constants indexed by level.
          */
-        init: function(model, pagectxid) {
+        init: function(model, pagectxid, taxonomies) {
             treeModel = model;
             pageContextId = pagectxid;
+            taxonomiesConstants = taxonomies;
 
             $('[data-region="competencyactions"] [data-action="add"]').on('click', addHandler);
 
@@ -506,6 +558,7 @@ define(['jquery',
                 '[data-action="relatedcompetencies"]': relateCompetenciesHandler.bind(this)
             });
             $('[data-region="competencyactionsmenu"]').hide();
+            $('[data-region="competencyactions"] [data-action="add"]').hide();
 
             $('[data-region="filtercompetencies"]').on('submit', updateSearchHandler);
             // Simple html5 drag drop because we already added an accessible alternative.
@@ -521,30 +574,56 @@ define(['jquery',
          * @method selectionChanged
          */
         selectionChanged: function(node) {
-            var id = $(node).data('id');
+            var id = $(node).data('id'),
+                btn = $('[data-region="competencyactions"] [data-action="add"]'),
+                actionMenu = $('[data-region="competencyactionsmenu"]'),
+                selectedTitle = $('[data-region="selected-competency"]'),
+                level = 0,
+                sublevel = 1;
+
             menubar.closeAll();
+
             if (typeof id === "undefined") {
                 // Assume this is the root of the tree.
                 // Here we are only getting the text from the top of the tree, to do it we clone the tree,
                 // remove all children and then call text on the result.
                 $('[data-region="competencyinfo"]').html(node.clone().children().remove().end().text());
                 $('[data-region="competencyactions"]').data('competency', null);
-                $('[data-region="competencyactionsmenu"]').hide();
-                $('[data-region="competencyactions"] [data-action="add"]').removeAttr("disabled");
+                actionMenu.hide();
+
             } else {
                 var competency = treeModel.getCompetency(id);
+
                 competency.showdeleterelatedaction = true;
                 competency.showrelatedcompetencies = true;
 
-                $('[data-region="competencyactionsmenu"]').show();
-                templates.render('tool_lp/competency_summary', competency)
-                   .done(function(html) {
-                        $('[data-region="competencyinfo"]').html(html);
-                        $('[data-action="deleterelation"]').on('click', deleteRelatedHandler);
-                   }).fail(notification.exception);
+                level = treeModel.getCompetencyLevel(id);
+                if (!hasSubLevel(level)) {
+                    sublevel = false;
+                } else {
+                    sublevel = level + 1;
+                }
 
+                actionMenu.show();
                 $('[data-region="competencyactions"]').data('competency', competency);
-                $('[data-region="competencyactions"] [data-action="add"]').removeAttr("disabled");
+                templates.render('tool_lp/competency_summary', competency).then(function(html) {
+                    $('[data-region="competencyinfo"]').html(html);
+                    $('[data-action="deleterelation"]').on('click', deleteRelatedHandler);
+                }, notification.exception);
+            }
+
+            strSelectedTaxonomy(level).then(function(str) {
+                selectedTitle.text(str);
+            });
+
+            if (!sublevel) {
+                btn.hide();
+            } else {
+                strAddTaxonomy(sublevel).then(function(str) {
+                    btn.show()
+                        .find('[data-region="term"]')
+                        .text(str);
+                });
             }
         }
     };

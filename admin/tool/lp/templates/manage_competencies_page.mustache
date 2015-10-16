@@ -22,13 +22,15 @@
     Data attibutes required for JS:
     * data-action=add
     * data-enhance=tree
+    * data-region=term
+    * data-region=selected-competency
 
     Context variables required for this template:
     * framework -
     * competencies - array of objects containing id, shortname, idnumber, sortorder, visible, parentid, competencyframeworkid, path
     * canmanage - true if this user has permission to manage the competencies
 }}
-<div data-region="managecompetencies" >
+<div data-region="managecompetencies">
 
 <div class="row">
 <div class="span6">
@@ -51,13 +53,13 @@
 </div>
 
 <div class="span6 well">
-<h4>{{#str}}selectedcompetency, tool_lp{{/str}}</h4>
+<h4 data-region="selected-competency">{{#str}}selectedcompetency, tool_lp{{/str}}</h4>
 <p data-region="competencyinfo">
 {{#str}}nocompetencyselected, tool_lp{{/str}}
 </p>
 {{#canmanage}}
 <div data-region="competencyactions">
-<button class="btn" data-action="add" disabled="disabled">{{#pix}}t/add{{/pix}} {{#str}}addcompetency, tool_lp{{/str}}</button>
+<button class="btn" data-action="add">{{#pix}}t/add{{/pix}} <span data-region="term"></span></button>
             <span data-region="competencyactionsmenu">
             <ul title="{{#str}}edit{{/str}}" class="competencyactionsmenu">
                 <li>
@@ -113,7 +115,7 @@ require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions' ]
 
     treeModel.init({{framework.id}});
 
-    actions.init(treeModel, {{pagecontextid}});
+    actions.init(treeModel, {{pagecontextid}}, {{{framework.taxonomies}}});
 
     var competencytree = new ariatree('[data-enhance=tree]', actions.selectionChanged);
 

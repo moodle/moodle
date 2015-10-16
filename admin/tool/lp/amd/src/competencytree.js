@@ -92,6 +92,18 @@
         },
 
         /**
+         * Get the competency level.
+         *
+         * @param  {Number} id The competency ID.
+         * @return {Number}
+         */
+        getCompetencyLevel: function(id) {
+            var competency = this.getCompetency(id),
+                level = competency.path.replace(/^\/|\/$/g, '').split('/').length;
+            return level;
+        },
+
+        /**
          * Reload all the page competencies framework competencies.
          * @method reloadCompetencies
          * @return {Promise}
