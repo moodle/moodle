@@ -28,7 +28,7 @@
     * data-action = deletetemplate
 
     Context variables required for this template:
-    * templates - array of objects containing id, shortname, idnumber, visible, canmanage, contextname
+    * templates - array of objects containing id, shortname, visible, canmanage, contextname
     * navigation - array of strings containing buttons for navigation
 }}
 <div data-region="managetemplates">
@@ -44,7 +44,7 @@
     <tbody class="drag-parentnode">
         {{#templates}}
         <tr class="drag-samenode" data-templateid="{{id}}">
-            <td><a href="{{pluginbaseurl}}/templatecompetencies.php?templateid={{id}}&amp;pagecontextid={{pagecontextid}}">{{shortname}} {{idnumber}}</a></span> {{^visible}}{{#str}}hiddenhint, tool_lp{{/str}}{{/visible}}</td>
+            <td><a href="{{pluginbaseurl}}/templatecompetencies.php?templateid={{id}}&amp;pagecontextid={{pagecontextid}}">{{shortname}}</a></span> {{^visible}}{{#str}}hiddenhint, tool_lp{{/str}}{{/visible}}</td>
             <td>{{contextname}}</td>
             <td>
             {{#canmanage}}

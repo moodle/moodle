@@ -59,10 +59,6 @@ class template extends persistent {
                 'type' => PARAM_INT,
                 'default' => FORMAT_HTML
             ),
-            'idnumber' => array(
-                'default' => '',
-                'type' => PARAM_TEXT,
-            ),
             'duedate' => array(
                 'default' => 0,
                 'type' => PARAM_INT,

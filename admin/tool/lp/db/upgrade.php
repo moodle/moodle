@@ -167,5 +167,20 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015052414, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015052416) {
+
+        // Define field idnumber to be dropped from tool_lp_template.
+        $table = new xmldb_table('tool_lp_template');
+        $field = new xmldb_field('idnumber');
+
+        // Conditionally launch drop field idnumber.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015052416, 'tool', 'lp');
+    }
+
     return true;
 }

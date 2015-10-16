@@ -59,9 +59,6 @@ class template extends moodleform {
         $mform->addElement('editor', 'description',
                            get_string('description', 'tool_lp'), array('rows' => 4));
         $mform->setType('description', PARAM_TEXT);
-        $mform->addElement('text', 'idnumber',
-                           get_string('idnumber', 'tool_lp'));
-        $mform->setType('idnumber', PARAM_TEXT);
         $mform->addElement('selectyesno', 'visible',
                            get_string('visible', 'tool_lp'));
         $mform->addElement('date_time_selector',

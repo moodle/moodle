@@ -1214,7 +1214,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $syscontext = context_system::instance();
 
         // Create a template.
-        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true,
+        $template = external::create_template('shortname', time(), 'description', FORMAT_HTML, true,
             array('contextid' => $syscontext->id));
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
@@ -1251,7 +1251,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $syscontext = context_system::instance();
 
         // Create a template.
-        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true,
+        $template = external::create_template('shortname', time(), 'description', FORMAT_HTML, true,
             array('contextid' => $syscontext->id));
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
@@ -1293,7 +1293,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $syscontext = context_system::instance();
 
         // Create a template.
-        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true,
+        $template = external::create_template('shortname', time(), 'description', FORMAT_HTML, true,
             array('contextid' => $syscontext->id));
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
@@ -1355,7 +1355,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $syscontext = context_system::instance();
 
         // Create a template.
-        $template = external::create_template('shortname', 'idnumber', time(), 'description', FORMAT_HTML, true,
+        $template = external::create_template('shortname', time(), 'description', FORMAT_HTML, true,
             array('contextid' => $syscontext->id));
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
@@ -1438,7 +1438,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // A user without permission.
         $this->setUser($this->user);
         try {
-            $result = external::create_template('shortname', 'idnumber', 0, 'description', FORMAT_HTML, true,
+            $result = external::create_template('shortname', 0, 'description', FORMAT_HTML, true,
                 array('contextid' => $syscontextid));
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
@@ -1447,7 +1447,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // A user without permission in a category.
         $this->setUser($this->catuser);
         try {
-            $result = external::create_template('shortname', 'idnumber', 0, 'description', FORMAT_HTML, true,
+            $result = external::create_template('shortname', 0, 'description', FORMAT_HTML, true,
                 array('contextid' => $catcontextid));
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
@@ -1455,14 +1455,14 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // A user with permissions in the system.
         $this->setUser($this->creator);
-        $result = external::create_template('shortname', 'idnumber', 0, 'description', FORMAT_HTML, true,
+        $result = external::create_template('shortname', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontextid));
         $result = external_api::clean_returnvalue(external::create_template_returns(), $result);
         $this->assertEquals('shortname', $result['shortname']);
         $this->assertEquals($syscontextid, $result['contextid']);
         $this->assertNotEmpty($result['id']);
 
-        $result = external::create_template('catshortname', 'catid', 0, 'description', FORMAT_HTML, true,
+        $result = external::create_template('catshortname', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
         $result = external_api::clean_returnvalue(external::create_template_returns(), $result);
         $this->assertEquals('catshortname', $result['shortname']);
@@ -1472,13 +1472,13 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // A user with permissions in the category.
         $this->setUser($this->catcreator);
         try {
-            $result = external::create_template('sysshortname', 'sysidnumber', 0, 'description', FORMAT_HTML, true,
+            $result = external::create_template('sysshortname', 0, 'description', FORMAT_HTML, true,
                 array('contextid' => $syscontextid));
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
         }
 
-        $result = external::create_template('catshortname2', 'catid2', 0, 'description', FORMAT_HTML, true,
+        $result = external::create_template('catshortname2', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
         $result = external_api::clean_returnvalue(external::create_template_returns(), $result);
         $this->assertEquals('catshortname2', $result['shortname']);
@@ -1500,9 +1500,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Creating two templates.
         $this->setUser($this->creator);
-        $systemplate = external::create_template('sys', 'sysid', $duedate, 'description', FORMAT_HTML, true,
+        $systemplate = external::create_template('sys', $duedate, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontextid));
-        $cattemplate = external::create_template('cat', 'catid', $duedate, 'description', FORMAT_HTML, true,
+        $cattemplate = external::create_template('cat', $duedate, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
 
         // User without permissions to read in system.
@@ -1537,7 +1537,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
         $this->assertEquals('cat', $result['shortname']);
-        $this->assertEquals('catid', $result['idnumber']);
         $this->assertEquals('description', $result['description']);
         $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
         $this->assertEquals(true, $result['visible']);
@@ -1552,7 +1551,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($systemplate->id, $result['id']);
         $this->assertEquals('sys', $result['shortname']);
-        $this->assertEquals('sysid', $result['idnumber']);
         $this->assertEquals('description', $result['description']);
         $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
         $this->assertEquals(true, $result['visible']);
@@ -1563,7 +1561,6 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
         $this->assertEquals('cat', $result['shortname']);
-        $this->assertEquals('catid', $result['idnumber']);
         $this->assertEquals('description', $result['description']);
         $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
         $this->assertEquals(true, $result['visible']);
@@ -1585,21 +1582,21 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Creating two templates.
         $this->setUser($this->creator);
-        $systemplate = external::create_template('sys', 'sysid', $duedate, 'description', FORMAT_HTML, true,
+        $systemplate = external::create_template('sys', $duedate, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontextid));
-        $cattemplate = external::create_template('cat', 'catid', $duedate, 'description', FORMAT_HTML, true,
+        $cattemplate = external::create_template('cat', $duedate, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
 
         // Trying to update in a without permissions.
         $this->setUser($this->user);
         try {
-            external::update_template($systemplate->id, 'a', 'b', 1234, 'c', FORMAT_MARKDOWN, false);
+            external::update_template($systemplate->id, 'a', 1234, 'c', FORMAT_MARKDOWN, false);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
         }
 
         try {
-            external::update_template($cattemplate->id, 'a', 'b', 1234, 'c', FORMAT_MARKDOWN, false);
+            external::update_template($cattemplate->id, 'a', 1234, 'c', FORMAT_MARKDOWN, false);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
         }
@@ -1607,7 +1604,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // User with permissions to update in category.
         $this->setUser($this->catcreator);
         try {
-            external::update_template($systemplate->id, 'a', 'b', 1234, 'c', FORMAT_MARKDOWN, false);
+            external::update_template($systemplate->id, 'a', 1234, 'c', FORMAT_MARKDOWN, false);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
         }
@@ -1616,14 +1613,13 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $date->modify('+1 year');
         $duedateupdated = $date->getTimestamp();
 
-        $result = external::update_template($cattemplate->id, 'a', 'b', $duedateupdated, 'c', FORMAT_MARKDOWN, false);
+        $result = external::update_template($cattemplate->id, 'a', $duedateupdated, 'c', FORMAT_MARKDOWN, false);
         $result = external_api::clean_returnvalue(external::update_template_returns(), $result);
         $this->assertTrue($result);
         $result = external::read_template($cattemplate->id);
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
         $this->assertEquals('a', $result['shortname']);
-        $this->assertEquals('b', $result['idnumber']);
         $this->assertEquals('c', $result['description']);
         $this->assertEquals(FORMAT_MARKDOWN, $result['descriptionformat']);
         $this->assertEquals(0, $result['visible']);
@@ -1632,28 +1628,26 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // User with permissions to update in the system.
         $this->setUser($this->creator);
-        $result = external::update_template($systemplate->id, 'x1', 'y1', $duedateupdated, 'z1', FORMAT_PLAIN, false);
+        $result = external::update_template($systemplate->id, 'x1', $duedateupdated, 'z1', FORMAT_PLAIN, false);
         $result = external_api::clean_returnvalue(external::update_template_returns(), $result);
         $this->assertTrue($result);
         $result = external::read_template($systemplate->id);
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($systemplate->id, $result['id']);
         $this->assertEquals('x1', $result['shortname']);
-        $this->assertEquals('y1', $result['idnumber']);
         $this->assertEquals('z1', $result['description']);
         $this->assertEquals(FORMAT_PLAIN, $result['descriptionformat']);
         $this->assertEquals(0, $result['visible']);
         $this->assertEquals($duedateupdated, $result['duedate']);
         $this->assertEquals(userdate($duedateupdated), $result['duedateformatted']);
 
-        $result = external::update_template($cattemplate->id, 'x2', 'y2', $duedateupdated, 'z2', FORMAT_PLAIN, true);
+        $result = external::update_template($cattemplate->id, 'x2', $duedateupdated, 'z2', FORMAT_PLAIN, true);
         $result = external_api::clean_returnvalue(external::update_template_returns(), $result);
         $this->assertTrue($result);
         $result = external::read_template($cattemplate->id);
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
         $this->assertEquals('x2', $result['shortname']);
-        $this->assertEquals('y2', $result['idnumber']);
         $this->assertEquals('z2', $result['description']);
         $this->assertEquals(FORMAT_PLAIN, $result['descriptionformat']);
         $this->assertEquals(1, $result['visible']);
@@ -1671,11 +1665,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Creating a few templates.
         $this->setUser($this->creator);
-        $sys1 = external::create_template('sys1', 'sysid1', 0, 'description', FORMAT_HTML, true,
+        $sys1 = external::create_template('sys1', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontextid));
-        $cat1 = external::create_template('cat1', 'catid1', 0, 'description', FORMAT_HTML, true,
+        $cat1 = external::create_template('cat1', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
-        $cat2 = external::create_template('cat2', 'catid2', 0, 'description', FORMAT_HTML, true,
+        $cat2 = external::create_template('cat2', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
         $this->assertTrue($DB->record_exists('tool_lp_template', array('id' => $sys1->id)));
         $this->assertTrue($DB->record_exists('tool_lp_template', array('id' => $cat1->id)));
@@ -1728,13 +1722,13 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Creating a few templates.
         $this->setUser($this->creator);
-        $sys1 = external::create_template('sys1', 'sysid1', 0, 'description', FORMAT_HTML, true,
+        $sys1 = external::create_template('sys1', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontextid));
-        $sys2 = external::create_template('sys2', 'sysid2', 0, 'description', FORMAT_HTML, true,
+        $sys2 = external::create_template('sys2', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontextid));
-        $cat1 = external::create_template('cat1', 'catid1', 0, 'description', FORMAT_HTML, true,
+        $cat1 = external::create_template('cat1', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
-        $cat2 = external::create_template('cat2', 'catid2', 0, 'description', FORMAT_HTML, true,
+        $cat2 = external::create_template('cat2', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
 
         // User without permission.
@@ -1774,15 +1768,15 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Creating a few templates.
         $this->setUser($this->creator);
-        $sys1 = external::create_template('sys1', 'sysid1', 0, 'description', FORMAT_HTML, true,
+        $sys1 = external::create_template('sys1', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontextid));
-        $sys2 = external::create_template('sys2', 'sysid2', 0, 'description', FORMAT_HTML, true,
+        $sys2 = external::create_template('sys2', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontextid));
-        $cat1 = external::create_template('cat1', 'catid1', 0, 'description', FORMAT_HTML, true,
+        $cat1 = external::create_template('cat1', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
-        $cat2 = external::create_template('cat2', 'catid2', 0, 'description', FORMAT_HTML, true,
+        $cat2 = external::create_template('cat2', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
-        $cat3 = external::create_template('cat3', 'catid3', 0, 'description', FORMAT_HTML, true,
+        $cat3 = external::create_template('cat3', 0, 'description', FORMAT_HTML, true,
             array('contextid' => $catcontextid));
 
         // User without permission.
