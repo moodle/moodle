@@ -71,12 +71,14 @@ class format extends base {
      * @param string $type the name of the plugintype, eg. mod, auth or workshopform
      * @param string $typerootdir full path to the location of the plugin dir
      * @param string $typeclass the name of the actually called class
+     * @param core_plugin_manager $pluginman the plugin manager calling this method
      * @return array of plugintype classes, indexed by the plugin name
      */
-    public static function get_plugins($type, $typerootdir, $typeclass) {
+    public static function get_plugins($type, $typerootdir, $typeclass, $pluginman) {
         global $CFG;
-        $formats = parent::get_plugins($type, $typerootdir, $typeclass);
         require_once($CFG->dirroot.'/course/lib.php');
+
+        $formats = parent::get_plugins($type, $typerootdir, $typeclass, $pluginman);
         $order = get_sorted_course_formats();
         $sortedformats = array();
         foreach ($order as $formatname) {
@@ -137,7 +139,7 @@ class format extends base {
             return '';
         }
 
-        $defaultformat = $this->get_plugin_manager()->plugin_name('format_'.get_config('moodlecourse', 'format'));
+        $defaultformat = $this->pluginman->plugin_name('format_'.get_config('moodlecourse', 'format'));
         $message = get_string(
             'formatuninstallwithcourses', 'core_admin',
             (object)array('count' => $coursecount, 'format' => $this->displayname,
