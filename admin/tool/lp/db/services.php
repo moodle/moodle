@@ -44,6 +44,14 @@ $functions = array(
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencyview',
     ),
+    'tool_lp_duplicate_competency_framework' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'duplicate_competency_framework',
+        'classpath'    => '',
+        'description'  => 'Duplicate a competency framework.',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:competencymanage',
+    ),
     'tool_lp_delete_competency_framework' => array(
         'classname'    => 'tool_lp\external',
         'methodname'   => 'delete_competency_framework',

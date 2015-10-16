@@ -343,4 +343,25 @@ class competency_framework extends persistent {
         return $list;
     }
 
+    /**
+     * Get a uniq idnumber.
+     *
+     * @param string $idnumber the framework idnumber
+     * @return string
+     */
+    public static function get_unused_idnumber($idnumber) {
+        global $DB;
+
+        $currentidnumber = $idnumber;
+        $counter = 0;
+        // Iteratere while the idnumber exists.
+        while ($DB->record_exists_select(static::TABLE, 'idnumber = ?', array($currentidnumber))) {
+            $suffixidnumber = '_' . ++$counter;
+            $currentidnumber = substr($idnumber, 0, 100 - strlen($suffixidnumber)).$suffixidnumber;
+        }
+
+        // Return the uniq idnumber.
+        return $currentidnumber;
+    }
+
 }

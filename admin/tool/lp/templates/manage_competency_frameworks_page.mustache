@@ -62,6 +62,11 @@
                             </a>
                         </li>
                         <li>
+                            <a data-action="duplicatecompetencyframework" href="#" data-frameworkid="{{id}}">
+                                {{#pix}}t/copy{{/pix}} {{#str}}duplicate{{/str}}
+                            </a>
+                        </li>
+                        <li>
                             <a data-action="deletecompetencyframework" href="#" data-frameworkid="{{id}}">
                                 {{#pix}}t/delete{{/pix}} {{#str}}delete{{/str}}
                             </a>
@@ -89,14 +94,15 @@
 
 {{#js}}
 // Initialise the JS.
-require(['tool_lp/frameworkdelete',
+require(['tool_lp/frameworkactions',
          'tool_lp/menubar'],
-        function(deleteMod, menubar) {
+        function(actionsMod, menubar) {
 
-    deleteMod.init({{pagecontextid}});
+    actionsMod.init({{pagecontextid}});
 
     menubar.enhance('.competencyframeworkactions', {
-        "[data-action='deletecompetencyframework']": deleteMod.deleteHandler
+        "[data-action='deletecompetencyframework']": actionsMod.deleteHandler,
+        "[data-action='duplicatecompetencyframework']": actionsMod.duplicateHandler,
     });
 });
 

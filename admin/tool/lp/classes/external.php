@@ -388,6 +388,56 @@ class external extends external_api {
     }
 
     /**
+     * Returns description of duplicate_competency_framework() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function duplicate_competency_framework_parameters() {
+        $id = new external_value(
+            PARAM_INT,
+            'Data base record id for the framework',
+            VALUE_REQUIRED
+        );
+
+        $params = array(
+            'id' => $id,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Expose to AJAX
+     * @return boolean
+     */
+    public static function duplicate_competency_framework_is_allowed_from_ajax() {
+        return true;
+    }
+
+    /**
+     * Duplicate a competency framework
+     *
+     * @param int $id The competency framework id
+     * @return boolean
+     */
+    public static function duplicate_competency_framework($id) {
+        $params = self::validate_parameters(self::duplicate_competency_framework_parameters(),
+                                            array(
+                                                'id' => $id,
+                                            ));
+
+        return api::duplicate_framework($params['id']);
+    }
+
+    /**
+     * Returns description of duplicate_competency_framework() result value.
+     *
+     * @return \external_description
+     */
+    public static function duplicate_competency_framework_returns() {
+       return self::get_competency_framework_external_structure();
+    }
+
+    /**
      * Returns description of delete_competency_framework() parameters.
      *
      * @return \external_function_parameters

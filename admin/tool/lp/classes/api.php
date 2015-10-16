@@ -354,6 +354,55 @@ class api {
     }
 
     /**
+     * Duplicate a competency framework by id.
+     *
+     * Requires tool/lp:competencymanage capability at the system context.
+     *
+     * @param int $id The record to duplicate. All competencies associated and related will be duplicated.
+     * @return competency_framework the framework duplicated
+     */
+    public static function duplicate_framework($id) {
+        $framework = new competency_framework($id);
+        require_capability('tool/lp:competencymanage', $framework->get_context());
+
+        // Get a uniq idnumber based on the origin framework.
+        $idnumber = competency_framework::get_unused_idnumber($framework->get_idnumber());
+        $framework->set_idnumber($idnumber);
+        // Adding the suffix copy to the shortname.
+        $framework->set_shortname(get_string('duplicateditemname', 'tool_lp', $framework->get_shortname()));
+        $framework->set_id(0);
+        $framework->create();
+
+        // Array that match the old competencies ids with the new one to use when copying related competencies.
+        $matchids = self::duplicate_competency_tree($framework->get_id(), competency::get_framework_tree($id), 0, 0);
+
+        // Copy the related competencies.
+        $relcomps = related_competency::get_multiple_relations(array_keys($matchids));
+
+        foreach ($relcomps as $relcomp) {
+            $compid = $relcomp->get_competencyid();
+            $relcompid = $relcomp->get_relatedcompetencyid();
+            if (isset($matchids[$compid]) && isset($matchids[$relcompid])) {
+                $newcompid = $matchids[$compid];
+                $newrelcompid = $matchids[$relcompid];
+                if ($newcompid < $newrelcompid) {
+                    $relcomp->set_competencyid($newcompid);
+                    $relcomp->set_relatedcompetencyid($newrelcompid);
+                } else {
+                    $relcomp->set_competencyid($newrelcompid);
+                    $relcomp->set_relatedcompetencyid($newcompid);
+                }
+                $relcomp->set_id(0);
+                $relcomp->create();
+            } else {
+                // Debugging message when there is no match found.
+                debugging('related competency id not found');
+            }
+        }
+        return $framework;
+    }
+
+    /**
      * Delete a competency framework by id.
      *
      * Requires tool/lp:competencymanage capability at the system context.
@@ -1360,5 +1409,43 @@ class api {
         }
 
         return false;
+    }
+
+    /**
+     * Recursively duplicate competencies from a tree, we start duplicating from parents to children to have a correct path.
+     * This method does not copy the related competencies.
+     *  
+     * @param int $frameworkid - framework id
+     * @param competency[] $tree - array of competencies object
+     * @param int $oldparent - old parent id
+     * @param int $newparent - new parent id
+     * @return array $matchids - List of old competencies ids matched with new ids.
+     */
+    protected static function duplicate_competency_tree($frameworkid, $tree, $oldparent = 0, $newparent = 0) {
+        $matchids = array();
+        foreach ($tree as $node) {
+            if ($node->competency->get_parentid() == $oldparent) {
+                $parentid = $node->competency->get_id();
+
+                // Create the competency.
+                $competency = $node->competency;
+                $competency->set_competencyframeworkid($frameworkid);
+                $competency->set_parentid($newparent);
+                $competency->set_path('');
+                $competency->set_id(0);
+                $competency->create();
+
+                // Match the old id with the new one.
+                $matchids[$parentid] = $competency->get_id();
+
+                if (!empty($node->children)) {
+                    // Duplicate children competency.
+                    $childrenids = self::duplicate_competency_tree($frameworkid, $node->children, $parentid, $competency->get_id());
+                    // Array_merge does not keep keys when merging so we use the + operator.
+                    $matchids = $matchids + $childrenids;
+                }
+            }
+        }
+        return $matchids;
     }
 }

@@ -159,4 +159,28 @@ class related_competency extends persistent {
         return $competencies;
     }
 
+    /**
+     * Get the related competencies from competency ids.
+     *
+     * @param  int[] $competencyids Array of competency ids.
+     * @return related_competency[]
+     */
+    public static function get_multiple_relations($competencyids) {
+        global $DB;
+
+        list($insql, $params) = $DB->get_in_or_equal($competencyids);
+
+        $records = $DB->get_records_select(self::TABLE,
+                                            "competencyid $insql OR relatedcompetencyid $insql",
+                                            array_merge($params, $params)
+                                            );
+
+        $relatedcompetencies = array();
+        foreach ($records as $record) {
+            unset($record->id);
+            $relatedcompetencies[] = new related_competency(null, $record);
+        }
+        return $relatedcompetencies;
+    }
+
 }

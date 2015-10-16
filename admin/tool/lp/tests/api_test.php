@@ -241,4 +241,67 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals($framework3->get_id(), $r2->get_id());
     }
 
+    /**
+     * Test duplicate a framework.
+     */
+    public function test_duplicate_framework() {
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $syscontext = context_system::instance();
+        $params = array(
+                'shortname' => 'shortname_a',
+                'idnumber' => 'idnumber_c',
+                'description' => 'description',
+                'descriptionformat' => FORMAT_HTML,
+                'visible' => true,
+                'contextid' => $syscontext->id
+        );
+        $framework = $lpg->create_framework($params);
+        $competency1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $competency2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $competency3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $competency4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $competencyidnumbers = array($competency1->get_idnumber(),
+                                        $competency2->get_idnumber(),
+                                        $competency3->get_idnumber(),
+                                        $competency4->get_idnumber()
+                                    );
+
+        api::add_related_competency($competency1->get_id(), $competency2->get_id());
+        api::add_related_competency($competency3->get_id(), $competency4->get_id());
+
+        $frameworkduplicated1 = api::duplicate_framework($framework->get_id());
+        $frameworkduplicated2 = api::duplicate_framework($framework->get_id());
+
+        $this->assertEquals($framework->get_idnumber().'_1', $frameworkduplicated1->get_idnumber());
+        $this->assertEquals($framework->get_idnumber().'_2', $frameworkduplicated2->get_idnumber());
+
+        $competenciesfr1 = api::list_competencies(array('competencyframeworkid' => $frameworkduplicated1->get_id()));
+        $competenciesfr2 = api::list_competencies(array('competencyframeworkid' => $frameworkduplicated2->get_id()));
+
+        $competencyidsfr1 = array();
+        $competencyidsfr2 = array();
+
+        foreach ($competenciesfr1 as $cmp) {
+            $competencyidsfr1[] = $cmp->get_idnumber();
+        }
+        foreach ($competenciesfr2 as $cmp) {
+            $competencyidsfr2[] = $cmp->get_idnumber();
+        }
+
+        $this->assertEmpty(array_diff($competencyidsfr1, $competencyidnumbers));
+        $this->assertEmpty(array_diff($competencyidsfr2, $competencyidnumbers));
+        $this->assertCount(4, $competenciesfr1);
+        $this->assertCount(4, $competenciesfr2);
+
+        // Test the related competencies.
+        reset($competenciesfr1);
+        $compduplicated1 = current($competenciesfr1);
+        $relatedcompetencies = $compduplicated1->get_related_competencies();
+        $comprelated = current($relatedcompetencies);
+        $this->assertEquals($comprelated->get_idnumber(), $competency2->get_idnumber());
+    }
+
 }

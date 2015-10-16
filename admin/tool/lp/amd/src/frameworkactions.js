@@ -14,9 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Delete competency frameworks via ajax.
+ * Competency frameworks actions via ajax.
  *
- * @module     tool_lp/frameworkdelete
+ * @module     tool_lp/frameworkactions
  * @package    tool_lp
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -52,6 +52,30 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
             .fail(notification.exception);
     };
 
+    /**
+     * Duplicate a framework and reload the page.
+     * @method doDuplicate
+     * @param {Event} e
+     */
+    var doDuplicate = function(e) {
+        e.preventDefault();
+
+        frameworkid = $(this).attr('data-frameworkid');
+
+        // We are chaining ajax requests here.
+        var requests = ajax.call([{
+            methodname: 'tool_lp_duplicate_competency_framework',
+            args: { id: frameworkid }
+        }, {
+            methodname: 'tool_lp_data_for_competency_frameworks_manage_page',
+            args: {
+                pagecontext: {
+                    contextid: pagecontextid
+                }
+            }
+        }]);
+        requests[1].done(reloadList).fail(notification.exception);
+    };
     /**
      * Delete a framework and reload the page.
      */
@@ -107,7 +131,7 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
     };
 
 
-    return /** @alias module:tool_lp/frameworkdelete */ {
+    return /** @alias module:tool_lp/frameworkactions */ {
         // Public variables and functions.
 
         /**
@@ -116,6 +140,13 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
          * @param {Event} e
          */
         deleteHandler: confirmDelete,
+
+        /**
+         * Expose the event handler for duplicate.
+         * @method duplicateHandler
+         * @param {Event} e
+         */
+        duplicateHandler: doDuplicate,
 
         /**
          * Initialise the module.
