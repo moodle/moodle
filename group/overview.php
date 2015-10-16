@@ -79,7 +79,8 @@ $members = array();
 foreach ($groupings as $grouping) {
     $members[$grouping->id] = array();
 }
-$members[OVERVIEW_GROUPING_GROUP_NO_GROUPING] = array(); //groups not in a grouping
+// Groups not in a grouping.
+$members[OVERVIEW_GROUPING_GROUP_NO_GROUPING] = array();
 
 // Get all groups
 $groups = $DB->get_records('groups', array('courseid'=>$courseid), 'name');
