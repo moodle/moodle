@@ -86,6 +86,7 @@ class mod_forum_external extends external_api {
                     continue;
                 }
 
+                $forum->name = external_format_string($forum->name, $context->id);
                 // Format the intro before being returning using the format setting.
                 list($forum->intro, $forum->introformat) = external_format_text($forum->intro, $forum->introformat,
                                                                                 $context->id, 'mod_forum', 'intro', 0);
@@ -113,9 +114,9 @@ class mod_forum_external extends external_api {
             new external_single_structure(
                 array(
                     'id' => new external_value(PARAM_INT, 'Forum id'),
-                    'course' => new external_value(PARAM_TEXT, 'Course id'),
+                    'course' => new external_value(PARAM_INT, 'Course id'),
                     'type' => new external_value(PARAM_TEXT, 'The forum type'),
-                    'name' => new external_value(PARAM_TEXT, 'Forum name'),
+                    'name' => new external_value(PARAM_RAW, 'Forum name'),
                     'intro' => new external_value(PARAM_RAW, 'The forum intro'),
                     'introformat' => new external_format_value('intro'),
                     'assessed' => new external_value(PARAM_INT, 'Aggregate type'),

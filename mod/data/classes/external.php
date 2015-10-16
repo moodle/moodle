@@ -124,7 +124,7 @@ class mod_data_external extends external_api {
                 $newdb['id'] = $database->id;
                 $newdb['coursemodule'] = $database->coursemodule;
                 $newdb['course'] = $database->course;
-                $newdb['name']  = $database->name;
+                $newdb['name']  = external_format_string($database->name, $datacontext->id);
                 // Format intro.
                 list($newdb['intro'], $newdb['introformat']) =
                     external_format_text($database->intro, $database->introformat,
@@ -188,8 +188,8 @@ class mod_data_external extends external_api {
                         array(
                             'id' => new external_value(PARAM_INT, 'Database id'),
                             'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_TEXT, 'Course id'),
-                            'name' => new external_value(PARAM_TEXT, 'Database name'),
+                            'course' => new external_value(PARAM_INT, 'Course id'),
+                            'name' => new external_value(PARAM_RAW, 'Database name'),
                             'intro' => new external_value(PARAM_RAW, 'The Database intro'),
                             'introformat' => new external_format_value('intro'),
                             'comments' => new external_value(PARAM_BOOL, 'comments enabled', VALUE_OPTIONAL),

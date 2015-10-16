@@ -543,7 +543,7 @@ class mod_chat_external extends external_api {
                 $chatdetails['id'] = $chat->id;
                 $chatdetails['coursemodule']      = $chat->coursemodule;
                 $chatdetails['course']            = $chat->course;
-                $chatdetails['name']              = $chat->name;
+                $chatdetails['name']              = external_format_string($chat->name, $chatcontext->id);
                 // Format intro.
                 list($chatdetails['intro'], $chatdetails['introformat']) =
                     external_format_text($chat->intro, $chat->introformat, $chatcontext->id, 'mod_chat', 'intro', null);
@@ -586,16 +586,16 @@ class mod_chat_external extends external_api {
                         array(
                             'id' => new external_value(PARAM_INT, 'Chat id'),
                             'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
-                            'course' => new external_value(PARAM_TEXT, 'Course id'),
-                            'name' => new external_value(PARAM_TEXT, 'Chat name'),
+                            'course' => new external_value(PARAM_INT, 'Course id'),
+                            'name' => new external_value(PARAM_RAW, 'Chat name'),
                             'intro' => new external_value(PARAM_RAW, 'The Chat intro'),
                             'introformat' => new external_format_value('intro'),
                             'chatmethod' => new external_value(PARAM_ALPHA, 'chat method (sockets, daemon)', VALUE_OPTIONAL),
                             'keepdays' => new external_value(PARAM_INT, 'keep days', VALUE_OPTIONAL),
                             'studentlogs' => new external_value(PARAM_INT, 'student logs visible to everyone', VALUE_OPTIONAL),
-                            'chattime' => new external_value(PARAM_RAW, 'chat time', VALUE_OPTIONAL),
+                            'chattime' => new external_value(PARAM_INT, 'chat time', VALUE_OPTIONAL),
                             'schedule' => new external_value(PARAM_INT, 'schedule type', VALUE_OPTIONAL),
-                            'timemodified' => new external_value(PARAM_RAW, 'time of last modification', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'time of last modification', VALUE_OPTIONAL),
                             'section' => new external_value(PARAM_INT, 'course section id', VALUE_OPTIONAL),
                             'visible' => new external_value(PARAM_BOOL, 'visible', VALUE_OPTIONAL),
                             'groupmode' => new external_value(PARAM_INT, 'group mode', VALUE_OPTIONAL),
