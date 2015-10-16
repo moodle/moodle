@@ -119,6 +119,15 @@ class core_message_events_testcase extends advanced_testcase {
         $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
         $this->assertEquals($url, $event->get_url());
 
+        // Make sure that the contact blocked event is not triggered again.
+        $sink->clear();
+        message_block_contact($user->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertEmpty($event);
+        // Make sure that we still have 1 blocked user.
+        $this->assertEquals(1, message_count_blocked_users());
+
         // Now blocking a user that is not a contact.
         $sink->clear();
         message_block_contact($user2->id);
@@ -147,6 +156,11 @@ class core_message_events_testcase extends advanced_testcase {
         // Add the user to the admin's contact list.
         message_add_contact($user->id);
 
+        // Block the user.
+        message_block_contact($user->id);
+        // Make sure that we have 1 blocked user.
+        $this->assertEquals(1, message_count_blocked_users());
+
         // Trigger and capture the event when unblocking a contact.
         $sink = $this->redirectEvents();
         message_unblock_contact($user->id);
@@ -160,6 +174,19 @@ class core_message_events_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
         $this->assertEquals($url, $event->get_url());
+
+        // Make sure that we have no blocked users.
+        $this->assertEmpty(message_count_blocked_users());
+
+        // Make sure that the contact unblocked event is not triggered again.
+        $sink->clear();
+        message_unblock_contact($user->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertEmpty($event);
+
+        // Make sure that we still have no blocked users.
+        $this->assertEmpty(message_count_blocked_users());
     }
 
     /**
