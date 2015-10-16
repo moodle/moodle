@@ -23,9 +23,9 @@ Replace $plugin with $module for activity modules, as in
     $plugin->component
         = 'old_foobar';//$plugin->component='commented';
 
-    $plugin->component      =   
+    $plugin->component      =
         'block_foobar';
-    
+
 $plugin->version = 2013010100;
  ////////$plugin->version = 0;
     /* for activity
