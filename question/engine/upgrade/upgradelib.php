@@ -447,6 +447,9 @@ class question_deleted_question_attempt_updater extends question_qtype_attempt_u
  * This check verifies that all quiz attempts were upgraded since following
  * the question engine upgrade in Moodle 2.1.
  *
+ * Note: This custom check (and its environment.xml declaration) will be safely
+ *       removed once we raise min required Moodle version to be 2.7 or newer.
+ *
  * @param environment_results object to update, if relevant.
  * @return environment_results updated results object, or null if this test is not relevant.
  */
