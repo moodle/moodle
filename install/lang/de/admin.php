@@ -42,3 +42,4 @@ Hilfe wird über die Option --help angezeigt.';
 $string['cliyesnoprompt'] = 'y (yes=ja) oder n (no=nein) eingeben';
 $string['environmentrequireinstall'] = 'muss installiert und aktiviert sein';
 $string['environmentrequireversion'] = 'notwendig: {$a->needed} - installiert: {$a->current}';
+$string['upgradekeyset'] = 'Aktualisierungsschlüssel (leer, um keinen zu setzen)';
