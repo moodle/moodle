@@ -1,5 +1,6 @@
 .path-grade-report-user #graded_users_selector {
     float: right;
+    margin-bottom: 5px;
 }
 .path-grade-report-user #graded_users_selector .singleselect label {
     display: inline-block;
