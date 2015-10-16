@@ -39,7 +39,9 @@
 <div class="form-autocomplete-selection {{#multiple}}form-autocomplete-multiple{{/multiple}}" id="{{selectionId}}" role="list" aria-atomic="true" tabindex="0" aria-multiselectable="true">
 <span class="accesshide">{{#str}}selecteditems, form{{/str}}</span>
     {{#items}}
-        <span role="listitem" data-value="{{value}}" aria-selected="true" class="label label-info"><span aria-hidden="true">×</span> {{{label}}}</span>
+        <span role="listitem" data-value="{{value}}" aria-selected="true" class="label label-info">
+            {{#multiple}}<span aria-hidden="true">× </span>{{/multiple}}{{{label}}}
+        </span>
     {{/items}}
     {{^items}}
         <span>{{#str}}noselection,form{{/str}}</span>
