@@ -275,10 +275,8 @@
                 if ($question->multi) {
                     echo $OUTPUT->heading($question->text . ':', 4);
 
-                    $subquestions = $DB->get_records_list("survey_questions", "id", explode(',', $question->multi));
-                    $subquestionorder = explode(",", $question->multi);
-                    foreach ($subquestionorder as $key => $val) {
-                        $subquestion = $subquestions[$val];
+                    $subquestions = survey_get_subquestions($question);
+                    foreach ($subquestions as $subquestion) {
                         if ($subquestion->type > 0) {
                             echo "<p class=\"centerpara\">";
                             echo "<a title=\"$strseemoredetail\" href=\"report.php?action=question&amp;id=$id&amp;qid=$subquestion->id\">";
