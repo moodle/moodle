@@ -966,7 +966,7 @@ function survey_save_answers($survey, $answersrawdata, $course, $context) {
     // Sort through the data and arrange it.
     // This is necessary because some of the questions may have two answers, eg Question 1 -> 1 and P1.
     foreach ($answersrawdata as $key => $val) {
-        if ($key <> "userid" && $key <> "id") {
+        if ($key != "userid" && $key != "id") {
             if (substr($key, 0, 1) == "q") {
                 $key = clean_param(substr($key, 1), PARAM_ALPHANUM);   // Keep everything but the 'q', number or P number.
             }
