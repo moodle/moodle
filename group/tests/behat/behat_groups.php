@@ -27,6 +27,7 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
+use Behat\Behat\Context\Step\Then;
 use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
@@ -84,4 +85,27 @@ class behat_groups extends behat_base {
         $this->find_button(get_string('backtogroups', 'group'))->click();
     }
 
+    /**
+     * A single or comma-separated list of groups expected within a grouping, on group overview page.
+     *
+     * @Given /^the group overview should include groups "(?P<groups_string>(?:[^"]|\\")*)" in grouping "(?P<grouping_string>(?:[^"]|\\")*)"$/
+     * @param string $groups one or comma seperated list of groups.
+     * @param string $grouping grouping in which all group should be present.
+     * @return Then[]
+     */
+    public function the_groups_overview_should_include_groups_in_grouping($groups, $grouping) {
+
+        $steps = array();
+        $groups = array_map('trim', explode(',', $groups));
+
+        foreach ($groups as $groupname) {
+            // Find the table after the H3 containing the grouping name, then look for the group name in the first column.
+            $xpath = "//h3[normalize-space(.) = '{$grouping}']/following-sibling::table//tr//".
+                "td[contains(concat(' ', normalize-space(@class), ' '), ' c0 ')][normalize-space(.) = '{$groupname}' ]";
+
+            $steps[] = new Then('"'.$xpath.'" "xpath_element" should exist');
+        }
+
+        return $steps;
+    }
 }
