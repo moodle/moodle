@@ -126,6 +126,7 @@ class core_update_code_manager_testcase extends advanced_testcase {
         $files = $codeman->list_plugin_folder_files($fixtures.'/foobar');
         $this->assertInternalType('array', $files);
         $this->assertEquals(6, count($files));
+        $fixtures = str_replace(DIRECTORY_SEPARATOR, '/', $fixtures);
         $this->assertEquals($files['foobar/'], $fixtures.'/foobar');
         $this->assertEquals($files['foobar/lang/en/local_foobar.php'], $fixtures.'/foobar/lang/en/local_foobar.php');
     }
