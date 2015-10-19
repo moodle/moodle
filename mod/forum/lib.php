@@ -2720,7 +2720,6 @@ function forum_get_discussion_neighbours($cm, $discussion, $forum) {
             if ($discussion->timemodified < $discussion->timestart) {
                 $params['disctimecompare'] = $discussion->timestart;
             }
-            $params['disctimecompare2'] = $params['disctimecompare'];
 
             // Here we need to take into account the release time (timestart)
             // if one is set, of the neighbouring posts and compare it to the
@@ -2730,11 +2729,9 @@ function forum_get_discussion_neighbours($cm, $discussion, $forum) {
             // timestart value from being buried under discussions that were
             // made afterwards.
             $prevsql = $sql . " AND CASE WHEN d.timemodified < d.timestart
-                                    THEN d.timestart < :disctimecompare
-                                    ELSE d.timemodified < :disctimecompare2 END";
+                                    THEN d.timestart ELSE d.timemodified END < :disctimecompare";
             $nextsql = $sql . " AND CASE WHEN d.timemodified < d.timestart
-                                    THEN d.timestart > :disctimecompare
-                                    ELSE d.timemodified > :disctimecompare2 END";
+                                    THEN d.timestart ELSE d.timemodified END > :disctimecompare";
         }
         $prevsql .= ' ORDER BY '.forum_get_default_sort_order();
         $nextsql .= ' ORDER BY '.forum_get_default_sort_order(false);
