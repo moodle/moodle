@@ -67,4 +67,76 @@ $functions = array(
         'capabilities'  => 'mod/glossary:view'
     ),
 
+    'mod_glossary_get_categories' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'get_categories',
+        'description'   => 'Get the categories.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/glossary:view'
+    ),
+
+    'mod_glossary_get_entries_by_category' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'get_entries_by_category',
+        'description'   => 'Browse entries by category.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/glossary:view'
+    ),
+
+    'mod_glossary_get_authors' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'get_authors',
+        'description'   => 'Get the authors.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/glossary:view'
+    ),
+
+    'mod_glossary_get_entries_by_author' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'get_entries_by_author',
+        'description'   => 'Browse entries by author.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/glossary:view'
+    ),
+
+    'mod_glossary_get_entries_by_author_id' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'get_entries_by_author_id',
+        'description'   => 'Browse entries by author ID.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/glossary:view'
+    ),
+
+    'mod_glossary_get_entries_by_search' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'get_entries_by_search',
+        'description'   => 'Browse entries by search query.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/glossary:view'
+    ),
+
+    'mod_glossary_get_entries_by_term' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'get_entries_by_term',
+        'description'   => 'Browse entries by term (concept or alias).',
+        'type'          => 'read',
+        'capabilities'  => 'mod/glossary:view'
+    ),
+
+    'mod_glossary_get_entries_to_approve' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'get_entries_to_approve',
+        'description'   => 'Browse entries to be approved.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/glossary:approve'
+    ),
+
+    'mod_glossary_get_entry_by_id' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'get_entry_by_id',
+        'description'   => 'Get an entry by ID',
+        'type'          => 'read',
+        'capabilities'  => 'mod/glossary:view'
+    ),
+
 );
