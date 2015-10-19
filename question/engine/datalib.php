@@ -306,7 +306,7 @@ class question_engine_data_mapper {
         $records = $this->db->get_recordset_sql("
 SELECT
     quba.contextid,
-    COALLESCE(q.qtype, 'missingtype') AS qtype,
+    COALESCE(q.qtype, 'missingtype') AS qtype,
     qas.id AS attemptstepid,
     qas.questionattemptid,
     qas.sequencenumber,
