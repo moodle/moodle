@@ -50,6 +50,7 @@ $string['mustbeoverriden'] = 'Abstract form_definition() method in class {$a} mu
 $string['nomethodforaddinghelpbutton'] = 'There is no method for adding a help button to form element {$a->name} (class {$a->classname})';
 $string['nonexistentformelements'] = 'Trying to add help buttons to non-existent form elements : {$a}';
 $string['noselection'] = 'No selection';
+$string['nosuggestions'] = 'No suggestions';
 $string['optional'] = 'Optional';
 $string['othersettings'] = 'Other settings';
 $string['requiredelement'] = 'Required field';
