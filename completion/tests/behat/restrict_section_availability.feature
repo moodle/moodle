@@ -74,10 +74,10 @@ Feature: Restrict sections availability through completion or grade conditions
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Grade" "button" in the "Add restriction..." "dialogue"
-    And I click on "min" "checkbox"
     And I set the following fields to these values:
-      | id | Grade assignment |
-      | minval | 20 |
+      | id     | Grade assignment |
+      | min    | 1                |
+      | minval | 20               |
     And I press "Save changes"
     And I log out
     When I log in as "student1"
