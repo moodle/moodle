@@ -325,7 +325,7 @@ class code_manager {
             if ($fileinfo->isDir() and substr($key, -1) !== '/') {
                 $key .= '/';
             }
-            $files[$key] = $fileinfo->getRealPath();
+            $files[str_replace(DIRECTORY_SEPARATOR, '/', $key)] = str_replace(DIRECTORY_SEPARATOR, '/', $fileinfo->getRealPath());
         }
         return $files;
     }
