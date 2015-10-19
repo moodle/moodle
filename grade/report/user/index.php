@@ -164,13 +164,19 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
     }
 }
 
-$event = \gradereport_user\event\grade_report_viewed::create(
-    array(
-        'context' => $context,
-        'courseid' => $courseid,
-        'relateduserid' => $userid,
-    )
-);
-$event->trigger();
+// Trigger report viewed event.
+if (isset($report)) {
+    $event = \gradereport_user\event\grade_report_viewed::create(
+        array(
+            'context' => $context,
+            'courseid' => $courseid,
+            'relateduserid' => $userid,
+        )
+    );
+    $event->trigger();
+} else {
+    echo html_writer::tag('div', '', array('class' => 'clearfix'));
+    echo $OUTPUT->notification(get_string('nostudentsyet'));
+}
 
 echo $OUTPUT->footer();
