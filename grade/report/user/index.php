@@ -166,7 +166,12 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
     }
 }
 
-// Trigger report viewed event.
-$report->viewed();
+if (isset($report)) {
+    // Trigger report viewed event.
+    $report->viewed();
+} else {
+    echo html_writer::tag('div', '', array('class' => 'clearfix'));
+    echo $OUTPUT->notification(get_string('nostudentsyet'));
+}
 
 echo $OUTPUT->footer();
