@@ -927,6 +927,112 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e2->id, $return['entries'][0]['id']);
     }
 
+    public function test_get_entries_to_approve() {
+        $this->resetAfterTest(true);
+
+        // Generate all the things.
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $c1 = $this->getDataGenerator()->create_course();
+        $g1 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $g2 = $this->getDataGenerator()->create_module('glossary', array('course' => $c1->id));
+        $u1 = $this->getDataGenerator()->create_user();
+        $ctx = context_module::instance($g1->cmid);
+        $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
+
+        $e1a = $gg->create_content($g1, array('approved' => 0, 'concept' => 'Bob', 'userid' => $u1->id,
+            'timecreated' => time() + 3600));
+        $e1b = $gg->create_content($g1, array('approved' => 0, 'concept' => 'Jane', 'userid' => $u1->id, 'timecreated' => 1));
+        $e1c = $gg->create_content($g1, array('approved' => 0, 'concept' => 'Alice', 'userid' => $u1->id, 'timemodified' => 1));
+        $e1d = $gg->create_content($g1, array('approved' => 0, 'concept' => '0-day', 'userid' => $u1->id,
+            'timemodified' => time() + 3600));
+        $e1e = $gg->create_content($g1, array('approved' => 1, 'concept' => '1-day', 'userid' => $u1->id));
+        $e2a = $gg->create_content($g2);
+
+        $this->setAdminUser(true);
+
+        // Simple listing.
+        $return = mod_glossary_external::get_entries_to_approve($g1->id, 'ALL', 'CONCEPT', 'ASC', 0, 20);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_to_approve_returns(), $return);
+        $this->assertCount(4, $return['entries']);
+        $this->assertEquals(4, $return['count']);
+        $this->assertEquals($e1d->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1c->id, $return['entries'][1]['id']);
+        $this->assertEquals($e1a->id, $return['entries'][2]['id']);
+        $this->assertEquals($e1b->id, $return['entries'][3]['id']);
+
+        // Revert ordering of concept.
+        $return = mod_glossary_external::get_entries_to_approve($g1->id, 'ALL', 'CONCEPT', 'DESC', 0, 20);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_to_approve_returns(), $return);
+        $this->assertCount(4, $return['entries']);
+        $this->assertEquals(4, $return['count']);
+        $this->assertEquals($e1b->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1a->id, $return['entries'][1]['id']);
+        $this->assertEquals($e1c->id, $return['entries'][2]['id']);
+        $this->assertEquals($e1d->id, $return['entries'][3]['id']);
+
+        // Filtering by letter.
+        $return = mod_glossary_external::get_entries_to_approve($g1->id, 'a', 'CONCEPT', 'ASC', 0, 20);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_to_approve_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(1, $return['count']);
+        $this->assertEquals($e1c->id, $return['entries'][0]['id']);
+
+        // Filtering by special.
+        $return = mod_glossary_external::get_entries_to_approve($g1->id, 'SPECIAL', 'CONCEPT', 'ASC', 0, 20);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_to_approve_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(1, $return['count']);
+        $this->assertEquals($e1d->id, $return['entries'][0]['id']);
+
+        // Pagination.
+        $return = mod_glossary_external::get_entries_to_approve($g1->id, 'ALL', 'CONCEPT', 'ASC', 0, 2);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_to_approve_returns(), $return);
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(4, $return['count']);
+        $this->assertEquals($e1d->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1c->id, $return['entries'][1]['id']);
+        $return = mod_glossary_external::get_entries_to_approve($g1->id, 'ALL', 'CONCEPT', 'ASC', 1, 2);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_to_approve_returns(), $return);
+        $this->assertCount(2, $return['entries']);
+        $this->assertEquals(4, $return['count']);
+        $this->assertEquals($e1c->id, $return['entries'][0]['id']);
+        $this->assertEquals($e1a->id, $return['entries'][1]['id']);
+
+        // Ordering by creation date.
+        $return = mod_glossary_external::get_entries_to_approve($g1->id, 'ALL', 'CREATION', 'ASC', 0, 1);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_to_approve_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(4, $return['count']);
+        $this->assertEquals($e1b->id, $return['entries'][0]['id']);
+
+        // Ordering by creation date desc.
+        $return = mod_glossary_external::get_entries_to_approve($g1->id, 'ALL', 'CREATION', 'DESC', 0, 1);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_to_approve_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(4, $return['count']);
+        $this->assertEquals($e1a->id, $return['entries'][0]['id']);
+
+        // Ordering by update date.
+        $return = mod_glossary_external::get_entries_to_approve($g1->id, 'ALL', 'UPDATE', 'ASC', 0, 1);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_to_approve_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(4, $return['count']);
+        $this->assertEquals($e1c->id, $return['entries'][0]['id']);
+
+        // Ordering by update date desc.
+        $return = mod_glossary_external::get_entries_to_approve($g1->id, 'ALL', 'UPDATE', 'DESC', 0, 1);
+        $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_to_approve_returns(), $return);
+        $this->assertCount(1, $return['entries']);
+        $this->assertEquals(4, $return['count']);
+        $this->assertEquals($e1d->id, $return['entries'][0]['id']);
+
+        // Permissions are checked.
+        $this->setUser($u1);
+        $this->setExpectedException('required_capability_exception');
+        mod_glossary_external::get_entries_to_approve($g1->id, 'ALL', 'CONCEPT', 'ASC', 0, 1);
+        $this->fail('Do not test anything else after this.');
+    }
+
     public function test_get_entry_by_id() {
         $this->resetAfterTest(true);
 

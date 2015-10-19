@@ -1289,6 +1289,96 @@ class mod_glossary_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 3.1
      */
+    public static function get_entries_to_approve_parameters() {
+        return new external_function_parameters(array(
+            'id' => new external_value(PARAM_INT, 'Glossary entry ID'),
+            'letter' => new external_value(PARAM_ALPHA, 'A letter, or either keywords: \'ALL\' or \'SPECIAL\'.'),
+            'order' => new external_value(PARAM_ALPHA, 'Order by: \'CONCEPT\', \'CREATION\' or \'UPDATE\'', VALUE_DEFAULT,
+                'CONCEPT'),
+            'sort' => new external_value(PARAM_ALPHA, 'The direction of the order: \'ASC\' or \'DESC\'', VALUE_DEFAULT, 'ASC'),
+            'from' => new external_value(PARAM_INT, 'Start returning records from here', VALUE_DEFAULT, 0),
+            'limit' => new external_value(PARAM_INT, 'Number of records to return', VALUE_DEFAULT, 20),
+            'options' => new external_single_structure(array(), 'An array of options', VALUE_DEFAULT, array())
+        ));
+    }
+
+    /**
+     * Browse a glossary entries using a term matching the concept or alias.
+     *
+     * @param int $id The glossary ID.
+     * @param string $letter A letter, or a special keyword.
+     * @param string $order The way to order the records.
+     * @param string $sort The direction of the order.
+     * @param int $from Start returning records from here.
+     * @param int $limit Number of records to return.
+     * @param array $options Array of options.
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function get_entries_to_approve($id, $letter, $order = 'CONCEPT', $sort = 'ASC', $from = 0, $limit = 20) {
+        global $DB, $USER;
+
+        $params = self::validate_parameters(self::get_entries_to_approve_parameters(), array(
+            'id' => $id,
+            'letter' => $letter,
+            'order' => $order,
+            'sort' => $sort,
+            'from' => $from,
+            'limit' => $limit
+        ));
+        $id = $params['id'];
+        $letter = $params['letter'];
+        $order = $params['order'];
+        $sort = $params['sort'];
+        $from = $params['from'];
+        $limit = $params['limit'];
+        $warnings = array();
+
+        // Get and validate the glossary.
+        list($glossary, $context) = self::validate_glossary($id);
+
+        // Check the permissions.
+        require_capability('mod/glossary:approve', $context);
+
+        // Fetching the entries.
+        $entries = array();
+        list($records, $count) = glossary_get_entries_to_approve($glossary, $context, $letter, $order, $sort, $from, $limit);
+        foreach ($records as $key => $record) {
+            self::fill_entry_details($record, $context);
+            $entries[] = $record;
+        }
+        $records->close();
+
+        return array(
+            'count' => $count,
+            'entries' => $entries,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns the description of the external function return value.
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function get_entries_to_approve_returns() {
+        return new external_single_structure(array(
+            'count' => new external_value(PARAM_INT, 'The total number of records matching the request.'),
+            'entries' => new external_multiple_structure(
+                self::get_entry_return_structure()
+            ),
+            'warnings' => new external_warnings()
+        ));
+    }
+
+    /**
+     * Returns the description of the external function parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
     public static function get_entry_by_id_parameters() {
         return new external_function_parameters(array(
             'id' => new external_value(PARAM_INT, 'Glossary entry ID'),

@@ -3736,6 +3736,49 @@ function glossary_get_entries_by_term($glossary, $context, $term, $from, $limit,
 }
 
 /**
+ * Returns the entries to be approved.
+ *
+ * @param  object $glossary The glossary.
+ * @param  context $context The context of the glossary.
+ * @param  string $letter The letter, or ALL, or SPECIAL.
+ * @param  string $order The mode of ordering: CONCEPT, CREATION or UPDATE.
+ * @param  string $sort The direction of the ordering: ASC or DESC.
+ * @param  int $from Fetch records from.
+ * @param  int $limit Number of records to fetch.
+ * @return array The first element being the recordset, the second the number of entries.
+ * @since Moodle 3.1
+ */
+function glossary_get_entries_to_approve($glossary, $context, $letter, $order, $sort, $from, $limit) {
+
+    $qb = new mod_glossary_entry_query_builder($glossary);
+    if ($letter != 'ALL' && $letter != 'SPECIAL' && core_text::strlen($letter)) {
+        $qb->filter_by_concept_letter($letter);
+    }
+    if ($letter == 'SPECIAL') {
+        $qb->filter_by_concept_non_letter();
+    }
+
+    $qb->add_field('*', 'entries');
+    $qb->join_user();
+    $qb->add_user_fields();
+    $qb->filter_by_non_approved(mod_glossary_entry_query_builder::NON_APPROVED_ONLY);
+    if ($order == 'CREATION') {
+        $qb->order_by('timecreated', 'entries', $sort);
+    } else if ($order == 'UPDATE') {
+        $qb->order_by('timemodified', 'entries', $sort);
+    } else {
+        $qb->order_by('concept', 'entries', $sort);
+    }
+    $qb->limit($from, $limit);
+
+    // Fetching the entries.
+    $count = $qb->count_records();
+    $entries = $qb->get_recordset();
+
+    return array($entries, $count);
+}
+
+/**
  * Fetch an entry.
  *
  * @param  int $id The entry ID.
