@@ -175,6 +175,7 @@ if (isset($report)) {
     );
     $event->trigger();
 } else {
+    echo html_writer::tag('div', '', array('class' => 'clearfix'));
     echo $OUTPUT->notification(get_string('nostudentsyet'));
 }
 
