@@ -1522,13 +1522,17 @@ class mod_forum_events_testcase extends advanced_testcase {
         $record = array();
         $record['discussion'] = $discussion->id;
         $record['userid'] = $user->id;
-        $post1 = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
-        $post2 = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
-        $post3 = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        $posts = array();
+        $posts[$discussionpost->id] = $discussionpost;
+        for ($i = 0; $i < 3; $i++) {
+            $post = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+            $posts[$post->id] = $post;
+        }
 
         // Delete the last post and capture the event.
+        $lastpost = end($posts);
         $sink = $this->redirectEvents();
-        forum_delete_post($post3, true, $course, $cm, $forum);
+        forum_delete_post($lastpost, true, $course, $cm, $forum);
         $events = $sink->get_events();
         $this->assertCount(1, $events);
         $event = reset($events);
@@ -1536,7 +1540,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         // Check that the events contain the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_deleted', $event);
         $this->assertEquals(context_module::instance($forum->cmid), $event->get_context());
-        $expected = array($course->id, 'forum', 'delete post', "discuss.php?d={$discussion->id}", $post3->id, $forum->cmid);
+        $expected = array($course->id, 'forum', 'delete post', "discuss.php?d={$discussion->id}", $lastpost->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
         $this->assertEquals($url, $event->get_url());
@@ -1551,16 +1555,8 @@ class mod_forum_events_testcase extends advanced_testcase {
         $this->assertCount(3, $events);
 
         // Loop through the events and check they are valid.
-        foreach ($events as $key => $event) {
-            if ($key === 0) {
-                // The last post in the discussion (that wasn't deleted).
-                $post = $post2;
-            } else if ($key === 1) {
-                // The first post in the discussion.
-                $post = $post1;
-            } else { // Must be the discussion post.
-                $post = $discussionpost;
-            }
+        foreach ($events as $event) {
+            $post = $posts[$event->objectid];
 
             // Check that the event contains the expected values.
             $this->assertInstanceOf('\mod_forum\event\post_deleted', $event);
