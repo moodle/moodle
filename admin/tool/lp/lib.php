@@ -60,7 +60,7 @@ function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $us
     global $USER;
 
     $context = context_user::instance($USER->id);
-    if (!$iscurrentuser && !has_capability('tool/lp:planviewall', $context)) {
+    if (!$iscurrentuser && !has_capability('tool/lp:planview', $context)) {
         return false;
     }
 

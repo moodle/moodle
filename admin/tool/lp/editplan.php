@@ -55,12 +55,12 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_heading($pagetitle);
 $output = $PAGE->get_renderer('tool_lp');
 
-$manageplans = has_capability('tool/lp:planmanageall', $context);
-$owncapabilities = array('tool/lp:plancreatedraft', 'tool/lp:planmanageown');
+$manageplans = has_capability('tool/lp:planmanage', $context);
+$owncapabilities = array('tool/lp:plancreateown', 'tool/lp:planmanageown');
 if ($USER->id === $userid && !has_any_capability($owncapabilities, $context) && !$manageplans) {
     throw new required_capability_exception($context, 'tool/lp:planmanageown', 'nopermissions', '');
 } else if (!$manageplans) {
-    throw new required_capability_exception($context, 'tool/lp:planmanageall', 'nopermissions', '');
+    throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
 }
 
 // Passing the templates list to the form.

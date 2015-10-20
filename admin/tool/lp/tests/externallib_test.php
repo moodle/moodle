@@ -99,9 +99,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // Reset all default authenticated users permissions.
         unassign_capability('tool/lp:competencymanage', $authrole->id);
         unassign_capability('tool/lp:competencyread', $authrole->id);
-        unassign_capability('tool/lp:planmanageall', $authrole->id);
+        unassign_capability('tool/lp:planmanage', $authrole->id);
         unassign_capability('tool/lp:planmanageown', $authrole->id);
-        unassign_capability('tool/lp:planviewall', $authrole->id);
+        unassign_capability('tool/lp:planview', $authrole->id);
         unassign_capability('tool/lp:templatemanage', $authrole->id);
         unassign_capability('tool/lp:templateread', $authrole->id);
 
@@ -111,9 +111,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         assign_capability('tool/lp:competencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:competencyread', CAP_ALLOW, $this->userrole, $syscontext->id);
-        assign_capability('tool/lp:planmanageall', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:planmanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->creatorrole, $syscontext->id);
-        assign_capability('tool/lp:planviewall', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:planview', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:templatemanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $syscontext->id);
 
@@ -1052,7 +1052,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
-        assign_capability('tool/lp:plancreatedraft', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('tool/lp:plancreateown', CAP_ALLOW, $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($this->user);
@@ -1095,7 +1095,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
 
         unassign_capability('tool/lp:planmanageown', $this->userrole, $syscontext->id);
-        unassign_capability('tool/lp:plancreatedraft', $this->userrole, $syscontext->id);
+        unassign_capability('tool/lp:plancreateown', $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         try {
@@ -1133,7 +1133,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $plan2['usercanupdate'] = false;
         $plan3['usercanupdate'] = false;
 
-        // You need planmanage, planmanageown or plancreatedraft to see draft plans.
+        // You need planmanage, planmanageown or plancreateown to see draft plans.
         try {
             external::read_plan($plan1['id']);
             $this->fail('Exception expected due to not permissions to read draft plan');
@@ -1143,13 +1143,13 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals((Array)$plan2, external::read_plan($plan2['id']));
         $this->assertEquals((Array)$plan3, external::read_plan($plan3['id']));
 
-        assign_capability('tool/lp:plancreatedraft', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('tool/lp:plancreateown', CAP_ALLOW, $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->assertEquals((Array)$plan1, external::read_plan($plan1['id']));
 
         assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id);
-        unassign_capability('tool/lp:plancreatedraft', $this->userrole, $syscontext->id);
+        unassign_capability('tool/lp:plancreateown', $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         try {
@@ -1171,7 +1171,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $this->assertTrue(external::delete_plan($plan1['id']));
 
-        unassign_capability('tool/lp:planmanageall', $this->creatorrole, $syscontext->id);
+        unassign_capability('tool/lp:planmanage', $this->creatorrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         try {

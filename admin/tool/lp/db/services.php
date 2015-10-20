@@ -346,7 +346,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Creates a learning plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanageall',
+        'capabilities' => 'tool/lp:planmanage',
     ),
     'tool_lp_update_plan' => array(
         'classname'    => 'tool_lp\external',
@@ -354,7 +354,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Updates a learning plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanageall',
+        'capabilities' => 'tool/lp:planmanage',
     ),
     'tool_lp_read_plan' => array(
         'classname'    => 'tool_lp\external',
@@ -370,7 +370,7 @@ $functions = array(
         'classpath'    => '',
         'description'  => 'Delete a learning plan.',
         'type'         => 'write',
-        'capabilities' => 'tool/lp:planmanageall',
+        'capabilities' => 'tool/lp:planmanage',
     ),
     'tool_lp_data_for_plans_page' => array(
         'classname'    => 'tool_lp\external',

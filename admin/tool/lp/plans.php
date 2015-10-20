@@ -43,11 +43,11 @@ if (!$user || !core_user::is_real_user($userid)) {
     throw new moodle_exception('invaliduser', 'error');
 }
 
-if (!has_capability('tool/lp:planviewall', $context)) {
+if (!has_capability('tool/lp:planview', $context)) {
     if ($iscurrentuser) {
         require_capability('tool/lp:planviewown', $context);
     } else {
-        throw new required_capability_exception($context, 'tool/lp:planviewall', 'nopermissions', '');
+        throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
     }
 }
 

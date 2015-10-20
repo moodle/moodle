@@ -60,14 +60,14 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/block:view'
     ),
-    'tool/lp:plancreatedraft' => array(
+    'tool/lp:plancreateown' => array(
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_USER,
         'archetypes' => array(
         ),
         'clonepermissionsfrom' => 'moodle/site:config'
     ),
-    'tool/lp:planmanageall' => array(
+    'tool/lp:planmanage' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
@@ -81,7 +81,7 @@ $capabilities = array(
         ),
         'clonepermissionsfrom' => 'moodle/site:config'
     ),
-    'tool/lp:planviewall' => array(
+    'tool/lp:planview' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_USER,
         'archetypes' => array(

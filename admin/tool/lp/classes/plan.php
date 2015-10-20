@@ -101,7 +101,7 @@ class plan extends persistent {
         $context = context_user::instance($userid);
 
         // Not all users can edit all plans, the template should know about it.
-        if (has_capability('tool/lp:planmanageall', $context) ||
+        if (has_capability('tool/lp:planmanage', $context) ||
                 has_capability('tool/lp:planmanageown', $context)) {
             return true;
         }
