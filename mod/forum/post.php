@@ -360,24 +360,6 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
                     $discussionurl = new moodle_url("/mod/forum/discuss.php", array('d' => $discussion->id));
                 }
 
-                $params = array(
-                    'context' => $modcontext,
-                    'objectid' => $post->id,
-                    'other' => array(
-                        'discussionid' => $discussion->id,
-                        'forumid' => $forum->id,
-                        'forumtype' => $forum->type,
-                    )
-                );
-
-                if ($post->userid !== $USER->id) {
-                    $params['relateduserid'] = $post->userid;
-                }
-                $event = \mod_forum\event\post_deleted::create($params);
-                $event->add_record_snapshot('forum_posts', $post);
-                $event->add_record_snapshot('forum_discussions', $discussion);
-                $event->trigger();
-
                 redirect(forum_go_back_to($discussionurl));
             } else {
                 print_error('errorwhiledelete', 'forum');
