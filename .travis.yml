@@ -1,5 +1,10 @@
 sudo: false
 
+# We currently disable Travis notifications entirely until https://github.com/travis-ci/travis-ci/issues/4976
+# is fixed.
+notifications:
+  email: false
+
 language: php
 
 php:
