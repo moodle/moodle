@@ -59,15 +59,18 @@ class report extends \mod_scorm\report {
             $includeqtext = $fromform->qtext;
             $includeresp = $fromform->resp;
             $includeright = $fromform->right;
+            $includeresult = $fromform->result;
             set_user_preference('scorm_report_pagesize', $pagesize);
             set_user_preference('scorm_report_interactions_qtext', $includeqtext);
             set_user_preference('scorm_report_interactions_resp', $includeresp);
             set_user_preference('scorm_report_interactions_right', $includeright);
+            set_user_preference('scorm_report_interactions_result', $includeresult);
         } else {
             $pagesize = get_user_preferences('scorm_report_pagesize', 0);
             $includeqtext = get_user_preferences('scorm_report_interactions_qtext', 0);
             $includeresp = get_user_preferences('scorm_report_interactions_resp', 1);
             $includeright = get_user_preferences('scorm_report_interactions_right', 0);
+            $includeresult = get_user_preferences('scorm_report_interactions_result', 0);
         }
         if ($pagesize < 1) {
             $pagesize = SCORM_REPORT_DEFAULT_PAGE_SIZE;
@@ -79,6 +82,7 @@ class report extends \mod_scorm\report {
         $displayoptions['qtext'] = $includeqtext;
         $displayoptions['resp'] = $includeresp;
         $displayoptions['right'] = $includeright;
+        $displayoptions['result'] = $includeresult;
 
         $mform->set_data($displayoptions + array('pagesize' => $pagesize));
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used.
@@ -204,6 +208,10 @@ class report extends \mod_scorm\report {
                     $columns[] = 'right' . $id;
                     $headers[] = get_string('rightanswerx', 'scormreport_interactions', $id);
                 }
+                if ($displayoptions['result']) {
+                    $columns[] = 'result' . $id;
+                    $headers[] = get_string('resultx', 'scormreport_interactions', $id);
+                }
             }
 
             if (!$download) {
@@ -238,6 +246,9 @@ class report extends \mod_scorm\report {
                     }
                     if ($displayoptions['right']) {
                         $table->no_sorting('right'.$id);
+                    }
+                    if ($displayoptions['result']) {
+                        $table->no_sorting('result'.$id);
                     }
                 }
 
@@ -522,6 +533,14 @@ class report extends \mod_scorm\report {
                                                 $element = 'cmi.interactions_'.$i.'.correct_responses_'.$j.'.pattern';
                                             }
                                             $row[] = $rightans;
+                                        } else {
+                                            $row[] = '&nbsp;';
+                                        }
+                                    }
+                                    if ($displayoptions['result']) {
+                                        $element = 'cmi.interactions_'.$i.'.result';
+                                        if (isset($trackdata->$element)) {
+                                            $row[] = s($trackdata->$element);
                                         } else {
                                             $row[] = '&nbsp;';
                                         }
