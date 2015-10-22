@@ -15,19 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Definition of auth_ldap tasks.
  *
- * @package    auth_cas
- * @author     Martin Dougiamas
- * @author     Jerome GUTIERREZ
- * @author     Iñaki Arenaza
+ * @package    auth_ldap
+ * @category   task
+ * @copyright  2015 Vadim Dvorovenko <Vadimon@mail.ru>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015100600;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015050500;        // Requires this Moodle version
-$plugin->component = 'auth_cas';        // Full name of the plugin (used for diagnostics)
-
-$plugin->dependencies = array('auth_ldap' => 2015050500);
+$tasks = array(
+    array(
+        'classname' => 'auth_ldap\task\sync_task',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '0',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 1
+    )
+);
