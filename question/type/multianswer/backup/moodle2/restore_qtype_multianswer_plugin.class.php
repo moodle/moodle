@@ -118,7 +118,8 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
                         question_bank::get_qtype($wrapped->qtype)->get_question_options($wrapped);
                         if (isset($wrapped->options->shuffleanswers)) {
                             preg_match('/'.ANSWER_REGEX.'/s', $wrapped->questiontext, $answerregs);
-                            if ($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE] != '' ) {
+                            if (isset($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE]) &&
+                                    $answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE] !== '') {
                                 $wrapped->options->shuffleanswers = 0;
                                 $DB->set_field_select('qtype_multichoice_options', 'shuffleanswers', '0', "id =:select",
                                     array('select' => $wrapped->options->id) );
