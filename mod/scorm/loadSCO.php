@@ -60,15 +60,8 @@ if (!isloggedin()) { // Prevent login page from being shown in iframe.
 
 require_login($course, false, $cm, false); // Call require_login anyway to set up globals correctly.
 
-// Check if scorm closed.
-$timenow = time();
-if ($scorm->timeclose != 0) {
-    if ($scorm->timeopen > $timenow) {
-        print_error('notopenyet', 'scorm', null, userdate($scorm->timeopen));
-    } else if ($timenow > $scorm->timeclose) {
-        print_error('expired', 'scorm', null, userdate($scorm->timeclose));
-    }
-}
+// Check if SCORM is available.
+scorm_require_available($scorm);
 
 $context = context_module::instance($cm->id);
 
