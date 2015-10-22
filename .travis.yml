@@ -1,3 +1,7 @@
+# PLEASE NOTE: Travis is not currently utilised by the Moodle core integration
+# process (which uses our internal CI system) this file is here for the benefit
+# of community developers git clones - see MDL-51458.
+
 sudo: false
 
 # We currently disable Travis notifications entirely until https://github.com/travis-ci/travis-ci/issues/4976
