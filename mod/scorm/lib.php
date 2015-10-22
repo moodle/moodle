@@ -948,7 +948,7 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
  * @return bool false if file not found, does not return if found - just send the file
  */
 function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
-    global $CFG;
+    global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -956,7 +956,17 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
 
     require_login($course, true, $cm);
 
+    $canmanageactivity = has_capability('moodle/course:manageactivities', $context);
     $lifetime = null;
+
+    // Check SCORM availability.
+    if (!$canmanageactivity) {
+        $scorm = $DB->get_record('scorm', array('id' => $cm->instance), 'id, timeopen, timeclose', MUST_EXIST);
+        list($available, $warnings) = scorm_get_availability_status($scorm);
+        if (!$available) {
+            return false;
+        }
+    }
 
     if ($filearea === 'content') {
         $revision = (int)array_shift($args); // Prevents caching problems - ignored here.
@@ -965,7 +975,7 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
         // TODO: add any other access restrictions here if needed!
 
     } else if ($filearea === 'package') {
-        if (!has_capability('moodle/course:manageactivities', $context)) {
+        if (!$canmanageactivity) {
             return false;
         }
         $revision = (int)array_shift($args); // Prevents caching problems - ignored here.

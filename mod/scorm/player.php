@@ -116,22 +116,16 @@ if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', cont
     die;
 }
 
-// Check if scorm closed.
-$timenow = time();
-if ($scorm->timeclose !=0) {
-    if ($scorm->timeopen > $timenow) {
-        echo $OUTPUT->header();
-        echo $OUTPUT->box(get_string("notopenyet", "scorm", userdate($scorm->timeopen)), "generalbox boxaligncenter");
-        echo $OUTPUT->footer();
-        die;
-    } else if ($timenow > $scorm->timeclose) {
-        echo $OUTPUT->header();
-        echo $OUTPUT->box(get_string("expired", "scorm", userdate($scorm->timeclose)), "generalbox boxaligncenter");
-        echo $OUTPUT->footer();
-
-        die;
-    }
+// Check if SCORM available.
+list($available, $warnings) = scorm_get_availability_status($scorm);
+if (!$available) {
+    $reason = current(array_keys($warnings));
+    echo $OUTPUT->header();
+    echo $OUTPUT->box(get_string($reason, "scorm", $warnings[$reason]), "generalbox boxaligncenter");
+    echo $OUTPUT->footer();
+    die;
 }
+
 // TOC processing
 $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe.
 if (!file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php')) {
