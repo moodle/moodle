@@ -87,8 +87,8 @@ class plans_page implements renderable, templatable {
         if ($this->plans) {
             foreach ($this->plans as $plan) {
                 $record = $plan->to_record();
-                $record['statusname'] = $plan->get_statusname();
-                $record['usercanupdate'] = $plan->can_update();
+                $record->statusname = $plan->get_statusname();
+                $record->usercanupdate = $plan->can_update();
                 $data->plans[] = $record;
             }
         }

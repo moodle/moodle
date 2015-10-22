@@ -1337,7 +1337,7 @@ class external extends external_api {
         $includerelated = new external_value(
             PARAM_BOOL,
             'Include or not related competencies',
-            VALUE_OPTIONAL,
+            VALUE_DEFAULT,
             false
         );
 
