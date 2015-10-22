@@ -385,6 +385,18 @@ class behat_hooks extends behat_base {
     }
 
     /**
+     * Executed after scenario having switch window to restart session.
+     * This is needed to close all extra browser windows and starting
+     * one browser window.
+     *
+     * @param ScenarioEvent $event event fired after scenario.
+     * @AfterScenario @_switch_window
+     */
+    public function after_scenario_switchwindow(ScenarioEvent $event) {
+        $this->getSession()->restart();
+    }
+
+    /**
      * Getter for self::$faildumpdirname
      *
      * @return string
