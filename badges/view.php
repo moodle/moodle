@@ -75,6 +75,8 @@ if ($type == BADGE_TYPE_SITE) {
     $PAGE->set_heading($title);
 }
 
+require_capability('moodle/badges:viewbadges', $PAGE->context);
+
 $PAGE->set_title($title);
 $output = $PAGE->get_renderer('core', 'badges');
 
