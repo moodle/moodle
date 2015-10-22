@@ -1269,6 +1269,7 @@ $services = array(
             'mod_lti_view_lti',
             'mod_imscp_view_imscp',
             'mod_imscp_get_imscps_by_courses',
+            'mod_wiki_get_wikis_by_courses',
             ),
         'enabled' => 0,
         'restrictedusers' => 0,
