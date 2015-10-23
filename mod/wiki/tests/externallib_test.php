@@ -58,16 +58,88 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
 
         // Create users.
         $this->student = self::getDataGenerator()->create_user();
+        $this->student2 = self::getDataGenerator()->create_user();
         $this->teacher = self::getDataGenerator()->create_user();
 
         // Users enrolments.
         $this->studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
         $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($this->student2->id, $this->course->id, $this->studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherrole->id, 'manual');
 
-        // Create first page.
+        // Create first pages.
         $this->firstpage = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_first_page($this->wiki);
+    }
+
+    /**
+     * Create two collaborative wikis (separate/visible groups), 2 groups and a first page for each wiki and group.
+     */
+    private function create_collaborative_wikis_with_groups() {
+        // Create groups and add student to one of them.
+        if (!isset($this->group1)) {
+            $this->group1 = $this->getDataGenerator()->create_group(array('courseid' => $this->course->id));
+            $this->getDataGenerator()->create_group_member(array('userid' => $this->student->id, 'groupid' => $this->group1->id));
+            $this->getDataGenerator()->create_group_member(array('userid' => $this->student2->id, 'groupid' => $this->group1->id));
+        }
+        if (!isset($this->group2)) {
+            $this->group2 = $this->getDataGenerator()->create_group(array('courseid' => $this->course->id));
+        }
+
+        // Create two collaborative wikis.
+        $this->wikisep = $this->getDataGenerator()->create_module('wiki',
+                                                        array('course' => $this->course->id, 'groupmode' => SEPARATEGROUPS));
+        $this->wikivis = $this->getDataGenerator()->create_module('wiki',
+                                                        array('course' => $this->course->id, 'groupmode' => VISIBLEGROUPS));
+
+        // Create pages.
+        $wikigenerator = $this->getDataGenerator()->get_plugin_generator('mod_wiki');
+        $this->fpsepg1 = $wikigenerator->create_first_page($this->wikisep, array('group' => $this->group1->id));
+        $this->fpsepg2 = $wikigenerator->create_first_page($this->wikisep, array('group' => $this->group2->id));
+        $this->fpsepall = $wikigenerator->create_first_page($this->wikisep, array('group' => 0)); // All participants.
+        $this->fpvisg1 = $wikigenerator->create_first_page($this->wikivis, array('group' => $this->group1->id));
+        $this->fpvisg2 = $wikigenerator->create_first_page($this->wikivis, array('group' => $this->group2->id));
+        $this->fpvisall = $wikigenerator->create_first_page($this->wikivis, array('group' => 0)); // All participants.
+    }
+
+    /**
+     * Create two individual wikis (separate/visible groups), 2 groups and a first page for each wiki and group.
+     */
+    private function create_individual_wikis_with_groups() {
+        // Create groups and add student to one of them.
+        if (!isset($this->group1)) {
+            $this->group1 = $this->getDataGenerator()->create_group(array('courseid' => $this->course->id));
+            $this->getDataGenerator()->create_group_member(array('userid' => $this->student->id, 'groupid' => $this->group1->id));
+            $this->getDataGenerator()->create_group_member(array('userid' => $this->student2->id, 'groupid' => $this->group1->id));
+        }
+        if (!isset($this->group2)) {
+            $this->group2 = $this->getDataGenerator()->create_group(array('courseid' => $this->course->id));
+        }
+
+        // Create two individual wikis.
+        $this->wikisepind = $this->getDataGenerator()->create_module('wiki', array('course' => $this->course->id,
+                                                        'groupmode' => SEPARATEGROUPS, 'wikimode' => 'individual'));
+        $this->wikivisind = $this->getDataGenerator()->create_module('wiki', array('course' => $this->course->id,
+                                                        'groupmode' => VISIBLEGROUPS, 'wikimode' => 'individual'));
+
+        // Create pages. Student can only create pages in his groups.
+        $wikigenerator = $this->getDataGenerator()->get_plugin_generator('mod_wiki');
+        $this->setUser($this->teacher);
+        $this->fpsepg1indt = $wikigenerator->create_first_page($this->wikisepind, array('group' => $this->group1->id));
+        $this->fpsepg2indt = $wikigenerator->create_first_page($this->wikisepind, array('group' => $this->group2->id));
+        $this->fpsepallindt = $wikigenerator->create_first_page($this->wikisepind, array('group' => 0)); // All participants.
+        $this->fpvisg1indt = $wikigenerator->create_first_page($this->wikivisind, array('group' => $this->group1->id));
+        $this->fpvisg2indt = $wikigenerator->create_first_page($this->wikivisind, array('group' => $this->group2->id));
+        $this->fpvisallindt = $wikigenerator->create_first_page($this->wikivisind, array('group' => 0)); // All participants.
+
+        $this->setUser($this->student);
+        $this->fpsepg1indstu = $wikigenerator->create_first_page($this->wikisepind, array('group' => $this->group1->id));
+        $this->fpvisg1indstu = $wikigenerator->create_first_page($this->wikivisind, array('group' => $this->group1->id));
+
+        $this->setUser($this->student2);
+        $this->fpsepg1indstu2 = $wikigenerator->create_first_page($this->wikisepind, array('group' => $this->group1->id));
+        $this->fpvisg1indstu2 = $wikigenerator->create_first_page($this->wikivisind, array('group' => $this->group1->id));
+
     }
 
     /*
@@ -370,6 +442,435 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
+    }
+
+    /**
+     * Test get_subwiki_pages using an invalid wiki instance.
+     */
+    public function test_get_subwiki_pages_invalid_instance() {
+        $this->setExpectedException('moodle_exception');
+        mod_wiki_external::get_subwiki_pages(0);
+    }
+
+    /**
+     * Test get_subwiki_pages using a user not enrolled in the course.
+     */
+    public function test_get_subwiki_pages_unenrolled_user() {
+        // Create and use the user.
+        $usernotenrolled = self::getDataGenerator()->create_user();
+        $this->setUser($usernotenrolled);
+
+        $this->setExpectedException('require_login_exception');
+        mod_wiki_external::get_subwiki_pages($this->wiki->id);
+    }
+
+    /**
+     * Test get_subwiki_pages using a hidden wiki as student.
+     */
+    public function test_get_subwiki_pages_hidden_wiki_as_student() {
+        // Create a hidden wiki and try to get the list of pages.
+        $hiddenwiki = $this->getDataGenerator()->create_module('wiki',
+                            array('course' => $this->course->id, 'visible' => false));
+
+        $this->setUser($this->student);
+        $this->setExpectedException('require_login_exception');
+        mod_wiki_external::get_subwiki_pages($hiddenwiki->id);
+    }
+
+    /**
+     * Test get_subwiki_pages without the viewpage capability.
+     */
+    public function test_get_subwiki_pages_without_viewpage_capability() {
+        // Prohibit capability = mod/wiki:viewpage on the course for students.
+        $contextcourse = context_course::instance($this->course->id);
+        assign_capability('mod/wiki:viewpage', CAP_PROHIBIT, $this->studentrole->id, $contextcourse->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_wiki_external::get_subwiki_pages($this->wiki->id);
+    }
+
+    /**
+     * Test get_subwiki_pages using an invalid userid.
+     */
+    public function test_get_subwiki_pages_invalid_userid() {
+        // Create an individual wiki.
+        $indwiki = $this->getDataGenerator()->create_module('wiki',
+                                array('course' => $this->course->id, 'wikimode' => 'individual'));
+
+        $this->setExpectedException('moodle_exception');
+        mod_wiki_external::get_subwiki_pages($indwiki->id, 0, -10);
+    }
+
+    /**
+     * Test get_subwiki_pages using an invalid groupid.
+     */
+    public function test_get_subwiki_pages_invalid_groupid() {
+        // Create testing data.
+        $this->create_collaborative_wikis_with_groups();
+
+        $this->setExpectedException('moodle_exception');
+        mod_wiki_external::get_subwiki_pages($this->wikisep->id, -111);
+    }
+
+    /**
+     * Test get_subwiki_pages, check that a student can't see another user pages in an individual wiki without groups.
+     */
+    public function test_get_subwiki_pages_individual_student_see_other_user() {
+        // Create an individual wiki.
+        $indwiki = $this->getDataGenerator()->create_module('wiki',
+                                array('course' => $this->course->id, 'wikimode' => 'individual'));
+
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_wiki_external::get_subwiki_pages($indwiki->id, 0, $this->teacher->id);
+    }
+
+    /**
+     * Test get_subwiki_pages, check that a student can't get the pages from another group in
+     * a collaborative wiki using separate groups.
+     */
+    public function test_get_subwiki_pages_collaborative_separate_groups_student_see_other_group() {
+        // Create testing data.
+        $this->create_collaborative_wikis_with_groups();
+
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_wiki_external::get_subwiki_pages($this->wikisep->id, $this->group2->id);
+    }
+
+    /**
+     * Test get_subwiki_pages, check that a student can't get the pages from another group in
+     * an individual wiki using separate groups.
+     */
+    public function test_get_subwiki_pages_individual_separate_groups_student_see_other_group() {
+        // Create testing data.
+        $this->create_individual_wikis_with_groups();
+
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_wiki_external::get_subwiki_pages($this->wikisepind->id, $this->group2->id, $this->teacher->id);
+    }
+
+    /**
+     * Test get_subwiki_pages, check that a student can't get the pages from all participants in
+     * a collaborative wiki using separate groups.
+     */
+    public function test_get_subwiki_pages_collaborative_separate_groups_student_see_all_participants() {
+        // Create testing data.
+        $this->create_collaborative_wikis_with_groups();
+
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_wiki_external::get_subwiki_pages($this->wikisep->id, 0);
+    }
+
+    /**
+     * Test get_subwiki_pages, check that a student can't get the pages from all participants in
+     * an individual wiki using separate groups.
+     */
+    public function test_get_subwiki_pages_individual_separate_groups_student_see_all_participants() {
+        // Create testing data.
+        $this->create_individual_wikis_with_groups();
+
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_wiki_external::get_subwiki_pages($this->wikisepind->id, 0, $this->teacher->id);
+    }
+
+    /**
+     * Test get_subwiki_pages without groups and collaborative wiki.
+     */
+    public function test_get_subwiki_pages_collaborative() {
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Set expected result: first page.
+        $expectedpages = array();
+        $expectedfirstpage = (array) $this->firstpage;
+        $expectedfirstpage['caneditpage'] = true; // No groups and students have 'mod/wiki:editpage' capability.
+        $expectedfirstpage['firstpage'] = true;
+        $expectedfirstpage['contentformat'] = 1;
+        $expectedpages[] = $expectedfirstpage;
+
+        $result = mod_wiki_external::get_subwiki_pages($this->wiki->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that groupid param is ignored since the wiki isn't using groups.
+        $result = mod_wiki_external::get_subwiki_pages($this->wiki->id, 1234);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that userid param is ignored since the wiki is collaborative.
+        $result = mod_wiki_external::get_subwiki_pages($this->wiki->id, 1234, 1234);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Add a new page to the wiki and test again. We'll use a custom title so it's returned first if sorted by title.
+        $newpage = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_page(
+                                $this->wiki, array('title' => 'AAA'));
+
+        $expectednewpage = (array) $newpage;
+        $expectednewpage['caneditpage'] = true; // No groups and students have 'mod/wiki:editpage' capability.
+        $expectednewpage['firstpage'] = false;
+        $expectednewpage['contentformat'] = 1;
+        array_unshift($expectedpages, $expectednewpage); // Add page to the beginning since it orders by title by default.
+
+        $result = mod_wiki_external::get_subwiki_pages($this->wiki->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Now we'll order by ID. Since first page was created first it'll have a lower ID.
+        $expectedpages = array($expectedfirstpage, $expectednewpage);
+        $result = mod_wiki_external::get_subwiki_pages($this->wiki->id, 0, 0, array('sortby' => 'id'));
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that WS doesn't return page content if includecontent is false.
+        unset($expectedpages[0]['cachedcontent']);
+        unset($expectedpages[0]['contentformat']);
+        unset($expectedpages[1]['cachedcontent']);
+        unset($expectedpages[1]['contentformat']);
+        $result = mod_wiki_external::get_subwiki_pages($this->wiki->id, 0, 0, array('sortby' => 'id', 'includecontent' => 0));
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+    }
+
+    /**
+     * Test get_subwiki_pages without groups.
+     */
+    public function test_get_subwiki_pages_individual() {
+
+        // Create an individual wiki to test userid param.
+        $indwiki = $this->getDataGenerator()->create_module('wiki',
+                                array('course' => $this->course->id, 'wikimode' => 'individual'));
+
+        // Perform a request before creating any page to check that an empty array is returned if subwiki doesn't exist.
+        $result = mod_wiki_external::get_subwiki_pages($indwiki->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals(array(), $result['pages']);
+
+        // Create first pages as student and teacher.
+        $this->setUser($this->student);
+        $indfirstpagestudent = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_first_page($indwiki);
+        $this->setUser($this->teacher);
+        $indfirstpageteacher = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_first_page($indwiki);
+
+        // Check that teacher can get his pages.
+        $expectedteacherpage = (array) $indfirstpageteacher;
+        $expectedteacherpage['caneditpage'] = true;
+        $expectedteacherpage['firstpage'] = true;
+        $expectedteacherpage['contentformat'] = 1;
+        $expectedpages = array($expectedteacherpage);
+
+        $result = mod_wiki_external::get_subwiki_pages($indwiki->id, 0, $this->teacher->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that the teacher can see the student's pages.
+        $expectedstudentpage = (array) $indfirstpagestudent;
+        $expectedstudentpage['caneditpage'] = true;
+        $expectedstudentpage['firstpage'] = true;
+        $expectedstudentpage['contentformat'] = 1;
+        $expectedpages = array($expectedstudentpage);
+
+        $result = mod_wiki_external::get_subwiki_pages($indwiki->id, 0, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Now check that student can get his pages.
+        $this->setUser($this->student);
+
+        $result = mod_wiki_external::get_subwiki_pages($indwiki->id, 0, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that not using userid uses current user.
+        $result = mod_wiki_external::get_subwiki_pages($indwiki->id, 0);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+    }
+
+    /**
+     * Test get_subwiki_pages with groups and collaborative wikis.
+     */
+    public function test_get_subwiki_pages_separate_groups_collaborative() {
+
+        // Create testing data.
+        $this->create_collaborative_wikis_with_groups();
+
+        $this->setUser($this->student);
+
+        // Try to get pages from a valid group in separate groups wiki.
+
+        $expectedpage = (array) $this->fpsepg1;
+        $expectedpage['caneditpage'] = true; // User belongs to group and has 'mod/wiki:editpage' capability.
+        $expectedpage['firstpage'] = true;
+        $expectedpage['contentformat'] = 1;
+        $expectedpages = array($expectedpage);
+
+        $result = mod_wiki_external::get_subwiki_pages($this->wikisep->id, $this->group1->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Let's check that not using groupid returns the same result (current group).
+        $result = mod_wiki_external::get_subwiki_pages($this->wikisep->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that teacher can view a group pages without belonging to it.
+        $this->setUser($this->teacher);
+        $result = mod_wiki_external::get_subwiki_pages($this->wikisep->id, $this->group1->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that teacher can get the pages from all participants.
+        $expectedpage = (array) $this->fpsepall;
+        $expectedpage['caneditpage'] = true;
+        $expectedpage['firstpage'] = true;
+        $expectedpage['contentformat'] = 1;
+        $expectedpages = array($expectedpage);
+
+        $result = mod_wiki_external::get_subwiki_pages($this->wikisep->id, 0);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+    }
+
+    /**
+     * Test get_subwiki_pages with groups and collaborative wikis.
+     */
+    public function test_get_subwiki_pages_visible_groups_collaborative() {
+
+        // Create testing data.
+        $this->create_collaborative_wikis_with_groups();
+
+        $this->setUser($this->student);
+
+        // Try to get pages from a valid group in visible groups wiki.
+
+        $expectedpage = (array) $this->fpvisg1;
+        $expectedpage['caneditpage'] = true; // User belongs to group and has 'mod/wiki:editpage' capability.
+        $expectedpage['firstpage'] = true;
+        $expectedpage['contentformat'] = 1;
+        $expectedpages = array($expectedpage);
+
+        $result = mod_wiki_external::get_subwiki_pages($this->wikivis->id, $this->group1->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that with visible groups a student can get the pages of groups he doesn't belong to.
+        $expectedpage = (array) $this->fpvisg2;
+        $expectedpage['caneditpage'] = false; // User doesn't belong to group so he can't edit the page.
+        $expectedpage['firstpage'] = true;
+        $expectedpage['contentformat'] = 1;
+        $expectedpages = array($expectedpage);
+
+        $result = mod_wiki_external::get_subwiki_pages($this->wikivis->id, $this->group2->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that with visible groups a student can get the pages of all participants.
+        $expectedpage = (array) $this->fpvisall;
+        $expectedpage['caneditpage'] = false;
+        $expectedpage['firstpage'] = true;
+        $expectedpage['contentformat'] = 1;
+        $expectedpages = array($expectedpage);
+
+        $result = mod_wiki_external::get_subwiki_pages($this->wikivis->id, 0);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+    }
+
+    /**
+     * Test get_subwiki_pages with groups and individual wikis.
+     */
+    public function test_get_subwiki_pages_separate_groups_individual() {
+
+        // Create testing data.
+        $this->create_individual_wikis_with_groups();
+
+        $this->setUser($this->student);
+
+        // Check that student can retrieve his pages from separate wiki.
+        $expectedpage = (array) $this->fpsepg1indstu;
+        $expectedpage['caneditpage'] = true;
+        $expectedpage['firstpage'] = true;
+        $expectedpage['contentformat'] = 1;
+        $expectedpages = array($expectedpage);
+
+        $result = mod_wiki_external::get_subwiki_pages($this->wikisepind->id, $this->group1->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that not using userid uses current user.
+        $result = mod_wiki_external::get_subwiki_pages($this->wikisepind->id, $this->group1->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that the teacher can see the student pages.
+        $this->setUser($this->teacher);
+        $result = mod_wiki_external::get_subwiki_pages($this->wikisepind->id, $this->group1->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that a student can see pages from another user that belongs to his groups.
+        $this->setUser($this->student);
+        $expectedpage = (array) $this->fpsepg1indstu2;
+        $expectedpage['caneditpage'] = false;
+        $expectedpage['firstpage'] = true;
+        $expectedpage['contentformat'] = 1;
+        $expectedpages = array($expectedpage);
+
+        $result = mod_wiki_external::get_subwiki_pages($this->wikisepind->id, $this->group1->id, $this->student2->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+    }
+
+    /**
+     * Test get_subwiki_pages with groups and individual wikis.
+     */
+    public function test_get_subwiki_pages_visible_groups_individual() {
+
+        // Create testing data.
+        $this->create_individual_wikis_with_groups();
+
+        $this->setUser($this->student);
+
+        // Check that student can retrieve his pages from visible wiki.
+        $expectedpage = (array) $this->fpvisg1indstu;
+        $expectedpage['caneditpage'] = true;
+        $expectedpage['firstpage'] = true;
+        $expectedpage['contentformat'] = 1;
+        $expectedpages = array($expectedpage);
+
+        $result = mod_wiki_external::get_subwiki_pages($this->wikivisind->id, $this->group1->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that student can see teacher pages in visible groups, even if the user doesn't belong to the group.
+        $expectedpage = (array) $this->fpvisg2indt;
+        $expectedpage['caneditpage'] = false;
+        $expectedpage['firstpage'] = true;
+        $expectedpage['contentformat'] = 1;
+        $expectedpages = array($expectedpage);
+
+        $result = mod_wiki_external::get_subwiki_pages($this->wikivisind->id, $this->group2->id, $this->teacher->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Check that with visible groups a student can get the pages of all participants.
+        $expectedpage = (array) $this->fpvisallindt;
+        $expectedpage['caneditpage'] = false;
+        $expectedpage['firstpage'] = true;
+        $expectedpage['contentformat'] = 1;
+        $expectedpages = array($expectedpage);
+
+        $result = mod_wiki_external::get_subwiki_pages($this->wikivisind->id, 0, $this->teacher->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_subwiki_pages_returns(), $result);
+        $this->assertEquals($expectedpages, $result['pages']);
     }
 
 }
