@@ -42,3 +42,4 @@ Por favor use a opção --help.';
 $string['cliyesnoprompt'] = 'digite s (sim) ou n (não)';
 $string['environmentrequireinstall'] = 'deve ser instalado e habilitado';
 $string['environmentrequireversion'] = 'a versão {$a->needed} é necessária e você está usando a versão {$a->current}';
+$string['upgradekeyset'] = 'Chave de atualização (deixe em branco para não defini-la)';
