@@ -275,11 +275,6 @@ if (!wiki_user_can_view($subwiki, $wiki)) {
     print_error('cannotviewpage', 'wiki');
 }
 
-// Update 'viewed' state if required by completion system
-require_once($CFG->libdir . '/completionlib.php');
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
-
 if (($edit != - 1) and $PAGE->user_allowed_editing()) {
     $USER->editing = $edit;
 }
@@ -290,40 +285,19 @@ $wikipage->set_gid($currentgroup);
 $wikipage->set_page($page);
 
 $context = context_module::instance($cm->id);
-if($pageid) {
-    $event = \mod_wiki\event\page_viewed::create(
-            array(
-                'context' => $context,
-                'objectid' => $pageid
-                )
-            );
-    $event->add_record_snapshot('wiki_pages', $page);
-} else if($id) {
-    $event = \mod_wiki\event\course_module_viewed::create(
-            array(
-                'context' => $context,
-                'objectid' => $wiki->id
-                )
-            );
-} else if($wid && $title) {
-    $event = \mod_wiki\event\page_viewed::create(
-            array(
-                'context' => $context,
-                'objectid' => $page->id,
-                'relateduserid' => $uid,
-                'other' => array(
-                    'title' => $title,
-                    'wid' => $wid,
-                    'group' => $gid,
-                    'groupanduser' => $groupanduser)
-                )
-            );
-    $event->add_record_snapshot('wiki_pages', $page);
+if ($pageid) {
+    wiki_page_view($wiki, $page, $course, $cm, $context, null, null, $subwiki);
+} else if ($id) {
+    wiki_view($wiki, $course, $cm, $context);
+} else if ($wid && $title) {
+    $other = array(
+        'title' => $title,
+        'wid' => $wid,
+        'group' => $gid,
+        'groupanduser' => $groupanduser
+    );
+    wiki_page_view($wiki, $page, $course, $cm, $context, $uid, $other, $subwiki);
 }
-$event->add_record_snapshot('course_modules', $cm);
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('wiki', $wiki);
-$event->trigger();
 
 $wikipage->print_header();
 $wikipage->print_content();
