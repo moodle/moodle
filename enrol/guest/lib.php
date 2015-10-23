@@ -358,7 +358,27 @@ class enrol_guest_plugin extends enrol_plugin {
      */
     public function can_hide_show_instance($instance) {
         $context = context_course::instance($instance->courseid);
-        return has_capability('enrol/guest:config', $context);
+        if (!has_capability('enrol/guest:config', $context)) {
+            return false;
+        }
+
+        // If the instance is currently disabled, before it can be enabled, we must check whether the password meets the
+        // password policies.
+        if ($instance->status == ENROL_INSTANCE_DISABLED) {
+            if ($this->get_config('requirepassword')) {
+                if (empty($instance->password)) {
+                    return false;
+                }
+            }
+
+            if ($this->get_config('usepasswordpolicy')) {
+                if (!check_password_policy($instance->password, $errmsg)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**

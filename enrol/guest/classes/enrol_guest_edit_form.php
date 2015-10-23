@@ -58,6 +58,10 @@ class enrol_guest_edit_form extends moodleform {
         $mform->addElement('passwordunmask', 'password', get_string('password', 'enrol_guest'));
         $mform->addHelpButton('password', 'password', 'enrol_guest');
 
+        if ($plugin->get_config('requirepassword')) {
+            $mform->addRule('password', get_string('required'), 'required', null);
+        }
+
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'courseid');
@@ -92,11 +96,8 @@ class enrol_guest_edit_form extends moodleform {
         }
 
         if ($checkpassword) {
-            $require = $plugin->get_config('requirepassword');
             $policy  = $plugin->get_config('usepasswordpolicy');
-            if ($require && empty($data['password'])) {
-                $errors['password'] = get_string('required');
-            } else if ($policy) {
+            if ($policy) {
                 $errmsg = '';
                 if (!check_password_policy($data['password'], $errmsg)) {
                     $errors['password'] = $errmsg;
