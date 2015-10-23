@@ -238,7 +238,7 @@ function resource_get_coursemodule_info($coursemodule) {
     }
 
     // If any optional extra details are turned on, store in custom data
-    $info->customdata = resource_get_optional_details($resource, $coursemodule);
+    $info->customdata = $resource->displayoptions;
 
     return $info;
 }
@@ -250,7 +250,11 @@ function resource_get_coursemodule_info($coursemodule) {
  * @param cm_info $cm Course module information
  */
 function resource_cm_info_view(cm_info $cm) {
-    $details = $cm->customdata;
+    global $CFG;
+    require_once($CFG->dirroot . '/mod/resource/locallib.php');
+
+    $resource = (object)array('displayoptions' => $cm->customdata);
+    $details = resource_get_optional_details($resource, $cm);
     if ($details) {
         $cm->set_after_link(' ' . html_writer::tag('span', $details,
                 array('class' => 'resourcelinkdetails')));
