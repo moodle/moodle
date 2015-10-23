@@ -1,4 +1,4 @@
-@mod @mod_resource
+@mod @mod_resource @_file_upload
 Feature: Teacher can specify different display options for the resource
   In order to provide more information about a file
   As a teacher
