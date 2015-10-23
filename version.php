@@ -33,7 +33,7 @@ $version  = 2015102000.00;              // YYYYMMDD      = weekly release date o
                                         //         RR    = release increments - 00 in DEV branches.
                                         //           .XX = incremental changes.
 
-$release  = '3.0dev+ (Build: 20151020)'; // Human-friendly version name
+$release  = '3.0dev (Build: 20151020)'; // Human-friendly version name
 
 $branch   = '30';                       // This version's branch.
 $maturity = MATURITY_ALPHA;             // This version's maturity level.
