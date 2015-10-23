@@ -395,4 +395,203 @@ class mod_wiki_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_subwiki_pages.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function get_subwiki_pages_parameters() {
+        return new external_function_parameters (
+            array(
+                'wikiid' => new external_value(PARAM_INT, 'Wiki instance ID.'),
+                'groupid' => new external_value(PARAM_INT, 'Subwiki\'s group ID, -1 means current group. It will be ignored'
+                                        . ' if the wiki doesn\'t use groups.', VALUE_DEFAULT, -1),
+                'userid' => new external_value(PARAM_INT, 'Subwiki\'s user ID, 0 means current user. It will be ignored'
+                                        .' in collaborative wikis.', VALUE_DEFAULT, 0),
+                'options' => new external_single_structure(
+                            array(
+                                    'sortby' => new external_value(PARAM_ALPHA,
+                                            'Field to sort by (id, title, ...).', VALUE_DEFAULT, 'title'),
+                                    'sortdirection' => new external_value(PARAM_ALPHA,
+                                            'Sort direction: ASC or DESC.', VALUE_DEFAULT, 'ASC'),
+                                    'includecontent' => new external_value(PARAM_INT,
+                                            'Include each page contents or not.', VALUE_DEFAULT, 1),
+                            ), 'Options', VALUE_DEFAULT, array()),
+            )
+        );
+    }
+
+    /**
+     * Returns the list of pages from a specific subwiki.
+     *
+     * @param int $wikiid The wiki instance ID.
+     * @param int $groupid The group ID. If not defined, use current group.
+     * @param int $userid The user ID. If not defined, use current user.
+     * @param array $options Several options like sort by, sort direction, ...
+     * @return array Containing a list of warnings and a list of pages.
+     * @since Moodle 3.1
+     */
+    public static function get_subwiki_pages($wikiid, $groupid = -1, $userid = 0, $options = array()) {
+        global $USER, $DB;
+
+        $returnedpages = array();
+        $warnings = array();
+
+        $params = self::validate_parameters(self::get_subwiki_pages_parameters(),
+                                            array(
+                                                'wikiid' => $wikiid,
+                                                'groupid' => $groupid,
+                                                'userid' => $userid,
+                                                'options' => $options
+                                                )
+            );
+
+        // Get wiki instance.
+        if (!$wiki = wiki_get_wiki($params['wikiid'])) {
+            throw new moodle_exception('incorrectwikiid', 'wiki');
+        }
+        list($course, $cm) = get_course_and_cm_from_instance($wiki, 'wiki');
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // Determine group.
+        $groupmode = groups_get_activity_groupmode($cm);
+        if ($groupmode == NOGROUPS) {
+            $groupid = 0;
+        } else if ($params['groupid'] == -1) {
+            // Use current group.
+            $groupid = groups_get_activity_group($cm);
+            $groupid = !empty($groupid) ? $groupid : 0;
+        } else {
+            $groupid = $params['groupid'];
+        }
+
+        // Determine user.
+        if ($wiki->wikimode == 'collaborative') {
+            // Collaborative wikis don't use userid in subwikis.
+            $userid = 0;
+        } else if (empty($params['userid'])) {
+            // Use current user.
+            $userid = $USER->id;
+        } else {
+            $userid = $params['userid'];
+        }
+
+        // Get subwiki based on group and user.
+        if (!$subwiki = wiki_get_subwiki_by_group($cm->instance, $groupid, $userid)) {
+            // The subwiki doesn't exist.
+            // Validate if user is valid.
+            if ($userid != 0 && $userid != $USER->id && !$user = $DB->get_record('user', array('id' => $userid))) {
+                throw new moodle_exception('invaliduserid', 'error');
+            }
+
+            // Validate that groupid is valid.
+            if ($groupid != 0 && !groups_group_exists($groupid)) {
+                throw new moodle_exception('cannotfindgroup', 'error');
+            }
+
+            // Valid data but subwiki not found. We'll simulate a subwiki object to check if the user would be able to see it
+            // if it existed. If he's able to see it then we'll return an empty array because the subwiki has no pages.
+            $subwiki = new stdClass();
+            $subwiki->wikiid = $wiki->id;
+            $subwiki->userid = $userid;
+            $subwiki->groupid = $groupid;
+
+            // Check that the user can view the subwiki. This function checks capabilities.
+            if (!wiki_user_can_view($subwiki, $wiki)) {
+                throw new moodle_exception('cannotviewpage', 'wiki');
+            }
+        } else {
+            // Check that the user can view the subwiki. This function checks capabilities.
+            if (!wiki_user_can_view($subwiki, $wiki)) {
+                throw new moodle_exception('cannotviewpage', 'wiki');
+            }
+
+            // Set sort param.
+            $options = $params['options'];
+            if (!empty($options['sortby'])) {
+                if ($options['sortdirection'] != 'ASC' && $options['sortdirection'] != 'DESC') {
+                    // Invalid sort direction. Use default.
+                    $options['sortdirection'] = 'ASC';
+                }
+                $sort = $options['sortby'] . ' ' . $options['sortdirection'];
+            }
+
+            $pages = wiki_get_page_list($subwiki->id, $sort);
+            $caneditpages = wiki_user_can_edit($subwiki);
+            $firstpage = wiki_get_first_page($subwiki->id);
+
+            foreach ($pages as $page) {
+                $retpage = array(
+                        'id' => $page->id,
+                        'subwikiid' => $page->subwikiid,
+                        'title' => external_format_string($page->title, $context->id),
+                        'timecreated' => $page->timecreated,
+                        'timemodified' => $page->timemodified,
+                        'timerendered' => $page->timerendered,
+                        'userid' => $page->userid,
+                        'pageviews' => $page->pageviews,
+                        'readonly' => $page->readonly,
+                        'caneditpage' => $caneditpages,
+                        'firstpage' => $page->id == $firstpage->id
+                    );
+
+                if ($options['includecontent']) {
+                    // Refresh page cached content if needed.
+                    if ($page->timerendered + WIKI_REFRESH_CACHE_TIME < time()) {
+                        if ($content = wiki_refresh_cachedcontent($page)) {
+                            $page = $content['page'];
+                        }
+                    }
+
+                    list($retpage['cachedcontent'], $retpage['contentformat']) = external_format_text(
+                                $page->cachedcontent, FORMAT_HTML, $context->id, 'mod_wiki', 'attachments', $subwiki->id);
+                }
+
+                $returnedpages[] = $retpage;
+            }
+
+        }
+
+        $result = array();
+        $result['pages'] = $returnedpages;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_subwiki_pages return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.1
+     */
+    public static function get_subwiki_pages_returns() {
+
+        return new external_single_structure(
+            array(
+                'pages' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'Page ID.'),
+                            'subwikiid' => new external_value(PARAM_INT, 'Page\'s subwiki ID.'),
+                            'title' => new external_value(PARAM_RAW, 'Page title.'),
+                            'timecreated' => new external_value(PARAM_INT, 'Time of creation.'),
+                            'timemodified' => new external_value(PARAM_INT, 'Time of last modification.'),
+                            'timerendered' => new external_value(PARAM_INT, 'Time of last renderization.'),
+                            'userid' => new external_value(PARAM_INT, 'ID of the user that last modified the page.'),
+                            'pageviews' => new external_value(PARAM_INT, 'Number of times the page has been viewed.'),
+                            'readonly' => new external_value(PARAM_INT, '1 if readonly, 0 otherwise.'),
+                            'caneditpage' => new external_value(PARAM_BOOL, 'True if user can edit the page.'),
+                            'firstpage' => new external_value(PARAM_BOOL, 'True if it\'s the first page.'),
+                            'cachedcontent' => new external_value(PARAM_RAW, 'Page contents.', VALUE_OPTIONAL),
+                            'contentformat' => new external_format_value('cachedcontent', VALUE_OPTIONAL),
+                        ), 'Pages'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
 }
