@@ -96,6 +96,32 @@ function theme_get_revision() {
     }
 }
 
+/**
+ * Checks if the given device has a theme defined in config.php.
+ *
+ * @return bool
+ */
+function theme_is_device_locked($device) {
+    global $CFG;
+    $themeconfigname = core_useragent::get_device_type_cfg_var_name($device);
+    return isset($CFG->config_php_settings[$themeconfigname]);
+}
+
+/**
+ * Returns the theme named defined in config.php for the given device.
+ *
+ * @return string or null
+ */
+function theme_get_locked_theme_for_device($device) {
+    global $CFG;
+
+    if (!theme_is_device_locked($device)) {
+        return null;
+    }
+
+    $themeconfigname = core_useragent::get_device_type_cfg_var_name($device);
+    return $CFG->config_php_settings[$themeconfigname];
+}
 
 /**
  * This class represents the configuration variables of a Moodle theme.
