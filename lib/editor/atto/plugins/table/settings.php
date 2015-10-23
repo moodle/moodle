@@ -50,16 +50,18 @@ if ($ADMIN->fulltree) {
 
     $name = new lang_string('borderstyles', 'atto_table');
     $desc = new lang_string('borderstyles_desc', 'atto_table');
-    $default = ['none' => 'none',
-    'hidden' => 'hidden',
-    'dotted' => 'dotted',
-    'dashed' => 'dashed',
-    'solid' => 'solid',
-    'double' => 'double',
-    'groove' => 'groove',
-    'ridge' => 'ridge',
-    'inset' => 'inset',
-    'outset' => 'outset'];
+    $default = array('initial' => new lang_string('initial', 'atto_table'),
+    'unset' => new lang_string('unset', 'atto_table'),
+    'none' => new lang_string('none', 'atto_table'),
+    'hidden' => new lang_string('hidden', 'atto_table'),
+    'dotted' => new lang_string('dotted', 'atto_table'),
+    'dashed' => new lang_string('dashed', 'atto_table'),
+    'solid' => new lang_string('solid', 'atto_table'),
+    'double' => new lang_string('double', 'atto_table'),
+    'groove' => new lang_string('groove', 'atto_table'),
+    'ridge' => new lang_string('ridge', 'atto_table'),
+    'inset' => new lang_string('inset', 'atto_table'),
+    'outset' => new lang_string('outset', 'atto_table'));
 
     $setting = new admin_setting_configmultiselect('atto_table/borderstyles',
                                                 $name,
