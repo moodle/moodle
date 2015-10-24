@@ -921,3 +921,29 @@ function choice_print_overview($courses, &$htmlarray) {
     }
     return;
 }
+
+/**
+ * Check if a choice is available for the current user.
+ *
+ * @param  stdClass  $choice            choice record
+ * @return array                       status (available or not and possible warnings)
+ */
+function choice_get_availability_status($choice) {
+    $available = true;
+    $warnings = array();
+
+    if ($choice->timeclose != 0) {
+        $timenow = time();
+
+        if ($choice->timeopen > $timenow) {
+            $available = false;
+            $warnings['notopenyet'] = userdate($choice->timeopen);
+        } else if ($timenow > $choice->timeclose) {
+            $available = false;
+            $warnings['expired'] = userdate($choice->timeclose);
+        }
+    }
+
+    // Choice is available.
+    return array($available, $warnings);
+}
