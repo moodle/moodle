@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['authnotexisting'] = 'The autorization plugin doesn\'t exist';
+$string['authnotexisting'] = 'The authorization plugin doesn\'t exist';
 $string['backupcontainexternal'] = 'This backup file contains external Moodle Network Hosts that are not configured locally';
 $string['backuptablefail'] = 'Backup tables could NOT be set up successfully!';
 $string['blockcannotconfig'] = 'This block does not support global configuration';
