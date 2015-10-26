@@ -125,6 +125,8 @@ class user_edit_form extends moodleform {
             // Disable fields that are locked by auth plugins.
             $fields = get_user_fieldnames();
             $authplugin = get_auth_plugin($user->auth);
+            $customfields = $authplugin->get_custom_user_profile_fields();
+            $fields = array_merge($fields, $customfields);
             foreach ($fields as $field) {
                 if ($field === 'description') {
                     // Hard coded hack for description field. See MDL-37704 for details.
@@ -135,14 +137,15 @@ class user_edit_form extends moodleform {
                 if (!$mform->elementExists($formfield)) {
                     continue;
                 }
+                $value = $mform->getElementValue($formfield);
                 $configvariable = 'field_lock_' . $field;
                 if (isset($authplugin->config->{$configvariable})) {
                     if ($authplugin->config->{$configvariable} === 'locked') {
                         $mform->hardFreeze($formfield);
-                        $mform->setConstant($formfield, $user->$field);
-                    } else if ($authplugin->config->{$configvariable} === 'unlockedifempty' and $user->$field != '') {
+                        $mform->setConstant($formfield, $value);
+                    } else if ($authplugin->config->{$configvariable} === 'unlockedifempty' and $value != '') {
                         $mform->hardFreeze($formfield);
-                        $mform->setConstant($formfield, $user->$field);
+                        $mform->setConstant($formfield, $value);
                     }
                 }
             }
