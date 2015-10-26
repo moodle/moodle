@@ -76,7 +76,8 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
                         $options = $DB->get_record('qtype_multichoice_options', array('questionid' => $wrapped->id), '*');
                         if (isset($options->shuffleanswers)) {
                             preg_match('/'.ANSWER_REGEX.'/s', $wrapped->questiontext, $answerregs);
-                            if ($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE] != '' ) {
+                            if (isset($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE]) &&
+                                    $answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE] !== '') {
                                 $DB->set_field('qtype_multichoice_options', 'shuffleanswers', '0',
                                         array('id' => $options->id) );
                             }
