@@ -44,6 +44,7 @@ define('CLI_SCRIPT', true);
 
 require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->libdir.'/clilib.php');
 
 // Ensure errors are well explained
 set_debugging(DEBUG_DEVELOPER, true);
