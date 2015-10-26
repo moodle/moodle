@@ -1,6 +1,10 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 2.9.3 ===
+
+* External function core_enrol_external::get_enrolled_users now returns only the viewable participants if the course has groups enabled and no groupid is passed.
+
 === 2.9 ===
 
 * External function core_enrol_external::get_users_courses now returns additional optional fields:

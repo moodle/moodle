@@ -378,7 +378,10 @@ class core_enrol_external extends external_api {
                         )
                     ), 'Option names:
                             * withcapability (string) return only users with this capability. This option requires \'moodle/role:review\' on the course context.
-                            * groupid (integer) return only users in this group id. This option requires \'moodle/site:accessallgroups\' on the course context.
+                            * groupid (integer) return only users in this group id. If the course has groups enabled and this param
+                                                isn\'t defined, returns all the viewable users.
+                                                This option requires \'moodle/site:accessallgroups\' on the course context if the
+                                                user doesn\'t belong to the group.
                             * onlyactive (integer) return only users with active enrolments and matching time restrictions. This option requires \'moodle/course:enrolreview\' on the course context.
                             * userfields (\'string, string, ...\') return only the values of these user fields.
                             * limitfrom (integer) sql limit from.
@@ -466,7 +469,7 @@ class core_enrol_external extends external_api {
             require_capability('moodle/role:review', $coursecontext);
         }
         // need accessallgroups capability if you want to overwrite this option
-        if (!empty($groupid) && groups_is_member($groupid)) {
+        if (!empty($groupid) && !groups_is_member($groupid)) {
             require_capability('moodle/site:accessallgroups', $coursecontext);
         }
         // to overwrite this option, you need course:enrolereview permission
@@ -478,10 +481,29 @@ class core_enrol_external extends external_api {
         $ctxselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
         $ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
         $enrolledparams['contextlevel'] = CONTEXT_USER;
-        $sql = "SELECT u.* $ctxselect
-                  FROM {user} u $ctxjoin
-                 WHERE u.id IN ($enrolledsql)
-                 ORDER BY u.id ASC";
+
+        $groupjoin = '';
+        if (empty($groupid) && groups_get_course_groupmode($course) == SEPARATEGROUPS &&
+                !has_capability('moodle/site:accessallgroups', $coursecontext)) {
+            // Filter by groups the user can view.
+            $usergroups = groups_get_user_groups($course->id);
+            if (!empty($usergroups['0'])) {
+                list($groupsql, $groupparams) = $DB->get_in_or_equal($usergroups['0'], SQL_PARAMS_NAMED);
+                $groupjoin = "JOIN {groups_members} gm ON (u.id = gm.userid AND gm.groupid $groupsql)";
+                $enrolledparams = array_merge($enrolledparams, $groupparams);
+            } else {
+                // User doesn't belong to any group, so he can't see any user. Return an empty array.
+                return array();
+            }
+        }
+        $sql = "SELECT us.*
+                  FROM {user} us
+                  JOIN (
+                      SELECT DISTINCT u.id $ctxselect
+                        FROM {user} u $ctxjoin $groupjoin
+                       WHERE u.id IN ($enrolledsql)
+                  ) q ON q.id = us.id
+                ORDER BY us.id ASC";
         $enrolledusers = $DB->get_recordset_sql($sql, $enrolledparams, $limitfrom, $limitnumber);
         $users = array();
         foreach ($enrolledusers as $user) {
