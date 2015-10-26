@@ -165,19 +165,28 @@ script:
         # The local_ci repository does the actual checking.
         git clone https://github.com/moodlehq/moodle-local_ci.git local/ci
 
-        # Determine the branch
-        grep '^$release.*dev' version.php > /dev/null
+        # Determine the branch based on the release maturity.
+        grep '^$maturity.*=.*MATURITY_STABLE.*' version.php > /dev/null
         if [ $? -eq 0 ];
         then
-          # This is master
-          export branchname='master';
-        else
           # This is a stable branch. Use the version from version.php to determine which one.
-          export branchname="MOODLE_`grep '^$branch' version.php | sed "s/^.*'\([0-9]*\)'.*$/\1/"`_STABLE";
+          branchname="MOODLE_`grep '^$branch' version.php | sed "s/^.*'\([0-9]*\)'.*$/\1/"`_STABLE";
+        else
+          # We only branch at the point at which we make the release stable.
+          # Revert to 'master' until we do so.
+          branchname='master';
         fi
 
         # We need the official upstream for comparison
         git remote add upstream https://github.com/moodle/moodle.git;
+
+        # Check to see if the remote branch was found.
+        git ls-remote --exit-code --heads upstream "$branchname"
+        if [ $? -ne 0 ];
+        then
+          echo "Branch '$branchname' could not be found. Skipping further CI Tests" && false;
+        fi
+
         git fetch upstream "$branchname";
         export GIT_PREVIOUS_COMMIT="`git merge-base FETCH_HEAD $TRAVIS_COMMIT`";
         export GIT_COMMIT="$TRAVIS_COMMIT";
