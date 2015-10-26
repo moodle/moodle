@@ -102,6 +102,10 @@ class manager {
         try {
             $this->client->login();
             mtrace("Connection established.");
+
+            // Ensure that mailboxes exist.
+            $this->ensure_mailboxes_exist();
+
             return true;
 
         } catch (\Horde_Imap_Client_Exception $e) {
@@ -733,6 +737,27 @@ class manager {
         $flags = $messagedata->getFlags();
 
         return in_array($flag, $flags);
+    }
+
+    /**
+     * Ensure that all mailboxes exist.
+     */
+    private function ensure_mailboxes_exist() {
+        $requiredmailboxes = array(
+            self::MAILBOX,
+            self::CONFIRMATIONFOLDER,
+        );
+
+        $existingmailboxes = $this->client->listMailboxes($requiredmailboxes);
+        foreach ($requiredmailboxes as $mailbox) {
+            if (isset($existingmailboxes[$mailbox])) {
+                // This mailbox was found.
+                continue;
+            }
+
+            mtrace("Unable to find the '{$mailbox}' mailbox - creating it.");
+            $this->client->createMailbox($mailbox);
+        }
     }
 
     /**
