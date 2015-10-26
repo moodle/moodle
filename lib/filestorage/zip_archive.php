@@ -191,7 +191,7 @@ class zip_archive extends file_archive {
         }
 
         if ($this->emptyziphack) {
-            $this->za->close();
+            @$this->za->close();
             $this->za = null;
             $this->mode = null;
             $this->namelookup = null;
@@ -202,7 +202,7 @@ class zip_archive extends file_archive {
 
         } else if ($this->za->numFiles == 0) {
             // PHP can not create empty archives, so let's fake it.
-            $this->za->close();
+            @$this->za->close();
             $this->za = null;
             $this->mode = null;
             $this->namelookup = null;
