@@ -376,6 +376,73 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
         unlink($archive);
     }
 
+    public function test_close_archive() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        $archive = "$CFG->tempdir/archive.zip";
+        $textfile = "$CFG->tempdir/textfile.txt";
+        touch($textfile);
+
+        $this->assertFileNotExists($archive);
+        $this->assertFileExists($textfile);
+
+        // Create archive and close it without files.
+        // (returns true, without any warning).
+        $zip_archive = new zip_archive();
+        $result = $zip_archive->open($archive, file_archive::CREATE);
+        $this->assertTrue($result);
+        $result = $zip_archive->close();
+        $this->assertTrue($result);
+        unlink($archive);
+
+        // Create archive and close it with files.
+        // (returns true, without any warning).
+        $zip_archive = new zip_archive();
+        $result = $zip_archive->open($archive, file_archive::CREATE);
+        $this->assertTrue($result);
+        $result = $zip_archive->add_file_from_string('test.txt', 'test');
+        $this->assertTrue($result);
+        $result = $zip_archive->add_file_from_pathname('test2.txt', $textfile);
+        $result = $zip_archive->close();
+        $this->assertTrue($result);
+        unlink($archive);
+
+        // Create archive and close if forcing error.
+        // (returns true for old PHP versions and
+        // false with warnings for new PHP versions). MDL-51863.
+        $zip_archive = new zip_archive();
+        $result = $zip_archive->open($archive, file_archive::CREATE);
+        $this->assertTrue($result);
+        $result = $zip_archive->add_file_from_string('test.txt', 'test');
+        $this->assertTrue($result);
+        $result = $zip_archive->add_file_from_pathname('test2.txt', $textfile);
+        $this->assertTrue($result);
+        // Delete the file before closing does force close() to fail.
+        unlink($textfile);
+        // Behavior is different between old PHP versions and new ones. Let's detect it.
+        $result = false;
+        try {
+            // Old PHP versions were not printing any warning.
+            $result = $zip_archive->close();
+        } catch (Exception $e) {
+            // New PHP versions print PHP Warning.
+            $this->assertInstanceOf('PHPUnit_Framework_Error_Warning', $e);
+            $this->assertContains('ZipArchive::close', $e->getMessage());
+        }
+        // This is crazy, but it shows how some PHP versions do return true.
+        try {
+            // And some PHP versions do return correctly false (5.4.25, 5.6.14...)
+            $this->assertFalse($result);
+        } catch (Exception $e) {
+            // But others do insist into returning true (5.6.13...). Only can accept them.
+            $this->assertInstanceOf('PHPUnit_Framework_ExpectationFailedException', $e);
+            $this->assertTrue($result);
+        }
+        $this->assertFileNotExists($archive);
+    }
+
     /**
      * @depends test_add_files
      */
