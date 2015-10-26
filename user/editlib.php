@@ -421,16 +421,40 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
 
     $mform->addElement('text', 'msn', get_string('msnid'), 'maxlength="50" size="25"');
     $mform->setType('msn', PARAM_NOTAGS);
-
+/*
     $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="255" size="25"');
     $mform->setType('idnumber', PARAM_NOTAGS);
-
+*/
     $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="255" size="25"');
     $mform->setType('institution', PARAM_TEXT);
-
+/*
     $mform->addElement('text', 'department', get_string('department'), 'maxlength="255" size="25"');
     $mform->setType('department', PARAM_TEXT);
+*/
+    $dbman = $DB->get_manager(); 
+    if (!($dbman->table_exists('local_cabinet_departments')))
+    {
+        $mform->addElement('text', 'department', get_string('department'), 'maxlength="255" size="25"');
+        $mform->setType('department', PARAM_TEXT);
+    }
+    else
+    {
+        $cabinet_roles = array('Не указана','Студент','Преподаватель','Другое');
+        $sql = 'SELECT id, desc_department FROM {local_cabinet_departments}';
+        $departments = array();
+        $rs = $DB->get_recordset_sql($sql, array());
+        foreach ($rs as $rec) {
+            $departments[$rec->desc_department] = $rec->desc_department;
+        }
+        $rs->close();
 
+        $sel_department = $mform->addElement('select', 'department', get_string('role'), $cabinet_roles);
+        $mform->setType('department', PARAM_TEXT);
+    }
+    if (!is_siteadmin()){
+        $mform->disabledIf('department', 'id', 'neq', -1);
+    }
+    
     $mform->addElement('text', 'phone1', get_string('phone'), 'maxlength="20" size="25"');
     $mform->setType('phone1', PARAM_NOTAGS);
 
