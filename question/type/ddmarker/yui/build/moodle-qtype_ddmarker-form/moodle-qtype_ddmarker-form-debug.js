@@ -98,7 +98,7 @@ Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
         }
         if (this.doc.bg_img()) {
             Y.one('div.ddarea .grid')
-                    .setXY(this.doc.bg_img().getXY())
+                    .setXY(this.convert_to_window_xy([0, 0]))
                     .setStyle('width', this.doc.bg_img().get('width'))
                     .setStyle('height', this.doc.bg_img().get('height'));
         }
