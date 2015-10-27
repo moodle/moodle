@@ -172,7 +172,11 @@ class course_enrolment_manager {
                            FROM {user} u
                            JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
                            JOIN {enrol} e ON (e.id = ue.enrolid)
-                      LEFT JOIN {groups_members} gm ON u.id = gm.userid
+                      LEFT JOIN {groups_members} gm ON u.id = gm.userid AND gm.groupid IN (
+                               SELECT g.id
+                                 FROM {groups} g
+                                WHERE g.courseid = e.courseid
+                              )
                           WHERE $filtersql";
             $this->totalusers = (int)$DB->count_records_sql($sqltotal, $params);
         }
