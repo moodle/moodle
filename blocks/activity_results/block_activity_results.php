@@ -92,7 +92,7 @@ class block_activity_results extends block_base {
             return $result;
         }
         // See if it is a gradable activity.
-        if (($rec->gradetype != GRADE_TYPE_VALUE) || ($rec->gradetype != GRADE_TYPE_SCALE)) {
+        if (($rec->gradetype != GRADE_TYPE_VALUE) && ($rec->gradetype != GRADE_TYPE_SCALE)) {
             return $result;
         }
         return $rec;
