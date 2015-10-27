@@ -268,7 +268,7 @@ if ($id) {
     //     * Error. No more options
     //     */
 } else {
-    print_error('incorrectparameters');
+    print_error('invalidparameters', 'wiki');
 }
 
 if (!wiki_user_can_view($subwiki, $wiki)) {
