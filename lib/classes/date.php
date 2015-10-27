@@ -537,7 +537,6 @@ class core_date {
         self::$badzones['5.5'] = 'Asia/Kolkata';
         self::$badzones['6.5'] = 'Asia/Rangoon';
         self::$badzones['9.5'] = 'Australia/Darwin';
-        self::$badzones['11.5'] = 'Pacific/Norfolk';
 
         // Remove bad zones that are elsewhere.
         foreach (self::$bczones as $zone => $unused) {
