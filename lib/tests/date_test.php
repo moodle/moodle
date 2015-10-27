@@ -83,7 +83,6 @@ class core_date_testcase extends advanced_testcase {
         $this->assertSame('Asia/Kolkata', core_date::normalise_timezone(5.5));
         $this->assertSame('Asia/Rangoon', core_date::normalise_timezone(6.5));
         $this->assertSame('Australia/Darwin', core_date::normalise_timezone('9.5'));
-        $this->assertSame('Pacific/Norfolk', core_date::normalise_timezone('11.5'));
 
         $this->setTimezone('99', 'Pacific/Auckland');
         $this->assertSame('Pacific/Auckland', core_date::normalise_timezone('Pacific/Auckland'));
