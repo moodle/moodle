@@ -3381,6 +3381,7 @@ function glossary_get_entries_by_letter($glossary, $context, $letter, $from, $li
     $qb->join_user();
     $qb->add_user_fields();
     $qb->order_by('concept', 'entries');
+    $qb->order_by('id', 'entries', 'ASC'); // Sort on ID to avoid random ordering when entries share an ordering value.
     $qb->limit($from, $limit);
 
     // Fetching the entries.
@@ -3424,6 +3425,7 @@ function glossary_get_entries_by_date($glossary, $context, $order, $sort, $from,
     } else {
         $qb->order_by('timemodified', 'entries', $sort);
     }
+    $qb->order_by('id', 'entries', $sort); // Sort on ID to avoid random ordering when entries share an ordering value.
 
     // Fetching the entries.
     $count = $qb->count_records();
@@ -3469,7 +3471,9 @@ function glossary_get_entries_by_category($glossary, $context, $categoryid, $fro
         $qb->where('categoryid', 'entries_categories', null);
     }
 
+    // Sort on additional fields to avoid random ordering when entries share an ordering value.
     $qb->order_by('concept', 'entries');
+    $qb->order_by('id', 'entries', 'ASC');
     $qb->limit($from, $limit);
 
     // Fetching the entries.
@@ -3517,6 +3521,7 @@ function glossary_get_entries_by_author($glossary, $context, $letter, $field, $s
     $qb->add_user_fields();
     $qb->order_by_author($firstnamefirst, $sort);
     $qb->order_by('concept', 'entries');
+    $qb->order_by('id', 'entries', 'ASC'); // Sort on ID to avoid random ordering when entries share an ordering value.
     $qb->limit($from, $limit);
 
     // Fetching the entries.
@@ -3563,6 +3568,7 @@ function glossary_get_entries_by_author_id($glossary, $context, $authorid, $orde
     } else {
         $qb->order_by('concept', 'entries', $sort);
     }
+    $qb->order_by('id', 'entries', $sort); // Sort on ID to avoid random ordering when entries share an ordering value.
 
     $qb->limit($from, $limit);
 
@@ -3684,7 +3690,7 @@ function glossary_get_entries_by_search($glossary, $context, $query, $fullsearch
     } else {
         $qb->order_by('concept', 'entries', $sort);
     }
-
+    $qb->order_by('id', 'entries', $sort); // Sort on ID to avoid random ordering when entries share an ordering value.
     $qb->limit($from, $limit);
 
     // Fetching the entries.
@@ -3726,6 +3732,7 @@ function glossary_get_entries_by_term($glossary, $context, $term, $from, $limit,
     $qb->filter_by_term($term);
 
     $qb->order_by('concept', 'entries');
+    $qb->order_by('id', 'entries');     // Sort on ID to avoid random ordering when entries share an ordering value.
     $qb->limit($from, $limit);
 
     // Fetching the entries.
@@ -3769,6 +3776,7 @@ function glossary_get_entries_to_approve($glossary, $context, $letter, $order, $
     } else {
         $qb->order_by('concept', 'entries', $sort);
     }
+    $qb->order_by('id', 'entries', $sort); // Sort on ID to avoid random ordering when entries share an ordering value.
     $qb->limit($from, $limit);
 
     // Fetching the entries.
