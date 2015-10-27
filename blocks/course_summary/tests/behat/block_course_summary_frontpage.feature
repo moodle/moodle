@@ -17,6 +17,7 @@ Feature: Course summary block used on the frontpage
   Scenario: Guest can view site summary
     When I am on site homepage
     Then "Course/site summary" "block" should exist
+    And I should not see "Course summary" in the "Course/site summary" "block"
     And I should see "Proved the summary block works!" in the "Course/site summary" "block"
 
   Scenario: Admin can see an edit icon when edit mode is on and follow it to the front page settings
@@ -24,6 +25,7 @@ Feature: Course summary block used on the frontpage
     And I am on site homepage
     And I follow "Turn editing on"
     Then I should see "Proved the summary block works!" in the "Course/site summary" "block"
+    And I should not see "Course summary" in the "Course/site summary" "block"
     And I click on "Edit" "link" in the "Course/site summary" "block"
     Then I should see "Front page settings" in the "h2" "css_element"
 
@@ -31,4 +33,5 @@ Feature: Course summary block used on the frontpage
     When I log in as "admin"
     And I am on site homepage
     Then I should see "Proved the summary block works!" in the "Course/site summary" "block"
+    And I should not see "Course summary" in the "Course/site summary" "block"
     And "Edit" "link" should not exist in the "Course/site summary" "block"
