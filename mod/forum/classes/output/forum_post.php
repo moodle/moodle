@@ -41,69 +41,69 @@ class forum_post implements \renderable {
      *
      * @var object $course
      */
-    private $course = null;
+    protected $course = null;
 
     /**
      * The course module for the forum.
      *
      * @var object $cm
      */
-    private $cm = null;
+    protected $cm = null;
 
     /**
      * The forum that the post is in.
      *
      * @var object $forum
      */
-    private $forum = null;
+    protected $forum = null;
 
     /**
      * The discussion that the forum post is in.
      *
      * @var object $discussion
      */
-    private $discussion = null;
+    protected $discussion = null;
 
     /**
      * The forum post being displayed.
      *
      * @var object $post
      */
-    private $post = null;
+    protected $post = null;
 
     /**
      * Whether the user can reply to this post.
      *
      * @var boolean $canreply
      */
-    private $canreply = false;
+    protected $canreply = false;
 
     /**
      * Whether to override forum display when displaying usernames.
      * @var boolean $viewfullnames
      */
-    private $viewfullnames = false;
+    protected $viewfullnames = false;
 
     /**
      * The user that is reading the post.
      *
      * @var object $userto
      */
-    private $userto = null;
+    protected $userto = null;
 
     /**
      * The user that wrote the post.
      *
      * @var object $author
      */
-    private $author = null;
+    protected $author = null;
 
     /**
      * An associative array indicating which keys on this object should be writeable.
      *
      * @var array $writablekeys
      */
-    private $writablekeys = array(
+    protected $writablekeys = array(
         'viewfullnames'    => true,
     );
 
@@ -448,7 +448,14 @@ class forum_post implements \renderable {
      * @return string.
      */
     public function get_postdate() {
-        return userdate($this->post->modified, "", \core_date::get_user_timezone($this->get_postto()));
+        global $CFG;
+
+        $postmodified = $this->post->modified;
+        if (!empty($CFG->forum_enabletimedposts) && ($this->discussion->timestart > $postmodified)) {
+            $postmodified = $this->discussion->timestart;
+        }
+
+        return userdate($postmodified, "", \core_date::get_user_timezone($this->get_postto()));
     }
 
     /**
