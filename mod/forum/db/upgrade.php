@@ -181,5 +181,13 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014051203, 'forum');
     }
 
+    if ($oldversion < 2014051204) {
+        // Groupid = 0 is never valid.
+        $DB->set_field('forum_discussions', 'groupid', -1, array('groupid' => 0));
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2014051204, 'forum');
+    }
+
     return true;
 }
