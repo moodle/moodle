@@ -27,6 +27,8 @@ use tool_lp\competency;
 use tool_lp\competency_framework;
 use tool_lp\external;
 use tool_lp\related_competency;
+use tool_lp\user_competency;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -179,6 +181,28 @@ class tool_lp_generator extends component_generator_base {
         $relation->create();
 
         return $relation;
+    }
+
+    /**
+     * Create a new user competency.
+     *
+     * @param array|stdClass $record
+     * @return user_competency
+     */
+    public function create_user_competency($record = null) {
+        $record = (object) $record;
+
+        if (!isset($record->userid)) {
+            throw new coding_exception('The userid value is required.');
+        }
+        if (!isset($record->competencyid)) {
+            throw new coding_exception('The competencyid value is required.');
+        }
+
+        $usercompetency = new user_competency(0, $record);
+        $usercompetency->create();
+
+        return $usercompetency;
     }
 
 }

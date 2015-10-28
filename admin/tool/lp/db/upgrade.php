@@ -182,5 +182,41 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015052416, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015052420) {
+
+        // Define table tool_lp_user_competency to be created.
+        $table = new xmldb_table('tool_lp_user_competency');
+
+        // Adding fields to table tool_lp_user_competency.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('competencyid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('reviewerid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('proficiency', XMLDB_TYPE_INTEGER, '2', null, null, null, '0');
+        $table->add_field('grade', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table tool_lp_user_competency.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        $index = new xmldb_index('useridcompetency', XMLDB_INDEX_UNIQUE, array('userid', 'competencyid'));
+
+        // Conditionally launch create table for tool_lp_user_competency.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Conditionally launch add index useridcompetency.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015052420, 'tool', 'lp');
+    }
+
     return true;
 }
