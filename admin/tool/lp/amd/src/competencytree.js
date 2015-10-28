@@ -21,56 +21,112 @@
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
- define(['core/ajax', 'core/notification', 'jquery'], function(ajax, notification, $) {
-     // Private variables and functions.
-      /** @var {Object[]} competencies - Cached list of competencies */
-     var competencies = [];
+define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jquery'],
+       function(ajax, notification, templates, Ariatree, $) {
 
-     /** @var {Number} competencyFrameworkId - The current framework id */
-     var competencyFrameworkId = 0;
+    // Private variables and functions.
+    /** @var {Object[]} competencies - Cached list of competencies */
+    var competencies = [];
 
-     /**
-      * Load the list of competencies via ajax. Competencies are filtered by the searchtext.
-      * @param {String} searchtext The text to filter on.
-      * @return {promise}
-      */
-     var loadCompetencies = function(searchtext) {
-         var deferred = $.Deferred();
-         searchtext = '';
-         var promises = ajax.call([{
-             methodname: 'tool_lp_search_competencies',
-             args: {
-                 searchtext: searchtext,
-                 competencyframeworkid: competencyFrameworkId,
-                 includerelated: true
-             }
-         }]);
-         promises[0].done(function(result) {
-             competencies = [];
-             var i = 0;
-             for (i = 0; i < result.length; i++) {
-                 competencies[result[i].id] = result[i];
-             }
-             deferred.resolve(competencies);
-         }).fail(function(exception) {
-             deferred.reject(exception);
-         });
+    /** @var {Number} competencyFrameworkId - The current framework id */
+    var competencyFrameworkId = 0;
 
-         return deferred.promise();
-     };
+    /** @var {String} competencyFrameworkShortName - The current framework short name */
+    var competencyFrameworkShortName = '';
+
+    /** @var {String} treeSelector - The selector for the root of the tree. */
+    var treeSelector = '';
+
+    /** @var {Function} changeCallback - Handler for selection changed events. */
+    var changeCallback = false;
+
+    /**
+     * Build a tree from the flat list of competencies.
+     * @param {Object} parent The parent competency.
+     * @param {Array} all The list of all competencies.
+     */
+    var addChildren = function(parent, all) {
+        var i = 0;
+        var current = false;
+        parent.haschildren = false;
+        parent.children = [];
+        for (i = 0; i < all.length; i++) {
+            current = all[i];
+            if (current.parentid == parent.id) {
+                parent.haschildren = true;
+                parent.children.push(current);
+                addChildren(current, all);
+            }
+        }
+    };
+
+    /**
+     * Load the list of competencies via ajax. Competencies are filtered by the searchtext.
+     * @param {String} searchtext The text to filter on.
+     * @return {promise}
+     */
+    var loadCompetencies = function(searchtext) {
+        var deferred = $.Deferred();
+        var promises = ajax.call([{
+            methodname: 'tool_lp_search_competencies',
+            args: {
+                searchtext: searchtext,
+                competencyframeworkid: competencyFrameworkId,
+                includerelated: true
+            }
+        }]);
+        promises[0].done(function(result) {
+            competencies = [];
+            var i = 0;
+            for (i = 0; i < result.length; i++) {
+                competencies[result[i].id] = result[i];
+            }
+
+            var children = [];
+            var competency = false;
+            for (i = 0; i < result.length; i++) {
+                competency = result[i];
+                if (parseInt(competency.parentid, 10) === 0) {
+                    children.push(competency);
+                    addChildren(competency, result);
+                }
+            }
+            var context = {
+               shortname: competencyFrameworkShortName,
+               competencies: children
+            };
+            templates.render('tool_lp/competencies_tree_root', context).done(function(html, js) {
+               templates.replaceNode($(treeSelector), html, js);
+               new Ariatree(treeSelector, changeCallback);
+               deferred.resolve(competencies);
+            }).fail(notification.exception);
+
+        }).fail(function(exception) {
+            deferred.reject(exception);
+        });
+
+        return deferred.promise();
+    };
 
 
-     return /** @alias module:tool_lp/competencytree */ {
+    return /** @alias module:tool_lp/competencytree */ {
         // Public variables and functions.
         /**
          * Initialise the tree.
          *
          * @param {Number} id The competency id.
+         * @param {String} shortname The framework shortname
+         * @param {String} search The current search string
+         * @param {String} selector The selector for the tree div
+         * @param {Function} changeHandler The handler to call when the selection changes.
          */
-        init: function(id) {
+        init: function(id, shortname, search, selector, changeHandler) {
             competencyFrameworkId = id;
-            loadCompetencies('').fail(notification.exception);
-        },
+            competencyFrameworkShortName = shortname;
+            treeSelector = selector;
+            changeCallback = changeHandler;
+            loadCompetencies(search).fail(notification.exception);
+         },
 
         /**
          * Get the competency framework id this model was initiliased with.
@@ -121,14 +177,5 @@
             return competencies;
         },
 
-        /**
-         * Reload the list of competencies, filtered by the search text.
-         *
-         * @param {String} searchtext The text to filter by.
-         * @return {Object[]} The filtered competency list.
-         */
-        applySearch: function(searchtext) {
-            return loadCompetencies(searchtext);
-        }
      };
  });

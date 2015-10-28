@@ -41,15 +41,8 @@
     <button>{{#pix}}a/search, , {{#str}}search{{/str}}{{/pix}}</button>
 </form>
 </p>
-<ul data-enhance="tree">
-    <li>{{framework.shortname}}
-        <ul>
-            {{#competencies}}
-                {{> tool_lp/competencies_tree }}
-            {{/competencies}}
-        </ul>
-    </li>
-</ul>
+<div data-enhance="tree">
+</div>
 </div>
 
 <div class="span6 well">
@@ -113,11 +106,13 @@
 // Initialise the JS.
 require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions' ], function(ariatree, treeModel, actions) {
 
-    treeModel.init({{framework.id}});
+    treeModel.init({{framework.id}},
+                   '{{framework.shortname}}',
+                   '{{search}}',
+                   '[data-enhance=tree]',
+                   actions.selectionChanged);
 
     actions.init(treeModel, {{pagecontextid}}, {{{framework.taxonomies}}});
-
-    var competencytree = new ariatree('[data-enhance=tree]', actions.selectionChanged);
 
 });
 {{/js}}
