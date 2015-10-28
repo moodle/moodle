@@ -35,6 +35,7 @@ $functions = array(
         'description'  => 'Creates new competency frameworks.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_read_competency_framework' => array(
         'classname'    => 'tool_lp\external',
@@ -43,6 +44,7 @@ $functions = array(
         'description'  => 'Load a summary of a competency framework.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencyview',
+        'ajax'         => true,
     ),
     'tool_lp_duplicate_competency_framework' => array(
         'classname'    => 'tool_lp\external',
@@ -51,6 +53,7 @@ $functions = array(
         'description'  => 'Duplicate a competency framework.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_delete_competency_framework' => array(
         'classname'    => 'tool_lp\external',
@@ -59,6 +62,7 @@ $functions = array(
         'description'  => 'Delete a competency framework.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_update_competency_framework' => array(
         'classname'    => 'tool_lp\external',
@@ -67,6 +71,7 @@ $functions = array(
         'description'  => 'Update a competency framework.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_list_competency_frameworks' => array(
         'classname'    => 'tool_lp\external',
@@ -75,6 +80,7 @@ $functions = array(
         'description'  => 'Load a list of a competency frameworks.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencyview',
+        'ajax'         => true,
     ),
     'tool_lp_count_competency_frameworks' => array(
         'classname'    => 'tool_lp\external',
@@ -83,6 +89,7 @@ $functions = array(
         'description'  => 'Count a list of a competency frameworks.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencyview',
+        'ajax'         => true,
     ),
     'tool_lp_data_for_competency_frameworks_manage_page' => array(
         'classname'    => 'tool_lp\external',
@@ -91,6 +98,7 @@ $functions = array(
         'description'  => 'Load the data for the competency frameworks manage page template',
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencyview',
+        'ajax'         => true,
     ),
     'tool_lp_create_competency' => array(
         'classname'    => 'tool_lp\external',
@@ -99,6 +107,7 @@ $functions = array(
         'description'  => 'Creates new competencies.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_read_competency' => array(
         'classname'    => 'tool_lp\external',
@@ -107,6 +116,7 @@ $functions = array(
         'description'  => 'Load a summary of a competency.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencyview',
+        'ajax'         => true,
     ),
     'tool_lp_delete_competency' => array(
         'classname'    => 'tool_lp\external',
@@ -115,6 +125,7 @@ $functions = array(
         'description'  => 'Delete a competency.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_update_competency' => array(
         'classname'    => 'tool_lp\external',
@@ -123,6 +134,7 @@ $functions = array(
         'description'  => 'Update a competency.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_list_competencies' => array(
         'classname'    => 'tool_lp\external',
@@ -131,6 +143,7 @@ $functions = array(
         'description'  => 'Load a list of a competencies.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencyview',
+        'ajax'         => true,
     ),
     'tool_lp_count_competencies' => array(
         'classname'    => 'tool_lp\external',
@@ -139,6 +152,7 @@ $functions = array(
         'description'  => 'Count a list of a competencies.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencyview',
+        'ajax'         => true,
     ),
     'tool_lp_search_competencies' => array(
         'classname'    => 'tool_lp\external',
@@ -147,6 +161,7 @@ $functions = array(
         'description'  => 'Search a list of a competencies.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencyview',
+        'ajax'         => true,
     ),
     'tool_lp_data_for_competencies_manage_page' => array(
         'classname'    => 'tool_lp\external',
@@ -155,6 +170,7 @@ $functions = array(
         'description'  => 'Load the data for the competencies manage page template',
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencyview',
+        'ajax'         => true,
     ),
     'tool_lp_set_parent_competency' => array(
         'classname'    => 'tool_lp\external',
@@ -163,6 +179,7 @@ $functions = array(
         'description'  => 'Set a new parent for a competency.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_move_up_competency' => array(
         'classname'    => 'tool_lp\external',
@@ -171,6 +188,7 @@ $functions = array(
         'description'  => 'Re-order a competency.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_move_down_competency' => array(
         'classname'    => 'tool_lp\external',
@@ -179,6 +197,7 @@ $functions = array(
         'description'  => 'Re-order a competency.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_list_competencies_in_course' => array(
         'classname'    => 'tool_lp\external',
@@ -187,6 +206,7 @@ $functions = array(
         'description'  => 'List the competencies in a course',
         'type'         => 'read',
         'capabilities' => 'tool/lp:coursecompetencyread',
+        'ajax'         => true,
     ),
     'tool_lp_list_courses_using_competency' => array(
         'classname'    => 'tool_lp\external',
@@ -195,6 +215,7 @@ $functions = array(
         'description'  => 'List the courses using a competency',
         'type'         => 'read',
         'capabilities' => 'tool/lp:coursecompetencyread',
+        'ajax'         => true,
     ),
     'tool_lp_count_competencies_in_course' => array(
         'classname'    => 'tool_lp\external',
@@ -203,6 +224,7 @@ $functions = array(
         'description'  => 'List the competencies in a course',
         'type'         => 'read',
         'capabilities' => 'tool/lp:coursecompetencyread',
+        'ajax'         => true,
     ),
     'tool_lp_count_courses_using_competency' => array(
         'classname'    => 'tool_lp\external',
@@ -211,6 +233,7 @@ $functions = array(
         'description'  => 'List the courses using a competency',
         'type'         => 'read',
         'capabilities' => 'tool/lp:coursecompetencyread',
+        'ajax'         => true,
     ),
     'tool_lp_add_competency_to_course' => array(
         'classname'    => 'tool_lp\external',
@@ -219,6 +242,7 @@ $functions = array(
         'description'  => 'Add the competency to a course',
         'type'         => 'write',
         'capabilities' => 'tool/lp:coursecompetencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_add_competency_to_template' => array(
         'classname'    => 'tool_lp\external',
@@ -227,6 +251,7 @@ $functions = array(
         'description'  => 'Add the competency to a template',
         'type'         => 'write',
         'capabilities' => 'tool/lp:templatemanage',
+        'ajax'         => true,
     ),
     'tool_lp_remove_competency_from_course' => array(
         'classname'    => 'tool_lp\external',
@@ -235,6 +260,7 @@ $functions = array(
         'description'  => 'Remove a competency from a course',
         'type'         => 'write',
         'capabilities' => 'tool/lp:coursecompetencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_remove_competency_from_template' => array(
         'classname'    => 'tool_lp\external',
@@ -243,6 +269,7 @@ $functions = array(
         'description'  => 'Remove a competency from a template',
         'type'         => 'write',
         'capabilities' => 'tool/lp:templatemanage',
+        'ajax'         => true,
     ),
     'tool_lp_data_for_course_competencies_page' => array(
         'classname'    => 'tool_lp\external',
@@ -251,6 +278,7 @@ $functions = array(
         'description'  => 'Load the data for the course competencies page template.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:coursecompetencyread',
+        'ajax'         => true,
     ),
     'tool_lp_data_for_template_competencies_page' => array(
         'classname'    => 'tool_lp\external',
@@ -259,6 +287,7 @@ $functions = array(
         'description'  => 'Load the data for the template competencies page template.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:templateread',
+        'ajax'         => true,
     ),
     'tool_lp_reorder_course_competency' => array(
         'classname'    => 'tool_lp\external',
@@ -267,6 +296,7 @@ $functions = array(
         'description'  => 'Move a course competency to a new relative sort order.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:coursecompetencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_reorder_template_competency' => array(
         'classname'    => 'tool_lp\external',
@@ -275,6 +305,7 @@ $functions = array(
         'description'  => 'Move a template competency to a new relative sort order.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:templatemanage',
+        'ajax'         => true,
     ),
     'tool_lp_create_template' => array(
         'classname'    => 'tool_lp\external',
@@ -283,6 +314,7 @@ $functions = array(
         'description'  => 'Creates new learning plan templates.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:templatemanage',
+        'ajax'         => true,
     ),
     'tool_lp_duplicate_template' => array(
         'classname'    => 'tool_lp\external',
@@ -291,6 +323,7 @@ $functions = array(
         'description'  => 'Duplicate learning plan template.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:templatemanage',
+        'ajax'         => true,
     ),
     'tool_lp_read_template' => array(
         'classname'    => 'tool_lp\external',
@@ -299,6 +332,7 @@ $functions = array(
         'description'  => 'Load a summary of a learning plan template.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:templateview',
+        'ajax'         => true,
     ),
     'tool_lp_delete_template' => array(
         'classname'    => 'tool_lp\external',
@@ -307,6 +341,7 @@ $functions = array(
         'description'  => 'Delete a learning plan template.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:templatemanage',
+        'ajax'         => true,
     ),
     'tool_lp_update_template' => array(
         'classname'    => 'tool_lp\external',
@@ -315,6 +350,7 @@ $functions = array(
         'description'  => 'Update a learning plan template.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:templatemanage',
+        'ajax'         => true,
     ),
     'tool_lp_list_templates' => array(
         'classname'    => 'tool_lp\external',
@@ -323,6 +359,7 @@ $functions = array(
         'description'  => 'Load a list of a learning plan templates.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:templateview',
+        'ajax'         => true,
     ),
     'tool_lp_count_templates' => array(
         'classname'    => 'tool_lp\external',
@@ -331,6 +368,7 @@ $functions = array(
         'description'  => 'Count a list of a learning plan templates.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:templateview',
+        'ajax'         => true,
     ),
     'tool_lp_data_for_templates_manage_page' => array(
         'classname'    => 'tool_lp\external',
@@ -339,6 +377,7 @@ $functions = array(
         'description'  => 'Load the data for the learning plan templates manage page template',
         'type'         => 'read',
         'capabilities' => 'tool/lp:templateview',
+        'ajax'         => true,
     ),
     'tool_lp_create_plan' => array(
         'classname'    => 'tool_lp\external',
@@ -347,6 +386,7 @@ $functions = array(
         'description'  => 'Creates a learning plan.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:planmanage',
+        'ajax'         => true,
     ),
     'tool_lp_update_plan' => array(
         'classname'    => 'tool_lp\external',
@@ -355,6 +395,7 @@ $functions = array(
         'description'  => 'Updates a learning plan.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:planmanage',
+        'ajax'         => true,
     ),
     'tool_lp_read_plan' => array(
         'classname'    => 'tool_lp\external',
@@ -363,6 +404,7 @@ $functions = array(
         'description'  => 'Load a learning plan.',
         'type'         => 'read',
         'capabilities' => 'tool/lp:planviewown',
+        'ajax'         => true,
     ),
     'tool_lp_delete_plan' => array(
         'classname'    => 'tool_lp\external',
@@ -371,6 +413,7 @@ $functions = array(
         'description'  => 'Delete a learning plan.',
         'type'         => 'write',
         'capabilities' => 'tool/lp:planmanage',
+        'ajax'         => true,
     ),
     'tool_lp_data_for_plans_page' => array(
         'classname'    => 'tool_lp\external',
@@ -379,6 +422,7 @@ $functions = array(
         'description'  => 'Load the data for the plans page template',
         'type'         => 'read',
         'capabilities' => 'tool/lp:planviewown',
+        'ajax'         => true,
     ),
     'tool_lp_get_scale_values' => array(
         'classname'    => 'tool_lp\external',
@@ -387,30 +431,34 @@ $functions = array(
         'description'  => 'Fetch the values for a specific scale',
         'type'         => 'read',
         'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_add_related_competency' => array(
-        'classname'   => 'tool_lp\external',
-        'methodname'  => 'add_related_competency',
-        'classpath'   => '',
-        'description' => 'Adds a related competency',
-        'type'        => 'write',
-        'capabilities'=> 'tool/lp:competencymanage',
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'add_related_competency',
+        'classpath'    => '',
+        'description'  => 'Adds a related competency',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_remove_related_competency' => array(
-        'classname'   => 'tool_lp\external',
-        'methodname'  => 'remove_related_competency',
-        'classpath'   => '',
-        'description' => 'Remove a related competency',
-        'type'        => 'write',
-        'capabilities'=> 'tool/lp:competencymanage',
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'remove_related_competency',
+        'classpath'    => '',
+        'description'  => 'Remove a related competency',
+        'type'         => 'write',
+        'capabilities' => 'tool/lp:competencymanage',
+        'ajax'         => true,
     ),
     'tool_lp_data_for_related_competencies_section' => array(
-        'classname'   => 'tool_lp\external',
-        'methodname'  => 'data_for_related_competencies_section',
-        'classpath'   => '',
-        'description' => 'Load the data for the related competencies template.',
-        'type'        => 'read',
-        'capabilities'=> 'tool/lp:competencyread',
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'data_for_related_competencies_section',
+        'classpath'    => '',
+        'description'  => 'Load the data for the related competencies template.',
+        'type'         => 'read',
+        'capabilities' => 'tool/lp:competencyread',
+        'ajax'         => true,
     ),
 
 );

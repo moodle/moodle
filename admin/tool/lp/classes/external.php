@@ -276,14 +276,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function create_competency_framework_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Create a new competency framework
      *
      * @param string $shortname The short name
@@ -352,14 +344,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function read_competency_framework_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Read a competency framework by id.
      *
      * @param int $id The id of the framework.
@@ -406,14 +390,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function duplicate_competency_framework_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Duplicate a competency framework
      *
      * @param int $id The competency framework id
@@ -453,14 +429,6 @@ class external extends external_api {
             'id' => $id,
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function delete_competency_framework_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -544,14 +512,6 @@ class external extends external_api {
             'visible' => $visible,
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function update_competency_framework_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -651,14 +611,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function list_competency_frameworks_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * List the existing competency frameworks
      *
      * @param string $filters
@@ -737,14 +689,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function count_competency_frameworks_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Count the existing competency frameworks
      *
      * @param string $filters Filters to use.
@@ -780,14 +724,6 @@ class external extends external_api {
     public static function data_for_competency_frameworks_manage_page_parameters() {
         $params = array('pagecontext' => self::get_context_parameters());
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function data_for_competency_frameworks_manage_page_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -930,14 +866,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function create_competency_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Returns description of create_competency() parameters.
      *
      * @return \external_function_parameters
@@ -1059,14 +987,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function read_competency_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Read a competency by id.
      *
      * @param int $id The id of the competency
@@ -1110,14 +1030,6 @@ class external extends external_api {
             'id' => $id,
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function delete_competency_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -1192,14 +1104,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function update_competency_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Update an existing competency
      *
      * @param int $id The competency id
@@ -1247,14 +1151,6 @@ class external extends external_api {
      */
     public static function list_competencies_parameters() {
         return self::list_parameters_structure();
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function list_competencies_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -1350,14 +1246,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function search_competencies_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * List the existing competency frameworks
      *
      * @param string $searchtext Text to search.
@@ -1418,14 +1306,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function count_competencies_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Count the existing competency frameworks.
      *
      * @param string $filters Filters to use.
@@ -1481,14 +1361,6 @@ class external extends external_api {
             'search' => $search
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function data_for_competencies_manage_page_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -1557,14 +1429,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function set_parent_competency_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Move the competency to a new parent.
      *
      * @param int $competencyid Competency id.
@@ -1609,14 +1473,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function move_up_competency_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Change the sort order of a competency.
      *
      * @param int $competencyid Competency id.
@@ -1655,14 +1511,6 @@ class external extends external_api {
             'id' => $competencyid,
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function move_down_competency_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -1707,14 +1555,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function count_courses_using_competency_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Count the courses (visible to this user) that use this competency.
      *
      * @param int $competencyid Competency id.
@@ -1753,14 +1593,6 @@ class external extends external_api {
             'id' => $competencyid,
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function list_courses_using_competency_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -1843,14 +1675,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function count_competencies_in_course_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Count the competencies (visible to this user) in this course.
      *
      * @param int $courseid The course id to check.
@@ -1889,14 +1713,6 @@ class external extends external_api {
             'id' => $courseid,
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function list_competencies_in_course_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -1955,14 +1771,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function add_competency_to_course_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Count the competencies (visible to this user) in this course.
      *
      * @param int $courseid The course id to check.
@@ -2012,14 +1820,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function remove_competency_from_course_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Count the competencies (visible to this user) in this course.
      *
      * @param int $courseid The course id to check.
@@ -2058,14 +1858,6 @@ class external extends external_api {
         );
         $params = array('courseid' => $courseid);
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function data_for_course_competencies_page_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -2137,14 +1929,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function reorder_course_competency_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Change the order of course competencies.
      *
      * @param int $courseid The course id
@@ -2199,14 +1983,6 @@ class external extends external_api {
             'competencyidto' => $competencyidto,
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function reorder_template_competency_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -2355,14 +2131,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function create_template_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Create a new learning plan template
      *
      * @param string $shortname The short name of the template.
@@ -2427,14 +2195,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function read_template_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Read a learning plan template by id.
      *
      * @param int $id The id of the template.
@@ -2479,14 +2239,6 @@ class external extends external_api {
             'id' => $id,
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function delete_template_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -2561,14 +2313,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function update_template_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Update an existing learning plan template
      *
      * @param int $id The learning plan template id
@@ -2626,14 +2370,6 @@ class external extends external_api {
             'id' => $templateid
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX.
-     * @return boolean
-     */
-    public static function duplicate_template_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -2707,14 +2443,6 @@ class external extends external_api {
             'includes' => $includes
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function list_templates_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -2794,14 +2522,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function count_templates_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Count the existing learning plan templates
      *
      * @param array $filters Filters to allow.
@@ -2836,14 +2556,6 @@ class external extends external_api {
     public static function data_for_templates_manage_page_parameters() {
         $params = array('pagecontext' => self::get_context_parameters());
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function data_for_templates_manage_page_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -2906,14 +2618,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function count_templates_using_competency_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Count the learning plan templates (visible to this user) that use this competency.
      *
      * @param int $competencyid Competency id.
@@ -2952,14 +2656,6 @@ class external extends external_api {
             'id' => $competencyid,
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function list_templates_using_competency_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -3005,14 +2701,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function count_competencies_in_template_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Count the competencies (visible to this user) in this learning plan template.
      *
      * @param int $templateid The template id to check
@@ -3052,14 +2740,6 @@ class external extends external_api {
             'id' => $templateid,
         );
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function list_competencies_in_template_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -3119,14 +2799,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function add_competency_to_template_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Count the competencies (visible to this user) in this template.
      *
      * @param int $templateid Template id.
@@ -3177,14 +2849,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function remove_competency_from_template_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Count the competencies (visible to this user) in this learning plan template.
      *
      * @param int $templateid Template id.
@@ -3223,14 +2887,6 @@ class external extends external_api {
         );
         $params = array('templateid' => $templateid, 'pagecontext' => self::get_context_parameters());
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function data_for_template_competencies_page_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -3415,14 +3071,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function create_plan_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Create a new learning plan.
      *
      * @param string $name Name.
@@ -3529,14 +3177,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function update_plan_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Updates a new learning plan.
      *
      * @param int $id Plan id.
@@ -3595,14 +3235,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function read_plan_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Read a plan by id.
      *
      * @param int $id The id of the plan.
@@ -3649,14 +3281,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function delete_plan_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Delete a plan.
      *
      * @param int $id The plan id
@@ -3692,14 +3316,6 @@ class external extends external_api {
         );
         $params = array('userid' => $userid);
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     * @return boolean
-     */
-    public static function data_for_plans_page_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -3753,15 +3369,6 @@ class external extends external_api {
         );
         $params = array('scaleid' => $scaleid);
         return new external_function_parameters($params);
-    }
-
-    /**
-     * Expose to AJAX
-     *
-     * @return boolean
-     */
-    public static function get_scale_values_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
@@ -3831,15 +3438,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     *
-     * @return boolean
-     */
-    public static function add_related_competency_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Adds a related competency.
      *
      * @param int $competencyid
@@ -3889,15 +3487,6 @@ class external extends external_api {
     }
 
     /**
-     * Expose to AJAX
-     *
-     * @return boolean
-     */
-    public static function remove_related_competency_is_allowed_from_ajax() {
-        return true;
-    }
-
-    /**
      * Removes a related competency.
      *
      * @param int $competencyid
@@ -3935,15 +3524,6 @@ class external extends external_api {
             VALUE_REQUIRED
         );
         return new external_function_parameters(array('competencyid' => $competencyid));
-    }
-
-    /**
-     * Expose to AJAX
-     *
-     * @return boolean
-     */
-    public static function data_for_related_competencies_section_is_allowed_from_ajax() {
-        return true;
     }
 
     /**
