@@ -40,7 +40,7 @@ form.mform fieldset#id_previewareaheader div.draghome, form.mform fieldset#id_pr
 .que.ddmarker div.dragitems span.markertext,
 .que.ddmarker div.markertexts span.markertext,
 form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
-    margin: 5px;
+    margin: 0 5px;
     z-index: 3;
     background-color: white;
     border: 2px solid black;
@@ -70,8 +70,8 @@ form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
 }
 .que.ddmarker div.dragitems img.target {
     position: absolute;
-    left: -7px;
-    top: -3px;
+    left: -7px; /* This must be half the size of the target image, minus 0.5. */
+    top: -7px;  /* In other words, this works for a 15x15 cross-hair. */
 }
 .que.ddmarker div.dragitems div.draghome img.target {
     display: none;

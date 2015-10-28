@@ -131,6 +131,8 @@ Y.extend(DDMARKER_DD, Y.Base, {
         return colour;
     },
     convert_to_window_xy : function (bgimgxy) {
+        // The +1 seems rather odd, but seems to give the best results in
+        // the three main browsers at a range of zoom levels.
         return [Number(bgimgxy[0]) + this.doc.bg_img().getX() + 1,
                 Number(bgimgxy[1]) + this.doc.bg_img().getY() + 1];
     },

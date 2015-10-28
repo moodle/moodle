@@ -214,6 +214,8 @@ class qtype_ddmarker_question extends qtype_ddtoimage_question_base {
                     continue;
                 }
                 $pointxy = explode(',', $coord);
+                $pointxy[0] = round($pointxy[0]);
+                $pointxy[1] = round($pointxy[1]);
                 if ($place->drop_hit($pointxy)) {
                     if (!isset($hits[$placeno])) {
                         $hits[$placeno] = array();
