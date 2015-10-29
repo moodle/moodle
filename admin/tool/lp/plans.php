@@ -24,18 +24,12 @@
 
 require_once(__DIR__ . '/../../../config.php');
 
-$userid = optional_param('userid', false, PARAM_INT);
-
 require_login(null, false);
 if (isguestuser()) {
     throw new require_login_exception('Guests are not allowed here.');
 }
 
-$iscurrentuser = $userid == $USER->id;
-if ($userid === false) {
-    $userid = $USER->id;
-}
-$context = context_user::instance($userid);
+$userid = optional_param('userid', $USER->id, PARAM_INT);
 
 // Check that the user is a valid user.
 $user = core_user::get_user($userid);
@@ -43,12 +37,9 @@ if (!$user || !core_user::is_real_user($userid)) {
     throw new moodle_exception('invaliduser', 'error');
 }
 
-if (!has_capability('tool/lp:planview', $context)) {
-    if ($iscurrentuser) {
-        require_capability('tool/lp:planviewown', $context);
-    } else {
-        throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
-    }
+$context = context_user::instance($userid);
+if (!\tool_lp\plan::can_read_user($userid) && !\tool_lp\plan::can_read_user_draft($userid)) {
+    throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
 }
 
 $url = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $userid));

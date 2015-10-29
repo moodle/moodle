@@ -55,21 +55,12 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_heading($pagetitle);
 $output = $PAGE->get_renderer('tool_lp');
 
-$manageplans = has_capability('tool/lp:planmanage', $context);
-$owncapabilities = array('tool/lp:plancreateown', 'tool/lp:planmanageown');
-if ($USER->id === $userid && !has_any_capability($owncapabilities, $context) && !$manageplans) {
-    throw new required_capability_exception($context, 'tool/lp:planmanageown', 'nopermissions', '');
-} else if (!$manageplans) {
+// TODO MDL-51646 Handle user creating plan, editing plan, drafts, etc...
+if (!\tool_lp\plan::can_manage_user_draft($userid)) {
     throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
 }
 
-// Passing the templates list to the form.
-$templates = array();
-if ($manageplans) {
-    $templates = \tool_lp\api::list_templates('', '', 0, 0, context_system::instance(), 'children');
-}
-
-$customdata = array('id' => $id, 'userid' => $userid, 'templates' => $templates);
+$customdata = array('id' => $id, 'userid' => $userid);
 $form = new \tool_lp\form\plan(null, $customdata);
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/admin/tool/lp/plans.php?userid=' . $userid));

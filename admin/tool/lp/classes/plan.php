@@ -86,33 +86,27 @@ class plan extends persistent {
     }
 
     /**
-     * Whether the current user can update the learning plan.
+     * Whether the current user can manage the plan.
      *
-     * @return bool|null
+     * @return bool
      */
-    public function can_update() {
-        global $USER;
-
-        // Null if the record has not been filled.
-        if (!$userid = $this->get_userid()) {
-            return null;
+    public function can_manage() {
+        if ($this->get_status() == self::STATUS_DRAFT) {
+            return self::can_manage_user_draft($this->get_userid());
         }
+        return self::can_manage_user($this->get_userid());
+    }
 
-        $context = context_user::instance($userid);
-
-        // Not all users can edit all plans, the template should know about it.
-        if (has_capability('tool/lp:planmanage', $context) ||
-                has_capability('tool/lp:planmanageown', $context)) {
-            return true;
+    /**
+     * Whether the current user can read the plan.
+     *
+     * @return bool
+     */
+    public function can_read() {
+        if ($this->get_status() == self::STATUS_DRAFT) {
+            return self::can_read_user_draft($this->get_userid());
         }
-
-        // The user that created the template can also edit it if he was the last one that modified it. But
-        // can't do it if it is already completed.
-        if ($USER->id == $userid && $this->get_usermodified() == $USER->id && $this->get_status() != self::STATUS_COMPLETE) {
-            return true;
-        }
-
-        return false;
+        return self::can_read_user($this->get_userid());
     }
 
     /**
@@ -156,6 +150,80 @@ class plan extends persistent {
         }
 
         return true;
+    }
+
+    /**
+     * Can the current user manage a user's plan?
+     *
+     * @param  int $planuserid The user to whom the plan would belong.
+     * @return bool
+     */
+    public static function can_manage_user($planuserid) {
+        global $USER;
+        $context = context_user::instance($planuserid);
+
+        $capabilities = array('tool/lp:planmanage');
+        if ($context->instanceid == $USER->id) {
+            $capabilities[] = 'tool/lp:planmanageown';
+        }
+
+        return has_any_capability($capabilities, $context);
+    }
+
+    /**
+     * Can the current user manage a user's draft plan?
+     *
+     * @param  int $planuserid The user to whom the plan would belong.
+     * @return bool
+     */
+    public static function can_manage_user_draft($planuserid) {
+        global $USER;
+        $context = context_user::instance($planuserid);
+
+        $capabilities = array('tool/lp:planmanagedraft');
+        if ($context->instanceid == $USER->id) {
+            $capabilities[] = 'tool/lp:planmanageowndraft';
+        }
+
+        return has_any_capability($capabilities, $context);
+    }
+
+    /**
+     * Can the current user view a user's plan?
+     *
+     * @param  int $planuserid The user to whom the plan would belong.
+     * @return bool
+     */
+    public static function can_read_user($planuserid) {
+        global $USER;
+        $context = context_user::instance($planuserid);
+
+        $capabilities = array('tool/lp:planview');
+        if ($context->instanceid == $USER->id) {
+            $capabilities[] = 'tool/lp:planviewown';
+        }
+
+        return has_any_capability($capabilities, $context)
+            || self::can_manage_user($planuserid);
+    }
+
+    /**
+     * Can the current user view a user's draft plan?
+     *
+     * @param  int $planuserid The user to whom the plan would belong.
+     * @return bool
+     */
+    public static function can_read_user_draft($planuserid) {
+        global $USER;
+        $context = context_user::instance($planuserid);
+
+        $capabilities = array('tool/lp:planviewdraft');
+        if ($context->instanceid == $USER->id) {
+            $capabilities[] = 'tool/lp:planviewowndraft';
+        }
+
+        return has_any_capability($capabilities, $context)
+            || self::can_manage_user_draft($planuserid);
     }
 
 }

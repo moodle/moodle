@@ -1199,22 +1199,23 @@ class api {
      */
     public static function list_user_plans($userid) {
         global $USER;
-
         $select = 'userid = :userid';
         $params = array('userid' => $userid);
-
         $context = context_user::instance($userid);
 
-        // We can allow guest user to pass they will not have LP.
-        if ($USER->id != $userid) {
-            require_capability('tool/lp:planview', $context);
-        } else {
-            require_capability('tool/lp:planviewown', $context);
+        // Check that we can read something here.
+        if (!plan::can_read_user($userid) && !plan::can_read_user_draft($userid)) {
+            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
         }
 
-        // Users that can manage plans can only see active and completed plans.
-        if (!has_any_capability(array('tool/lp:planmanage', 'tool/lp:planmanageown', 'tool/lp:plancreateown'), $context)) {
+        // The user cannot view the drafts.
+        if (!plan::can_read_user_draft($userid)) {
             $select = ' AND status != :statusdraft';
+            $params['statusdraft'] = plan::STATUS_DRAFT;
+        }
+        // The user cannot view the non-drafts.
+        if (!plan::can_read_user($userid)) {
+            $select = ' AND status = :statusdraft';
             $params['statusdraft'] = plan::STATUS_DRAFT;
         }
 
@@ -1229,30 +1230,13 @@ class api {
      */
     public static function create_plan(stdClass $record) {
         global $USER;
+        $plan = new plan(0, $record);
 
-        $context = context_user::instance($record->userid);
-
-        $manageplans = has_capability('tool/lp:planmanage', $context);
-        $createdraft = has_capability('tool/lp:plancreateown', $context);
-        $manageownplan = has_capability('tool/lp:planmanageown', $context);
-
-        // Any of them is enough.
-        if ($USER->id == $record->userid && !$manageplans && !$createdraft && !$manageownplan) {
-            // Exception about plancreateown as it is the one that is closer to basic users.
-            throw new required_capability_exception($context, 'tool/lp:plancreateown', 'nopermissions', '');
-        } else if ($USER->id != $record->userid && !$manageplans) {
+        if (!$plan->can_manage()) {
+            $context = context_user::instance($plan->get_userid());
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
         }
 
-        if (!isset($record->status)) {
-            // Default to status draft.
-            $record->status = plan::STATUS_DRAFT;
-        } else if ($record->status !== plan::STATUS_DRAFT && !$manageplans && !$manageownplan) {
-            // If the user can only create drafts we don't allow them to set other status.
-            throw new required_capability_exception($context, 'tool/lp:planmanageown', 'nopermissions', '');
-        }
-
-        $plan = new plan(0, $record);
         $plan->create();
         return $plan;
     }
@@ -1265,37 +1249,28 @@ class api {
      */
     public static function update_plan(stdClass $record) {
         global $USER;
-
-        $context = context_user::instance($record->userid);
-
-        $manageplans = has_capability('tool/lp:planmanage', $context);
-        $createdraft = has_capability('tool/lp:plancreateown', $context);
-        $manageownplan = has_capability('tool/lp:planmanageown', $context);
-
-        // Any of them is enough.
-        if ($USER->id == $record->userid && !$manageplans && !$createdraft && !$manageownplan) {
-            throw new required_capability_exception($context, 'tool/lp:planmanageown', 'nopermissions', '');
-        } else if (!$manageplans) {
-            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
-        }
-
         $plan = new plan($record->id);
 
-        // We don't allow users without planmanage and without
-        // planmanageown to edit plans that other users modified.
-        if (!$manageplans && !$manageownplan && $USER->id != $plan->get_usermodified()) {
-            throw new \moodle_exception('erroreditingmodifiedplan', 'tool_lp');
-        } else if (!$manageplans && $USER->id != $plan->get_userid()) {
+        // Validate that the plan as it is can be managed.
+        if (!$plan->can_manage()) {
+            $context = context_user::instance($plan->get_userid());
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
         }
 
-        // If the user can only create drafts we don't allow them to set other status.
-        if ($record->status !== plan::STATUS_DRAFT && !$manageplans && !$manageownplan) {
-            throw new required_capability_exception($context, 'tool/lp:planmanageown', 'nopermissions', '');
+        // Prevent change of ownership as the capabilities are checked against that.
+        if (isset($record->userid) && $plan->get_userid() != $record->userid) {
+            throw new coding_exception('A plan cannot be transfered to another user');
+        }
+        $plan->from_record($record);
+
+        // Revalidate after the data has be injected. This handles status change, etc...
+        if (!$plan->can_manage()) {
+            $context = context_user::instance($plan->get_userid());
+            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
         }
 
-        $plan->from_record($record);
-        return $plan->update();
+        $plan->update();
+        return $plan;
     }
 
     /**
@@ -1306,22 +1281,13 @@ class api {
      */
     public static function read_plan($id) {
         global $USER;
-
         $plan = new plan($id);
-        $context = context_user::instance($plan->get_userid());
 
-        if ($USER->id == $plan->get_userid()) {
-            require_capability('tool/lp:planviewown', $context);
-        } else {
-            require_capability('tool/lp:planview', $context);
+        if (!$plan->can_read()) {
+            $context = context_user::instance($plan->get_userid());
+            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
         }
 
-        // We require any of these capabilities to retrieve draft plans.
-        if ($plan->get_status() == plan::STATUS_DRAFT &&
-                !has_any_capability(array('tool/lp:planmanageown', 'tool/lp:planmanage', 'tool/lp:plancreateown'), $context)) {
-            // Exception about plancreateown as it is the one that is closer to basic users.
-            throw new required_capability_exception($context, 'tool/lp:plancreateown', 'nopermissions', '');
-        }
         return $plan;
     }
 
@@ -1333,20 +1299,10 @@ class api {
      */
     public static function delete_plan($id) {
         global $USER;
-
         $plan = new plan($id);
 
-        $context = context_user::instance($plan->get_userid());
-
-        $manageplans = has_capability('tool/lp:planmanage', $context);
-        $manageownplan = has_capability('tool/lp:planmanageown', $context);
-
-        if ($USER->id == $plan->get_userid() && $USER->id != $plan->get_usermodified() &&
-                !$manageplans && !$manageownplan) {
-            // A normal user can only edit its plan if they created it.
-            throw new required_capability_exception($context, 'tool/lp:planmanageown', 'nopermissions', '');
-        } else if ($USER->id != $plan->get_userid() && !$manageplans) {
-            // Other users needs to have tool/lp:planmanage.
+        if (!$plan->can_manage()) {
+            $context = context_user::instance($plan->get_userid());
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
         }
 

@@ -59,12 +59,6 @@ class plan extends moodleform {
         $mform->addElement('editor', 'description', get_string('plandescription', 'tool_lp'), array('rows' => 4));
         $mform->setType('description', PARAM_TEXT);
 
-        $templates = $this->get_template_options();
-        if ($templates) {
-            $mform->addElement('select', 'templateid', get_string('plantemplate', 'tool_lp'), $templates);
-            $mform->addHelpButton('templateid', 'plantemplate', 'tool_lp');
-        }
-
         $mform->addElement('date_selector', 'duedate', get_string('duedate', 'tool_lp'));
         $mform->addHelpButton('duedate', 'duedate', 'tool_lp');
 

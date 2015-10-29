@@ -59,12 +59,7 @@ function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) 
 function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
     global $USER;
 
-    $context = context_user::instance($USER->id);
-    if (!$iscurrentuser && !has_capability('tool/lp:planview', $context)) {
-        return false;
-    }
-
-    if (!has_capability('tool/lp:planviewown', $context)) {
+    if (!\tool_lp\plan::can_read_user($user->id)) {
         return false;
     }
 

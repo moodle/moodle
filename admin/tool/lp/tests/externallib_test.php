@@ -100,6 +100,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         unassign_capability('tool/lp:competencymanage', $authrole->id);
         unassign_capability('tool/lp:competencyread', $authrole->id);
         unassign_capability('tool/lp:planmanage', $authrole->id);
+        unassign_capability('tool/lp:planmanagedraft', $authrole->id);
         unassign_capability('tool/lp:planmanageown', $authrole->id);
         unassign_capability('tool/lp:planview', $authrole->id);
         unassign_capability('tool/lp:templatemanage', $authrole->id);
@@ -112,6 +113,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:competencymanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:competencyread', CAP_ALLOW, $this->userrole, $syscontext->id);
         assign_capability('tool/lp:planmanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
+        assign_capability('tool/lp:planmanagedraft', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:planview', CAP_ALLOW, $this->creatorrole, $syscontext->id);
         assign_capability('tool/lp:templatemanage', CAP_ALLOW, $this->creatorrole, $syscontext->id);
@@ -1052,7 +1054,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
-        assign_capability('tool/lp:plancreateown', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         $this->setUser($this->user);
@@ -1095,7 +1097,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
 
         unassign_capability('tool/lp:planmanageown', $this->userrole, $syscontext->id);
-        unassign_capability('tool/lp:plancreateown', $this->userrole, $syscontext->id);
+        unassign_capability('tool/lp:planmanageowndraft', $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         try {
@@ -1133,31 +1135,69 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $plan2['usercanupdate'] = false;
         $plan3['usercanupdate'] = false;
 
-        // You need planmanage, planmanageown or plancreateown to see draft plans.
+        // Prevent the user from seeing their own non-draft plans.
+        assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $this->userrole, $syscontext->id, true);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->assertEquals((array)$plan1, external::read_plan($plan1['id']));
+
         try {
-            external::read_plan($plan1['id']);
-            $this->fail('Exception expected due to not permissions to read draft plan');
+            external::read_plan($plan2['id']);
+            $this->fail('Exception expected due to not permissions to read plan');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
-        $this->assertEquals((Array)$plan2, external::read_plan($plan2['id']));
-        $this->assertEquals((Array)$plan3, external::read_plan($plan3['id']));
-
-        assign_capability('tool/lp:plancreateown', CAP_ALLOW, $this->userrole, $syscontext->id);
-        accesslib_clear_all_caches_for_unit_testing();
-
-        $this->assertEquals((Array)$plan1, external::read_plan($plan1['id']));
-
-        assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id);
-        unassign_capability('tool/lp:plancreateown', $this->userrole, $syscontext->id);
-        accesslib_clear_all_caches_for_unit_testing();
-
         try {
-            $plan = external::read_plan($plan2['id']);
-            $this->fail('Exception expected due to not permissions to view own plans');
+            external::read_plan($plan3['id']);
+            $this->fail('Exception expected due to not permissions to read plan');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
+
+        // Allow user to see their plan.
+        assign_capability('tool/lp:planviewown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
+        assign_capability('tool/lp:planmanageowndraft', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->assertEquals((array)$plan1, external::read_plan($plan1['id']));
+        $this->assertEquals((array)$plan2, external::read_plan($plan2['id']));
+        $this->assertEquals((array)$plan3, external::read_plan($plan3['id']));
+
+        // Allow use to manage their own draft plan.
+        assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('tool/lp:planmanageown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id, true);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $plan1['usercanupdate'] = true;
+        $this->assertEquals((array)$plan1, external::read_plan($plan1['id']));
+        try {
+            external::read_plan($plan2['id']);
+            $this->fail('Exception expected due to not permissions to read plan');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+        try {
+            external::read_plan($plan3['id']);
+            $this->fail('Exception expected due to not permissions to read plan');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('nopermissions', $e->errorcode);
+        }
+
+        // Allow use to manage their plan.
+        assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('tool/lp:planmanageown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('tool/lp:planmanageowndraft', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
+        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $plan1['usercanupdate'] = false;
+        $plan2['usercanupdate'] = true;
+        $plan3['usercanupdate'] = true;
+        $this->assertEquals((array)$plan1, external::read_plan($plan1['id']));
+        $this->assertEquals((array)$plan2, external::read_plan($plan2['id']));
+        $this->assertEquals((array)$plan3, external::read_plan($plan3['id']));
     }
 
     public function test_delete_plans() {

@@ -3099,7 +3099,7 @@ class external extends external_api {
         $result = api::create_plan($params);
         $record = $result->to_record();
         $record->statusname = $result->get_statusname();
-        $record->usercanupdate = $result->can_update();
+        $record->usercanupdate = $result->can_manage();
         return external_api::clean_returnvalue(self::create_plan_returns(), $record);
     }
 
@@ -3207,7 +3207,7 @@ class external extends external_api {
         $result = api::update_plan($params);
         $record = $result->to_record();
         $record->statusname = $result->get_statusname();
-        $record->usercanupdate = $result->can_update();
+        $record->usercanupdate = $result->can_manage();
         return external_api::clean_returnvalue(self::update_plan_returns(), $record);
     }
 
@@ -3249,7 +3249,7 @@ class external extends external_api {
         $result = api::read_plan($params['id']);
         $record = $result->to_record();
         $record->statusname = $result->get_statusname();
-        $record->usercanupdate = $result->can_update();
+        $record->usercanupdate = $result->can_manage();
         return external_api::clean_returnvalue(self::read_plan_returns(), $record);
     }
 
