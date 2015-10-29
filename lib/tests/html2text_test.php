@@ -180,4 +180,12 @@ What would happen if a non-terminated string were input to this function?
 
         $this->assertSame($strconv, html_to_text($strorig));
     }
+
+    /**
+     * Scripts should be stripped.
+     */
+    public function test_strip_scripts() {
+        $this->assertSame('Interesting text',
+                html_to_text('Interesting <script type="text/javascript">var what_a_mess = "Yuck!";</script> text', 0));
+    }
 }
