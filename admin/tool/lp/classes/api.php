@@ -1210,12 +1210,12 @@ class api {
 
         // The user cannot view the drafts.
         if (!plan::can_read_user_draft($userid)) {
-            $select = ' AND status != :statusdraft';
+            $select .= ' AND status != :statusdraft';
             $params['statusdraft'] = plan::STATUS_DRAFT;
         }
         // The user cannot view the non-drafts.
         if (!plan::can_read_user($userid)) {
-            $select = ' AND status = :statusdraft';
+            $select .= ' AND status = :statusdraft';
             $params['statusdraft'] = plan::STATUS_DRAFT;
         }
 
@@ -1248,7 +1248,6 @@ class api {
      * @return \tool_lp\plan
      */
     public static function update_plan(stdClass $record) {
-        global $USER;
         $plan = new plan($record->id);
 
         // Validate that the plan as it is can be managed.
@@ -1280,7 +1279,6 @@ class api {
      * @return \tool_lp\plan
      */
     public static function read_plan($id) {
-        global $USER;
         $plan = new plan($id);
 
         if (!$plan->can_read()) {
@@ -1298,7 +1296,6 @@ class api {
      * @return bool Success?
      */
     public static function delete_plan($id) {
-        global $USER;
         $plan = new plan($id);
 
         if (!$plan->can_manage()) {

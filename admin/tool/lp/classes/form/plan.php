@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 use moodleform;
 use tool_lp\api;
-
+use tool_lp\plan as planpersistent;
 require_once($CFG->libdir.'/formslib.php');
 
 /**
@@ -45,6 +45,7 @@ class plan extends moodleform {
      */
     public function definition() {
         $mform = $this->_form;
+        $context = $this->_customdata['context'];
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -62,11 +63,21 @@ class plan extends moodleform {
         $mform->addElement('date_selector', 'duedate', get_string('duedate', 'tool_lp'));
         $mform->addHelpButton('duedate', 'duedate', 'tool_lp');
 
+        // Display status selector in form.
+        $status = planpersistent::get_status_list($this->_customdata['userid']);
+        if (!empty($status) && count($status) > 1) {
+            $mform->addElement('select', 'status', get_string('status', 'tool_lp'), $status);
+        } else if (count($status) === 1) {
+            $mform->addElement('static', 'staticstatus', get_string('status', 'tool_lp'), current($status));
+        } else {
+            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
 
-        if (!empty($this->_customdata['id'])) {
+        if (isset($this->_customdata['plan'])) {
             if (!$this->is_submitted()) {
-                $plan = api::read_plan($this->_customdata['id']);
+                $plan = $this->_customdata['plan'];
                 $record = $plan->to_record();
                 $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
                 $this->set_data($record);

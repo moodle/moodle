@@ -226,4 +226,22 @@ class plan extends persistent {
             || self::can_manage_user_draft($planuserid);
     }
 
+    /**
+     * Return a list of status depending on capabilities.
+     *
+     * @param  int $userid The user to whom the plan would belong.
+     * @return array
+     */
+    public static function get_status_list($userid) {
+        $status = array();
+        if (self::can_manage_user_draft($userid)) {
+            $status[self::STATUS_DRAFT] = get_string('planstatusdraft', 'tool_lp');
+        }
+        if (self::can_manage_user($userid)) {
+            $status[self::STATUS_ACTIVE] = get_string('planstatusactive', 'tool_lp');
+            $status[self::STATUS_COMPLETE] = get_string('planstatuscomplete', 'tool_lp');
+        }
+        return $status;
+    }
+
 }

@@ -55,12 +55,25 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_heading($pagetitle);
 $output = $PAGE->get_renderer('tool_lp');
 
-// TODO MDL-51646 Handle user creating plan, editing plan, drafts, etc...
-if (!\tool_lp\plan::can_manage_user_draft($userid)) {
+// Custom data to pass to the form.
+$customdata = array('userid' => $userid, 'context' => $context);
+
+// User can create plan if he can_manage_user with active/complete status
+// or if he can_manage_user_draft with draft status.
+$cancreate = \tool_lp\plan::can_manage_user_draft($userid) || \tool_lp\plan::can_manage_user($userid);
+
+// If editing plan get the plan and check if user has permissions to edit it.
+if ($id) {
+    $plan = \tool_lp\api::read_plan($id);
+    if (!$plan->can_manage()) {
+        throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+    }
+    $customdata['plan'] = $plan;
+} else if (!$cancreate) {
     throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
 }
 
-$customdata = array('id' => $id, 'userid' => $userid);
+
 $form = new \tool_lp\form\plan(null, $customdata);
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/admin/tool/lp/plans.php?userid=' . $userid));

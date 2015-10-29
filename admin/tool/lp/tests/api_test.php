@@ -304,4 +304,121 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals($comprelated->get_idnumber(), $competency2->get_idnumber());
     }
 
+    /**
+     * Test update plan.
+     */
+    public function test_update_plan() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $usermanageowndraft = $dg->create_user();
+        $usermanageown = $dg->create_user();
+        $usermanagedraft = $dg->create_user();
+        $usermanage = $dg->create_user();
+
+        $syscontext = context_system::instance();
+
+        // Creating specific roles.
+        $manageowndraftrole = $dg->create_role(array(
+            'name' => 'User manage own draft',
+            'shortname' => 'manage-own-draft'
+        ));
+        $manageownrole = $dg->create_role(array(
+            'name' => 'User manage own',
+            'shortname' => 'manage-own'
+        ));
+        $managedraftrole = $dg->create_role(array(
+            'name' => 'User manage draft',
+            'shortname' => 'manage-draft'
+        ));
+        $managerole = $dg->create_role(array(
+            'name' => 'User manage',
+            'shortname' => 'manage'
+        ));
+
+        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $manageowndraftrole, $syscontext->id);
+        assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $manageowndraftrole, $syscontext->id);
+
+        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $manageownrole, $syscontext->id);
+        assign_capability('tool/lp:planviewown', CAP_ALLOW, $manageownrole, $syscontext->id);
+
+        assign_capability('tool/lp:planmanagedraft', CAP_ALLOW, $managedraftrole, $syscontext->id);
+        assign_capability('tool/lp:planviewdraft', CAP_ALLOW, $managedraftrole, $syscontext->id);
+
+        assign_capability('tool/lp:planmanage', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('tool/lp:planview', CAP_ALLOW, $managerole, $syscontext->id);
+
+        $dg->role_assign($manageowndraftrole, $usermanageowndraft->id, $syscontext->id);
+        $dg->role_assign($manageownrole, $usermanageown->id, $syscontext->id);
+        $dg->role_assign($managedraftrole, $usermanagedraft->id, $syscontext->id);
+        $dg->role_assign($managerole, $usermanage->id, $syscontext->id);
+
+        // Create first learning plan with user create draft.
+        $this->setUser($usermanageowndraft);
+        $plan = array (
+            'name' => 'plan own draft',
+            'description' => 'plan own draft',
+            'userid' => $usermanageowndraft->id
+        );
+        $plan = api::create_plan((object)$plan);
+        $record = $plan->to_record();
+        $record->name = 'plan own draft modified';
+
+        // Check if user create draft can edit the plan name.
+        $plan = api::update_plan($record);
+        $this->assertInstanceOf('\tool_lp\plan', $plan);
+
+        // Thrown exception when manageowndraft user try to change the status.
+        $record->status = \tool_lp\plan::STATUS_ACTIVE;
+        try {
+            $plan = api::update_plan($record);
+            $this->fail('User with manage own draft capability cannot edit the plan status.');
+        } catch (required_capability_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        // Test when user with manage own plan capability try to edit other user plan.
+        $record->status = \tool_lp\plan::STATUS_DRAFT;
+        $record->name = 'plan create draft modified 2';
+        $this->setUser($usermanageown);
+        try {
+            $plan = api::update_plan($record);
+            $this->fail('User with manage own plan capability can only edit his own plan.');
+        } catch (required_capability_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        // User with manage plan capability cannot edit the other user plans with status draft.
+        $this->setUser($usermanage);
+        $record->status = \tool_lp\plan::STATUS_COMPLETE;
+        try {
+            $plan = api::update_plan($record);
+            $this->fail('User with manage plan capability cannot edit the other user plans with status draft');
+        } catch (required_capability_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        // User with manage draft capability can edit other user's learning plan if the status is draft.
+        $this->setUser($usermanagedraft);
+        $record->status = \tool_lp\plan::STATUS_DRAFT;
+        $record->name = 'plan manage draft modified 3';
+        $plan = api::update_plan($record);
+        $this->assertInstanceOf('\tool_lp\plan', $plan);
+
+        // User with manage  plan capability can create/edit learning plan if status is active/complete.
+        $this->setUser($usermanage);
+        $plan = array (
+            'name' => 'plan create',
+            'description' => 'plan create',
+            'userid' => $usermanage->id,
+            'status' => \tool_lp\plan::STATUS_ACTIVE
+        );
+        $plan = api::create_plan((object)$plan);
+        $record = $plan->to_record();
+        $record->name = 'plan create own modified';
+        $record->status = \tool_lp\plan::STATUS_COMPLETE;
+        $plan = api::update_plan($record);
+        $this->assertInstanceOf('\tool_lp\plan', $plan);
+
+    }
+
 }
