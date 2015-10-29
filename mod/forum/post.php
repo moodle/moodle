@@ -840,7 +840,7 @@ if ($fromform = $mform_post->get_data()) {
         // Before we add this we must check that the user will not exceed the blocking threshold.
         forum_check_blocking_threshold($thresholdwarning);
 
-        if (isset($fromform->groupinfo)) {
+        if (!empty($fromform->groupinfo)) {
             // Use the value provided in the dropdown group selection.
             $fromform->groupid = $fromform->groupinfo;
 
