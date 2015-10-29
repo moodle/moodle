@@ -50,11 +50,12 @@ Feature: Enrolled users can be filtered by group
     And I should see "<expected3>"
     And I should not see "<notexpected1>"
     And I should not see "<notexpected2>"
+    And I should see "<expected4>"
 
     # Note the 'XX-IGNORE-XX' elements are for when there is less than 2 'not expected' items.
     Examples:
-      | group            | expected1 | expected2 | expected3 | notexpected1 | notexpected2 |
-      | All participants | Student 1 | Student 2 | Student 3 | XX-IGNORE-XX | XX-IGNORE-XX |
-      | No group         | Student 1 |           |           | Student 2    | Student 3    |
-      | Group 1          | Student 2 |           |           | Student 1    | Student 3    |
-      | Group 2          | Student 2 | Student 3 |           | Student 1    | XX-IGNORE-XX |
+      | group            | expected1 | expected2 | expected3 | expected4        | notexpected1 | notexpected2 |
+      | All participants | Student 1 | Student 2 | Student 3 | 4 enrolled users | XX-IGNORE-XX | XX-IGNORE-XX |
+      | No group         | Student 1 |           |           | 2 enrolled users | Student 2    | Student 3    |
+      | Group 1          | Student 2 |           |           | 1 enrolled users | Student 1    | Student 3    |
+      | Group 2          | Student 2 | Student 3 |           | 2 enrolled users | Student 1    | XX-IGNORE-XX |
