@@ -42,6 +42,7 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
         this.treeRoot = $(selector);
 
         this.items = this.treeRoot.find('li');
+        this.expandAll = this.items.length < 20;
         this.parents = this.treeRoot.find('li:has(ul)');
 
         this.visibleItems = null;
@@ -82,6 +83,14 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
         this.treeRoot.attr('role', 'tree');
 
         this.visibleItems = this.treeRoot.find('li');
+
+        var thisObj = this;
+        if (!this.expandAll) {
+            this.parents.each(function() {
+                thisObj.collapseGroup($(this));
+            });
+            this.expandGroup(this.parents.first());
+        }
     };
 
     /**
@@ -146,6 +155,15 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
      * @param {Object} item is the jquery id of the parent item of the group
      */
     Tree.prototype.updateFocus = function(item) {
+        // Expand all nodes up the tree.
+        var walk = item.parent();
+        while (walk.attr('role') != 'tree') {
+            walk = walk.parent();
+            if (walk.attr('aria-expanded') == 'false') {
+                this.expandGroup(walk);
+            }
+            walk = walk.parent();
+        }
         this.items.attr('aria-selected', 'false').attr('tabindex', '-1');
         item.attr('aria-selected', 'true').attr('tabindex', 0);
         this.treeRoot.trigger('selectionchanged', [item]);

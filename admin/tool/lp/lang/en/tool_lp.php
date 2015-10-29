@@ -80,6 +80,7 @@ $string['linktemplatecompetencies'] = 'Link template competencies';
 $string['listcompetencyframeworkscaption'] = 'List of competency frameworks';
 $string['listplanscaption'] = 'List of learning plans';
 $string['listtemplatescaption'] = 'List of learning plan templates';
+$string['loading'] = 'Loading...';
 $string['locatecompetency'] = 'Locate competency';
 $string['lp:competencymanage'] = 'Manage competency frameworks';
 $string['lp:competencyread'] = 'View competency frameworks';

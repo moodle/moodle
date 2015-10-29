@@ -37,6 +37,9 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
     /** @var {String} treeSelector - The selector for the root of the tree. */
     var treeSelector = '';
 
+    /** @var {String} currentNodeId - The data-id of the current node in the tree. */
+    var currentNodeId = '';
+
     /**
      * Build a tree from the flat list of competencies.
      * @param {Object} parent The parent competency.
@@ -64,43 +67,63 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
      */
     var loadCompetencies = function(searchtext) {
         var deferred = $.Deferred();
-        var promises = ajax.call([{
-            methodname: 'tool_lp_search_competencies',
-            args: {
-                searchtext: searchtext,
-                competencyframeworkid: competencyFrameworkId,
-                includerelated: true
-            }
-        }]);
-        promises[0].done(function(result) {
-            competencies = [];
-            var i = 0;
-            for (i = 0; i < result.length; i++) {
-                competencies[result[i].id] = result[i];
-            }
 
-            var children = [];
-            var competency = false;
-            for (i = 0; i < result.length; i++) {
-                competency = result[i];
-                if (parseInt(competency.parentid, 10) === 0) {
-                    children.push(competency);
-                    addChildren(competency, result);
+        templates.render('tool_lp/loading', {}).done(function(loadinghtml, loadingjs) {
+            templates.replaceNodeContents($(treeSelector), loadinghtml, loadingjs);
+
+            var promises = ajax.call([{
+                methodname: 'tool_lp_search_competencies',
+                args: {
+                    searchtext: searchtext,
+                    competencyframeworkid: competencyFrameworkId,
+                    includerelated: true
                 }
-            }
-            var context = {
-               shortname: competencyFrameworkShortName,
-               competencies: children
-            };
-            templates.render('tool_lp/competencies_tree_root', context).done(function(html, js) {
-               templates.replaceNodeContents($(treeSelector), $(html).html(), js);
-               new Ariatree(treeSelector);
-               deferred.resolve(competencies);
-            }).fail(deferred.reject);
+            }]);
+            promises[0].done(function(result) {
+                competencies = [];
+                var i = 0;
+                for (i = 0; i < result.length; i++) {
+                    competencies[result[i].id] = result[i];
+                }
 
-        }).fail(deferred.reject);
+                var children = [];
+                var competency = false;
+                for (i = 0; i < result.length; i++) {
+                    competency = result[i];
+                    if (parseInt(competency.parentid, 10) === 0) {
+                        children.push(competency);
+                        addChildren(competency, result);
+                    }
+                }
+                var context = {
+                    shortname: competencyFrameworkShortName,
+                    competencies: children
+                };
+                templates.render('tool_lp/competencies_tree_root', context).done(function(html, js) {
+                    templates.replaceNodeContents($(treeSelector), $(html).html(), js);
+                    var tree = new Ariatree(treeSelector);
+
+                    if (currentNodeId) {
+                        var node = $(treeSelector).find('[data-id=' + currentNodeId + ']');
+                        if (node.length) {
+                            tree.updateFocus(node);
+                        }
+                    }
+                    deferred.resolve(competencies);
+                }).fail(deferred.reject);
+            }).fail(deferred.reject);
+        });
 
         return deferred.promise();
+    };
+
+    /**
+     * Whenever the current item in the tree is changed - remember the "id".
+     * @param {Event} evt
+     * @param {Node} The active node in the tree.
+     */
+    var rememberCurrent = function(evt, node) {
+        currentNodeId = node.attr('data-id');
     };
 
 
@@ -119,6 +142,8 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
             competencyFrameworkShortName = shortname;
             treeSelector = selector;
             loadCompetencies(search).fail(notification.exception);
+
+            this.on('selectionchanged', rememberCurrent);
          },
 
         /**
