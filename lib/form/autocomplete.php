@@ -46,6 +46,8 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
     protected $ajax = '';
     /** @var string $placeholder Placeholder text for an empty list. */
     protected $placeholder = '';
+    /** @var bool $casesensitive Wether the search has to be case-sensitive. */
+    protected $casesensitive = false;
 
     /**
      * constructor
@@ -54,7 +56,7 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
      * @param mixed $elementLabel Label(s) for the select
      * @param mixed $options Data to be used to populate options
      * @param mixed $attributes Either a typical HTML attribute string or an associative array. Special options
-     *                          "tags", "placeholder", "ajax", "multiple" are supported.
+     *                          "tags", "placeholder", "ajax", "multiple", "casesensitive" are supported.
      */
     function MoodleQuickForm_autocomplete($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
         // Even if the constructor gets called twice we do not really want 2x options (crazy forms!).
@@ -75,6 +77,10 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
             $this->ajax = $attributes['ajax'];
             unset($attributes['ajax']);
         }
+        if (isset($attributes['casesensitive'])) {
+            $this->casesensitive = $attributes['casesensitive'] ? true : false;
+            unset($attributes['casesensitive']);
+        }
         parent::HTML_QuickForm_select($elementName, $elementLabel, $options, $attributes);
 
         $this->_type = 'autocomplete';
@@ -91,7 +97,8 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
         // Enhance the select with javascript.
         $this->_generateId();
         $id = $this->getAttribute('id');
-        $PAGE->requires->js_call_amd('core/form-autocomplete', 'enhance', $params = array('#' . $id, $this->tags, $this->ajax, $this->placeholder));
+        $PAGE->requires->js_call_amd('core/form-autocomplete', 'enhance', $params = array('#' . $id, $this->tags, $this->ajax,
+            $this->placeholder, $this->casesensitive));
 
         return parent::toHTML();
     }
