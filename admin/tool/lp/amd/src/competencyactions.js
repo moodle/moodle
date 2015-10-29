@@ -573,7 +573,7 @@ define(['jquery',
          * Handler when a node in the aria tree is selected.
          * @method selectionChanged
          */
-        selectionChanged: function(node) {
+        selectionChanged: function(evt, node) {
             var id = $(node).data('id'),
                 btn = $('[data-region="competencyactions"] [data-action="add"]'),
                 actionMenu = $('[data-region="competencyactionsmenu"]'),
@@ -625,6 +625,9 @@ define(['jquery',
                         .text(str);
                 });
             }
+            // We handled this event so consume it.
+            evt.preventDefault();
+            return false;
         }
     };
 });

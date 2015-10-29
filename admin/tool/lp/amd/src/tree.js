@@ -17,6 +17,8 @@
  * Implement an accessible aria tree widget, from a nested unordered list.
  * Based on http://oaa-accessibility.org/example/41/
  *
+ * To respond to selection changed events - listen to "change" events on the root of the tree.
+ *
  * @module     tool_lp/tree
  * @package    core
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
@@ -33,9 +35,8 @@ define(['jquery', 'core/url'], function($, url) {
      * Constructor
      *
      * @param {String} selector
-     * @param {function} selectCallback Called when the active node is changed.
      */
-    var Tree = function(selector, selectCallback) {
+    var Tree = function(selector) {
         this.treeRoot = $(selector);
 
         this.items = this.treeRoot.find('li');
@@ -43,7 +44,6 @@ define(['jquery', 'core/url'], function($, url) {
 
         this.visibleItems = null;
         this.activeItem = null;
-        this.selectCallback = selectCallback;
 
         this.keys = {
             tab:      9,
@@ -146,7 +146,7 @@ define(['jquery', 'core/url'], function($, url) {
     Tree.prototype.updateFocus = function(item) {
         this.items.attr('aria-selected', 'false').attr('tabindex', '-1');
         item.attr('aria-selected', 'true').attr('tabindex', 0);
-        this.selectCallback(item);
+        this.treeRoot.trigger('change', [item]);
     };
 
     /**

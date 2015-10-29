@@ -37,9 +37,6 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
     /** @var {String} treeSelector - The selector for the root of the tree. */
     var treeSelector = '';
 
-    /** @var {Function} changeCallback - Handler for selection changed events. */
-    var changeCallback = false;
-
     /**
      * Build a tree from the flat list of competencies.
      * @param {Object} parent The parent competency.
@@ -96,8 +93,8 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
                competencies: children
             };
             templates.render('tool_lp/competencies_tree_root', context).done(function(html, js) {
-               templates.replaceNode($(treeSelector), html, js);
-               new Ariatree(treeSelector, changeCallback);
+               templates.replaceNodeContents($(treeSelector), $(html).html(), js);
+               new Ariatree(treeSelector);
                deferred.resolve(competencies);
             }).fail(notification.exception);
 
@@ -118,13 +115,11 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
          * @param {String} shortname The framework shortname
          * @param {String} search The current search string
          * @param {String} selector The selector for the tree div
-         * @param {Function} changeHandler The handler to call when the selection changes.
          */
-        init: function(id, shortname, search, selector, changeHandler) {
+        init: function(id, shortname, search, selector) {
             competencyFrameworkId = id;
             competencyFrameworkShortName = shortname;
             treeSelector = selector;
-            changeCallback = changeHandler;
             loadCompetencies(search).fail(notification.exception);
          },
 

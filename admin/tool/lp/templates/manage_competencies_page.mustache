@@ -41,8 +41,8 @@
     <button>{{#pix}}a/search, , {{#str}}search{{/str}}{{/pix}}</button>
 </form>
 </p>
-<div data-enhance="tree">
-</div>
+<ul data-enhance="tree">
+</ul>
 </div>
 
 <div class="span6 well">
@@ -104,13 +104,15 @@
 
 {{#js}}
 // Initialise the JS.
-require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions' ], function(ariatree, treeModel, actions) {
+require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions', 'jquery'],
+        function(ariatree, treeModel, actions, $) {
 
     treeModel.init({{framework.id}},
                    '{{framework.shortname}}',
                    '{{search}}',
-                   '[data-enhance=tree]',
-                   actions.selectionChanged);
+                   '[data-enhance=tree]');
+    // Listen to the custom event triggered by the aria tree.
+    $('[data-enhance=tree]').on('change', actions.selectionChanged);
 
     actions.init(treeModel, {{pagecontextid}}, {{{framework.taxonomies}}});
 

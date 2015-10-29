@@ -82,9 +82,13 @@ define(['jquery',
     Picker.prototype._afterRender = function() {
 
         // Initialise the tree.
-        new Tree(self._find('[data-enhance=linktree]'), function(target) {
+        new Tree(self._find('[data-enhance=linktree]'));
+
+        self._find('[data-enhance=linktree]').on('change', function(evt, target) {
             var compId = target.data('id'),
                 valid = true;
+
+            evt.preventDefault();
 
             $.each(self._disallowedCompetencyIDs, function(i, id) {
                 if (id == compId) {
