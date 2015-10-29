@@ -237,8 +237,16 @@ function resource_get_coursemodule_info($coursemodule) {
 
     }
 
-    // If any optional extra details are turned on, store in custom data
-    $info->customdata = $resource->displayoptions;
+    // If any optional extra details are turned on, store in custom data,
+    // add some file details as well to be used later by resource_get_optional_details() without retriving.
+    // Do not store filedetails if this is a reference - they will still need to be retrieved every time.
+    if (($filedetails = resource_get_file_details($resource, $coursemodule)) && empty($filedetails['isref'])) {
+        $displayoptions = @unserialize($resource->displayoptions);
+        $displayoptions['filedetails'] = $filedetails;
+        $info->customdata = serialize($displayoptions);
+    } else {
+        $info->customdata = $resource->displayoptions;
+    }
 
     return $info;
 }

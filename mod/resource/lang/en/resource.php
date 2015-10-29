@@ -63,7 +63,7 @@ $string['framesize'] = 'Frame height';
 $string['legacyfiles'] = 'Migration of old course file';
 $string['legacyfilesactive'] = 'Active';
 $string['legacyfilesdone'] = 'Finished';
-$string['modifieddate'] = 'Modified on {$a}';
+$string['modifieddate'] = 'Modified {$a}';
 $string['modulename'] = 'File';
 $string['modulename_help'] = 'The file module enables a teacher to provide a file as a course resource. Where possible, the file will be displayed within the course interface; otherwise students will be prompted to download it. The file may include supporting files, for example an HTML page may have embedded images or Flash objects.
 
@@ -115,4 +115,4 @@ $string['showtype_help'] = 'Displays the type of the file, such as \'Word docume
 If there are multiple files in this resource, the start file type is displayed.
 
 If the file type is not known to the system, it will not display.';
-$string['uploadeddate'] = 'Uploaded on {$a}';
+$string['uploadeddate'] = 'Uploaded {$a}';
