@@ -311,7 +311,7 @@ class competency_framework extends persistent {
      * @return int
      */
     public static function get_taxonomies_max_level() {
-        return 4;
+        return 6;
     }
 
     /**
