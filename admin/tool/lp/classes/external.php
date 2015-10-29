@@ -1480,9 +1480,8 @@ class external extends external_api {
         return new external_single_structure(array (
             'framework' => self::get_competency_framework_external_structure(),
             'canmanage' => new external_value(PARAM_BOOL, 'True if this user has permission to manage competency frameworks'),
-            'competencies' => new external_multiple_structure(
-                self::get_competency_external_structure()
-            )
+            'pagecontextid' => new external_value(PARAM_INT, 'Context id for the framework'),
+            'search' => new external_value(PARAM_RAW, 'Current search string')
         ));
 
     }

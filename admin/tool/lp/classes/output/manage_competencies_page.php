@@ -76,8 +76,6 @@ class manage_competencies_page implements renderable, templatable {
         );
         $this->navigation[] = $addpage;
 
-  //      $this->competencies = api::search_competencies($search, $framework->get_id());
-
         $this->canmanage = has_capability('tool/lp:competencymanage', $framework->get_context());
     }
 
@@ -118,21 +116,8 @@ class manage_competencies_page implements renderable, templatable {
             $options);
         $data->framework->taxonomies = json_encode($this->framework->get_taxonomies());
         $data->canmanage = $this->canmanage;
-        $data->competencies = array();
         $data->search = $this->search;
         $data->pagecontextid = $this->pagecontext->id;
-
-/*        foreach ($this->competencies as $competency) {
-            if ($competency->get_parentid() == 0) {
-                $record = $competency->to_record();
-                $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
-                $record->children = array();
-                $record->haschildren = false;
-                $data->competencies[] = $record;
-                $this->add_competency_children($record, $this->competencies);
-            }
-        }
-*/
 
         return $data;
     }
