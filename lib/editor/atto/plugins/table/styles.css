@@ -34,3 +34,6 @@ div.availablecolors label input[type="radio"] {
     margin-left: -15px;
 }
 
+input[name="bordersize"], input[name="width"] {
+    margin-right: 0.3em;
+}
