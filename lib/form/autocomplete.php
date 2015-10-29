@@ -46,7 +46,7 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
     protected $ajax = '';
     /** @var string $placeholder Placeholder text for an empty list. */
     protected $placeholder = '';
-    /** @var bool $casesensitive Wether the search has to be case-sensitive. */
+    /** @var bool $casesensitive Whether the search has to be case-sensitive. */
     protected $casesensitive = false;
 
     /**
