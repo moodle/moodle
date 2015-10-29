@@ -452,7 +452,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
             }
         }
         // Check role permissions
-        if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:assign'), $coursecontext)) {
+        if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride', 'moodle/role:override'), $coursecontext)) {
             $url = new moodle_url('/admin/roles/check.php', array('contextid'=>$coursecontext->id));
             $permissionsnode->add(get_string('checkpermissions', 'role'), $url, navigation_node::TYPE_SETTING, null, 'permissions', new pix_icon('i/checkpermissions', ''));
         }
