@@ -97,6 +97,7 @@ class data_field_checkbox extends data_field_base {
             } else {
                 $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), false, $checkbox);
             }
+            $str .= html_writer::empty_tag('br');
             $found = true;
         }
         if (!$found) {
