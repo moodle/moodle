@@ -239,3 +239,16 @@ Feature: Posting to all groups in a separate group discussion is restricted to u
     And the "Group" select box should contain "Group A"
     And the "Group" select box should contain "Group B"
     And I should see "Post a copy to all groups"
+
+  Scenario: Students can view all participants discussions in separate groups mode
+    Given I log in as "teacher1"
+    And I follow "Course 1"
+    When I add a new discussion to "Standard forum name" forum with:
+      | Subject | Forum post to all participants |
+      | Message | This is the body |
+      | Group   | All participants |
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Standard forum name"
+    Then I should see "Forum post to all participants"
