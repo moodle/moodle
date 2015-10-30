@@ -141,14 +141,15 @@ if ($action === 'delete') {
         // Output edit mode title.
         echo $OUTPUT->heading($strblogs . ': ' . get_string('deleteentry', 'blog'), 2);
 
+        echo $OUTPUT->confirm(get_string('blogdeleteconfirm', 'blog'),
+                              new moodle_url('edit.php', $optionsyes),
+                              new moodle_url('index.php', $optionsno));
+
+        echo '<br />';
         // Output the entry.
         $entry->prepare_render();
         echo $output->render($entry);
 
-        echo '<br />';
-        echo $OUTPUT->confirm(get_string('blogdeleteconfirm', 'blog'),
-                              new moodle_url('edit.php', $optionsyes),
-                              new moodle_url('index.php', $optionsno));
         echo $OUTPUT->footer();
         die;
     }
