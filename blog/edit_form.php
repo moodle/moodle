@@ -151,7 +151,7 @@ class blog_edit_form extends moodleform {
     public function validation($data, $files) {
         global $CFG, $DB, $USER;
 
-        $errors = array();
+        $errors = parent::validation($data, $files);
 
         // Validate course association.
         if (!empty($data['courseassoc'])) {
