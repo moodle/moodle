@@ -28,6 +28,8 @@ use tool_lp\competency_framework;
 use tool_lp\external;
 use tool_lp\plan;
 use tool_lp\related_competency;
+use tool_lp\template;
+use tool_lp\template_competency;
 use tool_lp\user_competency;
 use tool_lp\user_competency_plan;
 
@@ -49,8 +51,11 @@ class tool_lp_generator extends component_generator_base {
     /** @var int Number of created frameworks. */
     protected $frameworkcount = 0;
 
-     /** @var int Number of created plans. */
+    /** @var int Number of created plans. */
     protected $plancount = 0;
+
+    /** @var int Number of created templates. */
+    protected $templatecount = 0;
 
     /** @var stdClass Scale that we might need. */
     protected $scale;
@@ -183,6 +188,55 @@ class tool_lp_generator extends component_generator_base {
         if ($relation->get_id()) {
             throw new coding_exception('Relation already exists');
         }
+        $relation->create();
+
+        return $relation;
+    }
+
+    /**
+     * Create a template.
+     *
+     * @param array|stdClass $record
+     * @return template
+     */
+    public function create_template($record = null) {
+        $this->templatecount++;
+        $i = $this->templatecount;
+        $record = (object) $record;
+
+        if (!isset($record->shortname)) {
+            $record->shortname = "Template shortname $i";
+        }
+        if (!isset($record->description)) {
+            $record->description = "Template $i description ";
+        }
+        if (!isset($record->contextid)) {
+            $record->contextid = context_system::instance()->id;
+        }
+
+        $template = new template(0, $record);
+        $template->create();
+
+        return $template;
+    }
+
+    /**
+     * Create a template competency.
+     *
+     * @param array|stdClass $record
+     * @return template_competency
+     */
+    public function create_template_competency($record = null) {
+        $record = (object) $record;
+
+        if (!isset($record->competencyid)) {
+            throw new coding_exception('Property competencyid is required.');
+        }
+        if (!isset($record->templateid)) {
+            throw new coding_exception('Property templateid is required.');
+        }
+
+        $relation = new template_competency(0, $record);
         $relation->create();
 
         return $relation;

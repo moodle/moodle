@@ -27,6 +27,8 @@ use tool_lp\competency;
 use tool_lp\competency_framework;
 use tool_lp\plan;
 use tool_lp\related_competency;
+use tool_lp\template;
+use tool_lp\template_competency;
 use tool_lp\user_competency;
 use tool_lp\user_competency_plan;
 
@@ -129,6 +131,32 @@ class tool_lp_generator_testcase extends advanced_testcase {
                                                 ));
         $this->assertEquals(2, user_competency_plan::count_records());
         $this->assertInstanceOf('\tool_lp\user_competency_plan', $ucp);
+    }
+
+    public function test_create_template() {
+        $this->resetAfterTest(true);
+
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $this->assertEquals(0, template::count_records());
+        $template = $lpg->create_template();
+        $template = $lpg->create_template();
+        $this->assertEquals(2, template::count_records());
+        $this->assertInstanceOf('\tool_lp\template', $template);
+    }
+
+    public function test_create_template_competency() {
+        $this->resetAfterTest(true);
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $this->assertEquals(0, template_competency::count_records());
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $template = $lpg->create_template();
+        $relation = $lpg->create_template_competency(array('competencyid' => $c1->get_id(), 'templateid' => $template->get_id()));
+        $relation = $lpg->create_template_competency(array('competencyid' => $c2->get_id(), 'templateid' => $template->get_id()));
+        $this->assertEquals(2, template_competency::count_records());
+        $this->assertInstanceOf('\tool_lp\template_competency', $relation);
     }
 
 }

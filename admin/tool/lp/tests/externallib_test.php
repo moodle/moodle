@@ -30,6 +30,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 use tool_lp\external;
 use tool_lp\plan;
 use tool_lp\related_competency;
+use tool_lp\user_competency;
 
 /**
  * External learning plans webservice API tests.
@@ -1246,6 +1247,51 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $plan4 = external::create_plan('4', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
         $this->assertTrue(external::delete_plan($plan4['id']));
+    }
+
+    public function test_list_plan_competencies() {
+        $this->setUser($this->creator);
+
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $f1 = $lpg->create_framework();
+        $f2 = $lpg->create_framework();
+
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1c = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2a = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id()));
+        $c2b = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id()));
+
+        $tpl = $lpg->create_template();
+        $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c1a->get_id()));
+        $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c1c->get_id()));
+        $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c2b->get_id()));
+
+        $plan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get_id()));
+
+        $uc1a = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1a->get_id(),
+            'status' => user_competency::STATUS_IN_REVIEW));
+        $uc1b = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1b->get_id()));
+        $uc2b = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c2b->get_id(),
+            'grade' => 2, 'proficiency' => 1));
+        $ux1a = $lpg->create_user_competency(array('userid' => $this->creator->id, 'competencyid' => $c1a->get_id()));
+
+        $result = external::list_plan_competencies($plan->get_id());
+        $result = external::clean_returnvalue(external::list_plan_competencies_returns(), $result);
+
+        $this->assertCount(3, $result);
+        $this->assertEquals($c1a->get_id(), $result[0]['competency']['id']);
+        $this->assertEquals($this->user->id, $result[0]['usercompetency']['userid']);
+        $this->assertEquals($c1c->get_id(), $result[1]['competency']['id']);
+        $this->assertEquals($this->user->id, $result[1]['usercompetency']['userid']);
+        $this->assertEquals($c2b->get_id(), $result[2]['competency']['id']);
+        $this->assertEquals($this->user->id, $result[2]['usercompetency']['userid']);
+        $this->assertEquals(user_competency::STATUS_IN_REVIEW, $result[0]['usercompetency']['status']);
+        $this->assertEquals(null, $result[1]['usercompetency']['grade']);
+        $this->assertEquals(2, $result[2]['usercompetency']['grade']);
+        $this->assertEquals(1, $result[2]['usercompetency']['proficiency']);
     }
 
     public function test_add_competency_to_template() {
