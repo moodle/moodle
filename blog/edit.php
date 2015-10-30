@@ -141,7 +141,7 @@ if ($action === 'delete') {
         // Output edit mode title.
         echo $OUTPUT->heading($strblogs . ': ' . get_string('deleteentry', 'blog'), 2);
 
-        echo $OUTPUT->confirm(get_string('blogdeleteconfirm', 'blog'),
+        echo $OUTPUT->confirm(get_string('blogdeleteconfirm', 'blog', format_string($entry->subject)),
                               new moodle_url('edit.php', $optionsyes),
                               new moodle_url('index.php', $optionsno));
 
