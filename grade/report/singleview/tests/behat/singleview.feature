@@ -105,7 +105,7 @@ Feature: We can use Single view
     And I set the field "Insert value" to "1.0"
     And I click on "Perform bulk insert" "checkbox"
     And I press "Save"
-    Then I should see "Grades were set for 9 items"
+    Then I should see "Grades were set for 8 items"
 
   Scenario: Navigation works in the Single view.
     Given I follow "Single view for Student 1"
