@@ -130,11 +130,11 @@ class qtype_ddmarker_question_test extends basic_testcase {
 
         // The second returned param in array is the max of correct choices or
         // the actual number of items dragged.
-        $response1 = array('c1' => '50,50', 'c2' => '100,100', 'c3' => '100,100;200,200');
+        $response1 = array('c1' => '50,50', 'c2' => '110,110', 'c3' => '90,90;210,210');
         $this->assertEquals(array(1, 4), $dd->get_num_parts_right($response1));
         $response2 = array('c1' => '50,50;150,50;50,150',
-                            'c2' => '100,100',
-                            'c3' => '100,100;200,200');
+                            'c2' => '110,110',
+                            'c3' => '90,90;210,210');
         $this->assertEquals(array(1, 6), $dd->get_num_parts_right($response2));
         $response3 = array('c1' => '50,50;150,50;50,150',
                             'c2' => '',

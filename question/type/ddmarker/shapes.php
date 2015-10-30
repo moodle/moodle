@@ -82,13 +82,13 @@ abstract class qtype_ddmarker_shape {
      * @return bool
      */
     protected function is_point_in_bounding_box($pointxy, $xleftytop, $xrightybottom) {
-        if ($pointxy[0] <= $xleftytop[0]) {
+        if ($pointxy[0] < $xleftytop[0]) {
             return false;
-        } else if ($pointxy[0] >= $xrightybottom[0]) {
+        } else if ($pointxy[0] > $xrightybottom[0]) {
             return false;
-        } else if ($pointxy[1] <= $xleftytop[1]) {
+        } else if ($pointxy[1] < $xleftytop[1]) {
             return false;
-        } else if ($pointxy[1] >= $xrightybottom[1]) {
+        } else if ($pointxy[1] > $xrightybottom[1]) {
             return false;
         }
         return true;
@@ -300,7 +300,7 @@ class qtype_ddmarker_shape_circle extends qtype_ddmarker_shape {
 
     public function is_point_in_shape($xy) {
         $distancefromcentre = sqrt(pow(($xy[0] - $this->xcentre), 2) + pow(($xy[1] - $this->ycentre), 2));
-        return $distancefromcentre < $this->radius;
+        return $distancefromcentre <= $this->radius;
     }
 
     public function center_point() {
@@ -380,84 +380,69 @@ class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
     }
 
     public function is_point_in_shape($xy) {
-        $pointatinfinity = new qtype_ddmarker_point(-1000000, $xy[1] + 1);
-        $pointtotest = new qtype_ddmarker_point($xy[0], $xy[1]);
-        $testsegment = new qtype_ddmarker_segment($pointatinfinity, $pointtotest);
+        // This code is based on the winding number algorithm from
+        // http://geomalgorithms.com/a03-_inclusion.html
+        // which comes with the following copyright notice:
+
+        // Copyright 2000 softSurfer, 2012 Dan Sunday
+        // This code may be freely used, distributed and modified for any purpose
+        // providing that this copyright notice is included with it.
+        // SoftSurfer makes no warranty for this code, and cannot be held
+        // liable for any real or imagined damage resulting from its use.
+        // Users of this code must verify correctness for their application.
+
+        $point = new qtype_ddmarker_point($xy[0], $xy[1]);
         $windingnumber = 0;
         foreach ($this->coords as $index => $coord) {
-            if ($index != 0) {
-                $a = new qtype_ddmarker_point($this->coords[$index - 1][0],
-                                                $this->coords[$index - 1][1]);
+            $start = new qtype_ddmarker_point($this->coords[$index][0], $this->coords[$index][1]);
+            if ($index < count($this->coords) - 1) {
+                $endindex = $index + 1;
             } else {
-                $a = new qtype_ddmarker_point($this->coords[count($this->coords) - 1][0],
-                                                $this->coords[count($this->coords) - 1][1]);
+                $endindex = 0;
             }
-            $b = new qtype_ddmarker_point($this->coords[$index][0],
-                                            $this->coords[$index][1]);
-            $segment = new qtype_ddmarker_segment($a, $b);
-            $intersects = $segment->intersects($testsegment);
-            if ($intersects === null) {
-                list($perturbedsegment, $testsegment) = $this->perturb($segment, $testsegment);
-                if ($index !== 0) {
-                    $this->coords[$index - 1][0] = $perturbedsegment->a->x;
-                    $this->coords[$index - 1][1] = $perturbedsegment->a->y;
-                } else {
-                    $this->coords[count($this->coords) - 1][0] = $perturbedsegment->a->x;
-                    $this->coords[count($this->coords) - 1][1] = $perturbedsegment->a->y;
+            $end = new qtype_ddmarker_point($this->coords[$endindex][0], $this->coords[$endindex][1]);
+
+            if ($start->y <= $point->y) {
+                if ($end->y >= $point->y) { // An upward crossing.
+                    $isleft = $this->is_left($start, $end, $point);
+                    if ($isleft == 0) {
+                        return true; // The point is on the line.
+                    } else if ($isleft > 0) {
+                        // A valid up intersect.
+                        $windingnumber += 1;
+                    }
                 }
-                $this->coords[$index][0] = $perturbedsegment->b->x;
-                $this->coords[$index][1] = $perturbedsegment->b->y;
-                $intersects = $perturbedsegment->intersects($testsegment);
-                if ($intersects === null) {
-                    throw new coding_exception('Polygon hit test code failed '.
-                                                   '- Still touching end point after perturbation');
-                } else if ($intersects) {
-                    $windingnumber++;
+            } else {
+                if ($end->y <= $point->y) { // A downward crossing.
+                    $isleft = $this->is_left($start, $end, $point);
+                    if ($isleft == 0) {
+                        return true; // The point is on the line.
+                    } else if ($this->is_left($start, $end, $point) < 0) {
+                        // A valid down intersect.
+                        $windingnumber -= 1;
+                    }
                 }
-            } else if ($intersects) {
-                $windingnumber++;
             }
         }
-        return ($windingnumber % 2) ? true : false;
+        return $windingnumber != 0;
     }
 
     /**
-     * $v segment and this touch, move one of them slightly.
-     * @param qtype_ddmarker_segment $v
-     * @param int $ua
-     * @param int $ub
+     * Tests if a point is left / on / right of an infinite line.
+     *
+     * @param qtype_ddmarker_point $start first of two points on the infinite line.
+     * @param qtype_ddmarker_point $end second of two points on the infinite line.
+     * @param qtype_ddmarker_point $point the oint to test.
+     * @return number > 0 if the point is left of the line.
+     *                 = 0 if the point is on the line.
+     *                 < 0 if the point is right of the line.
      */
-    public function perturb($p, $q) {
-        list(, $ua, $ub) = $p->intersection_point($q);
-        $pt = 0.00001; // Perturbation factor.
-        $h = $p->a->dist($p->b);
-        if ($ua == 0) {
-            // ... q1, q2 intersects p1 exactly, move vertex p1 closer to p2.
-            $a = ($pt * $p->a->dist(new qtype_ddmarker_point($p->b->x, $p->a->y))) / $h;
-            $b = ($pt * $p->b->dist(new qtype_ddmarker_point($p->b->x, $p->a->y))) / $h;
-            $p->a->x = $p->a->x + $a;
-            $p->a->y = $p->a->y + $b;
-        } else if ($ua == 1) {
-            // ... q1, q2 intersects p2 exactly, move vertex p2 closer to p1.
-            $a = ($pt * $p->a->dist(new qtype_ddmarker_point($p->b->x, $p->a->y))) / $h;
-            $b = ($pt * $p->b->dist(new qtype_ddmarker_point($p->b->x, $p->a->y))) / $h;
-            $p->b->x = $p->b->x - $a;
-            $p->b->y = $p->b->y - $b;
-        } else if ($ub == 0) {
-            // ... p1, p2 intersects q1 exactly, move vertex q1 closer to q2.
-            $a = ($pt * $q->a->dist(new qtype_ddmarker_point($q->b->x, $q->a->y))) / $h;
-            $b = ($pt * $q->b->dist(new qtype_ddmarker_point($q->b->x, $q->a->y))) / $h;
-            $q->a->x = $q->a->x + $a;
-            $q->a->y = $q->a->y + $b;
-        } else if ($ub == 1) {
-            // ... p1, p2 intersects q2 exactly, move vertex q2 closer to q1.
-            $a = ($pt * $q->a->dist(new qtype_ddmarker_point($q->b->x, $q->a->y))) / $h;
-            $b = ($pt * $q->b->dist(new qtype_ddmarker_point($q->b->x, $q->a->y))) / $h;
-            $q->b->x = $q->b->x - $a;
-            $q->b->y = $q->b->y - $b;
-        }
-        return array($p, $q);
+    protected function is_left(qtype_ddmarker_point $start, qtype_ddmarker_point $end,
+            qtype_ddmarker_point $point) {
+        return ($end->x - $start->x) * ($point->y - $start->y)
+                - ($point->x -  $start->x) * ($end->y - $start->y);
     }
+
     public function center_point() {
         $center = array(round(($this->minxy[0] + $this->maxxy[0]) / 2),
                         round(($this->minxy[1] + $this->maxxy[1]) / 2));
@@ -466,7 +451,6 @@ class qtype_ddmarker_shape_polygon extends qtype_ddmarker_shape {
         } else {
             return null;
         }
-
     }
 }
 
@@ -493,71 +477,5 @@ class qtype_ddmarker_point {
      */
     public function dist($other) {
         return sqrt(pow($this->x - $other->x, 2) + pow($this->y - $other->y, 2));
-    }
-}
-
-
-/**
- * Defines a segment between two end points a and b.
- *
- * @copyright 2012 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qtype_ddmarker_segment {
-    /** @var object First point */
-    public $a;
-
-    /** @var object Second point */
-    public $b;
-
-    public function __construct(qtype_ddmarker_point $a, qtype_ddmarker_point $b) {
-        $this->a = $a;
-        $this->b = $b;
-    }
-    /**
-     * Find if this segment intersects another segment $v.
-     * @param segment $v
-     * @return boolean does it intersect?
-     */
-    public function intersects(qtype_ddmarker_segment $v) {
-        // Algorithm from: http://astronomy.swin.edu.au/~pbourke/geometry/lineline2d/
-        // $this is P1 to P2 and $v is P3 to P4.
-        list($d, $ua, $ub) = $this->intersection_point($v);
-        if ($d !== 0) { // The lines intersect at a point somewhere
-            // The values of $ua and $ub tell us where the intersection occurred.
-            if ( (($ua == 0 || $ua == 1 )&&($ub >= 0 && $ub <= 1))
-                                            || (($ub == 0 || $ub == 1) && ($ua >= 0 && $ua <= 1))) {
-                // A value of exactly 0 or 1 means the intersection occurred right at the
-                // start or end of the line segment. For our purposes we will consider this
-                // NOT to be an intersection away from the intersecting line.
-                // Degenerate case - segment exactly touches a line.
-                return null;
-            } else if (($ua > 0 && $ua < 1) && ($ub > 0 && $ub < 1)) {
-                // A value between 0 and 1 means the intersection occurred within the
-                // line segment.
-                // Intersection occurs on both line segments.
-                return true;
-            } else {
-                // The lines do not intersect within the line segments.
-                return false;
-            }
-        } else { // The lines do not intersect.
-            return false;
-        }
-    }
-
-    public function intersection_point(qtype_ddmarker_segment $v) {
-        $d = (($v->b->y - $v->a->y) * ($this->b->x - $this->a->x)) -
-                (($v->b->x - $v->a->x) * ($this->b->y - $this->a->y));
-        if ($d != 0) { // The lines intersect at a point somewhere.
-            $ua = (($v->b->x - $v->a->x) * ($this->a->y - $v->a->y) -
-                    ($v->b->y - $v->a->y) * ($this->a->x - $v->a->x)) / $d;
-            $ub = (($this->b->x - $this->a->x) * ($this->a->y - $v->a->y) -
-                    ($this->b->y - $this->a->y) * ($this->a->x - $v->a->x)) / $d;
-        } else {
-            $ua = null;
-            $ub = null;
-        }
-        return array($d, $ua, $ub);
     }
 }
