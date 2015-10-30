@@ -402,7 +402,7 @@ function install_print_footer($config, $reload=false) {
 
     $homelink  = '<div class="sitelink">'.
        '<a title="Moodle '. $CFG->target_release .'" href="http://docs.moodle.org/en/Administrator_documentation" onclick="this.target=\'_blank\'">'.
-       '<img src="pix/moodlelogo.png" alt="moodlelogo" /></a></div>';
+       '<img src="pix/moodlelogo.png" alt="'.get_string('moodlelogo').'" /></a></div>';
 
     echo '</form></div>';
     echo '<div id="page-footer">'.$homelink.'</div>';

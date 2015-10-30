@@ -43,6 +43,7 @@ langdownloaderror,install
 language,moodle
 memorylimithelp,install
 missingrequiredfield,error
+moodlelogo,moodle
 next,moodle
 parentlanguage,langconfig
 pathserrcreatedataroot,install
