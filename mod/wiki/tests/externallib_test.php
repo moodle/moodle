@@ -873,4 +873,138 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($expectedpages, $result['pages']);
     }
 
+    /**
+     * Test get_page_contents using an invalid pageid.
+     */
+    public function test_get_page_contents_invalid_pageid() {
+        $this->setExpectedException('moodle_exception');
+        mod_wiki_external::get_page_contents(0);
+    }
+
+    /**
+     * Test get_page_contents using a user not enrolled in the course.
+     */
+    public function test_get_page_contents_unenrolled_user() {
+        // Create and use the user.
+        $usernotenrolled = self::getDataGenerator()->create_user();
+        $this->setUser($usernotenrolled);
+
+        $this->setExpectedException('require_login_exception');
+        mod_wiki_external::get_page_contents($this->firstpage->id);
+    }
+
+    /**
+     * Test get_page_contents using a hidden wiki as student.
+     */
+    public function test_get_page_contents_hidden_wiki_as_student() {
+        // Create a hidden wiki and try to get a page contents.
+        $hiddenwiki = $this->getDataGenerator()->create_module('wiki',
+                            array('course' => $this->course->id, 'visible' => false));
+        $hiddenpage = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_page($hiddenwiki);
+
+        $this->setUser($this->student);
+        $this->setExpectedException('require_login_exception');
+        mod_wiki_external::get_page_contents($hiddenpage->id);
+    }
+
+    /**
+     * Test get_page_contents without the viewpage capability.
+     */
+    public function test_get_page_contents_without_viewpage_capability() {
+        // Prohibit capability = mod/wiki:viewpage on the course for students.
+        $contextcourse = context_course::instance($this->course->id);
+        assign_capability('mod/wiki:viewpage', CAP_PROHIBIT, $this->studentrole->id, $contextcourse->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_wiki_external::get_page_contents($this->firstpage->id);
+    }
+
+    /**
+     * Test get_page_contents, check that a student can't get a page from another group when
+     * using separate groups.
+     */
+    public function test_get_page_contents_separate_groups_student_see_other_group() {
+        // Create testing data.
+        $this->create_individual_wikis_with_groups();
+
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_wiki_external::get_page_contents($this->fpsepg2indt->id);
+    }
+
+    /**
+     * Test get_page_contents without groups. We won't test all the possible cases because that's already
+     * done in the tests for get_subwiki_pages.
+     */
+    public function test_get_page_contents() {
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Set expected result: first page.
+        $expectedpage = array(
+            'id' => $this->firstpage->id,
+            'wikiid' => $this->wiki->id,
+            'subwikiid' => $this->firstpage->subwikiid,
+            'groupid' => 0, // No groups.
+            'userid' => 0, // Collaborative.
+            'title' => $this->firstpage->title,
+            'cachedcontent' => $this->firstpage->cachedcontent,
+            'contentformat' => 1,
+            'caneditpage' => true
+        );
+
+        $result = mod_wiki_external::get_page_contents($this->firstpage->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_contents_returns(), $result);
+        $this->assertEquals($expectedpage, $result['page']);
+
+        // Add a new page to the wiki and test with it.
+        $newpage = $this->getDataGenerator()->get_plugin_generator('mod_wiki')->create_page($this->wiki);
+
+        $expectedpage['id'] = $newpage->id;
+        $expectedpage['title'] = $newpage->title;
+        $expectedpage['cachedcontent'] = $newpage->cachedcontent;
+
+        $result = mod_wiki_external::get_page_contents($newpage->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_contents_returns(), $result);
+        $this->assertEquals($expectedpage, $result['page']);
+    }
+
+    /**
+     * Test get_page_contents with groups. We won't test all the possible cases because that's already
+     * done in the tests for get_subwiki_pages.
+     */
+    public function test_get_page_contents_with_groups() {
+
+        // Create testing data.
+        $this->create_individual_wikis_with_groups();
+
+        // Try to get page from a valid group in separate groups wiki.
+        $this->setUser($this->student);
+
+        $expectedfpsepg1indstu = array(
+            'id' => $this->fpsepg1indstu->id,
+            'wikiid' => $this->wikisepind->id,
+            'subwikiid' => $this->fpsepg1indstu->subwikiid,
+            'groupid' => $this->group1->id,
+            'userid' => $this->student->id,
+            'title' => $this->fpsepg1indstu->title,
+            'cachedcontent' => $this->fpsepg1indstu->cachedcontent,
+            'contentformat' => 1,
+            'caneditpage' => true
+        );
+
+        $result = mod_wiki_external::get_page_contents($this->fpsepg1indstu->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_contents_returns(), $result);
+        $this->assertEquals($expectedfpsepg1indstu, $result['page']);
+
+        // Check that teacher can view a group pages without belonging to it.
+        $this->setUser($this->teacher);
+        $result = mod_wiki_external::get_page_contents($this->fpsepg1indstu->id);
+        $result = external_api::clean_returnvalue(mod_wiki_external::get_page_contents_returns(), $result);
+        $this->assertEquals($expectedfpsepg1indstu, $result['page']);
+    }
+
 }
