@@ -1307,6 +1307,52 @@ class api {
     }
 
     /**
+     * List the competencies in a user plan.
+     *
+     * @param  int $planorid The plan, or its ID.
+     * @return array((object) array('competency' => competency, 'usercompetency' => user_competency))
+     */
+    public static function list_plan_competencies($planorid) {
+        $plan = $planorid;
+        if (!is_object($planorid)) {
+            $plan = new plan($planorid);
+        }
+
+        if (!$plan->can_read()) {
+            $context = context_user::instance($plan->get_userid());
+            throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
+        }
+
+        $result = array();
+        $competencies = $plan->get_competencies();
+        $usercompetencies = user_competency::get_multiple($plan->get_userid(), $competencies);
+
+        // Build the return values.
+        foreach ($competencies as $key => $competency) {
+            $found = false;
+
+            foreach ($usercompetencies as $uckey => $uc) {
+                if ($uc->get_competencyid() == $competency->get_id()) {
+                    $found = true;
+                    unset($usercompetencies[$uckey]);
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $uc = user_competency::create_relation($plan->get_userid(), $competency->get_id());
+            }
+
+            $result[] = (object) array(
+                'competency' => $competency,
+                'usercompetency' => $uc,
+            );
+        }
+
+        return $result;
+    }
+
+    /**
      * List all the related competencies.
      *
      * @param int $competencyid The id of the competency to check.

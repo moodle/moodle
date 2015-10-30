@@ -27,6 +27,8 @@ use context;
 use lang_string;
 use stdClass;
 
+require_once($CFG->libdir . '/grade/grade_scale.php');
+
 /**
  * Class for loading/storing competency frameworks from the DB.
  *
@@ -109,6 +111,17 @@ class competency_framework extends persistent {
                 'default' => ''
             )
         );
+    }
+
+    /**
+     * Return the scale.
+     *
+     * @return \grade_scale
+     */
+    public function get_scale() {
+        $scale = \grade_scale::fetch(array('id' => $this->get_scaleid()));
+        $scale->load_items();
+        return $scale;
     }
 
     /**

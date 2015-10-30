@@ -101,6 +101,17 @@ class renderer extends plugin_renderer_base {
     /**
      * Defer to template.
      *
+     * @param plan_page $page
+     * @return bool|string
+     */
+    public function render_plan_page(plan_page $page) {
+        $data = $page->export_for_template($this);
+        return parent::render_from_template('tool_lp/plan_page', $data);
+    }
+
+    /**
+     * Defer to template.
+     *
      * @param plans_page $page
      * @return bool|string
      */

@@ -424,6 +424,15 @@ $functions = array(
         'capabilities' => 'tool/lp:planviewown',
         'ajax'         => true,
     ),
+    'tool_lp_list_plan_competencies' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'list_plan_competencies',
+        'classpath'    => '',
+        'description'  => 'List the competencies in a plan',
+        'type'         => 'read',
+        'capabilities' => 'tool/lp:planviewown',
+        'ajax'         => true,
+    ),
     'tool_lp_get_scale_values' => array(
         'classname'    => 'tool_lp\external',
         'methodname'   => 'get_scale_values',

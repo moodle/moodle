@@ -157,14 +157,15 @@ class template_competency extends persistent {
                   FROM {' . competency::TABLE . '} comp
                   JOIN {' . self::TABLE . '} tplcomp
                     ON tplcomp.competencyid = comp.id
-                 WHERE tplcomp.templateid = ?
-              ORDER BY tplcomp.sortorder ASC';
+                 WHERE tplcomp.templateid = ?';
         $params = array($templateid);
 
         if ($onlyvisible) {
             $sql .= ' AND comp.visible = ?';
             $params[] = 1;
         }
+
+        $sql .= 'ORDER BY tplcomp.sortorder ASC';
 
         $results = $DB->get_records_sql($sql, $params);
 

@@ -190,4 +190,52 @@ class user_competency extends persistent {
         return true;
     }
 
+    /**
+     * Create a new user_competency object.
+     *
+     * Note, this is intended to be used to create a blank relation, for instance when
+     * the record was not found in the database. This does not save the model.
+     *
+     * @param  int $userid The user ID.
+     * @param  int $competencyid The competency ID.
+     * @return \tool_lp\user_competency
+     */
+    public static function create_relation($userid, $competencyid) {
+        $relation = new user_competency(0, (object) array('userid' => $userid, 'competencyid' => $competencyid));
+        return $relation;
+    }
+
+    /**
+     * Get multiple user_competency for a user.
+     *
+     * @param  int $userid
+     * @param  array  $competenciesorids Limit search to those competencies, or competency IDs.
+     * @return \tool_lp\user_competency[]
+     */
+    public static function get_multiple($userid, array $competenciesorids = null) {
+        global $DB;
+
+        $params = array();
+        $params['userid'] = $userid;
+        $sql = '1 = 1';
+
+        if (!empty($competenciesorids)) {
+            $test = reset($competenciesorids);
+            if (is_int($test)) {
+                $ids = $competenciesorids;
+            } else {
+                $ids = array();
+                foreach ($competenciesorids as $comp) {
+                    $ids[] = $comp->get_id();
+                }
+            }
+
+            list($insql, $inparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
+            $params += $inparams;
+            $sql = "competencyid $insql";
+        }
+
+        return parent::get_records_select("userid = :userid AND $sql", $params);
+    }
+
 }

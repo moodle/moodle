@@ -110,6 +110,33 @@ class plan extends persistent {
     }
 
     /**
+     * Get the competencies in this plan.
+     *
+     * @return competency[]
+     */
+    public function get_competencies() {
+        $competencies = array();
+        if ($this->get_templateid()) {
+            // Get the competencies from the template.
+            $competencies = template_competency::list_competencies($this->get_templateid(), true);
+        } else {
+            // TODO MDL-50328.
+            // Get the competencies in this plan.
+            // $competencies = plan_competency::list_competencies($this->get_id());
+        }
+        return $competencies;
+    }
+
+    /**
+     * Get the context in which the plan is attached.
+     *
+     * @return context_user
+     */
+    public function get_context() {
+        return context_user::instance($this->get_userid());
+    }
+
+    /**
      * Human readable status name.
      *
      * @return string

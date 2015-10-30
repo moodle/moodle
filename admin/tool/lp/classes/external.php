@@ -866,6 +866,69 @@ class external extends external_api {
     }
 
     /**
+     * Returns the external structure of a full user_competency record.
+     *
+     * @return \external_single_structure
+     */
+    protected static function get_user_competency_external_structure() {
+        $id = new external_value(
+            PARAM_INT,
+            'Database record id'
+        );
+        $userid = new external_value(
+            PARAM_INT,
+            'User to whom this record belongs to'
+        );
+        $competencyid = new external_value(
+            PARAM_INT,
+            'The competency associated with this record'
+        );
+        $status = new external_value(
+            PARAM_INT,
+            'The status of the user competency'
+        );
+        $reviewerid = new external_value(
+            PARAM_INT,
+            'The reviewer ID'
+        );
+        $proficiency = new external_value(
+            PARAM_BOOL,
+            'Whether or not the user is proficient'
+        );
+        $grade = new external_value(
+            PARAM_INT,
+            'The scale grade'
+        );
+        $timecreated = new external_value(
+            PARAM_INT,
+            'Timestamp this record was created'
+        );
+        $timemodified = new external_value(
+            PARAM_INT,
+            'Timestamp this record was modified'
+        );
+        $usermodified = new external_value(
+            PARAM_INT,
+            'User who modified this record last'
+        );
+
+        $returns = array(
+            'id' => $id,
+            'userid' => $userid,
+            'competencyid' => $competencyid,
+            'status' => $status,
+            'reviewerid' => $reviewerid,
+            'proficiency' => $proficiency,
+            'grade' => $grade,
+            'timecreated' => $timecreated,
+            'timemodified' => $timemodified,
+            'usermodified' => $usermodified,
+        );
+
+        return new external_single_structure($returns);
+    }
+
+    /**
      * Returns description of create_competency() parameters.
      *
      * @return \external_function_parameters
@@ -3352,6 +3415,50 @@ class external extends external_api {
             'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
             'navigation' => new external_multiple_structure(
                 new external_value(PARAM_RAW, 'HTML for a navigation item that should be on this page')
+            )
+        ));
+    }
+
+    /**
+     * External function parameters structure.
+     *
+     * @return \external_description
+     */
+    public static function list_plan_competencies_parameters() {
+        return new external_single_structure(array(
+            'id' => new external_value(PARAM_INT, 'The plan ID.')
+        ));
+    }
+
+    /**
+     * List plan competencies.
+     * @param  int $id The plan ID.
+     * @return array
+     */
+    public static function list_plan_competencies($id) {
+        $params = self::validate_parameters(self::list_plan_competencies_parameters(), array('id' => $id));
+        $id = $params['id'];
+        $plan = api::read_plan($id);
+        $result = api::list_plan_competencies($plan);
+        foreach ($result as $key => $r) {
+            $r->competency = $r->competency->to_record();
+            $r->competency->descriptionformatted = format_text($r->competency->description,
+                $r->competency->descriptionformat, array('context' => $plan->get_context()));
+            $r->usercompetency = $r->usercompetency->to_record();
+        }
+        return $result;
+    }
+
+    /**
+     * External function return structure.
+     *
+     * @return \external_description
+     */
+    public static function list_plan_competencies_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(array(
+                'competency' => self::get_competency_external_structure(),
+                'usercompetency' => self::get_user_competency_external_structure(),
             )
         ));
     }

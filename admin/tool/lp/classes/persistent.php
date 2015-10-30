@@ -629,7 +629,7 @@ abstract class persistent {
      * @param int $skip Limitstart.
      * @param int $limit Number of rows to return.
      *
-     * @return persistent[]
+     * @return \tool_lp\persistent[]
      */
     public static function get_records($filters = array(), $sort = '', $order = 'ASC', $skip = 0, $limit = 0) {
         global $DB;
@@ -658,7 +658,7 @@ abstract class persistent {
      * @param string $fields
      * @param int $limitfrom
      * @param int $limitnum
-     * @return \tool_lp\plan[]
+     * @return \tool_lp\persistent[]
      */
     public static function get_records_select($select, $params = null, $sort = '', $fields = '*', $limitfrom = 0, $limitnum = 0) {
         global $DB;

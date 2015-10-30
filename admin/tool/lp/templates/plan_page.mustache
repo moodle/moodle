@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Plan page template.
+}}
+<div data-region="planpage">
+
+    <table class="generaltable fullwidth">
+        <thead>
+            <tr>
+                <th scope="col">{{#str}}shortname, tool_lp{{/str}}</th>
+                <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
+                <th scope="col">{{#str}}proficient, tool_lp{{/str}}</th>
+                <th scope="col">{{#str}}state, tool_lp{{/str}}</th>
+                <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#competencies}}
+            <tr data-id="{{id}}">
+                <td>{{shortname}}</td>
+                <td>{{usercompetency.gradename}}</td>
+                <td>{{usercompetency.proficiencyname}}</td>
+                <td>{{usercompetency.statusname}}</td>
+                <td><!-- Option to remove the competency from the plan, ... --></td>
+            </tr>
+            {{/competencies}}
+        </tbody>
+    </table>
+
+    <div data-region="actions">
+        <div class="pull-right">
+            <!-- Button to add competencies to the plan -->
+        </div>
+    </div>
+
+</div>
+{{#js}}
+{{/js}}
