@@ -61,7 +61,6 @@ Feature: The student can navigate to their grades page and user grade report.
     And I follow "Grades"
     Then I should see "My badges from Acceptance test site web site"
 
-  @javascript
   Scenario: Log in as a parent and view a childs grades.
     When I log in as "admin"
     And I am on site homepage
@@ -84,7 +83,7 @@ Feature: The student can navigate to their grades page and user grade report.
     And I click on "Preferences" "link" in the ".profile_tree" "css_element"
     And I follow "Assign roles relative to this user"
     And I follow "Parent"
-    And I click on "//select[@id='addselect']/descendant::option[contains(., 'Parent 1 (parent1@example.com)')]" "xpath_element"
+    And I set the field "Potential users" to "Parent 1 (parent1@example.com)"
     And I click on "Add" "button"
     And I log out
     And I log in as "parent1"
