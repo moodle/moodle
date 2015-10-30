@@ -548,6 +548,8 @@ class page_requirements_manager {
                 $path = realpath("$componentdir/jquery/$file");
                 if (strpos($path, $CFG->dirroot) === 0) {
                     $url = $CFG->httpswwwroot.preg_replace('/^'.preg_quote($CFG->dirroot, '/').'/', '', $path);
+                    // Replace all occurences of backslashes characters in url to forward slashes.
+                    $url = str_replace('\\', '/', $url);
                     $url = new moodle_url($url);
                 } else {
                     // Bad luck, fix your server!
