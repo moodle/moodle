@@ -25,8 +25,10 @@
 
 use tool_lp\competency;
 use tool_lp\competency_framework;
+use tool_lp\plan;
 use tool_lp\related_competency;
 use tool_lp\user_competency;
+use tool_lp\user_competency_plan;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -78,6 +80,17 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $this->assertInstanceOf('\tool_lp\related_competency', $rc);
     }
 
+    public function test_create_plan() {
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $this->assertEquals(0, plan::count_records());
+        $plan = $lpg->create_plan(array('userid' => $user->id));
+        $this->assertEquals(1, plan::count_records());
+        $this->assertInstanceOf('\tool_lp\plan', $plan);
+    }
+
     public function test_create_user_competency() {
         $this->resetAfterTest(true);
 
@@ -92,6 +105,30 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $rc = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c2->get_id()));
         $this->assertEquals(2, user_competency::count_records());
         $this->assertInstanceOf('\tool_lp\user_competency', $rc);
+    }
+
+    public function test_create_user_competency_plan() {
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $plan = $lpg->create_plan(array('userid' => $user->id));
+        $this->assertEquals(0, user_competency_plan::count_records());
+        $ucp = $lpg->create_user_competency_plan(array(
+                                                     'userid' => $user->id,
+                                                     'competencyid' => $c1->get_id(),
+                                                     'planid' => $plan->get_id()
+                                                ));
+        $ucp = $lpg->create_user_competency_plan(array(
+                                                     'userid' => $user->id,
+                                                     'competencyid' => $c2->get_id(),
+                                                     'planid' => $plan->get_id()
+                                                ));
+        $this->assertEquals(2, user_competency_plan::count_records());
+        $this->assertInstanceOf('\tool_lp\user_competency_plan', $ucp);
     }
 
 }

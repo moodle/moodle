@@ -154,5 +154,26 @@
         <INDEX NAME="useridcompetency" UNIQUE="true" FIELDS="userid, competencyid"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="tool_lp_user_competency_plan" COMMENT="User competencies plans">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User associated to the competency."/>
+        <FIELD NAME="competencyid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Competency associated to the user."/>
+        <FIELD NAME="planid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Plan associated to the user."/>
+        <FIELD NAME="status" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Competency status."/>
+        <FIELD NAME="reviewerid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="User that reviewed the competency."/>
+        <FIELD NAME="proficiency" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Indicate if the competency is proficient not."/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Grade assigned to the competency."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="usercompetencyplan" UNIQUE="true" FIELDS="userid, competencyid, planid"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>

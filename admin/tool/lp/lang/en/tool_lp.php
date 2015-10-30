@@ -71,6 +71,7 @@ $string['hiddenhint'] = '(hidden)';
 $string['idnumber'] = 'Id number';
 $string['invalidgrade'] = 'Invalid grade';
 $string['invalidpersistent'] = 'Invalid persistent';
+$string['invalidplan'] = 'Invalid learning plan';
 $string['invalidtaxonomy'] = 'Invalid taxonomy: {$a}';
 $string['itemstoadd'] = 'Items to add';
 $string['learningplans'] = 'Learning plans';
