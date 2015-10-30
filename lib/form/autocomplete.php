@@ -48,6 +48,8 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
     protected $placeholder = '';
     /** @var bool $casesensitive Whether the search has to be case-sensitive. */
     protected $casesensitive = false;
+    /** @var bool $showsuggestions Show suggestions by default - but this can be turned off. */
+    protected $showsuggestions = true;
 
     /**
      * constructor
@@ -67,6 +69,10 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
         if (isset($attributes['tags'])) {
             $this->tags = $attributes['tags'];
             unset($attributes['tags']);
+        }
+        if (isset($attributes['showsuggestions'])) {
+            $this->showsuggestions = $attributes['showsuggestions'];
+            unset($attributes['showsuggestions']);
         }
         $this->placeholder = get_string('search');
         if (isset($attributes['placeholder'])) {
@@ -98,7 +104,7 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
         $this->_generateId();
         $id = $this->getAttribute('id');
         $PAGE->requires->js_call_amd('core/form-autocomplete', 'enhance', $params = array('#' . $id, $this->tags, $this->ajax,
-            $this->placeholder, $this->casesensitive));
+            $this->placeholder, $this->casesensitive, $this->showsuggestions));
 
         return parent::toHTML();
     }
