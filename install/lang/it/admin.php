@@ -42,3 +42,4 @@ $string['cliunknowoption'] = 'Opzioni non riconosciute:
 $string['cliyesnoprompt'] = 'inserisci s (per Si) o n (per No)';
 $string['environmentrequireinstall'] = 'E\' necessaria l\'installazione e attivazione';
 $string['environmentrequireversion'] = 'Versione minima necessaria: {$a->needed}. Versione in uso: {$a->current}';
+$string['upgradekeyset'] = 'Chiave per l\'aggiornamento (lasciare vuoto se non impostata)';
