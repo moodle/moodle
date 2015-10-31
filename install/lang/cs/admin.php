@@ -42,3 +42,4 @@ Použijte volbu --help pro získání nápovědy';
 $string['cliyesnoprompt'] = 'zadejte a (pro "ano") nebo n (pro "ne")';
 $string['environmentrequireinstall'] = 'musí být nainstalováno a povoleno';
 $string['environmentrequireversion'] = 'vyžadována je verze {$a->needed}, nyní používáte verzi {$a->current}';
+$string['upgradekeyset'] = 'Klíč pro upgrade (ponechte prázdné, nechcete-li nenastavil)';
