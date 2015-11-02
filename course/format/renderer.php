@@ -104,7 +104,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 $url = empty($value['url']) ? '' : $value['url'];
                 $icon = empty($value['icon']) ? '' : $value['icon'];
                 $name = empty($value['name']) ? '' : $value['name'];
-                $attr = empty($value['attr']) ? '' : $value['attr'];
+                $attr = empty($value['attr']) ? array() : $value['attr'];
                 $class = empty($item['pixattr']['class']) ? '' : $item['pixattr']['class'];
                 $alt = empty($item['pixattr']['alt']) ? '' : $item['pixattr']['alt'];
                 $al = new action_menu_link_secondary(
