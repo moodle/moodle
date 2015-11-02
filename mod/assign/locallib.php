@@ -889,10 +889,12 @@ class assign {
         // Special case for add_instance as the coursemodule has not been set yet.
         $instance = $this->get_instance();
 
+        $eventtype = 'due';
+
         if ($instance->duedate) {
             $event = new stdClass();
 
-            $params = array('modulename'=>'assign', 'instance'=>$instance->id);
+            $params = array('modulename' => 'assign', 'instance' => $instance->id, 'eventtype' => $eventtype);
             $event->id = $DB->get_field('event', 'id', $params);
             $event->name = $instance->name;
             $event->timestart = $instance->duedate;
@@ -929,12 +931,12 @@ class assign {
                 $event->userid      = 0;
                 $event->modulename  = 'assign';
                 $event->instance    = $instance->id;
-                $event->eventtype   = 'due';
+                $event->eventtype   = $eventtype;
                 $event->timeduration = 0;
                 calendar_event::create($event);
             }
         } else {
-            $DB->delete_records('event', array('modulename'=>'assign', 'instance'=>$instance->id));
+            $DB->delete_records('event', array('modulename' => 'assign', 'instance' => $instance->id, 'eventtype' => $eventtype));
         }
     }
 
