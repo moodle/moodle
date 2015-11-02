@@ -2996,6 +2996,11 @@ class assign {
         if ($rownum == count($useridlist) - 1) {
             $last = true;
         }
+        // This variation on the url will link direct to this student, with no next/previous links.
+        // The benefit is the url will be the same every time for this student, so Atto autosave drafts can match up.
+        $returnparams = array('userid' => $userid, 'rownum' => 0, 'useridlistid' => 0);
+        $this->register_return_link('grade', $returnparams);
+
         $user = $DB->get_record('user', array('id' => $userid));
         if ($user) {
             $viewfullnames = has_capability('moodle/site:viewfullnames', $this->get_course_context());
