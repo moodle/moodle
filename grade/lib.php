@@ -3142,9 +3142,6 @@ abstract class grade_helper {
                                                     JOIN {user_info_category} c ON f.categoryid=c.id
                                                     WHERE f.shortname $wherefields
                                                     ORDER BY c.sortorder ASC, f.sortorder ASC", $whereparams);
-            if (!is_array($customfields)) {
-                continue;
-            }
 
             foreach ($customfields as $field) {
                 // Make sure we can display this custom field
