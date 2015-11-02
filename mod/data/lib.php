@@ -1571,6 +1571,11 @@ function mod_data_rating_can_see_item_ratings($params) {
         throw new rating_exception('invaliditemid');
     }
 
+    // User can see ratings of all participants.
+    if ($info->groupid == 0) {
+        return true;
+    }
+
     $course = $DB->get_record('course', array('id' => $info->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('data', $info->dataid, $course->id, false, MUST_EXIST);
 
