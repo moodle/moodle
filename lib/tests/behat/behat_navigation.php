@@ -221,40 +221,30 @@ class behat_navigation extends behat_base {
             }
         }
 
-        // Expand first node, and get it.
+        // Get top level node.
         $node = $this->get_top_navigation_node($parentnodes[0]);
 
-        // Expand parent, sub-parent nodes in navigation if js enabled.
-        if ($node->hasClass('collapsed') || ($node->hasAttribute('data-loaded') && $node->getAttribute('data-loaded') == 0)) {
-            $xpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]/span";
-            $nodetoexpand = $node->find('xpath', $xpath);
+        // Expand all nodes.
+        for ($i = 0; $i < $countparentnode; $i++) {
+            if ($i > 0) {
+                // Sub nodes within top level node.
+                $node = $this->get_navigation_node($parentnodes[$i], $node);
+            }
 
-            if ($this->running_javascript()) {
+            // Keep expanding all sub-parents if js enabled.
+            if ($this->running_javascript() && $node->hasClass('collapsed')) {
+                $xpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]";
+                $nodetoexpand = $node->find('xpath', $xpath);
+
                 $this->ensure_node_is_visible($nodetoexpand);
                 $nodetoexpand->click();
 
-                // Site administration node needs to be expanded.
-                if ($parentnodes[0] === $siteadminstr) {
-                    $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
-                }
-            }
-        }
+                // Wait for node to load, if not loaded before.
+                if ($nodetoexpand->hasAttribute('data-loaded') && $nodetoexpand->getAttribute('data-loaded') == 0) {
+                    $jscondition = '(document.evaluate("' . $nodetoexpand->getXpath() . '", document, null, '.
+                        'XPathResult.ANY_TYPE, null).iterateNext().getAttribute(\'data-loaded\') == 1)';
 
-        // If sub-parent nodes then get to the last one.
-        if ($countparentnode > 1) {
-            for ($i = 1; $i < $countparentnode; $i++) {
-                $node = $this->get_navigation_node($parentnodes[$i], $node);
-
-                // Keep expanding all sub-parents if js enabled.
-                if ($this->running_javascript()) {
-                    $xpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]";
-                    if ($node->hasClass('collapsed')) {
-                        $nodetoexpand = $node->find('xpath', $xpath);
-                        if ($this->running_javascript()) {
-                            $this->ensure_node_is_visible($nodetoexpand);
-                            $nodetoexpand->click();
-                        }
-                    }
+                    $this->getSession()->wait(self::EXTENDED_TIMEOUT * 1000, $jscondition);
                 }
             }
         }
@@ -263,19 +253,15 @@ class behat_navigation extends behat_base {
         $nodetextliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($nodetext);
         $xpath = "/ul/li/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]" .
                 "/a[normalize-space(.)=" . $nodetextliteral . "]";
-        $node = $node->find('xpath', $xpath);
+        $nodetoclick = $node->find('xpath', $xpath);
 
         // Throw exception if no node found.
-        if (!$node) {
+        if (!$nodetoclick) {
             throw new ExpectationException('Navigation node "' . $nodetext . '" not found under "' .
                 implode($parentnodes, ' > ') . '"', $this->getSession());
         }
 
-        if ($this->running_javascript()) {
-            $this->ensure_node_is_visible($node);
-        }
-
-        $node->click();
+        $nodetoclick->click();
     }
 
     /**
