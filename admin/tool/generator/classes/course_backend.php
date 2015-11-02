@@ -208,10 +208,13 @@ class tool_generator_course_backend extends tool_generator_backend {
      */
     private function create_course() {
         $this->log('createcourse', $this->shortname);
-        $courserecord = array('shortname' => $this->shortname,
-                'fullname' => get_string('fullname', 'tool_generator',
-                    array('size' => get_string('shortsize_' . $this->size, 'tool_generator'))),
-                'numsections' => self::$paramsections[$this->size]);
+        $courserecord = array(
+            'shortname' => $this->shortname,
+            'fullname' => get_string('fullname', 'tool_generator',
+                array('size' => get_string('shortsize_' . $this->size, 'tool_generator'))),
+            'numsections' => self::$paramsections[$this->size],
+            'startdate' => usergetmidnight(time())
+        );
         return $this->generator->create_course($courserecord, array('createsections' => true));
     }
 
