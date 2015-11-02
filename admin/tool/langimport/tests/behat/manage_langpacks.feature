@@ -53,7 +53,7 @@ Feature: Manage language packs
     And I navigate to "Language packs" node in "Site administration > Language"
     When I set the field "Installed language packs" to "English (en)"
     And I press "Uninstall selected language pack(s)"
-    Then I should see "English language pack can not be uninstalled"
+    Then I should see "The English language pack cannot be uninstalled."
     And I navigate to "Live logs" node in "Site administration > Reports"
     And I should not see "Language pack uninstalled"
     And I log out
