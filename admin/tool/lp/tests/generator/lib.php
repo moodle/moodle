@@ -32,6 +32,7 @@ use tool_lp\template;
 use tool_lp\template_competency;
 use tool_lp\user_competency;
 use tool_lp\user_competency_plan;
+use tool_lp\plan_competency;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -318,6 +319,28 @@ class tool_lp_generator extends component_generator_base {
         $usercompetencyplan->create();
 
         return $usercompetencyplan;
+    }
+
+    /**
+     * Create a new plan competency.
+     *
+     * @param array|stdClass $record
+     * @return plan_competency
+     */
+    public function create_plan_competency($record = null) {
+        $record = (object) $record;
+
+        if (!isset($record->planid)) {
+            throw new coding_exception('The planid value is required.');
+        }
+        if (!isset($record->competencyid)) {
+            throw new coding_exception('The competencyid value is required.');
+        }
+
+        $plancompetency = new plan_competency(0, $record);
+        $plancompetency->create();
+
+        return $plancompetency;
     }
 
 }
