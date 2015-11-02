@@ -35,7 +35,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $params = new stdClass();
     $params->bytes = $defaultuserquota;
     $params->displaysize = display_size($defaultuserquota);
-    $temp->add(new admin_setting_configtext('userquota', new lang_string('userquota', 'admin'), new lang_string('configuserquota', 'admin', $params), $defaultuserquota));
+    $temp->add(new admin_setting_configtext('userquota', new lang_string('userquota', 'admin'),
+                new lang_string('configuserquota', 'admin', $params), $defaultuserquota, PARAM_INT, 30));
 
     $temp->add(new admin_setting_configcheckbox('allowobjectembed', new lang_string('allowobjectembed', 'admin'), new lang_string('configallowobjectembed', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('enabletrusttext', new lang_string('enabletrusttext', 'admin'), new lang_string('configenabletrusttext', 'admin'), 0));
