@@ -180,13 +180,13 @@ class mysqli_native_moodle_database extends moodle_database {
             return $engine;
         }
 
-        // get the default database engine
-        $sql = "SELECT @@storage_engine";
+        // Get the default database engine.
+        $sql = "SELECT @@default_storage_engine engine";
         $this->query_start($sql, NULL, SQL_QUERY_AUX);
         $result = $this->mysqli->query($sql);
         $this->query_end($result);
         if ($rec = $result->fetch_assoc()) {
-            $engine = $rec['@@storage_engine'];
+            $engine = $rec['engine'];
         }
         $result->close();
 
