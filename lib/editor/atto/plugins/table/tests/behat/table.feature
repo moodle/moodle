@@ -40,9 +40,6 @@ Feature: Atto tables
     Given the following config values are set as admin:
     | config | value | plugin |
     | allowborders | 1 | atto_table |
-    | allowborderstyles | 1 | atto_table |
-    | allowbordersize | 1 | atto_table |
-    | allowbordercolour | 1 | atto_table |
     | allowbackgroundcolour | 1 | atto_table |
     | allowwidth | 1 | atto_table |
     And I log in as "admin"
@@ -66,9 +63,6 @@ Feature: Atto tables
     Given the following config values are set as admin:
     | config | value | plugin |
     | allowborders | 1 | atto_table |
-    | allowborderstyles | 1 | atto_table |
-    | allowbordersize | 1 | atto_table |
-    | allowbordercolour | 1 | atto_table |
     | allowbackgroundcolour | 1 | atto_table |
     | allowwidth | 1 | atto_table |
     And I log in as "admin"
@@ -105,9 +99,6 @@ Feature: Atto tables
     Given the following config values are set as admin:
     | config | value | plugin |
     | allowborders | 0 | atto_table |
-    | allowborderstyles | 0 | atto_table |
-    | allowbordersize | 0 | atto_table |
-    | allowbordercolour | 0 | atto_table |
     | allowbackgroundcolour | 1 | atto_table |
     | allowwidth | 1 | atto_table |
     And I log in as "admin"
@@ -140,9 +131,6 @@ Feature: Atto tables
     Given the following config values are set as admin:
     | config | value | plugin |
     | allowborders | 0 | atto_table |
-    | allowborderstyles | 0 | atto_table |
-    | allowbordersize | 0 | atto_table |
-    | allowbordercolour | 0 | atto_table |
     | allowbackgroundcolour | 1 | atto_table |
     | allowwidth | 1 | atto_table |
     And I log in as "admin"
@@ -155,12 +143,6 @@ Feature: Atto tables
     And I click on "Show more buttons" "button"
     And I click on "Table" "button"
     When I click on "Edit table" "link"
-    Then ".moodle-dialogue-base .atto_form .borders" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .borderstyle" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .bordersize" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .bordercolour" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .customwidth" "css_element" should exist
     And I click on "#FFFFFF" "radio" in the ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element"
     And I set the field "Table width (in %)" to "100"
     And I press "Update table"
@@ -176,9 +158,6 @@ Feature: Atto tables
     Given the following config values are set as admin:
     | config | value | plugin |
     | allowborders | 1 | atto_table |
-    | allowborderstyles | 0 | atto_table |
-    | allowbordersize | 0 | atto_table |
-    | allowbordercolour | 0 | atto_table |
     | allowbackgroundcolour | 1 | atto_table |
     | allowwidth | 1 | atto_table |
     And I log in as "admin"
@@ -191,9 +170,9 @@ Feature: Atto tables
     And I click on "Show more buttons" "button"
     When I click on "Table" "button"
     Then ".moodle-dialogue-base .atto_form .borders" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .borderstyle" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .bordersize" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .bordercolour" "css_element" should not exist
+    Then ".moodle-dialogue-base .atto_form .borderstyle" "css_element" should exist
+    Then ".moodle-dialogue-base .atto_form .bordersize" "css_element" should exist
+    Then ".moodle-dialogue-base .atto_form .bordercolour" "css_element" should exist
     Then ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element" should exist
     Then ".moodle-dialogue-base .atto_form .customwidth" "css_element" should exist
     And I click on "#FFFFFF" "radio" in the ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element"
@@ -212,9 +191,6 @@ Feature: Atto tables
     Given the following config values are set as admin:
     | config | value | plugin |
     | allowborders | 1 | atto_table |
-    | allowborderstyles | 0 | atto_table |
-    | allowbordersize | 0 | atto_table |
-    | allowbordercolour | 0 | atto_table |
     | allowbackgroundcolour | 1 | atto_table |
     | allowwidth | 1 | atto_table |
     And I log in as "admin"
@@ -227,12 +203,6 @@ Feature: Atto tables
     And I click on "Show more buttons" "button"
     And I click on "Table" "button"
     When I click on "Edit table" "link"
-    Then ".moodle-dialogue-base .atto_form .borders" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .borderstyle" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .bordersize" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .bordercolour" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .customwidth" "css_element" should exist
     And I click on "#FFFFFF" "radio" in the ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element"
     And I set the field "Table width (in %)" to "100"
     And I set the field "Borders" to "Around each cell"
@@ -249,9 +219,6 @@ Feature: Atto tables
     Given the following config values are set as admin:
     | config | value | plugin |
     | allowborders | 1 | atto_table |
-    | allowborderstyles | 1 | atto_table |
-    | allowbordersize | 0 | atto_table |
-    | allowbordercolour | 0 | atto_table |
     | allowbackgroundcolour | 1 | atto_table |
     | allowwidth | 1 | atto_table |
     And I log in as "admin"
@@ -263,12 +230,6 @@ Feature: Atto tables
     And I select the text in the "Blog entry body" Atto editor
     And I click on "Show more buttons" "button"
     When I click on "Table" "button"
-    Then ".moodle-dialogue-base .atto_form .borders" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .borderstyle" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .bordersize" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .bordercolour" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .customwidth" "css_element" should exist
     And I click on "#FFFFFF" "radio" in the ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element"
     And I set the field "Table width (in %)" to "100"
     And I set the field "Borders" to "Around table"
@@ -287,9 +248,6 @@ Feature: Atto tables
     Given the following config values are set as admin:
     | config | value | plugin |
     | allowborders | 1 | atto_table |
-    | allowborderstyles | 1 | atto_table |
-    | allowbordersize | 0 | atto_table |
-    | allowbordercolour | 0 | atto_table |
     | allowbackgroundcolour | 1 | atto_table |
     | allowwidth | 1 | atto_table |
     And I log in as "admin"
@@ -302,12 +260,6 @@ Feature: Atto tables
     And I click on "Show more buttons" "button"
     And I click on "Table" "button"
     When I click on "Edit table" "link"
-    Then ".moodle-dialogue-base .atto_form .borders" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .borderstyle" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .bordersize" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .bordercolour" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .customwidth" "css_element" should exist
     And I click on "#FFFFFF" "radio" in the ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element"
     And I set the field "Table width (in %)" to "100"
     And I set the field "Borders" to "Around table"
@@ -326,9 +278,6 @@ Feature: Atto tables
     Given the following config values are set as admin:
     | config | value | plugin |
     | allowborders | 1 | atto_table |
-    | allowborderstyles | 1 | atto_table |
-    | allowbordersize | 1 | atto_table |
-    | allowbordercolour | 0 | atto_table |
     | allowbackgroundcolour | 1 | atto_table |
     | allowwidth | 1 | atto_table |
     And I log in as "admin"
@@ -340,12 +289,6 @@ Feature: Atto tables
     And I select the text in the "Blog entry body" Atto editor
     And I click on "Show more buttons" "button"
     When I click on "Table" "button"
-    Then ".moodle-dialogue-base .atto_form .borders" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .borderstyle" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .bordersize" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .bordercolour" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .customwidth" "css_element" should exist
     And I click on "#FFFFFF" "radio" in the ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element"
     And I set the field "Table width (in %)" to "100"
     And I set the field "Borders" to "Around table"
@@ -366,9 +309,6 @@ Feature: Atto tables
     Given the following config values are set as admin:
     | config | value | plugin |
     | allowborders | 1 | atto_table |
-    | allowborderstyles | 1 | atto_table |
-    | allowbordersize | 1 | atto_table |
-    | allowbordercolour | 0 | atto_table |
     | allowbackgroundcolour | 1 | atto_table |
     | allowwidth | 1 | atto_table |
     And I log in as "admin"
@@ -381,12 +321,6 @@ Feature: Atto tables
     And I click on "Show more buttons" "button"
     And I click on "Table" "button"
     When I click on "Edit table" "link"
-    Then ".moodle-dialogue-base .atto_form .borders" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .borderstyle" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .bordersize" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .bordercolour" "css_element" should not exist
-    Then ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .customwidth" "css_element" should exist
     And I click on "#FFFFFF" "radio" in the ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element"
     And I set the field "Table width (in %)" to "100"
     And I set the field "Borders" to "Around table"
@@ -407,9 +341,6 @@ Feature: Atto tables
     Given the following config values are set as admin:
     | config | value | plugin |
     | allowborders | 1 | atto_table |
-    | allowborderstyles | 1 | atto_table |
-    | allowbordersize | 1 | atto_table |
-    | allowbordercolour | 1 | atto_table |
     | allowbackgroundcolour | 1 | atto_table |
     | allowwidth | 1 | atto_table |
     And I log in as "admin"
@@ -421,12 +352,6 @@ Feature: Atto tables
     And I select the text in the "Blog entry body" Atto editor
     And I click on "Show more buttons" "button"
     When I click on "Table" "button"
-    Then ".moodle-dialogue-base .atto_form .borders" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .borderstyle" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .bordersize" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .bordercolour" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .customwidth" "css_element" should exist
     And I click on "#FFFFFF" "radio" in the ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element"
     And I set the field "Table width (in %)" to "100"
     And I set the field "Borders" to "Around table"
@@ -449,9 +374,6 @@ Feature: Atto tables
     Given the following config values are set as admin:
     | config | value | plugin |
     | allowborders | 1 | atto_table |
-    | allowborderstyles | 1 | atto_table |
-    | allowbordersize | 1 | atto_table |
-    | allowbordercolour | 1 | atto_table |
     | allowbackgroundcolour | 1 | atto_table |
     | allowwidth | 1 | atto_table |
     And I log in as "admin"
@@ -464,12 +386,6 @@ Feature: Atto tables
     And I click on "Show more buttons" "button"
     And I click on "Table" "button"
     When I click on "Edit table" "link"
-    Then ".moodle-dialogue-base .atto_form .borders" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .borderstyle" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .bordersize" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .bordercolour" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element" should exist
-    Then ".moodle-dialogue-base .atto_form .customwidth" "css_element" should exist
     And I click on "FFFFFF" "radio" in the ".moodle-dialogue-base .atto_form .backgroundcolour" "css_element"
     And I set the field "Table width (in %)" to "100"
     And I set the field "Borders" to "Around table"
