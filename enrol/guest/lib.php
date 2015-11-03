@@ -225,7 +225,6 @@ class enrol_guest_plugin extends enrol_plugin {
             $mform->disabledIf('enrol_guest_password_'.$i, 'enrol_guest_status_'.$i, 'noteq', ENROL_INSTANCE_ENABLED);
         }
 
-
         // now add all values from enrol table
         if ($instance) {
             foreach($instance as $key=>$val) {
@@ -260,24 +259,27 @@ class enrol_guest_plugin extends enrol_plugin {
         $checkpassword = false;
 
         if ($instance) {
-            if ($data['enrol_guest_status_'.$i] == ENROL_INSTANCE_ENABLED) {
-                if ($instance->password !== $password) {
-                    $checkpassword = true;
-                }
-            }
-        } else {
-            if ($data['enrol_guest_status_'.$i] == ENROL_INSTANCE_ENABLED) {
+            // Check the password if we are enabling the plugin again.
+            if (($instance->status == ENROL_INSTANCE_DISABLED) && ($data['enrol_guest_status_' . $i] == ENROL_INSTANCE_ENABLED)) {
                 $checkpassword = true;
             }
+
+            // Check the password if the instance is enabled and the password has changed.
+            if (($data['enrol_guest_status_' . $i] == ENROL_INSTANCE_ENABLED) &&
+                ($instance->password !== $password)) {
+                $checkpassword = true;
+            }
+        } else {
+            $checkpassword = true;
         }
 
         if ($checkpassword) {
             $require = $this->get_config('requirepassword');
             $policy  = $this->get_config('usepasswordpolicy');
-            if ($require and empty($password)) {
+            if ($require && trim($password) === '') {
                 $errors['enrol_guest_password_'.$i] = get_string('required');
-            } else if ($policy) {
-                $errmsg = '';//prevent eclipse warning
+            } else if (!empty($password) && $policy) {
+                $errmsg = '';
                 if (!check_password_policy($password, $errmsg)) {
                     $errors['enrol_guest_password_'.$i] = $errmsg;
                 }
@@ -411,6 +413,27 @@ class enrol_guest_plugin extends enrol_plugin {
      */
     public function can_hide_show_instance($instance) {
         $context = context_course::instance($instance->courseid);
-        return has_capability('enrol/guest:config', $context);
+        if (!has_capability('enrol/guest:config', $context)) {
+            return false;
+        }
+
+        // If the instance is currently disabled, before it can be enabled, we must check whether the password meets the
+        // password policies.
+        if ($instance->status == ENROL_INSTANCE_DISABLED) {
+            if ($this->get_config('requirepassword')) {
+                if (empty($instance->password)) {
+                    return false;
+                }
+            }
+
+            // Only check the password if it is set.
+            if (!empty($instance->password) && $this->get_config('usepasswordpolicy')) {
+                if (!check_password_policy($instance->password, $errmsg)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
