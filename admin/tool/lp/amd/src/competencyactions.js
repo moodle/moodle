@@ -107,8 +107,9 @@ define(['jquery',
      * @param {dialogue} popup The tool_lp/dialogue that was created.
      */
     var initMovePopup = function(popup) {
-        var tree = new Ariatree('[data-enhance=movetree]');
-        tree.on('selectionchanged', function(evt, target) {
+        var tree = new Ariatree('[data-enhance=movetree]', false);
+        tree.on('selectionchanged', function(evt, params) {
+            var target = params.selected.first();
             moveTarget = $(target).data('id');
         });
 
@@ -330,16 +331,24 @@ define(['jquery',
         if (!pickerInstance) {
             pickerInstance = new Picker(pageContextId, relatedTarget.competencyframeworkid);
             pickerInstance.on('save', function(e, data) {
-                var compId = data.competencyId;
+                var compIds = data.competencyIds;
 
-                var promises = ajax.call([
-                    { methodname: 'tool_lp_add_related_competency',
-                        args: { competencyid: compId, relatedcompetencyid: relatedTarget.id }},
-                    { methodname: 'tool_lp_data_for_related_competencies_section',
-                        args: { competencyid: relatedTarget.id }}
-                ]);
+                var calls = [];
+                $.each(compIds, function(index, value) {
+                    calls.push({
+                        methodname: 'tool_lp_add_related_competency',
+                        args: { competencyid: value, relatedcompetencyid: relatedTarget.id }
+                    });
+                });
 
-                promises[1].then(function(context) {
+                calls.push( {
+                    methodname: 'tool_lp_data_for_related_competencies_section',
+                    args: { competencyid: relatedTarget.id }
+                });
+
+                var promises = ajax.call(calls);
+
+                promises[calls.length - 1].then(function(context) {
                     return templates.render('tool_lp/related_competencies', context).done(function(html, js) {
                         $('[data-region="relatedcompetencies"]').replaceWith(html);
                         templates.runTemplateJS(js);
@@ -617,9 +626,12 @@ define(['jquery',
     /**
      * Handler when a node in the aria tree is selected.
      * @method selectionChanged
+     * @param {Event} evt The event that triggered the selection change.
+     * @param {Object} params The parameters for the event. Contains a list of selected nodes.
      */
-    var selectionChanged = function(evt, node) {
-        var id = $(node).data('id'),
+    var selectionChanged = function(evt, params) {
+        var node = params.selected.first(),
+            id = $(node).data('id'),
             btn = $('[data-region="competencyactions"] [data-action="add"]'),
             actionMenu = $('[data-region="competencyactionsmenu"]'),
             selectedTitle = $('[data-region="selected-competency"]'),
@@ -714,6 +726,5 @@ define(['jquery',
             ruleConfigInstance = new RuleConfig(treeModel, rulesModules);
             ruleConfigInstance.on('save', ruleConfigSaveHandler.bind(this));
         }
-
     };
 });

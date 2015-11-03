@@ -126,39 +126,58 @@ define(['jquery',
         if (!self.pickerInstance) {
             self.pickerInstance = new Picker(self.pageContextId, undefined, self.itemtype === 'course' ? 'parents' : undefined);
             self.pickerInstance.on('save', function(e, data) {
-                var compId = data.competencyId;
+                var compIds = data.competencyIds;
 
                 if (self.itemtype === "course") {
-                    requests = [
-                        { methodname: 'tool_lp_add_competency_to_course',
-                          args: { courseid: self.itemid, competencyid: compId } },
-                        { methodname: 'tool_lp_data_for_course_competencies_page',
-                          args: { courseid: self.itemid } }
-                    ];
+                    requests = [];
+
+                    $.each(compIds, function(index, compId) {
+                        requests.push({
+                            methodname: 'tool_lp_add_competency_to_course',
+                            args: { courseid: self.itemid, competencyid: compId }
+                        });
+                    });
+                    requests.push({
+                        methodname: 'tool_lp_data_for_course_competencies_page',
+                        args: { courseid: self.itemid }
+                    });
+
                     pagerender = 'tool_lp/course_competencies_page';
                     pageregion = 'coursecompetenciespage';
 
                 } else if (self.itemtype === "template") {
-                    requests = [
-                        { methodname: 'tool_lp_add_competency_to_template',
-                            args: { templateid: self.itemid, competencyid: compId }},
-                        { methodname: 'tool_lp_data_for_template_competencies_page',
-                            args: { templateid: self.itemid, pagecontext: { contextid: self.pageContextId }}}
-                    ];
+                    requests = [];
+
+                    $.each(compIds, function(index, compId) {
+                        requests.push({
+                            methodname: 'tool_lp_add_competency_to_template',
+                            args: { templateid: self.itemid, competencyid: compId }
+                        });
+                    });
+                    requests.push({
+                        methodname: 'tool_lp_data_for_template_competencies_page',
+                        args: { templateid: self.itemid, pagecontext: { contextid: self.pageContextId }}
+                    });
                     pagerender = 'tool_lp/template_competencies_page';
                     pageregion = 'templatecompetenciespage';
                 } else if (self.itemtype === "plan") {
-                    requests = [
-                        { methodname: 'tool_lp_add_competency_to_plan',
-                            args: { planid: self.itemid, competencyid: compId }},
-                        { methodname: 'tool_lp_data_for_plan_competencies_page',
-                            args: { planid: self.itemid}}
-                    ];
+                    requests = [];
+
+                    $.each(compIds, function(index, compId) {
+                        requests.push({
+                            methodname: 'tool_lp_add_competency_to_plan',
+                            args: { planid: self.itemid, competencyid: compId }
+                        });
+                    });
+                    requests.push({
+                         methodname: 'tool_lp_data_for_plan_competencies_page',
+                         args: { planid: self.itemid}
+                    });
                     pagerender = 'tool_lp/plan_page';
                     pageregion = 'plancompetenciespage';
                 }
 
-                ajax.call(requests)[1].then(function(context) {
+                ajax.call(requests)[requests.length - 1].then(function(context) {
                     return templates.render(pagerender, context).done(function(html, js) {
                         $('[data-region="' + pageregion + '"]').replaceWith(html);
                         templates.runTemplateJS(js);

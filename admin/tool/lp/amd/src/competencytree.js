@@ -101,11 +101,12 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
                 };
                 templates.render('tool_lp/competencies_tree_root', context).done(function(html, js) {
                     templates.replaceNodeContents($(treeSelector), $(html).html(), js);
-                    var tree = new Ariatree(treeSelector);
+                    var tree = new Ariatree(treeSelector, false);
 
                     if (currentNodeId) {
                         var node = $(treeSelector).find('[data-id=' + currentNodeId + ']');
                         if (node.length) {
+                            tree.selectItem(node);
                             tree.updateFocus(node);
                         }
                     }
@@ -120,9 +121,10 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
     /**
      * Whenever the current item in the tree is changed - remember the "id".
      * @param {Event} evt
-     * @param {Node} The active node in the tree.
+     * @param {Object} The parameters for the event.
      */
-    var rememberCurrent = function(evt, node) {
+    var rememberCurrent = function(evt, params) {
+        var node = params.selected.first();
         currentNodeId = node.attr('data-id');
     };
 

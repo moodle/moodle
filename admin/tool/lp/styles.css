@@ -24,11 +24,27 @@
 .path-admin-tool-lp [data-region="competencymovetree"] ul {
     cursor: pointer;
 }
-.path-admin-tool-lp [data-region="competencylinktree"] ul [aria-selected="true"],
-.path-admin-tool-lp [data-region="competencymovetree"] ul [aria-selected="true"],
-.path-admin-tool-lp [data-region="plans"] ul [aria-selected="true"],
-.path-admin-tool-lp [data-region="managecompetencies"] ul [aria-selected="true"] {
+.path-admin-tool-lp [data-region="competencylinktree"] ul li>span,
+.path-admin-tool-lp [data-region="competencymovetree"] ul li>span,
+.path-admin-tool-lp [data-region="plans"] ul li>span,
+.path-admin-tool-lp [data-region="managecompetencies"] ul li>span {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+    border-radius: 4px;
+}
+.path-admin-tool-lp [data-region="competencylinktree"] ul [aria-selected="true"]>span,
+.path-admin-tool-lp [data-region="competencymovetree"] ul [aria-selected="true"]>span,
+.path-admin-tool-lp [data-region="plans"] ul [aria-selected="true"]>span,
+.path-admin-tool-lp [data-region="managecompetencies"] ul [aria-selected="true"]>span {
     background-color: #dfdfdf;
+}
+.path-admin-tool-lp [data-region="competencylinktree"] ul [tabindex="0"]>span,
+.path-admin-tool-lp [data-region="competencymovetree"] ul [tabindex="0"]>span,
+.path-admin-tool-lp [data-region="plans"] ul [tabindex="0"]>span,
+.path-admin-tool-lp [data-region="managecompetencies"] ul [tabindex="0"]>span {
+    border: 2px solid #0070a8;
 }
 .path-admin-tool-lp [data-region="filtercompetencies"] input {
     margin-left: 10px;

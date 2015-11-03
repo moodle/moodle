@@ -1,7 +1,7 @@
 <li data-id="{{id}}" draggable="true">
-    {{^visible}}<span class="disabled">{{/visible}}
+    <span {{^visible}}class="disabled"{{/visible}}>
         {{shortname}}
-    {{^visible}}</span>{{/visible}}
+    </span>
     {{#haschildren}}
     <ul>
     {{#children}}
