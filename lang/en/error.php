@@ -304,7 +304,7 @@ $string['invalidcourselevel'] = 'Incorrect context level';
 $string['invalidcoursemodule'] = 'Invalid course module ID';
 $string['invalidcoursenameshort'] = 'Invalid short course name';
 $string['invaliddata'] = 'Data submitted is invalid';
-$string['invaliddatarootpermissions'] = 'Invalid permissions detected in $CFG->dataroot directory, administrator has to fix permissions.';
+$string['invaliddatarootpermissions'] = 'Invalid permissions detected when trying to create a directory. Turn debugging on for further details.';
 $string['invaliddevicetype'] = 'Invalid device type';
 $string['invalidelementid'] = 'Incorrect element id!';
 $string['invalidentry'] = 'This is not valid entry!';
@@ -388,7 +388,7 @@ $string['movecatcontentstoroot'] = 'Moving the category content to root is not a
 $string['movecategorynotpossible'] = 'You cannot move category \'{$a}\' into the selected category.';
 $string['movecategoryownparent'] = 'You cannot make category \'{$a}\' a parent of itself.';
 $string['movecategoryparentconflict'] = 'You cannot make category \'{$a}\' a subcategory of one of its own subcategories.';
-$string['mssqlrcsmodemissing'] = 'The database is not using the expected READ_COMMITTED_SNAPSHOT mode which can lead to wrong results, especially under high concurrency scenarios. Please enable it for correct behaviour. You can find more information in the <a href="https://docs.moodle.org/en/Installing_MSSQL_for_PHP#Configuration">Moodle Docs</a>.';
+$string['mssqlrcsmodemissing'] = 'The database is not using the expected READ_COMMITTED_SNAPSHOT mode which can lead to wrong results, especially under high concurrency scenarios. Please enable it for correct behaviour. For further information, see the documentation <a href="https://docs.moodle.org/en/Installing_MSSQL_for_PHP">Installing MSSQL for PHP</a>.';
 $string['multiplerecordsfound'] = 'Multiple records found, only one record expected.';
 $string['multiplerestorenotallow'] = 'Multiple restore execution not allowed!';
 $string['mustbeloggedin'] = 'You must be logged in to do this';

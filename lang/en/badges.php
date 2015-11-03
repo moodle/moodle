@@ -106,7 +106,7 @@ $string['badgeprivacysetting_help'] = 'Badges you earn can be displayed on your 
 
 You can still control individual badge privacy settings on your badges page.';
 $string['badgeprivacysetting_str'] = 'Automatically show badges I earn on my profile page';
-$string['badgesalt'] = 'Salt for hashing the recepient\'s email address';
+$string['badgesalt'] = 'Salt for hashing the recipient\'s email address';
 $string['badgesalt_desc'] = 'Using a hash allows backpack services to confirm the badge earner without having to expose their email address. This setting should only use numbers and letters.
 
 Note: For recipient verification purposes, please avoid changing this setting once you start issuing badges.';

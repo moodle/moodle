@@ -240,7 +240,9 @@ $string['gradeanalysis'] = 'Grade analysis';
 $string['gradebook'] = 'Gradebook';
 $string['gradebookcalculationsuptodate'] = 'The calculations in the gradebook are up to date. You may need to reload this page to see changes.';
 $string['gradebookcalculationsfixbutton'] = 'Accept grade changes and fix calculation errors';
-$string['gradebookcalculationswarning'] = 'Note: Some errors have been detected in calculating the grades displayed in the gradebook. It is recommended that the errors are fixed by clicking the button below, though this will result in some grades being changed. For details, see the changes between versions {$a->gradebookversion} and {$a->currentversion} in <a href="{$a->url}">Gradebook calculation changes</a>.';
+$string['gradebookcalculationswarning'] = 'Note: Some errors have been detected in calculating the grades displayed in the gradebook. If your course has not started or is in progress, it is recommended that the errors are fixed by clicking the button below, though this will result in some grades being changed. If your course has already ended and grades have been submitted, you probably do not want to fix this issue.
+
+The newer version is {$a->currentversion}; you are using gradebook version {$a->gradebookversion}. You can see a list of changes in <a href="{$a->url}">Gradebook calculation changes</a>.';
 $string['gradebookhiddenerror'] = 'The gradebook is currently set to hide everything from students.';
 $string['gradebookhistories'] = 'Grade histories';
 $string['gradeboundary'] = 'Letter grade boundary';
