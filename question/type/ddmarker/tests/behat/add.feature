@@ -51,7 +51,7 @@ Feature: Test creating a drag and drop markers question
 
     # Try to submit without setting the last marker.
     And I press "id_submitbutton"
-    Then I should see "You have specified a drop zone but not chosen a marker that must be dragged to the zone"
+    Then I should see "You have specified a drop zone but not chosen a marker that must be dragged to the zone."
 
     # Set the last marker and submit again.
     And I set the field "id_drops_3_choice" to "2"
