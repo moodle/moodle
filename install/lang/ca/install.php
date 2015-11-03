@@ -90,5 +90,5 @@ $string['welcomep50'] = 'L\'ús de totes les aplicacions d\'aquest paquet és go
 <a href="http://www.opensource.org/docs/definition_plain.html">codi font obert</a> i es distribueix
 sota llicència <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
 $string['welcomep60'] = 'Les pàgines següents us guiaran per una sèrie de passos fàcils de seguir per configurar <strong>Moodle</strong> en el vostre ordinador. Podeu acceptar els paràmetres per defecte o, opcionalment, modificar-los perquè s\'ajustin a les vostres necessitats.';
-$string['welcomep70'] = 'Feu clic en el botó "Següent" per continuar la configuració de <strong>Moodle</strong>.';
+$string['welcomep70'] = 'Feu clic al botó «Següent» per continuar amb la configuració de <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Adreça web';
