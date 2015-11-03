@@ -462,6 +462,39 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
     }
 
+    public function test_update_framework_scale() {
+        $this->setUser($this->creator);
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $s1 = $this->getDataGenerator()->create_scale();
+
+        $f1 = $lpg->create_framework(array('scaleid' => 1));
+        $f2 = $lpg->create_framework(array('scaleid' => 1));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id()));
+
+        $this->assertEquals(1, $f1->get_scaleid());
+
+        // Make the scale of f2 being used.
+        $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c2->get_id()));
+
+        // Changing the framework where the scale is not used.
+        $result = external::update_competency_framework($f1->get_id(), 'a', 'a', 'a', FORMAT_PLAIN, 3, $this->scaleconfiguration3, false);
+        $result = external_api::clean_returnvalue(external::update_competency_framework_returns(), $result);
+
+        $f1 = new \tool_lp\competency_framework($f1->get_id());
+        $this->assertEquals(3, $f1->get_scaleid());
+
+        // Changing the framework where the scale is used.
+        try {
+            $result = external::update_competency_framework($f2->get_id(), 'b', 'b', 'b', FORMAT_PLAIN, 3, $this->scaleconfiguration3, false);
+            $result = external_api::clean_returnvalue(external::update_competency_framework_returns(), $result);
+            $this->fail('The scale cannot be changed once used.');
+        } catch (\tool_lp\invalid_persistent_exception $e) {
+            $this->assertRegexp('/scaleid/', $e->getMessage());
+        }
+    }
+
     /**
      * Test we can update a competency framework with read permissions.
      */

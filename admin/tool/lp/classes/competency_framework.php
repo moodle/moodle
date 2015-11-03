@@ -62,6 +62,9 @@ class competency_framework extends persistent {
     /** Taxonomy constant. */
     const TAXONOMY_VALUE = 'value';
 
+    /** @var static The object before it was updated. */
+    protected $beforeupdate;
+
     /**
      * Get the context.
      *
@@ -114,6 +117,21 @@ class competency_framework extends persistent {
     }
 
     /**
+     * Hook to execute before validate.
+     *
+     * @return void
+     */
+    protected function before_validate() {
+        $this->beforeupdate = null;
+
+        // During update.
+        if ($this->get_id()) {
+            $this->beforeupdate = new competency_framework($this->get_id());
+        }
+
+    }
+
+    /**
      * Return the scale.
      *
      * @return \grade_scale
@@ -163,6 +181,17 @@ class competency_framework extends persistent {
         }
 
         return $taxonomies;
+    }
+
+    /**
+     * Returns true when some competencies of the framework have user competencies.
+     *
+     * This is useful to determine if the framework, or part of it, should be locked down.
+     *
+     * @return boolean
+     */
+    public function has_user_competencies() {
+        return user_competency::has_records_for_framework($this->get_id());
     }
 
     /**
@@ -236,8 +265,21 @@ class competency_framework extends persistent {
     protected function validate_scaleid($value) {
         global $DB;
 
+        // Always validate that the scale exists.
         if (!$DB->record_exists_select('scale', 'id = :id', array('id' => $value))) {
             return new lang_string('invalidscaleid', 'error');
+        }
+
+        // During update.
+        if ($this->get_id()) {
+
+            // Validate that we can only change the scale when it is not used yet.
+            if ($this->beforeupdate->get_scaleid() != $value) {
+                if ($this->beforeupdate->has_user_competencies()) {
+                    return new lang_string('errorscalealreadyused', 'tool_lp');
+                }
+            }
+
         }
 
         return true;
@@ -262,7 +304,7 @@ class competency_framework extends persistent {
             $scaleinfo = array_shift($scaleconfigurations);
             if (empty($scaleinfo) || !isset($scaleinfo->scaleid) || $scaleinfo->scaleid != $this->get('scaleid')) {
                 // This should never happen.
-                return new lang_string('invaliddata', 'error');
+                return new lang_string('errorscaleconfiguration', 'tool_lp');
             }
 
             // Walk through the array to find proficient and default values.

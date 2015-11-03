@@ -62,6 +62,7 @@ $string['errorcannotsetduedateinthepast'] = 'The due date cannot be set in the p
 $string['errorcannotchangeapastduedate'] = 'The due date has passed, it cannot be changed.';
 $string['errornocompetency'] = '{$a} competency can not be found';
 $string['errorplanstatus'] = 'Learning plans \'{$a}\' status unknown';
+$string['errorscalealreadyused'] = 'The scale cannot be changed, it is already being used.';
 $string['errorscaleconfiguration'] = 'You must configure the scale by selecting default and proficient values.';
 $string['hidden'] = 'Hidden';
 $string['hiddenhint'] = '(hidden)';

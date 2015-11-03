@@ -49,6 +49,11 @@ class competency_framework extends moodleform {
         $mform = $this->_form;
         $id = $this->_customdata['id'];
         $context = $this->_customdata['context'];
+        $framework = null;
+
+        if ($id) {
+            $framework = api::read_framework($id);;
+        }
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -69,9 +74,16 @@ class competency_framework extends moodleform {
         $mform->addRule('idnumber', null, 'required', null, 'client');
 
         $scales = get_scales_menu();
-        $mform->addElement('select', 'scaleid', get_string('scale', 'tool_lp'), $scales);
+        $scaleid = $mform->addElement('select', 'scaleid', get_string('scale', 'tool_lp'), $scales);
         $mform->setType('scaleid', PARAM_INT);
         $mform->addHelpButton('scaleid', 'scale', 'tool_lp');
+        if ($framework && $framework->has_user_competencies()) {
+            // The scale is used so we "freeze" the element. Though, the javascript code for the scale
+            // configuration requires this field so we only disable it. It is fine as setting the value
+            // as a constant will ensure that nobody can change it. And it's validated in the persistent anyway.
+            $scaleid->updateAttributes(array('disabled' => 'disabled'));
+            $mform->setConstant('scaleid', $framework->get_scaleid());
+        }
 
         $mform->addElement('button', 'scaleconfigbutton', get_string('configurescale', 'tool_lp'));
         // Add js.
@@ -99,16 +111,13 @@ class competency_framework extends moodleform {
 
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
 
-        if (!empty($id)) {
-            if (!$this->is_submitted()) {
-                $framework = api::read_framework($id);
-                $record = $framework->to_record();
-                // Massage for editor API.
-                $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
-                // New hair cut for taxonomies.
-                $record->taxonomies = $framework->get_taxonomies();
-                $this->set_data($record);
-            }
+        if ($framework && !$this->is_submitted()) {
+            $record = $framework->to_record();
+            // Massage for editor API.
+            $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
+            // New hair cut for taxonomies.
+            $record->taxonomies = $framework->get_taxonomies();
+            $this->set_data($record);
         }
 
     }
@@ -144,7 +153,7 @@ class competency_framework extends moodleform {
 
         $framework = new \tool_lp\competency_framework(0, $data);
         $errors = $framework->get_errors();
-        if (isset($errors['scaleconfiguration'])) {
+        if (isset($errors['scaleconfiguration']) && !isset($errors['scaleid'])) {
             $errors['scaleid'] = $errors['scaleconfiguration'];
             unset($errors['scaleconfiguration']);
         }

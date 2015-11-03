@@ -238,4 +238,23 @@ class user_competency extends persistent {
         return parent::get_records_select("userid = :userid AND $sql", $params);
     }
 
+    /**
+     * Checks if any of the competencies of a framework has a user competency record.
+     *
+     * @param  int $frameworkid The competency framework ID.
+     * @return boolean
+     */
+    public static function has_records_for_framework($frameworkid) {
+        global $DB;
+
+        $sql = "SELECT 'x'
+                  FROM {" . self::TABLE . "} uc
+                  JOIN {" . competency::TABLE . "} c
+                    ON uc.competencyid = c.id
+                 WHERE c.competencyframeworkid = ?";
+        $params = array($frameworkid);
+
+        return $DB->record_exists_sql($sql, $params);
+    }
+
 }
