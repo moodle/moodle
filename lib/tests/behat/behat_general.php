@@ -1435,4 +1435,40 @@ class behat_general extends behat_base {
             throw new ExpectationException('Unknown browser button.', $session);
         }
     }
+
+    /**
+     * Trigger a keydown event for a key on a specific element.
+     *
+     * @When /^I press key "(?P<key_string>(?:[^"]|\\")*)" in "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)"$/
+     * @param string $key either char-code or character itself,
+     *               may optionally be prefixed with ctrl-, alt-, shift- or meta-
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     * @throws DriverException
+     * @throws ExpectationException
+     */
+    public function i_press_key_in_element($key, $element, $selectortype) {
+        if (!$this->running_javascript()) {
+            throw new DriverException('Key down step is not available with Javascript disabled');
+        }
+        // Gets the node based on the requested selector type and locator.
+        $node = $this->get_selected_node($selectortype, $element);
+        $modifier = null;
+        $validmodifiers = array('ctrl', 'alt', 'shift', 'meta');
+        $char = $key;
+        if (strpos($key, '-')) {
+            list($modifier, $char) = preg_split('/-/', $key, 2);
+            $modifier = strtolower($modifier);
+            if (!in_array($modifier, $validmodifiers)) {
+                throw new ExpectationException(sprintf('Unknown key modifier: %s.', $modifier));
+            }
+        }
+        if (is_numeric($char)) {
+            $char = (int)$char;
+        }
+
+        $node->keyDown($char, $modifier);
+        $node->keyPress($char, $modifier);
+        $node->keyUp($char, $modifier);
+    }
 }
