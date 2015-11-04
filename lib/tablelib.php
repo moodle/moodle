@@ -458,7 +458,9 @@ class flexible_table {
         } else if (isset($SESSION->flextable[$this->uniqueid])) {
             $this->prefs = $SESSION->flextable[$this->uniqueid];
         }
-        if (!$this->prefs) {
+
+        // Set up default preferences if needed.
+        if (!$this->prefs or optional_param($this->request[TABLE_VAR_RESET], false, PARAM_BOOL)) {
             $this->prefs = array(
                 'collapse' => array(),
                 'sortby'   => array(),
@@ -524,17 +526,6 @@ class flexible_table {
         $ifirst = optional_param($this->request[TABLE_VAR_IFIRST], null, PARAM_RAW);
         if (!is_null($ifirst) && ($ifirst === '' || strpos(get_string('alphabet', 'langconfig'), $ifirst) !== false)) {
             $this->prefs['i_first'] = $ifirst;
-        }
-
-        // Allow user to reset table preferences.
-        if (optional_param($this->request[TABLE_VAR_RESET], 0, PARAM_BOOL) === 1) {
-            $this->prefs = array(
-                'collapse' => array(),
-                'sortby'   => array(),
-                'i_first'  => '',
-                'i_last'   => '',
-                'textsort' => $this->column_textsort,
-            );
         }
 
         // Save user preferences if they have changed.
@@ -1416,31 +1407,56 @@ class flexible_table {
     /**
      * Generate the HTML for the table preferences reset button.
      *
-     * @return string HTML fragment.
+     * @return string HTML fragment, empty string if no need to reset
      */
-    private function render_reset_button() {
-        $userprefs = false;
-        // Loop through the user table preferences for a setting.
-        foreach ($this->prefs as $preference) {
-            if (!empty($preference)) {
-                // We have a preference.
-                $userprefs = true;
-                // We only need one.
-                break;
-            }
-        }
-        // If no table preferences have been set then don't show the reset button.
-        if (!$userprefs) {
+    protected function render_reset_button() {
+
+        if (!$this->can_be_reset()) {
             return '';
         }
 
         $url = $this->baseurl->out(false, array($this->request[TABLE_VAR_RESET] => 1));
 
-        $html  = html_writer::start_div('mdl-right');
+        $html  = html_writer::start_div('resettable mdl-right');
         $html .= html_writer::link($url, get_string('resettable'));
         $html .= html_writer::end_div();
 
         return $html;
+    }
+
+    /**
+     * Are there some table preferences that can be reset?
+     *
+     * If true, then the "reset table preferences" widget should be displayed.
+     *
+     * @return bool
+     */
+    protected function can_be_reset() {
+
+        // Loop through preferences and make sure they are empty or set to the default value.
+        foreach ($this->prefs as $prefname => $prefval) {
+
+            if ($prefname === 'sortby' and !empty($this->sort_default_column)) {
+                // Check if the actual sorting differs from the default one.
+                if (empty($prefval) or $prefval !== array($this->sort_default_column => $this->sort_default_order)) {
+                    return true;
+                }
+
+            } else if ($prefname === 'collapse' and !empty($prefval)) {
+                // Check if there are some collapsed columns (all are expanded by default).
+                foreach ($prefval as $columnname => $iscollapsed) {
+                    if ($iscollapsed) {
+                        return true;
+                    }
+                }
+
+            } else if (!empty($prefval)) {
+                // For all other cases, we just check if some preference is set.
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 
