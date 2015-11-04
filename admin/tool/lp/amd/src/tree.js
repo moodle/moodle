@@ -24,7 +24,7 @@
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/url'], function($, url) {
+define(['jquery', 'core/url', 'core/log'], function($, url, log) {
     // Private variables and functions.
     /** @var {String} expandedImage The html for an expanded tree node twistie. */
     var expandedImage = $('<img alt="" src="' + url.imageUrl('t/expanded') + '"/>');
@@ -146,7 +146,7 @@ define(['jquery', 'core/url'], function($, url) {
     Tree.prototype.updateFocus = function(item) {
         this.items.attr('aria-selected', 'false').attr('tabindex', '-1');
         item.attr('aria-selected', 'true').attr('tabindex', 0);
-        this.treeRoot.trigger('change', [item]);
+        this.treeRoot.trigger('selectionchanged', [item]);
     };
 
     /**
@@ -335,6 +335,21 @@ define(['jquery', 'core/url'], function($, url) {
         }
 
         return true;
+    };
+
+    /**
+     * Attach an event listener to the tree.
+     *
+     * @method on
+     * @param {String} eventname This is the name of the event to listen for. Only 'selectionchanged' is supported for now.
+     * @param {Function} handler The function to call when the event is triggered.
+     */
+    Tree.prototype.on = function(eventname, handler) {
+        if (eventname !== 'selectionchanged') {
+            log.warning('Invalid custom event name for tree. Only "selectionchanged" is supported.');
+        } else {
+            this.treeRoot.on(eventname, handler);
+        }
     };
 
     /**

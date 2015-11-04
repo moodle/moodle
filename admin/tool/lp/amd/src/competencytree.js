@@ -124,6 +124,20 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
          },
 
         /**
+         * Add an event handler for custom events emitted by the tree.
+         *
+         * @param {String} eventname The name of the event - only "selectionchanged" for now
+         * @param {Function} handler The handler for the event.
+         */
+        on: function(eventname, handler) {
+            // We can't use the tree on function directly
+            // because the tree gets rebuilt whenever the search string changes,
+            // instead we attach the listner to the root node of the tree which never
+            // gets destroyed (same as "on()" code in the tree.js).
+            $(treeSelector).on(eventname, handler);
+        },
+
+        /**
          * Get the competency framework id this model was initiliased with.
          *
          * @return {Number}

@@ -111,8 +111,6 @@ require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions', 
                    '{{framework.shortname}}',
                    '{{search}}',
                    '[data-enhance=tree]');
-    // Listen to the custom event triggered by the aria tree.
-    $('[data-enhance=tree]').on('change', actions.selectionChanged);
 
     actions.init(treeModel, {{pagecontextid}}, {{{framework.taxonomies}}});
 

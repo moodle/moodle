@@ -101,7 +101,8 @@ define(['jquery',
      * @param {dialogue} popup The tool_lp/dialogue that was created.
      */
     var initMovePopup = function(popup) {
-        new Ariatree('[data-enhance=movetree]', function(target) {
+        var tree = new Ariatree('[data-enhance=movetree]');
+        tree.on('selectionchanged', function(evt, target) {
             moveTarget = $(target).data('id');
         });
 
@@ -146,8 +147,8 @@ define(['jquery',
                 methodname: 'tool_lp_search_competencies',
                 args: {
                     competencyframeworkid: competency.competencyframeworkid,
-                    context: { contextid: pageContextId },
-                    searchtext: ''
+                    searchtext: '',
+                    includerelated: false
                 }
             },{
                 methodname: 'tool_lp_read_competency_framework',
@@ -532,6 +533,67 @@ define(['jquery',
         return str.get_string('taxonomy_selected_' + getTaxonomyAtLevel(level), 'tool_lp');
     };
 
+    /**
+     * Handler when a node in the aria tree is selected.
+     * @method selectionChanged
+     */
+    var selectionChanged = function(evt, node) {
+        var id = $(node).data('id'),
+            btn = $('[data-region="competencyactions"] [data-action="add"]'),
+            actionMenu = $('[data-region="competencyactionsmenu"]'),
+            selectedTitle = $('[data-region="selected-competency"]'),
+            level = 0,
+            sublevel = 1;
+
+        menubar.closeAll();
+
+        if (typeof id === "undefined") {
+            // Assume this is the root of the tree.
+            // Here we are only getting the text from the top of the tree, to do it we clone the tree,
+            // remove all children and then call text on the result.
+            $('[data-region="competencyinfo"]').html(node.clone().children().remove().end().text());
+            $('[data-region="competencyactions"]').data('competency', null);
+            actionMenu.hide();
+
+        } else {
+            var competency = treeModel.getCompetency(id);
+
+            competency.showdeleterelatedaction = true;
+            competency.showrelatedcompetencies = true;
+
+            level = treeModel.getCompetencyLevel(id);
+            if (!hasSubLevel(level)) {
+                sublevel = false;
+            } else {
+                sublevel = level + 1;
+            }
+
+            actionMenu.show();
+            $('[data-region="competencyactions"]').data('competency', competency);
+            templates.render('tool_lp/competency_summary', competency).then(function(html) {
+                $('[data-region="competencyinfo"]').html(html);
+                $('[data-action="deleterelation"]').on('click', deleteRelatedHandler);
+            }, notification.exception);
+        }
+
+        strSelectedTaxonomy(level).then(function(str) {
+            selectedTitle.text(str);
+        });
+
+        if (!sublevel) {
+            btn.hide();
+        } else {
+            strAddTaxonomy(sublevel).then(function(str) {
+                btn.show()
+                    .find('[data-region="term"]')
+                    .text(str);
+            });
+        }
+        // We handled this event so consume it.
+        evt.preventDefault();
+        return false;
+    };
+
     return {
         /**
          * Initialise this page (attach event handlers etc).
@@ -567,67 +629,9 @@ define(['jquery',
             $('[data-region="managecompetencies"] li').on('dragenter', dragEnter);
             $('[data-region="managecompetencies"] li').on('dragleave', dragLeave);
             $('[data-region="managecompetencies"] li').on('drop', dropOver);
-        },
 
-        /**
-         * Handler when a node in the aria tree is selected.
-         * @method selectionChanged
-         */
-        selectionChanged: function(evt, node) {
-            var id = $(node).data('id'),
-                btn = $('[data-region="competencyactions"] [data-action="add"]'),
-                actionMenu = $('[data-region="competencyactionsmenu"]'),
-                selectedTitle = $('[data-region="selected-competency"]'),
-                level = 0,
-                sublevel = 1;
-
-            menubar.closeAll();
-
-            if (typeof id === "undefined") {
-                // Assume this is the root of the tree.
-                // Here we are only getting the text from the top of the tree, to do it we clone the tree,
-                // remove all children and then call text on the result.
-                $('[data-region="competencyinfo"]').html(node.clone().children().remove().end().text());
-                $('[data-region="competencyactions"]').data('competency', null);
-                actionMenu.hide();
-
-            } else {
-                var competency = treeModel.getCompetency(id);
-
-                competency.showdeleterelatedaction = true;
-                competency.showrelatedcompetencies = true;
-
-                level = treeModel.getCompetencyLevel(id);
-                if (!hasSubLevel(level)) {
-                    sublevel = false;
-                } else {
-                    sublevel = level + 1;
-                }
-
-                actionMenu.show();
-                $('[data-region="competencyactions"]').data('competency', competency);
-                templates.render('tool_lp/competency_summary', competency).then(function(html) {
-                    $('[data-region="competencyinfo"]').html(html);
-                    $('[data-action="deleterelation"]').on('click', deleteRelatedHandler);
-                }, notification.exception);
-            }
-
-            strSelectedTaxonomy(level).then(function(str) {
-                selectedTitle.text(str);
-            });
-
-            if (!sublevel) {
-                btn.hide();
-            } else {
-                strAddTaxonomy(sublevel).then(function(str) {
-                    btn.show()
-                        .find('[data-region="term"]')
-                        .text(str);
-                });
-            }
-            // We handled this event so consume it.
-            evt.preventDefault();
-            return false;
+            model.on('selectionchanged', selectionChanged);
         }
+
     };
 });
