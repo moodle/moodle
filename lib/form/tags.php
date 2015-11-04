@@ -90,6 +90,7 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
         }
         $attributes['multiple'] = 'multiple';
         $attributes['placeholder'] = get_string('entertags', 'tag');
+        $attributes['showsuggestions'] = $this->showingofficial;
 
         parent::MoodleQuickForm_autocomplete($elementName, $elementLabel, $validoptions, $attributes);
     }
