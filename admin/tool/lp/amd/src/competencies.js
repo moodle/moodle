@@ -98,6 +98,13 @@ define(['jquery',
                     args: { templateid: localthis.itemid, competencyidfrom: fromid, competencyidto: toid }
                 }
             ]);
+        } else if (localthis.itemtype == 'plan') {
+            requests = ajax.call([
+                {
+                    methodname: 'tool_lp_reorder_plan_competency',
+                    args: { planid: localthis.itemid, competencyidfrom: fromid, competencyidto: toid }
+                }
+            ]);
         } else {
             return null;
         }
@@ -140,6 +147,15 @@ define(['jquery',
                     ];
                     pagerender = 'tool_lp/template_competencies_page';
                     pageregion = 'templatecompetenciespage';
+                } else if (self.itemtype === "plan") {
+                    requests = [
+                        { methodname: 'tool_lp_add_competency_to_plan',
+                            args: { planid: self.itemid, competencyid: compId }},
+                        { methodname: 'tool_lp_data_for_plan_competencies_page',
+                            args: { planid: self.itemid}}
+                    ];
+                    pagerender = 'tool_lp/plan_page';
+                    pageregion = 'plancompetenciespage';
                 }
 
                 ajax.call(requests)[1].then(function(context) {
@@ -193,6 +209,15 @@ define(['jquery',
                 ]);
                 pagerender = 'tool_lp/template_competencies_page';
                 pageregion = 'templatecompetenciespage';
+            } else if (localthis.itemtype == 'plan') {
+                requests = ajax.call([
+                    { methodname: 'tool_lp_remove_competency_from_plan',
+                        args: { planid: localthis.itemid, competencyid: deleteid } },
+                    { methodname: 'tool_lp_data_for_plan_competencies_page',
+                        args: { planid: localthis.itemid } }
+                ]);
+                pagerender = 'tool_lp/plan_page';
+                pageregion = 'plancompetenciespage';
             }
 
             requests[1].done(function(context) {

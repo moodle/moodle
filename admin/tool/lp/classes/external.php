@@ -410,7 +410,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function duplicate_competency_framework_returns() {
-       return self::get_competency_framework_external_structure();
+        return self::get_competency_framework_external_structure();
     }
 
     /**
@@ -912,6 +912,20 @@ class external extends external_api {
             'User who modified this record last'
         );
 
+        // Extra params.
+        $gradename = new external_value(
+            PARAM_TEXT,
+            'User competency status name'
+        );
+        $proficiencyname = new external_value(
+            PARAM_TEXT,
+            'User competency proficiency name'
+        );
+        $statusname = new external_value(
+            PARAM_TEXT,
+            'User competency status name'
+        );
+
         $returns = array(
             'id' => $id,
             'userid' => $userid,
@@ -923,6 +937,9 @@ class external extends external_api {
             'timecreated' => $timecreated,
             'timemodified' => $timemodified,
             'usermodified' => $usermodified,
+            'gradename' => $gradename,
+            'proficiencyname' => $proficiencyname,
+            'statusname' => $statusname,
         );
 
         return new external_single_structure($returns);
@@ -2889,6 +2906,104 @@ class external extends external_api {
     }
 
     /**
+     * Returns description of add_competency_to_plan() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function add_competency_to_plan_parameters() {
+        $planid = new external_value(
+            PARAM_INT,
+            'The plan id',
+            VALUE_REQUIRED
+        );
+        $competencyid = new external_value(
+            PARAM_INT,
+            'The competency id',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'planid' => $planid,
+            'competencyid' => $competencyid,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * add competency to a learning plan.
+     *
+     * @param int $planid Plan id.
+     * @param int $competencyid Competency id.
+     * @return int
+     */
+    public static function add_competency_to_plan($planid, $competencyid) {
+        $params = self::validate_parameters(self::add_competency_to_plan_parameters(),
+                                            array(
+                                                'planid' => $planid,
+                                                'competencyid' => $competencyid,
+                                            ));
+
+        return api::add_competency_to_plan($params['planid'], $params['competencyid']);
+    }
+
+    /**
+     * Returns description of add_competency_to_plan() result value.
+     *
+     * @return \external_description
+     */
+    public static function add_competency_to_plan_returns() {
+        return new external_value(PARAM_BOOL, 'True if successful.');
+    }
+
+    /**
+     * Returns description of remove_competency_from_plan() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function remove_competency_from_plan_parameters() {
+        $planid = new external_value(
+            PARAM_INT,
+            'The plan id',
+            VALUE_REQUIRED
+        );
+        $competencyid = new external_value(
+            PARAM_INT,
+            'The competency id',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'planid' => $planid,
+            'competencyid' => $competencyid,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Remove a competency from plan.
+     *
+     * @param int $planid Plan id.
+     * @param int $competencyid Competency id.
+     * @return int
+     */
+    public static function remove_competency_from_plan($planid, $competencyid) {
+        $params = self::validate_parameters(self::remove_competency_from_plan_parameters(),
+                                            array(
+                                                'planid' => $planid,
+                                                'competencyid' => $competencyid,
+                                            ));
+
+        return api::remove_competency_from_plan($params['planid'], $params['competencyid']);
+    }
+
+    /**
+     * Returns description of remove_competency_from_plan() result value.
+     *
+     * @return \external_description
+     */
+    public static function remove_competency_from_plan_returns() {
+        return new external_value(PARAM_BOOL, 'True if successful.');
+    }
+
+    /**
      * Returns description of remove_competency_from_template() parameters.
      *
      * @return \external_function_parameters
@@ -2909,6 +3024,63 @@ class external extends external_api {
             'competencyid' => $competencyid,
         );
         return new external_function_parameters($params);
+    }
+
+    /**
+     * Returns description of reorder_plan_competency() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function reorder_plan_competency_parameters() {
+        $planid = new external_value(
+            PARAM_INT,
+            'The plan id',
+            VALUE_REQUIRED
+        );
+        $competencyidfrom = new external_value(
+            PARAM_INT,
+            'The competency id we are moving',
+            VALUE_REQUIRED
+        );
+        $competencyidto = new external_value(
+            PARAM_INT,
+            'The competency id we are moving to',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'planid' => $planid,
+            'competencyidfrom' => $competencyidfrom,
+            'competencyidto' => $competencyidto,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Change the order of plan competencies.
+     *
+     * @param int $planid The plan id
+     * @param int $competencyidfrom The competency to move.
+     * @param int $competencyidto The competency to move to.
+     * @return bool
+     */
+    public static function reorder_plan_competency($planid, $competencyidfrom, $competencyidto) {
+        $params = self::validate_parameters(self::reorder_plan_competency_parameters(),
+            array(
+                'planid' => $planid,
+                'competencyidfrom' => $competencyidfrom,
+                'competencyidto' => $competencyidto,
+            ));
+
+        return api::reorder_plan_competency($params['planid'], $params['competencyidfrom'], $params['competencyidto']);
+    }
+
+    /**
+     * Returns description of reorder_plan_competency() result value.
+     *
+     * @return \external_description
+     */
+    public static function reorder_plan_competency_returns() {
+        return new external_value(PARAM_BOOL, 'True if successful.');
     }
 
     /**
@@ -2992,6 +3164,62 @@ class external extends external_api {
                 self::get_competency_external_structure()
             ),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
+        ));
+
+    }
+
+    /**
+     * Returns description of data_for_plan_competenies_page() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function data_for_plan_competencies_page_parameters() {
+        $planid = new external_value(
+            PARAM_INT,
+            'The plan id',
+            VALUE_REQUIRED
+        );
+        $params = array('planid' => $planid);
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Loads the data required to render the plan_competencies_page template.
+     *
+     * @param int $planid Learning Plan id.
+     * @return boolean
+     */
+    public static function data_for_plan_competencies_page($planid) {
+        global $PAGE;
+        $params = self::validate_parameters(self::data_for_plan_competencies_page_parameters(),
+                                            array(
+                                                'planid' => $planid
+                                            ));
+        $plan = api::read_plan($planid);
+        $renderable = new output\plan_page($plan);
+        $renderer = $PAGE->get_renderer('tool_lp');
+
+        $data = $renderable->export_for_template($renderer);
+
+        return $data;
+    }
+
+    /**
+     * Returns description of data_for_plan_competencies_page() result value.
+     *
+     * @return \external_description
+     */
+    public static function data_for_plan_competencies_page_returns() {
+
+        return new external_single_structure(array (
+            'planid' => new external_value(PARAM_INT, 'Learning Plan id'),
+            'canmanage' => new external_value(PARAM_BOOL, 'User can manage learning plan'),
+            'competencies' => new external_multiple_structure(
+                    new external_single_structure(array(
+                        'competency' => self::get_competency_external_structure(),
+                        'usercompetency' => self::get_user_competency_external_structure(),
+                    ))
+            )
         ));
 
     }

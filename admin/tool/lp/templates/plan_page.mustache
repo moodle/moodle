@@ -17,9 +17,8 @@
 {{!
     Plan page template.
 }}
-<div data-region="planpage">
-
-    <table class="generaltable fullwidth">
+<div data-region="plancompetenciespage">
+    <table class="generaltable fullwidth managecompetencies">
         <thead>
             <tr>
                 <th scope="col">{{#str}}shortname, tool_lp{{/str}}</th>
@@ -29,14 +28,25 @@
                 <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody  class="drag-parentnode">
             {{#competencies}}
-            <tr data-id="{{id}}">
-                <td>{{shortname}}</td>
+            <tr class="drag-samenode" data-id="{{id}}">
+                <td>
+                    {{#canmanage}}
+                    <span class="drag-handlecontainer pull-left"></span>
+                    {{/canmanage}}
+                    {{shortname}}
+                </td>
                 <td>{{usercompetency.gradename}}</td>
                 <td>{{usercompetency.proficiencyname}}</td>
                 <td>{{usercompetency.statusname}}</td>
-                <td><!-- Option to remove the competency from the plan, ... --></td>
+                <td>
+                    {{#canmanage}}
+                    <div class="pull-left">
+                        <a href="#" data-action="delete-competency-link" data-id="{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+                    </div>
+                    {{/canmanage}}
+                </td>
             </tr>
             {{/competencies}}
         </tbody>
@@ -45,9 +55,17 @@
     <div data-region="actions">
         <div class="pull-right">
             <!-- Button to add competencies to the plan -->
+            {{#canmanage}}
+             <button class="btn" data-action="add">{{#pix}}t/add{{/pix}} {{#str}}addcompetency, tool_lp{{/str}}</button>
+            {{/canmanage}}
         </div>
     </div>
 
 </div>
+{{#canmanage}}
 {{#js}}
+require(['tool_lp/competencies'], function(mod) {
+    (new mod({{planid}}, 'plan', {{contextid}}));
+});
 {{/js}}
+{{/canmanage}}

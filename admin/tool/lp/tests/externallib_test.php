@@ -31,6 +31,7 @@ use tool_lp\external;
 use tool_lp\plan;
 use tool_lp\related_competency;
 use tool_lp\user_competency;
+use tool_lp\plan_competency;
 
 /**
  * External learning plans webservice API tests.
@@ -2090,6 +2091,179 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($c4->get_id(), $result[1]['relatedcompetencies'][1]['id']);
         $this->assertEquals($c1->get_id(), $result[2]['relatedcompetencies'][0]['id']);
         $this->assertEquals($c2->get_id(), $result[3]['relatedcompetencies'][0]['id']);
+    }
+
+    /**
+     * Test that we can add competency to plan if we have the right capability.
+     *
+     * @return void
+     */
+    public function test_add_competency_to_plan() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $usermanage = $dg->create_user();
+        $user = $dg->create_user();
+
+        $syscontext = context_system::instance();
+
+        // Creating specific roles.
+        $managerole = $dg->create_role(array(
+            'name' => 'User manage',
+            'shortname' => 'manage'
+        ));
+
+        assign_capability('tool/lp:planmanage', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('tool/lp:planview', CAP_ALLOW, $managerole, $syscontext->id);
+
+        $dg->role_assign($managerole, $usermanage->id, $syscontext->id);
+
+        $this->setUser($usermanage);
+        $plan = array (
+            'userid' => $usermanage->id,
+            'status' => \tool_lp\plan::STATUS_ACTIVE
+        );
+        $pl1 = $lpg->create_plan($plan);
+        $framework = $lpg->create_framework();
+        $competency = $lpg->create_competency(
+                array('competencyframeworkid' => $framework->get_id())
+                );
+        $this->assertTrue(external::add_competency_to_plan($pl1->get_id(), $competency->get_id()));
+
+        // A competency cannot be added to plan based on template.
+        $template = $lpg->create_template();
+        $plan = array (
+            'userid' => $usermanage->id,
+            'status' => \tool_lp\plan::STATUS_ACTIVE,
+            'templateid' => $template->get_id()
+        );
+        $pl2 = $lpg->create_plan($plan);
+        try {
+            external::add_competency_to_plan($pl2->get_id(), $competency->get_id());
+            $this->fail('A competency cannot be added to plan based on template');
+        } catch (coding_exception $ex) {
+            $this->assertTrue(true);
+        }
+
+        // User without capability cannot add competency to a plan.
+        $this->setUser($user);
+        try {
+            external::add_competency_to_plan($pl1->get_id(), $competency->get_id());
+            $this->fail('User without capability cannot add competency to a plan');
+        } catch (required_capability_exception $ex) {
+            $this->assertTrue(true);
+        }
+    }
+
+    /**
+     * Test that we can add competency to plan if we have the right capability.
+     *
+     * @return void
+     */
+    public function test_remove_competency_from_plan() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $usermanage = $dg->create_user();
+        $user = $dg->create_user();
+
+        $syscontext = context_system::instance();
+
+        // Creating specific roles.
+        $managerole = $dg->create_role(array(
+            'name' => 'User manage',
+            'shortname' => 'manage'
+        ));
+
+        assign_capability('tool/lp:planmanage', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('tool/lp:planview', CAP_ALLOW, $managerole, $syscontext->id);
+
+        $dg->role_assign($managerole, $usermanage->id, $syscontext->id);
+
+        $this->setUser($usermanage);
+        $plan = array (
+            'userid' => $usermanage->id,
+            'status' => \tool_lp\plan::STATUS_ACTIVE
+        );
+        $pl1 = $lpg->create_plan($plan);
+        $framework = $lpg->create_framework();
+        $competency = $lpg->create_competency(
+                array('competencyframeworkid' => $framework->get_id())
+                );
+        $lpg->create_plan_competency(
+                array(
+                    'planid' => $pl1->get_id(),
+                    'competencyid' => $competency->get_id()
+                    )
+                );
+        $this->assertTrue(external::remove_competency_from_plan($pl1->get_id(), $competency->get_id()));
+        $this->assertCount(0, $pl1->get_competencies());
+    }
+
+    /**
+     * Test that we can add competency to plan if we have the right capability.
+     *
+     * @return void
+     */
+    public function test_reorder_plan_competency() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $usermanage = $dg->create_user();
+        $user = $dg->create_user();
+
+        $syscontext = context_system::instance();
+
+        // Creating specific roles.
+        $managerole = $dg->create_role(array(
+            'name' => 'User manage',
+            'shortname' => 'manage'
+        ));
+
+        assign_capability('tool/lp:planmanage', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('tool/lp:planview', CAP_ALLOW, $managerole, $syscontext->id);
+
+        $dg->role_assign($managerole, $usermanage->id, $syscontext->id);
+
+        $this->setUser($usermanage);
+        $plan = array (
+            'userid' => $usermanage->id,
+            'status' => \tool_lp\plan::STATUS_ACTIVE
+        );
+        $pl1 = $lpg->create_plan($plan);
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c5 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        $lpg->create_plan_competency(array('planid' => $pl1->get_id(), 'competencyid' => $c1->get_id(), 'sortorder' => 1));
+        $lpg->create_plan_competency(array('planid' => $pl1->get_id(), 'competencyid' => $c2->get_id(), 'sortorder' => 2));
+        $lpg->create_plan_competency(array('planid' => $pl1->get_id(), 'competencyid' => $c3->get_id(), 'sortorder' => 3));
+        $lpg->create_plan_competency(array('planid' => $pl1->get_id(), 'competencyid' => $c4->get_id(), 'sortorder' => 4));
+        $lpg->create_plan_competency(array('planid' => $pl1->get_id(), 'competencyid' => $c5->get_id(), 'sortorder' => 5));
+
+        $this->assertTrue(external::reorder_plan_competency($pl1->get_id(), $c2->get_id(), $c5->get_id()));
+        $this->assertTrue(external::reorder_plan_competency($pl1->get_id(), $c3->get_id(), $c4->get_id()));
+        $plancompetencies = plan_competency::get_records(
+                array(
+                    'planid' => $pl1->get_id()
+                ),
+                'sortorder',
+                'ASC'
+                );
+        $plcmp1 = $plancompetencies[0];
+        $plcmp2 = $plancompetencies[1];
+        $plcmp3 = $plancompetencies[2];
+        $plcmp4 = $plancompetencies[3];
+        $plcmp5 = $plancompetencies[4];
+
+        $this->assertEquals($plcmp1->get_competencyid(), $c1->get_id());
+        $this->assertEquals($plcmp2->get_competencyid(), $c4->get_id());
+        $this->assertEquals($plcmp3->get_competencyid(), $c3->get_id());
+        $this->assertEquals($plcmp4->get_competencyid(), $c5->get_id());
+        $this->assertEquals($plcmp5->get_competencyid(), $c2->get_id());
     }
 
 }

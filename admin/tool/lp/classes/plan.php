@@ -120,9 +120,8 @@ class plan extends persistent {
             // Get the competencies from the template.
             $competencies = template_competency::list_competencies($this->get_templateid(), true);
         } else {
-            // TODO MDL-50328.
-            // Get the competencies in this plan.
-            // $competencies = plan_competency::list_competencies($this->get_id());
+            // Get the competencies from the plan.
+            $competencies = plan_competency::list_competencies($this->get_id());
         }
         return $competencies;
     }
@@ -269,6 +268,15 @@ class plan extends persistent {
             $status[self::STATUS_COMPLETE] = get_string('planstatuscomplete', 'tool_lp');
         }
         return $status;
+    }
+
+    /**
+     * Check if a template is associated to the plan.
+     *
+     * @return bool
+     */
+    public function is_based_on_template() {
+        return $this->get_templateid() !== null;
     }
 
 }
