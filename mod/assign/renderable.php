@@ -783,7 +783,7 @@ class assign_files implements renderable {
 
         if (!empty($CFG->enableportfolios)) {
             require_once($CFG->libdir . '/portfoliolib.php');
-            if (count($files) >= 1 &&
+            if (count($files) >= 1 && !empty($sid) &&
                     has_capability('mod/assign:exportownsubmission', $this->context)) {
                 $button = new portfolio_add_button();
                 $callbackparams = array('cmid' => $this->cm->id,
@@ -818,6 +818,7 @@ class assign_files implements renderable {
         foreach ($dir['files'] as $file) {
             $file->portfoliobutton = '';
             if (!empty($CFG->enableportfolios)) {
+                require_once($CFG->libdir . '/portfoliolib.php');
                 $button = new portfolio_add_button();
                 if (has_capability('mod/assign:exportownsubmission', $this->context)) {
                     $portfolioparams = array('cmid' => $this->cm->id, 'fileid' => $file->get_id());
