@@ -281,6 +281,16 @@ class mod_data_lib_testcase extends advanced_testcase {
 
         $field->define_field($fielddetail);
         $field->insert_field();
+
+        // Add a record with a group id of zero (all participants).
+        $recordid1 = data_add_record($data, 0);
+
+        $datacontent = array();
+        $datacontent['fieldid'] = $field->field->id;
+        $datacontent['recordid'] = $recordid1;
+        $datacontent['content'] = 'Obelix';
+        $DB->insert_record('data_content', $datacontent);
+
         $recordid = data_add_record($data, $group1->id);
 
         $datacontent = array();
@@ -291,30 +301,46 @@ class mod_data_lib_testcase extends advanced_testcase {
 
         // Now try to access it as various users.
         unassign_capability('moodle/site:accessallgroups', $role->id);
+        // Eveyone should have access to the record with the group id of zero.
+        $params1 = array('contextid' => 2,
+                        'component' => 'mod_data',
+                        'ratingarea' => 'entry',
+                        'itemid' => $recordid1,
+                        'scaleid' => 2);
+
         $params = array('contextid' => 2,
                         'component' => 'mod_data',
                         'ratingarea' => 'entry',
                         'itemid' => $recordid,
                         'scaleid' => 2);
+
         $this->setUser($user1);
         $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
         $this->setUser($user2);
         $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
         $this->setUser($user3);
         $this->assertFalse(mod_data_rating_can_see_item_ratings($params));
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
         $this->setUser($user4);
         $this->assertFalse(mod_data_rating_can_see_item_ratings($params));
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
 
         // Now try with accessallgroups cap and make sure everything is visible.
         assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $role->id, $context->id);
         $this->setUser($user1);
         $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
         $this->setUser($user2);
         $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
         $this->setUser($user3);
         $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
         $this->setUser($user4);
         $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
 
         // Change group mode and verify visibility.
         $course->groupmode = VISIBLEGROUPS;
@@ -322,12 +348,16 @@ class mod_data_lib_testcase extends advanced_testcase {
         unassign_capability('moodle/site:accessallgroups', $role->id);
         $this->setUser($user1);
         $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
         $this->setUser($user2);
         $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
         $this->setUser($user3);
         $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
         $this->setUser($user4);
         $this->assertTrue(mod_data_rating_can_see_item_ratings($params));
+        $this->assertTrue(mod_data_rating_can_see_item_ratings($params1));
 
     }
 }
