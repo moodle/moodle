@@ -251,6 +251,7 @@ M.gradereport_grader.classes.ajax.prototype.keypress_enter = function(e) {
  * @param {Bool} ignoreshift If true and shift is pressed then don't exec
  */
 M.gradereport_grader.classes.ajax.prototype.keypress_tab = function(e, ignoreshift) {
+    e.preventDefault();
     var next = null;
     if (e.shiftKey) {
         if (ignoreshift) {
@@ -328,8 +329,8 @@ M.gradereport_grader.classes.ajax.prototype.get_next_cell = function(cell) {
     if (!next) {
         return this.current.node;
     }
-    // Continue on until we find a clickable cell
-    if (!next.hasClass('clickable')) {
+    // Continue on until we find a navigable cell
+    if (!next.hasClass('gbnavigable')) {
         return this.get_next_cell(next);
     }
     return next;
@@ -352,8 +353,8 @@ M.gradereport_grader.classes.ajax.prototype.get_prev_cell = function(cell) {
     if (!next) {
         return this.current.node;
     }
-    // Continue on until we find a clickable cell
-    if (!next.hasClass('clickable')) {
+    // Continue on until we find a navigable cell
+    if (!next.hasClass('gbnavigable')) {
         return this.get_prev_cell(next);
     }
     return next;
@@ -380,8 +381,8 @@ M.gradereport_grader.classes.ajax.prototype.get_above_cell = function(cell) {
     if (!next) {
         return this.current.node;
     }
-    // Continue on until we find a clickable cell
-    if (!next.hasClass('clickable')) {
+    // Continue on until we find a navigable cell
+    if (!next.hasClass('gbnavigable')) {
         return this.get_above_cell(next);
     }
     return next;
@@ -408,8 +409,8 @@ M.gradereport_grader.classes.ajax.prototype.get_below_cell = function(cell) {
     if (!next) {
         return this.current.node;
     }
-    // Continue on until we find a clickable cell
-    if (!next.hasClass('clickable')) {
+    // Continue on until we find a navigable cell
+    if (!next.hasClass('gbnavigable')) {
         return this.get_below_cell(next);
     }
     return next;
@@ -700,13 +701,13 @@ M.gradereport_grader.classes.existingfield = function(ajax, userid, itemid) {
         }
     } else if (this.grade) {
         // Handle Tab and Shift+Tab.
-        this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.grade, 'press:9', this));
+        this.keyevents.push(this.report.Y.on('key', this.keypress_tab, this.grade, 'down:9', this));
     }
     if (this.grade) {
         // Handle the Enter key being pressed.
-        this.keyevents.push(this.report.Y.on('key', this.keypress_enter, this.grade, 'press:13', this));
+        this.keyevents.push(this.report.Y.on('key', this.keypress_enter, this.grade, 'up:13', this));
         // Handle CTRL + arrow keys.
-        this.keyevents.push(this.report.Y.on('key', this.keypress_arrows, this.grade, 'press:37,38,39,40+ctrl', this));
+        this.keyevents.push(this.report.Y.on('key', this.keypress_arrows, this.grade, 'down:37,38,39,40+ctrl', this));
     }
 };
 /**
@@ -759,6 +760,7 @@ M.gradereport_grader.classes.existingfield.prototype.keypress_tab = function(e, 
  * @param {Event} e
  */
 M.gradereport_grader.classes.existingfield.prototype.keypress_arrows = function(e) {
+    e.preventDefault();
     var next = null;
     switch (e.keyCode) {
         case 37:    // Left
@@ -785,6 +787,7 @@ M.gradereport_grader.classes.existingfield.prototype.keypress_arrows = function(
 M.gradereport_grader.classes.existingfield.prototype.move_focus = function(node) {
     if (node) {
         var properties = this.report.get_cell_info(node);
+        this.report.ajax.current = node;
         switch(properties.itemtype) {
             case 'scale':
                 properties.cell.one('select.select').focus();
@@ -1078,16 +1081,16 @@ M.gradereport_grader.classes.textfield.prototype.attach_key_events = function() 
     if (this.editfeedback) {
         if (this.grade) {
             // Handle Shift+Tab.
-            this.keyevents.push(this.report.Y.on('key', a.keypress_tab, this.grade, 'press:9+shift', a));
+            this.keyevents.push(this.report.Y.on('key', a.keypress_tab, this.grade, 'down:9+shift', a));
         }
         // Handle Tab.
-        this.keyevents.push(this.report.Y.on('key', a.keypress_tab, this.feedback, 'press:9', a, true));
+        this.keyevents.push(this.report.Y.on('key', a.keypress_tab, this.feedback, 'down:9', a, true));
         // Handle the Enter key being pressed.
-        this.keyevents.push(this.report.Y.on('key', a.keypress_enter, this.feedback, 'press:13', a));
+        this.keyevents.push(this.report.Y.on('key', a.keypress_enter, this.feedback, 'up:13', a));
     } else {
         if (this.grade) {
             // Handle Tab and Shift+Tab.
-            this.keyevents.push(this.report.Y.on('key', a.keypress_tab, this.grade, 'press:9', a));
+            this.keyevents.push(this.report.Y.on('key', a.keypress_tab, this.grade, 'down:9', a));
         }
     }
 
@@ -1097,7 +1100,7 @@ M.gradereport_grader.classes.textfield.prototype.attach_key_events = function() 
 
     if (this.grade) {
         // Handle the Enter key being pressed.
-        this.keyevents.push(this.report.Y.on('key', a.keypress_enter, this.grade, 'press:13', a));
+        this.keyevents.push(this.report.Y.on('key', a.keypress_enter, this.grade, 'up:13', a));
         // Prevent the default key action on all fields for arrow keys on all key events!
         // Note: this still does not work in FF!!!!!
         this.keyevents.push(this.report.Y.on('key', function(e){e.preventDefault();}, this.grade, 'down:37,38,39,40+ctrl'));
