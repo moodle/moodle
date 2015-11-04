@@ -205,7 +205,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
     /// check if user password has expired
     /// Currently supported only for ldap-authentication module
         $userauth = get_auth_plugin($USER->auth);
-        if (!empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
+        if (!isguestuser() and !empty($userauth->config->expiration) and $userauth->config->expiration == 1) {
             if ($userauth->can_change_password()) {
                 $passwordchangeurl = $userauth->change_password_url();
                 if (!$passwordchangeurl) {
