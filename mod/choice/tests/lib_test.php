@@ -131,6 +131,28 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
 
     }
 
+    public function test_choice_user_submit_response_validation() {
+        global $USER;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $choice1 = $this->getDataGenerator()->create_module('choice', array('course' => $course->id));
+        $choice2 = $this->getDataGenerator()->create_module('choice', array('course' => $course->id));
+        $cm = get_coursemodule_from_instance('choice', $choice1->id);
+
+        $choicewithoptions1 = choice_get_choice($choice1->id);
+        $choicewithoptions2 = choice_get_choice($choice2->id);
+        $optionids1 = array_keys($choicewithoptions1->option);
+        $optionids2 = array_keys($choicewithoptions2->option);
+
+        // Make sure we cannot submit options from a different choice instance.
+        $this->setExpectedException('moodle_exception');
+        choice_user_submit_response($optionids2[0], $choice1, $USER->id, $course, $cm);
+    }
+
     /**
      * Test choice_get_my_response
      * @return void
