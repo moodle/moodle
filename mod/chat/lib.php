@@ -1265,7 +1265,7 @@ function chat_extend_settings_navigation(settings_navigation $settings, navigati
     if ($chat->chattime && $chat->schedule) {
         $nextsessionnode = $chatnode->add(get_string('nextsession', 'chat').
                                           ': '.userdate($chat->chattime).
-                                          ' ('.usertimezone($USER->timezone));
+                                          ' ('.usertimezone($USER->timezone).')');
         $nextsessionnode->add_class('note');
     }
 
