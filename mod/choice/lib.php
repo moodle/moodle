@@ -268,6 +268,10 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
         }
     }
 
+    if (!$DB->record_exists('choice_options', array('id' => $formanswer, 'choiceid' => $choice->id))) {
+        print_error('cannotsubmit', 'choice', $continueurl);
+    }
+
     $current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid));
     $context = context_module::instance($cm->id);
 
