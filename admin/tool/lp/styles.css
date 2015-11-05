@@ -59,7 +59,7 @@
     margin-right: 10px;
 }
 
-.path-admin-tool-lp .currentdragtarget {
+.path-admin-tool-lp span.currentdragtarget {
     border: 1px dashed;
 }
 
