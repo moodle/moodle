@@ -53,13 +53,23 @@ class MoodleQuickForm_warning extends HTML_QuickForm_static{
      * @param string $elementClass (optional) show as warning or notification => 'notifyproblem'
      * @param string $text (optional) Text to put in warning field
      */
-    function MoodleQuickForm_warning($elementName=null, $elementClass='notifyproblem', $text=null) {
-        parent::HTML_QuickForm_static($elementName, null, $text);
+    public function __construct($elementName=null, $elementClass='notifyproblem', $text=null) {
+        parent::__construct($elementName, null, $text);
         $this->_type = 'warning';
         if (is_null($elementClass)) {
             $elementClass = 'notifyproblem';
         }
         $this->_class = $elementClass;
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_warning($elementName=null, $elementClass='notifyproblem', $text=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementClass, $text);
     }
 
     /**

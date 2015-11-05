@@ -33,9 +33,19 @@ class mod_lesson_mod_form extends moodleform_mod {
 
     protected $course = null;
 
-    public function mod_lesson_mod_form($current, $section, $cm, $course) {
+    public function __construct($current, $section, $cm, $course) {
         $this->course = $course;
-        parent::moodleform_mod($current, $section, $cm, $course);
+        parent::__construct($current, $section, $cm, $course);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     * 
+     * @deprecated since Moodle 3.1
+     */
+    public function mod_lesson_mod_form($current, $section, $cm, $course) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($current, $section, $cm, $course);
     }
 
     function definition() {

@@ -27,3 +27,10 @@ Most probably we will stop using this library in the future.
 MDL-20876 - replaced split() with explode() or preg_split() where appropriate
 MDL-40267 - Moodle core_text strlen functions used for range rule rule to be utf8 safe.
 MDL-46467 - $mform->hardfreeze causes labels to loose their for HTML attribute
+MDL-52081 - made all constructors PHP7 compatible
+
+
+Pear
+====
+Changed constructors in classes PEAR and PEAR_ERROR to be __construct(). This has
+been already changed upstream in 1.10.0, remove this line after upgrade.

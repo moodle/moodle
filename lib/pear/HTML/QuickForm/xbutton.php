@@ -44,14 +44,22 @@ class HTML_QuickForm_xbutton extends HTML_QuickForm_element
     * @param    mixed   Either a typical HTML attribute string or an associative array
     * @access   public
     */
-    function HTML_QuickForm_xbutton($elementName = null, $elementContent = null, $attributes = null)
-    {
-        $this->HTML_QuickForm_element($elementName, null, $attributes);
+    public function __construct($elementName = null, $elementContent = null, $attributes = null) {
+        parent::__construct($elementName, null, $attributes);
         $this->setContent($elementContent);
         $this->setPersistantFreeze(false);
         $this->_type = 'xbutton';
     }
 
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function HTML_QuickForm_xbutton($elementName = null, $elementContent = null, $attributes = null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementContent, $attributes);
+    }
 
     function toHtml()
     {

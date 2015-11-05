@@ -46,11 +46,20 @@ class HTML_QuickForm_password extends HTML_QuickForm_input
      * @return    void
      * @throws    
      */
-    function HTML_QuickForm_password($elementName=null, $elementLabel=null, $attributes=null)
-    {
-        HTML_QuickForm_input::HTML_QuickForm_input($elementName, $elementLabel, $attributes);
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null) {
+        parent::__construct($elementName, $elementLabel, $attributes);
         $this->setType('password');
     } //end constructor
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function HTML_QuickForm_password($elementName=null, $elementLabel=null, $attributes=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $attributes);
+    }
     
     // }}}
     // {{{ setSize()

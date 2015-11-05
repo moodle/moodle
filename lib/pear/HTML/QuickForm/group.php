@@ -92,9 +92,8 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
      * @access    public
      * @return    void
      */
-    function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true)
-    {
-        $this->HTML_QuickForm_element($elementName, $elementLabel);
+    public function __construct($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true) {
+        parent::__construct($elementName, $elementLabel);
         $this->_type = 'group';
         if (isset($elements) && is_array($elements)) {
             $this->setElements($elements);
@@ -106,6 +105,16 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
             $this->_appendName = $appendName;
         }
     } //end constructor
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function HTML_QuickForm_group($elementName=null, $elementLabel=null, $elements=null, $separator=null, $appendName = true) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $elements, $separator, $appendName);
+    }
 
     // }}}
     // {{{ setName()

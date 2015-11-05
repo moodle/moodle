@@ -11,6 +11,18 @@ information provided here is intended especially for developers.
 * Ajax calls going through lib/ajax/* now validate the return values before sending
   the response. If the validation does not pass an exception is raised. This behaviour
   is consistent with web services.
+* Several changes in Moodle core, standard plugins and third party libraries to
+  ensure compatibility with PHP7. All plugins are recommended to perform testing
+  against PHP7 as well. The following changes may affect you:
+  * Class moodleform, moodleform_mod and some module classes have been changed to use
+    __construct() for the constructor. Calling parent constructors by the class
+    name will display debugging message. Incorrect: parent::moodleform(),
+    correct: parent::__construct()
+  * All form elements have also changed the constructor syntax. No changes are
+    needed for using form elements, however if plugin defines new form element it
+    needs to use correct syntax. For example, incorrect: parent::HTML_QuickForm_input(),
+    HTML_QuickForm_input::HTML_QuickForm_input(), $this->HTML_QuickForm_input().
+    Correct: HTML_QuickForm_input::__construct() or parent::__construct().
 
 === 3.0 ===
 
