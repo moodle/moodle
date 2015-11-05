@@ -288,4 +288,15 @@ class completion_criteria_activity extends completion_criteria {
 
         return $details;
     }
+
+    /**
+     * Return pix_icon for display in reports.
+     *
+     * @param string $alt The alt text to use for the icon
+     * @param array $attributes html attributes
+     * @return pix_icon
+     */
+    public function get_icon($alt, array $attributes = null) {
+        return new pix_icon('icon', $alt, 'mod_'.$this->module, $attributes);
+    }
 }
