@@ -943,6 +943,8 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
 
     // Check SCORM availability.
     if (!$canmanageactivity) {
+        require_once($CFG->dirroot.'/mod/scorm/locallib.php');
+
         $scorm = $DB->get_record('scorm', array('id' => $cm->instance), 'id, timeopen, timeclose', MUST_EXIST);
         list($available, $warnings) = scorm_get_availability_status($scorm);
         if (!$available) {
