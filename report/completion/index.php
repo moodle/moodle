@@ -457,18 +457,16 @@ if (!$csv) {
     foreach ($criteria as $criterion) {
 
         // Generate icon details
-        $icon = '';
         $iconlink = '';
-        $icontitle = ''; // Required if $iconlink set
         $iconalt = ''; // Required
+        $iconattributes = array('class' => 'icon');
         switch ($criterion->criteriatype) {
 
             case COMPLETION_CRITERIA_TYPE_ACTIVITY:
 
                 // Display icon
-                $icon = $OUTPUT->pix_url('icon', $criterion->module);
                 $iconlink = $CFG->wwwroot.'/mod/'.$criterion->module.'/view.php?id='.$criterion->moduleinstance;
-                $icontitle = $modinfo->cms[$criterion->moduleinstance]->get_formatted_name();
+                $iconattributes['title'] = $modinfo->cms[$criterion->moduleinstance]->get_formatted_name();
                 $iconalt = get_string('modulename', $criterion->module);
                 break;
 
@@ -478,7 +476,7 @@ if (!$csv) {
 
                 // Display icon
                 $iconlink = $CFG->wwwroot.'/course/view.php?id='.$criterion->courseinstance;
-                $icontitle = format_string($crs->fullname, true, array('context' => context_course::instance($crs->id, MUST_EXIST)));
+                $iconattributes['title'] = format_string($crs->fullname, true, array('context' => context_course::instance($crs->id, MUST_EXIST)));
                 $iconalt = format_string($crs->shortname, true, array('context' => context_course::instance($crs->id)));
                 break;
 
@@ -491,16 +489,16 @@ if (!$csv) {
                 break;
         }
 
+        // Create icon alt if not supplied
+        if (!$iconalt) {
+            $iconalt = $criterion->get_title();
+        }
+
         // Print icon and cell
         print '<th class="criteriaicon">';
 
-        // Create icon if not supplied
-        if (!$icon) {
-            $icon = $OUTPUT->pix_url('i/'.$COMPLETION_CRITERIA_TYPES[$criterion->criteriatype]);
-        }
-
-        print ($iconlink ? '<a href="'.$iconlink.'" title="'.$icontitle.'">' : '');
-        print '<img src="'.$icon.'" class="icon" alt="'.$iconalt.'" '.(!$iconlink ? 'title="'.$iconalt.'"' : '').' />';
+        print ($iconlink ? '<a href="'.$iconlink.'" title="'.$iconattributes['title'].'">' : '');
+        print $OUTPUT->render($criterion->get_icon($iconalt, $iconattributes));
         print ($iconlink ? '</a>' : '');
 
         print '</th>';
