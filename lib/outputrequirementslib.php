@@ -1541,8 +1541,7 @@ class page_requirements_manager {
         $links = '';
         $attributes = array('class' => 'skip');
         foreach ($this->skiplinks as $url => $text) {
-            $attributes['data-target'] = '#'.$url;
-            $links .= html_writer::link('#', $text, $attributes);
+            $links .= html_writer::link('#'.$url, $text, $attributes);
         }
         $output = html_writer::tag('div', $links, array('class'=>'skiplinks')) . "\n";
         $this->js_init_call('M.util.init_skiplink');
