@@ -106,7 +106,9 @@ class behat_form_field {
         // using the generic behat_form_field is because we are
         // dealing with a fgroup element.
         $instance = $this->guess_type();
-        return $instance->field->keyPress($char, $modifier);
+        $instance->field->keyDown($char, $modifier);
+        $instance->field->keyPress($char, $modifier);
+        $instance->field->keyUp($char, $modifier);
     }
 
     /**
