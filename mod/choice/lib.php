@@ -265,6 +265,12 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
         $formanswers = array($formanswer);
     }
 
+    $options = $DB->get_records('choice_options', array('choiceid' => $choice->id), '', 'id');
+    foreach ($formanswers as $key => $val) {
+        if (!isset($options[$val])) {
+            print_error('cannotsubmit', 'choice', $continueurl);
+        }
+    }
     // Start lock to prevent synchronous access to the same data
     // before it's updated, if using limits.
     if ($choice->limitanswers) {
