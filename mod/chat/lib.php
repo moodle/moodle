@@ -634,7 +634,7 @@ function chat_update_chat_times($chatid=0) {
         $event = new stdClass(); // Update calendar too.
 
         $cond = "modulename='chat' AND instance = :chatid AND timestart <> :chattime";
-        $params = array('chattime' => $chat->chattime, 'chatid' => $chatid);
+        $params = array('chattime' => $chat->chattime, 'chatid' => $chat->id);
 
         if ($event->id = $DB->get_field_select('event', 'id', $cond, $params)) {
             $event->timestart   = $chat->chattime;
