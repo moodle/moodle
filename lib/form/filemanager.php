@@ -60,7 +60,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
      *              or an associative array
      * @param array $options set of options to initalize filemanager
      */
-    function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG, $PAGE;
 
         $options = (array)$options;
@@ -76,7 +76,14 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element {
             $this->_options['return_types'] = (FILE_INTERNAL | FILE_REFERENCE);
         }
         $this->_type = 'filemanager';
-        parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+        parent::__construct($elementName, $elementLabel, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_filemanager($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
+        self::__construct($elementName, $elementLabel, $attributes, $options);
     }
 
     /**

@@ -36,7 +36,7 @@ class feed_edit_form extends moodleform {
     function __construct($actionurl, $isadding, $caneditshared) {
         $this->isadding = $isadding;
         $this->caneditshared = $caneditshared;
-        parent::moodleform($actionurl);
+        parent::__construct($actionurl);
     }
 
     function definition() {

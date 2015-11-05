@@ -40,10 +40,16 @@ class HTML_QuickForm_html extends HTML_QuickForm_static
     * @access public
     * @return void
     */
-    function HTML_QuickForm_html($text = null)
-    {
-        $this->HTML_QuickForm_static(null, null, $text);
+    public function __construct($text = null) {
+        parent::__construct(null, null, $text);
         $this->_type = 'html';
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function HTML_QuickForm_html($text = null) {
+        self::__construct($text);
     }
 
     // }}}

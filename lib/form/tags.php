@@ -71,7 +71,7 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
      * @param array $options Options to control the element's display
      * @param mixed $attributes Either a typical HTML attribute string or an associative array.
      */
-    function MoodleQuickForm_tags($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
+    public function __construct($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
         if (!isset($options['display'])) {
             $options['display'] = self::DEFAULTUI;
         }
@@ -92,7 +92,14 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
         $attributes['placeholder'] = get_string('entertags', 'tag');
         $attributes['showsuggestions'] = $this->showingofficial;
 
-        parent::MoodleQuickForm_autocomplete($elementName, $elementLabel, $validoptions, $attributes);
+        parent::__construct($elementName, $elementLabel, $validoptions, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_tags($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
+        self::__construct($elementName, $elementLabel, $options, $attributes);
     }
 
     /**

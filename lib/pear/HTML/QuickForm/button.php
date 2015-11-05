@@ -45,13 +45,19 @@ class HTML_QuickForm_button extends HTML_QuickForm_input
      * @access    public
      * @return    void
      */
-    function HTML_QuickForm_button($elementName=null, $value=null, $attributes=null)
-    {
-        HTML_QuickForm_input::HTML_QuickForm_input($elementName, null, $attributes);
+    public function __construct($elementName=null, $value=null, $attributes=null) {
+        parent::__construct($elementName, null, $attributes);
         $this->_persistantFreeze = false;
         $this->setValue($value);
         $this->setType('button');
     } //end constructor
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function HTML_QuickForm_button($elementName=null, $value=null, $attributes=null) {
+        self::__construct($elementName, $value, $attributes);
+    }
     
     // }}}
     // {{{ freeze()

@@ -49,8 +49,15 @@ class MoodleQuickForm_hidden extends HTML_QuickForm_hidden{
      * @param mixed  $attributes (optional) Either a typical HTML attribute string
      *               or an associative array
      */
-    function MoodleQuickForm_hidden($elementName=null, $value='', $attributes=null) {
-        parent::HTML_QuickForm_hidden($elementName, $value, $attributes);
+    public function __construct($elementName=null, $value='', $attributes=null) {
+        parent::__construct($elementName, $value, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_hidden($elementName=null, $value='', $attributes=null) {
+        return self::__construct($elementName, $value, $attributes);
     }
 
     /**

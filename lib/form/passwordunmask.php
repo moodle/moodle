@@ -51,7 +51,7 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
      * @param mixed $attributes (optional) Either a typical HTML attribute string
      *              or an associative array
      */
-    function MoodleQuickForm_passwordunmask($elementName=null, $elementLabel=null, $attributes=null) {
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null) {
         global $CFG;
         // no standard mform in moodle should allow autocomplete of passwords
         if (empty($attributes)) {
@@ -64,7 +64,14 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
             }
         }
 
-        parent::MoodleQuickForm_password($elementName, $elementLabel, $attributes);
+        parent::__construct($elementName, $elementLabel, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_passwordunmask($elementName=null, $elementLabel=null, $attributes=null) {
+        self::__construct($elementName, $elementLabel, $attributes);
     }
 
     /**

@@ -45,8 +45,15 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit {
      * @param string $value (optional) field label
      * @param string $attributes (optional) Either a typical HTML attribute string or an associative array
      */
-    function MoodleQuickForm_submit($elementName=null, $value=null, $attributes=null) {
-        parent::HTML_QuickForm_submit($elementName, $value, $attributes);
+    public function __construct($elementName=null, $value=null, $attributes=null) {
+        parent::__construct($elementName, $value, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_submit($elementName=null, $value=null, $attributes=null) {
+        self::__construct($elementName, $value, $attributes);
     }
 
     /**

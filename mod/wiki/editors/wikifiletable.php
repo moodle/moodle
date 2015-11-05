@@ -37,11 +37,18 @@ class MoodleQuickForm_wikifiletable extends HTML_QuickForm_element {
     private $_fileinfo;
     private $_value = array();
 
-    function MoodleQuickForm_wikifiletable($elementName = null, $elementLabel = null, $attributes = null, $fileinfo = null, $format = null) {
+    public function __construct($elementName = null, $elementLabel = null, $attributes = null, $fileinfo = null, $format = null) {
 
-        parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+        parent::__construct($elementName, $elementLabel, $attributes);
         $this->_fileinfo = $fileinfo;
         $this->_format = $format;
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function MoodleQuickForm_wikifiletable($elementName = null, $elementLabel = null, $attributes = null, $fileinfo = null, $format = null) {
+        self::__construct($elementName, $elementLabel, $attributes, $fileinfo, $format);
     }
 
     function onQuickFormEvent($event, $arg, &$caller) {
