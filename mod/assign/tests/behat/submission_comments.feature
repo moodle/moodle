@@ -63,3 +63,23 @@ Feature: In an assignment, students can comment in their submissions
     And I press "Continue"
     Then I should see "50.00" in the "Student 1" "table_row"
     And I should see "I'm the teacher feedback" in the "Student 1" "table_row"
+
+  Scenario: Teacher can comment on assignments with a zero grade
+    Given the following "activities" exist:
+      | activity | course | idnumber | name                 | intro                       | assignsubmission_onlinetext_enabled | assignmentsubmission_file_enabled | assignfeedback_comments_enabled |
+      | assign   | C1     | assign1  | Test assignment name | Test assignment description | 0 | 0 | 1 |
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I follow "Test assignment name"
+    And I follow "View/grade all submissions"
+    And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    And I set the following fields to these values:
+      | Grade out of 100 | 0 |
+    And I press "Save changes"
+    And I should see "The grade changes were saved"
+    And I press "Continue"
+    When I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    And I set the following fields to these values:
+      | Feedback comments | I'm the teacher feedback |
+    And I press "Save changes"
+    Then I should see "The grade changes were saved"
