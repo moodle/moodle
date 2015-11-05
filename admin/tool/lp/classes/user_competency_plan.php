@@ -36,15 +36,6 @@ class user_competency_plan extends persistent {
     /** Table name for user_competency_plan persistency */
     const TABLE = 'tool_lp_user_competency_plan';
 
-    /** Idle status */
-    const STATUS_IDLE = 0;
-
-    /** Waiting for review status */
-    const STATUS_WAITING_FOR_REVIEW = 1;
-
-    /** In review status */
-    const STATUS_IN_REVIEW = 2;
-
     /**
      * Return the definition of the properties of this model.
      *
@@ -57,20 +48,6 @@ class user_competency_plan extends persistent {
             ),
             'competencyid' => array(
                 'type' => PARAM_INT,
-            ),
-            'status' => array(
-                'choices' => array(
-                    self::STATUS_IDLE,
-                    self::STATUS_WAITING_FOR_REVIEW,
-                    self::STATUS_IN_REVIEW,
-                ),
-                'type' => PARAM_INT,
-                'default' => self::STATUS_IDLE,
-            ),
-            'reviewerid' => array(
-                'type' => PARAM_INT,
-                'default' => null,
-                'null' => NULL_ALLOWED,
             ),
             'proficiency' => array(
                 'type' => PARAM_BOOL,
@@ -86,51 +63,6 @@ class user_competency_plan extends persistent {
                 'type' => PARAM_INT,
             ),
         );
-    }
-
-    /**
-     * Human readable status name.
-     *
-     * @param int $status The status code.
-     * @return lang_string
-     */
-    public static function get_status_name($status) {
-
-        switch ($status) {
-            case self::STATUS_IDLE:
-                $strname = 'idle';
-                break;
-            case self::STATUS_WAITING_FOR_REVIEW:
-                $strname = 'waitingforreview';
-                break;
-            case self::STATUS_IN_REVIEW:
-                $strname = 'inreview';
-                break;
-            default:
-                throw new \moodle_exception('errorcomptencystatus', 'tool_lp', '', $status);
-                break;
-        }
-
-        return new lang_string('usercompetencystatus_' . $strname, 'tool_lp');
-    }
-
-    /**
-     * Get list of competency status.
-     *
-     * @return array
-     */
-    public static function get_status_list() {
-
-        static $list = null;
-
-        if ($list === null) {
-            $list = array(
-                self::STATUS_IDLE => self::get_status_name(self::STATUS_IDLE),
-                self::STATUS_WAITING_FOR_REVIEW => self::get_status_name(self::STATUS_WAITING_FOR_REVIEW),
-                self::STATUS_IN_REVIEW => self::get_status_name(self::STATUS_IN_REVIEW));
-        }
-
-        return $list;
     }
 
     /**
@@ -164,22 +96,6 @@ class user_competency_plan extends persistent {
     }
 
     /**
-     * Validate the reviewer ID.
-     *
-     * @param int $value The value.
-     * @return true|lang_string
-     */
-    protected function validate_reviewerid($value) {
-        global $DB;
-
-        if ($value !== null && !$DB->record_exists('user', array('id' => $value))) {
-            return new lang_string('invaliduserid', 'error');
-        }
-
-        return true;
-    }
-
-    /**
      * Validate the grade.
      *
      * @param int $value The value.
@@ -207,6 +123,58 @@ class user_competency_plan extends persistent {
         }
 
         return true;
+    }
+
+    /**
+     * Create a new user_competency_plan object.
+     *
+     * Note, this is intended to be used to create a blank relation, for instance when
+     * the record was not found in the database. This does not save the model.
+     *
+     * @param int $userid The user ID.
+     * @param int $competencyid The competency ID.
+     * @param int $planid The plan ID.
+     * @return \tool_lp\user_competency_plan
+     */
+    public static function create_relation($userid, $competencyid, $planid) {
+        $relation = new user_competency_plan(0, (object) array('userid' => $userid, 'competencyid' => $competencyid,
+                'planid' => $planid));
+        return $relation;
+    }
+
+    /**
+     * Get multiple user_competency_plan for a user.
+     *
+     * @param int $userid The user ID.
+     * @param int $planid The plan ID.
+     * @param array  $competenciesorids Limit search to those competencies, or competency IDs.
+     * @return \tool_lp\user_competency_plan[]
+     */
+    public static function get_multiple($userid, $planid, array $competenciesorids = null) {
+        global $DB;
+
+        $params = array();
+        $params['userid'] = $userid;
+        $params['planid'] = $planid;
+        $sql = '1 = 1';
+
+        if (!empty($competenciesorids)) {
+            $test = reset($competenciesorids);
+            if (is_int($test)) {
+                $ids = $competenciesorids;
+            } else {
+                $ids = array();
+                foreach ($competenciesorids as $comp) {
+                    $ids[] = $comp->get_id();
+                }
+            }
+
+            list($insql, $inparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
+            $params += $inparams;
+            $sql = "competencyid $insql";
+        }
+
+        return static::get_records_select("userid = :userid AND planid = :planid AND $sql", $params);
     }
 
 }

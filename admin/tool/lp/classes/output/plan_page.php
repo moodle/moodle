@@ -27,6 +27,7 @@ use renderable;
 use templatable;
 use stdClass;
 use tool_lp\api;
+use tool_lp\plan;
 use tool_lp\user_competency;
 /**
  * Plan page class.
@@ -67,9 +68,17 @@ class plan_page implements renderable, templatable {
         $data->contextid = $this->plan->get_context()->id;
 
         $pclist = api::list_plan_competencies($this->plan);
+
+        $data->iscompleted = $this->plan->get_status() == plan::STATUS_COMPLETE;
+        if ($data->iscompleted) {
+            $ucproperty = 'usercompetencyplan';
+        } else {
+            $ucproperty = 'usercompetency';
+        }
+
         foreach ($pclist as $pc) {
             $comp = $pc->competency;
-            $usercomp = $pc->usercompetency;
+            $usercomp = $pc->$ucproperty;
 
             if (!isset($frameworks[$comp->get_competencyframeworkid()])) {
                 $frameworks[$comp->get_competencyframeworkid()] = $comp->get_framework();
@@ -84,7 +93,7 @@ class plan_page implements renderable, templatable {
             $competency = $comp->to_record();
             $competency->descriptionformatted = format_text($competency->description, $competency->descriptionformat, $options);
             $usercompetency = $usercomp->to_record();
-            $competency->usercompetency = $usercompetency;
+            $competency->$ucproperty = $usercompetency;
 
             if ($usercompetency->grade === null) {
                 $gradename = '-';
@@ -98,14 +107,20 @@ class plan_page implements renderable, templatable {
                 $proficiencyname = get_string($usercompetency->proficiency ? 'yes' : 'no');
             }
 
-            $statusname = '-';
-            if ($usercompetency->status != user_competency::STATUS_IDLE) {
-                $statusname = (string) user_competency::get_status_name($usercompetency->status);
+            // We don't want to show user competency status when plan is completed.
+            if (!$data->iscompleted) {
+                $statusname = '-';
+                if ($usercompetency->status != user_competency::STATUS_IDLE) {
+                    $statusname = (string) user_competency::get_status_name($usercompetency->status);
+                }
+                $usercompetency->statusname = $statusname;
+            } else {
+                // Assign planid if plan is completed.
+                $usercompetency->planid = $this->plan->get_id();
             }
 
             $usercompetency->gradename = $gradename;
             $usercompetency->proficiencyname = $proficiencyname;
-            $usercompetency->statusname = $statusname;
 
             $data->competencies[] = $competency;
         }

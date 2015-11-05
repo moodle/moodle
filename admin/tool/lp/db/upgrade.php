@@ -289,5 +289,26 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015052424, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015052427) {
+
+        // Define fields status and reviewerid to be dropped from tool_lp_user_competency_plan.
+        $table = new xmldb_table('tool_lp_user_competency_plan');
+        $fieldstatus = new xmldb_field('status');
+        $fieldreviewerid = new xmldb_field('reviewerid');
+
+        // Conditionally launch drop field status.
+        if ($dbman->field_exists($table, $fieldstatus)) {
+            $dbman->drop_field($table, $fieldstatus);
+        }
+
+        // Conditionally launch drop field status.
+        if ($dbman->field_exists($table, $fieldreviewerid)) {
+            $dbman->drop_field($table, $fieldreviewerid);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015052427, 'tool', 'lp');
+    }
+
     return true;
 }

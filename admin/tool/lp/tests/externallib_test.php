@@ -1318,14 +1318,47 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(3, $result);
         $this->assertEquals($c1a->get_id(), $result[0]['competency']['id']);
         $this->assertEquals($this->user->id, $result[0]['usercompetency']['userid']);
+        $this->assertArrayNotHasKey('usercompetencyplan', $result[0]);
         $this->assertEquals($c1c->get_id(), $result[1]['competency']['id']);
         $this->assertEquals($this->user->id, $result[1]['usercompetency']['userid']);
+        $this->assertArrayNotHasKey('usercompetencyplan', $result[1]);
         $this->assertEquals($c2b->get_id(), $result[2]['competency']['id']);
         $this->assertEquals($this->user->id, $result[2]['usercompetency']['userid']);
+        $this->assertArrayNotHasKey('usercompetencyplan', $result[2]);
         $this->assertEquals(user_competency::STATUS_IN_REVIEW, $result[0]['usercompetency']['status']);
         $this->assertEquals(null, $result[1]['usercompetency']['grade']);
         $this->assertEquals(2, $result[2]['usercompetency']['grade']);
         $this->assertEquals(1, $result[2]['usercompetency']['proficiency']);
+
+        // Check the return values when the plan status is complete.
+        $completedplan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get_id(),
+                'status' => plan::STATUS_COMPLETE));
+
+        $uc1a = $lpg->create_user_competency_plan(array('userid' => $this->user->id, 'competencyid' => $c1a->get_id(),
+                'planid' => $completedplan->get_id()));
+        $uc1b = $lpg->create_user_competency_plan(array('userid' => $this->user->id, 'competencyid' => $c1c->get_id(),
+                'planid' => $completedplan->get_id()));
+        $uc2b = $lpg->create_user_competency_plan(array('userid' => $this->user->id, 'competencyid' => $c2b->get_id(),
+                'planid' => $completedplan->get_id(), 'grade' => 2, 'proficiency' => 1));
+        $ux1a = $lpg->create_user_competency_plan(array('userid' => $this->creator->id, 'competencyid' => $c1a->get_id(),
+                'planid' => $completedplan->get_id()));
+
+        $result = external::list_plan_competencies($completedplan->get_id());
+        $result = external::clean_returnvalue(external::list_plan_competencies_returns(), $result);
+
+        $this->assertCount(3, $result);
+        $this->assertEquals($c1a->get_id(), $result[0]['competency']['id']);
+        $this->assertEquals($this->user->id, $result[0]['usercompetencyplan']['userid']);
+        $this->assertArrayNotHasKey('usercompetency', $result[0]);
+        $this->assertEquals($c1c->get_id(), $result[1]['competency']['id']);
+        $this->assertEquals($this->user->id, $result[1]['usercompetencyplan']['userid']);
+        $this->assertArrayNotHasKey('usercompetency', $result[1]);
+        $this->assertEquals($c2b->get_id(), $result[2]['competency']['id']);
+        $this->assertEquals($this->user->id, $result[2]['usercompetencyplan']['userid']);
+        $this->assertArrayNotHasKey('usercompetency', $result[2]);
+        $this->assertEquals(null, $result[1]['usercompetencyplan']['grade']);
+        $this->assertEquals(2, $result[2]['usercompetencyplan']['grade']);
+        $this->assertEquals(1, $result[2]['usercompetencyplan']['proficiency']);
     }
 
     public function test_add_competency_to_template() {

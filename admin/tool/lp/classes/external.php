@@ -869,9 +869,10 @@ class external extends external_api {
      * Returns the external structure of a full user_competency record.
      *
      * @param int $fordisplay When true, additional fields for display purposes will be added.
+     * @param int $required If the stucture is required.
      * @return \external_single_structure
      */
-    protected static function get_user_competency_external_structure($fordisplay = false) {
+    protected static function get_user_competency_external_structure($fordisplay = false, $required = VALUE_REQUIRED) {
         $id = new external_value(
             PARAM_INT,
             'Database record id'
@@ -944,7 +945,80 @@ class external extends external_api {
             $returns['statusname'] = $statusname;
         }
 
-        return new external_single_structure($returns);
+        return new external_single_structure($returns, '', $required);
+    }
+
+    /**
+     * Returns the external structure of a full user_competency_plan record.
+     *
+     * @param int $fordisplay When true, additional fields for display purposes will be added.
+     * @param int $required If the stucture is required.
+     * @return \external_single_structure
+     */
+    protected static function get_user_competency_plan_external_structure($fordisplay = false, $required = VALUE_REQUIRED) {
+        $id = new external_value(
+            PARAM_INT,
+            'Database record id'
+        );
+        $userid = new external_value(
+            PARAM_INT,
+            'User to whom this record belongs to'
+        );
+        $competencyid = new external_value(
+            PARAM_INT,
+            'The competency associated with this record'
+        );
+        $proficiency = new external_value(
+            PARAM_BOOL,
+            'Whether or not the user is proficient'
+        );
+        $grade = new external_value(
+            PARAM_INT,
+            'The scale grade'
+        );
+        $planid = new external_value(
+            PARAM_INT,
+            'The plan id'
+        );
+        $timecreated = new external_value(
+            PARAM_INT,
+            'Timestamp this record was created'
+        );
+        $timemodified = new external_value(
+            PARAM_INT,
+            'Timestamp this record was modified'
+        );
+        $usermodified = new external_value(
+            PARAM_INT,
+            'User who modified this record last'
+        );
+
+        $returns = array(
+            'id' => $id,
+            'userid' => $userid,
+            'competencyid' => $competencyid,
+            'proficiency' => $proficiency,
+            'grade' => $grade,
+            'planid' => $planid,
+            'timecreated' => $timecreated,
+            'timemodified' => $timemodified,
+            'usermodified' => $usermodified,
+        );
+
+        if ($fordisplay) {
+            $gradename = new external_value(
+                PARAM_TEXT,
+                'User competency status name'
+            );
+            $proficiencyname = new external_value(
+                PARAM_TEXT,
+                'User competency proficiency name'
+            );
+            $returns['gradename'] = $gradename;
+            $returns['proficiencyname'] = $proficiencyname;
+        }
+
+        return new external_single_structure($returns, '', $required);
     }
 
     /**
@@ -3214,10 +3288,12 @@ class external extends external_api {
         return new external_single_structure(array (
             'planid' => new external_value(PARAM_INT, 'Learning Plan id'),
             'canmanage' => new external_value(PARAM_BOOL, 'User can manage learning plan'),
+            'iscompleted' => new external_value(PARAM_BOOL, 'Is the plan completed'),
             'competencies' => new external_multiple_structure(
                 new external_single_structure(array(
                     'competency' => self::get_competency_external_structure(),
-                    'usercompetency' => self::get_user_competency_external_structure(true),
+                    'usercompetency' => self::get_user_competency_external_structure(true, VALUE_OPTIONAL),
+                    'usercompetencyplan' => self::get_user_competency_plan_external_structure(true, VALUE_OPTIONAL)
                 ))
             )
         ));
@@ -3667,11 +3743,22 @@ class external extends external_api {
         $id = $params['id'];
         $plan = api::read_plan($id);
         $result = api::list_plan_competencies($plan);
+
+        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+            $ucproperty = 'usercompetencyplan';
+        } else {
+            $ucproperty = 'usercompetency';
+        }
+
         foreach ($result as $key => $r) {
             $r->competency = $r->competency->to_record();
             $r->competency->descriptionformatted = format_text($r->competency->description,
                 $r->competency->descriptionformat, array('context' => $plan->get_context()));
-            $r->usercompetency = $r->usercompetency->to_record();
+
+            $ucrecord = $r->$ucproperty->to_record();
+            unset($r->usercompetency);
+            unset($r->usercompetencyplan);
+            $r->$ucproperty = $ucrecord;
         }
         return $result;
     }
@@ -3685,7 +3772,8 @@ class external extends external_api {
         return new external_multiple_structure(
             new external_single_structure(array(
                 'competency' => self::get_competency_external_structure(),
-                'usercompetency' => self::get_user_competency_external_structure(),
+                'usercompetency' => self::get_user_competency_external_structure(false, VALUE_OPTIONAL),
+                'usercompetencyplan' => self::get_user_competency_plan_external_structure(false, VALUE_OPTIONAL),
             )
         ));
     }

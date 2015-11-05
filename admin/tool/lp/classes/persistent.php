@@ -726,4 +726,16 @@ abstract class persistent {
         return $DB->record_exists(static::TABLE, array('id' => $id));
     }
 
+    /**
+     * Check if a records exists.
+     *
+     * @param string $select
+     * @param array $params
+     * @return bool
+     */
+    public static function record_exists_select($select, array $params = null) {
+        globaL $DB;
+        return $DB->record_exists_select(static::TABLE, $select, $params);
+    }
+
 }

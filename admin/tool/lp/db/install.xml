@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/lp/db" VERSION="20151102" COMMENT="XMLDB file for Moodle admin/tool/lp"
+<XMLDB PATH="admin/tool/lp/db" VERSION="20151111" COMMENT="XMLDB file for Moodle admin/tool/lp"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -160,8 +160,6 @@
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User associated to the competency."/>
         <FIELD NAME="competencyid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Competency associated to the user."/>
         <FIELD NAME="planid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Plan associated to the user."/>
-        <FIELD NAME="status" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Competency status."/>
-        <FIELD NAME="reviewerid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="User that reviewed the competency."/>
         <FIELD NAME="proficiency" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="Indicate if the competency is proficient not."/>
         <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Grade assigned to the competency."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>

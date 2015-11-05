@@ -1255,6 +1255,8 @@ class api {
      * @return \tool_lp\plan
      */
     public static function update_plan(stdClass $record) {
+        global $DB;
+
         $plan = new plan($record->id);
 
         // Validate that the plan as it is can be managed.
@@ -1267,6 +1269,8 @@ class api {
         if (isset($record->userid) && $plan->get_userid() != $record->userid) {
             throw new coding_exception('A plan cannot be transfered to another user');
         }
+
+        $beforestatus = $plan->get_status();
         $plan->from_record($record);
 
         // Revalidate after the data has be injected. This handles status change, etc...
@@ -1275,7 +1279,25 @@ class api {
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
         }
 
+        // Wrap the updates in a DB transaction.
+        $transaction = $DB->start_delegated_transaction();
+
+        // Archive user competencies if the status of the plan is changed to complete.
+        $mustarchivecompetencies = ($plan->get_status() == plan::STATUS_COMPLETE && $beforestatus != plan::STATUS_COMPLETE);
+        if ($mustarchivecompetencies) {
+            self::archive_user_competencies_in_plan($plan);
+        }
+
+        // Delete archived user competencies if the status of the plan is changed from complete to another status.
+        $mustremovearchivedcompetencies = ($beforestatus == plan::STATUS_COMPLETE && $plan->get_status() != plan::STATUS_COMPLETE);
+        if ($mustremovearchivedcompetencies) {
+            self::remove_archived_user_competencies_in_plan($plan);
+        }
+
         $plan->update();
+
+        $transaction->allow_commit();
+
         return $plan;
     }
 
@@ -1303,6 +1325,8 @@ class api {
      * @return bool Success?
      */
     public static function delete_plan($id) {
+        global $DB;
+
         $plan = new plan($id);
 
         if (!$plan->can_manage()) {
@@ -1310,14 +1334,31 @@ class api {
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
         }
 
-        return $plan->delete();
+        // Wrap the suppression in a DB transaction.
+        $transaction = $DB->start_delegated_transaction();
+
+        // Delete archive user competencies if the status of the plan is complete.
+        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+            self::remove_archived_user_competencies_in_plan($plan);
+        }
+
+        $success = $plan->delete();
+
+        $transaction->allow_commit();
+
+        return $success;
     }
 
     /**
      * List the competencies in a user plan.
      *
      * @param  int $planorid The plan, or its ID.
-     * @return array((object) array('competency' => competency, 'usercompetency' => user_competency))
+     * @return array((object) array(
+     *                            'competency' => \tool_lp\competency,
+     *                            'usercompetency' => \tool_lp\user_competency
+     *                            'usercompetencyplan' => \tool_lp\user_competency_plan
+     *                        ))
+     *         The values of of keys usercompetency and usercompetencyplan cannot be defined at the same time.
      */
     public static function list_plan_competencies($planorid) {
         $plan = $planorid;
@@ -1332,7 +1373,16 @@ class api {
 
         $result = array();
         $competencies = $plan->get_competencies();
-        $usercompetencies = user_competency::get_multiple($plan->get_userid(), $competencies);
+
+        // Get user competencies from user_competency_plan if the plan status is set to complete.
+        $iscompletedplan = $plan->get_status() == plan::STATUS_COMPLETE;
+        if ($iscompletedplan) {
+            $usercompetencies = user_competency_plan::get_multiple($plan->get_userid(), $plan->get_id(), $competencies);
+            $ucresultkey = 'usercompetencyplan';
+        } else {
+            $usercompetencies = user_competency::get_multiple($plan->get_userid(), $competencies);
+            $ucresultkey = 'usercompetency';
+        }
 
         // Build the return values.
         foreach ($competencies as $key => $competency) {
@@ -1347,13 +1397,20 @@ class api {
             }
 
             if (!$found) {
-                $uc = user_competency::create_relation($plan->get_userid(), $competency->get_id());
+                if ($iscompletedplan) {
+                    throw new coding_exception('A user competency plan is missing');
+                } else {
+                    $uc = user_competency::create_relation($plan->get_userid(), $competency->get_id());
+                }
             }
 
-            $result[] = (object) array(
+            $plancompetency = (object) array(
                 'competency' => $competency,
-                'usercompetency' => $uc,
+                'usercompetency' => null,
+                'usercompetencyplan' => null
             );
+            $plancompetency->$ucresultkey = $uc;
+            $result[] = $plancompetency;
         }
 
         return $result;
@@ -1566,5 +1623,60 @@ class api {
             }
         }
         return $matchids;
+    }
+
+    /**
+     * Archive user competencies in a plan.
+     *
+     * @param int $plan The plan object.
+     * @return void
+     */
+    protected static function archive_user_competencies_in_plan($plan) {
+        $competencies = $plan->get_competencies();
+        $usercompetencies = user_competency::get_multiple($plan->get_userid(), $competencies);
+
+        foreach ($competencies as $competency) {
+            $found = false;
+
+            foreach ($usercompetencies as $uckey => $uc) {
+                if ($uc->get_competencyid() == $competency->get_id()) {
+                    $found = true;
+
+                    $ucprecord = $uc->to_record();
+                    $ucprecord->planid = $plan->get_id();
+                    unset($ucprecord->id);
+                    unset($ucprecord->status);
+                    unset($ucprecord->reviewerid);
+
+                    $usercompetencyplan = new user_competency_plan(0, $ucprecord);
+                    $usercompetencyplan->create();
+
+                    unset($usercompetencies[$uckey]);
+                    break;
+                }
+            }
+
+            // If the user competency doesn't exist, we create a new relation in user_competency_plan.
+            if (!$found) {
+                $usercompetencyplan = user_competency_plan::create_relation($plan->get_userid(), $competency->get_id(),
+                        $plan->get_id());
+                $usercompetencyplan->create();
+            }
+        }
+    }
+
+    /**
+     * Delete archived user competencies in a plan.
+     *
+     * @param int $plan The plan object.
+     * @return void
+     */
+    protected static function remove_archived_user_competencies_in_plan($plan) {
+        $competencies = $plan->get_competencies();
+        $usercompetenciesplan = user_competency_plan::get_multiple($plan->get_userid(), $plan->get_id(), $competencies);
+
+        foreach ($usercompetenciesplan as $ucpkey => $ucp) {
+            $ucp->delete();
+        }
     }
 }

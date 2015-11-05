@@ -421,4 +421,246 @@ class tool_lp_api_testcase extends advanced_testcase {
 
     }
 
+    /**
+     * Test update plan and the managing of archived user competencies.
+     */
+    public function test_update_plan_manage_archived_competencies() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $syscontext = context_system::instance();
+
+        // Create users and roles for the test.
+        $user = $dg->create_user();
+        $manageownrole = $dg->create_role(array(
+            'name' => 'User manage own',
+            'shortname' => 'manageown'
+        ));
+        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $manageownrole, $syscontext->id);
+        assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $manageownrole, $syscontext->id);
+        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $manageownrole, $syscontext->id);
+        assign_capability('tool/lp:planviewown', CAP_ALLOW, $manageownrole, $syscontext->id);
+        $dg->role_assign($manageownrole, $user->id, $syscontext->id);
+        $this->setUser($user);
+
+        // Create a framework and assign competencies.
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Create two plans and assign competencies.
+        $plan = $lpg->create_plan(array('userid' => $user->id));
+        $otherplan = $lpg->create_plan(array('userid' => $user->id));
+
+        $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c1->get_id()));
+        $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c2->get_id()));
+        $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c3->get_id()));
+        $lpg->create_plan_competency(array('planid' => $otherplan->get_id(), 'competencyid' => $c1->get_id()));
+
+        $uclist = array(
+            $lpg->create_user_competency(array(
+                                            'userid' => $user->id,
+                                            'competencyid' => $c1->get_id(),
+                                            'proficiency' => true,
+                                            'grade' => 1
+                                        )),
+            $lpg->create_user_competency(array(
+                                            'userid' => $user->id,
+                                            'competencyid' => $c2->get_id(),
+                                            'proficiency' => false,
+                                            'grade' => 2
+                                        ))
+        );
+
+        // Change status of the plan to complete.
+        $record = $plan->to_record();
+        $record->status = \tool_lp\plan::STATUS_COMPLETE;
+
+        $plan = api::update_plan($record);
+
+        // Check that user compretencies are now in user_competency_plan objects and still in user_competency.
+        $this->assertEquals(2, \tool_lp\user_competency::count_records());
+        $this->assertEquals(3, \tool_lp\user_competency_plan::count_records());
+
+        $usercompetenciesplan = \tool_lp\user_competency_plan::get_records();
+
+        $this->assertEquals($uclist[0]->get_userid(), $usercompetenciesplan[0]->get_userid());
+        $this->assertEquals($uclist[0]->get_competencyid(), $usercompetenciesplan[0]->get_competencyid());
+        $this->assertEquals($uclist[0]->get_proficiency(), (bool) $usercompetenciesplan[0]->get_proficiency());
+        $this->assertEquals($uclist[0]->get_grade(), $usercompetenciesplan[0]->get_grade());
+        $this->assertEquals($plan->get_id(), $usercompetenciesplan[0]->get_planid());
+
+        $this->assertEquals($uclist[1]->get_userid(), $usercompetenciesplan[1]->get_userid());
+        $this->assertEquals($uclist[1]->get_competencyid(), $usercompetenciesplan[1]->get_competencyid());
+        $this->assertEquals($uclist[1]->get_proficiency(), (bool) $usercompetenciesplan[1]->get_proficiency());
+        $this->assertEquals($uclist[1]->get_grade(), $usercompetenciesplan[1]->get_grade());
+        $this->assertEquals($plan->get_id(), $usercompetenciesplan[1]->get_planid());
+
+        $this->assertEquals($user->id, $usercompetenciesplan[2]->get_userid());
+        $this->assertEquals($c3->get_id(), $usercompetenciesplan[2]->get_competencyid());
+        $this->assertNull($usercompetenciesplan[2]->get_proficiency());
+        $this->assertNull($usercompetenciesplan[2]->get_grade());
+        $this->assertEquals($plan->get_id(), $usercompetenciesplan[2]->get_planid());
+
+        $plan = api::update_plan($record);
+
+        // Check that nothing is done if re-updating plan with same status.
+        $this->assertEquals(2, \tool_lp\user_competency::count_records());
+        $this->assertEquals(3, \tool_lp\user_competency_plan::count_records());
+
+        // Change status of the plan to active.
+        $record = $plan->to_record();
+        $record->status = \tool_lp\plan::STATUS_ACTIVE;
+
+        $plan = api::update_plan($record);
+
+        // Check that user_competency_plan objects are deleted if the plan status is changed to another status.
+        $this->assertEquals(2, \tool_lp\user_competency::count_records());
+        $this->assertEquals(0, \tool_lp\user_competency_plan::count_records());
+    }
+
+    /**
+     * Test remove plan and the managing of archived user competencies.
+     */
+    public function test_delete_plan_manage_archived_competencies() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $syscontext = context_system::instance();
+
+        // Create user and role for the test.
+        $user = $dg->create_user();
+        $managerole = $dg->create_role(array(
+            'name' => 'User manage own',
+            'shortname' => 'manageown'
+        ));
+        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $managerole, $syscontext->id);
+        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $managerole, $syscontext->id);
+        $dg->role_assign($managerole, $user->id, $syscontext->id);
+        $this->setUser($user);
+
+        // Create a framework and assign competencies.
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Create completed plan with records in user_competency.
+        $completedplan = $lpg->create_plan(array('userid' => $user->id, 'status' => \tool_lp\plan::STATUS_COMPLETE));
+
+        $lpg->create_plan_competency(array('planid' => $completedplan->get_id(), 'competencyid' => $c1->get_id()));
+        $lpg->create_plan_competency(array('planid' => $completedplan->get_id(), 'competencyid' => $c2->get_id()));
+
+        $uc1 = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c1->get_id()));
+        $uc2 = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c2->get_id()));
+
+        $ucp1 = $lpg->create_user_competency_plan(array('userid' => $user->id, 'competencyid' => $c1->get_id(),
+                'planid' => $completedplan->get_id()));
+        $ucp2 = $lpg->create_user_competency_plan(array('userid' => $user->id, 'competencyid' => $c2->get_id(),
+                'planid' => $completedplan->get_id()));
+
+        api::delete_plan($completedplan->get_id());
+
+        // Check that achived user competencies are deleted.
+        $this->assertEquals(0, \tool_lp\plan::count_records());
+        $this->assertEquals(2, \tool_lp\user_competency::count_records());
+        $this->assertEquals(0, \tool_lp\user_competency_plan::count_records());
+    }
+
+    /**
+     * Test listing of plan competencies.
+     */
+    public function test_list_plan_competencies_manage_archived_competencies() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $syscontext = context_system::instance();
+
+        // Create user and role for the test.
+        $user = $dg->create_user();
+        $viewrole = $dg->create_role(array(
+            'name' => 'User view',
+            'shortname' => 'view'
+        ));
+        assign_capability('tool/lp:planviewdraft', CAP_ALLOW, $viewrole, $syscontext->id);
+        assign_capability('tool/lp:planview', CAP_ALLOW, $viewrole, $syscontext->id);
+        $dg->role_assign($viewrole, $user->id, $syscontext->id);
+        $this->setUser($user);
+
+        // Create a framework and assign competencies.
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Create draft plan with records in user_competency.
+        $draftplan = $lpg->create_plan(array('userid' => $user->id));
+
+        $lpg->create_plan_competency(array('planid' => $draftplan->get_id(), 'competencyid' => $c1->get_id()));
+        $lpg->create_plan_competency(array('planid' => $draftplan->get_id(), 'competencyid' => $c2->get_id()));
+        $lpg->create_plan_competency(array('planid' => $draftplan->get_id(), 'competencyid' => $c3->get_id()));
+
+        $uc1 = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c1->get_id()));
+        $uc2 = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c2->get_id()));
+
+        // Check that user_competency objects are returned when plan status is not complete.
+        $plancompetencies = api::list_plan_competencies($draftplan);
+
+        $this->assertCount(3, $plancompetencies);
+        $this->assertInstanceOf('\tool_lp\user_competency', $plancompetencies[0]->usercompetency);
+        $this->assertEquals($uc1->get_id(), $plancompetencies[0]->usercompetency->get_id());
+        $this->assertNull($plancompetencies[0]->usercompetencyplan);
+
+        $this->assertInstanceOf('\tool_lp\user_competency', $plancompetencies[1]->usercompetency);
+        $this->assertEquals($uc2->get_id(), $plancompetencies[1]->usercompetency->get_id());
+        $this->assertNull($plancompetencies[1]->usercompetencyplan);
+
+        $this->assertInstanceOf('\tool_lp\user_competency', $plancompetencies[2]->usercompetency);
+        $this->assertEquals(0, $plancompetencies[2]->usercompetency->get_id());
+        $this->assertNull($plancompetencies[2]->usercompetencyplan);
+
+        // Create completed plan with records in user_competency_plan.
+        $completedplan = $lpg->create_plan(array('userid' => $user->id, 'status' => \tool_lp\plan::STATUS_COMPLETE));
+
+        $pc1 = $lpg->create_plan_competency(array('planid' => $completedplan->get_id(), 'competencyid' => $c1->get_id()));
+        $pc2 = $lpg->create_plan_competency(array('planid' => $completedplan->get_id(), 'competencyid' => $c2->get_id()));
+        $pc3 = $lpg->create_plan_competency(array('planid' => $completedplan->get_id(), 'competencyid' => $c3->get_id()));
+
+        $ucp1 = $lpg->create_user_competency_plan(array('userid' => $user->id, 'competencyid' => $c1->get_id(),
+                'planid' => $completedplan->get_id()));
+        $ucp2 = $lpg->create_user_competency_plan(array('userid' => $user->id, 'competencyid' => $c2->get_id(),
+                'planid' => $completedplan->get_id()));
+
+         // Check that an exception is thrown when a user competency plan is missing.
+        try {
+            $plancompetencies = api::list_plan_competencies($completedplan);
+            $this->fail('All competencies in the plan must be associated to a user competency plan');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
+        }
+
+        $ucp3 = $lpg->create_user_competency_plan(array('userid' => $user->id, 'competencyid' => $c3->get_id(),
+                'planid' => $completedplan->get_id()));
+
+        // Check that user_competency_plan objects are returned when plan status is complete.
+        $plancompetencies = api::list_plan_competencies($completedplan);
+
+        $this->assertCount(3, $plancompetencies);
+        $this->assertInstanceOf('\tool_lp\user_competency_plan', $plancompetencies[0]->usercompetencyplan);
+        $this->assertEquals($ucp1->get_id(), $plancompetencies[0]->usercompetencyplan->get_id());
+        $this->assertNull($plancompetencies[0]->usercompetency);
+        $this->assertInstanceOf('\tool_lp\user_competency_plan', $plancompetencies[1]->usercompetencyplan);
+        $this->assertEquals($ucp2->get_id(), $plancompetencies[1]->usercompetencyplan->get_id());
+        $this->assertNull($plancompetencies[1]->usercompetency);
+        $this->assertInstanceOf('\tool_lp\user_competency_plan', $plancompetencies[2]->usercompetencyplan);
+        $this->assertEquals($ucp3->get_id(), $plancompetencies[2]->usercompetencyplan->get_id());
+        $this->assertNull($plancompetencies[2]->usercompetency);
+    }
+
 }

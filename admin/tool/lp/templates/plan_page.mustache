@@ -24,7 +24,9 @@
                 <th scope="col">{{#str}}shortname, tool_lp{{/str}}</th>
                 <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
                 <th scope="col">{{#str}}proficient, tool_lp{{/str}}</th>
-                <th scope="col">{{#str}}state, tool_lp{{/str}}</th>
+                {{^iscompleted}}
+                    <th scope="col">{{#str}}state, tool_lp{{/str}}</th>
+                {{/iscompleted}}
                 <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
             </tr>
         </thead>
@@ -37,9 +39,15 @@
                     {{/canmanage}}
                     {{shortname}}
                 </td>
-                <td>{{usercompetency.gradename}}</td>
-                <td>{{usercompetency.proficiencyname}}</td>
-                <td>{{usercompetency.statusname}}</td>
+                {{#iscompleted}}
+                    <td>{{usercompetencyplan.gradename}}</td>
+                    <td>{{usercompetencyplan.proficiencyname}}</td>
+                {{/iscompleted}}
+                {{^iscompleted}}
+                    <td>{{usercompetency.gradename}}</td>
+                    <td>{{usercompetency.proficiencyname}}</td>
+                    <td>{{usercompetency.statusname}}</td>
+                {{/iscompleted}}
                 <td>
                     {{#canmanage}}
                     <div class="pull-left">
