@@ -54,7 +54,8 @@ if (!empty($users) && confirm_sesskey()) {
     $note->courseid = $id;
     $note->format = FORMAT_PLAIN;
     foreach ($users as $k => $v) {
-        if (!$user = $DB->get_record('user', array('id' => $v)) || empty($contents[$k])) {
+        $user = $DB->get_record('user', array('id' => $v));
+        if (!$user || empty($contents[$k])) {
             continue;
         }
         $note->id = 0;
