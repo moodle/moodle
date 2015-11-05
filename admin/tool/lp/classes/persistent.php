@@ -680,8 +680,8 @@ abstract class persistent {
 
         // We return class instances.
         $instances = array();
-        foreach ($records as $record) {
-            array_push($instances, new static(0, $record));
+        foreach ($records as $key => $record) {
+            $instances[$key] = new static(0, $record);
         }
 
         return $instances;

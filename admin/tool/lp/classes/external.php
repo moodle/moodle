@@ -1247,6 +1247,24 @@ class external extends external_api {
             'Is this framework visible?',
             VALUE_REQUIRED
         );
+        $ruletype = new external_value(
+            PARAM_RAW,
+            'The type of rule',
+            VALUE_DEFAULT,
+            null
+        );
+        $ruleoutcome = new external_value(
+            PARAM_INT,
+            'The outcome when the rule matches. Constant value competency::OUTCOME_*',
+            VALUE_DEFAULT,
+            competency::OUTCOME_NONE
+        );
+        $ruleconfig = new external_value(
+            PARAM_RAW,
+            'The extra config of the rule.',
+            VALUE_DEFAULT,
+            null
+        );
 
         $params = array(
             'id' => $id,
@@ -1255,6 +1273,9 @@ class external extends external_api {
             'description' => $description,
             'descriptionformat' => $descriptionformat,
             'visible' => $visible,
+            'ruletype' => $ruletype,
+            'ruleoutcome' => $ruleoutcome,
+            'ruleconfig' => $ruleconfig,
         );
         return new external_function_parameters($params);
     }
@@ -1275,7 +1296,10 @@ class external extends external_api {
                                              $idnumber,
                                              $description,
                                              $descriptionformat,
-                                             $visible) {
+                                             $visible,
+                                             $ruletype = null,
+                                             $ruleoutcome = competency::OUTCOME_NONE,
+                                             $ruleconfig = null) {
 
         $params = self::validate_parameters(self::update_competency_parameters(),
                                             array(
@@ -1284,7 +1308,10 @@ class external extends external_api {
                                                 'idnumber' => $idnumber,
                                                 'description' => $description,
                                                 'descriptionformat' => $descriptionformat,
-                                                'visible' => $visible
+                                                'visible' => $visible,
+                                                'ruletype' => $ruletype,
+                                                'ruleoutcome' => $ruleoutcome,
+                                                'ruleconfig' => $ruleconfig,
                                             ));
         $params = (object) $params;
 
@@ -1555,7 +1582,12 @@ class external extends external_api {
             'framework' => self::get_competency_framework_external_structure(),
             'canmanage' => new external_value(PARAM_BOOL, 'True if this user has permission to manage competency frameworks'),
             'pagecontextid' => new external_value(PARAM_INT, 'Context id for the framework'),
-            'search' => new external_value(PARAM_RAW, 'Current search string')
+            'search' => new external_value(PARAM_RAW, 'Current search string'),
+            'rulesmodules' => new external_multiple_structure(new external_single_structure(array(
+                'type' => new external_value(PARAM_RAW, 'The rule type'),
+                'amd' => new external_value(PARAM_RAW, 'The AMD module of the rule'),
+                'name' => new external_value(PARAM_TEXT, 'The name of the rule'),
+            )))
         ));
 
     }

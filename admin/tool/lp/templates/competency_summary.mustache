@@ -6,3 +6,12 @@
 {{#showrelatedcompetencies}}
     {{> tool_lp/related_competencies }}
 {{/showrelatedcompetencies}}
+{{#showrule}}
+    <h5>{{#str}}competencyrule, tool_lp{{/str}}</h5>
+    <dl>
+        <dt>{{#str}}outcome, tool_lp{{/str}}</dt>
+        <dd>{{rule.outcome}}</dd>
+        <dt>{{#str}}when, tool_lp{{/str}}</dt>
+        <dd>{{rule.type}}</dd>
+    </dl>
+{{/showrule}}

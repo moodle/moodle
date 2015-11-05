@@ -31,6 +31,7 @@ use stdClass;
 use moodle_url;
 use context_system;
 use tool_lp\api;
+use tool_lp\competency;
 use tool_lp\competency_framework;
 
 /**
@@ -118,6 +119,13 @@ class manage_competencies_page implements renderable, templatable {
         $data->canmanage = $this->canmanage;
         $data->search = $this->search;
         $data->pagecontextid = $this->pagecontext->id;
+
+        $rules = competency::get_available_rules();
+        foreach ($rules as $type => $rule) {
+            $rule->name = (string) $rule->name;
+            $rule->type = $type;
+        }
+        $data->rulesmodules = json_encode(array_values($rules));
 
         return $data;
     }

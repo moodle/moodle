@@ -221,24 +221,22 @@ class tool_lp_api_testcase extends advanced_testcase {
         // Get frameworks list order by shortname desc.
         $result = api::list_frameworks('shortname', 'DESC', null, 3, context_system::instance());
 
-        $r1 = (object) $result[0];
-        $r2 = (object) $result[1];
-        $r3 = (object) $result[2];
-
-        $this->assertEquals($framework1->get_id(), $r3->get_id());
-        $this->assertEquals($framework2->get_id(), $r2->get_id());
-        $this->assertEquals($framework3->get_id(), $r1->get_id());
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework3->get_id(), $f->get_id());
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework2->get_id(), $f->get_id());
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework1->get_id(), $f->get_id());
 
         // Get frameworks list order by idnumber asc.
         $result = api::list_frameworks('idnumber', 'ASC', null, 3, context_system::instance());
 
-        $r1 = (object) $result[0];
-        $r2 = (object) $result[1];
-        $r3 = (object) $result[2];
-
-        $this->assertEquals($framework1->get_id(), $r3->get_id());
-        $this->assertEquals($framework2->get_id(), $r1->get_id());
-        $this->assertEquals($framework3->get_id(), $r2->get_id());
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework2->get_id(), $f->get_id());
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework3->get_id(), $f->get_id());
+        $f = (object) array_shift($result);
+        $this->assertEquals($framework1->get_id(), $f->get_id());
     }
 
     /**

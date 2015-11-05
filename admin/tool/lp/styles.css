@@ -52,6 +52,47 @@
     vertical-align: text-top;
 }
 
+.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-base"] {
+    display: table;
+    width: 100%;
+}
+.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-outcome"],
+.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-type"] {
+    display: table-row;
+}
+.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-outcome"] label,
+.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-type"] label {
+    padding-right: 10px;
+}
+.dir-rtl.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-outcome"] label,
+.dir-rtl.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-type"] label {
+    padding-left: 10px;
+    padding-right: 0;
+}
+.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-outcome"] label,
+.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-outcome"] select,
+.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-type"] label,
+.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-type"] select {
+    display: table-cell;
+}
+.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-outcome"] select,
+.path-admin-tool-lp [data-region="competencyruleconfig"] [data-region="rule-type"] select {
+    width: 100%;
+}
+
+.path-admin-tool-lp .competency-rule-points {
+    margin-top: 10px;
+}
+.path-admin-tool-lp .competency-rule-points table input {
+    margin-bottom: 0;
+}
+.path-admin-tool-lp .competency-rule-points tr[data-competency] th {
+    font-weight: normal;
+}
+.path-admin-tool-lp .competency-rule-points input[type="number"] {
+    width: 50px;
+}
+
 /** Styles required for menubar js */
 
 .tool-lp-menu li {

@@ -37,6 +37,15 @@ class competency extends persistent {
 
     const TABLE = 'tool_lp_competency';
 
+    /** Outcome none. */
+    const OUTCOME_NONE = 0;
+    /** Outcome evidence. */
+    const OUTCOME_EVIDENCE = 1;
+    /** Outcome complete. */
+    const OUTCOME_COMPLETE = 2;
+    /** Outcome recommend. */
+    const OUTCOME_RECOMMEND = 3;
+
     /** @var competency Object before update. */
     protected $beforeupdate = null;
 
@@ -77,6 +86,21 @@ class competency extends persistent {
             'path' => array(
                 'default' => '/0/',
                 'type' => PARAM_RAW
+            ),
+            'ruleoutcome' => array(
+                'choices' => array(self::OUTCOME_NONE, self::OUTCOME_EVIDENCE, self::OUTCOME_COMPLETE, self::OUTCOME_RECOMMEND),
+                'default' => self::OUTCOME_NONE,
+                'type' => PARAM_INT
+            ),
+            'ruletype' => array(
+                'type' => PARAM_RAW,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            ),
+            'ruleconfig' => array(
+                'default' => null,
+                'type' => PARAM_RAW,
+                'null' => NULL_ALLOWED
             ),
             'competencyframeworkid' => array(
                 'default' => 0,
@@ -213,6 +237,37 @@ class competency extends persistent {
      */
     public function get_related_competencies() {
         return related_competency::get_related_competencies($this->get_id());
+    }
+
+    /**
+     * Get the rule object.
+     *
+     * @return null|competency_rule
+     */
+    public function get_rule_object() {
+        $rule = $this->get_ruletype();
+
+        if (!$rule || !is_subclass_of($rule, '\tool_lp\competency_rule')) {
+            // Double check that the rule is extending the right class to avoid bad surprises.
+            return null;
+        }
+
+        return new $rule($this);
+    }
+
+    /**
+     * Check if the competency is the parent of passed competencies.
+     *
+     * @param  array $ids IDs of supposedly direct children.
+     * @return boolean
+     */
+    public function is_parent_of(array $ids) {
+        global $DB;
+
+        list($insql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
+        $params['parentid'] = $this->get_id();
+
+        return $DB->count_records_select(self::TABLE, "id $insql AND parentid = :parentid", $params) == count($ids);
     }
 
     /**
@@ -405,6 +460,53 @@ class competency extends persistent {
     }
 
     /**
+     * Validate the rule.
+     *
+     * @param string $value The ID.
+     * @return true|lang_string
+     */
+    protected function validate_ruletype($value) {
+        if ($value === null) {
+            return true;
+        }
+
+        if (!class_exists($value) || !is_subclass_of($value, '\tool_lp\competency_rule')) {
+            return new lang_string('invaliddata', 'error');
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate the rule config.
+     *
+     * @param string $value The ID.
+     * @return true|lang_string
+     */
+    protected function validate_ruleconfig($value) {
+        $rule = $this->get_rule_object();
+
+        // We don't have a rule.
+        if (empty($rule)) {
+            if ($value === null) {
+                // No config, perfect.
+                return true;
+            } else if (empty($rule) && !$value !== null) {
+                // Config but no rules, whoops!
+                return new lang_string('invaliddata', 'error');
+            }
+        }
+
+        $valid = $rule->validate_config($value);
+        if ($valid !== true) {
+            // Whoops!
+            return new lang_string('invaliddata', 'error');
+        }
+
+        return true;
+    }
+
+    /**
      * Return whether or not the competency IDs share the same framework.
      *
      * @param  array  $ids Competency IDs
@@ -414,6 +516,24 @@ class competency extends persistent {
         global $DB;
         list($insql, $params) = $DB->get_in_or_equal($ids);
         return $DB->count_records_select(self::TABLE, "id $insql", $params, "COUNT(DISTINCT(competencyframeworkid))") == 1;
+    }
+
+    /**
+     * Get the available rules.
+     *
+     * @return array Keys are the class names, values is an object containing name and amd.
+     */
+    public static function get_available_rules() {
+        // Fully qualified class names withough leading slashes because get_class() does not add them either.
+        $rules = array(
+            'tool_lp\competency_rule_all' => (object) array(),
+            'tool_lp\competency_rule_points' => (object) array(),
+        );
+        foreach ($rules as $class => $rule) {
+            $rule->name = $class::get_name();
+            $rule->amd = $class::get_amd_module();
+        }
+        return $rules;
     }
 
     /**

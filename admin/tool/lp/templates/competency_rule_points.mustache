@@ -1,0 +1,27 @@
+<div class="competency-rule-points">
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">{{#str}}points, tool_lp{{/str}}</th>
+                <th scope="col">{{#str}}required{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#children}}
+            <tr data-competency="{{id}}">
+                <th scope="row">{{shortname}}</th>
+                <td><input type="number" min="0" value="{{points}}" name="points" aria-label="{{#str}}pointsgivenfor, tool_lp, {{competency.shortname}}{{/str}}"></td>
+                <td><input type="checkbox" value="1" name="required" {{#required}}checked{{/required}} aria-label="{{#str}}aisrequired, tool_lp, {{competency.shortname}}{{/str}}"></td>
+            </tr>
+            {{/children}}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th scope="row">{{#str}}totalrequiredtocomplete, tool_lp{{/str}}</th>
+                <td><input type="number" min="1" value="{{requiredpoints}}" name="requiredpoints" aria-label="{{#str}}totalrequiredtocomplete, tool_lp{{/str}}"></td>
+                <td> </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

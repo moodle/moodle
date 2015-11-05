@@ -209,17 +209,17 @@ class api {
      * @return boolean
      */
     public static function update_competency($record) {
-        $current = new competency($record->id);
+        $competency = new competency($record->id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $current->get_framework()->get_context());
+        require_capability('tool/lp:competencymanage', $competency->get_framework()->get_context());
 
         // Some things should not be changed in an update - they should use a more specific method.
-        $record->sortorder = $current->get_sortorder();
-        $record->parentid = $current->get_parentid();
-        $record->competencyframeworkid = $current->get_competencyframeworkid();
+        $record->sortorder = $competency->get_sortorder();
+        $record->parentid = $competency->get_parentid();
+        $record->competencyframeworkid = $competency->get_competencyframeworkid();
 
-        $competency = new competency(0, $record);
+        $competency->from_record($record);
         require_capability('tool/lp:competencymanage', $competency->get_framework()->get_context());
 
         // OK - all set.

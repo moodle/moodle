@@ -94,6 +94,11 @@
                                 {{#pix}}t/add{{/pix}} {{#str}}addrelatedcompetency, tool_lp{{/str}}
                             </a>
                         </li>
+                        <li>
+                            <a href="#" data-action="competencyrules">
+                                {{#pix}}t/edit{{/pix}} {{#str}}competencyrule, tool_lp{{/str}}
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -113,7 +118,7 @@ require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions', 
                    '{{search}}',
                    '[data-enhance=tree]');
 
-    actions.init(treeModel, {{pagecontextid}}, {{{framework.taxonomies}}});
+    actions.init(treeModel, {{pagecontextid}}, {{{framework.taxonomies}}}, {{{rulesmodules}}});
 
 });
 {{/js}}

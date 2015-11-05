@@ -92,6 +92,20 @@ class tool_lp_persistent_testcase extends advanced_testcase {
             'usermodified' => array(
                 'default' => 0,
                 'type' => PARAM_INT
+            ),
+            'ruletype' => array(
+                'type' => PARAM_RAW,
+                'default' => null,
+                'null' => NULL_ALLOWED,
+            ),
+            'ruleconfig' => array(
+                'type' => PARAM_RAW,
+                'default' => null,
+                'null' => NULL_ALLOWED,
+            ),
+            'ruleoutcome' => array(
+                'type' => PARAM_RAW,
+                'default' => 0
             )
         );
         $this->assertEquals($expected, tool_lp_testable_persistent::properties_definition());
@@ -113,6 +127,9 @@ class tool_lp_persistent_testcase extends advanced_testcase {
             'timecreated' => 0,
             'timemodified' => 0,
             'usermodified' => 0,
+            'ruletype' => null,
+            'ruleconfig' => null,
+            'ruleoutcome' => 0,
         );
         $this->assertEquals($expected, $p->to_record());
     }
@@ -133,6 +150,9 @@ class tool_lp_persistent_testcase extends advanced_testcase {
             'timecreated' => 2,
             'timemodified' => 3,
             'usermodified' => 4,
+            'ruletype' => null,
+            'ruleconfig' => null,
+            'ruleoutcome' => 0,
         );
         $p->from_record($data);
         $this->assertEquals($data, $p->to_record());
@@ -408,6 +428,20 @@ class tool_lp_testable_persistent extends \tool_lp\persistent {
                 'default' => 0,
                 'null' => NULL_ALLOWED
             ),
+            'ruletype' => array(
+                'type' => PARAM_RAW,
+                'default' => null,
+                'null' => NULL_ALLOWED,
+            ),
+            'ruleconfig' => array(
+                'type' => PARAM_RAW,
+                'default' => null,
+                'null' => NULL_ALLOWED,
+            ),
+            'ruleoutcome' => array(
+                'type' => PARAM_RAW,
+                'default' => 0
+            )
         );
     }
 

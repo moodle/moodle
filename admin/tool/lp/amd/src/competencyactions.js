@@ -31,8 +31,10 @@ define(['jquery',
         'tool_lp/tree',
         'tool_lp/dialogue',
         'tool_lp/menubar',
-        'tool_lp/competencypicker'],
-       function($, url, templates, notification, str, ajax, dragdrop, Ariatree, Dialogue, menubar, Picker) {
+        'tool_lp/competencypicker',
+        'tool_lp/competency_outcomes',
+        'tool_lp/competencyruleconfig'],
+       function($, url, templates, notification, str, ajax, dragdrop, Ariatree, Dialogue, menubar, Picker, Outcomes, RuleConfig) {
 
     // Private variables and functions.
     /** @var {Object} treeModel - This is an object representing the nodes in the tree. */
@@ -45,10 +47,14 @@ define(['jquery',
     var pageContextId;
     /** @type {Object} Picker instance. */
     var pickerInstance;
+    /** @type {Object} Rule config instance. */
+    var ruleConfigInstance;
     /** @type {Object} The competency we're picking a relation to. */
     var relatedTarget;
     /** @type {Object} Taxonomy constants indexed per level. */
     var taxonomiesConstants;
+    /** @type {Array} The rules modules. Values are object containing type, namd and amd. */
+    var rulesModules;
 
     /**
      * Respond to choosing the "Add" menu item for the selected node in the tree.
@@ -347,6 +353,38 @@ define(['jquery',
         pickerInstance.display();
     };
 
+    var ruleConfigHandler = function(e) {
+        e.preventDefault();
+        relatedTarget = $('[data-region="competencyactions"]').data('competency');
+        ruleConfigInstance.setTargetCompetencyId(relatedTarget.id);
+        ruleConfigInstance.display();
+    };
+
+    var ruleConfigSaveHandler = function(e, config) {
+        var promise = ajax.call([{
+            methodname: 'tool_lp_update_competency',
+            args: {
+                id: relatedTarget.id,
+                shortname: relatedTarget.shortname,
+                idnumber: relatedTarget.idnumber,
+                description: relatedTarget.description,
+                descriptionformat: relatedTarget.descriptionformat,
+                visible: relatedTarget.visible,
+                ruletype: config.ruletype,
+                ruleoutcome: config.ruleoutcome,
+                ruleconfig: config.ruleconfig,
+            }
+        }]);
+        promise[0].then(function(result) {
+            if (result) {
+                relatedTarget.ruletype = config.ruletype;
+                relatedTarget.ruleoutcome = config.ruleoutcome;
+                relatedTarget.ruleconfig = config.ruleconfig;
+                renderCompetencySummary(relatedTarget);
+            }
+        }, notification.exception);
+    };
+
     /**
      * Delete a competency.
      * @method doDelete
@@ -375,6 +413,7 @@ define(['jquery',
         // We don't need to show related actions when showing the competency info.
         delete competency.showdeleterelatedaction;
         delete competency.showrelatedcompetencies;
+        delete competency.showrule;
 
         templates.render('tool_lp/competency_summary', competency)
            .done(function(html) {
@@ -512,6 +551,48 @@ define(['jquery',
     };
 
     /**
+     * Render the competency summary.
+     *
+     * @param  {Object} competency The competency.
+     */
+    var renderCompetencySummary = function(competency) {
+        var promise = $.Deferred().resolve().promise(),
+            context = $.extend({}, competency);
+
+        context.showdeleterelatedaction = true;
+        context.showrelatedcompetencies = true;
+        context.showrule = false;
+
+        if (competency.ruleoutcome != Outcomes.NONE) {
+            // Get the outcome and rule name.
+            promise = Outcomes.getString(competency.ruleoutcome).then(function(str) {
+                var name;
+                $.each(rulesModules, function(index, modInfo) {
+                    if (modInfo.type == competency.ruletype) {
+                        name = modInfo.name;
+                    }
+                });
+                return [str, name];
+            });
+        }
+
+        promise.then(function(strs) {
+            if (typeof strs !== 'undefined') {
+                context.showrule = true;
+                context.rule = {
+                    outcome: strs[0],
+                    type: strs[1]
+                };
+            }
+        }).then(function() {
+            return templates.render('tool_lp/competency_summary', context).then(function(html) {
+                $('[data-region="competencyinfo"]').html(html);
+                $('[data-action="deleterelation"]').on('click', deleteRelatedHandler);
+            });
+        }).fail(notification.exception);
+    };
+
+    /**
      * Return the string "Add <taxonomy>".
      *
      * @param  {Number} level The level.
@@ -558,9 +639,6 @@ define(['jquery',
         } else {
             var competency = treeModel.getCompetency(id);
 
-            competency.showdeleterelatedaction = true;
-            competency.showrelatedcompetencies = true;
-
             level = treeModel.getCompetencyLevel(id);
             if (!hasSubLevel(level)) {
                 sublevel = false;
@@ -570,10 +648,7 @@ define(['jquery',
 
             actionMenu.show();
             $('[data-region="competencyactions"]').data('competency', competency);
-            templates.render('tool_lp/competency_summary', competency).then(function(html) {
-                $('[data-region="competencyinfo"]').html(html);
-                $('[data-action="deleterelation"]').on('click', deleteRelatedHandler);
-            }, notification.exception);
+            renderCompetencySummary(competency);
         }
 
         strSelectedTaxonomy(level).then(function(str) {
@@ -602,11 +677,13 @@ define(['jquery',
          * @param {Object} model The tree model provides some useful functions for loading and searching competencies.
          * @param {Number} pagectxid The page context ID.
          * @param {Object} taxonomies Constants indexed by level.
+         * @param {Object} rulesMods The modules of the rules.
          */
-        init: function(model, pagectxid, taxonomies) {
+        init: function(model, pagectxid, taxonomies, rulesMods) {
             treeModel = model;
             pageContextId = pagectxid;
             taxonomiesConstants = taxonomies;
+            rulesModules = rulesMods;
 
             $('[data-region="competencyactions"] [data-action="add"]').on('click', addHandler);
 
@@ -617,7 +694,8 @@ define(['jquery',
                 '[data-action="moveup"]': moveUpHandler,
                 '[data-action="movedown"]': moveDownHandler,
                 '[data-action="linkedcourses"]': seeCoursesHandler,
-                '[data-action="relatedcompetencies"]': relateCompetenciesHandler.bind(this)
+                '[data-action="relatedcompetencies"]': relateCompetenciesHandler.bind(this),
+                '[data-action="competencyrules"]': ruleConfigHandler.bind(this)
             });
             $('[data-region="competencyactionsmenu"]').hide();
             $('[data-region="competencyactions"] [data-action="add"]').hide();
@@ -631,6 +709,10 @@ define(['jquery',
             $('[data-region="managecompetencies"] li').on('drop', dropOver);
 
             model.on('selectionchanged', selectionChanged);
+
+            // Prepare the configuration tool.
+            ruleConfigInstance = new RuleConfig(treeModel, rulesModules);
+            ruleConfigInstance.on('save', ruleConfigSaveHandler.bind(this));
         }
 
     };

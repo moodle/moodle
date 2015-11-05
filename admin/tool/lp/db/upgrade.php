@@ -310,5 +310,65 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015052427, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015111001) {
+
+        // Define field ruletype to be added to tool_lp_competency.
+        $table = new xmldb_table('tool_lp_competency');
+        $field = new xmldb_field('ruletype', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'sortorder');
+
+        // Conditionally launch add field ruletype.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111001, 'tool', 'lp');
+    }
+
+    if ($oldversion < 2015111002) {
+
+        // Define field ruleoutcome to be added to tool_lp_competency.
+        $table = new xmldb_table('tool_lp_competency');
+        $field = new xmldb_field('ruleoutcome', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'ruletype');
+
+        // Conditionally launch add field ruleoutcome.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111002, 'tool', 'lp');
+    }
+
+    if ($oldversion < 2015111003) {
+
+        // Define field ruleconfig to be added to tool_lp_competency.
+        $table = new xmldb_table('tool_lp_competency');
+        $field = new xmldb_field('ruleconfig', XMLDB_TYPE_TEXT, null, null, null, null, null, 'ruleoutcome');
+
+        // Conditionally launch add field ruleconfig.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111003, 'tool', 'lp');
+    }
+
+    if ($oldversion < 2015111004) {
+
+        // Define index ruleoutcome (not unique) to be added to tool_lp_competency.
+        $table = new xmldb_table('tool_lp_competency');
+        $index = new xmldb_index('ruleoutcome', XMLDB_INDEX_NOTUNIQUE, array('ruleoutcome'));
+
+        // Conditionally launch add index ruleoutcome.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111004, 'tool', 'lp');
+    }
+
     return true;
 }
