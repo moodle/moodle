@@ -33,62 +33,6 @@ require_once($CFG->dirroot . '/enrol/externallib.php');
 class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
     /**
-     * Test get_enrolled_users
-     */
-    public function test_get_enrolled_users() {
-        global $USER;
-
-        $this->resetAfterTest(true);
-
-        $course = self::getDataGenerator()->create_course();
-        $user1 = self::getDataGenerator()->create_user();
-        $user2 = self::getDataGenerator()->create_user();
-        $user3 = self::getDataGenerator()->create_user();
-        $this->setUser($user3);
-
-        // Set the required capabilities by the external function.
-        $context = context_course::instance($course->id);
-        $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id);
-        $this->assignUserCapability('moodle/user:viewdetails', $context->id, $roleid);
-
-        // Enrol the users in the course.
-        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $roleid, 'manual');
-        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $roleid, 'manual');
-        $this->getDataGenerator()->enrol_user($user3->id, $course->id, $roleid, 'manual');
-
-        // Call the external function.
-        $enrolledusers = core_enrol_external::get_enrolled_users($course->id);
-
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
-
-        // Check the result set.
-        $this->assertEquals(3, count($enrolledusers));
-        $this->assertArrayHasKey('email', $enrolledusers[0]);
-
-        // Call the function with some parameters set.
-        $enrolledusers = core_enrol_external::get_enrolled_users($course->id, array(
-            array('name' => 'limitfrom', 'value' => 2),
-            array('name' => 'limitnumber', 'value' => 1),
-            array('name' => 'userfields', 'value' => 'id')
-        ));
-
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
-
-        // Check the result set, we should only get the 3rd result, which is $user3.
-        $this->assertCount(1, $enrolledusers);
-        $this->assertEquals($user3->id, $enrolledusers[0]['id']);
-        $this->assertArrayHasKey('id', $enrolledusers[0]);
-        $this->assertArrayNotHasKey('email', $enrolledusers[0]);
-
-        // Call without required capability.
-        $this->unassignUserCapability('moodle/course:viewparticipants', $context->id, $roleid);
-        $this->setExpectedException('moodle_exception');
-        $categories = core_enrol_external::get_enrolled_users($course->id);
-    }
-
-    /**
      * Test get_users_courses
      */
     public function test_get_users_courses() {
@@ -142,96 +86,6 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
                 }
             }
         }
-    }
-
-    /**
-     * Test get_enrolled_users_with_capability
-     */
-    public function test_get_enrolled_users_with_capability () {
-        global $DB, $USER;
-
-        $this->resetAfterTest(true);
-
-        $user1 = $this->getDataGenerator()->create_user();
-
-        $coursedata['idnumber'] = 'idnumbercourse1';
-        $coursedata['fullname'] = 'Lightwork Course 1';
-        $coursedata['summary'] = 'Lightwork Course 1 description';
-        $coursedata['summaryformat'] = FORMAT_MOODLE;
-        $course1  = self::getDataGenerator()->create_course($coursedata);
-
-        // Create a manual enrolment record.
-        $manual_enrol_data['enrol'] = 'manual';
-        $manual_enrol_data['status'] = 0;
-        $manual_enrol_data['courseid'] = $course1->id;
-        $enrolid = $DB->insert_record('enrol', $manual_enrol_data);
-
-        // Create the users and give them capabilities in the course context.
-        $context = context_course::instance($course1->id);
-        $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
-
-        // Create 2 students.
-        $student1 = self::getDataGenerator()->create_user();
-        $student2 = self::getDataGenerator()->create_user();
-
-        // Give the capability to student2.
-        assign_capability('moodle/course:viewparticipants', CAP_ALLOW, 3, $context->id);
-        role_assign(3, $student2->id, $context->id);
-        accesslib_clear_all_caches_for_unit_testing();
-
-        // Enrol both the user and the students in the course.
-        $user_enrolment_data['status'] = 0;
-        $user_enrolment_data['enrolid'] = $enrolid;
-        $user_enrolment_data['userid'] = $USER->id;
-        $DB->insert_record('user_enrolments', $user_enrolment_data);
-
-        $user_enrolment_data['status'] = 0;
-        $user_enrolment_data['enrolid'] = $enrolid;
-        $user_enrolment_data['userid'] = $student1->id;
-        $DB->insert_record('user_enrolments', $user_enrolment_data);
-
-        $user_enrolment_data['status'] = 0;
-        $user_enrolment_data['enrolid'] = $enrolid;
-        $user_enrolment_data['userid'] = $student2->id;
-        $DB->insert_record('user_enrolments', $user_enrolment_data);
-
-        $params = array("coursecapabilities" => array('courseid' => $course1->id,
-            'capabilities' => array('moodle/course:viewparticipants')));
-        $options = array();
-        $result = core_enrol_external::get_enrolled_users_with_capability($params, $options);
-
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
-
-        // Check an array containing the expected user for the course capability is returned.
-        $expecteduserlist = $result[0];
-        $this->assertEquals($course1->id, $expecteduserlist['courseid']);
-        $this->assertEquals('moodle/course:viewparticipants', $expecteduserlist['capability']);
-        $this->assertEquals(2, count($expecteduserlist['users']));
-
-        // Now doing the query again with options.
-        $params = array(
-            "coursecapabilities" => array(
-                'courseid' => $course1->id,
-                'capabilities' => array('moodle/course:viewparticipants')
-            )
-        );
-        $options = array(
-            array('name' => 'limitfrom', 'value' => 1),
-            array('name' => 'limitnumber', 'value' => 1),
-            array('name' => 'userfields', 'value' => 'id')
-        );
-
-        $result = core_enrol_external::get_enrolled_users_with_capability($params, $options);
-
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
-
-        // Check an array containing the expected user for the course capability is returned.
-        $expecteduserlist = $result[0]['users'];
-        $expecteduser = reset($expecteduserlist);
-        $this->assertEquals(1, count($expecteduserlist));
-        $this->assertEquals($student2->id, $expecteduser['id']);
     }
 
     /**
@@ -299,4 +153,189 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $this->assertTrue($enrolmentmethod['status']);
         $this->assertEquals('enrol_self_get_instance_info', $enrolmentmethod['wsfunction']);
     }
+
+    public function get_enrolled_users_setup($capability) {
+        global $USER;
+
+        $this->resetAfterTest(true);
+
+        $return = new stdClass();
+
+        $return->course = self::getDataGenerator()->create_course();
+        $return->user1 = self::getDataGenerator()->create_user();
+        $return->user2 = self::getDataGenerator()->create_user();
+        $return->user3 = self::getDataGenerator()->create_user();
+        $this->setUser($return->user3);
+
+        // Set the required capabilities by the external function.
+        $return->context = context_course::instance($return->course->id);
+        $return->roleid = $this->assignUserCapability($capability, $return->context->id);
+        $this->assignUserCapability('moodle/user:viewdetails', $return->context->id, $return->roleid);
+
+        // Enrol the users in the course.
+        $this->getDataGenerator()->enrol_user($return->user1->id, $return->course->id, $return->roleid, 'manual');
+        $this->getDataGenerator()->enrol_user($return->user2->id, $return->course->id, $return->roleid, 'manual');
+        $this->getDataGenerator()->enrol_user($return->user3->id, $return->course->id, $return->roleid, 'manual');
+
+        return $return;
+    }
+
+    /**
+     * Test get_enrolled_users from core_enrol_external without additional
+     * parameters.
+     */
+    public function test_get_enrolled_users_without_parameters() {
+        $capability = 'moodle/course:viewparticipants';
+        $data = $this->get_enrolled_users_setup($capability);
+
+        // Call the external function.
+        $enrolledusers = core_enrol_external::get_enrolled_users($data->course->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+
+        // Check the result set.
+        $this->assertEquals(3, count($enrolledusers));
+        $this->assertArrayHasKey('email', $enrolledusers[0]);
+    }
+
+    /**
+     * Test get_enrolled_users from core_enrol_external with some parameters set.
+     */
+    public function test_get_enrolled_users_with_parameters() {
+        $capability = 'moodle/course:viewparticipants';
+        $data = $this->get_enrolled_users_setup($capability);
+
+        // Call the function with some parameters set.
+        $enrolledusers = core_enrol_external::get_enrolled_users($data->course->id, array(
+            array('name' => 'limitfrom', 'value' => 2),
+            array('name' => 'limitnumber', 'value' => 1),
+            array('name' => 'userfields', 'value' => 'id')
+        ));
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+
+        // Check the result set, we should only get the 3rd result, which is $user3.
+        $this->assertCount(1, $enrolledusers);
+        $this->assertEquals($data->user3->id, $enrolledusers[0]['id']);
+        $this->assertArrayHasKey('id', $enrolledusers[0]);
+        $this->assertArrayNotHasKey('email', $enrolledusers[0]);
+    }
+
+    /**
+     * Test get_enrolled_users from core_enrol_external with capability to
+     * viewparticipants removed.
+     */
+    public function test_get_enrolled_users_without_capability() {
+        $capability = 'moodle/course:viewparticipants';
+        $data = $this->get_enrolled_users_setup($capability);
+
+        // Call without required capability.
+        $this->unassignUserCapability($capability, $data->context->id, $data->roleid);
+        $this->setExpectedException('moodle_exception');
+        $categories = core_enrol_external::get_enrolled_users($data->course->id);
+    }
+
+    public function get_enrolled_users_with_capability_setup($capability) {
+        global $USER, $DB;
+
+        $this->resetAfterTest(true);
+
+        $return = new stdClass();
+
+        // Create the course and fetch its context.
+        $return->course = self::getDataGenerator()->create_course();
+        $context = context_course::instance($return->course->id);
+
+        // Create one teacher, and two students.
+        $return->teacher = self::getDataGenerator()->create_user();
+        $return->student1 = self::getDataGenerator()->create_user();
+        $return->student2 = self::getDataGenerator()->create_user();
+
+        // Create a new student role based on the student archetype but with the capability prohibitted.
+        $fakestudentroleid = create_role('Fake student role', 'fakestudent', 'Fake student role', 'student');
+        assign_capability($capability, CAP_PROHIBIT, $fakestudentroleid, $context->id);
+
+        // Enrol all of the users in the course.
+        // * 'teacher'  is an editing teacher.
+        // * 'student1' is a standard student.
+        // * 'student2' is a student with the capability prohibitted.
+        $editingteacherroleid = $DB->get_field('role', 'id', array('shortname' => 'editingteacher'));
+        $studentroleid = $DB->get_field('role', 'id', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($return->teacher->id, $return->course->id, $editingteacherroleid);
+        $this->getDataGenerator()->enrol_user($return->student1->id, $return->course->id, $studentroleid);
+        $this->getDataGenerator()->enrol_user($return->student2->id, $return->course->id, $fakestudentroleid);
+
+        // Log in as the teacher.
+        $this->setUser($return->teacher);
+
+        // Clear caches.
+        accesslib_clear_all_caches_for_unit_testing();
+
+        return $return;
+    }
+
+    /**
+     * Test get_enrolled_users_with_capability without additional paramaters.
+     */
+    public function test_get_enrolled_users_with_capability_without_parameters() {
+        $capability = 'moodle/course:viewparticipants';
+        $data = $this->get_enrolled_users_with_capability_setup($capability);
+
+        $result = core_enrol_external::get_enrolled_users_with_capability(
+            array(
+                'coursecapabilities' => array(
+                    'courseid' => $data->course->id,
+                    'capabilities' => array(
+                        $capability,
+                    ),
+                ),
+            ),
+            array()
+        );
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+
+        // Check an array containing the expected user for the course capability is returned.
+        $expecteduserlist = $result[0];
+        $this->assertEquals($data->course->id, $expecteduserlist['courseid']);
+        $this->assertEquals($capability, $expecteduserlist['capability']);
+        $this->assertEquals(2, count($expecteduserlist['users']));
+    }
+
+    /**
+     * Test get_enrolled_users_with_capability
+     */
+    public function test_get_enrolled_users_with_capability_with_parameters () {
+        $capability = 'moodle/course:viewparticipants';
+        $data = $this->get_enrolled_users_with_capability_setup($capability);
+
+        $result = core_enrol_external::get_enrolled_users_with_capability(
+            array(
+                'coursecapabilities' => array(
+                    'courseid' => $data->course->id,
+                    'capabilities' => array(
+                        $capability,
+                    ),
+                ),
+            ),
+            array(
+                array('name' => 'limitfrom', 'value' => 1),
+                array('name' => 'limitnumber', 'value' => 1),
+                array('name' => 'userfields', 'value' => 'id')
+            )
+        );
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+
+        // Check an array containing the expected user for the course capability is returned.
+        $expecteduserlist = $result[0]['users'];
+        $expecteduser = reset($expecteduserlist);
+        $this->assertEquals(1, count($expecteduserlist));
+        $this->assertEquals($data->student1->id, $expecteduser['id']);
+    }
+
 }
