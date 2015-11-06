@@ -340,6 +340,9 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
             );
             $enrolledusers = core_enrol_external::get_enrolled_users($course->id, $options);
 
+            // We need to execute the return values cleaning process to simulate the web service server.
+            $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+
             // We are only interested in ids to check visibility.
             $viewed = array();
             // Verify the user canview the expected users.
