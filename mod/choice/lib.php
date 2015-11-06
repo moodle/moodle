@@ -1035,6 +1035,10 @@ function choice_get_availability_status($choice) {
             $warnings['expired'] = userdate($choice->timeclose);
         }
     }
+    if (!$choice->allowupdate && choice_get_my_response($choice)) {
+        $available = false;
+        $warnings['choicesaved'] = '';
+    }
 
     // Choice is available.
     return array($available, $warnings);

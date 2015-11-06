@@ -198,7 +198,9 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
      * Test choice_get_availability_status
      * @return void
      */
-    public function choice_get_availability_status() {
+    public function test_choice_get_availability_status() {
+        global $USER;
+
         $this->resetAfterTest();
 
         $this->setAdminUser();
@@ -206,10 +208,28 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $choice = $this->getDataGenerator()->create_module('choice', array('course' => $course->id));
 
-        // No time restrictions.
+        // No time restrictions and updates allowed.
         list($status, $warnings) = choice_get_availability_status($choice, false);
         $this->assertEquals(true, $status);
         $this->assertCount(0, $warnings);
+
+        // No updates allowed, but haven't answered yet.
+        $choice->allowupdate = false;
+        list($status, $warnings) = choice_get_availability_status($choice, false);
+        $this->assertEquals(true, $status);
+        $this->assertCount(0, $warnings);
+
+        // No updates allowed and have answered.
+        $cm = get_coursemodule_from_instance('choice', $choice->id);
+        $choicewithoptions = choice_get_choice($choice->id);
+        $optionids = array_keys($choicewithoptions->option);
+        choice_user_submit_response($optionids[0], $choice, $USER->id, $course, $cm);
+        list($status, $warnings) = choice_get_availability_status($choice, false);
+        $this->assertEquals(false, $status);
+        $this->assertCount(1, $warnings);
+        $this->assertEquals('choicesaved', array_keys($warnings)[0]);
+
+        $choice->allowupdate = true;
 
         // With time restrictions, still open.
         $choice->timeopen = time() - DAYSECS;
@@ -224,7 +244,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         list($status, $warnings) = choice_get_availability_status($choice, false);
         $this->assertEquals(false, $status);
         $this->assertCount(1, $warnings);
-        $this->assertEquals('notopenyet', $warnings[0]);
+        $this->assertEquals('notopenyet', array_keys($warnings)[0]);
 
         // Choice closed.
         $choice->timeopen = time() - DAYSECS;
@@ -232,7 +252,7 @@ class mod_choice_lib_testcase extends externallib_advanced_testcase {
         list($status, $warnings) = choice_get_availability_status($choice, false);
         $this->assertEquals(false, $status);
         $this->assertCount(1, $warnings);
-        $this->assertEquals('expired', $warnings[0]);
+        $this->assertEquals('expired', array_keys($warnings)[0]);
 
     }
 
