@@ -2281,5 +2281,53 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $this->assertEquals(false, strpos($output, get_string('hiddenuser', 'assign')));
         $this->assertEquals(true, strpos($output, fullname($student)));    //students full name doesn't appear.
     }
+
+    /**
+     * Testing get_shared_group_members
+     */
+    public function test_get_shared_group_members() {
+        $this->create_extra_users();
+        $this->setAdminUser();
+
+        // Force create an assignment with SEPARATEGROUPS.
+        $data = new stdClass();
+        $data->courseid = $this->course->id;
+        $data->name = 'Grouping';
+        $groupingid = groups_create_grouping($data);
+        groups_assign_grouping($groupingid, $this->groups[0]->id);
+        groups_assign_grouping($groupingid, $this->groups[1]->id);
+        $assign = $this->create_instance(array('groupingid' => $groupingid, 'groupmode' => SEPARATEGROUPS));
+        $cm = $assign->get_course_module();
+
+        // Add the capability to access allgroups.
+        $roleid = create_role('Access all groups role', 'accessallgroupsrole', '');
+        assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $roleid, $assign->get_context()->id);
+        role_assign($roleid, $this->extrastudents[3]->id, $assign->get_context()->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Get shared group members for students 0 and 1.
+        $groupmembers = array();
+        $groupmembers[0] = $assign->get_shared_group_members($cm, $this->students[0]->id);
+        $groupmembers[1] = $assign->get_shared_group_members($cm, $this->students[1]->id);
+
+        // They should share groups with extrastudents 0 and 1.
+        $this->assertTrue(in_array($this->extrastudents[0]->id, $groupmembers[0]));
+        $this->assertFalse(in_array($this->extrastudents[0]->id, $groupmembers[1]));
+        $this->assertTrue(in_array($this->extrastudents[1]->id, $groupmembers[1]));
+        $this->assertFalse(in_array($this->extrastudents[1]->id, $groupmembers[0]));
+
+        // Lists of group members for students and extrastudents should be the same.
+        $this->assertEquals($groupmembers[0], $assign->get_shared_group_members($cm, $this->extrastudents[0]->id));
+        $this->assertEquals($groupmembers[1], $assign->get_shared_group_members($cm, $this->extrastudents[1]->id));
+
+        // Get all group members for extrastudent 3 wich can access all groups.
+        $allgroupmembers = $assign->get_shared_group_members($cm, $this->extrastudents[3]->id);
+
+        // Extrastudent 3 should see students 0 and 1, extrastudent 0 and 1.
+        $this->assertTrue(in_array($this->students[0]->id, $allgroupmembers));
+        $this->assertTrue(in_array($this->students[1]->id, $allgroupmembers));
+        $this->assertTrue(in_array($this->extrastudents[0]->id, $allgroupmembers));
+        $this->assertTrue(in_array($this->extrastudents[1]->id , $allgroupmembers));
+    }
 }
 
