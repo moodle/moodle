@@ -1,8 +1,8 @@
 @core @core_message
-Feature: Block users from contacting me
-  In order to block other users
+Feature: Block non contacts from contacting me
+  In order to reduce unsolicited messages
   As a user
-  I need to prevent specific users to sending me messages
+  I need to prevent non-contacts from sending me messages
 
   Background:
     Given the following "users" exist:
