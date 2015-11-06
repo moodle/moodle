@@ -1,8 +1,8 @@
 @core @core_message
-Feature: Block users from contacting me
-  In order to block other users
+Feature: Block non contacts from contacting me
+  In order to reduce unsolicited messages
   As a user
-  I need to prevent specific users to sending me messages
+  I need to prevent non-contacts from sending me messages
 
   Background:
     Given the following "users" exist:
@@ -40,6 +40,9 @@ Feature: Block users from contacting me
     And I press "Search people and messages"
     When I follow "Send message to User One"
     Then I should see "User One only accepts messages from their contacts."
-    And I follow "Picture of User One"
+    And I am on site homepage
+    And I follow "Course 1"
+    And I follow "Participants"
+    And I follow "User One"
     And I press "Message"
     And I should see "User One only accepts messages from their contacts."

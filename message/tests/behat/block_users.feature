@@ -39,6 +39,9 @@ Feature: Block users from contacting me
     And I press "Search people and messages"
     When I follow "Send message to User One"
     Then I should see "This user has blocked you from sending messages to them"
-    And I follow "Picture of User One"
+    And I am on site homepage
+    And I follow "Course 1"
+    And I follow "Participants"
+    And I follow "User One"
     And I press "Message"
     And I should see "This user has blocked you from sending messages to them"
