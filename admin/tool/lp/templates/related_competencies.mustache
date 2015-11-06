@@ -1,4 +1,4 @@
-<div data-region='relatedcompetencies'>
+<div data-region="relatedcompetencies">
 <p>
     <strong>{{#str}}relatedcompetencies, tool_lp{{/str}}:</strong>
 </p>
@@ -11,7 +11,11 @@
                         <a href="#" data-action="deleterelation" id="id-related-{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
                     </div>
                 {{/showdeleterelatedaction}}
-                <p>{{shortname}}{{#idnumber}} {{idnumber}}{{/idnumber}}</p>
+                <p>
+                    <a href="#" data-action="competency-dialogue" data-id="{{id}}">
+                        {{shortname}}{{#idnumber}} {{idnumber}}{{/idnumber}}
+                    </a>
+                </p>
             </li>
         {{/visible}}
     </ul>

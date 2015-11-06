@@ -1055,6 +1055,88 @@ class external extends external_api {
     }
 
     /**
+     * Returns description of data_for_competency_summary() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function data_for_competency_summary_parameters() {
+        $competencyid = new external_value(
+            PARAM_INT,
+            'The competency id',
+            VALUE_REQUIRED
+        );
+        $includerelated = new external_value(
+            PARAM_BOOL,
+            'Include or not related competencies',
+            VALUE_DEFAULT,
+            false
+        );
+        $includecourses = new external_value(
+            PARAM_BOOL,
+            'Include or not competency courses',
+            VALUE_DEFAULT,
+            false
+        );
+        $params = array(
+            'competencyid' => $competencyid,
+            'includerelated' => $includerelated,
+            'includecourses' => $includecourses
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Loads the data required to render the competency_page template.
+     *
+     * @param int $competencyid Competency id.
+     * @param boolean $includerelated Include or not related competencies.
+     * @param boolean $includecourses Include or not competency courses.
+     *
+     * @return \stdClass
+     */
+    public static function data_for_competency_summary($competencyid, $includerelated = false, $includecourses = false) {
+        global $PAGE;
+        $params = self::validate_parameters(self::data_for_competency_summary_parameters(),
+                                            array(
+                                                'competencyid' => $competencyid,
+                                                'includerelated' => $includerelated,
+                                                'includecourses' => $includecourses
+                                            ));
+
+        $competency = api::read_competency($params['competencyid']);
+        $framework = api::read_framework($competency->get_competencyframeworkid());
+        $renderable = new output\competency_summary($competency, $framework, $params['includerelated'], $params['includecourses']);
+        $renderer = $PAGE->get_renderer('tool_lp');
+
+        $data = $renderable->export_for_template($renderer);
+
+        return $data;
+    }
+
+    /**
+     * Returns description of data_for_competency_summary_() result value.
+     *
+     * @return \external_description
+     */
+    public static function data_for_competency_summary_returns() {
+        return new external_single_structure(array (
+            'framework' => competency_Framework_exporter::get_read_structure(),
+            'id' => new external_value(PARAM_INT, 'The competency id'),
+            'shortname' => new external_value(PARAM_TEXT, 'The competency shortname'),
+            'idnumber' => new external_value(PARAM_TEXT, 'The competency idnumber'),
+            'visible' => new external_value(PARAM_BOOL, 'True if competency visible'),
+            'descriptionformatted' => new external_value(PARAM_RAW, 'The competency description'),
+            'relatedcompetencies' => new external_multiple_structure(
+                competency_exporter::get_read_structure()
+            ),
+            'courses' => self::list_courses_using_competency_returns(),
+            'showrelatedcompetencies' => new external_value(PARAM_BOOL, 'Show or not the related competencies'),
+            'showcourses' => new external_value(PARAM_BOOL, 'Show or not the linked courses'),
+        ));
+
+    }
+
+    /**
      * Returns description of set_parent_competency() parameters.
      *
      * @return \external_function_parameters

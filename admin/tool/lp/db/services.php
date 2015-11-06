@@ -136,6 +136,15 @@ $functions = array(
         'capabilities' => 'tool/lp:competencymanage',
         'ajax'         => true,
     ),
+    'tool_lp_data_for_competency_summary' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'data_for_competency_summary',
+        'classpath'    => '',
+        'description'  => 'Load competency data for summary template.',
+        'type'         => 'read',
+        'capabilities' => 'tool/lp:competencyview',
+        'ajax'         => true,
+    ),
     'tool_lp_list_competencies' => array(
         'classname'    => 'tool_lp\external',
         'methodname'   => 'list_competencies',

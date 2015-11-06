@@ -51,9 +51,11 @@ define(['core/yui'], function(Y) {
                 if (e.newVal) {
                     // Delay the callback call to the next tick, otherwise it can happen that it is
                     // executed before the dialogue constructor returns.
-                    Y.soon(function() {
-                        afterShow(parent);
-                    });
+                    if ((typeof afterShow !== 'undefined')) {
+                        Y.soon(function() {
+                            afterShow(parent);
+                        });
+                    }
                 }
             });
 

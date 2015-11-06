@@ -1,11 +1,19 @@
 <p><strong>{{shortname}} <em>{{idnumber}}</em></strong></p>
 <p>{{description}}</p>
+
+{{#framework}}
+<p><strong>{{framework.shortname}}</strong></p>
+<p>{{framework.description}}</p>
+{{/framework}}
+
 {{^visible}}
 ( {{#str}} hidden, tool_lp{{/str}})
 {{/visible}}
+
 {{#showrelatedcompetencies}}
     {{> tool_lp/related_competencies }}
 {{/showrelatedcompetencies}}
+
 {{#showrule}}
     <h5>{{#str}}competencyrule, tool_lp{{/str}}</h5>
     <dl>
