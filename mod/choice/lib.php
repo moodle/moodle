@@ -935,6 +935,7 @@ function choice_print_overview($courses, &$htmlarray) {
  * @return array                       status (available or not and possible warnings)
  */
 function choice_get_availability_status($choice) {
+    global $DB, $USER;
     $available = true;
     $warnings = array();
 
@@ -948,6 +949,10 @@ function choice_get_availability_status($choice) {
             $available = false;
             $warnings['expired'] = userdate($choice->timeclose);
         }
+    }
+    if (!$choice->allowupdate && $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) {
+        $available = false;
+        $warnings['choicesaved'] = '';
     }
 
     // Choice is available.
