@@ -74,10 +74,6 @@ class block_tags extends block_base {
             $this->config->numberoftags = 80;
         }
 
-        if (empty($this->config->tagtype)) {
-            $this->config->tagtype = '';
-        }
-
         if ($this->content !== NULL) {
             return $this->content;
         }
