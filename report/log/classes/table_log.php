@@ -158,8 +158,13 @@ class report_log_table_log extends table_sql {
      * @return string HTML for the time column
      */
     public function col_time($event) {
-        $recenttimestr = get_string('strftimerecent', 'core_langconfig');
-        return userdate($event->timecreated, $recenttimestr);
+
+        if (empty($this->download)) {
+            $dateformat = get_string('strftimerecent', 'core_langconfig');
+        } else {
+            $dateformat = get_string('strftimedatetimeshort', 'core_langconfig');
+        }
+        return userdate($event->timecreated, $dateformat);
     }
 
     /**
