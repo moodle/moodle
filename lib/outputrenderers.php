@@ -1394,11 +1394,10 @@ class core_renderer extends renderer_base {
             $output = '';
             $skipdest = '';
         } else {
-            $output = html_writer::link('#', get_string('skipa', 'access', $skiptitle),
-                      array('class' => 'skip skip-block', 'id'=>'fsb-' . $bc->skipid,
-                      'data-target' => '#sb-'.$bc->skipid));
+            $output = html_writer::link('#sb-'.$bc->skipid, get_string('skipa', 'access', $skiptitle),
+                      array('class' => 'skip skip-block', 'id' => 'fsb-' . $bc->skipid));
             $skipdest = html_writer::span('', 'skip-block-to',
-                      array('id' => 'sb-' . $bc->skipid, 'tabindex' => '-1'));
+                      array('id' => 'sb-' . $bc->skipid));
         }
 
         $output .= html_writer::start_tag('div', $bc->attributes);
@@ -2963,7 +2962,7 @@ EOD;
      * @return string the HTML to output.
      */
     public function skip_link_target($id = null) {
-        return html_writer::span('', '', array('id' => $id, 'tabindex' => '-1'));
+        return html_writer::span('', '', array('id' => $id));
     }
 
     /**
