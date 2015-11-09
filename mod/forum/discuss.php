@@ -169,7 +169,7 @@ if ($move > 0 and confirm_sesskey()) {
     forum_rss_delete_file($forum);
     forum_rss_delete_file($forumto);
 
-    redirect($return.'&moved=-1&sesskey='.sesskey());
+    redirect($return.'&move=-1&sesskey='.sesskey());
 }
 
 // Trigger discussion viewed event.
