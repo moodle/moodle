@@ -653,8 +653,7 @@ abstract class persistent {
      * Load a single record.
      *
      * @param array $filters Filters to apply.
-     *
-     * @return \tool_lp\persistent
+     * @return false|\tool_lp\persistent
      */
     public static function get_record($filters = array()) {
         global $DB;

@@ -868,9 +868,10 @@ class external extends external_api {
     /**
      * Returns the external structure of a full user_competency record.
      *
+     * @param int $fordisplay When true, additional fields for display purposes will be added.
      * @return \external_single_structure
      */
-    protected static function get_user_competency_external_structure() {
+    protected static function get_user_competency_external_structure($fordisplay = false) {
         $id = new external_value(
             PARAM_INT,
             'Database record id'
@@ -912,20 +913,6 @@ class external extends external_api {
             'User who modified this record last'
         );
 
-        // Extra params.
-        $gradename = new external_value(
-            PARAM_TEXT,
-            'User competency status name'
-        );
-        $proficiencyname = new external_value(
-            PARAM_TEXT,
-            'User competency proficiency name'
-        );
-        $statusname = new external_value(
-            PARAM_TEXT,
-            'User competency status name'
-        );
-
         $returns = array(
             'id' => $id,
             'userid' => $userid,
@@ -937,10 +924,25 @@ class external extends external_api {
             'timecreated' => $timecreated,
             'timemodified' => $timemodified,
             'usermodified' => $usermodified,
-            'gradename' => $gradename,
-            'proficiencyname' => $proficiencyname,
-            'statusname' => $statusname,
         );
+
+        if ($fordisplay) {
+            $gradename = new external_value(
+                PARAM_TEXT,
+                'User competency status name'
+            );
+            $proficiencyname = new external_value(
+                PARAM_TEXT,
+                'User competency proficiency name'
+            );
+            $statusname = new external_value(
+                PARAM_TEXT,
+                'User competency status name'
+            );
+            $returns['gradename'] = $gradename;
+            $returns['proficiencyname'] = $proficiencyname;
+            $returns['statusname'] = $statusname;
+        }
 
         return new external_single_structure($returns);
     }
@@ -3210,18 +3212,16 @@ class external extends external_api {
      * @return \external_description
      */
     public static function data_for_plan_competencies_page_returns() {
-
         return new external_single_structure(array (
             'planid' => new external_value(PARAM_INT, 'Learning Plan id'),
             'canmanage' => new external_value(PARAM_BOOL, 'User can manage learning plan'),
             'competencies' => new external_multiple_structure(
-                    new external_single_structure(array(
-                        'competency' => self::get_competency_external_structure(),
-                        'usercompetency' => self::get_user_competency_external_structure(),
-                    ))
+                new external_single_structure(array(
+                    'competency' => self::get_competency_external_structure(),
+                    'usercompetency' => self::get_user_competency_external_structure(true),
+                ))
             )
         ));
-
     }
 
     /**

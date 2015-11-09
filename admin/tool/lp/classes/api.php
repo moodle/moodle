@@ -520,7 +520,9 @@ class api {
     /**
      * Fetches all the relevant contexts.
      *
-     * Note: This currently only supports system and category contexts.
+     * Note: This currently only supports system, category and user contexts. However user contexts
+     * behave a bit differently and will fallback on the system context. This is what makes the most
+     * sense because a user context does not have descendants, and only has system as a parent.
      *
      * @param context $context The context to start from.
      * @param string $includes Defines what other contexts to find.
@@ -537,9 +539,10 @@ class api {
         if (!in_array($includes, array('children', 'parents', 'self'))) {
             throw new coding_exception('Invalid parameter value for \'includes\'.');
         }
+
         // If context user swap it for the context_system.
         if ($context->contextlevel == CONTEXT_USER) {
-            $context = $systemcontext = context_system::instance();
+            $context = context_system::instance();
         }
 
         $contexts = array($context->id => $context);
@@ -1364,27 +1367,25 @@ class api {
      * @return bool
      */
     public static function add_competency_to_plan($planid, $competencyid) {
-        // First we do a permissions check.
         $plan = new plan($planid);
-        $plan->read();
-        if (!$plan->can_manage()) {
-            $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
-        }
 
-        if ($plan->is_based_on_template()) {
+        // First we do a permissions check.
+        if (!$plan->can_manage()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+
+        } else if ($plan->is_based_on_template()) {
             throw new coding_exception('A competency can not be added to a learning plan based on a template');
         }
 
-        $record = new stdClass();
-        $record->planid = $planid;
-        $record->competencyid = $competencyid;
-
-        $exists = plan_competency::get_records(array('planid' => $planid, 'competencyid' => $competencyid));
+        $exists = plan_competency::get_record(array('planid' => $planid, 'competencyid' => $competencyid));
         if (!$exists) {
+            $record = new stdClass();
+            $record->planid = $planid;
+            $record->competencyid = $competencyid;
             $plancompetency = new plan_competency(0, $record);
             $plancompetency->create();
         }
+
         return true;
     }
 
@@ -1396,21 +1397,16 @@ class api {
      * @return bool
      */
     public static function remove_competency_from_plan($planid, $competencyid) {
-        // First we do a permissions check.
         $plan = new plan($planid);
-        $plan->read();
+
+        // First we do a permissions check.
         if (!$plan->can_manage()) {
             $context = context_user::instance($plan->get_userid());
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
-        }
 
-        if ($plan->is_based_on_template()) {
+        } else if ($plan->is_based_on_template()) {
             throw new coding_exception('A competency can not be removed from a learning plan based on a template');
         }
-
-        $record = new stdClass();
-        $record->planid = $planid;
-        $record->competencyid = $competencyid;
 
         $link = plan_competency::get_record(array('planid' => $planid, 'competencyid' => $competencyid));
         if ($link) {
@@ -1430,15 +1426,14 @@ class api {
      * @return boolean
      */
     public static function reorder_plan_competency($planid, $competencyidfrom, $competencyidto) {
-        // First we do a permissions check.
         $plan = new plan($planid);
-        $plan->read();
+
+        // First we do a permissions check.
         if (!$plan->can_manage()) {
             $context = context_user::instance($plan->get_userid());
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
-        }
 
-        if ($plan->is_based_on_template()) {
+        } else if ($plan->is_based_on_template()) {
             throw new coding_exception('A competency can not be reordered in a learning plan based on a template');
         }
 
