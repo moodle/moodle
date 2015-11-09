@@ -14,4 +14,11 @@
     <version>3.6.2</version>
     <licenseversion>2.0</licenseversion>
   </library>
+  <library>
+    <location>amd/src/bootstrap.js</location>
+    <name>bootstrap</name>
+    <license>Apache</license>
+    <version>2.3.2</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
 </libraries>
