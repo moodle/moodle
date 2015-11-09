@@ -17,7 +17,9 @@
  * Implement an accessible aria tree widget, from a nested unordered list.
  * Based on http://oaa-accessibility.org/example/41/
  *
- * To respond to selection changed events - listen to "change" events on the root of the tree.
+ * To respond to selection changed events - use tree.on("selectionchanged", handler).
+ * The handler will receive an array of nodes, which are the list items that are currently
+ * selected.
  *
  * @module     tool_lp/tree
  * @package    core

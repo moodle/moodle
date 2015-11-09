@@ -96,11 +96,9 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
                templates.replaceNodeContents($(treeSelector), $(html).html(), js);
                new Ariatree(treeSelector);
                deferred.resolve(competencies);
-            }).fail(notification.exception);
+            }).fail(deferred.reject);
 
-        }).fail(function(exception) {
-            deferred.reject(exception);
-        });
+        }).fail(deferred.reject);
 
         return deferred.promise();
     };
