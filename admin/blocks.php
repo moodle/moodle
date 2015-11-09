@@ -155,7 +155,8 @@
             } else if ($blocksettings instanceof admin_settingpage) {
                 $settings = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=blocksetting'.$block->name.'">'.$strsettings.'</a>';
             } else {
-                $settings = '<a href="block.php?block='.$blockid.'">'.$strsettings.'</a>';
+                debugging('Warning: block_'.$block->name.' returns true in has_config() but does not provide a settings.php file',
+                    DEBUG_DEVELOPER);
             }
         }
 
