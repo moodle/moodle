@@ -30,6 +30,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p>Nu se poate crea baza de date.</p>
+<p>Baza de date specificată nu există iar utilizatorul nu are permisiunea de a crea baza de date.</p>
+<p>Admistratorul site-ului trebuie să verfice configurarea bazei de date.</p>';
 $string['cannotcreatelangdir'] = 'Nu se poate crea un director lang';
 $string['cannotcreatetempdir'] = 'Nu se poate crea director temporar';
 $string['cannotdownloadcomponents'] = 'Nu se pot descărca componente';
