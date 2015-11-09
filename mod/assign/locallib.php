@@ -5588,7 +5588,7 @@ class assign {
         require_once($CFG->dirroot . '/mod/assign/gradingoptionsform.php');
 
         // Need submit permission to submit an assignment.
-        require_capability('mod/assign:grade', $this->context);
+        $this->require_view_grades();
         require_sesskey();
 
         // Is advanced grading enabled?
