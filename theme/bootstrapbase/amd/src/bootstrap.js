@@ -679,15 +679,15 @@ define(['jquery'], function($) {
 
       isActive = $parent.hasClass('open')
 
-      clearMenus()
+      clearMenus($this)
 
       if (!isActive) {
         if ('ontouchstart' in document.documentElement) {
           // if mobile we we use a backdrop because click events don't delegate
           $('<div class="dropdown-backdrop"/>').insertBefore($(this)).on('click', clearMenus)
         }
-        $parent.toggleClass('open')
       }
+      $parent.toggleClass('open')
 
       $this.focus()
 
@@ -737,10 +737,13 @@ define(['jquery'], function($) {
 
   }
 
-  function clearMenus() {
+  function clearMenus($e) {
     $('.dropdown-backdrop').remove()
     $(toggle).each(function () {
-      getParent($(this)).removeClass('open')
+      var $parent = getParent($(this))
+      if ($e == undefined || $parent.find($e).length == 0) {
+          $parent.removeClass('open')
+      }
     })
   }
 
