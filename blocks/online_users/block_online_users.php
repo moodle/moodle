@@ -69,8 +69,8 @@ class block_online_users extends block_base {
 
         $sitelevel = $this->page->course->id == SITEID || $this->page->context->contextlevel < CONTEXT_COURSE;
 
-        $onlineusers = new fetcher($currentgroup, $now, $timetoshowusers, $sitelevel,
-                $this->page->context, $this->page->course->id);
+        $onlineusers = new fetcher($currentgroup, $now, $timetoshowusers, $this->page->context,
+                $sitelevel, $this->page->course->id);
 
         //Calculate minutes
         $minutes  = floor($timetoshowusers/60);
