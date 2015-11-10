@@ -85,7 +85,7 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
             $debugerror = phpunit_util::display_debugging_messages();
             $this->resetDebugging();
             if ($debugerror) {
-                trigger_error('Unenxpected debugging() call detected.', E_USER_NOTICE);
+                trigger_error('Unexpected debugging() call detected.', E_USER_NOTICE);
             }
 
         } catch (Exception $e) {
