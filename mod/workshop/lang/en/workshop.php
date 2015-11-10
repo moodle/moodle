@@ -114,6 +114,7 @@ $string['eventsubmissionassessmentsreset'] = 'Submission assessments cleared';
 $string['eventsubmissioncreated'] = 'Submission created';
 $string['eventsubmissionreassessed'] = 'Submission re-assessed';
 $string['eventsubmissionupdated'] = 'Submission updated';
+$string['eventsubmissiondeleted'] = 'Submission deleted';
 $string['eventsubmissionviewed'] = 'Submission viewed';
 $string['eventphaseswitched'] = 'Phase switched';
 $string['example'] = 'Example submission';
