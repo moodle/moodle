@@ -169,7 +169,7 @@ if ($move > 0 and confirm_sesskey()) {
     forum_rss_delete_file($forum);
     forum_rss_delete_file($forumto);
 
-    redirect($return.'&moved=-1&sesskey='.sesskey());
+    redirect($return.'&move=-1&sesskey='.sesskey());
 }
 
 // Trigger discussion viewed event.
@@ -325,8 +325,8 @@ if ($forum->type != 'single'
         if (!empty($forummenu)) {
             echo '<div class="movediscussionoption">';
             $select = new url_select($forummenu, '',
-                    array(''=>get_string("movethisdiscussionto", "forum")),
-                    'forummenu');
+                    array('/mod/forum/discuss.php?d=' . $discussion->id => get_string("movethisdiscussionto", "forum")),
+                    'forummenu', get_string('move'));
             echo $OUTPUT->render($select);
             echo "</div>";
         }
