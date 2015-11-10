@@ -224,7 +224,9 @@ if ($mycourses = enrol_get_my_courses()) {
     $controlstable->data[0]->cells[] = $OUTPUT->render($select);
 }
 
-$controlstable->data[0]->cells[] = groups_print_course_menu($course, $baseurl->out(), true);
+if ($groupmenu = groups_print_course_menu($course, $baseurl->out(), true)) {
+    $controlstable->data[0]->cells[] = $groupmenu;
+}
 
 if (!isset($hiddenfields['lastaccess'])) {
     // Get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
