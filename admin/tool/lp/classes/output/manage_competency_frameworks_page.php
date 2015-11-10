@@ -32,6 +32,7 @@ use moodle_url;
 use context;
 use context_system;
 use tool_lp\api;
+use tool_lp\external\competency_framework_exporter;
 
 /**
  * Class containing data for managecompetencyframeworks page
@@ -83,7 +84,8 @@ class manage_competency_frameworks_page implements renderable, templatable {
         $data->competencyframeworks = array();
         $data->pagecontextid = $this->pagecontext->id;
         foreach ($this->competencyframeworks as $framework) {
-            $record = $framework->to_record();
+            $exporter = new competency_framework_exporter($framework);
+            $record = $exporter->export_for_template($output);
             $filters = array('competencyframeworkid' => $framework->get_id());
             $record->canmanage = has_capability('tool/lp:competencymanage', $framework->get_context());
             $record->competencies_count = api::count_competencies($filters);

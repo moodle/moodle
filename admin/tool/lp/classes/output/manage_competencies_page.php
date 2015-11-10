@@ -33,6 +33,7 @@ use context_system;
 use tool_lp\api;
 use tool_lp\competency;
 use tool_lp\competency_framework;
+use tool_lp\external\competency_framework_exporter;
 
 /**
  * Class containing data for managecompetencies page
@@ -81,41 +82,15 @@ class manage_competencies_page implements renderable, templatable {
     }
 
     /**
-     * Recursively build up the tree of nodes.
-     *
-     * @param stdClass $parent - the exported parent node
-     * @param array $all - List of all competency classes.
-     * @param context $context The context.
-     */
-    protected function add_competency_children($parent, $all) {
-        $options = array('context' => $this->framework->get_context());
-        foreach ($all as $one) {
-            if ($one->get_parentid() == $parent->id) {
-                $parent->haschildren = true;
-                $record = $one->to_record();
-                $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
-                $record->children = array();
-                $record->haschildren = false;
-                $parent->children[] = $record;
-                $this->add_competency_children($record, $all);
-            }
-        }
-    }
-
-    /**
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param renderer_base $output Renderer base.
      * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
-        $options = array('context' => $this->framework->get_context());
-
         $data = new stdClass();
-        $data->framework = $this->framework->to_record();
-        $data->framework->descriptionformatted = format_text($data->framework->description, $data->framework->descriptionformat,
-            $options);
-        $data->framework->taxonomies = json_encode($this->framework->get_taxonomies());
+        $exporter = new competency_framework_exporter($this->framework);
+        $data->framework = $exporter->export_for_template($output);
         $data->canmanage = $this->canmanage;
         $data->search = $this->search;
         $data->pagecontextid = $this->pagecontext->id;

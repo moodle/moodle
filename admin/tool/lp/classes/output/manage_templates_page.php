@@ -32,6 +32,7 @@ use stdClass;
 use moodle_url;
 use context_system;
 use tool_lp\api;
+use tool_lp\external\template_exporter;
 
 /**
  * Class containing data for managecompetencyframeworks page
@@ -77,7 +78,8 @@ class manage_templates_page implements renderable, templatable {
         $data->pagecontextid = $this->pagecontext->id;
         $data->templates = array();
         foreach ($this->templates as $template) {
-            $record = $template->to_record();
+            $exporter = new template_exporter($template);
+            $record = $exporter->export_for_template($output);
             $record->canmanage = has_capability('tool/lp:templatemanage', $template->get_context());
             $record->contextname = $template->get_context()->get_context_name();
             $data->templates[] = $record;

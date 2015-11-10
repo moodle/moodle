@@ -548,6 +548,15 @@ class competency extends persistent {
     }
 
     /**
+     * Get the context from the framework.
+     *
+     * @return context
+     */
+    public function get_context() {
+        return $this->get_framework()->get_context();
+    }
+
+    /**
      * Recursively build up the tree of nodes.
      *
      * @param array $all - List of all competency classes.

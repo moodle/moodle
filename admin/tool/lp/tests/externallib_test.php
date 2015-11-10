@@ -1365,9 +1365,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->creator);
 
         $syscontext = context_system::instance();
+        $onehour = time() + 60*60;
 
         // Create a template.
-        $template = external::create_template('shortname', time(), 'description', FORMAT_HTML, true,
+        $template = external::create_template('shortname', $onehour, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontext->id));
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 

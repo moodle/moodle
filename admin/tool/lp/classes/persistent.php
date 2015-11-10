@@ -28,6 +28,7 @@ use invalid_parameter_exception;
 use lang_string;
 use ReflectionMethod;
 use stdClass;
+use renderer_base;
 
 /**
  * Abstract class for tool_lp objects saved to the DB.
@@ -78,7 +79,7 @@ abstract class persistent {
         } else if (strpos($method, 'set_') === 0) {
             return $this->set(substr($method, 4), $arguments[0]);
         }
-        throw new coding_exception('Unexpected method call');
+        throw new coding_exception('Unexpected method call: ' . $method);
     }
 
     /**
@@ -722,7 +723,7 @@ abstract class persistent {
      * @return bool
      */
     public static function record_exists($id) {
-        globaL $DB;
+        global $DB;
         return $DB->record_exists(static::TABLE, array('id' => $id));
     }
 
@@ -734,7 +735,7 @@ abstract class persistent {
      * @return bool
      */
     public static function record_exists_select($select, array $params = null) {
-        globaL $DB;
+        global $DB;
         return $DB->record_exists_select(static::TABLE, $select, $params);
     }
 

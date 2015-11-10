@@ -28,6 +28,8 @@ require_once("$CFG->libdir/grade/grade_scale.php");
 
 use context;
 use context_system;
+use context_course;
+use context_user;
 use external_api;
 use external_function_parameters;
 use external_value;
@@ -36,6 +38,11 @@ use external_single_structure;
 use external_multiple_structure;
 use invalid_parameter_exception;
 use grade_scale;
+use tool_lp\external\competency_framework_exporter;
+use tool_lp\external\user_competency_exporter;
+use tool_lp\external\competency_exporter;
+use tool_lp\external\plan_exporter;
+use tool_lp\external\template_exporter;
 
 /**
  * This is the external API for this tool.
@@ -166,10 +173,6 @@ class external extends external_api {
         $descriptionformat = new external_format_value(
             'Description format for the framework'
         );
-        $descriptionformatted = new external_value(
-            PARAM_RAW,
-            'Description that has been formatted for display'
-        );
         $scaleid = new external_value(
             PARAM_INT,
             'Scale id associated to the framework.'
@@ -205,7 +208,6 @@ class external extends external_api {
             'idnumber' => $idnumber,
             'description' => $description,
             'descriptionformat' => $descriptionformat,
-            'descriptionformatted' => $descriptionformatted,
             'scaleid' => $scaleid,
             'scaleconfiguration' => $scaleconfiguration,
             'taxonomies' => $taxonomies,
@@ -290,6 +292,8 @@ class external extends external_api {
      */
     public static function create_competency_framework($shortname, $idnumber, $description, $descriptionformat, $scaleid,
                                                        $scaleconfiguration, $visible, $context) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::create_competency_framework_parameters(),
                                             array(
                                                 'shortname' => $shortname,
@@ -304,15 +308,15 @@ class external extends external_api {
 
         $context = self::get_context_from_params($params['context']);
         self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
 
         unset($params['context']);
         $params['contextid'] = $context->id;
 
         $params = (object) $params;
         $result = api::create_framework($params);
-        $record = $result->to_record();
-        $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
-            array('context' => context_system::instance()));
+        $exporter = new competency_framework_exporter($result);
+        $record = $exporter->export_for_template($output);
         return $record;
     }
 
@@ -350,15 +354,18 @@ class external extends external_api {
      * @return \stdClass
      */
     public static function read_competency_framework($id) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::read_competency_framework_parameters(),
                                             array(
                                                 'id' => $id,
                                             ));
 
-        $result = api::read_framework($params['id']);
-        $record = $result->to_record();
-        $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
-            array('context' => context_system::instance()));
+        $framework = api::read_framework($params['id']);
+        self::validate_context($framework->get_context());
+        $output = $PAGE->get_renderer('tool_lp');
+        $exporter = new competency_framework_exporter($framework);
+        $record = $exporter->export_for_template($output);
         return $record;
     }
 
@@ -401,6 +408,9 @@ class external extends external_api {
                                                 'id' => $id,
                                             ));
 
+        $framework = api::read_framework($params['id']);
+        self::validate_context($framework->get_context());
+
         return api::duplicate_framework($params['id']);
     }
 
@@ -442,6 +452,9 @@ class external extends external_api {
                                             array(
                                                 'id' => $id,
                                             ));
+
+        $framework = api::read_framework($params['id']);
+        self::validate_context($framework->get_context());
 
         return api::delete_framework($params['id']);
     }
@@ -548,6 +561,9 @@ class external extends external_api {
                                                 'visible' => $visible
                                             ));
 
+        $framework = api::read_framework($params['id']);
+        self::validate_context($framework->get_context());
+
         $params = (object) $params;
 
         return api::update_framework($params);
@@ -626,6 +642,8 @@ class external extends external_api {
      * @throws invalid_parameter_exception
      */
     public static function list_competency_frameworks($sort, $order, $skip, $limit, $context, $includes) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::list_competency_frameworks_parameters(),
                                             array(
                                                 'sort' => $sort,
@@ -638,6 +656,7 @@ class external extends external_api {
 
         $context = self::get_context_from_params($params['context']);
         self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
 
         if ($params['order'] !== '' && $params['order'] !== 'ASC' && $params['order'] !== 'DESC') {
             throw new invalid_parameter_exception('Invalid order param. Must be ASC, DESC or empty.');
@@ -651,9 +670,8 @@ class external extends external_api {
                                        $params['includes']);
         $records = array();
         foreach ($results as $result) {
-            $record = $result->to_record();
-            $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
-                array('context' => context_system::instance()));
+            $exporter = new competency_framework_exporter($result);
+            $record = $exporter->export_for_template($output);
             array_push($records, $record);
         }
         return $records;
@@ -796,10 +814,6 @@ class external extends external_api {
         $descriptionformat = new external_format_value(
             'Description format for the competency'
         );
-        $descriptionformatted = new external_value(
-            PARAM_RAW,
-            'Description formatted for display'
-        );
         $visible = new external_value(
             PARAM_BOOL,
             'Is this competency visible?'
@@ -843,7 +857,6 @@ class external extends external_api {
             'idnumber' => $idnumber,
             'description' => $description,
             'descriptionformat' => $descriptionformat,
-            'descriptionformatted' => $descriptionformatted,
             'visible' => $visible,
             'sortorder' => $sortorder,
             'timecreated' => $timecreated,
@@ -1095,6 +1108,8 @@ class external extends external_api {
                                              $visible,
                                              $competencyframeworkid,
                                              $parentid) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::create_competency_parameters(),
                                             array(
                                                 'shortname' => $shortname,
@@ -1106,12 +1121,16 @@ class external extends external_api {
                                                 'parentid' => $parentid,
                                             ));
 
-        $params = (object) $params;
 
+        $framework = api::read_framework($params['competencyframeworkid']);
+        $context = $framework->get_context();
+        self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $params = (object) $params;
         $result = api::create_competency($params);
-        $record = $result->to_record();
-        $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
-            array('context' => context_system::instance()));
+        $exporter = new competency_exporter($result, array('context' => $context));
+        $record = $exporter->export_for_template($output);
         return $record;
     }
 
@@ -1149,15 +1168,20 @@ class external extends external_api {
      * @return \stdClass
      */
     public static function read_competency($id) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::read_competency_parameters(),
                                             array(
                                                 'id' => $id,
                                             ));
 
-        $result = api::read_competency($params['id']);
-        $record = $result->to_record();
-        $options = array('context' => context_system::instance());
-        $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
+
+        $competency = api::read_competency($params['id']);
+        $context = $competency->get_framework()->get_context();
+        self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
+        $exporter = new competency_exporter($competency, array('context' => $context));
+        $record = $exporter->export_for_template($output);
         return $record;
     }
 
@@ -1199,6 +1223,10 @@ class external extends external_api {
                                             array(
                                                 'id' => $id,
                                             ));
+
+        $competency = api::read_competency($params['id']);
+        $context = $competency->get_framework()->get_context();
+        self::validate_context($context);
 
         return api::delete_competency($params['id']);
     }
@@ -1313,6 +1341,10 @@ class external extends external_api {
                                                 'ruleoutcome' => $ruleoutcome,
                                                 'ruleconfig' => $ruleconfig,
                                             ));
+
+        $competency = api::read_competency($params['id']);
+        self::validate_context($competency->get_framework()->get_context());
+
         $params = (object) $params;
 
         return api::update_competency($params);
@@ -1350,6 +1382,8 @@ class external extends external_api {
      * @throws invalid_parameter_exception
      */
     public static function list_competencies($filters, $sort, $order, $skip, $limit) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::list_competencies_parameters(),
                                             array(
                                                 'filters' => $filters,
@@ -1373,16 +1407,26 @@ class external extends external_api {
             $safefilters[$filter->column] = $filter->value;
         }
 
+        $context = null;
+        if (isset($safefilters['competencyframeworkid'])) {
+            $framework = api::read_framework($safefilters['competencyframeworkid']);
+            $context = $framework->get_context();
+        } else {
+            $context = context_system::instance();
+        }
+
+        self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
+
         $results = api::list_competencies($safefilters,
                                                      $params['sort'],
                                                      $params['order'],
                                                      $params['skip'],
                                                      $params['limit']);
         $records = array();
-        $options = array('context' => context_system::instance());
         foreach ($results as $result) {
-            $record = $result->to_record();
-            $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
+            $exporter = new competency_exporter($result, array('context' => $context));
+            $record = $exporter->export_for_template($output);
             array_push($records, $record);
         }
         return $records;
@@ -1437,6 +1481,8 @@ class external extends external_api {
      * @return array
      */
     public static function search_competencies($searchtext, $competencyframeworkid, $includerelated = false) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::search_competencies_parameters(),
                                             array(
                                                 'searchtext' => $searchtext,
@@ -1444,26 +1490,27 @@ class external extends external_api {
                                                 'includerelated' => $includerelated
                                             ));
 
+        $framework = api::read_framework($params['competencyframeworkid']);
+        $context = $framework->get_context();
+        self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
+
         $results = api::search_competencies($params['searchtext'], $params['competencyframeworkid']);
-        $options = array('context' => context_system::instance());
         $records = array();
         foreach ($results as $result) {
-            $record = $result->to_record();
+            $exporter = new competency_exporter($result, array('context' => $context));
+            $record = $exporter->export_for_template($output);
 
             if ($params['includerelated']) {
                 $record->relatedcompetencies = array();
                 $relatedcomps = $result->get_related_competencies();
                 foreach ($relatedcomps as $comp) {
-                    $comprecord = $comp->to_record();
-                    // TODO Format using the context from the framework.
-                    $comprecord->descriptionformatted = format_text($comprecord->description,
-                        $comprecord->descriptionformat, $options);
+                    $exporter = new competency_exporter($comp, array('context' => $context));
+                    $comprecord = $exporter->export_for_template($output);
                     $record->relatedcompetencies[] = $comprecord;
                 }
             }
 
-            // TODO Format using the context from the framework.
-            $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
             array_push($records, $record);
         }
 
@@ -1509,6 +1556,16 @@ class external extends external_api {
             }
             $safefilters[$filter['column']] = $filter['value'];
         }
+
+        $context = null;
+        if (isset($safefilters['competencyframeworkid'])) {
+            $framework = api::read_framework($safefilters['competencyframeworkid']);
+            $context = $framework->get_context();
+        } else {
+            $context = context_system::instance();
+        }
+
+        self::validate_context($context);
 
         return api::count_competencies($safefilters);
     }
@@ -1556,18 +1613,20 @@ class external extends external_api {
      */
     public static function data_for_competencies_manage_page($competencyframeworkid, $search) {
         global $PAGE;
+
         $params = self::validate_parameters(self::data_for_competencies_manage_page_parameters(),
                                             array(
                                                 'competencyframeworkid' => $competencyframeworkid,
                                                 'search' => $search
                                             ));
 
-        $framework = new competency_framework($params['competencyframeworkid']);
+        $framework = api::read_framework($params['competencyframeworkid']);
+        self::validate_context($framework->get_context());
+        $output = $PAGE->get_renderer('tool_lp');
 
         $renderable = new output\manage_competencies_page($framework, $params['search'], $framework->get_context());
-        $renderer = $PAGE->get_renderer('tool_lp');
 
-        $data = $renderable->export_for_template($renderer);
+        $data = $renderable->export_for_template($output);
 
         return $data;
     }
@@ -1630,7 +1689,10 @@ class external extends external_api {
                                                 'parentid' => $parentid
                                             ));
 
-        return api::set_parent_competency($competencyid, $parentid);
+        $competency = api::read_competency($params['competencyid']);
+        self::validate_context($competency->get_framework()->get_context());
+
+        return api::set_parent_competency($params['competencyid'], $params['parentid']);
     }
 
     /**
@@ -1670,6 +1732,9 @@ class external extends external_api {
                                             array(
                                                 'id' => $competencyid,
                                             ));
+
+        $competency = api::read_competency($params['id']);
+        self::validate_context($competency->get_framework()->get_context());
 
         return api::move_up_competency($params['id']);
     }
@@ -1712,6 +1777,9 @@ class external extends external_api {
                                                 'id' => $competencyid,
                                             ));
 
+        $competency = api::read_competency($params['id']);
+        self::validate_context($competency->get_framework()->get_context());
+
         return api::move_down_competency($params['id']);
     }
 
@@ -1752,6 +1820,9 @@ class external extends external_api {
                                             array(
                                                 'id' => $competencyid,
                                             ));
+
+        $competency = api::read_competency($params['id']);
+        self::validate_context($competency->get_framework()->get_context());
 
         return api::count_courses_using_competency($params['id']);
     }
@@ -1794,6 +1865,9 @@ class external extends external_api {
                                                 'id' => $competencyid,
                                             ));
 
+        $competency = api::read_competency($params['id']);
+        self::validate_context($competency->get_framework()->get_context());
+
         return api::list_courses_using_competency($params['id']);
     }
 
@@ -1819,26 +1893,16 @@ class external extends external_api {
             PARAM_TEXT,
             'Course short name'
         );
-        $shortnameformatted = new external_value(
-            PARAM_RAW,
-            'Shortname that has been formatted for display'
-        );
         $fullname = new external_value(
             PARAM_TEXT,
             'Course fullname'
-        );
-        $fullnameformatted = new external_value(
-            PARAM_RAW,
-            'Fullname that has been formatted for display'
         );
 
         $returns = array(
             'id' => $id,
             'shortname' => $shortname,
-            'shortnameformatted' => $shortnameformatted,
             'idnumber' => $idnumber,
             'fullname' => $fullname,
-            'fullnameformatted' => $fullnameformatted,
             'visible' => $visible
         );
         return new external_multiple_structure(new external_single_structure($returns));
@@ -1872,6 +1936,8 @@ class external extends external_api {
                                             array(
                                                 'id' => $courseid,
                                             ));
+
+        self::validate_context(context_course::instance($params['id']));
 
         return api::count_competencies_in_course($params['id']);
     }
@@ -1909,17 +1975,27 @@ class external extends external_api {
      * @return array
      */
     public static function list_competencies_in_course($courseid) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::list_competencies_in_course_parameters(),
                                             array(
                                                 'id' => $courseid,
                                             ));
 
+        self::validate_context(context_course::instance($params['id']));
+        $output = $PAGE->get_renderer('tool_lp');
+
         $competencies = api::list_competencies_in_course($params['id']);
-        $options = array('context' => context_system::instance());
         $results = array();
+
+        $contextcache = array();
         foreach ($competencies as $competency) {
-            $record = $competency->to_record();
-            $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
+            if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
+                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_framework()->get_context();
+            }
+            $context = $contextcache[$competency->get_competencyframeworkid()];
+            $exporter = new competency_exporter($competency, array('context' => $context));
+            $record = $exporter->export_for_template($output);
             array_push($results, $record);
         }
         return $results;
@@ -1971,6 +2047,8 @@ class external extends external_api {
                                                 'competencyid' => $competencyid,
                                             ));
 
+        self::validate_context(context_course::instance($params['courseid']));
+
         return api::add_competency_to_course($params['courseid'], $params['competencyid']);
     }
 
@@ -2020,6 +2098,8 @@ class external extends external_api {
                                                 'competencyid' => $competencyid,
                                             ));
 
+        self::validate_context(context_course::instance($params['courseid']));
+
         return api::remove_competency_from_course($params['courseid'], $params['competencyid']);
     }
 
@@ -2059,6 +2139,7 @@ class external extends external_api {
                                             array(
                                                 'courseid' => $courseid,
                                             ));
+        self::validate_context(context_course::instance($params['courseid']));
 
         $renderable = new output\course_competencies_page($params['courseid']);
         $renderer = $PAGE->get_renderer('tool_lp');
@@ -2130,6 +2211,7 @@ class external extends external_api {
                                                 'competencyidfrom' => $competencyidfrom,
                                                 'competencyidto' => $competencyidto,
                                             ));
+        self::validate_context(context_course::instance($params['courseid']));
 
         return api::reorder_course_competency($params['courseid'], $params['competencyidfrom'], $params['competencyidto']);
     }
@@ -2188,6 +2270,9 @@ class external extends external_api {
                 'competencyidto' => $competencyidto,
             ));
 
+        $template = api::read_template($params['templateid']);
+        self::validate_context($template->get_context());
+
         return api::reorder_template_competency($params['templateid'], $params['competencyidfrom'], $params['competencyidto']);
     }
 
@@ -2229,10 +2314,6 @@ class external extends external_api {
         $descriptionformat = new external_format_value(
             'Description format for the template'
         );
-        $descriptionformatted = new external_value(
-            PARAM_RAW,
-            'Description that has been formatted for display'
-        );
         $visible = new external_value(
             PARAM_BOOL,
             'Is this template visible?'
@@ -2261,7 +2342,6 @@ class external extends external_api {
             'duedateformatted' => $duedateformatted,
             'description' => $description,
             'descriptionformat' => $descriptionformat,
-            'descriptionformatted' => $descriptionformatted,
             'visible' => $visible,
             'timecreated' => $timecreated,
             'timemodified' => $timemodified,
@@ -2330,6 +2410,8 @@ class external extends external_api {
      * @return \stdClass Record of new template.
      */
     public static function create_template($shortname, $duedate, $description, $descriptionformat, $visible, $context) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::create_template_parameters(),
                                             array(
                                                 'shortname' => $shortname,
@@ -2341,16 +2423,15 @@ class external extends external_api {
                                             ));
         $context = self::get_context_from_params($params['context']);
         self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
 
         unset($params['context']);
         $params = (object) $params;
         $params->contextid = $context->id;
 
         $result = api::create_template($params);
-        $record = $result->to_record();
-        $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
-            array('context' => context_system::instance()));
-        $record->duedateformatted = userdate($record->duedate);
+        $exporter = new template_exporter($result);
+        $record = $exporter->export_for_template($output);
         return $record;
     }
 
@@ -2388,16 +2469,19 @@ class external extends external_api {
      * @return \stdClass
      */
     public static function read_template($id) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::read_template_parameters(),
                                             array(
                                                 'id' => $id,
                                             ));
 
-        $result = api::read_template($params['id']);
-        $record = $result->to_record();
-        $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
-            array('context' => context_system::instance()));
-        $record->duedateformatted = userdate($record->duedate);
+        $template = api::read_template($params['id']);
+        self::validate_context($template->get_context());
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $exporter = new template_exporter($template);
+        $record = $exporter->export_for_template($output);
         return $record;
     }
 
@@ -2439,6 +2523,9 @@ class external extends external_api {
                                             array(
                                                 'id' => $id,
                                             ));
+
+        $template = api::read_template($params['id']);
+        self::validate_context($template->get_context());
 
         return api::delete_template($params['id']);
     }
@@ -2527,6 +2614,9 @@ class external extends external_api {
                                                 'descriptionformat' => $descriptionformat,
                                                 'visible' => $visible
                                             ));
+        $template = api::read_template($params['id']);
+        self::validate_context($template->get_context());
+
         $params = (object) $params;
 
         return api::update_template($params);
@@ -2566,13 +2656,20 @@ class external extends external_api {
      * @return boolean Record of new template.
      */
     public static function duplicate_template($id) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::duplicate_template_parameters(),
                                             array(
                                                 'id' => $id,
                                             ));
 
+        $template = api::read_template($params['id']);
+        self::validate_context($template->get_context());
+        $output = $PAGE->get_renderer('tool_lp');
+
         $result = api::duplicate_template($params['id']);
-        return $result->to_record();
+        $exporter = new template_exporter($result);
+        return $exporter->export_for_template($output);
     }
 
     /**
@@ -2645,6 +2742,8 @@ class external extends external_api {
      * @return array
      */
     public static function list_templates($sort, $order, $skip, $limit, $context, $includes) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::list_templates_parameters(),
                                             array(
                                                 'sort' => $sort,
@@ -2657,6 +2756,7 @@ class external extends external_api {
 
         $context = self::get_context_from_params($params['context']);
         self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
 
         if ($params['order'] !== '' && $params['order'] !== 'ASC' && $params['order'] !== 'DESC') {
             throw new invalid_parameter_exception('Invalid order param. Must be ASC, DESC or empty.');
@@ -2670,10 +2770,8 @@ class external extends external_api {
                                        $params['includes']);
         $records = array();
         foreach ($results as $result) {
-            $record = $result->to_record();
-            $record->descriptionformatted = format_text($record->description, $record->descriptionformat,
-                array('context' => context_system::instance()));
-            $record->duedateformatted = userdate($record->duedate);
+            $exporter = new template_exporter($result);
+            $record = $exporter->export_for_template($output);
             array_push($records, $record);
         }
         return $records;
@@ -2816,6 +2914,9 @@ class external extends external_api {
                                                 'id' => $competencyid,
                                             ));
 
+        $competency = api::read_competency($params['id']);
+        self::validate_context($competency->get_framework()->get_context());
+
         return api::count_templates_using_competency($params['id']);
     }
 
@@ -2853,12 +2954,24 @@ class external extends external_api {
      */
     public static function list_templates_using_competency($competencyid) {
         global $PAGE;
+
         $params = self::validate_parameters(self::list_templates_using_competency_parameters(),
                                             array(
                                                 'id' => $competencyid,
                                             ));
 
-        return api::list_templates_using_competency($params['id']);
+        $competency = api::read_competency($params['id']);
+        self::validate_context($competency->get_framework()->get_context());
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $templates = api::list_templates_using_competency($params['id']);
+        $records = array();
+
+        foreach ($templates as $template) {
+            $exporter = new template_exporter($template);
+            $record = $exporter->export_for_template($output);
+            $records[] = $record;
+        }
     }
 
     /**
@@ -2899,6 +3012,8 @@ class external extends external_api {
                                             array(
                                                 'id' => $templateid,
                                             ));
+        $template = api::read_template($params['id']);
+        self::validate_context($template->get_context());
 
         return api::count_competencies_in_template($params['id']);
     }
@@ -2937,17 +3052,27 @@ class external extends external_api {
      */
     public static function list_competencies_in_template($templateid) {
         global $PAGE;
+
         $params = self::validate_parameters(self::list_competencies_in_template_parameters(),
                                             array(
                                                 'id' => $templateid,
                                             ));
 
+        $template = api::read_template($params['id']);
+        self::validate_context($template->get_context());
+        $output = $PAGE->get_renderer('tool_lp');
+
         $competencies = api::list_competencies_in_template($params['id']);
-        $options = array('context' => context_system::instance());
         $results = array();
+        $contextcache = array();
+
         foreach ($competencies as $competency) {
-            $record = $competency->to_record();
-            $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
+            if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
+                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_framework()->get_context();
+            }
+            $context = $contextcache[$competency->get_competencyframeworkid()];
+            $exporter = new competency_exporter($competency, array('context' => $context));
+            $record = $exporter->export_for_template($output);
             array_push($results, $record);
         }
         return $results;
@@ -3000,6 +3125,9 @@ class external extends external_api {
                                                 'competencyid' => $competencyid,
                                             ));
 
+        $template = api::read_template($params['templateid']);
+        self::validate_context($template->get_context());
+
         return api::add_competency_to_template($params['templateid'], $params['competencyid']);
     }
 
@@ -3049,6 +3177,9 @@ class external extends external_api {
                                                 'competencyid' => $competencyid,
                                             ));
 
+        $plan = api::read_plan($params['planid']);
+        self::validate_context($plan->get_context());
+
         return api::add_competency_to_plan($params['planid'], $params['competencyid']);
     }
 
@@ -3097,6 +3228,8 @@ class external extends external_api {
                                                 'planid' => $planid,
                                                 'competencyid' => $competencyid,
                                             ));
+        $plan = api::read_plan($params['planid']);
+        self::validate_context($plan->get_context());
 
         return api::remove_competency_from_plan($params['planid'], $params['competencyid']);
     }
@@ -3178,6 +3311,9 @@ class external extends external_api {
                 'competencyidto' => $competencyidto,
             ));
 
+        $plan = api::read_plan($params['planid']);
+        self::validate_context($plan->get_context());
+
         return api::reorder_plan_competency($params['planid'], $params['competencyidfrom'], $params['competencyidto']);
     }
 
@@ -3203,6 +3339,8 @@ class external extends external_api {
                                                 'templateid' => $templateid,
                                                 'competencyid' => $competencyid,
                                             ));
+        $template = api::read_template($params['templateid']);
+        self::validate_context($template->get_context());
 
         return api::remove_competency_from_template($params['templateid'], $params['competencyid']);
     }
@@ -3302,7 +3440,9 @@ class external extends external_api {
                                             array(
                                                 'planid' => $planid
                                             ));
-        $plan = api::read_plan($planid);
+        $plan = api::read_plan($params['planid']);
+        self::validate_context($plan->get_context());
+
         $renderable = new output\plan_page($plan);
         $renderer = $PAGE->get_renderer('tool_lp');
 
@@ -3482,6 +3622,8 @@ class external extends external_api {
      * @return mixed
      */
     public static function create_plan($name, $description, $descriptionformat, $userid, $templateid, $status, $duedate) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::create_plan_parameters(),
                                             array(
                                                 'name' => $name,
@@ -3492,11 +3634,15 @@ class external extends external_api {
                                                 'status' => $status,
                                                 'duedate' => $duedate
                                             ));
+        $context = context_user::instance($params['userid']);
+        self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
+
         $params = (object) $params;
 
         $result = api::create_plan($params);
-        $record = $result->to_record();
-        $record->statusname = $result->get_statusname();
+        $exporter = new plan_exporter($result);
+        $record = $exporter->export_for_template($output);
         $record->usercanupdate = $result->can_manage();
         return external_api::clean_returnvalue(self::create_plan_returns(), $record);
     }
@@ -3589,6 +3735,8 @@ class external extends external_api {
      * @return mixed
      */
     public static function update_plan($id, $name, $description, $descriptionformat, $userid, $templateid, $status, $duedate) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::update_plan_parameters(),
                                             array(
                                                 'id' => $id,
@@ -3600,11 +3748,15 @@ class external extends external_api {
                                                 'status' => $status,
                                                 'duedate' => $duedate
                                             ));
-        $params = (object) $params;
 
+        $plan = api::read_plan($params['id']);
+        self::validate_context($plan->get_context());
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $params = (object) $params;
         $result = api::update_plan($params);
-        $record = $result->to_record();
-        $record->statusname = $result->get_statusname();
+        $exporter = plan_exporter($result);
+        $record = $exporter->export_for_template($output);
         $record->usercanupdate = $result->can_manage();
         return external_api::clean_returnvalue(self::update_plan_returns(), $record);
     }
@@ -3639,15 +3791,20 @@ class external extends external_api {
      * @return \stdClass
      */
     public static function read_plan($id) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::read_plan_parameters(),
                                             array(
                                                 'id' => $id,
                                             ));
 
-        $result = api::read_plan($params['id']);
-        $record = $result->to_record();
-        $record->statusname = $result->get_statusname();
-        $record->usercanupdate = $result->can_manage();
+        $plan = api::read_plan($params['id']);
+        self::validate_context($plan->get_context());
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $exporter = new plan_exporter($plan);
+        $record = $exporter->export_for_template($output);
+        $record->usercanupdate = $plan->can_manage();
         return external_api::clean_returnvalue(self::read_plan_returns(), $record);
     }
 
@@ -3689,6 +3846,10 @@ class external extends external_api {
                                             array(
                                                 'id' => $id,
                                             ));
+
+        $plan = api::read_plan($params['id']);
+        self::validate_context($plan->get_context());
+
         return external_api::clean_returnvalue(self::delete_plan_returns(), api::delete_plan($params['id']));
     }
 
@@ -3730,10 +3891,13 @@ class external extends external_api {
                                                 'userid' => $userid,
                                             ));
 
-        $renderable = new \tool_lp\output\plans_page($params['userid']);
-        $renderer = $PAGE->get_renderer('tool_lp');
+        $context = context_user::instance($params['userid']);
+        self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
 
-        return external_api::clean_returnvalue(self::data_for_plans_page_returns(), $renderable->export_for_template($renderer));
+        $renderable = new \tool_lp\output\plans_page($params['userid']);
+
+        return external_api::clean_returnvalue(self::data_for_plans_page_returns(), $renderable->export_for_template($output));
     }
 
     /**
@@ -3771,9 +3935,15 @@ class external extends external_api {
      * @return array
      */
     public static function list_plan_competencies($id) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::list_plan_competencies_parameters(), array('id' => $id));
         $id = $params['id'];
         $plan = api::read_plan($id);
+        $usercontext = $plan->get_context();
+        self::validate_context($usercontext);
+        $output = $PAGE->get_renderer('tool_lp');
+
         $result = api::list_plan_competencies($plan);
 
         if ($plan->get_status() == plan::STATUS_COMPLETE) {
@@ -3782,15 +3952,30 @@ class external extends external_api {
             $ucproperty = 'usercompetency';
         }
 
-        foreach ($result as $key => $r) {
-            $r->competency = $r->competency->to_record();
-            $r->competency->descriptionformatted = format_text($r->competency->description,
-                $r->competency->descriptionformat, array('context' => $plan->get_context()));
+        $contextcache = array();
+        $scalecache = array();
 
-            $ucrecord = $r->$ucproperty->to_record();
-            unset($r->usercompetency);
-            unset($r->usercompetencyplan);
-            $r->$ucproperty = $ucrecord;
+        foreach ($result as $key => $r) {
+            $r->competency = null;
+            $r->usercompetency = null;
+
+            if ($plan->get_status() == plan::STATUS_COMPLETE) {
+                if (!isset($contextcache[$r->competency->get_competencyframeworkid()])) {
+                    $contextcache[$r->competency->get_competencyframeworkid()] = $r->competency->get_framework()->get_context();
+                }
+                $context = $contextcache[$r->competency->get_competencyframeworkid()];
+
+                $exporter = new competency_exporter($r->competency, array('context' => $context));
+                $r->competency = $exporter->export_for_template($output);
+            } else {
+                if (!isset($scalecache[$r->competency->get_competencyframeworkid()])) {
+                    $scalecache[$r->competency->get_competencyframeworkid()] = $r->competency->get_framework()->get_scale();
+                }
+                $scale = $scalecache[$r->competency->get_competencyframeworkid()];
+
+                $exporter = new user_competency_exporter($r->usercompetency, array('scale' => $scale));
+                $r->usercompetency = $exporter->export_for_template($output);
+            }
         }
         return $result;
     }
@@ -3838,6 +4023,8 @@ class external extends external_api {
                 'scaleid' => $scaleid,
             )
         );
+        $context = context_system::instance();
+        self::validate_context($context);
         // The following section is not learning plan specific and so has not been moved to the api.
         // Retrieve the scale value from the database.
         $scale = grade_scale::fetch(array('id' => $scaleid));
@@ -3847,7 +4034,7 @@ class external extends external_api {
             // Add a key (make the first value 1).
             $scalevalues[$key] = array(
                     'id' => $key + 1,
-                    'name' => $value
+                    'name' => external_format_string($value, $context->id)
                 );
         }
         return $scalevalues;
@@ -3904,6 +4091,8 @@ class external extends external_api {
                                                 'competencyid' => $competencyid,
                                                 'relatedcompetencyid' => $relatedcompetencyid
                                             ));
+        $competency = api::read_competency($params['competencyid']);
+        self::validate_context($competency->get_framework()->get_context());
 
         return api::add_related_competency($params['competencyid'], $params['relatedcompetencyid']);
     }
@@ -3953,6 +4142,8 @@ class external extends external_api {
                                                 'competencyid' => $competencyid,
                                                 'relatedcompetencyid' => $relatedcompetencyid
                                             ));
+        $competency = api::read_competency($params['competencyid']);
+        self::validate_context($competency->get_framework()->get_context());
 
         return api::remove_related_competency($params['competencyid'], $params['relatedcompetencyid']);
     }
@@ -3993,6 +4184,8 @@ class external extends external_api {
                                             array(
                                                 'competencyid' => $competencyid,
                                             ));
+        $competency = api::read_competency($params['competencyid']);
+        self::validate_context($competency->get_framework()->get_context());
 
         $renderable = new \tool_lp\output\related_competencies($params['competencyid']);
         $renderer = $PAGE->get_renderer('tool_lp');

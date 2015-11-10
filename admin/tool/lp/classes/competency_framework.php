@@ -418,5 +418,4 @@ class competency_framework extends persistent {
         // Return the uniq idnumber.
         return $currentidnumber;
     }
-
 }

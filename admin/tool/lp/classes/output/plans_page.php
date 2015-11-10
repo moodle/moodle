@@ -30,6 +30,7 @@ use stdClass;
 use single_button;
 use moodle_url;
 use tool_lp\api;
+use tool_lp\external\plan_exporter;
 use tool_lp\plan;
 use context_user;
 
@@ -86,8 +87,8 @@ class plans_page implements renderable, templatable {
         $data->plans = array();
         if ($this->plans) {
             foreach ($this->plans as $plan) {
-                $record = $plan->to_record();
-                $record->statusname = $plan->get_statusname();
+                $exporter = new plan_exporter($plan);
+                $record = $exporter->export_for_template($output);
                 $record->usercanupdate = $plan->can_manage();
                 $data->plans[] = $record;
             }

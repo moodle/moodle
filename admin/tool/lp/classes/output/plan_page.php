@@ -29,6 +29,9 @@ use stdClass;
 use tool_lp\api;
 use tool_lp\plan;
 use tool_lp\user_competency;
+use tool_lp\external\user_competency_exporter;
+use tool_lp\external\competency_exporter;
+
 /**
  * Plan page class.
  *
@@ -57,7 +60,6 @@ class plan_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(\renderer_base $output) {
-        $options = array('context' => $this->plan->get_context());
         $frameworks = array();
         $scales = array();
 
@@ -90,37 +92,10 @@ class plan_page implements renderable, templatable {
             $scale = $scales[$framework->get_scaleid()];
 
             // Prepare the data.
-            $competency = $comp->to_record();
-            $competency->descriptionformatted = format_text($competency->description, $competency->descriptionformat, $options);
-            $usercompetency = $usercomp->to_record();
-            $competency->$ucproperty = $usercompetency;
-
-            if ($usercompetency->grade === null) {
-                $gradename = '-';
-            } else {
-                $gradename = format_string($scale->scale_items[$usercompetency->grade - 1], null, $options);
-            }
-
-            if ($usercompetency->proficiency === null) {
-                $proficiencyname = '-';
-            } else {
-                $proficiencyname = get_string($usercompetency->proficiency ? 'yes' : 'no');
-            }
-
-            // We don't want to show user competency status when plan is completed.
-            if (!$data->iscompleted) {
-                $statusname = '-';
-                if ($usercompetency->status != user_competency::STATUS_IDLE) {
-                    $statusname = (string) user_competency::get_status_name($usercompetency->status);
-                }
-                $usercompetency->statusname = $statusname;
-            } else {
-                // Assign planid if plan is completed.
-                $usercompetency->planid = $this->plan->get_id();
-            }
-
-            $usercompetency->gradename = $gradename;
-            $usercompetency->proficiencyname = $proficiencyname;
+            $exporter = new competency_exporter($comp, array('context' => $framework->get_context()));
+            $competency = $exporter->export_for_template($output);
+            $exporter = new user_competency_exporter($usercomp, array('scale' => $scale));
+            $competency->usercompetency = $exporter->export_for_template($output);
 
             $data->competencies[] = $competency;
         }

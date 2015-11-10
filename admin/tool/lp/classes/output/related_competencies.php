@@ -29,6 +29,7 @@ use renderer_base;
 use stdClass;
 use moodle_url;
 use tool_lp\api;
+use tool_lp\external\competency_exporter;
 
 /**
  * Class containing data for related competencies.
@@ -47,6 +48,8 @@ class related_competencies implements renderable, templatable {
      * @param int $competencyid
      */
     public function __construct($competencyid) {
+        $this->competency = api::read_competency($competencyid);
+        $this->context = $this->competency->get_framework()->get_context();
         $this->relatedcompetencies = api::list_related_competencies($competencyid);
     }
 
@@ -61,10 +64,8 @@ class related_competencies implements renderable, templatable {
         $data->relatedcompetencies = array();
         if ($this->relatedcompetencies) {
             foreach ($this->relatedcompetencies as $competency) {
-                $record = $competency->to_record();
-                // TODO Format using the context from the framework.
-                $record->descriptionformatted = format_text($record->description,
-                    $record->descriptionformat, $options);
+                $exporter = new competency_exporter($competency, array('context' => $this->context));
+                $record = $exporter->export_for_template($output);
                 $data->relatedcompetencies[] = $record;
             }
         }

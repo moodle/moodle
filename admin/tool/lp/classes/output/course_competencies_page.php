@@ -31,6 +31,7 @@ use moodle_url;
 use context_system;
 use context_course;
 use tool_lp\api;
+use tool_lp\external\competency_exporter;
 
 /**
  * Class containing data for course competencies page
@@ -94,10 +95,16 @@ class course_competencies_page implements renderable, templatable {
         $data->courseid = $this->courseid;
         $data->pagecontextid = $this->context->id;
         $data->competencies = array();
-        $options = array('context' => context_system::instance());
+
+        $contextcache = array();
         foreach ($this->competencies as $competency) {
-            $record = $competency->to_record();
-            $record->descriptionformatted = format_text($record->description, $record->descriptionformat, $options);
+            if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
+                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_framework()->get_context();
+            }
+            $context = $contextcache[$competency->get_competencyframeworkid()];
+
+            $exporter = new competency_exporter($competency, array('context' => $context));
+            $record = $exporter->export_for_template($output);
             array_push($data->competencies, $record);
         }
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;
