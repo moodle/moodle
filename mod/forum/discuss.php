@@ -349,7 +349,7 @@ if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutpostin
 }
 
 if ($move == -1 and confirm_sesskey()) {
-    echo $OUTPUT->notification(get_string('discussionmoved', 'forum', format_string($forum->name,true)));
+    echo $OUTPUT->notification(get_string('discussionmoved', 'forum', format_string($forum->name,true)), 'notifysuccess');
 }
 
 $canrate = has_capability('mod/forum:rate', $modcontext);
