@@ -30,7 +30,7 @@ $id = required_param('id', PARAM_INT);
 $urlparams = array('id' => $id,
                   'action' => optional_param('action', '', PARAM_TEXT),
                   'rownum' => optional_param('rownum', 0, PARAM_INT),
-                  'useridlistid' => optional_param('action', 0, PARAM_INT));
+                  'useridlistid' => optional_param('useridlistid', time(), PARAM_INT));
 
 $url = new moodle_url('/mod/assign/view.php', $urlparams);
 
