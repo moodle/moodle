@@ -140,6 +140,9 @@ class assign {
     /** @var bool whether to exclude users with inactive enrolment */
     private $showonlyactiveenrol = null;
 
+    /** @var string A key used to identify cached userlists created by this object. */
+    private $useridlistid = null;
+
     /** @var array cached list of participants for this assignment. The cache key will be group, showactive and the context id */
     private $participants = array();
 
@@ -178,6 +181,9 @@ class assign {
 
         $this->submissionplugins = $this->load_plugins('assignsubmission');
         $this->feedbackplugins = $this->load_plugins('assignfeedback');
+
+        // Extra entropy is required for uniqid() to work on cygwin.
+        $this->useridlistid = clean_param(uniqid('', true), PARAM_ALPHANUM);
     }
 
     /**
@@ -470,18 +476,18 @@ class assign {
                     $action = 'redirect';
                     $nextpageparams['action'] = 'grade';
                     $nextpageparams['rownum'] = optional_param('rownum', 0, PARAM_INT) + 1;
-                    $nextpageparams['useridlistid'] = optional_param('useridlistid', time(), PARAM_INT);
+                    $nextpageparams['useridlistid'] = optional_param('useridlistid', $this->get_useridlist_key_id(), PARAM_ALPHANUM);
                 }
             } else if (optional_param('nosaveandprevious', null, PARAM_RAW)) {
                 $action = 'redirect';
                 $nextpageparams['action'] = 'grade';
                 $nextpageparams['rownum'] = optional_param('rownum', 0, PARAM_INT) - 1;
-                $nextpageparams['useridlistid'] = optional_param('useridlistid', time(), PARAM_INT);
+                $nextpageparams['useridlistid'] = optional_param('useridlistid', $this->get_useridlist_key_id(), PARAM_ALPHANUM);
             } else if (optional_param('nosaveandnext', null, PARAM_RAW)) {
                 $action = 'redirect';
                 $nextpageparams['action'] = 'grade';
                 $nextpageparams['rownum'] = optional_param('rownum', 0, PARAM_INT) + 1;
-                $nextpageparams['useridlistid'] = optional_param('useridlistid', time(), PARAM_INT);
+                $nextpageparams['useridlistid'] = optional_param('useridlistid', $this->get_useridlist_key_id(), PARAM_ALPHANUM);
             } else if (optional_param('savegrade', null, PARAM_RAW)) {
                 // Save changes button.
                 $action = 'grade';
@@ -514,7 +520,7 @@ class assign {
         }
 
         $returnparams = array('rownum'=>optional_param('rownum', 0, PARAM_INT),
-                              'useridlistid' => optional_param('useridlistid', time(), PARAM_INT));
+                              'useridlistid' => optional_param('useridlistid', $this->get_useridlist_key_id(), PARAM_ALPHANUM));
         $this->register_return_link($action, $returnparams);
 
         // Now show the right view page.
@@ -3006,16 +3012,16 @@ class assign {
 
         // If userid is passed - we are only grading a single student.
         $rownum = required_param('rownum', PARAM_INT);
-        $useridlistid = optional_param('useridlistid', time(), PARAM_INT);
+        $useridlistid = optional_param('useridlistid', $this->get_useridlist_key_id(), PARAM_ALPHANUM);
         $userid = optional_param('userid', 0, PARAM_INT);
         $attemptnumber = optional_param('attemptnumber', -1, PARAM_INT);
 
         $cache = cache::make_from_params(cache_store::MODE_SESSION, 'mod_assign', 'useridlist');
         if (!$userid) {
-            if (!$useridlist = $cache->get($this->get_course_module()->id . '_' . $useridlistid)) {
+            if (!$useridlist = $cache->get($this->get_useridlist_key($useridlistid))) {
                 $useridlist = $this->get_grading_userid_list();
             }
-            $cache->set($this->get_course_module()->id . '_' . $useridlistid, $useridlist);
+            $cache->set($this->get_useridlist_key($useridlistid), $useridlist);
         } else {
             $rownum = 0;
             $useridlist = array($userid);
@@ -3391,6 +3397,14 @@ class assign {
         } else {
             $gradingtable = new assign_grading_table($this, $perpage, $filter, 0, false);
             $o .= $this->get_renderer()->render($gradingtable);
+        }
+
+        if ($this->can_grade()) {
+            // We need to cache the order of uses in the table as the person may wish to grade them.
+            // This is done based on the row number of the user.
+            $cache = cache::make_from_params(cache_store::MODE_SESSION, 'mod_assign', 'useridlist');
+            $useridlist = $gradingtable->get_column_data('userid');
+            $cache->set($this->get_useridlist_key(), $useridlist);
         }
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
@@ -6080,9 +6094,9 @@ class assign {
         $attemptnumber = $params['attemptnumber'];
         if (!$userid) {
             $cache = cache::make_from_params(cache_store::MODE_SESSION, 'mod_assign', 'useridlist');
-            if (!$useridlist = $cache->get($this->get_course_module()->id . '_' . $useridlistid)) {
+            if (!$useridlist = $cache->get($this->get_useridlist_key($useridlistid))) {
                 $useridlist = $this->get_grading_userid_list();
-                $cache->set($this->get_course_module()->id . '_' . $useridlistid, $useridlist);
+                $cache->set($this->get_useridlist_key($useridlistid), $useridlist);
             }
         } else {
             $useridlist = array($userid);
@@ -6239,7 +6253,7 @@ class assign {
         $mform->setType('rownum', PARAM_INT);
         $mform->setConstant('rownum', $rownum);
         $mform->addElement('hidden', 'useridlistid', $useridlistid);
-        $mform->setType('useridlistid', PARAM_INT);
+        $mform->setType('useridlistid', PARAM_ALPHANUM);
         $mform->addElement('hidden', 'attemptnumber', $attemptnumber);
         $mform->setType('attemptnumber', PARAM_INT);
         $mform->addElement('hidden', 'ajax', optional_param('ajax', 0, PARAM_INT));
@@ -6934,13 +6948,15 @@ class assign {
         $instance = $this->get_instance();
         $rownum = required_param('rownum', PARAM_INT);
         $attemptnumber = optional_param('attemptnumber', -1, PARAM_INT);
-        $useridlistid = optional_param('useridlistid', time(), PARAM_INT);
+        $useridlistid = optional_param('useridlistid', $this->get_useridlist_key_id(), PARAM_ALPHANUM);
         $userid = optional_param('userid', 0, PARAM_INT);
         $cache = cache::make_from_params(cache_store::MODE_SESSION, 'mod_assign', 'useridlist');
         if (!$userid) {
-            if (!$useridlist = $cache->get($this->get_course_module()->id . '_' . $useridlistid)) {
-                $useridlist = $this->get_grading_userid_list();
-                $cache->set($this->get_course_module()->id . '_' . $useridlistid, $useridlist);
+            if (!$useridlist = $cache->get($this->get_useridlist_key($useridlistid))) {
+                // If the userid list is not cached we must not save, as it is possible that the user in a
+                // given row position may not be the same now as when the grading page was generated.
+                $url = new moodle_url('/mod/assign/view.php', array('id' => $this->get_course_module()->id));
+                throw new moodle_exception('useridlistnotcached', 'mod_assign', $url);
             }
         } else {
             $useridlist = array($userid);
@@ -7427,6 +7443,28 @@ class assign {
                 return ASSIGN_GRADING_STATUS_NOT_GRADED;
             }
         }
+    }
+
+    /**
+     * The id used to uniquily identify the cache for this instance of the assign object.
+     *
+     * @return string
+     */
+    public function get_useridlist_key_id() {
+        return $this->useridlistid;
+    }
+
+    /**
+     * Generates the key that should be used for an entry in the useridlist cache.
+     *
+     * @param string $id Generate a key for this instance (optional)
+     * @return string The key for the id, or new entry if no $id is passed.
+     */
+    public function get_useridlist_key($id = null) {
+        if ($id === null) {
+            $id = $this->get_useridlist_key_id();
+        }
+        return $this->get_course_module()->id . '_' . $id;
     }
 }
 

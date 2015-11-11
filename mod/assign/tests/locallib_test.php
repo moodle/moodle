@@ -2143,7 +2143,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $pagination = array('userid'=>$this->students[0]->id,
                             'rownum'=>0,
                             'last'=>true,
-                            'useridlistid'=>time(),
+                            'useridlistid' => $assign->get_useridlist_key_id(),
                             'attemptnumber'=>0);
         $formparams = array($assign, $data, $pagination);
         $mform = new mod_assign_grade_form(null, $formparams);
@@ -2328,6 +2328,31 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $this->assertTrue(in_array($this->students[1]->id, $allgroupmembers));
         $this->assertTrue(in_array($this->extrastudents[0]->id, $allgroupmembers));
         $this->assertTrue(in_array($this->extrastudents[1]->id , $allgroupmembers));
+    }
+
+    /**
+     * Test that the useridlist cache will retive the correct values
+     * when using assign::get_useridlist_key and assign::get_useridlist_key_id.
+     */
+    public function test_useridlist_cache() {
+        // Create an assignment object, we will use this to test the key generation functions.
+        $course = self::getDataGenerator()->create_course();
+        $assign = self::getDataGenerator()->create_module('assign', array('course' => $course->id));
+        list($courserecord, $cm) = get_course_and_cm_from_instance($assign->id, 'assign');
+        $context = context_module::instance($cm->id);
+        $assign = new assign($context, $cm, $courserecord);
+        // Create the cache.
+        $cache = cache::make_from_params(cache_store::MODE_SESSION, 'mod_assign', 'useridlist');
+        // Create an entry that we will insert into the cache.
+        $entry = array(0 => '5', 1 => '6325', 2 => '67783');
+        // Insert the value into the cache.
+        $cache->set($assign->get_useridlist_key(), $entry);
+        // Now test we can retrive the entry.
+        $this->assertEquals($entry, $cache->get($assign->get_useridlist_key()));
+        $useridlistid = clean_param($assign->get_useridlist_key_id(), PARAM_ALPHANUM);
+        $this->assertEquals($entry, $cache->get($assign->get_useridlist_key($useridlistid)));
+        // Check it will not retrive anything on an invalid key.
+        $this->assertFalse($cache->get($assign->get_useridlist_key('notvalid')));
     }
 }
 
