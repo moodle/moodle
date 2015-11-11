@@ -64,4 +64,58 @@ class theme_clean_core_renderer extends theme_bootstrapbase_core_renderer {
 
         return false;
     }
+
+    /**
+     * Returns the navigation bar home reference.
+     *
+     * The small logo is only rendered on pages where the logo is not displayed.
+     *
+     * @param bool $returnlink Whether to wrap the icon and the site name in links or not
+     * @return string The site name, the small logo or both depending on the theme settings.
+     */
+    public function navbar_home($returnlink = true) {
+        global $CFG;
+
+        if ($this->should_render_logo() || empty($this->page->theme->settings->smalllogo)) {
+            // If there is no small logo we always show the site name.
+            return $this->get_home_ref($returnlink);
+        }
+        $imageurl = $this->page->theme->setting_file_url('smalllogo', 'smalllogo');
+        $image = html_writer::img($imageurl, get_string('sitelogo', 'theme_' . $this->page->theme->name),
+            array('class' => 'small-logo'));
+
+        if ($returnlink) {
+            $logocontainer = html_writer::link($CFG->wwwroot, $image,
+                array('class' => 'small-logo-container', 'title' => get_string('home')));
+        } else {
+            $logocontainer = html_writer::tag('span', $image, array('class' => 'small-logo-container'));
+        }
+
+        // Sitename setting defaults to true.
+        if (!isset($this->page->theme->settings->sitename) || !empty($this->page->theme->settings->sitename)) {
+            return $logocontainer . $this->get_home_ref($returnlink);
+        }
+
+        return $logocontainer;
+    }
+
+    /**
+     * Returns a reference to the site home.
+     *
+     * It can be either a link or a span.
+     *
+     * @param bool $returnlink
+     * @return string
+     */
+    protected function get_home_ref($returnlink = true) {
+        global $CFG, $SITE;
+
+        $sitename = format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID)));
+
+        if ($returnlink) {
+            return html_writer::link($CFG->wwwroot, $sitename, array('class' => 'brand', 'title' => get_string('home')));
+        }
+
+        return html_writer::tag('span', $sitename, array('class' => 'brand'));
+    }
 }

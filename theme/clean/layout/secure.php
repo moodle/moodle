@@ -54,9 +54,7 @@ echo $OUTPUT->doctype() ?>
 <header role="banner" class="navbar navbar-fixed-top moodle-has-zindex">
     <nav role="navigation" class="navbar-inner">
         <div class="container-fluid">
-            <span class="brand"><?php echo
-                format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID)));
-                ?></span>
+            <?php echo $OUTPUT->navbar_home(false); ?>
             <?php echo $OUTPUT->navbar_button(); ?>
             <div class="nav-collapse collapse">
                 <ul class="nav pull-right">
