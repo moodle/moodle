@@ -269,17 +269,15 @@ abstract class testing_util {
      * @return array  $table=>$records
      */
     protected static function get_tabledata() {
-        global $CFG;
-
-        $framework = self::get_framework();
-
-        $datafile = self::get_dataroot() . '/' . $framework . '/tabledata.ser';
-        if (!file_exists($datafile)) {
-            // Not initialised yet.
-            return array();
-        }
-
         if (!isset(self::$tabledata)) {
+            $framework = self::get_framework();
+
+            $datafile = self::get_dataroot() . '/' . $framework . '/tabledata.ser';
+            if (!file_exists($datafile)) {
+                // Not initialised yet.
+                return array();
+            }
+
             $data = file_get_contents($datafile);
             self::$tabledata = unserialize($data);
         }
@@ -297,17 +295,15 @@ abstract class testing_util {
      * @return array $table=>$records
      */
     public static function get_tablestructure() {
-        global $CFG;
-
-        $framework = self::get_framework();
-
-        $structurefile = self::get_dataroot() . '/' . $framework . '/tablestructure.ser';
-        if (!file_exists($structurefile)) {
-            // Not initialised yet.
-            return array();
-        }
-
         if (!isset(self::$tablestructure)) {
+            $framework = self::get_framework();
+
+            $structurefile = self::get_dataroot() . '/' . $framework . '/tablestructure.ser';
+            if (!file_exists($structurefile)) {
+                // Not initialised yet.
+                return array();
+            }
+
             $data = file_get_contents($structurefile);
             self::$tablestructure = unserialize($data);
         }
