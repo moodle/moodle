@@ -131,7 +131,7 @@ XPATH
     [./descendant::*[self::h2][normalize-space(.) = %locator%] or %locator% = 'frontpage']
 XPATH
         , 'table' => <<<XPATH
-.//table[(./@id = %locator% or contains(.//caption, %locator%) or contains(concat(' ', normalize-space(@class), ' '), %locator% ))]
+.//table[(./@id = %locator% or contains(.//caption, %locator%) or contains(.//th, %locator%) or contains(concat(' ', normalize-space(@class), ' '), %locator% ))]
 XPATH
         , 'table_row' => <<<XPATH
 .//tr[contains(normalize-space(.), %locator%) and not(.//tr[contains(normalize-space(.), %locator%)])]
