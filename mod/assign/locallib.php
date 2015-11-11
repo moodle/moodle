@@ -511,7 +511,7 @@ class assign {
         }
 
         $returnparams = array('rownum'=>optional_param('rownum', 0, PARAM_INT),
-                              'useridlistid'=>optional_param('useridlistid', 0, PARAM_INT));
+                              'useridlistid' => optional_param('useridlistid', time(), PARAM_INT));
         $this->register_return_link($action, $returnparams);
 
         // Now show the right view page.
