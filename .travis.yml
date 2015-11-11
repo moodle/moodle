@@ -22,6 +22,11 @@ php:
     # We hope to offer PHP 7 support in the near future.
     - nightly
 
+services:
+    # Ensure that memcached and mongodb are running for testing of those MUC stores.
+    - memcached
+    - mongodb
+
 env:
     # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
     # start first so that the total run time is not too high.
@@ -81,6 +86,10 @@ install:
     # Typically it should be able to use the Composer cache if any other job has already completed before we started here.
     - travis_retry composer install --prefer-dist --no-interaction
 
+    - echo "extension = memcache.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    - echo "extension = mongo.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
 before_script:
     - >
       if [ "$INSTALL" = 'true' -o "$PHPUNIT" = 'true' ];
@@ -135,6 +144,9 @@ before_script:
           sed -i \
             -e "/require_once/i \\\$CFG->phpunit_dataroot = '\/home\/travis\/roots\/phpunit';" \
             -e "/require_once/i \\\$CFG->phpunit_prefix = 'p_';" \
+            -e "/require_once/i define('TEST_CACHESTORE_MEMCACHE_TESTSERVERS', '127.0.0.1:11211');" \
+            -e "/require_once/i define('TEST_CACHESTORE_MEMCACHED_TESTSERVERS', '127.0.0.1:11211');" \
+            -e "/require_once/i define('TEST_CACHESTORE_MONGODB_TESTSERVER', 'mongodb://localhost:27017');" \
             config.php ;
 
           # Initialise PHPUnit for Moodle.
