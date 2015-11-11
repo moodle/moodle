@@ -60,6 +60,11 @@ abstract class testing_util {
     protected static $tablestructure = null;
 
     /**
+     * @var array keep list of sequenceid used in a table.
+     */
+    private static $tablesequences = array();
+
+    /**
      * @var array original structure of all database tables
      */
     protected static $sequencenames = null;
@@ -78,6 +83,7 @@ abstract class testing_util {
      * @var int next sequence value for a single test cycle.
      */
     protected static $sequencenextstartingid = null;
+
     /**
      * Return the name of the JSON file containing the init filenames.
      *
@@ -361,9 +367,10 @@ abstract class testing_util {
                     // incorrect table match caused by _
                     continue;
                 }
+
                 if (!is_null($info->auto_increment)) {
                     $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
-                    if ($info->auto_increment == 1) {
+                    if (isset(self::$tablesequences[$table]) && ($info->auto_increment == self::$tablesequences[$table])) {
                         $empties[$table] = $table;
                     }
                 }
@@ -418,9 +425,14 @@ abstract class testing_util {
      *
      * @static
      * @param array $records The records to use to determine the starting value for the table.
+     * @param string $table table name.
      * @return int The value the sequence should be set to.
      */
-    private static function get_next_sequence_starting_value($records) {
+    private static function get_next_sequence_starting_value($records, $table) {
+        if (isset(self::$tablesequences[$table])) {
+            return self::$tablesequences[$table];
+        }
+
         $id = self::$sequencenextstartingid;
 
         // If there are records, calculate the minimum id we can use.
@@ -431,6 +443,9 @@ abstract class testing_util {
         }
 
         self::$sequencenextstartingid = $id + 1000;
+
+        self::$tablesequences[$table] = $id;
+
         return $id;
     }
 
@@ -470,7 +485,7 @@ abstract class testing_util {
             $prefix = $DB->get_prefix();
             foreach ($data as $table => $records) {
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
-                    $nextid = self::get_next_sequence_starting_value($records);
+                    $nextid = self::get_next_sequence_starting_value($records, $table);
                     $queries[] = "ALTER SEQUENCE {$prefix}{$table}_id_seq RESTART WITH $nextid";
                 }
             }
@@ -498,11 +513,10 @@ abstract class testing_util {
             foreach ($data as $table => $records) {
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     if (isset($sequences[$table])) {
-                        $nextid = self::get_next_sequence_starting_value($records);
+                        $nextid = self::get_next_sequence_starting_value($records, $table);
                         if ($sequences[$table] != $nextid) {
                             $DB->change_database_structure("ALTER TABLE {$prefix}{$table} AUTO_INCREMENT = $nextid");
                         }
-
                     } else {
                         // some problem exists, fallback to standard code
                         $DB->get_manager()->reset_sequence($table);
