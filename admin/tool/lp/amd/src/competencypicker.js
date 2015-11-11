@@ -89,6 +89,9 @@ define(['jquery',
         // Initialise the tree.
         var tree = new Tree(self._find('[data-enhance=linktree]'), self._multiSelect);
 
+        // To prevent jiggling we only show the tree after it is enhanced.
+        self._find('[data-enhance=linktree]').show();
+
         tree.on('selectionchanged', function(evt, params) {
             var selected = params.selected;
             evt.preventDefault();
@@ -97,11 +100,16 @@ define(['jquery',
                 var compId = $(item).data('id'),
                     valid = true;
 
-                $.each(self._disallowedCompetencyIDs, function(i, id) {
-                    if (id == compId) {
-                        valid = false;
-                    }
-                });
+                if (typeof compId === 'undefined') {
+                    // Do not allow picking nodes with no id.
+                    valid = false;
+                } else {
+                    $.each(self._disallowedCompetencyIDs, function(i, id) {
+                        if (id == compId) {
+                            valid = false;
+                        }
+                    });
+                }
                 if (valid) {
                     validIds.push(compId);
                 }

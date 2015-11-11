@@ -107,13 +107,15 @@ define(['jquery',
      * @param {dialogue} popup The tool_lp/dialogue that was created.
      */
     var initMovePopup = function(popup) {
-        var tree = new Ariatree('[data-enhance=movetree]', false);
+        var body = $(popup.getContent());
+        var treeRoot = body.find('[data-enhance=movetree]');
+        var tree = new Ariatree(treeRoot, false);
         tree.on('selectionchanged', function(evt, params) {
-            var target = params.selected.first();
+            var target = params.selected;
             moveTarget = $(target).data('id');
         });
+        treeRoot.show();
 
-        var body = $(popup.getContent());
         body.on('click', '[data-action="move"]', function() { popup.close(); doMove(); });
         body.on('click', '[data-action="cancel"]', function() { popup.close(); });
     };
@@ -630,7 +632,7 @@ define(['jquery',
      * @param {Object} params The parameters for the event. Contains a list of selected nodes.
      */
     var selectionChanged = function(evt, params) {
-        var node = params.selected.first(),
+        var node = params.selected,
             id = $(node).data('id'),
             btn = $('[data-region="competencyactions"] [data-action="add"]'),
             actionMenu = $('[data-region="competencyactionsmenu"]'),

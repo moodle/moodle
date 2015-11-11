@@ -121,10 +121,10 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
     /**
      * Whenever the current item in the tree is changed - remember the "id".
      * @param {Event} evt
-     * @param {Object} The parameters for the event.
+     * @param {Object} params The parameters for the event (This is the selected node).
      */
     var rememberCurrent = function(evt, params) {
-        var node = params.selected.first();
+        var node = params.selected;
         currentNodeId = node.attr('data-id');
     };
 

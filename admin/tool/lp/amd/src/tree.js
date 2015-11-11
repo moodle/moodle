@@ -19,7 +19,7 @@
  *
  * To respond to selection changed events - use tree.on("selectionchanged", handler).
  * The handler will receive an array of nodes, which are the list items that are currently
- * selected.
+ * selected. (Or a single node if multiselect is disabled).
  *
  * @module     tool_lp/tree
  * @package    core
@@ -157,11 +157,25 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
         }
     };
 
+    /**
+     * Whenever the currently selected node has changed, trigger an event using this function.
+     *
+     * @method triggerChange
+     */
     Tree.prototype.triggerChange = function() {
         var allSelected = this.items.filter('[aria-selected=true]');
+        if (!this.multiSelect) {
+            allSelected = allSelected.first();
+        }
         this.treeRoot.trigger('selectionchanged', { selected: allSelected });
     };
 
+    /**
+     * Select all the items between the last focused item and this currently focused item.
+     *
+     * @method multiSelectItem
+     * @param {Object} item is the jquery id of the newly selected item.
+     */
     Tree.prototype.multiSelectItem = function(item) {
         if (!this.multiSelect) {
             this.items.attr('aria-selected', 'false');
@@ -186,6 +200,12 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
         this.triggerChange();
     };
 
+    /**
+     * Select a single item. Make sure all the parents are expanded. De-select all other items.
+     *
+     * @method selectItem
+     * @param {Object} item is the jquery id of the newly selected item.
+     */
     Tree.prototype.selectItem = function(item) {
         // Expand all nodes up the tree.
         var walk = item.parent();
@@ -201,6 +221,12 @@ define(['jquery', 'core/url', 'core/log'], function($, url, log) {
         this.triggerChange();
     };
 
+    /**
+     * Toggle the selected state for an item back and forth.
+     *
+     * @method toggleItem
+     * @param {Object} item is the jquery id of the item to toggle.
+     */
     Tree.prototype.toggleItem = function(item) {
         if (!this.multiSelect) {
             return this.selectItem(item);
