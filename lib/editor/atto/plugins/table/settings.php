@@ -38,77 +38,21 @@ if ($ADMIN->fulltree) {
                                                 $default);
     $settings->add($setting);
 
-    $name = new lang_string('allowborderstyle', 'atto_table');
-    $desc = new lang_string('allowborderstyle_desc', 'atto_table');
-    $default = 0;
-
-    $setting = new admin_setting_configcheckbox('atto_table/allowborderstyles',
-                                                $name,
-                                                $desc,
-                                                $default);
-    $settings->add($setting);
-
-    $name = new lang_string('borderstyles', 'atto_table');
-    $desc = new lang_string('borderstyles_desc', 'atto_table');
-    $default = array(
-            'initial' => new lang_string('initial', 'atto_table'),
-            'unset' => new lang_string('unset', 'atto_table'),
-            'none' => new lang_string('none', 'atto_table'),
-            'hidden' => new lang_string('hidden', 'atto_table'),
-            'dotted' => new lang_string('dotted', 'atto_table'),
-            'dashed' => new lang_string('dashed', 'atto_table'),
-            'solid' => new lang_string('solid', 'atto_table'),
-            'double' => new lang_string('double', 'atto_table'),
-            'groove' => new lang_string('groove', 'atto_table'),
-            'ridge' => new lang_string('ridge', 'atto_table'),
-            'inset' => new lang_string('inset', 'atto_table'),
-            'outset' => new lang_string('outset', 'atto_table'),
-        );
-
-    $setting = new admin_setting_configmultiselect('atto_table/borderstyles',
-                                                $name,
-                                                $desc,
-                                                array_keys($default),
-                                                $default);
-    $settings->add($setting);
-
-    $name = new lang_string('allowbordersize', 'atto_table');
-    $desc = new lang_string('allowbordersize_desc', 'atto_table');
-    $default = 0;
-
-    $setting = new admin_setting_configcheckbox('atto_table/allowbordersize',
-                                                $name,
-                                                $desc,
-                                                $default);
-    $settings->add($setting);
-
-    $name = new lang_string('allowbordercolour', 'atto_table');
-    $desc = new lang_string('allowbordercolour_desc', 'atto_table');
-    $default = 0;
-
-    $setting = new admin_setting_configcheckbox('atto_table/allowbordercolour',
-                                                $name,
-                                                $desc,
-                                                $default);
-    $settings->add($setting);
-
     $name = new lang_string('allowbackgroundcolour', 'atto_table');
-    $desc = new lang_string('allowbackgroundcolour_desc', 'atto_table');
     $default = 0;
 
     $setting = new admin_setting_configcheckbox('atto_table/allowbackgroundcolour',
                                                 $name,
-                                                $desc,
+                                                '',
                                                 $default);
     $settings->add($setting);
 
     $name = new lang_string('allowwidth', 'atto_table');
-    $desc = new lang_string('allowwidth_desc', 'atto_table');
     $default = 0;
 
     $setting = new admin_setting_configcheckbox('atto_table/allowwidth',
                                                 $name,
-                                                $desc,
+                                                '',
                                                 $default);
     $settings->add($setting);
 }
