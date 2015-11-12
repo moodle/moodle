@@ -16,6 +16,10 @@
 /**
  * Competency picker.
  *
+ * To handle 'save' events use: picker.on('save')
+ * This will receive a object with either a single 'competencyId', or an array in 'competencyIds'
+ * depending on the value of multiSelect.
+ *
  * @package    tool_lp
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -156,7 +160,13 @@ define(['jquery',
                 return;
             }
 
-            self._trigger('save', { competencyIds: self._selectedCompetencies });
+            if (self._multiSelect) {
+                self._trigger('save', { competencyIds: self._selectedCompetencies });
+            } else {
+                // We checked above that the array has at least one value.
+                self._trigger('save', { competencyId: self._selectedCompetencies[0] });
+            }
+
             self.close();
         });
 
