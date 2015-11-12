@@ -37,5 +37,10 @@ Feature: Add notes to course participants
     And I follow "Participants"
     And I follow "Student 2"
     And I follow "Notes"
-    # Terrible way to verify the absence of a note..
-    And I should not see "Teacher" in the "region-main" "region"
+    And I follow "Course 1"
+    And I follow "Participants"
+    And I follow "Notes"
+    Then I should see "Student 1"
+    And I should see "Student 1 needs to pick up his game"
+    # Verify Student 2 does not have a note added.
+    And I should not see "Student 2"
