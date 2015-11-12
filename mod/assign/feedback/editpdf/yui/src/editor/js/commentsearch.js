@@ -73,8 +73,8 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
             commentslist,
             filtertext;
 
-        filternode = Y.one(SELECTOR.SEARCHFILTER);
-        commentslist = Y.one(SELECTOR.SEARCHCOMMENTSLIST);
+        filternode = this.get('editor').get_dialogue_element(SELECTOR.SEARCHFILTER);
+        commentslist = this.get('editor').get_dialogue_element(SELECTOR.SEARCHCOMMENTSLIST);
 
         filtertext = filternode.get('value');
 
