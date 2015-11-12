@@ -170,8 +170,8 @@ Y.extend(ANNOTATION, Y.Base, {
      */
     draw_highlight : function() {
         var bounds,
-            drawingregion = Y.one(SELECTOR.DRAWINGREGION),
-            offsetcanvas = Y.one(SELECTOR.DRAWINGCANVAS).getXY(),
+            drawingregion = this.editor.get_dialogue_element(SELECTOR.DRAWINGREGION),
+            offsetcanvas = this.editor.get_dialogue_element(SELECTOR.DRAWINGCANVAS).getXY(),
             shape;
 
         if (this.editor.currentannotation === this) {
