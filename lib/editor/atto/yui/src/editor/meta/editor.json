@@ -27,7 +27,8 @@
             "event-outside",
             "handlebars",
             "event-custom",
-            "timers"
+            "timers",
+            "moodle-editor_atto-menu"
         ]
     },
     "moodle-editor_atto-menu": {
