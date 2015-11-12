@@ -10,6 +10,7 @@ Feature: Add notes to course participants
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
       | student2 | Student | 2 | student2@example.com |
+      | student3 | Student | 3 | student3@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -18,16 +19,19 @@ Feature: Add notes to course participants
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
+      | student3 | C1 | student |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Participants"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Student 1')]//input[@type='checkbox']" to "1"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Student 2')]//input[@type='checkbox']" to "1"
+    And I set the field with xpath "//tr[contains(normalize-space(.), 'Student 3')]//input[@type='checkbox']" to "1"
     And I set the field "With selected users..." to "Add a new note"
     And I press "OK"
-    # Add a note to student 1, but leave student 2 empty.
+    # Add a note to student 1, but leave student 2 empty and student 3 with space.
     When I set the field with xpath "//tr[contains(normalize-space(.), 'Student 1')]//textarea" to "Student 1 needs to pick up his game"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'Student 2')]//textarea" to ""
+    And I set the field with xpath "//tr[contains(normalize-space(.), 'Student 3')]//textarea" to "  "
     And I press "Save changes"
     And I follow "Student 1"
     And I follow "Notes"
@@ -44,3 +48,4 @@ Feature: Add notes to course participants
     And I should see "Student 1 needs to pick up his game"
     # Verify Student 2 does not have a note added.
     And I should not see "Student 2"
+    And I should not see "Student 3"
