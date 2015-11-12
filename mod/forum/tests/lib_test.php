@@ -797,6 +797,9 @@ class mod_forum_lib_testcase extends advanced_testcase {
         global $CFG, $DB;
         $this->resetAfterTest();
 
+        $timenow = time();
+        $timenext = $timenow;
+
         // Setup test data.
         $forumgen = $this->getDataGenerator()->get_plugin_generator('mod_forum');
         $course = $this->getDataGenerator()->create_course();
@@ -987,19 +990,52 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $CFG->forum_enabletimedposts = false;
         $this->setAdminUser();
 
-        // Two discussions with identical timemodified ignore each other.
-        $record->timemodified++;
+        // Two discussions with identical timemodified will sort by id.
+        $record->timemodified += 25;
         $DB->update_record('forum_discussions', (object) array('id' => $disc3->id, 'timemodified' => $record->timemodified));
         $DB->update_record('forum_discussions', (object) array('id' => $disc2->id, 'timemodified' => $record->timemodified));
+        $DB->update_record('forum_discussions', (object) array('id' => $disc12->id, 'timemodified' => $record->timemodified - 5));
         $disc2 = $DB->get_record('forum_discussions', array('id' => $disc2->id));
         $disc3 = $DB->get_record('forum_discussions', array('id' => $disc3->id));
 
+        $neighbours = forum_get_discussion_neighbours($cm, $disc3, $forum);
+        $this->assertEquals($disc2->id, $neighbours['prev']->id);
+        $this->assertEmpty($neighbours['next']);
+
         $neighbours = forum_get_discussion_neighbours($cm, $disc2, $forum);
-        $this->assertEquals($disc13->id, $neighbours['prev']->id);
+        $this->assertEquals($disc12->id, $neighbours['prev']->id);
+        $this->assertEquals($disc3->id, $neighbours['next']->id);
+
+        // Set timemodified to not be identical.
+        $DB->update_record('forum_discussions', (object) array('id' => $disc2->id, 'timemodified' => $record->timemodified - 1));
+
+        // Test pinned posts behave correctly.
+        $disc8->pinned = 1;
+        $DB->update_record('forum_discussions', (object) array('id' => $disc8->id, 'pinned' => $disc8->pinned));
+        $neighbours = forum_get_discussion_neighbours($cm, $disc8, $forum);
+        $this->assertEquals($disc3->id, $neighbours['prev']->id);
         $this->assertEmpty($neighbours['next']);
 
         $neighbours = forum_get_discussion_neighbours($cm, $disc3, $forum);
-        $this->assertEquals($disc13->id, $neighbours['prev']->id);
+        $this->assertEquals($disc2->id, $neighbours['prev']->id);
+        $this->assertEquals($disc8->id, $neighbours['next']->id);
+
+        // Test 3 pinned posts.
+        $disc6->pinned = 1;
+        $DB->update_record('forum_discussions', (object) array('id' => $disc6->id, 'pinned' => $disc6->pinned));
+        $disc4->pinned = 1;
+        $DB->update_record('forum_discussions', (object) array('id' => $disc4->id, 'pinned' => $disc4->pinned));
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc6, $forum);
+        $this->assertEquals($disc4->id, $neighbours['prev']->id);
+        $this->assertEquals($disc8->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc4, $forum);
+        $this->assertEquals($disc3->id, $neighbours['prev']->id);
+        $this->assertEquals($disc6->id, $neighbours['next']->id);
+
+        $neighbours = forum_get_discussion_neighbours($cm, $disc8, $forum);
+        $this->assertEquals($disc6->id, $neighbours['prev']->id);
         $this->assertEmpty($neighbours['next']);
     }
 
@@ -1009,6 +1045,9 @@ class mod_forum_lib_testcase extends advanced_testcase {
     public function test_forum_get_neighbours_blog() {
         global $CFG, $DB;
         $this->resetAfterTest();
+
+        $timenow = time();
+        $timenext = $timenow;
 
         // Setup test data.
         $forumgen = $this->getDataGenerator()->get_plugin_generator('mod_forum');
@@ -1176,17 +1215,17 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $CFG->forum_enabletimedposts = false;
         $this->setAdminUser();
 
-        // Two blog posts with identical creation time ignore each other.
         $record->timemodified++;
+        // Two blog posts with identical creation time will sort by id.
         $DB->update_record('forum_posts', (object) array('id' => $disc2->firstpost, 'created' => $record->timemodified));
         $DB->update_record('forum_posts', (object) array('id' => $disc3->firstpost, 'created' => $record->timemodified));
 
         $neighbours = forum_get_discussion_neighbours($cm, $disc2, $forum);
         $this->assertEquals($disc12->id, $neighbours['prev']->id);
-        $this->assertEmpty($neighbours['next']);
+        $this->assertEquals($disc3->id, $neighbours['next']->id);
 
         $neighbours = forum_get_discussion_neighbours($cm, $disc3, $forum);
-        $this->assertEquals($disc12->id, $neighbours['prev']->id);
+        $this->assertEquals($disc2->id, $neighbours['prev']->id);
         $this->assertEmpty($neighbours['next']);
     }
 
@@ -1195,6 +1234,9 @@ class mod_forum_lib_testcase extends advanced_testcase {
      */
     public function test_forum_get_neighbours_with_groups() {
         $this->resetAfterTest();
+
+        $timenow = time();
+        $timenext = $timenow;
 
         // Setup test data.
         $forumgen = $this->getDataGenerator()->get_plugin_generator('mod_forum');
@@ -1390,6 +1432,9 @@ class mod_forum_lib_testcase extends advanced_testcase {
     public function test_forum_get_neighbours_with_groups_blog() {
         $this->resetAfterTest();
 
+        $timenow = time();
+        $timenext = $timenow;
+
         // Setup test data.
         $forumgen = $this->getDataGenerator()->get_plugin_generator('mod_forum');
         $course = $this->getDataGenerator()->create_course();
@@ -1418,6 +1463,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $record->groupid = $group1->id;
         $record->timemodified = time();
         $disc11 = $forumgen->create_discussion($record);
+        $record->timenow = $timenext++;
         $record->forum = $forum2->id;
         $record->timemodified++;
         $disc21 = $forumgen->create_discussion($record);
@@ -1661,7 +1707,14 @@ class mod_forum_lib_testcase extends advanced_testcase {
             $this->assertEquals($discussionid, $row->discussion);
         }
     }
-
+    public function test_discussion_pinned_sort() {
+        list($forum, $discussionids) = $this->create_multiple_discussions_with_replies(10, 5);
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+        $discussions = forum_get_discussions($cm);
+        // First discussion should be pinned.
+        $first = reset($discussions);
+        $this->assertEquals(1, $first->pinned, "First discussion should be pinned discussion");
+    }
     public function test_forum_view() {
         global $CFG;
 
@@ -1759,7 +1812,13 @@ class mod_forum_lib_testcase extends advanced_testcase {
         // Create 10 discussions with replies.
         $discussionids = array();
         for ($i = 0; $i < $discussioncount; $i++) {
-            $discussion = $this->create_single_discussion_with_replies($forum, $user, $replycount);
+            // Pin 3rd discussion.
+            if ($i == 3) {
+                $discussion = $this->create_single_discussion_pinned_with_replies($forum, $user, $replycount);
+            } else {
+                $discussion = $this->create_single_discussion_with_replies($forum, $user, $replycount);
+            }
+
             $discussionids[] = $discussion->id;
         }
         return array($forum, $discussionids);
@@ -1782,6 +1841,41 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $record->course = $forum->course;
         $record->forum = $forum->id;
         $record->userid = $user->id;
+        $discussion = $generator->create_discussion($record);
+
+        // Retrieve the first post.
+        $replyto = $DB->get_record('forum_posts', array('discussion' => $discussion->id));
+
+        // Create the replies.
+        $post = new stdClass();
+        $post->userid = $user->id;
+        $post->discussion = $discussion->id;
+        $post->parent = $replyto->id;
+
+        for ($i = 0; $i < $replycount; $i++) {
+            $generator->create_post($post);
+        }
+
+        return $discussion;
+    }
+    /**
+     * Create a discussion with a number of replies.
+     *
+     * @param object $forum The forum which has been created
+     * @param object $user The user making the discussion and replies
+     * @param int $replycount The number of replies
+     * @return object $discussion
+     */
+    protected function create_single_discussion_pinned_with_replies($forum, $user, $replycount) {
+        global $DB;
+
+        $generator = self::getDataGenerator()->get_plugin_generator('mod_forum');
+
+        $record = new stdClass();
+        $record->course = $forum->course;
+        $record->forum = $forum->id;
+        $record->userid = $user->id;
+        $record->pinned = 1;
         $discussion = $generator->create_discussion($record);
 
         // Retrieve the first post.

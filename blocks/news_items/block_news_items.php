@@ -93,7 +93,8 @@ class block_news_items extends block_base {
             // descending order. The call to default sort order here will use
             // that unless the discussion that post is in has a timestart set
             // in the future.
-            $sort = forum_get_default_sort_order(true, 'p.modified');
+            // This sort will ignore pinned posts as we want the most recent.
+            $sort = forum_get_default_sort_order(true, 'p.modified', 'd', false);
             if (! $discussions = forum_get_discussions($cm, $sort, false,
                                                        $currentgroup, $this->page->course->newsitems) ) {
                 $text .= '('.get_string('nonews', 'forum').')';

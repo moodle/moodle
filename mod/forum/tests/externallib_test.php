@@ -695,7 +695,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 'userpictureurl' => '',
                 'usermodifiedpictureurl' => '',
                 'numreplies' => 3,
-                'numunread' => 0
+                'numunread' => 0,
+                'pinned' => 0
             );
 
         // Call the external function passing forum id.
@@ -907,6 +908,14 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('the subject', $discussions['discussions'][0]['subject']);
         $this->assertEquals('some text here...', $discussions['discussions'][0]['message']);
 
+        $discussion2pinned = mod_forum_external::add_discussion($forum->id, 'the pinned subject', 'some 2 text here...', -1,
+                                                                array('options' => array('name' => 'discussionpinned',
+                                                                                         'value' => true)));
+        $discussion3 = mod_forum_external::add_discussion($forum->id, 'the non pinnedsubject', 'some 3 text here...');
+        $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+        $this->assertCount(3, $discussions['discussions']);
+        $this->assertEquals($discussion2pinned['discussionid'], $discussions['discussions'][0]['discussion']);
     }
 
     /**

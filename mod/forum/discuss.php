@@ -32,7 +32,7 @@ $mode   = optional_param('mode', 0, PARAM_INT);          // If set, changes the 
 $move   = optional_param('move', 0, PARAM_INT);          // If set, moves this discussion to another forum
 $mark   = optional_param('mark', '', PARAM_ALPHA);       // Used for tracking read posts if user initiated.
 $postid = optional_param('postid', 0, PARAM_INT);        // Used for tracking read posts if user initiated.
-$pin = optional_param('pin', -1, PARAM_INT);          // If set, pin or unpin this discussion.
+$pin    = optional_param('pin', -1, PARAM_INT);          // If set, pin or unpin this discussion.
 
 $url = new moodle_url('/mod/forum/discuss.php', array('d'=>$d));
 if ($parent !== 0) {
@@ -172,7 +172,6 @@ if ($move > 0 and confirm_sesskey()) {
 
     redirect($return.'&move=-1&sesskey='.sesskey());
 }
-
 // Pin or unpin discussion if requested.
 if ($pin !== -1 && confirm_sesskey()) {
     require_capability('mod/forum:pindiscussions', $modcontext);
@@ -181,19 +180,15 @@ if ($pin !== -1 && confirm_sesskey()) {
 
     switch ($pin) {
         case FORUM_DISCUSSION_PINNED:
-            $DB->set_field('forum_discussions', 'pinned', $pin, array('id' => $discussion->id));
-            $event = \mod_forum\event\discussion_pinned::create($params);
-            $event->add_record_snapshot('forum_discussions', $discussion);
-            $event->trigger();
+            // Pin the discussion and trigger discussion pinned event.
+            forum_discussion_pin($modcontext, $forum, $discussion);
             break;
         case FORUM_DISCUSSION_UNPINNED:
-            $DB->set_field('forum_discussions', 'pinned', $pin, array('id' => $discussion->id));
-            $event = \mod_forum\event\discussion_unpinned::create($params);
-            $event->add_record_snapshot('forum_discussions', $discussion);
-            $event->trigger();
+            // Unpin the discussion and trigger discussion unpinned event.
+            forum_discussion_unpin($modcontext, $forum, $discussion);
             break;
         default:
-            echo $OUTPUT->notfication("Invalid value when attempting to pin/unpin discussion");
+            echo $OUTPUT->notification("Invalid value when attempting to pin/unpin discussion");
             break;
     }
 
@@ -299,7 +294,7 @@ $neighbourlinks = $renderer->neighbouring_discussion_navigation($neighbours['pre
 echo $neighbourlinks;
 
 /// Print the controls across the top
-echo '<div class="discussioncontrols clearfix">';
+echo '<div class="discussioncontrols clearfix"><div class="controlscontainer">';
 
 if (!empty($CFG->enableportfolios) && has_capability('mod/forum:exportdiscussion', $modcontext)) {
     require_once($CFG->libdir.'/portfoliolib.php');
@@ -374,8 +369,8 @@ if (has_capability('mod/forum:pindiscussions', $modcontext)) {
     echo html_writer::tag('div', $OUTPUT->render($button), array('class' => 'discussioncontrol pindiscussion'));
 }
 
-echo '<div class="clearfloat">&nbsp;</div>';
-echo "</div>";
+
+echo "</div></div>";
 
 if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
     $a = new stdClass();
@@ -386,7 +381,7 @@ if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
 
 if ($forum->type == 'qanda' && !has_capability('mod/forum:viewqandawithoutposting', $modcontext) &&
             !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {
-    echo $OUTPUT->notification(get_string('qandanotify','forum'));
+    echo $OUTPUT->notification(get_string('qandanotify', 'forum'));
 }
 
 if ($move == -1 and confirm_sesskey()) {

@@ -650,6 +650,10 @@ $mform_post->set_data(array(        'attachments'=>$draftitemid,
                                     'timeend'=>$discussion->timeend):
                                 array())+
 
+                            (isset($discussion->pinned) ? array(
+                                     'pinned' => $discussion->pinned) :
+                                array()) +
+
                             (isset($post->groupid)?array(
                                     'groupid'=>$post->groupid):
                                 array())+
@@ -713,7 +717,16 @@ if ($mform_post->is_cancelled()) {
 
             $DB->set_field('forum_discussions' ,'groupid' , $fromform->groupinfo, array('firstpost' => $fromform->id));
         }
-
+        // When editing first post/discussion.
+        if (!$fromform->parent) {
+            if (has_capability('mod/forum:pindiscussions', $modcontext)) {
+                // Can change pinned if we have capability.
+                $fromform->pinned = !empty($fromform->pinned) ? FORUM_DISCUSSION_PINNED : FORUM_DISCUSSION_UNPINNED;
+            } else {
+                // We don't have the capability to change so keep to previous value.
+                unset($fromform->pinned);
+            }
+        }
         $updatepost = $fromform; //realpost
         $updatepost->forum = $forum->id;
         if (!forum_update_post($updatepost, $mform_post, $message)) {
@@ -852,7 +865,12 @@ if ($mform_post->is_cancelled()) {
         }
         $discussion->timestart = $fromform->timestart;
         $discussion->timeend = $fromform->timeend;
-        $discussion->pinned = FORUM_DISCUSSION_UNPINNED;
+
+        if (has_capability('mod/forum:pindiscussions', $modcontext) && !empty($fromform->pinned)) {
+            $discussion->pinned = FORUM_DISCUSSION_PINNED;
+        } else {
+            $discussion->pinned = FORUM_DISCUSSION_UNPINNED;
+        }
 
         $allowedgroups = array();
         $groupstopostto = array();
@@ -1048,4 +1066,3 @@ if (!empty($formheading)) {
 $mform_post->display();
 
 echo $OUTPUT->footer();
-

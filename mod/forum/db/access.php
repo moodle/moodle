@@ -226,7 +226,7 @@ $capabilities = array(
 
     'mod/forum:pindiscussions' => array(
 
-        'captype' => 'read',
+        'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
             'teacher' => CAP_ALLOW,
