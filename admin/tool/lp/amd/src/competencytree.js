@@ -80,7 +80,7 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
                 }
             }]);
             promises[0].done(function(result) {
-                competencies = [];
+                competencies = {};
                 var i = 0;
                 for (i = 0; i < result.length; i++) {
                     competencies[result[i].id] = result[i];
