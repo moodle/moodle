@@ -42,17 +42,17 @@
     * unsubscribediscussionlink
     * forumindexlink
 }}
-{{ coursename }} -> {{# str }} forums, forum {{/ str }} -> {{ forumname }}{{# showdiscussionname }} -> {{ discussionname }} {{/ showdiscussionname }}
+{{{ coursename }}} -> {{# str }} forums, forum {{/ str }} -> {{{ forumname }}}{{# showdiscussionname }} -> {{{ discussionname }}} {{/ showdiscussionname }}
 {{ discussionlink }}
-{{ subject }}
-{{# str }} bynameondate, forum, { "name": "{{ authorfullname }}", "date": "{{ postdate }}" } {{/ str }}
+{{{ subject }}}
+{{# str }} bynameondate, forum, { "name": "{{{ authorfullname }}}", "date": "{{ postdate }}" } {{/ str }}
 ---------------------------------------------------------------------
-{{ message }}
+{{{ message }}}
 
-{{ attachments }}
+{{{ attachments }}}
 ---------------------------------------------------------------------
 {{# canreply }}
-{{# str }} postmailinfolink, forum, { "coursename": "{{ coursename }}", "replylink": "{{ replylink }}" } {{/ str }}
+{{# str }} postmailinfolink, forum, { "coursename": "{{{ coursename }}}", "replylink": "{{ replylink }}" } {{/ str }}
 {{/ canreply }}
 {{# unsubscribeforumlink }}
 {{# str }} unsubscribelink, forum, {{{ unsubscribeforumlink }}} {{/ str }}
