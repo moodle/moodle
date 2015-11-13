@@ -90,7 +90,7 @@ class manage_competencies_page implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
         $exporter = new competency_framework_exporter($this->framework);
-        $data->framework = $exporter->export_for_template($output);
+        $data->framework = $exporter->export($output);
         $data->canmanage = $this->canmanage;
         $data->search = $this->search;
         $data->pagecontextid = $this->pagecontext->id;

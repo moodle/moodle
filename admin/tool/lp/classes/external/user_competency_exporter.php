@@ -44,8 +44,8 @@ class user_competency_exporter extends persistent_exporter {
         return array('scale' => 'grade_scale');
     }
 
-    public function export_for_template(renderer_base $output) {
-        $result = parent::export_for_template($output);
+    public function export(renderer_base $output) {
+        $result = parent::export($output);
         $context = context_user::instance($result->userid);
         if ($result->grade === null) {
             $gradename = '-';

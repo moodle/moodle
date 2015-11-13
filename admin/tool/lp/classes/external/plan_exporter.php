@@ -37,8 +37,8 @@ class plan_exporter extends persistent_exporter {
         return 'tool_lp\\plan';
     }
 
-    public function export_for_template(renderer_base $output) {
-        $result = parent::export_for_template($output);
+    public function export(renderer_base $output) {
+        $result = parent::export($output);
         $result->statusname = $this->persistent->get_statusname();
         return $result;
     }

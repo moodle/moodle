@@ -316,7 +316,7 @@ class external extends external_api {
         $params = (object) $params;
         $result = api::create_framework($params);
         $exporter = new competency_framework_exporter($result);
-        $record = $exporter->export_for_template($output);
+        $record = $exporter->export($output);
         return $record;
     }
 
@@ -365,7 +365,7 @@ class external extends external_api {
         self::validate_context($framework->get_context());
         $output = $PAGE->get_renderer('tool_lp');
         $exporter = new competency_framework_exporter($framework);
-        $record = $exporter->export_for_template($output);
+        $record = $exporter->export($output);
         return $record;
     }
 
@@ -671,7 +671,7 @@ class external extends external_api {
         $records = array();
         foreach ($results as $result) {
             $exporter = new competency_framework_exporter($result);
-            $record = $exporter->export_for_template($output);
+            $record = $exporter->export($output);
             array_push($records, $record);
         }
         return $records;
@@ -1130,7 +1130,7 @@ class external extends external_api {
         $params = (object) $params;
         $result = api::create_competency($params);
         $exporter = new competency_exporter($result, array('context' => $context));
-        $record = $exporter->export_for_template($output);
+        $record = $exporter->export($output);
         return $record;
     }
 
@@ -1181,7 +1181,7 @@ class external extends external_api {
         self::validate_context($context);
         $output = $PAGE->get_renderer('tool_lp');
         $exporter = new competency_exporter($competency, array('context' => $context));
-        $record = $exporter->export_for_template($output);
+        $record = $exporter->export($output);
         return $record;
     }
 
@@ -1426,7 +1426,7 @@ class external extends external_api {
         $records = array();
         foreach ($results as $result) {
             $exporter = new competency_exporter($result, array('context' => $context));
-            $record = $exporter->export_for_template($output);
+            $record = $exporter->export($output);
             array_push($records, $record);
         }
         return $records;
@@ -1499,14 +1499,14 @@ class external extends external_api {
         $records = array();
         foreach ($results as $result) {
             $exporter = new competency_exporter($result, array('context' => $context));
-            $record = $exporter->export_for_template($output);
+            $record = $exporter->export($output);
 
             if ($params['includerelated']) {
                 $record->relatedcompetencies = array();
                 $relatedcomps = $result->get_related_competencies();
                 foreach ($relatedcomps as $comp) {
                     $exporter = new competency_exporter($comp, array('context' => $context));
-                    $comprecord = $exporter->export_for_template($output);
+                    $comprecord = $exporter->export($output);
                     $record->relatedcompetencies[] = $comprecord;
                 }
             }
@@ -1995,7 +1995,7 @@ class external extends external_api {
             }
             $context = $contextcache[$competency->get_competencyframeworkid()];
             $exporter = new competency_exporter($competency, array('context' => $context));
-            $record = $exporter->export_for_template($output);
+            $record = $exporter->export($output);
             array_push($results, $record);
         }
         return $results;
@@ -2431,7 +2431,7 @@ class external extends external_api {
 
         $result = api::create_template($params);
         $exporter = new template_exporter($result);
-        $record = $exporter->export_for_template($output);
+        $record = $exporter->export($output);
         return $record;
     }
 
@@ -2481,7 +2481,7 @@ class external extends external_api {
         $output = $PAGE->get_renderer('tool_lp');
 
         $exporter = new template_exporter($template);
-        $record = $exporter->export_for_template($output);
+        $record = $exporter->export($output);
         return $record;
     }
 
@@ -2669,7 +2669,7 @@ class external extends external_api {
 
         $result = api::duplicate_template($params['id']);
         $exporter = new template_exporter($result);
-        return $exporter->export_for_template($output);
+        return $exporter->export($output);
     }
 
     /**
@@ -2771,7 +2771,7 @@ class external extends external_api {
         $records = array();
         foreach ($results as $result) {
             $exporter = new template_exporter($result);
-            $record = $exporter->export_for_template($output);
+            $record = $exporter->export($output);
             array_push($records, $record);
         }
         return $records;
@@ -2969,7 +2969,7 @@ class external extends external_api {
 
         foreach ($templates as $template) {
             $exporter = new template_exporter($template);
-            $record = $exporter->export_for_template($output);
+            $record = $exporter->export($output);
             $records[] = $record;
         }
     }
@@ -3072,7 +3072,7 @@ class external extends external_api {
             }
             $context = $contextcache[$competency->get_competencyframeworkid()];
             $exporter = new competency_exporter($competency, array('context' => $context));
-            $record = $exporter->export_for_template($output);
+            $record = $exporter->export($output);
             array_push($results, $record);
         }
         return $results;
@@ -3642,7 +3642,7 @@ class external extends external_api {
 
         $result = api::create_plan($params);
         $exporter = new plan_exporter($result);
-        $record = $exporter->export_for_template($output);
+        $record = $exporter->export($output);
         $record->usercanupdate = $result->can_manage();
         return external_api::clean_returnvalue(self::create_plan_returns(), $record);
     }
@@ -3756,7 +3756,7 @@ class external extends external_api {
         $params = (object) $params;
         $result = api::update_plan($params);
         $exporter = plan_exporter($result);
-        $record = $exporter->export_for_template($output);
+        $record = $exporter->export($output);
         $record->usercanupdate = $result->can_manage();
         return external_api::clean_returnvalue(self::update_plan_returns(), $record);
     }
@@ -3803,7 +3803,7 @@ class external extends external_api {
         $output = $PAGE->get_renderer('tool_lp');
 
         $exporter = new plan_exporter($plan);
-        $record = $exporter->export_for_template($output);
+        $record = $exporter->export($output);
         $record->usercanupdate = $plan->can_manage();
         return external_api::clean_returnvalue(self::read_plan_returns(), $record);
     }
@@ -3966,7 +3966,7 @@ class external extends external_api {
                 $context = $contextcache[$r->competency->get_competencyframeworkid()];
 
                 $exporter = new competency_exporter($r->competency, array('context' => $context));
-                $r->competency = $exporter->export_for_template($output);
+                $r->competency = $exporter->export($output);
             } else {
                 if (!isset($scalecache[$r->competency->get_competencyframeworkid()])) {
                     $scalecache[$r->competency->get_competencyframeworkid()] = $r->competency->get_framework()->get_scale();
@@ -3974,7 +3974,7 @@ class external extends external_api {
                 $scale = $scalecache[$r->competency->get_competencyframeworkid()];
 
                 $exporter = new user_competency_exporter($r->usercompetency, array('scale' => $scale));
-                $r->usercompetency = $exporter->export_for_template($output);
+                $r->usercompetency = $exporter->export($output);
             }
         }
         return $result;

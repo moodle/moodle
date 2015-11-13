@@ -65,7 +65,7 @@ class related_competencies implements renderable, templatable {
         if ($this->relatedcompetencies) {
             foreach ($this->relatedcompetencies as $competency) {
                 $exporter = new competency_exporter($competency, array('context' => $this->context));
-                $record = $exporter->export_for_template($output);
+                $record = $exporter->export($output);
                 $data->relatedcompetencies[] = $record;
             }
         }

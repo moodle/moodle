@@ -79,7 +79,7 @@ class manage_templates_page implements renderable, templatable {
         $data->templates = array();
         foreach ($this->templates as $template) {
             $exporter = new template_exporter($template);
-            $record = $exporter->export_for_template($output);
+            $record = $exporter->export($output);
             $record->canmanage = has_capability('tool/lp:templatemanage', $template->get_context());
             $record->contextname = $template->get_context()->get_context_name();
             $data->templates[] = $record;

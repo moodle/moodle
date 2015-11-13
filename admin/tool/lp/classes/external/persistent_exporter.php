@@ -26,19 +26,18 @@ namespace tool_lp\external;
 require_once($CFG->libdir . '/externallib.php');
 
 use stdClass;
-use templatable;
 use renderer_base;
 use context;
 use context_system;
 use coding_exception;
 
 /**
- * An extended version of the persistent class with a default implementation of export_for_template
+ * An extended version of the persistent class with a default implementation of export
  *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class persistent_exporter implements templatable {
+abstract class persistent_exporter {
 
     /** @var \tool_lp\persistent The persistent object we will export. */
     var $persistent = null;
@@ -112,7 +111,7 @@ abstract class persistent_exporter implements templatable {
      * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
      * @return stdClass|array
      */
-    public function export_for_template(renderer_base $output) {
+    public function export(renderer_base $output) {
         $data = new stdClass();
         $properties = $this->persistent->properties_definition();
         $context = $this->get_context();

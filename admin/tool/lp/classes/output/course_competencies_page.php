@@ -104,7 +104,7 @@ class course_competencies_page implements renderable, templatable {
             $context = $contextcache[$competency->get_competencyframeworkid()];
 
             $exporter = new competency_exporter($competency, array('context' => $context));
-            $record = $exporter->export_for_template($output);
+            $record = $exporter->export($output);
             array_push($data->competencies, $record);
         }
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;

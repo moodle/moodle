@@ -93,9 +93,9 @@ class plan_page implements renderable, templatable {
 
             // Prepare the data.
             $exporter = new competency_exporter($comp, array('context' => $framework->get_context()));
-            $competency = $exporter->export_for_template($output);
+            $competency = $exporter->export($output);
             $exporter = new user_competency_exporter($usercomp, array('scale' => $scale));
-            $competency->usercompetency = $exporter->export_for_template($output);
+            $competency->usercompetency = $exporter->export($output);
 
             $data->competencies[] = $competency;
         }

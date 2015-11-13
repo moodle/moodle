@@ -85,7 +85,7 @@ class manage_competency_frameworks_page implements renderable, templatable {
         $data->pagecontextid = $this->pagecontext->id;
         foreach ($this->competencyframeworks as $framework) {
             $exporter = new competency_framework_exporter($framework);
-            $record = $exporter->export_for_template($output);
+            $record = $exporter->export($output);
             $filters = array('competencyframeworkid' => $framework->get_id());
             $record->canmanage = has_capability('tool/lp:competencymanage', $framework->get_context());
             $record->competencies_count = api::count_competencies($filters);
