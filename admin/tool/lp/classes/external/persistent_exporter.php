@@ -88,6 +88,23 @@ abstract class persistent_exporter implements templatable {
     }
 
     /**
+     * Function to guess the correct context, falling back to system context.
+     *
+     * @return context
+     */
+    protected function get_context() {
+        $context = null;
+        if (isset($this->related['context']) && $this->related['context'] instanceof context) {
+            $context = $this->related['context'];
+        } else if (method_exists($this->persistent, 'get_context')) {
+            $context = $this->persistent->get_context();
+        } else {
+            $context = context_system::instance();
+        }
+        return $context;
+    }
+
+    /**
      * Function to export the renderer data in a format that is suitable for a
      * mustache template. This means raw records are generated as in to_record,
      * but all strings are correctly passed through external_format_text (or external_format_string).
@@ -98,23 +115,18 @@ abstract class persistent_exporter implements templatable {
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
         $properties = $this->persistent->properties_definition();
-        if (isset($this->related['context']) && $this->related['context'] instanceof context) {
-            $context = $this->related['context'];
-        } else if (method_exists($this->persistent, 'get_context')) {
-            $context = $this->persistent->get_context();
-        } else {
-            $context = context_system::instance();
-        }
+        $context = $this->get_context();
+        $record = $this->persistent->to_record();
+
         foreach ($properties as $property => $definition) {
             if (!isset($data->$property)) {
-                $getmethod = 'get_' . $property;
-                $data->$property = $this->persistent->$getmethod();
+                $data->$property = $record->$property;
                 if ($definition['type'] === PARAM_TEXT) {
                     $propertyformat = $property . 'format';
 
-                    if (isset($properties[$propertyformat]) && $properties[$propertyformat]['type'] == PARAM_FORMAT) {
-                        $format = $this->persistent->get($propertyformat);
-                        list($text, $format) = external_format_text($data->$property, $format, $context->id);
+                    if (isset($properties[$propertyformat]) && $properties[$propertyformat]['type'] == PARAM_INT) {
+                        $format = $record->$propertyformat;
+                        list($text, $format) = external_format_text($data->$property, $format, $context->id, 'tool_lp', '', 0);
                         $data->$property = $text;
                         $data->$propertyformat = $format;
                     } else {

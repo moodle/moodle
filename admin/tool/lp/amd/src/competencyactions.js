@@ -683,6 +683,22 @@ define(['jquery',
         return false;
     };
 
+    /**
+     * Return the string "Selected <taxonomy>".
+     *
+     * @function parseTaxonomies
+     * @param  {String} Comma separated list of taxonomies.
+     * @return {Array} of level => taxonomystr
+     */
+    var parseTaxonomies = function(taxonomiesstr) {
+        var all = taxonomiesstr.split(',');
+        all.unshift("");
+        delete all[0];
+
+        // Note we don't need to fill holes, because other functions check for empty anyway.
+        return all;
+    };
+
     return {
         /**
          * Initialise this page (attach event handlers etc).
@@ -696,7 +712,7 @@ define(['jquery',
         init: function(model, pagectxid, taxonomies, rulesMods) {
             treeModel = model;
             pageContextId = pagectxid;
-            taxonomiesConstants = taxonomies;
+            taxonomiesConstants = parseTaxonomies(taxonomies);
             rulesModules = rulesMods;
 
             $('[data-region="competencyactions"] [data-action="add"]').on('click', addHandler);

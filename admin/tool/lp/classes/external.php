@@ -1177,7 +1177,7 @@ class external extends external_api {
 
 
         $competency = api::read_competency($params['id']);
-        $context = $competency->get_framework()->get_context();
+        $context = $competency->get_context();
         self::validate_context($context);
         $output = $PAGE->get_renderer('tool_lp');
         $exporter = new competency_exporter($competency, array('context' => $context));
@@ -1225,7 +1225,7 @@ class external extends external_api {
                                             ));
 
         $competency = api::read_competency($params['id']);
-        $context = $competency->get_framework()->get_context();
+        $context = $competency->get_context();
         self::validate_context($context);
 
         return api::delete_competency($params['id']);
@@ -1343,7 +1343,7 @@ class external extends external_api {
                                             ));
 
         $competency = api::read_competency($params['id']);
-        self::validate_context($competency->get_framework()->get_context());
+        self::validate_context($competency->get_context());
 
         $params = (object) $params;
 
@@ -1690,7 +1690,7 @@ class external extends external_api {
                                             ));
 
         $competency = api::read_competency($params['competencyid']);
-        self::validate_context($competency->get_framework()->get_context());
+        self::validate_context($competency->get_context());
 
         return api::set_parent_competency($params['competencyid'], $params['parentid']);
     }
@@ -1734,7 +1734,7 @@ class external extends external_api {
                                             ));
 
         $competency = api::read_competency($params['id']);
-        self::validate_context($competency->get_framework()->get_context());
+        self::validate_context($competency->get_context());
 
         return api::move_up_competency($params['id']);
     }
@@ -1778,7 +1778,7 @@ class external extends external_api {
                                             ));
 
         $competency = api::read_competency($params['id']);
-        self::validate_context($competency->get_framework()->get_context());
+        self::validate_context($competency->get_context());
 
         return api::move_down_competency($params['id']);
     }
@@ -1822,7 +1822,7 @@ class external extends external_api {
                                             ));
 
         $competency = api::read_competency($params['id']);
-        self::validate_context($competency->get_framework()->get_context());
+        self::validate_context($competency->get_context());
 
         return api::count_courses_using_competency($params['id']);
     }
@@ -1866,7 +1866,7 @@ class external extends external_api {
                                             ));
 
         $competency = api::read_competency($params['id']);
-        self::validate_context($competency->get_framework()->get_context());
+        self::validate_context($competency->get_context());
 
         return api::list_courses_using_competency($params['id']);
     }
@@ -1991,7 +1991,7 @@ class external extends external_api {
         $contextcache = array();
         foreach ($competencies as $competency) {
             if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
-                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_framework()->get_context();
+                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
             }
             $context = $contextcache[$competency->get_competencyframeworkid()];
             $exporter = new competency_exporter($competency, array('context' => $context));
@@ -2915,7 +2915,7 @@ class external extends external_api {
                                             ));
 
         $competency = api::read_competency($params['id']);
-        self::validate_context($competency->get_framework()->get_context());
+        self::validate_context($competency->get_context());
 
         return api::count_templates_using_competency($params['id']);
     }
@@ -2961,7 +2961,7 @@ class external extends external_api {
                                             ));
 
         $competency = api::read_competency($params['id']);
-        self::validate_context($competency->get_framework()->get_context());
+        self::validate_context($competency->get_context());
         $output = $PAGE->get_renderer('tool_lp');
 
         $templates = api::list_templates_using_competency($params['id']);
@@ -3068,7 +3068,7 @@ class external extends external_api {
 
         foreach ($competencies as $competency) {
             if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
-                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_framework()->get_context();
+                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
             }
             $context = $contextcache[$competency->get_competencyframeworkid()];
             $exporter = new competency_exporter($competency, array('context' => $context));
@@ -3961,7 +3961,7 @@ class external extends external_api {
 
             if ($plan->get_status() == plan::STATUS_COMPLETE) {
                 if (!isset($contextcache[$r->competency->get_competencyframeworkid()])) {
-                    $contextcache[$r->competency->get_competencyframeworkid()] = $r->competency->get_framework()->get_context();
+                    $contextcache[$r->competency->get_competencyframeworkid()] = $r->competency->get_context();
                 }
                 $context = $contextcache[$r->competency->get_competencyframeworkid()];
 
@@ -4092,7 +4092,7 @@ class external extends external_api {
                                                 'relatedcompetencyid' => $relatedcompetencyid
                                             ));
         $competency = api::read_competency($params['competencyid']);
-        self::validate_context($competency->get_framework()->get_context());
+        self::validate_context($competency->get_context());
 
         return api::add_related_competency($params['competencyid'], $params['relatedcompetencyid']);
     }
@@ -4143,7 +4143,7 @@ class external extends external_api {
                                                 'relatedcompetencyid' => $relatedcompetencyid
                                             ));
         $competency = api::read_competency($params['competencyid']);
-        self::validate_context($competency->get_framework()->get_context());
+        self::validate_context($competency->get_context());
 
         return api::remove_related_competency($params['competencyid'], $params['relatedcompetencyid']);
     }
@@ -4185,7 +4185,7 @@ class external extends external_api {
                                                 'competencyid' => $competencyid,
                                             ));
         $competency = api::read_competency($params['competencyid']);
-        self::validate_context($competency->get_framework()->get_context());
+        self::validate_context($competency->get_context());
 
         $renderable = new \tool_lp\output\related_competencies($params['competencyid']);
         $renderer = $PAGE->get_renderer('tool_lp');

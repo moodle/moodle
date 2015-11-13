@@ -52,7 +52,7 @@ class api {
         $competency = new competency(0, $record);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $competency->get_framework()->get_context());
+        require_capability('tool/lp:competencymanage', $competency->get_context());
 
         // OK - all set.
         $id = $competency->create();
@@ -71,7 +71,7 @@ class api {
         $competency = new competency($id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $competency->get_framework()->get_context());
+        require_capability('tool/lp:competencymanage', $competency->get_context());
 
         // OK - all set.
         return $competency->delete();
@@ -89,7 +89,7 @@ class api {
         $current = new competency($id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $current->get_framework()->get_context());
+        require_capability('tool/lp:competencymanage', $current->get_context());
 
         $max = self::count_competencies(array('parentid' => $current->get_parentid(),
                                               'competencyframeworkid' => $current->get_competencyframeworkid()));
@@ -130,7 +130,7 @@ class api {
         $current = new competency($id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $current->get_framework()->get_context());
+        require_capability('tool/lp:competencymanage', $current->get_context());
 
         $sortorder = $current->get_sortorder();
         if ($sortorder == 0) {
@@ -166,7 +166,7 @@ class api {
         $current = new competency($id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $current->get_framework()->get_context());
+        require_capability('tool/lp:competencymanage', $current->get_context());
 
         // This will throw an exception if the parent does not exist.
 
@@ -212,7 +212,7 @@ class api {
         $competency = new competency($record->id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:competencymanage', $competency->get_framework()->get_context());
+        require_capability('tool/lp:competencymanage', $competency->get_context());
 
         // Some things should not be changed in an update - they should use a more specific method.
         $record->sortorder = $competency->get_sortorder();
@@ -220,7 +220,7 @@ class api {
         $record->competencyframeworkid = $competency->get_competencyframeworkid();
 
         $competency->from_record($record);
-        require_capability('tool/lp:competencymanage', $competency->get_framework()->get_context());
+        require_capability('tool/lp:competencymanage', $competency->get_context());
 
         // OK - all set.
         return $competency->update();
@@ -239,7 +239,7 @@ class api {
         $competency = new competency($id);
 
         // First we do a permissions check.
-        $context = $competency->get_framework()->get_context();
+        $context = $competency->get_context();
         if (!has_any_capability(array('tool/lp:competencyread', 'tool/lp:competencymanage'), $context)) {
              throw new required_capability_exception($context, 'tool/lp:competencyread', 'nopermissions', '');
         }
@@ -1538,7 +1538,7 @@ class api {
     public static function list_related_competencies($competencyid) {
         $competency = new competency($competencyid);
 
-        require_capability('tool/lp:competencymanage', $competency->get_framework()->get_context());
+        require_capability('tool/lp:competencymanage', $competency->get_context());
 
         return $competency->get_related_competencies();
     }
@@ -1554,7 +1554,7 @@ class api {
         $competency1 = new competency($competencyid);
         $competency2 = new competency($relatedcompetencyid);
 
-        require_capability('tool/lp:competencymanage', $competency1->get_framework()->get_context());
+        require_capability('tool/lp:competencymanage', $competency1->get_context());
 
         $relatedcompetency = related_competency::get_relation($competency1->get_id(), $competency2->get_id());
         if (!$relatedcompetency->get_id()) {
@@ -1577,7 +1577,7 @@ class api {
 
         // This only check if we have the permission in either competency because both competencies
         // should belong to the same framework.
-        require_capability('tool/lp:competencymanage', $competency->get_framework()->get_context());
+        require_capability('tool/lp:competencymanage', $competency->get_context());
 
         $relatedcompetency = related_competency::get_relation($competencyid, $relatedcompetencyid);
         if ($relatedcompetency->get_id()) {

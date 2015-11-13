@@ -33,7 +33,7 @@ use lang_string;
  * @copyright  2015 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plan extends persistent  {
+class plan extends persistent {
 
     const TABLE = 'tool_lp_plan';
 

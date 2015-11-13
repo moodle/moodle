@@ -36,10 +36,4 @@ class competency_framework_exporter extends persistent_exporter {
     protected function get_persistent_class() {
         return 'tool_lp\\competency_framework';
     }
-
-    public function export_for_template(renderer_base $output) {
-        $result = parent::export_for_template($output);
-        $result->taxonomies = json_encode($this->persistent->get_taxonomies());
-        return $result;
-    }
 }

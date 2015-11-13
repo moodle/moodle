@@ -49,7 +49,7 @@ class related_competencies implements renderable, templatable {
      */
     public function __construct($competencyid) {
         $this->competency = api::read_competency($competencyid);
-        $this->context = $this->competency->get_framework()->get_context();
+        $this->context = $this->competency->get_context();
         $this->relatedcompetencies = api::list_related_competencies($competencyid);
     }
 

@@ -88,7 +88,7 @@ class template_competencies_page implements renderable, templatable {
         $contextcache = array();
         foreach ($this->competencies as $competency) {
             if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
-                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_framework()->get_context();
+                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
             }
             $context = $contextcache[$competency->get_competencyframeworkid()];
 
