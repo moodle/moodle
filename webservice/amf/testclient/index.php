@@ -48,14 +48,14 @@ $output = <<<OET
 <param name="base" value="." />
 <param name="allowscriptaccess" value="sameDomain" />
 <param name="FlashVars" value="rooturl=$CFG->wwwroot" />
-<!--[if !IE]>-->
+<!--[if !IE]><!-->
 <object type="application/x-shockwave-flash" data="$url" width="100%" height="1000">
   <param name="base" value="." />
   <param name="allowscriptaccess" value="sameDomain" />
   <param name="FlashVars" value="rooturl=$CFG->wwwroot" />
 <!--<![endif]-->
 <p>You need to install Flash 9.0</p>
-<!--[if !IE]>-->
+<!--[if !IE]><!-->
 </object>
 <!--<![endif]-->
 </object>
