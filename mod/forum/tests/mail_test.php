@@ -833,4 +833,248 @@ class mod_forum_mail_testcase extends advanced_testcase {
         $this->assertEquals($author->id, $message->useridfrom);
         $this->assertEquals($expectedsubject, $message->subject);
     }
+
+    /**
+     * dataProvider for test_forum_post_email_templates().
+     */
+    public function forum_post_email_templates_provider() {
+        // Base information, we'll build variations based on it.
+        $base = array(
+            'user' => array('firstname' => 'Love', 'lastname' => 'Moodle', 'mailformat' => 0, 'maildigest' => 0),
+            'course' => array('shortname' => '101', 'fullname' => 'Moodle 101'),
+            'forums' => array(
+                array(
+                    'name' => 'Moodle Forum',
+                    'forumposts' => array(
+                        array(
+                            'name' => 'Hello Moodle',
+                            'message' => 'Welcome to Moodle',
+                            'messageformat' => FORMAT_MOODLE,
+                            'attachments' => array(
+                                array(
+                                    'filename' => 'example.txt',
+                                    'filecontents' => 'Basic information about the course'
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            'expectations' => array(
+                array(
+                    'subject' => '.*101.*Hello',
+                    'contents' => array(
+                        '~{$a',
+                        '~&(amp|lt|gt|quot|\#039);(?!course)',
+                        'Attachment example.txt:\n' .
+                            'http://www.example.com/moodle/pluginfile.php/\d*/mod_forum/attachment/\d*/example.txt\n',
+                        'Hello Moodle', 'Moodle Forum', 'Welcome.*Moodle', 'Love Moodle', '1\d1'
+                    ),
+                ),
+            ),
+        );
+
+        // Build the text cases.
+        $textcases = array('Text mail without ampersands, quotes or lt/gt' => array('data' => $base));
+
+        // Single and double quotes everywhere.
+        $newcase = $base;
+        $newcase['user']['lastname'] = 'Moodle\'';
+        // $newcase['user']['lastname'] = 'Moodle\'"'; // TODO: This breaks badly. See MDL-52136.
+        $newcase['course']['shortname'] = '101\'';
+        // $newcase['course']['shortname'] = '101\'"'; // TODO: This breaks badly. See MDL-52136.
+        $newcase['forums'][0]['name'] = 'Moodle Forum\'"';
+        $newcase['forums'][0]['forumposts'][0]['name'] = 'Hello Moodle\'"';
+        $newcase['forums'][0]['forumposts'][0]['message'] = 'Welcome to Moodle\'"';
+        $newcase['expectations'][0]['contents'] = array(
+            'Attachment example.txt:', '~{\$a', '~&amp;(quot|\#039);', 'Love Moodle\'', '101\'', 'Moodle Forum\'"',
+            'Hello Moodle\'"', 'Welcome to Moodle\'"');
+        $textcases['Text mail with quotes everywhere'] = array('data' => $newcase);
+
+        // Lt and gt everywhere. This case is completely borked because format_string()
+        // strips tags with $CFG->formatstringstriptags and also escapes < and > (correct
+        // for web presentation but not for text email). See MDL-19829.
+        $newcase = $base;
+        $newcase['user']['lastname'] = 'Moodle>';
+        $newcase['course']['shortname'] = '101>';
+        $newcase['forums'][0]['name'] = 'Moodle Forum>';
+        $newcase['forums'][0]['forumposts'][0]['name'] = 'Hello Moodle>';
+        $newcase['forums'][0]['forumposts'][0]['message'] = 'Welcome to Moodle>';
+        $newcase['expectations'][0]['contents'] = array(
+            'Attachment example.txt:', '~{\$a', '~&amp;gt;', 'Love Moodle>', '101&gt;', 'Moodle Forum&gt;',
+            'Hello Moodle&gt;', 'Welcome to Moodle>');
+        $textcases['Text mail with gt and lt everywhere'] = array('data' => $newcase);
+
+        // Ampersands everywhere. This case is completely borked because format_string()
+        // escapes ampersands (correct for web presentation but not for text email). See MDL-19829.
+        $newcase = $base;
+        $newcase['user']['lastname'] = 'Moodle&';
+        $newcase['course']['shortname'] = '101&';
+        $newcase['forums'][0]['name'] = 'Moodle Forum&';
+        $newcase['forums'][0]['forumposts'][0]['name'] = 'Hello Moodle&';
+        $newcase['forums'][0]['forumposts'][0]['message'] = 'Welcome to Moodle&';
+        $newcase['expectations'][0]['contents'] = array(
+            'Attachment example.txt:', '~{\$a', '~&amp;amp;', 'Love Moodle&', '101&amp;', 'Moodle Forum&amp;',
+            'Hello Moodle&amp;', 'Welcome to Moodle&');
+        $textcases['Text mail with ampersands everywhere'] = array('data' => $newcase);
+
+        // Now the html cases.
+        $htmlcases = array();
+
+        // New base for html cases, no quotes, lts, gts or ampersands.
+        $htmlbase = $base;
+        $htmlbase['user']['mailformat'] = 1;
+        $htmlbase['expectations'][0]['contents'] = array(
+            '~{\$a',
+            '~&(amp|lt|gt|quot|\#039);(?!course)',
+            '<div class=3D"attachments">( *\n *)?<a href',
+            '<div class=3D"subject">\n.*Hello Moodle', '>Moodle Forum', '>Welcome.*Moodle', '>Love Moodle', '>1\d1');
+        $htmlcases['HTML mail without ampersands, quotes or lt/gt'] = array('data' => $htmlbase);
+
+        // Single and double quotes, lt and gt, ampersands everywhere.
+        $newcase = $htmlbase;
+        $newcase['user']['lastname'] = 'Moodle\'>&';
+        // $newcase['user']['lastname'] = 'Moodle\'">&'; // TODO: This breaks badly. See MDL-52136.
+        $newcase['course']['shortname'] = '101\'>&';
+        // $newcase['course']['shortname'] = '101\'">&'; // TODO: This breaks badly. See MDL-52136.
+        $newcase['forums'][0]['name'] = 'Moodle Forum\'">&';
+        $newcase['forums'][0]['forumposts'][0]['name'] = 'Hello Moodle\'">&';
+        $newcase['forums'][0]['forumposts'][0]['message'] = 'Welcome to Moodle\'">&';
+        $newcase['expectations'][0]['contents'] = array(
+            '~{\$a',
+            '~&amp;(amp|lt|gt|quot|\#039);',
+            '<div class=3D"attachments">( *\n *)?<a href',
+            '<div class=3D"subject">\n.*Hello Moodle\'"&gt;&amp;', '>Moodle Forum\'"&gt;&amp;',
+            '>Welcome.*Moodle\'"&gt;&amp;', '>Love Moodle&\#039;&gt;&amp;', '>1\d1\'&gt;&amp');
+        $htmlcases['HTML mail with quotes, gt, lt and ampersand  everywhere'] = array('data' => $newcase);
+
+        return $textcases + $htmlcases;
+    }
+
+    /**
+     * Verify forum emails body using templates to generate the expected results.
+     *
+     * @dataProvider forum_post_email_templates_provider
+     * @param array $data provider samples.
+     */
+    public function test_forum_post_email_templates($data) {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create the course, with the specified options.
+        $options = array();
+        foreach ($data['course'] as $option => $value) {
+            $options[$option] = $value;
+        }
+        $course = $this->getDataGenerator()->create_course($options);
+
+        // Create the user, with the specified options and enrol in the course.
+        $options = array();
+        foreach ($data['user'] as $option => $value) {
+            $options[$option] = $value;
+        }
+        $user = $this->getDataGenerator()->create_user($options);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        // Create forums, always force susbscribed (for easy), with the specified options.
+        $posts = array();
+        foreach ($data['forums'] as $dataforum) {
+            $forumposts = isset($dataforum['forumposts']) ? $dataforum['forumposts'] : array();
+            unset($dataforum['forumposts']);
+            $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE);
+            foreach ($dataforum as $option => $value) {
+                $options[$option] = $value;
+            }
+            $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+            // Create posts, always for immediate delivery (for easy), with the specified options.
+            foreach ($forumposts as $forumpost) {
+                $attachments = isset($forumpost['attachments']) ? $forumpost['attachments'] : array();
+                unset($forumpost['attachments']);
+                $postoptions = array('course' => $course->id, 'forum' => $forum->id, 'userid' => $user->id,
+                    'mailnow' => 1, 'attachment' => !empty($attachments));
+                foreach ($forumpost as $option => $value) {
+                    $postoptions[$option] = $value;
+                }
+                list($discussion, $post) = $this->helper_post_to_forum($forum, $user, $postoptions);
+                $posts[$post->subject] = $post; // Need this to verify cron output.
+
+                // Add the attachments to the post.
+                if ($attachments) {
+                    $fs = get_file_storage();
+                    foreach ($attachments as $attachment) {
+                        $filerecord = array(
+                            'contextid' => context_module::instance($forum->cmid)->id,
+                            'component' => 'mod_forum',
+                            'filearea'  => 'attachment',
+                            'itemid'    => $post->id,
+                            'filepath'  => '/',
+                            'filename'  => $attachment['filename']
+                        );
+                        $fs->create_file_from_string($filerecord, $attachment['filecontents']);
+                    }
+                    $DB->set_field('forum_posts', 'attachment', '1', array('id' => $post->id));
+                }
+            }
+        }
+
+        // Clear the mailsink and close the messagesink.
+        // (surely setup should provide us this cleared but...)
+        $this->helper->mailsink->clear();
+        $this->helper->messagesink->close();
+
+        // Capture and silence cron output, verifying contents.
+        foreach ($posts as $post) {
+            $this->expectOutputRegex("/1 users were sent post {$post->id}, '{$post->subject}'/");
+        }
+        forum_cron(); // It's really annoying that we have to run cron to test this.
+
+        // Get the mails.
+        $mails = $this->helper->mailsink->get_messages();
+
+        // Start testing the expectations.
+        $expectations = $data['expectations'];
+
+        // Assert the number is the expected.
+        $this->assertSame(count($expectations), count($mails));
+
+        // Start processing mails, first localizing its expectations, then checking them.
+        foreach ($mails as $mail) {
+            // Find the corresponding expectation.
+            $foundexpectation = null;
+            foreach ($expectations as $key => $expectation) {
+                // All expectations must have a subject for matching.
+                if (!isset($expectation['subject'])) {
+                    $this->fail('Provider expectation missing mandatory subject');
+                }
+                if (preg_match('!' . $expectation['subject'] . '!', $mail->subject)) {
+                    // If we already had found the expectation, there are non-unique subjects. Fail.
+                    if (isset($foundexpectation)) {
+                        $this->fail('Multiple expectations found (by subject matching). Please make them unique.');
+                    }
+                    $foundexpectation = $expectation;
+                    unset($expectations[$key]);
+                }
+            }
+            // Arrived here, we should have found the expectations.
+            $this->assertNotEmpty($foundexpectation, 'Expectation not found for the mail');
+
+            // If we have found the expectation and have contents to match, let's do it.
+            if (isset($foundexpectation) and isset($foundexpectation['contents'])) {
+                if (!is_array($foundexpectation['contents'])) { // Accept both string and array.
+                    $foundexpectation['contents'] = array($foundexpectation['contents']);
+                }
+                foreach ($foundexpectation['contents'] as $content) {
+                    if (strpos($content, '~') !== 0) {
+                        $this->assertRegexp('#' . $content . '#m', $mail->body);
+                    } else {
+                        $this->assertNotRegexp('#' . substr($content, 1) . '#m', $mail->body);
+                    }
+                }
+            }
+        }
+        // Finished, there should not be remaining expectations.
+        $this->assertCount(0, $expectations);
+    }
 }
