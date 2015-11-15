@@ -81,14 +81,14 @@
 </head>
 <body id="email">
 <div class="navbar">
-    <a target="_blank" href="{{{ courselink }}}">{{ coursename }}</a>
+    <a target="_blank" href="{{{ courselink }}}">{{{ coursename }}}</a>
     &raquo;
     <a target="_blank" href="{{{ forumindexlink }}}">{{# str }} forums, forum {{/ str }}</a>
     &raquo;
-    <a target="_blank" href="{{{ forumviewlink }}}">{{ forumname }}</a>
+    <a target="_blank" href="{{{ forumviewlink }}}">{{{ forumname }}}</a>
 {{# showdiscussionname }}
     &raquo;
-    <a target="_blank" href="{{{ discussionlink }}}">{{ discussionname }}</a>
+    <a target="_blank" href="{{{ discussionlink }}}">{{{ discussionname }}}</a>
 {{/ showdiscussionname }}
 </div>
 
@@ -99,7 +99,7 @@
         </td>
         <td class="topic {{# firstpost }}starter{{/ firstpost }}">
             <div class="subject">
-                {{ subject }}
+                {{{ subject }}}
             </div>
             <div class="author">
                 {{# str }} bynameondate, forum, { "name": "<a target='_blank' href='{{{ authorlink }}}'>{{ authorfullname }}</a>", "date": "{{ postdate }}" } {{/ str }}
@@ -118,7 +118,7 @@
         <td class="content">
             {{# attachments }}
                 <div class="attachments">
-                    {{ attachments }}
+                    {{{ attachments }}}
                 </div>
             {{/ attachments }}
             {{{ message }}}
