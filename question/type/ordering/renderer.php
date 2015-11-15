@@ -53,9 +53,16 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         //   response_id        : id_q27_1_response_319
         //   sortable_id        : id_sortable_q27_1_response_319
         $response_fieldname = $question->get_response_fieldname();
-        $response_name = $qa->get_qt_field_name($response_fieldname);
-        $response_id = 'id_'.preg_replace('/[^a-zA-Z0-9]+/', '_', $response_name);
-        $sortable_id = 'id_sortable_'.$question->id;
+        $response_name      = $qa->get_qt_field_name($response_fieldname);
+        $response_id        = 'id_'.preg_replace('/[^a-zA-Z0-9]+/', '_', $response_name);
+        $sortable_id        = 'id_sortable_'.$question->id;
+        $ablock_id          = 'id_ablock_'.$question->id;
+
+        switch ($question->options->layouttype) {
+            case 0 : $axis = 'y'; break; // vertical
+            case 1 : $axis = ''; break;  // horizontal
+            default: $axis = '';         // unknown
+        }
 
         $result = '';
 
@@ -67,11 +74,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             $script .= "if (window.$) {\n"; // $ is an alias for jQuery
             $script .= "    $(function() {\n";
             $script .= "        $('#$sortable_id').sortable({\n";
+            $script .= "            axis: '$axis',\n";
+            $script .= "            containment: '#$ablock_id',\n";
+            $script .= "            opacity: 0.6,\n";
             $script .= "            update: function(event, ui) {\n";
             $script .= "                var ItemsOrder = $(this).sortable('toArray').toString();\n";
             $script .= "                $('#$response_id').attr('value', ItemsOrder);\n";
-            $script .= "            },\n";
-            $script .= "            opacity: 0.6\n";
+            $script .= "            }\n";
             $script .= "        });\n";
             $script .= "        $('#$sortable_id').disableSelection();\n";
             $script .= "    });\n";
@@ -89,6 +98,9 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $printeditems = false;
         if (count($currentresponse)) {
 
+            // set layout class
+            $layoutclass = $question->get_ordering_layoutclass();
+
             // generate ordering items
             foreach ($currentresponse as $position => $answerid) {
                 if (! array_key_exists($answerid, $question->answers)) {
@@ -100,8 +112,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
                 if ($printeditems==false) {
                     $printeditems = true;
-                    $result .= html_writer::start_tag('div', array('class' => 'ablock'));
-                    $result .= html_writer::start_tag('div', array('class' => 'answer'));
+                    $result .= html_writer::start_tag('div', array('class' => 'ablock', 'id' => $ablock_id));
+                    $result .= html_writer::start_tag('div', array('class' => 'answer ordering'));
                     $result .= html_writer::start_tag('ul',  array('class' => 'sortablelist', 'id' => $sortable_id));
                 }
 
@@ -118,6 +130,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                     $class = 'sortableitem';
                     $img = '';
                 }
+                $class = "$class $layoutclass";
+
                 // the original "id" revealed the correct order of the answers
                 // because $answer->fraction holds the correct order number
                 // $id = 'ordering_item_'.$answerid.'_'.intval($question->answers[$answerid]->fraction);
@@ -136,7 +150,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                                                              'name'  => $response_name,
                                                              'id'    => $response_id,
                                                              'value' => ''));
-            $result .= html_writer::tag('div', '', array('style' => 'clear:both;'));
+            // the following DIV is not necessary if we use "overflow: auto;" on the "answer" DIV
+            //$result .= html_writer::tag('div', '', array('style' => 'clear:both;'));
         }
 
         return $result;
@@ -165,12 +180,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             }
         }
         if ($showcorrect) {
+            $layoutclass = $question->get_ordering_layoutclass();
             $output .= html_writer::tag('p', get_string('correctorder', 'qtype_ordering'));
-            $output .= html_writer::start_tag('ol');
+            $output .= html_writer::start_tag('ol', array('class' => 'correctorder'));
             $correctresponse = $question->correctresponse;
             foreach ($correctresponse as $position => $answerid) {
                 $answer = $question->answers[$answerid];
-                $output .= html_writer::tag('li', $answer->answer);
+                $output .= html_writer::tag('li', $answer->answer, array('class' => $layoutclass));
             }
             $output .= html_writer::end_tag('ol');
         }

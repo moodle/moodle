@@ -1,3 +1,6 @@
+/* ensure container covers the draggable items */
+.que.ordering div.answer.ordering { overflow: auto; }
+
 .que.ordering ul.sortablelist {
     border           : 1px solid #ccc;
     float            : left;
@@ -9,23 +12,37 @@
     padding          : 4px 4px 0 4px;
     width            : 80%;
 }
+.que.ordering ul.sortablelist,
+.que.ordering ul.sortablelist li {
+    -webkit-border-radius: 6px; /* Safari and Chrome */
+    -moz-border-radius: 6px;   /* Firefox */
+    -o-border-radius: 6px;    /* Opera */
+    border-radius: 6px;      /* CSS3 */
+}
 .que.ordering ul.sortablelist li {
     background-color : #eeeeee;
     border           : 1px solid #cccccc;
     border-image     : initial;
     list-style-type  : none;
-    margin-bottom    : 1px;
-    min-height       : 20px;
-    padding          : 8px 2px;
+    margin           : 4px;
+    padding          : 6px 12px;
 }
 .que.ordering ul.sortablelist li.sortableitem {
     position         : relative;
     cursor           : move;
 }
+.que.ordering ul.sortablelist li.horizontal {
+    float            : left;
+}
+.que.ordering ul.sortablelist li.vertical {
+    min-height       : 18px;
+}
 .que.ordering ul.sortablelist li.correctposition {
+    background-color : #dff0d8;           /* light green */
     border           : 4px solid #99ff66; /* gentle green */
 }
 .que.ordering ul.sortablelist li.wrongposition {
+    background-color : #f2dede;           /* light red */
     border           : 4px solid #ff7373; /* gentle red */
 }
 .que.ordering ul.sortablelist li.correctposition,
@@ -33,3 +50,18 @@
     margin-bottom    : 4px;
     margin-top       : 4px;
 }
+
+.que.ordering div.rightanswer ol.correctorder {
+    overflow: auto; /* cover the floating LI elements */
+}
+.que.ordering div.rightanswer ol.correctorder li.horizontal {
+    float            : left;
+    margin-left      : 24px;
+    margin-right     : 24px;
+}
+.que.ordering div.rightanswer ol.correctorder li.vertical {
+}
+
+/* the width restriction can be limited to editors for draggable items
+   by inserting "fieldset:nth-child(n+4)" before "div.feditor" */
+#page-question-type-ordering form.mform fieldset:nth-child(n+4) div.feditor { max-width: 480px; }

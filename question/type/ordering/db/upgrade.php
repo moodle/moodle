@@ -149,6 +149,23 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
     }
 
+    $newversion = 2015110725;
+    if ($oldversion < $newversion) {
+        $table = new xmldb_table('qtype_ordering_options');
+        $fields = array(
+            new xmldb_field('layouttype', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, 0, 'questionid'),
+            new xmldb_field('selecttype', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, 0, 'layouttype')
+        );
+        foreach ($fields as $field) {
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->change_field_type($table, $field);
+            } else {
+                $dbman->add_field($table, $field);
+            }
+        }
+        upgrade_plugin_savepoint(true, $newversion, 'qtype', 'ordering');
+    }
+
     return true;
 }
 

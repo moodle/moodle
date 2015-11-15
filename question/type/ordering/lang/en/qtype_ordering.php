@@ -20,6 +20,9 @@ $string['answer'] = 'Item text';
 $string['answerheader'] = 'Draggable item {no}';
 $string['correctorder'] = 'The correct order for these items is as follows:';
 $string['defaultquestionname'] = 'Drag the following items into the correct order.';
+$string['horizontal'] = 'Horizontal';
+$string['layouttype_help'] = 'Choose whether to display the items vertically or horizontally.';
+$string['layouttype'] = 'Layout of items';
 $string['noresponsedetails'] = 'Sorry, no details of the response to this question are available.';
 $string['notenoughanswers'] = 'Ordering questions must have more than {$a} answers.';
 $string['selectall'] = 'Select all items';
@@ -29,6 +32,7 @@ $string['selectcount'] = 'Size of subset';
 $string['selectrandom'] = 'Select a random subset of items';
 $string['selecttype_help'] = 'Choose whether to display all the items or a subset of the items.';
 $string['selecttype'] = 'Item selection type';
+$string['vertical'] = 'Vertical';
 
 // requred strings for Moodle 2.0
 $string['ordering'] = 'Ordering';

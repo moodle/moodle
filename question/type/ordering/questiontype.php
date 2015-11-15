@@ -40,6 +40,9 @@ if (class_exists('question_type')) {
  */
 class qtype_ordering extends question_type {
 
+    /** combined feedback fields */
+    public $feedback_fields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
+
     /**
      * Utility method used by {@link qtype_renderer::head_code()}
      * It looks for any of the files script.js or script.php that
@@ -136,16 +139,15 @@ class qtype_ordering extends question_type {
 
         // Insert all the new answers
 
-        foreach ($question->answer as $i => $text) {
+        foreach ($question->answer as $i => $answer) {
             $answer = (object)array(
-                'question' => $question->id,
-                'fraction' => ($i + 1), // start at 1
-                'answer'   => $text,
-                'answerformat' => FORMAT_MOODLE, // =0
-                'feedback' => '',
-                'feedbackformat' => FORMAT_MOODLE, // =0
+                'question'       => $question->id,
+                'fraction'       => ($i + 1), // start at 1
+                'answer'         => (is_array($answer) ? $answer['text']   : $answer),
+                'answerformat'   => (is_array($answer) ? $answer['format'] : FORMAT_MOODLE),
+                'feedback'       => '',
+                'feedbackformat' => FORMAT_MOODLE,
             );
-
             if ($answer->id = array_shift($answerids)) {
                 if (! $DB->update_record('question_answers', $answer)) {
                     $result->error = get_string('cannotupdaterecord', 'error', 'question_answers (id='.$answer->id.')');
@@ -163,6 +165,7 @@ class qtype_ordering extends question_type {
         // create $options for this ordering question
         $options = (object)array(
             'questionid' => $question->id,
+            'layouttype' => $question->layouttype,
             'selecttype' => $question->selecttype,
             'selectcount' => $question->selectcount
         );
@@ -196,10 +199,9 @@ class qtype_ordering extends question_type {
             $options = $this->initialise_combined_feedback($question, $questiondata, $shownumcorrect);
         } else {
             // Moodle 2.0
-            $names = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
-            foreach ($names as $name) {
-                $format = $name.'format';
-                $question->$name = $questiondata->options->$name;
+            foreach ($this->feedback_fields as $field) {
+                $format = $field.'format';
+                $question->$field = $questiondata->options->$field;
                 $question->$format = $questiondata->options->$format;
             }
             if ($shownumcorrect) {
@@ -228,11 +230,10 @@ class qtype_ordering extends question_type {
             $options = $this->save_combined_feedback_helper($options, $question, $context, $shownumcorrect);
         } else {
             // Moodle 2.0
-            $names = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
-            foreach ($names as $name) {
-                $text = $question->$name;
-                $format = $name.'format';
-                $options->$name = $this->import_or_save_files($text, $context, 'qtype_ordering', $name, $question->id);
+            foreach ($this->feedback_fields as $field) {
+                $text = $question->$field;
+                $format = $field.'format';
+                $options->$field = $this->import_or_save_files($text, $context, 'qtype_ordering', $field, $question->id);
                 $options->$format = $text['format'];
             }
             if ($shownumcorrect) {
@@ -243,6 +244,9 @@ class qtype_ordering extends question_type {
     }
 
     public function is_not_blank($value) {
+        if (is_array($value)) {
+            $value = $value['text'];
+        }
         $value = trim($value);
         return ($value || $value==='0');
     }
@@ -281,17 +285,17 @@ class qtype_ordering extends question_type {
      * @param string        $extra (optional, default=null)
      * @todo Finish documenting this function
      */
-    function import_from_gift($lines, $question, $format, $extra=null) {
-
+    public function import_from_gift($lines, $question, $format, $extra=null) {
         // convert $lines to a single a string - for preg_match()
         $lines = implode(PHP_EOL, $lines);
 
         // extract question info from GIFT file $lines
-        $search = '/^([^{]*)\s*\{>\s*(\d+)\s*((?:ALL|EXACT|RANDOM|REL|CONTIGUOUS|CONTIG)?)\s*(.*?)\s*\}\s*$/s';
+        $search = '/^([^{]*)\s*\{>\s*(\d+)\s*((?:ALL|EXACT|RANDOM|REL|CONTIGUOUS|CONTIG)?)\s*((?:HORIZONTAL|HORI|H|1|VERTICAL|VERT|V|0)?)\s*(.*?)\s*\}\s*$/s';
         // $1 the question name
         // $2 the number of items to be shown
         // $3 the extraction type
-        // $4 the lines of items to be ordered
+        // $4 the layout type
+        // $5 the lines of items to be ordered
         if (empty($extra) || ! preg_match($search, $lines, $matches)) {
             return false; // format not recognized
         }
@@ -299,7 +303,8 @@ class qtype_ordering extends question_type {
         $questionname = trim($matches[1]);
         $selectcount = trim($matches[2]);
         $selecttype = trim($matches[3]);
-        $lines = explode(PHP_EOL, $matches[4]);
+        $layouttype = trim($matches[4]);
+        $lines = explode(PHP_EOL, $matches[5]);
         unset($matches);
 
         $question->qtype = 'ordering';
@@ -314,7 +319,7 @@ class qtype_ordering extends question_type {
         } else {
             $selectcount = min(6, count($lines));
         }
-        $this->set_count_and_type($question, $selectcount, $selecttype);
+        $this->set_layout_count_type($question, $layouttype, $selectcount, $selecttype);
 
         // remove blank items
         $lines = array_map('trim', $lines);
@@ -339,16 +344,40 @@ class qtype_ordering extends question_type {
             $question->feedbackformat[$i] = FORMAT_MOODLE; // =0
         }
 
+        // check that the required feedback fields exist
+        $this->check_ordering_combined_feedback($question);
+
         return $question;
     }
 
     /**
-     * extract_count_and_type
+     * check_ordering_combined_feedback
      *
-     * @param stdClass      $question
+     * @param stdClass $question (passed by reference)
      * @todo Finish documenting this function
      */
-    function extract_count_and_type($question) {
+    protected function check_ordering_combined_feedback(&$question) {
+        foreach ($this->feedback_fields as $field) {
+            if (empty($question->$field)) {
+                $question->$field = array('text' => '', 'format' => 0, 'itemid' => 0, 'files' => null);
+            }
+        }
+    }
+
+    /**
+     * extract_layout_count_type
+     *
+     * @param stdClass $question
+     * @todo Finish documenting this function
+     */
+    public function extract_layout_count_type($question) {
+
+        switch ($question->options->layouttype) {
+            case 0:  $layout = 'VERTICAL'; break;
+            case 1:  $layout = 'HORIZONTAL'; break;
+            default: $layout = ''; // shouldn't happen !!
+        }
+
         switch ($question->options->selecttype) {
             case 0:  $type = 'ALL';        break; // all items
             case 1:  $type = 'RANDOM';     break; // random subset
@@ -359,7 +388,7 @@ class qtype_ordering extends question_type {
         // Note: this used to be (selectcount + 2)
         $count = $question->options->selectcount;
 
-        return array($count, $type);
+        return array($layout, $count, $type);
     }
 
     /**
@@ -370,16 +399,16 @@ class qtype_ordering extends question_type {
      * @param string        $extra (optional, default=null)
      * @todo Finish documenting this function
      */
-    function export_to_gift($question, $format, $extra=null) {
-        list($count, $type) = $this->extract_count_and_type($question);
-
-        $expout = $question->questiontext.'{>'.$count.' '.$type.' '."\n";
+    public function export_to_gift($question, $format, $extra=null) {
+        list($layouttype, $selectcount, $selecttype) = $this->extract_layout_count_type($question);
+        $output = $question->questiontext.'{>'.$selectcount.' '.
+                                               $selecttype.' '.
+                                               $layouttype."\n";
         foreach ($question->options->answers as $answer) {
-            $expout .= $answer->answer."\n";
+            $output .= $answer->answer."\n";
         }
-        $expout .= '}';
-
-        return $expout;
+        $output .= '}';
+        return $output;
     }
 
     /**
@@ -390,13 +419,14 @@ class qtype_ordering extends question_type {
      * @param string      $extra (optional, default=null)
      * @todo Finish documenting this function
      */
-    function export_to_xml($question, qformat_xml $format, $extra=null) {
+    public function export_to_xml($question, qformat_xml $format, $extra=null) {
 
-        list($count, $type) = $this->extract_count_and_type($question);
+        list($layouttype, $selectcount, $selecttype) = $this->extract_layout_count_type($question);
 
         $output = '';
-        $output .= "    <selecttype>$type</selecttype>\n";
-        $output .= "    <selectcount>$count</selectcount>\n";
+        $output .= "    <layouttype>$layouttype</layouttype>\n";
+        $output .= "    <selecttype>$selecttype</selecttype>\n";
+        $output .= "    <selectcount>$selectcount</selectcount>\n";
 
         foreach($question->options->answers as $answer) {
             $output .= '    <answer fraction="'.$answer->fraction.'" '.$format->format($answer->answerformat).">\n";
@@ -446,9 +476,10 @@ class qtype_ordering extends question_type {
             $selecttype = 'logical';
             $selectcount = 'studentsee';
         }
+        $layouttype = $format->getpath($data, array('#', 'layouttype', 0, '#'), 'VERTICAL');
         $selecttype = $format->getpath($data, array('#', $selecttype, 0, '#'), 'RANDOM');
         $selectcount = $format->getpath($data, array('#', $selectcount, 0, '#'), 6);
-        $this->set_count_and_type($newquestion, $selectcount, $selecttype);
+        $this->set_layout_count_type($newquestion, $layouttype, $selectcount, $selecttype);
 
         $newquestion->answer = array();
         $newquestion->answerformat = array();
@@ -469,6 +500,9 @@ class qtype_ordering extends question_type {
             }
             $i++;
         }
+
+        // check that the required feedback fields exist
+        $this->check_ordering_combined_feedback($newquestion);
 
         return $newquestion;
     }
@@ -499,18 +533,45 @@ class qtype_ordering extends question_type {
     }
 
     /*
-     * set_count_and_type
+     * set_layout_count_type
      *
      * @param object $question (passed by reference)
+     * @param integer $layout the layout type
      * @param integer $count the number of items to display
      * @param integer $type the extraction type
      * @param integer $default_type (optional, default=1)
      */
-    function set_count_and_type(&$question, $count, $type, $default_type=1) {
+    public function set_layout_count_type(&$question, $layout, $count, $type) {
+
+        $default_layout = 0; // horizontal
+        $default_type   = 1; // random
+        $default_count  = 3;
+
+        switch (strtoupper($layout)) {
+            case 'HORIZONTAL':
+            case 'HORI':
+            case 'H':
+            case '1':
+                $question->layouttype = 1;
+                break;
+            case 'VERTICAL':
+            case 'VERT':
+            case 'V':
+            case '0':
+                $question->layouttype = 0;
+                break;
+            default:
+                $question->layouttype = $default_layout;
+        }
+
 
         // set "selectcount" from $count
         // this used to be ($count - 2)
-        $question->selectcount = $count;
+        if (is_numeric($count)) {
+            $question->selectcount = intval($count);
+        } else {
+            $question->selectcount = $default_count;
+        }
 
         // set "selecttype" from $type
         switch ($type) {

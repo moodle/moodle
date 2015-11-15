@@ -4,8 +4,9 @@
     <TABLE NAME="qtype_ordering_options" COMMENT="Options for ordering questions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="questionid"/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="selecttype"/>
-        <FIELD NAME="selecttype" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="questionid" NEXT="selectcount"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="layouttype"/>
+        <FIELD NAME="layouttype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="questionid" NEXT="selecttype"/>
+        <FIELD NAME="selecttype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="layouttype" NEXT="selectcount"/>
         <FIELD NAME="selectcount" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="selecttype" NEXT="correctfeedback"/>
         <FIELD NAME="correctfeedback" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="selectcount" NEXT="correctfeedbackformat"/>
         <FIELD NAME="correctfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="correctfeedback" NEXT="incorrectfeedback"/>

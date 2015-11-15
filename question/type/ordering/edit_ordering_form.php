@@ -41,6 +41,13 @@ class qtype_ordering_edit_form extends question_edit_form {
     const NUM_ANS_START = 6;
     const NUM_ANS_ADD   = 2;
 
+    // this functionality is currently disabled
+    // because it is not fully functional
+    protected $use_editor_for_answers = false;
+
+    /**
+     * unique name for this question type
+     */
     public function qtype() {
         return 'ordering';
     }
@@ -54,6 +61,17 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         // cache this plugins name
         $plugin = 'qtype_ordering';
+
+        // layouttype
+        $name = 'layouttype';
+        $label = get_string($name, $plugin);
+        $options = array(
+            0 => get_string('vertical', $plugin),
+            1 => get_string('horizontal', $plugin)
+        );
+        $mform->addElement('select', $name, $label, $options);
+        $mform->addHelpButton($name, $name, $plugin);
+        $mform->setDefault($name, 0);
 
         // selecttype
         $name = 'selecttype';
@@ -80,16 +98,24 @@ class qtype_ordering_edit_form extends question_edit_form {
         $mform->setDefault($name, 0);
 
         // answers (=items)
+        //     get_per_answer_fields()
+        //     add_per_answer_fields()
         $elements = array();
+        $options = array();
 
         $name = 'answerheader';
         $label = get_string($name, $plugin);
-        $elements[] =& $mform->createElement('header', $name, $label);
+        $elements[] = $mform->createElement('header', $name, $label);
+        $options[$name] = array('expanded' => true);
 
         $name = 'answer';
         $label = get_string($name, $plugin);
-        $options = array('rows' => self::NUM_ANS_ROWS, 'cols' => self::NUM_ANS_COLS);
-        $elements[] =& $mform->createElement('textarea', $name, $label, $options);
+        if ($this->use_editor_for_answers) {
+            $elements[] = $mform->createElement('editor', $name, $label, $this->get_editor_attributes(), $this->get_editor_options());
+        } else {
+            $elements[] = $mform->createElement('textarea', $name, $label, array('rows' => self::NUM_ANS_ROWS, 'cols' => self::NUM_ANS_COLS));
+        }
+        $options[$name] = array('type' => PARAM_RAW);
 
         if (empty($this->question->options)){
             $start = 0;
@@ -99,14 +125,40 @@ class qtype_ordering_edit_form extends question_edit_form {
         if ($start < self::NUM_ANS_START) {
             $start = self::NUM_ANS_START;
         }
-        $options = array('answerheader' => array('expanded' => true));
         $buttontext = get_string('addmoreanswers', $plugin, self::NUM_ANS_ADD);
         $this->repeat_elements($elements, $start, $options, 'countanswers', 'addanswers', self::NUM_ANS_ADD, $buttontext);
 
         // feedback
-        $this->add_ordering_feedback_fields();
+        $this->add_ordering_feedback_fields(true);
+
+        // interactive
+        $this->add_ordering_interactive_settings(true, true);
     }
 
+    /**
+     * get_editor_attributes
+     */
+    protected function get_editor_attributes() {
+        return array(
+            'rows'  => self::NUM_ANS_ROWS,
+            'cols'  => self::NUM_ANS_COLS
+        );
+    }
+
+    /**
+     * get_editor_options
+     */
+    protected function get_editor_options() {
+        return array(
+            'context'  => $this->context,
+            'maxfiles' => EDITOR_UNLIMITED_FILES,
+            'noclean'  => true
+        );
+    }
+
+    /**
+     * data_preprocessing
+     */
     public function data_preprocessing($question) {
 
         $question = parent::data_preprocessing($question);
@@ -118,17 +170,57 @@ class qtype_ordering_edit_form extends question_edit_form {
         // answers and fractions
         $question->answer     = array();
         $question->fraction   = array();
+
         if (isset($question->options->answers)) {
+
             $i = 0;
             foreach ($question->options->answers as $answer) {
+
                 if (trim($answer->answer)=='') {
                     continue; // skip empty answers
                 }
-                $question->answer[$i]   = $answer->answer;
+
+                if ($this->use_editor_for_answers) {
+                    $draftid = file_get_submitted_draft_itemid("answer[$i]");
+
+                    if (isset($answer->id)) {
+                        $itemid = $answer->id;
+                    } else {
+                        $itemid = null;
+                    }
+
+                    if (isset($answer->answer)) {
+                        $text = $answer->answer;
+                    } else {
+                        $text = '';
+                    }
+
+                    if (isset($answer->answerformat)) {
+                        $format = $answer->answerformat;
+                    } else {
+                        $format = FORMAT_MOODLE;
+                    }
+
+                    $text = file_prepare_draft_area($draftid, $this->context->id, 'qtype_ordering',
+                                                    'answer', $itemid, $this->editoroptions, $text);
+
+                    $question->answer[$i] = array('text'   => $text,
+                                                  'format' => $format,
+                                                  'itemid' => $draftid);
+                } else {
+                    $question->answer[$i]= $answer->answer;
+                }
+
                 $question->fraction[$i] = ($i + 1);
                 $i++;
             }
+        }
 
+        // layouttype
+        if (isset($question->options->layouttype)) {
+            $question->layouttype = $question->options->layouttype;
+        } else {
+            $question->layouttype = 0;
         }
 
         // selecttype
@@ -154,6 +246,9 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         $answercount = 0;
         foreach ($data['answer'] as $answer){
+            if ($this->use_editor_for_answers) {
+                $answer = $answer['text'];
+            }
             if (trim($answer)=='') {
                 continue; // skip empty answer
             }
@@ -168,11 +263,10 @@ class qtype_ordering_edit_form extends question_edit_form {
         return $errors;
     }
 
-
-    protected function add_ordering_feedback_fields($withshownumpartscorrect = false) {
+    protected function add_ordering_feedback_fields($shownumpartscorrect = false) {
         if (method_exists($this, 'add_combined_feedback_fields')) {
             // Moodle >= 2.1
-            $this->add_combined_feedback_fields($withshownumpartscorrect);
+            $this->add_combined_feedback_fields($shownumpartscorrect);
         } else {
             // Moodle 2.0
             $mform = $this->_form;
@@ -185,10 +279,17 @@ class qtype_ordering_edit_form extends question_edit_form {
         }
     }
 
-    protected function data_preprocessing_ordering_feedback($question, $withshownumcorrect = false) {
+    protected function add_ordering_interactive_settings($clearwrong=false, $shownumpartscorrect=false) {
+        if (method_exists($this, 'add_interactive_settings')) {
+            // Moodle >= 2.1
+            $this->add_interactive_settings($clearwrong, $shownumpartscorrect);
+        }
+    }
+
+    protected function data_preprocessing_ordering_feedback($question, $shownumcorrect=false) {
         if (method_exists($this, 'data_preprocessing_combined_feedback')) {
             // Moodle >= 2.1
-            $question = $this->data_preprocessing_combined_feedback($question, $withshownumcorrect);
+            $question = $this->data_preprocessing_combined_feedback($question, $shownumcorrect);
         } else {
             // Moodle 2.0
             $names = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
@@ -208,13 +309,13 @@ class qtype_ordering_edit_form extends question_edit_form {
                 }
 
                 $text = file_prepare_draft_area($draftid, $this->context->id, 'qtype_ordering',
-                                                $name, $itemid, $this->fileoptions, $text);
+                                                $name, $itemid, $this->editoroptions, $text);
 
                 $format = $name.'format';
                 if (isset($question->options->$format)) {
                     $format = $question->options->$format;
                 } else {
-                    $format = 0;
+                    $format = FORMAT_MOODLE;
                 }
 
                 $question->$name = array('text'   => $text,

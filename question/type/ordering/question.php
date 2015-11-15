@@ -54,18 +54,18 @@ class qtype_ordering_question extends question_graded_automatically {
     public $currentresponse;
 
     public function start_attempt(question_attempt_step $step, $variant) {
-        $this->answers = $this->get_ordering_answers();
-        $this->options = $this->get_ordering_options();
+        $answers = $this->get_ordering_answers();
+        $options = $this->get_ordering_options();
 
-        $countanswers = count($this->answers);
+        $countanswers = count($answers);
 
         // sanitize "selecttype"
-        $selecttype = $this->options->selecttype;
+        $selecttype = $options->selecttype;
         $selecttype = max(0, $selecttype);
         $selecttype = min(2, $selecttype);
 
         // sanitize "selectcount"
-        $selectcount = $this->options->selectcount;
+        $selectcount = $options->selectcount;
         $selectcount = max(3, $selectcount);
         $selectcount = min($countanswers, $selectcount);
 
@@ -78,15 +78,15 @@ class qtype_ordering_question extends question_graded_automatically {
         // extract answer ids
         switch ($selecttype) {
             case 0: // all
-                $answerids = array_keys($this->answers);
+                $answerids = array_keys($answers);
                 break;
 
             case 1: // random subset
-                $answerids = array_rand($this->answers, $selectcount);
+                $answerids = array_rand($answers, $selectcount);
                 break;
 
             case 2: // contiguous subset
-                $answerids = array_keys($this->answers);
+                $answerids = array_keys($answers);
                 $offset = mt_rand(0, $countanswers - $selectcount);
                 $answerids = array_slice($answerids, $offset, $selectcount, true);
                 break;
@@ -101,8 +101,8 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     public function apply_attempt_state(question_attempt_step $step) {
-        $this->answers = $this->get_ordering_answers();
-        $this->options = $this->get_ordering_options();
+        $answers = $this->get_ordering_answers();
+        $options = $this->get_ordering_options();
         $this->currentresponse = array_filter(explode(',', $step->get_qt_var('_currentresponse')));
         $this->correctresponse = array_filter(explode(',', $step->get_qt_var('_correctresponse')));
     }
@@ -198,6 +198,7 @@ class qtype_ordering_question extends question_graded_automatically {
             if (empty($this->options)) {
                 $this->options = (object)array(
                     'questionid' => $this->id,
+                    'layouttype' => 0, // vertical
                     'selecttype' => 0, // all answers
                     'selectcount' => 0,
                     'correctfeedback' => '',
@@ -231,5 +232,14 @@ class qtype_ordering_question extends question_graded_automatically {
             }
         }
         return $this->answers;
+    }
+
+    public function get_ordering_layoutclass() {
+        $options = $this->get_ordering_options();
+        switch ($options->layouttype) {
+            case 0:  return 'vertical';
+            case 1:  return 'horizontal';
+            default: return ''; // shouldn't happen !!
+        }
     }
 }
