@@ -24,6 +24,7 @@
 namespace tool_lp\external;
 
 use renderer_base;
+use external_value;
 
 /**
  * Class for exporting plan data.
@@ -33,13 +34,20 @@ use renderer_base;
  */
 class plan_exporter extends persistent_exporter {
 
-    protected function get_persistent_class() {
+    protected static function get_persistent_class() {
         return 'tool_lp\\plan';
     }
 
     public function export(renderer_base $output) {
         $result = parent::export($output);
         $result->statusname = $this->persistent->get_statusname();
+        $result->usercanupdate = $this->persistent->can_manage();
         return $result;
+    }
+
+    public static function export_read_properties_structure($fields) {
+        $fields['statusname'] = new external_value(PARAM_TEXT, 'statusname, readonly');
+        $fields['usercanupdate'] = new external_value(PARAM_BOOL, 'usercanupdate, readonly');
+        return $fields;
     }
 }

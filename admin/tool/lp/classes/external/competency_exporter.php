@@ -31,12 +31,12 @@ namespace tool_lp\external;
  */
 class competency_exporter extends persistent_exporter {
 
-    protected function get_related() {
+    protected static function get_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.
         return array('context' => '\context');
     }
 
-    protected function get_persistent_class() {
+    protected static function get_persistent_class() {
         return 'tool_lp\\competency';
     }
 }

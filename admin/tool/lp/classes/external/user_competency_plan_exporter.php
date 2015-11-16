@@ -33,7 +33,7 @@ use renderer_base;
  */
 class user_competency_plan_exporter extends persistent_exporter {
 
-    protected function get_persistent_class() {
+    protected static function get_persistent_class() {
         return 'tool_lp\\user_competency_plan';
     }
 

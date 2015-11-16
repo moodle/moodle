@@ -31,7 +31,7 @@ namespace tool_lp\external;
  */
 class related_competency_exporter extends persistent_exporter {
 
-    protected function get_persistent_class() {
+    protected static function get_persistent_class() {
         return 'tool_lp\\related_competency';
     }
 }

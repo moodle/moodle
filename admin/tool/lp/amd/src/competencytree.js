@@ -75,8 +75,7 @@ define(['core/ajax', 'core/notification', 'core/templates', 'tool_lp/tree', 'jqu
                 methodname: 'tool_lp_search_competencies',
                 args: {
                     searchtext: searchtext,
-                    competencyframeworkid: competencyFrameworkId,
-                    includerelated: true
+                    competencyframeworkid: competencyFrameworkId
                 }
             }]);
             promises[0].done(function(result) {

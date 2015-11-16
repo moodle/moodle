@@ -150,168 +150,36 @@ class external extends external_api {
     }
 
     /**
-     * Returns the external structure of a full competency_framework record.
-     *
-     * @return \external_single_structure
-     */
-    protected static function get_competency_framework_external_structure() {
-        $id = new external_value(
-            PARAM_INT,
-            'Database record id'
-        );
-        $shortname = new external_value(
-            PARAM_TEXT,
-            'Short name for the competency framework'
-        );
-        $idnumber = new external_value(
-            PARAM_TEXT,
-            'If provided, must be a unique string to identify this competency framework'
-        );
-        $description = new external_value(
-            PARAM_RAW,
-            'Description for the framework'
-        );
-        $descriptionformat = new external_format_value(
-            'Description format for the framework'
-        );
-        $scaleid = new external_value(
-            PARAM_INT,
-            'Scale id associated to the framework.'
-        );
-        $scaleconfiguration = new external_value(
-            PARAM_TEXT,
-            'Scale configuration.'
-        );
-        $taxonomies = new external_value(
-            PARAM_RAW,
-            'The taxonomy terms'
-        );
-        $visible = new external_value(
-            PARAM_BOOL,
-            'Is this framework visible?'
-        );
-        $timecreated = new external_value(
-            PARAM_INT,
-            'Timestamp this record was created'
-        );
-        $timemodified = new external_value(
-            PARAM_INT,
-            'Timestamp this record was modified'
-        );
-        $usermodified = new external_value(
-            PARAM_INT,
-            'User who modified this record last'
-        );
-
-        $returns = array(
-            'id' => $id,
-            'shortname' => $shortname,
-            'idnumber' => $idnumber,
-            'description' => $description,
-            'descriptionformat' => $descriptionformat,
-            'scaleid' => $scaleid,
-            'scaleconfiguration' => $scaleconfiguration,
-            'taxonomies' => $taxonomies,
-            'visible' => $visible,
-            'timecreated' => $timecreated,
-            'timemodified' => $timemodified,
-            'usermodified' => $usermodified,
-        );
-        return new external_single_structure($returns);
-    }
-
-    /**
      * Returns description of create_competency_framework() parameters.
      *
      * @return \external_function_parameters
      */
     public static function create_competency_framework_parameters() {
-        $shortname = new external_value(
-            PARAM_TEXT,
-            'Short name for the competency framework.',
-            VALUE_REQUIRED
-        );
-        $idnumber = new external_value(
-            PARAM_TEXT,
-            'If provided, must be a unique string to identify this competency framework.',
-            VALUE_DEFAULT,
-            ''
-        );
-        $description = new external_value(
-            PARAM_RAW,
-            'Optional description for the framework',
-            VALUE_DEFAULT,
-            ''
-        );
-        $descriptionformat = new external_format_value(
-            'Optional description format for the framework',
-            VALUE_DEFAULT,
-            FORMAT_HTML
-        );
-        $scaleid = new external_value(
-            PARAM_INT,
-            'Scale id associated to the framework.',
-            VALUE_REQUIRED
-        );
-        $scaleconfiguration = new external_value(
-            PARAM_TEXT,
-            'Scale configuration.',
-            VALUE_REQUIRED
-        );
-        $visible = new external_value(
-            PARAM_BOOL,
-            'Is this framework visible?',
-            VALUE_DEFAULT,
-            true
-        );
-
-        $params = array(
-            'shortname' => $shortname,
-            'idnumber' => $idnumber,
-            'description' => $description,
-            'descriptionformat' => $descriptionformat,
-            'scaleid' => $scaleid,
-            'scaleconfiguration' => $scaleconfiguration,
-            'visible' => $visible,
-            'context' => self::get_context_parameters(),
-        );
+        $structure = competency_framework_exporter::export_structure('create');
+        $params = array('competencyframework' => $structure);
         return new external_function_parameters($params);
     }
 
     /**
      * Create a new competency framework
      *
-     * @param string $shortname The short name
-     * @param string $idnumber The idnumber
-     * @param string $description The description
-     * @param int $descriptionformat The description format
-     * @param int $scaleid The scale id associated to the framework
-     * @param string $scaleconfiguration The scale configuration
-     * @param bool $visible Is this framework visible.
-     * @param array $context
+     * @param array $competencyframework A single param with all the fields for a competency framework.
      * @return \stdClass The new record
      */
-    public static function create_competency_framework($shortname, $idnumber, $description, $descriptionformat, $scaleid,
-                                                       $scaleconfiguration, $visible, $context) {
+    public static function create_competency_framework($competencyframework) {
         global $PAGE;
 
         $params = self::validate_parameters(self::create_competency_framework_parameters(),
-                                            array(
-                                                'shortname' => $shortname,
-                                                'idnumber' => $idnumber,
-                                                'description' => $description,
-                                                'descriptionformat' => $descriptionformat,
-                                                'scaleid' => $scaleid,
-                                                'scaleconfiguration' => $scaleconfiguration,
-                                                'visible' => $visible,
-                                                'context' => $context,
-                                            ));
+                                            array('competencyframework' => $competencyframework));
 
-        $context = self::get_context_from_params($params['context']);
+        $params = $params['competencyframework'];
+
+        $context = self::get_context_from_params($params);
         self::validate_context($context);
         $output = $PAGE->get_renderer('tool_lp');
 
-        unset($params['context']);
+        unset($params['contextlevel']);
+        unset($params['instanceid']);
         $params['contextid'] = $context->id;
 
         $params = (object) $params;
@@ -327,7 +195,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function create_competency_framework_returns() {
-        return self::get_competency_framework_external_structure();
+        return competency_framework_exporter::export_structure('read');
     }
 
     /**
@@ -376,7 +244,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function read_competency_framework_returns() {
-        return self::get_competency_framework_external_structure();
+        return competency_framework_exporter::export_structure('read');
     }
 
     /**
@@ -421,7 +289,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function duplicate_competency_framework_returns() {
-        return self::get_competency_framework_external_structure();
+        return competency_framework_exporter::export_structure('read');
     }
 
     /**
@@ -475,92 +343,25 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function update_competency_framework_parameters() {
-        $id = new external_value(
-            PARAM_INT,
-            'Data base record id for the framework',
-            VALUE_REQUIRED
-        );
-        $shortname = new external_value(
-            PARAM_TEXT,
-            'Short name for the competency framework.',
-            VALUE_REQUIRED
-        );
-        $idnumber = new external_value(
-            PARAM_TEXT,
-            'If provided, must be a unique string to identify this competency framework.',
-            VALUE_REQUIRED
-        );
-        $description = new external_value(
-            PARAM_RAW,
-            'Description for the framework',
-            VALUE_REQUIRED
-        );
-        $descriptionformat = new external_format_value(
-            'Description format for the framework',
-            VALUE_REQUIRED
-        );
-        $scaleid = new external_value(
-            PARAM_INT,
-            'Scale id associated to the framework.',
-            VALUE_REQUIRED
-        );
-        $scaleconfiguration = new external_value(
-            PARAM_TEXT,
-            'Scale configuration.',
-            VALUE_REQUIRED
-        );
-        $visible = new external_value(
-            PARAM_BOOL,
-            'Is this framework visible?',
-            VALUE_REQUIRED
-        );
-
-        $params = array(
-            'id' => $id,
-            'shortname' => $shortname,
-            'idnumber' => $idnumber,
-            'description' => $description,
-            'descriptionformat' => $descriptionformat,
-            'scaleid' => $scaleid,
-            'scaleconfiguration' => $scaleconfiguration,
-            'visible' => $visible,
-        );
+        $structure = competency_framework_exporter::export_structure('update');
+        $params = array('competencyframework' => $structure);
         return new external_function_parameters($params);
     }
 
     /**
      * Update an existing competency framework
      *
-     * @param int $id The competency framework id
-     * @param string $shortname
-     * @param string $idnumber
-     * @param string $description
-     * @param int $descriptionformat
-     * @param int $scaleid The scale id associated to the framework
-     * @param string $scaleconfiguration The scale configuration
-     * @param boolean $visible
+     * @param array $competencyframework An array with all the fields for a competency framework.
      * @return boolean
      */
-    public static function update_competency_framework($id,
-                                                       $shortname,
-                                                       $idnumber,
-                                                       $description,
-                                                       $descriptionformat,
-                                                       $scaleid,
-                                                       $scaleconfiguration,
-                                                       $visible) {
+    public static function update_competency_framework($competencyframework) {
 
         $params = self::validate_parameters(self::update_competency_framework_parameters(),
                                             array(
-                                                'id' => $id,
-                                                'shortname' => $shortname,
-                                                'idnumber' => $idnumber,
-                                                'description' => $description,
-                                                'descriptionformat' => $descriptionformat,
-                                                'scaleid' => $scaleid,
-                                                'scaleconfiguration' => $scaleconfiguration,
-                                                'visible' => $visible
+                                                'competencyframework' => $competencyframework
                                             ));
+
+        $params = $params['competencyframework'];
 
         $framework = api::read_framework($params['id']);
         self::validate_context($framework->get_context());
@@ -684,7 +485,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_competency_frameworks_returns() {
-        return new external_multiple_structure(self::get_competency_framework_external_structure());
+        return new external_multiple_structure(competency_framework_exporter::export_structure('read'));
     }
 
     /**
@@ -779,7 +580,7 @@ class external extends external_api {
         return new external_single_structure(array (
             'canmanage' => new external_value(PARAM_BOOL, 'True if this user has permission to manage competency frameworks'),
             'competencyframeworks' => new external_multiple_structure(
-                self::get_competency_framework_external_structure()
+                competency_framework_exporter::export_structure('read')
             ),
             'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
             'navigation' => new external_multiple_structure(
@@ -790,339 +591,29 @@ class external extends external_api {
     }
 
     /**
-     * Returns the external structure of a full competency record.
-     *
-     * @param bool $includerelated Useful to avoid recursive structures.
-     * @return \external_single_structure
-     */
-    protected static function get_competency_external_structure($includerelated = false) {
-        $id = new external_value(
-            PARAM_INT,
-            'Database record id'
-        );
-        $shortname = new external_value(
-            PARAM_TEXT,
-            'Short name for the competency'
-        );
-        $idnumber = new external_value(
-            PARAM_TEXT,
-            'If provided, must be a unique string to identify this competency'
-        );
-        $description = new external_value(
-            PARAM_RAW,
-            'Description for the competency'
-        );
-        $descriptionformat = new external_format_value(
-            'Description format for the competency'
-        );
-        $visible = new external_value(
-            PARAM_BOOL,
-            'Is this competency visible?'
-        );
-        $sortorder = new external_value(
-            PARAM_INT,
-            'Relative sort order of this competency'
-        );
-        $competencyframeworkid = new external_value(
-            PARAM_INT,
-            'Competency framework id that this competency belongs to'
-        );
-        $parentid = new external_value(
-            PARAM_INT,
-            'Parent competency id. 0 means top level node.'
-        );
-        $timecreated = new external_value(
-            PARAM_INT,
-            'Timestamp this record was created'
-        );
-        $timemodified = new external_value(
-            PARAM_INT,
-            'Timestamp this record was modified'
-        );
-        $usermodified = new external_value(
-            PARAM_INT,
-            'User who modified this record last'
-        );
-        $parentid = new external_value(
-            PARAM_INT,
-            'The id of the parent competency.'
-        );
-        $path = new external_value(
-            PARAM_RAW,
-            'The path of parents all the way to the root of the tree.'
-        );
-
-        $returns = array(
-            'id' => $id,
-            'shortname' => $shortname,
-            'idnumber' => $idnumber,
-            'description' => $description,
-            'descriptionformat' => $descriptionformat,
-            'visible' => $visible,
-            'sortorder' => $sortorder,
-            'timecreated' => $timecreated,
-            'timemodified' => $timemodified,
-            'usermodified' => $usermodified,
-            'parentid' => $parentid,
-            'competencyframeworkid' => $competencyframeworkid,
-            'path' => $path,
-        );
-
-        if ($includerelated) {
-            $returns['relatedcompetencies'] = new external_multiple_structure(
-                self::get_competency_external_structure(false),
-                'Related competencies',
-                VALUE_OPTIONAL
-            );
-        }
-
-        return new external_single_structure($returns);
-    }
-
-    /**
-     * Returns the external structure of a full user_competency record.
-     *
-     * @param int $fordisplay When true, additional fields for display purposes will be added.
-     * @param int $required If the stucture is required.
-     * @return \external_single_structure
-     */
-    protected static function get_user_competency_external_structure($fordisplay = false, $required = VALUE_REQUIRED) {
-        $id = new external_value(
-            PARAM_INT,
-            'Database record id'
-        );
-        $userid = new external_value(
-            PARAM_INT,
-            'User to whom this record belongs to'
-        );
-        $competencyid = new external_value(
-            PARAM_INT,
-            'The competency associated with this record'
-        );
-        $status = new external_value(
-            PARAM_INT,
-            'The status of the user competency'
-        );
-        $reviewerid = new external_value(
-            PARAM_INT,
-            'The reviewer ID'
-        );
-        $proficiency = new external_value(
-            PARAM_BOOL,
-            'Whether or not the user is proficient'
-        );
-        $grade = new external_value(
-            PARAM_INT,
-            'The scale grade'
-        );
-        $timecreated = new external_value(
-            PARAM_INT,
-            'Timestamp this record was created'
-        );
-        $timemodified = new external_value(
-            PARAM_INT,
-            'Timestamp this record was modified'
-        );
-        $usermodified = new external_value(
-            PARAM_INT,
-            'User who modified this record last'
-        );
-
-        $returns = array(
-            'id' => $id,
-            'userid' => $userid,
-            'competencyid' => $competencyid,
-            'status' => $status,
-            'reviewerid' => $reviewerid,
-            'proficiency' => $proficiency,
-            'grade' => $grade,
-            'timecreated' => $timecreated,
-            'timemodified' => $timemodified,
-            'usermodified' => $usermodified,
-        );
-
-        if ($fordisplay) {
-            $gradename = new external_value(
-                PARAM_TEXT,
-                'User competency status name'
-            );
-            $proficiencyname = new external_value(
-                PARAM_TEXT,
-                'User competency proficiency name'
-            );
-            $statusname = new external_value(
-                PARAM_TEXT,
-                'User competency status name'
-            );
-            $returns['gradename'] = $gradename;
-            $returns['proficiencyname'] = $proficiencyname;
-            $returns['statusname'] = $statusname;
-        }
-
-        return new external_single_structure($returns, '', $required);
-    }
-
-    /**
-     * Returns the external structure of a full user_competency_plan record.
-     *
-     * @param int $fordisplay When true, additional fields for display purposes will be added.
-     * @param int $required If the stucture is required.
-     * @return \external_single_structure
-     */
-    protected static function get_user_competency_plan_external_structure($fordisplay = false, $required = VALUE_REQUIRED) {
-        $id = new external_value(
-            PARAM_INT,
-            'Database record id'
-        );
-        $userid = new external_value(
-            PARAM_INT,
-            'User to whom this record belongs to'
-        );
-        $competencyid = new external_value(
-            PARAM_INT,
-            'The competency associated with this record'
-        );
-        $proficiency = new external_value(
-            PARAM_BOOL,
-            'Whether or not the user is proficient'
-        );
-        $grade = new external_value(
-            PARAM_INT,
-            'The scale grade'
-        );
-        $planid = new external_value(
-            PARAM_INT,
-            'The plan id'
-        );
-        $timecreated = new external_value(
-            PARAM_INT,
-            'Timestamp this record was created'
-        );
-        $timemodified = new external_value(
-            PARAM_INT,
-            'Timestamp this record was modified'
-        );
-        $usermodified = new external_value(
-            PARAM_INT,
-            'User who modified this record last'
-        );
-
-        $returns = array(
-            'id' => $id,
-            'userid' => $userid,
-            'competencyid' => $competencyid,
-            'proficiency' => $proficiency,
-            'grade' => $grade,
-            'planid' => $planid,
-            'timecreated' => $timecreated,
-            'timemodified' => $timemodified,
-            'usermodified' => $usermodified,
-        );
-
-        if ($fordisplay) {
-            $gradename = new external_value(
-                PARAM_TEXT,
-                'User competency status name'
-            );
-            $proficiencyname = new external_value(
-                PARAM_TEXT,
-                'User competency proficiency name'
-            );
-            $returns['gradename'] = $gradename;
-            $returns['proficiencyname'] = $proficiencyname;
-        }
-
-        return new external_single_structure($returns, '', $required);
-    }
-
-    /**
      * Returns description of create_competency() parameters.
      *
      * @return \external_function_parameters
      */
     public static function create_competency_parameters() {
-        $shortname = new external_value(
-            PARAM_TEXT,
-            'Short name for the competency framework.',
-            VALUE_REQUIRED
-        );
-        $idnumber = new external_value(
-            PARAM_TEXT,
-            'If provided, must be a unique string to identify this competency framework.',
-            VALUE_DEFAULT,
-            ''
-        );
-        $description = new external_value(
-            PARAM_RAW,
-            'Optional description for the framework',
-            VALUE_DEFAULT,
-            ''
-        );
-        $descriptionformat = new external_format_value(
-            'Optional description format for the framework',
-            VALUE_DEFAULT,
-            FORMAT_HTML
-        );
-        $visible = new external_value(
-            PARAM_BOOL,
-            'Is this competency visible?',
-            VALUE_DEFAULT,
-            true
-        );
-        $competencyframeworkid = new external_value(
-            PARAM_INT,
-            'Which competency framework does this competency belong to?'
-        );
-        $parentid = new external_value(
-            PARAM_INT,
-            'The parent competency. 0 means this is a top level competency.'
-        );
-
-        $params = array(
-            'shortname' => $shortname,
-            'idnumber' => $idnumber,
-            'description' => $description,
-            'descriptionformat' => $descriptionformat,
-            'visible' => $visible,
-            'competencyframeworkid' => $competencyframeworkid,
-            'parentid' => $parentid,
-        );
+        $structure = competency_exporter::export_structure('create');
+        $params = array('competency' => $structure);
         return new external_function_parameters($params);
     }
 
     /**
-     * Create a new competency framework
+     * Create a new competency
      *
-     * @param string $shortname
-     * @param string $idnumber
-     * @param string $description
-     * @param int $descriptionformat
-     * @param bool $visible
-     * @param int $competencyframeworkid
-     * @param int $parentid
-     * @return string the template
+     * @param array $competency All the fields for a competency record (including id)
+     * @return array the competency
      */
-    public static function create_competency($shortname,
-                                             $idnumber,
-                                             $description,
-                                             $descriptionformat,
-                                             $visible,
-                                             $competencyframeworkid,
-                                             $parentid) {
+    public static function create_competency($competency) {
         global $PAGE;
 
         $params = self::validate_parameters(self::create_competency_parameters(),
-                                            array(
-                                                'shortname' => $shortname,
-                                                'idnumber' => $idnumber,
-                                                'description' => $description,
-                                                'descriptionformat' => $descriptionformat,
-                                                'visible' => $visible,
-                                                'competencyframeworkid' => $competencyframeworkid,
-                                                'parentid' => $parentid,
-                                            ));
+                                            array('competency' => $competency));
 
-
+        $params = $params['competency'];
         $framework = api::read_framework($params['competencyframeworkid']);
         $context = $framework->get_context();
         self::validate_context($context);
@@ -1141,7 +632,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function create_competency_returns() {
-        return self::get_competency_external_structure();
+        return competency_exporter::export_structure('read');
     }
 
     /**
@@ -1192,7 +683,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function read_competency_returns() {
-        return self::get_competency_external_structure();
+        return competency_exporter::export_structure('read');
     }
 
     /**
@@ -1247,101 +738,22 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function update_competency_parameters() {
-        $id = new external_value(
-            PARAM_INT,
-            'Data base record id for the competency',
-            VALUE_REQUIRED
-        );
-        $shortname = new external_value(
-            PARAM_TEXT,
-            'Short name for the competency.',
-            VALUE_REQUIRED
-        );
-        $idnumber = new external_value(
-            PARAM_TEXT,
-            'If provided, must be a unique string to identify this competency.',
-            VALUE_REQUIRED
-        );
-        $description = new external_value(
-            PARAM_RAW,
-            'Description for the framework',
-            VALUE_REQUIRED
-        );
-        $descriptionformat = new external_format_value(
-            'Description format for the framework',
-            VALUE_REQUIRED
-        );
-        $visible = new external_value(
-            PARAM_BOOL,
-            'Is this framework visible?',
-            VALUE_REQUIRED
-        );
-        $ruletype = new external_value(
-            PARAM_RAW,
-            'The type of rule',
-            VALUE_DEFAULT,
-            null
-        );
-        $ruleoutcome = new external_value(
-            PARAM_INT,
-            'The outcome when the rule matches. Constant value competency::OUTCOME_*',
-            VALUE_DEFAULT,
-            competency::OUTCOME_NONE
-        );
-        $ruleconfig = new external_value(
-            PARAM_RAW,
-            'The extra config of the rule.',
-            VALUE_DEFAULT,
-            null
-        );
-
-        $params = array(
-            'id' => $id,
-            'shortname' => $shortname,
-            'idnumber' => $idnumber,
-            'description' => $description,
-            'descriptionformat' => $descriptionformat,
-            'visible' => $visible,
-            'ruletype' => $ruletype,
-            'ruleoutcome' => $ruleoutcome,
-            'ruleconfig' => $ruleconfig,
-        );
+        $structure = competency_exporter::export_structure('update');
+        $params = array('competency' => $structure);
         return new external_function_parameters($params);
     }
 
     /**
      * Update an existing competency
      *
-     * @param int $id The competency id
-     * @param string $shortname
-     * @param string $idnumber
-     * @param string $description
-     * @param int $descriptionformat
-     * @param boolean $visible
+     * @param array $competency The array of competency fields (id is required).
      * @return boolean
      */
-    public static function update_competency($id,
-                                             $shortname,
-                                             $idnumber,
-                                             $description,
-                                             $descriptionformat,
-                                             $visible,
-                                             $ruletype = null,
-                                             $ruleoutcome = competency::OUTCOME_NONE,
-                                             $ruleconfig = null) {
+    public static function update_competency($competency) {
 
         $params = self::validate_parameters(self::update_competency_parameters(),
-                                            array(
-                                                'id' => $id,
-                                                'shortname' => $shortname,
-                                                'idnumber' => $idnumber,
-                                                'description' => $description,
-                                                'descriptionformat' => $descriptionformat,
-                                                'visible' => $visible,
-                                                'ruletype' => $ruletype,
-                                                'ruleoutcome' => $ruleoutcome,
-                                                'ruleconfig' => $ruleconfig,
-                                            ));
+                                            array('competency' => $competency));
+        $params = $params['competency'];
 
         $competency = api::read_competency($params['id']);
         self::validate_context($competency->get_context());
@@ -1419,11 +831,14 @@ class external extends external_api {
         self::validate_context($context);
         $output = $PAGE->get_renderer('tool_lp');
 
-        $results = api::list_competencies($safefilters,
-                                                     $params['sort'],
-                                                     $params['order'],
-                                                     $params['skip'],
-                                                     $params['limit']);
+        $results = api::list_competencies(
+            $safefilters,
+            $params['sort'],
+            $params['order'],
+            $params['skip'],
+            $params['limit']
+        );
+
         $records = array();
         foreach ($results as $result) {
             $exporter = new competency_exporter($result, array('context' => $context));
@@ -1439,7 +854,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_competencies_returns() {
-        return new external_multiple_structure(self::get_competency_external_structure());
+        return new external_multiple_structure(competency_exporter::export_structure('read'));
     }
 
     /**
@@ -1458,17 +873,10 @@ class external extends external_api {
             'Competency framework id',
             VALUE_REQUIRED
         );
-        $includerelated = new external_value(
-            PARAM_BOOL,
-            'Include or not related competencies',
-            VALUE_DEFAULT,
-            false
-        );
 
         $params = array(
             'searchtext' => $searchtext,
-            'competencyframeworkid' => $frameworkid,
-            'includerelated' => $includerelated
+            'competencyframeworkid' => $frameworkid
         );
         return new external_function_parameters($params);
     }
@@ -1481,14 +889,13 @@ class external extends external_api {
      *
      * @return array
      */
-    public static function search_competencies($searchtext, $competencyframeworkid, $includerelated = false) {
+    public static function search_competencies($searchtext, $competencyframeworkid) {
         global $PAGE;
 
         $params = self::validate_parameters(self::search_competencies_parameters(),
                                             array(
                                                 'searchtext' => $searchtext,
-                                                'competencyframeworkid' => $competencyframeworkid,
-                                                'includerelated' => $includerelated
+                                                'competencyframeworkid' => $competencyframeworkid
                                             ));
 
         $framework = api::read_framework($params['competencyframeworkid']);
@@ -1502,16 +909,6 @@ class external extends external_api {
             $exporter = new competency_exporter($result, array('context' => $context));
             $record = $exporter->export($output);
 
-            if ($params['includerelated']) {
-                $record->relatedcompetencies = array();
-                $relatedcomps = $result->get_related_competencies();
-                foreach ($relatedcomps as $comp) {
-                    $exporter = new competency_exporter($comp, array('context' => $context));
-                    $comprecord = $exporter->export($output);
-                    $record->relatedcompetencies[] = $comprecord;
-                }
-            }
-
             array_push($records, $record);
         }
 
@@ -1524,7 +921,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function search_competencies_returns() {
-        return new external_multiple_structure(self::get_competency_external_structure(true));
+        return new external_multiple_structure(competency_exporter::export_structure('read'));
     }
 
     /**
@@ -1639,7 +1036,7 @@ class external extends external_api {
      */
     public static function data_for_competencies_manage_page_returns() {
         return new external_single_structure(array (
-            'framework' => self::get_competency_framework_external_structure(),
+            'framework' => competency_framework_exporter::export_structure('read'),
             'canmanage' => new external_value(PARAM_BOOL, 'True if this user has permission to manage competency frameworks'),
             'pagecontextid' => new external_value(PARAM_INT, 'Context id for the framework'),
             'search' => new external_value(PARAM_RAW, 'Current search string'),
@@ -2008,7 +1405,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_competencies_in_course_returns() {
-        return new external_multiple_structure(self::get_competency_external_structure());
+        return new external_multiple_structure(competency_exporter::export_structure('read'));
     }
 
     /**
@@ -2161,7 +1558,7 @@ class external extends external_api {
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagecoursecompetencies' => new external_value(PARAM_BOOL, 'User can manage linked course competencies'),
             'competencies' => new external_multiple_structure(
-                self::get_competency_external_structure()
+                competency_exporter::export_structure('read')
             ),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
         ));
@@ -2287,146 +1684,34 @@ class external extends external_api {
     }
 
     /**
-     * Returns the external structure of a full template record.
-     *
-     * @return \external_single_structure
-     */
-    protected static function get_template_external_structure() {
-        $id = new external_value(
-            PARAM_INT,
-            'Database record id'
-        );
-        $shortname = new external_value(
-            PARAM_TEXT,
-            'Short name for the learning plan template'
-        );
-        $duedate = new external_value(
-            PARAM_INT,
-            'The default due date for instances of this plan.'
-        );
-        $duedateformatted = new external_value(
-            PARAM_RAW,
-            'Due date that has been formatted for display'
-        );
-        $description = new external_value(
-            PARAM_RAW,
-            'Description for the template'
-        );
-        $descriptionformat = new external_format_value(
-            'Description format for the template'
-        );
-        $visible = new external_value(
-            PARAM_BOOL,
-            'Is this template visible?'
-        );
-        $timecreated = new external_value(
-            PARAM_INT,
-            'Timestamp this record was created'
-        );
-        $timemodified = new external_value(
-            PARAM_INT,
-            'Timestamp this record was modified'
-        );
-        $usermodified = new external_value(
-            PARAM_INT,
-            'User who modified this record last'
-        );
-        $contextid = new external_value(
-            PARAM_INT,
-            'The context ID the template belongs to'
-        );
-
-        $returns = array(
-            'id' => $id,
-            'shortname' => $shortname,
-            'duedate' => $duedate,
-            'duedateformatted' => $duedateformatted,
-            'description' => $description,
-            'descriptionformat' => $descriptionformat,
-            'visible' => $visible,
-            'timecreated' => $timecreated,
-            'timemodified' => $timemodified,
-            'usermodified' => $usermodified,
-            'contextid' => $contextid,
-        );
-        return new external_single_structure($returns);
-    }
-
-    /**
      * Returns description of create_template() parameters.
      *
      * @return \external_function_parameters
      */
     public static function create_template_parameters() {
-        $shortname = new external_value(
-            PARAM_TEXT,
-            'Short name for the learning plan template.',
-            VALUE_REQUIRED
-        );
-        $duedate = new external_value(
-            PARAM_INT,
-            'The default due date for instances of this plan',
-            VALUE_DEFAULT,
-            0
-        );
-        $description = new external_value(
-            PARAM_RAW,
-            'Optional description for the learning plan template',
-            VALUE_DEFAULT,
-            ''
-        );
-        $descriptionformat = new external_format_value(
-            'Optional description format for the learning plan template',
-            VALUE_DEFAULT,
-            FORMAT_HTML
-        );
-        $visible = new external_value(
-            PARAM_BOOL,
-            'Is this learning plan template visible?',
-            VALUE_DEFAULT,
-            true
-        );
-
-        $params = array(
-            'shortname' => $shortname,
-            'duedate' => $duedate,
-            'description' => $description,
-            'descriptionformat' => $descriptionformat,
-            'visible' => $visible,
-            'context' => self::get_context_parameters()
-        );
+        $structure = template_exporter::export_structure('create');
+        $params = array('template' => $structure);
         return new external_function_parameters($params);
     }
 
     /**
      * Create a new learning plan template
      *
-     * @param string $shortname The short name of the template.
-     * @param string $idnumber The idnumber of the template.
-     * @param int $duedate The due date for instances of this plan.
-     * @param string $description The description of the template.
-     * @param int $descriptionformat The format of the description
-     * @param bool $visible Is this template visible.
-     * @param array $context The context info.
+     * @param array $template The list of fields for the template.
      * @return \stdClass Record of new template.
      */
-    public static function create_template($shortname, $duedate, $description, $descriptionformat, $visible, $context) {
+    public static function create_template($template) {
         global $PAGE;
 
         $params = self::validate_parameters(self::create_template_parameters(),
-                                            array(
-                                                'shortname' => $shortname,
-                                                'duedate' => $duedate,
-                                                'description' => $description,
-                                                'descriptionformat' => $descriptionformat,
-                                                'visible' => $visible,
-                                                'context' => $context
-                                            ));
-        $context = self::get_context_from_params($params['context']);
+                                            array('template' => $template));
+        $params = $params['template'];
+        $context = self::get_context_from_params($params);
         self::validate_context($context);
         $output = $PAGE->get_renderer('tool_lp');
 
-        unset($params['context']);
+        unset($params['contextlevel']);
+        unset($params['instanceid']);
         $params = (object) $params;
         $params->contextid = $context->id;
 
@@ -2442,7 +1727,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function create_template_returns() {
-        return self::get_template_external_structure();
+        return template_exporter::export_structure('read');
     }
 
     /**
@@ -2492,7 +1777,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function read_template_returns() {
-        return self::get_template_external_structure();
+        return template_exporter::export_structure('read');
     }
 
     /**
@@ -2546,75 +1831,22 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function update_template_parameters() {
-        $id = new external_value(
-            PARAM_INT,
-            'Data base record id for the template',
-            VALUE_REQUIRED
-        );
-        $shortname = new external_value(
-            PARAM_TEXT,
-            'Short name for the learning plan template.',
-            VALUE_REQUIRED
-        );
-        $duedate = new external_value(
-            PARAM_INT,
-            'Default due date for instances of this plan',
-            VALUE_REQUIRED
-        );
-        $description = new external_value(
-            PARAM_RAW,
-            'Description for the template',
-            VALUE_REQUIRED
-        );
-        $descriptionformat = new external_format_value(
-            'Description format for the template',
-            VALUE_REQUIRED
-        );
-        $visible = new external_value(
-            PARAM_BOOL,
-            'Is this template visible?',
-            VALUE_REQUIRED
-        );
-
-        $params = array(
-            'id' => $id,
-            'shortname' => $shortname,
-            'duedate' => $duedate,
-            'description' => $description,
-            'descriptionformat' => $descriptionformat,
-            'visible' => $visible,
-        );
+        $structure = template_exporter::export_structure('update');
+        $params = array('template' => $structure);
         return new external_function_parameters($params);
     }
 
     /**
      * Update an existing learning plan template
      *
-     * @param int $id The learning plan template id
-     * @param string $shortname
-     * @param string $idnumber
-     * @param int $duedate
-     * @param string $description
-     * @param int $descriptionformat
-     * @param boolean $visible
+     * @param array $template The list of fields for the template.
      * @return boolean
      */
-    public static function update_template($id,
-                                                       $shortname,
-                                                       $duedate,
-                                                       $description,
-                                                       $descriptionformat,
-                                                       $visible) {
+    public static function update_template($template) {
 
         $params = self::validate_parameters(self::update_template_parameters(),
-                                            array(
-                                                'id' => $id,
-                                                'shortname' => $shortname,
-                                                'duedate' => $duedate,
-                                                'description' => $description,
-                                                'descriptionformat' => $descriptionformat,
-                                                'visible' => $visible
-                                            ));
+                                            array('template' => $template));
+        $params = $params['template'];
         $template = api::read_template($params['id']);
         self::validate_context($template->get_context());
 
@@ -2679,7 +1911,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function duplicate_template_returns() {
-        return self::get_template_external_structure();
+        return template_exporter::export_structure('read');
     }
 
     /**
@@ -2784,7 +2016,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_templates_returns() {
-        return new external_multiple_structure(self::get_template_external_structure());
+        return new external_multiple_structure(template_exporter::export_structure('read'));
     }
 
     /**
@@ -2876,7 +2108,7 @@ class external extends external_api {
         return new external_single_structure(array (
             'canmanage' => new external_value(PARAM_BOOL, 'True if this user has permission to manage learning plan templates'),
             'templates' => new external_multiple_structure(
-                self::get_template_external_structure()
+                template_exporter::export_structure('read')
             ),
             'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
             'navigation' => new external_multiple_structure(
@@ -2981,7 +2213,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_templates_using_competency_returns() {
-        return new external_multiple_structure(self::get_template_external_structure());
+        return new external_multiple_structure(template_exporter::export_structure('read'));
     }
 
     /**
@@ -3085,7 +2317,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_competencies_in_template_returns() {
-        return new external_multiple_structure(self::get_competency_external_structure());
+        return new external_multiple_structure(competency_exporter::export_structure('read'));
     }
 
     /**
@@ -3407,7 +2639,7 @@ class external extends external_api {
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagetemplates' => new external_value(PARAM_BOOL, 'User can manage learning plan templates'),
             'competencies' => new external_multiple_structure(
-                self::get_competency_external_structure()
+                competency_exporter::export_structure('read')
             ),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
         ));
@@ -3464,91 +2696,12 @@ class external extends external_api {
             'iscompleted' => new external_value(PARAM_BOOL, 'Is the plan completed'),
             'competencies' => new external_multiple_structure(
                 new external_single_structure(array(
-                    'competency' => self::get_competency_external_structure(),
-                    'usercompetency' => self::get_user_competency_external_structure(true, VALUE_OPTIONAL),
-                    'usercompetencyplan' => self::get_user_competency_plan_external_structure(true, VALUE_OPTIONAL)
+                    'competency' => competency_exporter::export_structure('read'),
+                    'usercompetency' => user_competency_exporter::export_structure('read'),
+                    'usercompetencyplan' => user_competency_plan_exporter::export_structure('read')
                 ))
             )
         ));
-    }
-
-    /**
-     * A learning plan structure.
-     *
-     * @return \external_single_structure
-     */
-    protected static function get_plan_external_structure() {
-        $id = new external_value(
-            PARAM_INT,
-            'Database record id'
-        );
-        $name = new external_value(
-            PARAM_TEXT,
-            'Name for the learning plan'
-        );
-        $description = new external_value(
-            PARAM_RAW,
-            'Description for the template'
-        );
-        $descriptionformat = new external_format_value(
-            'Description format for the template'
-        );
-        $userid = new external_value(
-            PARAM_INT,
-            'Learning plan user id'
-        );
-        $templateid = new external_value(
-            PARAM_INT,
-            'Learning plan templateid'
-        );
-        $status = new external_value(
-            PARAM_INT,
-            'Learning plan status identifier.'
-        );
-        $duedate = new external_value(
-            PARAM_INT,
-            'The default due date for instances of this plan.'
-        );
-        $timecreated = new external_value(
-            PARAM_INT,
-            'Timestamp this record was created'
-        );
-        $timemodified = new external_value(
-            PARAM_INT,
-            'Timestamp this record was modified'
-        );
-        $usermodified = new external_value(
-            PARAM_INT,
-            'User who modified this record last'
-        );
-
-        // Extra params.
-        $statusname = new external_value(
-            PARAM_TEXT,
-            'Learning plan status name'
-        );
-        $usercanupdate = new external_value(
-            PARAM_BOOL,
-            'Whether the current user can update this plan or not'
-        );
-
-        $returns = array(
-            'id' => $id,
-            'name' => $name,
-            'description' => $description,
-            'descriptionformat' => $descriptionformat,
-            'userid' => $userid,
-            'templateid' => $templateid,
-            'status' => $status,
-            'duedate' => $duedate,
-            'timecreated' => $timecreated,
-            'timemodified' => $timemodified,
-            'usermodified' => $usermodified,
-            'statusname' => $statusname,
-            'usercanupdate' => $usercanupdate
-        );
-
-        return new external_single_structure($returns);
     }
 
     /**
@@ -3557,84 +2710,24 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function create_plan_parameters() {
-        $name = new external_value(
-            PARAM_TEXT,
-            'Name for the learning plan template.',
-            VALUE_REQUIRED
-        );
-        $description = new external_value(
-            PARAM_RAW,
-            'Optional description for the learning plan description',
-            VALUE_DEFAULT,
-            ''
-        );
-        $descriptionformat = new external_format_value(
-            'Optional description format for the learning plan description',
-            VALUE_DEFAULT,
-            FORMAT_HTML
-        );
-        $userid = new external_value(
-            PARAM_INT,
-            'The learning plan user id',
-            VALUE_REQUIRED
-        );
-        $templateid = new external_value(
-            PARAM_INT,
-            'Optional template id',
-            VALUE_DEFAULT,
-            0
-        );
-        $status = new external_value(
-            PARAM_INT,
-            'Optional template id',
-            VALUE_DEFAULT,
-            plan::STATUS_DRAFT
-        );
-        $duedate = new external_value(
-            PARAM_INT,
-            'The default due date for this plan',
-            VALUE_DEFAULT,
-            0
-        );
-
-        $params = array(
-            'name' => $name,
-            'description' => $description,
-            'descriptionformat' => $descriptionformat,
-            'userid' => $userid,
-            'templateid' => $templateid,
-            'status' => $status,
-            'duedate' => $duedate
-        );
+        $structure = plan_exporter::export_structure('create');
+        $params = array('plan' => $structure);
         return new external_function_parameters($params);
     }
 
     /**
      * Create a new learning plan.
      *
-     * @param string $name Name.
-     * @param string $description Plan description.
-     * @param string $descriptionformat Plan description format.
-     * @param int $userid User id.
-     * @param int $templateid Related template id.
-     * @param int $status status.
-     * @param int $duedate due date.
-     *
-     * @return mixed
+     * @param array $plan List of fields for the plan.
+     * @return array New plan record.
      */
-    public static function create_plan($name, $description, $descriptionformat, $userid, $templateid, $status, $duedate) {
+    public static function create_plan($plan) {
         global $PAGE;
 
         $params = self::validate_parameters(self::create_plan_parameters(),
-                                            array(
-                                                'name' => $name,
-                                                'description' => $description,
-                                                'descriptionformat' => $descriptionformat,
-                                                'userid' => $userid,
-                                                'templateid' => $templateid,
-                                                'status' => $status,
-                                                'duedate' => $duedate
-                                            ));
+                                            array('plan' => $plan));
+        $params = $params['plan'];
+
         $context = context_user::instance($params['userid']);
         self::validate_context($context);
         $output = $PAGE->get_renderer('tool_lp');
@@ -3644,7 +2737,6 @@ class external extends external_api {
         $result = api::create_plan($params);
         $exporter = new plan_exporter($result);
         $record = $exporter->export($output);
-        $record->usercanupdate = $result->can_manage();
         return external_api::clean_returnvalue(self::create_plan_returns(), $record);
     }
 
@@ -3654,7 +2746,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function create_plan_returns() {
-        return self::get_plan_external_structure();
+        return plan_exporter::export_structure('read');
     }
 
     /**
@@ -3663,92 +2755,24 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function update_plan_parameters() {
-        $id = new external_value(
-            PARAM_INT,
-            'Learning plan id',
-            VALUE_REQUIRED
-        );
-        $name = new external_value(
-            PARAM_TEXT,
-            'Name for the learning plan template.',
-            VALUE_REQUIRED
-        );
-        $description = new external_value(
-            PARAM_RAW,
-            'Optional description for the learning plan description',
-            VALUE_DEFAULT,
-            ''
-        );
-        $descriptionformat = new external_format_value(
-            'Optional description format for the learning plan description',
-            VALUE_DEFAULT,
-            FORMAT_HTML
-        );
-        $userid = new external_value(
-            PARAM_INT,
-            'The learning plan user id',
-            VALUE_REQUIRED
-        );
-        $templateid = new external_value(
-            PARAM_INT,
-            'Optional template id',
-            VALUE_DEFAULT,
-            0
-        );
-        $status = new external_value(
-            PARAM_INT,
-            'Optional template id',
-            VALUE_DEFAULT,
-            plan::STATUS_DRAFT
-        );
-        $duedate = new external_value(
-            PARAM_INT,
-            'The default due date for this plan',
-            VALUE_DEFAULT,
-            0
-        );
-
-        $params = array(
-            'id' => $id,
-            'name' => $name,
-            'description' => $description,
-            'descriptionformat' => $descriptionformat,
-            'userid' => $userid,
-            'templateid' => $templateid,
-            'status' => $status,
-            'duedate' => $duedate
-        );
+        $structure = plan_exporter::export_structure('update');
+        $params = array('plan' => $structure);
         return new external_function_parameters($params);
     }
 
     /**
      * Updates a new learning plan.
      *
-     * @param int $id Plan id.
-     * @param string $name Name.
-     * @param string $description Plan description.
-     * @param string $descriptionformat Plan description format.
-     * @param int $userid User id.
-     * @param int $templateid Related template id.
-     * @param int $status status.
-     * @param int $duedate due date.
-     *
+     * @param array $plan Fields for the plan (id is required)
      * @return mixed
      */
-    public static function update_plan($id, $name, $description, $descriptionformat, $userid, $templateid, $status, $duedate) {
+    public static function update_plan($plan) {
         global $PAGE;
 
         $params = self::validate_parameters(self::update_plan_parameters(),
-                                            array(
-                                                'id' => $id,
-                                                'name' => $name,
-                                                'description' => $description,
-                                                'descriptionformat' => $descriptionformat,
-                                                'userid' => $userid,
-                                                'templateid' => $templateid,
-                                                'status' => $status,
-                                                'duedate' => $duedate
-                                            ));
+                                            array('plan' => $plan));
+
+        $params = $params['plan'];
 
         $plan = api::read_plan($params['id']);
         self::validate_context($plan->get_context());
@@ -3758,7 +2782,6 @@ class external extends external_api {
         $result = api::update_plan($params);
         $exporter = plan_exporter($result);
         $record = $exporter->export($output);
-        $record->usercanupdate = $result->can_manage();
         return external_api::clean_returnvalue(self::update_plan_returns(), $record);
     }
 
@@ -3768,7 +2791,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function update_plan_returns() {
-        return self::get_plan_external_structure();
+        return plan_exporter::export_structure('read');
     }
 
     /**
@@ -3805,7 +2828,6 @@ class external extends external_api {
 
         $exporter = new plan_exporter($plan);
         $record = $exporter->export($output);
-        $record->usercanupdate = $plan->can_manage();
         return external_api::clean_returnvalue(self::read_plan_returns(), $record);
     }
 
@@ -3815,7 +2837,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function read_plan_returns() {
-        return self::get_plan_external_structure();
+        return plan_exporter::export_structure('read');
     }
 
     /**
@@ -3910,7 +2932,7 @@ class external extends external_api {
         return new external_single_structure(array (
             'userid' => new external_value(PARAM_INT, 'The learning plan user id'),
             'plans' => new external_multiple_structure(
-                self::get_plan_external_structure()
+                plan_exporter::export_structure('read')
             ),
             'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
             'navigation' => new external_multiple_structure(
@@ -3989,13 +3011,19 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_plan_competencies_returns() {
+        $uc = user_competency_exporter::export_structure('read');
+        $ucp = user_competency_plan_exporter::export_structure('read');
+
+        $uc->required = VALUE_OPTIONAL;
+        $ucp->required = VALUE_OPTIONAL;
+
         return new external_multiple_structure(
             new external_single_structure(array(
-                'competency' => self::get_competency_external_structure(),
-                'usercompetency' => self::get_user_competency_external_structure(false, VALUE_OPTIONAL),
-                'usercompetencyplan' => self::get_user_competency_plan_external_structure(false, VALUE_OPTIONAL),
-            )
-        ));
+                'competency' => competency_exporter::export_structure('read'),
+                'usercompetency' => $uc,
+                'usercompetencyplan' => $ucp
+            ))
+        );
     }
 
     /**
@@ -4203,7 +3231,7 @@ class external extends external_api {
      */
     public static function data_for_related_competencies_section_returns() {
         return new external_single_structure(array(
-            'relatedcompetencies' => new external_multiple_structure(self::get_competency_external_structure(true)),
+            'relatedcompetencies' => new external_multiple_structure(competency_exporter::export_structure('read')),
             'showdeleterelatedaction' => new external_value(PARAM_BOOL, 'Whether to show the delete relation link or not')
         ));
     }

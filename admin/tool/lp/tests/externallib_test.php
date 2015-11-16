@@ -148,14 +148,129 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
     }
 
+    protected function create_competency_framework($number = 1, $system = true) {
+        $scalepropname = 'scaleconfiguration' . $number;
+        $framework = array(
+            'shortname' => 'shortname' . $number,
+            'idnumber' => 'idnumber' . $number,
+            'description' => 'description' . $number,
+            'descriptionformat' => FORMAT_HTML,
+            'scaleid' => $number,
+            'scaleconfiguration' => $this->$scalepropname,
+            'visible' => true,
+            'contextid' => $system ? context_system::instance()->id : context_coursecat::instance($this->category->id)->id
+        );
+        $result = external::create_competency_framework($framework);
+        return (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+    }
+
+    protected function create_plan($number, $userid, $templateid, $status, $duedate) {
+        $plan = array(
+            'name' => 'name' . $number,
+            'description' => 'description' . $number,
+            'descriptionformat' => FORMAT_HTML,
+            'userid' => $userid,
+            'templateid' => $templateid,
+            'status' => $status,
+            'duedate' => $duedate
+        );
+        $result = external::create_plan($plan);
+        return (object) external_api::clean_returnvalue(external::create_plan_returns(), $result);
+    }
+
+    protected function create_template($number, $system) {
+        $template = array(
+            'shortname' => 'shortname' . $number,
+            'description' => 'description' . $number,
+            'descriptionformat' => FORMAT_HTML,
+            'duedate' => 0,
+            'visible' => true,
+            'contextid' => $system ? context_system::instance()->id : context_coursecat::instance($this->category->id)->id
+        );
+        $result = external::create_template($template);
+        return (object) external_api::clean_returnvalue(external::create_template_returns(), $result);
+    }
+
+    protected function update_template($templateid, $number) {
+        $template = array(
+            'id' => $templateid,
+            'shortname' => 'shortname' . $number,
+            'description' => 'description' . $number,
+            'descriptionformat' => FORMAT_HTML,
+            'visible' => true
+        );
+        $result = external::update_template($template);
+        return external_api::clean_returnvalue(external::update_template_returns(), $result);
+    }
+
+    protected function update_plan($planid, $number, $userid, $templateid, $status, $duedate) {
+        $plan = array(
+            'id' => $planid,
+            'name' => 'name' . $number,
+            'description' => 'description' . $number,
+            'descriptionformat' => FORMAT_HTML,
+            'userid' => $userid,
+            'templateid' => $templateid,
+            'status' => $status,
+            'duedate' => $duedate
+        );
+        $result = external::update_plan($plan);
+        return external_api::clean_returnvalue(external::update_plan_returns(), $result);
+    }
+
+    protected function update_competency_framework($id, $number = 1, $system = true) {
+        $scalepropname = 'scaleconfiguration' . $number;
+        $framework = array(
+            'id' => $id,
+            'shortname' => 'shortname' . $number,
+            'idnumber' => 'idnumber' . $number,
+            'description' => 'description' . $number,
+            'descriptionformat' => FORMAT_HTML,
+            'scaleid' => $number,
+            'scaleconfiguration' => $this->$scalepropname,
+            'visible' => true,
+            'contextid' => $system ? context_system::instance()->id : context_coursecat::instance($this->category->id)->id
+        );
+        $result = external::update_competency_framework($framework);
+        return external_api::clean_returnvalue(external::update_competency_framework_returns(), $result);
+    }
+
+    protected function create_competency($number, $frameworkid) {
+        $competency = array(
+            'shortname' => 'shortname' . $number,
+            'idnumber' => 'idnumber' . $number,
+            'description' => 'description' . $number,
+            'descriptionformat' => FORMAT_HTML,
+            'visible' => true,
+            'competencyframeworkid' => $frameworkid,
+            'sortorder' => 0
+        );
+        $result = external::create_competency($competency);
+        return (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+    }
+
+    protected function update_competency($id, $number) {
+        $competency = array(
+            'id' => $id,
+            'shortname' => 'shortname' . $number,
+            'idnumber' => 'idnumber' . $number,
+            'description' => 'description' . $number,
+            'descriptionformat' => FORMAT_HTML,
+            'visible' => true,
+            'sortorder' => 0
+        );
+        $result = external::update_competency($competency);
+        return external_api::clean_returnvalue(external::update_competency_returns(), $result);
+    }
+
     /**
      * Test we can't create a competency framework with only read permissions.
      */
     public function test_create_competency_frameworks_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
         $this->setUser($this->user);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
+
+        $result = $this->create_competency_framework(1, true);
     }
 
     /**
@@ -164,8 +279,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_create_competency_frameworks_with_read_permissions_in_category() {
         $this->setExpectedException('required_capability_exception');
         $this->setUser($this->catuser);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
+        $result = $this->create_competency_framework(1, false);
     }
 
     /**
@@ -173,16 +287,14 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_create_competency_frameworks_with_manage_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $result = $this->create_competency_framework(1, true);
 
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname1', $result->shortname);
+        $this->assertEquals('idnumber1', $result->idnumber);
+        $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
         $this->assertEquals(1, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration1, $result->scaleconfiguration);
@@ -194,24 +306,21 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_create_competency_frameworks_with_manage_permissions_in_category() {
         $this->setUser($this->catcreator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
-        $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $result = $this->create_competency_framework(1, false);
 
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->catcreator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname1', $result->shortname);
+        $this->assertEquals('idnumber1', $result->idnumber);
+        $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
         $this->assertEquals(1, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration1, $result->scaleconfiguration);
         $this->assertEquals(true, $result->visible);
 
         try {
-            external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 2,
-                $this->scaleconfiguration2, true, array('contextid' => context_system::instance()->id));
+            $result = $this->create_competency_framework(1, true);
             $this->fail('User cannot create a framework at system level.');
         } catch (required_capability_exception $e) {
         }
@@ -223,8 +332,17 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_create_competency_frameworks_with_nasty_data() {
         $this->setUser($this->creator);
         $this->setExpectedException('invalid_parameter_exception');
-        $result = external::create_competency_framework('short<a href="">', 'id;"number', 'de<>\\..scription', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
+        $framework = array(
+            'shortname' => 'short<a href="">',
+            'idnumber' => 'id;"number',
+            'description' => 'de<>\\..scription',
+            'descriptionformat' => FORMAT_HTML,
+            'scaleid' => 1,
+            'scaleconfiguration' => $this->scaleconfiguration1,
+            'visible' => true,
+            'contextid' => context_system::instance()->id
+        );
+        $result = external::create_competency_framework($framework);
     }
 
     /**
@@ -232,9 +350,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_read_competency_frameworks_with_manage_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $result = $this->create_competency_framework(1, true);
 
         $id = $result->id;
         $result = external::read_competency_framework($id);
@@ -243,9 +359,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname1', $result->shortname);
+        $this->assertEquals('idnumber1', $result->idnumber);
+        $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
         $this->assertEquals(1, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration1, $result->scaleconfiguration);
@@ -258,12 +374,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_read_competency_frameworks_with_manage_permissions_in_category() {
         $this->setUser($this->creator);
 
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $insystem = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency_framework('catshortname', 'catidnumber', 'catdescription', FORMAT_HTML, 2,
-            $this->scaleconfiguration2, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
-        $incat = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $insystem = $this->create_competency_framework(1, true);
+        $incat = $this->create_competency_framework(2, false);
 
         $this->setUser($this->catcreator);
         $id = $incat->id;
@@ -273,9 +385,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('catshortname', $result->shortname);
-        $this->assertEquals('catidnumber', $result->idnumber);
-        $this->assertEquals('catdescription', $result->description);
+        $this->assertEquals('shortname2', $result->shortname);
+        $this->assertEquals('idnumber2', $result->idnumber);
+        $this->assertEquals('description2', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
         $this->assertEquals(2, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration2, $result->scaleconfiguration);
@@ -295,9 +407,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_read_competency_frameworks_with_read_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $result = $this->create_competency_framework(1, true);
 
         // Switch users to someone with less permissions.
         $this->setUser($this->user);
@@ -308,9 +418,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname1', $result->shortname);
+        $this->assertEquals('idnumber1', $result->idnumber);
+        $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
         $this->assertEquals(1, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration1, $result->scaleconfiguration);
@@ -322,12 +432,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_read_competency_frameworks_with_read_permissions_in_category() {
         $this->setUser($this->creator);
 
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $insystem = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency_framework('catshortname', 'catidnumber', 'catdescription', FORMAT_HTML, 2,
-            $this->scaleconfiguration2, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
-        $incat = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $insystem = $this->create_competency_framework(1, true);
+        $incat = $this->create_competency_framework(2, false);
 
         // Switch users to someone with less permissions.
         $this->setUser($this->catuser);
@@ -338,9 +444,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('catshortname', $result->shortname);
-        $this->assertEquals('catidnumber', $result->idnumber);
-        $this->assertEquals('catdescription', $result->description);
+        $this->assertEquals('shortname2', $result->shortname);
+        $this->assertEquals('idnumber2', $result->idnumber);
+        $this->assertEquals('description2', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
         $this->assertEquals(2, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration2, $result->scaleconfiguration);
@@ -359,9 +465,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_delete_competency_frameworks_with_manage_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $result = $this->create_competency_framework(1, true);
 
         $id = $result->id;
         $result = external::delete_competency_framework($id);
@@ -376,12 +480,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_delete_competency_frameworks_with_manage_permissions_in_category() {
         $this->setUser($this->creator);
 
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $insystem = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency_framework('catshortname', 'catidnumber', 'catdescription', FORMAT_HTML, 2,
-            $this->scaleconfiguration2, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
-        $incat = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $insystem = $this->create_competency_framework(1, true);
+        $incat = $this->create_competency_framework(2, false);
 
         $this->setUser($this->catcreator);
         $id = $incat->id;
@@ -405,9 +505,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_delete_competency_frameworks_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $result = $this->create_competency_framework(1, true);
 
         $id = $result->id;
         // Switch users to someone with less permissions.
@@ -420,13 +518,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_update_competency_frameworks_with_manage_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $result = $this->create_competency_framework(1, true);
 
-        $result = external::update_competency_framework($result->id, 'shortname2',
-                'idnumber2', 'description2', FORMAT_PLAIN, 2, $this->scaleconfiguration2, false);
-        $result = external_api::clean_returnvalue(external::update_competency_framework_returns(), $result);
+        $result = $this->update_competency_framework($result->id, 2, true);
 
         $this->assertTrue($result);
     }
@@ -437,28 +531,19 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_update_competency_frameworks_with_manage_permissions_in_category() {
         $this->setUser($this->creator);
 
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $insystem = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency_framework('catshortname', 'catidnumber', 'catdescription', FORMAT_HTML, 2,
-            $this->scaleconfiguration2, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
-        $incat = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $insystem = $this->create_competency_framework(1, true);
+        $incat = $this->create_competency_framework(2, false);
 
         $this->setUser($this->catcreator);
         $id = $incat->id;
 
-        $result = external::update_competency_framework($id, 'shortname2', 'idnumber2', 'description2', FORMAT_PLAIN, 3,
-             $this->scaleconfiguration3, false);
-        $result = external_api::clean_returnvalue(external::update_competency_framework_returns(), $result);
+        $result = $this->update_competency_framework($incat->id, 3, false);
 
         $this->assertTrue($result);
 
         try {
-            $id = $insystem->id;
-            $result = external::update_competency_framework($id, 'shortname3', 'idnumber3', 'description3', FORMAT_PLAIN, 4,
-                 $this->scaleconfiguration4,  false);
-            $result = external_api::clean_returnvalue(external::update_competency_framework_returns(), $result);
-            $this->fail('Current user cannot should not be able to update the framework.');
+            $result = $this->update_competency_framework($insystem->id, 4, true);
+            $this->fail('Current user should not be able to update the framework.');
         } catch (required_capability_exception $e) {
         }
     }
@@ -480,16 +565,14 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c2->get_id()));
 
         // Changing the framework where the scale is not used.
-        $result = external::update_competency_framework($f1->get_id(), 'a', 'a', 'a', FORMAT_PLAIN, 3, $this->scaleconfiguration3, false);
-        $result = external_api::clean_returnvalue(external::update_competency_framework_returns(), $result);
+        $result = $this->update_competency_framework($f1->get_id(), 3, true);
 
         $f1 = new \tool_lp\competency_framework($f1->get_id());
         $this->assertEquals(3, $f1->get_scaleid());
 
         // Changing the framework where the scale is used.
         try {
-            $result = external::update_competency_framework($f2->get_id(), 'b', 'b', 'b', FORMAT_PLAIN, 3, $this->scaleconfiguration3, false);
-            $result = external_api::clean_returnvalue(external::update_competency_framework_returns(), $result);
+            $result = $this->update_competency_framework($f2->get_id(), 4, true);
             $this->fail('The scale cannot be changed once used.');
         } catch (\tool_lp\invalid_persistent_exception $e) {
             $this->assertRegexp('/scaleid/', $e->getMessage());
@@ -502,13 +585,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_update_competency_frameworks_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $result = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $result = $this->create_competency_framework(1, true);
 
         $this->setUser($this->user);
-        $result = external::update_competency_framework($result->id, 'shortname2',
-                'idnumber2', 'description2', FORMAT_PLAIN, 2, $this->scaleconfiguration2, false);
+        $result = $this->update_competency_framework($result->id, 2, true);
     }
 
     /**
@@ -516,14 +596,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_list_and_count_competency_frameworks_with_manage_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $result = external::create_competency_framework('shortname2', 'idnumber2', 'description', FORMAT_HTML, 2,
-            $this->scaleconfiguration2, true, array('contextid' => context_system::instance()->id));
-        $result = external::create_competency_framework('shortname3', 'idnumber3', 'description', FORMAT_HTML, 3,
-            $this->scaleconfiguration3, true, array('contextid' => context_system::instance()->id));
-        $result = external::create_competency_framework('shortname4', 'idnumber4', 'description', FORMAT_HTML, 4,
-            $this->scaleconfiguration4, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
+        $result = $this->create_competency_framework(1, true);
+        $result = $this->create_competency_framework(2, true);
+        $result = $this->create_competency_framework(3, true);
+        $result = $this->create_competency_framework(4, false);
 
         $result = external::count_competency_frameworks(array('contextid' => context_system::instance()->id), 'self');
         $result = external_api::clean_returnvalue(external::count_competency_frameworks_returns(), $result);
@@ -540,9 +616,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname1', $result->shortname);
+        $this->assertEquals('idnumber1', $result->idnumber);
+        $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
         $this->assertEquals(1, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration1, $result->scaleconfiguration);
@@ -554,14 +630,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_list_and_count_competency_frameworks_with_read_permissions() {
         $this->setUser($this->creator);
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $result = external::create_competency_framework('shortname2', 'idnumber2', 'description', FORMAT_HTML, 2,
-            $this->scaleconfiguration2, true, array('contextid' => context_system::instance()->id));
-        $result = external::create_competency_framework('shortname3', 'idnumber3', 'description', FORMAT_HTML, 3,
-            $this->scaleconfiguration3, true, array('contextid' => context_system::instance()->id));
-        $result = external::create_competency_framework('shortname4', 'idnumber4', 'description', FORMAT_HTML, 4,
-            $this->scaleconfiguration4, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
+        $result = $this->create_competency_framework(1, true);
+        $result = $this->create_competency_framework(2, true);
+        $result = $this->create_competency_framework(3, true);
+        $result = $this->create_competency_framework(4, false);
 
         $this->setUser($this->user);
         $result = external::count_competency_frameworks(array('contextid' => context_system::instance()->id), 'self');
@@ -578,9 +650,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname1', $result->shortname);
+        $this->assertEquals('idnumber1', $result->idnumber);
+        $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
         $this->assertEquals(1, $result->scaleid);
         $this->assertEquals($this->scaleconfiguration1, $result->scaleconfiguration);
@@ -592,11 +664,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_create_competency_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
+        $framework = $this->create_competency_framework(1, true);
         $this->setUser($this->user);
-        $competency = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
+        $competency = $this->create_competency(1, $framework->id);
     }
 
     /**
@@ -604,19 +674,15 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_create_competency_with_manage_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-
-        $competency = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency);
+        $framework = $this->create_competency_framework(1, true);
+        $competency = $this->create_competency(1, $framework->id);
 
         $this->assertGreaterThan(0, $competency->timecreated);
         $this->assertGreaterThan(0, $competency->timemodified);
         $this->assertEquals($this->creator->id, $competency->usermodified);
-        $this->assertEquals('shortname', $competency->shortname);
-        $this->assertEquals('idnumber', $competency->idnumber);
-        $this->assertEquals('description', $competency->description);
+        $this->assertEquals('shortname1', $competency->shortname);
+        $this->assertEquals('idnumber1', $competency->idnumber);
+        $this->assertEquals('description1', $competency->description);
         $this->assertEquals(FORMAT_HTML, $competency->descriptionformat);
         $this->assertEquals(true, $competency->visible);
         $this->assertEquals(0, $competency->parentid);
@@ -630,32 +696,26 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_create_competency_with_manage_permissions_in_category() {
         $this->setUser($this->creator);
 
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $insystem = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency_framework('catshortname', 'catidnumber', 'catdescription', FORMAT_HTML, 2,
-            $this->scaleconfiguration2, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
-        $incat = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
+        $insystem = $this->create_competency_framework(1, true);
+        $incat = $this->create_competency_framework(2, false);
 
         $this->setUser($this->catcreator);
 
-        $competency = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $incat->id, 0);
-        $competency = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency);
+        $competency = $this->create_competency(1, $incat->id);
 
         $this->assertGreaterThan(0, $competency->timecreated);
         $this->assertGreaterThan(0, $competency->timemodified);
         $this->assertEquals($this->catcreator->id, $competency->usermodified);
-        $this->assertEquals('shortname', $competency->shortname);
-        $this->assertEquals('idnumber', $competency->idnumber);
-        $this->assertEquals('description', $competency->description);
+        $this->assertEquals('shortname1', $competency->shortname);
+        $this->assertEquals('idnumber1', $competency->idnumber);
+        $this->assertEquals('description1', $competency->description);
         $this->assertEquals(FORMAT_HTML, $competency->descriptionformat);
         $this->assertEquals(true, $competency->visible);
         $this->assertEquals(0, $competency->parentid);
         $this->assertEquals($incat->id, $competency->competencyframeworkid);
 
         try {
-            $competency = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $insystem->id, 0);
-            $competency = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency);
+            $competency = $this->create_competency(2, $insystem->id);
             $this->fail('User should not be able to create a competency in system context.');
         } catch (required_capability_exception $e) {
         }
@@ -666,12 +726,19 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_create_competency_with_nasty_data() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
+        $framework = $this->create_competency_framework(1, true);
         $this->setExpectedException('invalid_parameter_exception');
-        $competency = external::create_competency('shortname<a href="">', 'id;"number',
-                'de<>\\..scription', FORMAT_HTML, true, $framework->id, 0);
+        $competency = array(
+            'shortname' => 'shortname<a href="">',
+            'idnumber' => 'id;"number',
+            'description' => 'de<>\\..scription',
+            'descriptionformat' => FORMAT_HTML,
+            'visible' => true,
+            'competencyframeworkid' => $framework->id,
+            'sortorder' => 0
+        );
+        $result = external::create_competency($competency);
+        $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
     }
 
     /**
@@ -679,22 +746,19 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_read_competencies_with_manage_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+        $framework = $this->create_competency_framework(1, true);
+        $competency = $this->create_competency(1, $framework->id);
 
-        $id = $result->id;
+        $id = $competency->id;
         $result = external::read_competency($id);
         $result = (object) external_api::clean_returnvalue(external::read_competency_returns(), $result);
 
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname1', $result->shortname);
+        $this->assertEquals('idnumber1', $result->idnumber);
+        $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
         $this->assertEquals(true, $result->visible);
         $this->assertEquals(0, $result->parentid);
@@ -707,17 +771,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_read_competencies_with_manage_permissions_in_category() {
         $this->setUser($this->creator);
 
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $sysframework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $result->id, 0);
-        $insystem = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+        $sysframework = $this->create_competency_framework(1, true);
+        $insystem = $this->create_competency(1, $sysframework->id);
 
-        $result = external::create_competency_framework('catshortname', 'catidnumber', 'catdescription', FORMAT_HTML, 2,
-            $this->scaleconfiguration2, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
-        $catframework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $result->id, 0);
-        $incat = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+        $catframework = $this->create_competency_framework(2, false);
+        $incat = $this->create_competency(2, $catframework->id);
 
         $this->setUser($this->catcreator);
         $id = $incat->id;
@@ -727,9 +785,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname2', $result->shortname);
+        $this->assertEquals('idnumber2', $result->idnumber);
+        $this->assertEquals('description2', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
         $this->assertEquals(true, $result->visible);
         $this->assertEquals(0, $result->parentid);
@@ -747,24 +805,21 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_read_competencies_with_read_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+        $framework = $this->create_competency_framework(1, true);
+        $competency = $this->create_competency(1, $framework->id);
 
         // Switch users to someone with less permissions.
         $this->setUser($this->user);
-        $id = $result->id;
+        $id = $competency->id;
         $result = external::read_competency($id);
         $result = (object) external_api::clean_returnvalue(external::read_competency_returns(), $result);
 
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname1', $result->shortname);
+        $this->assertEquals('idnumber1', $result->idnumber);
+        $this->assertEquals('description1', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
         $this->assertEquals(true, $result->visible);
         $this->assertEquals(0, $result->parentid);
@@ -776,18 +831,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_read_competencies_with_read_permissions_in_category() {
         $this->setUser($this->creator);
-
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $sysframework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $result->id, 0);
-        $insystem = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
-
-        $result = external::create_competency_framework('catshortname', 'catidnumber', 'catdescription', FORMAT_HTML, 2,
-            $this->scaleconfiguration2, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
-        $catframework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $result->id, 0);
-        $incat = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+        $sysframework = $this->create_competency_framework(1, true);
+        $insystem = $this->create_competency(1, $sysframework->id);
+        $catframework = $this->create_competency_framework(2, false);
+        $incat = $this->create_competency(2, $catframework->id);
 
         // Switch users to someone with less permissions.
         $this->setUser($this->catuser);
@@ -798,9 +845,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname2', $result->shortname);
+        $this->assertEquals('idnumber2', $result->idnumber);
+        $this->assertEquals('description2', $result->description);
         $this->assertEquals(FORMAT_HTML, $result->descriptionformat);
         $this->assertEquals(true, $result->visible);
         $this->assertEquals(0, $result->parentid);
@@ -818,11 +865,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_delete_competency_with_manage_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+        $framework = $this->create_competency_framework(1, true);
+        $result = $this->create_competency(1, $framework->id);
 
         $id = $result->id;
         $result = external::delete_competency($id);
@@ -837,17 +881,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_delete_competency_with_manage_permissions_in_category() {
         $this->setUser($this->creator);
 
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $sysframework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $result->id, 0);
-        $insystem = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
-
-        $result = external::create_competency_framework('catshortname', 'catidnumber', 'catdescription', FORMAT_HTML, 2,
-            $this->scaleconfiguration2, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
-        $catframework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $result->id, 0);
-        $incat = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+        $sysframework = $this->create_competency_framework(1, true);
+        $insystem = $this->create_competency(1, $sysframework->id);
+        $catframework = $this->create_competency_framework(2, false);
+        $incat = $this->create_competency(2, $catframework->id);
 
         $this->setUser($this->catcreator);
         $id = $incat->id;
@@ -869,11 +906,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_delete_competency_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+        $framework = $this->create_competency_framework(1, true);
+        $result = $this->create_competency(1, $framework->id);
 
         $id = $result->id;
         // Switch users to someone with less permissions.
@@ -886,14 +920,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_update_competency_with_manage_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+        $framework = $this->create_competency_framework(1, true);
+        $result = $this->create_competency(1, $framework->id);
 
-        $result = external::update_competency($result->id, 'shortname2', 'idnumber2', 'description2', FORMAT_HTML, false);
-        $result = external_api::clean_returnvalue(external::update_competency_returns(), $result);
+        $result = $this->update_competency($result->id, 2);
 
         $this->assertTrue($result);
     }
@@ -904,27 +934,19 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_update_competency_with_manage_permissions_in_category() {
         $this->setUser($this->creator);
 
-        $result = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $sysframework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $result->id, 0);
-        $insystem = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
-
-        $result = external::create_competency_framework('catshortname', 'catidnumber', 'catdescription', FORMAT_HTML, 2,
-            $this->scaleconfiguration2, true, array('contextid' => context_coursecat::instance($this->category->id)->id));
-        $catframework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $result);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $result->id, 0);
-        $incat = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+        $sysframework = $this->create_competency_framework(1, true);
+        $insystem = $this->create_competency(1, $sysframework->id);
+        $catframework = $this->create_competency_framework(2, false);
+        $incat = $this->create_competency(2, $catframework->id);
 
         $this->setUser($this->catcreator);
 
-        $result = external::update_competency($incat->id, 'shortname2', 'idnumber2', 'description2', FORMAT_HTML, false);
-        $result = external_api::clean_returnvalue(external::update_competency_returns(), $result);
+        $result = $this->update_competency($incat->id, 2);
 
         $this->assertTrue($result);
 
         try {
-            external::update_competency($insystem->id, 'shortname2', 'idnumber2', 'description2', FORMAT_HTML, false);
+            $result = $this->update_competency($insystem->id, 3);
             $this->fail('User should not be able to update a competency in system context.');
         } catch (required_capability_exception $e) {
         }
@@ -936,14 +958,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     public function test_update_competency_with_read_permissions() {
         $this->setExpectedException('required_capability_exception');
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $result = (object) external_api::clean_returnvalue(external::create_competency_returns(), $result);
+        $framework = $this->create_competency_framework(1, true);
+        $result = $this->create_competency(1, $framework->id);
 
         $this->setUser($this->user);
-        $result = external::update_competency($result->id, 'shortname2', 'idnumber2', 'description2', FORMAT_HTML, false);
+        $result = $this->update_competency($result->id, 2);
     }
 
     /**
@@ -979,12 +998,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_list_and_count_competencies_with_manage_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $result = external::create_competency('shortname2', 'idnumber2', 'description2', FORMAT_HTML, true, $framework->id, 0);
-        $result = external::create_competency('shortname3', 'idnumber3', 'description3', FORMAT_HTML, true, $framework->id, 0);
+        $framework = $this->create_competency_framework(1, true);
+        $result = $this->create_competency(1, $framework->id);
+        $result = $this->create_competency(2, $framework->id);
+        $result = $this->create_competency(3, $framework->id);
 
         $result = external::count_competencies(array());
         $result = external_api::clean_returnvalue(external::count_competencies_returns(), $result);
@@ -1000,9 +1017,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname1', $result->shortname);
+        $this->assertEquals('idnumber1', $result->idnumber);
+        $this->assertEquals('description1', $result->description);
         $this->assertEquals(true, $result->visible);
     }
 
@@ -1011,12 +1028,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_list_and_count_competencies_with_read_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $result = external::create_competency('shortname2', 'idnumber2', 'description2', FORMAT_HTML, true, $framework->id, 0);
-        $result = external::create_competency('shortname3', 'idnumber3', 'description3', FORMAT_HTML, true, $framework->id, 0);
+        $framework = $this->create_competency_framework(1, true);
+        $result = $this->create_competency(1, $framework->id);
+        $result = $this->create_competency(2, $framework->id);
+        $result = $this->create_competency(3, $framework->id);
 
         $this->setUser($this->user);
 
@@ -1034,9 +1049,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname1', $result->shortname);
+        $this->assertEquals('idnumber1', $result->idnumber);
+        $this->assertEquals('description1', $result->description);
         $this->assertEquals(true, $result->visible);
     }
 
@@ -1045,12 +1060,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
      */
     public function test_search_competencies_with_read_permissions() {
         $this->setUser($this->creator);
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-        $result = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $result = external::create_competency('shortname2', 'idnumber2', 'description2', FORMAT_HTML, true, $framework->id, 0);
-        $result = external::create_competency('shortname3', 'idnumber3', 'description3', FORMAT_HTML, true, $framework->id, 0);
+        $framework = $this->create_competency_framework(1, true);
+        $result = $this->create_competency(1, $framework->id);
+        $result = $this->create_competency(2, $framework->id);
+        $result = $this->create_competency(3, $framework->id);
 
         $this->setUser($this->user);
 
@@ -1063,9 +1076,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertGreaterThan(0, $result->timecreated);
         $this->assertGreaterThan(0, $result->timemodified);
         $this->assertEquals($this->creator->id, $result->usermodified);
-        $this->assertEquals('shortname', $result->shortname);
-        $this->assertEquals('idnumber', $result->idnumber);
-        $this->assertEquals('description', $result->description);
+        $this->assertEquals('shortname1', $result->shortname);
+        $this->assertEquals('idnumber1', $result->idnumber);
+        $this->assertEquals('description1', $result->description);
         $this->assertEquals(true, $result->visible);
     }
 
@@ -1076,14 +1089,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $syscontext = context_system::instance();
 
         $this->setUser($this->creator);
-        $plan0 = external::create_plan('Complete plan', 'A description',
-                FORMAT_HTML, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan0 = $this->create_plan(1, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
 
         $this->setUser($this->user);
 
         try {
-            $plan1 = external::create_plan('Draft plan (they can not with the default capabilities)',
-                    'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_DRAFT, 0);
+            $plan1 = $this->create_plan(2, $this->user->id, 0, plan::STATUS_DRAFT, 0);
             $this->fail('Exception expected due to not permissions to create draft plans');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -1094,18 +1105,16 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $this->setUser($this->user);
 
-        $plan2 = external::create_plan('Draft plan', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_DRAFT, 0);
+        $plan2 = $this->create_plan(3, $this->user->id, 0, plan::STATUS_DRAFT, 0);
 
         try {
-            $plan3 = external::create_plan('Active plan (they can not)', 'A description',
-                    FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+            $plan3 = $this->create_plan(4, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
             $this->fail('Exception expected due to not permissions to create active plans');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
         try {
-            $plan3 = external::update_plan($plan2['id'], 'Updated active plan', 'A description',
-                    FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+            $plan3 = $this->update_plan($plan2->id, 4, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
             $this->fail('Exception expected due to not permissions to update plans to complete status');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -1114,19 +1123,17 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
-        $plan3 = external::create_plan('Active plan', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
-        $plan4 = external::create_plan('Complete plan', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan3 = $this->create_plan(4, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+        $plan4 = $this->create_plan(5, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
         try {
-            $plan4 = external::create_plan('Plan for another user', 'A description',
-                    FORMAT_HTML, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
+            $plan4 = $this->create_plan(6, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
             $this->fail('Exception expected due to not permissions to manage other users plans');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
         try {
-            $plan0 = external::update_plan($plan0['id'], 'Can not update other users plans',
-                    'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+            $plan0 = $this->update_plan($plan0->id, 1, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
@@ -1136,8 +1143,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         try {
-            $plan1 = external::update_plan($plan2['id'], 'Can not be updated even if they created it',
-                    'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+            // Cannot be updated even if they created it.
+            $plan1 = $this->update_plan($plan0->id, 1, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
             $this->fail('Exception expected due to not permissions to create draft plan');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -1152,39 +1159,36 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $syscontext = context_system::instance();
 
-        $plan1 = external::create_plan('Plan draft by creator', 'A description',
-                FORMAT_HTML, $this->user->id, 0, plan::STATUS_DRAFT, 0);
-        $plan2 = external::create_plan('Plan active by creator', 'A description',
-                FORMAT_HTML, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
-        $plan3 = external::create_plan('Plan complete by creator', 'A description',
-                FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan1 = $this->create_plan(1, $this->user->id, 0, plan::STATUS_DRAFT, 0);
+        $plan2 = $this->create_plan(2, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+        $plan3 = $this->create_plan(3, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
 
-        $this->assertEquals((Array)$plan1, external::read_plan($plan1['id']));
-        $this->assertEquals((Array)$plan2, external::read_plan($plan2['id']));
-        $this->assertEquals((Array)$plan3, external::read_plan($plan3['id']));
+        $this->assertEquals((Array)$plan1, external::read_plan($plan1->id));
+        $this->assertEquals((Array)$plan2, external::read_plan($plan2->id));
+        $this->assertEquals((Array)$plan3, external::read_plan($plan3->id));
 
         $this->setUser($this->user);
 
         // The normal user can not edit these plans.
-        $plan1['usercanupdate'] = false;
-        $plan2['usercanupdate'] = false;
-        $plan3['usercanupdate'] = false;
+        $plan1->usercanupdate = false;
+        $plan2->usercanupdate = false;
+        $plan3->usercanupdate = false;
 
         // Prevent the user from seeing their own non-draft plans.
         assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
         assign_capability('tool/lp:planviewowndraft', CAP_ALLOW, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
-        $this->assertEquals((array)$plan1, external::read_plan($plan1['id']));
+        $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
 
         try {
-            external::read_plan($plan2['id']);
+            external::read_plan($plan2->id);
             $this->fail('Exception expected due to not permissions to read plan');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
         try {
-            external::read_plan($plan3['id']);
+            external::read_plan($plan3->id);
             $this->fail('Exception expected due to not permissions to read plan');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -1195,9 +1199,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:planmanageowndraft', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
-        $this->assertEquals((array)$plan1, external::read_plan($plan1['id']));
-        $this->assertEquals((array)$plan2, external::read_plan($plan2['id']));
-        $this->assertEquals((array)$plan3, external::read_plan($plan3['id']));
+        $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
+        $this->assertEquals((array)$plan2, external::read_plan($plan2->id));
+        $this->assertEquals((array)$plan3, external::read_plan($plan3->id));
 
         // Allow use to manage their own draft plan.
         assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
@@ -1205,16 +1209,16 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
-        $plan1['usercanupdate'] = true;
-        $this->assertEquals((array)$plan1, external::read_plan($plan1['id']));
+        $plan1->usercanupdate = true;
+        $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
         try {
-            external::read_plan($plan2['id']);
+            external::read_plan($plan2->id);
             $this->fail('Exception expected due to not permissions to read plan');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
         try {
-            external::read_plan($plan3['id']);
+            external::read_plan($plan3->id);
             $this->fail('Exception expected due to not permissions to read plan');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -1227,12 +1231,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id, true);
         accesslib_clear_all_caches_for_unit_testing();
 
-        $plan1['usercanupdate'] = false;
-        $plan2['usercanupdate'] = true;
-        $plan3['usercanupdate'] = true;
-        $this->assertEquals((array)$plan1, external::read_plan($plan1['id']));
-        $this->assertEquals((array)$plan2, external::read_plan($plan2['id']));
-        $this->assertEquals((array)$plan3, external::read_plan($plan3['id']));
+        $plan1->usercanupdate = false;
+        $plan2->usercanupdate = true;
+        $plan3->usercanupdate = true;
+        $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
+        $this->assertEquals((array)$plan2, external::read_plan($plan2->id));
+        $this->assertEquals((array)$plan3, external::read_plan($plan3->id));
     }
 
     public function test_delete_plans() {
@@ -1240,17 +1244,17 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $syscontext = context_system::instance();
 
-        $plan1 = external::create_plan('1', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
-        $plan2 = external::create_plan('2', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
-        $plan3 = external::create_plan('3', 'A description', FORMAT_HTML, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan1 = $this->create_plan(1, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan2 = $this->create_plan(2, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan3 = $this->create_plan(3, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
 
-        $this->assertTrue(external::delete_plan($plan1['id']));
+        $this->assertTrue(external::delete_plan($plan1->id));
 
         unassign_capability('tool/lp:planmanage', $this->creatorrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
         try {
-            external::delete_plan($plan2['id']);
+            external::delete_plan($plan2->id);
             $this->fail('Exception expected due to not permissions to manage plans');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -1260,7 +1264,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Can not delete plans created by other users.
         try {
-            external::delete_plan($plan2['id']);
+            external::delete_plan($plan2->id);
             $this->fail('Exception expected due to not permissions to manage plans');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -1269,18 +1273,18 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
         accesslib_clear_all_caches_for_unit_testing();
 
-        $this->assertTrue(external::delete_plan($plan2['id']));
+        $this->assertTrue(external::delete_plan($plan2->id));
 
         // Can not delete plans created for other users.
         try {
-            external::delete_plan($plan3['id']);
+            external::delete_plan($plan3->id);
             $this->fail('Exception expected due to not permissions to manage plans');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
         }
 
-        $plan4 = external::create_plan('4', 'A description', FORMAT_HTML, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
-        $this->assertTrue(external::delete_plan($plan4['id']));
+        $plan4 = $this->create_plan(4, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+        $this->assertTrue(external::delete_plan($plan4->id));
     }
 
     public function test_list_plan_competencies() {
@@ -1365,19 +1369,13 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->creator);
 
         $syscontext = context_system::instance();
-        $onehour = time() + 60*60;
 
         // Create a template.
-        $template = external::create_template('shortname', $onehour, 'description', FORMAT_HTML, true,
-            array('contextid' => $syscontext->id));
-        $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
+        $template = $this->create_template(1, true);
 
         // Create a competency.
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
-        $competency = external::create_competency('shortname', 'idnumber', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency);
+        $framework = $this->create_competency_framework(1, true);
+        $competency = $this->create_competency(1, $framework->id);
 
         // Add the competency.
         external::add_competency_to_template($template->id, $competency->id);
@@ -1399,16 +1397,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     }
 
     public function test_remove_competency_from_template() {
+        $syscontext = context_system::instance();
         $this->setUser($this->creator);
         $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
 
-        $syscontext = context_system::instance();
-        $onehour = time() + 60*60;
-
         // Create a template.
-        $template = external::create_template('shortname', $onehour, 'description', FORMAT_HTML, true,
-            array('contextid' => $syscontext->id));
-        $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
+        $template = $this->create_template(1, true);
 
         // Create a competency.
         $framework = $lpg->create_framework();
@@ -1449,22 +1443,15 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $onehour = time() + 60*60;
 
         // Create a template.
-        $template = external::create_template('shortname', $onehour, 'description', FORMAT_HTML, true,
-            array('contextid' => $syscontext->id));
-        $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
+        $template = $this->create_template(1, true);
 
         // Create a competency framework.
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
+        $framework = $this->create_competency_framework(1, true);
 
         // Create multiple competencies.
-        $competency1 = external::create_competency('shortname1', 'idnumber1', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency1 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency1);
-        $competency2 = external::create_competency('shortname2', 'idnumber2', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency2 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency2);
-        $competency3 = external::create_competency('shortname3', 'idnumber3', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency3 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency3);
+        $competency1 = $this->create_competency(1, $framework->id);
+        $competency2 = $this->create_competency(2, $framework->id);
+        $competency3 = $this->create_competency(3, $framework->id);
 
         // Add the competencies.
         external::add_competency_to_template($template->id, $competency1->id);
@@ -1512,22 +1499,15 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $onehour = time() + 60*60;
 
         // Create a template.
-        $template = external::create_template('shortname', $onehour, 'description', FORMAT_HTML, true,
-            array('contextid' => $syscontext->id));
-        $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
+        $template = $this->create_template(1, true);
 
         // Create a competency framework.
-        $framework = external::create_competency_framework('shortname', 'idnumber', 'description', FORMAT_HTML, 1,
-            $this->scaleconfiguration1, true, array('contextid' => context_system::instance()->id));
-        $framework = (object) external_api::clean_returnvalue(external::create_competency_framework_returns(), $framework);
+        $framework = $this->create_competency_framework(1, true);
 
         // Create multiple competencies.
-        $competency1 = external::create_competency('shortname1', 'idnumber1', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency1 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency1);
-        $competency2 = external::create_competency('shortname2', 'idnumber2', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency2 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency2);
-        $competency3 = external::create_competency('shortname3', 'idnumber3', 'description', FORMAT_HTML, true, $framework->id, 0);
-        $competency3 = (object) external_api::clean_returnvalue(external::create_competency_returns(), $competency3);
+        $competency1 = $this->create_competency(1, $framework->id);
+        $competency2 = $this->create_competency(2, $framework->id);
+        $competency3 = $this->create_competency(3, $framework->id);
 
         // Add the competencies.
         external::add_competency_to_template($template->id, $competency1->id);
@@ -1595,8 +1575,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // A user without permission.
         $this->setUser($this->user);
         try {
-            $result = external::create_template('shortname', 0, 'description', FORMAT_HTML, true,
-                array('contextid' => $syscontextid));
+            $result = $this->create_template(1, true);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
         }
@@ -1604,43 +1583,35 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // A user without permission in a category.
         $this->setUser($this->catuser);
         try {
-            $result = external::create_template('shortname', 0, 'description', FORMAT_HTML, true,
-                array('contextid' => $catcontextid));
+            $result = $this->create_template(1, false);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
         }
 
         // A user with permissions in the system.
         $this->setUser($this->creator);
-        $result = external::create_template('shortname', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $syscontextid));
-        $result = external_api::clean_returnvalue(external::create_template_returns(), $result);
-        $this->assertEquals('shortname', $result['shortname']);
-        $this->assertEquals($syscontextid, $result['contextid']);
-        $this->assertNotEmpty($result['id']);
+        $result = $this->create_template(1, true);
+        $this->assertEquals('shortname1', $result->shortname);
+        $this->assertEquals($syscontextid, $result->contextid);
+        $this->assertNotEmpty($result->id);
 
-        $result = external::create_template('catshortname', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $catcontextid));
-        $result = external_api::clean_returnvalue(external::create_template_returns(), $result);
-        $this->assertEquals('catshortname', $result['shortname']);
-        $this->assertEquals($catcontextid, $result['contextid']);
-        $this->assertNotEmpty($result['id']);
+        $result = $this->create_template(2, false);
+        $this->assertEquals('shortname2', $result->shortname);
+        $this->assertEquals($catcontextid, $result->contextid);
+        $this->assertNotEmpty($result->id);
 
         // A user with permissions in the category.
         $this->setUser($this->catcreator);
         try {
-            $result = external::create_template('sysshortname', 0, 'description', FORMAT_HTML, true,
-                array('contextid' => $syscontextid));
+            $result = $this->create_template(3, true);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
         }
 
-        $result = external::create_template('catshortname2', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $catcontextid));
-        $result = external_api::clean_returnvalue(external::create_template_returns(), $result);
-        $this->assertEquals('catshortname2', $result['shortname']);
-        $this->assertEquals($catcontextid, $result['contextid']);
-        $this->assertNotEmpty($result['id']);
+        $result = $this->create_template(3, false);
+        $this->assertEquals('shortname3', $result->shortname);
+        $this->assertEquals($catcontextid, $result->contextid);
+        $this->assertNotEmpty($result->id);
     }
 
     /**
@@ -1657,10 +1628,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Creating two templates.
         $this->setUser($this->creator);
-        $systemplate = external::create_template('sys', $duedate, 'description', FORMAT_HTML, true,
-            array('contextid' => $syscontextid));
-        $cattemplate = external::create_template('cat', $duedate, 'description', FORMAT_HTML, true,
-            array('contextid' => $catcontextid));
+        $systemplate = $this->create_template(1, true);
+        $cattemplate = $this->create_template(2, false);
 
         // User without permissions to read in system.
         assign_capability('tool/lp:templateread', CAP_PROHIBIT, $this->userrole, $syscontextid, true);
@@ -1693,12 +1662,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $result = external::read_template($cattemplate->id);
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
-        $this->assertEquals('cat', $result['shortname']);
-        $this->assertEquals('description', $result['description']);
+        $this->assertEquals('shortname2', $result['shortname']);
+        $this->assertEquals('description2', $result['description']);
         $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
-        $this->assertEquals(true, $result['visible']);
-        $this->assertEquals($duedate, $result['duedate']);
-        $this->assertEquals(userdate($duedate), $result['duedateformatted']);
+        $this->assertEquals(1, $result['visible']);
+        $this->assertEquals(0, $result['duedate']);
+        $this->assertEquals(userdate(0), $result['duedateformatted']);
 
         // User with permissions to read in the system.
         assign_capability('tool/lp:templateread', CAP_ALLOW, $this->userrole, $syscontextid, true);
@@ -1707,22 +1676,22 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $result = external::read_template($systemplate->id);
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($systemplate->id, $result['id']);
-        $this->assertEquals('sys', $result['shortname']);
-        $this->assertEquals('description', $result['description']);
+        $this->assertEquals('shortname1', $result['shortname']);
+        $this->assertEquals('description1', $result['description']);
         $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
         $this->assertEquals(true, $result['visible']);
-        $this->assertEquals($duedate, $result['duedate']);
-        $this->assertEquals(userdate($duedate), $result['duedateformatted']);
+        $this->assertEquals(0, $result['duedate']);
+        $this->assertEquals(userdate(0), $result['duedateformatted']);
 
         $result = external::read_template($cattemplate->id);
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
-        $this->assertEquals('cat', $result['shortname']);
-        $this->assertEquals('description', $result['description']);
+        $this->assertEquals('shortname2', $result['shortname']);
+        $this->assertEquals('description2', $result['description']);
         $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
         $this->assertEquals(true, $result['visible']);
-        $this->assertEquals($duedate, $result['duedate']);
-        $this->assertEquals(userdate($duedate), $result['duedateformatted']);
+        $this->assertEquals(0, $result['duedate']);
+        $this->assertEquals(userdate(0), $result['duedateformatted']);
     }
 
     /**
@@ -1739,21 +1708,19 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Creating two templates.
         $this->setUser($this->creator);
-        $systemplate = external::create_template('sys', $duedate, 'description', FORMAT_HTML, true,
-            array('contextid' => $syscontextid));
-        $cattemplate = external::create_template('cat', $duedate, 'description', FORMAT_HTML, true,
-            array('contextid' => $catcontextid));
+        $systemplate = $this->create_template(1, true);
+        $cattemplate = $this->create_template(2, false);
 
         // Trying to update in a without permissions.
         $this->setUser($this->user);
         try {
-            external::update_template($systemplate->id, 'a', 1234, 'c', FORMAT_MARKDOWN, false);
+            $this->update_template($systemplate->id, 3);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
         }
 
         try {
-            external::update_template($cattemplate->id, 'a', 1234, 'c', FORMAT_MARKDOWN, false);
+            $this->update_template($cattemplate->id, 3);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
         }
@@ -1761,55 +1728,48 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         // User with permissions to update in category.
         $this->setUser($this->catcreator);
         try {
-            external::update_template($systemplate->id, 'a', 1234, 'c', FORMAT_MARKDOWN, false);
+            $this->update_template($systemplate->id, 3);
             $this->fail('Invalid permissions');
         } catch (required_capability_exception $e) {
         }
 
-        // Set a due date for the next 2 years.
-        $date->modify('+1 year');
-        $duedateupdated = $date->getTimestamp();
-
-        $result = external::update_template($cattemplate->id, 'a', $duedateupdated, 'c', FORMAT_MARKDOWN, false);
-        $result = external_api::clean_returnvalue(external::update_template_returns(), $result);
+        $result = $this->update_template($cattemplate->id, 3);
         $this->assertTrue($result);
         $result = external::read_template($cattemplate->id);
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
-        $this->assertEquals('a', $result['shortname']);
-        $this->assertEquals("<p>c</p>\n", $result['description']);
+        $this->assertEquals('shortname3', $result['shortname']);
+        $this->assertEquals("description3", $result['description']);
         $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
-        $this->assertEquals(0, $result['visible']);
-        $this->assertEquals($duedateupdated, $result['duedate']);
-        $this->assertEquals(userdate($duedateupdated), $result['duedateformatted']);
+        $this->assertEquals(true, $result['visible']);
+        $this->assertEquals(0, $result['duedate']);
+        $this->assertEquals(userdate(0), $result['duedateformatted']);
 
         // User with permissions to update in the system.
         $this->setUser($this->creator);
-        $result = external::update_template($systemplate->id, 'x1', $duedateupdated, 'z1', FORMAT_PLAIN, false);
-        $result = external_api::clean_returnvalue(external::update_template_returns(), $result);
+        $result = $this->update_template($systemplate->id, 4);
         $this->assertTrue($result);
         $result = external::read_template($systemplate->id);
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($systemplate->id, $result['id']);
-        $this->assertEquals('x1', $result['shortname']);
-        $this->assertEquals('z1', $result['description']);
+        $this->assertEquals('shortname4', $result['shortname']);
+        $this->assertEquals('description4', $result['description']);
         $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
-        $this->assertEquals(0, $result['visible']);
-        $this->assertEquals($duedateupdated, $result['duedate']);
-        $this->assertEquals(userdate($duedateupdated), $result['duedateformatted']);
+        $this->assertEquals(true, $result['visible']);
+        $this->assertEquals(0, $result['duedate']);
+        $this->assertEquals(userdate(0), $result['duedateformatted']);
 
-        $result = external::update_template($cattemplate->id, 'x2', $duedateupdated, 'z2', FORMAT_PLAIN, true);
-        $result = external_api::clean_returnvalue(external::update_template_returns(), $result);
+        $result = $this->update_template($cattemplate->id, 5);
         $this->assertTrue($result);
         $result = external::read_template($cattemplate->id);
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
-        $this->assertEquals('x2', $result['shortname']);
-        $this->assertEquals('z2', $result['description']);
+        $this->assertEquals('shortname5', $result['shortname']);
+        $this->assertEquals('description5', $result['description']);
         $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
         $this->assertEquals(1, $result['visible']);
-        $this->assertEquals($duedateupdated, $result['duedate']);
-        $this->assertEquals(userdate($duedateupdated), $result['duedateformatted']);
+        $this->assertEquals(0, $result['duedate']);
+        $this->assertEquals(userdate(0), $result['duedateformatted']);
     }
 
     /**
@@ -1822,12 +1782,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Creating a few templates.
         $this->setUser($this->creator);
-        $sys1 = external::create_template('sys1', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $syscontextid));
-        $cat1 = external::create_template('cat1', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $catcontextid));
-        $cat2 = external::create_template('cat2', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $catcontextid));
+        $sys1 = $this->create_template(1, true);
+        $cat1 = $this->create_template(2, false);
+        $cat2 = $this->create_template(3, false);
         $this->assertTrue($DB->record_exists('tool_lp_template', array('id' => $sys1->id)));
         $this->assertTrue($DB->record_exists('tool_lp_template', array('id' => $cat1->id)));
         $this->assertTrue($DB->record_exists('tool_lp_template', array('id' => $cat2->id)));
@@ -1879,14 +1836,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Creating a few templates.
         $this->setUser($this->creator);
-        $sys1 = external::create_template('sys1', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $syscontextid));
-        $sys2 = external::create_template('sys2', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $syscontextid));
-        $cat1 = external::create_template('cat1', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $catcontextid));
-        $cat2 = external::create_template('cat2', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $catcontextid));
+        $sys1 = $this->create_template(1, true);
+        $sys2 = $this->create_template(2, true);
+        $cat1 = $this->create_template(3, false);
+        $cat2 = $this->create_template(4, false);
 
         // User without permission.
         $this->setUser($this->user);
@@ -1925,16 +1878,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         // Creating a few templates.
         $this->setUser($this->creator);
-        $sys1 = external::create_template('sys1', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $syscontextid));
-        $sys2 = external::create_template('sys2', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $syscontextid));
-        $cat1 = external::create_template('cat1', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $catcontextid));
-        $cat2 = external::create_template('cat2', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $catcontextid));
-        $cat3 = external::create_template('cat3', 0, 'description', FORMAT_HTML, true,
-            array('contextid' => $catcontextid));
+        $sys1 = $this->create_template(1, true);
+        $sys2 = $this->create_template(2, true);
+        $cat1 = $this->create_template(3, false);
+        $cat2 = $this->create_template(4, false);
+        $cat3 = $this->create_template(5, false);
 
         // User without permission.
         $this->setUser($this->user);
@@ -2115,19 +2063,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(external::search_competencies_returns(), $result);
 
         $this->assertCount(5, $result);
-        $this->assertCount(2, $result[0]['relatedcompetencies']);
-        $this->assertCount(2, $result[1]['relatedcompetencies']);
-        $this->assertCount(1, $result[2]['relatedcompetencies']);
-        $this->assertCount(1, $result[3]['relatedcompetencies']);
-        $this->assertTrue(empty($result[4]['relatedcompetencies']));
 
-        // Checking that all competencies are returned.
-        $this->assertEquals($c2->get_id(), $result[0]['relatedcompetencies'][0]['id']);
-        $this->assertEquals($c3->get_id(), $result[0]['relatedcompetencies'][1]['id']);
-        $this->assertEquals($c1->get_id(), $result[1]['relatedcompetencies'][0]['id']);
-        $this->assertEquals($c4->get_id(), $result[1]['relatedcompetencies'][1]['id']);
-        $this->assertEquals($c1->get_id(), $result[2]['relatedcompetencies'][0]['id']);
-        $this->assertEquals($c2->get_id(), $result[3]['relatedcompetencies'][0]['id']);
     }
 
     /**

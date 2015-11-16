@@ -25,6 +25,7 @@ namespace tool_lp\external;
 
 use renderer_base;
 use context_user;
+use external_value;
 use tool_lp\user_competency;
 
 /**
@@ -35,11 +36,11 @@ use tool_lp\user_competency;
  */
 class user_competency_exporter extends persistent_exporter {
 
-    protected function get_persistent_class() {
+    protected static function get_persistent_class() {
         return 'tool_lp\\user_competency';
     }
 
-    protected function get_related() {
+    protected static function get_related() {
         // We cache the scale so it does not need to be retrieved from the framework every time.
         return array('scale' => 'grade_scale');
     }
@@ -67,5 +68,12 @@ class user_competency_exporter extends persistent_exporter {
         }
         $result->statusname = $statusname;
         return $result;
+    }
+
+    public static function export_read_properties_structure($fields) {
+        $fields['gradename'] = new external_value(PARAM_TEXT, 'gradename, readonly');
+        $fields['proficiencyname'] = new external_value(PARAM_TEXT, 'proficiencyname, readonly');
+        $fields['statusname'] = new external_value(PARAM_TEXT, 'statusname, readonly');
+        return $fields;
     }
 }
