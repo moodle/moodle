@@ -1,6 +1,9 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.1 ===
+* core_enrol_external::get_enrolled_users now supports two additional parameters for ordering: sortby and sortdirection.
+
 === 3.0 ===
 
 * Added new events enrol_instance_created, enrol_instance_updated and
