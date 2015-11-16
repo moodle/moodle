@@ -40,6 +40,7 @@ use invalid_parameter_exception;
 use grade_scale;
 use tool_lp\external\competency_framework_exporter;
 use tool_lp\external\user_competency_exporter;
+use tool_lp\external\user_competency_plan_exporter;
 use tool_lp\external\competency_exporter;
 use tool_lp\external\plan_exporter;
 use tool_lp\external\template_exporter;
@@ -3956,25 +3957,27 @@ class external extends external_api {
         $scalecache = array();
 
         foreach ($result as $key => $r) {
-            $r->competency = null;
-            $r->usercompetency = null;
+            if (!isset($scalecache[$r->competency->get_competencyframeworkid()])) {
+                $scalecache[$r->competency->get_competencyframeworkid()] = $r->competency->get_framework()->get_scale();
+            }
+            $scale = $scalecache[$r->competency->get_competencyframeworkid()];
 
-            if ($plan->get_status() == plan::STATUS_COMPLETE) {
-                if (!isset($contextcache[$r->competency->get_competencyframeworkid()])) {
-                    $contextcache[$r->competency->get_competencyframeworkid()] = $r->competency->get_context();
-                }
-                $context = $contextcache[$r->competency->get_competencyframeworkid()];
+            if (!isset($contextcache[$r->competency->get_competencyframeworkid()])) {
+                $contextcache[$r->competency->get_competencyframeworkid()] = $r->competency->get_context();
+            }
+            $context = $contextcache[$r->competency->get_competencyframeworkid()];
 
-                $exporter = new competency_exporter($r->competency, array('context' => $context));
-                $r->competency = $exporter->export($output);
-            } else {
-                if (!isset($scalecache[$r->competency->get_competencyframeworkid()])) {
-                    $scalecache[$r->competency->get_competencyframeworkid()] = $r->competency->get_framework()->get_scale();
-                }
-                $scale = $scalecache[$r->competency->get_competencyframeworkid()];
+            $exporter = new competency_exporter($r->competency, array('context' => $context));
+            $r->competency = $exporter->export($output);
 
+            if ($r->usercompetency) {
                 $exporter = new user_competency_exporter($r->usercompetency, array('scale' => $scale));
                 $r->usercompetency = $exporter->export($output);
+                unset($r->usercompetencyplan);
+            } else {
+                $exporter = new user_competency_plan_exporter($r->usercompetencyplan);
+                $r->usercompetencyplan = $exporter->export($output);
+                unset($r->usercompetency);
             }
         }
         return $result;

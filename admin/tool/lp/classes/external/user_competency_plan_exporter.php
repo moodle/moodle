@@ -31,15 +31,10 @@ use renderer_base;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_plan_competency_exporter extends persistent_exporter {
+class user_competency_plan_exporter extends persistent_exporter {
 
     protected function get_persistent_class() {
-        return 'tool_lp\\user_plan_competency';
+        return 'tool_lp\\user_competency_plan';
     }
 
-    public function export(renderer_base $output) {
-        $result = parent::export($output);
-        $result->statusname = $this->persistent->get_statusname();
-        return $result;
-    }
 }

@@ -1403,9 +1403,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
 
         $syscontext = context_system::instance();
+        $onehour = time() + 60*60;
 
         // Create a template.
-        $template = external::create_template('shortname', time(), 'description', FORMAT_HTML, true,
+        $template = external::create_template('shortname', $onehour, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontext->id));
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
@@ -1445,9 +1446,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->creator);
 
         $syscontext = context_system::instance();
+        $onehour = time() + 60*60;
 
         // Create a template.
-        $template = external::create_template('shortname', time(), 'description', FORMAT_HTML, true,
+        $template = external::create_template('shortname', $onehour, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontext->id));
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
@@ -1507,9 +1509,10 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->creator);
 
         $syscontext = context_system::instance();
+        $onehour = time() + 60*60;
 
         // Create a template.
-        $template = external::create_template('shortname', time(), 'description', FORMAT_HTML, true,
+        $template = external::create_template('shortname', $onehour, 'description', FORMAT_HTML, true,
             array('contextid' => $syscontext->id));
         $template = (object) external_api::clean_returnvalue(external::create_template_returns(), $template);
 
@@ -1774,8 +1777,8 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(external::read_template_returns(), $result);
         $this->assertEquals($cattemplate->id, $result['id']);
         $this->assertEquals('a', $result['shortname']);
-        $this->assertEquals('c', $result['description']);
-        $this->assertEquals(FORMAT_MARKDOWN, $result['descriptionformat']);
+        $this->assertEquals("<p>c</p>\n", $result['description']);
+        $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
         $this->assertEquals(0, $result['visible']);
         $this->assertEquals($duedateupdated, $result['duedate']);
         $this->assertEquals(userdate($duedateupdated), $result['duedateformatted']);
@@ -1790,7 +1793,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($systemplate->id, $result['id']);
         $this->assertEquals('x1', $result['shortname']);
         $this->assertEquals('z1', $result['description']);
-        $this->assertEquals(FORMAT_PLAIN, $result['descriptionformat']);
+        $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
         $this->assertEquals(0, $result['visible']);
         $this->assertEquals($duedateupdated, $result['duedate']);
         $this->assertEquals(userdate($duedateupdated), $result['duedateformatted']);
@@ -1803,7 +1806,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($cattemplate->id, $result['id']);
         $this->assertEquals('x2', $result['shortname']);
         $this->assertEquals('z2', $result['description']);
-        $this->assertEquals(FORMAT_PLAIN, $result['descriptionformat']);
+        $this->assertEquals(FORMAT_HTML, $result['descriptionformat']);
         $this->assertEquals(1, $result['visible']);
         $this->assertEquals($duedateupdated, $result['duedate']);
         $this->assertEquals(userdate($duedateupdated), $result['duedateformatted']);
