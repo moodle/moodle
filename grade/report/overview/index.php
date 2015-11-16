@@ -65,9 +65,9 @@ if (isset($personalcontext) && $courseid == SITEID) {
 if ($userid == $USER->id) {
     $settings = $PAGE->settingsnav->find('mygrades', null);
     $settings->make_active();
-} else if ($courseid != SITEID) {
+} else if ($courseid != SITEID && $userid) {
     // Show some other navbar thing.
-    $user = $DB->get_record('user', array('id' => $userid));
+    $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
     $PAGE->navigation->extend_for_user($user);
 }
 
