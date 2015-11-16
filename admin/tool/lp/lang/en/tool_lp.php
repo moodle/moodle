@@ -74,6 +74,7 @@ $string['errorscaleconfiguration'] = 'You must configure the scale by selecting 
 $string['hidden'] = 'Hidden';
 $string['hiddenhint'] = '(hidden)';
 $string['idnumber'] = 'Id number';
+$string['invalidevidencedesc'] = 'Invalid evidence description';
 $string['invalidgrade'] = 'Invalid grade';
 $string['invalidpersistent'] = 'Invalid persistent';
 $string['invalidplan'] = 'Invalid learning plan';
