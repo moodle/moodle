@@ -52,6 +52,7 @@ class enrol_self_external extends external_api {
      *
      * @param int $instanceid instance id of self enrolment plugin.
      * @return array instance information.
+     * @throws moodle_exception
      */
     public static function get_instance_info($instanceid) {
         global $DB, $CFG;
@@ -66,10 +67,15 @@ class enrol_self_external extends external_api {
             throw new moodle_exception('invaliddata', 'error');
         }
 
+        // Note that we can't use validate_context because the user is not enrolled in the course.
+        require_login(null, false, null, false, true);
+
         $enrolinstance = $DB->get_record('enrol', array('id' => $params['instanceid']), '*', MUST_EXIST);
-        $coursecontext = context_course::instance($enrolinstance->courseid);
-        $categorycontext = $coursecontext->get_parent_context();
-        self::validate_context($categorycontext);
+        $course = $DB->get_record('course', array('id' => $enrolinstance->courseid), '*', MUST_EXIST);
+        $context = context_course::instance($course->id);
+        if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
+            throw new moodle_exception('coursehidden');
+        }
 
         $instanceinfo = (array) $enrolplugin->get_enrol_info($enrolinstance);
         if (isset($instanceinfo['requiredparam']->enrolpassword)) {

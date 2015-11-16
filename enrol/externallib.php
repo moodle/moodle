@@ -603,14 +603,21 @@ class core_enrol_external extends external_api {
      *
      * @param int $courseid
      * @return array of course enrolment methods
+     * @throws moodle_exception
      */
     public static function get_course_enrolment_methods($courseid) {
+        global $DB;
 
         $params = self::validate_parameters(self::get_course_enrolment_methods_parameters(), array('courseid' => $courseid));
 
-        $coursecontext = context_course::instance($params['courseid']);
-        $categorycontext = $coursecontext->get_parent_context();
-        self::validate_context($categorycontext);
+        // Note that we can't use validate_context because the user is not enrolled in the course.
+        require_login(null, false, null, false, true);
+
+        $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
+        $context = context_course::instance($course->id);
+        if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
+            throw new moodle_exception('coursehidden');
+        }
 
         $result = array();
         $enrolinstances = enrol_get_instances($params['courseid'], true);
