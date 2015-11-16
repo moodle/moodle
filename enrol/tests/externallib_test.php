@@ -552,7 +552,9 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $this->assertNotEmpty($studentrole);
 
         $course1 = self::getDataGenerator()->create_course();
-        $course2 = self::getDataGenerator()->create_course();
+        $coursedata = new stdClass();
+        $coursedata->visible = 0;
+        $course2 = self::getDataGenerator()->create_course($coursedata);
 
         // Add enrolment methods for course.
         $instanceid1 = $selfplugin->add_instance($course1, array('status' => ENROL_INSTANCE_ENABLED,
@@ -568,6 +570,8 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
         $enrolmentmethods = $DB->get_records('enrol', array('courseid' => $course1->id, 'status' => ENROL_INSTANCE_ENABLED));
         $this->assertCount(2, $enrolmentmethods);
+
+        $this->setAdminUser();
 
         // Check if information is returned.
         $enrolmentmethods = core_enrol_external::get_course_enrolment_methods($course1->id);
@@ -598,5 +602,14 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals('self', $enrolmentmethod['type']);
         $this->assertTrue($enrolmentmethod['status']);
         $this->assertEquals('enrol_self_get_instance_info', $enrolmentmethod['wsfunction']);
+
+        // Try to retrieve information using a normal user for a hidden course.
+        $user = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+        try {
+            core_enrol_external::get_course_enrolment_methods($course2->id);
+        } catch (moodle_exception $e) {
+            $this->assertEquals('coursehidden', $e->errorcode);
+        }
     }
 }
