@@ -4020,8 +4020,8 @@ class settings_navigation extends navigation_node {
 
         $function($this, $modulenode);
 
-        // Remove the module node if there are no children
-        if (empty($modulenode->children)) {
+        // Remove the module node if there are no children.
+        if ($modulenode->children->count() <= 0) {
             $modulenode->remove();
         }
 
