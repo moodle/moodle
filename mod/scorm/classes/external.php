@@ -805,4 +805,77 @@ class mod_scorm_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.1
+     */
+    public static function launch_sco_parameters() {
+        return new external_function_parameters(
+            array(
+                'scormid' => new external_value(PARAM_INT, 'SCORM instance id'),
+                'scoid' => new external_value(PARAM_INT, 'SCO id (empty for launching the first SCO)', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Trigger the course module viewed event.
+     *
+     * @param int $scormid the SCORM instance id
+     * @param int $scoid the SCO id
+     * @return array of warnings and status result
+     * @since Moodle 3.1
+     * @throws moodle_exception
+     */
+    public static function launch_sco($scormid, $scoid = 0) {
+        global $DB;
+
+        $params = self::validate_parameters(self::launch_sco_parameters(),
+                                            array(
+                                                'scormid' => $scormid,
+                                                'scoid' => $scoid
+                                            ));
+        $warnings = array();
+
+        // Request and permission validation.
+        $scorm = $DB->get_record('scorm', array('id' => $params['scormid']), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($scorm, 'scorm');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        // If the SCORM is not open this function will throw exceptions.
+        scorm_require_available($scorm);
+
+        if (!empty($params['scoid']) and !($sco = scorm_get_sco($params['scoid'], SCO_ONLY))) {
+            throw new moodle_exception('cannotfindsco', 'scorm');
+        }
+
+        list($sco, $scolaunchurl) = scorm_get_sco_and_launch_url($scorm, $params['scoid'], $context);
+        // Trigger the SCO launched event.
+        scorm_launch_sco($scorm, $sco, $cm, $context, $scolaunchurl);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.1
+     */
+    public static function launch_sco_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

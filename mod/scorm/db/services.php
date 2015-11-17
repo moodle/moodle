@@ -84,5 +84,13 @@ $functions = array(
                             no courses are provided then all the scorm instances the user has access to will be returned.',
         'type'          => 'read',
         'capabilities'  => ''
-    )
+    ),
+
+    'mod_scorm_launch_sco' => array(
+        'classname'     => 'mod_scorm_external',
+        'methodname'    => 'launch_sco',
+        'description'   => 'Trigger the SCO launched event.',
+        'type'          => 'write',
+        'capabilities'  => ''
+    ),
 );
