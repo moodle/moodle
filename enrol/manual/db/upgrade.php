@@ -72,6 +72,9 @@ function xmldb_enrol_manual_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015091500, 'enrol', 'manual');
     }
 
+    // Moodle v3.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
 
