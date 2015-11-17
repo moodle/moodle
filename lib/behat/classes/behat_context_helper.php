@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Helper to initialise behat contexts from moodle code.
+ * Helper to get behat contexts from other contexts.
  *
  * @package    core
  * @category   test
@@ -25,8 +25,7 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-use Behat\Mink\Session as Session,
-    Behat\Mink\Mink as Mink;
+use \Behat\Behat\Context\BehatContext;
 
 /**
  * Helper to get behat contexts.
@@ -39,28 +38,18 @@ use Behat\Mink\Session as Session,
 class behat_context_helper {
 
     /**
-     * List of already initialized contexts.
-     *
-     * @var array
+     * @var BehatContext main behat context.
      */
-    protected static $contexts = array();
+    protected static $maincontext = false;
 
     /**
-     * @var Mink.
-     */
-    protected static $mink = false;
-
-    /**
-     * Sets the browser session.
+     * Save main behat context reference to be used for finding sub-contexts.
      *
-     * @param Session $session
+     * @param BehatContext $maincontext
      * @return void
      */
-    public static function set_session(Session $session) {
-
-        // Set mink to be able to init a context.
-        self::$mink = new Mink(array('mink' => $session));
-        self::$mink->setDefaultSessionName('mink');
+    public static function set_main_context(BehatContext $maincontext) {
+        self::$maincontext = $maincontext;
     }
 
     /**
@@ -76,36 +65,10 @@ class behat_context_helper {
      */
     public static function get($classname) {
 
-        if (!self::init_context($classname)) {
+        if (!$subcontext = self::$maincontext->getSubcontextByClassName($classname)) {
             throw coding_exception('The required "' . $classname . '" class does not exist');
         }
 
-        return self::$contexts[$classname];
+        return $subcontext;
     }
-
-    /**
-     * Initializes the required context.
-     *
-     * @throws coding_exception
-     * @param string $classname
-     * @return bool
-     */
-    protected static function init_context($classname) {
-
-        if (!empty(self::$contexts[$classname])) {
-            return true;
-        }
-
-        if (!class_exists($classname)) {
-            return false;
-        }
-
-        $instance = new $classname();
-        $instance->setMink(self::$mink);
-
-        self::$contexts[$classname] = $instance;
-
-        return true;
-    }
-
 }
