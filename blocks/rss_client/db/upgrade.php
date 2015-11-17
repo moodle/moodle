@@ -50,5 +50,8 @@ function xmldb_block_rss_client_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2015071700, 'rss_client');
     }
 
+    // Moodle v3.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
