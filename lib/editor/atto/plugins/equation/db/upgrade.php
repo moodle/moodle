@@ -39,5 +39,8 @@ function xmldb_atto_equation_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015083100, 'atto', 'equation');
     }
 
+    // Moodle v3.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

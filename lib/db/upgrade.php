@@ -4606,5 +4606,8 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015100800.01);
     }
 
+    // Moodle v3.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

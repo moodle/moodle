@@ -53,5 +53,8 @@ function xmldb_enrol_database_upgrade($oldversion) {
     // Moodle v2.9.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Moodle v3.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

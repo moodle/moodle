@@ -98,5 +98,8 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015100201, 'qtype', 'multianswer');
     }
 
+    // Moodle v3.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
