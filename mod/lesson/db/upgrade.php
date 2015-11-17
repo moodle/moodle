@@ -349,5 +349,9 @@ function xmldb_lesson_upgrade($oldversion) {
         // Lesson savepoint reached.
         upgrade_mod_savepoint(true, 2015071803, 'lesson');
     }
+
+    // Moodle v3.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
