@@ -46,6 +46,21 @@ function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) 
     }
 }
 
+
+/**
+ * This function extends the user navigation.
+ *
+ * @param navigation_node $navigation The navigation node to extend
+ * @param stdClass $user The user object
+ * @param context_user $usercontext The user context
+ * @param stdClass $course The course object
+ * @param context_course $coursecontext The context of the course
+ */
+function tool_lp_extend_navigation_user($navigation, $user, $usercontext, $course, $coursecontext) {
+    $navigation->add(get_string('learningplans', 'tool_lp'),
+            new moodle_url('/admin/tool/lp/plans.php', array('userid' => $user->id)));
+}
+
 /**
  * Add nodes to myprofile page.
  *
@@ -57,16 +72,16 @@ function tool_lp_extend_navigation_course($navigation, $course, $coursecontext) 
  * @return bool
  */
 function tool_lp_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-    global $USER;
-
     if (!\tool_lp\plan::can_read_user($user->id)) {
         return false;
     }
 
-    $url = new moodle_url('/admin/tool/lp/plans.php');
+    $url = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $user->id));
     $node = new core_user\output\myprofile\node('miscellaneous', 'learningplans',
                                                 get_string('learningplans', 'tool_lp'), null, $url);
     $tree->add_node($node);
+
+    return true;
 }
 
 /**

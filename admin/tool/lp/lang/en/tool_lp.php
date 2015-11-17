@@ -95,6 +95,7 @@ $string['invalidplan'] = 'Invalid learning plan';
 $string['invalidtaxonomy'] = 'Invalid taxonomy: {$a}';
 $string['itemstoadd'] = 'Items to add';
 $string['aisrequired'] = '\'{$a}\' is required';
+$string['learningplancompetencies'] = 'Learning plan competencies';
 $string['learningplans'] = 'Learning plans';
 $string['levela'] = 'Level {$a}';
 $string['linkcoursecompetencies'] = 'Link course competencies';

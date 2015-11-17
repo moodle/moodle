@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 use coding_exception;
 use context;
 use moodle_url;
+use core_user;
+use context_user;
 
 /**
  * Page helper.
@@ -98,5 +100,67 @@ class page_helper {
         }
 
         return array($title, $subtitle, $templatesurl);
+    }
+
+    /**
+     * Set-up a plan page.
+     *
+     * Example:
+     * list($title, $subtitle) = page_helper::setup_for_plan($url, $template, $pagetitle);
+     * echo $OUTPUT->heading($title);
+     * echo $OUTPUT->heading($subtitle, 3);
+     *
+     * @param  int $userid The user ID.
+     * @param  moodle_url $url The current page.
+     * @param  \tool_lp\plan $plan The plan, if any.
+     * @param  string $subtitle The title of the subpage, if any.
+     * @return array With the following:
+     *               - Page title
+     *               - Page sub title
+     *               - Return URL (main plan page)
+     */
+    public static function setup_for_plan($userid, moodle_url $url, $plan = null, $subtitle = '') {
+        global $PAGE, $USER;
+
+        // Check that the user is a valid user.
+        $user = core_user::get_user($userid);
+        if (!$user || !core_user::is_real_user($userid)) {
+            throw new moodle_exception('invaliduser', 'error');
+        }
+
+        $context = context_user::instance($user->id);
+
+        $plansurl = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $userid));
+
+        $PAGE->navigation->override_active_url($plansurl);
+        $PAGE->set_context($context);
+
+        // If not his own plan, we want to extend the navigation for the user.
+        $iscurrentuser = ($USER->id == $user->id);
+        if (!$iscurrentuser) {
+            $PAGE->navigation->extend_for_user($user);
+            $PAGE->navigation->set_userid_for_parent_checks($user->id);
+        }
+
+        if (!empty($plan)) {
+            $title = format_string($plan->get_name(), true, array('context' => $context));
+        } else {
+            $title = get_string('learningplans', 'tool_lp');
+        }
+
+        $PAGE->set_pagelayout('standard');
+        $PAGE->set_url($url);
+        $PAGE->set_title($title);
+        $PAGE->set_heading($title);
+
+        if (!empty($plan)) {
+            $PAGE->navbar->add($title);
+            $PAGE->navbar->add($subtitle, $url);
+        } else if (!empty($subtitle)) {
+            // We're in a sub page without a specific plan.
+            $PAGE->navbar->add($subtitle, $url);
+        }
+
+        return array($title, $subtitle, $plansurl);
     }
 }

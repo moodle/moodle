@@ -28,62 +28,57 @@ require_once($CFG->libdir.'/adminlib.php');
 $userid = optional_param('userid', false, PARAM_INT);
 $id = optional_param('id', false, PARAM_INT);
 
-// Set up the page.
+$url = new moodle_url('/admin/tool/lp/editplan.php', array('id' => $id, 'userid' => $userid));
+
+$plan = null;
 if (empty($id)) {
     $pagetitle = get_string('addnewplan', 'tool_lp');
+    list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_plan($userid, $url, null, $pagetitle);
 } else {
+    $plan = \tool_lp\api::read_plan($id);
+
+    // The userid parameter must be the same as the owner of the plan.
+    if ($userid != $plan->get_userid()) {
+        throw new coding_exception('Inconsistency between the userid parameter and the userid of the plan');
+    }
+
     $pagetitle = get_string('editplan', 'tool_lp');
+    list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_plan($userid, $url, $plan, $pagetitle);
 }
 
-// Default to the current user.
-if (!$userid) {
-    $userid = $USER->id;
-}
-
-$context = context_user::instance($userid);
-
-$params = array('userid' => $userid);
-if ($id) {
-    $params['id'] = $id;
-}
-
-$url = new moodle_url("/admin/tool/lp/editplan.php", $params);
-$PAGE->set_context($context);
-$PAGE->set_url($url);
-$PAGE->set_title($pagetitle);
-$PAGE->set_pagelayout('admin');
-$PAGE->set_heading($pagetitle);
 $output = $PAGE->get_renderer('tool_lp');
 
 // Custom data to pass to the form.
-$customdata = array('userid' => $userid, 'context' => $context);
+$customdata = array('userid' => $userid, 'context' => $PAGE->context);
 
 // User can create plan if he can_manage_user with active/complete status
 // or if he can_manage_user_draft with draft status.
 $cancreate = \tool_lp\plan::can_manage_user_draft($userid) || \tool_lp\plan::can_manage_user($userid);
 
-// If editing plan get the plan and check if user has permissions to edit it.
-if ($id) {
-    $plan = \tool_lp\api::read_plan($id);
+// If editing plan, check if user has permissions to edit it.
+if ($plan != null) {
     if (!$plan->can_manage()) {
-        throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+        throw new required_capability_exception($PAGE->context, 'tool/lp:planmanage', 'nopermissions', '');
     }
     if (!$plan->can_be_edited()) {
         throw new coding_exception('Completed plan can not be edited');
     }
     $customdata['plan'] = $plan;
 } else if (!$cancreate) {
-    throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+    throw new required_capability_exception($PAGE->context, 'tool/lp:planmanage', 'nopermissions', '');
 }
-
 
 $form = new \tool_lp\form\plan(null, $customdata);
 if ($form->is_cancelled()) {
-    redirect(new moodle_url('/admin/tool/lp/plans.php?userid=' . $userid));
+    redirect($returnurl);
 }
 
 echo $output->header();
-echo $output->heading($pagetitle);
+echo $output->heading($title);
+if (!empty($subtitle)) {
+    echo $output->heading($subtitle, 3);
+}
+
 $data = $form->get_data();
 
 if ($data) {

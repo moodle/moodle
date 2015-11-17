@@ -31,25 +31,8 @@ if (isguestuser()) {
 
 $userid = optional_param('userid', $USER->id, PARAM_INT);
 
-// Check that the user is a valid user.
-$user = core_user::get_user($userid);
-if (!$user || !core_user::is_real_user($userid)) {
-    throw new moodle_exception('invaliduser', 'error');
-}
-
-$context = context_user::instance($userid);
-if (!\tool_lp\plan::can_read_user($userid) && !\tool_lp\plan::can_read_user_draft($userid)) {
-    throw new required_capability_exception($context, 'tool/lp:planview', 'nopermissions', '');
-}
-
 $url = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $userid));
-
-$title = get_string('learningplans', 'tool_lp');
-$PAGE->set_context($context);
-$PAGE->set_pagelayout('admin');
-$PAGE->set_url($url);
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
+list($title, $subtitle) = \tool_lp\page_helper::setup_for_plan($userid, $url);
 
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();

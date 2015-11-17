@@ -32,19 +32,15 @@ if (isguestuser()) {
 }
 
 $plan = \tool_lp\api::read_plan($id);
-$context = $plan->get_context();
-
 $url = new moodle_url('/admin/tool/lp/plan.php', array('id' => $id));
-$title = format_string($plan->get_name(), true, array('context' => $context));
-$PAGE->set_context($context);
-$PAGE->set_pagelayout('admin');
-$PAGE->set_url($url);
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
+
+list($title, $subtitle) = \tool_lp\page_helper::setup_for_plan($plan->get_userid(), $url, $plan,
+        get_string('learningplancompetencies', 'tool_lp'));
 
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($title);
+echo $output->heading($subtitle, 3);
 
 $page = new \tool_lp\output\plan_page($plan);
 echo $output->render($page);
