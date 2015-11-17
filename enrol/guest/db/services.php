@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Guest access plugin version specification.
+ * Guest enrolment external functions and service definitions.
  *
  * @package    enrol_guest
- * @copyright  2010 Petr Skoda  {@link http://skodak.org}
+ * @category   external
+ * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.1
  */
 
-defined('MOODLE_INTERNAL') || die();
+$functions = array(
 
-$plugin->version   = 2015111601;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015111000;        // Requires this Moodle version
-$plugin->component = 'enrol_guest';     // Full name of the plugin (used for diagnostics)
+    'enrol_guest_get_instance_info' => array(
+        'classname'   => 'enrol_guest_external',
+        'methodname'  => 'get_instance_info',
+        'description' => 'Return guest enrolment instance information.',
+        'type'        => 'read'
+    ),
+);
