@@ -559,6 +559,14 @@ $functions = array(
         'capabilities' => 'tool/lp:competencyread',
         'ajax'         => true,
     ),
-
+    'tool_lp_search_users' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'search_users',
+        'classpath'    => '',
+        'description'  => 'Search for users.',
+        'type'         => 'read',
+        'capabilities' => '',
+        'ajax'         => true,
+    ),
 );
 

@@ -2497,4 +2497,127 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, $c2a->get_sortorder());
     }
 
+    public function test_search_users() {
+        global $CFG;
+        $this->resetAfterTest(true);
+
+        $dg = $this->getDataGenerator();
+        $ux = $dg->create_user();
+        $u1 = $dg->create_user(array('idnumber' => 'Cats', 'firstname' => 'Bob', 'lastname' => 'Dylan',
+            'email' => 'bobby@dylan.com', 'phone1' => '123456', 'phone2' => '78910', 'department' => 'Marketing',
+            'institution' => 'HQ'));
+        $u2 = $dg->create_user(array('idnumber' => 'Dogs', 'firstname' => 'Alice', 'lastname' => 'Dylan',
+            'email' => 'alyson@dylan.com', 'phone1' => '33333', 'phone2' => '77777', 'department' => 'Development',
+            'institution' => 'O2'));
+        $u3 = $dg->create_user(array('idnumber' => 'Fish', 'firstname' => 'Thomas', 'lastname' => 'Xow',
+            'email' => 'fishy@moodle.com', 'phone1' => '77777', 'phone2' => '33333', 'department' => 'Research',
+            'institution' => 'Bob'));
+
+        // We need to give the user the capability we are searching for on each of the test users.
+        $this->setAdminUser();
+        $usercontext = context_user::instance($u1->id);
+        $dummyrole = $this->assignUserCapability('tool/lp:planmanage', $usercontext->id);
+        $usercontext = context_user::instance($u2->id);
+        $this->assignUserCapability('tool/lp:planmanage', $usercontext->id, $dummyrole);
+        $usercontext = context_user::instance($u3->id);
+        $this->assignUserCapability('tool/lp:planmanage', $usercontext->id, $dummyrole);
+
+        $this->setUser($ux);
+        $usercontext = context_user::instance($u1->id);
+        $this->assignUserCapability('tool/lp:planmanage', $usercontext->id, $dummyrole);
+        $usercontext = context_user::instance($u2->id);
+        $this->assignUserCapability('tool/lp:planmanage', $usercontext->id, $dummyrole);
+        $usercontext = context_user::instance($u3->id);
+        $this->assignUserCapability('tool/lp:planmanage', $usercontext->id, $dummyrole);
+
+        $this->setAdminUser();
+
+        // No identity fields.
+        $CFG->showuseridentity = '';
+        $result = external::search_users('cats', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(0, $result['users']);
+        $this->assertEquals(0, $result['count']);
+
+        // Filter by name.
+        $CFG->showuseridentity = '';
+        $result = external::search_users('dylan', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(2, $result['users']);
+        $this->assertEquals(2, $result['count']);
+        $this->assertEquals($u2->id, $result['users'][0]['id']);
+        $this->assertEquals($u1->id, $result['users'][1]['id']);
+
+        // Filter by institution and name.
+        $CFG->showuseridentity = 'institution';
+        $result = external::search_users('bob', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(2, $result['users']);
+        $this->assertEquals(2, $result['count']);
+        $this->assertEquals($u1->id, $result['users'][0]['id']);
+        $this->assertEquals($u3->id, $result['users'][1]['id']);
+
+        // Filter by id number.
+        $CFG->showuseridentity = 'idnumber';
+        $result = external::search_users('cats', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(1, $result['users']);
+        $this->assertEquals(1, $result['count']);
+        $this->assertEquals($u1->id, $result['users'][0]['id']);
+        $this->assertEquals($u1->idnumber, $result['users'][0]['idnumber']);
+        $this->assertArrayNotHasKey('email', $result['users'][0]);
+        $this->assertArrayNotHasKey('phone1', $result['users'][0]);
+        $this->assertArrayNotHasKey('phone2', $result['users'][0]);
+        $this->assertArrayNotHasKey('department', $result['users'][0]);
+        $this->assertArrayNotHasKey('institution', $result['users'][0]);
+
+        // Filter by email.
+        $CFG->showuseridentity = 'email';
+        $result = external::search_users('y', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(3, $result['users']);
+        $this->assertEquals(3, $result['count']);
+        $this->assertEquals($u2->id, $result['users'][0]['id']);
+        $this->assertEquals($u2->email, $result['users'][0]['email']);
+        $this->assertEquals($u1->id, $result['users'][1]['id']);
+        $this->assertEquals($u1->email, $result['users'][1]['email']);
+        $this->assertEquals($u3->id, $result['users'][2]['id']);
+        $this->assertEquals($u3->email, $result['users'][2]['email']);
+
+        // Filter by any.
+        $CFG->showuseridentity = 'idnumber,email,phone1,phone2,department,institution';
+        $result = external::search_users('y', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(3, $result['users']);
+        $this->assertEquals(3, $result['count']);
+        $this->assertArrayHasKey('idnumber', $result['users'][0]);
+        $this->assertArrayHasKey('email', $result['users'][0]);
+        $this->assertArrayHasKey('phone1', $result['users'][0]);
+        $this->assertArrayHasKey('phone2', $result['users'][0]);
+        $this->assertArrayHasKey('department', $result['users'][0]);
+        $this->assertArrayHasKey('institution', $result['users'][0]);
+
+        // Switch to a user that cannot view identity fields.
+        $this->setUser($ux);
+        $CFG->showuseridentity = 'idnumber,email,phone1,phone2,department,institution';
+
+        // Only names are included.
+        $result = external::search_users('fish');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(0, $result['users']);
+        $this->assertEquals(0, $result['count']);
+
+        $result = external::search_users('bob', 'tool/lp:planmanage');
+        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $this->assertCount(1, $result['users']);
+        $this->assertEquals(1, $result['count']);
+        $this->assertEquals($u1->id, $result['users'][0]['id']);
+        $this->assertArrayNotHasKey('idnumber', $result['users'][0]);
+        $this->assertArrayNotHasKey('email', $result['users'][0]);
+        $this->assertArrayNotHasKey('phone1', $result['users'][0]);
+        $this->assertArrayNotHasKey('phone2', $result['users'][0]);
+        $this->assertArrayNotHasKey('department', $result['users'][0]);
+        $this->assertArrayNotHasKey('institution', $result['users'][0]);
+    }
+
 }
