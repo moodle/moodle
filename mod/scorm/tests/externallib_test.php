@@ -851,8 +851,8 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
 
         // Invalid SCO.
         try {
-            mod_scorm_external::launch_sco($this->scorm->id, 1);
-            $this->fail('Exception expected due to not enrolled user.');
+            mod_scorm_external::launch_sco($this->scorm->id, -1);
+            $this->fail('Exception expected due to invalid SCO id.');
         } catch (moodle_exception $e) {
             $this->assertEquals('cannotfindsco', $e->errorcode);
         }
