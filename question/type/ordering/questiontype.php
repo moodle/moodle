@@ -115,6 +115,7 @@ class qtype_ordering extends question_type {
 
         $result = new stdClass();
         $context = $question->context;
+        //$context = $this->get_context_by_category_id($question->category);
 
         // remove empty answers
         $question->answer = array_filter($question->answer, array($this, 'is_not_blank'));
@@ -122,6 +123,14 @@ class qtype_ordering extends question_type {
 
         // count how many answers we have
         $countanswers = count($question->answer);
+
+        // search/replace strings to reduce simple <p>...</p> to plain text
+        $p_search = '/^\s*<p>\s*(.*?)(\s*<br\s*\/?>)*\s*<\/p>\s*$/';
+        $p_replace = '$1';
+
+        // search/replace strings to standardize vertical align of <img> tags
+        $img_search = '/(<img[^>]*)\bvertical-align:\s*[a-zA-Z0-9_-]+([^>]*>)/';
+        $img_replace = '$1'.'vertical-align:text-top'.'$2';
 
         // check at least two answers exist
         if ($countanswers < 2) {
@@ -138,16 +147,40 @@ class qtype_ordering extends question_type {
         }
 
         // Insert all the new answers
-
         foreach ($question->answer as $i => $answer) {
+
+            // extract $answer fields
+            if (is_array($answer)) {
+                // editor
+                $answertext   = $answer['text'];
+                $answerformat = $answer['format'];
+                $answeritemid = $answer['itemid'];
+            } else {
+                // textarea
+                $answertext   = $answer;
+                $answerformat = FORMAT_MOODLE;
+                $answeritemid = 0; // i.e. no editor
+            }
+
+            // reduce simple <p>...</p> to plain text
+            if (substr_count($answertext, '<p>')==1) {
+                $answertext = preg_replace($p_search, $p_replace, $answertext);
+            }
+
+            // standardize vertical align of img tags
+            $answertext = preg_replace($img_search, $img_replace, $answertext);
+
+            // prepare the $answer object
             $answer = (object)array(
                 'question'       => $question->id,
                 'fraction'       => ($i + 1), // start at 1
-                'answer'         => (is_array($answer) ? $answer['text']   : $answer),
-                'answerformat'   => (is_array($answer) ? $answer['format'] : FORMAT_MOODLE),
+                'answer'         => $answertext,
+                'answerformat'   => $answerformat,
                 'feedback'       => '',
                 'feedbackformat' => FORMAT_MOODLE,
             );
+
+            // add/insert $answer into the database
             if ($answer->id = array_shift($answerids)) {
                 if (! $DB->update_record('question_answers', $answer)) {
                     $result->error = get_string('cannotupdaterecord', 'error', 'question_answers (id='.$answer->id.')');
@@ -159,6 +192,14 @@ class qtype_ordering extends question_type {
                     $result->error = get_string('cannotinsertrecord', 'error', 'question_answers');
                     return $result;
                 }
+            }
+
+            // copy files across from draft files area
+            // Note: we must do this AFTER inserting the answer record
+            //       because the answer id is used as the file's "itemid"
+            if ($answeritemid) {
+                $answertext = file_save_draft_area_files($answeritemid, $context->id, 'question', 'answer', $answer->id, $this->fileoptions, $answertext);
+                $DB->set_field('question_answers', 'answer', $answertext, array('id' => $answer->id));
             }
         }
 
@@ -187,7 +228,11 @@ class qtype_ordering extends question_type {
 
         // delete old answer records, if any
         if (count($answerids)) {
-            $DB->delete_records_list('question_answers', 'id', $answerids);
+            $fs = get_file_storage();
+            foreach ($answerids as $answerid) {
+                $fs->delete_area_files($context->id, 'question', 'answer', $answerid);
+                $DB->delete_records('question_answers', array('id' => $answerid));
+            }
         }
 
         return true;

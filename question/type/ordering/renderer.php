@@ -136,6 +136,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 // because $answer->fraction holds the correct order number
                 // $id = 'ordering_item_'.$answerid.'_'.intval($question->answers[$answerid]->fraction);
                 $answer = $question->answers[$answerid];
+                $answer->answer = $question->format_text($answer->answer, $answer->answerformat, $qa, 'question', 'answer', $answerid);
                 $params = array('class' => $class, 'id' => $answer->md5key);
                 $result .= html_writer::tag('li', $img.$answer->answer, $params);
             }

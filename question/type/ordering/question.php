@@ -167,6 +167,24 @@ class qtype_ordering_question extends question_graded_automatically {
         return array($fraction, question_state::graded_state_for_fraction($fraction));
     }
 
+    public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
+        if ($component=='question') {
+            if ($filearea=='answer') {
+                $answerid = reset($args); // "itemid" is answer id
+                return array_key_exists($answerid, $this->answers);
+
+            }
+            if (in_array($filearea, $this->qtype->feedback_fields)) {
+                return $this->check_combined_feedback_file_access($qa, $options, $filearea);
+
+            }
+            if ($filearea=='hint') {
+                return $this->check_hint_file_access($qa, $options, $args);
+            }
+        }
+        return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
+    }
+
     ////////////////////////////////////////////////////////////////////
     // custom methods
     ////////////////////////////////////////////////////////////////////
