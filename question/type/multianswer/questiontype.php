@@ -26,8 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/questiontypebase.php');
 require_once($CFG->dirroot . '/question/type/multichoice/question.php');
-
 
 /**
  * The multi-answer question type class.

@@ -26,6 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/question/type/questionbase.php');
 
 /**
  * Base class for multiple choice questions. The parts that are common to
