@@ -36,7 +36,7 @@ function flowplayer_send_flash_content($filename) {
     // Note: Do not use any fancy APIs here, this must work in all supported versions.
 
     // No url params.
-    if (!empty($_GET) or !empty($_POST) or !empty($_REQUEST)) {
+    if (!empty($_GET) or !empty($_POST)) {
         header("HTTP/1.1 404 Not Found");
         die;
     }
