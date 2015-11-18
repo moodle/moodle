@@ -24,8 +24,7 @@
 namespace tool_lp\external;
 
 use renderer_base;
-use context_user;
-use external_value;
+use stdClass;
 use tool_lp\user_competency;
 
 /**
@@ -36,44 +35,52 @@ use tool_lp\user_competency;
  */
 class user_competency_exporter extends persistent_exporter {
 
-    protected static function get_persistent_class() {
+    protected static function define_class() {
         return 'tool_lp\\user_competency';
     }
 
-    protected static function get_related() {
+    protected static function define_related() {
         // We cache the scale so it does not need to be retrieved from the framework every time.
         return array('scale' => 'grade_scale');
     }
 
-    public function export(renderer_base $output) {
-        $result = parent::export($output);
-        $context = context_user::instance($result->userid);
-        if ($result->grade === null) {
+    protected function get_values(renderer_base $output) {
+        $result = new stdClass();
+
+        if ($this->persistent->get_grade() === null) {
             $gradename = '-';
         } else {
-            $gradename = external_format_string($this->related['scale']->scale_items[$result->grade - 1], $context->id);
+            $gradename = $this->related['scale']->scale_items[$this->persistent->get_grade() - 1];
         }
         $result->gradename = $gradename;
 
-        if ($result->proficiency === null) {
+        if ($this->persistent->get_proficiency() === null) {
             $proficiencyname = '-';
         } else {
-            $proficiencyname = get_string($result->proficiency ? 'yes' : 'no');
+            $proficiencyname = get_string($this->persistent->get_proficiency() ? 'yes' : 'no');
         }
         $result->proficiencyname = $proficiencyname;
 
         $statusname = '-';
-        if ($result->status != user_competency::STATUS_IDLE) {
-            $statusname = (string) $this->persistent->get_status_name($result->status);
+        if ($this->persistent->get_status() != user_competency::STATUS_IDLE) {
+            $statusname = (string) user_competency::get_status_name($this->persistent->get_status());
         }
         $result->statusname = $statusname;
-        return $result;
+
+        return (array) $result;
     }
 
-    public static function export_read_properties_structure($fields) {
-        $fields['gradename'] = new external_value(PARAM_TEXT, 'gradename, readonly');
-        $fields['proficiencyname'] = new external_value(PARAM_TEXT, 'proficiencyname, readonly');
-        $fields['statusname'] = new external_value(PARAM_TEXT, 'statusname, readonly');
-        return $fields;
+    protected static function define_properties() {
+        return array(
+            'gradename' => array(
+                'type' => PARAM_TEXT
+            ),
+            'proficiencyname' => array(
+                'type' => PARAM_RAW
+            ),
+            'statusname' => array(
+                'type' => PARAM_RAW
+            ),
+        );
     }
 }

@@ -42,35 +42,43 @@ class tool_lp_persistent_testcase extends advanced_testcase {
         $expected = array(
             'shortname' => array(
                 'type' => PARAM_TEXT,
-                'default' => ''
+                'default' => '',
+                'null' => NULL_NOT_ALLOWED
             ),
             'idnumber' => array(
                 'type' => PARAM_TEXT,
+                'null' => NULL_NOT_ALLOWED
             ),
             'description' => array(
                 'type' => PARAM_TEXT,
-                'default' => ''
+                'default' => '',
+                'null' => NULL_NOT_ALLOWED
             ),
             'descriptionformat' => array(
                 'choices' => array(FORMAT_HTML, FORMAT_MOODLE, FORMAT_PLAIN, FORMAT_MARKDOWN),
                 'type' => PARAM_INT,
-                'default' => FORMAT_HTML
+                'default' => FORMAT_HTML,
+                'null' => NULL_NOT_ALLOWED
             ),
             'parentid' => array(
                 'type' => PARAM_INT,
-                'default' => 0
+                'default' => 0,
+                'null' => NULL_NOT_ALLOWED
             ),
             'visible' => array(
                 'type' => PARAM_BOOL,
-                'default' => true
+                'default' => true,
+                'null' => NULL_NOT_ALLOWED
             ),
             'path' => array(
                 'type' => PARAM_RAW,
-                'default' => ''
+                'default' => '',
+                'null' => NULL_NOT_ALLOWED
             ),
             'sortorder' => array(
                 'type' => PARAM_INT,
-                'message' => new lang_string('invalidrequest', 'error')
+                'message' => new lang_string('invalidrequest', 'error'),
+                'null' => NULL_NOT_ALLOWED
             ),
             'competencyframeworkid' => array(
                 'type' => PARAM_INT,
@@ -80,18 +88,22 @@ class tool_lp_persistent_testcase extends advanced_testcase {
             'id' => array(
                 'default' => 0,
                 'type' => PARAM_INT,
+                'null' => NULL_NOT_ALLOWED
             ),
             'timecreated' => array(
                 'default' => 0,
                 'type' => PARAM_INT,
+                'null' => NULL_NOT_ALLOWED
             ),
             'timemodified' => array(
                 'default' => 0,
-                'type' => PARAM_INT
+                'type' => PARAM_INT,
+                'null' => NULL_NOT_ALLOWED
             ),
             'usermodified' => array(
                 'default' => 0,
-                'type' => PARAM_INT
+                'type' => PARAM_INT,
+                'null' => NULL_NOT_ALLOWED
             ),
             'ruletype' => array(
                 'type' => PARAM_RAW,
@@ -105,7 +117,8 @@ class tool_lp_persistent_testcase extends advanced_testcase {
             ),
             'ruleoutcome' => array(
                 'type' => PARAM_RAW,
-                'default' => 0
+                'default' => 0,
+                'null' => NULL_NOT_ALLOWED
             )
         );
         $this->assertEquals($expected, tool_lp_testable_persistent::properties_definition());

@@ -23,8 +23,6 @@
  */
 namespace tool_lp\external;
 
-use renderer_base;
-
 /**
  * Class for exporting competency_framework data.
  *
@@ -33,7 +31,7 @@ use renderer_base;
  */
 class competency_framework_exporter extends persistent_exporter {
 
-    protected static function get_persistent_class() {
+    protected static function define_class() {
         return 'tool_lp\\competency_framework';
     }
 

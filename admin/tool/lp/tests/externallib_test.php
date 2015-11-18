@@ -1163,9 +1163,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $plan2 = $this->create_plan(2, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
         $plan3 = $this->create_plan(3, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
 
-        $this->assertEquals((Array)$plan1, external::read_plan($plan1->id));
-        $this->assertEquals((Array)$plan2, external::read_plan($plan2->id));
-        $this->assertEquals((Array)$plan3, external::read_plan($plan3->id));
+        $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
+        $this->assertEquals((array)$plan2, external::read_plan($plan2->id));
+        $this->assertEquals((array)$plan3, external::read_plan($plan3->id));
 
         $this->setUser($this->user);
 

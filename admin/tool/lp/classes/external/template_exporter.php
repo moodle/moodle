@@ -24,7 +24,6 @@
 namespace tool_lp\external;
 
 use renderer_base;
-use external_value;
 
 /**
  * Class for exporting template data.
@@ -34,18 +33,21 @@ use external_value;
  */
 class template_exporter extends persistent_exporter {
 
-    protected static function get_persistent_class() {
+    protected static function define_class() {
         return 'tool_lp\\template';
     }
 
-    public function export(renderer_base $output) {
-        $result = parent::export($output);
-        $result->duedateformatted = userdate($result->duedate);
-        return $result;
+    protected function get_values(renderer_base $output) {
+        return array(
+            'duedateformatted' => userdate($this->persistent->get_duedate())
+        );
     }
 
-    public static function export_read_properties_structure($fields) {
-        $fields['duedateformatted'] = new external_value(PARAM_TEXT, 'duedateformatted, readonly');
-        return $fields;
+    protected static function define_properties() {
+        return array(
+            'duedateformatted' => array(
+                'type' => PARAM_RAW
+            )
+        );
     }
 }

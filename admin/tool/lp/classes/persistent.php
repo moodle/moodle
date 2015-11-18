@@ -187,14 +187,20 @@ abstract class persistent {
             'type' => PARAM_INT
         );
 
-        // Warn the developers when they are doing something wrong.
-        if ($CFG->debugdeveloper) {
 
-            // List of reserved property names. Mostly because we have methods (getters/setters) which would confict with them.
-            // Think about backwards compability before adding new ones here!
-            $reserved = array('errors', 'records', 'records_select', 'property_default_value', 'property_error_message');
+        // List of reserved property names. Mostly because we have methods (getters/setters) which would confict with them.
+        // Think about backwards compability before adding new ones here!
+        $reserved = array('errors', 'records', 'records_select', 'property_default_value', 'property_error_message');
 
-            foreach ($def as $property => $definition) {
+        foreach ($def as $property => $definition) {
+
+            // Ensures that the null property is always set.
+            if (!array_key_exists('null', $definition)) {
+                $def[$property]['null'] = NULL_NOT_ALLOWED;
+            }
+
+            // Warn the developers when they are doing something wrong.
+            if ($CFG->debugdeveloper) {
                 if (!array_key_exists('type', $definition)) {
                     throw new coding_exception('Missing type for: ' . $property);
 
@@ -559,8 +565,7 @@ abstract class persistent {
                         // Validate_param() does not like false with PARAM_BOOL, better to convert it to int.
                         $value = 0;
                     }
-                    $allownull = isset($definition['null']) ? $definition['null'] : NULL_NOT_ALLOWED;
-                    validate_param($value, $definition['type'], $allownull);
+                    validate_param($value, $definition['type'], $definition['null']);
                 } catch (invalid_parameter_exception $e) {
                     $errors[$property] = static::get_property_error_message($property);
                     continue;

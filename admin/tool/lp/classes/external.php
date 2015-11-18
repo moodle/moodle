@@ -155,7 +155,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function create_competency_framework_parameters() {
-        $structure = competency_framework_exporter::export_structure('create');
+        $structure = competency_framework_exporter::get_create_structure();
         $params = array('competencyframework' => $structure);
         return new external_function_parameters($params);
     }
@@ -195,7 +195,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function create_competency_framework_returns() {
-        return competency_framework_exporter::export_structure('read');
+        return competency_framework_exporter::get_read_structure();
     }
 
     /**
@@ -244,7 +244,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function read_competency_framework_returns() {
-        return competency_framework_exporter::export_structure('read');
+        return competency_framework_exporter::get_read_structure();
     }
 
     /**
@@ -289,7 +289,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function duplicate_competency_framework_returns() {
-        return competency_framework_exporter::export_structure('read');
+        return competency_framework_exporter::get_read_structure();
     }
 
     /**
@@ -343,7 +343,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function update_competency_framework_parameters() {
-        $structure = competency_framework_exporter::export_structure('update');
+        $structure = competency_framework_exporter::get_update_structure();
         $params = array('competencyframework' => $structure);
         return new external_function_parameters($params);
     }
@@ -485,7 +485,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_competency_frameworks_returns() {
-        return new external_multiple_structure(competency_framework_exporter::export_structure('read'));
+        return new external_multiple_structure(competency_framework_exporter::get_read_structure());
     }
 
     /**
@@ -580,7 +580,7 @@ class external extends external_api {
         return new external_single_structure(array (
             'canmanage' => new external_value(PARAM_BOOL, 'True if this user has permission to manage competency frameworks'),
             'competencyframeworks' => new external_multiple_structure(
-                competency_framework_exporter::export_structure('read')
+                competency_framework_exporter::get_read_structure()
             ),
             'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
             'navigation' => new external_multiple_structure(
@@ -596,7 +596,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function create_competency_parameters() {
-        $structure = competency_exporter::export_structure('create');
+        $structure = competency_exporter::get_create_structure();
         $params = array('competency' => $structure);
         return new external_function_parameters($params);
     }
@@ -632,7 +632,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function create_competency_returns() {
-        return competency_exporter::export_structure('read');
+        return competency_exporter::get_read_structure();
     }
 
     /**
@@ -683,7 +683,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function read_competency_returns() {
-        return competency_exporter::export_structure('read');
+        return competency_exporter::get_read_structure();
     }
 
     /**
@@ -738,7 +738,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function update_competency_parameters() {
-        $structure = competency_exporter::export_structure('update');
+        $structure = competency_exporter::get_update_structure();
         $params = array('competency' => $structure);
         return new external_function_parameters($params);
     }
@@ -854,7 +854,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_competencies_returns() {
-        return new external_multiple_structure(competency_exporter::export_structure('read'));
+        return new external_multiple_structure(competency_exporter::get_read_structure());
     }
 
     /**
@@ -921,7 +921,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function search_competencies_returns() {
-        return new external_multiple_structure(competency_exporter::export_structure('read'));
+        return new external_multiple_structure(competency_exporter::get_read_structure());
     }
 
     /**
@@ -1036,7 +1036,7 @@ class external extends external_api {
      */
     public static function data_for_competencies_manage_page_returns() {
         return new external_single_structure(array (
-            'framework' => competency_framework_exporter::export_structure('read'),
+            'framework' => competency_framework_exporter::get_read_structure(),
             'canmanage' => new external_value(PARAM_BOOL, 'True if this user has permission to manage competency frameworks'),
             'pagecontextid' => new external_value(PARAM_INT, 'Context id for the framework'),
             'search' => new external_value(PARAM_RAW, 'Current search string'),
@@ -1405,7 +1405,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_competencies_in_course_returns() {
-        return new external_multiple_structure(competency_exporter::export_structure('read'));
+        return new external_multiple_structure(competency_exporter::get_read_structure());
     }
 
     /**
@@ -1558,7 +1558,7 @@ class external extends external_api {
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagecoursecompetencies' => new external_value(PARAM_BOOL, 'User can manage linked course competencies'),
             'competencies' => new external_multiple_structure(
-                competency_exporter::export_structure('read')
+                competency_exporter::get_read_structure()
             ),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
         ));
@@ -1689,7 +1689,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function create_template_parameters() {
-        $structure = template_exporter::export_structure('create');
+        $structure = template_exporter::get_create_structure();
         $params = array('template' => $structure);
         return new external_function_parameters($params);
     }
@@ -1727,7 +1727,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function create_template_returns() {
-        return template_exporter::export_structure('read');
+        return template_exporter::get_read_structure();
     }
 
     /**
@@ -1777,7 +1777,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function read_template_returns() {
-        return template_exporter::export_structure('read');
+        return template_exporter::get_read_structure();
     }
 
     /**
@@ -1831,7 +1831,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function update_template_parameters() {
-        $structure = template_exporter::export_structure('update');
+        $structure = template_exporter::get_update_structure();
         $params = array('template' => $structure);
         return new external_function_parameters($params);
     }
@@ -1911,7 +1911,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function duplicate_template_returns() {
-        return template_exporter::export_structure('read');
+        return template_exporter::get_read_structure();
     }
 
     /**
@@ -2016,7 +2016,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_templates_returns() {
-        return new external_multiple_structure(template_exporter::export_structure('read'));
+        return new external_multiple_structure(template_exporter::get_read_structure());
     }
 
     /**
@@ -2108,7 +2108,7 @@ class external extends external_api {
         return new external_single_structure(array (
             'canmanage' => new external_value(PARAM_BOOL, 'True if this user has permission to manage learning plan templates'),
             'templates' => new external_multiple_structure(
-                template_exporter::export_structure('read')
+                template_exporter::get_read_structure()
             ),
             'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
             'navigation' => new external_multiple_structure(
@@ -2213,7 +2213,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_templates_using_competency_returns() {
-        return new external_multiple_structure(template_exporter::export_structure('read'));
+        return new external_multiple_structure(template_exporter::get_read_structure());
     }
 
     /**
@@ -2317,7 +2317,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_competencies_in_template_returns() {
-        return new external_multiple_structure(competency_exporter::export_structure('read'));
+        return new external_multiple_structure(competency_exporter::get_read_structure());
     }
 
     /**
@@ -2639,7 +2639,7 @@ class external extends external_api {
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagetemplates' => new external_value(PARAM_BOOL, 'User can manage learning plan templates'),
             'competencies' => new external_multiple_structure(
-                competency_exporter::export_structure('read')
+                competency_exporter::get_read_structure()
             ),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
         ));
@@ -2696,9 +2696,9 @@ class external extends external_api {
             'iscompleted' => new external_value(PARAM_BOOL, 'Is the plan completed'),
             'competencies' => new external_multiple_structure(
                 new external_single_structure(array(
-                    'competency' => competency_exporter::export_structure('read'),
-                    'usercompetency' => user_competency_exporter::export_structure('read'),
-                    'usercompetencyplan' => user_competency_plan_exporter::export_structure('read')
+                    'competency' => competency_exporter::get_read_structure(),
+                    'usercompetency' => user_competency_exporter::get_read_structure(),
+                    'usercompetencyplan' => user_competency_plan_exporter::get_read_structure()
                 ))
             )
         ));
@@ -2710,7 +2710,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function create_plan_parameters() {
-        $structure = plan_exporter::export_structure('create');
+        $structure = plan_exporter::get_create_structure();
         $params = array('plan' => $structure);
         return new external_function_parameters($params);
     }
@@ -2736,8 +2736,7 @@ class external extends external_api {
 
         $result = api::create_plan($params);
         $exporter = new plan_exporter($result);
-        $record = $exporter->export($output);
-        return external_api::clean_returnvalue(self::create_plan_returns(), $record);
+        return $exporter->export($output);
     }
 
     /**
@@ -2746,7 +2745,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function create_plan_returns() {
-        return plan_exporter::export_structure('read');
+        return plan_exporter::get_read_structure();
     }
 
     /**
@@ -2755,7 +2754,7 @@ class external extends external_api {
      * @return \external_function_parameters
      */
     public static function update_plan_parameters() {
-        $structure = plan_exporter::export_structure('update');
+        $structure = plan_exporter::get_update_structure();
         $params = array('plan' => $structure);
         return new external_function_parameters($params);
     }
@@ -2791,7 +2790,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function update_plan_returns() {
-        return plan_exporter::export_structure('read');
+        return plan_exporter::get_read_structure();
     }
 
     /**
@@ -2837,7 +2836,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function read_plan_returns() {
-        return plan_exporter::export_structure('read');
+        return plan_exporter::get_read_structure();
     }
 
     /**
@@ -2932,7 +2931,7 @@ class external extends external_api {
         return new external_single_structure(array (
             'userid' => new external_value(PARAM_INT, 'The learning plan user id'),
             'plans' => new external_multiple_structure(
-                plan_exporter::export_structure('read')
+                plan_exporter::get_read_structure()
             ),
             'pluginbaseurl' => new external_value(PARAM_LOCALURL, 'Url to the tool_lp plugin folder on this Moodle site'),
             'navigation' => new external_multiple_structure(
@@ -3011,15 +3010,15 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_plan_competencies_returns() {
-        $uc = user_competency_exporter::export_structure('read');
-        $ucp = user_competency_plan_exporter::export_structure('read');
+        $uc = user_competency_exporter::get_read_structure();
+        $ucp = user_competency_plan_exporter::get_read_structure();
 
         $uc->required = VALUE_OPTIONAL;
         $ucp->required = VALUE_OPTIONAL;
 
         return new external_multiple_structure(
             new external_single_structure(array(
-                'competency' => competency_exporter::export_structure('read'),
+                'competency' => competency_exporter::get_read_structure(),
                 'usercompetency' => $uc,
                 'usercompetencyplan' => $ucp
             ))
@@ -3231,7 +3230,7 @@ class external extends external_api {
      */
     public static function data_for_related_competencies_section_returns() {
         return new external_single_structure(array(
-            'relatedcompetencies' => new external_multiple_structure(competency_exporter::export_structure('read')),
+            'relatedcompetencies' => new external_multiple_structure(competency_exporter::get_read_structure()),
             'showdeleterelatedaction' => new external_value(PARAM_BOOL, 'Whether to show the delete relation link or not')
         ));
     }
