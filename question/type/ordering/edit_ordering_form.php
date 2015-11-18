@@ -36,10 +36,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qtype_ordering_edit_form extends question_edit_form {
 
-    const NUM_ANS_ROWS  =  2;
-    const NUM_ANS_COLS  = 60;
-    const NUM_ANS_START =  6;
-    const NUM_ANS_ADD   =  3;
+    const NUM_ANS_ROWS    =  2;
+    const NUM_ANS_COLS    = 60;
+    const NUM_ANS_DEFAULT =  6;
+    const NUM_ANS_MIN     =  3;
+    const NUM_ANS_ADD     =  3;
 
     // this functionality is currently disabled
     // because it is not fully functional
@@ -109,35 +110,43 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options[$name] = array('expanded' => true);
 
         $name = 'answer';
-        $label = get_string($name, $plugin);
-        if ($this->use_editor_for_answers) {
+        if (isset($this->question->id)) {
             $elements[] = $mform->createElement('editor', $name, $label, $this->get_editor_attributes(), $this->get_editor_options());
-            $elements[] = $mform->createElement('submit', $name.'removeeditor', get_string('removeeditor', $plugin));
+            $elements[] = $mform->createElement('submit', $name.'removeeditor', get_string('removeeditor', $plugin), array('onclick' => 'skipClientValidation = true;'));
             //$elements[] = $mform->createElement('submit', $name.'removeitem', get_string('removeitem', $plugin));
         } else {
-            $elements[] = $mform->createElement('textarea', $name, $label, array('rows' => self::NUM_ANS_ROWS, 'cols' => self::NUM_ANS_COLS));
+            $elements[] = $mform->createElement('textarea', $name, $label, $this->get_editor_attributes());
         }
         $options[$name] = array('type' => PARAM_RAW);
 
-        if (empty($this->question->options)){
-            $start = 0;
-        } else {
-            $start = count($this->question->options->answers);
+        $repeats = $this->get_answer_repeats($this->question);
+        $label = get_string('addmoreanswers', $plugin, self::NUM_ANS_ADD); // button text
+        $this->repeat_elements($elements, $repeats, $options, 'countanswers', 'addanswers', self::NUM_ANS_ADD, $label);
+
+        if (optional_param('addanswers', 0, PARAM_RAW)) {
+            $repeats += self::NUM_ANS_ADD;
         }
-        if ($start < self::NUM_ANS_START) {
-            $start = self::NUM_ANS_START;
-        }
-        $buttontext = get_string('addmoreanswers', $plugin, self::NUM_ANS_ADD);
-        $this->repeat_elements($elements, $start, $options, 'countanswers', 'addanswers', self::NUM_ANS_ADD, $buttontext);
 
         // adjust HTML editor and removal buttons
-        $this->adjust_html_editors($mform, $name);
+        $this->adjust_html_editors($mform, $name, $repeats);
 
         // feedback
         $this->add_ordering_feedback_fields(true);
 
         // interactive
         $this->add_ordering_interactive_settings(true, true);
+    }
+
+    protected function get_answer_repeats($question) {
+        if (isset($question->id)) {
+            $repeats = count($question->options->answers);
+        } else {
+            $repeats = self::NUM_ANS_DEFAULT;
+        }
+        if ($repeats < self::NUM_ANS_MIN) {
+            $repeats = self::NUM_ANS_MIN;
+        }
+        return $repeats;
     }
 
     /**
@@ -162,61 +171,74 @@ class qtype_ordering_edit_form extends question_edit_form {
     }
 
     /**
+     * reset_editor_format
+     */
+    protected function reset_editor_format($editor, $format=FORMAT_MOODLE) {
+        $value = $editor->getValue();
+        $value['format'] = $format;
+        $value = $editor->setValue($value);
+        return $editor->getFormat();
+    }
+
+    /**
      * adjust_html_editors
      */
-    protected function adjust_html_editors($mform, $name) {
+    protected function adjust_html_editors($mform, $name, $repeats) {
 
-        // check whether or not we are using editors
-        if (! $this->use_editor_for_answers) {
-            return;
-        }
-
-        // cache the number of supported formats
-        // for the preferred editor for each format
+        // cache the number of formats supported
+        // by the preferred editor for each format
         $count = array();
 
-        $ids = array_keys($this->question->options->answers);
-        foreach ($ids as $i => $id) {
+        if (isset($this->question->options->answers)) {
+            $ids = array_keys($this->question->options->answers);
+        } else {
+            $ids = array();
+        }
+
+        for ($i=0; $i<$repeats; $i++) {
 
             $editor = $name.'['.$i.']';
-            if (! $mform->elementExists($editor)) {
-                continue;
-            }
-            $editor = $mform->getElement($editor);
+            if ($mform->elementExists($editor)) {
+                $editor = $mform->getElement($editor);
 
-            // the old/new name of the button to remove the HTML editor
-            // old : the name of the button when added by repeat_elements
-            // new : the simplified name of the button to satisfy
-            //       "no_submit_button_pressed()" in lib/formslib.php
-            $oldname = $name.'removeeditor['.$i.']';
-            $newname = $name.'removeeditor_'.$i;
-
-            // remove HTML editor, if necessary
-            if (optional_param($newname, 0, PARAM_RAW)) {
-                $value = $editor->getValue();
-                $value['format'] = FORMAT_MOODLE;
-                $value = $editor->setValue($value);
-                $format = $editor->getFormat();
-                // override incoming format value
-                $_POST['answer'][$i]['format'] = $format;
-            } else {
-                $format = $this->question->options->answers[$id]->answerformat;
-            }
-
-            // check we have a submit button - it should always be there !!
-            if ($mform->elementExists($oldname)) {
-                if (! isset($count[$format])) {
-                    $editor = editors_get_preferred_editor($format);
-                    $count[$format] = $editor->get_supported_formats();
-                    $count[$format] = count($count[$format]);
-                }
-                if ($count[$format] > 1) {
-                    $mform->removeElement($oldname);
+                if (isset($ids[$i])) {
+                    $id = $ids[$i];
                 } else {
-                    $submit = $mform->getElement($oldname);
-                    $submit->setName($newname);
+                    $id = 0;
                 }
-                $mform->registerNoSubmitButton($newname);
+
+                // the old/new name of the button to remove the HTML editor
+                // old : the name of the button when added by repeat_elements
+                // new : the simplified name of the button to satisfy
+                //       "no_submit_button_pressed()" in lib/formslib.php
+                $oldname = $name.'removeeditor['.$i.']';
+                $newname = $name.'removeeditor_'.$i;
+
+                // remove HTML editor, if necessary
+                if (optional_param($newname, 0, PARAM_RAW)) {
+                    $format = $this->reset_editor_format($editor);
+                    $_POST['answer'][$i]['format'] = $format; // overwrite incoming data
+                } else if ($id) {
+                    $format = $this->question->options->answers[$id]->answerformat;
+                } else {
+                    $format = $this->reset_editor_format($editor);
+                }
+
+                // check we have a submit button - it should always be there !!
+                if ($mform->elementExists($oldname)) {
+                    if (! isset($count[$format])) {
+                        $editor = editors_get_preferred_editor($format);
+                        $count[$format] = $editor->get_supported_formats();
+                        $count[$format] = count($count[$format]);
+                    }
+                    if ($count[$format] > 1) {
+                        $mform->removeElement($oldname);
+                    } else {
+                        $submit = $mform->getElement($oldname);
+                        $submit->setName($newname);
+                    }
+                    $mform->registerNoSubmitButton($newname);
+                }
             }
         }
     }
@@ -236,43 +258,33 @@ class qtype_ordering_edit_form extends question_edit_form {
         $question->answer     = array();
         $question->fraction   = array();
 
-        if (isset($question->options->answers)) {
+        if (empty($question->options->answers)) {
+            $answerids = array();
+        } else {
+            $answerids = array_keys($question->options->answers);
+        }
 
-            $i = 0;
-            foreach ($question->options->answers as $answerid => $answer) {
+        $repeats = $this->get_answer_repeats($question);
+        for ($i=0; $i<$repeats; $i++) {
 
-                if (trim($answer->answer)=='') {
-                    continue; // skip empty answers
-                }
-
-                if ($this->use_editor_for_answers) {
-                    $itemid = file_get_submitted_draft_itemid("answer[$i]");
-
-                    if (isset($answer->answer)) {
-                        $text = $answer->answer;
-                    } else {
-                        $text = '';
-                    }
-
-                    if (isset($answer->answerformat)) {
-                        $format = $answer->answerformat;
-                    } else {
-                        $format = FORMAT_MOODLE;
-                    }
-
-                    $text = file_prepare_draft_area($itemid, $this->context->id, 'question', 'answer',
-                                                    $answerid, $this->editoroptions, $text);
-
-                    $question->answer[$i] = array('text'   => $text,
-                                                  'format' => $format,
-                                                  'itemid' => $itemid);
-                } else {
-                    $question->answer[$i]= $answer->answer;
-                }
-
-                $question->fraction[$i] = ($i + 1);
-                $i++;
+            if ($answerid = array_shift($answerids)) {
+                $answer = $question->options->answers[$answerid];
+            } else {
+                $answer = (object)array(
+                    'answer' => '',
+                    'answerformat' => FORMAT_MOODLE,
+                );
+                $answerid = $answer->id;
             }
+
+            $itemid = file_get_submitted_draft_itemid("answer[$i]");
+            $format = $answer->answerformat;
+            $text = file_prepare_draft_area($itemid, $this->context->id, 'question', 'answer',
+                                            $answerid, $this->editoroptions, $answer->answer);
+            $question->answer[$i] = array('text'   => $text,
+                                          'format' => $format,
+                                          'itemid' => $itemid);
+            $question->fraction[$i] = ($i + 1);
         }
 
         // layouttype

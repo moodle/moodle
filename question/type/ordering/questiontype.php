@@ -166,6 +166,12 @@ class qtype_ordering extends question_type {
             if (substr_count($answertext, '<p>')==1) {
                 $answertext = preg_replace($p_search, $p_replace, $answertext);
             }
+            $answertext = trim($answertext);
+
+            // skip empty answers
+            if ($answertext=='') {
+                continue;
+            }
 
             // standardize vertical align of img tags
             $answertext = preg_replace($img_search, $img_replace, $answertext);
