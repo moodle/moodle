@@ -1521,7 +1521,6 @@ class file_storage {
 
         $width    = $imageinfo['width'];
         $height   = $imageinfo['height'];
-        $mimetype = $imageinfo['mimetype'];
 
         if ($keepaspectratio) {
             if (0 >= $newwidth and 0 >= $newheight) {
@@ -1553,32 +1552,58 @@ class file_storage {
             }
         }
 
+        // The original image.
         $img = imagecreatefromstring($file->get_content());
-        if ($height != $newheight or $width != $newwidth) {
-            $newimg = imagecreatetruecolor($newwidth, $newheight);
 
-            // Maintain transparency.
-            if ($filerecord['mimetype'] == 'image/png' || $filerecord['mimetype'] == 'image/gif') {
-                $colour = imagecolorallocatealpha($newimg, 0, 0, 0, 127);
-                imagecolortransparent($newimg, $colour);
-                imagealphablending($newimg, false);
+        // A new true color image where we will copy our original image.
+        $newimg = imagecreatetruecolor($newwidth, $newheight);
+
+        // Determine if the file supports transparency.
+        $hasalpha = $filerecord['mimetype'] == 'image/png' || $filerecord['mimetype'] == 'image/gif';
+
+        // Maintain transparency.
+        if ($hasalpha) {
+            imagealphablending($newimg, true);
+
+            // Get the current transparent index for the original image.
+            $colour = imagecolortransparent($img);
+            if ($colour == -1) {
+                // Set a transparent colour index if there's none.
+                $colour = imagecolorallocatealpha($newimg, 255, 255, 255, 127);
+                // Save full alpha channel.
                 imagesavealpha($newimg, true);
-                imagefill($newimg, 0, 0, $colour);
             }
+            imagecolortransparent($newimg, $colour);
+            imagefill($newimg, 0, 0, $colour);
+        }
 
+        // Process the image to be output.
+        if ($height != $newheight or $width != $newwidth) {
+            // Resample if the dimensions differ from the original.
             if (!imagecopyresampled($newimg, $img, 0, 0, 0, 0, $newwidth, $newheight, $width, $height)) {
                 // weird
                 throw new file_exception('storedfileproblem', 'Can not resize image');
             }
             imagedestroy($img);
             $img = $newimg;
+
+        } else if ($hasalpha) {
+            // Just copy to the new image with the alpha channel.
+            if (!imagecopy($newimg, $img, 0, 0, 0, 0, $width, $height)) {
+                // Weird.
+                throw new file_exception('storedfileproblem', 'Can not copy image');
+            }
+            imagedestroy($img);
+            $img = $newimg;
+
+        } else {
+            // No particular processing needed for the original image.
+            imagedestroy($newimg);
         }
 
         ob_start();
         switch ($filerecord['mimetype']) {
             case 'image/gif':
-                imagealphablending($img, true);
-                imagesavealpha($img, true);
                 imagegif($img);
                 break;
 
@@ -1597,8 +1622,6 @@ class file_storage {
                 // the latter of which can go to 100, we need to make sure that quality here is
                 // in a safe range or PHP WILL CRASH AND DIE. You have been warned.
                 $quality = $quality > 9 ? (int)(max(1.0, (float)$quality / 100.0) * 9.0) : $quality;
-                imagealphablending($img, true);
-                imagesavealpha($img, true);
                 imagepng($img, NULL, $quality, NULL);
                 break;
 
