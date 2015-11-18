@@ -71,6 +71,10 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->addElement('text', 'lti_toolurl', get_string('toolurl', 'lti'), array('size' => '64'));
         $mform->setType('lti_toolurl', PARAM_TEXT);
         $mform->addHelpButton('lti_toolurl', 'toolurl', 'lti');
+
+        $mform->addElement('textarea', 'lti_description', get_string('tooldescription', 'lti'), array('rows' => 4, 'cols' => 60));
+        $mform->setType('lti_description', PARAM_TEXT);
+        $mform->addHelpButton('lti_description', 'tooldescription', 'lti');
         if (!$istool) {
             $mform->addRule('lti_toolurl', null, 'required', null, 'client');
         } else {

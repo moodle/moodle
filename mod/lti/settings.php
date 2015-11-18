@@ -60,6 +60,9 @@ $ADMIN->add('modltifolder', $settings);
 $ADMIN->add('modltifolder', new admin_externalpage('ltitoolproxies',
         get_string('manage_tool_proxies', 'lti'),
         new moodle_url('/mod/lti/toolproxies.php')));
+$ADMIN->add('modltifolder', new admin_externalpage('ltitoolconfigure',
+        get_string('manage_external_tools', 'lti'),
+        new moodle_url('/mod/lti/toolconfigure.php')));
 
 foreach (core_plugin_manager::instance()->get_plugins_of_type('ltisource') as $plugin) {
     /*

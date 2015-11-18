@@ -257,6 +257,7 @@ Tool types listed on this page are separated into three categories:
         Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.
 * **Rejected** - These tools providers are flagged as ones which an administrator has no intention of making available to the entire
         Moodle instance. Teachers may still use tools from these providers if they have a consumer key and shared secret, or if none is required.';
+$string['manage_external_tools'] = 'Manage external tools';
 $string['manage_tools'] = 'Manage external tool types';
 $string['manage_tool_proxies'] = 'Manage external tool registrations';
 $string['miscellaneous'] = 'Miscellaneous';
@@ -435,6 +436,10 @@ $string['subplugintype_ltisource_plural'] = 'LTI sources';
 $string['toggle_debug_data'] = 'Toggle debug data';
 $string['tool_config_not_found'] = 'Tool configuration not found for this URL.';
 $string['tool_settings'] = 'Tool settings';
+$string['tooldescription'] = 'Tool description';
+$string['tooldescription_help'] = 'The description of the tool that will be displayed to teachers in the activity list.
+
+This should describe what the tool is for and what it does and any additional information the teacher may need to know.';
 $string['toolproxy'] = 'External tool registrations';
 $string['toolproxy_help'] = 'External tool registrations allow Moodle site administrators to configure external tools from a tool proxy obtained from a tool provider supporting LTI 2.0. A registration URL provided by the tool provider is all that is required to initiate the process. The capabilities and services offered to the tool provider are selected when configuring a new registration.
 

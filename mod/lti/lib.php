@@ -449,7 +449,20 @@ function lti_uninstall() {
 function lti_get_lti_types() {
     global $DB;
 
-    return $DB->get_records('lti_types');
+    return $DB->get_records('lti_types', null, 'state DESC, timemodified DESC');
+}
+
+/**
+ * Returns available Basic LTI types that match the given
+ * tool proxy id
+ *
+ * @param int Tool proxy id
+ * @return array of basicLTI types
+ */
+function lti_get_lti_types_from_proxy_id($toolproxyid) {
+    global $DB;
+
+    return $DB->get_records('lti_types', array('toolproxyid' => $toolproxyid), 'state DESC, timemodified DESC');
 }
 
 /**

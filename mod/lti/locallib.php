@@ -273,21 +273,28 @@ function lti_launch_tool($instance) {
  * $param object $instance       Tool Proxy instance object
  */
 function lti_register($toolproxy) {
-    global $PAGE, $CFG;
+    $endpoint = $toolproxy->regurl;
 
+    // Change the status to pending.
+    $toolproxy->state = LTI_TOOL_PROXY_STATE_PENDING;
+    lti_update_tool_proxy($toolproxy);
+
+    $requestparams = lti_get_register_parameters($toolproxy);
+
+    $content = lti_post_launch_html($requestparams, $endpoint, false);
+
+    echo $content;
+}
+
+function lti_get_register_parameters($toolproxy) {
     $key = $toolproxy->guid;
     $secret = $toolproxy->secret;
-    $endpoint = $toolproxy->regurl;
 
     $requestparams = array();
     $requestparams['lti_message_type'] = 'ToolProxyRegistrationRequest';
     $requestparams['lti_version'] = 'LTI-2p0';
     $requestparams['reg_key'] = $key;
     $requestparams['reg_password'] = $secret;
-
-    // Change the status to pending.
-    $toolproxy->state = LTI_TOOL_PROXY_STATE_PENDING;
-    lti_update_tool_proxy($toolproxy);
 
     // Add the profile URL.
     $profileservice = lti_get_service_by_name('profile');
@@ -296,13 +303,12 @@ function lti_register($toolproxy) {
 
     // Add the return URL.
     $returnurlparams = array('id' => $toolproxy->id, 'sesskey' => sesskey());
-    $url = new \moodle_url('/mod/lti/registrationreturn.php', $returnurlparams);
+    $url = new \moodle_url('/mod/lti/externalregistrationreturn.php', $returnurlparams);
     $returnurl = $url->out(false);
 
     $requestparams['launch_presentation_return_url'] = $returnurl;
-    $content = lti_post_launch_html($requestparams, $endpoint, false);
 
-    echo $content;
+    return $requestparams;
 }
 
 /**
@@ -1357,6 +1363,8 @@ function lti_get_type_type_config($id) {
 
     $type->lti_toolurl = $basicltitype->baseurl;
 
+    $type->lti_description = $basicltitype->description;
+
     $type->lti_parameters = $basicltitype->parameter;
 
     $type->lti_icon = $basicltitype->icon;
@@ -1436,6 +1444,9 @@ function lti_prepare_type_for_save($type, $config) {
         $type->baseurl = $config->lti_toolurl;
         $type->tooldomain = lti_get_domain_from_url($config->lti_toolurl);
     }
+    if (isset($config->lti_description)) {
+        $type->description = $config->lti_description;
+    }
     if (isset($config->lti_typename)) {
         $type->name = $config->lti_typename;
     }
@@ -1456,6 +1467,7 @@ function lti_prepare_type_for_save($type, $config) {
 
     unset ($config->lti_typename);
     unset ($config->lti_toolurl);
+    unset ($config->lti_description);
     unset ($config->lti_icon);
     unset ($config->lti_secureicon);
 }
@@ -1568,6 +1580,23 @@ function lti_get_tool_proxy_from_guid($toolproxyguid) {
 }
 
 /**
+ * Get the tool proxy instance given its registration URL
+ *
+ * @param string $regurl Tool proxy registration URL
+ *
+ * @return array
+ */
+function lti_get_tool_proxies_from_registration_url($regurl) {
+    global $DB;
+
+    return $DB->get_records_sql(
+        'SELECT * FROM {lti_tool_proxies}
+        WHERE '.$DB->sql_compare_text('regurl', 256).' = :regurl',
+        array('regurl' => $regurl)
+    );
+}
+
+/**
  * Generates some of the tool proxy configuration based on the admin configuration details
  *
  * @param int $id
@@ -1621,9 +1650,15 @@ function lti_add_tool_proxy($config) {
     }
     if (isset($config->lti_capabilities)) {
         $toolproxy->capabilityoffered = implode("\n", $config->lti_capabilities);
+    } else {
+        $toolproxy->capabilityoffered = implode("\n", array_keys(lti_get_capabilities()));
     }
     if (isset($config->lti_services)) {
         $toolproxy->serviceoffered = implode("\n", $config->lti_services);
+    } else {
+        $func = function($s) { return $s->get_id(); };
+        $servicenames = array_map($func, lti_get_services());
+        $toolproxy->serviceoffered = implode("\n", $servicenames);
     }
     if (isset($config->toolproxyid) && !empty($config->toolproxyid)) {
         $toolproxy->id = $config->toolproxyid;
@@ -2185,4 +2220,151 @@ function lti_get_fqid($contexts, $id) {
 
     return $id;
 
+}
+
+function get_tool_type_icon_url(stdClass $type) {
+    global $OUTPUT;
+
+    $iconurl = $type->secureicon;
+
+    if (empty($iconurl)) {
+        $iconurl = $type->icon;
+    }
+
+    if (empty($iconurl)) {
+        // TODO: This throws a pile of warnings when running. Gets run when the tool
+        // doesn't have an icon url set in the DB.
+        $iconurl = $OUTPUT->pix_url('icon', 'lti')->out();
+    }
+
+    return $iconurl;
+}
+
+function get_tool_type_edit_url(stdClass $type) {
+    $url = new moodle_url('/mod/lti/typessettings.php', array('action' => 'update', 'id' => $type->id, 'sesskey' => sesskey()));
+    return $url->out();
+}
+
+function get_tool_type_course_url(stdClass $type) {
+    if ($type->course == 1) {
+        return;
+    } else {
+        $url = new moodle_url('/course/view.php', array('id' => $type->course));
+        return $url->out();
+    }
+}
+
+function get_tool_type_urls(stdClass $type) {
+    $courseurl = get_tool_type_course_url($type);
+
+    $urls = array(
+        'icon' => get_tool_type_icon_url($type),
+        'edit' => get_tool_type_edit_url($type),
+    );
+
+    if ($courseurl) {
+        $urls['course'] = $courseurl;
+    }
+
+    return $urls;
+}
+
+function get_tool_type_state_info(stdClass $type) {
+    # TODO: lang strings.
+    $state = '';
+    $isconfigured = false;
+    $ispending = false;
+    $isany = false;
+    $isrejected = false;
+    $isunknown = false;
+    switch ($type->state) {
+        case LTI_TOOL_STATE_ANY:
+            $state = 'any';
+            $isany = true;
+            break;
+        case LTI_TOOL_STATE_CONFIGURED:
+            $state = 'active';
+            $isconfigured = true;
+            break;
+        case LTI_TOOL_STATE_PENDING:
+           $state = 'pending';
+            $ispending = true;
+            break;
+        case LTI_TOOL_STATE_REJECTED:
+            $state = 'rejected';
+            $isrejected = true;
+            break;
+        default:
+            $state = 'unknown state';
+            $isunknown = true;
+            break;
+    }
+
+    return array(
+        'text' => $state,
+        'pending' => $ispending,
+        'configured' => $isconfigured,
+        'rejected' => $isrejected,
+        'any' => $isany,
+        'unknown' => $isunknown
+    );
+}
+
+function get_tool_type_capability_groups($type) {
+    $capabilities = lti_get_enabled_capabilities($type);
+    $groups = array();
+    $hasCourse = false;
+    $hasActivities = false;
+    $hasUserAccount = false;
+    $hasUserPersonal = false;
+
+    # TODO: lang strings.
+    foreach ($capabilities as $capability) {
+        // Bail out early if we've already found all groups.
+        if (count($groups) >= 4) {
+            continue;
+        }
+
+        if (!$hasCourse && preg_match('/^CourseSection/', $capability)) {
+            $hasCourse = true;
+            $groups[] = 'course information';
+        } else if (!$hasActivities && preg_match('/^ResourceLink/', $capability)) {
+            $hasActivities = true;
+            $groups[] = 'course activities or resources';
+        } else if (!$hasUserAccount && preg_match('/^User/', $capability) || preg_match('/^Membership/', $capability)) {
+            $hasUserAccount = true;
+            $groups[] = 'user account information';
+        } else if (!$hasUserPersonal && preg_match('/^Person/', $capability)) {
+            $hasUserPersonal = true;
+            $groups[] = 'user personal information';
+        }
+    }
+
+    return $groups;
+}
+
+function get_tool_type_instance_ids($type) {
+    global $DB;
+
+    return array_keys($DB->get_records('lti', array('typeid' => $type->id), '', 'id'));
+}
+
+function serialise_tool_type(stdClass $type) {
+    $capabilitygroups = get_tool_type_capability_groups($type);
+    $instanceids = get_tool_type_instance_ids($type);
+
+    # TODO: lang strings.
+    return array(
+        'id' => $type->id,
+        'name' => $type->name,
+        'description' => isset($type->description) ? $type->description : "Default tool description placeholder until we can code this in.",
+        'urls' => get_tool_type_urls($type),
+        'state' => get_tool_type_state_info($type),
+        'hascapabilitygroups' => !empty($capabilitygroups),
+        'capabilitygroups' => $capabilitygroups,
+        // Course ID of 1 means it's not linked to a course.
+        'courseid' => $type->course == 1 ? 0 : $type->course,
+        'instanceids' => $instanceids,
+        'instancecount' => count($instanceids)
+    );
 }

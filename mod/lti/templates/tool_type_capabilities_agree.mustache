@@ -1,0 +1,77 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_lti/tool_type_capabilities_agree
+
+    List of tool type's capabilities to be agreed to.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    *
+
+    Example context (json):
+    {
+    }
+
+}}
+<div class="capabilities-container tool-type-{{id}}">
+    <p>This tool requires access to the following data in order to activate:</p>
+    <ul>
+        {{#capabilitygroups}}<li>{{.}}</li>{{/capabilitygroups}}
+    </ul>
+    <p>Are you sure you'd like to activate this tool?</p>
+    <a class="yes btn btn-success" href="#">Yes</a>
+    <a class="no btn btn-danger" href="#">No</a>
+</div>
+{{#js}}
+    require(['jquery', 'mod_lti/events', 'mod_lti/keys'], function($, ltiEvents, KEYS) {
+        var container = $('.capabilities-container.tool-type-{{id}}');
+        var yesButton = container.find('a.yes');
+        var noButton = container.find('a.no');
+
+        yesButton.click(function(e) {
+            e.preventDefault();
+            container.trigger(ltiEvents.CAPABILITIES_AGREE);
+        });
+        yesButton.keypress(function(e) {
+            if (!e.metaKey && !e.shiftKey && !e.altKey && !e.ctrlKey) {
+                if (e.keyCode == KEYS.ENTER || e.keyCode == KEYS.SPACE) {
+                    e.preventDefault();
+                    yesButton.click();
+                }
+            }
+        });
+
+        noButton.click(function(e) {
+            e.preventDefault();
+            container.trigger(ltiEvents.CAPABILITIES_DECLINE);
+        });
+        noButton.keypress(function(e) {
+            if (!e.metaKey && !e.shiftKey && !e.altKey && !e.ctrlKey) {
+                if (e.keyCode == KEYS.ENTER || e.keyCode == KEYS.SPACE) {
+                    e.preventDefault();
+                    noButton.click();
+                }
+            }
+        });
+    });
+{{/js}}
