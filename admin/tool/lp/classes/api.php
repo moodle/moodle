@@ -1305,9 +1305,63 @@ class api {
         global $USER;
         $plan = new plan(0, $record);
 
+        if ($plan->is_based_on_template()) {
+            throw new coding_exception('To create a plan from a template use api::create_plan_from_template().');
+        }
+
         if (!$plan->can_manage()) {
             $context = context_user::instance($plan->get_userid());
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        $plan->create();
+        return $plan;
+    }
+
+    /**
+     * Create a learning plan from a template.
+     *
+     * @param  mixed $templateorid The template object or ID.
+     * @param  int $userid
+     * @return false|\tool_lp\plan Returns false when the plan already exists.
+     */
+    public static function create_plan_from_template($templateorid, $userid) {
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+        require_capability('tool/lp:templatemanage', $template->get_context());
+
+        // Convert the template to a plan.
+        $record = $template->to_record();
+        $record->templateid = $record->id;
+        $record->userid = $userid;
+        $record->name = $record->shortname;
+        $record->status = plan::STATUS_ACTIVE;
+
+        unset($record->id);
+        unset($record->timecreated);
+        unset($record->timemodified);
+        unset($record->usermodified);
+
+        // Remove extra keys.
+        $properties = plan::properties_definition();
+        foreach ($record as $key => $value) {
+            if (!array_key_exists($key, $properties)) {
+                unset($record->$key);
+            }
+        }
+
+        $plan = new plan(0, $record);
+        if (!$plan->can_manage()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        // We first apply the permission checks as we wouldn't want to leak information by returning early that
+        // the plan already exists.
+        if (plan::record_exists_select('templateid = :templateid AND userid = :userid', array(
+                'templateid' => $template->get_id(), 'userid' => $userid))) {
+            return false;
         }
 
         $plan->create();

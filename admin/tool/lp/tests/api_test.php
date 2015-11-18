@@ -423,6 +423,32 @@ class tool_lp_api_testcase extends advanced_testcase {
 
     }
 
+    public function test_create_plan_from_template() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $u1 = $this->getDataGenerator()->create_user();
+        $tpl = $this->getDataGenerator()->get_plugin_generator('tool_lp')->create_template();
+
+        // Creating a new plan.
+        $plan = api::create_plan_from_template($tpl, $u1->id);
+        $record = $plan->to_record();
+        $this->assertInstanceOf('\tool_lp\plan', $plan);
+        $this->assertTrue(\tool_lp\plan::record_exists($plan->get_id()));
+        $this->assertEquals($tpl->get_id(), $plan->get_templateid());
+        $this->assertEquals($u1->id, $plan->get_userid());
+        $this->assertTrue($plan->is_based_on_template());
+
+        // Creating a plan that already exists.
+        $plan = api::create_plan_from_template($tpl, $u1->id);
+        $this->assertFalse($plan);
+
+        // Check that api::create_plan cannot be used.
+        $this->setExpectedException('coding_exception');
+        unset($record->id);
+        $plan = api::create_plan($record);
+    }
+
     /**
      * Test that the method to complete a plan.
      */

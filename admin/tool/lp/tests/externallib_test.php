@@ -170,7 +170,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
             'description' => 'description' . $number,
             'descriptionformat' => FORMAT_HTML,
             'userid' => $userid,
-            'templateid' => $templateid,
+            'templateid' => empty($templateid) ? null : $templateid,
             'status' => $status,
             'duedate' => $duedate
         );
