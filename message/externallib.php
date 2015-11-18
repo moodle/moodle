@@ -25,6 +25,7 @@
  */
 
 require_once("$CFG->libdir/externallib.php");
+require_once($CFG->dirroot . "/message/lib.php");
 
 /**
  * Message external functions
@@ -69,7 +70,6 @@ class core_message_external extends external_api {
      */
     public static function send_instant_messages($messages = array()) {
         global $CFG, $USER, $DB;
-        require_once($CFG->dirroot . "/message/lib.php");
 
         // Check if messaging is enabled.
         if (!$CFG->messaging) {
@@ -652,7 +652,6 @@ class core_message_external extends external_api {
     public static function get_messages($useridto, $useridfrom = 0, $type = 'both', $read = true,
                                         $newestfirst = true, $limitfrom = 0, $limitnum = 0) {
         global $CFG, $USER;
-        require_once($CFG->dirroot . "/message/lib.php");
 
         $warnings = array();
 
@@ -853,7 +852,6 @@ class core_message_external extends external_api {
      */
     public static function get_blocked_users($userid) {
         global $CFG, $USER, $PAGE;
-        require_once($CFG->dirroot . "/message/lib.php");
 
         // Warnings array, it can be empty at the end but is mandatory.
         $warnings = array();
@@ -957,7 +955,6 @@ class core_message_external extends external_api {
      */
     public static function mark_message_read($messageid, $timeread) {
         global $CFG, $DB, $USER;
-        require_once($CFG->dirroot . "/message/lib.php");
 
         // Check if private messaging between users is allowed.
         if (empty($CFG->messaging)) {
@@ -1036,7 +1033,6 @@ class core_message_external extends external_api {
      */
     public static function delete_message($messageid, $userid, $read = true) {
         global $CFG, $DB;
-        require_once($CFG->dirroot . "/message/lib.php");
 
         // Check if private messaging between users is allowed.
         if (empty($CFG->messaging)) {
