@@ -26,8 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/multianswer/questiontype.php');
-
 /**
  * Upgrade code for the multi-answer question type.
  * @param int $oldversion the version we are upgrading from.
