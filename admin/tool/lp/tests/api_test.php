@@ -733,4 +733,62 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertNull($plancompetencies[2]->usercompetency);
     }
 
+    public function test_create_template_cohort() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $c1 = $dg->create_cohort();
+        $c2 = $dg->create_cohort();
+        $t1 = $lpg->create_template();
+        $t2 = $lpg->create_template();
+
+        $this->assertEquals(0, \tool_lp\template_cohort::count_records());
+
+        // Create two relations with mixed parameters.
+        $result = api::create_template_cohort($t1->get_id(), $c1->id);
+        $result = api::create_template_cohort($t1, $c2);
+
+        $this->assertEquals(2, \tool_lp\template_cohort::count_records());
+        $this->assertInstanceOf('tool_lp\template_cohort', $result);
+        $this->assertEquals($c2->id, $result->get_cohortid());
+        $this->assertEquals($t1->get_id(), $result->get_templateid());
+        $this->assertEquals(2, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
+        $this->assertEquals(0, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+    }
+
+    public function test_delete_template_cohort() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $c1 = $dg->create_cohort();
+        $c2 = $dg->create_cohort();
+        $t1 = $lpg->create_template();
+        $t2 = $lpg->create_template();
+        $tc1 = $lpg->create_template_cohort(array('templateid' => $t1->get_id(), 'cohortid' => $c1->id));
+        $tc1 = $lpg->create_template_cohort(array('templateid' => $t2->get_id(), 'cohortid' => $c2->id));
+
+        $this->assertEquals(2, \tool_lp\template_cohort::count_records());
+        $this->assertEquals(1, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
+        $this->assertEquals(1, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+
+        // Delete existing.
+        $result = api::delete_template_cohort($t1->get_id(), $c1->id);
+        $this->assertTrue($result);
+        $this->assertEquals(1, \tool_lp\template_cohort::count_records());
+        $this->assertEquals(0, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
+        $this->assertEquals(1, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+
+        // Delete non-existant.
+        $result = api::delete_template_cohort($t1->get_id(), $c1->id);
+        $this->assertTrue($result);
+        $this->assertEquals(1, \tool_lp\template_cohort::count_records());
+        $this->assertEquals(0, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
+        $this->assertEquals(1, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
+    }
 }

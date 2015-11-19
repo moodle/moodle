@@ -29,6 +29,7 @@ use tool_lp\external;
 use tool_lp\plan;
 use tool_lp\related_competency;
 use tool_lp\template;
+use tool_lp\template_cohort;
 use tool_lp\template_competency;
 use tool_lp\user_competency;
 use tool_lp\user_competency_plan;
@@ -341,6 +342,28 @@ class tool_lp_generator extends component_generator_base {
         $plancompetency->create();
 
         return $plancompetency;
+    }
+
+    /**
+     * Create a new template cohort.
+     *
+     * @param array|stdClass $record
+     * @return template_cohort
+     */
+    public function create_template_cohort($record = null) {
+        $record = (object) $record;
+
+        if (!isset($record->templateid)) {
+            throw new coding_exception('The templateid value is required.');
+        }
+        if (!isset($record->cohortid)) {
+            throw new coding_exception('The cohortid value is required.');
+        }
+
+        $tplcohort = new template_cohort(0, $record);
+        $tplcohort->create();
+
+        return $tplcohort;
     }
 
 }

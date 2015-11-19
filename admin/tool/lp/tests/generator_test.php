@@ -28,6 +28,7 @@ use tool_lp\competency_framework;
 use tool_lp\plan;
 use tool_lp\related_competency;
 use tool_lp\template;
+use tool_lp\template_cohort;
 use tool_lp\template_competency;
 use tool_lp\user_competency;
 use tool_lp\user_competency_plan;
@@ -178,6 +179,21 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $this->assertInstanceOf('\tool_lp\plan_competency', $pc1);
         $this->assertInstanceOf('\tool_lp\plan_competency', $pc2);
         $this->assertEquals($plan->get_id(), $pc1->get_planid());
+    }
+
+    public function test_create_template_cohort() {
+        $this->resetAfterTest(true);
+
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $c1 = $this->getDataGenerator()->create_cohort();
+        $c2 = $this->getDataGenerator()->create_cohort();
+        $t1 = $lpg->create_template();
+        $this->assertEquals(0, template_cohort::count_records());
+        $tc = $lpg->create_template_cohort(array('templateid' => $t1->get_id(), 'cohortid' => $c1->id));
+        $this->assertEquals(1, template_cohort::count_records());
+        $tc = $lpg->create_template_cohort(array('templateid' => $t1->get_id(), 'cohortid' => $c2->id));
+        $this->assertEquals(2, template_cohort::count_records());
+        $this->assertInstanceOf('\tool_lp\template_cohort', $tc);
     }
 
 }

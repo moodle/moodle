@@ -1199,6 +1199,72 @@ class api {
     }
 
     /**
+     * Create a relation between a template and a cohort.
+     *
+     * This silently ignores when the relation already existed.
+     *
+     * @param  template|int $templateorid The template or its ID.
+     * @param  stdClass|int $cohortid     The cohort ot its ID.
+     * @return template_cohort
+     */
+    public static function create_template_cohort($templateorid, $cohortorid) {
+        global $DB;
+
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+        require_capability('tool/lp:templatemanage', $template->get_context());
+
+        $cohort = $cohortorid;
+        if (!is_object($cohort)) {
+            $cohort = $DB->get_record('cohort', array('id' => $cohort), '*', MUST_EXIST);
+        }
+
+        // Check that the user can at least view this cohort.
+        $cohortcontext = context::instance_by_id($cohort->contextid);
+        if (!has_any_capability(array('moodle/cohort:manage', 'moodle/cohort:view'), $cohortcontext)) {
+            throw new required_capability_exception($cohortcontext, 'moodle/cohort:view', 'nopermissions', '');
+        }
+
+        $tplcohort = template_cohort::get_relation($template->get_id(), $cohort->id);
+        if (!$tplcohort->get_id()) {
+            $tplcohort->create();
+        }
+
+        return $tplcohort;
+    }
+
+    /**
+     * Remove a relation between a template and a cohort.
+     *
+     * @param  template|int $templateorid The template or its ID.
+     * @param  stdClass|int $cohortid     The cohort ot its ID.
+     * @return boolean True on success or when the relation did not exist.
+     */
+    public static function delete_template_cohort($templateorid, $cohortorid) {
+        global $DB;
+
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+        require_capability('tool/lp:templatemanage', $template->get_context());
+
+        $cohort = $cohortorid;
+        if (!is_object($cohort)) {
+            $cohort = $DB->get_record('cohort', array('id' => $cohort), '*', MUST_EXIST);
+        }
+
+        $tplcohort = template_cohort::get_relation($template->get_id(), $cohort->id);
+        if (!$tplcohort->get_id()) {
+            return true;
+        }
+
+        return $tplcohort->delete();
+    }
+
+    /**
      * Lists user plans.
      *
      * @param int $userid
