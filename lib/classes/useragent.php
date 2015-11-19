@@ -215,7 +215,7 @@ class core_useragent {
      * @return bool
      */
     protected function is_useragent_web_crawler() {
-        $regex = '/Googlebot|google\.com|Yahoo! Slurp|\[ZSEBOT\]|msnbot|bingbot|BingPreview|Yandex|AltaVista|Baiduspider|Teoma/';
+        $regex = '/Googlebot|google\.com|Yahoo! Slurp|\[ZSEBOT\]|msnbot|bingbot|BingPreview|Yandex|AltaVista|Baiduspider|Teoma/i';
         return (preg_match($regex, $this->useragent));
     }
 
