@@ -28,7 +28,7 @@ require_once($CFG->libdir.'/adminlib.php');
 $templateid = required_param('templateid', PARAM_INT);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
 
-require_login();
+require_login(0, false);
 
 $pagecontext = context::instance_by_id($pagecontextid);
 $template = \tool_lp\api::read_template($templateid);
@@ -38,24 +38,14 @@ require_capability('tool/lp:templatemanage', $context);
 // Set up the page.
 $url = new moodle_url('/admin/tool/lp/templatecompetencies.php', array('templateid' => $template->get_id(),
     'pagecontextid' => $pagecontextid));
-$templatesurl = new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => $pagecontextid));
-
-$PAGE->navigation->override_active_url($templatesurl);
-$PAGE->set_context($pagecontext);
-
-$title = get_string('templatecompetencies', 'tool_lp');
-$templatename = format_text($template->get_shortname());
-
-$PAGE->set_pagelayout('admin');
-$PAGE->set_url($url);
-$PAGE->set_title($title);
-$PAGE->set_heading($templatename);
-$PAGE->navbar->add($templatename, $url);
+list($title, $subtitle) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template,
+    get_string('templatecompetencies', 'tool_lp'));
 
 // Display the page.
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($title);
+echo $output->heading($subtitle, 3);
 $page = new \tool_lp\output\template_competencies_page($template->get_id(), $pagecontext);
 echo $output->render($page);
 echo $output->footer();

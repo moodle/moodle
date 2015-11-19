@@ -28,6 +28,7 @@ require_once($CFG->libdir.'/adminlib.php');
 $id = optional_param('id', 0, PARAM_INT);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to where we can from.
 
+$template = null;
 if (!empty($id)) {
     // Always use the context from the framework when it exists.
     $template = new \tool_lp\template($id);
@@ -37,37 +38,33 @@ if (!empty($id)) {
 }
 
 // We check that we have the permission to edit this framework, in its own context.
-require_login();
+require_login(0, false);
 require_capability('tool/lp:templatemanage', $context);
 
 // We keep the original context in the URLs, so that we remain in the same context.
 $url = new moodle_url("/admin/tool/lp/edittemplate.php", array('id' => $id, 'pagecontextid' => $pagecontextid));
-$templatesurl = new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => $pagecontextid));
 $formurl = new moodle_url("/admin/tool/lp/edittemplate.php", array('pagecontextid' => $pagecontextid));
 
-$title = get_string('templates', 'tool_lp');
 if (empty($id)) {
     $pagetitle = get_string('addnewtemplate', 'tool_lp');
+    list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, null, $pagetitle);
 } else {
+    $template = \tool_lp\api::read_template($id);
     $pagetitle = get_string('edittemplate', 'tool_lp');
+    list($title, $subtitle, $returnurl) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template, $pagetitle);
 }
-// Set up the page.
-$PAGE->navigation->override_active_url($templatesurl);
-$PAGE->set_context(context::instance_by_id($pagecontextid));
-$PAGE->set_pagelayout('admin');
-$PAGE->set_url($url);
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
-$output = $PAGE->get_renderer('tool_lp');
 
-$form = new \tool_lp\form\template($formurl->out(false), array('id' => $id, 'context' => $context));
-
+$form = new \tool_lp\form\template($formurl->out(false), array('template' => $template, 'context' => $context));
 if ($form->is_cancelled()) {
-    redirect($templatesurl);
+    redirect($returnurl);
 }
 
+$output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
-echo $output->heading($pagetitle);
+echo $output->heading($title);
+if (!empty($subtitle)) {
+    echo $output->heading($subtitle, 3);
+}
 
 $data = $form->get_data();
 if ($data) {
@@ -81,12 +78,12 @@ if ($data) {
         $data->contextid = $context->id;
         \tool_lp\api::create_template($data);
         echo $output->notification(get_string('templatecreated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button($templatesurl);
+        echo $output->continue_button($returnurl);
     } else {
         require_sesskey();
         \tool_lp\api::update_template($data);
         echo $output->notification(get_string('templateupdated', 'tool_lp'), 'notifysuccess');
-        echo $output->continue_button($templatesurl);
+        echo $output->continue_button($returnurl);
     }
 } else {
     $form->display();

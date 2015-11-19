@@ -15,28 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This page lets users to manage site wide competencies.
+ * Template plans renderable.
  *
  * @package    tool_lp
- * @copyright  2015 Damyon Wiese
+ * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
+namespace tool_lp\output;
+defined('MOODLE_INTERNAL') || die();
 
-$pagecontextid = required_param('pagecontextid', PARAM_INT);
-$context = context::instance_by_id($pagecontextid);
+/**
+ * Template plans renderable.
+ *
+ * @package    tool_lp
+ * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class template_plans_page implements \renderable {
 
-require_login(0, false);
-require_capability('tool/lp:templatemanage', $context);
+    public function __construct(\tool_lp\template $template, \moodle_url $url) {
+        $this->template = $template;
+        $this->url = $url;
+        $this->table = new template_plans_table('tplplans', $template);
+        $this->table->define_baseurl($url);
+    }
 
-$url = new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => $pagecontextid));
-list($title, $subtitle) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url);
-
-$output = $PAGE->get_renderer('tool_lp');
-echo $output->header();
-echo $output->heading($title);
-$page = new \tool_lp\output\manage_templates_page($context);
-echo $output->render($page);
-echo $output->footer();
+}

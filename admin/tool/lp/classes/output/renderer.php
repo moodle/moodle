@@ -131,4 +131,14 @@ class renderer extends plugin_renderer_base {
         return parent::render_from_template('tool_lp/related_competencies', $data);
     }
 
+    /**
+     * Render the template plans page.
+     *
+     * @param  renderable $page
+     * @return string
+     */
+    public function render_template_plans_page(renderable $page) {
+        return $page->table->out(50, true);
+    }
+
 }

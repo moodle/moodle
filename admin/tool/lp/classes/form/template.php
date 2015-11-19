@@ -45,7 +45,12 @@ class template extends moodleform {
      */
     public function definition() {
         $mform = $this->_form;
-        $id = $this->_customdata['id'];
+        $template = $this->_customdata['template'];
+        if (empty($template)) {
+            $id = 0;
+        } else {
+            $id = $template->get_id();
+        }
         $context = $this->_customdata['context'];
 
         $mform->addElement('hidden', 'id');
@@ -75,14 +80,11 @@ class template extends moodleform {
 
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
 
-        if (!empty($id)) {
-            if (!$this->is_submitted()) {
-                $template = api::read_template($id);
-                $record = $template->to_record();
-                // Massage for editor API.
-                $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
-                $this->set_data($record);
-            }
+        if (!$this->is_submitted() && !empty($template)) {
+            $record = $template->to_record();
+            // Massage for editor API.
+            $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
+            $this->set_data($record);
         }
 
     }

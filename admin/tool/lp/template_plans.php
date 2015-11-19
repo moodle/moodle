@@ -28,11 +28,7 @@ $id = required_param('id', PARAM_INT);
 $pagecontextid = required_param('pagecontextid', PARAM_INT);  // Reference to the context we came from.
 
 require_login(0, false);
-if (isguestuser()) {
-    throw new require_login_exception('Guests are not allowed here.');
-}
 
-$pagecontext = context::instance_by_id($pagecontextid);
 $template = \tool_lp\api::read_template($id);
 $context = $template->get_context();
 require_capability('tool/lp:templatemanage', $context);
@@ -42,27 +38,13 @@ $url = new moodle_url('/admin/tool/lp/template_plans.php', array(
     'id' => $id,
     'pagecontextid' => $pagecontextid
 ));
-$templatesurl = new moodle_url('/admin/tool/lp/learningplans.php', array('pagecontextid' => $pagecontextid));
-
-$PAGE->navigation->override_active_url($templatesurl);
-$PAGE->set_context($pagecontext);
-
-$title = get_string('userplans', 'tool_lp');
-$templatename = format_string($template->get_shortname(), true, array('context' => $context));
-
-$PAGE->set_pagelayout('admin');
-$PAGE->set_url($url);
-$PAGE->set_title($title);
-$PAGE->set_heading($templatename);
-$PAGE->navbar->add($templatename, $url);
+list($title, $subtitle) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template, get_string('userplans', 'tool_lp'));
 
 // Display the page.
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($title);
-
-$tpl = new \tool_lp\output\template_plans_table('tplplans', $template);
-$tpl->define_baseurl($url);
-echo $tpl->out(50, true);
-
+echo $output->heading($subtitle, 3);
+$page = new \tool_lp\output\template_plans_page($template, $url);
+echo $output->render($page);
 echo $output->footer();
