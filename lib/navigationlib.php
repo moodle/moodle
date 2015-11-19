@@ -2342,6 +2342,15 @@ class global_navigation extends navigation_node {
                 }
             }
 
+            // Let plugins hook into user navigation.
+            $pluginsfunction = get_plugins_with_function('extend_navigation_user', 'lib.php');
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                if ($plugintype != 'report') {
+                    foreach ($plugins as $pluginfunction) {
+                        $pluginfunction($usernode, $user, $usercontext, $course, $coursecontext);
+                    }
+                }
+            }
         }
         return true;
     }
@@ -4307,6 +4316,17 @@ class settings_navigation extends navigation_node {
                 }
                 $dashboard->add(get_string('grades', 'grades'), $url, self::TYPE_SETTING, null, 'mygrades');
             }
+
+            // Let plugins hook into user navigation.
+            $pluginsfunction = get_plugins_with_function('extend_navigation_user', 'lib.php');
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                if ($plugintype != 'report') {
+                    foreach ($plugins as $pluginfunction) {
+                        $pluginfunction($profilenode, $user, $usercontext, $course, $coursecontext);
+                    }
+                }
+            }
+
             $usersetting = navigation_node::create(get_string('preferences', 'moodle'), $prefurl, self::TYPE_CONTAINER, null, $key);
             $dashboard->add_node($usersetting);
         } else {
