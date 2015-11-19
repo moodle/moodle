@@ -420,7 +420,6 @@ class tool_lp_api_testcase extends advanced_testcase {
         $record->name = 'plan create own modified';
         $plan = api::update_plan($record);
         $this->assertInstanceOf('\tool_lp\plan', $plan);
-
     }
 
     public function test_create_plan_from_template() {
@@ -447,6 +446,47 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->setExpectedException('coding_exception');
         unset($record->id);
         $plan = api::create_plan($record);
+    }
+
+    public function test_update_plan_based_on_template() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+
+        $this->setAdminUser();
+        $tpl1 = $lpg->create_template();
+        $tpl2 = $lpg->create_template();
+        $up1 = $lpg->create_plan(array('userid' => $u1->id, 'templateid' => $tpl1->get_id()));
+        $up2 = $lpg->create_plan(array('userid' => $u2->id, 'templateid' => null));
+
+        try {
+            // Trying to remove the template dependency.
+            $record = $up1->to_record();
+            $record->templateid = null;
+            api::update_plan($record);
+            $this->fail('A plan cannot be unlinked using api::update_plan()');
+        } catch (coding_exception $e) {
+        }
+
+        try {
+            // Trying to switch to another template.
+            $record = $up1->to_record();
+            $record->templateid = $tpl2->get_id();
+            api::update_plan($record);
+            $this->fail('A plan cannot be moved to another template.');
+        } catch (coding_exception $e) {
+        }
+
+        try {
+            // Trying to switch to using a template.
+            $record = $up2->to_record();
+            $record->templateid = $tpl1->get_id();
+            api::update_plan($record);
+            $this->fail('A plan cannot be update to use a template.');
+        } catch (coding_exception $e) {
+        }
     }
 
     /**
