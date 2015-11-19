@@ -311,7 +311,7 @@ EDITOR.prototype = {
             this.loadingicon = this.get_dialogue_element(SELECTOR.LOADINGICON);
 
             drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
-            this.graphic = new Y.Graphic({render : SELECTOR.DRAWINGCANVAS});
+            this.graphic = new Y.Graphic({render : drawingcanvas});
 
             drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
             drawingregion.on('scroll', this.move_canvas, this);

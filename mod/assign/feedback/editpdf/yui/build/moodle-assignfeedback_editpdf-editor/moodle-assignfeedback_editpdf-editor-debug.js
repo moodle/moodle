@@ -2224,7 +2224,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
         commentlist = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_menu"/>');
         container.append(commentlist);
 
-        commentfilter.on('keyup', this.filter_search_comments, null, this);
+        commentfilter.on('keyup', this.filter_search_comments, this);
         commentlist.delegate('click', this.focus_on_comment, 'a', this);
         commentlist.delegate('key', this.focus_on_comment, 'enter,space', 'a', this);
 
@@ -2245,8 +2245,8 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
             commentslist,
             filtertext;
 
-        filternode = this.get('editor').get_dialogue_element(SELECTOR.SEARCHFILTER);
-        commentslist = this.get('editor').get_dialogue_element(SELECTOR.SEARCHCOMMENTSLIST);
+        filternode = Y.one(SELECTOR.SEARCHFILTER);
+        commentslist = Y.one(SELECTOR.SEARCHCOMMENTSLIST);
 
         filtertext = filternode.get('value');
 
@@ -3364,7 +3364,7 @@ EDITOR.prototype = {
             this.loadingicon = this.get_dialogue_element(SELECTOR.LOADINGICON);
 
             drawingcanvas = this.get_dialogue_element(SELECTOR.DRAWINGCANVAS);
-            this.graphic = new Y.Graphic({render : SELECTOR.DRAWINGCANVAS});
+            this.graphic = new Y.Graphic({render : drawingcanvas});
 
             drawingregion = this.get_dialogue_element(SELECTOR.DRAWINGREGION);
             drawingregion.on('scroll', this.move_canvas, this);
