@@ -173,8 +173,15 @@ if (!empty($instanceid) && !empty($roleid)) {
     $table = new flexible_table('course-participation-'.$course->id.'-'.$cm->id.'-'.$roleid);
     $table->course = $course;
 
-    $table->define_columns(array('fullname','count','select'));
-    $table->define_headers(array(get_string('user'),((!empty($action)) ? get_string($action) : get_string('allactions')),get_string('select')));
+    $actionheader = !empty($action) ? get_string($action) : get_string('allactions');
+
+    if (empty($CFG->messaging)) {
+        $table->define_columns(array('fullname', 'count'));
+        $table->define_headers(array(get_string('user'), $actionheader));
+    } else {
+        $table->define_columns(array('fullname', 'count', 'select'));
+        $table->define_headers(array(get_string('user'), $actionheader, get_string('select')));
+    }
     $table->define_baseurl($baseurl);
 
     $table->set_attribute('cellpadding','5');
@@ -336,10 +343,14 @@ if (!empty($instanceid) && !empty($roleid)) {
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />'."\n";
 
     foreach ($users as $u) {
-        $data = array('<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&amp;course='.$course->id.'">'.fullname($u,true).'</a>'."\n",
-                      ((!empty($u->count)) ? get_string('yes').' ('.$u->count.') ' : get_string('no')),
-                      '<input type="checkbox" class="usercheckbox" name="user'.$u->userid.'" value="'.$u->count.'" />'."\n",
-                      );
+        $data = array();
+        $data[] = html_writer::link(new moodle_url('/user/view.php', array('id' => $u->userid, 'course' => $course->id)),
+            fullname($u, true));
+        $data[] = !empty($u->count) ? get_string('yes').' ('.$u->count.') ' : get_string('no');
+
+        if (!empty($CFG->messaging)) {
+            $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$u->userid.'" value="'.$u->count.'" />';
+        }
         $table->add_data($data);
     }
 
@@ -357,25 +368,27 @@ if (!empty($instanceid) && !empty($roleid)) {
         echo html_writer::end_div();
     }
 
-    echo '<div class="selectbuttons">';
-    echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> '."\n";
-    echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> '."\n";
-    if ($perpage >= $matchcount) {
-        echo '<input type="button" id="checknos" value="'.get_string('selectnos').'" />'."\n";
-    }
-    echo '</div>';
-    echo '<div>';
-    echo html_writer::label(get_string('withselectedusers'), 'formactionselect');
-    $displaylist['messageselect.php'] = get_string('messageselectadd');
-    echo html_writer::select($displaylist, 'formaction', '', array(''=>'choosedots'), array('id'=>'formactionselect'));
-    echo $OUTPUT->help_icon('withselectedusers');
-    echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
-    echo '</div>';
-    echo '</div>'."\n";
-    echo '</form>'."\n";
-    echo '</div>'."\n";
+    if (!empty($CFG->messaging)) {
+        echo '<div class="selectbuttons">';
+        echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> '."\n";
+        echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> '."\n";
+        if ($perpage >= $matchcount) {
+            echo '<input type="button" id="checknos" value="'.get_string('selectnos').'" />'."\n";
+        }
+        echo '</div>';
+        echo '<div>';
+        echo html_writer::label(get_string('withselectedusers'), 'formactionselect');
+        $displaylist['messageselect.php'] = get_string('messageselectadd');
+        echo html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), array('id' => 'formactionselect'));
+        echo $OUTPUT->help_icon('withselectedusers');
+        echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
+        echo '</div>';
+        echo '</div>'."\n";
+        echo '</form>'."\n";
+        echo '</div>'."\n";
 
-    $PAGE->requires->js_init_call('M.report_participation.init');
+        $PAGE->requires->js_init_call('M.report_participation.init');
+    }
 }
 
 echo $OUTPUT->footer();

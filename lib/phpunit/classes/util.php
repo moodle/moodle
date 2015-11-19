@@ -131,6 +131,7 @@ class phpunit_util extends testing_util {
         }
 
         $resetdb = self::reset_database();
+        $localename = self::get_locale_name();
         $warnings = array();
 
         if ($detectchanges === true) {
@@ -163,14 +164,8 @@ class phpunit_util extends testing_util {
                 $warnings[] = 'Warning: unexpected change of $COURSE';
             }
 
-            if ($CFG->ostype === 'WINDOWS') {
-                if (setlocale(LC_TIME, 0) !== 'English_Australia.1252') {
-                    $warnings[] = 'Warning: unexpected change of locale';
-                }
-            } else {
-                if (setlocale(LC_TIME, 0) !== 'en_AU.UTF-8') {
-                    $warnings[] = 'Warning: unexpected change of locale';
-                }
+            if (setlocale(LC_TIME, 0) !== $localename) {
+                $warnings[] = 'Warning: unexpected change of locale';
             }
         }
 
@@ -262,11 +257,7 @@ class phpunit_util extends testing_util {
         core_date::phpunit_reset();
 
         // Make sure the time locale is consistent - that is Australian English.
-        if ($CFG->ostype === 'WINDOWS') {
-            setlocale(LC_TIME, 'English_Australia.1252');
-        } else {
-            setlocale(LC_TIME, 'en_AU.UTF-8');
-        }
+        setlocale(LC_TIME, $localename);
 
         // verify db writes just in case something goes wrong in reset
         if (self::$lastdbwrites != $DB->perf_get_writes()) {
@@ -361,6 +352,11 @@ class phpunit_util extends testing_util {
      */
     public static function testing_ready_problem() {
         global $DB;
+
+        $localename = self::get_locale_name();
+        if (setlocale(LC_TIME, $localename) === false) {
+            return array(PHPUNIT_EXITCODE_CONFIGERROR, "Required locale '$localename' is not installed.");
+        }
 
         if (!self::is_test_site()) {
             // dataroot was verified in bootstrap, so it must be DB
@@ -796,6 +792,21 @@ class phpunit_util extends testing_util {
     public static function event_triggered(\core\event\base $event) {
         if (self::$eventsink) {
             self::$eventsink->add_event($event);
+        }
+    }
+
+    /**
+     * Gets the name of the locale for testing environment (Australian English)
+     * depending on platform environment.
+     *
+     * @return string the locale name.
+     */
+    protected static function get_locale_name() {
+        global $CFG;
+        if ($CFG->ostype === 'WINDOWS') {
+            return 'English_Australia.1252';
+        } else {
+            return 'en_AU.UTF-8';
         }
     }
 }

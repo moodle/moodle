@@ -36,6 +36,7 @@ if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 require_login(null, false);
+$PAGE->set_course($course);
 
 $context = context_course::instance($course->id);
 $systemcontext = context_system::instance();

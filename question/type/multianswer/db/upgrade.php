@@ -26,8 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/question/type/multianswer/questiontype.php');
-
 /**
  * Upgrade code for the multi-answer question type.
  * @param int $oldversion the version we are upgrading from.
@@ -67,10 +65,10 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
                  FROM {question} q
                  JOIN {question_multianswer} qma ON q.id = qma.question");
         foreach ($rs as $q) {
-            if (!empty($q->sequence)) {
+            $sequence = preg_split('/,/', $q->sequence, -1, PREG_SPLIT_NO_EMPTY);
+            if ($sequence) {
                 // Get relevant data indexed by positionkey from the multianswers table.
-                $wrappedquestions = $DB->get_records_list('question', 'id',
-                        explode(',', $q->sequence), 'id ASC');
+                $wrappedquestions = $DB->get_records_list('question', 'id', $sequence, 'id ASC');
                 foreach ($wrappedquestions as $wrapped) {
                     if ($wrapped->qtype == 'multichoice') {
                         $options = $DB->get_record('qtype_multichoice_options', array('questionid' => $wrapped->id), '*');
@@ -97,6 +95,9 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
         // Multianswer savepoint reached.
         upgrade_plugin_savepoint(true, 2015100201, 'qtype', 'multianswer');
     }
+
+    // Moodle v3.0.0 release upgrade line.
+    // Put any upgrade step following this.
 
     return true;
 }
