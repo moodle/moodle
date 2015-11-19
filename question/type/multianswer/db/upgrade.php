@@ -65,10 +65,10 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
                  FROM {question} q
                  JOIN {question_multianswer} qma ON q.id = qma.question");
         foreach ($rs as $q) {
-            if (!empty($q->sequence)) {
+            $sequence = preg_split('/,/', $q->sequence, -1, PREG_SPLIT_NO_EMPTY);
+            if ($sequence) {
                 // Get relevant data indexed by positionkey from the multianswers table.
-                $wrappedquestions = $DB->get_records_list('question', 'id',
-                        explode(',', $q->sequence), 'id ASC');
+                $wrappedquestions = $DB->get_records_list('question', 'id', $sequence, 'id ASC');
                 foreach ($wrappedquestions as $wrapped) {
                     if ($wrapped->qtype == 'multichoice') {
                         $options = $DB->get_record('qtype_multichoice_options', array('questionid' => $wrapped->id), '*');
