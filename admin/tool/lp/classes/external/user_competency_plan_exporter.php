@@ -23,6 +23,9 @@
  */
 namespace tool_lp\external;
 
+use renderer_base;
+use stdClass;
+
 /**
  * Class for exporting plan competency data.
  *
@@ -35,4 +38,39 @@ class user_competency_plan_exporter extends persistent_exporter {
         return 'tool_lp\\user_competency_plan';
     }
 
+    protected static function define_related() {
+        // We cache the scale so it does not need to be retrieved from the framework every time.
+        return array('scale' => 'grade_scale');
+    }
+
+    protected function get_values(renderer_base $output) {
+        $result = new stdClass();
+
+        if ($this->persistent->get_grade() === null) {
+            $gradename = '-';
+        } else {
+            $gradename = $this->related['scale']->scale_items[$this->persistent->get_grade() - 1];
+        }
+        $result->gradename = $gradename;
+
+        if ($this->persistent->get_proficiency() === null) {
+            $proficiencyname = '-';
+        } else {
+            $proficiencyname = get_string($this->persistent->get_proficiency() ? 'yes' : 'no');
+        }
+        $result->proficiencyname = $proficiencyname;
+
+        return (array) $result;
+    }
+
+    protected static function define_properties() {
+        return array(
+            'gradename' => array(
+                'type' => PARAM_TEXT
+            ),
+            'proficiencyname' => array(
+                'type' => PARAM_RAW
+            ),
+        );
+    }
 }

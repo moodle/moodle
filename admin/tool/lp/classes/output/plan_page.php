@@ -28,8 +28,6 @@ use templatable;
 use stdClass;
 use tool_lp\api;
 use tool_lp\plan;
-use tool_lp\user_competency;
-use tool_lp\external\user_competency_exporter;
 use tool_lp\external\competency_exporter;
 
 /**
@@ -74,8 +72,10 @@ class plan_page implements renderable, templatable {
         $data->iscompleted = $this->plan->get_status() == plan::STATUS_COMPLETE;
         if ($data->iscompleted) {
             $ucproperty = 'usercompetencyplan';
+            $ucexporter = 'tool_lp\\external\\user_competency_plan_exporter';
         } else {
             $ucproperty = 'usercompetency';
+            $ucexporter = 'tool_lp\\external\\user_competency_exporter';
         }
 
         foreach ($pclist as $pc) {
@@ -94,8 +94,8 @@ class plan_page implements renderable, templatable {
             // Prepare the data.
             $exporter = new competency_exporter($comp, array('context' => $framework->get_context()));
             $competency = $exporter->export($output);
-            $exporter = new user_competency_exporter($usercomp, array('scale' => $scale));
-            $competency->usercompetency = $exporter->export($output);
+            $exporter = new $ucexporter($usercomp, array('scale' => $scale));
+            $competency->$ucproperty = $exporter->export($output);
 
             $data->competencies[] = $competency;
         }
