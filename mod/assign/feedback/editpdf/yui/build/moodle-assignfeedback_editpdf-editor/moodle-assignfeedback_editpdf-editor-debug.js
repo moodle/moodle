@@ -2243,10 +2243,12 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
     filter_search_comments : function() {
         var filternode,
             commentslist,
-            filtertext;
+            filtertext,
+            dialogueid;
 
-        filternode = Y.one(SELECTOR.SEARCHFILTER);
-        commentslist = Y.one(SELECTOR.SEARCHCOMMENTSLIST);
+        dialogueid = this.get('id');
+        filternode = Y.one('#' + dialogueid + SELECTOR.SEARCHFILTER);
+        commentslist = Y.one('#' + dialogueid + SELECTOR.SEARCHCOMMENTSLIST);
 
         filtertext = filternode.get('value');
 
