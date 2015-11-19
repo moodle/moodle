@@ -38,6 +38,7 @@
         <tr>
             <th scope="col">{{#str}}templatename, tool_lp{{/str}}</th>
             <th scope="col">{{#str}}context, core_role{{/str}}</th>
+            <th scope="col">{{#str}}userplans, tool_lp{{/str}}</th>
             <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
         </tr>
     </thead>
@@ -46,6 +47,7 @@
         <tr class="drag-samenode" data-templateid="{{id}}">
             <td><a href="{{pluginbaseurl}}/templatecompetencies.php?templateid={{id}}&amp;pagecontextid={{pagecontextid}}">{{shortname}}</a></span> {{^visible}}{{#str}}hiddenhint, tool_lp{{/str}}{{/visible}}</td>
             <td>{{contextname}}</td>
+            <td><a href="{{pluginbaseurl}}/template_plans.php?id={{id}}&amp;pagecontextid={{pagecontextid}}">{{planscount}}</a></td>
             <td>
             {{#canmanage}}
             <ul class="templateactions">

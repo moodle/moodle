@@ -213,6 +213,7 @@ $string['totalrequiredtocomplete'] = 'Total required to complete';
 $string['usercompetencystatus_idle'] = 'Idle';
 $string['usercompetencystatus_inreview'] = 'In review';
 $string['usercompetencystatus_waitingforreview'] = 'Waiting for review';
+$string['userplans'] = 'User plans';
 $string['visible'] = 'Visible';
 $string['visible_help'] = 'A competency framework can be hidden from teachers. This could be useful if a framework is still in the process of being developed.';
 $string['when'] = 'When';

@@ -24,6 +24,7 @@
 namespace tool_lp\external;
 
 use renderer_base;
+use tool_lp\plan;
 
 /**
  * Class for exporting template data.
@@ -39,7 +40,8 @@ class template_exporter extends persistent_exporter {
 
     protected function get_values(renderer_base $output) {
         return array(
-            'duedateformatted' => userdate($this->persistent->get_duedate())
+            'duedateformatted' => userdate($this->persistent->get_duedate()),
+            'planscount' => plan::count_records(array('templateid' => $this->persistent->get_id()))
         );
     }
 
@@ -47,6 +49,9 @@ class template_exporter extends persistent_exporter {
         return array(
             'duedateformatted' => array(
                 'type' => PARAM_RAW
+            ),
+            'planscount' => array(
+                'type' => PARAM_INT
             )
         );
     }
