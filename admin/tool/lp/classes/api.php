@@ -1369,6 +1369,54 @@ class api {
     }
 
     /**
+     * Unlink a plan from its template.
+     *
+     * @param  \tool_lp\plan|int $planorid The plan or its ID.
+     * @return bool
+     */
+    public static function unlink_plan_from_template($planorid) {
+        global $DB;
+
+        $plan = $planorid;
+        if (!is_object($planorid)) {
+            $plan = new plan($planorid);
+        }
+
+        // The user must be allowed to manage the plans of the user.
+        if (!$plan->can_manage()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        // Early exit, it's already done...
+        if (!$plan->is_based_on_template()) {
+            return true;
+        }
+
+        // Fetch the template.
+        $template = new template($plan->get_templateid());
+
+        // Now, proceed by copying all competencies to the plan, then update the plan.
+        $transaction = $DB->start_delegated_transaction();
+        $competencies = template_competency::list_competencies($template->get_id(), false);
+        $i = 0;
+        foreach ($competencies as $competency) {
+            $record = (object) array(
+                'planid' => $plan->get_id(),
+                'competencyid' => $competency->get_id(),
+                'sortorder' => $i++
+            );
+            $pc = new plan_competency(null, $record);
+            $pc->create();
+        }
+        $plan->set_origtemplateid($template->get_id());
+        $plan->set_templateid(null);
+        $success = $plan->update();
+        $transaction->allow_commit();
+
+        return $success;
+    }
+
+    /**
      * Updates a plan.
      *
      * @param stdClass $record

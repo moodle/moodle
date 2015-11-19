@@ -73,6 +73,11 @@ class plan extends persistent {
                 'default' => null,
                 'null' => NULL_ALLOWED,
             ),
+            'origtemplateid' => array(
+                'type' => PARAM_INT,
+                'default' => null,
+                'null' => NULL_ALLOWED,
+            ),
             'status' => array(
                 'choices' => array(self::STATUS_DRAFT, self::STATUS_COMPLETE, self::STATUS_ACTIVE),
                 'type' => PARAM_INT,

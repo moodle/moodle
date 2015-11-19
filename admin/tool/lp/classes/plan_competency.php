@@ -73,6 +73,7 @@ class plan_competency extends persistent {
               ORDER BY plancomp.sortorder ASC';
         $params = array($planid);
 
+        // TODO MDL-52229 Handle hidden competencies.
         $results = $DB->get_records_sql($sql, $params);
 
         $instances = array();

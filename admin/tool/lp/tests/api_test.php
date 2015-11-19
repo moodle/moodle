@@ -489,6 +489,71 @@ class tool_lp_api_testcase extends advanced_testcase {
         }
     }
 
+    public function test_unlink_plan_from_template() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+
+        $this->setAdminUser();
+        $f1 = $lpg->create_framework();
+        $f2 = $lpg->create_framework();
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2a = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id()));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        $tpl1 = $lpg->create_template();
+        $tpl2 = $lpg->create_template();
+
+        $tplc1a = $lpg->create_template_competency(array('templateid' => $tpl1->get_id(), 'competencyid' => $c1a->get_id(),
+            'sortorder' => 9));
+        $tplc1b = $lpg->create_template_competency(array('templateid' => $tpl1->get_id(), 'competencyid' => $c1b->get_id(),
+            'sortorder' => 8));
+        $tplc2a = $lpg->create_template_competency(array('templateid' => $tpl2->get_id(), 'competencyid' => $c2a->get_id()));
+
+        $plan1 = $lpg->create_plan(array('userid' => $u1->id, 'templateid' => $tpl1->get_id()));
+        $plan2 = $lpg->create_plan(array('userid' => $u2->id, 'templateid' => $tpl2->get_id()));
+
+        // Check that we have what we expect at this stage.
+        $this->assertEquals(2, \tool_lp\template_competency::count_records(array('templateid' => $tpl1->get_id())));
+        $this->assertEquals(1, \tool_lp\template_competency::count_records(array('templateid' => $tpl2->get_id())));
+        $this->assertEquals(0, \tool_lp\plan_competency::count_records(array('planid' => $plan1->get_id())));
+        $this->assertEquals(0, \tool_lp\plan_competency::count_records(array('planid' => $plan2->get_id())));
+        $this->assertTrue($plan1->is_based_on_template());
+        $this->assertTrue($plan2->is_based_on_template());
+
+        // Let's do this!
+        $tpl1comps = \tool_lp\template_competency::list_competencies($tpl1->get_id(), true);
+        $tpl2comps = \tool_lp\template_competency::list_competencies($tpl2->get_id(), true);
+
+        api::unlink_plan_from_template($plan1);
+
+        $plan1->read();
+        $plan2->read();
+        $this->assertCount(2, $tpl1comps);
+        $this->assertCount(1, $tpl2comps);
+        $this->assertEquals(2, \tool_lp\template_competency::count_records(array('templateid' => $tpl1->get_id())));
+        $this->assertEquals(1, \tool_lp\template_competency::count_records(array('templateid' => $tpl2->get_id())));
+        $this->assertEquals(2, \tool_lp\plan_competency::count_records(array('planid' => $plan1->get_id())));
+        $this->assertEquals(0, \tool_lp\plan_competency::count_records(array('planid' => $plan2->get_id())));
+        $this->assertFalse($plan1->is_based_on_template());
+        $this->assertEquals($tpl1->get_id(), $plan1->get_origtemplateid());
+        $this->assertTrue($plan2->is_based_on_template());
+        $this->assertEquals(null, $plan2->get_origtemplateid());
+
+        // Even the order remains.
+        $plan1comps = \tool_lp\plan_competency::list_competencies($plan1->get_id());
+        $before = reset($tpl1comps);
+        $after = reset($plan1comps);
+        $this->assertEquals($before->get_id(), $after->get_id());
+        $this->assertEquals($before->get_sortorder(), $after->get_sortorder());
+        $before = next($tpl1comps);
+        $after = next($plan1comps);
+        $this->assertEquals($before->get_id(), $after->get_id());
+        $this->assertEquals($before->get_sortorder(), $after->get_sortorder());
+    }
+
     /**
      * Test that the method to complete a plan.
      */
