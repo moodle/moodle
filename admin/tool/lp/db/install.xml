@@ -126,6 +126,23 @@
         <KEY NAME="competencyid" TYPE="foreign" FIELDS="competencyid" REFTABLE="tool_lp_competency" REFFIELDS="id" COMMENT="Competency foreign key."/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="tool_lp_template_cohort" COMMENT="Default comment for the table, please edit me">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="templateid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="cohortid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="templateid" UNIQUE="false" FIELDS="templateid"/>
+        <INDEX NAME="templatecohortids" UNIQUE="true" FIELDS="templateid, cohortid"/>
+      </INDEXES>
+    </TABLE>
     <TABLE NAME="tool_lp_related_competency" COMMENT="Related competencies">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
