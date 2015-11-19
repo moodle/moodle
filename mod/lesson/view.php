@@ -227,6 +227,8 @@ if (empty($pageid)) {
             }
         } elseif ($jumpto == LESSON_NEXTPAGE) {
             $lastpageseen = $lesson->get_next_page($attemptpage->nextpageid);
+        } else if ($jumpto == LESSON_CLUSTERJUMP) {
+            $lastpageseen = $lesson->cluster_jump($attempt->pageid);
         } else {
             $lastpageseen = $jumpto;
         }
