@@ -65,6 +65,7 @@ class plan_page implements renderable, templatable {
         $data->competencies = array();
         $data->planid = $this->plan->get_id();
         $data->canmanage = $this->plan->can_manage() && !$this->plan->is_based_on_template();
+        $data->canbeedited = $this->plan->can_be_edited();
         $data->contextid = $this->plan->get_context()->id;
 
         $pclist = api::list_plan_competencies($this->plan);

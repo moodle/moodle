@@ -282,7 +282,6 @@ class plan extends persistent {
         }
         if (self::can_manage_user($userid)) {
             $status[self::STATUS_ACTIVE] = get_string('planstatusactive', 'tool_lp');
-            $status[self::STATUS_COMPLETE] = get_string('planstatuscomplete', 'tool_lp');
         }
         return $status;
     }
@@ -330,5 +329,14 @@ class plan extends persistent {
      */
     public function is_based_on_template() {
         return $this->get_templateid() !== null;
+    }
+
+    /**
+     * Check if plan can be edited.
+     *
+     * @return bool
+     */
+    public function can_be_edited() {
+        return $this->can_manage() && $this->get_status() != self::STATUS_COMPLETE;
     }
 }

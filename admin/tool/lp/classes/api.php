@@ -895,8 +895,8 @@ class api {
         if (!$template->can_manage()) {
             throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
 
-        // We can never change the context of a template.
         } else if (isset($record->contextid) && $record->contextid != $template->get_contextid()) {
+             // We can never change the context of a template.
             throw new coding_exception('Changing the context of an existing tempalte is forbidden.');
 
         }
@@ -1466,7 +1466,6 @@ class api {
      * @return \tool_lp\plan
      */
     public static function update_plan(stdClass $record) {
-        global $DB;
 
         $plan = new plan($record->id);
 
@@ -1475,45 +1474,42 @@ class api {
             $context = context_user::instance($plan->get_userid());
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
 
-        // Prevent a plan based on a template to be edited.
         } else if ($plan->is_based_on_template()) {
+            // Prevent a plan based on a template to be edited.
             throw new coding_exception('Cannot update a plan that is based on a template.');
 
-        // Prevent change of ownership as the capabilities are checked against that.
         } else if (isset($record->userid) && $plan->get_userid() != $record->userid) {
+            // Prevent change of ownership as the capabilities are checked against that.
             throw new coding_exception('A plan cannot be transfered to another user');
         }
 
         $beforestatus = $plan->get_status();
+        $beforetemplateid = $plan->get_templateid();
         $plan->from_record($record);
+
+        if ($beforestatus == plan::STATUS_COMPLETE) {
+            throw new coding_exception('Completed plan can not be edited');
+        }
+
+        if ($plan->get_status() == plan::STATUS_COMPLETE && $beforestatus != plan::STATUS_COMPLETE) {
+            throw new coding_exception('Completing plan is not allowed in api::update_status (use complete_plan instead)');
+        }
+
+        if ($plan->get_status() == plan::STATUS_ACTIVE && $beforestatus == plan::STATUS_COMPLETE) {
+            throw new coding_exception('Re-opening plan is not allowed in api::update_status (use reopen_plan instead)');
+        }
+
+        if ($beforetemplateid === null &&  $plan->get_templateid() !== null) {
+            throw new coding_exception('A plan cannot be update to use a template.');
+        }
 
         // Revalidate after the data has be injected. This handles status change, etc...
         if (!$plan->can_manage()) {
             $context = context_user::instance($plan->get_userid());
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
-
-        // Prevent a plan to be updated to use a template.
-        } else if ($plan->is_based_on_template()) {
-            throw new coding_exception('Cannot update a plan to be based on a template.');
-        }
-
-        // Are we trying to set the plan as complete?
-        if ($plan->get_status() == plan::STATUS_COMPLETE && $beforestatus != plan::STATUS_COMPLETE) {
-            throw new coding_exception('To set a plan as complete api::complete_plan() must be used.');
-        }
-
-        // Wrap the updates in a DB transaction.
-        $transaction = $DB->start_delegated_transaction();
-
-        // Delete archived user competencies if the status of the plan is changed from complete to another status.
-        $mustremovearchivedcompetencies = ($beforestatus == plan::STATUS_COMPLETE && $plan->get_status() != plan::STATUS_COMPLETE);
-        if ($mustremovearchivedcompetencies) {
-            self::remove_archived_user_competencies_in_plan($plan);
         }
 
         $plan->update();
-
-        $transaction->allow_commit();
 
         return $plan;
     }
@@ -1614,6 +1610,55 @@ class api {
     }
 
     /**
+     * Reopen a plan.
+     *
+     * @param int|plan $planorid The plan, or its ID.
+     * @return bool
+     */
+    public static function reopen_plan($planorid) {
+        global $DB;
+
+        $plan = $planorid;
+        if (!is_object($planorid)) {
+            $plan = new plan($planorid);
+        }
+
+        // Validate that the plan as it is can be managed.
+        if (!$plan->can_manage()) {
+            $context = context_user::instance($plan->get_userid());
+            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        $beforestatus = $plan->get_status();
+        $plan->set_status(plan::STATUS_ACTIVE);
+
+        // Validate if status can be changed.
+        if (!$plan->can_manage()) {
+            $context = context_user::instance($plan->get_userid());
+            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        // Wrap the updates in a DB transaction.
+        $transaction = $DB->start_delegated_transaction();
+
+        // Delete archived user competencies if the status of the plan is changed from complete to another status.
+        $mustremovearchivedcompetencies = ($beforestatus == plan::STATUS_COMPLETE && $plan->get_status() != plan::STATUS_COMPLETE);
+        if ($mustremovearchivedcompetencies) {
+            self::remove_archived_user_competencies_in_plan($plan);
+        }
+
+        $success = $plan->update();
+
+        if (!$success) {
+            $transaction->rollback(new moodle_exception('The plan could not be updated.'));
+            return $success;
+        }
+
+        $transaction->allow_commit();
+        return $success;
+    }
+
+    /**
      * List the competencies in a user plan.
      *
      * @param  int $planorid The plan, or its ID.
@@ -1698,6 +1743,10 @@ class api {
             throw new coding_exception('A competency can not be added to a learning plan based on a template');
         }
 
+        if (!$plan->can_be_edited()) {
+            throw new coding_exception('A competency can not be added to a learning plan completed');
+        }
+
         $exists = plan_competency::get_record(array('planid' => $planid, 'competencyid' => $competencyid));
         if (!$exists) {
             $record = new stdClass();
@@ -1729,6 +1778,10 @@ class api {
             throw new coding_exception('A competency can not be removed from a learning plan based on a template');
         }
 
+        if (!$plan->can_be_edited()) {
+            throw new coding_exception('A competency can not be removed from a learning plan completed');
+        }
+
         $link = plan_competency::get_record(array('planid' => $planid, 'competencyid' => $competencyid));
         if ($link) {
             return $link->delete();
@@ -1756,6 +1809,10 @@ class api {
 
         } else if ($plan->is_based_on_template()) {
             throw new coding_exception('A competency can not be reordered in a learning plan based on a template');
+        }
+
+        if (!$plan->can_be_edited()) {
+            throw new coding_exception('A competency can not be reordered in a learning plan completed');
         }
 
         $down = true;

@@ -14,15 +14,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Delete plans via ajax.
+ * Plan actions via ajax.
  *
- * @module     tool_lp/plandelete
+ * @module     tool_lp/planactions
  * @package    tool_lp
  * @copyright  2015 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'], function($, templates, ajax, notification, str) {
-    // Private variables and functions.
 
     /** @var {Number} planid The id of the plan */
     var planid = 0;
@@ -102,6 +101,103 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
 
     };
 
+    /**
+     * Reopen plan and reload the page.
+     */
+    var doReopenPlan = function() {
+
+        var requests = ajax.call([{
+            methodname: 'tool_lp_reopen_plan',
+            args: { planid: planid}
+        }, {
+            methodname: 'tool_lp_data_for_plans_page',
+            args: { userid: userid }
+        }]);
+        requests[1].done(reloadList).fail(notification.exception);
+    };
+
+    /**
+     * Complete plan and reload the page.
+     */
+    var doCompletePlan = function() {
+
+        var requests = ajax.call([{
+            methodname: 'tool_lp_complete_plan',
+            args: { planid: planid}
+        }, {
+            methodname: 'tool_lp_data_for_plans_page',
+            args: { userid: userid }
+        }]);
+        requests[1].done(reloadList).fail(notification.exception);
+    };
+
+    /**
+     * Handler for "Reopen plan" actions.
+     * @param {Event} e
+     */
+    var confirmReopenPlan = function(e) {
+        e.preventDefault();
+
+        planid = $(this).attr('data-planid');
+        userid = $(this).attr('data-userid');
+
+        var requests = ajax.call([{
+            methodname: 'tool_lp_read_plan',
+            args: { id: planid }
+        }]);
+
+        requests[0].done(function(plan) {
+            str.get_strings([
+                { key: 'confirm', component: 'moodle' },
+                { key: 'reopenplanconfirm', component: 'tool_lp', param: plan.name },
+                { key: 'reopenplan', component: 'tool_lp' },
+                { key: 'cancel', component: 'moodle' }
+            ]).done(function (strings) {
+                notification.confirm(
+                    strings[0], // Confirm.
+                    strings[1], // Reopen plan X?
+                    strings[2], // reopen.
+                    strings[3], // Cancel.
+                    doReopenPlan
+                );
+            }).fail(notification.exception);
+        }).fail(notification.exception);
+
+    };
+
+    /**
+     * Handler for "Complete plan" actions.
+     * @param {Event} e
+     */
+    var confirmCompletePlan = function(e) {
+        e.preventDefault();
+
+        planid = $(this).attr('data-planid');
+        userid = $(this).attr('data-userid');
+
+        var requests = ajax.call([{
+            methodname: 'tool_lp_read_plan',
+            args: { id: planid }
+        }]);
+
+        requests[0].done(function(plan) {
+            str.get_strings([
+                { key: 'confirm', component: 'moodle' },
+                { key: 'completeplanconfirm', component: 'tool_lp', param: plan.name },
+                { key: 'completeplan', component: 'tool_lp' },
+                { key: 'cancel', component: 'moodle' }
+            ]).done(function (strings) {
+                notification.confirm(
+                    strings[0], // Confirm.
+                    strings[1], // Complete plan X?
+                    strings[2], // Complete.
+                    strings[3], // Cancel.
+                    doCompletePlan
+                );
+            }).fail(notification.exception);
+        }).fail(notification.exception);
+
+    };
 
     return {
         // Public variables and functions.
@@ -111,6 +207,20 @@ define(['jquery', 'core/templates', 'core/ajax', 'core/notification', 'core/str'
          * @param {Event} e
          */
         deleteHandler: confirmDelete,
+
+        /**
+         * Expose the event handler for complete plan.
+         * @method updateStatusHandler
+         * @param {Event} e
+         */
+        completePlanHandler: confirmCompletePlan,
+
+        /**
+         * Expose the event handler for reopen plan.
+         * @method reopenPlanHandler
+         * @param {Event} e
+         */
+        reopenPlanHandler: confirmReopenPlan
 
     };
 });

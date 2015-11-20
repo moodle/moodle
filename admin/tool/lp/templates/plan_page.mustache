@@ -35,7 +35,9 @@
             <tr class="drag-samenode" data-id="{{id}}">
                 <td>
                     {{#canmanage}}
+                    {{#canbeedited}}
                     <span class="drag-handlecontainer pull-left"></span>
+                    {{/canbeedited}}
                     {{/canmanage}}
                     {{shortname}}
                 </td>
@@ -50,9 +52,11 @@
                 {{/iscompleted}}
                 <td>
                     {{#canmanage}}
+                    {{#canbeedited}}
                     <div class="pull-left">
                         <a href="#" data-action="delete-competency-link" data-id="{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
                     </div>
+                    {{/canbeedited}}
                     {{/canmanage}}
                 </td>
             </tr>
@@ -64,7 +68,9 @@
         <div class="pull-right">
             <!-- Button to add competencies to the plan -->
             {{#canmanage}}
+            {{#canbeedited}}
              <button class="btn" data-action="add">{{#pix}}t/add{{/pix}} {{#str}}addcompetency, tool_lp{{/str}}</button>
+             {{/canbeedited}}
             {{/canmanage}}
         </div>
     </div>

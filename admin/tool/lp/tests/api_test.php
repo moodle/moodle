@@ -418,8 +418,12 @@ class tool_lp_api_testcase extends advanced_testcase {
 
         $record = $plan->to_record();
         $record->name = 'plan create own modified';
-        $plan = api::update_plan($record);
-        $this->assertInstanceOf('\tool_lp\plan', $plan);
+        try {
+            api::update_plan($record);
+            $this->fail('Completed plan can not be edited');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
+        }
     }
 
     public function test_create_plan_from_template() {
@@ -808,8 +812,13 @@ class tool_lp_api_testcase extends advanced_testcase {
         $record = $plan->to_record();
         $record->status = \tool_lp\plan::STATUS_ACTIVE;
 
-        $plan = api::update_plan($record);
+        try {
+            api::update_plan($record);
+            $this->fail('Completed plan can not be edited');
+        } catch (coding_exception $e) {
+        }
 
+        api::reopen_plan($record->id);
         // Check that user_competency_plan objects are deleted if the plan status is changed to another status.
         $this->assertEquals(2, \tool_lp\user_competency::count_records());
         $this->assertEquals(0, \tool_lp\user_competency_plan::count_records());

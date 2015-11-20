@@ -57,11 +57,31 @@
                 <li>
                     <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
                     <ul class="dropdown-menu">
-                    <li>
-                        <a href="{{pluginbaseurl}}/editplan.php?id={{id}}">
+                    <li {{^canbeedited}} class="disabled" {{/canbeedited}}>
+                        <a href="{{#canbeedited}}
+                                    {{pluginbaseurl}}/editplan.php?id={{id}}
+                                 {{/canbeedited}}
+                                 {{^canbeedited}}
+                                    #
+                                 {{/canbeedited}}
+                                 ">
                             {{#pix}}t/edit{{/pix}} {{#str}}editthisplan, tool_lp{{/str}}
                         </a>
                     </li>
+                    {{#usercanreopen}}
+                    <li>
+                        <a data-action="reopenplan" data-planid="{{id}}" data-userid="{{userid}}" href="#">
+                            {{#pix}}t/edit{{/pix}} {{#str}}reopenplan, tool_lp{{/str}}
+                        </a>
+                    </li>
+                    {{/usercanreopen}}
+                    {{#usercancomplete}}
+                    <li>
+                        <a data-action="completeplan" data-planid="{{id}}" data-userid="{{userid}}" href="#">
+                            {{#pix}}t/edit{{/pix}} {{#str}}completeplan, tool_lp{{/str}}
+                        </a>
+                    </li>
+                    {{/usercancomplete}}
                     <li>
                         <a data-action="deleteplan" data-planid="{{id}}" data-userid="{{userid}}" href="#">
                             {{#pix}}t/delete{{/pix}} {{#str}}deletethisplan, tool_lp{{/str}}
@@ -91,12 +111,14 @@
 
 {{#js}}
 // Initialise the JS.
-require(['tool_lp/plandelete',
+require(['tool_lp/planactions',
          'tool_lp/menubar'],
-        function(deleteMod, menubar) {
+        function(actionsMod, menubar) {
 
     menubar.enhance('.planactions', {
-        "[data-action='deleteplan']": deleteMod.deleteHandler
+        "[data-action='deleteplan']": actionsMod.deleteHandler,
+        "[data-action='completeplan']": actionsMod.completePlanHandler,
+        "[data-action='reopenplan']": actionsMod.reopenPlanHandler,
     });
 });
 

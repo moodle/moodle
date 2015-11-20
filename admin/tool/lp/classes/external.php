@@ -667,7 +667,6 @@ class external extends external_api {
                                                 'id' => $id,
                                             ));
 
-
         $competency = api::read_competency($params['id']);
         $context = $competency->get_context();
         self::validate_context($context);
@@ -2791,6 +2790,84 @@ class external extends external_api {
      */
     public static function update_plan_returns() {
         return plan_exporter::get_read_structure();
+    }
+
+    /**
+     * Returns description of complete_plan() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function complete_plan_parameters() {
+        $planid = new external_value(
+            PARAM_INT,
+            'The plan id',
+            VALUE_REQUIRED
+        );
+        $params = array('planid' => $planid);
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Complete Learning plan.
+     *
+     * @param int $planid plan id (id is required)
+     * @return boolean
+     */
+    public static function complete_plan($planid) {
+        $params = self::validate_parameters(self::complete_plan_parameters(),
+                                            array(
+                                                'planid' => $planid
+                                            ));
+
+        return api::complete_plan($params['planid']);
+    }
+
+    /**
+     * Returns description of complete_plan() result value.
+     *
+     * @return \external_description
+     */
+    public static function complete_plan_returns() {
+        return new external_value(PARAM_BOOL, 'True if completing learning plan was successful');
+    }
+
+    /**
+     * Returns description of reopen_plan() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function reopen_plan_parameters() {
+        $planid = new external_value(
+            PARAM_INT,
+            'The plan id',
+            VALUE_REQUIRED
+        );
+        $params = array('planid' => $planid);
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Reopen Learning plan.
+     *
+     * @param int $planid plan id (id is required)
+     * @return boolean
+     */
+    public static function reopen_plan($planid) {
+        $params = self::validate_parameters(self::reopen_plan_parameters(),
+                                            array(
+                                                'planid' => $planid
+                                            ));
+
+        return api::reopen_plan($params['planid']);
+    }
+
+    /**
+     * Returns description of reopen_plan() result value.
+     *
+     * @return \external_description
+     */
+    public static function reopen_plan_returns() {
+        return new external_value(PARAM_BOOL, 'True if reopening learning plan was successful');
     }
 
     /**

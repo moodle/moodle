@@ -1089,7 +1089,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $syscontext = context_system::instance();
 
         $this->setUser($this->creator);
-        $plan0 = $this->create_plan(1, $this->creator->id, 0, plan::STATUS_COMPLETE, 0);
+        $plan0 = $this->create_plan(1, $this->creator->id, 0, plan::STATUS_ACTIVE, 0);
 
         $this->setUser($this->user);
 
@@ -1115,9 +1115,9 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         }
         try {
             $plan3 = $this->update_plan($plan2->id, 4, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
-            $this->fail('Exception expected due to not permissions to update plans to complete status');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('nopermissions', $e->errorcode);
+            $this->fail('We cannot complete a plan using api::update_plan().');
+        } catch (coding_exception $e) {
+            $this->assertTrue(true);
         }
 
         assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
@@ -1152,6 +1152,50 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test complete plan.
+     */
+    public function test_complete_plan() {
+        $syscontext = context_system::instance();
+
+        $this->setUser($this->creator);
+
+        $this->setUser($this->user);
+
+        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->setUser($this->user);
+
+        $plan = $this->create_plan(1, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
+
+        $result = external::complete_plan($plan->id);
+        $this->assertTrue($result);
+    }
+
+    /**
+     * Test reopen plan.
+     */
+    public function test_reopen_plan() {
+        $syscontext = context_system::instance();
+
+        $this->setUser($this->creator);
+
+        $this->setUser($this->user);
+
+        assign_capability('tool/lp:planmanageowndraft', CAP_ALLOW, $this->userrole, $syscontext->id);
+        assign_capability('tool/lp:planmanageown', CAP_ALLOW, $this->userrole, $syscontext->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->setUser($this->user);
+
+        $plan = $this->create_plan(1, $this->user->id, 0, plan::STATUS_COMPLETE, 0);
+
+        $result = external::reopen_plan($plan->id);
+        $this->assertTrue($result);
+    }
+
+    /**
      * Test that we can read plans.
      */
     public function test_read_plans() {
@@ -1173,6 +1217,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $plan1->usercanupdate = false;
         $plan2->usercanupdate = false;
         $plan3->usercanupdate = false;
+        $plan1->canbeedited = false;
+        $plan2->canbeedited = false;
+        $plan3->canbeedited = false;
+        $plan1->usercancomplete = false;
+        $plan2->usercancomplete = false;
+        $plan3->usercanreopen = false;
 
         // Prevent the user from seeing their own non-draft plans.
         assign_capability('tool/lp:planviewown', CAP_PROHIBIT, $this->userrole, $syscontext->id, true);
@@ -1210,6 +1260,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $plan1->usercanupdate = true;
+        $plan1->canbeedited = true;
         $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
         try {
             external::read_plan($plan2->id);
@@ -1232,8 +1283,17 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $plan1->usercanupdate = false;
+        $plan1->canbeedited = false;
+
         $plan2->usercanupdate = true;
+        $plan2->canbeedited = true;
+        $plan2->usercanreopen = false;
+        $plan2->usercancomplete = true;
+
         $plan3->usercanupdate = true;
+        $plan3->usercanreopen = true;
+        $plan3->usercancomplete = false;
+
         $this->assertEquals((array)$plan1, external::read_plan($plan1->id));
         $this->assertEquals((array)$plan2, external::read_plan($plan2->id));
         $this->assertEquals((array)$plan3, external::read_plan($plan3->id));
@@ -1440,7 +1500,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->creator);
 
         $syscontext = context_system::instance();
-        $onehour = time() + 60*60;
+        $onehour = time() + 60 * 60;
 
         // Create a template.
         $template = $this->create_template(1, true);
@@ -1496,7 +1556,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->creator);
 
         $syscontext = context_system::instance();
-        $onehour = time() + 60*60;
+        $onehour = time() + 60 * 60;
 
         // Create a template.
         $template = $this->create_template(1, true);

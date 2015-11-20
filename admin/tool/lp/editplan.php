@@ -68,6 +68,9 @@ if ($id) {
     if (!$plan->can_manage()) {
         throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
     }
+    if (!$plan->can_be_edited()) {
+        throw new coding_exception('Completed plan can not be edited');
+    }
     $customdata['plan'] = $plan;
 } else if (!$cancreate) {
     throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
