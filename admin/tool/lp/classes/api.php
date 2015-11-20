@@ -882,6 +882,7 @@ class api {
      * @return boolean
      */
     public static function update_template($record) {
+        global $DB;
         $template = new template($record->id);
 
         // First we do a permissions check.
@@ -890,8 +891,35 @@ class api {
             throw new coding_exception('Changing the context of an existing tempalte is forbidden.');
         }
 
+        $updateplans = false;
+        $before = $template->to_record();
+
         $template->from_record($record);
-        return $template->update();
+        $after = $template->to_record();
+
+        // Should we update the related plans?
+        if ($before->duedate != $after->duedate ||
+                $before->shortname != $after->shortname ||
+                $before->description != $after->description ||
+                $before->descriptionformat != $after->descriptionformat) {
+            $updateplans = true;
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+        $success = $template->update();
+
+        if (!$success) {
+            $transaction->rollback(new moodle_exception('Error while updating the template.'));
+            return $success;
+        }
+
+        if ($updateplans) {
+            plan::update_multiple_from_template($template);
+        }
+
+        $transaction->allow_commit();
+
+        return $success;
     }
 
     /**

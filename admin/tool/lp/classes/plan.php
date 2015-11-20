@@ -288,6 +288,42 @@ class plan extends persistent {
     }
 
     /**
+     * Update from template.
+     *
+     * Bulk update a lot of plans from a template
+     *
+     * @param  template $template
+     * @return bool
+     */
+    public static function update_multiple_from_template(template $template) {
+        global $DB;
+        if (!$template->is_valid()) {
+            // As we will bypass this model's validation we rely on the template being validated.
+            throw new coding_exception('The template must be validated before updating plans.');
+        }
+
+        $params = array(
+            'templateid' => $template->get_id(),
+            'status' => self::STATUS_COMPLETE,
+
+            'name' => $template->get_shortname(),
+            'description' => $template->get_description(),
+            'descriptionformat' => $template->get_descriptionformat(),
+            'duedate' => $template->get_duedate(),
+        );
+
+        $sql = "UPDATE {" . self::TABLE . "}
+                   SET name = :name,
+                       description = :description,
+                       descriptionformat = :descriptionformat,
+                       duedate = :duedate
+                 WHERE templateid = :templateid
+                   AND status != :status";
+
+        return $DB->execute($sql, $params);
+    }
+
+    /**
      * Check if a template is associated to the plan.
      *
      * @return bool

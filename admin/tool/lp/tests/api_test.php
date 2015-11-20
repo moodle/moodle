@@ -554,6 +554,97 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals($before->get_sortorder(), $after->get_sortorder());
     }
 
+    public function test_update_template_updates_plans() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $dg = $this->getDataGenerator();
+        $u1 = $dg->create_user();
+        $u2 = $dg->create_user();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+        $tpl1 = $lpg->create_template();
+        $tpl2 = $lpg->create_template();
+
+
+        // Create plans with data not matching templates.
+        $time = time();
+        $plan1 = $lpg->create_plan(array('templateid' => $tpl1->get_id(), 'userid' => $u1->id,
+            'name' => 'Not good name', 'duedate' => $time + 3600, 'description' => 'Ahah', 'descriptionformat' => FORMAT_MARKDOWN));
+        $plan2 = $lpg->create_plan(array('templateid' => $tpl1->get_id(), 'userid' => $u2->id,
+            'name' => 'Not right name', 'duedate' => $time + 3601, 'description' => 'Ahah', 'descriptionformat' => FORMAT_PLAIN));
+        $plan3 = $lpg->create_plan(array('templateid' => $tpl2->get_id(), 'userid' => $u1->id,
+            'name' => 'Not sweet name', 'duedate' => $time + 3602, 'description' => 'Ahah', 'descriptionformat' => FORMAT_PLAIN));
+
+        // Prepare our expectations.
+        $plan1->read();
+        $plan2->read();
+        $plan3->read();
+
+        $this->assertEquals($tpl1->get_id(), $plan1->get_templateid());
+        $this->assertEquals($tpl1->get_id(), $plan2->get_templateid());
+        $this->assertEquals($tpl2->get_id(), $plan3->get_templateid());
+        $this->assertNotEquals($tpl1->get_shortname(), $plan1->get_name());
+        $this->assertNotEquals($tpl1->get_shortname(), $plan2->get_name());
+        $this->assertNotEquals($tpl2->get_shortname(), $plan3->get_name());
+        $this->assertNotEquals($tpl1->get_description(), $plan1->get_description());
+        $this->assertNotEquals($tpl1->get_description(), $plan2->get_description());
+        $this->assertNotEquals($tpl2->get_description(), $plan3->get_description());
+        $this->assertNotEquals($tpl1->get_descriptionformat(), $plan1->get_descriptionformat());
+        $this->assertNotEquals($tpl1->get_descriptionformat(), $plan2->get_descriptionformat());
+        $this->assertNotEquals($tpl2->get_descriptionformat(), $plan3->get_descriptionformat());
+        $this->assertNotEquals($tpl1->get_duedate(), $plan1->get_duedate());
+        $this->assertNotEquals($tpl1->get_duedate(), $plan2->get_duedate());
+        $this->assertNotEquals($tpl2->get_duedate(), $plan3->get_duedate());
+
+        // Update the template without changing critical fields does not update the plans.
+        $data = $tpl1->to_record();
+        $data->visible = 0;
+        api::update_template($data);
+        $this->assertNotEquals($tpl1->get_shortname(), $plan1->get_name());
+        $this->assertNotEquals($tpl1->get_shortname(), $plan2->get_name());
+        $this->assertNotEquals($tpl2->get_shortname(), $plan3->get_name());
+        $this->assertNotEquals($tpl1->get_description(), $plan1->get_description());
+        $this->assertNotEquals($tpl1->get_description(), $plan2->get_description());
+        $this->assertNotEquals($tpl2->get_description(), $plan3->get_description());
+        $this->assertNotEquals($tpl1->get_descriptionformat(), $plan1->get_descriptionformat());
+        $this->assertNotEquals($tpl1->get_descriptionformat(), $plan2->get_descriptionformat());
+        $this->assertNotEquals($tpl2->get_descriptionformat(), $plan3->get_descriptionformat());
+        $this->assertNotEquals($tpl1->get_duedate(), $plan1->get_duedate());
+        $this->assertNotEquals($tpl1->get_duedate(), $plan2->get_duedate());
+        $this->assertNotEquals($tpl2->get_duedate(), $plan3->get_duedate());
+
+        // Now really update the template.
+        $data = $tpl1->to_record();
+        $data->shortname = 'Awesome!';
+        $data->description = 'This is too awesome!';
+        $data->descriptionformat = FORMAT_HTML;
+        $data->duedate = $time + 7200;
+        api::update_template($data);
+        $tpl1->read();
+
+        // Now confirm that the right plans were updated.
+        $plan1->read();
+        $plan2->read();
+        $plan3->read();
+
+        $this->assertEquals($tpl1->get_id(), $plan1->get_templateid());
+        $this->assertEquals($tpl1->get_id(), $plan2->get_templateid());
+        $this->assertEquals($tpl2->get_id(), $plan3->get_templateid());
+
+        $this->assertEquals($tpl1->get_shortname(), $plan1->get_name());
+        $this->assertEquals($tpl1->get_shortname(), $plan2->get_name());
+        $this->assertNotEquals($tpl2->get_shortname(), $plan3->get_name());
+        $this->assertEquals($tpl1->get_description(), $plan1->get_description());
+        $this->assertEquals($tpl1->get_description(), $plan2->get_description());
+        $this->assertNotEquals($tpl2->get_description(), $plan3->get_description());
+        $this->assertEquals($tpl1->get_descriptionformat(), $plan1->get_descriptionformat());
+        $this->assertEquals($tpl1->get_descriptionformat(), $plan2->get_descriptionformat());
+        $this->assertNotEquals($tpl2->get_descriptionformat(), $plan3->get_descriptionformat());
+        $this->assertEquals($tpl1->get_duedate(), $plan1->get_duedate());
+        $this->assertEquals($tpl1->get_duedate(), $plan2->get_duedate());
+        $this->assertNotEquals($tpl2->get_duedate(), $plan3->get_duedate());
+    }
+
     /**
      * Test that the method to complete a plan.
      */
