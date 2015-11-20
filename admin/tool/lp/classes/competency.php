@@ -256,6 +256,33 @@ class competency extends persistent {
     }
 
     /**
+     * Return the scale.
+     *
+     * @return \grade_scale
+     */
+    public function get_scale() {
+        $scaleid = $this->get_scaleid();
+        if ($scaleid === null) {
+            return $this->get_framework()->get_scale();
+        }
+        $scale = \grade_scale::fetch(array('id' => $scaleid));
+        $scale->load_items();
+        return $scale;
+    }
+
+    /**
+     * Return the scale ID.
+     *
+     * Here we pretend that the scale ID can be read from the competency, however it
+     * only serves as a placeholder in case we want to support competency scales later on.
+     *
+     * @return int|null
+     */
+    public function get_scaleid() {
+        return null;
+    }
+
+    /**
      * Check if the competency is the parent of passed competencies.
      *
      * @param  array $ids IDs of supposedly direct children.

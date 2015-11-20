@@ -83,10 +83,17 @@ class plan_page implements renderable, templatable {
             $comp = $pc->competency;
             $usercomp = $pc->$ucproperty;
 
+            // Get the framework.
             if (!isset($frameworks[$comp->get_competencyframeworkid()])) {
                 $frameworks[$comp->get_competencyframeworkid()] = $comp->get_framework();
             }
             $framework = $frameworks[$comp->get_competencyframeworkid()];
+
+            // Get the scale.
+            $scaleid = $comp->get_scaleid();
+            if ($scaleid === null) {
+                $scaleid = $framework->get_scaleid();
+            }
             if (!isset($scales[$framework->get_scaleid()])) {
                 $scales[$framework->get_scaleid()] = $framework->get_scale();
             }
