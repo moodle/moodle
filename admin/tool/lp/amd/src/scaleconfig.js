@@ -38,6 +38,11 @@ define(['jquery', 'core/notification', 'core/templates', 'core/ajax', 'tool_lp/d
      */
     var showConfig = function() {
         scaleid = $("#id_scaleid").val();
+        if (scaleid <= 0) {
+            // This should not happen.
+            return;
+        }
+
         var scalename = $("#id_scaleid option:selected").text();
         getScaleValues(scaleid).done(function() {
 
@@ -156,6 +161,23 @@ define(['jquery', 'core/notification', 'core/templates', 'core/ajax', 'tool_lp/d
         return deferred.promise();
     };
 
+    /**
+     * Triggered when a scale is selected.
+     *
+     * @name   scaleChangeHandler
+     * @param  {Event} e
+     * @return {Void}
+     * @function
+     */
+    var scaleChangeHandler = function(e) {
+        if ($(e.target).val() <= 0) {
+            $('#id_scaleconfigbutton').prop('disabled', true);
+        } else {
+            $('#id_scaleconfigbutton').prop('disabled', false);
+        }
+
+    };
+
     return {
         /**
          * Main initialisation.
@@ -165,6 +187,7 @@ define(['jquery', 'core/notification', 'core/templates', 'core/ajax', 'tool_lp/d
         init: function() {
             // Get the current scale ID.
             originalscaleid = $("#id_scaleid").val();
+            $("#id_scaleid").on('change', scaleChangeHandler).change();
             $('#id_scaleconfigbutton').click(showConfig);
         }
     };

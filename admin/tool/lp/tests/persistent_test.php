@@ -125,6 +125,11 @@ class tool_lp_persistent_testcase extends advanced_testcase {
                 'type' => PARAM_INT,
                 'null' => NULL_ALLOWED
             ),
+            'scaleconfiguration' => array(
+                'type' => PARAM_RAW,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            )
         );
         $this->assertEquals($expected, tool_lp_testable_persistent::properties_definition());
     }
@@ -149,6 +154,7 @@ class tool_lp_persistent_testcase extends advanced_testcase {
             'ruleconfig' => null,
             'ruleoutcome' => 0,
             'scaleid' => null,
+            'scaleconfiguration' => null,
         );
         $this->assertEquals($expected, $p->to_record());
     }
@@ -173,6 +179,7 @@ class tool_lp_persistent_testcase extends advanced_testcase {
             'ruleconfig' => null,
             'ruleoutcome' => 0,
             'scaleid' => null,
+            'scaleconfiguration' => null,
         );
         $p->from_record($data);
         $this->assertEquals($data, $p->to_record());
@@ -464,6 +471,11 @@ class tool_lp_testable_persistent extends \tool_lp\persistent {
             ),
             'scaleid' => array(
                 'type' => PARAM_INT,
+                'default' => null,
+                'null' => NULL_ALLOWED
+            ),
+            'scaleconfiguration' => array(
+                'type' => PARAM_RAW,
                 'default' => null,
                 'null' => NULL_ALLOWED
             )

@@ -177,4 +177,33 @@ class user_competency_plan extends persistent {
         return static::get_records_select("userid = :userid AND planid = :planid AND $sql", $params);
     }
 
+    /**
+     * Checks if a competency has user competency plan records.
+     *
+     * @param  int $competencyid The competency ID
+     * @return boolean
+     */
+    public static function has_records_for_competency($competencyid) {
+        return self::record_exists_select('competencyid = ?', array($competencyid));
+    }
+
+    /**
+     * Checks if any of the competencies of a framework has a user competency plan record.
+     *
+     * @param  int $frameworkid The competency framework ID.
+     * @return boolean
+     */
+    public static function has_records_for_framework($frameworkid) {
+        global $DB;
+
+        $sql = "SELECT 'x'
+                  FROM {" . self::TABLE . "} ucp
+                  JOIN {" . competency::TABLE . "} c
+                    ON ucp.competencyid = c.id
+                 WHERE c.competencyframeworkid = ?";
+        $params = array($frameworkid);
+
+        return $DB->record_exists_sql($sql, $params);
+    }
+
 }

@@ -191,7 +191,8 @@ class competency_framework extends persistent {
      * @return boolean
      */
     public function has_user_competencies() {
-        return user_competency::has_records_for_framework($this->get_id());
+        return user_competency::has_records_for_framework($this->get_id()) ||
+            user_competency_plan::has_records_for_framework($this->get_id());
     }
 
     /**
@@ -292,8 +293,6 @@ class competency_framework extends persistent {
      * @return bool|lang_string
      */
     protected function validate_scaleconfiguration($value) {
-        global $DB;
-
         $scaledefaultselected = false;
         $proficientselected = false;
         $scaleconfigurations = json_decode($value);

@@ -108,6 +108,11 @@ class competency extends persistent {
                 'type' => PARAM_INT,
                 'null' => NULL_ALLOWED
             ),
+            'scaleconfiguration' => array(
+                'default' => null,
+                'type' => PARAM_RAW,
+                'null' => NULL_ALLOWED
+            ),
             'competencyframeworkid' => array(
                 'default' => 0,
                 'type' => PARAM_INT
@@ -284,7 +289,8 @@ class competency extends persistent {
      * @return boolean
      */
     public function has_user_competencies() {
-        return user_competency::has_records_for_competency($this->get_id());
+        return user_competency::has_records_for_competency($this->get_id()) ||
+            user_competency_plan::has_records_for_competency($this->get_id());
     }
 
     /**
@@ -550,14 +556,10 @@ class competency extends persistent {
     protected function validate_scaleid($value) {
         global $DB;
 
-        // To use the framework scale, use
+        // We'll
         if ($value === null) {
             return true;
         }
-
-        // Prevent a scale ID from being set. We may want to remove this check later
-        // when we decide to fully support competency scales.
-        throw new coding_exception('Custom competency scales are not supported yet.');
 
         // Always validate that the scale exists.
         if (!$DB->record_exists_select('scale', 'id = :id', array('id' => $value))) {
@@ -574,6 +576,51 @@ class competency extends persistent {
                 }
             }
 
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate the scale configuration.
+     *
+     * This logic is adapted from {@link \tool_lp\competency_framework::validate_scaleconfiguration()}.
+     *
+     * @param  string $value The scale configuration.
+     * @return bool|lang_string
+     */
+    protected function validate_scaleconfiguration($value) {
+        $scaleid = $this->get('scaleid');
+        if ($scaleid === null && $value === null) {
+            return true;
+        }
+
+        $scaledefaultselected = false;
+        $proficientselected = false;
+        $scaleconfigurations = json_decode($value);
+
+        if (is_array($scaleconfigurations)) {
+
+            // The first element of the array contains the scale ID.
+            $scaleinfo = array_shift($scaleconfigurations);
+            if (empty($scaleinfo) || !isset($scaleinfo->scaleid) || $scaleinfo->scaleid != $scaleid) {
+                // This should never happen.
+                return new lang_string('errorscaleconfiguration', 'tool_lp');
+            }
+
+            // Walk through the array to find proficient and default values.
+            foreach ($scaleconfigurations as $scaleconfiguration) {
+                if (isset($scaleconfiguration->scaledefault) && $scaleconfiguration->scaledefault) {
+                    $scaledefaultselected = true;
+                }
+                if (isset($scaleconfiguration->proficient) && $scaleconfiguration->proficient) {
+                    $proficientselected = true;
+                }
+            }
+        }
+
+        if (!$scaledefaultselected || !$proficientselected) {
+            return new lang_string('errorscaleconfiguration', 'tool_lp');
         }
 
         return true;

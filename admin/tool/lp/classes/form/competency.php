@@ -44,10 +44,13 @@ class competency extends moodleform {
      * Define the form - called by parent constructor
      */
     public function definition() {
+        global $PAGE;
+
         $mform = $this->_form;
         $id = $this->_customdata['id'];
         $framework = $this->_customdata['competencyframework'];
         $parent = $this->_customdata['parent'];
+        $competency = $this->_customdata['competency'];
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -89,6 +92,28 @@ class competency extends moodleform {
                            get_string('idnumber', 'tool_lp'));
         $mform->setType('idnumber', PARAM_TEXT);
         $mform->addRule('idnumber', null, 'required', null, 'client');
+
+        $frameworkscale = $framework->get_scale();
+        $scales = array(null => get_string('inheritfromframework', 'tool_lp')) + get_scales_menu();
+
+        $scaleid = $mform->addElement('select', 'scaleid', get_string('scale', 'tool_lp'), $scales);
+        $mform->setType('scaleid', PARAM_INT);
+        $mform->addHelpButton('scaleid', 'scale', 'tool_lp');
+
+        $mform->addElement('hidden', 'scaleconfiguration', '', array('id' => 'tool_lp_scaleconfiguration'));
+        $mform->setType('scaleconfiguration', PARAM_RAW);
+
+        $scaleconfig = $mform->addElement('button', 'scaleconfigbutton', get_string('configurescale', 'tool_lp'));
+        $PAGE->requires->js_call_amd('tool_lp/scaleconfig', 'init');
+
+        if ($competency && $competency->has_user_competencies()) {
+            // The scale is used so we "freeze" the element. Though, the javascript code for the scale
+            // configuration requires this field so we only disable it. It is fine as setting the value
+            // as a constant will ensure that nobody can change it. And it's validated in the persistent anyway.
+            $scaleid->updateAttributes(array('disabled' => 'disabled'));
+            $mform->setConstant('scaleid', $competency->get_scaleid());
+        }
+
         $mform->addElement('selectyesno', 'visible',
                            get_string('visible', 'tool_lp'));
         $mform->setDefault('visible', true);
@@ -96,14 +121,11 @@ class competency extends moodleform {
 
         $this->add_action_buttons(true, get_string('savechanges', 'tool_lp'));
 
-        if (!empty($id)) {
-            if (!$this->is_submitted()) {
-                $competency = $this->_customdata['competency'];
-                $record = $competency->to_record();
-                // Massage for editor API.
-                $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
-                $this->set_data($record);
-            }
+        if (!empty($competency) && !$this->is_submitted()) {
+            $record = $competency->to_record();
+            // Massage for editor API.
+            $record->description = array('text' => $record->description, 'format' => $record->descriptionformat);
+            $this->set_data($record);
         }
 
     }
@@ -117,6 +139,12 @@ class competency extends moodleform {
         $data = parent::get_data();
         if (is_object($data)) {
             unset($data->submitbutton);
+
+            // Ensure that we have the format expected by the persistent.
+            if (empty($data->scaleid)) {
+                $data->scaleid = null;
+                $data->scaleconfiguration = null;
+            }
         }
         return $data;
     }
@@ -129,20 +157,31 @@ class competency extends moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+        $competency = $this->_customdata['competency'];
+        if (!$competency) {
+            $competency = new \tool_lp\competency();
+        }
 
-        // Add field validation check for duplicate idnumber.
-        $competency = new \tool_lp\competency();
-        $framework = $this->_customdata['competencyframework'];
-        $sql = 'idnumber = :idnumber AND competencyframeworkid = :competencyframeworkid AND id <> :id';
-        $params = array(
-            'id' => $data['id'],
-            'idnumber' => $data['idnumber'],
-            'competencyframeworkid' => $framework->get_id()
-        );
+        // Fetch data like this to remove CSRF tokens, etc...
+        $data = $this->get_submitted_data();
+        unset($data->submitbutton);
 
-        $exists = $competency->get_records_select($sql, $params, '', 'id', 0, 1);
-        if ($exists) {
-            $errors['idnumber'] = get_string('idnumbertaken', 'error');
+        // Ensure that we send the expected format to the persistent.
+        $data->descriptionformat = $data->description['format'];
+        $data->description = $data->description['text'];
+        if (empty($data->scaleid)) {
+            $data->scaleid = null;
+            $data->scaleconfiguration = null;
+        }
+
+        // Validate from the model.
+        $competency->from_record($data);
+        $errors = $competency->get_errors();
+
+        // Move the error from scaleconfiguration to the form element scale ID.
+        if (isset($errors['scaleconfiguration']) && !isset($errors['scaleid'])) {
+            $errors['scaleid'] = $errors['scaleconfiguration'];
+            unset($errors['scaleconfiguration']);
         }
 
         return $errors;
