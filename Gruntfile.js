@@ -50,6 +50,17 @@ module.exports = function(grunt) {
                     }
                 )
             }
+        },
+        less: {
+            bootstrapbase: {
+                files: {
+                    "theme/bootstrapbase/style/moodle.css": "theme/bootstrapbase/less/moodle.less",
+                    "theme/bootstrapbase/style/editor.css": "theme/bootstrapbase/less/editor.less",
+                },
+                options: {
+                    compress: true
+                }
+           }
         }
     });
 
@@ -215,6 +226,7 @@ module.exports = function(grunt) {
             grunt.task.run('shifter');
             grunt.task.run('jshint');
             grunt.task.run('uglify');
+            grunt.task.run('less');
         }
     };
 
@@ -222,6 +234,7 @@ module.exports = function(grunt) {
     // Register NPM tasks.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-less');
 
     // Register the shifter task.
     grunt.registerTask('shifter', 'Run Shifter against the current directory', tasks.shifter);
