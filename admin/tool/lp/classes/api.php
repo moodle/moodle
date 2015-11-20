@@ -818,7 +818,9 @@ class api {
         $template = new template(0, $record);
 
         // First we do a permissions check.
-        require_capability('tool/lp:templatemanage', $template->get_context());
+        if (!$template->can_manage()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
+        }
 
         // OK - all set.
         $id = $template->create();
@@ -837,7 +839,9 @@ class api {
         $template = new template($id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:templatemanage', $template->get_context());
+        if (!$template->can_manage()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
+        }
 
         // OK - all set.
         $competencies = template_competency::list_competencies($id, false);
@@ -867,7 +871,9 @@ class api {
         $template = new template($id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:templatemanage', $template->get_context());
+        if (!$template->can_manage()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
+        }
 
         // OK - all set.
         return $template->delete();
@@ -886,9 +892,13 @@ class api {
         $template = new template($record->id);
 
         // First we do a permissions check.
-        require_capability('tool/lp:templatemanage', $template->get_context());
-        if (isset($record->contextid) && $record->contextid != $template->get_contextid()) {
+        if (!$template->can_manage()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
+
+        // We can never change the context of a template.
+        } else if (isset($record->contextid) && $record->contextid != $template->get_contextid()) {
             throw new coding_exception('Changing the context of an existing tempalte is forbidden.');
+
         }
 
         $updateplans = false;
@@ -935,9 +945,8 @@ class api {
         $context = $template->get_context();
 
         // First we do a permissions check.
-        $caps = array('tool/lp:templateread', 'tool/lp:templatemanage');
-        if (!has_any_capability($caps, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
+        if (!$template->can_read()) {
+             throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
         }
 
         // OK - all set.
@@ -1076,12 +1085,11 @@ class api {
         $context = $template->get_context();
         $onlyvisible = 1;
 
-        $capabilities = array('tool/lp:templateread', 'tool/lp:templatemanage');
-        if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
+        if (!$template->can_read()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
         }
 
-        if (has_capability('tool/lp:templatemanage', $context)) {
+        if ($template->can_manage()) {
             $onlyvisible = 0;
         }
 
@@ -1101,12 +1109,11 @@ class api {
         $context = $template->get_context();
         $onlyvisible = 1;
 
-        $capabilities = array('tool/lp:templateread', 'tool/lp:templatemanage');
-        if (!has_any_capability($capabilities, $context)) {
-             throw new required_capability_exception($context, 'tool/lp:templateread', 'nopermissions', '');
+        if (!$template->can_read()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
         }
 
-        if (has_capability('tool/lp:templatemanage', $context)) {
+        if ($template->can_manage()) {
             $onlyvisible = 0;
         }
 
@@ -1124,7 +1131,9 @@ class api {
     public static function add_competency_to_template($templateid, $competencyid) {
         // First we do a permissions check.
         $template = new template($templateid);
-        require_capability('tool/lp:templatemanage', $template->get_context());
+        if (!$template->can_manage()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
+        }
 
         $record = new stdClass();
         $record->templateid = $templateid;
@@ -1155,7 +1164,9 @@ class api {
     public static function remove_competency_from_template($templateid, $competencyid) {
         // First we do a permissions check.
         $template = new template($templateid);
-        require_capability('tool/lp:templatemanage', $template->get_context());
+        if (!$template->can_manage()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templatemanage', 'nopermissions', '');
+        }
 
         $record = new stdClass();
         $record->templateid = $templateid;
@@ -1358,7 +1369,11 @@ class api {
         if (!is_object($template)) {
             $template = new template($template);
         }
-        require_capability('tool/lp:templatemanage', $template->get_context());
+
+        // The user must be able to view the template to use it as a base for a plan.
+        if (!$template->can_read()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+        }
 
         // Convert the template to a plan.
         $record = $template->to_record();
@@ -1410,7 +1425,7 @@ class api {
             $plan = new plan($planorid);
         }
 
-        // The user must be allowed to manage the plans of the user.
+        // The user must be allowed to manage the plans of the user, nothing about the template.
         if (!$plan->can_manage()) {
             throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
         }
@@ -1522,6 +1537,8 @@ class api {
 
     /**
      * Deletes a plan.
+     *
+     * Plans based on a template can be removed just like any other one.
      *
      * @param int $id
      * @return bool Success?

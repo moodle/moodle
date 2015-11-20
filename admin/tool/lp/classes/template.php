@@ -98,6 +98,25 @@ class template extends persistent {
     }
 
     /**
+     * Whether or not the current user can read the template.
+     *
+     * @return bool
+     */
+    public function can_manage() {
+        return has_capability('tool/lp:templatemanage', $this->get_context());
+    }
+
+
+    /**
+     * Whether or not the current user can read the template.
+     *
+     * @return bool
+     */
+    public function can_read() {
+        return has_any_capability(array('tool/lp:templateread', 'tool/lp:templatemanage'), $this->get_context());
+    }
+
+    /**
      * Get the context.
      *
      * @return context The context
