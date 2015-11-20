@@ -2946,7 +2946,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_plan_competencies_parameters() {
-        return new external_single_structure(array(
+        return new external_function_parameters(array(
             'id' => new external_value(PARAM_INT, 'The plan ID.')
         ));
     }
