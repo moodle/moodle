@@ -459,5 +459,20 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015111013, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015111017) {
+
+        // Define field scaleid to be added to tool_lp_competency.
+        $table = new xmldb_table('tool_lp_competency');
+        $field = new xmldb_field('scaleid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'ruleconfig');
+
+        // Conditionally launch add field scaleid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111017, 'tool', 'lp');
+    }
+
     return true;
 }

@@ -23,6 +23,7 @@
  */
 namespace tool_lp;
 
+use coding_exception;
 use context_system;
 use lang_string;
 use stdClass;
@@ -100,6 +101,11 @@ class competency extends persistent {
             'ruleconfig' => array(
                 'default' => null,
                 'type' => PARAM_RAW,
+                'null' => NULL_ALLOWED
+            ),
+            'scaleid' => array(
+                'default' => null,
+                'type' => PARAM_INT,
                 'null' => NULL_ALLOWED
             ),
             'competencyframeworkid' => array(
@@ -271,15 +277,14 @@ class competency extends persistent {
     }
 
     /**
-     * Return the scale ID.
+     * Returns true when the competency has user competencies.
      *
-     * Here we pretend that the scale ID can be read from the competency, however it
-     * only serves as a placeholder in case we want to support competency scales later on.
+     * This is useful to determine if the competency, or part of it, should be locked down.
      *
-     * @return int|null
+     * @return boolean
      */
-    public function get_scaleid() {
-        return null;
+    public function has_user_competencies() {
+        return user_competency::has_records_for_competency($this->get_id());
     }
 
     /**
@@ -528,6 +533,47 @@ class competency extends persistent {
         if ($valid !== true) {
             // Whoops!
             return new lang_string('invaliddata', 'error');
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate the scale ID.
+     *
+     * Note that the value for a scale can never be 0, null has to be used when
+     * the framework's scale has to be used.
+     *
+     * @param  int $value
+     * @return true|lang_string
+     */
+    protected function validate_scaleid($value) {
+        global $DB;
+
+        // To use the framework scale, use
+        if ($value === null) {
+            return true;
+        }
+
+        // Prevent a scale ID from being set. We may want to remove this check later
+        // when we decide to fully support competency scales.
+        throw new coding_exception('Custom competency scales are not supported yet.');
+
+        // Always validate that the scale exists.
+        if (!$DB->record_exists_select('scale', 'id = :id', array('id' => $value))) {
+            return new lang_string('invalidscaleid', 'error');
+        }
+
+        // During update.
+        if ($this->get_id()) {
+
+            // Validate that we can only change the scale when it is not used yet.
+            if ($this->beforeupdate->get_scaleid() != $value) {
+                if ($this->has_user_competencies()) {
+                    return new lang_string('errorscalealreadyused', 'tool_lp');
+                }
+            }
+
         }
 
         return true;

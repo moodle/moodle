@@ -239,6 +239,16 @@ class user_competency extends persistent {
     }
 
     /**
+     * Checks if a competency has user competency records.
+     *
+     * @param  int $competencyid The competency ID
+     * @return boolean
+     */
+    public static function has_records_for_competency($competencyid) {
+        return self::record_exists_select('competencyid = ?', array($competencyid));
+    }
+
+    /**
      * Checks if any of the competencies of a framework has a user competency record.
      *
      * @param  int $frameworkid The competency framework ID.
