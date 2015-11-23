@@ -2395,8 +2395,8 @@ function get_referer($stripquery = true) {
  * @deprecated since Moodle 3.0 use \core_useragent::is_web_crawler instead.
  */
 function is_web_crawler() {
-    debugging("is_web_crawler() has been deprecated, please use \\core_useragent\\is_web_crawler() instead.", DEBUG_DEVELOPER);
-    return core_useragent::is_crawler();
+    debugging('is_web_crawler() has been deprecated, please use core_useragent::is_web_crawler() instead.', DEBUG_DEVELOPER);
+    return core_useragent::is_web_crawler();
 }
 
 /**
