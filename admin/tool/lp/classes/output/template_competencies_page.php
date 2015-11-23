@@ -30,6 +30,7 @@ use stdClass;
 use moodle_url;
 use context;
 use context_system;
+use context_course;
 use tool_lp\api;
 use tool_lp\external\competency_exporter;
 
@@ -94,6 +95,14 @@ class template_competencies_page implements renderable, templatable {
 
             $exporter = new competency_exporter($competency, array('context' => $context));
             $record = $exporter->export($output);
+            $courses = api::list_courses_using_competency($competency->get_id());
+            foreach ($courses as $course) {
+                $coursecontext = context_course::instance($course->id);
+                $course->fullname = external_format_string($course->fullname, $coursecontext->id);
+                $course->shortname = external_format_string($course->shortname, $coursecontext->id);
+            }
+            $record->linkedcourses = $courses;
+            $record->hascourses = count($courses) > 0;
             array_push($data->competencies, $record);
         }
         $data->canmanagecompetencyframeworks = $this->canmanagecompetencyframeworks;

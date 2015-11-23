@@ -19,21 +19,34 @@
 }}
 <div data-region="templatecompetenciespage">
     <div data-region="templatecompetencies">
-        <table class="generaltable fullwidth managecompetencies">
-            <tbody class="drag-parentnode">
+        <div class="managecompetencies">
+            <div class="drag-parentnode">
                 {{#competencies}}
-                <tr class="drag-samenode" data-id="{{id}}">
-                    <td>
+                <div class="drag-samenode" data-id="{{id}}">
+                    <div class="well">
+                        {{#canmanagetemplatecompetencies}}
                         <span class="drag-handlecontainer pull-left"></span>
                         <div class="pull-right">
                             <a href="#" data-action="delete-competency-link" data-id="{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
                         </div>
+                        {{/canmanagetemplatecompetencies}}
                         {{> tool_lp/competency_summary }}
-                    </td>
-                </tr>
+                        <strong>{{#str}}linkedcourses, tool_lp{{/str}}</strong>
+                        {{#hascourses}}
+                        <ul class="inline">
+                        {{#linkedcourses}}
+                            <li><a href="{{viewurl}}?id={{id}}">{{fullname}} ({{shortname}})</a></li>
+                        {{/linkedcourses}}
+                        </ul>
+                        {{/hascourses}}
+                        {{^hascourses}}
+                        <span class="label label-info">{{#str}}nolinkedcourses, tool_lp{{/str}}</span>
+                        {{/hascourses}}
+                    </div>
+                </div>
                 {{/competencies}}
-            </tbody>
-        </table>
+            </div>
+        </div>
         {{^competencies}}
         <p class="alert-info">
             {{#str}}nocompetenciesintemplate, tool_lp{{/str}}
