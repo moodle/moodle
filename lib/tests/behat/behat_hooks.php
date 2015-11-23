@@ -256,7 +256,7 @@ class behat_hooks extends behat_base {
         // We need the Mink session to do it and we do it only before the first scenario.
         if (self::is_first_scenario()) {
             behat_selectors::register_moodle_selectors($session);
-            behat_context_helper::set_session($session);
+            behat_context_helper::set_main_context($event->getContext()->getMainContext());
         }
 
         // Reset mink session between the scenarios.
@@ -382,6 +382,18 @@ class behat_hooks extends behat_base {
                 $event->getResult() === StepEvent::FAILED) {
             $this->take_contentdump($event);
         }
+    }
+
+    /**
+     * Executed after scenario having switch window to restart session.
+     * This is needed to close all extra browser windows and starting
+     * one browser window.
+     *
+     * @param ScenarioEvent $event event fired after scenario.
+     * @AfterScenario @_switch_window
+     */
+    public function after_scenario_switchwindow(ScenarioEvent $event) {
+        $this->getSession()->restart();
     }
 
     /**
