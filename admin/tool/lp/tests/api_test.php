@@ -411,12 +411,85 @@ class tool_lp_api_testcase extends advanced_testcase {
             'status' => \tool_lp\plan::STATUS_ACTIVE
         );
         $plan = api::create_plan((object)$plan);
+
+        // Silently transition to complete status to avoid errors about transitioning to complete.
+        $plan->set_status(\tool_lp\plan::STATUS_COMPLETE);
+        $plan->update();
+
         $record = $plan->to_record();
         $record->name = 'plan create own modified';
-        $record->status = \tool_lp\plan::STATUS_COMPLETE;
         $plan = api::update_plan($record);
         $this->assertInstanceOf('\tool_lp\plan', $plan);
 
+    }
+
+    /**
+     * Test that the method to complete a plan.
+     */
+    public function test_complete_plan() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $user = $dg->create_user();
+
+        // Create a framework and assign competencies.
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Create two plans and assign competencies.
+        $plan = $lpg->create_plan(array('userid' => $user->id));
+        $otherplan = $lpg->create_plan(array('userid' => $user->id));
+
+        $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c1->get_id()));
+        $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c2->get_id()));
+        $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c3->get_id()));
+        $lpg->create_plan_competency(array('planid' => $otherplan->get_id(), 'competencyid' => $c1->get_id()));
+
+        $uclist = array(
+            $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c1->get_id(),
+                'proficiency' => true, 'grade' => 1 )),
+            $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c2->get_id(),
+                'proficiency' => false, 'grade' => 2 ))
+        );
+
+        $this->assertEquals(2, \tool_lp\user_competency::count_records());
+        $this->assertEquals(0, \tool_lp\user_competency_plan::count_records());
+
+        // Change status of the plan to complete.
+        api::complete_plan($plan);
+
+        // Check that user competencies are now in user_competency_plan objects and still in user_competency.
+        $this->assertEquals(2, \tool_lp\user_competency::count_records());
+        $this->assertEquals(3, \tool_lp\user_competency_plan::count_records());
+
+        $usercompetenciesplan = \tool_lp\user_competency_plan::get_records();
+
+        $this->assertEquals($uclist[0]->get_userid(), $usercompetenciesplan[0]->get_userid());
+        $this->assertEquals($uclist[0]->get_competencyid(), $usercompetenciesplan[0]->get_competencyid());
+        $this->assertEquals($uclist[0]->get_proficiency(), (bool) $usercompetenciesplan[0]->get_proficiency());
+        $this->assertEquals($uclist[0]->get_grade(), $usercompetenciesplan[0]->get_grade());
+        $this->assertEquals($plan->get_id(), $usercompetenciesplan[0]->get_planid());
+
+        $this->assertEquals($uclist[1]->get_userid(), $usercompetenciesplan[1]->get_userid());
+        $this->assertEquals($uclist[1]->get_competencyid(), $usercompetenciesplan[1]->get_competencyid());
+        $this->assertEquals($uclist[1]->get_proficiency(), (bool) $usercompetenciesplan[1]->get_proficiency());
+        $this->assertEquals($uclist[1]->get_grade(), $usercompetenciesplan[1]->get_grade());
+        $this->assertEquals($plan->get_id(), $usercompetenciesplan[1]->get_planid());
+
+        $this->assertEquals($user->id, $usercompetenciesplan[2]->get_userid());
+        $this->assertEquals($c3->get_id(), $usercompetenciesplan[2]->get_competencyid());
+        $this->assertNull($usercompetenciesplan[2]->get_proficiency());
+        $this->assertNull($usercompetenciesplan[2]->get_grade());
+        $this->assertEquals($plan->get_id(), $usercompetenciesplan[2]->get_planid());
+
+        // Completing a plan that is completed throws an exception.
+        $this->setExpectedException('coding_exception');
+        api::complete_plan($plan);
     }
 
     /**
@@ -478,7 +551,12 @@ class tool_lp_api_testcase extends advanced_testcase {
         $record = $plan->to_record();
         $record->status = \tool_lp\plan::STATUS_COMPLETE;
 
-        $plan = api::update_plan($record);
+        try {
+            $plan = api::update_plan($record);
+            $this->fail('We cannot complete a plan using api::update_plan().');
+        } catch (coding_exception $e) {
+        }
+        api::complete_plan($plan);
 
         // Check that user compretencies are now in user_competency_plan objects and still in user_competency.
         $this->assertEquals(2, \tool_lp\user_competency::count_records());
@@ -503,12 +581,6 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertNull($usercompetenciesplan[2]->get_proficiency());
         $this->assertNull($usercompetenciesplan[2]->get_grade());
         $this->assertEquals($plan->get_id(), $usercompetenciesplan[2]->get_planid());
-
-        $plan = api::update_plan($record);
-
-        // Check that nothing is done if re-updating plan with same status.
-        $this->assertEquals(2, \tool_lp\user_competency::count_records());
-        $this->assertEquals(3, \tool_lp\user_competency_plan::count_records());
 
         // Change status of the plan to active.
         $record = $plan->to_record();

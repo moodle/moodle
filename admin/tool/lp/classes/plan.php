@@ -253,6 +253,18 @@ class plan extends persistent {
     }
 
     /**
+     * Get the recordset of the plans that are due and incomplete.
+     *
+     * @return \moodle_recordset
+     */
+    public static function get_recordset_for_due_and_incomplete() {
+        global $DB;
+        $sql = "duedate > 0 AND duedate < :now AND status != :status";
+        $params = array('now' => time(), 'status' => self::STATUS_COMPLETE);
+        return $DB->get_recordset_select(self::TABLE, $sql, $params);
+    }
+
+    /**
      * Return a list of status depending on capabilities.
      *
      * @param  int $userid The user to whom the plan would belong.

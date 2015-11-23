@@ -47,6 +47,7 @@ $string['competencypicker'] = 'Competency picker';
 $string['competencyrelatedcompetencies'] = '{$a} related competencies';
 $string['competencyrule'] = 'Competency rule';
 $string['competencyupdated'] = 'Competency updated';
+$string['completeplanstask'] = 'Complete plans which are due';
 $string['configurescale'] = 'Configure scales';
 $string['coursecompetencies'] = 'Course competencies';
 $string['coursesusingthiscompetency'] = 'Courses using this competency';

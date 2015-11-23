@@ -1279,14 +1279,13 @@ class api {
             throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
         }
 
+        // Are we trying to set the plan as complete?
+        if ($plan->get_status() == plan::STATUS_COMPLETE && $beforestatus != plan::STATUS_COMPLETE) {
+            throw new coding_exception('To set a plan as complete api::complete_plan() must be used.');
+        }
+
         // Wrap the updates in a DB transaction.
         $transaction = $DB->start_delegated_transaction();
-
-        // Archive user competencies if the status of the plan is changed to complete.
-        $mustarchivecompetencies = ($plan->get_status() == plan::STATUS_COMPLETE && $beforestatus != plan::STATUS_COMPLETE);
-        if ($mustarchivecompetencies) {
-            self::archive_user_competencies_in_plan($plan);
-        }
 
         // Delete archived user competencies if the status of the plan is changed from complete to another status.
         $mustremovearchivedcompetencies = ($beforestatus == plan::STATUS_COMPLETE && $plan->get_status() != plan::STATUS_COMPLETE);
@@ -1346,6 +1345,51 @@ class api {
 
         $transaction->allow_commit();
 
+        return $success;
+    }
+
+    /**
+     * Complete a plan.
+     *
+     * @param int|plan $planorid The plan, or its ID.
+     * @return bool
+     */
+    public static function complete_plan($planorid) {
+        global $DB;
+
+        $plan = $planorid;
+        if (!is_object($planorid)) {
+            $plan = new plan($planorid);
+        }
+
+        // Validate that the plan can be managed.
+        if (!$plan->can_manage()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        // Check if the plan was already completed.
+        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+            throw new coding_exception('The plan is already complete.');
+        }
+
+        $plan->set_status(plan::STATUS_COMPLETE);
+
+        // The user should also be able to manage the plan when it's completed.
+        if (!$plan->can_manage()) {
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+        }
+
+        // Do the things.
+        $transaction = $DB->start_delegated_transaction();
+        self::archive_user_competencies_in_plan($plan);
+        $success = $plan->update();
+
+        if (!$success) {
+            $transaction->rollback(new moodle_exception('The plan could not be updated.'));
+            return $success;
+        }
+
+        $transaction->allow_commit();
         return $success;
     }
 
