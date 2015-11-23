@@ -3671,32 +3671,34 @@ EOD;
             return $str;
         }
 
-        // Print subtree
-        $str .= html_writer::start_tag('ul', array('class' => 'tabrow'. $tabobject->level));
-        $cnt = 0;
-        foreach ($tabobject->subtree as $tab) {
-            $liclass = '';
-            if (!$cnt) {
-                $liclass .= ' first';
-            }
-            if ($cnt == count($tabobject->subtree) - 1) {
-                $liclass .= ' last';
-            }
-            if ((empty($tab->subtree)) && (!empty($tab->selected))) {
-                $liclass .= ' onerow';
-            }
+        // Print subtree.
+        if ($tabobject->level == 0 || $tabobject->selected || $tabobject->activated) {
+            $str .= html_writer::start_tag('ul', array('class' => 'tabrow'. $tabobject->level));
+            $cnt = 0;
+            foreach ($tabobject->subtree as $tab) {
+                $liclass = '';
+                if (!$cnt) {
+                    $liclass .= ' first';
+                }
+                if ($cnt == count($tabobject->subtree) - 1) {
+                    $liclass .= ' last';
+                }
+                if ((empty($tab->subtree)) && (!empty($tab->selected))) {
+                    $liclass .= ' onerow';
+                }
 
-            if ($tab->selected) {
-                $liclass .= ' here selected';
-            } else if ($tab->activated) {
-                $liclass .= ' here active';
-            }
+                if ($tab->selected) {
+                    $liclass .= ' here selected';
+                } else if ($tab->activated) {
+                    $liclass .= ' here active';
+                }
 
-            // This will recursively call function render_tabobject() for each item in subtree
-            $str .= html_writer::tag('li', $this->render($tab), array('class' => trim($liclass)));
-            $cnt++;
+                // This will recursively call function render_tabobject() for each item in subtree.
+                $str .= html_writer::tag('li', $this->render($tab), array('class' => trim($liclass)));
+                $cnt++;
+            }
+            $str .= html_writer::end_tag('ul');
         }
-        $str .= html_writer::end_tag('ul');
 
         return $str;
     }
