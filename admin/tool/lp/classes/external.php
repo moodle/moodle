@@ -2996,7 +2996,7 @@ class external extends external_api {
                 $r->usercompetency = $exporter->export($output);
                 unset($r->usercompetencyplan);
             } else {
-                $exporter = new user_competency_plan_exporter($r->usercompetencyplan);
+                $exporter = new user_competency_plan_exporter($r->usercompetencyplan, array('scale' => $scale));
                 $r->usercompetencyplan = $exporter->export($output);
                 unset($r->usercompetency);
             }
