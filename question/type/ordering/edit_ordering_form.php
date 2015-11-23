@@ -177,7 +177,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $value = $editor->getValue();
         $value['format'] = $format;
         $value = $editor->setValue($value);
-        return $editor->getFormat();
+        return $format;
     }
 
     /**
@@ -270,20 +270,22 @@ class qtype_ordering_edit_form extends question_edit_form {
             if ($answerid = array_shift($answerids)) {
                 $answer = $question->options->answers[$answerid];
             } else {
-                $answer = (object)array(
-                    'answer' => '',
-                    'answerformat' => FORMAT_MOODLE,
-                );
-                $answerid = $answer->id;
+                $answer = (object)array('answer' => '',
+                                        'answerformat' => FORMAT_MOODLE);
+                $answerid = 0;
             }
 
-            $itemid = file_get_submitted_draft_itemid("answer[$i]");
-            $format = $answer->answerformat;
-            $text = file_prepare_draft_area($itemid, $this->context->id, 'question', 'answer',
-                                            $answerid, $this->editoroptions, $answer->answer);
-            $question->answer[$i] = array('text'   => $text,
-                                          'format' => $format,
-                                          'itemid' => $itemid);
+            if (empty($question->id)) {
+                $question->answer[$i] = $answer->answer;
+            } else {
+                $itemid = file_get_submitted_draft_itemid("answer[$i]");
+                $format = $answer->answerformat;
+                $text = file_prepare_draft_area($itemid, $this->context->id, 'question', 'answer',
+                                                $answerid, $this->editoroptions, $answer->answer);
+                $question->answer[$i] = array('text' => $text,
+                                              'format' => $format,
+                                              'itemid' => $itemid);
+            }
             $question->fraction[$i] = ($i + 1);
         }
 
