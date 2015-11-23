@@ -16,8 +16,6 @@ Feature: Restrict activity availability through date conditions
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And the following config values are set as admin:
-      | enableavailability | 1 |
     And I log in as "teacher1"
     And I am on site homepage
     And I follow "Course 1"
