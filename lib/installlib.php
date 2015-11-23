@@ -337,6 +337,7 @@ function install_print_header($config, $stagename, $heading, $stagetext, $stagec
 
     echo '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/install/css.php" />
           <title>'.get_string('installation','install').' - Moodle '.$CFG->target_release.'</title>
+          <meta name="robots" content="noindex">
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           <meta http-equiv="pragma" content="no-cache" />
           <meta http-equiv="expires" content="0" />';
