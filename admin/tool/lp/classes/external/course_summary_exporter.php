@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for exporting template data.
+ * Class for exporting a course summary from an stdClass.
  *
  * @package    tool_lp
  * @copyright  2015 Damyon Wiese
@@ -24,39 +24,48 @@
 namespace tool_lp\external;
 
 use renderer_base;
-use tool_lp\plan;
-use tool_lp\template_cohort;
+use moodle_url;
 
 /**
- * Class for exporting template data.
+ * Class for exporting a course summary from an stdClass.
  *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class template_exporter extends persistent_exporter {
+class course_summary_exporter extends exporter {
 
-    protected static function define_class() {
-        return 'tool_lp\\template';
+    protected static function define_related() {
+        // We cache the context so it does not need to be retrieved from the course.
+        return array('context' => '\\context');
     }
 
     protected function get_other_values(renderer_base $output) {
         return array(
-            'duedateformatted' => userdate($this->persistent->get_duedate()),
-            'cohortscount' => template_cohort::count_records(array('templateid' => $this->persistent->get_id())),
-            'planscount' => plan::count_records(array('templateid' => $this->persistent->get_id())),
+            'viewurl' => new moodle_url('course/view.php', array('id' => $this->data->id))
         );
     }
 
-    protected static function define_other_properties() {
+    public static function define_properties() {
         return array(
-            'duedateformatted' => array(
-                'type' => PARAM_RAW
+            'id' => array(
+                'type' => PARAM_INT,
             ),
-            'cohortscount' => array(
-                'type' => PARAM_INT
+            'fullname' => array(
+                'type' => PARAM_TEXT,
             ),
-            'planscount' => array(
-                'type' => PARAM_INT
+            'shortname' => array(
+                'type' => PARAM_TEXT,
+            ),
+            'idnumber' => array(
+                'type' => PARAM_TEXT,
+            )
+        );
+    }
+
+    public static function define_other_properties() {
+        return array(
+            'viewurl' => array(
+                'type' => PARAM_URL,
             )
         );
     }

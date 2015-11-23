@@ -39,6 +39,7 @@ use external_multiple_structure;
 use invalid_parameter_exception;
 use grade_scale;
 use tool_lp\external\competency_framework_exporter;
+use tool_lp\external\competency_with_linked_courses_exporter;
 use tool_lp\external\user_competency_exporter;
 use tool_lp\external\user_competency_plan_exporter;
 use tool_lp\external\competency_exporter;
@@ -2640,7 +2641,7 @@ class external extends external_api {
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagetemplates' => new external_value(PARAM_BOOL, 'User can manage learning plan templates'),
             'competencies' => new external_multiple_structure(
-                competency_exporter::get_read_structure()
+                competency_with_linked_courses_exporter::get_read_structure()
             ),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
         ));

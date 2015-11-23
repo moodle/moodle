@@ -44,7 +44,7 @@ class user_competency_exporter extends persistent_exporter {
         return array('scale' => 'grade_scale');
     }
 
-    protected function get_values(renderer_base $output) {
+    protected function get_other_values(renderer_base $output) {
         $result = new stdClass();
 
         if ($this->persistent->get_grade() === null) {
@@ -70,7 +70,7 @@ class user_competency_exporter extends persistent_exporter {
         return (array) $result;
     }
 
-    protected static function define_properties() {
+    protected static function define_other_properties() {
         return array(
             'gradename' => array(
                 'type' => PARAM_TEXT

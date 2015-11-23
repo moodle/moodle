@@ -22,15 +22,17 @@
         <div class="managecompetencies">
             <div class="drag-parentnode">
                 {{#competencies}}
-                <div class="drag-samenode" data-id="{{id}}">
+                <div class="drag-samenode" data-id="{{competency.id}}">
                     <div class="well">
                         {{#canmanagetemplatecompetencies}}
                         <span class="drag-handlecontainer pull-left"></span>
                         <div class="pull-right">
-                            <a href="#" data-action="delete-competency-link" data-id="{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+                            <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
                         </div>
                         {{/canmanagetemplatecompetencies}}
+                        {{#competency}}
                         {{> tool_lp/competency_summary }}
+                        {{/competency}}
                         <strong>{{#str}}linkedcourses, tool_lp{{/str}}</strong>
                         {{#hascourses}}
                         <ul class="inline">
