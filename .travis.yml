@@ -191,14 +191,6 @@ script:
         export phpcmd=`which php`;
       fi
 
-    - >
-      if [ "$CITEST" = "true" -a "$GIT_PREVIOUS_COMMIT" != "$UPSTREAM_FETCH_HEAD" ];
-      then
-        # This is a CI test, but it is based on an older weekly release.
-        # Warn in a way that will fail the test.
-        echo "Current commit is based on an older weekly release" && false;
-      fi
-
     # Actually run the CI Tests - do this outside of the main test to make output clearer.
     - >
       if [ "$CITEST" = 'true' ];
