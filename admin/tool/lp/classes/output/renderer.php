@@ -141,4 +141,14 @@ class renderer extends plugin_renderer_base {
         return $page->table->out(50, true);
     }
 
+    /**
+     * Render the template cohorts page.
+     *
+     * @param  renderable $page
+     * @return string
+     */
+    public function render_template_cohorts_page(renderable $page) {
+        return $page->table->out(50, true);
+    }
+
 }

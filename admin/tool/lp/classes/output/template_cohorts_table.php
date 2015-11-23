@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Template plans table.
+ * Template cohorts table.
  *
  * @package    tool_lp
  * @copyright  2015 Frédéric Massart - FMCorz.net
@@ -32,16 +32,16 @@ use moodle_url;
 use table_sql;
 
 /**
- * Template plans table class.
+ * Template cohorts table class.
  *
  * Note that presently this table may display some rows although the current user
- * does not have permission to view those plans.
+ * does not have permission to view those cohorts.
  *
  * @package    tool_lp
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class template_plans_table extends table_sql {
+class template_cohorts_table extends table_sql {
 
     /** @var context The context. */
     protected $context;
@@ -65,7 +65,6 @@ class template_plans_table extends table_sql {
         // Set protected properties.
         $this->template = $template;
         $this->context = $this->template->get_context();
-        $this->useridfield = 'userid';
 
         // Define columns in the table.
         $this->define_table_columns();
@@ -75,14 +74,14 @@ class template_plans_table extends table_sql {
     }
 
     /**
-     * Format column name.
+     * Column actions.
      *
-     * @param  stdClass $row
+     * @param  object $row
      * @return string
      */
-    protected function col_name($row) {
-        return html_writer::link(new moodle_url('/admin/tool/lp/plan.php', array('id' => $row->id)),
-            format_string($row->name, true, array('context' => $this->context)));
+    protected function col_actions($row) {
+        // TODO MDL-52266 Add delete action icon.
+        return '';
     }
 
     /**
@@ -93,21 +92,10 @@ class template_plans_table extends table_sql {
 
         // Define headers and columns.
         $cols = array(
-            'name' => get_string('planname', 'tool_lp'),
-            'fullname' => get_string('name')
+            'name' => get_string('name', 'cohort'),
+            'idnumber' => get_string('idnumber', 'cohort'),
+            'actions' => get_string('actions')
         );
-
-        // Add headers for extra user fields.
-        foreach ($extrafields as $field) {
-            if (get_string_manager()->string_exists($field, 'moodle')) {
-                $cols[$field] = get_string($field);
-            } else {
-                $cols[$field] = $field;
-            }
-        }
-
-        // Add remaining headers.
-        $cols = array_merge($cols, array());
 
         $this->define_columns(array_keys($cols));
         $this->define_headers(array_values($cols));
@@ -118,8 +106,9 @@ class template_plans_table extends table_sql {
      */
     protected function define_table_configs() {
         $this->collapsible(false);
-        $this->sortable(true, 'lastname', SORT_ASC);
+        $this->sortable(true, 'name', SORT_ASC);
         $this->pageable(true);
+        $this->no_sorting('actions');
     }
 
     /**
@@ -129,14 +118,7 @@ class template_plans_table extends table_sql {
      * @return array containing sql to use and an array of params.
      */
     protected function get_sql_and_params($count = false) {
-        $fields = 'p.id, p.userid, p.name, ';
-
-        // Add extra user fields that we need for the graded user.
-        $extrafields = get_extra_user_fields($this->context);
-        foreach ($extrafields as $field) {
-            $fields .= 'u.' . $field . ', ';
-        }
-        $fields .= get_all_user_name_fields(true, 'u');
+        $fields = 'c.id, c.name, c.idnumber';
 
         if ($count) {
             $select = "COUNT(1)";
@@ -145,9 +127,9 @@ class template_plans_table extends table_sql {
         }
 
         $sql =  "SELECT $select
-                   FROM {" . \tool_lp\plan::TABLE . "} p
-                   JOIN {user} u ON u.id = p.userid
-                  WHERE p.templateid = :templateid";
+                   FROM {" . \tool_lp\template_cohort::TABLE . "} tc
+                   JOIN {cohort} c ON c.id = tc.cohortid
+                  WHERE tc.templateid = :templateid";
         $params = array('templateid' => $this->template->get_id());
 
         // Add order by if needed.
