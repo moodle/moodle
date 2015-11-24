@@ -60,7 +60,7 @@ class plan extends moodleform {
         $mform->addElement('editor', 'description', get_string('plandescription', 'tool_lp'), array('rows' => 4));
         $mform->setType('description', PARAM_TEXT);
 
-        $mform->addElement('date_selector', 'duedate', get_string('duedate', 'tool_lp'));
+        $mform->addElement('date_time_selector', 'duedate', get_string('duedate', 'tool_lp'), array('optional' => true));
         $mform->addHelpButton('duedate', 'duedate', 'tool_lp');
 
         // Display status selector in form.
