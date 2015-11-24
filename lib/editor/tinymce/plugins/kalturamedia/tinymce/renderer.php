@@ -37,6 +37,7 @@ function tinymce_kalturamedia_preview_embed_form() {
     $hiddenelements = html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'entry_id', 'value' => ''));
     $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'source', 'value' => ''));
     $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'token', 'value' => KALTURA_URI_TOKEN));
+    $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'kafuri', 'value' => local_kaltura_get_config()->kaf_uri));
     $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'video_title', 'value' => ''));
     $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'uiconf_id', 'value' => ''));
     $hiddenelements .= html_writer::empty_tag('input', array('type' => 'hidden', 'id' => 'widescreen', 'value' => ''));

@@ -42,7 +42,7 @@ function xmldb_local_kaltura_upgrade($oldversion) {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('module', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
         $table->add_field('type', XMLDB_TYPE_CHAR, '3', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('endpoint', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('endpoint', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
         $table->add_field('data', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, '0');
 
@@ -59,13 +59,13 @@ function xmldb_local_kaltura_upgrade($oldversion) {
         }
 
         // Kaltura savepoint reached.
-        upgrade_plugin_savepoint(true, 2015091609, 'local', 'kaltura');
+        upgrade_plugin_savepoint(true, 2015101809, 'local', 'kaltura');
         $savePointDone = true;
     }
 
-    if (!$savePointDone && $oldversion < 2015091609) {
+    if (!$savePointDone && $oldversion < 2015101809) {
         // Kaltura savepoint reached.
-        upgrade_plugin_savepoint(true, 2015091609, 'local', 'kaltura');
+        upgrade_plugin_savepoint(true, 2015101809, 'local', 'kaltura');
     }
     return true;
 }
