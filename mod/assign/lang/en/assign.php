@@ -446,6 +446,7 @@ $string['updategrade'] = 'Update grade';
 $string['updatetable'] = 'Save and update table';
 $string['upgradenotimplemented'] = 'Upgrade not implemented in plugin ({$a->type} {$a->subtype})';
 $string['userextensiondate'] = 'Extension granted until: {$a}';
+$string['useridlistnotcached'] = 'Aborting save. Moodle could not determine which user to save the grade against.';
 $string['userswhoneedtosubmit'] = 'Users who need to submit: {$a}';
 $string['usergrade'] = 'User grade';
 $string['validmarkingworkflowstates'] = 'Valid marking workflow states';
