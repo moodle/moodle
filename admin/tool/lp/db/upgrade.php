@@ -400,6 +400,20 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015111005, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015111011) {
+
+        // Define index statusduedate (not unique) to be added to tool_lp_plan.
+        $table = new xmldb_table('tool_lp_plan');
+        $index = new xmldb_index('statusduedate', XMLDB_INDEX_NOTUNIQUE, array('status', 'duedate'));
+
+        // Conditionally launch add index statusduedate.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111011, 'tool', 'lp');
+    }
 
     return true;
 }

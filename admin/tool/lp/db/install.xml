@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="admin/tool/lp/db" VERSION="20151116" COMMENT="XMLDB file for Moodle admin/tool/lp"
+<XMLDB PATH="admin/tool/lp/db" VERSION="20151124" COMMENT="XMLDB file for Moodle admin/tool/lp"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -90,6 +90,7 @@
       <INDEXES>
         <INDEX NAME="useridstatus" UNIQUE="false" FIELDS="userid, status"/>
         <INDEX NAME="templateid" UNIQUE="false" FIELDS="templateid"/>
+        <INDEX NAME="statusduedate" UNIQUE="false" FIELDS="status, duedate"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="tool_lp_template" COMMENT="Learning plan templates.">
