@@ -464,7 +464,7 @@ class filterobject {
      * @param bool $fullmatch
      * @param mixed $replacementphrase
      */
-    function filterobject($phrase, $hreftagbegin = '<span class="highlight">',
+    public function __construct($phrase, $hreftagbegin = '<span class="highlight">',
                                    $hreftagend = '</span>',
                                    $casesensitive = false,
                                    $fullmatch = false,
