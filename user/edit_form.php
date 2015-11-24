@@ -144,7 +144,7 @@ class user_edit_form extends moodleform {
                 if (!$mform->elementExists($formfield)) {
                     continue;
                 }
-                $value = $mform->getElementValue($formfield);
+                $value = $mform->getElement($formfield)->exportValue($mform->getElementValue($formfield)) ?: '';
                 $configvariable = 'field_lock_' . $field;
                 if (isset($authplugin->config->{$configvariable})) {
                     if ($authplugin->config->{$configvariable} === 'locked') {
