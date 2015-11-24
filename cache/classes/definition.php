@@ -100,6 +100,11 @@ defined('MOODLE_INTERNAL') || die();
  *     + defaultsharing
  *          [int] The default sharing option to use. It's highly recommended that you don't set this unless there is a very
  *          specific reason not to use the system default.
+ *     + canuselocalstore
+ *          [bool] The cache is able to safely run with multiple copies on different webservers without any need for administrator
+ *                 intervention to ensure that data stays in sync across nodes.  This is usually managed by a revision
+ *                 system as seen in modinfo cache or language cache.  Requiring purge on upgrade is not sufficient as
+ *                 it requires administrator intervention on each node to make it work.
  *
  * For examples take a look at lib/db/caches.php
  *
@@ -309,6 +314,11 @@ class cache_definition {
     protected $sharingoptions;
 
     /**
+     * Whether this cache supports local storages.
+     * @var bool
+     */
+    protected $canuselocalstore = false;
+    /**
      * The selected sharing option.
      * @var int One of self::SHARING_*
      */
@@ -367,6 +377,7 @@ class cache_definition {
         $sharingoptions = self::SHARING_DEFAULT;
         $selectedsharingoption = self::SHARING_DEFAULT;
         $userinputsharingkey = '';
+        $canuselocalstore = false;
 
         if (array_key_exists('simplekeys', $definition)) {
             $simplekeys = (bool)$definition['simplekeys'];
@@ -453,6 +464,9 @@ class cache_definition {
                 $selectedsharingoption = self::SHARING_ALL;
             }
         }
+        if (array_key_exists('canuselocalstore', $definition)) {
+            $canuselocalstore = (bool)$definition['canuselocalstore'];
+        }
 
         if (array_key_exists('userinputsharingkey', $definition) && !empty($definition['userinputsharingkey'])) {
             $userinputsharingkey = (string)$definition['userinputsharingkey'];
@@ -529,6 +543,7 @@ class cache_definition {
         $cachedefinition->sharingoptions = $sharingoptions;
         $cachedefinition->selectedsharingoption = $selectedsharingoption;
         $cachedefinition->userinputsharingkey = $userinputsharingkey;
+        $cachedefinition->canuselocalstore = $canuselocalstore;
 
         return $cachedefinition;
     }
@@ -730,6 +745,15 @@ class cache_definition {
      */
     public function require_locking_write() {
         return $this->requirelockingwrite;
+    }
+
+    /**
+     * Returns true if this definition allows local storage to be used for caching.
+     * @since Moodle 3.1.0
+     * @return bool
+     */
+    public function can_use_localstore() {
+        return $this->canuselocalstore;
     }
 
     /**

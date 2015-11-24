@@ -31,22 +31,22 @@ $definitions = array(
     // Used to store processed lang files.
     // The keys used are the revision, lang and component of the string file.
     // The static acceleration size has been based upon student access of the site.
-    // NOTE: this data may be safely stored in local caches on cluster nodes.
     'string' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
         'staticacceleration' => true,
-        'staticaccelerationsize' => 30
+        'staticaccelerationsize' => 30,
+        'canuselocalstore' => true
     ),
 
     // Used to store cache of all available translations.
-    // NOTE: this data may be safely stored in local caches on cluster nodes.
     'langmenu' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
         'staticacceleration' => true,
+        'canuselocalstore' => true
     ),
 
     // Used to store database meta information.
@@ -91,9 +91,9 @@ $definitions = array(
     // This caches the html purifier cleaned text. This is done because the text is usually cleaned once for every user
     // and context combo. Text caching handles caching for the combination, this cache is responsible for caching the
     // cleaned text which is shareable.
-    // NOTE: this data may be safely stored in local caches on cluster nodes.
     'htmlpurifier' => array(
         'mode' => cache_store::MODE_APPLICATION,
+        'canuselocalstore' => true
     ),
 
     // Used to store data from the config + config_plugins table in the database.
@@ -206,6 +206,7 @@ $definitions = array(
     'coursemodinfo' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
+        'canuselocalstore' => true
     ),
     // This is the session user selections cache.
     // It's a special cache that is used to record user selections that should persist for the lifetime of the session.
