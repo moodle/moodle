@@ -45,6 +45,9 @@ Feature: Preview a drag-drop onto image question
   Scenario: Preview a question using the keyboard.
     When I click on "Preview" "link" in the "Drag markers" "table_row"
     And I switch to "questionpreview" window
+    # Increase window size and wait 2 seconds to ensure elements are placed properly by js.
+    And I change window size to "medium"
+    And I wait "2" seconds
     And I type "up" "89" times on marker "Railway station" in the drag and drop markers question
     And I type "right" "21" times on marker "Railway station" in the drag and drop markers question
     And I press "Submit and finish"
