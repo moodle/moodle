@@ -61,6 +61,15 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2015100201) {
+        // Detect the exact table/field we want to use, coz can be different
+        // depending of the version we are upgrading from. See MDL-52291 and MDL-52298.
+        $multichoicetable = 'qtype_multichoice_options';
+        $multichoicefield = 'questionid';
+        if (!$dbman->table_exists($multichoicetable)) {
+            // Multichoice not upgraded yet, let's use old names.
+            $multichoicetable = 'question_multichoice';
+            $multichoicefield = 'question';
+        }
         $rs = $DB->get_recordset_sql("SELECT q.id, q.category, qma.sequence
                  FROM {question} q
                  JOIN {question_multianswer} qma ON q.id = qma.question");
@@ -71,21 +80,21 @@ function xmldb_qtype_multianswer_upgrade($oldversion) {
                 $wrappedquestions = $DB->get_records_list('question', 'id', $sequence, 'id ASC');
                 foreach ($wrappedquestions as $wrapped) {
                     if ($wrapped->qtype == 'multichoice') {
-                        $options = $DB->get_record('qtype_multichoice_options', array('questionid' => $wrapped->id), '*');
+                        $options = $DB->get_record($multichoicetable, array($multichoicefield => $wrapped->id), '*');
                         if (isset($options->shuffleanswers)) {
                             preg_match('/'.ANSWER_REGEX.'/s', $wrapped->questiontext, $answerregs);
                             if (isset($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE]) &&
                                     $answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE] !== '') {
-                                $DB->set_field('qtype_multichoice_options', 'shuffleanswers', '0',
+                                $DB->set_field($multichoicetable, 'shuffleanswers', '0',
                                         array('id' => $options->id) );
                             }
                         } else {
                             $newrecord = new stdClass();
-                            $newrecord->questionid = $wrapped->id;
+                            $newrecord->$multichoicefield = $wrapped->id;
                             $newrecord->correctfeedback = '';
                             $newrecord->partiallycorrectfeedback = '';
                             $newrecord->incorrectfeedback = '';
-                            $DB->insert_record('qtype_multichoice_options', $newrecord);
+                            $DB->insert_record($multichoicetable, $newrecord);
                         }
                     }
                 }
