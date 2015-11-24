@@ -457,11 +457,21 @@ EOD;
     }
 
     /**
-     * Create a test block
-     * @param string $blockname
-     * @param array|stdClass $record
-     * @param array $options
-     * @return stdClass block instance record
+     * Create a test block.
+     *
+     * The $record passed in becomes the basis for the new row added to the
+     * block_instances table. You only need to supply the values of interest.
+     * Any missing values have sensible defaults filled in, and ->blockname will be set based on $blockname.
+     *
+     * The $options array provides additional data, not directly related to what
+     * will be inserted in the block_instance table, which may affect the block
+     * that is created. The meanings of any data passed here depends on the particular
+     * type of block being created.
+     *
+     * @param string $blockname the type of block to create. E.g. 'html'.
+     * @param array|stdClass $record forms the basis for the entry to be inserted in the block_instances table.
+     * @param array $options further, block-specific options to control how the block is created.
+     * @return stdClass new block_instance record.
      */
     public function create_block($blockname, $record=null, array $options=null) {
         $generator = $this->get_plugin_generator('block_'.$blockname);
@@ -469,11 +479,23 @@ EOD;
     }
 
     /**
-     * Create a test module
-     * @param string $modulename
-     * @param array|stdClass $record
-     * @param array $options
-     * @return stdClass activity record
+     * Create a test activity module.
+     *
+     * The $record should contain the same data that you would call from
+     * ->get_data() when the mod_[type]_mod_form is submitted, except that you
+     * only need to supply values of interest. The only required value is
+     * 'course'. Any missing values will have a sensible default supplied.
+     *
+     * The $options array provides additional data, not directly related to what
+     * would come back from the module edit settings form, which may affect the activity
+     * that is created. The meanings of any data passed here depends on the particular
+     * type of activity being created.
+     *
+     * @param string $modulename the type of activity to create. E.g. 'forum' or 'quiz'.
+     * @param array|stdClass $record data, as if from the module edit settings form.
+     * @param array $options additional data that may affect how the module is created.
+     * @return stdClass activity record new new record that was just inserted in the table
+     *      like 'forum' or 'quiz', with a ->cmid field added.
      */
     public function create_module($modulename, $record=null, array $options=null) {
         $generator = $this->get_plugin_generator('mod_'.$modulename);
