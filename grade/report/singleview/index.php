@@ -35,12 +35,12 @@ $userid   = optional_param('userid', null, PARAM_INT);
 
 $defaulttype = $userid ? 'user' : 'select';
 
-$itemid   = optional_param('itemid', $userid, PARAM_INT);
+$itemid = optional_param('itemid', null, PARAM_INT);
 $itemtype = optional_param('item', $defaulttype, PARAM_TEXT);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 100, PARAM_INT);
 
-if ($itemid < 1){
+if (empty($itemid)) {
     $itemid = $userid;
     $itemtype = $defaulttype;
 }
