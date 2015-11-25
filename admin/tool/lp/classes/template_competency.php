@@ -67,7 +67,7 @@ class template_competency extends persistent {
     public static function count_templates($competencyid, $onlyvisible) {
         global $DB;
 
-        $sql = 'SELECT COUNT(template.id)
+        $sql = 'SELECT COUNT(tpl.id)
                   FROM {' . self::TABLE . '} tplcomp
                   JOIN {' . template::TABLE . '} tpl
                     ON tplcomp.templateid = tpl.id

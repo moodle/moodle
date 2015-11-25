@@ -2204,6 +2204,8 @@ class external extends external_api {
             $record = $exporter->export($output);
             $records[] = $record;
         }
+
+        return $records;
     }
 
     /**

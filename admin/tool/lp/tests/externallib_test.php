@@ -1932,6 +1932,53 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($sys2->id, $result[2]['id']);
     }
 
+    /**
+     * List templates using competency.
+     */
+    public function test_list_templates_using_competency() {
+        $this->setUser($this->creator);
+
+        // Create a template.
+        $template1 = $this->create_template(1, true);
+        $template2 = $this->create_template(2, true);
+        $template3 = $this->create_template(3, true);
+        $template4 = $this->create_template(4, true);
+
+        // Create a competency.
+        $framework = $this->create_competency_framework(1, true);
+        $competency1 = $this->create_competency(1, $framework->id);
+        $competency2 = $this->create_competency(2, $framework->id);
+
+        // Add the competency.
+        external::add_competency_to_template($template1->id, $competency1->id);
+        external::add_competency_to_template($template2->id, $competency1->id);
+        external::add_competency_to_template($template3->id, $competency1->id);
+
+        external::add_competency_to_template($template4->id, $competency2->id);
+
+        $listcomp1 = external::list_templates_using_competency($competency1->id);
+        $listcomp2 = external::list_templates_using_competency($competency2->id);
+
+        // Test count_templates_using_competency.
+        $counttempcomp1 = external::count_templates_using_competency($competency1->id);
+        $counttempcomp2 = external::count_templates_using_competency($competency2->id);
+
+        $comptemp1 = $listcomp1[0];
+        $comptemp2 = $listcomp1[1];
+        $comptemp3 = $listcomp1[2];
+
+        $comptemp4 = $listcomp2[0];
+
+        $this->assertCount(3, $listcomp1);
+        $this->assertCount(1, $listcomp2);
+        $this->assertEquals(3, $counttempcomp1);
+        $this->assertEquals(1, $counttempcomp2);
+        $this->assertEquals($template1->id, $comptemp1->id);
+        $this->assertEquals($template2->id, $comptemp2->id);
+        $this->assertEquals($template3->id, $comptemp3->id);
+        $this->assertEquals($template4->id, $comptemp4->id);
+    }
+
     public function test_count_templates() {
         $syscontextid = context_system::instance()->id;
         $catcontextid = context_coursecat::instance($this->category->id)->id;
