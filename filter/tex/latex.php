@@ -123,7 +123,7 @@
 
             // run dvips (.dvi to .ps)
             $pathdvips = escapeshellarg(trim(get_config('filter_tex', 'pathdvips'), " '\""));
-            $command = "$pathdvips -E $dvi -o $ps";
+            $command = "$pathdvips -q -E $dvi -o $ps";
             if ($this->execute($command, $log )) {
                 return false;
             }
