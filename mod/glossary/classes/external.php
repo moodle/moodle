@@ -48,11 +48,14 @@ class mod_glossary_external extends external_api {
      * @param  string $format The display format of the glossary.
      * @return array Containing some of all of the following: letter, cat, date, author.
      */
-    public static function get_browse_modes_from_display_format($format) {
+    protected static function get_browse_modes_from_display_format($format) {
         global $DB;
 
+        $formats = array();
         $dp = $DB->get_record('glossary_formats', array('name' => $format), '*', IGNORE_MISSING);
-        $formats = glossary_get_visible_tabs($dp);
+        if ($dp) {
+            $formats = glossary_get_visible_tabs($dp);
+        }
 
         // Always add 'letter'.
         $modes = array('letter');
@@ -76,12 +79,12 @@ class mod_glossary_external extends external_api {
      * @param bool $includecat Whether the definition should include category info.
      * @return external_definition
      */
-    public static function get_entry_return_structure($includecat = false) {
+    protected static function get_entry_return_structure($includecat = false) {
         $params = array(
             'id' => new external_value(PARAM_INT, 'The entry ID'),
             'glossaryid' => new external_value(PARAM_INT, 'The glossary ID'),
             'userid' => new external_value(PARAM_INT, 'Author ID'),
-            'userfullname' => new external_value(PARAM_TEXT, 'Author full name'),
+            'userfullname' => new external_value(PARAM_NOTAGS, 'Author full name'),
             'userpictureurl' => new external_value(PARAM_URL, 'Author picture'),
             'concept' => new external_value(PARAM_RAW, 'The concept'),
             'definition' => new external_value(PARAM_RAW, 'The definition'),
@@ -125,7 +128,7 @@ class mod_glossary_external extends external_api {
      * @param  context  $context The context the entry belongs to.
      * @return void
      */
-    public static function fill_entry_details($entry, $context) {
+    protected static function fill_entry_details($entry, $context) {
         global $PAGE;
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
@@ -167,7 +170,7 @@ class mod_glossary_external extends external_api {
      * @param  int $id The glossary ID.
      * @return array Contains glossary, context, course and cm.
      */
-    public static function validate_glossary($id) {
+    protected static function validate_glossary($id) {
         global $DB;
         $glossary = $DB->get_record('glossary', array('id' => $id), '*', MUST_EXIST);
         list($course, $cm) = get_course_and_cm_from_instance($glossary, 'glossary');
@@ -329,13 +332,12 @@ class mod_glossary_external extends external_api {
      * Notify that the course module was viewed.
      *
      * @param int $id The glossary instance ID.
+     * @param string $mode The view mode.
      * @return array of warnings and status result
      * @since Moodle 3.1
      * @throws moodle_exception
      */
     public static function view_glossary($id, $mode) {
-        global $DB;
-
         $params = self::validate_parameters(self::view_glossary_parameters(), array(
             'id' => $id,
             'mode' => $mode
@@ -388,6 +390,7 @@ class mod_glossary_external extends external_api {
      * @return array of warnings and status result
      * @since Moodle 3.1
      * @throws moodle_exception
+     * @throws invalid_parameter_exception
      */
     public static function view_entry($id) {
         global $DB, $USER;
@@ -453,13 +456,12 @@ class mod_glossary_external extends external_api {
      * @param int $from Start returning records from here.
      * @param int $limit Number of records to return.
      * @param array $options Array of options.
-     * @return array of warnings and status result
+     * @return array Containing count, entries and warnings.
      * @since Moodle 3.1
      * @throws moodle_exception
+     * @throws invalid_parameter_exception
      */
-    public static function get_entries_by_letter($id, $letter, $from = 0, $limit = 20, $options = array()) {
-        global $DB, $USER;
-
+    public static function get_entries_by_letter($id, $letter, $from, $limit, $options) {
         $params = self::validate_parameters(self::get_entries_by_letter_parameters(), array(
             'id' => $id,
             'letter' => $letter,
@@ -544,14 +546,12 @@ class mod_glossary_external extends external_api {
      * @param int $from Start returning records from here.
      * @param int $limit Number of records to return.
      * @param array $options Array of options.
-     * @return array of warnings and status result
+     * @return array Containing count, entries and warnings.
      * @since Moodle 3.1
      * @throws moodle_exception
+     * @throws invalid_parameter_exception
      */
-    public static function get_entries_by_date($id, $order = 'UPDATE', $sort = 'DESC', $from = 0, $limit = 20,
-            $options = array()) {
-        global $DB, $USER;
-
+    public static function get_entries_by_date($id, $order, $sort, $from, $limit, $options) {
         $params = self::validate_parameters(self::get_entries_by_date_parameters(), array(
             'id' => $id,
             'order' => core_text::strtoupper($order),
@@ -622,7 +622,7 @@ class mod_glossary_external extends external_api {
      */
     public static function get_categories_parameters() {
         return new external_function_parameters(array(
-            'id' => new external_value(PARAM_INT, 'Glossary entry ID'),
+            'id' => new external_value(PARAM_INT, 'The glossary ID'),
             'from' => new external_value(PARAM_INT, 'Start returning records from here', VALUE_DEFAULT, 0),
             'limit' => new external_value(PARAM_INT, 'Number of records to return', VALUE_DEFAULT, 20)
         ));
@@ -634,13 +634,11 @@ class mod_glossary_external extends external_api {
      * @param int $id The glossary ID.
      * @param int $from Start returning records from here.
      * @param int $limit Number of records to return.
-     * @return array of warnings and status result
+     * @return array Containing count, categories and warnings.
      * @since Moodle 3.1
      * @throws moodle_exception
      */
-    public static function get_categories($id, $from = 0, $limit = 20) {
-        global $DB;
-
+    public static function get_categories($id, $from, $limit) {
         $params = self::validate_parameters(self::get_categories_parameters(), array(
             'id' => $id,
             'from' => $from,
@@ -698,7 +696,7 @@ class mod_glossary_external extends external_api {
      */
     public static function get_entries_by_category_parameters() {
         return new external_function_parameters(array(
-            'id' => new external_value(PARAM_INT, 'Glossary entry ID.'),
+            'id' => new external_value(PARAM_INT, 'The glossary ID.'),
             'categoryid' => new external_value(PARAM_INT, 'The category ID. Use \'' . GLOSSARY_SHOW_ALL_CATEGORIES . '\' for all' .
                 ' categories, or \'' . GLOSSARY_SHOW_NOT_CATEGORISED . '\' for uncategorised entries.'),
             'from' => new external_value(PARAM_INT, 'Start returning records from here', VALUE_DEFAULT, 0),
@@ -718,12 +716,13 @@ class mod_glossary_external extends external_api {
      * @param int $from Start returning records from here.
      * @param int $limit Number of records to return.
      * @param array $options Array of options.
-     * @return array of warnings and status result
+     * @return array Containing count, entries and warnings.
      * @since Moodle 3.1
      * @throws moodle_exception
+     * @throws invalid_parameter_exception
      */
-    public static function get_entries_by_category($id, $categoryid, $from = 0, $limit = 20, $options = array()) {
-        global $DB, $USER;
+    public static function get_entries_by_category($id, $categoryid, $from, $limit, $options) {
+        global $DB;
 
         $params = self::validate_parameters(self::get_entries_by_category_parameters(), array(
             'id' => $id,
@@ -751,7 +750,7 @@ class mod_glossary_external extends external_api {
         // Validate the category.
         if (in_array($categoryid, array(GLOSSARY_SHOW_ALL_CATEGORIES, GLOSSARY_SHOW_NOT_CATEGORISED))) {
             // All good.
-        } else if ($DB->count_records('glossary_categories', array('id' => $categoryid, 'glossaryid' => $id)) < 1) {
+        } else if (!$DB->record_exists('glossary_categories', array('id' => $categoryid, 'glossaryid' => $id))) {
             throw new invalid_parameter_exception('invalidcategory');
         }
 
@@ -818,12 +817,12 @@ class mod_glossary_external extends external_api {
      * @param int $from Start returning records from here.
      * @param int $limit Number of records to return.
      * @param array $options Array of options.
-     * @return array of warnings and status result
+     * @return array Containing count, authors and warnings.
      * @since Moodle 3.1
      * @throws moodle_exception
      */
-    public static function get_authors($id, $from = 0, $limit = 20, $options = array()) {
-        global $DB, $PAGE, $USER;
+    public static function get_authors($id, $from, $limit, $options) {
+        global $PAGE;
 
         $params = self::validate_parameters(self::get_authors_parameters(), array(
             'id' => $id,
@@ -916,14 +915,12 @@ class mod_glossary_external extends external_api {
      * @param int $from Start returning records from here.
      * @param int $limit Number of records to return.
      * @param array $options Array of options.
-     * @return array of warnings and status result
+     * @return array Containing count, entries and warnings.
      * @since Moodle 3.1
      * @throws moodle_exception
+     * @throws invalid_parameter_exception
      */
-    public static function get_entries_by_author($id, $letter, $field = 'LASTNAME', $sort = 'ASC', $from = 0, $limit = 20,
-            $options = array()) {
-        global $DB, $USER;
-
+    public static function get_entries_by_author($id, $letter, $field, $sort, $from, $limit, $options) {
         $params = self::validate_parameters(self::get_entries_by_author_parameters(), array(
             'id' => $id,
             'letter' => $letter,
@@ -1022,14 +1019,12 @@ class mod_glossary_external extends external_api {
      * @param int $from Start returning records from here.
      * @param int $limit Number of records to return.
      * @param array $options Array of options.
-     * @return array of warnings and status result
+     * @return array Containing count, entries and warnings.
      * @since Moodle 3.1
      * @throws moodle_exception
+     * @throws invalid_parameter_exception
      */
-    public static function get_entries_by_author_id($id, $authorid, $order = 'CONCEPT', $sort = 'ASC', $from = 0, $limit = 20,
-            $options = array()) {
-        global $DB, $USER;
-
+    public static function get_entries_by_author_id($id, $authorid, $order, $sort, $from, $limit, $options) {
         $params = self::validate_parameters(self::get_entries_by_author_id_parameters(), array(
             'id' => $id,
             'authorid' => $authorid,
@@ -1130,14 +1125,12 @@ class mod_glossary_external extends external_api {
      * @param int $from Start returning records from here.
      * @param int $limit Number of records to return.
      * @param array $options Array of options.
-     * @return array of warnings and status result
+     * @return array Containing count, entries and warnings.
      * @since Moodle 3.1
      * @throws moodle_exception
+     * @throws invalid_parameter_exception
      */
-    public static function get_entries_by_search($id, $query, $fullsearch = true, $order = 'CONCEPT', $sort = 'ASC', $from = 0,
-            $limit = 20, $options = array()) {
-        global $DB, $USER;
-
+    public static function get_entries_by_search($id, $query, $fullsearch, $order, $sort, $from, $limit, $options) {
         $params = self::validate_parameters(self::get_entries_by_search_parameters(), array(
             'id' => $id,
             'query' => $query,
@@ -1227,13 +1220,11 @@ class mod_glossary_external extends external_api {
      * @param int $from Start returning records from here.
      * @param int $limit Number of records to return.
      * @param array $options Array of options.
-     * @return array of warnings and status result
+     * @return array Containing count, entries and warnings.
      * @since Moodle 3.1
      * @throws moodle_exception
      */
-    public static function get_entries_by_term($id, $term, $from = 0, $limit = 20, $options = array()) {
-        global $DB, $USER;
-
+    public static function get_entries_by_term($id, $term, $from, $limit, $options) {
         $params = self::validate_parameters(self::get_entries_by_term_parameters(), array(
             'id' => $id,
             'term' => $term,
@@ -1311,14 +1302,11 @@ class mod_glossary_external extends external_api {
      * @param string $sort The direction of the order.
      * @param int $from Start returning records from here.
      * @param int $limit Number of records to return.
-     * @param array $options Array of options.
-     * @return array of warnings and status result
+     * @return array Containing count, entries and warnings.
      * @since Moodle 3.1
      * @throws moodle_exception
      */
-    public static function get_entries_to_approve($id, $letter, $order = 'CONCEPT', $sort = 'ASC', $from = 0, $limit = 20) {
-        global $DB, $USER;
-
+    public static function get_entries_to_approve($id, $letter, $order, $sort, $from, $limit) {
         $params = self::validate_parameters(self::get_entries_to_approve_parameters(), array(
             'id' => $id,
             'letter' => $letter,
@@ -1389,9 +1377,10 @@ class mod_glossary_external extends external_api {
      * Get an entry.
      *
      * @param int $id The entry ID.
-     * @return array of warnings and status result
+     * @return array Containing entry and warnings.
      * @since Moodle 3.1
      * @throws moodle_exception
+     * @throws invalid_parameter_exception
      */
     public static function get_entry_by_id($id) {
         global $DB, $USER;

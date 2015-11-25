@@ -37,6 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @package    mod_glossary
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.1
  */
 class mod_glossary_entry_query_builder {
 
@@ -88,7 +89,8 @@ class mod_glossary_entry_query_builder {
         $this->from = sprintf('FROM {glossary_entries} %s', self::ALIAS_ENTRIES);
         if (!empty($glossary)) {
             $this->glossary = $glossary;
-            $this->where[] = sprintf('(%s.glossaryid = :gid OR %s.sourceglossaryid = :gid2)', self::ALIAS_ENTRIES, self::ALIAS_ENTRIES);
+            $this->where[] = sprintf('(%s.glossaryid = :gid OR %s.sourceglossaryid = :gid2)',
+                self::ALIAS_ENTRIES, self::ALIAS_ENTRIES);
             $this->params['gid'] = $glossary->id;
             $this->params['gid2'] = $glossary->id;
         }
@@ -121,7 +123,7 @@ class mod_glossary_entry_query_builder {
     /**
      * Internal method to build the query.
      *
-     * @param  boolean $count Query to count?
+     * @param bool $count Query to count?
      * @return string The SQL statement.
      */
     protected function build_query($count = false) {
@@ -150,7 +152,7 @@ class mod_glossary_entry_query_builder {
     /**
      * Count the records.
      *
-     * @return int
+     * @return int The number of records.
      */
     public function count_records() {
         global $DB;
@@ -171,8 +173,8 @@ class mod_glossary_entry_query_builder {
     /**
      * Filter a field using a letter.
      *
-     * @param  string $letter     The letter.
-     * @param  string $finalfield The SQL statement representing the field.
+     * @param string $letter     The letter.
+     * @param string $finalfield The SQL statement representing the field.
      */
     protected function filter_by_letter($letter, $finalfield) {
         global $DB;
@@ -188,7 +190,7 @@ class mod_glossary_entry_query_builder {
     /**
      * Filter a field by special characters.
      *
-     * @param  string $finalfield The SQL statement representing the field.
+     * @param string $finalfield The SQL statement representing the field.
      */
     protected function filter_by_non_letter($finalfield) {
         global $DB;
@@ -205,8 +207,8 @@ class mod_glossary_entry_query_builder {
     /**
      * Filter the author by letter.
      *
-     * @param  string  $letter         The letter.
-     * @param  boolean $firstnamefirst Whether or not the firstname is first in the author's name.
+     * @param string  $letter         The letter.
+     * @param bool    $firstnamefirst Whether or not the firstname is first in the author's name.
      */
     public function filter_by_author_letter($letter, $firstnamefirst = false) {
         $field = self::get_fullname_field($firstnamefirst);
@@ -216,7 +218,7 @@ class mod_glossary_entry_query_builder {
     /**
      * Filter the author by special characters.
      *
-     * @param  boolean $firstnamefirst Whether or not the firstname is first in the author's name.
+     * @param bool $firstnamefirst Whether or not the firstname is first in the author's name.
      */
     public function filter_by_author_non_letter($firstnamefirst = false) {
         $field = self::get_fullname_field($firstnamefirst);
@@ -226,7 +228,7 @@ class mod_glossary_entry_query_builder {
     /**
      * Filter the concept by letter.
      *
-     * @param  string  $letter         The letter.
+     * @param string  $letter         The letter.
      */
     public function filter_by_concept_letter($letter) {
         $this->filter_by_letter($letter, self::resolve_field('concept', 'entries'));
@@ -244,8 +246,8 @@ class mod_glossary_entry_query_builder {
     /**
      * Filter non approved entries.
      *
-     * @param  string $constant One of the NON_APPROVED_* constants.
-     * @param  int    $userid   The user ID when relevant, otherwise current user.
+     * @param string $constant One of the NON_APPROVED_* constants.
+     * @param int    $userid   The user ID when relevant, otherwise current user.
      */
     public function filter_by_non_approved($constant, $userid = null) {
         global $USER;
@@ -277,7 +279,7 @@ class mod_glossary_entry_query_builder {
      *
      * This requires the alias table to be joined in the query. See {@link self::join_alias()}.
      *
-     * @param  string $term What the concept or aliases should be.
+     * @param string $term What the concept or aliases should be.
      */
     public function filter_by_term($term) {
         $this->where[] = sprintf("(%s = :filterterma OR %s = :filtertermb)",
@@ -293,8 +295,8 @@ class mod_glossary_entry_query_builder {
      * Note that this does not handle invalid or too short terms. This requires the alias
      * table to be joined in the query. See {@link self::join_alias()}.
      *
-     * @param  array   $terms      Array of terms.
-     * @param  boolean $fullsearch Whether or not full search should be enabled.
+     * @param array   $terms      Array of terms.
+     * @param bool    $fullsearch Whether or not full search should be enabled.
      */
     public function filter_by_search_terms(array $terms, $fullsearch = true) {
         global $DB;
@@ -362,7 +364,7 @@ class mod_glossary_entry_query_builder {
     /**
      * Convenience method to get get the SQL statement for the full name.
      *
-     * @param  boolean $firstnamefirst Whether or not the firstname is first in the author's name.
+     * @param bool $firstnamefirst Whether or not the firstname is first in the author's name.
      * @return string The SQL statement.
      */
     public static function get_fullname_field($firstnamefirst = false) {
@@ -398,7 +400,7 @@ class mod_glossary_entry_query_builder {
      *
      * This comes handy when {@link self::add_user_fields} was used.
      *
-     * @param  stdClass $record The record.
+     * @param stdClass $record The record.
      * @return stdClass A user object.
      */
     public static function get_user_from_record($record) {
@@ -425,7 +427,7 @@ class mod_glossary_entry_query_builder {
      * logic that assumes that when displaying all categories the non categorised entries should
      * not be returned, etc...
      *
-     * @param  int $categoryid The category ID, or GLOSSARY_SHOW_* constant.
+     * @param int $categoryid The category ID, or GLOSSARY_SHOW_* constant.
      */
     public function join_category($categoryid) {
 
@@ -456,7 +458,7 @@ class mod_glossary_entry_query_builder {
     /**
      * Join the user table.
      *
-     * @param  boolean $strict When strict uses a JOIN rather than a LEFT JOIN.
+     * @param bool $strict When strict uses a JOIN rather than a LEFT JOIN.
      */
     public function join_user($strict = false) {
         $join = $strict ? 'JOIN' : 'LEFT JOIN';
@@ -466,8 +468,8 @@ class mod_glossary_entry_query_builder {
 
     /**
      * Limit the number of records to fetch.
-     * @param  int $from Fetch from.
-     * @param  int $num  Number to fetch.
+     * @param int $from Fetch from.
+     * @param int $num  Number to fetch.
      */
     public function limit($from, $num) {
         $this->limitfrom = $from;
@@ -479,7 +481,7 @@ class mod_glossary_entry_query_builder {
      *
      * This ensures that the value is either ASC or DESC.
      *
-     * @param  string $direction The desired direction.
+     * @param string $direction The desired direction.
      * @return string ASC or DESC.
      */
     protected function normalize_direction($direction) {
@@ -505,9 +507,8 @@ class mod_glossary_entry_query_builder {
     /**
      * Order by author name.
      *
-     * @param  boolean $firstnamefirst Whether or not the firstname is first in the author's name.
-     * @param  string  $direction      [description]
-     * @param  string $direction ASC, or DESC.
+     * @param bool   $firstnamefirst Whether or not the firstname is first in the author's name.
+     * @param string $direction ASC, or DESC.
      */
     public function order_by_author($firstnamefirst = false, $direction = '') {
         $field = self::get_fullname_field($firstnamefirst);

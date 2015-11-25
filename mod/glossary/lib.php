@@ -3584,8 +3584,8 @@ function glossary_get_entries_by_author_id($glossary, $context, $authorid, $orde
  *
  * @param  object $glossary The glossary.
  * @param  context $context The context of the glossary.
- * @param  int $from Fetch records from.
  * @param  int $limit Number of records to fetch.
+ * @param  int $from Fetch records from.
  * @param  array $options Accepts:
  *                        - (bool) includenotapproved. When false, includes self even if all of their entries require approval.
  *                          When true, also includes authors only having entries pending approval.
@@ -3790,7 +3790,8 @@ function glossary_get_entries_to_approve($glossary, $context, $letter, $order, $
  * Fetch an entry.
  *
  * @param  int $id The entry ID.
- * @return object|false
+ * @return object|false The entry, or false when not found.
+ * @since Moodle 3.1
  */
 function glossary_get_entry_by_id($id) {
 

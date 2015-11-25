@@ -173,6 +173,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
             mod_glossary_external::view_entry($e3->id);
             $this->fail('Cannot view non-approved entries of others.');
         } catch (invalid_parameter_exception $e) {
+            // All good.
         }
 
         // Test non-readable entry.
@@ -257,14 +258,14 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->setUser($u1);
 
         // Requesting a single letter.
-        $return = mod_glossary_external::get_entries_by_letter($g1->id, 'b', 0, 20);
+        $return = mod_glossary_external::get_entries_by_letter($g1->id, 'b', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_letter_returns(), $return);
         $this->assertCount(1, $return['entries']);
         $this->assertEquals(1, $return['count']);
         $this->assertEquals($e1b->id, $return['entries'][0]['id']);
 
         // Requesting special letters.
-        $return = mod_glossary_external::get_entries_by_letter($g1->id, 'SPECIAL', 0, 20);
+        $return = mod_glossary_external::get_entries_by_letter($g1->id, 'SPECIAL', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_letter_returns(), $return);
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(2, $return['count']);
@@ -272,12 +273,12 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e1c->id, $return['entries'][1]['id']);
 
         // Requesting with limit.
-        $return = mod_glossary_external::get_entries_by_letter($g1->id, 'ALL', 0, 1);
+        $return = mod_glossary_external::get_entries_by_letter($g1->id, 'ALL', 0, 1, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_letter_returns(), $return);
         $this->assertCount(1, $return['entries']);
         $this->assertEquals(3, $return['count']);
         $this->assertEquals($e1a->id, $return['entries'][0]['id']);
-        $return = mod_glossary_external::get_entries_by_letter($g1->id, 'ALL', 1, 2);
+        $return = mod_glossary_external::get_entries_by_letter($g1->id, 'ALL', 1, 2, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_letter_returns(), $return);
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(3, $return['count']);
@@ -426,7 +427,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         $cat1a = $gg->create_category($g1, array('name' => 'Fish'), array($e1a1, $e1a2, $e1a3));
         $cat1b = $gg->create_category($g1, array('name' => 'Cat'), array($e1b1, $e1b2));
-        $cat1c = $gg->create_category($g1, array('name' => 'Zebra'), array($e1b1));   // $e1b1 is in two categories.
+        $cat1c = $gg->create_category($g1, array('name' => 'Zebra'), array($e1b1));   // Entry $e1b1 is in two categories.
         $cat2a = $gg->create_category($g2, array(), array($e2a1, $e2a2));
 
         $this->setAdminUser();
@@ -559,7 +560,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->setUser($u1);
 
         // Requesting a single letter.
-        $return = mod_glossary_external::get_entries_by_author($g1->id, 'u', 'LASTNAME', 'ASC', 0, 20);
+        $return = mod_glossary_external::get_entries_by_author($g1->id, 'u', 'LASTNAME', 'ASC', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_returns(), $return);
         $this->assertCount(4, $return['entries']);
         $this->assertEquals(4, $return['count']);
@@ -569,19 +570,19 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e1a3->id, $return['entries'][3]['id']);
 
         // Requesting special letters.
-        $return = mod_glossary_external::get_entries_by_author($g1->id, 'SPECIAL', 'LASTNAME', 'ASC', 0, 20);
+        $return = mod_glossary_external::get_entries_by_author($g1->id, 'SPECIAL', 'LASTNAME', 'ASC', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_returns(), $return);
         $this->assertCount(1, $return['entries']);
         $this->assertEquals(1, $return['count']);
         $this->assertEquals($e1d1->id, $return['entries'][0]['id']);
 
         // Requesting with limit.
-        $return = mod_glossary_external::get_entries_by_author($g1->id, 'ALL', 'LASTNAME', 'ASC', 0, 1);
+        $return = mod_glossary_external::get_entries_by_author($g1->id, 'ALL', 'LASTNAME', 'ASC', 0, 1, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_returns(), $return);
         $this->assertCount(1, $return['entries']);
         $this->assertEquals(6, $return['count']);
         $this->assertEquals($e1d1->id, $return['entries'][0]['id']);
-        $return = mod_glossary_external::get_entries_by_author($g1->id, 'ALL', 'LASTNAME', 'ASC', 1, 2);
+        $return = mod_glossary_external::get_entries_by_author($g1->id, 'ALL', 'LASTNAME', 'ASC', 1, 2, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_returns(), $return);
         $this->assertCount(2, $return['entries']);
         $this->assertEquals(6, $return['count']);
@@ -604,28 +605,28 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e1a3->id, $return['entries'][6]['id']);
 
         // Changing order.
-        $return = mod_glossary_external::get_entries_by_author($g1->id, 'ALL', 'LASTNAME', 'DESC', 0, 1);
+        $return = mod_glossary_external::get_entries_by_author($g1->id, 'ALL', 'LASTNAME', 'DESC', 0, 1, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_returns(), $return);
         $this->assertCount(1, $return['entries']);
         $this->assertEquals(6, $return['count']);
         $this->assertEquals($e1a1->id, $return['entries'][0]['id']);
 
         // Sorting by firstname.
-        $return = mod_glossary_external::get_entries_by_author($g1->id, 'ALL', 'FIRSTNAME', 'ASC', 0, 1);
+        $return = mod_glossary_external::get_entries_by_author($g1->id, 'ALL', 'FIRSTNAME', 'ASC', 0, 1, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_returns(), $return);
         $this->assertCount(1, $return['entries']);
         $this->assertEquals(6, $return['count']);
         $this->assertEquals($e1b2->id, $return['entries'][0]['id']);
 
         // Sorting by firstname descending.
-        $return = mod_glossary_external::get_entries_by_author($g1->id, 'ALL', 'FIRSTNAME', 'DESC', 0, 1);
+        $return = mod_glossary_external::get_entries_by_author($g1->id, 'ALL', 'FIRSTNAME', 'DESC', 0, 1, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_returns(), $return);
         $this->assertCount(1, $return['entries']);
         $this->assertEquals(6, $return['count']);
         $this->assertEquals($e1d1->id, $return['entries'][0]['id']);
 
         // Filtering by firstname descending.
-        $return = mod_glossary_external::get_entries_by_author($g1->id, 'z', 'FIRSTNAME', 'DESC', 0, 20);
+        $return = mod_glossary_external::get_entries_by_author($g1->id, 'z', 'FIRSTNAME', 'DESC', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_returns(), $return);
         $this->assertCount(4, $return['entries']);
         $this->assertEquals(4, $return['count']);
@@ -636,7 +637,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         // Test with a deleted user.
         delete_user($u2);
-        $return = mod_glossary_external::get_entries_by_author($g1->id, 'u', 'LASTNAME', 'ASC', 0, 20);
+        $return = mod_glossary_external::get_entries_by_author($g1->id, 'u', 'LASTNAME', 'ASC', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_returns(), $return);
         $this->assertCount(4, $return['entries']);
         $this->assertEquals(4, $return['count']);
@@ -673,7 +674,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         // Standard request.
-        $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'CONCEPT', 'ASC', 0, 20);
+        $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'CONCEPT', 'ASC', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_id_returns(), $return);
         $this->assertCount(3, $return['entries']);
         $this->assertEquals(3, $return['count']);
@@ -682,7 +683,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e1a1->id, $return['entries'][2]['id']);
 
         // Standard request descending.
-        $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'CONCEPT', 'DESC', 0, 20);
+        $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'CONCEPT', 'DESC', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_id_returns(), $return);
         $this->assertCount(3, $return['entries']);
         $this->assertEquals(3, $return['count']);
@@ -691,7 +692,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e1a2->id, $return['entries'][2]['id']);
 
         // Requesting ordering by time created.
-        $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'CREATION', 'ASC', 0, 20);
+        $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'CREATION', 'ASC', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_id_returns(), $return);
         $this->assertCount(3, $return['entries']);
         $this->assertEquals(3, $return['count']);
@@ -700,7 +701,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e1a2->id, $return['entries'][2]['id']);
 
         // Requesting ordering by time created descending.
-        $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'CREATION', 'DESC', 0, 20);
+        $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'CREATION', 'DESC', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_id_returns(), $return);
         $this->assertCount(3, $return['entries']);
         $this->assertEquals(3, $return['count']);
@@ -709,7 +710,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e1a3->id, $return['entries'][2]['id']);
 
         // Requesting ordering by time modified.
-        $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'UPDATE', 'ASC', 0, 20);
+        $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'UPDATE', 'ASC', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_id_returns(), $return);
         $this->assertCount(3, $return['entries']);
         $this->assertEquals(3, $return['count']);
@@ -718,7 +719,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e1a2->id, $return['entries'][2]['id']);
 
         // Requesting ordering by time modified descending.
-        $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'UPDATE', 'DESC', 0, 20);
+        $return = mod_glossary_external::get_entries_by_author_id($g1->id, $u1->id, 'UPDATE', 'DESC', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_author_id_returns(), $return);
         $this->assertCount(3, $return['entries']);
         $this->assertEquals(3, $return['count']);
@@ -773,8 +774,8 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $e4 = $gg->create_content($g1, array('approved' => 0, 'concept' => 'Toulouse'));
         $e5 = $gg->create_content($g1, array('approved' => 1, 'definition' => 'Heroes', 'concept' => 'Abcd'));
         $e6 = $gg->create_content($g1, array('approved' => 0, 'definition' => 'When used for heroes'));
-        $e7 = $gg->create_content($g1, array('approved' => 1, 'timecreated' => 1, 'timemodified' => time() + 3600, 'concept' => 'Z'),
-            array('Couscous'));
+        $e7 = $gg->create_content($g1, array('approved' => 1, 'timecreated' => 1, 'timemodified' => time() + 3600,
+            'concept' => 'Z'), array('Couscous'));
         $e8 = $gg->create_content($g1, array('approved' => 0), array('Heroes'));
         $e9 = $gg->create_content($g2, array('approved' => 0));
 
@@ -797,7 +798,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e5->id, $return['entries'][0]['id']);
         $this->assertEquals($e3->id, $return['entries'][1]['id']);
 
-        // Concept descending
+        // Concept descending.
         $query = 'hero';
         $return = mod_glossary_external::get_entries_by_search($g1->id, $query, true, 'CONCEPT', 'DESC', 0, 20, array());
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entries_by_search_returns(), $return);
@@ -1065,12 +1066,14 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
             $return = mod_glossary_external::get_entry_by_id($e3->id);
             $this->fail('Cannot view unapproved entries of others.');
         } catch (invalid_parameter_exception $e) {
+            // All good.
         }
 
         try {
             $return = mod_glossary_external::get_entry_by_id($e4->id);
             $this->fail('Cannot view entries from another course.');
         } catch (require_login_exception $e) {
+            // All good.
         }
 
         // An admin can be other's entries to be approved.
