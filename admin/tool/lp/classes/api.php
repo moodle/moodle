@@ -55,6 +55,9 @@ class api {
         // First we do a permissions check.
         require_capability('tool/lp:competencymanage', $competency->get_context());
 
+        // Reset the sortorder, use reorder instead.
+        $competency->set_sortorder(null);
+
         // OK - all set.
         $id = $competency->create();
         return $competency;

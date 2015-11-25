@@ -183,7 +183,7 @@ class template_competency extends persistent {
      * @return void
      */
     protected function before_validate() {
-        if ($this->get_sortorder() === null) {
+        if (($this->get_id() && $this->get_sortorder() === null) || !$this->get_id()) {
             $this->set_sortorder($this->count_records(array('templateid' => $this->get_templateid())));
         }
     }
@@ -212,6 +212,23 @@ class template_competency extends persistent {
             return new lang_string('invaliddata', 'error');
         }
         return true;
+    }
+
+    /**
+     * Hook to execute after delete.
+     *
+     * @param bool $result Whether or not the delete was successful.
+     * @return void
+     */
+    protected function after_delete($result) {
+        global $DB;
+        if (!$result) {
+            return;
+        }
+
+        $table = '{' . self::TABLE . '}';
+        $sql = "UPDATE $table SET sortorder = sortorder -1  WHERE templateid = ? AND sortorder > ?";
+        $DB->execute($sql, array($this->get_templateid(), $this->get_sortorder()));
     }
 
 }

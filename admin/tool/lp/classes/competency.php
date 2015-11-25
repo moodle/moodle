@@ -138,7 +138,7 @@ class competency extends persistent {
                 $this->newparent = $this->get_parent();
 
                 // Update path and sortorder.
-                $this->set_new_path($parent);
+                $this->set_new_path($this->newparent);
                 $this->set_new_sortorder();
             }
 
@@ -146,10 +146,9 @@ class competency extends persistent {
         } else {
 
             $this->set_new_path();
-            if ($this->get_sortorder() === null) {
-                // Get a sortorder if it wasn't set.
-                $this->set_new_sortorder();
-            }
+            // Always generate new sortorder when we create new competency.
+            $this->set_new_sortorder();
+
         }
     }
 
@@ -181,6 +180,15 @@ class competency extends persistent {
                 $this->get_path() . $this->get_id() . '/',
                 $likesearch
             ));
+
+            // Resolving sortorder holes left after changing parent.
+            $table = '{' . self::TABLE . '}';
+            $sql = "UPDATE $table SET sortorder = sortorder -1 "
+                    . " WHERE  competencyframeworkid = ? AND parentid = ? AND sortorder > ?";
+            $DB->execute($sql, array($this->get_competencyframeworkid(),
+                                        $this->beforeupdate->get_parentid(),
+                                        $this->beforeupdate->get_sortorder()
+                                    ));
         }
 
         $this->beforeupdate = null;
@@ -206,6 +214,11 @@ class competency extends persistent {
 
         // And all the links to courses.
         $DB->delete_records('tool_lp_course_competency', array('competencyid' => $this->get_id()));
+
+        // Resolving sortorder holes left after delete.
+        $table = '{' . self::TABLE . '}';
+        $sql = "UPDATE $table SET sortorder = sortorder -1  WHERE  competencyframeworkid = ? AND parentid = ? AND sortorder > ?";
+        $DB->execute($sql, array($this->get_competencyframeworkid(), $this->get_parentid(), $this->get_sortorder()));
     }
 
     /**

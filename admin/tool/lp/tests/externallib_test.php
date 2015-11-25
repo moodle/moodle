@@ -32,6 +32,7 @@ use tool_lp\plan;
 use tool_lp\related_competency;
 use tool_lp\user_competency;
 use tool_lp\plan_competency;
+use tool_lp\template_competency;
 
 /**
  * External learning plans webservice API tests.
@@ -1512,14 +1513,26 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $competency1 = $this->create_competency(1, $framework->id);
         $competency2 = $this->create_competency(2, $framework->id);
         $competency3 = $this->create_competency(3, $framework->id);
+        $competency4 = $this->create_competency(4, $framework->id);
 
         // Add the competencies.
         external::add_competency_to_template($template->id, $competency1->id);
         external::add_competency_to_template($template->id, $competency2->id);
         external::add_competency_to_template($template->id, $competency3->id);
+        external::add_competency_to_template($template->id, $competency4->id);
+
+        // Test if removing competency from template don't create sortorder holes.
+        external::remove_competency_from_template($template->id, $competency3->id);
+        $templcomp4 = template_competency::get_record(
+                                array(
+                                    'templateid' => $template->id,
+                                    'competencyid' => $competency4->id
+                                ));
+
+        $this->assertEquals(2, $templcomp4->get_sortorder());
 
         // This is a move up.
-        external::reorder_template_competency($template->id, $competency3->id, $competency2->id);
+        external::reorder_template_competency($template->id, $competency4->id, $competency2->id);
         $result = external::list_competencies_in_template($template->id);
         $result = external_api::clean_returnvalue(external::list_competencies_in_template_returns(), $result);
 
@@ -1528,11 +1541,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $r3 = (object) $result[2];
 
         $this->assertEquals($competency1->id, $r1->id);
-        $this->assertEquals($competency3->id, $r2->id);
+        $this->assertEquals($competency4->id, $r2->id);
         $this->assertEquals($competency2->id, $r3->id);
 
         // This is a move down.
-        external::reorder_template_competency($template->id, $competency1->id, $competency3->id);
+        external::reorder_template_competency($template->id, $competency1->id, $competency4->id);
         $result = external::list_competencies_in_template($template->id);
         $result = external_api::clean_returnvalue(external::list_competencies_in_template_returns(), $result);
 
@@ -1540,7 +1553,7 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $r2 = (object) $result[1];
         $r3 = (object) $result[2];
 
-        $this->assertEquals($competency3->id, $r1->id);
+        $this->assertEquals($competency4->id, $r1->id);
         $this->assertEquals($competency1->id, $r2->id);
         $this->assertEquals($competency2->id, $r3->id);
 
@@ -2324,8 +2337,18 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $lpg->create_plan_competency(array('planid' => $pl1->get_id(), 'competencyid' => $c4->get_id(), 'sortorder' => 4));
         $lpg->create_plan_competency(array('planid' => $pl1->get_id(), 'competencyid' => $c5->get_id(), 'sortorder' => 5));
 
+        // Test if removing competency from plan don't create sortorder holes.
+        external::remove_competency_from_plan($pl1->get_id(), $c4->get_id());
+        $plancomp5 = plan_competency::get_record(
+                                array(
+                                    'planid' => $pl1->get_id(),
+                                    'competencyid' => $c5->get_id()
+                                ));
+
+        $this->assertEquals(3, $plancomp5->get_sortorder());
+
         $this->assertTrue(external::reorder_plan_competency($pl1->get_id(), $c2->get_id(), $c5->get_id()));
-        $this->assertTrue(external::reorder_plan_competency($pl1->get_id(), $c3->get_id(), $c4->get_id()));
+        $this->assertTrue(external::reorder_plan_competency($pl1->get_id(), $c3->get_id(), $c1->get_id()));
         $plancompetencies = plan_competency::get_records(
                 array(
                     'planid' => $pl1->get_id()
@@ -2337,13 +2360,141 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $plcmp2 = $plancompetencies[1];
         $plcmp3 = $plancompetencies[2];
         $plcmp4 = $plancompetencies[3];
-        $plcmp5 = $plancompetencies[4];
 
-        $this->assertEquals($plcmp1->get_competencyid(), $c1->get_id());
-        $this->assertEquals($plcmp2->get_competencyid(), $c4->get_id());
-        $this->assertEquals($plcmp3->get_competencyid(), $c3->get_id());
-        $this->assertEquals($plcmp4->get_competencyid(), $c5->get_id());
-        $this->assertEquals($plcmp5->get_competencyid(), $c2->get_id());
+        $this->assertEquals($plcmp1->get_competencyid(), $c3->get_id());
+        $this->assertEquals($plcmp2->get_competencyid(), $c1->get_id());
+        $this->assertEquals($plcmp3->get_competencyid(), $c5->get_id());
+        $this->assertEquals($plcmp4->get_competencyid(), $c2->get_id());
+    }
+
+    /**
+     * Test resolving sortorder when we creating competency.
+     */
+    public function test_fix_sortorder_when_creating_competency() {
+        $this->resetAfterTest(true);
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'sortorder' => 20));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'sortorder' => 1));
+
+        $this->assertEquals(0, $c1->get_sortorder());
+        $this->assertEquals(1, $c2->get_sortorder());
+        $this->assertEquals(2, $c3->get_sortorder());
+    }
+
+    /**
+     * Test resolving sortorder when we delete competency.
+     */
+    public function test_fix_sortorder_when_delete_competency() {
+        $this->resetAfterTest(true);
+        $this->setUser($this->creator);
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $framework = $lpg->create_framework();
+
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2a = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c2->get_id()));
+        $c2b = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c2->get_id()));
+        $c2c = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c2->get_id()));
+        $c2d = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c2->get_id()));
+
+        $this->assertEquals(0, $c1->get_sortorder());
+        $this->assertEquals(1, $c2->get_sortorder());
+        $this->assertEquals(0, $c2a->get_sortorder());
+        $this->assertEquals(1, $c2b->get_sortorder());
+        $this->assertEquals(2, $c2c->get_sortorder());
+        $this->assertEquals(3, $c2d->get_sortorder());
+
+        $result = external::delete_competency($c1->get_id());
+        $result = external_api::clean_returnvalue(external::delete_competency_returns(), $result);
+
+        $c2->read();
+        $c2a->read();
+        $c2b->read();
+        $c2c->read();
+        $c2d->read();
+
+        $this->assertEquals(0, $c2->get_sortorder());
+        $this->assertEquals(0, $c2a->get_sortorder());
+        $this->assertEquals(1, $c2b->get_sortorder());
+        $this->assertEquals(2, $c2c->get_sortorder());
+        $this->assertEquals(3, $c2d->get_sortorder());
+
+        $result = external::delete_competency($c2b->get_id());
+        $result = external_api::clean_returnvalue(external::delete_competency_returns(), $result);
+
+        $c2->read();
+        $c2a->read();
+        $c2c->read();
+        $c2d->read();
+
+        $this->assertEquals(0, $c2->get_sortorder());
+        $this->assertEquals(0, $c2a->get_sortorder());
+        $this->assertEquals(1, $c2c->get_sortorder());
+        $this->assertEquals(2, $c2d->get_sortorder());
+    }
+
+    /**
+     * Test resolving sortorder when moving a competency.
+     */
+    public function test_fix_sortorder_when_moving_competency() {
+        $this->resetAfterTest(true);
+        $this->setUser($this->creator);
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $framework = $lpg->create_framework();
+
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id()));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2a = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c2->get_id()));
+        $c2b = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c2->get_id()));
+
+        $this->assertEquals(0, $c1->get_sortorder());
+        $this->assertEquals(0, $c1a->get_sortorder());
+        $this->assertEquals(1, $c1b->get_sortorder());
+        $this->assertEquals(1, $c2->get_sortorder());
+        $this->assertEquals(0, $c2a->get_sortorder());
+        $this->assertEquals(1, $c2b->get_sortorder());
+
+        $result = external::set_parent_competency($c2a->get_id(), $c1->get_id());
+        $result = external_api::clean_returnvalue(external::set_parent_competency_returns(), $result);
+
+        $c1->read();
+        $c1a->read();
+        $c1b->read();
+        $c2->read();
+        $c2a->read();
+        $c2b->read();
+
+        $this->assertEquals(0, $c1->get_sortorder());
+        $this->assertEquals(0, $c1a->get_sortorder());
+        $this->assertEquals(1, $c1b->get_sortorder());
+        $this->assertEquals(2, $c2a->get_sortorder());
+        $this->assertEquals(1, $c2->get_sortorder());
+        $this->assertEquals(0, $c2b->get_sortorder());
+
+        // Move a root node.
+        $result = external::set_parent_competency($c2->get_id(), $c1b->get_id());
+        $result = external_api::clean_returnvalue(external::set_parent_competency_returns(), $result);
+
+        $c1->read();
+        $c1a->read();
+        $c1b->read();
+        $c2->read();
+        $c2a->read();
+        $c2b->read();
+
+        $this->assertEquals(0, $c1->get_sortorder());
+        $this->assertEquals(0, $c1a->get_sortorder());
+        $this->assertEquals(1, $c1b->get_sortorder());
+        $this->assertEquals(0, $c2->get_sortorder());
+        $this->assertEquals(0, $c2b->get_sortorder());
+        $this->assertEquals(2, $c2a->get_sortorder());
     }
 
 }

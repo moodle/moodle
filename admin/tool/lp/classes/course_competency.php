@@ -60,12 +60,8 @@ class course_competency extends persistent {
      * @return void
      */
     protected function before_validate() {
-        // During create.
-        if (!$this->get_id()) {
-            if ($this->get_sortorder() === null) {
-                // Get a sortorder if it wasn't set.
-                $this->set('sortorder', $this->count_records(array('courseid' => $this->get_courseid())));
-            }
+        if (($this->get_id() && $this->get_sortorder() === null) || !$this->get_id()) {
+            $this->set('sortorder', $this->count_records(array('courseid' => $this->get_courseid())));
         }
     }
 
@@ -190,6 +186,23 @@ class course_competency extends persistent {
         $results->close();
 
         return $instances;
+    }
+
+    /**
+     * Hook to execute after delete.
+     *
+     * @param bool $result Whether or not the delete was successful.
+     * @return void
+     */
+    protected function after_delete($result) {
+        global $DB;
+        if (!$result) {
+            return;
+        }
+
+        $table = '{' . self::TABLE . '}';
+        $sql = "UPDATE $table SET sortorder = sortorder -1  WHERE courseid = ? AND sortorder > ?";
+        $DB->execute($sql, array($this->get_courseid(), $this->get_sortorder()));
     }
 
 }
