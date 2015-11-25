@@ -33,6 +33,7 @@ use tool_lp\template_competency;
 use tool_lp\user_competency;
 use tool_lp\user_competency_plan;
 use tool_lp\plan_competency;
+use tool_lp\evidence;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -194,6 +195,22 @@ class tool_lp_generator_testcase extends advanced_testcase {
         $tc = $lpg->create_template_cohort(array('templateid' => $t1->get_id(), 'cohortid' => $c2->id));
         $this->assertEquals(2, template_cohort::count_records());
         $this->assertInstanceOf('\tool_lp\template_cohort', $tc);
+    }
+
+    public function test_create_evidence() {
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $rc1 = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c1->get_id()));
+        $rc2 = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c2->get_id()));
+        $e = $lpg->create_evidence(array('usercompetencyid' => $rc1->get_id()));
+        $e = $lpg->create_evidence(array('usercompetencyid' => $rc2->get_id()));
+        $this->assertEquals(2, evidence::count_records());
+        $this->assertInstanceOf('\tool_lp\evidence', $e);
     }
 
 }

@@ -1022,4 +1022,66 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals(0, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t1->get_id())));
         $this->assertEquals(1, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
     }
+
+    /**
+     * Test add evidence for existing user_competency.
+     */
+    public function test_add_evidence_existing_user_competency() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $syscontext = context_system::instance();
+
+        // Create users.
+        $user = $dg->create_user();
+        $this->setUser($user);
+
+        // Create a framework and assign competencies.
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $uc = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c1->get_id()));
+
+        // Create an evidence and check it was created with the right usercomptencyid and information.
+        $evidence = api::add_evidence($user->id, $c1->get_id(), 'invalidevidencedesc', 'tool_lp', '{"a": "b"}', 'url', 1);
+        $this->assertEquals(1, \tool_lp\evidence::count_records());
+
+        $evidence->read();
+        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
+        $this->assertEquals('invalidevidencedesc', $evidence->get_descidentifier());
+        $this->assertEquals('tool_lp', $evidence->get_desccomponent());
+        $this->assertEquals((object) array('a' => 'b'), $evidence->get_desca());
+        $this->assertEquals('url', $evidence->get_url());
+        $this->assertEquals(1, $evidence->get_grade());
+    }
+
+    /**
+     * Test add evidence for none existing user_competency.
+     */
+    public function test_add_evidence_no_existing_user_competency() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $this->getDataGenerator()->get_plugin_generator('tool_lp');
+
+        $syscontext = context_system::instance();
+
+        // Create users.
+        $user = $dg->create_user();
+        $this->setUser($user);
+
+        // Create a framework and assign competencies.
+        $framework = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+
+        // Create an evidence.
+        $evidence = api::add_evidence($user->id, $c1->get_id(), 'invalidevidencedesc', 'tool_lp');
+        $this->assertEquals(1, \tool_lp\evidence::count_records());
+
+        // Check a user_comptency was created with the same usercomptencyid.
+        $this->assertEquals(1, \tool_lp\user_competency::count_records_select('id = :id',
+                                                                              array('id' => $evidence->get_usercompetencyid())));
+    }
 }

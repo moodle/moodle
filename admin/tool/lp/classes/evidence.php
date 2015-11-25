@@ -65,6 +65,11 @@ class evidence extends persistent {
                 'type' => PARAM_URL,
                 'default' => null,
                 'null' => NULL_ALLOWED
+            ),
+            'grade' => array(
+                'type' => PARAM_INT,
+                'default' => null,
+                'null' => NULL_ALLOWED
             )
         );
     }
@@ -140,6 +145,20 @@ class evidence extends persistent {
     protected function validate_descidentifier($value) {
         if (!$this->get_id() && !get_string_manager()->string_exists($value, $this->get('desccomponent'))) {
             return new lang_string('invalidevidencedesc', 'tool_lp');
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate the grade.
+     *
+     * @param int $value The value.
+     * @return true|lang_string
+     */
+    protected function validate_grade($value) {
+        if ($value !== null && $value <= 0) {
+            return new lang_string('invalidgrade', 'tool_lp');
         }
 
         return true;

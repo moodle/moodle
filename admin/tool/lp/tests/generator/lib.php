@@ -34,6 +34,7 @@ use tool_lp\template_competency;
 use tool_lp\user_competency;
 use tool_lp\user_competency_plan;
 use tool_lp\plan_competency;
+use tool_lp\evidence;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -364,6 +365,32 @@ class tool_lp_generator extends component_generator_base {
         $tplcohort->create();
 
         return $tplcohort;
+    }
+
+    /**
+     * Create a new evidence.
+     *
+     * @param array|stdClass $record
+     * @return evidence
+     */
+    public function create_evidence($record = null) {
+        $record = (object) $record;
+
+        if (!isset($record->usercompetencyid)) {
+            throw new coding_exception('The usercompetencyid value is required.');
+        }
+
+        if (!isset($record->descidentifier)) {
+            $record->descidentifier = 'invalidevidencedesc';
+        }
+
+        if (!isset($record->desccomponent)) {
+            $record->desccomponent = 'tool_lp';
+        }
+        $evidence = new evidence(0, $record);
+        $evidence->create();
+
+        return $evidence;
     }
 
 }

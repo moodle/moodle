@@ -489,5 +489,26 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015111018, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015111020) {
+
+        // Define field url and grade to be added to tool_lp_evidence.
+        $table = new xmldb_table('tool_lp_evidence');
+        $fieldurl = new xmldb_field('url', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'desca');
+        $fieldgrade = new xmldb_field('grade', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'url');
+
+        // Conditionally launch add field url.
+        if (!$dbman->field_exists($table, $fieldurl)) {
+            $dbman->add_field($table, $fieldurl);
+        }
+
+         // Conditionally launch add field grade.
+        if (!$dbman->field_exists($table, $fieldgrade)) {
+            $dbman->add_field($table, $fieldgrade);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111020, 'tool', 'lp');
+    }
+
     return true;
 }

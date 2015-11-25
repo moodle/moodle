@@ -2072,4 +2072,51 @@ class api {
             $ucp->delete();
         }
     }
+
+    /**
+     * Create an evidence from a list of parameters.
+     *
+     * Requires no capability because evidence can be added in many situations under any user.
+     *
+     * @param int $userid The user id for which evidence is added.
+     * @param int $competencyid The competency id for which evidence is added.
+     * @param string $descidentifier The strings identifier.
+     * @param string $desccomponent The strings component.
+     * @param stdClass|array $desca Any arguments the string requires.
+     * @param string $url The url.
+     * @param int $grade The grade.
+     * @return evidence
+     */
+    public static function add_evidence($userid, $competencyid, $descidentifier, $desccomponent, $desca = null, $url = null,
+                                        $grade = null) {
+        global $DB;
+
+        if (empty($userid)) {
+            throw new coding_exception('Invalid parameter value for \'userid\'.');
+        }
+        if (empty($competencyid)) {
+            throw new coding_exception('Invalid parameter value for \'competencyid\'.');
+        }
+
+        // Create user_competency if it doesn't exist.
+        $usercompetency = $DB->get_record('tool_lp_user_competency',  array('userid' => $userid, 'competencyid' => $competencyid));
+        if (!$usercompetency) {
+            $usercompetency = user_competency::create_relation($userid, $competencyid)->create();
+            $id = $usercompetency->get_id();
+        } else {
+            $id = $usercompetency->id;
+        }
+
+        $record = new stdClass();
+        $record->usercompetencyid = $id;
+        $record->descidentifier = $descidentifier;
+        $record->desccomponent = $desccomponent;
+        $record->desca = $desca;
+        $record->url = $url;
+        $record->grade = $grade;
+        $evidence = new evidence(0, $record);
+        $evidence->create();
+
+        return $evidence;
+    }
 }
