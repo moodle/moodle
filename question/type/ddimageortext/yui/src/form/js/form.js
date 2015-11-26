@@ -143,7 +143,7 @@ Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
                     if (value !== 0) { // No item option is always selectable.
                         var cbel = Y.one('#id_drags_' + (value - 1) + '_infinite');
                         if (cbel && !cbel.get('checked')) {
-                            if (this.check_dropzone_for_selected_value(value)) {
+                            if (this.item_is_allocated_to_dropzone(value)) {
                                 optionnode.set('disabled', true);
                             }
                         }
@@ -157,9 +157,16 @@ Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
         Y.all('fieldset#id_dropzoneheader select').detachAll();
     },
 
-    check_dropzone_for_selected_value: function(value) {
+    /**
+     * Checks if the specified drag item is allocated to a dropzone.
+     *
+     * @method item_is_allocated_to_dropzone
+     * @param {Number} value of the drag item to check
+     * @return {Boolean} true if item is allocated to dropzone
+     */
+    item_is_allocated_to_dropzone: function(itemvalue) {
         return Y.all('fieldset#id_dropzoneheader select').some(function(selectNode) {
-            return Number(selectNode.get('value')) === value;
+            return Number(selectNode.get('value')) === itemvalue;
         });
     },
 
@@ -190,8 +197,8 @@ Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
 
         for (var i = 0; i < this.form.get_form_value('noitems', []); i++) {
             // Change to group selector.
-            Y.all('#fgroup_id_drags_' + i + ' select.draggroup').on('change', this.clear_dd_area, this);
-            Y.all('#fgroup_id_drags_' + i + ' select.dragitemtype').on('change', this.clear_dd_area, this);
+            Y.all('#fgroup_id_drags_' + i + ' select.draggroup').on('change', this.redraw_dd_area, this);
+            Y.all('#fgroup_id_drags_' + i + ' select.dragitemtype').on('change', this.redraw_dd_area, this);
             Y.all('fieldset#draggableitemheader_' + i + ' input[type="text"]')
                                 .on('blur', this.set_options_for_drag_item_selectors, this);
             // Change to infinite checkbox.
@@ -208,7 +215,12 @@ Y.extend(DDIMAGEORTEXT_FORM, M.qtype_ddimageortext.dd_base_class, {
         }, M.form_filepicker, 'callback', this);
     },
 
-    clear_dd_area: function() {
+    /**
+     * Redraws drag and drop preview area.
+     *
+     * @method redraw_dd_area
+     */
+    redraw_dd_area: function() {
         this.doc.drag_items().remove(true);
         this.draw_dd_area();
     },
