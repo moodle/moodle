@@ -282,6 +282,9 @@ class backup_module_structure_step extends backup_structure_step {
         // attach local plugin structure to $module, multiple allowed
         $this->add_plugin_structure('local', $module, true);
 
+        // Attach admin tools plugin structure to $module.
+        $this->add_plugin_structure('tool', $module, true);
+
         $module->add_child($tags);
         $tags->add_child($tag);
 
@@ -410,6 +413,10 @@ class backup_course_structure_step extends backup_structure_step {
         // attach local plugin structure to $course element; multiple local plugins
         // can save course data if required
         $this->add_plugin_structure('local', $course, true);
+
+        // Attach admin tools plugin structure to $course element; multiple plugins
+        // can save course data if required.
+        $this->add_plugin_structure('tool', $course, true);
 
         // Build the tree
 

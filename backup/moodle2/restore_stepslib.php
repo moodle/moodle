@@ -1689,6 +1689,9 @@ class restore_course_structure_step extends restore_structure_step {
         // Apply for local plugins optional paths at course level
         $this->add_plugin_structure('local', $course);
 
+        // Apply for admin tool plugins optional paths at course level.
+        $this->add_plugin_structure('tool', $course);
+
         return array($course, $category, $tag, $allowed_module);
     }
 
@@ -3594,6 +3597,9 @@ class restore_module_structure_step extends restore_structure_step {
 
         // Apply for 'local' plugins optional paths at module level
         $this->add_plugin_structure('local', $module);
+
+        // Apply for 'admin tool' plugins optional paths at module level.
+        $this->add_plugin_structure('tool', $module);
 
         return $paths;
     }
