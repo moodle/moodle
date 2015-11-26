@@ -633,7 +633,6 @@ class api {
                 unset($courses[$id]);
                 continue;
             }
-            $course->viewurl = new moodle_url('/course/view.php', array('id' => $course->id));
             array_push($result, $course);
         }
 

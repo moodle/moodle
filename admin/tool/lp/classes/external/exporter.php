@@ -36,7 +36,11 @@ use external_value;
 use external_format_value;
 
 /**
- * Generic exporter to take a stdClass and prepare it for return by webservice.
+ * Generic exporter to take a stdClass and prepare it for return by webservice, or as the context
+ * for a template.
+ *
+ * templatable classes implementing export_for_template, should always use a standard exporter if it exists.
+ * External functions should always use a standard exporter if it exists.
  *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -96,10 +100,16 @@ abstract class exporter {
      */
     final public function export(renderer_base $output) {
         $data = new stdClass();
-        $properties = self::properties_definition(true);
+        $properties = self::read_properties_definition();
         $context = $this->get_context();
         $values = (array) $this->data;
-        $values += $this->get_other_values($output);
+
+        $othervalues = $this->get_other_values($output);
+        if (array_intersect_key($values, $othervalues)) {
+            // Attempt to replace a standard property.
+            throw new coding_exception('Cannot override a standard property value: ' . $property);
+        }
+        $values += $othervalues;
         $record = (object) $values;
 
         foreach ($properties as $property => $definition) {
@@ -115,6 +125,10 @@ abstract class exporter {
 
             // If the field is PARAM_TEXT and has a format field.
             if ($propertyformat = self::get_format_field($properties, $property)) {
+                if (!property_exists($record, $propertyformat)) {
+                    // Whoops, we got something that wasn't defined.
+                    throw new coding_exception('Unexpected property ' . $propertyformat);
+                }
                 $format = $record->$propertyformat;
                 list($text, $format) = external_format_text($data->$property, $format, $context->id, 'tool_lp', '', 0);
                 $data->$property = $text;
@@ -122,7 +136,13 @@ abstract class exporter {
 
             // If it's a PARAM_TEXT without format field.
             } else if ($definition['type'] === PARAM_TEXT) {
-                $data->$property = external_format_string($data->$property, $context->id);
+                if (!empty($definition['multiple'])) {
+                    foreach ($data->$property as $key => $value) {
+                        $data->$property[$key] = external_format_string($value, $context->id);
+                    }
+                } else {
+                    $data->$property = external_format_string($data->$property, $context->id);
+                }
             }
         }
 
@@ -165,22 +185,38 @@ abstract class exporter {
     }
 
     /**
-     * Get the properties definition of this exporter.
+     * Get the read properties definition of this exporter. Read properties combines the
+     * default properties from the model (persistent or stdClass) with the properties defined
+     * by {@link self::define_other_properties()}.
      *
-     * @param bool $additional Whether or not to include the additional properties.
      * @return array Keys are the property names, and value their definition.
      */
-    final public static function properties_definition($additional = false) {
-        $properties = static::define_properties();
-        if ($additional) {
-            $customprops = static::define_other_properties();
-            foreach ($customprops as $property => $definition) {
-                // Ensures that null is set to its default.
-                if (!isset($definition['null'])) {
-                    $customprops[$property]['null'] = NULL_NOT_ALLOWED;
-                }
+    final public static function read_properties_definition() {
+        $properties = static::properties_definition();
+        $customprops = static::define_other_properties();
+        foreach ($customprops as $property => $definition) {
+            // Ensures that null is set to its default.
+            if (!isset($definition['null'])) {
+                $customprops[$property]['null'] = NULL_NOT_ALLOWED;
             }
-            $properties += $customprops;
+        }
+        $properties += $customprops;
+        return $properties;
+    }
+
+    /**
+     * Get the properties definition of this exporter used for create, and update structures.
+     * The read structures are returned by: {@link self::read_properties_definition()}.
+     *
+     * @return array Keys are the property names, and value their definition.
+     */
+    final public static function properties_definition() {
+        $properties = static::define_properties();
+        foreach ($properties as $property => $definition) {
+            // Ensures that null is set to its default.
+            if (!isset($definition['null'])) {
+                $properties[$property]['null'] = NULL_NOT_ALLOWED;
+            }
         }
         return $properties;
     }
@@ -198,8 +234,20 @@ abstract class exporter {
      * type as a nested array of more properties in order to generate a nested
      * external_single_structure.
      *
-     * See {@link \tool_lp\external\competency_with_linked_courses_exporter} for an
-     * example returning a nested array of properties, defined by another exporter.
+     * You can specify an array of values by including a 'multiple' => true array value. This
+     * will result in a nested external_multiple_structure.
+     * E.g.
+     *
+     *       'arrayofbools' => array(
+     *           'type' => PARAM_BOOL,
+     *           'multiple' => true
+     *       ),
+     *
+     * You can return a nested array in the type field, which will result in a nested external_single_structure.
+     * E.g.
+     *      'competency' => array(
+     *          'type' => competency_exporter::read_properties_definition()
+     *       ),
      *
      * @return array
      */
@@ -223,6 +271,8 @@ abstract class exporter {
      * Returns a list of objects that are related to this persistent.
      *
      * Only objects listed here can be cached in this object.
+     *
+     * The class name can be suffixed with [] to indicate an array of values.
      *
      * @return array of 'propertyname' => array('type' => classname, 'required' => true)
      */
@@ -280,7 +330,7 @@ abstract class exporter {
      * @return external_single_structure
      */
     final public static function get_create_structure() {
-        $properties = self::properties_definition(false);
+        $properties = self::properties_definition();
         $returns = array();
 
         foreach ($properties as $property => $definition) {
@@ -332,7 +382,7 @@ abstract class exporter {
      * @return external_single_structure
      */
     final public static function get_read_structure() {
-        $properties = self::properties_definition(true);
+        $properties = self::read_properties_definition();
 
         return self::get_read_structure_from_properties($properties);
     }
@@ -386,7 +436,7 @@ abstract class exporter {
      * @return external_single_structure
      */
     final public static function get_update_structure() {
-        $properties = self::properties_definition(false);
+        $properties = self::properties_definition();
         $returns = array();
 
         foreach ($properties as $property => $definition) {

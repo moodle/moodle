@@ -28,12 +28,12 @@ use renderer_base;
 use stdClass;
 
 /**
- * Class for exporting competency data.
+ * Class for exporting competency data with additional related data.
  *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class competency_with_linked_courses_exporter extends exporter {
+class competency_summary_exporter extends exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.
@@ -45,11 +45,11 @@ class competency_with_linked_courses_exporter extends exporter {
     protected static function define_other_properties() {
         return array(
             'linkedcourses' => array(
-                'type' => course_summary_exporter::properties_definition(true),
+                'type' => course_summary_exporter::read_properties_definition(),
                 'multiple' => true
             ),
             'competency' => array(
-                'type' => competency_exporter::properties_definition(true)
+                'type' => competency_exporter::read_properties_definition()
             ),
             'hascourses' => array(
                 'type' => PARAM_BOOL

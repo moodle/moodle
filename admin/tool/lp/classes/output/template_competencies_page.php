@@ -31,7 +31,7 @@ use context;
 use context_system;
 use moodle_url;
 use tool_lp\api;
-use tool_lp\external\competency_with_linked_courses_exporter;
+use tool_lp\external\competency_summary_exporter;
 
 /**
  * Class containing data for learning plan template competencies page
@@ -94,7 +94,7 @@ class template_competencies_page implements renderable, templatable {
 
             $courses = api::list_courses_using_competency($competency->get_id());
             $related = array('competency' => $competency, 'linkedcourses' => $courses, 'context' => $context);
-            $exporter = new competency_with_linked_courses_exporter(null, $related);
+            $exporter = new competency_summary_exporter(null, $related);
             $record = $exporter->export($output);
 
             array_push($data->competencies, $record);

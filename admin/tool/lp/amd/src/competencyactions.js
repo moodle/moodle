@@ -306,7 +306,6 @@ define(['jquery',
 
         requests[0].done(function(courses) {
             var context = {
-                courseviewurl: url.relativeUrl('/course/view.php'),
                 courses: courses
             };
             templates.render('tool_lp/linked_courses_summary', context).done(function(html) {

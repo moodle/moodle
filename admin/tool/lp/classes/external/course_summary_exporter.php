@@ -41,7 +41,7 @@ class course_summary_exporter extends exporter {
 
     protected function get_other_values(renderer_base $output) {
         return array(
-            'viewurl' => new moodle_url('course/view.php', array('id' => $this->data->id))
+            'viewurl' => (new moodle_url('/course/view.php', array('id' => $this->data->id)))->out(false)
         );
     }
 

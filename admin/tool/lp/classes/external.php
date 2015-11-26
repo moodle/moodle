@@ -39,10 +39,11 @@ use external_multiple_structure;
 use invalid_parameter_exception;
 use grade_scale;
 use tool_lp\external\competency_framework_exporter;
-use tool_lp\external\competency_with_linked_courses_exporter;
+use tool_lp\external\competency_summary_exporter;
 use tool_lp\external\user_competency_exporter;
 use tool_lp\external\user_competency_plan_exporter;
 use tool_lp\external\competency_exporter;
+use tool_lp\external\course_summary_exporter;
 use tool_lp\external\plan_exporter;
 use tool_lp\external\template_exporter;
 
@@ -1258,6 +1259,8 @@ class external extends external_api {
      * @return array
      */
     public static function list_courses_using_competency($competencyid) {
+        global $PAGE;
+
         $params = self::validate_parameters(self::list_courses_using_competency_parameters(),
                                             array(
                                                 'id' => $competencyid,
@@ -1265,8 +1268,17 @@ class external extends external_api {
 
         $competency = api::read_competency($params['id']);
         self::validate_context($competency->get_context());
+        $output = $PAGE->get_renderer('tool_lp');
 
-        return api::list_courses_using_competency($params['id']);
+        $results = array();
+        $courses = api::list_courses_using_competency($params['id']);
+        foreach ($courses as $course) {
+            $context = context_course::instance($course->id);
+            $exporter = new course_summary_exporter($course, array('context' => $context));
+            $result = $exporter->export($output);
+            array_push($results, $result);
+        }
+        return $results;
     }
 
     /**
@@ -1275,35 +1287,7 @@ class external extends external_api {
      * @return \external_description
      */
     public static function list_courses_using_competency_returns() {
-        $id = new external_value(
-            PARAM_INT,
-            'Course id'
-        );
-        $visible = new external_value(
-            PARAM_BOOL,
-            'Is the course visible.'
-        );
-        $idnumber = new external_value(
-            PARAM_TEXT,
-            'Course id number'
-        );
-        $shortname = new external_value(
-            PARAM_TEXT,
-            'Course short name'
-        );
-        $fullname = new external_value(
-            PARAM_TEXT,
-            'Course fullname'
-        );
-
-        $returns = array(
-            'id' => $id,
-            'shortname' => $shortname,
-            'idnumber' => $idnumber,
-            'fullname' => $fullname,
-            'visible' => $visible
-        );
-        return new external_multiple_structure(new external_single_structure($returns));
+        return new external_multiple_structure(course_summary_exporter::get_read_structure());
     }
 
     /**
@@ -2641,7 +2625,7 @@ class external extends external_api {
             'canmanagecompetencyframeworks' => new external_value(PARAM_BOOL, 'User can manage competency frameworks'),
             'canmanagetemplates' => new external_value(PARAM_BOOL, 'User can manage learning plan templates'),
             'competencies' => new external_multiple_structure(
-                competency_with_linked_courses_exporter::get_read_structure()
+                competency_summary_exporter::get_read_structure()
             ),
             'manageurl' => new external_value(PARAM_LOCALURL, 'Url to the manage competencies page.'),
         ));
