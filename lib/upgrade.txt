@@ -208,6 +208,7 @@ information provided here is intended especially for developers.
   These hooks allow developers to use the item in question before it is deleted by core. For example, if your plugin is
   a module (plugins located in the mod folder) called 'xxx' and you wish to interact with the user object before it is
   deleted then the function to create would be mod_xxx_pre_user_delete($user) in mod/xxx/lib.php.
+* pear::Net::GeoIP has been removed.
 
 === 3.0 ===
 

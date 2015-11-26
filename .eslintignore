@@ -17,7 +17,6 @@ lib/bennu/
 lib/evalmath/
 lib/lessphp/
 lib/phpexcel/
-lib/pear/Net/
 lib/google/
 lib/htmlpurifier/
 lib/jabber/

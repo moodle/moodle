@@ -36,13 +36,6 @@
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
-    <location>pear/Net</location>
-    <name>GeoIP</name>
-    <license>LGPL</license>
-    <version>1.0.0</version>
-    <licenseversion>2.1+</licenseversion>
-  </library>
-  <library>
     <location>google</location>
     <name>Google APIs Client Library</name>
     <license>Apache</license>
