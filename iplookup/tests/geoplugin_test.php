@@ -31,20 +31,22 @@ defined('MOODLE_INTERNAL') || die();
  */
 class core_iplookup_geoplugin_testcase extends advanced_testcase {
 
-    public function test_geoip() {
+    public function setUp() {
         global $CFG;
         require_once("$CFG->libdir/filelib.php");
         require_once("$CFG->dirroot/iplookup/lib.php");
 
         if (!PHPUNIT_LONGTEST) {
             // we do not want to DDOS their server, right?
-            return;
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
         }
 
         $this->resetAfterTest();
 
         $CFG->geoipfile = '';
+    }
 
+    public function test_geoip_ipv4() {
         $result = iplookup_find_location('147.230.16.1');
 
         $this->assertEquals('array', gettype($result));
@@ -55,6 +57,13 @@ class core_iplookup_geoplugin_testcase extends advanced_testcase {
         $this->assertEquals('array', gettype($result['title']));
         $this->assertEquals('Liberec', $result['title'][0]);
         $this->assertEquals('Czech Republic', $result['title'][1]);
+    }
+
+    public function test_geoip_ipv6() {
+        $result = iplookup_find_location('2a01:8900:2:3:8c6c:c0db:3d33:9ce6');
+
+        $this->assertNotNull($result['error']);
+        $this->assertEquals($result['error'], get_string('invalidipformat', 'error'));
     }
 }
 
