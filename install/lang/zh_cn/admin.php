@@ -42,3 +42,4 @@ $string['cliunknowoption'] = '未识别的选项：
 $string['cliyesnoprompt'] = '输入y（表示是）或n（表示否）';
 $string['environmentrequireinstall'] = '必须安装并启用';
 $string['environmentrequireversion'] = '需要 {$a->needed} 版本，而您的是 {$a->current}';
+$string['upgradekeyset'] = '升级密码(若不要设定请保持空白)';
