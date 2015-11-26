@@ -50,10 +50,20 @@ class user_filter_simpleselect extends user_filter_type {
      * @param string $field user table filed name
      * @param array $options select options
      */
-    public function user_filter_simpleselect($name, $label, $advanced, $field, $options) {
-        parent::user_filter_type($name, $label, $advanced);
+    public function __construct($name, $label, $advanced, $field, $options) {
+        parent::__construct($name, $label, $advanced);
         $this->_field   = $field;
         $this->_options = $options;
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function user_filter_simpleselect($name, $label, $advanced, $field, $options) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($name, $label, $advanced, $field, $options);
     }
 
     /**

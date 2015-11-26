@@ -190,7 +190,7 @@ class component_installer {
      *               be expanded (default='' = moodledataitself)
      * @return object
      */
-    function component_installer ($sourcebase, $zippath, $zipfilename, $md5filename='', $destpath='') {
+    public function __construct($sourcebase, $zippath, $zipfilename, $md5filename='', $destpath='') {
 
         $this->sourcebase   = $sourcebase;
         $this->zippath      = $zippath;

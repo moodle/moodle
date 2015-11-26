@@ -23,6 +23,13 @@ information provided here is intended especially for developers.
     needs to use correct syntax. For example, incorrect: parent::HTML_QuickForm_input(),
     HTML_QuickForm_input::HTML_QuickForm_input(), $this->HTML_QuickForm_input().
     Correct: HTML_QuickForm_input::__construct() or parent::__construct().
+  * profile_field_base::profile_field_base() is deprecated, use parent::__construct()
+    in custom profile fields constructors. Similar deprecations in exsiting
+    profile_field_* classes.
+  * user_filter_type::user_filter_type() is deprecated, use parent::__construct() in
+    custom user filters. Similar deprecations in existing user_filter_* classes.
+  * table_default_export_format_parent::table_default_export_format_parent() is
+    deprecated, use parent::__construct() in extending classes.
 
 === 3.0 ===
 

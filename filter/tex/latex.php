@@ -15,7 +15,7 @@
          * external 'helper' binaries.
          * Other platforms could/should be added
          */
-        function latex() {
+        public function __construct() {
             global $CFG;
 
             // construct directory structure

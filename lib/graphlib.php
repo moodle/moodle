@@ -1173,7 +1173,7 @@ class graph {
       return array('min' => $min, 'max' => $max);
     }
 
-    function graph() {
+    public function __construct() {
       if (func_num_args() == 2) {
         $this->parameter['width']  = func_get_arg(0);
         $this->parameter['height'] = func_get_arg(1);

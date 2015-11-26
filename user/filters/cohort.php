@@ -37,8 +37,18 @@ class user_filter_cohort extends user_filter_type {
      * Constructor
      * @param boolean $advanced advanced form element flag
      */
+    public function __construct($advanced) {
+        parent::__construct('cohort', get_string('idnumber', 'core_cohort'), $advanced);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
     public function user_filter_cohort($advanced) {
-        parent::user_filter_type('cohort', get_string('idnumber', 'core_cohort'), $advanced);
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($advanced);
     }
 
     /**

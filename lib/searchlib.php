@@ -50,7 +50,7 @@ class search_token {
   private $value;
   private $type;
 
-  function search_token($type,$value){
+  public function __construct($type,$value){
     $this->type = $type;
     $this->value = $this->sanitize($value);
 
@@ -82,10 +82,10 @@ class search_token {
  */
 class search_lexer extends Lexer{
 
-  function search_lexer(&$parser){
+  public function __construct(&$parser){
 
     // Call parent constructor.
-    $this->Lexer($parser);
+    parent::__construct($parser);
 
     //Set up the state machine and pattern matches for transitions.
 

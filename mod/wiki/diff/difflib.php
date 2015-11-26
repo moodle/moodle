@@ -279,7 +279,7 @@ class ouwiki_line {
      * @param string $data Text data that makes up this 'line'. (May include line breaks etc.)
      * @param int $linepos Position number for first character in text
      */
-    function ouwiki_line($data,$linepos) {
+    public function __construct($data,$linepos) {
         // 1. Turn things we don't want into spaces (so that positioning stays same)
         
         // Whitespace replaced with space
@@ -368,7 +368,7 @@ class ouwiki_word {
     /** Start position in original xhtml */
     var $start;
     
-    function ouwiki_word($word,$start) {
+    public function __construct($word,$start) {
         $this->word=$word;
         $this->start=$start;
     }
@@ -455,7 +455,7 @@ class ouwiki_changes {
      *   to indices in file2. All indices 1-based.
      * @param int $count2 Number of lines in file2
      */
-    function ouwiki_changes($diff,$count2) {
+    public function __construct($diff,$count2) {
         // Find deleted lines
         $this->deletes=self::internal_find_deletes($diff,$count2);
         
