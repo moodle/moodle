@@ -65,6 +65,11 @@ abstract class testing_util {
     private static $tablesequences = array();
 
     /**
+     * @var array list of updated tables.
+     */
+    public static $tableupdated = array();
+
+    /**
      * @var array original structure of all database tables
      */
     protected static $sequencenames = null;
@@ -364,11 +369,9 @@ abstract class testing_util {
                     continue;
                 }
 
-                if (!is_null($info->auto_increment)) {
+                if (!is_null($info->auto_increment) && $info->rows == 0 && ($info->auto_increment == 1)) {
                     $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
-                    if (isset(self::$tablesequences[$table]) && ($info->auto_increment == self::$tablesequences[$table])) {
-                        $empties[$table] = $table;
-                    }
+                    $empties[$table] = $table;
                 }
             }
             $rs->close();
@@ -464,6 +467,8 @@ abstract class testing_util {
             return;
         }
 
+        $updatedtables = self::$tableupdated;
+
         // If all starting Id's are the same, it's difficult to detect coding and testing
         // errors that use the incorrect id in tests.  The classic case is cmid vs instance id.
         // To reduce the chance of the coding error, we start sequences at different values where possible.
@@ -480,6 +485,10 @@ abstract class testing_util {
             $queries = array();
             $prefix = $DB->get_prefix();
             foreach ($data as $table => $records) {
+                // If table is not modified then no need to do anything.
+                if (!isset($updatedtables[$table])) {
+                    continue;
+                }
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     $nextid = self::get_next_sequence_starting_value($records, $table);
                     $queries[] = "ALTER SEQUENCE {$prefix}{$table}_id_seq RESTART WITH $nextid";
@@ -490,6 +499,7 @@ abstract class testing_util {
             }
 
         } else if ($dbfamily === 'mysql') {
+            $queries = array();
             $sequences = array();
             $prefix = $DB->get_prefix();
             $rs = $DB->get_recordset_sql("SHOW TABLE STATUS LIKE ?", array($prefix.'%'));
@@ -507,17 +517,24 @@ abstract class testing_util {
             $rs->close();
             $prefix = $DB->get_prefix();
             foreach ($data as $table => $records) {
+                // If table is not modified then no need to do anything.
+                if (!isset($updatedtables[$table])) {
+                    continue;
+                }
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     if (isset($sequences[$table])) {
                         $nextid = self::get_next_sequence_starting_value($records, $table);
                         if ($sequences[$table] != $nextid) {
-                            $DB->change_database_structure("ALTER TABLE {$prefix}{$table} AUTO_INCREMENT = $nextid");
+                            $queries[] = "ALTER TABLE {$prefix}{$table} AUTO_INCREMENT = $nextid";
                         }
                     } else {
                         // some problem exists, fallback to standard code
                         $DB->get_manager()->reset_sequence($table);
                     }
                 }
+            }
+            if ($queries) {
+                $DB->change_database_structure(implode(';', $queries));
             }
 
         } else if ($dbfamily === 'oracle') {
@@ -536,6 +553,10 @@ abstract class testing_util {
             $rs->close();
 
             foreach ($data as $table => $records) {
+                // If table is not modified then no need to do anything.
+                if (!isset($updatedtables[$table])) {
+                    continue;
+                }
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     $lastrecord = end($records);
                     if ($lastrecord) {
@@ -559,11 +580,12 @@ abstract class testing_util {
         } else {
             // note: does mssql support any kind of faster reset?
             // This also implies mssql will not use unique sequence values.
-            if (is_null($empties)) {
+            if (is_null($empties) and (empty($updatedtables))) {
                 $empties = self::guess_unmodified_empty_tables();
             }
             foreach ($data as $table => $records) {
-                if (isset($empties[$table])) {
+                // If table is not modified then no need to do anything.
+                if (isset($empties[$table]) or (!isset($updatedtables[$table]))) {
                     continue;
                 }
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
@@ -596,7 +618,26 @@ abstract class testing_util {
             return false;
         }
 
-        $empties = self::guess_unmodified_empty_tables();
+        $empties = array();
+        // Use local copy of self::$tableupdated, as list gets updated in for loop.
+        $updatedtables = self::$tableupdated;
+
+        // If empty tablesequences list then it's the very first run.
+        if (empty(self::$tablesequences) && (($DB->get_dbfamily() != 'mysql') && ($DB->get_dbfamily() != 'postgres'))) {
+            // Only Mysql and Postgres support random sequence, so don't guess, just reset everything on very first run.
+            $empties = self::guess_unmodified_empty_tables();
+        }
+
+        // Check if any table has been modified by behat selenium process.
+        if (defined('BEHAT_SITE_RUNNING')) {
+            // Crazy way to reset :(.
+            $tablesupdatedfile = self::get_tables_updated_by_scenario_list_path();
+            if ($tablesupdated = @json_decode(file_get_contents($tablesupdatedfile), true)) {
+                self::$tableupdated = array_merge(self::$tableupdated, $tablesupdated);
+                unlink($tablesupdatedfile);
+            }
+            $updatedtables = self::$tableupdated;
+        }
 
         $borkedmysql = false;
         if ($DB->get_dbfamily() === 'mysql') {
@@ -637,6 +678,12 @@ abstract class testing_util {
         }
 
         foreach ($data as $table => $records) {
+            // If table is not modified then no need to do anything.
+            // $updatedtables tables is set after the first run, so check before checking for specific table update.
+            if (!empty($updatedtables) && !isset($updatedtables[$table])) {
+                continue;
+            }
+
             if ($borkedmysql) {
                 if (empty($records) and isset($empties[$table])) {
                     continue;
@@ -708,6 +755,8 @@ abstract class testing_util {
                 $DB->get_manager()->drop_table(new xmldb_table($table));
             }
         }
+
+        self::reset_updated_table_list();
 
         return true;
     }
@@ -841,6 +890,50 @@ abstract class testing_util {
         }
 
         return $hash;
+    }
+
+    /**
+     * Set state of modified tables.
+     *
+     * @param string $sql sql which is updating the table.
+     */
+    public static function set_table_modified_by_sql($sql) {
+        global $DB;
+
+        $prefix = $DB->get_prefix();
+
+        preg_match('/( ' . $prefix . '\w*)(.*)/', $sql, $matches);
+        // Ignore random sql for testing like "XXUPDATE SET XSSD".
+        if (!empty($matches[1])) {
+            $table = trim($matches[1]);
+            $table = preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $table);
+            self::$tableupdated[$table] = true;
+
+            if (defined('BEHAT_SITE_RUNNING')) {
+                $tablesupdatedfile = self::get_tables_updated_by_scenario_list_path();
+                if ($tablesupdated = @json_decode(file_get_contents($tablesupdatedfile), true)) {
+                    $tablesupdated[$table] = true;
+                } else {
+                    $tablesupdated[$table] = true;
+                }
+                @file_put_contents($tablesupdatedfile, json_encode($tablesupdated, JSON_PRETTY_PRINT));
+            }
+        }
+    }
+
+    /**
+     * Reset updated table list. This should be done after every reset.
+     */
+    public static function reset_updated_table_list() {
+        self::$tableupdated = array();
+    }
+
+    /**
+     * Returns the path to the file which holds list of tables updated in scenario.
+     * @return string
+     */
+    protected final static function get_tables_updated_by_scenario_list_path() {
+        return self::get_dataroot() . '/tablesupdatedbyscenario.txt';
     }
 
     /**

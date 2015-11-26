@@ -404,6 +404,14 @@ abstract class moodle_database {
             case SQL_QUERY_UPDATE:
             case SQL_QUERY_STRUCTURE:
                 $this->writes++;
+            default:
+                if ((PHPUNIT_TEST) || (defined('BEHAT_TEST') && BEHAT_TEST) ||
+                    defined('BEHAT_SITE_RUNNING')) {
+
+                    // Set list of tables that are updated.
+                    require_once(__DIR__.'/../testing/classes/util.php');
+                    testing_util::set_table_modified_by_sql($sql);
+                }
         }
 
         $this->print_debug($sql, $params);
