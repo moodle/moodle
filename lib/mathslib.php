@@ -48,7 +48,7 @@ class calc_formula {
      * @param string $formula with leading =
      * @param array $params associative array of parameters used in formula. All parameter names must be lowercase!
      */
-    function calc_formula($formula, $params=false) {
+    public function __construct($formula, $params=false) {
         $this->_em = new EvalMath();
         $this->_em->suppress_errors = true; // no PHP errors!
         if (strpos($formula, '=') !== 0) {

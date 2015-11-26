@@ -18,7 +18,7 @@ class cssparser {
   private $css;
   private $html;
 
-  function cssparser($html = true) {
+  public function __construct($html = true) {
     // Register "destructor"
     core_shutdown_manager::register_function(array(&$this, "finalize"));
     $this->html = ($html != false);

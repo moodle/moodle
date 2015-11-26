@@ -44,7 +44,7 @@
          *                    for insensitive.
          *    @access public
          */
-        function ParallelRegex($case) {
+        public function __construct($case) {
             $this->_case = $case;
             $this->_patterns = array();
             $this->_labels = array();
@@ -137,7 +137,7 @@
          *    @param string $start        Starting state name.
          *    @access public
          */
-        function StateStack($start) {
+        public function __construct($start) {
             $this->_stack = array($start);
         }
         
@@ -203,12 +203,19 @@
          *    @param bool $case       True for case sensitive.
          *    @access public
          */
-        function Lexer(&$parser, $start = "accept", $case = false) {
+        public function __construct(&$parser, $start = "accept", $case = false) {
             $this->_case = $case;
             $this->_regexes = array();
             $this->_parser = &$parser;
             $this->_mode = new StateStack($start);
             $this->_mode_handlers = array();
+        }
+
+        /**
+         * Old syntax of class constructor for backward compatibility.
+         */
+        public function Lexer(&$parser, $start = "accept", $case = false) {
+            self::__construct($parser, $start, $case);
         }
         
         /**

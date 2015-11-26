@@ -37,8 +37,15 @@ class user_filter_yesno extends user_filter_simpleselect {
      * @param boolean $advanced advanced form element flag
      * @param string $field user table filed name
      */
+    public function __construct($name, $label, $advanced, $field) {
+        parent::__construct($name, $label, $advanced, $field, array(0 => get_string('no'), 1 => get_string('yes')));
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
     public function user_filter_yesno($name, $label, $advanced, $field) {
-        parent::user_filter_simpleselect($name, $label, $advanced, $field, array(0 => get_string('no'), 1 => get_string('yes')));
+        self::__construct($name, $label, $advanced, $field);
     }
 
     /**

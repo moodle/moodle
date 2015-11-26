@@ -52,11 +52,18 @@ class user_filter_select extends user_filter_type {
      * @param array $options select options
      * @param mixed $default option
      */
-    public function user_filter_select($name, $label, $advanced, $field, $options, $default=null) {
-        parent::user_filter_type($name, $label, $advanced);
+    public function __construct($name, $label, $advanced, $field, $options, $default=null) {
+        parent::__construct($name, $label, $advanced);
         $this->_field   = $field;
         $this->_options = $options;
         $this->_default = $default;
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function user_filter_select($name, $label, $advanced, $field, $options, $default=null) {
+        self::__construct($name, $label, $advanced, $field, $options, $default=null);
     }
 
     /**

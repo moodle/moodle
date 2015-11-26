@@ -44,9 +44,9 @@ class profile_field_menu extends profile_field_base {
      * @param int $fieldid
      * @param int $userid
      */
-    public function profile_field_menu($fieldid = 0, $userid = 0) {
+    public function __construct($fieldid = 0, $userid = 0) {
         // First call parent constructor.
-        $this->profile_field_base($fieldid, $userid);
+        parent::__construct($fieldid, $userid);
 
         // Param 1 for menu type is the options.
         if (isset($this->field->param1)) {
@@ -70,6 +70,13 @@ class profile_field_menu extends profile_field_base {
                 $this->datakey = $key;
             }
         }
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function profile_field_menu($fieldid=0, $userid=0) {
+        self::__construct($fieldid, $userid);
     }
 
     /**

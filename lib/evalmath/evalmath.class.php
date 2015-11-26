@@ -117,7 +117,7 @@ class EvalMath {
 
     var $allowimplicitmultiplication;
 
-    function EvalMath($allowconstants = false, $allowimplicitmultiplication = false) {
+    public function __construct($allowconstants = false, $allowimplicitmultiplication = false) {
         if ($allowconstants){
             $this->v['pi'] = pi();
             $this->v['e'] = exp(1);

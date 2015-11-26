@@ -61,12 +61,19 @@ class profile_field_base {
      * @param int $fieldid id of the profile from the user_info_field table
      * @param int $userid id of the user for whom we are displaying data
      */
-    public function profile_field_base($fieldid=0, $userid=0) {
+    public function __construct($fieldid=0, $userid=0) {
         global $USER;
 
         $this->set_fieldid($fieldid);
         $this->set_userid($userid);
         $this->load_data();
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function profile_field_base($fieldid=0, $userid=0) {
+        self::__construct($fieldid, $userid);
     }
 
     /**

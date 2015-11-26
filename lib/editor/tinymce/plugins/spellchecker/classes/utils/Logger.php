@@ -31,7 +31,7 @@ class Moxiecode_Logger {
 	/**
 	 * Constructs a new logger instance.
 	 */
-	function Moxiecode_Logger() {
+	public function __construct() {
 		$this->_path = "";
 		$this->_filename = "{level}.log";
 		$this->setMaxSize("100k");
