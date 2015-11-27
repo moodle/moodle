@@ -35,10 +35,17 @@ class auth_plugin_mnet extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_mnet() {
+    public function __construct() {
         $this->authtype = 'mnet';
         $this->config = get_config('auth_mnet');
         $this->mnet = get_mnet_environment();
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function auth_plugin_mnet() {
+        self::__construct();
     }
 
     /**

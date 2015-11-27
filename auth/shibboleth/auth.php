@@ -38,9 +38,16 @@ class auth_plugin_shibboleth extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_shibboleth() {
+    public function __construct() {
         $this->authtype = 'shibboleth';
         $this->config = get_config('auth/shibboleth');
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function auth_plugin_shibboleth() {
+        self::__construct();
     }
 
     /**

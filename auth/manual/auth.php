@@ -46,11 +46,18 @@ class auth_plugin_manual extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_manual() {
+    public function __construct() {
         $this->authtype = 'manual';
         $config = get_config(self::COMPONENT_NAME);
         $legacyconfig = get_config(self::LEGACY_COMPONENT_NAME);
         $this->config = (object)array_merge((array)$legacyconfig, (array)$config);
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function auth_plugin_manual() {
+        self::__construct();
     }
 
     /**

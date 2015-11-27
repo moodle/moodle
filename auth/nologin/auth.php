@@ -35,8 +35,15 @@ class auth_plugin_nologin extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_nologin() {
+    public function __construct() {
         $this->authtype = 'nologin';
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function auth_plugin_nologin() {
+        self::__construct();
     }
 
     /**

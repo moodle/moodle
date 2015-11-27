@@ -34,9 +34,16 @@ class auth_plugin_email extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_email() {
+    public function __construct() {
         $this->authtype = 'email';
         $this->config = get_config('auth/email');
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function auth_plugin_email() {
+        self::__construct();
     }
 
     /**

@@ -35,9 +35,16 @@ class auth_plugin_pop3 extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_pop3() {
+    public function __construct() {
         $this->authtype = 'pop3';
         $this->config = get_config('auth/pop3');
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function auth_plugin_pop3() {
+        self::__construct();
     }
 
     /**

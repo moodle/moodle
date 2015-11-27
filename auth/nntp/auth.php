@@ -35,9 +35,16 @@ class auth_plugin_nntp extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_nntp() {
+    public function __construct() {
         $this->authtype = 'nntp';
         $this->config = get_config('auth/nntp');
+    }
+
+    /**
+     * Old syntax of class constructor for backward compatibility.
+     */
+    public function auth_plugin_nntp() {
+        self::__construct();
     }
 
     /**
