@@ -30,7 +30,7 @@ class fcFPP
     var $_debug = FALSE;    // set to true to see some debug info
 
     // class constructor
-    function fcFPP($host="localhost", $port="3333")
+    public function __construct($host="localhost", $port="3333")
     {
     $this->_hostname = $host;
     $this->_port = $port;

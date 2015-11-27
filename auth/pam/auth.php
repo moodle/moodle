@@ -53,10 +53,20 @@ class auth_plugin_pam extends auth_plugin_base {
     /**
      * Constructor.
      */
-    function auth_plugin_pam() {
+    public function __construct() {
         $this->authtype = 'pam';
         $this->config = get_config('auth/pam');
         $this->errormessage = '';
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function auth_plugin_pam() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     /**

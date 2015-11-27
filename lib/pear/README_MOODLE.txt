@@ -34,3 +34,8 @@ Pear
 ====
 Changed constructors in classes PEAR and PEAR_ERROR to be __construct(). This has
 been already changed upstream in 1.10.0, remove this line after upgrade.
+
+
+Crypt/CHAP
+==========
+MDL-52285 - made all constructors PHP7 compatible
