@@ -47,6 +47,7 @@ if ($scoes = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id), 'sort
     }
 }
 
+$scorm->autocommit = ($scorm->autocommit === "1") ? true : false;
 $PAGE->requires->js_init_call('M.scorm_api.init', array($def, $cmiobj, $cmiint, $cmicommentsuser, $cmicommentslms,
                                                         scorm_debugging($scorm), $scorm->auto, $scorm->id, $CFG->wwwroot,
                                                         sesskey(), $scoid, $attempt, $mode, $id, $currentorg, $scorm->autocommit));
