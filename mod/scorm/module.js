@@ -156,6 +156,9 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
             var obj = document.createElement('iframe');
             obj.setAttribute('id', 'scorm_object');
             obj.setAttribute('type', 'text/html');
+            obj.setAttribute('allowfullscreen', 'allowfullscreen');
+            obj.setAttribute('webkitallowfullscreen', 'webkitallowfullscreen');
+            obj.setAttribute('mozallowfullscreen', 'mozallowfullscreen');
             if (!window_name && node.title != null) {
                 obj.setAttribute('src', url_prefix + node.title);
             }
