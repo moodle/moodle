@@ -3335,6 +3335,19 @@ class external extends external_api {
         ));
     }
 
+    /**
+     * TODO: MDL-52243 Move this function to lib/accesslib.php
+     *
+     * Function used to return a list of users where the given user has a particular capability.
+     * This is used e.g. to find all the users where someone is able to manage their learning plans,
+     * it also would be useful for mentees etc.
+     * @param $capability String - The capability string we are filtering for. If '' is passed,
+     *                             an always matching filter is returned.
+     * @param $userid int - The user id we are using for the access checks. Defaults to current user.
+     * @param $type int - The type of named params to return (passed to $DB->get_in_or_equal).
+     * @param $prefix string - The type prefix for the db table (passed to $DB->get_in_or_equal).
+     * @return list($sql, $params) Same as $DB->get_in_or_equal().
+     */
     public static function filter_users_with_capability_on_user_context_sql($capability,
                                                                             $userid = 0,
                                                                             $type=SQL_PARAMS_QM,
