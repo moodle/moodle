@@ -338,7 +338,16 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
             $class = 'day';
         }
 
-        if (isset($eventsbyday[$day])) {
+        $eventids = array();
+        if (!empty($eventsbyday[$day])) {
+            $eventids = $eventsbyday[$day];
+        }
+
+        if (!empty($durationbyday[$day])) {
+            $eventids = array_unique(array_merge($eventids, $durationbyday[$day]));
+        }
+
+        if (!empty($eventids)) {
             // There is at least one event on this day.
 
             $class .= ' hasevent';
@@ -346,7 +355,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
             $dayhref = calendar_get_link_href(new moodle_url(CALENDAR_URL . 'view.php', $hrefparams), 0, 0, 0, $daytime);
 
             $popupcontent = '';
-            foreach($eventsbyday[$day] as $eventid) {
+            foreach($eventids as $eventid) {
                 if (!isset($events[$eventid])) {
                     continue;
                 }

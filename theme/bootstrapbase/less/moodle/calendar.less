@@ -20,6 +20,22 @@
     background-color: @calendarEventUserColor;
 }
 
+.duration_global {
+    background-color: @calendarEventGlobalColor;
+}
+
+.duration_course {
+    background-color: @calendarEventCourseColor;
+}
+
+.duration_group {
+    background-color: @calendarEventGroupColor;
+}
+
+.duration_user {
+    background-color: @calendarEventUserColor;
+}
+
 // Calendar restyling.
 .path-calendar {
     .calendartable {
@@ -314,6 +330,10 @@
         td {
             &.weekend {
                 .muted;
+
+                a {
+                    .muted;
+                }
             }
             a {
                 width: 100%;
