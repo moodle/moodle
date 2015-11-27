@@ -62,7 +62,7 @@ define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
                     var ctx = user,
                         identity = [];
                     $.each(['idnumber', 'email', 'phone1', 'phone2', 'department', 'institution'], function(i, k) {
-                        if (typeof user[k] !== 'undefined') {
+                        if (typeof user[k] !== 'undefined' && user[k] !== '') {
                             ctx.hasidentity = true;
                             identity.push(user[k]);
                         }

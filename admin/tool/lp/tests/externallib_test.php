@@ -2565,11 +2565,11 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, $result['count']);
         $this->assertEquals($u1->id, $result['users'][0]['id']);
         $this->assertEquals($u1->idnumber, $result['users'][0]['idnumber']);
-        $this->assertArrayNotHasKey('email', $result['users'][0]);
-        $this->assertArrayNotHasKey('phone1', $result['users'][0]);
-        $this->assertArrayNotHasKey('phone2', $result['users'][0]);
-        $this->assertArrayNotHasKey('department', $result['users'][0]);
-        $this->assertArrayNotHasKey('institution', $result['users'][0]);
+        $this->assertEmpty($result['users'][0]['email']);
+        $this->assertEmpty($result['users'][0]['phone1']);
+        $this->assertEmpty($result['users'][0]['phone2']);
+        $this->assertEmpty($result['users'][0]['department']);
+        $this->assertEmpty($result['users'][0]['institution']);
 
         // Filter by email.
         $CFG->showuseridentity = 'email';
@@ -2612,12 +2612,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
         $this->assertEquals($u1->id, $result['users'][0]['id']);
-        $this->assertArrayNotHasKey('idnumber', $result['users'][0]);
-        $this->assertArrayNotHasKey('email', $result['users'][0]);
-        $this->assertArrayNotHasKey('phone1', $result['users'][0]);
-        $this->assertArrayNotHasKey('phone2', $result['users'][0]);
-        $this->assertArrayNotHasKey('department', $result['users'][0]);
-        $this->assertArrayNotHasKey('institution', $result['users'][0]);
+        $this->assertEmpty($result['users'][0]['idnumber']);
+        $this->assertEmpty($result['users'][0]['email']);
+        $this->assertEmpty($result['users'][0]['phone1']);
+        $this->assertEmpty($result['users'][0]['phone2']);
+        $this->assertEmpty($result['users'][0]['department']);
+        $this->assertEmpty($result['users'][0]['institution']);
     }
 
 }

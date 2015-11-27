@@ -41,6 +41,7 @@ use invalid_parameter_exception;
 use grade_scale;
 use tool_lp\external\competency_framework_exporter;
 use tool_lp\external\competency_summary_exporter;
+use tool_lp\external\user_summary_exporter;
 use tool_lp\external\user_competency_exporter;
 use tool_lp\external\user_competency_plan_exporter;
 use tool_lp\external\competency_exporter;
@@ -3458,6 +3459,7 @@ class external extends external_api {
 
         $context = context_system::instance();
         self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
 
         list($filtercapsql, $filtercapparams) = self::filter_users_with_capability_on_user_context_sql($cap,
                                                                                                        $USER->id,
@@ -3482,22 +3484,16 @@ class external extends external_api {
 
         $users = array();
         foreach ($result as $key => $user) {
-            $newuser = array(
-                'id' => $user->id,
-                'fullname' => fullname($user)
-            );
-
-            // Add user picture.
-            $userpicture = new \user_picture($user);
-            $userpicture->size = 1; // Size f1.
-            $newuser['profileimageurl'] = $userpicture->get_url($PAGE)->out(false);
-            $userpicture->size = 0; // Size f2.
-            $newuser['profileimageurlsmall'] = $userpicture->get_url($PAGE)->out(false);
-
-            // Add identity fields.
-            foreach ($extrasearchfields as $field) {
-                $newuser[$field] = $user->$field;
+            // Make sure all required fields are set.
+            foreach (user_summary_exporter::define_properties() as $propertykey => $definition) {
+                if (empty($user->$propertykey) || !in_array($propertykey, $extrasearchfields)) {
+                    if ($propertykey != 'id') {
+                        $user->$propertykey = '';
+                    }
+                }
             }
+            $exporter = new user_summary_exporter($user);
+            $newuser = $exporter->export($output);
 
             $users[$key] = $newuser;
         }
@@ -3518,20 +3514,7 @@ class external extends external_api {
         global $CFG;
         require_once($CFG->dirroot . '/user/externallib.php');
         return new external_single_structure(array(
-            'users' => new external_multiple_structure(new external_single_structure(array(
-                'id' => new external_value(PARAM_INT, 'User ID'),
-                'fullname' => new external_value(PARAM_NOTAGS, 'User full name'),
-
-                'profileimageurl' => new external_value(PARAM_URL, 'User picture URL', VALUE_OPTIONAL),
-                'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL', VALUE_OPTIONAL),
-
-                'idnumber' => new external_value(PARAM_NOTAGS, 'ID number', VALUE_OPTIONAL),
-                'email' => new external_value(PARAM_TEXT, 'Email', VALUE_OPTIONAL),
-                'phone1' => new external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
-                'phone2' => new external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
-                'department' => new external_value(PARAM_TEXT, 'Department', VALUE_OPTIONAL),
-                'institution' => new external_value(PARAM_TEXT, 'Institution', VALUE_OPTIONAL),
-            ))),
+            'users' => new external_multiple_structure(user_summary_exporter::get_read_structure()),
             'count' => new external_value(PARAM_INT, 'Total number of results.')
         ));
     }
