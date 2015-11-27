@@ -184,6 +184,29 @@ class plan extends persistent {
     }
 
     /**
+     * Validate the user ID.
+     *
+     * @param  int $value
+     * @return true|lang_string
+     */
+    protected function validate_userid($value) {
+        global $DB;
+
+        // During create.
+        if (!$this->get_id()) {
+
+            // Check that the user exists. We do not need to do that on update because
+            // the userid of a plan should never change.
+            if (!$DB->record_exists('user', array('id' => $value))) {
+                return new lang_string('invaliddata', 'error');
+            }
+
+        }
+
+        return true;
+    }
+
+    /**
      * Can the current user manage a user's plan?
      *
      * @param  int $planuserid The user to whom the plan would belong.

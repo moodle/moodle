@@ -1473,8 +1473,7 @@ class api {
 
         // Validate that the plan as it is can be managed.
         if (!$plan->can_manage()) {
-            $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
 
         } else if ($plan->is_based_on_template()) {
             // Prevent a plan based on a template to be edited.
@@ -1501,14 +1500,13 @@ class api {
             throw new coding_exception('Re-opening plan is not allowed in api::update_status (use reopen_plan instead)');
         }
 
-        if ($beforetemplateid === null &&  $plan->get_templateid() !== null) {
-            throw new coding_exception('A plan cannot be update to use a template.');
+        if ($beforetemplateid === null && $plan->get_templateid() !== null) {
+            throw new coding_exception('A plan cannot be updated to use a template.');
         }
 
         // Revalidate after the data has be injected. This handles status change, etc...
         if (!$plan->can_manage()) {
-            $context = context_user::instance($plan->get_userid());
-            throw new required_capability_exception($context, 'tool/lp:planmanage', 'nopermissions', '');
+            throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
         }
 
         $plan->update();

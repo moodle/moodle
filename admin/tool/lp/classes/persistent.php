@@ -535,6 +535,13 @@ abstract class persistent {
      * recommended because of the possible dependencies between one field and another,also the
      * field ID can be used to check whether the object is being updated or created.
      *
+     * When validating foreign keys the persistent should only check that the associated model
+     * exists. The validation methods should not be used to check for a change in that relationship.
+     * The API method setting the attributes on the model should be responsible for that.
+     * E.g. On a course model, the method validate_categoryid will check that the category exists.
+     * However, if a course can never be moved outside of its category it would be up to the calling
+     * code to ensure that the category ID will not be altered.
+     *
      * @return array|true Returns true when the validation passed, or an array of properties with errors.
      */
     final public function validate() {
