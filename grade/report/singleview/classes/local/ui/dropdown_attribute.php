@@ -83,7 +83,7 @@ class dropdown_attribute extends element {
             'value' => $this->selected
         );
 
-        $attributes = array();
+        $attributes = array('tabindex' => '1');
 
         if (!empty($this->isdisabled)) {
             $attributes['disabled'] = 'DISABLED';
