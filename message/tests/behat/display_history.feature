@@ -11,6 +11,7 @@ Feature: Message history displays correctly
       | user2 | User | Two | two@example.com |
     And I log in as "user1"
     And I send "Message 1 from user1 to user2" message to "User Two" user
+    And I wait "1" seconds
     And I send "Message 2 from user1 to user2" message to "User Two" user
     And I send "Message 3 from user1 to user2" message to "User Two" user
     And I send "Message 4 from user1 to user2" message to "User Two" user
@@ -19,6 +20,7 @@ Feature: Message history displays correctly
     And I send "Message 7 from user1 to user2" message to "User Two" user
     And I send "Message 8 from user1 to user2" message to "User Two" user
     And I send "Message 9 from user1 to user2" message to "User Two" user
+    And I wait "1" seconds
     And I send "Message 10 from user1 to user2" message to "User Two" user
 
   Scenario: View sent messages

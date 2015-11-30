@@ -23,6 +23,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 9 |
@@ -30,6 +31,7 @@ Background:
     And I press "Post to forum"
     And I wait to be redirected
     And I follow "Course 1"
+    And I wait "1" seconds
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
       | Subject | Forum Post 8 |
@@ -78,6 +80,7 @@ Background:
       | Message | This is forum post two |
     And I press "Post to forum"
     And I wait to be redirected
+    And I wait "1" seconds
     And I follow "Course 1"
     And I press "Add a new discussion topic"
     And I set the following fields to these values:
