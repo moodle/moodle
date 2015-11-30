@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/form_autocomplete_suggestions
+    @template tool_lp/form-user-selector-suggestion
 
     Moodle template for the list of valid options in an autocomplate form element.
 
@@ -26,14 +26,27 @@
     * none
 
     Context variables required for this template:
-    * suggestionsId The dom id of the current suggestions list.
-    * options List of options with label and value fields.
+    * profileimageurlsmall Url to a small profile image.
+    * profileimageurl Url to a profile image.
+    * fullname Users full name
+    * hasidentity boolean to say if there are identity fields to show
+    * identity concatenated list of identity fields.
+    * id user id field
+    * email user email field
+    * idnumber user idnumber field
+    * phone1 user phone1 field
+    * phone2 user phone2 field
+    * department user department field
+    * institution user institution field
 
     Example context (json):
-    { "suggestionsId": 1, "options": [
-        { "label": "Item label with <strong>tags</strong>", "value": "5" },
-        { "label": "Another item label with <strong>tags</strong>", "value": "4" }
-    ]}
+    { "id": "1",
+      "fullname": "Admin",
+      "hasidentity": true,
+      "identity": "Admin User, 0144114141",
+      "profileimageurl": "invalid url",
+      "profileimageurlsmall": "invalid url"
+    }
 }}
 <span>
     <img height="18" src="{{profileimageurlsmall}}" alt="" role="presentation">
