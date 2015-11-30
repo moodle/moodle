@@ -14,9 +14,6 @@ Feature: Confirm that conditions on completion no longer cause a bug
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
-    And the following config values are set as admin:
-      | enableavailability | 1 |
-      | enablecompletion   | 1 |
 
   @javascript
   Scenario: Multiple completion conditions on glossary

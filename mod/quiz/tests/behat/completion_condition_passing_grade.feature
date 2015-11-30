@@ -17,7 +17,6 @@ Feature: Set a quiz to be marked complete when the student passes
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
     And the following config values are set as admin:
-      | enablecompletion    | 1           |
       | grade_item_advanced | hiddenuntil |
     And the following "question categories" exist:
       | contextlevel | reference | name           |

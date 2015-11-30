@@ -46,9 +46,7 @@ Feature: View structural changes in recent activity block
       | GG3      | G2    |
 
   Scenario: Check that Added module information is displayed respecting view capability
-    Given the following config values are set as admin:
-      | enableavailability | 1 |
-    And I log in as "teacher1"
+    Given I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
     When I add a "Forum" to section "1" and I fill the form with:
