@@ -40,11 +40,32 @@ $url = new moodle_url('/admin/tool/lp/template_plans.php', array(
 ));
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template, get_string('userplans', 'tool_lp'));
 
+// Capture the form submission.
+$form = new \tool_lp\form\template_plans($url->out(false));
+if (($data = $form->get_data()) && !empty($data->users)) {
+    $i = 0;
+    foreach ($data->users as $userid) {
+        $result = \tool_lp\api::create_plan_from_template($template->get_id(), $userid);
+        if ($result) {
+            $i++;
+        }
+    }
+    if ($i == 0) {
+        $notification = get_string('noplanswerecreated', 'tool_lp');
+    } else if ($i == 1) {
+        $notification = get_string('oneplanwascreated', 'tool_lp');
+    } else {
+        $notification = get_string('aplanswerecreated', 'tool_lp', $i);
+    }
+    redirect($url, $notification);
+}
+
 // Display the page.
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();
 echo $output->heading($title);
 echo $output->heading($subtitle, 3);
+echo $form->display();
 $page = new \tool_lp\output\template_plans_page($template, $url);
 echo $output->render($page);
 echo $output->footer();
