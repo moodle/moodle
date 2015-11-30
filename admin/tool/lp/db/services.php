@@ -568,5 +568,14 @@ $functions = array(
         'capabilities' => '',
         'ajax'         => true,
     ),
+    'tool_lp_search_cohorts' => array(
+        'classname'    => 'tool_lp\external',
+        'methodname'   => 'search_cohorts',
+        'classpath'    => '',
+        'description'  => 'Search for cohorts.',
+        'type'         => 'read',
+        'capabilities' => 'moodle/cohort:view',
+        'ajax'         => true,
+    ),
 );
 

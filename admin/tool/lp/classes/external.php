@@ -38,6 +38,7 @@ use external_format_value;
 use external_single_structure;
 use external_multiple_structure;
 use invalid_parameter_exception;
+use required_capability_exception;
 use grade_scale;
 use tool_lp\external\competency_framework_exporter;
 use tool_lp\external\competency_summary_exporter;
@@ -3532,4 +3533,90 @@ class external extends external_api {
         ));
     }
 
+    /**
+     * Returns the description of external function parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function search_cohorts_parameters() {
+        $query = new external_value(
+            PARAM_RAW,
+            'Query string'
+        );
+        $limitfrom = new external_value(
+            PARAM_INT,
+            'limitfrom we are fetching the records from',
+            VALUE_DEFAULT,
+            0
+        );
+        $limitnum = new external_value(
+            PARAM_INT,
+            'Number of records to fetch',
+            VALUE_DEFAULT,
+            25
+        );
+        return new external_function_parameters(array(
+            'query' => $query,
+            'context' => self::get_context_parameters(),
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+    }
+
+    /**
+     * Search cohorts.
+     *
+     * @param string $query
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return array
+     */
+    public static function search_cohorts($query, $context, $limitfrom = 0, $limitnum = 25) {
+        global $DB, $CFG, $PAGE;
+        require_once($CFG->dirroot . '/cohort/lib.php');
+
+        $params = self::validate_parameters(self::search_cohorts_parameters(),
+                                            array(
+                                                'query' => $query,
+                                                'context' => $context,
+                                                'limitfrom' => $limitfrom,
+                                                'limitnum' => $limitnum,
+                                            ));
+        $query = $params['query'];
+        $context = self::get_context_from_params($params['context']);
+        $limitfrom = $params['limitfrom'];
+        $limitnum = $params['limitnum'];
+
+        self::validate_context($context);
+        $results = cohort_get_available_cohorts($context, COHORT_ALL, $limitfrom, $limitnum, $query);
+
+        $cohorts = array();
+        foreach ($results as $record) {
+            $cohorts[] = array(
+                'id' => $record->id,
+                'name' => external_format_string($record->name, $record->contextid),
+                'idnumber' => $record->idnumber,
+            );
+        }
+
+        return array(
+            'cohorts' => $cohorts
+        );
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return external_description
+     */
+    public static function search_cohorts_returns() {
+        global $CFG;
+        return new external_single_structure(array(
+            'cohorts' => new external_multiple_structure(new external_single_structure(array(
+                'id' => new external_value(PARAM_INT, 'The cohort ID'),
+                'name' => new external_value(PARAM_TEXT, 'The cohort name'),
+                'idnumber' => new external_value(PARAM_RAW, 'The ID number'),
+            ))),
+        ));
+    }
 }

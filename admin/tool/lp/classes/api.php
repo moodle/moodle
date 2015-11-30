@@ -1414,6 +1414,78 @@ class api {
     }
 
     /**
+     * Create learning plans from a template and cohort.
+     *
+     * @param  mixed $templateorid The template object or ID.
+     * @param  int $cohortid The cohort ID.
+     * @param  bool $recreateunlinked When true the plans that were unlinked from this template will be re-created.
+     * @return int The number of plans created.
+     */
+    public static function create_plans_from_template_cohort($templateorid, $cohortid, $recreateunlinked = false) {
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/cohort/lib.php');
+
+        $template = $templateorid;
+        if (!is_object($template)) {
+            $template = new template($template);
+        }
+
+        // The user must be able to view the template to use it as a base for a plan.
+        if (!$template->can_read()) {
+            throw new required_capability_exception($template->get_context(), 'tool/lp:templateread', 'nopermissions', '');
+        }
+
+        // The user must be able to view the cohort.
+        $cohort = $DB->get_record('cohort', array('id' => $cohortid), '*', MUST_EXIST);
+        $cohortctx = context::instance_by_id($cohort->contextid);
+        if (!has_any_capability(array('moodle/cohort:manage', 'moodle/cohort:view'), $cohortctx)) {
+            throw new required_capability_exception($cohortctx, 'tool/lp:templateread', 'nopermissions', '');
+        }
+
+        // Convert the template to a plan.
+        $recordbase = $template->to_record();
+        $recordbase->templateid = $recordbase->id;
+        $recordbase->name = $recordbase->shortname;
+        $recordbase->status = plan::STATUS_ACTIVE;
+
+        unset($recordbase->id);
+        unset($recordbase->timecreated);
+        unset($recordbase->timemodified);
+        unset($recordbase->usermodified);
+
+        // Remove extra keys.
+        $properties = plan::properties_definition();
+        foreach ($recordbase as $key => $value) {
+            if (!array_key_exists($key, $properties)) {
+                unset($recordbase->$key);
+            }
+        }
+
+        // Create the plans.
+        $created = 0;
+        $userids = template_cohort::get_missing_plans($template->get_id(), $cohortid, $recreateunlinked);
+        foreach ($userids as $userid) {
+            $record = (object) (array) $recordbase;
+            $record->userid = $userid;
+
+            try {
+                $plan = new plan(0, $record);
+                if (!$plan->can_manage()) {
+                    throw new required_capability_exception($plan->get_context(), 'tool/lp:planmanage', 'nopermissions', '');
+                }
+            } catch (required_capability_exception $e) {
+                // Silently skip members where permissions are lacking.
+                continue;
+            }
+
+            $plan->create();
+            $created++;
+        }
+
+        return $created;
+    }
+
+    /**
      * Unlink a plan from its template.
      *
      * @param  \tool_lp\plan|int $planorid The plan or its ID.

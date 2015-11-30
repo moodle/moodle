@@ -83,6 +83,41 @@ class template_cohort extends persistent {
     }
 
     /**
+     * Return an array of user IDs for which the plans are missing.
+     *
+     * Plans are considered as missing when a member of a cohort does not have a plan created.
+     * When the parameter $unlinkedaremissing is set to false, plans that were unlinked from
+     * their template will be ignored so that we do not recreate unlinked plans endlessly.
+     *
+     * @param  int     $templateid The template ID.
+     * @param  int     $cohortid The cohort ID.
+     * @param  boolean $unlinkedaremissing When true, unlinked plans are considered as missing.
+     * @return int[]   User IDs.
+     */
+    public static function get_missing_plans($templateid, $cohortid, $unlinkedaremissing = false) {
+        global $DB;
+
+        $skipsql = '';
+        $skipparams = array();
+        if (!$unlinkedaremissing) {
+            $skipsql = 'OR p.origtemplateid = :origtemplateid';
+            $skipparams = array('origtemplateid' => $templateid);
+        }
+
+        $sql = "SELECT cm.userid
+                  FROM {cohort_members} cm
+             LEFT JOIN {" . plan::TABLE . "} p
+                    ON p.userid = cm.userid
+                   AND (p.templateid = :templateid
+                        $skipsql)
+                 WHERE cm.cohortid = :cohortid
+                   AND p.id IS NULL";
+        $params = array('templateid' => $templateid, 'cohortid' => $cohortid) + $skipparams;
+
+        return $DB->get_fieldset_sql($sql, $params);
+    }
+
+    /**
      * Get a relation.
      *
      * This does not perform any validation on the data passed. If the relation exists in the database
