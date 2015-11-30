@@ -489,10 +489,9 @@ if ($hassiteconfig) {
 // Add Calendar type settings.
 if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('calendartype', new lang_string('calendartypes', 'calendar')));
-    foreach (core_component::get_plugin_list_with_file('calendartype', 'settings.php') as $plugin => $settingspath) {
-        $settings = new admin_settingpage('calendartype_' . $plugin . '_settings', new lang_string('pluginname', 'calendartype_' . $plugin), 'moodle/site:config');
-        include($settingspath);
-        $ADMIN->add('calendartype', $settings);
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('calendartype') as $plugin) {
+        /** @var \core\plugininfo\calendartype $plugin */
+        $plugin->load_settings($ADMIN, 'calendartype', $hassiteconfig);
     }
 }
 
