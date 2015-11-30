@@ -25,6 +25,7 @@
  */
 
 require_once("$CFG->libdir/externallib.php");
+require_once($CFG->dirroot . "/message/lib.php");
 
 /**
  * Message external functions
@@ -69,7 +70,6 @@ class core_message_external extends external_api {
      */
     public static function send_instant_messages($messages = array()) {
         global $CFG, $USER, $DB;
-        require_once($CFG->dirroot . "/message/lib.php");
 
         // Check if messaging is enabled.
         if (!$CFG->messaging) {
@@ -652,7 +652,6 @@ class core_message_external extends external_api {
     public static function get_messages($useridto, $useridfrom = 0, $type = 'both', $read = true,
                                         $newestfirst = true, $limitfrom = 0, $limitnum = 0) {
         global $CFG, $USER;
-        require_once($CFG->dirroot . "/message/lib.php");
 
         $warnings = array();
 
@@ -853,7 +852,6 @@ class core_message_external extends external_api {
      */
     public static function get_blocked_users($userid) {
         global $CFG, $USER, $PAGE;
-        require_once($CFG->dirroot . "/message/lib.php");
 
         // Warnings array, it can be empty at the end but is mandatory.
         $warnings = array();
@@ -957,7 +955,6 @@ class core_message_external extends external_api {
      */
     public static function mark_message_read($messageid, $timeread) {
         global $CFG, $DB, $USER;
-        require_once($CFG->dirroot . "/message/lib.php");
 
         // Check if private messaging between users is allowed.
         if (empty($CFG->messaging)) {
@@ -1003,6 +1000,90 @@ class core_message_external extends external_api {
         return new external_single_structure(
             array(
                 'messageid' => new external_value(PARAM_INT, 'the id of the message in the message_read table'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since 3.1
+     */
+    public static function delete_message_parameters() {
+        return new external_function_parameters(
+            array(
+                'messageid' => new external_value(PARAM_INT, 'The message id'),
+                'userid' => new external_value(PARAM_INT, 'The user id of who we want to delete the message for'),
+                'read' => new external_value(PARAM_BOOL, 'If is a message read', VALUE_DEFAULT, true)
+            )
+        );
+    }
+
+    /**
+     * Deletes a message
+     *
+     * @param  int $messageid the message id
+     * @param  int $userid the user id of who we want to delete the message for
+     * @param  bool $read if is a message read (default to true)
+     * @return external_description
+     * @throws moodle_exception
+     * @since 3.1
+     */
+    public static function delete_message($messageid, $userid, $read = true) {
+        global $CFG, $DB;
+
+        // Check if private messaging between users is allowed.
+        if (empty($CFG->messaging)) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        // Validate params.
+        $params = array(
+            'messageid' => $messageid,
+            'userid' => $userid,
+            'read' => $read
+        );
+        $params = self::validate_parameters(self::delete_message_parameters(), $params);
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $messagestable = $params['read'] ? 'message_read' : 'message';
+        $message = $DB->get_record($messagestable, array('id' => $params['messageid']), '*', MUST_EXIST);
+
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+
+        $status = false;
+        if (message_can_delete_message($message, $user->id)) {
+            $status = message_delete_message($message, $user->id);;
+        } else {
+            throw new moodle_exception('You do not have permission to delete this message');
+        }
+
+        $results = array(
+            'status' => $status,
+            'warnings' => $warnings
+        );
+        return $results;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since 3.1
+     */
+    public static function delete_message_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'True if the message was deleted, false otherwise'),
                 'warnings' => new external_warnings()
             )
         );
