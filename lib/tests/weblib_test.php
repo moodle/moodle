@@ -246,6 +246,24 @@ class core_weblib_testcase extends advanced_testcase {
         $this->assertSame($strurl, $url->out(false));
     }
 
+    /**
+     * Test set good scheme on Moodle URL objects.
+     */
+    public function test_moodle_url_set_good_scheme() {
+        $url = new moodle_url('http://moodle.org/foo/bar');
+        $url->set_scheme('myscheme');
+        $this->assertSame('myscheme://moodle.org/foo/bar', $url->out());
+    }
+
+    /**
+     * Test set bad scheme on Moodle URL objects.
+     */
+    public function test_moodle_url_set_bad_scheme() {
+        $url = new moodle_url('http://moodle.org/foo/bar');
+        $this->setExpectedException('coding_exception');
+        $url->set_scheme('not a valid $ scheme');
+    }
+
     public function test_moodle_url_round_trip_array_params() {
         $strurl = 'http://example.com/?a%5B1%5D=1&a%5B2%5D=2';
         $url = new moodle_url($strurl);

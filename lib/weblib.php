@@ -673,6 +673,20 @@ class moodle_url {
     }
 
     /**
+     * Sets the scheme for the URI (the bit before ://)
+     *
+     * @param string $scheme
+     */
+    public function set_scheme($scheme) {
+        // See http://www.ietf.org/rfc/rfc3986.txt part 3.1.
+        if (preg_match('/^[a-zA-Z][a-zA-Z0-9+.-]*$/', $scheme)) {
+            $this->scheme = $scheme;
+        } else {
+            throw new coding_exception('Bad URL scheme.');
+        }
+    }
+
+    /**
      * Sets the url slashargument value.
      *
      * @param string $path usually file path
