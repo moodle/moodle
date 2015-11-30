@@ -80,8 +80,11 @@ class template_cohorts_table extends table_sql {
      * @return string
      */
     protected function col_actions($row) {
-        // TODO MDL-52266 Add delete action icon.
-        return '';
+        global $OUTPUT;
+        $action = new \confirm_action(get_string('areyousure'));
+        $url = new moodle_url($this->baseurl);
+        $url->params(array('removecohort' => $row->id, 'sesskey' => sesskey()));
+        return $OUTPUT->action_link($url, '', $action, null, new \pix_icon('t/delete', get_string('stopsyncingcohort', 'tool_lp')));
     }
 
     /**

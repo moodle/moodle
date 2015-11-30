@@ -41,6 +41,11 @@ $url = new moodle_url('/admin/tool/lp/template_cohorts.php', array(
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template,
     get_string('cohortssyncedtotemplate', 'tool_lp'));
 
+// Remove cohort.
+if (($removecohort = optional_param('removecohort', false, PARAM_INT)) !== false && confirm_sesskey()) {
+    \tool_lp\api::delete_template_cohort($template, $removecohort);
+}
+
 // Capture the form submission.
 $form = new \tool_lp\form\template_cohorts($url->out(false), array('pagecontextid' => $pagecontextid));
 if (($data = $form->get_data()) && !empty($data->cohorts)) {
