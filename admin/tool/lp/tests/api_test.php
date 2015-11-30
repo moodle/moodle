@@ -1023,6 +1023,319 @@ class tool_lp_api_testcase extends advanced_testcase {
         $this->assertEquals(1, \tool_lp\template_cohort::count_records_select('templateid = :id', array('id' => $t2->get_id())));
     }
 
+    public function test_add_evidence_log() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $u1 = $dg->create_user();
+        $u1ctx = context_user::instance($u1->id);
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        // Creating a standard evidence with minimal information.
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata', 'error');
+        $evidence->read();
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $this->assertSame(null, $uc->get_grade());
+        $this->assertSame(null, $uc->get_proficiency());
+        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
+        $this->assertEquals($u1ctx->id, $evidence->get_contextid());
+        $this->assertEquals(\tool_lp\evidence::ACTION_LOG, $evidence->get_action());
+        $this->assertEquals('invaliddata', $evidence->get_descidentifier());
+        $this->assertEquals('error', $evidence->get_desccomponent());
+        $this->assertSame(null, $evidence->get_desca());
+        $this->assertSame(null, $evidence->get_url());
+        $this->assertSame(null, $evidence->get_grade());
+        $this->assertSame(null, $evidence->get_actionuserid());
+
+        // Creating a standard evidence with more information.
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata', 'error',
+            '$a', false, 'http://moodle.org', null, 2);
+        $evidence->read();
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $this->assertSame(null, $uc->get_grade());
+        $this->assertSame(null, $uc->get_proficiency());
+        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
+        $this->assertEquals($u1ctx->id, $evidence->get_contextid());
+        $this->assertEquals(\tool_lp\evidence::ACTION_LOG, $evidence->get_action());
+        $this->assertEquals('invaliddata', $evidence->get_descidentifier());
+        $this->assertEquals('error', $evidence->get_desccomponent());
+        $this->assertEquals('$a', $evidence->get_desca());
+        $this->assertEquals('http://moodle.org', $evidence->get_url());
+        $this->assertSame(null, $evidence->get_grade());
+        $this->assertEquals(2, $evidence->get_actionuserid());
+
+        // Creating a standard evidence and send for review.
+        $evidence = api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata',
+            'error', null, true);
+        $evidence->read();
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
+        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
+
+        // Trying to pass a grade should fail.
+        try {
+            $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata', 'error',
+                null, false, null, 1);
+            $this->fail('A grade can not be set');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/grade MUST NOT be set/', $e->getMessage());
+        }
+    }
+
+    public function test_add_evidence_suggest() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $u1 = $dg->create_user();
+        $u1ctx = context_user::instance($u1->id);
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        // Creating an evidence with minimal information.
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_SUGGEST, 'invaliddata',
+            'error', null, false, null, 1, 2);
+        $evidence->read();
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $this->assertSame(null, $uc->get_grade());    // We don't grade, we just suggest.
+        $this->assertSame(null, $uc->get_proficiency());
+        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
+        $this->assertEquals($u1ctx->id, $evidence->get_contextid());
+        $this->assertEquals(\tool_lp\evidence::ACTION_SUGGEST, $evidence->get_action());
+        $this->assertEquals('invaliddata', $evidence->get_descidentifier());
+        $this->assertEquals('error', $evidence->get_desccomponent());
+        $this->assertSame(null, $evidence->get_desca());
+        $this->assertSame(null, $evidence->get_url());
+        $this->assertEquals(1, $evidence->get_grade());
+        $this->assertEquals(2, $evidence->get_actionuserid());
+
+        // Creating a standard evidence and send for review.
+        $evidence = api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_SUGGEST, 'invaliddata',
+            'error', null, true, null, 1, 2);
+        $evidence->read();
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
+        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
+
+        // Trying not to pass a grade should fail.
+        try {
+            $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_SUGGEST, 'invaliddata', 'error',
+                false, null);
+            $this->fail('A grade must be set');
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/grade MUST be set/', $e->getMessage());
+        }
+    }
+
+    public function test_add_evidence_complete() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $u1 = $dg->create_user();
+        $u1ctx = context_user::instance($u1->id);
+        $scale = $dg->create_scale(array('scale' => 'A,B,C,D'));
+        $scaleconfig = array(array('scaleid' => $scale->id));
+        $scaleconfig[] = array('name' => 'A', 'id' => 1, 'scaledefault' => 0, 'proficient' => 0);
+        $scaleconfig[] = array('name' => 'B', 'id' => 2, 'scaledefault' => 1, 'proficient' => 0);
+        $scaleconfig[] = array('name' => 'C', 'id' => 3, 'scaledefault' => 0, 'proficient' => 1);
+        $scaleconfig[] = array('name' => 'D', 'id' => 4, 'scaledefault' => 0, 'proficient' => 1);
+        $c2scaleconfig = array(array('scaleid' => $scale->id));
+        $c2scaleconfig[] = array('name' => 'A', 'id' => 1, 'scaledefault' => 0, 'proficient' => 0);
+        $c2scaleconfig[] = array('name' => 'B', 'id' => 2, 'scaledefault' => 0, 'proficient' => 1);
+        $c2scaleconfig[] = array('name' => 'C', 'id' => 3, 'scaledefault' => 0, 'proficient' => 0);
+        $c2scaleconfig[] = array('name' => 'D', 'id' => 4, 'scaledefault' => 1, 'proficient' => 1);
+        $f1 = $lpg->create_framework(array('scaleid' => $scale->id, 'scaleconfiguration' => $scaleconfig));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'scaleid' => $scale->id,
+            'scaleconfiguration' => $c2scaleconfig));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        // Creating an evidence with minimal information.
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_COMPLETE, 'invaliddata',
+            'error');
+        $evidence->read();
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $this->assertEquals(2, $uc->get_grade());    // The grade has been set automatically to the framework default.
+        $this->assertEquals(0, $uc->get_proficiency());
+        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
+        $this->assertEquals($u1ctx->id, $evidence->get_contextid());
+        $this->assertEquals(\tool_lp\evidence::ACTION_COMPLETE, $evidence->get_action());
+        $this->assertEquals('invaliddata', $evidence->get_descidentifier());
+        $this->assertEquals('error', $evidence->get_desccomponent());
+        $this->assertSame(null, $evidence->get_desca());
+        $this->assertSame(null, $evidence->get_url());
+        $this->assertEquals(2, $evidence->get_grade());
+        $this->assertSame(null, $evidence->get_actionuserid());
+
+        // Creating an evidence complete on competency with custom scale.
+        $evidence = api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_COMPLETE, 'invaliddata',
+            'error');
+        $evidence->read();
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
+        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $this->assertEquals(4, $uc->get_grade());    // The grade has been set automatically to the competency default.
+        $this->assertEquals(true, $uc->get_proficiency());
+        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
+        $this->assertEquals($u1ctx->id, $evidence->get_contextid());
+        $this->assertEquals(\tool_lp\evidence::ACTION_COMPLETE, $evidence->get_action());
+        $this->assertEquals('invaliddata', $evidence->get_descidentifier());
+        $this->assertEquals('error', $evidence->get_desccomponent());
+        $this->assertSame(null, $evidence->get_desca());
+        $this->assertSame(null, $evidence->get_url());
+        $this->assertEquals(4, $evidence->get_grade());
+        $this->assertSame(null, $evidence->get_actionuserid());
+
+        // Creating an evidence complete on a user competency with an existing grade.
+        $uc = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c3->get_id(), 'grade' => 1,
+            'proficiency' => 0));
+        $this->assertEquals(1, $uc->get_grade());
+        $this->assertEquals(0, $uc->get_proficiency());
+        $evidence = api::add_evidence($u1->id, $c3->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_COMPLETE, 'invaliddata',
+            'error');
+        $evidence->read();
+        $uc->read();
+        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $this->assertEquals(1, $uc->get_grade());    // The grade has not been changed.
+        $this->assertEquals(0, $uc->get_proficiency());
+        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
+        $this->assertEquals($u1ctx->id, $evidence->get_contextid());
+        $this->assertEquals(\tool_lp\evidence::ACTION_COMPLETE, $evidence->get_action());
+        $this->assertEquals('invaliddata', $evidence->get_descidentifier());
+        $this->assertEquals('error', $evidence->get_desccomponent());
+        $this->assertSame(null, $evidence->get_desca());
+        $this->assertSame(null, $evidence->get_url());
+        $this->assertEquals(2, $evidence->get_grade());     // The complete grade has been set.
+        $this->assertSame(null, $evidence->get_actionuserid());
+
+        // Creating a standard evidence and send for review.
+        $evidence = api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_COMPLETE, 'invaliddata',
+            'error', null, true);
+        $evidence->read();
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
+        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
+
+        // Trying to pass a grade should throw an exception.
+        try {
+            api::add_evidence($u1->id, $c2->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_COMPLETE, 'invaliddata',
+                'error', null, false, null, 1);
+        } catch (coding_exception $e) {
+            $this->assertRegExp('/grade MUST NOT be set/', $e->getMessage());
+        }
+    }
+
+    public function test_add_evidence_override() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $u1 = $dg->create_user();
+        $u1ctx = context_user::instance($u1->id);
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        // Creating an evidence with minimal information.
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_OVERRIDE, 'invaliddata',
+            'error');
+        $evidence->read();
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $this->assertSame(null, $uc->get_grade());      // We overrode with 'null'.
+        $this->assertSame(null, $uc->get_proficiency());
+        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
+        $this->assertEquals($u1ctx->id, $evidence->get_contextid());
+        $this->assertEquals(\tool_lp\evidence::ACTION_OVERRIDE, $evidence->get_action());
+        $this->assertEquals('invaliddata', $evidence->get_descidentifier());
+        $this->assertEquals('error', $evidence->get_desccomponent());
+        $this->assertSame(null, $evidence->get_desca());
+        $this->assertSame(null, $evidence->get_url());
+        $this->assertSame(null, $evidence->get_grade()); // We overrode with 'null'.
+        $this->assertSame(null, $evidence->get_actionuserid());
+
+        // Creating an evidence with a grade information.
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_OVERRIDE, 'invaliddata',
+            'error', null, false, null, 3);
+        $evidence->read();
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $this->assertEquals(3, $uc->get_grade());
+        $this->assertEquals(true, $uc->get_proficiency());
+        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
+        $this->assertEquals($u1ctx->id, $evidence->get_contextid());
+        $this->assertEquals(\tool_lp\evidence::ACTION_OVERRIDE, $evidence->get_action());
+        $this->assertEquals('invaliddata', $evidence->get_descidentifier());
+        $this->assertEquals('error', $evidence->get_desccomponent());
+        $this->assertSame(null, $evidence->get_desca());
+        $this->assertSame(null, $evidence->get_url());
+        $this->assertEquals(3, $evidence->get_grade());
+        $this->assertSame(null, $evidence->get_actionuserid());
+
+        // Creating an evidence with another grade information.
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_OVERRIDE, 'invaliddata',
+            'error', null, false, null, 1);
+        $evidence->read();
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc->get_status());
+        $this->assertEquals(1, $uc->get_grade());
+        $this->assertEquals(0, $uc->get_proficiency());
+        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
+        $this->assertEquals($u1ctx->id, $evidence->get_contextid());
+        $this->assertEquals(\tool_lp\evidence::ACTION_OVERRIDE, $evidence->get_action());
+        $this->assertEquals('invaliddata', $evidence->get_descidentifier());
+        $this->assertEquals('error', $evidence->get_desccomponent());
+        $this->assertSame(null, $evidence->get_desca());
+        $this->assertSame(null, $evidence->get_url());
+        $this->assertEquals(1, $evidence->get_grade());
+        $this->assertSame(null, $evidence->get_actionuserid());
+
+        // Creating reverting the grade and send for review.
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_OVERRIDE, 'invaliddata',
+            'error', null, true);
+        $evidence->read();
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertSame(null, $uc->get_grade());
+        $this->assertSame(null, $uc->get_proficiency());
+        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
+        $this->assertSame(null, $evidence->get_grade());
+    }
+
+    public function test_add_evidence_and_send_for_review() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        $u1 = $dg->create_user();
+        $u1ctx = context_user::instance($u1->id);
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        // Non-existing user competencies are created up for review.
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata',
+            'error', null, true);
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
+        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
+
+        // Existing user competencies sent for review don't change.
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata',
+            'error', null, true);
+        $uc->read();
+        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc->get_status());
+
+        // A user competency with a status non-idle won't change.
+        $uc->set_status(\tool_lp\user_competency::STATUS_IN_REVIEW);
+        $uc->update();
+        $evidence = api::add_evidence($u1->id, $c1->get_id(), $u1ctx->id, \tool_lp\evidence::ACTION_LOG, 'invaliddata',
+            'error', null, true);
+        $uc->read();
+        $this->assertEquals(\tool_lp\user_competency::STATUS_IN_REVIEW, $uc->get_status());
+    }
+
     /**
      * Test add evidence for existing user_competency.
      */
@@ -1043,22 +1356,30 @@ class tool_lp_api_testcase extends advanced_testcase {
         $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $uc = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c1->get_id()));
+        $this->assertSame(null, $uc->get_grade());
+        $this->assertSame(null, $uc->get_proficiency());
 
         // Create an evidence and check it was created with the right usercomptencyid and information.
-        $evidence = api::add_evidence($user->id, $c1->get_id(), 'invalidevidencedesc', 'tool_lp', '{"a": "b"}', 'url', 1);
+        $evidence = api::add_evidence($user->id, $c1->get_id(), $syscontext->id, \tool_lp\evidence::ACTION_OVERRIDE,
+            'invalidevidencedesc', 'tool_lp', array('a' => 'b'), false, 'http://moodle.org', 1, 2);
         $this->assertEquals(1, \tool_lp\evidence::count_records());
 
         $evidence->read();
+        $uc->read();
         $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
         $this->assertEquals('invalidevidencedesc', $evidence->get_descidentifier());
         $this->assertEquals('tool_lp', $evidence->get_desccomponent());
         $this->assertEquals((object) array('a' => 'b'), $evidence->get_desca());
-        $this->assertEquals('url', $evidence->get_url());
+        $this->assertEquals('http://moodle.org', $evidence->get_url());
+        $this->assertEquals(\tool_lp\evidence::ACTION_OVERRIDE, $evidence->get_action());
+        $this->assertEquals(2, $evidence->get_actionuserid());
         $this->assertEquals(1, $evidence->get_grade());
+        $this->assertEquals(1, $uc->get_grade());
+        $this->assertEquals(0, $uc->get_proficiency());
     }
 
     /**
-     * Test add evidence for none existing user_competency.
+     * Test add evidence for non-existing user_competency.
      */
     public function test_add_evidence_no_existing_user_competency() {
         $this->resetAfterTest(true);
@@ -1075,14 +1396,121 @@ class tool_lp_api_testcase extends advanced_testcase {
         $framework = $lpg->create_framework();
         $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
         $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $this->assertEquals(0, \tool_lp\user_competency::count_records());
 
-        // Create an evidence.
-        $evidence = api::add_evidence($user->id, $c1->get_id(), 'invalidevidencedesc', 'tool_lp');
+        // Create an evidence without a user competency record.
+        $evidence = api::add_evidence($user->id, $c1->get_id(), $syscontext->id, \tool_lp\evidence::ACTION_OVERRIDE,
+            'invalidevidencedesc', 'tool_lp', 'Hello world!', false, 'http://moodle.org', 1, 2);
         $this->assertEquals(1, \tool_lp\evidence::count_records());
+        $this->assertEquals(1, \tool_lp\user_competency::count_records());
 
-        // Check a user_comptency was created with the same usercomptencyid.
-        $this->assertEquals(1, \tool_lp\user_competency::count_records_select('id = :id',
-                                                                              array('id' => $evidence->get_usercompetencyid())));
+        $uc = \tool_lp\user_competency::get_record(array('userid' => $user->id, 'competencyid' => $c1->get_id()));
+        $evidence->read();
+        $this->assertEquals($uc->get_id(), $evidence->get_usercompetencyid());
+        $this->assertEquals('invalidevidencedesc', $evidence->get_descidentifier());
+        $this->assertEquals('tool_lp', $evidence->get_desccomponent());
+        $this->assertEquals('Hello world!', $evidence->get_desca());
+        $this->assertEquals('http://moodle.org', $evidence->get_url());
+        $this->assertEquals(\tool_lp\evidence::ACTION_OVERRIDE, $evidence->get_action());
+        $this->assertEquals(2, $evidence->get_actionuserid());
+        $this->assertEquals(1, $evidence->get_grade());
+        $this->assertEquals(1, $uc->get_grade());
+        $this->assertEquals(0, $uc->get_proficiency());
+    }
+
+    public function test_observe_course_completed() {
+        $this->resetAfterTest(true);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('tool_lp');
+
+        // Set-up users, framework, competencies and course competencies.
+        $course = $dg->create_course();
+        $coursectx = context_course::instance($course->id);
+        $u1 = $dg->create_user();
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $cc1 = $lpg->create_course_competency(array('competencyid' => $c1->get_id(), 'courseid' => $course->id,
+            'ruleoutcome' => \tool_lp\course_competency::OUTCOME_NONE));
+        $cc2 = $lpg->create_course_competency(array('competencyid' => $c2->get_id(), 'courseid' => $course->id,
+            'ruleoutcome' => \tool_lp\course_competency::OUTCOME_EVIDENCE));
+        $cc3 = $lpg->create_course_competency(array('competencyid' => $c3->get_id(), 'courseid' => $course->id,
+            'ruleoutcome' => \tool_lp\course_competency::OUTCOME_RECOMMEND));
+        $cc4 = $lpg->create_course_competency(array('competencyid' => $c4->get_id(), 'courseid' => $course->id,
+            'ruleoutcome' => \tool_lp\course_competency::OUTCOME_COMPLETE));
+
+        $event = \core\event\course_completed::create(array(
+            'objectid' => 1,
+            'relateduserid' => $u1->id,
+            'context' => $coursectx,
+            'courseid' => $course->id,
+            'other' => array('relateduserid' => $u1->id)
+        ));
+        $this->assertEquals(0, \tool_lp\user_competency::count_records());
+        $this->assertEquals(0, \tool_lp\evidence::count_records());
+
+        // Let's go!
+        api::observe_course_completed($event);
+        $this->assertEquals(3, \tool_lp\user_competency::count_records());
+        $this->assertEquals(3, \tool_lp\evidence::count_records());
+
+        // Outcome NONE did nothing.
+        $this->assertFalse(\tool_lp\user_competency::record_exists_select('userid = :uid AND competencyid = :cid', array(
+            'uid' => $u1->id, 'cid' => $c1->get_id()
+        )));
+
+        // Outcome evidence.
+        $uc2 = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
+        $ev2 = \tool_lp\evidence::get_record(array('usercompetencyid' => $uc2->get_id()));
+
+        $this->assertEquals(null, $uc2->get_grade());
+        $this->assertEquals(null, $uc2->get_proficiency());
+        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc2->get_status());
+
+        $this->assertEquals('evidence_coursecompleted', $ev2->get_descidentifier());
+        $this->assertEquals('tool_lp', $ev2->get_desccomponent());
+        $this->assertEquals($course->shortname, $ev2->get_desca());
+        $this->assertStringEndsWith('/report/completion/index.php?course=' . $course->id, $ev2->get_url());
+        $this->assertEquals(null, $ev2->get_grade());
+        $this->assertEquals($coursectx->id, $ev2->get_contextid());
+        $this->assertEquals(\tool_lp\evidence::ACTION_LOG, $ev2->get_action());
+        $this->assertEquals(null, $ev2->get_actionuserid());
+
+        // Outcome recommend.
+        $uc3 = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c3->get_id()));
+        $ev3 = \tool_lp\evidence::get_record(array('usercompetencyid' => $uc3->get_id()));
+
+        $this->assertEquals(null, $uc3->get_grade());
+        $this->assertEquals(null, $uc3->get_proficiency());
+        $this->assertEquals(\tool_lp\user_competency::STATUS_WAITING_FOR_REVIEW, $uc3->get_status());
+
+        $this->assertEquals('evidence_coursecompleted', $ev3->get_descidentifier());
+        $this->assertEquals('tool_lp', $ev3->get_desccomponent());
+        $this->assertEquals($course->shortname, $ev3->get_desca());
+        $this->assertStringEndsWith('/report/completion/index.php?course=' . $course->id, $ev3->get_url());
+        $this->assertEquals(null, $ev3->get_grade());
+        $this->assertEquals($coursectx->id, $ev3->get_contextid());
+        $this->assertEquals(\tool_lp\evidence::ACTION_LOG, $ev3->get_action());
+        $this->assertEquals(null, $ev3->get_actionuserid());
+
+        // Outcome complete.
+        $uc4 = \tool_lp\user_competency::get_record(array('userid' => $u1->id, 'competencyid' => $c4->get_id()));
+        $ev4 = \tool_lp\evidence::get_record(array('usercompetencyid' => $uc4->get_id()));
+
+        $this->assertEquals(3, $uc4->get_grade());
+        $this->assertEquals(1, $uc4->get_proficiency());
+        $this->assertEquals(\tool_lp\user_competency::STATUS_IDLE, $uc4->get_status());
+
+        $this->assertEquals('evidence_coursecompleted', $ev4->get_descidentifier());
+        $this->assertEquals('tool_lp', $ev4->get_desccomponent());
+        $this->assertEquals($course->shortname, $ev4->get_desca());
+        $this->assertStringEndsWith('/report/completion/index.php?course=' . $course->id, $ev4->get_url());
+        $this->assertEquals(3, $ev4->get_grade());
+        $this->assertEquals($coursectx->id, $ev4->get_contextid());
+        $this->assertEquals(\tool_lp\evidence::ACTION_COMPLETE, $ev4->get_action());
+        $this->assertEquals(null, $ev4->get_actionuserid());
     }
 
     /**

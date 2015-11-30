@@ -67,9 +67,12 @@ class tool_lp_competency_rule_testcase extends externallib_advanced_testcase {
 
         // Create some user competency records.
         $uc1 = $lpg->create_user_competency(array('competencyid' => $c1->get_id(), 'userid' => $u1->id));
-        $uc11 = $lpg->create_user_competency(array('competencyid' => $c11->get_id(), 'userid' => $u1->id, 'proficiency' => 1));
-        $uc111 = $lpg->create_user_competency(array('competencyid' => $c111->get_id(), 'userid' => $u1->id, 'proficiency' => 1));
-        $uc112 = $lpg->create_user_competency(array('competencyid' => $c112->get_id(), 'userid' => $u1->id, 'proficiency' => 1));
+        $uc11 = $lpg->create_user_competency(array('competencyid' => $c11->get_id(), 'userid' => $u1->id,
+            'grade' => 1, 'proficiency' => 1));
+        $uc111 = $lpg->create_user_competency(array('competencyid' => $c111->get_id(), 'userid' => $u1->id,
+            'grade' => 1, 'proficiency' => 1));
+        $uc112 = $lpg->create_user_competency(array('competencyid' => $c112->get_id(), 'userid' => $u1->id,
+            'grade' => 1, 'proficiency' => 1));
         $uc12 = $lpg->create_user_competency(array('competencyid' => $c12->get_id(), 'userid' => $u1->id));
         $uc13 = new user_competency(0, (object) array('userid' => $u1->id, 'competencyid' => $c13->get_id()));
 
@@ -239,8 +242,10 @@ class tool_lp_competency_rule_testcase extends externallib_advanced_testcase {
 
         // Create some user competency records.
         $uc1 = $lpg->create_user_competency(array('competencyid' => $c1->get_id(), 'userid' => $u1->id));
-        $uc11 = $lpg->create_user_competency(array('competencyid' => $c11->get_id(), 'userid' => $u1->id, 'proficiency' => 1));
-        $uc12 = $lpg->create_user_competency(array('competencyid' => $c12->get_id(), 'userid' => $u1->id, 'proficiency' => 1));
+        $uc11 = $lpg->create_user_competency(array('competencyid' => $c11->get_id(), 'userid' => $u1->id,
+            'grade' => 1, 'proficiency' => 1));
+        $uc12 = $lpg->create_user_competency(array('competencyid' => $c12->get_id(), 'userid' => $u1->id,
+            'grade' => 1, 'proficiency' => 1));
         $uc13 = $lpg->create_user_competency(array('competencyid' => $c13->get_id(), 'userid' => $u1->id));
 
         // Enough points.

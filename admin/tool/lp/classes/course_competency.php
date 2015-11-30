@@ -45,7 +45,6 @@ class course_competency extends persistent {
     /** Course competency ruleoutcome constant. */
     const OUTCOME_COMPLETE = 3;
 
-
     /**
      * Return the definition of the properties of this model.
      *

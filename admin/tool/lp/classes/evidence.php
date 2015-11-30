@@ -26,7 +26,9 @@ namespace tool_lp;
 defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
+use context;
 use lang_string;
+use moodle_exception;
 use stdClass;
 
 /**
@@ -40,6 +42,15 @@ class evidence extends persistent {
 
     const TABLE = 'tool_lp_evidence';
 
+    /** Action logging. */
+    const ACTION_LOG = 0;
+    /** Action suggesting a rating. */
+    const ACTION_SUGGEST = 1;
+    /** Action rating a competency when no rating is set. */
+    const ACTION_COMPLETE = 2;
+    /** Action rating a competency. */
+    const ACTION_OVERRIDE = 3;
+
     /**
      * Return the definition of the properties of this model.
      *
@@ -49,6 +60,18 @@ class evidence extends persistent {
         return array(
             'usercompetencyid' => array(
                 'type' => PARAM_INT
+            ),
+            'contextid' => array(
+                'type' => PARAM_INT
+            ),
+            'action' => array(
+                'type' => PARAM_INT,
+                'choices' => array(self::ACTION_LOG, self::ACTION_SUGGEST, self::ACTION_COMPLETE, self::ACTION_OVERRIDE)
+            ),
+            'actionuserid' => array(
+                'type' => PARAM_INT,
+                'default' => null,
+                'null' => NULL_ALLOWED
             ),
             'descidentifier' => array(
                 'type' => PARAM_STRINGID
@@ -113,6 +136,47 @@ class evidence extends persistent {
     }
 
     /**
+     * Convenience method handling moodle_urls.
+     *
+     * @param null|string|moodle_url $url The URL.
+     */
+    public function set_url($url) {
+        if ($url instanceof \moodle_url) {
+            $url = $url->out(false);
+        }
+        $this->set('url', $url);
+    }
+
+    /**
+     * Validate the action user ID.
+     *
+     * @param  int $value A user ID.
+     * @return true|lang_string
+     */
+    protected function validate_actionuserid($value) {
+        if ($value !== null && !\core_user::is_real_user($value)) {
+            return new lang_string('invaliddata', 'error');
+        }
+        return true;
+    }
+
+    /**
+     * Validate the context ID.
+     *
+     * @param  int $value
+     * @return true|lang_string
+     */
+    protected function validate_contextid($value) {
+        try {
+            context::instance_by_id($value);
+        } catch (moodle_exception $e) {
+            // That does not look good...
+            return new lang_string('invaliddata', 'error');
+        }
+        return true;
+    }
+
+    /**
      * Validate the description $a.
      *
      * @param string $value
@@ -125,7 +189,7 @@ class evidence extends persistent {
 
         $desc = json_decode($value);
         if ($desc === null && json_last_error() !== JSON_ERROR_NONE) {
-            return new lang_string('invaliddata', 'tool_lp');
+            return new lang_string('invaliddata', 'error');
         }
 
         return true;
@@ -153,11 +217,22 @@ class evidence extends persistent {
     /**
      * Validate the grade.
      *
+     * For performance reason we do not validate that the grade is a valid item of the
+     * scale associated with the competency or framework.
+     *
      * @param int $value The value.
      * @return true|lang_string
      */
     protected function validate_grade($value) {
         if ($value !== null && $value <= 0) {
+            return new lang_string('invalidgrade', 'tool_lp');
+        }
+
+        $action = $this->get('action');
+        if ($value === null && in_array($action, array(self::ACTION_SUGGEST, self::ACTION_COMPLETE))) {
+            return new lang_string('invalidgrade', 'tool_lp');
+
+        } else if ($value !== null && $action == self::ACTION_LOG) {
             return new lang_string('invalidgrade', 'tool_lp');
         }
 

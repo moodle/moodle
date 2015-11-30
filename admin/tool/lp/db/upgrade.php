@@ -531,5 +531,50 @@ function xmldb_tool_lp_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015111021, 'tool', 'lp');
     }
 
+    if ($oldversion < 2015111022) {
+
+        // Define field contextid to be added to tool_lp_evidence.
+        $table = new xmldb_table('tool_lp_evidence');
+        $field = new xmldb_field('contextid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'usercompetencyid');
+
+        // Conditionally launch add field contextid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111022, 'tool', 'lp');
+    }
+
+    if ($oldversion < 2015111023) {
+
+        // Define field action to be added to tool_lp_evidence.
+        $table = new xmldb_table('tool_lp_evidence');
+        $field = new xmldb_field('action', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, null, 'contextid');
+
+        // Conditionally launch add field action.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111023, 'tool', 'lp');
+    }
+
+    if ($oldversion < 2015111024) {
+
+        // Define field actionuserid to be added to tool_lp_evidence.
+        $table = new xmldb_table('tool_lp_evidence');
+        $field = new xmldb_field('actionuserid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'action');
+
+        // Conditionally launch add field actionuserid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lp savepoint reached.
+        upgrade_plugin_savepoint(true, 2015111024, 'tool', 'lp');
+    }
+
     return true;
 }

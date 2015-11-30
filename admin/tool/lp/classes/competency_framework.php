@@ -23,6 +23,7 @@
  */
 namespace tool_lp;
 
+use coding_exception;
 use context;
 use lang_string;
 use stdClass;
@@ -344,6 +345,57 @@ class competency_framework extends persistent {
         }
 
         return true;
+    }
+
+    /**
+     * Extract the default grade from a scale configuration.
+     *
+     * Returns an array where the first element is the grade, and the second
+     * is a boolean representing whether or not this grade is considered 'proficient'.
+     *
+     * @param  string $config JSON encoded config.
+     * @return array(int grade, int proficient)
+     */
+    public static function get_default_grade_from_scale_configuration($config) {
+        $config = json_decode($config);
+        if (!is_array($config)) {
+            throw new coding_exception('Unexpected scale configuration.');
+        }
+
+        // Remove the scale ID from the config.
+        array_shift($config);
+
+        foreach ($config as $part) {
+            if ($part->scaledefault) {
+                return array((int) $part->id, (int) $part->proficient);
+            }
+        }
+
+        throw new coding_exception('Invalid scale configuration, default not found.');
+    }
+
+    /**
+     * Extract the proficiency of a grade from a scale configuration.
+     *
+     * @param  string $config JSON encoded config.
+     * @return int Representing a boolean
+     */
+    public static function get_proficiency_of_grade_from_scale_configuration($config, $grade) {
+        $config = json_decode($config);
+        if (!is_array($config)) {
+            throw new coding_exception('Unexpected scale configuration.');
+        }
+
+        // Remove the scale ID from the config.
+        array_shift($config);
+
+        foreach ($config as $part) {
+            if ($part->id == $grade) {
+                return (int) $part->proficient;
+            }
+        }
+
+        throw new coding_exception('Grade not found in configuration.');
     }
 
     /**

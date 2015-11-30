@@ -78,6 +78,7 @@ $string['editcompetencyframework'] = 'Edit competency framework';
 $string['editplan'] = 'Edit learning plan';
 $string['edittemplate'] = 'Edit learning plan template';
 $string['editthisplan'] = 'Edit this learning plan';
+$string['evidence_coursecompleted'] = 'The course \'{$a}\' was completed.';
 $string['errorcannotsetduedateinthepast'] = 'The due date cannot be set in the past.';
 $string['errorcannotchangeapastduedate'] = 'The due date has passed, it cannot be changed.';
 $string['errornocompetency'] = '{$a} competency can not be found';

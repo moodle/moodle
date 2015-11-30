@@ -222,6 +222,23 @@ class competency extends persistent {
     }
 
     /**
+     * Extracts the default grade from the scale configuration.
+     *
+     * Returns an array where the first element is the grade, and the second
+     * is a boolean representing whether or not this grade is considered 'proficient'.
+     *
+     * @return array(int grade, bool proficient)
+     */
+    public function get_default_grade() {
+        $scaleid = $this->get_scaleid();
+        $scaleconfig = $this->get_scaleconfiguration();
+        if ($scaleid === null) {
+            $scaleconfig = $this->get_framework()->get_scaleconfiguration();
+        }
+        return competency_framework::get_default_grade_from_scale_configuration($scaleconfig);
+    }
+
+    /**
      * Get the competency framework.
      *
      * @return competency_framework
@@ -252,6 +269,21 @@ class competency extends persistent {
             return null;
         }
         return new competency($parentid);
+    }
+
+    /**
+     * Extracts the proficiency of a grade from the scale configuration.
+     *
+     * @param int $grade The grade (scale item ID).
+     * @return array(int grade, bool proficient)
+     */
+    public function get_proficiency_of_grade($grade) {
+        $scaleid = $this->get_scaleid();
+        $scaleconfig = $this->get_scaleconfiguration();
+        if ($scaleid === null) {
+            $scaleconfig = $this->get_framework()->get_scaleconfiguration();
+        }
+        return competency_framework::get_proficiency_of_grade_from_scale_configuration($scaleconfig, $grade);
     }
 
     /**

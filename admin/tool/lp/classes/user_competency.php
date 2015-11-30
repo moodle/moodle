@@ -161,6 +161,27 @@ class user_competency extends persistent {
     }
 
     /**
+     * Validate the proficiency.
+     *
+     * @param int $value The value.
+     * @return true|lang_string
+     */
+    protected function validate_proficiency($value) {
+        $grade = $this->get('grade');
+
+        if ($grade !== null && $value === null) {
+            // We must set a proficiency when we set a grade.
+            return new lang_string('invaliddata', 'error');
+
+        } else if ($grade === null && $value !== null) {
+            // We must not set a proficiency when we don't set a grade.
+            return new lang_string('invaliddata', 'error');
+        }
+
+        return true;
+    }
+
+    /**
      * Validate the reviewer ID.
      *
      * @param int $value The value.

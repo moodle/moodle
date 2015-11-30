@@ -31,6 +31,7 @@ use context_course;
 use context_user;
 use coding_exception;
 use require_login_exception;
+use moodle_exception;
 use moodle_url;
 use required_capability_exception;
 
@@ -2162,45 +2163,198 @@ class api {
      * Requires no capability because evidence can be added in many situations under any user.
      *
      * @param int $userid The user id for which evidence is added.
-     * @param int $competencyid The competency id for which evidence is added.
+     * @param int $competencyid The competency, or its id for which evidence is added.
+     * @param int $contextid The context in which the evidence took place.
+     * @param int $action The type of action to take on the competency. \tool_lp\evidence::ACTION_*.
      * @param string $descidentifier The strings identifier.
      * @param string $desccomponent The strings component.
-     * @param stdClass|array $desca Any arguments the string requires.
-     * @param string $url The url.
-     * @param int $grade The grade.
+     * @param mixed $desca Any arguments the string requires.
+     * @param bool $recommend When true, the user competency will be sent for review.
+     * @param string $url The url the evidence may link to.
+     * @param int $grade The grade, or scale ID item.
+     * @param int $actionuserid The ID of the user who took the action of adding the evidence. Null when system.
+     *                          This should be used when the action was taken by a real person, this will allow
+     *                          to keep track of all the evidence given by a certain person.
      * @return evidence
      */
-    public static function add_evidence($userid, $competencyid, $descidentifier, $desccomponent, $desca = null, $url = null,
-                                        $grade = null) {
+    public static function add_evidence($userid,
+                                        $competencyorid,
+                                        $contextid,
+                                        $action,
+                                        $descidentifier,
+                                        $desccomponent,
+                                        $desca = null,
+                                        $recommend = false,
+                                        $url = null,
+                                        $grade = null,
+                                        $actionuserid = null) {
         global $DB;
 
-        if (empty($userid)) {
-            throw new coding_exception('Invalid parameter value for \'userid\'.');
+        // Some clearly important variable assignments right there.
+        $competencyid = $competencyorid;
+        $competency = null;
+        if (is_object($competencyid)) {
+            $competency = $competencyid;
+            $competencyid = $competency->get_id();
         }
-        if (empty($competencyid)) {
-            throw new coding_exception('Invalid parameter value for \'competencyid\'.');
-        }
+        $setucgrade = false;
+        $ucgrade = null;
+        $ucproficiency = null;
 
-        // Create user_competency if it doesn't exist.
-        $usercompetency = $DB->get_record('tool_lp_user_competency',  array('userid' => $userid, 'competencyid' => $competencyid));
+        // Fetch or create the user competency.
+        $usercompetency = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$usercompetency) {
-            $usercompetency = user_competency::create_relation($userid, $competencyid)->create();
-            $id = $usercompetency->get_id();
-        } else {
-            $id = $usercompetency->id;
+            $usercompetency = user_competency::create_relation($userid, $competencyid);
+            $usercompetency->create();
         }
 
+        // What should we be doing?
+        switch ($action) {
+
+            // Completing a competency.
+            case evidence::ACTION_COMPLETE:
+                if ($grade !== null) {
+                    throw new coding_exception("The grade MUST NOT be set with a 'completing' evidence.");
+                }
+
+                // Fetch the default grade to attach to the evidence.
+                if (empty($competency)) {
+                    $competency = new competency($competencyid);
+                }
+                list($grade, $proficiency) = $competency->get_default_grade();
+
+                // When completing the competency we fetch the default grade from the competency. But we only mark
+                // the user competency when a grade has not been set yet. Complete is an action to use with automated systems.
+                if ($usercompetency->get_grade() === null) {
+                    $setucgrade = true;
+                    $ucgrade = $grade;
+                    $ucproficiency = $proficiency;
+                }
+
+                break;
+
+            // We override the grade, even overriding back to not set.
+            case evidence::ACTION_OVERRIDE:
+                $setucgrade = true;
+                $ucgrade = $grade;
+                if (empty($competency)) {
+                    $competency = new competency($competencyid);
+                }
+                if ($ucgrade !== null) {
+                    $ucproficiency = $competency->get_proficiency_of_grade($ucgrade);
+                }
+                break;
+
+            // Suggesting a grade with an evidence.
+            case evidence::ACTION_SUGGEST:
+                if ($grade === null) {
+                    throw new coding_exception("The grade MUST be set when 'suggesting' an evidence. Or use ACTION_LOG instead.");
+                }
+                break;
+
+            // Simply logging an evidence.
+            case evidence::ACTION_LOG:
+                if ($grade !== null) {
+                    throw new coding_exception("The grade MUST NOT be set when 'logging' an evidence. Or use ACTION_SUGGEST instead.");
+                }
+                break;
+
+            // Whoops, this is not expected.
+            default:
+                throw new coding_exception('Unexpected action parameter when registering an evidence.');
+                break;
+        }
+
+        // Should we recommend?
+        if ($recommend && $usercompetency->get_status() == user_competency::STATUS_IDLE) {
+            $usercompetency->set_status(user_competency::STATUS_WAITING_FOR_REVIEW);
+        }
+
+        // Setting the grade and proficiency for the user competency.
+        if ($setucgrade == true) {
+            $usercompetency->set_grade($ucgrade);
+            $usercompetency->set_proficiency($ucproficiency);
+        }
+
+        // Prepare the evidence.
         $record = new stdClass();
-        $record->usercompetencyid = $id;
+        $record->usercompetencyid = $usercompetency->get_id();
+        $record->contextid = $contextid;
+        $record->action = $action;
         $record->descidentifier = $descidentifier;
         $record->desccomponent = $desccomponent;
-        $record->desca = $desca;
-        $record->url = $url;
         $record->grade = $grade;
+        $record->actionuserid = $actionuserid;
         $evidence = new evidence(0, $record);
+        $evidence->set_desca($desca);
+        $evidence->set_url($url);
+
+        // Validate both models, we should not operate on one if the other will not save.
+        if (!$usercompetency->is_valid()) {
+            throw new invalid_persistent_exception($usercompetency->get_errors());
+        } else if (!$evidence->is_valid()) {
+            throw new invalid_persistent_exception($evidence->get_errors());
+        }
+
+        // Finally save. Pheww!
+        $usercompetency->update();
         $evidence->create();
 
         return $evidence;
     }
 
+    /**
+     * Observe when a course is marked as completed.
+     *
+     * Note that the user being logged in while this happens may be anyone.
+     * Do not rely on capability checks here!
+     *
+     * @param  \core\event\course_completed $event
+     * @return void
+     */
+    public static function observe_course_completed(\core\event\course_completed $event) {
+        $sql = 'courseid = :courseid AND ruleoutcome != :nooutcome';
+        $params = array(
+            'courseid' => $event->courseid,
+            'nooutcome' => course_competency::OUTCOME_NONE
+        );
+        $coursecompetencies = course_competency::get_records_select($sql, $params);
+
+        $course = get_course($event->courseid);
+        $courseshortname = format_string($course->shortname, null, array('context' => $event->contextid));
+
+        foreach ($coursecompetencies as $coursecompetency) {
+
+            $outcome = $coursecompetency->get_ruleoutcome();
+            $action = null;
+            $recommend = false;
+            $strdesc = 'evidence_coursecompleted';
+
+            if ($outcome == course_competency::OUTCOME_EVIDENCE) {
+                $action = evidence::ACTION_LOG;
+
+            } else if ($outcome == course_competency::OUTCOME_RECOMMEND) {
+                $action = evidence::ACTION_LOG;
+                $recommend = true;
+
+            } else if ($outcome == course_competency::OUTCOME_COMPLETE) {
+                $action = evidence::ACTION_COMPLETE;
+
+            } else {
+                throw new moodle_exception('Unexpected rule outcome: ' + $outcome);
+            }
+
+            static::add_evidence(
+                $event->relateduserid,
+                $coursecompetency->get_competencyid(),
+                $event->contextid,
+                $action,
+                $strdesc,
+                'tool_lp',
+                $courseshortname,
+                $recommend,
+                $event->get_url()
+            );
+        }
+    }
 }
