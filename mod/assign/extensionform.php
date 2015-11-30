@@ -44,19 +44,25 @@ class mod_assign_extension_form extends moodleform {
      */
     public function definition() {
         $mform = $this->_form;
+        $params = $this->_customdata;
 
-        list($coursemoduleid, $userid, $batchusers, $instance, $data) = $this->_customdata;
         // Instance variable is used by the form validation function.
+        $instance = $params['instance'];
         $this->instance = $instance;
 
-        if ($batchusers) {
-            $listusersmessage = get_string('grantextensionforusers', 'assign', count(explode(',', $batchusers)));
-            $mform->addElement('static', 'applytoselectedusers', '', $listusersmessage);
+        if (!empty($params['userscount'])) {
+            $listusersmessage = get_string('grantextensionforusers', 'assign', $params['userscount']);
+            $mform->addElement('header', 'general', $listusersmessage);
+            $mform->addElement('static', 'userslist', get_string('selectedusers', 'assign'), $params['usershtml']);
+        } else {
+            $mform->addElement('static', 'userslist', '', $params['usershtml']);
         }
         if ($instance->allowsubmissionsfromdate) {
             $mform->addElement('static', 'allowsubmissionsfromdate', get_string('allowsubmissionsfromdate', 'assign'),
                                userdate($instance->allowsubmissionsfromdate));
         }
+
+        $finaldate = 0;
         if ($instance->duedate) {
             $mform->addElement('static', 'duedate', get_string('duedate', 'assign'), userdate($instance->duedate));
             $finaldate = $instance->duedate;
@@ -68,19 +74,17 @@ class mod_assign_extension_form extends moodleform {
         $mform->addElement('date_time_selector', 'extensionduedate',
                            get_string('extensionduedate', 'assign'), array('optional'=>true));
         $mform->setDefault('extensionduedate', $finaldate);
-        $mform->addElement('hidden', 'id', $coursemoduleid);
+
+        $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
-        $mform->addElement('hidden', 'userid', $userid);
+        $mform->addElement('hidden', 'userid');
         $mform->setType('userid', PARAM_INT);
-        $mform->addElement('hidden', 'selectedusers', $batchusers);
+        $mform->addElement('hidden', 'selectedusers');
         $mform->setType('selectedusers', PARAM_SEQUENCE);
         $mform->addElement('hidden', 'action', 'saveextension');
         $mform->setType('action', PARAM_ALPHA);
-        $this->add_action_buttons(true, get_string('savechanges', 'assign'));
 
-        if ($data) {
-            $this->set_data($data);
-        }
+        $this->add_action_buttons(true, get_string('savechanges', 'assign'));
     }
 
     /**

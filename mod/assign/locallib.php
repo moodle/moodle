@@ -2012,39 +2012,76 @@ class assign {
         require_once($CFG->dirroot . '/mod/assign/extensionform.php');
 
         $o = '';
-        $batchusers = optional_param('selectedusers', '', PARAM_SEQUENCE);
-        $data = new stdClass();
-        $data->extensionduedate = null;
-        $userid = 0;
-        if (!$batchusers) {
-            $userid = required_param('userid', PARAM_INT);
 
+        $data = new stdClass();
+        $data->id = $this->get_course_module()->id;
+
+        $formparams = array(
+            'instance' => $this->get_instance()
+        );
+
+        $extrauserfields = get_extra_user_fields($this->get_context());
+
+        if ($mform) {
+            $submitteddata = $mform->get_data();
+            $users = $submitteddata->selectedusers;
+            $userlist = explode(',', $users);
+
+            $data->selectedusers = $users;
+            $data->userid = 0;
+
+            $usershtml = '';
+            $usercount = 0;
+            foreach ($userlist as $userid) {
+                if ($usercount >= 5) {
+                    $usershtml .= get_string('moreusers', 'assign', count($userlist) - 5);
+                    break;
+                }
+                $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+
+                $usershtml .= $this->get_renderer()->render(new assign_user_summary($user,
+                                                                    $this->get_course()->id,
+                                                                    has_capability('moodle/site:viewfullnames',
+                                                                    $this->get_course_context()),
+                                                                    $this->is_blind_marking(),
+                                                                    $this->get_uniqueid_for_user($user->id),
+                                                                    $extrauserfields,
+                                                                    !$this->is_active_user($userid)));
+                $usercount += 1;
+            }
+
+            $formparams['userscount'] = count($userlist);
+            $formparams['usershtml'] = $usershtml;
+
+        } else {
+            $userid = required_param('userid', PARAM_INT);
+            $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
             $flags = $this->get_user_flags($userid, false);
 
-            $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
-
+            $data->userid = $user->id;
             if ($flags) {
                 $data->extensionduedate = $flags->extensionduedate;
             }
-            $data->userid = $userid;
-        } else {
-            $data->batchusers = $batchusers;
+
+            $usershtml = $this->get_renderer()->render(new assign_user_summary($user,
+                                                                $this->get_course()->id,
+                                                                has_capability('moodle/site:viewfullnames',
+                                                                $this->get_course_context()),
+                                                                $this->is_blind_marking(),
+                                                                $this->get_uniqueid_for_user($user->id),
+                                                                $extrauserfields,
+                                                                !$this->is_active_user($userid)));
+            $formparams['usershtml'] = $usershtml;
         }
+
+        $mform = new mod_assign_extension_form(null, $formparams);
+        $mform->set_data($data);
         $header = new assign_header($this->get_instance(),
                                     $this->get_context(),
                                     $this->show_intro(),
                                     $this->get_course_module()->id,
                                     get_string('grantextension', 'assign'));
         $o .= $this->get_renderer()->render($header);
-
-        if (!$mform) {
-            $formparams = array($this->get_course_module()->id,
-                                $userid,
-                                $batchusers,
-                                $this->get_instance(),
-                                $data);
-            $mform = new mod_assign_extension_form(null, $formparams);
-        }
         $o .= $this->get_renderer()->render(new assign_form('extensionform', $mform));
         $o .= $this->view_footer();
         return $o;
@@ -3707,7 +3744,6 @@ class assign {
 
             if ($data->operation == 'grantextension') {
                 // Reset the form so the grant extension page will create the extension form.
-                $mform = null;
                 return 'grantextension';
             } else if ($data->operation == 'setmarkingworkflowstate') {
                 return 'viewbatchsetmarkingworkflowstate';
@@ -5296,34 +5332,34 @@ class assign {
         require_once($CFG->dirroot . '/mod/assign/extensionform.php');
         require_sesskey();
 
-        $batchusers = optional_param('selectedusers', '', PARAM_SEQUENCE);
-        $userid = 0;
-        if (!$batchusers) {
-            $userid = required_param('userid', PARAM_INT);
-            $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
-        }
-        $mform = new mod_assign_extension_form(null, array($this->get_course_module()->id,
-                                                           $userid,
-                                                           $batchusers,
-                                                           $this->get_instance(),
-                                                           null));
+        $formparams = array(
+            'instance' => $this->get_instance(),
+            'userscount' => 0,
+            'usershtml' => '',
+        );
+
+        $mform = new mod_assign_extension_form(null, $formparams);
 
         if ($mform->is_cancelled()) {
             return true;
         }
 
         if ($formdata = $mform->get_data()) {
-            if ($batchusers) {
-                $users = explode(',', $batchusers);
+            if (!empty($formdata->selectedusers)) {
+                $users = explode(',', $formdata->selectedusers);
                 $result = true;
                 foreach ($users as $userid) {
-                    $result = $this->save_user_extension($userid, $formdata->extensionduedate) && $result;
+                    $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+                    $result = $this->save_user_extension($user->id, $formdata->extensionduedate) && $result;
                 }
                 return $result;
-            } else {
-                return $this->save_user_extension($userid, $formdata->extensionduedate);
+            }
+            if (!empty($formdata->userid)) {
+                $user = $DB->get_record('user', array('id' => $formdata->userid), '*', MUST_EXIST);
+                return $this->save_user_extension($user->id, $formdata->extensionduedate);
             }
         }
+
         return false;
     }
 
