@@ -1169,6 +1169,7 @@ $services = array(
             'core_enrol_get_enrolled_users',
             'core_enrol_get_course_enrolment_methods',
             'enrol_self_enrol_user',
+            'enrol_self_get_instance_info',
             'core_user_get_users_by_id',
             'core_webservice_get_site_info',
             'core_notes_create_notes',
