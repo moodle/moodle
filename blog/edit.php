@@ -138,14 +138,15 @@ if ($action === 'delete') {
         $PAGE->set_heading($SITE->fullname);
         echo $OUTPUT->header();
 
+        echo $OUTPUT->confirm(get_string('blogdeleteconfirm', 'blog'),
+                              new moodle_url('edit.php', $optionsyes),
+                              new moodle_url('index.php', $optionsno));
+
+        echo '<br />';
         // Output the entry.
         $entry->prepare_render();
         echo $output->render($entry);
 
-        echo '<br />';
-        echo $OUTPUT->confirm(get_string('blogdeleteconfirm', 'blog'),
-                              new moodle_url('edit.php', $optionsyes),
-                              new moodle_url('index.php', $optionsno));
         echo $OUTPUT->footer();
         die;
     }
